@@ -26,7 +26,6 @@ TODO:
 
 * ScreenEvaluationSummary (lacks pagination)
 * ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
-* ScreenGameOver (lacks player stats)
 * score vocalization
 
 
