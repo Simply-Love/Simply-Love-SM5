@@ -4,7 +4,7 @@ Simply Love (SM5 Port)
 This is a recreation of hurtpiggypig's Simply Love SM3.95 theme made to now run in StepMania 5.
 
 For information on the original StepMania 3.95 version of Simply Love, check here:
-http://aaronin.jp/boards/viewtopic.php?t=9994
+http://r21freak.com/phpbb3/viewtopic.php?f=6&t=23504
 
 
 
@@ -26,8 +26,8 @@ TODO:
 
 * ScreenEvaluationSummary (lacks pagination)
 * ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
-* score vocalization
-
+* Score vocalization
+* Combos don't carry over from song to song.
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
@@ -38,7 +38,7 @@ TODO:
 
 **BUGS**
 
-* Combos don't carry over from song to song.
+* Songs with multiple edit charts (ie. Tachyon Alpha/Delta Max) cause the custom StepsDisplayList to behave erratically
 * Local profiles don't load nicely.  See BGAnimations/ScreenSelectMusic overlay/loadProfilesHack.lua
 
 

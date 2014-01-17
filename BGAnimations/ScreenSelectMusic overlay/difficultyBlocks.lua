@@ -168,12 +168,9 @@ local function GetStepsToDisplay(steps)
 			end
 		end
 		
-		--SCREENMAN:SystemMessage(currentIndexP1 .. " " .. currentIndexP2);
 		
 		local range = math.abs(currentIndexP1-currentIndexP2);
-		
-		--SCREENMAN:SystemMessage(range);
-		
+				
 		local greaterIndex, lesserIndex;
 		if currentIndexP1 > currentIndexP2 then
 			greaterIndex = currentIndexP1;
@@ -212,24 +209,33 @@ end
 
 
 local function ColorTheGrid(af)
-	local song, steps;
+	local SongOrCourse, StepsOrTrails;
 	local difficulties = {};
 	
-	song = GAMESTATE:GetCurrentSong();
-	if song then
-		steps = song:GetStepsByStepsType(relevantStepsType);
+	if GAMESTATE:IsCourseMode() then
+		SongOrCourse = GAMESTATE:GetCurrentCourse();		
+	else
+		SongOrCourse = GAMESTATE:GetCurrentSong();
+	end;
 	
-		if steps then				
+	if SongOrCourse then
+		
+		if GAMESTATE:IsCourseMode() then
+			StepsOrTrails = SongOrCourse:GetAllTrails()		
+		else
+			StepsOrTrails = SongOrCourse:GetStepsByStepsType(relevantStepsType);
+		end;
+	
+	
+		if StepsOrTrails then				
 			
-			local stepstodisplay = GetStepsToDisplay(steps);
-
-			--SMPairs(stepstodisplay);
+			local stepstodisplay = GetStepsToDisplay(StepsOrTrails);
 
 			for k,chart in pairs(stepstodisplay) do
 				
 				local meter = tonumber(chart:GetMeter());
 				local difficulty = chart:GetDifficulty();
-							
+						
 				-- diffuse and set each chart's difficulty meter
 				af:GetChild("Grid"):GetChild( "Row" .. tonumber(k) ):GetChild("Meter"):diffuse( DifficultyColor(difficulty) );
 				af:GetChild("Grid"):GetChild( "Row" .. tonumber(k) ):GetChild("Meter"):settext(meter);
@@ -249,6 +255,7 @@ local function ColorTheGrid(af)
 				
 			end			
 		end
+		
 	else
 		-- is it safe to assume that if there isn't a song, we're on a group (folder)?
 		-- for now, I'm going to have to go with "yes"
@@ -314,9 +321,16 @@ local t = Def.ActorFrame{
 			SetCommand=function(self)
 				
 				if GAMESTATE:IsHumanPlayer(PLAYER_1) then
-					local currentSteps = GAMESTATE:GetCurrentSteps(PLAYER_1);
-					if currentSteps then
-						local currentDifficulty = currentSteps:GetDifficulty();
+					local CurrentStepsOrTrails;
+					
+					if GAMESTATE:IsCourseMode() then
+						CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_1);
+					else
+						CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_1);
+					end;
+					
+					if CurrentStepsOrTrails then
+						local currentDifficulty = CurrentStepsOrTrails:GetDifficulty();
 						local offset = GetYOffsetByDifficulty(currentDifficulty);
 						self:y((offset-3) * 18);
 					end
@@ -361,9 +375,17 @@ local t = Def.ActorFrame{
 			SetCommand=function(self)
 				
 				if GAMESTATE:IsHumanPlayer(PLAYER_2) then
-					local currentSteps = GAMESTATE:GetCurrentSteps(PLAYER_2);
-					if currentSteps then
-						local currentDifficulty = currentSteps:GetDifficulty();
+
+					local CurrentStepsOrTrails;
+					
+					if GAMESTATE:IsCourseMode() then
+						CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_1);
+					else
+						CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_1);
+					end;
+
+					if CurrentStepsOrTrails then
+						local currentDifficulty = CurrentStepsOrTrails:GetDifficulty();
 						local offset = GetYOffsetByDifficulty(currentDifficulty);
 						self:y((offset-3) * 18);
 					end
