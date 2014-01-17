@@ -37,9 +37,14 @@ TODO:
 * setting per-screen MenuTimers via a menu
 
 
+**BUGS**
+
+* Combos don't carry over from song to song.
+* Local profiles don't load nicely.  See BGAnimations/ScreenSelectMusic overlay/loadProfilesHack.lua
+
 
 ACKNOWLEDGEMENTS:
------------------
+----------------
 
 * hurtpiggypig ( http://www.etsy.com/shop/hurtpiggypig ) -- Lara designed the original Simply Love theme for StepMania 3.95.
 * djpohly ( https://github.com/djpohly ) -- Devin was a constant source of knowledge and help during the six (or so) months I spent porting this.

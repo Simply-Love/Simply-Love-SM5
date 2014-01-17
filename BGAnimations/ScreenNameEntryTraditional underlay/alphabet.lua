@@ -52,6 +52,11 @@ local Letters = Def.ActorFrame{
 	end;
 	OnCommand=function(self)
 		self:visible(SCREENMAN:GetTopScreen():GetEnteringName(Player));
+		
+		-- if a name is available from a profile
+		if playerName ~= "" then
+			self:queuecommand("GoToOkay");
+		end
 	end;
 	GoToOkayCommand=function(self)
 		--the player just entered the maximum number of characters permitted
