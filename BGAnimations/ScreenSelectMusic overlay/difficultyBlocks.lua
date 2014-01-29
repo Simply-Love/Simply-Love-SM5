@@ -1,28 +1,5 @@
 local gridLength = 20;
 
---get what game we're playing
-local game = GAMESTATE:GetCurrentGame():GetName();
---capitalize the first letter of game
-local capitalizedGame = game:gsub("^%l", string.upper);
-
---get our style (single, versus, double)
-local style = GAMESTATE:GetCurrentStyle():GetName();
-
---since there are no StepsType "versus"
---we're really only interested in singles charts
---regardless of whether the style is "single" or "versus"
-if style == "versus" then
-	style = "single";
-end
-if style == "versus8" then
-	style = "single8";
-end
---capitalize the first letter of our style
-local capitalizedStyle = style:gsub("^%l", string.upper);
-local relevantStepsType = "StepsType_"..capitalizedGame.."_"..capitalizedStyle;
-
-
-
 local function GetStepsToDisplay(steps)
 	
 	--gather any edit charts into a table
@@ -223,7 +200,7 @@ local function ColorTheGrid(af)
 		if GAMESTATE:IsCourseMode() then
 			StepsOrTrails = SongOrCourse:GetAllTrails()		
 		else
-			StepsOrTrails = SongOrCourse:GetStepsByStepsType(relevantStepsType);
+			StepsOrTrails = SongUtil.GetPlayableSteps( SongOrCourse );
 		end;
 	
 	
@@ -314,7 +291,7 @@ local t = Def.ActorFrame{
 			end;
 		end;
 		
-		LoadActor("cursor p1.png")..{
+		LoadActor("cursor.png")..{
 			InitCommand=cmd(zoom,0.6; x, WideScale(-142,-152); y,-36; );
 			--OnCommand taken from freem's ITG3 SM5 port
 			OnCommand=cmd(linear,.4;diffusealpha,1;bounce;effectmagnitude,-3,0,0;effectperiod,1.0;effectoffset,0.2;effectclock,"beat";);
@@ -341,12 +318,8 @@ local t = Def.ActorFrame{
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 		
-			CurrentStepsP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP1ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
+			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 		};
 	};
 	
@@ -368,8 +341,8 @@ local t = Def.ActorFrame{
 				(cmd(bouncebegin,0.3;zoom,0))(self);
 			end;
 		end;
-		LoadActor("cursor p2.png")..{
-			InitCommand=cmd(zoom,0.6; x, WideScale(142,155); );
+		LoadActor("cursor.png")..{
+			InitCommand=cmd(zoom,0.6; rotationz,180; x, WideScale(142,155); );
 			--OnCommand taken from freem's ITG3 SM5 port
 			OnCommand=cmd(linear,.4;diffusealpha,1;bounce;effectmagnitude,3,0,0;effectperiod,1.0;effectoffset,0.2;effectclock,"beat";);
 			SetCommand=function(self)
@@ -395,12 +368,8 @@ local t = Def.ActorFrame{
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 	
-			CurrentStepsP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
-			CurrentTrailP2ChangedMessageCommand=function(self)
-				self:playcommand("Set");
-			end;
+			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 		};
 
 	};
