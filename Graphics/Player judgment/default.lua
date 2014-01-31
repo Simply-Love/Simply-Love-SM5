@@ -2,7 +2,7 @@ local c;
 local player = Var "Player";
 
 -- local judType=GetUserPref("UserJudgmentLabel" .. ToEnumShortString(player) ) or "Love";
-local judType=getenv("UserJudgmentLabel" .. ToEnumShortString(player) ) or "Love";
+local judType=getenv("JudgmentGraphic" .. ToEnumShortString(player) ) or "Love";
 
 
 local JudgeCmds = {
