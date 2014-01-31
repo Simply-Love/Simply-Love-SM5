@@ -352,9 +352,9 @@ local t = Def.ActorFrame{
 					local CurrentStepsOrTrails;
 					
 					if GAMESTATE:IsCourseMode() then
-						CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_1);
+						CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_2);
 					else
-						CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_1);
+						CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_2);
 					end;
 
 					if CurrentStepsOrTrails then
