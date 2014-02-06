@@ -106,7 +106,7 @@ local t = Def.ActorFrame{
 		
 			--letter grade
 			LoadActor("letterGrade", PLAYER_1)..{
-				InitCommand=cmd( x, SCREEN_CENTER_X - 225; y,SCREEN_CENTER_Y-134;);
+				InitCommand=cmd(x, SCREEN_CENTER_X-225; y,SCREEN_CENTER_Y-134;);
 				OnCommand=cmd(zoom, 0.4);
 			};
 		
@@ -123,6 +123,11 @@ local t = Def.ActorFrame{
 					end
 					self:settext(stepartist)
 				end;
+			};
+			
+			-- Record Texts
+			LoadActor("recordTexts", PLAYER_1)..{
+				InitCommand=cmd(xy, SCREEN_CENTER_X-224, SCREEN_CENTER_Y-80; zoom, 0.42; horizalign, left;);
 			};
 		
 			-- colored background for player 1's chart's difficulty meter
@@ -190,11 +195,6 @@ local t = Def.ActorFrame{
 		-- numbers
 		LoadActor("judgeNumbers", PLAYER_1)..{
 			InitCommand=cmd(x,SCREEN_CENTER_X-64; y, SCREEN_CENTER_Y-24; zoom, 0.8);
-		};
-
-		-- Record Texts
-		LoadActor("recordTexts", PLAYER_1)..{
-			InitCommand=cmd(x,SCREEN_CENTER_X-64;y,SCREEN_CENTER_Y+168);
 		};
 		
 		LoadActor("playerOptions", PLAYER_1)..{
@@ -277,6 +277,11 @@ local t = Def.ActorFrame{
 					self:settext(stepartist)
 				end;
 			};
+			
+			-- Record Texts
+			LoadActor("recordTexts", PLAYER_2)..{
+				InitCommand=cmd(xy, SCREEN_CENTER_X+224, SCREEN_CENTER_Y-80; zoom, 0.42; horizalign, right;);
+			};
 
 			-- colored background for player 2's chart's difficulty meter
 			Def.Quad{
@@ -344,11 +349,6 @@ local t = Def.ActorFrame{
 		-- numbers
 		LoadActor("judgeNumbers", PLAYER_2)..{
 			InitCommand=cmd(x,SCREEN_CENTER_X+64;y,SCREEN_CENTER_Y-24; zoom, 0.8);
-		};
-
-		-- Record Texts
-		LoadActor("recordTexts", PLAYER_2)..{
-			InitCommand=cmd(x,SCREEN_CENTER_X+64;y,SCREEN_CENTER_Y+168);
 		};
 
 		-- player 2's options
