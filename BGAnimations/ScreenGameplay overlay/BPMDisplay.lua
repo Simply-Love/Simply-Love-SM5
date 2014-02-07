@@ -64,7 +64,8 @@ local displaySingle = Def.ActorFrame{
 
 displaySingle.InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM);
 
-if numPlayers == 1 then
+-- in CourseMode, both players should always be playing the same charts, right?
+if numPlayers == 1 or GAMESTATE:IsCourseMode() then
 	t[#t+1] = displaySingle
 else
 	-- check if both players are playing the same steps

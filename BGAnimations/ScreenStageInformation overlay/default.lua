@@ -52,8 +52,13 @@ return Def.ActorFrame{
 			else
 				self:setext("STEVEREEN!");
 			end
-			
+
 			self:sleep(1);
+					
+			if self:GetText() == "WHAT'RE YOU TRYNA DO?!" then
+				self:accelerate(0.4);
+				self:diffusealpha(0);
+			end
 		end;
 	};
 };

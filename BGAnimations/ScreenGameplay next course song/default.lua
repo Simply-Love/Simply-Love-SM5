@@ -1,4 +1,4 @@
--- xxx: fixme: I don't scale right.
+-- fixme: I don't scale right.
 local t = Def.ActorFrame {
 	Def.Sprite{
 		InitCommand=cmd(Center);

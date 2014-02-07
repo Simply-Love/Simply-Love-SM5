@@ -11,8 +11,6 @@ t[#t+1] = Def.ActorFrame{
 		InitCommand=cmd(shadowlength,1);
 		OnCommand=function(self)
 			self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y);
-						
-			-- TODO: CourseMode
 			
 			if not PREFSMAN:GetPreference("EventMode") then
 				local current_stg =	GAMESTATE:GetCurrentStage()
@@ -26,7 +24,7 @@ t[#t+1] = Def.ActorFrame{
 					if stg_number then
 						text = "ROUND " .. stg_number;
 					else
-						text = "WHAT'RE YOU TRYNA DO?!"
+						text = ""
 					end
 				end
 				
