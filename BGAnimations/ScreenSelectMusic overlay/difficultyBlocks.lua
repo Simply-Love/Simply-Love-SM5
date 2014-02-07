@@ -371,14 +371,16 @@ for row=1,5 do
 		Name="BlockRow"..row;
 		InitCommand=cmd(halign,0; diffuse,DifficultyIndexColor(row));
 		OnCommand=function(self)
-			width = self:GetWidth();
-			height= self:GetHeight();
+			local width = self:GetWidth();
+			local height= self:GetHeight();
 			
 			self:y(2 + row*height*gridZoomFactor - (height*gridZoomFactor*3));
 			self:x(-(width * gridLength)/4 - WideScale(1,10));
 			self:queuecommand("Color");
 		end;
 		ResetCommand=function(self)
+			local width = self:GetWidth();
+			local height= self:GetHeight();
 			local SongOrCourse, StepsOrTrails;
 	
 			if GAMESTATE:IsCourseMode() then
