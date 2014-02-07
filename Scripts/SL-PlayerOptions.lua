@@ -1,5 +1,5 @@
 function PlayerJudgment()
-	local judgmentGraphics = { 'Love','3.9','ITG2','GrooveNights','Chromatic','Tactics','Emoticon' };
+	local judgmentGraphics = { 'Love','3.9','ITG2','GrooveNights','Chromatic','Tactics','Emoticon','None' };
 	local t = {
 		Name = "UserPlayerJudgment",
 		LayoutType = "ShowAllInRow",

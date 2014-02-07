@@ -29,12 +29,16 @@ local t = Def.ActorFrame {
 	InitCommand=cmd(fov,90);
 
 
-	LoadActor( judType ) .. {
+	 Def.Sprite{
 		Name="JudgmentWithOffsets";
 		InitCommand=cmd(pause;visible,false;);
 		OnCommand=function(self)
 			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
 				self:Load( THEME:GetPathG("Player", "judgment/Love") );
+			elseif judType == "None" then
+				self:Load( THEME:GetPathG("", "_blank") );
+			else
+				self:Load( THEME:GetPathG("Player", "judgment/" .. judType) )
 			end
 		end;
 		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false);
