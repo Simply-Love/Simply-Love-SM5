@@ -1,4 +1,5 @@
 local gridLength = 20;
+local gridZoomFactor = WideScale(0.355,0.38);
 
 local function GetStepsToDisplay(steps)
 	
@@ -18,6 +19,10 @@ local function GetStepsToDisplay(steps)
 		end
 	end
 	
+	-- if there are no edits we can safely bail now
+	if #edits == 0 then return charts end;
+	
+	
 	-- start the editIndex at 6
 	-- (one higher than 5, which is used for Challenge charts)
 	local editIndex = 6;
@@ -25,9 +30,6 @@ local function GetStepsToDisplay(steps)
 		charts[editIndex] = edit;
 		editIndex = editIndex + 1;
 	end
-
-	-- if there are no edits we can safely bail now
-	if #edits == 0 then return charts end;
 		
 	
 	--THERE ARE EDITS, OH NO!
@@ -115,39 +117,26 @@ local function GetStepsToDisplay(steps)
 		end
 
 
-
-
-
-
-						
 		local currentIndexP1, currentIndexP2;
 		
 		-- how broad is the "range" of charts for this song?
 		-- (where beginner=1 and edit=6+)
 		-- and how far apart are P1 and P2 currently?
+		
 		for k,chart in pairs(charts) do
-			
-			if chart:IsAnEdit() and chart:GetChartName()==currentStepsP1:GetChartName() then
-				currentIndexP1 = tonumber(k);
+
+			if chart == currentStepsP1 then
+				currentIndexP1 = k;
 			end
-			
-			if not chart:IsAnEdit() and chart:GetDifficulty()==currentStepsP1:GetDifficulty() then
-				currentIndexP1 = tonumber(k);
-			end
-			
-			
-			if chart:IsAnEdit() and chart:GetChartName()==currentStepsP2:GetChartName() then
-				currentIndexP2 = tonumber(k);
-			end
-			
-			if not chart:IsAnEdit() and chart:GetDifficulty()==currentStepsP2:GetDifficulty() then
-				currentIndexP2 = tonumber(k);
-			end
+
+			if chart == currentStepsP2 then
+				currentIndexP2 = k;
+			end	
 		end
 		
 		
 		local range = math.abs(currentIndexP1-currentIndexP2);
-				
+								
 		local greaterIndex, lesserIndex;
 		if currentIndexP1 > currentIndexP2 then
 			greaterIndex = currentIndexP1;
@@ -157,15 +146,16 @@ local function GetStepsToDisplay(steps)
 			lesserIndex = currentIndexP1;
 		end
 		
+		SM(range)
 		
-		if range >= 5 then
+		if range > 5 then
 			
 			local frIndex=1;
 			for i=lesserIndex, lesserIndex+2 do
 				finalReturn[frIndex] = charts[i];
 				frIndex = frIndex + 1;
 			end
-			for i=greaterIndex, greaterIndex-1, -1 do
+			for i=greaterIndex-1, greaterIndex do
 				finalReturn[frIndex] = charts[i];
 				frIndex = frIndex + 1;
 			end
@@ -184,81 +174,17 @@ end
 
 
 
-
-local function ColorTheGrid(af)
-	local SongOrCourse, StepsOrTrails;
-	local difficulties = {};
-	
-	if GAMESTATE:IsCourseMode() then
-		SongOrCourse = GAMESTATE:GetCurrentCourse();		
-	else
-		SongOrCourse = GAMESTATE:GetCurrentSong();
-	end;
-	
-	if SongOrCourse then
-		
-		if GAMESTATE:IsCourseMode() then
-			StepsOrTrails = SongOrCourse:GetAllTrails()		
-		else
-			StepsOrTrails = SongUtil.GetPlayableSteps( SongOrCourse );
-		end;
-	
-	
-		if StepsOrTrails then				
-			
-			local stepstodisplay = GetStepsToDisplay(StepsOrTrails);
-
-			for k,chart in pairs(stepstodisplay) do
-				
-				local meter = tonumber(chart:GetMeter());
-				local difficulty = chart:GetDifficulty();
-						
-				-- diffuse and set each chart's difficulty meter
-				af:GetChild("Grid"):GetChild( "Row" .. tonumber(k) ):GetChild("Meter"):diffuse( DifficultyColor(difficulty) );
-				af:GetChild("Grid"):GetChild( "Row" .. tonumber(k) ):GetChild("Meter"):settext(meter);
-				
-				-- our grid only supports charts with up to a 20-block difficulty meter
-				-- but charts can have higher difficulties
-				-- handle that here by setting a maximum number to worry about displaying
-				if meter > gridLength then
-					meter = gridLength
-				end
-								
-				-- find the proper blocks by row then column,
-				-- and diffuse each the appropriate color one by one
-				for i=1,meter do
-					af:GetChild("Grid"):GetChild("Row".. tonumber(k) ):GetChild("Block"..i):diffuse(DifficultyColor(difficulty));
-				end
-				
-			end			
-		end
-		
-	else
-		-- is it safe to assume that if there isn't a song, we're on a group (folder)?
-		-- for now, I'm going to have to go with "yes"
-		af:propagatecommand("Group");
-	end
-end
-
-
-
-
-
-
 local t = Def.ActorFrame{
 	
 	InitCommand=cmd(xy, SCREEN_CENTER_X / WideScale(2, 1.73), SCREEN_CENTER_Y + 70; );
 	CurrentStepsP1ChangedMessageCommand=function(self)
 		self:propagatecommand("Reset");
-		ColorTheGrid(self);
 	end;
 	CurrentStepsP2ChangedMessageCommand=function(self)
 		self:propagatecommand("Reset");
-		ColorTheGrid(self);
 	end;
 	CurrentSongChangedMessageCommand=function(self)
 		self:propagatecommand("Reset");
-		ColorTheGrid(self);
 	end;
 
 
@@ -292,7 +218,7 @@ local t = Def.ActorFrame{
 		end;
 		
 		LoadActor("cursor.png")..{
-			InitCommand=cmd(zoom,0.6; x, WideScale(-142,-152); y,-36; );
+			InitCommand=cmd(zoom,0.6; x, WideScale(-142,-155); y,-36; );
 			--OnCommand taken from freem's ITG3 SM5 port
 			OnCommand=cmd(linear,.4;diffusealpha,1;bounce;effectmagnitude,-3,0,0;effectperiod,1.0;effectoffset,0.2;effectclock,"beat";);
 			SetCommand=function(self)
@@ -374,64 +300,130 @@ local t = Def.ActorFrame{
 
 	};
 	
-	
-	
 };
 
 
+t[#t+1] = LoadActor("block.png")..{
+	Name="BackgroundBlocks";
+	InitCommand=cmd(diffuse,color("#182025"); halign,0);
+	OnCommand=function(self)
+		width = self:GetWidth();
+		height= self:GetHeight();
+		self:y(2);
+		self:x(-(width * gridLength)/4 - WideScale(1,10));
+		self:zoomto(width * gridLength * gridZoomFactor * 1.55, height * 5 * gridZoomFactor);
+		self:customtexturerect(0, 0, gridLength, 5);
+	end;
+};
 
-local function DrawRow(y_offset, nBlocks)
 
-	local row = Def.ActorFrame{
-		Name="Row"..y_offset;
-		InitCommand=cmd(x,WideScale(-16,0); zoom,WideScale(0.98,1));
-	};
+for row=1,5 do
 
-	row[#row+1] = LoadFont("_wendy small")..{
-		Name="Meter";
+	t[#t+1] = LoadFont("_wendy small")..{
+		Name="Meter"..row;
 		Text="?";
-		InitCommand=cmd(diffuse,DifficultyIndexColor(y_offset); zoom,0.3; y, y_offset * 18; x, WideScale(4,6); horizalign,right);
-		ResetCommand=cmd(settext,"");
-		GroupCommand=cmd(settext,"?"; diffuse,DifficultyIndexColor(y_offset);)	
-	};
-
-	for i=1,nBlocks do
+		InitCommand=cmd(diffuse,DifficultyIndexColor(row); zoom,WideScale(0.27,0.3); y, row * WideScale(17.333,18.333) - WideScale(52,55.5); x, WideScale(-123,-134); horizalign,right);
+		ResetCommand=function(self)
+			local SongOrCourse, StepsOrTrails;
 	
-		row[#row+1] = Def.Quad{
-			Name="Block"..i;
-			InitCommand=function(self)
-				self:diffuse(color("#182025"));
-				self:zoomto(WideScale(8, 9), 15);
-				self:x(i * WideScale(13, 14));
-				self:y(y_offset * 18);
+			if GAMESTATE:IsCourseMode() then
+				SongOrCourse = GAMESTATE:GetCurrentCourse();		
+			else
+				SongOrCourse = GAMESTATE:GetCurrentSong();
 			end;
-			ResetCommand=cmd(diffuse,color("#182025"));
-		};
-	end
 	
-	return row
-end
-
-
-
-
-local function DrawGrid(nBlocks)
+			if SongOrCourse then
+		
+				if GAMESTATE:IsCourseMode() then
+					StepsOrTrails = SongOrCourse:GetAllTrails()		
+				else
+					StepsOrTrails = SongUtil.GetPlayableSteps( SongOrCourse )
+				end;
 	
-	local grid = Def.ActorFrame{
-		Name="Grid";
-		InitCommand=cmd(y, -53; x, -SCREEN_WIDTH/WideScale(6, 6.275));
+	
+				if StepsOrTrails then				
+			
+					local stepstodisplay = GetStepsToDisplay(StepsOrTrails);
+			
+					if stepstodisplay[row] then
+				
+						local meter = tonumber(stepstodisplay[row]:GetMeter());
+						local difficulty = stepstodisplay[row]:GetDifficulty();
+						
+						-- diffuse and set each chart's difficulty meter
+						self:diffuse( DifficultyColor(difficulty) );
+						self:settext(meter);
+	
+					else
+						self:settext("");
+					end			
+				end
+		
+			else
+				-- is it safe to assume that if there isn't a song, we're on a group (folder)?
+				-- for now, I'm going to have to go with "yes"
+				self:settext("?");
+			end
+		end;
 	};
-
-	for i=1,5 do
-		grid[#grid+1] = DrawRow(i,nBlocks);
-	end
-
-	return grid
+	
+	t[#t+1] = LoadActor("block.png")..{
+		Name="BlockRow"..row;
+		InitCommand=cmd(halign,0; diffuse,DifficultyIndexColor(row));
+		OnCommand=function(self)
+			width = self:GetWidth();
+			height= self:GetHeight();
+			
+			self:y(2 + row*height*gridZoomFactor - (height*gridZoomFactor*3));
+			self:x(-(width * gridLength)/4 - WideScale(1,10));
+			self:queuecommand("Color");
+		end;
+		ResetCommand=function(self)
+			local SongOrCourse, StepsOrTrails;
+	
+			if GAMESTATE:IsCourseMode() then
+				SongOrCourse = GAMESTATE:GetCurrentCourse();		
+			else
+				SongOrCourse = GAMESTATE:GetCurrentSong();
+			end;
+	
+			if SongOrCourse then
+		
+				if GAMESTATE:IsCourseMode() then
+					StepsOrTrails = SongOrCourse:GetAllTrails()		
+				else
+					StepsOrTrails = SongUtil.GetPlayableSteps( SongOrCourse )
+				end;
+	
+	
+				if StepsOrTrails then				
+			
+					local stepstodisplay = GetStepsToDisplay(StepsOrTrails);
+					
+					if stepstodisplay[row] then
+						local meter = stepstodisplay[row]:GetMeter();
+						local difficulty = stepstodisplay[row]:GetDifficulty();
+						
+						-- our grid only supports charts with up to a 20-block difficulty meter
+						-- but charts can have higher difficulties
+						-- handle that here by setting a maximum number to worry about displaying
+						if meter > gridLength then
+							meter = gridLength
+						end
+						
+						self:diffuse(DifficultyColor(difficulty));
+						self:zoomto(width * meter * gridZoomFactor * 1.55, height * gridZoomFactor);
+						self:customtexturerect(0, 0, meter, 1);
+					else
+						self:zoomto(0,0);
+					end
+				end
+			else
+				self:zoomto(0, 0);
+			end
+		end;
+	};
 end
 
-
-
-
-t[#t+1] = DrawGrid(gridLength);
 
 return t;
