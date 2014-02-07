@@ -48,50 +48,71 @@ t[#t+1] = Def.ActorFrame {
 };
 
 
-
-
-for i=numStages,1,-1 do
+if GAMESTATE:IsCourseMode() then
 	
-	local stageStats = STATSMAN:GetPlayedStageStats(i);
+	t[#t+1] = Def.Sprite{
+		Name="CourseBanner";
+		InitCommand=cmd(xy, SCREEN_CENTER_X, 121.5; );
+		OnCommand=function(self)
+			local course, banner;
+			course = GAMESTATE:GetCurrentCourse();
+						
+			if course then
+				 bannerpath = course:GetBannerPath();
+			end;			
+			
+			if bannerpath then
+				self:LoadBanner(bannerpath);			
+				self:setsize(418,164);
+				self:zoom(0.7);
+			end;
+		end;
+	};
 	
-	if stageStats then
+else
+
+	for i=numStages,1,-1 do
+	
+		local stageStats = STATSMAN:GetPlayedStageStats(i);
+	
+		if stageStats then
 		
-		local song = stageStats:GetPlayedSongs()[1];
+			local song = stageStats:GetPlayedSongs()[1];
 		
-		t[#t+1] = Def.Sprite{
-			Name="Banner";
-			InitCommand=cmd(xy, SCREEN_CENTER_X, 121.5; diffusealpha, 0; );
-			OnCommand=function(self)
+			t[#t+1] = Def.Sprite{
+				Name="Banner"..i;
+				InitCommand=cmd(xy, SCREEN_CENTER_X, 121.5; diffusealpha, 0; );
+				OnCommand=function(self)
 		
-				if song then
-					 bannerpath = song:GetBannerPath();
-				end;			
+					if song then
+						 bannerpath = song:GetBannerPath();
+					end;			
 		
-				if bannerpath then
-					self:LoadBanner(bannerpath);			
-					self:setsize(418,164);
-					self:zoom(0.7);
-				end;
+					if bannerpath then
+						self:LoadBanner(bannerpath);			
+						self:setsize(418,164);
+						self:zoom(0.7);
+					end;
 				
-				self:sleep(durationPerSong * (math.abs(i-numStages)) );
-				self:queuecommand("Display");
-			end;
-			DisplayCommand=function(self)				
-				self:diffusealpha(1);
-				self:sleep(durationPerSong);
-				self:diffusealpha(0);
-				self:queuecommand("Wait");
-			end;
-			WaitCommand=function(self)
-				self:sleep(durationPerSong * (numStages-1))
-				self:queuecommand("Display")
-			end;
-		};
+					self:sleep(durationPerSong * (math.abs(i-numStages)) );
+					self:queuecommand("Display");
+				end;
+				DisplayCommand=function(self)				
+					self:diffusealpha(1);
+					self:sleep(durationPerSong);
+					self:diffusealpha(0);
+					self:queuecommand("Wait");
+				end;
+				WaitCommand=function(self)
+					self:sleep(durationPerSong * (numStages-1))
+					self:queuecommand("Display")
+				end;
+			};
 		
+		end
 	end
+
 end
-
-
 
 
 

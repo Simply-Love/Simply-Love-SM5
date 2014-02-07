@@ -149,10 +149,12 @@ local t = Def.ActorFrame{
 				InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_CENTER_X-289.5, SCREEN_CENTER_Y-71; zoom, 0.5 );
 				BeginCommand=function(self)
 					local steps = GAMESTATE:GetCurrentSteps(PLAYER_1);
-					local meter = steps:GetMeter();
+					if steps then
+						local meter = steps:GetMeter();
 				
-					if meter then	
-						self:settext(meter)
+						if meter then	
+							self:settext(meter)
+						end
 					end
 				end;
 			};
@@ -187,10 +189,7 @@ local t = Def.ActorFrame{
 			end;
 		};
 
-		-- stages survived (course mode)
-		LoadActor("stagesSurvived", PLAYER_1)..{
-			InitCommand=cmd(x,SCREEN_WIDTH*0.2;y,SCREEN_CENTER_Y-136);
-		};
+
 
 		-- numbers
 		LoadActor("judgeNumbers", PLAYER_1)..{
@@ -268,7 +267,7 @@ local t = Def.ActorFrame{
 			LoadFont("_misoreg hires")..{
 				InitCommand=cmd(xy, SCREEN_CENTER_X+270, SCREEN_CENTER_Y-66; zoom, 0.65; horizalign, right;);
 				BeginCommand=function(self)
-					local stepartist;
+					local stepartist = "";
 					local cs = GAMESTATE:GetCurrentSteps(PLAYER_2);
 				
 					if cs then
@@ -302,10 +301,12 @@ local t = Def.ActorFrame{
 				InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_CENTER_X + 289.5, SCREEN_CENTER_Y-71; zoom, 0.5 );
 				BeginCommand=function(self)
 					local steps = GAMESTATE:GetCurrentSteps(PLAYER_2);
-					local meter = steps:GetMeter();
+					if steps then
+						local meter = steps:GetMeter();
 				
-					if meter then	
-						self:settext(meter)
+						if meter then	
+							self:settext(meter)
+						end
 					end
 				end;
 			};
@@ -341,10 +342,6 @@ local t = Def.ActorFrame{
 
 		
 		
-		-- stages survived (course mode)
-		LoadActor("stagesSurvived", PLAYER_2)..{
-			InitCommand=cmd(x,SCREEN_WIDTH*0.8;y,SCREEN_CENTER_Y-136);
-		};
 
 		-- numbers
 		LoadActor("judgeNumbers", PLAYER_2)..{

@@ -1,43 +1,5 @@
 -- Gameplay overlay.
 
-
--- SongNumber(pn)
--- Returns a text actor with the current song number.
-local function SongNumber(pn)
-	return LoadFont("_misoreg hires")..{
-		InitCommand=cmd(shadowlength,1;NoStroke);
-		BeginCommand=function(self)
-			self:horizalign( pn == PLAYER_1 and right or left );
-
-			-- [d1 v1.4] make the number a different color in endless
-			local pm = GAMESTATE:GetPlayMode();
-			if pm == "PlayMode_Endless" then
-				self:diffuse( color("1,0.796,0.398,1") );	-- gold
-			else
-				self:diffuse( color("1,1,1,1") );			-- white
-			end;
-
-			self:visible( GAMESTATE:IsSideJoined(pn) or GAMESTATE:IsPlayerEnabled(pn) );
-			self:playcommand("Update");
-		end;
-
-		UpdateCommand=function(self)
-			if not GAMESTATE:IsCourseMode() then return; end;
-			local proxy = SCREENMAN:GetTopScreen():GetChild('SongNumber'..pname(pn));
-			if proxy then self:settext( proxy:GetText() ); end;
-		end;
-
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Update");
-
-		PlayerFailedMessageCommand=function(self,params)
-			if params.PlayerNumber == pn then
-				self:accelerate(1);
-				self:diffuse( color("1,0,0,1") );
-			end;
-		end;
-	};
-end;
-
 local t = Def.ActorFrame{
 	
 	InitCommand=cmd(addy,-10);
@@ -144,12 +106,12 @@ local t = Def.ActorFrame{
 	};
 
 
-	-- p1 song number
-	SongNumber(PLAYER_1)..{
-		Name="P1SongNum";
-		InitCommand=cmd(x,SCREEN_CENTER_X-12;y,SCREEN_TOP+26;draworder,99);
-		OffCommand=cmd(linear,0.2;diffusealpha,0);
-	};
+	-- -- p1 song number
+	-- SongNumber(PLAYER_1)..{
+	-- 	Name="P1SongNum";
+	-- 	InitCommand=cmd(x,SCREEN_CENTER_X-12;y,SCREEN_TOP+26;draworder,99);
+	-- 	OffCommand=cmd(linear,0.2;diffusealpha,0);
+	-- };
 	LoadFont("_wendy fixedWidth")..{
 		Name="P1Score";
 		Text="0.00";
@@ -230,12 +192,12 @@ local t = Def.ActorFrame{
 	};
 		
 	
-	-- p2 song number
-	SongNumber(PLAYER_2)..{
-		Name="P2SongNum";
-		InitCommand=cmd(x,SCREEN_CENTER_X+12;y,SCREEN_TOP+26;draworder,99);
-		OffCommand=cmd(linear,0.2;diffusealpha,0);
-	};
+	-- -- p2 song number
+	-- SongNumber(PLAYER_2)..{
+	-- 	Name="P2SongNum";
+	-- 	InitCommand=cmd(x,SCREEN_CENTER_X+12;y,SCREEN_TOP+26;draworder,99);
+	-- 	OffCommand=cmd(linear,0.2;diffusealpha,0);
+	-- };
 	LoadFont("_wendy fixedWidth")..{
 		Name="P2Score";
 		Text="0.00";
