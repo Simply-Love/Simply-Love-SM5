@@ -302,7 +302,7 @@ local t = Def.ActorFrame{
 	
 };
 
-
+-- the grey background blocks
 t[#t+1] = LoadActor("block.png")..{
 	Name="BackgroundBlocks";
 	InitCommand=cmd(diffuse,color("#182025"); halign,0);
@@ -313,6 +313,7 @@ t[#t+1] = LoadActor("block.png")..{
 		self:x(-(width * gridLength)/4 - WideScale(1,10));
 		self:zoomto(width * gridLength * gridZoomFactor * 1.55, height * 5 * gridZoomFactor);
 		self:customtexturerect(0, 0, gridLength, 5);
+		self:texcoordvelocity(0,0);
 	end;
 };
 
@@ -376,7 +377,6 @@ for row=1,5 do
 			
 			self:y(2 + row*height*gridZoomFactor - (height*gridZoomFactor*3));
 			self:x(-(width * gridLength)/4 - WideScale(1,10));
-			self:queuecommand("Color");
 		end;
 		ResetCommand=function(self)
 			local width = self:GetWidth();
@@ -413,9 +413,9 @@ for row=1,5 do
 							meter = gridLength
 						end
 						
-						self:diffuse(DifficultyColor(difficulty));
 						self:zoomto(width * meter * gridZoomFactor * 1.55, height * gridZoomFactor);
 						self:customtexturerect(0, 0, meter, 1);
+						self:texcoordvelocity(0,0);
 					else
 						self:zoomto(0,0);
 					end
@@ -426,6 +426,5 @@ for row=1,5 do
 		end;
 	};
 end
-
 
 return t;
