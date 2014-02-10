@@ -8,16 +8,16 @@ function PlayerJudgment()
 		ExportOnChange = false,
 		Choices = judgmentGraphics,
 		LoadSelections = function(self, list, pn)
-			local userJudgmentGraphic = getenv("JudgmentGraphic" .. ToEnumShortString(pn))
+			local userJudgmentGraphic = getenv("JudgmentGraphic" .. ToEnumShortString(pn));
+			list[1] = true;
 			
 			if userJudgmentGraphic then
 				for i=1,#judgmentGraphics do
 					if userJudgmentGraphic == judgmentGraphics[i] then
-						list[i] = true
+						list[1] = nil;
+						list[i] = true;
 					end
-				end				
-			else
-				list[1] = true
+				end
 			end
 		end,
 		SaveSelections = function(self, list, pn)
@@ -29,7 +29,6 @@ function PlayerJudgment()
 				end
 			end
 			
-			--SetUserPref("JudgmentGraphic" .. ToEnumShortString(pn), sSave);
 			setenv("JudgmentGraphic"..ToEnumShortString(pn), sSave);
 		end
 	}
@@ -49,15 +48,16 @@ function OptionRowPlayerFilter()
 		ExportOnChange = false;
 		Choices = filters;
 		LoadSelections = function(self, list, pn)
-								
-			if getenv("ScreenFilter"..ToEnumShortString(pn)) then
+			local userScreenFilter = getenv("ScreenFilter"..ToEnumShortString(pn));
+			list[1] = true;
+						
+			if userScreenFilter then
 				for i=1,#filters do
-					if filters[i] == getenv("ScreenFilter"..ToEnumShortString(pn)) then
+					if userScreenFilter == filters[i] then
+						list[1] = nil;
 						list[i] = true;
 					end;
 				end
-			else
-				list[1] = true;
 			end
 			
 		end;
@@ -89,16 +89,16 @@ function OptionRowPlayerMini()
 		ExportOnChange = false;
 		Choices = mini;
 		LoadSelections = function(self, list, pn)
-			local pname = pname(pn);
+			local userMini = getenv("Mini"..ToEnumShortString(pn));
+			list[1] = true;
 			
-			if getenv("Mini"..pname) then
+			if userMini then
 				for i=1,#mini do
-					if mini[i] == getenv("Mini"..pname) then
+					if userMini == mini[i] then
+						list[1] = nil;
 						list[i] = true;
 					end;
 				end
-			else
-				list[1] = true;
 			end
 			
 		end;

@@ -7,6 +7,7 @@
 -- but PROFILEMAN:GetProfileDir() returns an empty string there...
 
 local t = Def.ActorFrame{
+	
 	-- this should handle latejoin players (?)
 	PlayerJoinedMessageCommand=function(self,params)
 		
@@ -23,6 +24,7 @@ local t = Def.ActorFrame{
 		
 		LoadProfileCustom(profile,dir);
 	end;
+	
 	-- this should handle players who joined at a "normal" time
 	OnCommand=function(self)
 		local Players = GAMESTATE:GetHumanPlayers();

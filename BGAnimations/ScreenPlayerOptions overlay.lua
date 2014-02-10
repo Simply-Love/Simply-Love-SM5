@@ -29,11 +29,6 @@ local currentMod = {
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,SCREEN_CENTER_X,0);
-	OnCommand=function(self)
-		local optionRow = SCREENMAN:GetTopScreen():GetOptionRow(1);	
-		--optionRow:visible(false);
-	end;
-	
 	
 	LoadFont("_misoreg hires")..{
 		Name="DummySpeedModTitle";
@@ -64,7 +59,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 			self:queuecommand("Set");
 		end;
 		SpeedModTypeP1SetMessageCommand=function(self,params)
-			-- local usertype = GetUserPref("SpeedModTypeP1");
+
 			local usertype = getenv("SpeedModTypeP1");
 			local newtype = params.Type
 			
@@ -74,8 +69,6 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 				elseif newtype == "x" then
 					currentMod["P1"] = "1.5x"
 				end
-				-- SetUserPref("SpeedModTypeP1", newtype);
-				-- SetUserPref("SpeedModP1",currentMod["P1"]);
 				
 				setenv("SpeedModTypeP1", newtype);				
 				setenv("SpeedModP1",currentMod["P1"]);
@@ -85,7 +78,6 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 			end
 		end;
 		SpeedModP1SetMessageCommand=function(self)
-			-- SetUserPref("SpeedModP1",currentMod["P1"]);
 			setenv("SpeedModP1", currentMod["P1"]);
 			
 			ApplySpeedMod("P1");
@@ -93,7 +85,6 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 		SetCommand=function(self)
 			self:settext(THEME:GetString("OptionNames","NextRow"));
 			
-			-- local userSpeed = GetUserPref("SpeedModP1");
 			local userSpeed = getenv("SpeedModP1");
 			
 			self:GetParent():GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod(userSpeed));
@@ -145,7 +136,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 			self:queuecommand("Set");
 		end;
 		SpeedModTypeP2SetMessageCommand=function(self, params)
-			-- local usertype = GetUserPref("SpeedModTypeP2");
+
 			local usertype = getenv("SpeedModTypeP2");
 			local newtype = params.Type
 			
@@ -155,8 +146,6 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 				elseif newtype == "x" then
 					currentMod["P2"] = "1.5x"
 				end
-				-- SetUserPref("SpeedModTypeP2", newtype);
-				-- SetUserPref("SpeedModP2",currentMod["P2"]);
 				
 				setenv("SpeedModTypeP2", newtype);
 				setenv("SpeedModP2",currentMod["P2"]);
@@ -166,8 +155,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 			end
 		end;
 		SpeedModP2SetMessageCommand=function(self)
-			-- SetUserPref("SpeedModP2",currentMod["P2"]);
-			
+		
 			setenv("SpeedModP2", currentMod["P2"]);
 			
 			ApplySpeedMod("P2");
@@ -175,7 +163,6 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 		SetCommand=function(self)
 			self:settext(THEME:GetString("OptionNames","NextRow"));
 			
-			--local userSpeed = GetUserPref("SpeedModP2");
 			local userSpeed = getenv("SpeedModP2");
 			
 			self:GetParent():GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod(userSpeed));

@@ -9,17 +9,16 @@ function SpeedModsType()
 		Choices = modList,
 		LoadSelections = function(self, list, pn)
 						
-			-- local userSpeedType = GetUserPref("SpeedModType" .. ToEnumShortString(pn))
 			local userSpeedType = getenv("SpeedModType" .. ToEnumShortString(pn))
-
+			list[1] = true
+			
 			if userSpeedType then		
 				for i=1, #modList do
 					if userSpeedType == modList[i] then
+						list[1] = nil
 						list[i] = true
 					end
 				end				
-			else
-				list[1] = true
 			end
 		end,
 		SaveSelections = function(self, list, pn)
@@ -52,18 +51,16 @@ function SpeedModsNew()
 		Choices = blank,
 		LoadSelections = function(self, list, pn)
 			
-			--local type = GetUserPref("SpeedModType"..ToEnumShortString(pn))
+			
 			local type = getenv("SpeedModType"..ToEnumShortString(pn))
 			if not type then
-				--SetUserPref("SpeedModType"..ToEnumShortString(pn), "x");
 				setenv("SpeedModType"..ToEnumShortString(pn), "x")
 			end
 			
-			-- local userSpeedMod = GetUserPref("SpeedMod"..ToEnumShortString(pn));
+			
 			local userSpeedMod = getenv("SpeedMod"..ToEnumShortString(pn));
-			if not userSpeedMod then
-				--SetUserPref("SpeedMod"..ToEnumShortString(pn),"1.5x")
-				setenv("SpeedMod"..ToEnumShortString(pn),"1.5x")
+			if not userSpeedMod then	
+				setenv("SpeedMod"..ToEnumShortString(pn),"1x")
 			end
 
 			list[1] = true	
