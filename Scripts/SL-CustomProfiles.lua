@@ -4,7 +4,12 @@ local path =  "UserPrefs/" .. THEME:GetThemeDisplayName() .."/";
 local prefs = { "ScreenFilter", "SpeedModType", "SpeedMod", "JudgmentGraphic", "Mini" };
 
 
-
+-- reset a particular player's custom preferences to nil
+function ResetPlayerCustomPrefs(pn)
+	for k,v in pairs(prefs) do
+		setenv(v..ToEnumShortString(pn), nil )
+	end
+end
 
 
 -- Hook called during profile load
@@ -22,14 +27,7 @@ function LoadProfileCustom(profile, dir)
 		end
 	end
 	
-	-- TODO: find a better time to reset custom pref values in the env table...
-	-- as is, this works, but isn't very effecient
-	-- basically what we're doing is resetting all values for both players
-	-- every time this function is called, which is a lot
-	-- (ScreenSelectMusic's OnCommand and PlayerJoinedMessageCommand)
-	for k,v in pairs(prefs) do
-		setenv(v.."P"..k, nil )
-	end
+	ResetPlayerCustomPrefs(pname);
 	
 	-- ...and then, if a player profile exists, set the env table values
 	if pname then
