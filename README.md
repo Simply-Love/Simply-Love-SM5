@@ -17,10 +17,7 @@ You'll need to be running StepMania 5 beta 2a or newer to run this port.
 TODO:
 -----
 
-**STUFF THAT IS BROKEN**
-
-* Course Mode (pretty much everything)
-
+* Help Text strings are often unhelpful or altogether incorrect and need to be revised.
 
 **MISSING FEATURES**
 
@@ -31,15 +28,14 @@ TODO:
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
-* Make ScreenSelectPlayMode change "demonstrations" to refelect pump and techno modes (requires additional graphics)
+* Make ScreenSelectPlayMode change "demonstrations" to reflect pump and techno modes (requires additional graphics)
 * setting long/marathon cutoff lengths via this menu like oITG
 * setting per-screen MenuTimers via a menu
-
 
 **BUGS**
 
 * Songs with multiple edit charts (ie. Tachyon Alpha/Delta Max) cause the custom StepsDisplayList to behave erratically
-* Local profiles don't load nicely.  See BGAnimations/ScreenSelectMusic overlay/loadProfilesHack.lua
+* Local profiles don't load/save custom gameplay modifiers (ScreenFilter, Judgment Graphic, Mini, SpeedMod Type)
 
 
 ACKNOWLEDGEMENTS:
