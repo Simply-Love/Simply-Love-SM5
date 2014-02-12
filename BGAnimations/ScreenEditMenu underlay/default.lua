@@ -16,51 +16,87 @@ local t = Def.ActorFrame{
 		if topscreen then
 			
 			local editMenu = topscreen:GetChild("EditMenu");	
+
 			local cursor = editMenu:GetChild("");
+			local cursorY = cursor:GetY();
+
 			local songTextBanner = editMenu:GetChild("SongTextBanner");
+			local rowHighlight = self:GetChild("RowHighlight");
 			
 			
-			if cursor then
-				local cursorY = cursor:GetY();
+			for i=1,#rowYvalues do
 				
-				for i=1,#rowYvalues do
-					if cursorY == rowYvalues[i] then
-						editMenu:GetChild("Label"..i):diffuse(color("#000000"));
-						editMenu:GetChild("Label"..i):shadowlength(0);
-						
-						if cursorY == rowYvalues[2] then
-							songTextBanner:GetChild("Title"):diffuse(color("#000000"));
-							songTextBanner:GetChild("Title"):shadowlength(0);
-							songTextBanner:GetChild("Subtitle"):diffuse(color("#000000"));
-							songTextBanner:GetChild("Subtitle"):shadowlength(0);
-						else
-							editMenu:GetChild("Value"..i):diffuse(color("#000000"));
-							editMenu:GetChild("Value"..i):shadowlength(0);
-						end
-					else
-						editMenu:GetChild("Label"..i):diffuse(color("#FFFFFF"));
-						editMenu:GetChild("Value"..i):diffuse(color("#FFFFFF"));
-						editMenu:GetChild("Label"..i):shadowlength(1);
-						editMenu:GetChild("Value"..i):shadowlength(1);
-						
-						if cursorY ~= rowYvalues[2] then
-							songTextBanner:GetChild("Title"):diffuse(color("#FFFFFF"));
-							songTextBanner:GetChild("Title"):shadowlength(1);
-							songTextBanner:GetChild("Subtitle"):diffuse(color("#FFFFFF"));
-							songTextBanner:GetChild("Subtitle"):shadowlength(1);
-						end
+				-- if this row is "active"
+				if cursorY == rowYvalues[i] then
+					editMenu:GetChild("Label"..i):diffuse(color("#000000"));
+					editMenu:GetChild("Label"..i):shadowlength(0);
+					editMenu:GetChild("Value"..i):diffuse(color("#000000"));
+					editMenu:GetChild("Value"..i):shadowlength(0);
+					
+					-- row2 has a textbanner and needs to be handled differently
+					if cursorY == rowYvalues[2] then
+						songTextBanner:GetChild("Title"):diffuse(color("#000000"));
+						songTextBanner:GetChild("Title"):shadowlength(0);
+						songTextBanner:GetChild("Subtitle"):diffuse(color("#000000"));
+						songTextBanner:GetChild("Subtitle"):shadowlength(0);	
+					end
+					
+					if cursorY == rowYvalues[4] then
+						editMenu:GetChild("StepsDisplay"):GetChild("Meter"):diffuse(color("#000000"));
+					end
+					if cursorY == rowYvalues[6] then
+						editMenu:GetChild("StepsDisplaySource"):GetChild("Meter"):diffuse(color("#000000"));
+					end
+					
+				else
+					editMenu:GetChild("Label"..i):diffuse(color("#FFFFFF"));
+					editMenu:GetChild("Value"..i):diffuse(color("#FFFFFF"));
+					editMenu:GetChild("Label"..i):shadowlength(1);
+					editMenu:GetChild("Value"..i):shadowlength(1);
+					
+					if cursorY ~= rowYvalues[2] then
+						songTextBanner:GetChild("Title"):diffuse(color("#FFFFFF"));
+						songTextBanner:GetChild("Title"):shadowlength(1);
+						songTextBanner:GetChild("Subtitle"):diffuse(color("#FFFFFF"));
+						songTextBanner:GetChild("Subtitle"):shadowlength(1);
+					end
+					
+					if cursorY ~= rowYvalues[4] then
+						editMenu:GetChild("StepsDisplay"):GetChild("Meter"):diffuse(color("#FFFFFF"));
+					end
+					if cursorY ~= rowYvalues[6] then
+						editMenu:GetChild("StepsDisplaySource"):GetChild("Meter"):diffuse(color("#FFFFFF"));
 					end
 				end
 
-				
-				if cursor:GetY() == rowYvalues[7] then
-					cursor:diffuse(PlayerColor(PLAYER_2))
+				rowHighlight:y(cursorY);
+				if cursorY == rowYvalues[7] then
+					rowHighlight:diffuse(PlayerColor(PLAYER_2));
 				else
-					cursor:diffuse(GetCurrentColor())
+					rowHighlight:diffuse(GetCurrentColor());
 				end
-				cursor:zoom(1);
-				cursor:x(SCREEN_CENTER_X);
-				cursor:setsize(SCREEN_WIDTH*0.9 - 4,SCREEN_HEIGHT*0.1);
+				-- cursor:zoom(1);
+				-- cursor:x(SCREEN_CENTER_X);
+				-- cursor:setsize(SCREEN_WIDTH*0.9 - 4,SCREEN_HEIGHT*0.1);
+			end
+		end
+	end;
+	-- MeterSetMessage is broadcast from Metrics under [StepsDisplay] MeterSetCommand
+	-- I'm (ab)using it here to force the meter on Row4 to always be black
+	-- even when the user is sitting on Row4 flipping between difficulties
+	MeterSetMessageCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen();
+		
+		if topscreen then
+			
+			local editMenu = topscreen:GetChild("EditMenu");
+			
+			local cursor = editMenu:GetChild("");
+			if cursor then
+				local cursorY = cursor:GetY();
+				if cursorY == rowYvalues[4] then
+					editMenu:GetChild("StepsDisplay"):GetChild("Meter"):diffuse(color("#000000"));
+				end
 			end
 		end
 	end;
@@ -97,6 +133,11 @@ t[#t+1] = Def.Quad {
 	OnCommand=function(self)
 		self:xy(SCREEN_CENTER_X + WideScale(49,65), 400)
 	end
+}
+
+t[#t+1] = Def.Quad {
+	Name="RowHighlight";
+	OnCommand=cmd(x, SCREEN_CENTER_X; setsize, SCREEN_WIDTH*0.9 - 4,SCREEN_HEIGHT*0.1);
 }
 
 
