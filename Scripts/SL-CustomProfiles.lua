@@ -16,22 +16,27 @@ end
 function LoadProfileCustom(profile, dir)
 
 	local PrefPath =  dir .. path;
-	local pname;
+	local Players, pname;
 		
 	-- we've been passed a profile object as the variable "profile"
 	-- see if it matches against anything returned by PROFILEMAN:GetProfile(pn)
 	local Players = GAMESTATE:GetHumanPlayers();
-	for pn in ivalues(Players) do
-		if profile == PROFILEMAN:GetProfile(pn) then
-			pname = ToEnumShortString(pn);
+	
+	if Players then
+		for pn in ivalues(Players) do
+			if profile == PROFILEMAN:GetProfile(pn) then
+				pname = ToEnumShortString(pn);
+			end
 		end
+	
 	end
 	
-	ResetPlayerCustomPrefs(pname);
 	
 	-- ...and then, if a player profile exists, set the env table values
 	if pname then
-	
+		
+		ResetPlayerCustomPrefs(pname);
+		
 		local f = RageFileUtil.CreateRageFile()
 		local setting
 
