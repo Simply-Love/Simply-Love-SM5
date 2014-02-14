@@ -1,5 +1,5 @@
 local gridLength = 20;
-local gridZoomFactor = WideScale(0.355,0.38);
+local gridZoomFactor = WideScale(0.27,0.29);
 
 local function GetStepsToDisplay(steps)
 	
@@ -303,17 +303,15 @@ local t = Def.ActorFrame{
 };
 
 -- the grey background blocks
-t[#t+1] = LoadActor("block.png")..{
+t[#t+1] = LoadActor("_block.png")..{
 	Name="BackgroundBlocks";
 	InitCommand=cmd(diffuse,color("#182025"); halign,0);
 	OnCommand=function(self)
 		width = self:GetWidth();
 		height= self:GetHeight();
-		self:y(2);
-		self:x(-(width * gridLength)/4 - WideScale(1,10));
+		self:x(-(width * gridLength)/4 + WideScale(32,26));
 		self:zoomto(width * gridLength * gridZoomFactor * 1.55, height * 5 * gridZoomFactor);
 		self:customtexturerect(0, 0, gridLength, 5);
-		self:texcoordvelocity(0,0);
 	end;
 };
 
@@ -323,7 +321,7 @@ for row=1,5 do
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name="Meter"..row;
 		Text="?";
-		InitCommand=cmd(diffuse,DifficultyIndexColor(row); zoom,WideScale(0.27,0.3); y, row * WideScale(17.333,18.333) - WideScale(52,55.5); x, WideScale(-123,-134); horizalign,right);
+		InitCommand=cmd(diffuse,DifficultyIndexColor(row); zoom,gridZoomFactor; y, row * WideScale(17.333,18.333) - WideScale(52,55.5); x, WideScale(-128,-135); horizalign,right);
 		ResetCommand=function(self)
 			local SongOrCourse, StepsOrTrails;
 	
@@ -368,15 +366,15 @@ for row=1,5 do
 		end;
 	};
 	
-	t[#t+1] = LoadActor("block.png")..{
+	t[#t+1] = LoadActor("_block.png")..{
 		Name="BlockRow"..row;
 		InitCommand=cmd(halign,0; diffuse,DifficultyIndexColor(row));
 		OnCommand=function(self)
 			local width = self:GetWidth();
 			local height= self:GetHeight();
 			
-			self:y(2 + row*height*gridZoomFactor - (height*gridZoomFactor*3));
-			self:x(-(width * gridLength)/4 - WideScale(1,10));
+			self:y(row*height*gridZoomFactor - (height*gridZoomFactor*3));
+			self:x(-(width * gridLength)/4 + WideScale(32,26));
 		end;
 		ResetCommand=function(self)
 			local width = self:GetWidth();
