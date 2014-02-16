@@ -89,7 +89,7 @@ function increment(speed)
 		if tonumber(speed)+0.1 >= 20 then
 			speed = "0.1x"
 		else
-			speed = tostring(tonumber(speed) + 0.1).."x"
+			speed = string.format("%.1fx", tonumber(speed) + 0.1)
 		end
 	-- elseif using a C-mod
 	elseif string.sub(speed,1,1) == "C" then
@@ -113,7 +113,7 @@ function decrement(speed)
 		if tonumber(speed)-0.1 <= 0 then
 			speed = "20x"
 		else
-			speed = tostring(tonumber(speed) - 0.1).."x"
+			speed = string.format("%.1fx", tonumber(speed) - 0.1)
 		end
 	-- elseif using a C-mod
 	elseif string.sub(speed,1,1) == "C" then
