@@ -24,7 +24,6 @@ TODO:
 * ScreenEvaluationSummary (lacks pagination)
 * ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
 * Score vocalization
-* Combos don't carry over from song to song.
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
