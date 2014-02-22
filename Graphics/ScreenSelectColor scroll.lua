@@ -43,11 +43,10 @@ local t = Def.ActorFrame {
 			self:linear(0.2);
 			self:diffusealpha(0);
 		end;
-		DisabledCommand=cmd();
 		GainFocusCommand=function(self)
-		
 		end;
-		LoseFocusCommand=cmd();
+		LoseFocusCommand=function(self)
+		end;
 	};
 };
 
