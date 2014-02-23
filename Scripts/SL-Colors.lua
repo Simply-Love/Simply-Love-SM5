@@ -16,17 +16,12 @@ end
 
 
 function SimplyLoveColor()
-	local slc = GetUserPref("SimplyLoveColor")
-	-- local slc = ThemePrefs.Get("SimplyLoveColor")
-	
-	if slc == nil then slc = 1 end
+	local slc = GetUserPref("SimplyLoveColor") or 1;
 	return tonumber(slc);
 end
 
 function SetSimplyLoveColor( c )
-	SetUserPref('SimplyLoveColor', c);
-	-- ThemePrefs.Set('SimplyLoveColor', c);
-	
+	SetUserPref('SimplyLoveColor', c);	
 	MESSAGEMAN:Broadcast("ColorSelected");
 	return c
 end
@@ -62,6 +57,7 @@ function DifficultyColor( difficulty )
 	
 	return DifficultyIndexColor(index);
 end
+
 
 function DifficultyIndexColor( i )
 	
@@ -107,25 +103,6 @@ end
 
 
 
-
-
-
-
-
-function BubbleColorRGB ( pn )
-	if GAMESTATE:IsPlayerEnabled( pn ) then
-		local steps = GAMESTATE:GetCurrentSteps( pn )
-		if not steps then return 1,1,1,0 end
-		steps = steps:GetDifficulty()
-		if steps == DIFFICULTY_EDIT	then return 0.71,0.72,0.73,1 end
-		return ColorRGB(steps-2)
-	end
-	return 1,1,1,1
-end
-
-function DifficultyColorRGB( n ) if n < 5 then return ColorRGB( n - 2 ) else return 0.71,0.72,0.73,1 end end
-
-
 function ColorRGB ( n )
 	local clr = n + SimplyLoveColor() + 12
 	clr = math.mod(clr-1,12)+1
@@ -144,17 +121,6 @@ function ColorRGB ( n )
 	return color("1,1,1,1")
 end
 
-
--- function TextOnColor (n)
--- 	local color = SimplyLoveColor() + 12
--- 	if n then color = color + n end
--- 	color = math.mod(color-1,12)+1
--- 	if color == 9 then return 0,0,0,1 end
--- 	if color == 10 then return 0,0,0,1 end
--- 	if color == 11 then return 0,0,0,1 end
--- 	if color == 12 then return 0,0,0,1 end
--- 	return 1,1,1,1
--- end
 
 
 
