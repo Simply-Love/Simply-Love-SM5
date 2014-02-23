@@ -8,6 +8,18 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentStepsP1ChangedMessageCommand=function(self)
+			self:playcommand("Set");
+		end;
+		CurrentTrailP1ChangedMessageCommand=function(self)
+			self:playcommand("Set");
+		end;
+		CurrentStepsP2ChangedMessageCommand=function(self)
+			self:playcommand("Set");
+		end;
+		CurrentTrailP2ChangedMessageCommand=function(self)
+			self:playcommand("Set");
+		end;
 		
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
@@ -59,24 +71,67 @@ local t = Def.ActorFrame{
 
 			-- BPM value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, 5);
+				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, 5; diffuse, color("1,1,1,1"));
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
-					self:diffuse(1,1,1,1);
 					
-					if song ~= nil then
-						local bpms = song:GetDisplayBpms()
-						local bpm;
-		
-						if bpms[1] == bpms[2] then
-							bpm = round(bpms[1])
-						else
-							bpm = round(bpms[1]) .." - "..round(bpms[2])
+					if GAMESTATE:IsCourseMode() then
+						local Players = GAMESTATE:GetHumanPlayers();
+						local player = Players[1];
+						local trail = GAMESTATE:GetCurrentTrail(player);
+						local trailEntries = trail:GetTrailEntries();
+						local lowest, highest, text;
+						
+						for k,trailEntry in ipairs(trailEntries) do
+							local bpms = trailEntry:GetSong():GetDisplayBpms();
+							
+							-- on the first iteration, lowest and highest will both be nil
+							-- so set lowest to this song's lower bpm
+							-- and highest to this song's higher bpm
+							if not lowest then
+								lowest = bpms[1];
+							end
+							if not highest then
+								highest = bpms[2];
+							end
+							
+							-- on each subsequent iteration, compare
+							if lowest > bpms[1] then
+								lowest = bpms[1];
+							end
+							if highest < bpms[2] then
+								highest = bpms[2];
+							end
 						end
-		
-						self:settext(bpm);	
+						
+						if lowest and highest then
+							if lowest == highest then
+								text = round(lowest);
+							else
+								text = round(lowest) .. " - " .. round(highest)
+							end
+							
+							self:settext(text);
+						end
+						
 					else
-						self:settext("");
+					
+						local song = GAMESTATE:GetCurrentSong();
+					
+						if song then
+							local bpms = song:GetDisplayBpms()
+							local bpm;
+		
+							if bpms[1] == bpms[2] then
+								bpm = round(bpms[1])
+							else
+								bpm = round(bpms[1]) .." - "..round(bpms[2])
+							end
+		
+							self:settext(bpm);	
+						else
+							self:settext("");
+						end
+						
 					end
 				end;
 			};
@@ -97,10 +152,21 @@ local t = Def.ActorFrame{
 			LoadFont("_misoreg hires")..{
 				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, SCREEN_WIDTH/4.5 + 5);
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
+					local duration;
+					local Players = GAMESTATE:GetHumanPlayers();
+					local player = Players[1];					
 					
-					if song then
-						local duration = song:MusicLengthSeconds();
+					if GAMESTATE:IsCourseMode() then
+						duration = TrailUtil.GetTotalSeconds(GAMESTATE:GetCurrentTrail(player));
+					else
+						local song = GAMESTATE:GetCurrentSong();
+						if song then
+							duration = song:MusicLengthSeconds();
+						end
+					end;
+					
+					
+					if duration then
 						self:diffuse(1,1,1,1);
 					
 						if duration == 105.0 then
