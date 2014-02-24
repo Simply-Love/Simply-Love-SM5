@@ -121,7 +121,7 @@ for p=1,2 do
 				
 				local song = GAMESTATE:GetCurrentSong();
 				local course = GAMESTATE:GetCurrentCourse();
-				self:visible(song ~= nil or course ~= nil)
+				self:visible(song or course)
 			end;
 		};
 		
