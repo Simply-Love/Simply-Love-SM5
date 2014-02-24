@@ -142,6 +142,7 @@ local Letters = Def.ActorFrame{
 				
 				
 				elseif selectionText == dummyOKtext then
+					self:GetChild("enter"):playforplayer(Player);
 					SCREENMAN:GetTopScreen():Finish(Player);
 					self:diffusealpha(0);
 					self:GetParent():GetChild("Cursor"):diffusealpha(0);
@@ -212,7 +213,7 @@ for k,l in ipairs(possibleCharacters) do
 		
 			for i=-3,3,1 do
 				if self:GetName() == tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i)) then
-					self:linear(0.1);
+					self:linear(0.075);
 					self:x(charWidth * i);
 				end
 			end
