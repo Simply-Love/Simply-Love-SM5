@@ -10,7 +10,7 @@ http://r21freak.com/phpbb3/viewtopic.php?f=6&t=23504
 
 Requirements:
 -------------
-You'll need to be running StepMania 5 beta 2a or newer to run this port.
+You'll need to be running StepMania 5 beta 3 or newer to run this port.
 
 
 
