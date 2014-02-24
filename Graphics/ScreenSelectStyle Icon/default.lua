@@ -25,23 +25,19 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("_wendy small")..{
 		Name="StyleName"..iIndex;
 		InitCommand=function(self)
-			if iIndex == 0 then
-				self:settext("1 Player");
-			elseif iIndex == 1 then
-				self:settext("2 Players");
+			self:settext(THEME:GetString("ScreenSelectStyle", choiceName));
+				
+			if choiceName == "Versus" then
 				self:addx(-14);
-			elseif iIndex == 2 then
-				self:settext("Double");
-			-- elseif iIndex == 3 then
-			-- 	self:settext("Routine");
 			end;
+			
 			self:addy(60);
 			self:zoom(0.5);
 		end;
 		OffCommand=function(self)
-			if iIndex == 1 then
+			if choiceName == "Versus" then
 				self:sleep(0.12);
-			elseif iIndex == 2 then
+			elseif choiceName == "Double" then
 				self:sleep(0.36);
 			end;
 			self:linear(0.2)
@@ -73,7 +69,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth());
 				self:y(zoomFactor * self:GetHeight());
 			
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -87,7 +83,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 2);
 				self:y(zoomFactor * self:GetHeight());
 			
-				if gameName == "dance" or gameName == "techno" then
+				if gameName == "dance" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -101,7 +97,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 3);
 				self:y(zoomFactor * self:GetHeight());
 			
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -119,7 +115,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth());
 				self:y(zoomFactor * self:GetHeight() * 2);
 			
-				if gameName == "dance" or gameName == "techno" then
+				if gameName == "dance" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -147,7 +143,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 3);
 				self:y(zoomFactor * self:GetHeight() * 2);
 			
-				if gameName == "dance" or gameName == "techno" then
+				if gameName == "dance" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -164,7 +160,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth());
 				self:y(zoomFactor * self:GetHeight() * 3);
 			
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -178,7 +174,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 2);
 				self:y(zoomFactor * self:GetHeight() * 3);
 			
-				if gameName == "dance" or gameName == "techno" then
+				if gameName == "dance" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);
@@ -192,7 +188,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 3);
 				self:y(zoomFactor * self:GetHeight() * 3);
 			
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" then
 					self:diffuse(DifficultyIndexColor(color));
 				else
 					self:diffuse(0.2,0.2,0.2,1);

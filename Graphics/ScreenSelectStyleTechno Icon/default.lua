@@ -23,14 +23,12 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("_wendy small")..{
 		Name="StyleName"..iIndex;
 		InitCommand=function(self)
-			if iIndex == 0 then
-				self:settext("1 Player");
-			elseif iIndex == 1 then
-				self:settext("2 Players");
+			self:settext(THEME:GetString("ScreenSelectStyleTechno", choiceName));
+				
+			if choiceName == "Versus" then
 				self:addx(-14);
-			elseif iIndex == 2 then
-				self:settext("Double");
 			end;
+
 			self:addy(60);
 			self:zoom(0.5);
 		end;
@@ -156,7 +154,7 @@ end
 if choiceName == "Single" then -- 1 Player
 	t[#t+1] = drawNinePanelPad(3, -xshift - 14);
 	
-elseif choiceName == "Versus" then -- 1 Player
+elseif choiceName == "Versus" then -- 2 Players
 	t[#t+1] = drawNinePanelPad(2,-xshift - WideScale(70,80));
 	t[#t+1] = drawNinePanelPad(5, xshift - WideScale(70,80));
 	
