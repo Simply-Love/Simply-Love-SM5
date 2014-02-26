@@ -12,9 +12,3 @@ function GetComboThreshold()
 	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() );
 	return ComboThresholdTable[CurrentGame];
 end;
-
--- hardcoded to only happen on beat/pop'n
-function GetPenalizeTapScore()
-	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() );
-	return (CurrentGame == "beat" or CurrentGame == "popn") and true or false;
-end;
