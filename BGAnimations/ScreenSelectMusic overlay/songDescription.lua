@@ -75,42 +75,48 @@ local t = Def.ActorFrame{
 				SetCommand=function(self)
 					
 					if GAMESTATE:IsCourseMode() then
-						local Players = GAMESTATE:GetHumanPlayers();
-						local player = Players[1];
-						local trail = GAMESTATE:GetCurrentTrail(player);
-						local trailEntries = trail:GetTrailEntries();
-						local lowest, highest, text;
+						local Players, player, trail, trailEntries, lowest, highest, text;
 						
-						for k,trailEntry in ipairs(trailEntries) do
-							local bpms = trailEntry:GetSong():GetDisplayBpms();
-							
-							-- on the first iteration, lowest and highest will both be nil
-							-- so set lowest to this song's lower bpm
-							-- and highest to this song's higher bpm
-							if not lowest then
-								lowest = bpms[1];
-							end
-							if not highest then
-								highest = bpms[2];
-							end
-							
-							-- on each subsequent iteration, compare
-							if lowest > bpms[1] then
-								lowest = bpms[1];
-							end
-							if highest < bpms[2] then
-								highest = bpms[2];
-							end
-						end
+						Players = GAMESTATE:GetHumanPlayers();
+						player = Players[1];
 						
-						if lowest and highest then
-							if lowest == highest then
-								text = round(lowest);
-							else
-								text = round(lowest) .. " - " .. round(highest)
-							end
+						if player then
+							trail = GAMESTATE:GetCurrentTrail(player);
 							
-							self:settext(text);
+							if trail then
+								trailEntries = trail:GetTrailEntries();
+						
+								for k,trailEntry in ipairs(trailEntries) do
+									local bpms = trailEntry:GetSong():GetDisplayBpms();
+							
+									-- on the first iteration, lowest and highest will both be nil
+									-- so set lowest to this song's lower bpm
+									-- and highest to this song's higher bpm
+									if not lowest then
+										lowest = bpms[1];
+									end
+									if not highest then
+										highest = bpms[2];
+									end
+							
+									-- on each subsequent iteration, compare
+									if lowest > bpms[1] then
+										lowest = bpms[1];
+									end
+									if highest < bpms[2] then
+										highest = bpms[2];
+									end
+								end
+								if lowest and highest then
+									if lowest == highest then
+										text = round(lowest);
+									else
+										text = round(lowest) .. " - " .. round(highest)
+									end
+							
+									self:settext(text);
+								end
+							end
 						end
 						
 					else
@@ -153,11 +159,15 @@ local t = Def.ActorFrame{
 				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, SCREEN_WIDTH/4.5 + 5);
 				SetCommand=function(self)
 					local duration;
-					local Players = GAMESTATE:GetHumanPlayers();
-					local player = Players[1];					
-					
+			
 					if GAMESTATE:IsCourseMode() then
-						duration = TrailUtil.GetTotalSeconds(GAMESTATE:GetCurrentTrail(player));
+						local Players = GAMESTATE:GetHumanPlayers();
+						local player = Players[1];		
+						local trail = GAMESTATE:GetCurrentTrail(player);
+						
+						if trail then
+							duration = TrailUtil.GetTotalSeconds(trail);
+						end
 					else
 						local song = GAMESTATE:GetCurrentSong();
 						if song then
