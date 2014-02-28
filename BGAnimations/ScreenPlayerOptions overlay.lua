@@ -29,6 +29,7 @@ local currentMod = {
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,SCREEN_CENTER_X,0);
+	OffCommand=cmd(linear,0.2;diffusealpha,0);
 	
 	LoadFont("_misoreg hires")..{
 		Name="DummySpeedModTitle";
