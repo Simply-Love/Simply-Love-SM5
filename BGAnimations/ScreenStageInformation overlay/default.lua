@@ -11,8 +11,10 @@ return Def.ActorFrame{
 		for pn in ivalues(Players) do
 			local mini = getenv("Mini"..ToEnumShortString(pn))
 			
-			if mini ~= "no mini" then
-				mini = mini .. " mini"
+			if mini == "Normal" then
+				mini = "no mini";
+			else
+				mini = mini .. " mini";
 			end
 			
 			GAMESTATE:ApplyGameCommand('mod,' ..  mini, pn)
