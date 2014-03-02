@@ -105,13 +105,6 @@ local t = Def.ActorFrame{
 		end;
 	};
 
-
-	-- -- p1 song number
-	-- SongNumber(PLAYER_1)..{
-	-- 	Name="P1SongNum";
-	-- 	InitCommand=cmd(x,SCREEN_CENTER_X-12;y,SCREEN_TOP+26;draworder,99);
-	-- 	OffCommand=cmd(linear,0.2;diffusealpha,0);
-	-- };
 	LoadFont("_wendy fixedWidth")..{
 		Name="P1Score";
 		Text="0.00";
@@ -120,7 +113,13 @@ local t = Def.ActorFrame{
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1))
 		end;
 		JudgmentMessageCommand=function(self, param)
-			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then	
+			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+				self:queuecommand("RedrawScoreP1");
+			end
+		end;
+		RedrawScoreP1MessageCommand=function(self)
+			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+				
 				local percent = FormatPercentScore(STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints());
 				percent = string.sub(percent,1,-2);
 				self:settext(percent);
@@ -191,13 +190,7 @@ local t = Def.ActorFrame{
 		end;
 	};
 		
-	
-	-- -- p2 song number
-	-- SongNumber(PLAYER_2)..{
-	-- 	Name="P2SongNum";
-	-- 	InitCommand=cmd(x,SCREEN_CENTER_X+12;y,SCREEN_TOP+26;draworder,99);
-	-- 	OffCommand=cmd(linear,0.2;diffusealpha,0);
-	-- };
+
 	LoadFont("_wendy fixedWidth")..{
 		Name="P2Score";
 		Text="0.00";
@@ -207,10 +200,13 @@ local t = Def.ActorFrame{
 		end;
 		JudgmentMessageCommand=function(self, param)
 			if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-				local percent = FormatPercentScore(STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints());
-				percent = string.sub(percent,1,-2);
-				self:settext(percent);
+				self:queuecommand("RedrawScoreP2");
 			end
+		end;
+		RedrawScoreP2MessageCommand=function(self)
+			local percent = FormatPercentScore(STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints());
+			percent = string.sub(percent,1,-2);
+			self:settext(percent);
 		end;
 	};
 	--[[ end p2 ]]
