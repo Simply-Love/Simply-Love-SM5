@@ -1,5 +1,25 @@
 return Def.ActorFrame{
 	
+	-- I used to use GAMESTATE:ApplyGameCommand() to apply mini from
+	-- ./Scripts/SL-PlayerOptions.lua in OptionRowPlayerMini() in SaveSelections()
+	-- However, it seems that the SaveSelections function
+	-- never gets called if the player(s) proceed onto ScreenPlayerOptions2.
+	-- I'm not really sure where else might be a good place to make sure mini is applied.
+	-- This seems as good a place as any?
+	OnCommand=function(self)
+		local Players = GAMESTATE:GetHumanPlayers();
+		for pn in ivalues(Players) do
+			local mini = getenv("Mini"..ToEnumShortString(pn))
+			
+			if mini ~= "no mini" then
+				mini = mini .. " mini"
+			end
+			
+			GAMESTATE:ApplyGameCommand('mod,' ..  mini, pn)
+		end
+	end;
+	
+	
 	Def.Quad{
 		OnCommand=cmd(diffuse,color("0,0,0,1"); xy,SCREEN_CENTER_X, SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH, SCREEN_HEIGHT;);
 	};
