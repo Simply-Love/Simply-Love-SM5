@@ -9,7 +9,7 @@ return Def.ActorFrame{
 	OnCommand=function(self)
 		local Players = GAMESTATE:GetHumanPlayers();
 		for pn in ivalues(Players) do
-			local mini = getenv("Mini"..ToEnumShortString(pn))
+			local mini = getenv("Mini"..ToEnumShortString(pn)) or "Normal"
 			
 			if mini == "Normal" then
 				mini = "no mini";
@@ -17,7 +17,7 @@ return Def.ActorFrame{
 				mini = mini .. " mini";
 			end
 			
-			GAMESTATE:ApplyGameCommand('mod,' ..  mini, pn)
+			GAMESTATE:ApplyGameCommand('mod,' ..  mini, pn);
 		end
 	end;
 	
