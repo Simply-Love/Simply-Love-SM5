@@ -25,7 +25,7 @@ function LoadProfileCustom(profile, dir)
 	if Players then
 		for pn in ivalues(Players) do
 			if profile == PROFILEMAN:GetProfile(pn) then
-				pname = ToEnumShortString(pn);
+				pname = pn;
 			end
 		end
 	
@@ -47,7 +47,7 @@ function LoadProfileCustom(profile, dir)
 			if f:Open(fullFilename,1) then
 				
 				setting = tostring( f:Read() )
-				setenv(v..pname, setting )
+				setenv(v..ToEnumShortString(pname), setting )
 			else
 				local fError = f:GetError()
 				Trace( "[FileUtils] Error reading ".. fullFilename ..": ".. fError )
@@ -73,7 +73,7 @@ function SaveProfileCustom(profile, dir)
 	local Players = GAMESTATE:GetHumanPlayers();
 	for pn in ivalues(Players) do
 		if profile == PROFILEMAN:GetProfile(pn) then
-			pname = ToEnumShortString(pn);
+			pname = pn;
 		end
 	end
 	
@@ -90,7 +90,7 @@ function SaveProfileCustom(profile, dir)
 
 			if f:Open(fullFilename, 2) then
 				
-				local setting = getenv( v..pname )
+				local setting = getenv( v..ToEnumShortString(pname) )
 				if setting then
 					f:Write( tostring( setting ) )
 				end
