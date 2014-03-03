@@ -11,12 +11,12 @@ return Def.ActorFrame{
 		
 	LoadActor("heartsplode.png")..{
 		InitCommand=cmd(diffusealpha,0; blend,"BlendMode_Add";);
-		MilestoneCommand=cmd(diffuse, GetHexColor(SimplyLoveColor());rotationz,10;zoom,.25;diffusealpha,0.6;decelerate,0.6;rotationz,0;zoom,2;diffusealpha,0);
+		MilestoneCommand=cmd(diffuse, GetCurrentColor();rotationz,10;zoom,.25;diffusealpha,0.6;decelerate,0.6;rotationz,0;zoom,2;diffusealpha,0);
 	};
 		
 	LoadActor("minisplode.png")..{
 		InitCommand=cmd(diffusealpha,0; blend,"BlendMode_Add";);
-		MilestoneCommand=cmd(diffuse, GetHexColor(SimplyLoveColor());rotationz,10;zoom,.25;diffusealpha,1;linear,0.4;rotationz,0;zoom,1.8;diffusealpha,0);
+		MilestoneCommand=cmd(diffuse, GetCurrentColor();rotationz,10;zoom,.25;diffusealpha,1;linear,0.4;rotationz,0;zoom,1.8;diffusealpha,0);
 	};
 
 };
