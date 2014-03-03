@@ -1,8 +1,8 @@
-local curStage = GAMESTATE:GetCurrentStage();
-local s = THEME:GetString("Stage", string.sub(curStage,7));
+local curStage = string.sub(GAMESTATE:GetCurrentStage(), 7);
+local s = THEME:GetString("Stage", curStage);
 
-if s == "Round "..tostring(PREFSMAN:GetPreference("SongsPerPlay")) then
-	s = "FINAL ROUND";
+if string.match(curStage, '%d+') == tostring(PREFSMAN:GetPreference("SongsPerPlay")) then
+	s = THEME:GetString("Stage", "Final");
 end;
 
 local t = Def.ActorFrame{
