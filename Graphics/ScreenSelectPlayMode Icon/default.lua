@@ -33,9 +33,7 @@ local t = Def.ActorFrame{
 				
 		-- lower mask to hide the arrows scrolling upwards
 		Def.Quad{
-			
-			--diffuse,color("0,0,0,0.01") is a workaround because masking in Mac OS SM5 is broken
-			InitCommand=cmd(zoomto,viewport.w*2.19,viewport.h*3; addy,viewport.h*2; diffuse,color("0,0,0,0.01"); MaskSource, true);
+			InitCommand=cmd(zoomto,viewport.w*2.19,viewport.h*3; addy,viewport.h*2; MaskSource, true);
 			OffCommand=cmd(linear,0.2; diffusealpha,0);
 		};	
 	};

@@ -17,7 +17,7 @@ t[#t+1] = Def.ActorFrame {
 	
 	Def.Quad{
 		Name="LeftMask";
-		InitCommand=cmd(diffuse,color("0,0,0,0.01"); halign,0);
+		InitCommand=cmd(halign,0);
 		OnCommand=function(self)
 			self:xy(0,SCREEN_CENTER_Y);
 			self:zoomto(SCREEN_CENTER_X-272, SCREEN_HEIGHT);
@@ -27,7 +27,6 @@ t[#t+1] = Def.ActorFrame {
 	
 	Def.Quad{
 		Name="CenterMask";
-		InitCommand=cmd(diffuse,color("0,0,0,0.01"););
 		OnCommand=function(self)
 			self:Center();
 			self:zoomto(110, SCREEN_HEIGHT);
@@ -37,7 +36,7 @@ t[#t+1] = Def.ActorFrame {
 	
 	Def.Quad{
 		Name="RightMask";
-		InitCommand=cmd(diffuse,color("0,0,0,0.01"); halign,1);
+		InitCommand=cmd(halign,1);
 		OnCommand=function(self)
 			self:xy(SCREEN_WIDTH,SCREEN_CENTER_Y);
 			self:zoomto(SCREEN_CENTER_X-272, SCREEN_HEIGHT);

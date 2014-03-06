@@ -14,11 +14,11 @@ return Def.ActorFrame{
 	
 	--masking quads
 	Def.Quad{
-		InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_CENTER_Y-162,SCREEN_RIGHT,SCREEN_TOP; diffuse,color("0,0,0,0.01"); MaskSource, false; );
+		InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_CENTER_Y-162,SCREEN_RIGHT,SCREEN_TOP; MaskSource, false; );
 	};
 	
 	Def.Quad{
-		InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_CENTER_Y+162,SCREEN_RIGHT,SCREEN_BOTTOM; diffuse,color("0,0,0,0.01"); MaskSource, false; );
+		InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_CENTER_Y+162,SCREEN_RIGHT,SCREEN_BOTTOM; MaskSource, false; );
 	};
 	
 
