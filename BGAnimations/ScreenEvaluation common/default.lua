@@ -3,7 +3,7 @@ local t = Def.ActorFrame{
 	
 	-- quad behind the song/course title text
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("#1E282F"); xy,SCREEN_CENTER_X, 54; zoomto, 292.5,20; );
+		InitCommand=cmd(diffuse,color("#1E282F"); xy,SCREEN_CENTER_X, 54.5; zoomto, 292.5,20; );
 	};
 
 	-- song/course title text
@@ -48,10 +48,10 @@ local t = Def.ActorFrame{
 	
 	--quad behind the ratemod, if there is one
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("#1E282F"); xy,SCREEN_CENTER_X, 170; zoomto, 292.5,20; );
+		InitCommand=cmd(diffuse,color("#1E282F"); xy,SCREEN_CENTER_X, 173; zoomto, 292.5,16; );
 		OnCommand=function(self)
 			local songoptions = GAMESTATE:GetSongOptionsString();
-			local ratemod = string.match(songoptions, "%d.%d");
+			local ratemod = string.match(songoptions, "%d.%dx");
 			if not ratemod then
 				self:visible(false);
 			end
@@ -60,13 +60,13 @@ local t = Def.ActorFrame{
 	
 	--the ratemod, if there is one
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(xy,SCREEN_CENTER_X, 170; NoStroke;shadowlength,1;);
+		InitCommand=cmd(xy,SCREEN_CENTER_X, 174; NoStroke;shadowlength,1; zoom, 0.7);
 		OnCommand=function(self)	
 			local songoptions = GAMESTATE:GetSongOptionsString();
-			local ratemod = string.match(songoptions, "%d.%d");
+			local ratemod = string.match(songoptions, "%d.%dx");
 			
 			if ratemod then
-				self:settext(ratemod .. "x Music Rate");
+				self:settext(ratemod .. " Music Rate");
 			else
 				self:settext("");
 			end
@@ -175,7 +175,7 @@ local t = Def.ActorFrame{
 		
 		-- dark background quad behind player percent score
 		Def.Quad{
-			InitCommand=cmd(diffuse,color("#101519"); x, SCREEN_CENTER_X - 225; y,SCREEN_CENTER_Y-26; zoomto, 160,60; );
+			InitCommand=cmd(diffuse,color("#101519"); x, SCREEN_CENTER_X - 225.5; y,SCREEN_CENTER_Y-26; zoomto, 158.5,60; );
 		};
 		
 		-- percentage
@@ -325,7 +325,7 @@ local t = Def.ActorFrame{
 		
 		-- dark background quad behind player percent score
 		Def.Quad{
-			InitCommand=cmd(diffuse,color("#101519"); x, SCREEN_CENTER_X + 225; y,SCREEN_CENTER_Y-26; zoomto, 160,60; );
+			InitCommand=cmd(diffuse,color("#101519"); x, SCREEN_CENTER_X + 225.5; y,SCREEN_CENTER_Y-26; zoomto, 158.5,60; );
 		};
 		
 		
