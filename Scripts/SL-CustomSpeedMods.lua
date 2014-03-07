@@ -134,7 +134,6 @@ end;
 
 
 function ApplySpeedMod(pn)
-	-- local speed = GetUserPref("SpeedMod" .. pn)
 	local speed = getenv("SpeedMod" .. pn)
 	GAMESTATE:ApplyGameCommand('mod,' .. speed, "PlayerNumber_"..pn)
 end
