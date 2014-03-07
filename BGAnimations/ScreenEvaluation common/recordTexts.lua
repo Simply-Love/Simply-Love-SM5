@@ -14,13 +14,13 @@ local bPersonalRecord = ( highScoreIndex.Personal ~= -1 ) and stats:GetPercentDa
 
 r[#r+1] = LoadFont("_wendy small")..{
 	Text=string.format("Machine Record %i", highScoreIndex.Machine+1);
-	InitCommand=cmd(zoom,0.55;shadowlength,1;diffuse,PlayerColor(pn);NoStroke;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25"));
+	InitCommand=cmd(halign,0; xy,-110,-4; zoom,0.5;shadowlength,1;diffuse,PlayerColor(pn);NoStroke;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25"));
 	BeginCommand=cmd(visible,bMachineRecord;);
 };
 
 r[#r+1] = LoadFont("_wendy small")..{
 	Text=string.format("Personal Record %i", highScoreIndex.Personal+1);
-	InitCommand=cmd(y,16;zoom,0.55;shadowlength,1;diffuse,PlayerColor(pn);NoStroke;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25"));
+	InitCommand=cmd(halign,0; xy,-110,18; zoom,0.5;shadowlength,1;diffuse,PlayerColor(pn);NoStroke;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,0.25"));
 	BeginCommand=cmd(visible,bPersonalRecord;);
 };
 

@@ -58,7 +58,7 @@ local t = Def.ActorFrame{
 		end
 	};
 	
-	--the ratemod, if there is on
+	--the ratemod, if there is one
 	LoadFont("_misoreg hires")..{
 		InitCommand=cmd(xy,SCREEN_CENTER_X, 170; NoStroke;shadowlength,1;);
 		OnCommand=function(self)	
@@ -113,7 +113,7 @@ local t = Def.ActorFrame{
 		
 			--stepartist for player 1's chart
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(xy, SCREEN_CENTER_X-270, SCREEN_CENTER_Y-66; zoom, 0.65; horizalign, left;);
+				InitCommand=cmd(xy, SCREEN_CENTER_X-270, SCREEN_CENTER_Y-63; zoom, 0.65; horizalign, left;);
 				BeginCommand=function(self)
 					local stepartist;
 					local cs = GAMESTATE:GetCurrentSteps(PLAYER_1);
@@ -265,7 +265,7 @@ local t = Def.ActorFrame{
 		
 			--stepartist for player 2's chart
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(xy, SCREEN_CENTER_X+270, SCREEN_CENTER_Y-66; zoom, 0.65; horizalign, right;);
+				InitCommand=cmd(xy, SCREEN_CENTER_X+270, SCREEN_CENTER_Y-63; zoom, 0.65; horizalign, right;);
 				BeginCommand=function(self)
 					local stepartist = "";
 					local cs = GAMESTATE:GetCurrentSteps(PLAYER_2);
