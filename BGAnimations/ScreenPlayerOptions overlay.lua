@@ -1,24 +1,6 @@
-local function DisplayBPM()
-	local bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms();
-	local display = "";
-		
-	--if a single bpm suffices
-	if bpm[1] == bpm[2] then
-		display = round(bpm[1])
-		
-	-- if we have a range of bpms
-	else
-		display = round(bpm[1]) .. " - " .. round(bpm[2])
-	end
-
-	return " (" .. display .. ")";
-end
-
-
-
----------------------------------
--- SMOKE AND MIRRORS 
----------------------------------
+---------------------------------------------
+-- SMOKE AND MIRRORS, JEN! SMOKE AND MIRRORS!
+---------------------------------------------
 
 -- initialize speed mods from preferences
 local currentMod = {
@@ -40,7 +22,7 @@ local t = Def.ActorFrame{
 			local x = WideScale(-222,-320);
 			local y = 112;
 			self:xy(x, y);		
-			self:settext( DisplayBPM() );
+			self:settext( "(".. GetDisplayBPMs() .. ")" );
 		end;
 	};
 };
