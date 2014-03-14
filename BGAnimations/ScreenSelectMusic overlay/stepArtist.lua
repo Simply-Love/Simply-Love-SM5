@@ -93,7 +93,7 @@ for p=1,2 do
 				self:horizalign("HorizAlign_Left");
 				
 				self:zoom(WideScale(0.9,1));
-				self:maxwidth(WideScale(115,200));
+				self:maxwidth(WideScale(115,157));
 				
 				
 				if player == PLAYER_1 then
