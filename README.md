@@ -17,8 +17,6 @@ You'll need to be running StepMania 5 beta 3 or newer to run this port.
 TODO:
 -----
 
-* Help Text strings are often unhelpful or altogether incorrect and need to be revised.
-
 **MISSING FEATURES**
 
 * ScreenEvaluationSummary (lacks pagination)
