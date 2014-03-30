@@ -5,7 +5,12 @@ local rowYvalues = {};
 
 
 local t = Def.ActorFrame{
-	OnCommand=cmd(queuecommand, "Hax");
+	InitCommand=cmd(diffusealpha,0);
+	OnCommand=cmd(linear,0.15; diffusealpha,1; queuecommand, "Hax");
+	OffCommand=function(self)
+		self:linear(0.15);
+		self:diffusealpha(0);
+	end;
 	--playcommand seems more responsive than queuecommand, so use it here
 	--or else we see a frame or two where the cursor color hasn't been applied yet (HAX)
 	EditMenuChangeMessageCommand=cmd(playcommand, "Hax");
