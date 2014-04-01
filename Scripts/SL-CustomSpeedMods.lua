@@ -22,15 +22,15 @@ function SpeedModsType()
 			end
 		end,
 		SaveSelections = function(self, list, pn)
-			local bSave;
+			local sSave;
 			
 			for i=1, #list do
 				if list[i] then
-					bSave=modList[i]
+					sSave=modList[i]
 				end
 			end
 			
-			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=bSave});
+			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=sSave});
 		end
 	}
 	setmetatable(t, t)
@@ -50,7 +50,6 @@ function SpeedModsNew()
 		ExportOnChange = false,
 		Choices = blank,
 		LoadSelections = function(self, list, pn)
-			
 			
 			local type = getenv("SpeedModType"..ToEnumShortString(pn))
 			if not type then
