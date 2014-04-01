@@ -4,8 +4,10 @@ local statsP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 local gradeP1 = statsP1:GetGrade();
 local gradeP2 = statsP2:GetGrade();
 
+local failType = PREFSMAN:GetPreference("")
+
 local function failed(g)
-	if g == "Grade_Failed" or g == "Grade_Tier17" then
+	if g == "Grade_Failed" then
 		return true;
 	else
 		return false;
@@ -16,11 +18,11 @@ end
 local img = "cleared text.png"
 
 -- if (only P1) and (P1 failed)
-if (GAMESTATE:IsHumanPlayer(PLAYER_1) and failed(gradeP1) and not GAMESTATE:IsHumanPlayer(PLAYER_1)) then
+if (GAMESTATE:IsHumanPlayer(PLAYER_1) and failed(gradeP1) and not GAMESTATE:IsHumanPlayer(PLAYER_2)) then
 	img = "failed text.png"
 	
 -- if (only P2) and (P2 failed)	
-elseif (GAMESTATE:IsHumanPlayer(PLAYER_2) and failed(gradeP2) and not GAMESTATE:IsHumanPlayer(PLAYER_2)) then
+elseif (GAMESTATE:IsHumanPlayer(PLAYER_2) and failed(gradeP2) and not GAMESTATE:IsHumanPlayer(PLAYER_1)) then
 	img = "failed text.png"
 
 -- if (both P1 and P2) and (both P1 and P2 failed)	
