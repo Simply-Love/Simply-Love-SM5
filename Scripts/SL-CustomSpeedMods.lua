@@ -237,15 +237,17 @@ function GetDisplayBPMs()
 	-- if we ARE in CourseMode		
 	else
 		local range = GetCourseModeBPMs();
-		local lowest = range[1];
-		local highest = range[2];
+		if range then
+			local lowest = range[1];
+			local highest = range[2];
 				
 				
-		if lowest and highest then
-			if lowest == highest then
-				text = round(lowest);
-			else
-				text = round(lowest) .. " - " .. round(highest)
+			if lowest and highest then
+				if lowest == highest then
+					text = round(lowest);
+				else
+					text = round(lowest) .. " - " .. round(highest)
+				end
 			end
 		end
 	end
