@@ -32,7 +32,6 @@ TODO:
 
 **BUGS**
 
-* Songs with multiple edit charts (ie. Tachyon Alpha/Delta Max) cause the custom StepsDisplayList to behave erratically
 * Local profiles don't load/save custom gameplay modifiers (ScreenFilter, Judgment Graphic, Mini, SpeedMod Type)
 
 

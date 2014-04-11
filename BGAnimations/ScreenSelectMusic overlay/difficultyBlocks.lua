@@ -11,7 +11,7 @@ local function GetStepsToDisplay(steps)
 		
 		local difficulty = chart:GetDifficulty();
 		
-		if difficulty == "Difficulty_Edit" then
+		if chart:IsAnEdit() then
 			edits[#edits+1] = chart;
 		else
 			local index = GetYOffsetByDifficulty(difficulty);
@@ -23,17 +23,18 @@ local function GetStepsToDisplay(steps)
 	if #edits == 0 then return charts end;
 	
 	
+	
+	--THERE ARE EDITS, OH NO!
+	--HORRIBLE HANDLING/LOGIC BELOW
+	
 	-- start the editIndex at 6
 	-- (one higher than 5, which is used for Challenge charts)
 	local editIndex = 6;
 	for k,edit in ipairs(edits) do
-		charts[editIndex] = edit;
-		editIndex = editIndex + 1;
+		charts[5+k] = edit;
+		-- editIndex = editIndex + 1;
 	end
 		
-	
-	--THERE ARE EDITS, OH NO!
-	--HORRIBLE HANDLING/LOGIC BELOW
 	local currentStepsP1, currentStepsP2;
 	local finalReturn = {};
 	
@@ -99,9 +100,8 @@ local function GetStepsToDisplay(steps)
 		
 	-- elseif both players are joined
 	-- This can get complicated if P1 is on beginner and P2 is on an edit
-	-- AND there is a full range of charts inbetween
-	-- we'll have to hide SOMETHING, so I'm opting to hide the medium chart
-	-- if such a circumstance arrises
+	-- AND there is a full difference of charts inbetween
+	-- we'll have to hide SOMETHING...
 	elseif (currentStepsP1 and currentStepsP2) then
 		
 			
@@ -119,7 +119,7 @@ local function GetStepsToDisplay(steps)
 
 		local currentIndexP1, currentIndexP2;
 		
-		-- how broad is the "range" of charts for this song?
+		-- how broad is the range of charts for this song?
 		-- (where beginner=1 and edit=6+)
 		-- and how far apart are P1 and P2 currently?
 		
@@ -134,37 +134,37 @@ local function GetStepsToDisplay(steps)
 			end	
 		end
 		
-		
-		local range = math.abs(currentIndexP1-currentIndexP2);
-								
-		local greaterIndex, lesserIndex;
-		if currentIndexP1 > currentIndexP2 then
-			greaterIndex = currentIndexP1;
-			lesserIndex = currentIndexP2;
-		else
-			greaterIndex = currentIndexP2;
-			lesserIndex = currentIndexP1;
-		end
-		
-		SM(range)
-		
-		if range > 5 then
+		if (currentIndexP1 and currentIndexP2) then
 			
-			local frIndex=1;
-			for i=lesserIndex, lesserIndex+2 do
-				finalReturn[frIndex] = charts[i];
-				frIndex = frIndex + 1;
+			local difference = math.abs(currentIndexP1-currentIndexP2);
+								
+			local greaterIndex, lesserIndex;
+			if currentIndexP1 > currentIndexP2 then
+				greaterIndex = currentIndexP1;
+				lesserIndex = currentIndexP2;
+			else
+				greaterIndex = currentIndexP2;
+				lesserIndex = currentIndexP1;
 			end
-			for i=greaterIndex-1, greaterIndex do
-				finalReturn[frIndex] = charts[i];
-				frIndex = frIndex + 1;
-			end
+				
+			if difference > 4 then
+			
+				local frIndex=1;
+				for i=lesserIndex, lesserIndex+2 do
+					finalReturn[frIndex] = charts[i];
+					frIndex = frIndex + 1;
+				end
+				for i=greaterIndex-1, greaterIndex do
+					finalReturn[frIndex] = charts[i];
+					frIndex = frIndex + 1;
+				end
 
-		else
-			local frIndex = 5;
-			for i=greaterIndex, greaterIndex-4, -1 do
-				finalReturn[frIndex] = charts[i];
-				frIndex = frIndex - 1;
+			else
+				local frIndex = 5;
+				for i=greaterIndex, greaterIndex-4, -1 do
+					finalReturn[frIndex] = charts[i];
+					frIndex = frIndex - 1;
+				end
 			end
 		end
 	end
@@ -224,22 +224,44 @@ local t = Def.ActorFrame{
 			SetCommand=function(self)
 				
 				if GAMESTATE:IsHumanPlayer(PLAYER_1) then
-					local CurrentStepsOrTrails;
+					local SongOrCourse, AllStepsOrTrails, CurrentStepsOrTrail;
 					
 					if GAMESTATE:IsCourseMode() then
-						CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_1);
+						SongOrCourse = GAMESTATE:GetCurrentCourse();
 					else
-						CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_1);
-					end;
-					
-					if CurrentStepsOrTrails then
-						local currentDifficulty = CurrentStepsOrTrails:GetDifficulty();
-						local offset = GetYOffsetByDifficulty(currentDifficulty);
-						self:y((offset-3) * 18);
+						SongOrCourse = GAMESTATE:GetCurrentSong();
+					end
+
+					if SongOrCourse then
+						if GAMESTATE:IsCourseMode() then
+							AllStepsOrTrails = SongOrCourse:GetAllTrails();
+							CurrentStepsOrTrail = GAMESTATE:GetCurrentTrail(PLAYER_1);
+						else
+							AllStepsOrTrails = SongUtil.GetPlayableSteps( SongOrCourse );
+							CurrentStepsOrTrail = GAMESTATE:GetCurrentSteps(PLAYER_1);
+						end
+
+						if CurrentStepsOrTrail then
+							local stepstodisplay = GetStepsToDisplay(AllStepsOrTrails);
+							local offset=0;
+							for k,chart in pairs(stepstodisplay) do
+								if chart:IsAnEdit() then
+									if chart:GetChartName()==CurrentStepsOrTrail:GetChartName() then
+										offset = tonumber(k);
+									end
+								else
+									if chart:GetDifficulty()==CurrentStepsOrTrail:GetDifficulty() then
+										offset = tonumber(k);
+									end
+								end
+							end
+							self:y((offset-3) * 18);
+						end
 					end
 				end
 			end;
-			
+			ResetCommand=cmd(playcommand,"Set");
+
 			-- song and course changes
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
@@ -274,22 +296,45 @@ local t = Def.ActorFrame{
 			SetCommand=function(self)
 				
 				if GAMESTATE:IsHumanPlayer(PLAYER_2) then
-
-					local CurrentStepsOrTrails;
+					local SongOrCourse, StepsOrTrails, CurrentStepsOrTrails;
 					
 					if GAMESTATE:IsCourseMode() then
-						CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_2);
+						SongOrCourse = GAMESTATE:GetCurrentCourse();
 					else
-						CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_2);
-					end;
+						SongOrCourse = GAMESTATE:GetCurrentSong();
+					end
 
-					if CurrentStepsOrTrails then
-						local currentDifficulty = CurrentStepsOrTrails:GetDifficulty();
-						local offset = GetYOffsetByDifficulty(currentDifficulty);
-						self:y((offset-3) * 18);
+					if SongOrCourse then
+						if GAMESTATE:IsCourseMode() then
+							StepsOrTrails = SongOrCourse:GetAllTrails();
+							CurrentStepsOrTrails = GAMESTATE:GetCurrentTrail(PLAYER_2);
+						else
+							StepsOrTrails = SongUtil.GetPlayableSteps( SongOrCourse );
+							CurrentStepsOrTrails = GAMESTATE:GetCurrentSteps(PLAYER_2);
+						end
+
+
+						if CurrentStepsOrTrails then
+							local stepstodisplay = GetStepsToDisplay(StepsOrTrails);
+							local offset = 0;
+							for k,chart in pairs(stepstodisplay) do
+								if chart:IsAnEdit() then
+									if chart:GetChartName()==CurrentStepsOrTrails:GetChartName() then
+										offset = tonumber(k);
+									end
+								else
+									if chart:GetDifficulty()==CurrentStepsOrTrails:GetDifficulty() then
+										offset = tonumber(k);
+									end
+								end
+							end
+							self:y((offset-3) * 18);
+						end
 					end
 				end
 			end;
+			ResetCommand=cmd(playcommand,"Set");
+			
 			-- song and course changes
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
@@ -414,6 +459,8 @@ for row=1,5 do
 						self:zoomto(width * meter * gridZoomFactor * 1.55, height * gridZoomFactor);
 						self:customtexturerect(0, 0, meter, 1);
 						self:texcoordvelocity(0,0);
+						-- diffuse and set each chart's difficulty meter
+						self:diffuse( DifficultyColor(difficulty) );
 					else
 						self:zoomto(0,0);
 					end
