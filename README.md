@@ -19,7 +19,6 @@ TODO:
 
 **MISSING FEATURES**
 
-* ScreenEvaluationSummary (lacks pagination)
 * ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
 * Score vocalization
 
