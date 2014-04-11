@@ -1,7 +1,32 @@
-local t = Def.ActorFrame{};
-
 local numStages = STATSMAN:GetStagesPlayed();
 local currentStageNum = numStages;
+
+local amountAbleToMoveDown = numStages - 5;
+local amountAbleToMoveUp = 0;
+
+
+local t = Def.ActorFrame{
+	CodeMessageCommand=function(self, param)						
+		if param.Name == "Left" or param.Name == "MenuLeft" or param.Name == "Up" or param.Name == "MenuUp" then
+			if amountAbleToMoveUp > 0 then
+				self:linear(0.1);
+				self:addy( SCREEN_HEIGHT/5.25 );
+				amountAbleToMoveUp = amountAbleToMoveUp - 1;
+				amountAbleToMoveDown = amountAbleToMoveDown + 1;
+
+			end
+		end
+
+		if param.Name == "Right" or param.Name == "MenuRight" or param.Name == "Down" or param.Name == "MenuDown" then
+			if amountAbleToMoveDown > 0 then
+				self:linear(0.1);
+				self:addy( -SCREEN_HEIGHT/5.25 );
+				amountAbleToMoveDown = amountAbleToMoveDown - 1;
+				amountAbleToMoveUp = amountAbleToMoveUp + 1;
+			end
+		end
+	end;
+};
 
 -- currentStageNum will decrement so that we go from the first song we played to the song most recently played
 -- i will increment so that we progress down the screen from top to bottom

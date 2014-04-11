@@ -19,7 +19,6 @@ TODO:
 
 **MISSING FEATURES**
 
-* Have ScreenSelectMusic cancel lead to ScreenEvaluationSummary for songs played so far if EventMode is on.
 * ScreenEvaluationSummary (lacks pagination)
 * ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
 * Score vocalization

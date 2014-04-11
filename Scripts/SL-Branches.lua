@@ -55,3 +55,13 @@ Branch.AfterScreenPlayerOptions2 = function()
 		return "ScreenStageInformation"
 	end	
 end
+
+Branch.SSMCancel = function()
+	if GAMESTATE:IsEventMode() then
+		if GAMESTATE:GetCurrentStageIndex() > 0 then
+			return "ScreenEvaluationSummary"
+		end
+	end
+
+	return Branch.TitleMenu();
+end
