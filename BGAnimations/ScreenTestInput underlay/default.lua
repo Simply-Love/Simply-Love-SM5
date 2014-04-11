@@ -57,7 +57,7 @@ return Def.ActorFrame {
 	-- We use this to grab input strings from
 	Def.InputList {
 		Name="InputList";
-		Font="_misoreg hires";
+		Font=THEME:GetPathF("Common","Normal");
 		-- but it's distracting, so hide it
 		InitCommand=cmd(diffusealpha,0);
 		OnCommand=cmd(queuecommand,"Update");
@@ -81,7 +81,7 @@ return Def.ActorFrame {
 	};
 	
 	Def.DeviceList {
-		Font="_misoreg hires";
+		Font=THEME:GetPathF("","_misoreg hires");
 		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_HEIGHT-60; zoom,0.8; NoStroke);	
 	};
 		
