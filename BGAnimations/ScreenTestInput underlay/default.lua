@@ -54,6 +54,8 @@ end
 
 return Def.ActorFrame {
 	
+	OffCommand=cmd(sleep,0.4);
+	
 	-- We use this to grab input strings from
 	Def.InputList {
 		Name="InputList";

@@ -5,6 +5,9 @@ local game = GAMESTATE:GetCurrentGame():GetName();
 --PLAYER_1
 t[#t+1] = Def.ActorFrame{
 	Name="Player1Buttons";
+	InitCommand=cmd(diffusealpha,0);
+	OnCommand=cmd(linear,0.3;diffusealpha,1);
+	OffCommand=cmd(linear,0.2;diffusealpha,0);
 	
 	LoadFont("_wendy small")..{
 		Text="PLAYER 1";
@@ -122,7 +125,10 @@ t[#t+1] = Def.ActorFrame{
 --PLAYER_2
 t[#t+1] = Def.ActorFrame{
 	Name="Player2Buttons";
-	
+	InitCommand=cmd(diffusealpha,0);
+	OnCommand=cmd(linear,0.3;diffusealpha,1);
+	OffCommand=cmd(linear,0.2;diffusealpha,0);
+		
 	LoadFont("_wendy small")..{
 		Text="PLAYER 2";
 		InitCommand=cmd(xy,SCREEN_CENTER_X+150,30;zoom,0.7)
