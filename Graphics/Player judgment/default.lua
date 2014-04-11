@@ -1,9 +1,7 @@
 local c;
 local player = Var "Player";
 
--- local judType=GetUserPref("UserJudgmentLabel" .. ToEnumShortString(player) ) or "Love";
 local judType=getenv("JudgmentGraphic" .. ToEnumShortString(player) ) or "Love";
-
 
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );
@@ -37,27 +35,14 @@ local t = Def.ActorFrame {
 				self:Load( THEME:GetPathG("Player", "judgment/Love") );
 			elseif judType == "None" then
 				self:Load( THEME:GetPathG("", "_blank") );
+			elseif judType == "3.9" then
+				self:Load( THEME:GetPathG("Player", "judgment/3_9"));
 			else
-				self:Load( THEME:GetPathG("Player", "judgment/" .. judType) )
+				self:Load( THEME:GetPathG("Player", "judgment/" .. judType) );
 			end
 		end;
 		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false);
 		
-		-- -- XXX: This could potentially bog down gameplay performamce?
-		-- JudgmentMessageCommand=function(self)
-		-- 	
-		-- 	-- yes, it's needlessly ineffecient to check EVERY JudmentMessageCommand
-		-- 	-- but ScreenEdit doesn't listen for MESSAGEMAN:Broadcast()
-		-- 	-- so I don't know of any other way to get dynamic Judgment Graphics
-		-- 	-- on ScreenEdit from its OptionsMenu...
-		-- 	if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then				
-		-- 		local temp=GetUserPref("UserJudgmentLabel" .. ToEnumShortString(player) ) or "Love";
-		-- 		if temp ~= judType then
-		-- 			judType = temp;
-		-- 			self:Load( THEME:GetPathG("Player", "judgment/"..judType) );
-		-- 		end
-		-- 	end
-		-- end
 	};
 	InitCommand = function(self)
 		c = self:GetChildren();
