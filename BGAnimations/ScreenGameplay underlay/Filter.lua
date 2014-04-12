@@ -54,10 +54,18 @@ local filter = Def.ActorFrame{
 		OffCommand=function(self)
 			local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player);
 			if pStats:FullCombo() then
+				local comboColor
+				if pStats:FullComboOfScore('TapNoteScore_W1') then
+					comboColor = color("#6BF0FF")
+				elseif pStats:FullComboOfScore('TapNoteScore_W2') then
+					comboColor = color("#FDDB85")
+				else
+					comboColor = color("#94FEC1")
+				end
 				self:accelerate(0.25);
-				self:diffuse( color("1,1,1,1") );
+				self:diffuse( comboColor );
 				self:decelerate(0.75);
-				self:diffuse( color("0,0,0,0") );
+				self:diffusealpha( 0 );
 			end;
 		end;
 	};
