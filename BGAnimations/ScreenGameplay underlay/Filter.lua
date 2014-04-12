@@ -50,25 +50,22 @@ InitFilter();
 
 local filter = Def.ActorFrame{
 	Def.Quad{
-		InitCommand=cmd(diffuse,fallbackColor;y,SCREEN_CENTER_Y);
-		BeginCommand=function(self)
-			if getenv("ScreenFilter"..pName) == "Off" then
-				self:visible(false);
-			else
-				self:visible(true);
-				-- setup
-				self:x( FilterPosition() );
-				self:zoomto( FilterWidth(), SCREEN_HEIGHT );
-				self:diffuse( filterColor );
-			end;
-		end;
+		InitCommand=cmd(diffuse,filterColor;xy,FilterPosition(),SCREEN_CENTER_Y;zoomto,FilterWidth(),SCREEN_HEIGHT);
 		OffCommand=function(self)
 			local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player);
 			if pStats:FullCombo() then
+				local comboColor
+				if pStats:FullComboOfScore('TapNoteScore_W1') then
+					comboColor = color("#6BF0FF")
+				elseif pStats:FullComboOfScore('TapNoteScore_W2') then
+					comboColor = color("#FDDB85")
+				else
+					comboColor = color("#94FEC1")
+				end
 				self:accelerate(0.25);
-				self:glow( color("1,1,1,0.75") );
+				self:diffuse( comboColor );
 				self:decelerate(0.75);
-				self:glow( color("1,1,1,0") );
+				self:diffusealpha( 0 );
 			end;
 		end;
 	};
