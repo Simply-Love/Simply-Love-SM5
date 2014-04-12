@@ -50,25 +50,14 @@ InitFilter();
 
 local filter = Def.ActorFrame{
 	Def.Quad{
-		InitCommand=cmd(diffuse,fallbackColor;y,SCREEN_CENTER_Y);
-		BeginCommand=function(self)
-			if getenv("ScreenFilter"..pName) == "Off" then
-				self:visible(false);
-			else
-				self:visible(true);
-				-- setup
-				self:x( FilterPosition() );
-				self:zoomto( FilterWidth(), SCREEN_HEIGHT );
-				self:diffuse( filterColor );
-			end;
-		end;
+		InitCommand=cmd(diffuse,filterColor;xy,FilterPosition(),SCREEN_CENTER_Y;zoomto,FilterWidth(),SCREEN_HEIGHT);
 		OffCommand=function(self)
 			local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player);
 			if pStats:FullCombo() then
 				self:accelerate(0.25);
-				self:glow( color("1,1,1,0.75") );
+				self:diffuse( color("1,1,1,1") );
 				self:decelerate(0.75);
-				self:glow( color("1,1,1,0") );
+				self:diffuse( color("0,0,0,0") );
 			end;
 		end;
 	};
