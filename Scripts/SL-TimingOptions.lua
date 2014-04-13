@@ -46,19 +46,6 @@ local TimingWindowValues = {
 -- under [ScoreKeeperNormal]
 local PercentScoreWeightValues = {
 	
-	-- ITG Percent Score Weight Values
-	{
-		Held=5,
-		HitMine=-6,
-		LetGo=0,
-		W1=5,
-		W2=4,
-		W3=2,
-		W4=0,
-		W5=-6,
-		Miss=-12
-	},
-	
 	-- 	SM5 Percent Score Weight Values
 	{
 		Held=IsGame("Pump") and 0 or 3,
@@ -70,6 +57,19 @@ local PercentScoreWeightValues = {
 		W3=1,
 		W4=0,
 		W5=0
+	},
+	
+	-- ITG Percent Score Weight Values
+	{
+		Held=5,
+		HitMine=-6,
+		LetGo=0,
+		W1=5,
+		W2=4,
+		W3=2,
+		W4=0,
+		W5=-6,
+		Miss=-12
 	},
 	
 	-- Pump Pro Percent Score Weight Values
