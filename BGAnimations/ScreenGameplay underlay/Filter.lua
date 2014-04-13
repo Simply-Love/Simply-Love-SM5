@@ -7,13 +7,11 @@ local NumPlayers = GAMESTATE:GetNumPlayersEnabled();
 local NumSides = GAMESTATE:GetNumSidesJoined();
 
 local pName;
-local prefName = "FilterColor";
 local filterColor;
 local fallbackColor = color("0,0,0,0.75");
 
 local function InitFilter()
 	pName = pname(Player);
-	prefName = prefName..pName;
 	
 	local darkness = getenv("ScreenFilter"..pName)
 	if darkness == "Dark" then
