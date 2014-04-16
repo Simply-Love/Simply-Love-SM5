@@ -31,14 +31,16 @@ local t = Def.ActorFrame {
 		Name="JudgmentWithOffsets";
 		InitCommand=cmd(pause;visible,false;);
 		OnCommand=function(self)
+			
+			-- if we are on ScreenEdit, judgment font is always "Love"
 			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
-				self:Load( THEME:GetPathG("Player", "judgment/Love") );
+				self:Load( THEME:GetPathG("", "_judgments/Love") );
 			elseif judType == "None" then
 				self:Load( THEME:GetPathG("", "_blank") );
 			elseif judType == "3.9" then
-				self:Load( THEME:GetPathG("Player", "judgment/3_9"));
+				self:Load( THEME:GetPathG("", "_judgments/3_9"));
 			else
-				self:Load( THEME:GetPathG("Player", "judgment/" .. judType) );
+				self:Load( THEME:GetPathG("", "_judgments/" .. judType) );
 			end
 		end;
 		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false);
