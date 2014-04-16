@@ -1,4 +1,4 @@
-local headerHeight = 60;
+local headerHeight = 50;
 
 local function PlayerText(pn)
 	local pnumber = pn == PLAYER_1 and "1" or "2";
@@ -7,7 +7,7 @@ local function PlayerText(pn)
 	return LoadFont("_wendy small")..{
 		Name="Label"..pname(pn);
 		Text="Player "..pnumber;
-		InitCommand=cmd(x,SCREEN_CENTER_X*xpos;y,SCREEN_HEIGHT*0.075;NoStroke;shadowlength,1;zoom,0.8;);
+		InitCommand=cmd(x,SCREEN_CENTER_X*xpos; y,headerHeight/2; NoStroke; zoom,0.8;);
 		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1);
 		OffCommand=cmd(linear,0.5;diffusealpha,0);
 	};
@@ -21,9 +21,9 @@ local t = Def.ActorFrame{
 			BeginCommand=function(self)
 				local scroller = SCREENMAN:GetTopScreen():GetChild("LineScroller");
 				self:SetTarget(scroller);
-			end;
+			end;			
 		};
-
+	
 		Def.Quad{
 			InitCommand=cmd(CenterX;y,SCREEN_TOP;vertalign,top;zoomto,SCREEN_WIDTH,headerHeight;MaskSource);
 		};
@@ -51,7 +51,7 @@ local t = Def.ActorFrame{
 
 	Def.Quad{
 		Name="DevicesBG";
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_TOP+32;zoomto,SCREEN_WIDTH/3.5,headerHeight*0.65;diffuse,color("0.5,0.5,0.5,0.9"));
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,headerHeight/2;zoomto,SCREEN_WIDTH/3.5,headerHeight*0.65;diffuse,color("0.5,0.5,0.5,0.9"));
 	};
 };
 
