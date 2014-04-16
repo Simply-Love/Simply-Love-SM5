@@ -1,5 +1,27 @@
 function PlayerJudgment()
-	local judgmentGraphics = { 'Love','3.9','ITG2','GrooveNights','Chromatic','Tactics','Emoticon','Grammar','None' };
+	
+	-- allow users to artbitrarily add new judgment graphics to /Graphics/Player judgment/
+	-- without needing to modify this script;
+	-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN 
+	local path = THEME:GetPathG("Player","judgment");
+	path = string.gsub(path, "default.lua", "");
+	local files = FILEMAN:GetDirListing(path);
+	local judgmentGraphics = {};
+	
+	for k,filename in ipairs(files) do
+		-- FILEMAN returns all directory contents, but we're only interested in .png files,
+		-- so ignore default.lua
+		if filename ~= "default.lua" then
+			
+			-- use regexp to get only the name of the graphic, stripping out the extension 
+			local tempname = string.gsub(filename, " %dx%d.png", "");
+			-- the 3_9 graphic is a special case; we want it to appear in the options with a period (3.9 not 3_9)
+			if tempname == "3_9" then tempname = "3.9" end
+			-- dynamically fill the table
+			judgmentGraphics[#judgmentGraphics+1] = tempname
+		end
+	end
+	
 	local t = {
 		Name = "UserPlayerJudgment",
 		LayoutType = "ShowAllInRow",
