@@ -19,7 +19,7 @@ local t = Def.ActorFrame{
 		Text="";
 		InitCommand=cmd(zoom,0.8;shadowlength,1;shadowcolor,color("0,0,0,0.8");strokecolor,color("0,0,0,0.2");halign, 0 );
 		OnCommand=function(self)
-			local x = WideScale(-222,-320);
+			local x = WideScale(-215,-315);
 			local y = 112;
 			self:xy(x, y);		
 			self:settext( "(".. GetDisplayBPMs() .. ")" );
