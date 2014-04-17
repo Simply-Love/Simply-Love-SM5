@@ -19,14 +19,15 @@ TODO:
 
 **MISSING FEATURES**
 
-* ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
 * Score vocalization
+* DQ'd from Ranking with specific modifiers
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
 * Make ScreenSelectPlayMode change "demonstrations" to reflect pump and techno modes (requires additional graphics)
 * setting long/marathon cutoff lengths via this menu like oITG
 * setting per-screen MenuTimers via a menu
+* ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
 
 **BUGS**
 
