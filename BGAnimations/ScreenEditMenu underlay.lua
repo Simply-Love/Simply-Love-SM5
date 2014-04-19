@@ -7,10 +7,6 @@ local rowYvalues = {};
 local t = Def.ActorFrame{
 	InitCommand=cmd(diffusealpha,0);
 	OnCommand=cmd(linear,0.15; diffusealpha,1; queuecommand, "Hax");
-	OffCommand=function(self)
-		self:linear(0.15);
-		self:diffusealpha(0);
-	end;
 	--playcommand seems more responsive than queuecommand, so use it here
 	--or else we see a frame or two where the cursor color hasn't been applied yet (HAX)
 	EditMenuChangeMessageCommand=cmd(playcommand, "Hax");
@@ -18,10 +14,9 @@ local t = Def.ActorFrame{
 		
 		local topscreen = SCREENMAN:GetTopScreen();
 		
-		if topscreen then
+		if topscreen then			
+			local editMenu = topscreen:GetChild("EditMenu");
 			
-			local editMenu = topscreen:GetChild("EditMenu");	
-
 			local cursor = editMenu:GetChild("");
 			local cursorY = cursor:GetY();
 
@@ -80,10 +75,9 @@ local t = Def.ActorFrame{
 				else
 					rowHighlight:diffuse(GetCurrentColor());
 				end
-				-- cursor:zoom(1);
-				-- cursor:x(SCREEN_CENTER_X);
-				-- cursor:setsize(SCREEN_WIDTH*0.9 - 4,SCREEN_HEIGHT*0.1);
 			end
+			
+			
 		end
 	end;
 	-- MeterSetMessage is broadcast from Metrics under [StepsDisplay] MeterSetCommand
