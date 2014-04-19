@@ -32,7 +32,6 @@ local t = Def.ActorFrame{
 		LoadFont("_misoreg hires")..{
 			Name="SongName";
 			InitCommand=cmd(zoom,0.8; shadowlength,1; maxwidth,SCREEN_WIDTH/2.5 - 10; NoStroke);
-			OffCommand=cmd(linear,0.2;diffusealpha,0);
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Update");
 			UpdateCommand=function(self)
 				local title;
