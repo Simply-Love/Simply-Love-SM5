@@ -202,7 +202,7 @@ local t = Def.ActorFrame{
 		
 		Def.GraphDisplay{
 			InitCommand=function(self)
-				self:Load("GraphDisplay");
+				self:Load("GraphDisplay"..SimplyLoveColor() );
 				self:xy(SCREEN_CENTER_X -155, SCREEN_CENTER_Y+153);
 				self:zoomto(300,60);
 			end;
@@ -212,11 +212,6 @@ local t = Def.ActorFrame{
 				self:Set(stageStats, playerStageStats);
 				self:GetChild("Line"):diffusealpha(0);			
 			end
-		};
-		
-		Def.Quad{
-			InitCommand=cmd(xy, SCREEN_CENTER_X - 155, SCREEN_CENTER_Y+153; zoomto, 300,60; diffuse,PlayerColor(PLAYER_1); );
-			OnCommand=cmd(blend,Blend.Modulate)
 		};
 		
 		Def.ComboGraph{
@@ -354,19 +349,17 @@ local t = Def.ActorFrame{
 		};
 		
 		Def.GraphDisplay{
-			InitCommand=cmd(Load,"GraphDisplay"; xy, SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153; zoomto, 300,60;);
+			InitCommand=function(self)
+				self:Load("GraphDisplay" .. ((SimplyLoveColor()+2)%12)+1 );
+				 self:xy(SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153);
+				 self:zoomto(300,60);
+			end;
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 				local stageStats = STATSMAN:GetCurStageStats();
 				self:Set(stageStats, playerStageStats);
 				self:GetChild("Line"):diffusealpha(0);
 			end;
-		};
-		
-		
-		Def.Quad{
-			InitCommand=cmd(xy, SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153; zoomto, 300,60; diffuse,PlayerColor(PLAYER_2); );
-			OnCommand=cmd(blend,Blend.Modulate)
 		};
 		
 			
