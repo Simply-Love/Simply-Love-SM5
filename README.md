@@ -29,10 +29,11 @@ TODO:
 * setting per-screen MenuTimers via a menu
 * ScreenNameEntry (done enough) (but should ideally be re-written to allow RepeatingInput)
 
-**BUGS**
+**KNOWN BUGS**
 
 * Local profiles don't load/save custom gameplay modifiers (ScreenFilter, Judgment Graphic, Mini, SpeedMod Type)
-
+* OptionRows in various EditMode minimenus are unreadable and need to be investigated
+* ScreenOptionsManageProfiles is visually broken and need to be investigated 
 
 ACKNOWLEDGEMENTS:
 ----------------
