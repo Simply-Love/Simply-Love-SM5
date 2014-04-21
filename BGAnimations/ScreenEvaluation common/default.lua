@@ -223,6 +223,10 @@ local t = Def.ActorFrame{
 			end;
 		};
 		
+		-- was PLAYER_1 disqualified from ranking?
+		LoadActor("disqualified", PLAYER_1)..{
+			InitCommand=cmd(xy, SCREEN_CENTER_X -155, SCREEN_CENTER_Y+153);
+		};
 		
 	};
 
@@ -370,6 +374,11 @@ local t = Def.ActorFrame{
 				local stageStats = STATSMAN:GetCurStageStats();
 				self:Set(stageStats, playerStageStats);
 			end;
+		};
+		
+		-- was PLAYER_2 disqualified from ranking?
+		LoadActor("disqualified", PLAYER_2)..{
+			InitCommand=cmd(xy, SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153);
 		};
 		
 	};
