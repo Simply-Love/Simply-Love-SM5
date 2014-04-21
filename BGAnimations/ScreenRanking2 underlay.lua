@@ -1,6 +1,6 @@
 return Def.ActorFrame{
 	
-	OffCommand=cmd(linear,.5;diffusealpha,0);
+	OffCommand=cmd(linear,0.4; diffusealpha,0);
 		
 	-- the vertical colored bands
 	Def.Quad{
