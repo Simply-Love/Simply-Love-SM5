@@ -21,6 +21,7 @@ TODO:
 
 * Score vocalization
 * DQ'd from Ranking with specific modifiers
+* Icons for USB MemoryCard profiles (which should be distinct from local profiles)
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
@@ -33,7 +34,7 @@ TODO:
 
 * Local profiles don't load/save custom gameplay modifiers (ScreenFilter, Judgment Graphic, Mini, SpeedMod Type)
 * OptionRows in various EditMode minimenus are unreadable and need to be investigated
-* ScreenOptionsManageProfiles is visually broken and need to be investigated 
+* ScreenOptionsManageProfiles is visually broken and needs to be investigated 
 
 ACKNOWLEDGEMENTS:
 ----------------
