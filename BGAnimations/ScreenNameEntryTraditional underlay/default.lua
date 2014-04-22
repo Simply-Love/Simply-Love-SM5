@@ -9,7 +9,6 @@ local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
 	
-	
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
 		OnCommand=cmd(xy, SCREEN_CENTER_X, 121.5; zoom, 0.7);
@@ -117,7 +116,7 @@ end
 
 
 t[#t+1] = Def.Actor {
-	MenuTimerExpiredMessageCommand = function(self, param)
+	MenuTimerExpiredMessageCommand=function(self, param)
 		for pn in ivalues(Players) do
 			SCREENMAN:GetTopScreen():Finish(pn);
 		end

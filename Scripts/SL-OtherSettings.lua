@@ -1,9 +1,9 @@
 function NameEntryTraditionalCodes()
 	
 	if PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
-		return	"Backspace,MenuLeft,MenuRight,Enter"
+		return	"Backspace,MenuLeft,MenuRight,MenuLeftReleased,MenuRightReleased,Enter"
 	else
-		return "Backspace,Left,Right,MenuLeft,MenuRight,Enter"
+		return "Backspace,Left,Right,LeftReleased,RightReleased,MenuLeft,MenuRight,MenuLeftReleased,MenuRightReleased,Enter"
 	end
 	
 end

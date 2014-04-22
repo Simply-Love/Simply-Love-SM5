@@ -1,12 +1,15 @@
 local Player = ...;
 local charWidth = 40.5;
 
---the highscore name
+-- the highscore name
 local playerName = "";
 
 -- the character limit
 local limit = tonumber(THEME:GetMetric("ScreenNameEntryTraditional", "MaxRankingNameLength"));
 
+-- flags to determine if the user is holding input (and wants to scroll)
+local MovingRight = false;
+local MovingLeft  = false;
 
 if PROFILEMAN:IsPersistentProfile(Player) then
 	playerName = PROFILEMAN:GetProfile(Player):GetLastUsedHighScoreName();
@@ -43,7 +46,6 @@ local FiveLetters = {
 }; 
 
 
-
 local Letters = Def.ActorFrame{
 	Name="LetterAF";
 	InitCommand=function(self)
@@ -74,43 +76,72 @@ local Letters = Def.ActorFrame{
 			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
 		end
 	end;
+	MoveLeftCommand=function(self)
+		
+		if MovingLeft then
+			-- hide the right-most character, decrement our center, and make the left-most char visible
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(false);
+			FiveLetters.center = FiveLetters.center - 1;
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
+
+			--the Position command positions letters appropriately
+			--even though only five are visible at any given moment
+			--always have 1 extra on each side (-3 and 3) "in postion" 
+			--this makes tweening in from the sides appear more natural
+			for i=-3,3,1 do
+				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
+			end
+	
+			-- play the appropriate sound
+			self:GetChild("move"):playforplayer(Player);
+
+			self:sleep(0.12);
+			self:queuecommand("MoveLeft");
+		end
+	end;
+	MoveRightCommand=function(self)
+		
+		if MovingRight then
+			-- hide the left-most character, increment our center, and make the right-most char visible
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(false);
+			FiveLetters.center = FiveLetters.center + 1;
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
+	
+			for i=-3,3,1 do
+				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
+			end
+	
+			self:GetChild("move"):playforplayer(Player);
+			
+			self:sleep(0.12);
+			self:queuecommand("MoveRight");
+		end
+		
+	end;
 	CodeMessageCommand=function(self, param)
 		local pn = param.PlayerNumber;
 				
 		if pn == Player and not SCREENMAN:GetTopScreen():GetFinalized(pn) then
 		
 			if param.Name == "Left" or param.Name == "MenuLeft" then
-				-- hide the right-most character, decrement our center, and make the left most char visible
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(false);
-				FiveLetters.center = FiveLetters.center - 1;
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
-			
-				--the Position command positions letters appropriately
-				--even though only five are visible at any given moment
-				--always have 1 extra on each side (-3 and 3) "in postion" 
-				--this makes tweening in from the sides appear more natural
-				for i=-3,3,1 do
-					self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
-				end
-				
-				-- play the appropriate sound
-				self:GetChild("move"):playforplayer(Player);
+				MovingLeft = true;
+				self:queuecommand("MoveLeft");
 			end
 		
 			if param.Name == "Right" or param.Name == "MenuRight" then	
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(false);
-				FiveLetters.center = FiveLetters.center + 1;
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
-			
-				for i=-3,3,1 do
-					self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
-				end
-			
-				self:GetChild("move"):playforplayer(Player);
+				MovingRight = true;
+				self:queuecommand("MoveRight");
 			end
 			
+			if param.Name == "LeftReleased" or param.Name == "MenuLeftReleased" then
+				MovingLeft = false;
+			end
+		
+			if param.Name == "RightReleased" or param.Name == "MenuRightReleased" then	
+				MovingRight = false;
+			end
 			
 			-- if the START button is pushed
 			if param.Name == "Enter" then
