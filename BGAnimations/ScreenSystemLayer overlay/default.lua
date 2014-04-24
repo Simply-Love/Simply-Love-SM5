@@ -16,8 +16,7 @@ local function CreditsText( pn )
 	end
 
 	local text = LoadFont(Var "LoadingScreen","credits") .. {
-		-- it won't stick in the metrics
-		InitCommand=cmd(zoom,0.65;shadowlength,0;diffuse,color("#000000");diffusetopedge,0.6,0.6,0.6,1);
+		InitCommand=cmd(diffuse,color("#FFFFFF"););
 		RefreshCreditTextMessageCommand=update;
 		CoinInsertedMessageCommand=update;
 		PlayerJoinedMessageCommand=update;
@@ -25,6 +24,8 @@ local function CreditsText( pn )
 	};
 	return text;
 end
+
+
 
 local t = Def.ActorFrame {
 	Def.ActorFrame{
@@ -70,13 +71,17 @@ local t = Def.ActorFrame {
 
 	Def.ActorFrame{
 		CreditsText( PLAYER_1 ) .. {
-			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP1X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP1Y");horizalign,left;diffuse,PlayerColor(PLAYER_1);shadowlength,0;strokecolor,color("0,0,0,0.5"););
+			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP1X");
+							y,THEME:GetMetric(Var "LoadingScreen","CreditsP1Y");
+							horizalign,left;shadowlength,0;strokecolor,color("0,0,0,0.5"););
 		};
 	};
 
 	Def.ActorFrame{
 		CreditsText( PLAYER_2 ) .. {
-			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP2X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP2Y");horizalign,right;diffuse,PlayerColor(PLAYER_2);shadowlength,0;strokecolor,color("0,0,0,0.5"));
+			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP2X");
+							y,THEME:GetMetric(Var "LoadingScreen","CreditsP2Y");
+							horizalign,right;shadowlength,0;strokecolor,color("0,0,0,0.5"));
 		};
 	};
 };
