@@ -20,13 +20,10 @@ local t = Def.ActorFrame{
 	OptionRowChangedMessageCommand=function(self, params)
 				
 		local CurrentRowIndexP1, CurrentRowIndexP2;
-		local dummySpeedModTitle = self:GetChild("DummySpeedModTitle");
 		
 		-- there is always the possibility that a diffuseshift is still active
 		-- cancel it now (and re-apply below, if applicable)
 		params.Title:stopeffect();
-		dummySpeedModTitle:stopeffect();
-		dummySpeedModTitle:diffuse(Color.White);
 		
 		-- if ScreenOptions is nil, get it now
 		if not ScreenOptions then
@@ -35,17 +32,11 @@ local t = Def.ActorFrame{
 			-- get the index of PLAYER_1's current row
 			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 				CurrentRowIndexP1 = ScreenOptions:GetCurrentRowIndex(PLAYER_1);
-				if CurrentRowIndexP1 == 1 then
-					dummySpeedModTitle:diffuse(PlayerColor(PLAYER_1));
-				end
 			end
 			
 			-- get the index of PLAYER_2's current row
 			if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 				CurrentRowIndexP2 = ScreenOptions:GetCurrentRowIndex(PLAYER_2);
-				if CurrentRowIndexP2 == 1 then
-					dummySpeedModTitle:diffuse(PlayerColor(PLAYER_2));
-				end
 			end
 		end
 			
@@ -60,35 +51,15 @@ local t = Def.ActorFrame{
 			params.Title:diffuse(PlayerColor(PLAYER_2));
 		end
 			
-		if CurrentRowIndexP1 == CurrentRowIndexP2 then
-			params.Title:diffuseshift();
-			params.Title:effectcolor1(PlayerColor(PLAYER_1));
-			params.Title:effectcolor2(PlayerColor(PLAYER_2));
-			
-			if CurrentRowIndexP1 == 1 then
-				dummySpeedModTitle:diffuseshift();
-				dummySpeedModTitle:effectcolor1(PlayerColor(PLAYER_1));
-				dummySpeedModTitle:effectcolor2(PlayerColor(PLAYER_2));
+		if CurrentRowIndexP1 and CurrentRowIndexP1 then
+			if CurrentRowIndexP1 == CurrentRowIndexP2 then
+				params.Title:diffuseshift();
+				params.Title:effectcolor1(PlayerColor(PLAYER_1));
+				params.Title:effectcolor2(PlayerColor(PLAYER_2));
 			end
 		end
 
 	end;
-	
-	
-	LoadFont("_misoreg hires")..{
-		Name="DummySpeedModTitle";
-		Text="";
-		InitCommand=cmd(diffusealpha,0; zoom,0.8; halign,0 );
-		OnCommand=function(self)
-			local x = WideScale(-215,-315);
-			local y = 112;
-			self:xy(x, y);		
-			self:settext( "(".. GetDisplayBPMs() .. ")" );
-			self:sleep(0.1);
-			self:linear(0.2);
-			self:diffusealpha(1);
-		end;
-	};
 };
 
 	
