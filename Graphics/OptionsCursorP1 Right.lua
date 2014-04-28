@@ -1,6 +1,6 @@
 return Def.ActorFrame {
 	Def.Quad {
-		Name="CursorLeft";
+		Name="CursorRight";
 		InitCommand=cmd(zoomto,2,26;);
 	}
 };

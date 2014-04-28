@@ -59,7 +59,7 @@ function SpeedModsNew()
 			
 			local userSpeedMod = getenv("SpeedMod"..ToEnumShortString(pn));
 			if not userSpeedMod then	
-				setenv("SpeedMod"..ToEnumShortString(pn),"1x")
+				setenv("SpeedMod"..ToEnumShortString(pn),"1.00x")
 			end
 
 			list[1] = true	
@@ -172,7 +172,7 @@ end
 
 
 function GetCourseModeBPMs()
-	local Players, player, trail, trailEntries, lowest, highest, text;
+	local Players, player, trail, trailEntries, lowest, highest, text, range;
 
 	Players = GAMESTATE:GetHumanPlayers();
 	player = Players[1];
