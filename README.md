@@ -33,7 +33,6 @@ TODO:
 **KNOWN BUGS**
 
 * Local profiles don't load/save custom gameplay modifiers (ScreenFilter, Judgment Graphic, Mini, SpeedMod Type)
-* ScreenOptionsManageProfiles is visually broken and needs to be fixed
 * ScreenRanking2 currently doesn't populate with any course scores
 * CourseMode MusicWheel lags
 
@@ -41,7 +40,7 @@ TODO:
 ACKNOWLEDGEMENTS:
 ----------------
 
-* hurtpiggypig ( http://www.etsy.com/shop/hurtpiggypig ) -- Lara designed the original Simply Love theme for StepMania 3.95.
+* hurtpiggypig ( http://www.shirtpiggypig.com/ ) -- Lara designed the original Simply Love theme for StepMania 3.95.
 * djpohly ( https://github.com/djpohly ) -- Devin was a constant source of knowledge and help during the months I spent porting this.
 * sigatrev ( https://github.com/sigatrev ) -- Matt helped Lara implement some of the more technical aspects of the original theme and was always available to respond to my questions.
 * freem ( https://github.com/freem ) -- I used AJ's StepMania 5 theme, Moonlight, as the foundation/starting point for this port.
