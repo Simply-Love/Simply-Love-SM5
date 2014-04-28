@@ -1,22 +1,14 @@
 -- this is only used for the Screen that manages local profiles so far
 
 local t = Def.ActorFrame {
-	InitCommand=cmd(CenterX;y,SCREEN_CENTER_Y-84);
-
-
-
-	-- Intructions BG
-	Def.Quad {
-		InitCommand = cmd(zoomto, SCREEN_WIDTH*0.25, SCREEN_CENTER_Y*0.5; diffuse,Color.Black;);
-	};
+	InitCommand=cmd(xy,SCREEN_CENTER_X-SCREEN_WIDTH/6,SCREEN_CENTER_Y-84);
+	
 	-- white border
-	Border(SCREEN_WIDTH*0.25, SCREEN_CENTER_Y*0.5, 2) .. {
-		InitCommand = cmd();
-	};
+	Border(204, SCREEN_HEIGHT*0.235, 2);
 
 	-- header 
 	Def.Quad {
-		InitCommand = cmd(y,-60; zoomto, SCREEN_WIDTH*0.25, SCREEN_CENTER_Y*0.15; diffuse,Color.White;);
+		InitCommand=cmd(y,-60; zoomto, 204, SCREEN_HEIGHT*0.075; diffuse,Color.White;);
 	};
 	
 	LoadFont("_misoreg hires")..{
