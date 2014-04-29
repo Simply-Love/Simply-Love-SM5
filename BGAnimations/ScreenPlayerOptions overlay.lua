@@ -1,11 +1,10 @@
-
 -- initialize speed mods from preferences
 local currentMod = {
 	P1 = getenv("SpeedModP1") or "1.00x";
 	P2 = getenv("SpeedModP2") or "1.00x";
 };
 
-local ScreenOptions = SCREENMAN:GetTopScreen();
+local ScreenOptions;
 
 -- SpeedModItems is a table that will contain the BitMapText Actors
 -- for the SpeedModNew OptionRow for both P1 and P2
@@ -16,16 +15,16 @@ local SpeedModItems = {};
 local Cursors = {};
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy,SCREEN_CENTER_X,0; queuecommand, "Capture");
-	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1);
+	InitCommand=cmd(xy,SCREEN_CENTER_X,0;);
+	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1; queuecommand,"Capture");
 	OffCommand=cmd(linear,0.2;diffusealpha,0);
 	CaptureCommand=function(self)
 		
-		if not ScreenOptions then
-			ScreenOptions = SCREENMAN:GetTopScreen();
-		end
+		ScreenOptions = SCREENMAN:GetTopScreen();
 		
-		
+		-- reset for editmode OptionsMenu
+		SpeedModItems = {nil, nil};
+
 		-- The bitmaptext actors for P1 and P2 speedmod are both named "Item"
 		-- so using the normal approach of GetChildren() will only return one of them!
 		-- RunCommandsOnChildren() will run a command on ALL children, named or same-named or unnamed.
@@ -39,7 +38,7 @@ local t = Def.ActorFrame{
 				end
 			end
 		);
-		
+
 		-- Do similarly to grab cursors for P1 and P2.
 		-- We'll want both so we can update the width of each appropriately.
 		ScreenOptions:GetChild("Container"):RunCommandsOnChildren(
@@ -50,10 +49,10 @@ local t = Def.ActorFrame{
 			end
 		);
 			
-		if SpeedModItems[1] then
+		if SpeedModItems[1] and GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 			self:playcommand("SetP1");
 		end
-		if SpeedModItems[2] then
+		if SpeedModItems[2] and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 			self:playcommand("SetP2");
 		end
 
@@ -81,32 +80,25 @@ local t = Def.ActorFrame{
 	end;
 
 	SpeedModP1SetMessageCommand=function(self)
-		
 		setenv("SpeedModP1", currentMod.P1);
 		ApplySpeedMod("P1");
 	end;
 	SetP1Command=function(self)
-		local userSpeed = getenv("SpeedModP1");
-		
-		SpeedModItems[1]:settext(userSpeed);
-		self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod(userSpeed));
-		
-		currentMod.P1 = userSpeed;
+		SpeedModItems[1]:settext( currentMod.P1 );
+		self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P1 ));
 	end;
 	MenuLeftP1MessageCommand=function(self)
 		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_1) == 1 then
-			local mod = decrement(currentMod.P1);
-			currentMod.P1 = mod;
-			SpeedModItems[1]:settext(mod);
-			self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod(mod));
+			currentMod.P1 = decrement(currentMod.P1);
+			SpeedModItems[1]:settext( currentMod.P1 );
+			self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P1 ));
 		end	
 	end;
 	MenuRightP1MessageCommand=function(self)
 		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_1) == 1 then
-			local mod = increment(currentMod.P1);
-			currentMod.P1 = mod;
-			SpeedModItems[1]:settext(mod);
-			self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod(mod));
+			currentMod.P1 = increment(currentMod.P1);
+			SpeedModItems[1]:settext( currentMod.P1 );
+			self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P1 ));
 		end
 	end;
 	
@@ -132,30 +124,25 @@ local t = Def.ActorFrame{
 		end
 	end;
 	SpeedModP2SetMessageCommand=function(self)
-		
 		setenv("SpeedModP2", currentMod.P2);
 		ApplySpeedMod("P2");
 	end;
 	SetP2Command=function(self)
-		local userSpeed = getenv("SpeedModP2");
-		SpeedModItems[2]:settext(userSpeed);
-		self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod(userSpeed));
-		currentMod.P2 = userSpeed;
+		SpeedModItems[2]:settext( currentMod.P2 );
+		self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P2 ));
 	end;
 	MenuLeftP2MessageCommand=function(self)
 		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_2) == 1 then
-			local mod = decrement(currentMod.P2);
-			currentMod.P2 = mod;
-			SpeedModItems[2]:settext(mod);
-			self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod(mod));
+			currentMod.P2 = decrement(currentMod.P2);
+			SpeedModItems[2]:settext( currentMod.P2 );
+			self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P2 ));
 		end	
 	end;
 	MenuRightP2MessageCommand=function(self)
 		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_2) == 1 then
-			local mod = increment(currentMod.P2);
-			currentMod.P2 = mod;
-			SpeedModItems[2]:settext(mod);
-			self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod(mod));
+			currentMod.P2 = increment( currentMod.P2 );
+			SpeedModItems[2]:settext( currentMod.P2 );
+			self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P2 ));
 		end
 	end;
 
@@ -213,8 +200,9 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	-- the display that does math for you up at the top
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name="P1SpeedModHelper";
-		Text="P1 Scroll Rate";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; addx,-100; addy,48;);
+		Text="";
+		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; addx,-100; addy,48; diffusealpha,0;);
+		OnCommand=cmd(linear,0.4;diffusealpha,1);
 	};	
 end
 
@@ -224,8 +212,9 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	-- the display that does math for you up at the top
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name="P2SpeedModHelper";
-		Text="P2 Scroll Rate";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_2); zoom,0.5; addx,150; addy,48;);
+		Text="";
+		InitCommand=cmd(diffuse,PlayerColor(PLAYER_2); zoom,0.5; addx,150; addy,48;diffusealpha,0;);
+		OnCommand=cmd(linear,0.4;diffusealpha,1);
 	};
 	
 end
