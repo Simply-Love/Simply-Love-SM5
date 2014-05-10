@@ -192,7 +192,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name="P1SpeedModHelper";
 		Text="";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; addx,-100; addy,48; diffusealpha,0;);
+		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; x,-100; addy,48; diffusealpha,0;);
 		OnCommand=cmd(linear,0.4;diffusealpha,1);
 	};	
 end
@@ -204,7 +204,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name="P2SpeedModHelper";
 		Text="";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_2); zoom,0.5; addx,150; addy,48;diffusealpha,0;);
+		InitCommand=cmd(diffuse,PlayerColor(PLAYER_2); zoom,0.5; x,150; addy,48;diffusealpha,0;);
 		OnCommand=cmd(linear,0.4;diffusealpha,1);
 	};
 	

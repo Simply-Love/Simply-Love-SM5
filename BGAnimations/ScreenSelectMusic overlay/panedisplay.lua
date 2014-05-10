@@ -102,7 +102,7 @@ for pn in ivalues(Players) do
 		pd[#pd+1] = Def.ActorFrame{
 
 			Name=ToEnumShortString(pn)..paneStrings[i];
-			OnCommand=cmd(addx, -SCREEN_WIDTH/20; addy,6 );
+			OnCommand=cmd(x, -SCREEN_WIDTH/20; y,6 );
 
 			-- chart statistics labels
 			LoadFont("_misoreg hires")..{

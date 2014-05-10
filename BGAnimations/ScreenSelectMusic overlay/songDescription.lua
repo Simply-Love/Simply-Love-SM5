@@ -23,7 +23,7 @@ local t = Def.ActorFrame{
 		
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
-			InitCommand=cmd(diffuse, color("#1e282f"); zoomto, SCREEN_WIDTH/WideScale(2.05, 2.47) - 10, SCREEN_HEIGHT/10; addy, 12; )
+			InitCommand=cmd(diffuse, color("#1e282f"); zoomto, SCREEN_WIDTH/WideScale(2.05, 2.47) - 10, SCREEN_HEIGHT/10; y, 12; )
 		};
 		
 	
@@ -41,7 +41,7 @@ local t = Def.ActorFrame{
 
 			-- Song Artist
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign,left; NoStroke; addx, 5 );
+				InitCommand=cmd(horizalign,left; NoStroke; x, 5 );
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong();
 					
