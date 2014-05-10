@@ -4,8 +4,6 @@ local statsP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 local gradeP1 = statsP1:GetGrade();
 local gradeP2 = statsP2:GetGrade();
 
-local failType = PREFSMAN:GetPreference("")
-
 local function failed(g)
 	if g == "Grade_Failed" then
 		return true;
