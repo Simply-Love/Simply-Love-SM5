@@ -8,7 +8,7 @@ local ScreenOptions;
 
 -- SpeedModItems is a table that will contain the BitMapText Actors
 -- for the SpeedModNew OptionRow for both P1 and P2
-local SpeedModItems = {};
+local SpeedModItems = {nil, nil};
 
 -- Cursors is a table that will contain the Cusor ActorFrames
 -- for both P1 and P2
@@ -24,20 +24,11 @@ local t = Def.ActorFrame{
 		
 		-- reset for editmode OptionsMenu
 		SpeedModItems = {nil, nil};
-
+		
 		-- The bitmaptext actors for P1 and P2 speedmod are both named "Item"
-		-- so using the normal approach of GetChildren() will only return one of them!
-		-- RunCommandsOnChildren() will run a command on ALL children, named or same-named or unnamed.
-		-- We use it here to grab and store our two desired items into a table, SpeedModItems.
-		-- We can then manipulate those two bitmaptext items as normal, once we have them.
-		-- Hugs for Mad Matt, because he helped me with this.  -dbk2
-		ScreenOptions:GetOptionRow(1):GetChild(""):RunCommandsOnChildren(
-			function(self)				
-				if self:GetName() == "Item" then		
-					SpeedModItems[#SpeedModItems+1] = self;
-				end
-			end
-		);
+		SpeedModItems[1] = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[1];
+		SpeedModItems[2] = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[2];
+		
 
 		-- Do similarly to grab cursors for P1 and P2.
 		-- We'll want both so we can update the width of each appropriately.
@@ -184,7 +175,7 @@ local t = Def.ActorFrame{
 			params.Title:diffuse(PlayerColor(PLAYER_2));
 		end
 			
-		if CurrentRowIndexP1 and CurrentRowIndexP1 then
+		if CurrentRowIndexP1 and CurrentRowIndexP2 then
 			if CurrentRowIndexP1 == CurrentRowIndexP2 then
 				params.Title:diffuseshift();
 				params.Title:effectcolor1(PlayerColor(PLAYER_1));
