@@ -28,6 +28,7 @@ end;
 
 local function FilterPosition()
 	if IsUsingSoloSingles and NumPlayers == 1 and NumSides == 1 then return SCREEN_CENTER_X; end;
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return SCREEN_CENTER_X; end;
 
 	local strPlayer = (NumPlayers == 1) and "OnePlayer" or "TwoPlayers";
 	local strSide = (NumSides == 1) and "OneSide" or "TwoSides";
@@ -37,7 +38,8 @@ end;
 -- updated by sillybear
 -- xxx: does this still only account for dance?
 local function FilterWidth()
-	if NumPlayers == 1 and NumSides == 2 then 
+	
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then 
 		return ((SCREEN_WIDTH*1.058)/GetScreenAspectRatio());
 	else
 		return ((SCREEN_WIDTH*0.529)/GetScreenAspectRatio());
