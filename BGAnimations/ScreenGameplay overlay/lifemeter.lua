@@ -107,7 +107,29 @@ local meter = Def.ActorFrame{
 			self:zoomx( life );
 		end;
 	};
-
+	
+	LoadActor("hot.png")..{
+		Name="MeterHot";
+		InitCommand=cmd(zoomto,meterFillLength,meterFillHeight; diffusealpha,0.2; horizalign,left; x, -meterFillLength/2);
+		OnCommand=cmd(customtexturerect,0,0,1,1; texcoordvelocity,-1,0;);
+		HealthStateChangedMessageCommand=function(self,params)
+			if(params.PlayerNumber == Player) then
+				if(params.HealthState == 'HealthState_Hot') then
+					self:diffusealpha(1);
+				else
+					self:diffusealpha(0.2);
+				end;
+			end;
+		end;
+		LifeChangedMessageCommand=function(self,params)
+			if(params.Player == Player) then
+				local life = params.LifeMeter:GetLife() * (meterFillLength);
+				self:finishtweening();
+				self:bouncebegin(0.1);
+				self:zoomto( life, meterFillHeight );
+			end;
+		end;
+	};
 };
 
 
