@@ -14,7 +14,7 @@ local zoomFactor = WideScale(0.435,0.525);
 local t = Def.ActorFrame {
 	Name="Item"..iIndex;
 
-	GainFocusCommand=cmd(finishtweening; linear,0.2; zoom,1.1 );
+	GainFocusCommand=cmd(finishtweening; linear,0.2; zoom,1 );
 	LoseFocusCommand=cmd(linear,0.2; zoom,0.5);
 };
 
