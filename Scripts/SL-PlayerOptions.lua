@@ -8,14 +8,17 @@ function PlayerJudgment()
 	-- "Love" is a special case; it should always be first
 	local judgmentGraphics = {"Love"};
 	
-	for k,filename in ipairs(files) do
+	for k,filename in ipairs(files) do		
 		-- use regexp to get only the name of the graphic, stripping out the extension 
-		local tempname = string.gsub(filename, " %dx%d.png", "");
+		local name = string.gsub(filename, " %dx%d.png", "");
 		-- the 3_9 graphic is a special case; we want it to appear in the options with a period (3.9 not 3_9)
-		if tempname == "3_9" then tempname = "3.9" end
+		if name == "3_9" then name = "3.9" end
+		
 		-- dynamically fill the table
-		if tempname ~= "Love" then
-			judgmentGraphics[#judgmentGraphics+1] = tempname
+		-- Love is already in the table, and
+		-- we don't want files that start with a dot (like .DS_Store)
+		if name ~= "Love" and not string.find(name, ".", 1, true) then
+			judgmentGraphics[#judgmentGraphics+1] = name
 		end
 	end
 	
