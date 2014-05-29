@@ -2,19 +2,18 @@
 local Player = ...;
 assert( Player );
 
-local meterBaseLength = SCREEN_CENTER_X/2;
-local meterFillLength = meterBaseLength-32;
-local meterFillOffset = WideScale(96, 122.75);
-local meterFillHeight = 20;
+local meterFillLength = 136;
+local meterFillHeight = 18;
+local meterXOffset = SCREEN_CENTER_X;
 
-local newBPS;
-local oldBPS;
+if Player == PLAYER_1 then
+	meterXOffset = meterXOffset - WideScale(238, 288);
+elseif Player == PLAYER_2 then
+	meterXOffset = meterXOffset + WideScale(238, 288)
+end
 
-local dpMeterWidth = 160;
 
--- only used for oni mode:
-smLifeMeter = nil;
-local oldHealth = nil;
+local newBPS, oldBPS;
 
 local NumPlayers = GAMESTATE:GetNumPlayersEnabled();
 local NumSides = GAMESTATE:GetNumSidesJoined();
@@ -23,39 +22,27 @@ local IsDoubles = (NumPlayers == 1 and NumSides == 2);
 
 
 local meter = Def.ActorFrame{
+	
+	InitCommand=cmd(horizalign, left;);
+	
 	BeginCommand=function(self)
 		if IsDoubles and Player ~= GAMESTATE:GetMasterPlayerNumber() then
 			self:visible(false);
 			return;
 		else
-			
-
 			if GAMESTATE:IsPlayerEnabled(Player) then
-				self:visible(true);
-				-- oni
-				if GAMESTATE:IsCourseMode()
-					and GAMESTATE:GetPlayMode() == 'PlayMode_Oni' then
-					smLifeMeter = SCREENMAN:GetTopScreen():GetLifeMeter(Player);
-				end;
-			elseif GAMESTATE:IsDemonstration() then
-				-- don't hook up oni on demonstration
 				self:visible(true);
 			end;
 		end;
 	end;
-	OnCommand=cmd(runcommandsonleaves,cmd(addy,-40;linear,0.2;addy,40));
-	--OffCommand=cmd(runcommandsonleaves,cmd(linear,1;diffusealpha,0));
+	OnCommand=cmd(y, 30);
 
 	-- frame
-	Border(meterBaseLength-28, 24, 2)..{
+	Border(meterFillLength+4, meterFillHeight+4, 2)..{
 		OnCommand=function(self)
+			self:x(meterXOffset);
 			if GAMESTATE:IsPlayerEnabled(Player) then
 				self:visible(true);
-				-- oni
-				if GAMESTATE:IsCourseMode()
-					and GAMESTATE:GetPlayMode() == 'PlayMode_Oni' then
-					smLifeMeter = SCREENMAN:GetTopScreen():GetLifeMeter(Player);
-				end;
 			else
 				self:visible(false);
 			end;
@@ -65,19 +52,15 @@ local meter = Def.ActorFrame{
 	-- // start meter proper //
 	Def.Quad{
 		Name="MeterFill";
-		InitCommand=cmd(zoomto,0,meterFillHeight;diffuse,PlayerColor(Player););
+		InitCommand=cmd(zoomto,0,meterFillHeight;diffuse,PlayerColor(Player); horizalign, left;);
 		BeginCommand=function(self)
 			-- don't bother.
 			if not GAMESTATE:IsPlayerEnabled(Player) then
 				self:visible(false);
 				return;
 			end;
-	
-			self:horizalign(left);
-			self:addx(-(SCREEN_WIDTH/4)+meterFillOffset);
-	
 		end;
-	
+		OnCommand=cmd(x, meterXOffset - meterFillLength/2);
 		-- check state of mind
 		HealthStateChangedMessageCommand=function(self,params)
 			if(params.PlayerNumber == Player) then
@@ -98,23 +81,17 @@ local meter = Def.ActorFrame{
 				self:zoomx( life );
 			end;
 		end;
-	
-		-- check life (LifeMeterBattery)
-		BatteryLifeChangedMessageCommand=function(self,params)
-			local life = params.CurrentHealth * meterFillLength;
-			self:finishtweening();
-			self:accelerate(0.05);
-			self:zoomx( life );
-		end;
 	};
 	
 	LoadActor("hot.png")..{
 		Name="MeterHot";
-		InitCommand=cmd(zoomto,meterFillLength,meterFillHeight; diffusealpha,0.2; horizalign,left; x, -meterFillLength/2);
+		InitCommand=cmd(zoomto,meterFillLength,meterFillHeight; diffusealpha,0.2; horizalign, left; );
 		OnCommand=function(self)
+			self:x(meterXOffset - meterFillLength/2);
+			
 			if GAMESTATE:IsPlayerEnabled(Player) then
 				self:customtexturerect(0,0,1,1);
-				self:texcoordvelocity(-1,0);
+				--texcoordvelocity is handled by the Update function below
 			else
 				self:visible(false);
 			end
@@ -143,7 +120,7 @@ local meter = Def.ActorFrame{
 
 local function Update(self)
 
-	local hot = self:GetChild("MeterHotOverlay");
+	local hot = self:GetChild("MeterHot");
 
 	newBPS = GAMESTATE:GetSongBPS();
 	local move = (newBPS*-1)/2;

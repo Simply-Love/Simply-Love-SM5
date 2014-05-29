@@ -23,24 +23,7 @@ local function UpdateSingleBPM(self)
 end
 
 local t = Def.ActorFrame{
-	Name="BottomFrame";
 	InitCommand=cmd(CenterX;y,SCREEN_TOP+62;valign,1;zoom,1.33);
-	BeginCommand=function(self)
-	end;
-	
-
-	Def.ActorFrame{
-		Name="BPMFrame";
-		BeginCommand=function(self)
-			
-			-- if song options are enabled, move the bpm display up
-			if GAMESTATE:GetSongOptionsString() ~= "" then
-				self:y(-30); -- raised position (bg = 64px)
-			else
-				self:y(-13); -- normal position (bg = 44px):
-			end;
-		end;
-	};
 	
 	LoadFont("_misoreg hires")..{
 		Name="RatemodDisplay";
@@ -101,9 +84,7 @@ else
 			local pState = GAMESTATE:GetPlayerState(pn);
 			local songPosition = pState:GetSongPosition()
 			local bpm = songPosition:GetCurBPS() * 60 * ratemod
-			-- bpmDisplay:settext( string.format("%03.2f",bpm) )
-			bpmDisplay:settext( round(bpm) );
-			
+			bpmDisplay:settext( round(bpm) );			
 		end
 	end
 
