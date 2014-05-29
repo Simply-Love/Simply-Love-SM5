@@ -133,17 +133,14 @@ t[#t+1] = LoadFont("_wendy small")..{
 		elseif GAMESTATE:GetCoinMode()== "CoinMode_Home" then
 			self:settext('');
 		elseif GAMESTATE:GetCoinMode()== "CoinMode_Pay" then
-			local coins=GAMESTATE:GetCoins();
-			local coinsPerCredit=PREFSMAN:GetPreference('CoinsPerCredit');
-			local credits=math.floor(coins/coinsPerCredit);
-			local remainder=math.mod(coins,coinsPerCredit);
+			local Credits = GetCredits();
 			local text ='CREDIT(S)  ';
 		
-			if credits > 0 then
-				 text = text..credits..'  ';
+			if Credits["Credits"] > 0 then
+				 text = text..Credits["Credits"]..'  ';
 			end
 		
-			text = text .. remainder .. '/' .. coinsPerCredit;
+			text = text .. Credits["Remainder"] .. '/' .. Credits["CoinsPerCredit"];
 			self:settext(text)
 		end
 	end;
