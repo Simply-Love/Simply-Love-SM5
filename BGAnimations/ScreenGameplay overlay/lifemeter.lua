@@ -111,7 +111,14 @@ local meter = Def.ActorFrame{
 	LoadActor("hot.png")..{
 		Name="MeterHot";
 		InitCommand=cmd(zoomto,meterFillLength,meterFillHeight; diffusealpha,0.2; horizalign,left; x, -meterFillLength/2);
-		OnCommand=cmd(customtexturerect,0,0,1,1; texcoordvelocity,-1,0;);
+		OnCommand=function(self)
+			if GAMESTATE:IsPlayerEnabled(Player) then
+				self:customtexturerect(0,0,1,1);
+				self:texcoordvelocity(-1,0);
+			else
+				self:visible(false);
+			end
+		end;
 		HealthStateChangedMessageCommand=function(self,params)
 			if(params.PlayerNumber == Player) then
 				if(params.HealthState == 'HealthState_Hot') then
