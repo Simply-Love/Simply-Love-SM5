@@ -12,15 +12,12 @@ local t = Def.ActorFrame{
 		OnCommand=cmd(decelerate,0.2; diffusealpha,1);
 
 		Def.SongMeterDisplay {
-			StreamWidth=SCREEN_WIDTH/2;
+			StreamWidth=SCREEN_WIDTH/2-10;
 			Stream=Def.Quad{ InitCommand=cmd(zoomy,18;diffuse,DifficultyIndexColor(2) ); };
 		};
 		
-		Border(SCREEN_WIDTH/2, 22, 2);
+		Border(SCREEN_WIDTH/2-10, 22, 2);
 	};
-
-
-
 
 
 
@@ -88,7 +85,7 @@ local t = Def.ActorFrame{
 
 	-- player 1's chart's difficulty meter
 	LoadFont("_wendy small")..{
-		InitCommand=cmd(diffuse, color("#000000"); xy, WideScale(27,84), 66 zoom, 0.45 );
+		InitCommand=cmd(diffuse, color("#000000"); xy, WideScale(27,84), 66 zoom, 0.4 );
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1));	
 		end;
@@ -105,7 +102,7 @@ local t = Def.ActorFrame{
 	LoadFont("_wendy fixedWidth")..{
 		Name="P1Score";
 		Text="0.00";
-		InitCommand=cmd(x,SCREEN_CENTER_X * 0.55; y,SCREEN_TOP+66; halign,1; zoom,0.5);
+		InitCommand=cmd(x,SCREEN_CENTER_X - SCREEN_WIDTH/4.3; y,SCREEN_TOP+66; halign,1; zoom,0.5);
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1))
 		end;
@@ -169,7 +166,7 @@ local t = Def.ActorFrame{
 
 	-- player 2's chart's difficulty meter
 	LoadFont("_wendy small")..{
-		InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_WIDTH-WideScale(27,84), 66 zoom, 0.45 );
+		InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_WIDTH-WideScale(27,84), 66 zoom, 0.4 );
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2));
 		end;
@@ -189,7 +186,7 @@ local t = Def.ActorFrame{
 	LoadFont("_wendy fixedWidth")..{
 		Name="P2Score";
 		Text="0.00";
-		InitCommand=cmd(x,SCREEN_CENTER_X * 1.55; y,SCREEN_TOP+66; halign,1; zoom,0.5);
+		InitCommand=cmd(x,SCREEN_CENTER_X + SCREEN_WIDTH/2.85; y,SCREEN_TOP+66; halign,1; zoom,0.5);
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2))
 		end;

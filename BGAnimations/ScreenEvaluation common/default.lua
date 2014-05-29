@@ -146,7 +146,7 @@ local t = Def.ActorFrame{
 		
 			-- player 1's chart's difficulty meter
 			LoadFont("_wendy small")..{
-				InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_CENTER_X-289.5, SCREEN_CENTER_Y-71; zoom, 0.5 );
+				InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_CENTER_X-289.5, SCREEN_CENTER_Y-71; zoom, 0.4 );
 				BeginCommand=function(self)
 					local steps = GAMESTATE:GetCurrentSteps(PLAYER_1);
 					if steps then
@@ -297,7 +297,7 @@ local t = Def.ActorFrame{
 		
 			-- player 2's chart's difficulty meter
 			LoadFont("_wendy small")..{
-				InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_CENTER_X + 289.5, SCREEN_CENTER_Y-71; zoom, 0.5 );
+				InitCommand=cmd(diffuse, color("#000000"); xy, SCREEN_CENTER_X + 289.5, SCREEN_CENTER_Y-71; zoom, 0.4 );
 				BeginCommand=function(self)
 					local steps = GAMESTATE:GetCurrentSteps(PLAYER_2);
 					if steps then
