@@ -332,8 +332,9 @@ t[#t+1] = LoadFont("ScreenNameEntryTraditional entry")..{
 	end;
 };
 	
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_wendy small")..{
 	Text=THEME:GetString("ScreenNameEntryTraditional","OutOfRanking");
+	InitCommand=cmd(zoom,0.7; diffuse,PlayerColor(Player); y, 58);
 	OnCommand=function(self)
 		self:visible(not SCREENMAN:GetTopScreen():GetEnteringName(Player));
 	end;

@@ -83,7 +83,7 @@ for pn in ivalues(Players) do
 	-- colored background for chart statistics
 	pd[#pd+1] = Def.Quad{
 		Name="BackgroundQuad"..ToEnumShortString(pn);
-		InitCommand=cmd(diffuse, PlayerColor(pn); zoomto, SCREEN_WIDTH/2-10, SCREEN_HEIGHT/8.5; y, SCREEN_HEIGHT/3 + 15.33; );
+		InitCommand=cmd(diffuse, PlayerColor(pn); zoomto, SCREEN_WIDTH/2-10, SCREEN_HEIGHT/8; y, SCREEN_HEIGHT/3 + 15.33; );
 		SetCommand=function(self)			
 			if GAMESTATE:IsHumanPlayer(pn) then
 				local currentSteps = GAMESTATE:GetCurrentSteps(pn);
