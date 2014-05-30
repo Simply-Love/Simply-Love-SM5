@@ -4,12 +4,11 @@ local bDoubles = (numPlayers == 1 and numSides == 2);
 local bUsingCenter1P = PREFSMAN:GetPreference('Center1Player')
 
 
-local songoptions = GAMESTATE:GetSongOptionsString();
-local ratemod = string.match(songoptions, "%d.%d");
-if ratemod then
-	ratemod = tonumber(ratemod);
-else
-	ratemod = 1.0
+local songoptions = GAMESTATE:GetSongOptionsObject("ModsLevel_Song");
+local ratemod = nil;
+
+if songoptions then
+	ratemod = round(songoptions:MusicRate());
 end
 
 

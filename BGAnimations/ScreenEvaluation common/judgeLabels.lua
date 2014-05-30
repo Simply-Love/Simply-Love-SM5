@@ -10,7 +10,12 @@ local TNSNames = {
 	THEME:GetString("TapNoteScore","W5"),
 	THEME:GetString("TapNoteScore","Miss"),
 };
-local Labels2 = { 'holds', 'mines', 'hands', 'rolls' };
+local Labels2 = {
+	THEME:GetString("ScreenEvaluation", 'Holds'),
+	THEME:GetString("ScreenEvaluation", 'Mines'),
+	THEME:GetString("ScreenEvaluation", 'Hands'),
+	THEME:GetString("ScreenEvaluation", 'Rolls')
+};
 
 
 local l = Def.ActorFrame{};

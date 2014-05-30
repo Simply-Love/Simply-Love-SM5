@@ -20,7 +20,7 @@ local t = Def.ActorFrame{
 	
 	
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner" .. SimplyLoveColor() .. ".png"))..{
 		OnCommand=cmd(xy, SCREEN_CENTER_X, 121.5; zoom, 0.7);
 	};
 	
@@ -29,8 +29,9 @@ local t = Def.ActorFrame{
 		Name="Banner";
 		InitCommand=cmd(xy, SCREEN_CENTER_X, 121.5);
 		OnCommand=function(self)
-			--these need to be declared as empty variables here
-			--otherwise, the banner from round1 can persist into round2...
+			-- these need to be declared as empty variables here
+			-- otherwise, the banner from round1 can persist into round2
+			-- if round2 doesn't have banner!
 			local song, bannerpath;
 			song = GAMESTATE:GetCurrentSong();
 			
@@ -48,11 +49,11 @@ local t = Def.ActorFrame{
 	
 	--quad behind the ratemod, if there is one
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("#1E282F"); xy,SCREEN_CENTER_X, 173; zoomto, 292.5,16; );
+		InitCommand=cmd(diffuse,color("#1E282FCC"); xy,SCREEN_CENTER_X, 172; zoomto, 292.5,14; );
 		OnCommand=function(self)
-			local songoptions = GAMESTATE:GetSongOptionsString();
-			local ratemod = string.match(songoptions, "%d.%dx");
-			if not ratemod then
+			local songoptions = GAMESTATE:GetSongOptionsObject("ModsLevel_Song");
+			local ratemod = round(songoptions:MusicRate());
+			if ratemod == 1 then
 				self:visible(false);
 			end
 		end
@@ -60,14 +61,34 @@ local t = Def.ActorFrame{
 	
 	--the ratemod, if there is one
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(xy,SCREEN_CENTER_X, 174; NoStroke;shadowlength,1; zoom, 0.7);
+		InitCommand=cmd(xy,SCREEN_CENTER_X, 173; NoStroke;shadowlength,1; zoom, 0.7);
 		OnCommand=function(self)	
-			local songoptions = GAMESTATE:GetSongOptionsString();
-			local ratemod = string.match(songoptions, "%d.%dx");
+			local songoptions = GAMESTATE:GetSongOptionsObject("ModsLevel_Song");
+			local ratemod = round(songoptions:MusicRate());
+			local bpm = GetDisplayBPMs();
 			
-			if ratemod then
-				self:settext(ratemod .. " Music Rate");
+			if ratemod ~= 1 then
+				self:settext(string.format("%.1f", ratemod) .. " Music Rate");
+
+				if bpm then
+
+					--if there is a range of BPMs
+					if string.match(bpm, "%-") then
+						local bpms = {};
+						for i in string.gmatch(bpm, "%d+") do
+							bpms[#bpms+1] = round(tonumber(i) * ratemod);
+						end
+						if bpms[1] and bpms[2] then
+							bpm = bpms[1] .. "-" .. bpms[2];
+						end
+					else
+						bpm = tonumber(bpm) * ratemod;
+					end
+					
+					self:settext(self:GetText() .. " (" .. bpm .. " BPM)" );
+				end
 			else
+				-- else MusicRate was 1.0
 				self:settext("");
 			end
 		end;
@@ -113,7 +134,7 @@ local t = Def.ActorFrame{
 		
 			--stepartist for player 1's chart
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(xy, SCREEN_CENTER_X-270, SCREEN_CENTER_Y-63; zoom, 0.65; horizalign, left;);
+				InitCommand=cmd(xy, SCREEN_CENTER_X-270, SCREEN_CENTER_Y-80; zoom, 0.7; horizalign, left;);
 				BeginCommand=function(self)
 					local stepartist;
 					local cs = GAMESTATE:GetCurrentSteps(PLAYER_1);
@@ -125,9 +146,28 @@ local t = Def.ActorFrame{
 				end;
 			};
 			
+			--difficulty text for player 1
+			LoadFont("_misoreg hires")..{
+				InitCommand=cmd(xy, SCREEN_CENTER_X-270, SCREEN_CENTER_Y-64; zoom, 0.7; horizalign, left;);
+				OnCommand=function(self)
+					if GAMESTATE:IsHumanPlayer(PLAYER_1) then
+						local currentSteps = GAMESTATE:GetCurrentSteps(PLAYER_1);
+						if currentSteps then
+							local difficulty = currentSteps:GetDifficulty();
+							--GetDifficulty() returns a value from the Difficulty Enum
+							--"Difficulty_Hard" for example.
+							-- Strip the characters up to and including the underscore.
+							difficulty = string.gsub(difficulty, "Difficulty_", "");
+							self:settext(THEME:GetString("Difficulty", difficulty));
+							
+						end
+					end
+				end;
+			};
+			
 			-- Record Texts
 			LoadActor("recordTexts", PLAYER_1)..{
-				InitCommand=cmd(xy, SCREEN_CENTER_X-224, SCREEN_CENTER_Y-80; zoom, 0.42; horizalign, left;);
+				InitCommand=cmd(xy, SCREEN_CENTER_X-224, 54; zoom, 0.42; horizalign, left;);
 			};
 		
 			-- colored background for player 1's chart's difficulty meter
@@ -203,8 +243,7 @@ local t = Def.ActorFrame{
 		Def.GraphDisplay{
 			InitCommand=function(self)
 				self:Load("GraphDisplay"..SimplyLoveColor() );
-				self:xy(SCREEN_CENTER_X -155, SCREEN_CENTER_Y+153);
-				self:zoomto(300,60);
+				self:xy(SCREEN_CENTER_X -155, SCREEN_CENTER_Y+153.5);
 			end;
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
@@ -225,7 +264,7 @@ local t = Def.ActorFrame{
 		
 		-- was PLAYER_1 disqualified from ranking?
 		LoadActor("disqualified", PLAYER_1)..{
-			InitCommand=cmd(xy, SCREEN_CENTER_X -155, SCREEN_CENTER_Y+153);
+			InitCommand=cmd(xy, SCREEN_CENTER_X-84, SCREEN_CENTER_Y+138);
 		};
 		
 	};
@@ -264,7 +303,7 @@ local t = Def.ActorFrame{
 		
 			--stepartist for player 2's chart
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(xy, SCREEN_CENTER_X+270, SCREEN_CENTER_Y-63; zoom, 0.65; horizalign, right;);
+				InitCommand=cmd(xy, SCREEN_CENTER_X+270, SCREEN_CENTER_Y-80; zoom, 0.7; horizalign, right;);
 				BeginCommand=function(self)
 					local stepartist = "";
 					local cs = GAMESTATE:GetCurrentSteps(PLAYER_2);
@@ -276,9 +315,28 @@ local t = Def.ActorFrame{
 				end;
 			};
 			
+			--difficulty text for player 2
+			LoadFont("_misoreg hires")..{
+				InitCommand=cmd(xy, SCREEN_CENTER_X+270, SCREEN_CENTER_Y-64; zoom, 0.7; horizalign, right;);
+				OnCommand=function(self)
+					if GAMESTATE:IsHumanPlayer(PLAYER_1) then
+						local currentSteps = GAMESTATE:GetCurrentSteps(PLAYER_2);
+						if currentSteps then
+							local difficulty = currentSteps:GetDifficulty();
+							--GetDifficulty() returns a value from the Difficulty Enum
+							--"Difficulty_Hard" for example.
+							-- Strip the characters up to and including the underscore.
+							difficulty = string.gsub(difficulty, "Difficulty_", "");
+							self:settext(THEME:GetString("Difficulty", difficulty));
+							
+						end
+					end
+				end;
+			};
+			
 			-- Record Texts
 			LoadActor("recordTexts", PLAYER_2)..{
-				InitCommand=cmd(xy, SCREEN_CENTER_X+224, SCREEN_CENTER_Y-80; zoom, 0.42; horizalign, right;);
+				InitCommand=cmd(xy, SCREEN_CENTER_X+224, 54; zoom, 0.42; horizalign, right;);
 			};
 
 			-- colored background for player 2's chart's difficulty meter
@@ -355,8 +413,7 @@ local t = Def.ActorFrame{
 		Def.GraphDisplay{
 			InitCommand=function(self)
 				self:Load("GraphDisplay" .. ((SimplyLoveColor()+2)%12)+1 );
-				 self:xy(SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153);
-				 self:zoomto(300,60);
+				 self:xy(SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153.5);
 			end;
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
@@ -378,7 +435,7 @@ local t = Def.ActorFrame{
 		
 		-- was PLAYER_2 disqualified from ranking?
 		LoadActor("disqualified", PLAYER_2)..{
-			InitCommand=cmd(xy, SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153);
+			InitCommand=cmd(xy, SCREEN_CENTER_X + 224, SCREEN_CENTER_Y+138);
 		};
 		
 	};

@@ -5,13 +5,12 @@ local disqualified = stats:IsDisqualified();
 
 local s = "";
 
-return LoadFont("_misoreg hires")..{
+return LoadFont("_wendy small")..{
 	Name="Disqualified"..ToEnumShortString(pn);
-	Text="";
-	InitCommand=cmd(shadowlength,1;diffuse,color("0.9,0,0,1");zoom,0.8;);
+	InitCommand=cmd(diffuse,color("1,1,1,0.7");zoom,0.23;);
 	OnCommand=function(self)		
 		if disqualified then
-			self:settext("Disqualified");
+			self:settext(THEME:GetString("ScreenEvaluation","Disqualified"));
 		end;
 	end;
 };
