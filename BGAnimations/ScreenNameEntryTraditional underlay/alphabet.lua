@@ -1,5 +1,6 @@
 local Player = ...;
 local charWidth = 40.5;
+local finished = false;
 
 -- the highscore name
 local playerName = "";
@@ -55,6 +56,12 @@ local Letters = Def.ActorFrame{
 	OnCommand=function(self)
 		self:visible(SCREENMAN:GetTopScreen():GetEnteringName(Player));
 		
+		-- clear the highscorename (which is stored in C++ variables inaccessible to Lua) now
+		-- we'll re-enter it character by character when enter is pressed on the OK character
+		for i=1,limit do
+			SCREENMAN:GetTopScreen():Backspace(Player);
+		end
+		
 		-- if a name is available from a profile
 		if playerName ~= "" then
 			self:queuecommand("GoToOkay");
@@ -96,7 +103,7 @@ local Letters = Def.ActorFrame{
 			-- play the appropriate sound
 			self:GetChild("move"):playforplayer(Player);
 
-			self:sleep(0.12);
+			self:sleep(0.1);
 			self:queuecommand("MoveLeft");
 		end
 	end;
@@ -115,15 +122,15 @@ local Letters = Def.ActorFrame{
 	
 			self:GetChild("move"):playforplayer(Player);
 			
-			self:sleep(0.12);
+			self:sleep(0.1);
 			self:queuecommand("MoveRight");
 		end
 		
 	end;
 	CodeMessageCommand=function(self, param)
 		local pn = param.PlayerNumber;
-				
-		if pn == Player and not SCREENMAN:GetTopScreen():GetFinalized(pn) then
+	
+			if pn == Player and not SCREENMAN:GetTopScreen():GetFinalized(Player) then
 		
 			if param.Name == "Left" or param.Name == "MenuLeft" then
 				MovingLeft = true;
@@ -146,7 +153,6 @@ local Letters = Def.ActorFrame{
 			-- if the START button is pushed
 			if param.Name == "Enter" then
 				
-				
 				-- this "selectionText" var will grab whatever char is currently at relative index 0
 				-- that is, the character in the middle of the cursor
 				-- thus, selection can be A-Z, 0-9, ?, !, BACK, or OK
@@ -159,13 +165,10 @@ local Letters = Def.ActorFrame{
 				
 				if selectionText == dummyBACKtext then
 					
-					if string.len(playerName) > 0 then
-						
-						if SCREENMAN:GetTopScreen():Backspace(Player) then
-							playerName = string.sub(playerName,1,-2);
-							self:GetChild("delete"):playforplayer(Player);
-							self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
-						end
+					if string.len(playerName) > 0 then			
+						playerName = string.sub(playerName,1,-2);
+						self:GetChild("delete"):playforplayer(Player);
+						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
 					else
 						self:GetChild("invalid"):playforplayer(Player);
 					end
@@ -174,22 +177,28 @@ local Letters = Def.ActorFrame{
 				
 				elseif selectionText == dummyOKtext then
 					self:GetChild("enter"):playforplayer(Player);
-					SCREENMAN:GetTopScreen():Finish(Player);
 					self:diffusealpha(0);
 					self:GetParent():GetChild("Cursor"):diffusealpha(0);
-					
+					for i=1,#playerName do
+						local char = playerName:sub(i,i);
+					    SCREENMAN:GetTopScreen():EnterKey(Player, char);
+					end
+					SCREENMAN:GetTopScreen():Finish(Player);
 					
 				-- otherwise selectionText is any valid highscorename character: A-Z, 0-9, ?, or !
 				else
-
 					if string.len(playerName) < limit then
-						if SCREENMAN:GetTopScreen():EnterKey(Player, selectionText) then
-							playerName = playerName..selectionText;
-							self:GetChild("enter"):playforplayer(Player);
-							self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
-							if string.len(playerName) == limit then
-								self:queuecommand("GoToOkay");
-							end
+						-- I used to conditionally check here  
+							-- if SCREENMAN:GetTopScreen():EnterKey(Player, selectionText) then
+						-- but some sort of conflict was caused always caused with two players
+						-- entering names simultaneosuly (I think?) and eventually one player or both would
+						-- start to return false
+						
+						playerName = playerName..selectionText;
+						self:GetChild("enter"):playforplayer(Player);
+						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
+						if string.len(playerName) == limit then
+							self:queuecommand("GoToOkay");
 						end
 					else
 						self:GetChild("invalid"):playforplayer(Player);
@@ -202,11 +211,9 @@ local Letters = Def.ActorFrame{
 			-- if the SELECT button is pushed
 			if param.Name == "Backspace" then
 				if string.len(playerName) > 0 then
-					if SCREENMAN:GetTopScreen():Backspace(Player) then
-						playerName = string.sub(playerName,1,-2);
-						self:GetChild("delete"):playforplayer(Player);
-						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
-					end
+					playerName = string.sub(playerName,1,-2);
+					self:GetChild("delete"):playforplayer(Player);
+					self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
 				else
 					self:GetChild("invalid"):playforplayer(Player);
 				end
@@ -244,7 +251,8 @@ for k,l in ipairs(possibleCharacters) do
 		
 			for i=-3,3,1 do
 				if self:GetName() == tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i)) then
-					self:linear(0.075);
+					self:stoptweening();
+					self:linear(0.1);
 					self:x(charWidth * i);
 				end
 			end
@@ -290,6 +298,7 @@ local t = Def.ActorFrame{
 		end
 		self:y(SCREEN_CENTER_Y-20);
 	end;
+	
 	
 	-- the quad behind the playerName	
 	Def.Quad{
