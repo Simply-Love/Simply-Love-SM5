@@ -87,7 +87,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 			
 			-- hide this centered credit text for certain screens,
 			-- where it would more likely just be distracting and superfluous
-			if sClass == "ScreenGameplay" or sClass == "ScreenPlayerOptions" or sClass == "ScreenStageInformation" or sClass == "ScreenEvaluationStage" or sClass == "ScreenEvaluationCourse" or sClass == "ScreenEvaluationSummary" or sClass == "ScreenNameEntryTraditional"  then
+			if sClass == "ScreenGameplay" or sClass == "ScreenPlayerOptions" or sClass == "ScreenStageInformation" or sClass == "ScreenEvaluationStage" or sClass == "ScreenEvaluationCourse" or sClass == "ScreenEvaluationSummary" or sClass == "ScreenNameEntryTraditional" then
 				bShow = false
 			end
 		end

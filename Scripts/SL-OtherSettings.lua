@@ -11,8 +11,7 @@ function GetCredits()
 		CoinsPerCredit=coinsPerCredit
 	};
 	return r;
-end	
-	
+end
 
 function NameEntryTraditionalCodes()
 	
