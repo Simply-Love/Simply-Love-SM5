@@ -1,7 +1,8 @@
 local t = Def.ActorFrame{};
 
--- A hack to load custom options off local profiles, if there are any
-t[#t+1] = LoadActor("loadProfilesHack");
+-- A hack to load custom options off local profiles, if there are any.
+-- This also listens for SelectMenuInput.
+t[#t+1] = LoadActor("messageListener");
 
 -- Banner
 t[#t+1] = LoadActor("banner");
