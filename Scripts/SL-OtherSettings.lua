@@ -23,7 +23,7 @@ function NameEntryTraditionalCodes()
 	
 end
 
-function ScreenSelectMusicSortCode()
+function ScreenSelectMusicSortCode2()
 	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
 		return "DownLeft-DownRight"
 	else
