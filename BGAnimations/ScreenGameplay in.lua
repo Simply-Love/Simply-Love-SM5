@@ -36,7 +36,7 @@ t[#t+1] = Def.ActorFrame{
 				self:setext("STEVEREEN!");
 			end
 			
-			self:sleep(1);
+			self:sleep(0.66);
 			self:accelerate(0.33);
 			self:zoom(0.4);
 			self:y(SCREEN_HEIGHT-30);

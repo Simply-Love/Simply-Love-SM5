@@ -1,18 +1,6 @@
 local Players = GAMESTATE:GetHumanPlayers();
 
-local t = Def.ActorFrame{
-	Def.Quad{
-		InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,50;diffuse,color("#FFFFFF"));
-		OnCommand=cmd(fadebottom,0.15;fadetop,0.15);
-		OffCommand=cmd(accelerate,0.15;zoomy,0);
-	};
-
-	LoadFont("_wendy small")..{
-		Text=THEME:GetString("ScreenProfileSave","Saving Profiles...");
-		InitCommand=cmd(Center;diffuse,color("#000000");shadowlength,0; zoom,0.6);
-		OffCommand=cmd(linear,0.15;diffusealpha,0);
-	};
-};
+local t = Def.ActorFrame{};
 
 t[#t+1] = Def.Actor {
 	BeginCommand=function(self)
