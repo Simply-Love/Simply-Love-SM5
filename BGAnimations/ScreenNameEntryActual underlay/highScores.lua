@@ -9,7 +9,7 @@ local durationPerSong = 3;
 
 local months = {};
 for i=1,12 do
-	months[#months+1] = THEME:GetString("ScreenNameEntryTraditional", "Month"..i);
+	months[#months+1] = THEME:GetString("ScreenNameEntryActual", "Month"..i);
 end
 
 

@@ -13,20 +13,28 @@ function GetCredits()
 	return r;
 end
 
-function NameEntryTraditionalCodes()
-	
-	if PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
-		return	"Backspace,MenuLeft,MenuRight,MenuLeftReleased,MenuRightReleased,Enter"
-	else
-		return "Backspace,Left,Right,LeftReleased,RightReleased,MenuLeft,MenuRight,MenuLeftReleased,MenuRightReleased,Enter"
-	end
-	
-end
-
 function ScreenSelectMusicSortCode2()
 	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
 		return "DownLeft-DownRight"
 	else
 		return "MenuLeft-MenuRight"
 	end
+end
+
+-- woo, hax
+function EmptyOptionRow()
+	local t = {
+		Name = "Fake",
+		LayoutType = "ShowOneInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
+		Choices = {""},
+		LoadSelections = function(self, list, pn)
+			list[1] = true
+		end,
+		SaveSelections = function(self, list, pn) end
+	}
+	setmetatable(t, t)
+	return t
 end

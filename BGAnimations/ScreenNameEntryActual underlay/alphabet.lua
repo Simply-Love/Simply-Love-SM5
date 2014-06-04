@@ -1,4 +1,7 @@
-local Player = ...;
+local args = ...;
+local Player = args[1];
+local CanEnterName = args[2] or false;
+
 local charWidth = 40.5;
 local finished = false;
 
@@ -8,13 +11,20 @@ local playerName = "";
 -- the character limit
 local limit = tonumber(THEME:GetMetric("ScreenNameEntryTraditional", "MaxRankingNameLength"));
 
--- flags to determine if the user is holding input (and wants to scroll)
-local MovingRight = false;
-local MovingLeft  = false;
+
+-- machineProfile contains the overall high scores per song
+local machineProfile = PROFILEMAN:GetMachineProfile();
 
 if PROFILEMAN:IsPersistentProfile(Player) then
 	playerName = PROFILEMAN:GetProfile(Player):GetLastUsedHighScoreName();
 end
+
+
+local IsEnteringName = CanEnterName;
+
+
+
+
 
 local possibleCharacters = {
 	"&BACK;", "&OK;",
@@ -54,13 +64,7 @@ local Letters = Def.ActorFrame{
 		self:MaskDest();	
 	end;
 	OnCommand=function(self)
-		self:visible(SCREENMAN:GetTopScreen():GetEnteringName(Player));
-		
-		-- clear the highscorename (which is stored in C++ variables inaccessible to Lua) now
-		-- we'll re-enter it character by character when enter is pressed on the OK character
-		for i=1,limit do
-			SCREENMAN:GetTopScreen():Backspace(Player);
-		end
+		self:visible( CanEnterName );
 		
 		-- if a name is available from a profile
 		if playerName ~= "" then
@@ -83,72 +87,66 @@ local Letters = Def.ActorFrame{
 			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
 		end
 	end;
-	MoveLeftCommand=function(self)
-		
-		if MovingLeft then
-			-- hide the right-most character, decrement our center, and make the left-most char visible
-			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(false);
-			FiveLetters.center = FiveLetters.center - 1;
-			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
-			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
-
-			--the Position command positions letters appropriately
-			--even though only five are visible at any given moment
-			--always have 1 extra on each side (-3 and 3) "in postion" 
-			--this makes tweening in from the sides appear more natural
-			for i=-3,3,1 do
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
-			end
 	
-			-- play the appropriate sound
-			self:GetChild("move"):playforplayer(Player);
-
-			self:sleep(0.1);
+	MenuRightP1MessageCommand=function(self)		
+		if Player == PLAYER_1 and IsEnteringName then
+			self:queuecommand("MoveRight");
+		end
+	end;
+	MenuLeftP1MessageCommand=function(self)	
+		if Player == PLAYER_1 and IsEnteringName then
 			self:queuecommand("MoveLeft");
 		end
 	end;
-	MoveRightCommand=function(self)
-		
-		if MovingRight then
-			-- hide the left-most character, increment our center, and make the right-most char visible
-			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(false);
-			FiveLetters.center = FiveLetters.center + 1;
-			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
-			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
-	
-			for i=-3,3,1 do
-				self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
-			end
-	
-			self:GetChild("move"):playforplayer(Player);
-			
-			self:sleep(0.1);
+	MenuRightP2MessageCommand=function(self)
+		if Player == PLAYER_2 and IsEnteringName then
 			self:queuecommand("MoveRight");
 		end
+	end;
+	MenuLeftP2MessageCommand=function(self)
+		if Player == PLAYER_2 and IsEnteringName then
+			self:queuecommand("MoveLeft");
+		end
+	end;
+	
+	MoveLeftCommand=function(self)
+		
+		-- hide the right-most character, decrement our center, and make the left-most char visible
+		self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(false);
+		FiveLetters.center = FiveLetters.center - 1;
+		self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
+		self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
+
+		--the Position command positions letters appropriately
+		--even though only five are visible at any given moment
+		--always have 1 extra on each side (-3 and 3) "in postion" 
+		--this makes tweening in from the sides appear more natural
+		for i=-3,3,1 do
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
+		end
+
+		self:GetChild("move"):playforplayer(Player);
+
+	end;
+	MoveRightCommand=function(self)
+		
+		-- hide the left-most character, increment our center, and make the right-most char visible
+		self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(false);
+		FiveLetters.center = FiveLetters.center + 1;
+		self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(-2))):visible(true);
+		self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(2))):visible(true);
+
+		for i=-3,3,1 do
+			self:GetChild(tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i))):queuecommand("Position");
+		end
+		
+		self:GetChild("move"):playforplayer(Player);
 		
 	end;
 	CodeMessageCommand=function(self, param)
 		local pn = param.PlayerNumber;
 	
-			if pn == Player and not SCREENMAN:GetTopScreen():GetFinalized(Player) then
-		
-			if param.Name == "Left" or param.Name == "MenuLeft" then
-				MovingLeft = true;
-				self:queuecommand("MoveLeft");
-			end
-		
-			if param.Name == "Right" or param.Name == "MenuRight" then	
-				MovingRight = true;
-				self:queuecommand("MoveRight");
-			end
-			
-			if param.Name == "LeftReleased" or param.Name == "MenuLeftReleased" then
-				MovingLeft = false;
-			end
-		
-			if param.Name == "RightReleased" or param.Name == "MenuRightReleased" then	
-				MovingRight = false;
-			end
+		if pn == Player and CanEnterName and IsEnteringName then
 			
 			-- if the START button is pushed
 			if param.Name == "Enter" then
@@ -176,27 +174,19 @@ local Letters = Def.ActorFrame{
 				
 				
 				elseif selectionText == dummyOKtext then
-					self:GetChild("enter"):playforplayer(Player);
-					self:diffusealpha(0);
-					self:GetParent():GetChild("Cursor"):diffusealpha(0);
-					for i=1,#playerName do
-						local char = playerName:sub(i,i);
-					    SCREENMAN:GetTopScreen():EnterKey(Player, char);
-					end
-					SCREENMAN:GetTopScreen():Finish(Player);
-					
+					self:queuecommand("Finish");
+
 				-- otherwise selectionText is any valid highscorename character: A-Z, 0-9, ?, or !
 				else
 					if string.len(playerName) < limit then
-						-- I used to conditionally check here  
-							-- if SCREENMAN:GetTopScreen():EnterKey(Player, selectionText) then
-						-- but some sort of conflict was caused always caused with two players
-						-- entering names simultaneosuly (I think?) and eventually one player or both would
-						-- start to return false
 						
 						playerName = playerName..selectionText;
+						setenv("HighScoreName" .. ToEnumShortString(Player), playerName )
+						
 						self:GetChild("enter"):playforplayer(Player);
 						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
+						
+						-- if this player has now reached the character limit
 						if string.len(playerName) == limit then
 							self:queuecommand("GoToOkay");
 						end
@@ -212,6 +202,8 @@ local Letters = Def.ActorFrame{
 			if param.Name == "Backspace" then
 				if string.len(playerName) > 0 then
 					playerName = string.sub(playerName,1,-2);
+					setenv("HighScoreName" .. ToEnumShortString(Player), playerName )
+					
 					self:GetChild("delete"):playforplayer(Player);
 					self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
 				else
@@ -220,6 +212,16 @@ local Letters = Def.ActorFrame{
 			end
 		end
 	end;
+	MenuTimerExpiredMessageCommand=function(self, param)
+		self:queuecommand("Finish");
+	end;
+	FinishCommand=function(self)
+		self:GetChild("enter"):playforplayer(Player);
+		self:diffusealpha(0);
+		self:GetParent():GetChild("Cursor"):diffusealpha(0);
+		IsEnteringName = false;
+		MESSAGEMAN:Broadcast("DoneEnteringName" .. ToEnumShortString(Player) );
+	end
 };
 
 
@@ -251,8 +253,8 @@ for k,l in ipairs(possibleCharacters) do
 		
 			for i=-3,3,1 do
 				if self:GetName() == tostring(FiveLetters:GetIndexOfCharRelativeFromCenter(i)) then
-					self:stoptweening();
-					self:linear(0.1);
+					self:finishtweening();
+					self:linear(0.075);
 					self:x(charWidth * i);
 				end
 			end
@@ -325,7 +327,7 @@ t[#t+1] = LoadActor("Cursor.png")..{
 	Name="Cursor";
 	InitCommand=cmd(diffuse,PlayerColor(Player); zoom,0.5;);
 	OnCommand=function(self)
-		self:visible(SCREENMAN:GetTopScreen():GetEnteringName(Player));
+		self:visible( CanEnterName );
 		self:y(50);
 	end;
 };
@@ -333,7 +335,7 @@ t[#t+1] = LoadFont("ScreenNameEntryTraditional entry")..{
 	Name="PlayerName"..ToEnumShortString(Player);
 	InitCommand=cmd(zoom,0.75;halign,0; x,-80; y,-12;);
 	OnCommand=function(self)
-		self:visible(SCREENMAN:GetTopScreen():GetEnteringName(Player));
+		self:visible( CanEnterName );
 		self:settext(playerName);
 	end;
 	SetCommand=function(self)
@@ -342,10 +344,10 @@ t[#t+1] = LoadFont("ScreenNameEntryTraditional entry")..{
 };
 	
 t[#t+1] = LoadFont("_wendy small")..{
-	Text=THEME:GetString("ScreenNameEntryTraditional","OutOfRanking");
+	Text=THEME:GetString("ScreenNameEntryActual","OutOfRanking");
 	InitCommand=cmd(zoom,0.7; diffuse,PlayerColor(Player); y, 58);
 	OnCommand=function(self)
-		self:visible(not SCREENMAN:GetTopScreen():GetEnteringName(Player));
+		self:visible(not CanEnterName);
 	end;
 };
 

@@ -11,12 +11,6 @@ function SelectMusicOrCourse()
 	end
 end
 
-function ScreenEvalNextScreen()
-	-- Always save profile after eval
-	-- (todo: unless it's the final stage, where saving happens after summary)
-	return "ScreenProfileSave"
-end
-
 
 Branch.AfterGameplay = function()
 	local pm = GAMESTATE:GetPlayMode()
