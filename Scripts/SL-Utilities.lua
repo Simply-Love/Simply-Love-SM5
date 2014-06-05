@@ -12,3 +12,12 @@ end
 function SM(str)
 	SCREENMAN:SystemMessage(tostring(str));
 end
+
+function FindInTable(needle, haystack)
+	for i = 1, #haystack do
+		if needle == haystack[i] then
+			return i
+		end
+	end
+	return nil
+end

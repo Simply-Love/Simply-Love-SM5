@@ -34,16 +34,8 @@ function PlayerJudgment()
 		Choices = judgmentGraphics,
 		LoadSelections = function(self, list, pn)
 			local userJudgmentGraphic = getenv("JudgmentGraphic" .. ToEnumShortString(pn));
-			list[1] = true;
-			
-			if userJudgmentGraphic then
-				for i=1,#judgmentGraphics do
-					if userJudgmentGraphic == judgmentGraphics[i] then
-						list[1] = nil;
-						list[i] = true;
-					end
-				end
-			end
+			local i = FindInTable(userJudgmentGraphic, judgmentGraphics) or 1
+			list[i] = true;
 		end,
 		SaveSelections = function(self, list, pn)
 			local sSave;
@@ -74,17 +66,8 @@ function OptionRowPlayerFilter()
 		Choices = filters;
 		LoadSelections = function(self, list, pn)
 			local userScreenFilter = getenv("ScreenFilter"..ToEnumShortString(pn));
-			list[1] = true;
-						
-			if userScreenFilter then
-				for i=1,#filters do
-					if userScreenFilter == filters[i] then
-						list[1] = nil;
-						list[i] = true;
-					end;
-				end
-			end
-			
+			local i = FindInTable(userScreenFilter, filters) or 1
+			list[i] = true;
 		end;
 		SaveSelections = function(self, list, pn)
 			local sSave;
@@ -115,17 +98,8 @@ function OptionRowPlayerMini()
 		Choices = mini;
 		LoadSelections = function(self, list, pn)
 			local userMini = getenv("Mini"..ToEnumShortString(pn));
-			list[1] = true;
-			
-			if userMini then
-				for i=1,#mini do
-					if userMini == mini[i] then
-						list[1] = nil;
-						list[i] = true;
-					end;
-				end
-			end
-			
+			local i = FindInTable(userMini, mini) or 1
+			list[i] = true;
 		end;
 		SaveSelections = function(self, list, pn)
 			local sSave;
