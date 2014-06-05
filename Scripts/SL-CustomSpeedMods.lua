@@ -20,7 +20,7 @@ function SpeedModsType()
 					sSave=modList[i]
 				end
 			end
-			
+
 			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=sSave});
 		end
 	}
@@ -124,10 +124,10 @@ end;
 
 
 function ApplySpeedMod(pn)
-	local speed = getenv("SpeedMod" .. pn)
+	local speed = getenv("SpeedMod" .. ToEnumShortString(pn))
 	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack!
-	GAMESTATE:ApplyGameCommand('mod,1x', "PlayerNumber_"..pn)
-	GAMESTATE:ApplyGameCommand('mod,' .. speed, "PlayerNumber_"..pn)
+	GAMESTATE:ApplyGameCommand('mod,1x', pn)
+	GAMESTATE:ApplyGameCommand('mod,' .. speed, pn)
 end
 
 

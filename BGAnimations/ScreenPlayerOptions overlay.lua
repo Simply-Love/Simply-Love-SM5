@@ -49,14 +49,14 @@ local t = Def.ActorFrame{
 			setenv("SpeedModTypeP1", newtype);				
 			setenv("SpeedModP1",currentMod.P1);
 		
-			ApplySpeedMod("P1");
+			ApplySpeedMod(PLAYER_1);
 			self:queuecommand("SetP1");
 		end
 	end;
 
 	SpeedModP1SetMessageCommand=function(self)
 		setenv("SpeedModP1", currentMod.P1);
-		ApplySpeedMod("P1");
+		ApplySpeedMod(PLAYER_1);
 	end;
 	SetP1Command=function(self)
 		SpeedModItems[1]:settext( currentMod.P1 );
@@ -94,13 +94,13 @@ local t = Def.ActorFrame{
 			setenv("SpeedModTypeP2", newtype);
 			setenv("SpeedModP2",currentMod.P2);
 			
-			ApplySpeedMod("P2");
+			ApplySpeedMod(PLAYER_2);
 			self:queuecommand("SetP2");
 		end
 	end;
 	SpeedModP2SetMessageCommand=function(self)
 		setenv("SpeedModP2", currentMod.P2);
-		ApplySpeedMod("P2");
+		ApplySpeedMod(PLAYER_2);
 	end;
 	SetP2Command=function(self)
 		SpeedModItems[2]:settext( currentMod.P2 );
