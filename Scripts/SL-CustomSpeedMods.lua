@@ -8,18 +8,9 @@ function SpeedModsType()
 		ExportOnChange = true,
 		Choices = modList,
 		LoadSelections = function(self, list, pn)
-						
 			local userSpeedType = getenv("SpeedModType" .. ToEnumShortString(pn))
-			list[1] = true
-			
-			if userSpeedType then		
-				for i=1, #modList do
-					if userSpeedType == modList[i] then
-						list[1] = nil
-						list[i] = true
-					end
-				end				
-			end
+			local i = FindInTable(userSpeedType, modList) or 1
+			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
 			local sSave;
