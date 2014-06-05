@@ -1,8 +1,8 @@
 local ScreenOptions = SCREENMAN:GetTopScreen();
 
 local t = Def.ActorFrame{
-
-	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1);
+	InitCommand=cmd(xy,SCREEN_CENTER_X,0; diffusealpha,0;);
+	OnCommand=cmd(linear,0.2;diffusealpha,1;);
 	OffCommand=cmd(linear,0.2;diffusealpha,0);
 	
 	-- this is broadcast from [OptionRow] TitleGainFocusCommand in metrics.ini

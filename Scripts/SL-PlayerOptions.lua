@@ -94,7 +94,7 @@ function OptionRowPlayerMini()
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = false;
-		ExportOnChange = false;
+		ExportOnChange = true;
 		Choices = mini;
 		LoadSelections = function(self, list, pn)
 			local userMini = getenv("Mini"..ToEnumShortString(pn));
@@ -109,7 +109,14 @@ function OptionRowPlayerMini()
 					sSave = mini[i]	
 				end
 			end
-
+			
+			if sSave == "Normal" then
+				sSave = "no mini";
+			else
+				sSave = sSave .. " mini";
+			end
+			
+			GAMESTATE:ApplyGameCommand('mod,' ..  sSave, pn);
 			setenv("Mini"..ToEnumShortString(pn), sSave);
 		end;
 	};

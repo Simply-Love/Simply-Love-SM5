@@ -10,10 +10,6 @@ local ScreenOptions;
 -- for the SpeedModNew OptionRow for both P1 and P2
 local SpeedModItems = {nil, nil};
 
--- Cursors is a table that will contain the Cusor ActorFrames
--- for both P1 and P2
-local Cursors = {};
-
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,SCREEN_CENTER_X,0;);
 	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1; queuecommand,"Capture");
@@ -28,17 +24,6 @@ local t = Def.ActorFrame{
 		-- The bitmaptext actors for P1 and P2 speedmod are both named "Item"
 		SpeedModItems[1] = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[1];
 		SpeedModItems[2] = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[2];
-		
-
-		-- Do similarly to grab cursors for P1 and P2.
-		-- We'll want both so we can update the width of each appropriately.
-		ScreenOptions:GetChild("Container"):RunCommandsOnChildren(
-			function(self)			
-				if self:GetName() == "Cursor" then		
-					Cursors[#Cursors+1] = self;
-				end
-			end
-		);
 			
 		if SpeedModItems[1] and GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 			self:playcommand("SetP1");
@@ -46,7 +31,6 @@ local t = Def.ActorFrame{
 		if SpeedModItems[2] and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 			self:playcommand("SetP2");
 		end
-
 	end;
 	
 	-- Commands for PLAYER_1 speedmod
@@ -192,7 +176,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name="P1SpeedModHelper";
 		Text="";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; x,-100; addy,48; diffusealpha,0;);
+		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; x,-100; y,48; diffusealpha,0;);
 		OnCommand=cmd(linear,0.4;diffusealpha,1);
 	};	
 end
@@ -207,7 +191,7 @@ if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 		InitCommand=cmd(diffuse,PlayerColor(PLAYER_2); zoom,0.5; x,150; addy,48;diffusealpha,0;);
 		OnCommand=cmd(linear,0.4;diffusealpha,1);
 	};
-	
 end
+
 
 return t;
