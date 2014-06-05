@@ -110,6 +110,8 @@ function OptionRowPlayerMini()
 				end
 			end
 			
+			setenv("Mini"..ToEnumShortString(pn), sSave);
+			
 			if sSave == "Normal" then
 				sSave = "no mini";
 			else
@@ -117,7 +119,6 @@ function OptionRowPlayerMini()
 			end
 			
 			GAMESTATE:ApplyGameCommand('mod,' ..  sSave, pn);
-			setenv("Mini"..ToEnumShortString(pn), sSave);
 		end;
 	};
 	setmetatable( t, t );
