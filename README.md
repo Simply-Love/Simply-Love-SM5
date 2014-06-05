@@ -32,7 +32,6 @@ TODO:
 
 **KNOWN BUGS**
 
-* Local profiles don't load/save custom gameplay modifiers (ScreenFilter, Judgment Graphic, Mini, SpeedMod Type)
 * ScreenRanking2 currently doesn't populate with any course scores
 * CourseMode MusicWheel lags
 
