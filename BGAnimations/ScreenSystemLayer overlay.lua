@@ -4,6 +4,7 @@
 local function CreditsText( pn )
 	local text = LoadFont("_misoreg hires") .. {
 		InitCommand=function(self)
+			self:visible(false);
 			self:name("Credits" .. PlayerNumberToString(pn))
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen");
 		end;
@@ -71,9 +72,9 @@ t[#t+1] = LoadFont("_wendy small")..{
 					y,SCREEN_BOTTOM-16;
 					zoom,0.5;horizalign,center;
 	);
-	OnCommand=cmd(queuecommand,"Refresh");
+	OnCommand=cmd(playcommand,"Refresh");
 	ScreenChangedMessageCommand=function(self)
-		self:queuecommand("Refresh");
+		self:playcommand("Refresh");
 	end;
 	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh");
 	CoinsChangedMessageCommand=cmd(playcommand,"Refresh");
@@ -87,7 +88,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 			
 			-- hide this centered credit text for certain screens,
 			-- where it would more likely just be distracting and superfluous
-			if sClass == "ScreenGameplay" or sClass == "ScreenPlayerOptions" or sClass == "ScreenPlayerOptions2" or sClass == "ScreenStageInformation" or sClass == "ScreenEvaluationStage" or sClass == "ScreenEvaluationCourse" or sClass == "ScreenEvaluationSummary" or sClass == "ScreenNameEntryActual" or sClass == "ScreenNameEntryTraditional" then
+			if sClass == "ScreenGameplay" or sClass == "ScreenPlayerOptions" or sClass == "ScreenPlayerOptions2" or sClass == "ScreenStageInformation" or sClass == "ScreenEvaluationStage" or sClass == "ScreenEvaluationCourse" or sClass == "ScreenEvaluationSummary" or sClass == "ScreenNameEntryActual" or sClass == "ScreenNameEntryTraditional" or sClass == "ScreenGameOver" then
 				bShow = false
 			end
 		end
