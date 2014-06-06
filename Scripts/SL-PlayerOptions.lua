@@ -88,7 +88,12 @@ end;
 
 -- mini
 function OptionRowPlayerMini()
-	local mini = { "Normal","10%","20%","30%","40%","50%","60%","70%","80%","90%","98%" };
+	-- 200% mini is (literally) impossible to see, so don't bother.
+	local mini = { "Normal" };
+	for i=1,30 do
+		mini[#mini+1] = tostring(i * 5) .. "%";
+	end
+	
 	local t = {
 		Name = "Mini";
 		LayoutType = "ShowAllInRow";
