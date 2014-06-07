@@ -21,6 +21,15 @@ function ScreenSelectMusicSortCode2()
 	end
 end
 
+function SelectColorScrollerItems()
+	if IsUsingWideScreen() then
+		return 12
+	else
+		return 5
+	end
+end
+
+
 -- woo, hax
 function EmptyOptionRow()
 	local t = {

@@ -120,14 +120,3 @@ function ColorRGB ( n )
 	if clr == 12 then return color("1,0.75,0,1") end
 	return color("1,1,1,1")
 end
-
-
-
-
-function SelectColorScrollerItems()
-	if IsUsingWideScreen() then
-		return 12
-	else
-		return 5
-	end
-end

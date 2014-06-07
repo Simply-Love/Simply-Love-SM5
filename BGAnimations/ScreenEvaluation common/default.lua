@@ -241,10 +241,7 @@ local t = Def.ActorFrame{
 		};
 		
 		Def.GraphDisplay{
-			InitCommand=function(self)
-				self:Load("GraphDisplay"..SimplyLoveColor() );
-				self:xy(SCREEN_CENTER_X -155, SCREEN_CENTER_Y+153.5);
-			end;
+			InitCommand=cmd(Load,"GraphDisplay"..SimplyLoveColor(); xy, SCREEN_CENTER_X-155, SCREEN_CENTER_Y+153.5);
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
 				local stageStats = STATSMAN:GetCurStageStats();
@@ -254,7 +251,7 @@ local t = Def.ActorFrame{
 		};
 		
 		Def.ComboGraph{
-			InitCommand=cmd(Load,"ComboGraph"; xy, SCREEN_CENTER_X -155, SCREEN_CENTER_Y+188;);
+			InitCommand=cmd(Load,"ComboGraphP1"; xy, SCREEN_CENTER_X -155, SCREEN_CENTER_Y+188;);
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
 				local stageStats = STATSMAN:GetCurStageStats();
@@ -411,10 +408,7 @@ local t = Def.ActorFrame{
 		};
 		
 		Def.GraphDisplay{
-			InitCommand=function(self)
-				self:Load("GraphDisplay" .. ((SimplyLoveColor()+2)%12)+1 );
-				 self:xy(SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+153.5);
-			end;
+			InitCommand=cmd(Load,"GraphDisplay"..(SimplyLoveColor()+2)%12+1; xy, SCREEN_CENTER_X+155, SCREEN_CENTER_Y+153.5);
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 				local stageStats = STATSMAN:GetCurStageStats();
@@ -425,7 +419,7 @@ local t = Def.ActorFrame{
 		
 			
 		Def.ComboGraph{
-			InitCommand=cmd(Load,"ComboGraph"; xy, SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+188;);
+			InitCommand=cmd(Load,"ComboGraphP2"; xy, SCREEN_CENTER_X + 155, SCREEN_CENTER_Y+188;);
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 				local stageStats = STATSMAN:GetCurStageStats();
