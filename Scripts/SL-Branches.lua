@@ -38,24 +38,20 @@ end
 
 
 
-Branch.AfterScreenPlayerOptions = function()
-	local nextscreen = getenv("ScreenPlayerOptions")
-	
-	if nextscreen then
-		return nextscreen		
+Branch.PlayerOptions = function()
+	if SCREENMAN:GetTopScreen():GetGoToOptions() then
+		return "ScreenPlayerOptions"
 	else
-		return "ScreenStageInformation"
-	end	
+		return "ScreenGameplay"
+	end
+end
+	
+Branch.AfterScreenPlayerOptions = function()
+	return getenv("ScreenPlayerOptions") or Branch.GameplayScreen();
 end
 
 Branch.AfterScreenPlayerOptions2 = function()
-	local nextscreen = getenv("ScreenPlayerOptions2")
-	
-	if nextscreen then
-		return nextscreen		
-	else
-		return "ScreenStageInformation"
-	end	
+	return getenv("ScreenPlayerOptions2") or Branch.GameplayScreen();
 end
 
 Branch.SSMCancel = function()

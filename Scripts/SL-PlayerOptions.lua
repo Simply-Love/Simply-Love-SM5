@@ -153,7 +153,7 @@ function ForwardOrBackward()
 			list[1] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			if list[1] then setenv("ScreenPlayerOptions", "ScreenStageInformation") end
+			if list[1] then setenv("ScreenPlayerOptions", Branch.GameplayScreen()) end
 			if list[2] then setenv("ScreenPlayerOptions", "ScreenSelectMusic") end
 			if list[3] then setenv("ScreenPlayerOptions", "ScreenPlayerOptions2") end
 		end
@@ -175,7 +175,7 @@ function ForwardOrBackward2()
 			list[1] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			if list[1] then setenv("ScreenPlayerOptions2", "ScreenStageInformation") end
+			if list[1] then setenv("ScreenPlayerOptions2", Branch.GameplayScreen()) end
 			if list[2] then setenv("ScreenPlayerOptions2", "ScreenSelectMusic") end
 			if list[3] then setenv("ScreenPlayerOptions2", "ScreenPlayerOptions") end
 		end
