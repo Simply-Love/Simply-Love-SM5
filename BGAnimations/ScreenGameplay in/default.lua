@@ -3,25 +3,14 @@ local sStage = "";
 if not PREFSMAN:GetPreference("EventMode") then
 	
 	local CurrentSong = GAMESTATE:GetCurrentSong();
-	local Players = GAMESTATE:GetHumanPlayers();
-
 	local bIsLong = CurrentSong:IsLong();
 	local bIsMarathon = CurrentSong:IsMarathon();
 	local iAdditionalStagesThisSongCountsFor = bIsLong and 1 or bIsMarathon and 2 or 0;
 
-	local iStagesLeft = math.huge;
-
 	-- GAMESTATE:GetNumStagesLeft() asks for a playernumber because latejoin can
 	-- cause discrepencies between players.  For Simply Love, we only care about
 	-- which player has fewer stages remaining; we use that value for both.
-	for pn in ivalues(Players) do
-		local iPlayerStagesLeft = GAMESTATE:GetNumStagesLeft(pn)
-
-		if iStagesLeft > iPlayerStagesLeft then
-			iStagesLeft = iPlayerStagesLeft;
-		end
-	end
-
+	local iStagesLeft = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
 
 	local iSongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay");
 	local iStageNumber = (iSongsPerPlay - iStagesLeft) + 1;
