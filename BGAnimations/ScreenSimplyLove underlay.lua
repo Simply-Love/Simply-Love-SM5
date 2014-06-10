@@ -1,6 +1,10 @@
 local t = Def.ActorFrame{};
-	
-t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. GAMESTATE:GetCurrentGame():GetName()))..{
+local game = GAMESTATE:GetCurrentGame():GetName();
+if game == "popn" or game == "beat" or game == "kb7" or game == "para" then
+	game = "techno"
+end
+
+t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
 	InitCommand=cmd(x, SCREEN_CENTER_X; y, SCREEN_CENTER_Y; diffusealpha, 0;);
 	OnCommand=cmd(linear,0.5; diffusealpha, 1);
 };

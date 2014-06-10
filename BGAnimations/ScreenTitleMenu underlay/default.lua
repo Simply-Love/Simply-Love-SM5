@@ -2,6 +2,10 @@ local SongStats = SONGMAN:GetNumSongs() .. " songs in ";
 SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, ";
 SongStats = SongStats .. SONGMAN:GetNumCourses() .. " courses";
 
+local game = GAMESTATE:GetCurrentGame():GetName();
+if game == "popn" or game == "beat" or game == "kb7" or game == "para" then
+	game = "techno"
+end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
@@ -19,7 +23,7 @@ t[#t+1] = LoadFont("_misoreg hires")..{
 	OnCommand=cmd(linear,0.4; diffusealpha,1);	
 }	
 	
-t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. GAMESTATE:GetCurrentGame():GetName()));
+t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game));
 
 t[#t+1] = LoadActor("SimplyLove.png") .. {
 	InitCommand=cmd(zoom, 0.333);

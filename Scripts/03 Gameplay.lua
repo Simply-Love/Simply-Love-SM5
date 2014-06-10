@@ -5,7 +5,14 @@
 ComboThresholdTable = {
 	dance	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
 	pump	=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
-	techno	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+	techno	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+	kb7		=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
+	-- these values are chosen to match Deluxe's PARASTAR:
+	para	=	{ Maintain = "TapNoteScore_W5", Continue = "TapNoteScore_W3" },
+	
+	-- I don't know what these values are supposed to actually be...
+	popn	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+	beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
 };
 
 function GetComboThreshold()
