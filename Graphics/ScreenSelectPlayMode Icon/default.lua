@@ -1,13 +1,22 @@
 local gc = Var("GameCommand");
 local iIndex = gc:GetIndex();
 local sName = gc:GetName();
+local game = GAMESTATE:GetCurrentGame():GetName();
 
 local viewport 	= { w = 200, h = 150};
 local arrow		= { w = 12,  h = 20 };
 local timePerArrow = 0.2;
-local pattern = {"left", "down", "up", "right", "down", "up", "left", "right", "down", "right", "up", "down"}
+local pattern = {
+	dance	= {"left", "down", "up", "right", "down", "up", "left", "right", "down", "right", "up", "down"},
+	pump 	= {"upleft", "upright", "center", "downright", "upright", "center", "upleft", "upright", "center", "downright", "downleft", "center"},
+	techno 	= {"upleft", "upright", "down", "downright", "downleft", "up", "down", "right", "left", "downright", "downleft", "up"}
+};
 
-
+-- I don't intend to include visualization for kb7, beat, or pop'n,
+-- so fall back on the visualization for dance if necessary.
+if not pattern[game] then
+	game = "dance";
+end
 
 local t = Def.ActorFrame{
 	
@@ -48,42 +57,98 @@ local t = Def.ActorFrame{
 };
 
 
-local playfield = Def.ActorFrame{
+local playfield = Def.ActorFrame{};
+	
+if game == "pump" then
+	
+	-- downleft receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,-90; x,-arrow.w*4; y,-55; zoom, 0.45);
+	};
+	-- upleft receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(x,-arrow.w*2; y,-55; zoom, 0.45);
+	};
+	-- center receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-center.png")..{
+		InitCommand=cmd(x,0; y,-55; zoom, 0.45);
+	};
+	-- upright receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,90; x,arrow.w*2; y,-55; zoom, 0.45);
+	};
+	-- downright receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,180; x,arrow.w*4; y,-55; zoom, 0.45);
+	};
+	
+elseif game == "techno" then
+	
+	-- downleft receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,-90; x,-arrow.w*7; y,-55; zoom, 0.45);
+	};
+	-- left receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,-45; x,-arrow.w*5; y,-55; zoom, 0.45);
+	};
+	-- upleft receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(x,-arrow.w*3; y,-55; zoom, 0.45);
+	};
+	-- down receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,-135; x,-arrow.w; y,-55; zoom, 0.45);
+	};
+	-- up receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,45; x,arrow.w; y,-55; zoom, 0.45);
+	};
+	-- upright receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,90; x,arrow.w*3; y,-55; zoom, 0.45);
+	};
+	-- right receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,135; x,arrow.w*5; y,-55; zoom, 0.45);
+	};
+	-- downright receptor arrow
+	playfield[#playfield+1] = LoadActor("pump-arrow.png")..{
+		InitCommand=cmd(rotationz,180; x,arrow.w*7; y,-55; zoom, 0.45);
+	};
+
+else
 	
 	-- left receptor arrow
-	LoadActor("dance-receptor.png")..{
+	playfield[#playfield+1] = LoadActor("dance-receptor.png")..{
 		InitCommand=cmd(addx,-arrow.w*3; addy,-55; zoom, 0.77);
 	};
 	-- down receptor arrow
-	LoadActor("dance-receptor.png")..{
+	playfield[#playfield+1] = LoadActor("dance-receptor.png")..{
 		InitCommand=cmd(rotationz,-90; addx,-arrow.w; addy,-55; zoom, 0.77);
 	};
 	-- up receptor arrow
-	LoadActor("dance-receptor.png")..{
+	playfield[#playfield+1] = LoadActor("dance-receptor.png")..{
 		InitCommand=cmd(rotationz,90; addx,arrow.w; addy,-55; zoom, 0.77);
 	};
 	-- right receptor arrow
-	LoadActor("dance-receptor.png")..{
+	playfield[#playfield+1] = LoadActor("dance-receptor.png")..{
 		InitCommand=cmd(rotationz,180; addx,arrow.w*3; addy,-55; zoom, 0.77);
 	};
-};
-
-
-
-
+end
 
 
 
 local function LoopThisArrow(self,i)
 	-- reset the y of this arrow to a lower position
-	self:y(#pattern * arrow.h);
+	self:y(#pattern[game] * arrow.h);
 
 	-- apply tweens appropriately
 	if sName == "Nonstop" then
-		self:ease(timePerArrow * #pattern, 75);
+		self:ease(timePerArrow * #pattern[game], 75);
 		self:addrotationz(720);
 	else
-		self:linear(timePerArrow * #pattern);		
+		self:linear(timePerArrow * #pattern[game]);		
 	end
 	
 	--  -55 seems to be a good static y value to tween to
@@ -99,18 +164,65 @@ end
 local function YieldStepPattern(i, dir)
 	
 	local rz, ax;
-	if dir == "left" then
-		rz = 0;
-		ax = -arrow.w*3;
-	elseif dir == "down" then
-		rz = -90;
-		ax = -arrow.w;
-	elseif dir == "up" then
-		rz = 90;
-		ax = arrow.w;
-	elseif dir == "right" then
-		rz = 180;
-		ax = arrow.w*3;
+	if game == "pump" then
+		if dir == "downleft" then
+			rz = -90;
+			ax = -arrow.w*4;
+		elseif dir == "upleft" then
+			rz = 0;
+			ax = -arrow.w*2;
+		elseif dir == "center" then
+			rz = 0;
+			ax = 0;
+		elseif dir == "upright" then
+			rz = 90;
+			ax = arrow.w*2;
+		elseif dir == "downright" then
+			rz = 180;
+			ax = arrow.w*4;
+		end
+	elseif game == "techno" then
+		
+		if dir == "downleft" then
+			rz = -45;
+			ax = -arrow.w*7;
+		elseif dir == "left" then
+			rz = 0;
+			ax = -arrow.w*5;
+		elseif dir == "upleft" then
+			rz = 45;
+			ax = -arrow.w*3;
+		elseif dir == "down" then
+			rz = -90;
+			ax = -arrow.w;
+		elseif dir == "up" then
+			rz = 90;
+			ax = arrow.w;
+		elseif dir == "upright" then
+			rz = 135;
+			ax = arrow.w*3;
+		elseif dir == "right" then
+			rz = 180;
+			ax = arrow.w*5;
+		elseif dir == "downright" then
+			rz = 225;
+			ax = arrow.w*7;
+		end
+		
+	else
+		if dir == "left" then
+			rz = 0;
+			ax = -arrow.w*3;
+		elseif dir == "down" then
+			rz = -90;
+			ax = -arrow.w;
+		elseif dir == "up" then
+			rz = 90;
+			ax = arrow.w;
+		elseif dir == "right" then
+			rz = 180;
+			ax = arrow.w*3;
+		end
 	end
 	
 	local step = Def.ActorFrame{
@@ -137,22 +249,57 @@ local function YieldStepPattern(i, dir)
 		end;
 		LoopCommand=function(self)
 			LoopThisArrow(self,i);
-		end;	
+		end;
+	};
+	
+	if game == "pump" then
+		
+		if pattern[game][i] == "center" then
 			
+			-- white background center arrow
+			step[#step+1] = LoadActor("pump-center.png")..{
+				InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.45; );
+				OffCommand=cmd(diffusealpha,0);
+			};
+			
+			-- colorful center arrow
+			step[#step+1] = LoadActor("pump-center.png")..{
+				InitCommand=cmd( diffuse,GetHexColor(i); zoom, 0.4; );
+				GainFocusCommand=cmd(diffuse,GetHexColor(i));
+				LoseFocusCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
+				OffCommand=cmd(diffusealpha,0);
+			};
+		else
+			-- white background arrow
+			step[#step+1] = LoadActor("pump-arrow.png")..{
+				InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.45; );
+				OffCommand=cmd(diffusealpha,0);
+			};
+			
+			-- colorful arrow
+			step[#step+1] = LoadActor("pump-arrow.png")..{
+				InitCommand=cmd( diffuse,GetHexColor(i); zoom, 0.4; );
+				GainFocusCommand=cmd(diffuse,GetHexColor(i));
+				LoseFocusCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
+				OffCommand=cmd(diffusealpha,0);
+			};
+		end
+		
+	else
 		-- white background arrow
-		LoadActor("dance-receptor.png")..{
+		step[#step+1] = LoadActor("dance-receptor.png")..{
 			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.77; );
 			OffCommand=cmd(diffusealpha,0);
 		};
 	
 		-- colorful arrow
-		LoadActor("dance-arrow.png")..{
+		step[#step+1] = LoadActor("dance-arrow.png")..{
 			InitCommand=cmd( diffuse,GetHexColor(i); zoom, 0.77; );
 			GainFocusCommand=cmd(diffuse,GetHexColor(i));
 			LoseFocusCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
 			OffCommand=cmd(diffusealpha,0);
-		};
-	};
+		};	
+	end
 	
 
 	return step;
@@ -163,8 +310,8 @@ end;
 
 
 
-for i=1,#pattern do
-	playfield[#playfield+1] = YieldStepPattern(i, pattern[i]);
+for i=1,#pattern[game] do
+	playfield[#playfield+1] = YieldStepPattern(i, pattern[game][i]);
 end
 
 t[#t+1] = playfield;
