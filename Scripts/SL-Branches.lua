@@ -18,14 +18,6 @@ Branch.AfterGameplay = function()
 	if( pm == "PlayMode_Nonstop" )	then return "ScreenEvaluationNonstop" end
 end
 
-Branch.AfterInit = function()
-	if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
-		return Branch.TitleMenu()
-	else
-		return "ScreenSimplyLove"
-	end
-end
-
 -- Let's pretend I understand why this is necessary
 Branch.AfterScreenSelectPlayMode = function()
 	local gameName = GAMESTATE:GetCurrentGame():GetName();
