@@ -25,13 +25,13 @@ TODO:
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
-* Make ScreenSelectPlayMode change "demonstrations" to reflect pump and techno modes (requires additional graphics)
 * setting long/marathon cutoff lengths via this menu like oITG
 * setting per-screen MenuTimers via a menu
 * reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense
 
 **KNOWN BUGS**
 
+* Custom DifficultyList breaks with certain combinations of edits
 * ScreenRanking2 currently doesn't populate with any course scores
 * CourseMode MusicWheel lags
 
