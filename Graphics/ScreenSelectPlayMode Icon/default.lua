@@ -126,7 +126,6 @@ local function YieldStepPattern(i, dir)
 		FirstLoopCommand=function(self)
 			-- apply tweens appropriately
 			if sName == "Nonstop" then
-				--self:decelerate(i*timePerArrow);
 				self:ease(timePerArrow * i, 75);
 				self:addrotationz(720);
 			else
@@ -141,14 +140,14 @@ local function YieldStepPattern(i, dir)
 		end;	
 			
 		-- white background arrow
-		LoadActor("dance-arrow.png")..{
-			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.8; );
+		LoadActor("dance-receptor.png")..{
+			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.77; );
 			OffCommand=cmd(diffusealpha,0);
 		};
 	
 		-- colorful arrow
 		LoadActor("dance-arrow.png")..{
-			InitCommand=cmd( diffuse,GetHexColor(i); zoom, 0.74; );
+			InitCommand=cmd( diffuse,GetHexColor(i); zoom, 0.77; );
 			GainFocusCommand=cmd(diffuse,GetHexColor(i));
 			LoseFocusCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
 			OffCommand=cmd(diffusealpha,0);
