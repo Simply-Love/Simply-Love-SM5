@@ -69,8 +69,6 @@ Branch.AfterProfileSave = function()
 			else
 				SL_SongsRemaining = SL_SongsRemaining - 1;
 			end
-		
-			SM(SL_SongsRemaining);
 			
 			-- check first to see how many songs are remaining
 			-- if none, send the player(s) on to ScreenEvalutationSummary
