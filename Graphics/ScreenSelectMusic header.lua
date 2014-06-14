@@ -1,46 +1,29 @@
 local sStage = "";
+local iSongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
+local iAdditionalSongs = 0;
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(queuecommand,"FigureStuffOut");
 	FigureStuffOutCommand=function(self)
 	
 		if not PREFSMAN:GetPreference("EventMode") then
-	
-			-- GAMESTATE:GetNumStagesLeft() asks for a playernumber because latejoin can
-			-- cause discrepencies between players.  For Simply Love, we only care about
-			-- which player has fewer stages remaining; we use that value for both.
-			local iStagesLeft = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
-
-			local iSongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay");
-			local iStageNumber = (iSongsPerPlay - iStagesLeft);
-	
-			local CurrentSong = GAMESTATE:GetCurrentSong();
-			local bIsLong = CurrentSong:IsLong();
-			local bIsMarathon = CurrentSong:IsMarathon();
-			local iAdditionalStagesThisSongCountsFor = bIsLong and 1 or bIsMarathon and 2 or 0;
-	
-			-- This file produces the header for ScreenSelectMusic and ScreenEvaluationStage.
+		
+			sStage = THEME:GetString("Stage", "Stage") .. " " .. tostring(iSongsPerPlay - SL_SongsRemaining + 1);
 			local topscreen = SCREENMAN:GetTopScreen();
+			
 			if topscreen then
-				
-				-- iStageNumber could be 0, which would read as "Stage 0"
-				-- Add 1 here for display purposes.
-				if topscreen:GetName() == "ScreenSelectMusic" then
-					iStageNumber = iStageNumber + 1;
-				end
-				
-				-- The internal StageNumber has already incremented 1 by ScreenEvalutionStage.
-				-- Subtract the appropriate amount  (2, 1, or 0) from that StageNumber for display purposes.
-				if topscreen:GetName() == "ScreenEvaluationStage" then					
-					iStageNumber = iStageNumber - iAdditionalStagesThisSongCountsFor;
+				if topscreen:GetName() == "ScreenEvaluationStage" then
+					local song = GAMESTATE:GetCurrentSong();
+					if song then
+						if song:IsLong() then iAdditionalSongs = 1 end
+						if song:IsMarathon() then iAdditionalSongs = 2 end
+					end
 				end
 			end
-	
-			sStage = THEME:GetString("Stage", "Stage") .. " " .. tostring(iStageNumber);
-
-			if iStageNumber + iAdditionalStagesThisSongCountsFor >= iSongsPerPlay then
+			
+			if SL_SongsRemaining - iAdditionalSongs <= 1 then
 				sStage = THEME:GetString("Stage", "Final");
-			end;
+			end
 		else
 			sStage = THEME:GetString("Stage", "Event");
 		end

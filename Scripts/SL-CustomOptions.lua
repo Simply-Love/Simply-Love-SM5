@@ -27,3 +27,29 @@ function OptionRowEditorNoteskin()
 		end,
 	}
 end
+
+function OptionRowAllowFailingOutOfSet()
+	local failTypes = {"Yes", "No"}
+	
+	return {
+		Name = "Allow Fail Out Of Set",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = failTypes,
+		LoadSelections = function(self, list, pn)
+			local failType = GetUserPref("AllowFailingOutOfSet") or "Yes";
+			local i = FindInTable(failType, failTypes) or 1;
+			list[i] = true;
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #failTypes do
+				if list[i] then
+					SetUserPref("AllowFailingOutOfSet", failTypes[i])
+					break
+				end
+			end
+		end,
+	}
+end
