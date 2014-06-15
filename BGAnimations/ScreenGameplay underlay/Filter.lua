@@ -15,9 +15,9 @@ local function InitFilter()
 	
 	local darkness = getenv("ScreenFilter"..pName)
 	if darkness == "Dark" then
-		filterColor = color("#00000088");
+		filterColor = color("#00000099");
 	elseif darkness == "Darker" then
-		filterColor = color("#000000AA");
+		filterColor = color("#000000BB");
 	elseif darkness == "Darkest" then
 		filterColor = color("#000000EE");
 	else
