@@ -34,7 +34,7 @@ function SpeedModsNew()
 	local blank = {"       "};
 
 	local t = {
-		Name = "SpeedNew",
+		Name = "SpeedModNew",
 		LayoutType = "ShowOneInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
