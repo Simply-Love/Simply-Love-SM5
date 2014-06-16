@@ -229,15 +229,9 @@ local t = Def.ActorFrame{
 			end;
 		};
 
-
-
 		-- numbers
 		LoadActor("judgeNumbers", PLAYER_1)..{
 			InitCommand=cmd(x,SCREEN_CENTER_X-64; y, SCREEN_CENTER_Y-24; zoom, 0.8);
-		};
-		
-		LoadActor("playerOptions", PLAYER_1)..{
-			InitCommand=cmd(xy, SCREEN_CENTER_X -155, SCREEN_CENTER_Y+208;);
 		};
 		
 		Def.GraphDisplay{
@@ -257,6 +251,10 @@ local t = Def.ActorFrame{
 				local stageStats = STATSMAN:GetCurStageStats();
 				self:Set(stageStats, playerStageStats);
 			end;
+		};
+		
+		LoadActor("playerOptions", PLAYER_1)..{
+			InitCommand=cmd(xy, SCREEN_CENTER_X -155, SCREEN_CENTER_Y+208;);
 		};
 		
 		-- was PLAYER_1 disqualified from ranking?
@@ -393,18 +391,11 @@ local t = Def.ActorFrame{
 				self:settext(text);
 			end;
 		};
-
-		
-		
+	
 
 		-- numbers
 		LoadActor("judgeNumbers", PLAYER_2)..{
 			InitCommand=cmd(x,SCREEN_CENTER_X+64;y,SCREEN_CENTER_Y-24; zoom, 0.8);
-		};
-
-		-- player 2's options
-		LoadActor("playerOptions", PLAYER_2)..{
-			InitCommand=cmd(xy, SCREEN_CENTER_X +155, SCREEN_CENTER_Y+208;);
 		};
 		
 		Def.GraphDisplay{
@@ -425,6 +416,11 @@ local t = Def.ActorFrame{
 				local stageStats = STATSMAN:GetCurStageStats();
 				self:Set(stageStats, playerStageStats);
 			end;
+		};
+		
+		-- player 2's options
+		LoadActor("playerOptions", PLAYER_2)..{
+			InitCommand=cmd(xy, SCREEN_CENTER_X +155, SCREEN_CENTER_Y+208;);
 		};
 		
 		-- was PLAYER_2 disqualified from ranking?
