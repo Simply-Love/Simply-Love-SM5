@@ -1,24 +1,32 @@
 function PlayerJudgment()
 	
-	-- allow users to artbitrarily add new judgment graphics to /Graphics/_judgments/
+	-- Allow users to artbitrarily add new judgment graphics to /Graphics/_judgments/
 	-- without needing to modify this script;
-	-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN 
+	-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN.
 	local path = THEME:GetPathG("","_judgments");
 	local files = FILEMAN:GetDirListing(path.."/");
-	-- "Love" is a special case; it should always be first
-	local judgmentGraphics = {"Love"};
+	local judgmentGraphics = {};
 	
-	for k,filename in ipairs(files) do		
-		-- use regexp to get only the name of the graphic, stripping out the extension 
-		local name = string.gsub(filename, " %dx%d.png", "");
-		-- the 3_9 graphic is a special case; we want it to appear in the options with a period (3.9 not 3_9)
-		if name == "3_9" then name = "3.9" end
+	for k,filename in ipairs(files) do
 		
-		-- dynamically fill the table
-		-- Love is already in the table, and
-		-- we don't want files that start with a dot (like .DS_Store)
-		if name ~= "Love" and not string.find(name, ".", 1, true) then
-			judgmentGraphics[#judgmentGraphics+1] = name
+		-- A user might put something that isn't a suitable judgment graphic
+		-- into /Graphics/_judgments/ (also sometimes hidden files like .DS_Store show up here).
+		-- Do our best to filter out such files now.
+		if string.match(filename, " %dx%d.png") then
+			-- use regexp to get only the name of the graphic, stripping out the extension 
+			local name = string.gsub(filename, " %dx%d.png", "");
+		
+			-- The 3_9 graphic is a special case;
+			-- we want it to appear in the options with a period (3.9 not 3_9).
+			if name == "3_9" then name = "3.9" end
+		
+			-- Dynamically fill the table.
+			-- Love is a special case; it should always be first.
+			if name == "Love" then
+				table.insert(judgmentGraphics, 1, name);
+			else
+				judgmentGraphics[#judgmentGraphics+1] = name
+			end
 		end
 	end
 	
