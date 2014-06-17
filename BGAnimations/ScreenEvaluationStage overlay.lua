@@ -3,6 +3,4 @@ local t = Def.ActorFrame{
 	LoadActor( THEME:GetPathB("ScreenEvaluation","common") );
 };
 
-t[#t+1] = StandardDecorationFromFileOptional("Header","Header");
-
 return t;
