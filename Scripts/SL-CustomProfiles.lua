@@ -90,7 +90,7 @@ function SaveProfileCustom(profile, dir)
 		-- if a particular value is nil, nothing gets written
 		for k,v in pairs(prefs) do
 		
-			local fullFilename = PrefPath..v..".cfg";
+			local fullFilename = PrefPath..k..".cfg";
 
 			if f:Open(fullFilename, 2) then
 				
