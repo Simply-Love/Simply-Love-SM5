@@ -1,60 +1,28 @@
+-- Why bother having two distinct name entry screens?  Well, sit down, and I'll tell you a story...
+
+-- ScreenNameEntryTraditional has certain very helpful methods that are only available to it.
+-- GetEnteringName() is only available to ScreenNameEntryTraditional and is used to determine
+-- which players, if any, are entering highscore names.
+
+-- One thing that ScreenNameEntryTraditional lacks, however, is the ability to listen for message commands
+-- like MenuRightP1MessageCommand and MenuLeftP2MessageCommand. Those are very helpful when you want a player
+-- to be able to hold down a menu button to contine scrolling through letters.
+-- I did try, briefly, to set codes in Metrics for "held" and "released" menubuttons to recreate this functionality,
+-- but the results were less than satisfactory.
+
+-- So, use ScreenNameEntryTraditional to determine which players are entering highscore names, set an env value,
+-- and proceed to ScreenNameEntryActual.  On ScreenNameEntryActual, have players enter their names if necessary,
+-- and eventually save those names using GAMESTATE:StoreRankingName()
+
+
 local Players = GAMESTATE:GetHumanPlayers();
+
+-- This env value is a table containing a boolean value for keys {P1, P2}
+-- that was set on ScreenNameEntryTraditional underlay.lua
 local Entering = getenv("PlayersEnteringHighScoreNames");
 
 -- get the number of stages that were played
 local numStages = STATSMAN:GetStagesPlayed();
-
-
--- This loop determines which players, if any, are able to enter a high score name.
--- I chose NOT to use StageStats:PlayerHasHighScore(pn) to determine this
--- because it always caused an SM crash if either player had late-joined (no matter what I tried).
--- Instead, I use HighScore:IsFillInMarker()
-
--- for pn in ivalues(Players) do
--- 	
--- 	-- Attempt to get a player profile.
--- 	-- If there isn't one, use the machine profile for this player.
--- 	local profile = GetPlayerOrMachineProfile(pn);
--- 	
--- 	for i=numStages,1,-1 do
--- 		local stageStats = STATSMAN:GetPlayedStageStats(i);
--- 		
--- 		if stageStats then
--- 			local song = stageStats:GetPlayedSongs()[1];
--- 			
--- 			if stageStats then
--- 				local playerStageStats = stageStats:GetPlayerStageStats(pn);
--- 
--- 				if playerStageStats then
--- 					local steps = playerStageStats:GetPlayedSteps()[i];
--- 					if song and steps then
--- 						local highScoreList = profile:GetHighScoreList(song, steps):GetHighScores();
--- 		
--- 						Trace("\n\n")
--- 						Trace(ToEnumShortString(pn))
--- 						Trace("-------------------------------------------------")
--- 
--- 						for scoreNum=1,#highScoreList do
--- 							score = highScoreList[scoreNum];
--- 							
--- 							Trace(score:GetName() .. " " .. score:GetScore() .. " " .. tostring(score:IsFillInMarker()))
--- 							
--- 							if score then
--- 								if score:IsFillInMarker() then
--- 									Entering[ToEnumShortString(pn)] = true;
--- 								end
--- 							end
--- 						end
--- 						
--- 						Trace("-------------------------------------------------")
--- 						Trace("\n\n")
--- 					end
--- 				end
--- 			end
--- 		end
--- 	end
--- end
-
 
 local t = Def.ActorFrame {};
 
@@ -144,9 +112,7 @@ t[#t+1] = Def.Actor {
 			end
 		end
 	
-		-- set these back to nil now
-		setenv("HighScoreNameP1", nil);
-		setenv("HighScoreNameP2", nil);
+		-- set this back to nil now
 		setenv("PlayersEnteringHighScoreNames", nil);
 	end;
 };
