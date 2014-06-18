@@ -104,66 +104,80 @@ for i=numStages,1,-1 do
 			highscores = highscoreList:GetHighScores();
 		end
 		
-		t[#t+1] = LoadFont("_misoreg hires")..{
-			InitCommand=function(self)
-				self:diffusealpha(0);
-				self:zoom(0.95);
-				if Player == PLAYER_1 then
-					self:x(SCREEN_CENTER_X-160);
-				elseif Player == PLAYER_2 then
-					self:x(SCREEN_CENTER_X+160);
-				end
-				self:y(SCREEN_CENTER_Y+136);
-			end;
-			OnCommand=function(self)
+		if highscores then
+			
+			-- currently hardcoded to only display 5 highscores per stage
+			-- this really should use PREFSMAN:GetPreference("MaxHighScoresPerListForMachine")
+			for s=1,5 do
 				
-		
-				if highscores then
+				local score, name, date;
+				local numbers = {};
+
+				if highscores[s] then
+					score = FormatPercentScore(highscores[s]:GetPercentDP());
+					name = highscores[s]:GetName();	
+					date = highscores[s]:GetDate();
 					
-					-- currently hardcoded to only display 5 highscores per stage
-					-- this really should use PREFSMAN:GetPreference("MaxHighScoresPerListForMachine")
-					for s=1,5 do
-						local score, name, date;
-						local numbers = {};
-						
-						if highscores[s] then
-							score = highscores[s]:GetPercentDP();
-							
-							name = highscores[s]:GetName();							
-							if name == "" then name = "----" end
-							
-							date = highscores[s]:GetDate();
-							
-							for number in string.gmatch(date, "%d+") do
-								numbers[#numbers+1] = number;
-						    end
-							
-							date = months[tonumber(numbers[2])] .. " " ..  numbers[3] ..  ", " .. numbers[1];
-							text = text .. (name .. "            " .. FormatPercentScore(score) .. "            " .. date .. "\n");
-						else
-							text = text .. "----              -----           -----------\n";
-						end
-						
-						
-					end
-				end;
+					-- make the date look nice
+					for number in string.gmatch(date, "%d+") do
+						numbers[#numbers+1] = number;
+				    end
+					date = months[tonumber(numbers[2])] .. " " ..  numbers[3] ..  ", " .. numbers[1];
+				else
+					name	= "----";
+					score	= "------";
+					date	= "----------";
+				end
 				
-				self:settext(text);
-				self:sleep(durationPerSong * (math.abs(i-numStages)) );
-				self:queuecommand("Display");
-			end;
-			DisplayCommand=function(self)					
-				self:diffusealpha(1);
-				self:sleep(durationPerSong);
-				self:diffusealpha(0);
-				self:queuecommand("Wait");
-			end;
-			WaitCommand=function(self)
-				self:sleep(durationPerSong * (numStages-1))
-				self:queuecommand("Display")
-			end;
-		};
-		
+				
+				
+				local row = Def.ActorFrame{
+					Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(Player);
+					InitCommand=function(self)
+						self:diffusealpha(0);
+						self:zoom(0.95);
+						if Player == PLAYER_1 then
+							self:x(SCREEN_CENTER_X-160);
+						elseif Player == PLAYER_2 then
+							self:x(SCREEN_CENTER_X+160);
+						end
+						self:y(SCREEN_CENTER_Y+60);
+					end;
+					OnCommand=function(self)
+						self:sleep(durationPerSong * (math.abs(i-numStages)) );
+						self:queuecommand("Display");
+					end;
+					DisplayCommand=function(self)				
+						self:diffusealpha(1);
+						self:sleep(durationPerSong);
+						self:diffusealpha(0);
+						self:queuecommand("Wait");
+					end;
+					WaitCommand=function(self)
+						self:sleep(durationPerSong * (numStages-1))
+						self:queuecommand("Display")
+					end;				
+				};
+				
+				
+				row[#row+1] = LoadFont("_misoreg hires")..{
+					Text=name;
+					InitCommand=cmd(horizalign,left; xy, -130, s*22 );
+				};
+				
+				row[#row+1] = LoadFont("_misoreg hires")..{
+					Text=score;
+					InitCommand=cmd(horizalign,left; xy, -40, s*22 );
+				};
+				
+				row[#row+1] = LoadFont("_misoreg hires")..{
+					Text=date;
+					InitCommand=cmd(horizalign,left; xy, 50, s*22 );
+				};
+				
+				t[#t+1] = row;
+			end
+		end
 	end
 end
 
