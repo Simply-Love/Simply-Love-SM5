@@ -1,5 +1,12 @@
 local t = Def.ActorFrame{
+
+	-- I'll uncomment this when SaveScreenshot() is in the master branch.
 	
+	-- CodeMessageCommand=function(self, params)
+	-- 	if params.Name == "Screenshot" then
+	-- 		SaveScreenshot(params.PlayerNumber, false, true);
+	-- 	end
+	-- end;
 	
 	-- quad behind the song/course title text
 	Def.Quad{
@@ -9,7 +16,7 @@ local t = Def.ActorFrame{
 	-- song/course title text
 	LoadFont("_misoreg hires")..{
 		InitCommand=cmd(CenterX; y,54; NoStroke;shadowlength,1;);
-		OnCommand=function(self)	
+		OnCommand=function(self)
 			local songtitle = GAMESTATE:GetCurrentSong():GetDisplayFullTitle();
 			if songtitle then
 				self:settext(songtitle);
