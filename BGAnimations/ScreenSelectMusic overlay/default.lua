@@ -1,5 +1,8 @@
 local t = Def.ActorFrame{};
 
+-- Apply player modifiers from profile
+t[#t+1] = LoadActor("playerModifiers");
+
 -- Banner
 t[#t+1] = LoadActor("banner");
 

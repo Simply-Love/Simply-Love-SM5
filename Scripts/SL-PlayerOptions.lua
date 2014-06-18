@@ -124,14 +124,7 @@ function OptionRowPlayerMini()
 			end
 			
 			setenv("Mini"..ToEnumShortString(pn), sSave);
-			
-			if sSave == "Normal" then
-				sSave = "no mini";
-			else
-				sSave = sSave .. " mini";
-			end
-			
-			GAMESTATE:ApplyGameCommand('mod,' ..  sSave, pn);
+			ApplyMini(pn);
 		end;
 	};
 	setmetatable( t, t );
@@ -139,8 +132,21 @@ function OptionRowPlayerMini()
 end;
 
 
-
-
+-- ApplyMini() is called above, from OptionRowPlayerMini()
+-- but also, and less obviously, from
+-- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua
+function ApplyMini(pn)
+	local mini;
+	local envMini = getenv("Mini" .. ToEnumShortString(pn)) or "Normal";
+	
+	if envMini == "Normal" then
+		mini = "no mini";
+	else
+		mini = envMini .. " mini";
+	end
+	
+	GAMESTATE:ApplyGameCommand('mod,' .. mini, pn)
+end
 
 
 
