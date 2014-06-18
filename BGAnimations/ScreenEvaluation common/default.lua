@@ -15,7 +15,7 @@ local t = Def.ActorFrame{
 
 	-- song/course title text
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(CenterX; y,54; NoStroke;shadowlength,1;);
+		InitCommand=cmd(xy,SCREEN_CENTER_X,54; NoStroke; shadowlength,1; maxwidth, 294 );
 		OnCommand=function(self)
 			local songtitle = GAMESTATE:GetCurrentSong():GetDisplayFullTitle();
 			if songtitle then

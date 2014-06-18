@@ -13,7 +13,7 @@ local t = Def.ActorFrame{
 	
 	-- the title of the song
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(zoom,0.8; addy,-40);
+		InitCommand=cmd(zoom,0.8; addy,-40; maxwidth, 350;);
 		OnCommand=function(self)
 			if song then
 				self:settext(song:GetDisplayFullTitle());

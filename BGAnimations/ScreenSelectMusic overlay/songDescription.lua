@@ -41,11 +41,9 @@ local t = Def.ActorFrame{
 
 			-- Song Artist
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign,left; NoStroke; x, 5 );
+				InitCommand=cmd(horizalign,left; NoStroke; x, 5; maxwidth,WideScale(225,280) );
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong();
-					
-					self:maxwidth(WideScale(225,300));
 					
 					if song then
 						if song:GetDisplayArtist() then

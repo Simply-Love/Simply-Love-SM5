@@ -18,7 +18,7 @@ local t = Def.ActorFrame{
 	
 	--the name of the song, on top of the graphical banner
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(x,WideScale(-220,-280);halign,0;shadowlength,1;wrapwidthpixels,264;maxheight,58);
+		InitCommand=cmd(x,WideScale(-220,-280);halign,0;shadowlength,1;wrapwidthpixels,264;maxheight,58;maxwidth,280);
 		SetCommand=function(self, params)
 			if params.Song then
 				self:settext( params.Song:GetDisplayFullTitle() );
