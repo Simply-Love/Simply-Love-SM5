@@ -21,7 +21,7 @@ end
 local t = Def.ActorFrame{
 	
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("#1E282F"); zoomto, 300, 30);
+		InitCommand=cmd(diffuse,color("#1E282F"); zoomto, 300, 26);
 	};
 	
 	LoadFont("_misoreg hires")..{

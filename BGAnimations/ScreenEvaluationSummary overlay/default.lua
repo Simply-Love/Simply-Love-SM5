@@ -37,9 +37,13 @@ for i=1,numStages do
 	if stageStats then
 		t[#t+1] = LoadActor("stageStats", stageStats)..{
 			Name="Stage"..i.."Stats";
+			InitCommand=cmd(diffusealpha,0);
 			OnCommand=function(self)
 				self:x(SCREEN_CENTER_X);
 				self:y( (SCREEN_HEIGHT/5.25) * (i-0.35) );
+				self:sleep(i*0.1);
+				self:linear(0.25);
+				self:diffusealpha(1);
 			end
 		};
 		
@@ -48,10 +52,13 @@ for i=1,numStages do
 		-- but don't want one drawn after the last song that will appear on this page
 		if i ~= numStages then
 			t[#t+1] = Def.Quad{
-				InitCommand=cmd(zoomto,SCREEN_WIDTH*0.8,1;faderight,0.1;fadeleft,0.1;diffuse,color("#AAAAAAAA"));
+				InitCommand=cmd(zoomto,SCREEN_WIDTH*0.8,1;faderight,0.1;fadeleft,0.1;diffusealpha,0);
 				OnCommand=function(self)
 					self:x(SCREEN_CENTER_X);
 					self:y( (SCREEN_HEIGHT/5.25) * (i-0.5) + 54);
+					self:sleep(i*0.1);
+					self:linear(0.25);
+					self:diffusealpha(0.5);
 				end;
 			};
 		end

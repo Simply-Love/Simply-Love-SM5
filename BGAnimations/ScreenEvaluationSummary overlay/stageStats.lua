@@ -11,26 +11,18 @@ local song = stageStats:GetPlayedSongs()[1];
 --
 local t = Def.ActorFrame{
 	
-	-- the title of the song
-	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(zoom,0.8; addy,-40; maxwidth, 350;);
-		OnCommand=function(self)
-			if song then
-				self:settext(song:GetDisplayFullTitle());
-			end
-		end;
-	};
-	
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
-		OnCommand=cmd(zoom, 0.4);
+		InitCommand=cmd(y,-6; zoom, 0.333);
 	};
 	
 	-- the banner, if there is one
 	Def.Sprite{
 		Name="Banner";
-		OnCommand=function(self)
-	
+		InitCommand=function(self)
+			self:y(-6);
+			
+			local bannerpath;
 			if song then
 				bannerpath = song:GetBannerPath();
 			end			
@@ -38,7 +30,34 @@ local t = Def.ActorFrame{
 			if bannerpath then
 				self:LoadBanner(bannerpath);			
 				self:setsize(418,164);
-				self:zoom(0.4);
+				self:zoom(0.333);
+			end
+		end;
+	};
+	
+	-- the title of the song
+	LoadFont("_misoreg hires")..{
+		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350;);
+		OnCommand=function(self)
+			if song then
+				self:settext(song:GetDisplayFullTitle());
+			end
+		end;
+	};
+	
+	-- the BPM(s) of the song
+	LoadFont("_misoreg hires")..{
+		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350;);
+		OnCommand=function(self)
+			if song then
+				local BPMs = song:GetDisplayBpms();
+				if BPMs then
+					if BPMs[1] == BPMs[2] then
+						self:settext(round(BPMs[1]) .. " bpm");
+					else
+						self:settext(round(BPMs[1]) .. " - " .. round(BPMs[2]) .. " bpm");
+					end
+				end
 			end
 		end;
 	};
@@ -76,26 +95,26 @@ for pn in ivalues(Players) do
 			};
 	
 	
-			-- variables for positioning and halign, dependent on playernumber
+			-- variables for positioning and horizalign, dependent on playernumber
 			local col1x, col2x, gradex, align1, align2;
 	
 			if pn == PLAYER_1 then
 				col1x =  -90;
-				col2x =  -SCREEN_WIDTH/WideScale(2.25,2.5);
+				col2x =  -SCREEN_WIDTH/2.5;
 				gradex = -SCREEN_WIDTH/3.33;
-				align1 = 1;
-				align2 = 0;
+				align1 = right;
+				align2 = left;
 			elseif pn == PLAYER_2 then
 				col1x = 90;
-				col2x = SCREEN_WIDTH/WideScale(2.25,2.5);
+				col2x = SCREEN_WIDTH/2.5;
 				gradex = SCREEN_WIDTH/3.33;
-				align1= 0;
-				align2 = 1;
+				align1= left;
+				align2 = right;
 			end
 	
 			--percent score
 			t[#t+1] = LoadFont("_wendy small")..{
-				InitCommand=cmd(zoom,0.5; halign, align1; x,col1x; addy,-24);
+				InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24);
 				OnCommand=function(self)
 					if percentScore then
 				
@@ -107,7 +126,7 @@ for pn in ivalues(Players) do
 	
 			-- difficulty meter
 			t[#t+1] = LoadFont("_wendy small")..{
-				InitCommand=cmd(zoom,0.4; halign, align1; x,col1x; addy,4);
+				InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4);
 				OnCommand=function(self)
 					if difficultyMeter then
 						if difficulty then
@@ -122,7 +141,7 @@ for pn in ivalues(Players) do
 	
 			-- stepartist
 			t[#t+1] = LoadFont("_misoreg hires")..{
-				InitCommand=cmd(zoom,0.65; halign, align1; x,col1x; addy,28);
+				InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28);
 				OnCommand=function(self)
 					if stepartist then
 						self:settext(stepartist);
@@ -131,7 +150,7 @@ for pn in ivalues(Players) do
 			};
 	
 	
-			-- grade
+			-- letter grade
 			t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"))..{
 				OnCommand=cmd(zoom,0.2; x, gradex);
 			};
@@ -141,7 +160,7 @@ for pn in ivalues(Players) do
 			for i=1,#TNSTypes do
 		
 				t[#t+1] = LoadFont("_wendy small")..{
-					InitCommand=cmd(zoom,0.3; halign, align2; x,col2x; y,i*13 - 50);
+					InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50);
 					OnCommand=function(self)
 				
 						local val = playerStats:GetTapNoteScores(TNSTypes[i]);

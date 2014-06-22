@@ -4,7 +4,7 @@ return Def.ActorFrame{
 	-- over every single object in this screen. The fade is stolen from
 	-- Screen cancel because I like how it worked.
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("#000000");FullScreen;diffusealpha,0);
+		InitCommand=cmd(diffuse,Color.Black;FullScreen;diffusealpha,0);
 		OffCommand=cmd(cropbottom,1;fadebottom,.5;linear,0.3;cropbottom,-0.5;diffusealpha,1);
 	};
 
