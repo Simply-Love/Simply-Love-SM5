@@ -242,7 +242,7 @@ local t = Def.ActorFrame{
 		};
 		
 		Def.GraphDisplay{
-			InitCommand=cmd(Load,"GraphDisplay"..SimplyLoveColor(); xy, SCREEN_CENTER_X-155, SCREEN_CENTER_Y+153.5);
+			InitCommand=cmd(Load,"GraphDisplay"..SimplyLoveColor(); xy, SCREEN_CENTER_X-155, SCREEN_CENTER_Y+150.5);
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
 				local stageStats = STATSMAN:GetCurStageStats();
@@ -406,7 +406,7 @@ local t = Def.ActorFrame{
 		};
 		
 		Def.GraphDisplay{
-			InitCommand=cmd(Load,"GraphDisplay"..(SimplyLoveColor()+2)%12+1; xy, SCREEN_CENTER_X+155, SCREEN_CENTER_Y+153.5);
+			InitCommand=cmd(Load,"GraphDisplay"..(SimplyLoveColor()+2)%12+1; xy, SCREEN_CENTER_X+155, SCREEN_CENTER_Y+150.5);
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 				local stageStats = STATSMAN:GetCurStageStats();
