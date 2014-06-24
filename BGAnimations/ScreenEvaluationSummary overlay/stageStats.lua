@@ -117,8 +117,13 @@ for pn in ivalues(Players) do
 				InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24);
 				OnCommand=function(self)
 					if percentScore then
-				
+						
+						-- trim off the % symbol
 						local score = string.sub(FormatPercentScore(percentScore),1,-2);
+						
+						-- If the score is < 10.00% there will be leading whitespace, like " 9.45"
+						-- trim that too, so PLAYER_2's scores align properly.
+						score = string.gsub(score, " ", "")	
 						self:settext(score);
 					end
 				end		
