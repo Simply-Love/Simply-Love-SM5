@@ -14,7 +14,6 @@
 -- and proceed to ScreenNameEntryActual.  On ScreenNameEntryActual, have players enter their names if necessary,
 -- and eventually save those names using GAMESTATE:StoreRankingName()
 
-
 local Players = GAMESTATE:GetHumanPlayers();
 
 -- This env value is a table containing a boolean value for keys {P1, P2}
@@ -110,6 +109,9 @@ t[#t+1] = Def.Actor {
 					PROFILEMAN:GetProfile(pn):SetLastUsedHighScoreName(playerName);
 				end
 			end
+			
+			-- set this player's HighScoreName env value to nil now
+			setenv("HighScoreName" .. ToEnumShortString(pn), nil );
 		end
 	
 		-- set this back to nil now

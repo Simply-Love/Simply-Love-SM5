@@ -17,13 +17,11 @@ local machineProfile = PROFILEMAN:GetMachineProfile();
 
 if PROFILEMAN:IsPersistentProfile(Player) then
 	playerName = PROFILEMAN:GetProfile(Player):GetLastUsedHighScoreName();
+	setenv("HighScoreName" .. ToEnumShortString(Player), playerName );
 end
 
 
 local IsEnteringName = CanEnterName;
-
-
-
 
 
 local possibleCharacters = {
@@ -165,6 +163,8 @@ local Letters = Def.ActorFrame{
 					
 					if string.len(playerName) > 0 then			
 						playerName = string.sub(playerName,1,-2);
+						setenv("HighScoreName" .. ToEnumShortString(Player), playerName );
+						
 						self:GetChild("delete"):playforplayer(Player);
 						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
 					else
