@@ -47,3 +47,12 @@ function EmptyOptionRow()
 	setmetatable(t, t)
 	return t
 end
+
+
+function GetStepsTypeForThisGame(index, type)
+	local game = GAMESTATE:GetCurrentGame():GetName();
+	-- capitalize the first letter
+	game = game:gsub("^%l", string.upper);
+	
+	return "StepsType_" .. game .. "_" .. type;
+end

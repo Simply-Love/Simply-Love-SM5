@@ -32,8 +32,7 @@ TODO:
 **KNOWN BUGS**
 
 * Custom DifficultyList breaks with certain combinations of edits
-* ScreenRanking2 currently doesn't populate with any course scores
-* CourseMode MusicWheel lags
+* ~~CourseMode MusicWheel lags~~ this is engine-side
 
 
 ACKNOWLEDGEMENTS:
@@ -43,5 +42,5 @@ ACKNOWLEDGEMENTS:
 * djpohly ( https://github.com/djpohly ) -- Devin was a constant source of knowledge and help during the months I spent porting this.
 * sigatrev ( https://github.com/sigatrev ) -- Matt helped Lara implement some of the more technical aspects of the original theme and was always available to respond to my questions.
 * freem ( https://github.com/freem ) -- I used AJ's StepMania 5 theme, Moonlight, as the foundation/starting point for this port.
-* Kyzentun ( https://github.com/kyzentun ) -- Kyzentun answered many of my theming questions on IRC and even went out of his way to fix source-related issues that helped me out along my way.  
+* kyzentun ( https://github.com/kyzentun ) -- Kyzentun answered many of my theming questions on IRC and even went out of his way to fix source-related issues that helped me out along my way.  
 * the SM5 dev-team and IRC-frequenters -- Theming in SM5 is significantly easier than it is in 3.95.  Thank you, for that.  Thank you, shakesoda, Midiman, wolfman2000, et al!
