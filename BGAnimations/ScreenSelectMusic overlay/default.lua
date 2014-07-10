@@ -13,7 +13,7 @@ t[#t+1] = LoadActor("songDescription");
 t[#t+1] =  LoadActor("stepArtist");
 
 -- Difficulty Blocks
-t[#t+1] = LoadActor("difficultyBlocks");
+t[#t+1] = LoadActor("CustomStepsDisplayList");
 
 -- Step Data (Number of steps, jumps, holds, etc.)
 t[#t+1] = LoadActor("panedisplay");
