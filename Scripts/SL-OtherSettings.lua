@@ -49,7 +49,7 @@ function EmptyOptionRow()
 end
 
 
-function GetStepsTypeForThisGame(index, type)
+function GetStepsTypeForThisGame(type)
 	local game = GAMESTATE:GetCurrentGame():GetName();
 	-- capitalize the first letter
 	game = game:gsub("^%l", string.upper);
