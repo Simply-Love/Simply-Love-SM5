@@ -1,9 +1,9 @@
-local dc1 = DifficultyIndexColor(1);
-local dc2 = DifficultyIndexColor(2);
+local dc1 = DifficultyIndexColor(1)
+local dc2 = DifficultyIndexColor(2)
 
 local t = Def.ActorFrame{
 	OffCommand=cmd(linear,1);
-};
+}
 
 -- centers
 t[#t+1] = Def.ActorFrame {
@@ -13,36 +13,14 @@ t[#t+1] = Def.ActorFrame {
 	--top center
 	LoadActor("ScreenTitleMenu underlay/heartflycenter.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)			
-			self:diffuse(dc2);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(50);
-			self:zoom(1);
-			self:diffusealpha(0.4);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc2;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,50;zoom,1;diffusealpha,0.4;sleep,0;zoom,0;);
 	};	
 	
 	LoadActor("ScreenTitleMenu underlay/heartflycenter.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1)
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-50);
-			self:zoom(0.6);
-			self:diffusealpha(0.6);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,-50;zoom,0.6;diffusealpha,0.6;sleep,0;zoom,0;);
 	};
-};
-
+}
 
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(diffusealpha,0);
@@ -51,37 +29,14 @@ t[#t+1] = Def.ActorFrame {
 	--bottom center
 	LoadActor("ScreenTitleMenu underlay/heartflycenter.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc2);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(50);
-			self:zoom(0.6);
-			self:diffusealpha(0.6);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc2;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,50;zoom,0.6;diffusealpha,0.6;sleep,0;zoom,0;);
 	};
 
 	LoadActor("ScreenTitleMenu underlay/heartflycenter.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1)
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-50);
-			self:zoom(1);
-			self:diffusealpha(0.4);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,-50;zoom,1;diffusealpha,0.4;sleep,0;zoom,0;);
 	};
 }
-
-
 
 -- up 200
 t[#t+1] = Def.ActorFrame {
@@ -91,41 +46,15 @@ t[#t+1] = Def.ActorFrame {
 	--top left
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-200);
-			self:zoom(1.0);
-			self:diffusealpha(0.6);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-200;zoom,1.0;diffusealpha,0.6;sleep,0;zoom,0;);
 	};
-
 
 	--top right
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(200);
-			self:zoom(1.0);
-			self:diffusealpha(0.4);
-			self:sleep(0);
-			self:zoom(0);	
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,200;zoom,1.0;diffusealpha,0.4;sleep,0;zoom,0;);
 	};
 }
-
-
-
-
 
 --up 250
 t[#t+1] = Def.ActorFrame {
@@ -135,72 +64,25 @@ t[#t+1] = Def.ActorFrame {
 	--top left
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc2);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-200);
-			self:zoom(1.5);
-			self:diffusealpha(0.3);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc2;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-200;zoom,1.5;diffusealpha,0.3;sleep,0;zoom,0;);
 	};
-
 
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-200);
-			self:zoom(0.8);
-			self:diffusealpha(0.6);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-200;zoom,0.8;diffusealpha,0.6;sleep,0;zoom,0;);
 	};
-	
 	
 	--top right
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(200);
-			self:zoom(1.5);
-			self:diffusealpha(0.2);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,200;zoom,1.5;diffusealpha,0.2;sleep,0;zoom,0;);
 	};
-
 
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc2);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(200);
-			self:zoom(0.8);
-			self:diffusealpha(0.4);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc2;zoom,0;diffusealpha,0;accelerate,0.8;addx,200;zoom,0.8;diffusealpha,0.4;sleep,0;zoom,0;);
 	};
 }
-
-
 
 --up 150, out 280
 t[#t+1] = Def.ActorFrame {
@@ -210,38 +92,16 @@ t[#t+1] = Def.ActorFrame {
 	--top left
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-280);
-			self:zoom(1.2);
-			self:diffusealpha(0.6);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-280;zoom,1.2;diffusealpha,0.6;sleep,0;zoom,0;);
 	};
 		
 	--top right
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(280);
-			self:zoom(1.2);
-			self:diffusealpha(0.4);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,280;zoom,1.2;diffusealpha,0.4;sleep,0;zoom,0;);
 	};
 }
 		
-	
 --up 250, out 280
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(diffusealpha,0);
@@ -250,39 +110,16 @@ t[#t+1] = Def.ActorFrame {
 	--top left
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-280);
-			self:zoom(0.2);
-			self:diffusealpha(0.3);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-280;zoom,0.2;diffusealpha,0.3;sleep,0;zoom,0;);
 	};
 	
 	--top right
 	LoadActor("ScreenTitleMenu underlay/heartflytop.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(280);
-			self:zoom(0.2);
-			self:diffusealpha(0.2);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,280;zoom,0.2;diffusealpha,0.2;sleep,0;zoom,0;);
 	};
 }	
-	
-	
-	
+
 --up 200
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(diffusealpha,0);
@@ -291,37 +128,15 @@ t[#t+1] = Def.ActorFrame {
 	--bottom left
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-200);
-			self:zoom(1.0);
-			self:diffusealpha(0.3);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-200;zoom,1.0;diffusealpha,0.3;sleep,0;zoom,0;);
 	};
 	
 	--bottom right
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(200);
-			self:zoom(1.0);
-			self:diffusealpha(0.2);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,200;zoom,1.0;diffusealpha,0.2;sleep,0;zoom,0;);
 	};
 }
-		
 
 --up 250		
 t[#t+1] = Def.ActorFrame {
@@ -331,65 +146,22 @@ t[#t+1] = Def.ActorFrame {
 	-- bottom left
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc2);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-200);
-			self:zoom(1.5);
-			self:diffusealpha(0.6);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc2;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-200;zoom,1.5;diffusealpha,0.6;sleep,0;zoom,0;);
 	};
+	
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-200);
-			self:zoom(0.8);
-			self:diffusealpha(0.3);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-200;zoom,0.8;diffusealpha,0.3;sleep,0;zoom,0;);
 	};
 	-- bottom right
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(200);
-			self:zoom(1.5);
-			self:diffusealpha(0.4);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,200;zoom,1.5;diffusealpha,0.4;sleep,0;zoom,0;);
 	};
-	
-	
 	
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc2);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(200);
-			self:zoom(0.8);
-			self:diffusealpha(0.2);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc2;zoom,0;diffusealpha,0;accelerate,0.8;addx,200;zoom,0.8;diffusealpha,0.2;sleep,0;zoom,0;);
 	};		
 }
 
@@ -401,39 +173,17 @@ t[#t+1] = Def.ActorFrame {
 	--bottom left
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-280);
-			self:zoom(1.2);
-			self:diffusealpha(0.3);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-280;zoom,1.2;diffusealpha,0.3;sleep,0;zoom,0;);
 	};
 	
 	--bottom right
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(280);
-			self:zoom(1.2);
-			self:diffusealpha(0.2);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,280;zoom,1.2;diffusealpha,0.2;sleep,0;zoom,0;);
 	};
 }
 
 --up 250, out 280
-
 t[#t+1] = Def.ActorFrame {
 
 	InitCommand=cmd(diffusealpha,0);
@@ -442,39 +192,13 @@ t[#t+1] = Def.ActorFrame {
 	--bottom left
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0);
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:rotationy(180);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(-280);
-			self:zoom(0.2);
-			self:diffusealpha(0.3);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;rotationy,180;zoom,0;diffusealpha,0;accelerate,0.8;addx,-280;zoom,0.2;diffusealpha,0.3;sleep,0;zoom,0;);
 	};
 	--bottom right
 	LoadActor("ScreenTitleMenu underlay/heartflybottom.png") .. {
 		InitCommand=cmd(diffusealpha,0); 
-		OnCommand=function(self)
-			self:diffuse(dc1);
-			self:zoom(0);
-			self:diffusealpha(0);
-			self:accelerate(0.8);
-			self:addx(280);
-			self:zoom(0.2);
-			self:diffusealpha(0.2);
-			self:sleep(0);
-			self:zoom(0);
-		end
+		OnCommand=cmd(diffuse,dc1;zoom,0;diffusealpha,0;accelerate,0.8;addx,280;zoom,0.2;diffusealpha,0.2;sleep,0;zoom,0;);
 	};
 }
-
-
-
-
-
 
 return t;
