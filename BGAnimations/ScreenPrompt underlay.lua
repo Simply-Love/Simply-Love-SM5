@@ -7,23 +7,23 @@ return Def.ActorFrame{
 	
 	-- the BG for the prompt itself
 	Def.Quad {
-		InitCommand=cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y-56; zoomto, SCREEN_WIDTH*0.75, SCREEN_CENTER_Y*0.5; diffuse,GetCurrentColor(););
+		InitCommand=cmd(xy,_screen.cx, _screen.cy-56; zoomto, _screen.w*0.75, _screen.cy*0.5; diffuse,GetCurrentColor(););
 	};
 	-- white border
-	Border(SCREEN_WIDTH*0.75, SCREEN_CENTER_Y*0.5, 2) .. {
-		InitCommand=cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y-56);
+	Border(_screen.w*0.75, _screen.cy*0.5, 2) .. {
+		InitCommand=cmd(xy,_screen.cx, _screen.cy-56);
 	};
 	
 	
 
 	-- the BG for the choices presented to the player
 	Def.Quad {
-		InitCommand=cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y+120; zoomto, SCREEN_WIDTH*0.75, SCREEN_CENTER_Y*0.25;);
+		InitCommand=cmd(xy,_screen.cx, _screen.cy+120; zoomto, _screen.w*0.75, _screen.cy*0.25;);
 		OnCommand=cmd(diffuse,color("#000000FF"));
 	};
 	-- white border
-	Border(SCREEN_WIDTH*0.75, SCREEN_CENTER_Y*0.25, 2) .. {
-		InitCommand=cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y+120);
+	Border(_screen.w*0.75, _screen.cy*0.25, 2) .. {
+		InitCommand=cmd(xy,_screen.cx, _screen.cy+120);
 	};
 
 }

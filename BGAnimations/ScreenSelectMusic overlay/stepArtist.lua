@@ -17,7 +17,7 @@ for p=1,2 do
 			elseif player == PLAYER_2 then
 				self:player(PLAYER_2)
 				self:addy(96.5);
-				self:x(SCREEN_CENTER_X - SCREEN_WIDTH/4 - WideScale(8.5,12.5));
+				self:x(_screen.cx - _screen.w/4 - WideScale(8.5,12.5));
 			end
 			
 			if p == 1 and GAMESTATE:IsHumanPlayer(PLAYER_1) then
@@ -47,7 +47,7 @@ for p=1,2 do
 		Def.Quad{
 			InitCommand=function(self)
 			
-				self:zoomto(SCREEN_WIDTH/4, SCREEN_HEIGHT/28);
+				self:zoomto(_screen.w/4, _screen.h/28);
 				if player == PLAYER_1 then				
 					self:diffuse(DifficultyIndexColor(2));
 					self:horizalign(left);

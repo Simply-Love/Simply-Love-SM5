@@ -8,22 +8,22 @@ return Def.ActorFrame{
 	
 	-- Intructions BG
 	Def.Quad {
-		InitCommand = cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y-40; zoomto, SCREEN_WIDTH*0.75, SCREEN_CENTER_Y*0.5; diffuse,GetCurrentColor(););
+		InitCommand = cmd(xy,_screen.cx, _screen.cy-40; zoomto, _screen.w*0.75, _screen.cy*0.5; diffuse,GetCurrentColor(););
 	};
 	-- white border
-	Border(SCREEN_WIDTH*0.75, SCREEN_CENTER_Y*0.5, 2) .. {
-		InitCommand = cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y-40);
+	Border(_screen.w*0.75, _screen.cy*0.5, 2) .. {
+		InitCommand = cmd(xy,_screen.cx, _screen.cy-40);
 	};
 	
 	
 	
 	-- Text Entry BG
 	Def.Quad {
-		InitCommand = cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y+16; zoomto, SCREEN_WIDTH*0.75, 40; diffuse, color("#000000"); );
+		InitCommand = cmd(xy,_screen.cx, _screen.cy+16; zoomto, _screen.w*0.75, 40; diffuse, color("#000000"); );
 	};
 	-- white border
-	Border(SCREEN_WIDTH*0.75, 40, 2) .. {
-		InitCommand = cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y+16);
+	Border(_screen.w*0.75, 40, 2) .. {
+		InitCommand = cmd(xy,_screen.cx, _screen.cy+16);
 	};
 
 }

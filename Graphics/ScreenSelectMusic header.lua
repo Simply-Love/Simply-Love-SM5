@@ -33,7 +33,7 @@ local t = Def.ActorFrame{
 
 	
 	Def.Quad{
-		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_TOP;zoomto,SCREEN_WIDTH,40; diffuse,color("0.65,0.65,0.65,1"));
+		InitCommand=cmd(xy,_screen.cx,SCREEN_TOP;zoomto,_screen.w,40; diffuse,color("0.65,0.65,0.65,1"));
 	};
 	
 	LoadFont("_wendy small") .. {
@@ -45,7 +45,7 @@ local t = Def.ActorFrame{
 	
 	LoadFont("_wendy small")..{
 		Name="Stage Number";
-		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,SCREEN_CENTER_X, SCREEN_TOP);
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, SCREEN_TOP);
 		TextCommand=cmd(settext, sStage);
 		OnCommand=cmd(decelerate,0.5; diffusealpha,1);
 		OffCommand=cmd(accelerate,0.5;diffusealpha,0);

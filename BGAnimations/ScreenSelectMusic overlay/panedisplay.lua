@@ -45,9 +45,9 @@ for pn in ivalues(Players) do
 			end
 			
 			if pn == PLAYER_1 then
-				self:addx(-1 * SCREEN_WIDTH/4 - 5);
+				self:addx(-1 * _screen.w/4 - 5);
 			elseif pn == PLAYER_2 then
-				self:addx(1 * SCREEN_WIDTH/4 + 5);
+				self:addx(1 * _screen.w/4 + 5);
 			end;
 		end;
 
@@ -83,7 +83,7 @@ for pn in ivalues(Players) do
 	-- colored background for chart statistics
 	pd[#pd+1] = Def.Quad{
 		Name="BackgroundQuad"..ToEnumShortString(pn);
-		InitCommand=cmd(diffuse, PlayerColor(pn); zoomto, SCREEN_WIDTH/2-10, SCREEN_HEIGHT/8; y, SCREEN_HEIGHT/3 + 15.33; );
+		InitCommand=cmd(diffuse, PlayerColor(pn); zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33; );
 		SetCommand=function(self)			
 			if GAMESTATE:IsHumanPlayer(pn) then
 				local currentSteps = GAMESTATE:GetCurrentSteps(pn);
@@ -102,7 +102,7 @@ for pn in ivalues(Players) do
 		pd[#pd+1] = Def.ActorFrame{
 
 			Name=ToEnumShortString(pn)..paneStrings[i];
-			OnCommand=cmd(x, -SCREEN_WIDTH/20; y,6 );
+			OnCommand=cmd(x, -_screen.w/20; y,6 );
 
 			-- chart statistics labels
 			LoadFont("_misoreg hires")..{
@@ -203,7 +203,7 @@ for pn in ivalues(Players) do
 						steps = GAMESTATE:GetCurrentSteps(pn);
 					end;
 					
-					self:xy(SCREEN_WIDTH/4 + 20, SCREEN_HEIGHT/2 - 70);
+					self:xy(_screen.w/4 + 20, _screen.h/2 - 70);
 					self:diffuse(0,0,0,1);
 				
 					if steps then

@@ -100,14 +100,14 @@ for pn in ivalues(Players) do
 	
 			if pn == PLAYER_1 then
 				col1x =  -90;
-				col2x =  -SCREEN_WIDTH/2.5;
-				gradex = -SCREEN_WIDTH/3.33;
+				col2x =  -_screen.w/2.5;
+				gradex = -_screen.w/3.33;
 				align1 = right;
 				align2 = left;
 			elseif pn == PLAYER_2 then
 				col1x = 90;
-				col2x = SCREEN_WIDTH/2.5;
-				gradex = SCREEN_WIDTH/3.33;
+				col2x = _screen.w/2.5;
+				gradex = _screen.w/3.33;
 				align1= left;
 				align2 = right;
 			end

@@ -29,15 +29,15 @@ t[#t+1] = Def.ActorFrame {
 	
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
-		OnCommand=cmd(xy, SCREEN_CENTER_X, 121.5; zoom, 0.7);
+		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7);
 	};
 	
 	Def.Quad{
 		Name="LeftMask";
 		InitCommand=cmd(halign,0);
 		OnCommand=function(self)
-			self:xy(0,SCREEN_CENTER_Y);
-			self:zoomto(SCREEN_CENTER_X-272, SCREEN_HEIGHT);
+			self:xy(0,_screen.cy);
+			self:zoomto(_screen.cx-272, _screen.h);
 			self:MaskSource();
 		end;
 	};
@@ -46,7 +46,7 @@ t[#t+1] = Def.ActorFrame {
 		Name="CenterMask";
 		OnCommand=function(self)
 			self:Center();
-			self:zoomto(110, SCREEN_HEIGHT);
+			self:zoomto(110, _screen.h);
 			self:MaskSource();
 		end;
 	};
@@ -55,8 +55,8 @@ t[#t+1] = Def.ActorFrame {
 		Name="RightMask";
 		InitCommand=cmd(halign,1);
 		OnCommand=function(self)
-			self:xy(SCREEN_WIDTH,SCREEN_CENTER_Y);
-			self:zoomto(SCREEN_CENTER_X-272, SCREEN_HEIGHT);
+			self:xy(_screen.w,_screen.cy);
+			self:zoomto(_screen.cx-272, _screen.h);
 			self:MaskSource();
 		end;
 	};

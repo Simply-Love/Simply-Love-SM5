@@ -1,6 +1,6 @@
 local t = Def.ActorFrame{
 	LoadActor("MusicWheelItem sort.png" )..{
-		InitCommand=cmd(zoomto,SCREEN_WIDTH/2,50; horizalign,left; addx,-SCREEN_WIDTH/10);
+		InitCommand=cmd(zoomto,_screen.w/2,50; horizalign,left; addx,-_screen.w/10);
 		SetMessageCommand=function(self,param)
 		end;
 	};

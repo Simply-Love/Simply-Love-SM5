@@ -294,29 +294,29 @@ Letters[#Letters+1] = LoadFont("ScreenNameEntryTraditional entry")..{
 local t = Def.ActorFrame{
 	InitCommand=function(self)
 		if Player == PLAYER_1 then
-			self:x(SCREEN_CENTER_X-160);
+			self:x(_screen.cx-160);
 		elseif Player == PLAYER_2 then
-			self:x(SCREEN_CENTER_X+160);
+			self:x(_screen.cx+160);
 		end
-		self:y(SCREEN_CENTER_Y-20);
+		self:y(_screen.cy-20);
 	end;
 	
 	
 	-- the quad behind the playerName	
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("0,0,0,0.75"); zoomto, 300, SCREEN_HEIGHT/7);
+		InitCommand=cmd(diffuse,color("0,0,0,0.75"); zoomto, 300, _screen.h/7);
 		OnCommand=cmd();
 	};
 
 	-- the quad behind the scrolling alphabet
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("0,0,0,0.5"); zoomto, 300, SCREEN_HEIGHT/10);
+		InitCommand=cmd(diffuse,color("0,0,0,0.5"); zoomto, 300, _screen.h/10);
 		OnCommand=cmd(y, 58);
 	};
 	
 	-- the quad behind the highscore list
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("0,0,0,0.25"); zoomto, 300, SCREEN_HEIGHT/4);
+		InitCommand=cmd(diffuse,color("0,0,0,0.25"); zoomto, 300, _screen.h/4);
 		OnCommand=cmd(y,142);
 	};
 };

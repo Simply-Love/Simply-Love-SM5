@@ -3,7 +3,7 @@ local t = Def.ActorFrame{
 	InitCommand=cmd(runcommandsonleaves,cmd(ztest,true));
 
 	Def.Quad{
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,60);
+		InitCommand=cmd(zoomto,_screen.w,60);
 		OnCommand=cmd(diffuse,color("0,0,0,0.7"));		
 	};
 

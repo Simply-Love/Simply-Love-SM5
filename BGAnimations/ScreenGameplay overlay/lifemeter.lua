@@ -4,7 +4,7 @@ assert( Player );
 
 local meterFillLength = 136;
 local meterFillHeight = 18;
-local meterXOffset = SCREEN_CENTER_X;
+local meterXOffset = _screen.cx;
 
 if Player == PLAYER_1 then
 	meterXOffset = meterXOffset - WideScale(238, 288);

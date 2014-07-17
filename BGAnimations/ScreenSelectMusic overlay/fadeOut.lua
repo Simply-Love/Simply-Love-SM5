@@ -10,7 +10,7 @@ return Def.ActorFrame{
 
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenSelectMusic","Press Start for Options");
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;NoStroke;zoom,0.75;);
+		InitCommand=cmd(x,_screen.cx;y,_screen.cy;NoStroke;zoom,0.75;);
 		OnCommand=cmd(visible,false);
 		ShowPressStartForOptionsCommand=cmd(visible,true;);
 		ShowEnteringOptionsCommand=cmd(linear,0.1; diffusealpha,0; queuecommand, "NewText");
@@ -19,7 +19,7 @@ return Def.ActorFrame{
 	
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenSelectMusic","Start Button");
-		InitCommand=cmd(x,SCREEN_CENTER_X - 48;y,SCREEN_CENTER_Y - 45;NoStroke;);
+		InitCommand=cmd(x,_screen.cx - 48;y,_screen.cy - 45;NoStroke;);
 		OnCommand=cmd(visible,false);
 		ShowPressStartForOptionsCommand=cmd(visible,true;);
 		ShowEnteringOptionsCommand=cmd(linear,0.1; diffusealpha,0;);

@@ -1,6 +1,6 @@
 local t = Def.ActorFrame{
 
-	InitCommand=cmd(xy, SCREEN_CENTER_X/WideScale(2,1.73), SCREEN_CENTER_Y - 40 );
+	InitCommand=cmd(xy, _screen.cx/WideScale(2,1.73), _screen.cy - 40 );
 	
 
 	-- ----------------------------------------
@@ -23,14 +23,14 @@ local t = Def.ActorFrame{
 		
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
-			InitCommand=cmd(diffuse, color("#1e282f"); zoomto, SCREEN_WIDTH/WideScale(2.05, 2.47) - 10, SCREEN_HEIGHT/10; y, 12; )
+			InitCommand=cmd(diffuse, color("#1e282f"); zoomto, _screen.w/WideScale(2.05, 2.47) - 10, _screen.h/10; y, 12; )
 		};
 		
 	
 	
 		Def.ActorFrame{
 			
-			InitCommand=cmd(horizalign, left; x, -SCREEN_WIDTH/7.25);
+			InitCommand=cmd(horizalign, left; x, -_screen.w/7.25);
 			
 			-- Artist Label
 			LoadFont("_misoreg hires")..{
@@ -85,7 +85,7 @@ local t = Def.ActorFrame{
 			
 			-- Song Length Label
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, right; NoStroke; y, 20; x, SCREEN_WIDTH/4.5);
+				InitCommand=cmd(horizalign, right; NoStroke; y, 20; x, _screen.w/4.5);
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong();
 					self:diffuse(0.5,0.5,0.5,1);
@@ -95,7 +95,7 @@ local t = Def.ActorFrame{
 	
 			-- Song Length Value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, SCREEN_WIDTH/4.5 + 5);
+				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, _screen.w/4.5 + 5);
 				SetCommand=function(self)
 					local duration;
 			

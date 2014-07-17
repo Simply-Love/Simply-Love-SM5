@@ -45,7 +45,7 @@ t[#t+1] = Def.ActorFrame {
 -- SystemMessage Text
 t[#t+1] = Def.ActorFrame {
 	Def.Quad {
-		InitCommand=cmd(zoomtowidth,SCREEN_WIDTH;zoomtoheight,30;horizalign,left;vertalign,top;y,SCREEN_TOP;diffuse,color("0,0,0,0"));
+		InitCommand=cmd(zoomtowidth,_screen.w;zoomtoheight,30;horizalign,left;vertalign,top;y,SCREEN_TOP;diffuse,color("0,0,0,0"));
 		OnCommand=cmd(finishtweening;diffusealpha,0.85;);
 		OffCommand=cmd(sleep,3;linear,0.5;diffusealpha,0;);
 	};
@@ -68,7 +68,7 @@ t[#t+1] = Def.ActorFrame {
 
 -- Centered Credit Text
 t[#t+1] = LoadFont("_wendy small")..{
-	InitCommand=cmd(x,SCREEN_CENTER_X;
+	InitCommand=cmd(x,_screen.cx;
 					y,SCREEN_BOTTOM-16;
 					zoom,0.5;horizalign,center;
 	);

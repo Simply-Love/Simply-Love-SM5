@@ -4,7 +4,7 @@ local t = Def.ActorFrame{
 
 	Def.Quad{
 		Name="SectionBG";
-		InitCommand=cmd(zoomto,SCREEN_WIDTH/2,SCREEN_HEIGHT/15; horizalign,left; addx,-SCREEN_WIDTH/10);
+		InitCommand=cmd(zoomto,_screen.w/2,_screen.h/15; horizalign,left; addx,-_screen.w/10);
 		SetMessageCommand=function(self,params)
 			self:diffuse(color("#4c565d"));
 		end;

@@ -14,7 +14,7 @@ local t = Def.ActorFrame{
 		if param.Name == "Left" or param.Name == "MenuLeft" or param.Name == "Up" or param.Name == "MenuUp" then
 			if amountAbleToMoveUp > 0 then
 				self:linear(0.1);
-				self:addy( SCREEN_HEIGHT/5.25 );
+				self:addy( _screen.h/5.25 );
 				amountAbleToMoveUp = amountAbleToMoveUp - 1;
 				amountAbleToMoveDown = amountAbleToMoveDown + 1;
 
@@ -24,7 +24,7 @@ local t = Def.ActorFrame{
 		if param.Name == "Right" or param.Name == "MenuRight" or param.Name == "Down" or param.Name == "MenuDown" then
 			if amountAbleToMoveDown > 0 then
 				self:linear(0.1);
-				self:addy( -SCREEN_HEIGHT/5.25 );
+				self:addy( -_screen.h/5.25 );
 				amountAbleToMoveDown = amountAbleToMoveDown - 1;
 				amountAbleToMoveUp = amountAbleToMoveUp + 1;
 			end
@@ -43,8 +43,8 @@ for i=1,numStages do
 			Name="Stage"..i.."Stats";
 			InitCommand=cmd(diffusealpha,0);
 			OnCommand=function(self)
-				self:x(SCREEN_CENTER_X);
-				self:y( (SCREEN_HEIGHT/5.25) * (i-0.35) );
+				self:x(_screen.cx);
+				self:y( (_screen.h/5.25) * (i-0.35) );
 				self:sleep(i*0.1);
 				self:linear(0.25);
 				self:diffusealpha(1);
@@ -56,10 +56,10 @@ for i=1,numStages do
 		-- but don't want one drawn after the last song that will appear on this page
 		if i ~= numStages then
 			t[#t+1] = Def.Quad{
-				InitCommand=cmd(zoomto,SCREEN_WIDTH*0.8,1;faderight,0.1;fadeleft,0.1;diffusealpha,0);
+				InitCommand=cmd(zoomto,_screen.w*0.8,1;faderight,0.1;fadeleft,0.1;diffusealpha,0);
 				OnCommand=function(self)
-					self:x(SCREEN_CENTER_X);
-					self:y( (SCREEN_HEIGHT/5.25) * (i-0.5) + 54);
+					self:x(_screen.cx);
+					self:y( (_screen.h/5.25) * (i-0.5) + 54);
 					self:sleep(i*0.1);
 					self:linear(0.25);
 					self:diffusealpha(0.5);

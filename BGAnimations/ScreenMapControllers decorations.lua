@@ -7,7 +7,7 @@ local function PlayerText(pn)
 	return LoadFont("_wendy small")..{
 		Name="Label"..pname(pn);
 		Text="Player "..pnumber;
-		InitCommand=cmd(x,SCREEN_CENTER_X*xpos; y,headerHeight/2; NoStroke; zoom,0.8;);
+		InitCommand=cmd(x,_screen.cx*xpos; y,headerHeight/2; NoStroke; zoom,0.8;);
 		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1);
 		OffCommand=cmd(linear,0.5;diffusealpha,0);
 	};
@@ -25,14 +25,14 @@ local t = Def.ActorFrame{
 		};
 	
 		Def.Quad{
-			InitCommand=cmd(CenterX;y,SCREEN_TOP;vertalign,top;zoomto,SCREEN_WIDTH,headerHeight;MaskSource);
+			InitCommand=cmd(CenterX;y,SCREEN_TOP;vertalign,top;zoomto,_screen.w,headerHeight;MaskSource);
 		};
 	};
 
 	Def.ActorFrame{
 		Def.Quad{
 			Name="P1bg";
-			InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_TOP;horizalign,left;vertalign,top;zoomto,SCREEN_CENTER_X,headerHeight;diffuse,PlayerColor(PLAYER_1););
+			InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_TOP;horizalign,left;vertalign,top;zoomto,_screen.cx,headerHeight;diffuse,PlayerColor(PLAYER_1););
 			OnCommand=cmd(diffusealpha,0.75;);
 		};
 
@@ -42,7 +42,7 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		Def.Quad{
 			Name="P2bg";
-			InitCommand=cmd(x,SCREEN_RIGHT;y,SCREEN_TOP;horizalign,right;vertalign,top;zoomto,SCREEN_CENTER_X,headerHeight;diffuse,PlayerColor(PLAYER_2););
+			InitCommand=cmd(x,SCREEN_RIGHT;y,SCREEN_TOP;horizalign,right;vertalign,top;zoomto,_screen.cx,headerHeight;diffuse,PlayerColor(PLAYER_2););
 			OnCommand=cmd(diffusealpha,0.75;);
 		};
 
@@ -51,7 +51,7 @@ local t = Def.ActorFrame{
 
 	Def.Quad{
 		Name="DevicesBG";
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,headerHeight/2;zoomto,SCREEN_WIDTH/3.5,headerHeight*0.65;diffuse,color("0.5,0.5,0.5,0.9"));
+		InitCommand=cmd(x,_screen.cx;y,headerHeight/2;zoomto,_screen.w/3.5,headerHeight*0.65;diffuse,color("0.5,0.5,0.5,0.9"));
 	};
 };
 

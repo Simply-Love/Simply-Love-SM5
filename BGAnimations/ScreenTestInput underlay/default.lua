@@ -84,7 +84,7 @@ return Def.ActorFrame {
 	
 	Def.DeviceList {
 		Font=THEME:GetPathF("","_misoreg hires");
-		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_HEIGHT-60; zoom,0.8; NoStroke);	
+		InitCommand=cmd(xy,_screen.cx,_screen.h-60; zoom,0.8; NoStroke);	
 	};
 		
 	LoadActor("visuals");

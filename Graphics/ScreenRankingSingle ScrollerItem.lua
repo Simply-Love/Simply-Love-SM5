@@ -4,7 +4,7 @@ local t = Def.ActorFrame{
 	OffCommand=cmd(accelerate,0.1;diffusealpha,0);
 
 	Def.Quad{
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,60);
+		InitCommand=cmd(zoomto,_screen.w,60);
 		OnCommand=cmd(diffuse,color("0,0,0,0.7"));
 	};
 

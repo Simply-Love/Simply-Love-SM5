@@ -1,14 +1,14 @@
 -- this is only used for the Screen that manages local profiles so far
 
 local t = Def.ActorFrame {
-	InitCommand=cmd(xy,SCREEN_CENTER_X-SCREEN_WIDTH/6,SCREEN_CENTER_Y-84);
+	InitCommand=cmd(xy,_screen.cx-_screen.w/6,_screen.cy-84);
 	
 	-- white border
-	Border(204, SCREEN_HEIGHT*0.235, 2);
+	Border(204, _screen.h*0.235, 2);
 
 	-- header 
 	Def.Quad {
-		InitCommand=cmd(y,-60; zoomto, 204, SCREEN_HEIGHT*0.075; diffuse,Color.White;);
+		InitCommand=cmd(y,-60; zoomto, 204, _screen.h*0.075; diffuse,Color.White;);
 	};
 	
 	LoadFont("_misoreg hires")..{

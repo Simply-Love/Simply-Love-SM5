@@ -3,7 +3,7 @@ local gridZoomFactor = WideScale(0.27,0.29);
 
 local t = Def.ActorFrame{
 	
-	InitCommand=cmd(xy, SCREEN_CENTER_X / WideScale(2, 1.73), SCREEN_CENTER_Y + 70; );
+	InitCommand=cmd(xy, _screen.cx / WideScale(2, 1.73), _screen.cy + 70; );
 	
 	CurrentStepsP1ChangedMessageCommand=cmd(propagatecommand,"Reset");
 	CurrentStepsP2ChangedMessageCommand=cmd(propagatecommand,"Reset");
@@ -14,7 +14,7 @@ local t = Def.ActorFrame{
 	-- background
 	Def.Quad{
 		Name="Background";
-		InitCommand=cmd(diffuse,color("#1e282f"); zoomto, SCREEN_WIDTH/WideScale(2.05, 2.47) - 10, SCREEN_HEIGHT/5;);
+		InitCommand=cmd(diffuse,color("#1e282f"); zoomto, _screen.w/WideScale(2.05, 2.47) - 10, _screen.h/5;);
 	};
 
 	LoadActor("cursor", PLAYER_1);

@@ -2,7 +2,7 @@ local rColor = -1;
 local delay = 0.7;
 
 local t = Def.ActorFrame{
-	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;bob;effectmagnitude,0,50,0;effectperiod,8;);
+	OnCommand=cmd(x,_screen.cx;y,_screen.cy;bob;effectmagnitude,0,50,0;effectperiod,8;);
 	
 	Def.ActorFrame{
 		OnCommand=cmd(bob;effectmagnitude,0,0,50;effectperiod,12);

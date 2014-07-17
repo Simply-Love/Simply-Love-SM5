@@ -3,7 +3,7 @@ local bgChildren, textChildren;
 return Def.ActorFrame {
 	Def.ActorFrame{
 		Name="Backgrounds";
-		InitCommand=cmd(y,SCREEN_CENTER_Y;);
+		InitCommand=cmd(y,_screen.cy;);
 		BeginCommand=function(self)
 			bgChildren = self:GetChildren();
 		end;
@@ -39,11 +39,11 @@ return Def.ActorFrame {
 
 		Def.Quad {
 			Name="HelpBG";
-			InitCommand=cmd(x,SCREEN_LEFT;horizalign,left;zoomtowidth,128;zoomtoheight,SCREEN_HEIGHT;diffuse,color("#000000");diffuserightedge,color("#00000008"););
+			InitCommand=cmd(x,SCREEN_LEFT;horizalign,left;zoomtowidth,128;zoomtoheight,_screen.h;diffuse,color("#000000");diffuserightedge,color("#00000008"););
 		};
 		Def.Quad { 
 			Name="InfoBG";
-			InitCommand=cmd(x,SCREEN_RIGHT;horizalign,right;zoomtowidth,128;zoomtoheight,SCREEN_HEIGHT;diffuse,color("#000000");diffuseleftedge,color("#00000008"););
+			InitCommand=cmd(x,SCREEN_RIGHT;horizalign,right;zoomtowidth,128;zoomtoheight,_screen.h;diffuse,color("#000000");diffuseleftedge,color("#00000008"););
 		};
 	};
 

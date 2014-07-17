@@ -20,7 +20,7 @@ local t =  Def.ActorFrame{
 
 t[#t+1] = Def.Sprite{
 	Name="Banner";
-	InitCommand=cmd(xy, SCREEN_CENTER_X, SCREEN_CENTER_Y-55);
+	InitCommand=cmd(xy, _screen.cx, _screen.cy-55);
 	OnCommand=function(self)
 		
 		if song then
@@ -37,7 +37,7 @@ t[#t+1] = Def.Sprite{
 	
 t[#t+1] = LoadFont("_misoreg hires")..{
 	Name="RewardText";
-	InitCommand=cmd(xy, SCREEN_CENTER_X, 110; zoom,1.25);
+	InitCommand=cmd(xy, _screen.cx, 110; zoom,1.25);
 	OnCommand=function(self)
 		if song then
 			self:settext("You have unlocked: "..path)

@@ -27,8 +27,8 @@ local function InitFilter()
 end;
 
 local function FilterPosition()
-	if IsUsingSoloSingles and NumPlayers == 1 and NumSides == 1 then return SCREEN_CENTER_X; end;
-	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return SCREEN_CENTER_X; end;
+	if IsUsingSoloSingles and NumPlayers == 1 and NumSides == 1 then return _screen.cx; end;
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx; end;
 
 	local strPlayer = (NumPlayers == 1) and "OnePlayer" or "TwoPlayers";
 	local strSide = (NumSides == 1) and "OneSide" or "TwoSides";
@@ -40,9 +40,9 @@ end;
 local function FilterWidth()
 	
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then 
-		return ((SCREEN_WIDTH*1.058)/GetScreenAspectRatio());
+		return ((_screen.w*1.058)/GetScreenAspectRatio());
 	else
-		return ((SCREEN_WIDTH*0.529)/GetScreenAspectRatio());
+		return ((_screen.w*0.529)/GetScreenAspectRatio());
 	end;
 end;
 
@@ -50,7 +50,7 @@ InitFilter();
 
 local filter = Def.ActorFrame{
 	Def.Quad{
-		InitCommand=cmd(diffuse,filterColor;xy,FilterPosition(),SCREEN_CENTER_Y;zoomto,FilterWidth(),SCREEN_HEIGHT);
+		InitCommand=cmd(diffuse,filterColor;xy,FilterPosition(),_screen.cy;zoomto,FilterWidth(),_screen.h);
 		OffCommand=function(self)
 			local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player);
 			if pStats:FullCombo() then

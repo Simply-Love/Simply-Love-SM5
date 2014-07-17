@@ -11,7 +11,7 @@ local ScreenOptions;
 local SpeedModItems = {nil, nil};
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy,SCREEN_CENTER_X,0;);
+	InitCommand=cmd(xy,_screen.cx,0;);
 	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1; queuecommand,"Capture");
 	OffCommand=cmd(linear,0.2;diffusealpha,0);
 	CaptureCommand=function(self)

@@ -31,7 +31,7 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(Center);
 
 	Def.Quad {
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,0; diffuse, Color.Black);
+		InitCommand=cmd(zoomto,_screen.w,0; diffuse, Color.Black);
 		OnCommand=cmd( accelerate,0.3; zoomtoheight,128; diffusealpha,0.9; sleep,2.5; linear,0.25);
 		OffCommand=cmd(accelerate,0.3; zoomtoheight,0;)
 	};

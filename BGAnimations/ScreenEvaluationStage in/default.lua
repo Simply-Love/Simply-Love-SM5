@@ -31,10 +31,10 @@ end
 
 
 local t = Def.ActorFrame {
-	InitCommand=cmd(xy,SCREEN_CENTER_X, SCREEN_CENTER_Y);
+	InitCommand=cmd(xy,_screen.cx, _screen.cy);
 	
 	Def.Quad{
-		InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT; diffuse,color("0,0,0,1"););
+		InitCommand=cmd(zoomto,_screen.w,_screen.h; diffuse,color("0,0,0,1"););
 		OnCommand=cmd(sleep,0.2; linear,0.5;  diffusealpha,0);
 	};
 	

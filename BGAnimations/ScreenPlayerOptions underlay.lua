@@ -4,8 +4,8 @@ local t = Def.ActorFrame{
 	
 	Def.Quad{
 		Name="ExplanationBackground";
-		InitCommand=cmd(diffuse, color("0,0,0,0.5"); xy, SCREEN_CENTER_X, SCREEN_HEIGHT-57; );
-		OnCommand=cmd(zoomto,SCREEN_WIDTH*0.935,SCREEN_HEIGHT*0.08;);
+		InitCommand=cmd(diffuse, color("0,0,0,0.5"); xy, _screen.cx, _screen.h-57; );
+		OnCommand=cmd(zoomto,_screen.w*0.935,_screen.h*0.08;);
 	}
 };
 

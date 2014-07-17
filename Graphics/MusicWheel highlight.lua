@@ -1,6 +1,6 @@
 return Def.ActorFrame{
 	Def.Quad{
-		InitCommand=cmd(zoomto,SCREEN_WIDTH/2,SCREEN_HEIGHT/15; horizalign,left; addx,-SCREEN_WIDTH/5; diffuse,color("0.8,0.8,0.8,0.25"););
+		InitCommand=cmd(zoomto,_screen.w/2,_screen.h/15; horizalign,left; addx,-_screen.w/5; diffuse,color("0.8,0.8,0.8,0.25"););
 	};
 };
 

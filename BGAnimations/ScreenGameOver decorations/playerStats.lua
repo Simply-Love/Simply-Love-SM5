@@ -12,7 +12,7 @@ local x_pos;
 if Player == PLAYER_1 then
 	x_pos = 80;
 elseif Player == PLAYER_2 then
-	x_pos = SCREEN_WIDTH-80;
+	x_pos = _screen.w-80;
 end
 
  

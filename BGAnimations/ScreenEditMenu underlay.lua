@@ -104,7 +104,7 @@ local t = Def.ActorFrame{
 
 -- the overall BG
 t[#t+1] = Def.Quad {
-	InitCommand = cmd(Center;zoomto,SCREEN_WIDTH*0.9,SCREEN_HEIGHT*0.75;diffuse,color("#000000")),
+	InitCommand = cmd(Center;zoomto,_screen.w*0.9,_screen.h*0.75;diffuse,color("#000000")),
 }
 
 
@@ -112,7 +112,7 @@ t[#t+1] = Def.Quad {
 for i=1,7 do
 	-- a row
 	t[#t+1] = Def.Quad {
-		InitCommand=cmd(Center;zoomto,SCREEN_WIDTH*0.9,SCREEN_HEIGHT*0.09;diffuse,color("#071016"));
+		InitCommand=cmd(Center;zoomto,_screen.w*0.9,_screen.h*0.09;diffuse,color("#071016"));
 		OnCommand=cmd(y,40+ (i*45));
 	};
 	
@@ -123,25 +123,25 @@ end
 
 -- the grey BG for row labels
 t[#t+1] = Def.Quad {
-	InitCommand = cmd(Center;zoomto,SCREEN_WIDTH*0.15,SCREEN_HEIGHT*0.75;diffuse,color("#212831"); x, SCREEN_CENTER_X-WideScale(240,320)),
+	InitCommand = cmd(Center;zoomto,_screen.w*0.15,_screen.h*0.75;diffuse,color("#212831"); x, _screen.cx-WideScale(240,320)),
 }
 
 -- the grey BG for the instructions at the bottom
 t[#t+1] = Def.Quad {
-	InitCommand=cmd(zoomto,SCREEN_WIDTH*0.9 - SCREEN_WIDTH*0.15 - 2,SCREEN_HEIGHT*0.09;diffuse,color("#212831"););
+	InitCommand=cmd(zoomto,_screen.w*0.9 - _screen.w*0.15 - 2,_screen.h*0.09;diffuse,color("#212831"););
 	OnCommand=function(self)
-		self:xy(SCREEN_CENTER_X + WideScale(49,65), 400)
+		self:xy(_screen.cx + WideScale(49,65), 400)
 	end
 }
 
 t[#t+1] = Def.Quad {
 	Name="RowHighlight";
-	OnCommand=cmd(x, SCREEN_CENTER_X; setsize, SCREEN_WIDTH*0.9 - 4,SCREEN_HEIGHT*0.1);
+	OnCommand=cmd(x, _screen.cx; setsize, _screen.w*0.9 - 4,_screen.h*0.1);
 }
 
 
 -- white border
-t[#t+1] = Border(SCREEN_WIDTH*0.9, SCREEN_HEIGHT*0.75, 2) .. {
+t[#t+1] = Border(_screen.w*0.9, _screen.h*0.75, 2) .. {
 	InitCommand = cmd(Center),
 }
 

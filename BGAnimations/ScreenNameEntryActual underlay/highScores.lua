@@ -21,7 +21,7 @@ if GAMESTATE:IsCourseMode() then
 	
 	t[#t+1] = Def.Sprite{
 		Name="CourseBanner";
-		InitCommand=cmd(xy, SCREEN_CENTER_X, 121.5; );
+		InitCommand=cmd(xy, _screen.cx, 121.5; );
 		OnCommand=function(self)
 			local course, banner;
 			course = GAMESTATE:GetCurrentCourse();
@@ -50,7 +50,7 @@ else
 		
 			t[#t+1] = Def.Sprite{
 				Name="Banner"..i;
-				InitCommand=cmd(xy, SCREEN_CENTER_X, 121.5; diffusealpha, 0; );
+				InitCommand=cmd(xy, _screen.cx, 121.5; diffusealpha, 0; );
 				OnCommand=function(self)
 		
 					if song then
@@ -137,11 +137,11 @@ for i=numStages,1,-1 do
 						self:diffusealpha(0);
 						self:zoom(0.95);
 						if Player == PLAYER_1 then
-							self:x(SCREEN_CENTER_X-160);
+							self:x(_screen.cx-160);
 						elseif Player == PLAYER_2 then
-							self:x(SCREEN_CENTER_X+160);
+							self:x(_screen.cx+160);
 						end
-						self:y(SCREEN_CENTER_Y+60);
+						self:y(_screen.cy+60);
 					end;
 					OnCommand=function(self)
 						self:sleep(durationPerSong * (math.abs(i-numStages)) );

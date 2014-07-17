@@ -1,11 +1,11 @@
 local t = Def.ActorFrame{};
 
 t[#t+1] = Def.Quad{
-	InitCommand=cmd(Center; zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color.Black);
+	InitCommand=cmd(Center; zoomto,_screen.w,_screen.h;diffuse,Color.Black);
 };
 
 t[#t+1] = Def.Quad{
-	InitCommand=cmd(zoomto,SCREEN_WIDTH,0; Center; diffuse,Color.White);
+	InitCommand=cmd(zoomto,_screen.w,0; Center; diffuse,Color.White);
 	OnCommand=cmd(decelerate, 0.3; zoomtoheight,50; sleep,0.5; sleep,0.1; queuecommand, "Load");
 	LoadCommand=function(self) 
 		SCREENMAN:GetTopScreen():Continue();
