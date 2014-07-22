@@ -1,7 +1,7 @@
 local c;
 local player = Var "Player";
 
-local judType=getenv("JudgmentGraphic" .. ToEnumShortString(player) ) or "Love";
+local judType = SL[ToEnumShortString(player)].ActiveModifiers.JudgmentGraphic or "Love";
 
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );

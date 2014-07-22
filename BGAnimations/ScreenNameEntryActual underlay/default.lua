@@ -14,16 +14,12 @@
 -- and proceed to ScreenNameEntryActual.  On ScreenNameEntryActual, have players enter their names if necessary,
 -- and eventually save those names using GAMESTATE:StoreRankingName()
 
-local Players = GAMESTATE:GetHumanPlayers();
-
--- This env value is a table containing a boolean value for keys {P1, P2}
--- that was set on ScreenNameEntryTraditional underlay.lua
-local Entering = getenv("PlayersEnteringHighScoreNames");
+local Players = GAMESTATE:GetHumanPlayers()
 
 -- get the number of stages that were played
-local numStages = STATSMAN:GetStagesPlayed();
+local numStages = STATSMAN:GetStagesPlayed()
 
-local t = Def.ActorFrame {};
+local t = Def.ActorFrame {}
 
 t[#t+1] = Def.ActorFrame {
 	
@@ -66,11 +62,11 @@ t[#t+1] = Def.ActorFrame {
 
 t[#t+1] = Def.Actor {
 	DoneEnteringNameP1MessageCommand=function(self)
-		Entering.P1 = false;
+		SL.P1.HighScores.EnteringName = false;
 		self:queuecommand("AttemptToFinish");
 	end;
 	DoneEnteringNameP2MessageCommand=function(self)
-		Entering.P2 = false;
+		SL.P2.HighScores.EnteringName = false;
 		self:queuecommand("AttemptToFinish");
 	end;
 	CodeMessageCommand=function(self, params)
@@ -81,7 +77,7 @@ t[#t+1] = Def.Actor {
 	AttemptToFinishCommand=function(self)
 		local AnyEntering = false;
 		
-		if Entering.P1 or Entering.P2 then
+		if SL.P1.HighScores.EnteringName or SL.P2.HighScores.EnteringName then
 			AnyEntering = true
 		end
 		
@@ -98,7 +94,8 @@ t[#t+1] = Def.Actor {
 	end;
 	OffCommand=function(self)
 		for pn in ivalues(Players) do
-			local playerName = getenv("HighScoreName" .. ToEnumShortString(pn));
+			local playerName = SL[ToEnumShortString(pn)].HighScores.Name
+
 			if playerName then
 				
 				-- actually store the HighScoreName
@@ -109,19 +106,13 @@ t[#t+1] = Def.Actor {
 					PROFILEMAN:GetProfile(pn):SetLastUsedHighScoreName(playerName);
 				end
 			end
-			
-			-- set this player's HighScoreName env value to nil now
-			setenv("HighScoreName" .. ToEnumShortString(pn), nil );
 		end
-	
-		-- set this back to nil now
-		setenv("PlayersEnteringHighScoreNames", nil);
 	end;
 };
 
 
 for pn in ivalues(Players) do
-	t[#t+1] = LoadActor("alphabet", {pn, Entering[ToEnumShortString(pn)]} );
+	t[#t+1] = LoadActor("alphabet", pn);
 	t[#t+1] = LoadActor("highScores", pn);
 end 
 

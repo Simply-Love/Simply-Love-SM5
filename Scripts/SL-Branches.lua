@@ -1,5 +1,4 @@
 if not Branch then Branch = {}; end
-if not SL_SongsRemaining then SL_SongsRemaining = PREFSMAN:GetPreference("SongsPerPlay"); end
 
 function SelectMusicOrCourse()
 	local pm = GAMESTATE:GetPlayMode()
@@ -34,14 +33,6 @@ Branch.PlayerOptions = function()
 		return "ScreenGameplay"
 	end
 end
-	
-Branch.AfterScreenPlayerOptions = function()
-	return getenv("ScreenPlayerOptions") or Branch.GameplayScreen();
-end
-
-Branch.AfterScreenPlayerOptions2 = function()
-	return getenv("ScreenPlayerOptions2") or Branch.GameplayScreen();
-end
 
 Branch.SSMCancel = function()
 
@@ -63,18 +54,17 @@ Branch.AfterProfileSave = function()
 		
 			local song = GAMESTATE:GetCurrentSong();
 			if song:IsMarathon() then
-				SL_SongsRemaining = SL_SongsRemaining - 3;
+				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 3;
 			elseif song:IsLong() then
-				SL_SongsRemaining = SL_SongsRemaining - 2;
+				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 2;
 			else
-				SL_SongsRemaining = SL_SongsRemaining - 1;
+				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 1;
 			end
 			
 			-- check first to see how many songs are remaining
 			-- if none, send the player(s) on to ScreenEvalutationSummary
-			if SL_SongsRemaining == 0 then
-			
-				SL_SongsRemaining = PREFSMAN:GetPreference("SongsPerPlay");
+			if SL.Global.Stages.Remaining == 0 then
+
 				return "ScreenEvaluationSummary";
 			
 			-- otherwise, there are some stages remaining
@@ -87,7 +77,7 @@ Branch.AfterProfileSave = function()
 				if STATSMAN:GetCurStageStats():AllFailed() then
 					local Players = GAMESTATE:GetHumanPlayers();	
 					for pn in ivalues(Players) do
-						for i=1, SL_SongsRemaining do
+						for i=1, SL.Global.Stages.Remaining do
 							GAMESTATE:AddStageToPlayer(pn);
 						end
 					end
@@ -100,7 +90,7 @@ Branch.AfterProfileSave = function()
 		else
 		
 			if STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-				SL_SongsRemaining = PREFSMAN:GetPreference("SongsPerPlay");		
+				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay");		
 				return "ScreenEvaluationSummary"
 			else
 				return SelectMusicOrCourse()

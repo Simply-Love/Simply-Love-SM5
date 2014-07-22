@@ -1,24 +1,21 @@
-local Players = GAMESTATE:GetHumanPlayers();
-local Entering = {P1 = false, P2 = false};
+local Players = GAMESTATE:GetHumanPlayers()
 
-local t = Def.ActorFrame{
+return Def.ActorFrame{
 	InitCommand=cmd(queuecommand, "Detect");
 	DetectCommand=function(self)
-		local topscreen = SCREENMAN:GetTopScreen();
+		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
 		
 			for pn in ivalues(Players) do
 				if topscreen:GetEnteringName(pn) then
-					Entering[ToEnumShortString(pn)] = true;
+					SL[ToEnumShortString(pn)].HighScores.EnteringName = true
 				end
+				SM( SL[ToEnumShortString(pn)].HighScores.EnteringName)
 			end
 			
-			setenv("PlayersEnteringHighScoreNames", Entering);
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen");
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 		else
-			self:queuecommand("Detect");
+			self:queuecommand("Detect")
 		end
 	end;
-};
-
-return t;
+}

@@ -13,9 +13,9 @@ ComboThresholdTable = {
 	-- I don't know what these values are supposed to actually be...
 	popn	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
 	beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
-};
+}
 
 function GetComboThreshold()
 	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() );
 	return ComboThresholdTable[CurrentGame];
-end;
+end

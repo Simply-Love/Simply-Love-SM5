@@ -2,37 +2,36 @@
 local Player = ...;
 assert(...);
 
-local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player');
-local NumPlayers = GAMESTATE:GetNumPlayersEnabled();
-local NumSides = GAMESTATE:GetNumSidesJoined();
+local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
+local NumPlayers = GAMESTATE:GetNumPlayersEnabled()
+local NumSides = GAMESTATE:GetNumSidesJoined()
 
-local pName;
-local filterColor;
-local fallbackColor = color("0,0,0,0.75");
+local pName, filterColor
+local fallbackColor = color("0,0,0,0.75")
 
 local function InitFilter()
-	pName = pname(Player);
+	pName = pname(Player)
 	
-	local darkness = getenv("ScreenFilter"..pName)
+	local darkness = SL[pName].ActiveModifiers.ScreenFilter
 	if darkness == "Dark" then
-		filterColor = color("#00000099");
+		filterColor = color("#00000099")
 	elseif darkness == "Darker" then
-		filterColor = color("#000000BB");
+		filterColor = color("#000000BB")
 	elseif darkness == "Darkest" then
-		filterColor = color("#000000EE");
+		filterColor = color("#000000EE")
 	else
-		filterColor = color("#00000000");
+		filterColor = color("#00000000")
 	end
 	
-end;
+end
 
 local function FilterPosition()
-	if IsUsingSoloSingles and NumPlayers == 1 and NumSides == 1 then return _screen.cx; end;
-	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx; end;
+	if IsUsingSoloSingles and NumPlayers == 1 and NumSides == 1 then return _screen.cx end
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
 
-	local strPlayer = (NumPlayers == 1) and "OnePlayer" or "TwoPlayers";
-	local strSide = (NumSides == 1) and "OneSide" or "TwoSides";
-	return THEME:GetMetric("ScreenGameplay","Player".. pName .. strPlayer .. strSide .."X");
+	local strPlayer = (NumPlayers == 1) and "OnePlayer" or "TwoPlayers"
+	local strSide = (NumSides == 1) and "OneSide" or "TwoSides"
+	return THEME:GetMetric("ScreenGameplay","Player".. pName .. strPlayer .. strSide .."X")
 end;
 
 -- updated by sillybear
@@ -40,9 +39,9 @@ end;
 local function FilterWidth()
 	
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then 
-		return ((_screen.w*1.058)/GetScreenAspectRatio());
+		return ((_screen.w*1.058)/GetScreenAspectRatio())
 	else
-		return ((_screen.w*0.529)/GetScreenAspectRatio());
+		return ((_screen.w*0.529)/GetScreenAspectRatio())
 	end;
 end;
 

@@ -1,6 +1,6 @@
-local SongStats = SONGMAN:GetNumSongs() .. " songs in ";
-SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, ";
-SongStats = SongStats .. SONGMAN:GetNumCourses() .. " courses";
+local SongStats = SONGMAN:GetNumSongs() .. " songs in "
+SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, "
+SongStats = SongStats .. SONGMAN:GetNumCourses() .. " courses"
 
 local game = GAMESTATE:GetCurrentGame():GetName();
 if game == "popn" or game == "beat" or game == "kb7" or game == "para" then
@@ -9,13 +9,12 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		--see: ./Scripts/SL-CustomProfiles.lua
-		ResetPlayerCustomPrefs(PLAYER_1);
-		ResetPlayerCustomPrefs(PLAYER_2);
+		--see: ./Scripts/SL_Initialize.lua
+		InitializeSimplyLove()
 	end;
 	OnCommand=cmd(Center);
-	OffCommand=cmd(linear,0.5; diffusealpha, 0;);
-};
+	OffCommand=cmd(linear,0.5; diffusealpha, 0);
+}
 	
 t[#t+1] = LoadFont("_misoreg hires")..{
 	Text=SongStats;
@@ -23,10 +22,10 @@ t[#t+1] = LoadFont("_misoreg hires")..{
 	OnCommand=cmd(linear,0.4; diffusealpha,1);	
 }	
 	
-t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game));
+t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))
 
 t[#t+1] = LoadActor("SimplyLove.png") .. {
 	InitCommand=cmd(zoom, 0.333);
-};
+}
 
-return t;
+return t

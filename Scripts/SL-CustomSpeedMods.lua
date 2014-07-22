@@ -8,7 +8,7 @@ function SpeedModsType()
 		ExportOnChange = true,
 		Choices = modList,
 		LoadSelections = function(self, list, pn)
-			local userSpeedType = getenv("SpeedModType" .. ToEnumShortString(pn))
+			local userSpeedType = SL[ToEnumShortString(pn)].ActiveModifiers.SpeedModType
 			local i = FindInTable(userSpeedType, modList) or 1
 			list[i] = true
 		end,
@@ -41,26 +41,10 @@ function SpeedModsNew()
 		ExportOnChange = false,
 		Choices = blank,
 		LoadSelections = function(self, list, pn)
-			
-			local type = getenv("SpeedModType"..ToEnumShortString(pn))
-			if not type then
-				setenv("SpeedModType"..ToEnumShortString(pn), "x")
-			end
-			
-			
-			local userSpeedMod = getenv("SpeedMod"..ToEnumShortString(pn));
-			if not userSpeedMod then	
-				setenv("SpeedMod"..ToEnumShortString(pn),"1.00x")
-			end
-
 			list[1] = true	
 		end,
 		SaveSelections = function(self, list, pn)
-			--with ExportOnChange set to false
-			--SaveSelections gets called twice:
-				-- once when the ScreenPlayerOptions loads
-				-- and once when ScreenPlayerOptions exits
-			MESSAGEMAN:Broadcast('SpeedMod'..ToEnumShortString(pn)..'Set');
+			ApplySpeedMod(pn);
 		end	
 	}
 	setmetatable(t, t)
@@ -71,133 +55,119 @@ end
 
 
 
-function increment(speed)
+function ChangeSpeedMod(pn, direction)
+		
 	-- if using an x-mod
-	if string.sub(speed,-1) == "x" then
-		speed = string.gsub(speed,"x","");
+	if SL[pn].ActiveModifiers.SpeedModType == "x" then
 		
-		if tonumber(speed)+0.05 >= 20 then
-			speed = "0.1x"
+		if SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction) >= 20 then
+			SL[pn].ActiveModifiers.SpeedMod = 0.05
+		elseif SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction) <= 0 then
+			SL[pn].ActiveModifiers.SpeedMod = 20.00
 		else
-			speed = string.format("%.2fx", tonumber(speed) + 0.05)
+			SL[pn].ActiveModifiers.SpeedMod = SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction)
 		end
-	-- elseif using a C-mod
-	elseif string.sub(speed,1,1) == "C" then
-		speed = string.gsub(speed,"C","");
 		
-		if tonumber(speed)+10 >= 2000 then
-			speed = "C10"
+	-- elseif using a C-mod
+	elseif SL[pn].ActiveModifiers.SpeedModType == "C" then
+
+		if SL[pn].ActiveModifiers.SpeedMod + (10 * direction) >= 2000 then
+			SL[pn].ActiveModifiers.SpeedMod = 10
+		elseif SL[pn].ActiveModifiers.SpeedMod + (10 * direction) <= 0 then
+			SL[pn].ActiveModifiers.SpeedMod = 2000
 		else
-			speed = "C"..tostring(tonumber(speed) + 10)
+			SL[pn].ActiveModifiers.SpeedMod = SL[pn].ActiveModifiers.SpeedMod + (10 * direction)
 		end
 	end	
-	
-	return speed;
-end;
-
-function decrement(speed)
-	-- if using an x-mod
-	if string.sub(speed,-1) == "x" then
-		speed = string.gsub(speed,"x","");
-		
-		if tonumber(speed)-0.05 <= 0 then
-			speed = "20x"
-		else
-			speed = string.format("%.2fx", tonumber(speed) - 0.05)
-		end
-	-- elseif using a C-mod
-	elseif string.sub(speed,1,1) == "C" then
-		speed = string.gsub(speed,"C","");
-		if tonumber(speed)-10 <= 0 then
-			speed = "C2000"
-		else
-			speed = "C"..tostring(tonumber(speed) - 10)
-		end
-	end	
-	
-	return speed;
-end;
-
-
-
-
-
-
-function ApplySpeedMod(pn)
-	local speed = getenv("SpeedMod" .. ToEnumShortString(pn)) or "1.00x"
-	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack!
-	GAMESTATE:ApplyGameCommand('mod,1x', pn)
-	GAMESTATE:ApplyGameCommand('mod,' .. speed, pn)
 end
 
 
-function DisplaySpeedMod(speed)
-	local bpm, display;
+
+
+function ApplySpeedMod(player)
+	local type 	= SL[ToEnumShortString(player)].ActiveModifiers.SpeedModType or "x"
+	local speed = SL[ToEnumShortString(player)].ActiveModifiers.SpeedMod or 1.00
+	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
+	
+	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack!
+	playeroptions:XMod(1.00)
+	
+	if type == "x" then
+		playeroptions:XMod(speed)
+	elseif type == "C" then
+		playeroptions:CMod(speed)
+	end
+end
+
+
+function DisplaySpeedMod(pn)
+	local bpm
+	local display = ""
+	speed = SL[pn].ActiveModifiers.SpeedMod
 	
 	if GAMESTATE:IsCourseMode() then
-		bpm = GetCourseModeBPMs();
+		bpm = GetCourseModeBPMs()
 	else
-		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms();
+		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
 	end
 		
 	-- if using an x-mod
-	if string.sub(speed,-1) == "x" then
-		speed = string.gsub(speed,"x","");
+	if SL[pn].ActiveModifiers.SpeedModType == "x" then
 		
 		--if a single bpm suffices
 		if bpm[1] == bpm[2] then
-			display = speed.."x (" .. round(tonumber(speed) * tonumber(bpm[1])) .. ")";
+			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1]) .. ")"
 			
 		-- if we have a range of bpms
 		else
-			display = speed.."x (" .. round(tonumber(speed) * tonumber(bpm[1])) .. " - " .. round(tonumber(speed) * tonumber(bpm[2])) .. ")";
+			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1]) .. " - " .. round(speed * bpm[2]) .. ")"
 		end
 	
 	-- elseif using a C-mod
-	elseif string.sub(speed,1,1) == "C" then
-		display = speed;
+	elseif SL[pn].ActiveModifiers.SpeedModType == "C" then
+		display = "C" .. tostring(speed)
 	end
 
-	return display;
+	return display
 end
 
 
 function GetCourseModeBPMs()
-	local Players, player, trail, trailEntries, lowest, highest, text, range;
+	local Players, player, trail, trailEntries, lowest, highest, text, range
 
-	Players = GAMESTATE:GetHumanPlayers();
-	player = Players[1];
+	Players = GAMESTATE:GetHumanPlayers()
+	player = Players[1]
 
 	if player then
-		trail = GAMESTATE:GetCurrentTrail(player);
+		trail = GAMESTATE:GetCurrentTrail(player)
 
 		if trail then
-			trailEntries = trail:GetTrailEntries();
+			trailEntries = trail:GetTrailEntries()
 
 			for k,trailEntry in ipairs(trailEntries) do
-				local bpms = trailEntry:GetSong():GetDisplayBpms();
+				local bpms = trailEntry:GetSong():GetDisplayBpms()
 
 				-- on the first iteration, lowest and highest will both be nil
 				-- so set lowest to this song's lower bpm
 				-- and highest to this song's higher bpm
 				if not lowest then
-					lowest = bpms[1];
+					lowest = bpms[1]
 				end
 				if not highest then
-					highest = bpms[2];
+					highest = bpms[2]
 				end
 
 				-- on each subsequent iteration, compare
 				if lowest > bpms[1] then
-					lowest = bpms[1];
+					lowest = bpms[1]
 				end
 				if highest < bpms[2] then
-					highest = bpms[2];
+					highest = bpms[2]
 				end
 			end
 			if lowest and highest then
 				range = {lowest, highest}
-				return range;
+				return range
 			end
 		end
 	end
@@ -205,14 +175,14 @@ end
 
 
 function GetDisplayBPMs()
-	local text = "";
+	local text = ""
 	
 	-- if in "normal" mode
 	if not GAMESTATE:IsCourseMode() then
-		local song = GAMESTATE:GetCurrentSong();
+		local song = GAMESTATE:GetCurrentSong()
 		
 		if song then
-			local bpm = song:GetDisplayBpms();
+			local bpm = song:GetDisplayBpms()
 			
 			--if a single bpm suffices
 			if bpm[1] == bpm[2] then
@@ -228,13 +198,13 @@ function GetDisplayBPMs()
 	else
 		local range = GetCourseModeBPMs();
 		if range then
-			local lowest = range[1];
-			local highest = range[2];
+			local lowest = range[1]
+			local highest = range[2]
 				
 				
 			if lowest and highest then
 				if lowest == highest then
-					text = round(lowest);
+					text = round(lowest)
 				else
 					text = round(lowest) .. " - " .. round(highest)
 				end
@@ -242,5 +212,5 @@ function GetDisplayBPMs()
 		end
 	end
 	
-	return text;
+	return text
 end

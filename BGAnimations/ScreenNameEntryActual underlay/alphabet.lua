@@ -1,27 +1,22 @@
-local args = ...;
-local Player = args[1];
-local CanEnterName = args[2] or false;
+local Player = ...
+local pn = ToEnumShortString(Player)
+local CanEnterName = SL[pn].HighScores.EnteringName
 
-local charWidth = 40.5;
-local finished = false;
+if CanEnterName then
+	SL[pn].HighScores.Name = ""
+end
 
--- the highscore name
-local playerName = "";
+local charWidth = 40.5
 
 -- the character limit
-local limit = tonumber(THEME:GetMetric("ScreenNameEntryTraditional", "MaxRankingNameLength"));
-
-
--- machineProfile contains the overall high scores per song
-local machineProfile = PROFILEMAN:GetMachineProfile();
+local limit = tonumber(THEME:GetMetric("ScreenNameEntryTraditional", "MaxRankingNameLength"))
 
 if PROFILEMAN:IsPersistentProfile(Player) then
-	playerName = PROFILEMAN:GetProfile(Player):GetLastUsedHighScoreName();
-	setenv("HighScoreName" .. ToEnumShortString(Player), playerName );
+	SL[pn].HighScores.Name = PROFILEMAN:GetProfile(Player):GetLastUsedHighScoreName()
 end
 
 
-local IsEnteringName = CanEnterName;
+local IsEnteringName = CanEnterName
 
 
 local possibleCharacters = {
@@ -29,7 +24,7 @@ local possibleCharacters = {
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "?", "!"	
-};
+}
 
 local FiveLetters = {
 	--the index will potentially go negative or very large
@@ -52,7 +47,7 @@ local FiveLetters = {
 			return v % #possibleCharacters;
 		end
 	end
-}; 
+}
 
 
 local Letters = Def.ActorFrame{
@@ -65,7 +60,7 @@ local Letters = Def.ActorFrame{
 		self:visible( CanEnterName );
 		
 		-- if a name is available from a profile
-		if playerName ~= "" then
+		if SL[pn].HighScores.Name ~= "" then
 			self:queuecommand("GoToOkay");
 		end
 	end;
@@ -142,9 +137,8 @@ local Letters = Def.ActorFrame{
 		
 	end;
 	CodeMessageCommand=function(self, param)
-		local pn = param.PlayerNumber;
-	
-		if pn == Player and CanEnterName and IsEnteringName then
+
+		if param.PlayerNumber == Player and CanEnterName and IsEnteringName then
 			
 			-- if the START button is pushed
 			if param.Name == "Enter" then
@@ -161,12 +155,11 @@ local Letters = Def.ActorFrame{
 				
 				if selectionText == dummyBACKtext then
 					
-					if string.len(playerName) > 0 then			
-						playerName = string.sub(playerName,1,-2);
-						setenv("HighScoreName" .. ToEnumShortString(Player), playerName );
+					if string.len( SL[pn].HighScores.Name ) > 0 then			
+						SL[pn].HighScores.Name = string.sub(SL[pn].HighScores.Name,1,-2);
 						
 						self:GetChild("delete"):playforplayer(Player);
-						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
+						self:GetParent():GetChild("PlayerName"..pn):queuecommand("Set");
 					else
 						self:GetChild("invalid"):playforplayer(Player);
 					end
@@ -178,20 +171,19 @@ local Letters = Def.ActorFrame{
 
 				-- otherwise selectionText is any valid highscorename character: A-Z, 0-9, ?, or !
 				else
-					if string.len(playerName) < limit then
+					if string.len( SL[pn].HighScores.Name ) < limit then
 						
-						playerName = playerName..selectionText;
-						setenv("HighScoreName" .. ToEnumShortString(Player), playerName )
+						SL[pn].HighScores.Name = SL[pn].HighScores.Name..selectionText
 						
-						self:GetChild("enter"):playforplayer(Player);
-						self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
+						self:GetChild("enter"):playforplayer(Player)
+						self:GetParent():GetChild("PlayerName"..pn):queuecommand("Set")
 						
 						-- if this player has now reached the character limit
-						if string.len(playerName) == limit then
-							self:queuecommand("GoToOkay");
+						if string.len( SL[pn].HighScores.Name ) == limit then
+							self:queuecommand("GoToOkay")
 						end
 					else
-						self:GetChild("invalid"):playforplayer(Player);
+						self:GetChild("invalid"):playforplayer(Player)
 					end
 				
 				end
@@ -200,12 +192,11 @@ local Letters = Def.ActorFrame{
 		
 			-- if the SELECT button is pushed
 			if param.Name == "Backspace" then
-				if string.len(playerName) > 0 then
-					playerName = string.sub(playerName,1,-2);
-					setenv("HighScoreName" .. ToEnumShortString(Player), playerName )
+				if string.len( SL[pn].HighScores.Name ) > 0 then
+					SL[pn].HighScores.Name = string.sub(SL[pn].HighScores.Name,1,-2);
 					
 					self:GetChild("delete"):playforplayer(Player);
-					self:GetParent():GetChild("PlayerName"..ToEnumShortString(Player)):queuecommand("Set");
+					self:GetParent():GetChild("PlayerName"..pn):queuecommand("Set");
 				else
 					self:GetChild("invalid"):playforplayer(Player);
 				end
@@ -220,16 +211,16 @@ local Letters = Def.ActorFrame{
 		self:diffusealpha(0);
 		self:GetParent():GetChild("Cursor"):diffusealpha(0);
 		IsEnteringName = false;
-		MESSAGEMAN:Broadcast("DoneEnteringName" .. ToEnumShortString(Player) );
+		MESSAGEMAN:Broadcast("DoneEnteringName" .. pn );
 	end
-};
+}
 
 
 -- this is a generic variable we'll use to set the common attributes ALL letters
 -- initially share in common
 local letter = LoadFont("ScreenNameEntryTraditional entry")..{
 	InitCommand=cmd(zoom,0.5; shadowlength,0; visible, false; );
-};
+}
 
 
 -- run through all possible characters and add them to the Letters ActorFrame
@@ -262,13 +253,13 @@ for k,l in ipairs(possibleCharacters) do
 		end;
 	};
 
-end;
+end
 
 -- sounds
-Letters[#Letters+1] = LoadActor( THEME:GetPathS("", "_change value")	)..{Name="delete"; SupportPan = true; };
-Letters[#Letters+1] = LoadActor( THEME:GetPathS("Common", "start")		)..{Name="enter"; SupportPan = true; };
-Letters[#Letters+1] = LoadActor( THEME:GetPathS("MusicWheel", "change")	)..{Name="move"; SupportPan = true; };
-Letters[#Letters+1] = LoadActor( THEME:GetPathS("common", "invalid")	)..{Name="invalid"; SupportPan = true; };
+Letters[#Letters+1] = LoadActor( THEME:GetPathS("", "_change value")	)..{Name="delete"; SupportPan = true; }
+Letters[#Letters+1] = LoadActor( THEME:GetPathS("Common", "start")		)..{Name="enter"; SupportPan = true; }
+Letters[#Letters+1] = LoadActor( THEME:GetPathS("MusicWheel", "change")	)..{Name="move"; SupportPan = true; }
+Letters[#Letters+1] = LoadActor( THEME:GetPathS("common", "invalid")	)..{Name="invalid"; SupportPan = true; }
 
 --This is pretty stupid but it's my fault for trying to
 --perform string comparison on mapped characters
@@ -279,12 +270,12 @@ Letters[#Letters+1] = LoadFont("ScreenNameEntryTraditional entry")..{
 	Name="DummyOK";
 	Text="&OK;";
 	InitCommand=cmd(visible, false; );
-};
+}
 Letters[#Letters+1] = LoadFont("ScreenNameEntryTraditional entry")..{
 	Name="DummyBACK";
 	Text="&BACK;";
 	InitCommand=cmd(visible, false; );
-};
+}
 
 
 
@@ -319,10 +310,10 @@ local t = Def.ActorFrame{
 		InitCommand=cmd(diffuse,color("0,0,0,0.25"); zoomto, 300, _screen.h/4);
 		OnCommand=cmd(y,142);
 	};
-};
+}
 
 
-t[#t+1] = Letters;
+t[#t+1] = Letters
 t[#t+1] = LoadActor("Cursor.png")..{
 	Name="Cursor";
 	InitCommand=cmd(diffuse,PlayerColor(Player); zoom,0.5;);
@@ -330,18 +321,19 @@ t[#t+1] = LoadActor("Cursor.png")..{
 		self:visible( CanEnterName );
 		self:y(50);
 	end;
-};
+}
+
 t[#t+1] = LoadFont("ScreenNameEntryTraditional entry")..{
-	Name="PlayerName"..ToEnumShortString(Player);
+	Name="PlayerName"..pn;
 	InitCommand=cmd(zoom,0.75;halign,0; x,-80; y,-12;);
 	OnCommand=function(self)
 		self:visible( CanEnterName );
-		self:settext(playerName);
+		self:settext( SL[pn].HighScores.Name or "" );
 	end;
 	SetCommand=function(self)
-		self:settext(playerName);
+		self:settext( SL[pn].HighScores.Name or "" );
 	end;
-};
+}
 	
 t[#t+1] = LoadFont("_wendy small")..{
 	Text=THEME:GetString("ScreenNameEntryActual","OutOfRanking");
@@ -349,7 +341,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 	OnCommand=function(self)
 		self:visible(not CanEnterName);
 	end;
-};
+}
 
 
-return t;
+return t

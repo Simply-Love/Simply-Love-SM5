@@ -1,31 +1,31 @@
-local sStage = "";
-local iSongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
-local iAdditionalSongs = 0;
+local StageText = "";
+local SongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
+local AdditionalSongs = 0;
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(queuecommand,"FigureStuffOut");
 	FigureStuffOutCommand=function(self)
 	
-		if not PREFSMAN:GetPreference("EventMode") then
+		if not GAMESTATE:IsEventMode() then
 		
-			sStage = THEME:GetString("Stage", "Stage") .. " " .. tostring(iSongsPerPlay - SL_SongsRemaining + 1);
+			StageText = THEME:GetString("Stage", "Stage") .. " " .. tostring(SongsPerPlay - SL.Global.Stages.Remaining + 1);
 			local topscreen = SCREENMAN:GetTopScreen();
 			
 			if topscreen then
 				if topscreen:GetName() == "ScreenEvaluationStage" then
 					local song = GAMESTATE:GetCurrentSong();
 					if song then
-						if song:IsLong() then iAdditionalSongs = 1 end
-						if song:IsMarathon() then iAdditionalSongs = 2 end
+						if song:IsLong() then AdditionalSongs = 1 end
+						if song:IsMarathon() then AdditionalSongs = 2 end
 					end
 				end
 			end
 			
-			if SL_SongsRemaining - iAdditionalSongs <= 1 then
-				sStage = THEME:GetString("Stage", "Final");
+			if SL.Global.Stages.Remaining - AdditionalSongs <= 1 then
+				StageText = THEME:GetString("Stage", "Final");
 			end
 		else
-			sStage = THEME:GetString("Stage", "Event");
+			StageText = THEME:GetString("Stage", "Event");
 		end
 		
 		self:GetChild("Stage Number"):playcommand("Text");
@@ -46,7 +46,7 @@ local t = Def.ActorFrame{
 	LoadFont("_wendy small")..{
 		Name="Stage Number";
 		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, SCREEN_TOP);
-		TextCommand=cmd(settext, sStage);
+		TextCommand=cmd(settext, StageText);
 		OnCommand=cmd(decelerate,0.5; diffusealpha,1);
 		OffCommand=cmd(accelerate,0.5;diffusealpha,0);
 	};

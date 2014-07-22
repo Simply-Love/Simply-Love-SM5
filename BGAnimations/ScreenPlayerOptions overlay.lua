@@ -1,197 +1,168 @@
--- initialize speed mods from preferences
-local currentMod = {
-	P1 = getenv("SpeedModP1") or "1.00x";
-	P2 = getenv("SpeedModP2") or "1.00x";
-};
-
-local ScreenOptions;
+local Players = GAMESTATE:GetHumanPlayers()
+local ScreenOptions
 
 -- SpeedModItems is a table that will contain the BitMapText Actors
 -- for the SpeedModNew OptionRow for both P1 and P2
-local SpeedModItems = {nil, nil};
+local SpeedModItems = {P1, P2}
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy,_screen.cx,0;);
+	InitCommand=cmd(xy,_screen.cx,0);
 	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1; queuecommand,"Capture");
 	OffCommand=cmd(linear,0.2;diffusealpha,0);
 	CaptureCommand=function(self)
 		
-		ScreenOptions = SCREENMAN:GetTopScreen();
+		ScreenOptions = SCREENMAN:GetTopScreen()
 		
-		-- reset for editmode OptionsMenu
-		SpeedModItems = {nil, nil};
+		-- reset for ScreenEditOptions
+		SpeedModItems = {P1 = nil, P2 = nil}
 		
 		-- The bitmaptext actors for P1 and P2 speedmod are both named "Item"
-		SpeedModItems[1] = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[1];
-		SpeedModItems[2] = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[2];
+		SpeedModItems.P1 = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[1]
+		SpeedModItems.P2 = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Item")[2]
 			
-		if SpeedModItems[1] and GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-			self:playcommand("SetP1");
+		if SpeedModItems.P1 and GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+			self:playcommand("SetP1")
 		end
-		if SpeedModItems[2] and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-			self:playcommand("SetP2");
-		end
-	end;
-	
-	-- Commands for PLAYER_1 speedmod
-	SpeedModTypeP1SetMessageCommand=function(self,params)
-					
-		local usertype = getenv("SpeedModTypeP1");
-		local newtype = params.Type
-	
-		if usertype ~= newtype then
-			if newtype == "C" then
-				currentMod.P1 = "C200"
-			elseif newtype == "x" then
-				currentMod.P1 = "1.5x"
-			end
-		
-			setenv("SpeedModTypeP1", newtype);				
-			setenv("SpeedModP1",currentMod.P1);
-		
-			ApplySpeedMod(PLAYER_1);
-			self:queuecommand("SetP1");
-		end
-	end;
-
-	SpeedModP1SetMessageCommand=function(self)
-		setenv("SpeedModP1", currentMod.P1);
-		ApplySpeedMod(PLAYER_1);
-	end;
-	SetP1Command=function(self)
-		SpeedModItems[1]:settext( currentMod.P1 );
-		self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P1 ));
-	end;
-	MenuLeftP1MessageCommand=function(self)
-		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_1) == 1 then
-			currentMod.P1 = decrement(currentMod.P1);
-			SpeedModItems[1]:settext( currentMod.P1 );
-			self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P1 ));
-		end	
-	end;
-	MenuRightP1MessageCommand=function(self)
-		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_1) == 1 then
-			currentMod.P1 = increment(currentMod.P1);
-			SpeedModItems[1]:settext( currentMod.P1 );
-			self:GetChild("P1SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P1 ));
+		if SpeedModItems.P2 and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+			self:playcommand("SetP2")
 		end
 	end;
 	
-	
-	-- Commands for PLAYER_2 speedmod
-	SpeedModTypeP2SetMessageCommand=function(self, params)
-
-		local usertype = getenv("SpeedModTypeP2");
-		local newtype = params.Type
-		
-		if usertype ~= newtype then
-			if newtype == "C" then
-				currentMod.P2 = "C200"
-			elseif newtype == "x" then
-				currentMod.P2 = "1.5x"
-			end
-			
-			setenv("SpeedModTypeP2", newtype);
-			setenv("SpeedModP2",currentMod.P2);
-			
-			ApplySpeedMod(PLAYER_2);
-			self:queuecommand("SetP2");
-		end
-	end;
-	SpeedModP2SetMessageCommand=function(self)
-		setenv("SpeedModP2", currentMod.P2);
-		ApplySpeedMod(PLAYER_2);
-	end;
-	SetP2Command=function(self)
-		SpeedModItems[2]:settext( currentMod.P2 );
-		self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P2 ));
-	end;
-	MenuLeftP2MessageCommand=function(self)
-		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_2) == 1 then
-			currentMod.P2 = decrement(currentMod.P2);
-			SpeedModItems[2]:settext( currentMod.P2 );
-			self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P2 ));
-		end	
-	end;
-	MenuRightP2MessageCommand=function(self)
-		if SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_2) == 1 then
-			currentMod.P2 = increment( currentMod.P2 );
-			SpeedModItems[2]:settext( currentMod.P2 );
-			self:GetChild("P2SpeedModHelper"):settext(DisplaySpeedMod( currentMod.P2 ));
-		end
-	end;
-
-
-
 	-- this is broadcast from [OptionRow] TitleGainFocusCommand in metrics.ini
 	-- we use it to color the active OptionRow's title appropriately by PlayerColor()
 	OptionRowChangedMessageCommand=function(self, params)
-				
-		local CurrentRowIndexP1, CurrentRowIndexP2;
-		
+			
+		local CurrentRowIndex = {P1, P2}
+	
 		-- there is always the possibility that a diffuseshift is still active
 		-- cancel it now (and re-apply below, if applicable)
-		params.Title:stopeffect();
-		
+		params.Title:stopeffect()
+	
 		-- if ScreenOptions is nil, get it now
 		if not ScreenOptions then
-			ScreenOptions = SCREENMAN:GetTopScreen();
+			ScreenOptions = SCREENMAN:GetTopScreen()
 		else			
 			-- get the index of PLAYER_1's current row
 			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-				CurrentRowIndexP1 = ScreenOptions:GetCurrentRowIndex(PLAYER_1);
+				CurrentRowIndex.P1 = ScreenOptions:GetCurrentRowIndex(PLAYER_1)
 			end
-			
+		
 			-- get the index of PLAYER_2's current row
 			if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-				CurrentRowIndexP2 = ScreenOptions:GetCurrentRowIndex(PLAYER_2);
+				CurrentRowIndex.P2 = ScreenOptions:GetCurrentRowIndex(PLAYER_2)
 			end
 		end
-			
-		local optionRow = params.Title:GetParent():GetParent();
 		
+		local optionRow = params.Title:GetParent():GetParent();
+	
 		-- color the active optionrow's title appropriately
 		if optionRow:HasFocus(PLAYER_1) then
-			params.Title:diffuse(PlayerColor(PLAYER_1));
+			params.Title:diffuse(PlayerColor(PLAYER_1))
+		end
+	
+		if optionRow:HasFocus(PLAYER_2) then
+			params.Title:diffuse(PlayerColor(PLAYER_2))
 		end
 		
-		if optionRow:HasFocus(PLAYER_2) then
-			params.Title:diffuse(PlayerColor(PLAYER_2));
-		end
-			
-		if CurrentRowIndexP1 and CurrentRowIndexP2 then
-			if CurrentRowIndexP1 == CurrentRowIndexP2 then
-				params.Title:diffuseshift();
-				params.Title:effectcolor1(PlayerColor(PLAYER_1));
-				params.Title:effectcolor2(PlayerColor(PLAYER_2));
+		if CurrentRowIndex.P1 and CurrentRowIndex.P2 then
+			if CurrentRowIndex.P1 == CurrentRowIndex.P2 then
+				params.Title:diffuseshift()
+				params.Title:effectcolor1(PlayerColor(PLAYER_1))
+				params.Title:effectcolor2(PlayerColor(PLAYER_2))
 			end
 		end
 
-	end;
-};
+	end
+}
 
-				
-if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+
+for player in ivalues(Players) do
+	local pn = ToEnumShortString(player)
+
+	t[#t+1] = Def.ActorFrame{
+
+		-- Commands for player speedmod
+		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
+					
+			local prevtype = SL[pn].ActiveModifiers.SpeedModType
+			local newtype = params.Type
+	
+			if prevtype ~= newtype then
+				if newtype == "C" then
+					SL[pn].ActiveModifiers.SpeedMod = 200
+				elseif newtype == "x" then
+					SL[pn].ActiveModifiers.SpeedMod = 1.50
+				end
+		
+				SL[pn].ActiveModifiers.SpeedModType = newtype
+		
+				ApplySpeedMod(player)
+				self:queuecommand("Set" .. pn)
+			end
+		end;
+		
+		["Set" .. pn .. "Command"]=function(self)
+			local text = ""
+			
+			if  SL[pn].ActiveModifiers.SpeedModType == "x" then
+				text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
+			elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
+				text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
+			end
+			
+			SpeedModItems[pn]:settext( text )
+			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+		end;
+		
+		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
+			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == 1 then
+				ChangeSpeedMod( pn, -1 )
+				local text = ""
+			
+				if  SL[pn].ActiveModifiers.SpeedModType == "x" then
+					text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
+				elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
+					text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
+				end
+			
+				SpeedModItems[pn]:settext( text )
+				self:GetParent():GetChild(pn.."SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+			end	
+		end;
+		["MenuRight" .. pn .. "MessageCommand"]=function(self)
+			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == 1 then
+				ChangeSpeedMod( pn, 1 )
+				local text = ""
+			
+				if  SL[pn].ActiveModifiers.SpeedModType == "x" then
+					text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
+				elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
+					text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
+				end
+			
+				SpeedModItems[pn]:settext( text )
+				self:GetParent():GetChild(pn.."SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+			end
+		end
+	}
+	
 	-- the display that does math for you up at the top
 	t[#t+1] = LoadFont("_wendy small")..{
-		Name="P1SpeedModHelper";
+		Name=pn.."SpeedModHelper";
 		Text="";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_1); zoom,0.5; x,-100; y,48; diffusealpha,0;);
+		InitCommand=function(self)
+			self:diffuse(PlayerColor(player))
+			self:zoom(0.5)
+			if player == PLAYER_1 then
+				self:x(-100)
+			elseif player == PLAYER_2 then
+				self:x(150)
+			end
+			self:y(48)
+			self:diffusealpha(0)
+		end;
 		OnCommand=cmd(linear,0.4;diffusealpha,1);
-	};	
+	}
 end
 
-
-
-if GAMESTATE:IsPlayerEnabled(PLAYER_2) then	
-	-- the display that does math for you up at the top
-	t[#t+1] = LoadFont("_wendy small")..{
-		Name="P2SpeedModHelper";
-		Text="";
-		InitCommand=cmd(diffuse,PlayerColor(PLAYER_2); zoom,0.5; x,150; addy,48;diffusealpha,0;);
-		OnCommand=cmd(linear,0.4;diffusealpha,1);
-	};
-end
-
-
-return t;
+return t
