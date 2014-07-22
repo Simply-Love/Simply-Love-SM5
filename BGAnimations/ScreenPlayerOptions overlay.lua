@@ -84,14 +84,27 @@ for player in ivalues(Players) do
 		-- Commands for player speedmod
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
 					
-			local prevtype = SL[pn].ActiveModifiers.SpeedModType
+			local oldtype = SL[pn].ActiveModifiers.SpeedModType
 			local newtype = params.Type
 	
-			if prevtype ~= newtype then
-				if newtype == "C" or newtype == "M" then
-					SL[pn].ActiveModifiers.SpeedMod = 200
+			if oldtype ~= newtype then
+				local bpm
+				local oldspeed = SL[pn].ActiveModifiers.SpeedMod
+				
+				if GAMESTATE:IsCourseMode() then
+					bpm = GetCourseModeBPMs()
+				else
+					bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
+				end
+				
+				if oldtype == "x" and (newtype == "C" or newtype == "M") then
+					-- convert to the nearest MMod/CMod-appropriate integer by rounding to nearest 10
+					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / 10)) * 10	
+				
 				elseif newtype == "x" then
-					SL[pn].ActiveModifiers.SpeedMod = 1.50
+					-- convert to the nearest XMod-appropriate integer by rounding to 2 decimal places
+					-- and then rounding that to the nearest 0.05 increment
+					SL[pn].ActiveModifiers.SpeedMod = (round(round(oldspeed / bpm[2], 2) / 0.05)) * 0.05
 				end
 		
 				SL[pn].ActiveModifiers.SpeedModType = newtype

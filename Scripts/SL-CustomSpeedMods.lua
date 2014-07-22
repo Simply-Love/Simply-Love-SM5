@@ -103,7 +103,7 @@ end
 function DisplaySpeedMod(pn)
 	local bpm
 	local display = ""
-	speed = SL[pn].ActiveModifiers.SpeedMod
+	local speed = SL[pn].ActiveModifiers.SpeedMod
 	
 	if GAMESTATE:IsCourseMode() then
 		bpm = GetCourseModeBPMs()
