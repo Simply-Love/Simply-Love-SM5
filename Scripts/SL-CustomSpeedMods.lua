@@ -1,5 +1,5 @@
 function SpeedModsType()
-	local modList = { "x", "C" };
+	local modList = { "x", "C", "M" };
 	local t = {
 		Name = "SpeedType",
 		LayoutType = "ShowOneInRow",
@@ -24,7 +24,6 @@ function SpeedModsType()
 			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=sSave});
 		end
 	}
-	setmetatable(t, t)
 	return t
 end
 
@@ -47,7 +46,6 @@ function SpeedModsNew()
 			ApplySpeedMod(pn);
 		end	
 	}
-	setmetatable(t, t)
 	return t
 end
 
@@ -57,7 +55,7 @@ end
 
 function ChangeSpeedMod(pn, direction)
 		
-	-- if using an x-mod
+	-- if using an XMod
 	if SL[pn].ActiveModifiers.SpeedModType == "x" then
 		
 		if SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction) >= 20 then
@@ -68,8 +66,8 @@ function ChangeSpeedMod(pn, direction)
 			SL[pn].ActiveModifiers.SpeedMod = SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction)
 		end
 		
-	-- elseif using a C-mod
-	elseif SL[pn].ActiveModifiers.SpeedModType == "C" then
+	-- elseif using a CMod or an MMod
+	elseif SL[pn].ActiveModifiers.SpeedModType == "C" or SL[pn].ActiveModifiers.SpeedModType == "M" then
 
 		if SL[pn].ActiveModifiers.SpeedMod + (10 * direction) >= 2000 then
 			SL[pn].ActiveModifiers.SpeedMod = 10
@@ -96,6 +94,8 @@ function ApplySpeedMod(player)
 		playeroptions:XMod(speed)
 	elseif type == "C" then
 		playeroptions:CMod(speed)
+	elseif type == "M" then
+		playeroptions:MMod(speed)
 	end
 end
 
@@ -111,7 +111,7 @@ function DisplaySpeedMod(pn)
 		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
 	end
 		
-	-- if using an x-mod
+	-- if using an XMod
 	if SL[pn].ActiveModifiers.SpeedModType == "x" then
 		
 		--if a single bpm suffices
@@ -123,9 +123,9 @@ function DisplaySpeedMod(pn)
 			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1]) .. " - " .. round(speed * bpm[2]) .. ")"
 		end
 	
-	-- elseif using a C-mod
-	elseif SL[pn].ActiveModifiers.SpeedModType == "C" then
-		display = "C" .. tostring(speed)
+	-- elseif using a CMod or an MMod
+	elseif SL[pn].ActiveModifiers.SpeedModType == "C" or SL[pn].ActiveModifiers.SpeedModType == "M" then
+		display = SL[pn].ActiveModifiers.SpeedModType .. tostring(speed)
 	end
 
 	return display

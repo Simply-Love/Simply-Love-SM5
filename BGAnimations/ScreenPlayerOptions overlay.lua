@@ -34,8 +34,8 @@ local t = Def.ActorFrame{
 			
 		local CurrentRowIndex = {P1, P2}
 	
-		-- there is always the possibility that a diffuseshift is still active
-		-- cancel it now (and re-apply below, if applicable)
+		-- There is always the possibility that a diffuseshift is still active;
+		-- cancel it now (and re-apply below, if applicable).
 		params.Title:stopeffect()
 	
 		-- if ScreenOptions is nil, get it now
@@ -88,7 +88,7 @@ for player in ivalues(Players) do
 			local newtype = params.Type
 	
 			if prevtype ~= newtype then
-				if newtype == "C" then
+				if newtype == "C" or newtype == "M" then
 					SL[pn].ActiveModifiers.SpeedMod = 200
 				elseif newtype == "x" then
 					SL[pn].ActiveModifiers.SpeedMod = 1.50
@@ -108,6 +108,8 @@ for player in ivalues(Players) do
 				text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
 			elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
 				text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
+			elseif  SL[pn].ActiveModifiers.SpeedModType == "M" then
+				text = "M" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
 			end
 			
 			SpeedModItems[pn]:settext( text )
@@ -117,31 +119,13 @@ for player in ivalues(Players) do
 		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
 			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == 1 then
 				ChangeSpeedMod( pn, -1 )
-				local text = ""
-			
-				if  SL[pn].ActiveModifiers.SpeedModType == "x" then
-					text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
-				elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
-					text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
-				end
-			
-				SpeedModItems[pn]:settext( text )
-				self:GetParent():GetChild(pn.."SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+				self:queuecommand("Set"..pn)
 			end	
 		end;
 		["MenuRight" .. pn .. "MessageCommand"]=function(self)
 			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == 1 then
 				ChangeSpeedMod( pn, 1 )
-				local text = ""
-			
-				if  SL[pn].ActiveModifiers.SpeedModType == "x" then
-					text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
-				elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
-					text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
-				end
-			
-				SpeedModItems[pn]:settext( text )
-				self:GetParent():GetChild(pn.."SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+				self:queuecommand("Set"..pn)
 			end
 		end
 	}
