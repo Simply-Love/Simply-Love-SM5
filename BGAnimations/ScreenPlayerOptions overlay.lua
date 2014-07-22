@@ -66,6 +66,7 @@ for player in ivalues(Players) do
 		
 				ApplySpeedMod(player)
 				self:queuecommand("Set" .. pn)
+				self:GetParent():GetChild(pn.."MusicRateHelper"):playcommand("Set")
 			end
 		end;
 		
@@ -114,6 +115,38 @@ for player in ivalues(Players) do
 			self:diffusealpha(0)
 		end;
 		OnCommand=cmd(linear,0.4;diffusealpha,1);
+	}
+	
+	t[#t+1] = LoadFont("_misoreg hires")..{
+		Name=pn.."MusicRateHelper";
+		Text="";
+		InitCommand=function(self)
+			self:diffuse(PlayerColor(player))
+			self:zoom(0.8)
+						
+			if player == PLAYER_1 then
+				self:x(-100)
+			elseif player == PLAYER_2 then
+				self:x(150)
+			end
+			self:y(28)
+			self:diffusealpha(0)
+		end;
+		OnCommand=cmd(linear,0.4;diffusealpha,1);
+		SetCommand=function(self)
+			if SL[pn].ActiveModifiers.SpeedModType == "x" then
+				local musicrate = SL.Global.ActiveModifiers.MusicRate
+				if musicrate == 1 then
+					self:settext("")
+				else
+					self:settext(musicrate .. "x")
+				end
+			else
+				self:settext("")
+			end
+			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+		end;
+		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
 	}
 end
 

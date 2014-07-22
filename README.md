@@ -21,7 +21,6 @@ TODO:
 
 * Score vocalization (should be optional via directory detection, ideally)
 * DQ'd from Ranking with specific modifiers
-* Speed modifiers should scale appropriately with music rate mods
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 

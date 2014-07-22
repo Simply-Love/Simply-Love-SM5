@@ -24,6 +24,9 @@ local PlayerDefaults = {
 local GlobalDefaults = {
 	__index = {
 		initialize = function(self)
+			self.ActiveModifiers = {
+				MusicRate = 1.00,
+			}
 			self.Stages = {
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay")
 			}
@@ -49,3 +52,5 @@ function InitializeSimplyLove()
 	SL.P2:initialize()
 	SL.Global:initialize()
 end
+
+InitializeSimplyLove()

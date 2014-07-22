@@ -113,14 +113,15 @@ function DisplaySpeedMod(pn)
 		
 	-- if using an XMod
 	if SL[pn].ActiveModifiers.SpeedModType == "x" then
+		local musicrate = SL.Global.ActiveModifiers.MusicRate
 		
 		--if a single bpm suffices
 		if bpm[1] == bpm[2] then
-			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1]) .. ")"
+			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. ")"
 			
 		-- if we have a range of bpms
 		else
-			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1]) .. " - " .. round(speed * bpm[2]) .. ")"
+			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. " - " .. round(speed * bpm[2] * musicrate) .. ")"
 		end
 	
 	-- elseif using a CMod or an MMod

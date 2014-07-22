@@ -65,17 +65,17 @@ end
 function OptionRowPlayerFilter()
 	local filters = { 'Off','Dark','Darker','Darkest' }
 	local t = {
-		Name = "Screen Filter";
-		LayoutType = "ShowAllInRow";
-		SelectType = "SelectOne";
-		OneChoiceForAllPlayers = false;
-		ExportOnChange = false;
-		Choices = filters;
+		Name = "Screen Filter",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
+		Choices = filters,
 		LoadSelections = function(self, list, pn)
 			local userScreenFilter = SL[ToEnumShortString(pn)].ActiveModifiers.ScreenFilter
 			local i = FindInTable(userScreenFilter, filters) or 1
 			list[i] = true
-		end;
+		end,
 		SaveSelections = function(self, list, pn)
 			local sSave
 
@@ -86,7 +86,7 @@ function OptionRowPlayerFilter()
 			end
 
 			SL[ToEnumShortString(pn)].ActiveModifiers.ScreenFilter = sSave
-		end;
+		end
 	}
 	return t
 end
@@ -101,17 +101,17 @@ function OptionRowPlayerMini()
 	end
 	
 	local t = {
-		Name = "Mini";
-		LayoutType = "ShowAllInRow";
-		SelectType = "SelectOne";
-		OneChoiceForAllPlayers = false;
-		ExportOnChange = true;
-		Choices = mini;
+		Name = "Mini",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = true,
+		Choices = mini,
 		LoadSelections = function(self, list, pn)
 			local userMini = SL[ToEnumShortString(pn)].ActiveModifiers.Mini
 			local i = FindInTable(userMini, mini) or 1
 			list[i] = true
-		end;
+		end,
 		SaveSelections = function(self, list, pn)
 			local sSave
 
@@ -123,7 +123,42 @@ function OptionRowPlayerMini()
 			
 			SL[ToEnumShortString(pn)].ActiveModifiers.Mini = sSave
 			ApplyMini(pn);
-		end;
+		end
+	}
+	return t
+end
+
+function OptionRowSongMusicRate()
+	local musicrate = {}
+	for i=0.5,2.1,0.1 do
+		musicrate[#musicrate+1] = tostring(i)
+	end
+	
+	local t = {
+		Name = "Music Rate",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = true,
+		Choices = musicrate,
+		LoadSelections = function(self, list, pn)
+			local userRate = tostring(SL.Global.ActiveModifiers.MusicRate)
+			local i = FindInTable(userRate, musicrate) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local sSave
+
+			for i=1,#musicrate do
+				if list[i] then
+					sSave = musicrate[i]	
+				end
+			end
+			
+			SL.Global.ActiveModifiers.MusicRate = tonumber(sSave)
+			GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate(tonumber(sSave))
+			MESSAGEMAN:Broadcast("MusicRateChanged")
+		end
 	}
 	return t
 end
