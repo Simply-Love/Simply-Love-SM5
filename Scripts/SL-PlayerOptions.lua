@@ -131,7 +131,7 @@ end
 function OptionRowSongMusicRate()
 	local musicrate = {}
 	for i=0.5,2.1,0.1 do
-		musicrate[#musicrate+1] = tostring(i)
+		musicrate[#musicrate+1] = string.format("%.1f",i)
 	end
 	
 	local t = {
@@ -142,7 +142,7 @@ function OptionRowSongMusicRate()
 		ExportOnChange = true,
 		Choices = musicrate,
 		LoadSelections = function(self, list, pn)
-			local userRate = tostring(SL.Global.ActiveModifiers.MusicRate)
+			local userRate = string.format("%.1f", SL.Global.ActiveModifiers.MusicRate)
 			local i = FindInTable(userRate, musicrate) or 1
 			list[i] = true
 		end,

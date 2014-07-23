@@ -25,7 +25,7 @@ local GlobalDefaults = {
 	__index = {
 		initialize = function(self)
 			self.ActiveModifiers = {
-				MusicRate = 1.00,
+				MusicRate = 1.0,
 			}
 			self.Stages = {
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay")
