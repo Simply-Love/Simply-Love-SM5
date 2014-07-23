@@ -10,7 +10,6 @@ return Def.ActorFrame{
 				if topscreen:GetEnteringName(pn) then
 					SL[ToEnumShortString(pn)].HighScores.EnteringName = true
 				end
-				SM( SL[ToEnumShortString(pn)].HighScores.EnteringName)
 			end
 			
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
