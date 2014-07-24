@@ -96,8 +96,8 @@ end
 function OptionRowPlayerMini()
 	-- 200% mini is (literally) impossible to see, so don't bother.
 	local mini = { "Normal" }
-	for i=1,30 do
-		mini[#mini+1] = tostring(i * 5) .. "%"
+	for i=5,150,5 do
+		mini[#mini+1] = tostring(i) .. "%"
 	end
 	
 	local t = {
@@ -105,7 +105,7 @@ function OptionRowPlayerMini()
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
-		ExportOnChange = true,
+		ExportOnChange = false,
 		Choices = mini,
 		LoadSelections = function(self, list, pn)
 			local userMini = SL[ToEnumShortString(pn)].ActiveModifiers.Mini
@@ -171,12 +171,14 @@ function ApplyMini(pn)
 	local mini = SL[ToEnumShortString(pn)].ActiveModifiers.Mini or "Normal"
 	
 	if mini == "Normal" then
-		mini = "no mini"
+		mini = 0
 	else
-		mini = mini .. " mini"
+		mini = mini:gsub("%%","")/100
 	end
 	
-	GAMESTATE:ApplyGameCommand('mod,' .. mini, pn)
+	-- to make the arrows smaller, pass Mini() a value between 0 and 1
+	-- (to make the arrows bigger, pass Mini() a value larger than 1)
+	GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):Mini(mini)
 end
 
 
