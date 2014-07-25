@@ -8,7 +8,8 @@ local PlayerDefaults = {
 				Mini = "Normal",
 				ScreenFilter = "Off",
 				SpeedModType = "x",
-				SpeedMod = 1.00
+				SpeedMod = 1.00,
+				Vocalization = "None"
 			}
 			self.HighScores = {
 				EnteringName = false, 
@@ -31,8 +32,8 @@ local GlobalDefaults = {
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay")
 			}
 			self.ScreenAfter = {
-				PlayerOptions,
-				PlayerOptions2
+				PlayerOptions = "ScreenGameplay",
+				PlayerOptions2 = "ScreenGameplay"
 			}
 		end
 	}

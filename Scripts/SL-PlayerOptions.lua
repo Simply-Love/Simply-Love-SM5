@@ -41,9 +41,9 @@ function PlayerJudgment()
 		ExportOnChange = false,
 		Choices = judgmentGraphics,
 		LoadSelections = function(self, list, pn)
-			local userJudgmentGraphic = SL[ToEnumShortString(pn)].ActiveModifiers.JudmentGraphic
+			local userJudgmentGraphic = SL[ToEnumShortString(pn)].ActiveModifiers.JudgmentGraphic
 			local i = FindInTable(userJudgmentGraphic, judgmentGraphics) or 1
-			list[i] = true;
+			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
 			local sSave;
@@ -182,6 +182,80 @@ function ApplyMini(pn)
 end
 
 
+function OptionRowVocalize()
+	
+	-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Vocalize/
+	-- and have those vocalizations be automatically detected
+	local files = FILEMAN:GetDirListing("Themes/" .. THEME:GetThemeDisplayName() .. "/Vocalize/" , true, false)
+	local vocalizations = { "None" }
+	
+	for k,dir in ipairs(files) do
+		-- Dynamically fill the table.
+		vocalizations[#vocalizations+1] = dir
+	end
+	
+	vocalizations[#vocalizations+1] = "Random"
+	
+	local t = {
+		Name = "UserPlayerJudgment",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
+		Choices = vocalizations,
+		LoadSelections = function(self, list, pn)
+			local userVocal = SL[ToEnumShortString(pn)].ActiveModifiers.Vocalization
+			local i = FindInTable(userVocal, vocalizations) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local sSave
+			
+			for i=1,#list do
+				if list[i] then
+					sSave=vocalizations[i]
+				end
+			end
+			
+			SL[ToEnumShortString(pn)].ActiveModifiers.Vocalization = sSave;
+		end
+	}
+	return t
+end
+
+function ParseScore(score)
+	local digits = {}
+	
+	score = tonumber(score:gsub("%%",""))
+	local int = math.floor(score)
+	local dec = tonumber(score:sub(-2))
+	
+	if int == 100 then
+		digits[1] = '100percent'
+		
+	elseif score == 0 then
+		 digits[1] = nil
+		 
+	else
+		if int < 20 or int % 10 == 0 then
+			digits[1] = int
+			digits[2] = 'point'
+		else
+			digits[1] = int - int % 10
+			digits[2] = int % 10
+			digits[3] = 'point'
+		end
+		
+		if dec < 20 or dec % 10 == 0 then
+			digits[#digits+1] = dec
+		else
+			digits[#digits+1] = dec - dec % 10
+			digits[#digits+1] = dec % 10
+		end
+	end
+
+	return digits
+end
 
 
 

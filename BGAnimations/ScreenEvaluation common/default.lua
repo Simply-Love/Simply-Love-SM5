@@ -107,6 +107,7 @@ local t = Def.ActorFrame{
 for pn in ivalues(Players) do
 	
 	t[#t+1] = Def.ActorFrame{
+		Name=ToEnumShortString(pn).." AF Upper",
 		OnCommand=function(self)
 			if pn == PLAYER_1 then
 				self:x(_screen.cx - 155)
@@ -237,7 +238,7 @@ for pn in ivalues(Players) do
 	}
 	
 	t[#t+1] = Def.ActorFrame{
-
+		Name=ToEnumShortString(pn).." AF Lower",
 		OnCommand=function(self)
 			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
 				self:x(_screen.cx)
@@ -282,6 +283,7 @@ for pn in ivalues(Players) do
 		
 		-- percentage score
 		LoadActor("percentage", pn)..{
+			Name="PercentageContainer"..ToEnumShortString(pn),
 			InitCommand=function(self)
 				self:y(_screen.cy-26)
 				self:zoom(0.65)
