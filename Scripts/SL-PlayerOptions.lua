@@ -197,7 +197,7 @@ function OptionRowVocalize()
 	vocalizations[#vocalizations+1] = "Random"
 	
 	local t = {
-		Name = "UserPlayerJudgment",
+		Name = "UserScoreVocalization",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
