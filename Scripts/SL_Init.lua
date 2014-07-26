@@ -45,7 +45,8 @@ local GlobalDefaults = {
 SL = {
 	P1 = setmetatable( {}, PlayerDefaults),
 	P2 = setmetatable( {}, PlayerDefaults),
-	Global = setmetatable( {}, GlobalDefaults)
+	Global = setmetatable( {}, GlobalDefaults),
+	Vocalization = {}
 }
 
 function InitializeSimplyLove()

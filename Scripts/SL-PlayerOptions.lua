@@ -223,43 +223,6 @@ function OptionRowVocalize()
 	return t
 end
 
-function ParseScore(score)
-	local digits = {}
-	
-	score = tonumber(score:gsub("%%",""))
-	local int = math.floor(score)
-	local dec = tonumber(score:sub(-2))
-	
-	if int == 100 then
-		digits[1] = '100percent'
-		
-	elseif score == 0 then
-		 digits[1] = nil
-		 
-	else
-		if int < 20 or int % 10 == 0 then
-			digits[1] = int
-			digits[2] = 'point'
-		else
-			digits[1] = int - int % 10
-			digits[2] = int % 10
-			digits[3] = 'point'
-		end
-		
-		if dec < 20 or dec % 10 == 0 then
-			digits[#digits+1] = dec
-		else
-			digits[#digits+1] = dec - dec % 10
-			digits[#digits+1] = dec % 10
-		end
-	end
-
-	return digits
-end
-
-
-
-
 
 
 function ForwardOrBackward()
