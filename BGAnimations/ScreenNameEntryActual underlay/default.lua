@@ -25,73 +25,60 @@ t[#t+1] = Def.ActorFrame {
 	
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
-		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7);
-	};
+		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
+	},
 	
 	Def.Quad{
 		Name="LeftMask";
-		InitCommand=cmd(halign,0);
-		OnCommand=function(self)
-			self:xy(0,_screen.cy);
-			self:zoomto(_screen.cx-272, _screen.h);
-			self:MaskSource();
-		end;
-	};
+		InitCommand=cmd(halign,0),
+		OnCommand=cmd(xy, 0, _screen.cy; zoomto, _screen.cx-272, _screen.h; MaskSource)
+	},
 	
 	Def.Quad{
-		Name="CenterMask";
-		OnCommand=function(self)
-			self:Center();
-			self:zoomto(110, _screen.h);
-			self:MaskSource();
-		end;
-	};
+		Name="CenterMask",
+		OnCommand=cmd(Center; zoomto, 110, _screen.h; MaskSource)
+	},
 	
 	Def.Quad{
-		Name="RightMask";
-		InitCommand=cmd(halign,1);
-		OnCommand=function(self)
-			self:xy(_screen.w,_screen.cy);
-			self:zoomto(_screen.cx-272, _screen.h);
-			self:MaskSource();
-		end;
-	};
-
-};
+		Name="RightMask",
+		InitCommand=cmd(halign,1),
+		OnCommand=cmd(xy, _screen.w, _screen.cy; zoomto, _screen.cx-272, _screen.h; MaskSource)
+	}
+}
 
 
 t[#t+1] = Def.Actor {
 	DoneEnteringNameP1MessageCommand=function(self)
-		SL.P1.HighScores.EnteringName = false;
-		self:queuecommand("AttemptToFinish");
-	end;
+		SL.P1.HighScores.EnteringName = false
+		self:queuecommand("AttemptToFinish")
+	end,
 	DoneEnteringNameP2MessageCommand=function(self)
-		SL.P2.HighScores.EnteringName = false;
-		self:queuecommand("AttemptToFinish");
-	end;
+		SL.P2.HighScores.EnteringName = false
+		self:queuecommand("AttemptToFinish")
+	end,
 	CodeMessageCommand=function(self, params)
 		if params.Name == "Enter" then
-			self:queuecommand("AttemptToFinish");
+			self:queuecommand("AttemptToFinish")
 		end
-	end;
+	end,
 	AttemptToFinishCommand=function(self)
-		local AnyEntering = false;
+		local AnyEntering = false
 		
 		if SL.P1.HighScores.EnteringName or SL.P2.HighScores.EnteringName then
 			AnyEntering = true
 		end
 		
 		if not AnyEntering then
-			self:playcommand("Finish");
+			self:playcommand("Finish")
 		end
-	end;
+	end,
 	MenuTimerExpiredMessageCommand=function(self, param)
-		self:playcommand("Finish");
-	end;
+		self:playcommand("Finish")
+	end,
 	FinishCommand=function(self)
 		-- manually transition to the next screen (defined in Metrics)
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen");
-	end;
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+	end,
 	OffCommand=function(self)
 		for pn in ivalues(Players) do
 			local playerName = SL[ToEnumShortString(pn)].HighScores.Name
@@ -99,21 +86,22 @@ t[#t+1] = Def.Actor {
 			if playerName then
 				
 				-- actually store the HighScoreName
-				GAMESTATE:StoreRankingName(pn, playerName);
+				GAMESTATE:StoreRankingName(pn, playerName)
 				
 				-- if the player is using a profile, set a LastUsedHighScoreName for him/her
 				if PROFILEMAN:IsPersistentProfile(pn) then
-					PROFILEMAN:GetProfile(pn):SetLastUsedHighScoreName(playerName);
+					PROFILEMAN:GetProfile(pn):SetLastUsedHighScoreName(playerName)
 				end
 			end
 		end
-	end;
-};
+		PROFILEMAN:SaveMachineProfile()
+	end
+}
 
 
 for pn in ivalues(Players) do
-	t[#t+1] = LoadActor("alphabet", pn);
-	t[#t+1] = LoadActor("highScores", pn);
+	t[#t+1] = LoadActor("alphabet", pn)
+	t[#t+1] = LoadActor("highScores", pn)
 end 
 
 --
