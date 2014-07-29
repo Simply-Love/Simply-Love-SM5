@@ -1,50 +1,37 @@
 local numPlayers = GAMESTATE:GetNumPlayersEnabled()
-local numSides = GAMESTATE:GetNumSidesJoined();
-local bDoubles = (numPlayers == 1 and numSides == 2);
+local numSides = GAMESTATE:GetNumSidesJoined()
+local bDoubles = (numPlayers == 1 and numSides == 2)
 local bUsingCenter1P = PREFSMAN:GetPreference('Center1Player')
-
-
-local songoptions = GAMESTATE:GetSongOptionsObject("ModsLevel_Song");
-local ratemod = nil;
-
-if songoptions then
-	ratemod = round(songoptions:MusicRate());
-end
+local MusicRate = SL.Global.ActiveModifiers.MusicRate 
 
 
 local function UpdateSingleBPM(self)
 	local bpmDisplay = self:GetChild("BPMDisplay")
 	local pn = GAMESTATE:GetMasterPlayerNumber()
-	local pState = GAMESTATE:GetPlayerState(pn);
+	local pState = GAMESTATE:GetPlayerState(pn)
 	local songPosition = pState:GetSongPosition()
-	local bpm = songPosition:GetCurBPS() * 60 * ratemod
+	local bpm = songPosition:GetCurBPS() * 60 * MusicRate
 	bpmDisplay:settext( round(bpm) )
 end
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(CenterX;y,SCREEN_TOP+62;valign,1;zoom,1.33);
+	InitCommand=cmd(CenterX; y,SCREEN_TOP+62; valign,1; zoom,1.33),
 	
 	LoadFont("_misoreg hires")..{
-		Name="RatemodDisplay";
-		Text=ratemod.."x rate";
-		InitCommand=cmd(zoom,0.5; NoStroke);
-		OnCommand=function(self)
-			self:addy(13);
-			if self:GetText() == "1x rate" then
-				self:settext("");
-			end;
-		end;
-	};
-};
+		Name="RatemodDisplay",
+		Text=MusicRate ~= 1 and MusicRate.."x rate" or "",
+		InitCommand=cmd(zoom,0.5; y, 13)
+	}
+}
 
 local displaySingle = Def.ActorFrame{
 	LoadFont("_misoreg hires")..{
-		Name="BPMDisplay";
-		InitCommand=cmd(zoom,1; NoStroke;);
-	};
-};
+		Name="BPMDisplay",
+		InitCommand=cmd(zoom,1)
+	}
+}
 
-displaySingle.InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM);
+displaySingle.InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM)
 
 -- in CourseMode, both players should always be playing the same charts, right?
 if numPlayers == 1 or GAMESTATE:IsCourseMode() then
@@ -80,26 +67,26 @@ else
 		-- needs current bpm for p1 and p2
 		for pn in ivalues(PlayerNumber) do
 			local bpmDisplay = (pn == PLAYER_1) and dispP1 or dispP2
-			local pState = GAMESTATE:GetPlayerState(pn);
+			local pState = GAMESTATE:GetPlayerState(pn)
 			local songPosition = pState:GetSongPosition()
-			local bpm = songPosition:GetCurBPS() * 60 * ratemod
-			bpmDisplay:settext( round(bpm) );			
+			local bpm = songPosition:GetCurBPS() * 60 * MusicRate
+			bpmDisplay:settext( round(bpm) )		
 		end
 	end
 
 	local displayTwoPlayers = Def.ActorFrame{
 		-- manual bpm displays
 		LoadFont("_misoreg hires")..{
-			Name="DisplayP1";
-			InitCommand=cmd(x,-32;zoom,1;shadowlength,1;NoStroke;);
-		};
+			Name="DisplayP1",
+			InitCommand=cmd(x,-32; zoom,1; shadowlength,1)
+		},
 		LoadFont("_misoreg hires")..{
-			Name="DisplayP2";
-			InitCommand=cmd(x,32;zoom,1;shadowlength,1;NoStroke;);
-		};
-	};
+			Name="DisplayP2",
+			InitCommand=cmd(x,32; zoom,1; shadowlength,1)
+		}
+	}
 
-	displayTwoPlayers.InitCommand=cmd(SetUpdateFunction,Update2PBPM);
+	displayTwoPlayers.InitCommand=cmd(SetUpdateFunction,Update2PBPM)
 
 	t[#t+1] = displayTwoPlayers
 end
