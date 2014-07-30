@@ -94,7 +94,6 @@ t[#t+1] = Def.Actor {
 				end
 			end
 		end
-		PROFILEMAN:SaveMachineProfile()
 	end
 }
 
