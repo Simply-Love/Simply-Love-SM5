@@ -85,7 +85,10 @@ end
 function ApplySpeedMod(player)
 	local type 	= SL[ToEnumShortString(player)].ActiveModifiers.SpeedModType or "x"
 	local speed = SL[ToEnumShortString(player)].ActiveModifiers.SpeedMod or 1.00
-	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
+	local topscreen = SCREENMAN:GetTopScreen():GetName()
+	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
+	
+	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
 	
 	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack!
 	playeroptions:XMod(1.00)

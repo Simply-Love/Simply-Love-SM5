@@ -176,9 +176,12 @@ function ApplyMini(pn)
 		mini = mini:gsub("%%","")/100
 	end
 	
+	local topscreen = SCREENMAN:GetTopScreen():GetName()
+	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
+	
 	-- to make the arrows smaller, pass Mini() a value between 0 and 1
 	-- (to make the arrows bigger, pass Mini() a value larger than 1)
-	GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):Mini(mini)
+	GAMESTATE:GetPlayerState(pn):GetPlayerOptions(modslevel):Mini(mini)
 end
 
 
