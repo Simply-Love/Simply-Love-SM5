@@ -1,11 +1,12 @@
-local stageStats = ...;
-local Players = GAMESTATE:GetHumanPlayers();
+local passed_in = ...
+local stageStats = passed_in[1]
+local stageNum = passed_in[2]
 
-
+local Players = GAMESTATE:GetHumanPlayers()
 
 -- what sort of scenario would cause this to return a table of multiple songs?
 -- I honestly don't know...
-local song = stageStats:GetPlayedSongs()[1];
+local song = stageStats:GetPlayedSongs()[1]
 
 
 --
@@ -13,76 +14,85 @@ local t = Def.ActorFrame{
 	
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
-		InitCommand=cmd(y,-6; zoom, 0.333);
-	};
+		InitCommand=cmd(y,-6; zoom, 0.333)
+	},
 	
 	-- the banner, if there is one
 	Def.Sprite{
-		Name="Banner";
+		Name="Banner",
 		InitCommand=function(self)
-			self:y(-6);
+			self:y(-6)
 			
-			local bannerpath;
+			local bannerpath
 			if song then
-				bannerpath = song:GetBannerPath();
+				bannerpath = song:GetBannerPath()
 			end			
 	
 			if bannerpath then
-				self:LoadBanner(bannerpath);			
-				self:setsize(418,164);
-				self:zoom(0.333);
+				self:LoadBanner(bannerpath)			
+				self:setsize(418,164)
+				self:zoom(0.333)
 			end
-		end;
-	};
+		end
+	},
 	
 	-- the title of the song
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350;);
+		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350),
 		OnCommand=function(self)
 			if song then
-				self:settext(song:GetDisplayFullTitle());
+				self:settext(song:GetDisplayFullTitle())
 			end
-		end;
-	};
+		end
+	},
 	
 	-- the BPM(s) of the song
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350;);
+		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350),
 		OnCommand=function(self)
 			if song then
-				local BPMs = song:GetDisplayBpms();
+				local text = ""
+				local BPMs = song:GetDisplayBpms()
+				local MusicRate = SL.Global.Stages.MusicRate[stageNum]			
+				
 				if BPMs then
 					if BPMs[1] == BPMs[2] then
-						self:settext(round(BPMs[1]) .. " bpm");
+						text = text .. round(BPMs[1] * MusicRate) .. " bpm"
 					else
-						self:settext(round(BPMs[1]) .. " - " .. round(BPMs[2]) .. " bpm");
+						text = text .. round(BPMs[1] * MusicRate) .. " - " .. round(BPMs[2] * MusicRate) .. " bpm"
 					end
 				end
+				
+				if MusicRate ~= 1 then
+					text = text .. " (" .. tostring(MusicRate).."x Music Rate)"
+				end
+				
+				self:settext(text)
 			end
-		end;
-	};
-};
+		end
+	}
+}
 
 
 
 
 for pn in ivalues(Players) do
-	local playerStats;
+	local playerStats
 	
 	if stageStats then
-		playerStats = stageStats:GetPlayerStageStats(pn);
+		playerStats = stageStats:GetPlayerStageStats(pn)
 	end
 	
 	if playerStats then
 		
-		local percentScore = playerStats:GetPercentDancePoints();
-		local difficultyMeter, difficulty, stepartist, grade;
+		local percentScore = playerStats:GetPercentDancePoints()
+		local difficultyMeter, difficulty, stepartist, grade
 		
 		if playerStats:GetPlayedSteps()[1] then
-			difficultyMeter = playerStats:GetPlayedSteps()[1]:GetMeter();
-			difficulty = playerStats:GetPlayedSteps()[1]:GetDifficulty();
+			difficultyMeter = playerStats:GetPlayedSteps()[1]:GetMeter()
+			difficulty = playerStats:GetPlayedSteps()[1]:GetDifficulty()
 			stepartist = playerStats:GetPlayedSteps()[1]:GetAuthorCredit()
-			grade = playerStats:GetGrade();
+			grade = playerStats:GetGrade()
 		
 		
 			local TNSTypes = {
@@ -92,111 +102,111 @@ for pn in ivalues(Players) do
 				'TapNoteScore_W4',
 				'TapNoteScore_W5',
 				'TapNoteScore_Miss'
-			};
+			}
 	
 	
 			-- variables for positioning and horizalign, dependent on playernumber
-			local col1x, col2x, gradex, align1, align2;
+			local col1x, col2x, gradex, align1, align2
 	
 			if pn == PLAYER_1 then
-				col1x =  -90;
-				col2x =  -_screen.w/2.5;
-				gradex = -_screen.w/3.33;
-				align1 = right;
-				align2 = left;
+				col1x =  -90
+				col2x =  -_screen.w/2.5
+				gradex = -_screen.w/3.33
+				align1 = right
+				align2 = left
 			elseif pn == PLAYER_2 then
-				col1x = 90;
-				col2x = _screen.w/2.5;
-				gradex = _screen.w/3.33;
-				align1= left;
-				align2 = right;
+				col1x = 90
+				col2x = _screen.w/2.5
+				gradex = _screen.w/3.33
+				align1= left
+				align2 = right
 			end
 	
 			--percent score
 			t[#t+1] = LoadFont("_wendy small")..{
-				InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24);
+				InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24),
 				OnCommand=function(self)
 					if percentScore then
 						
 						-- trim off the % symbol
-						local score = string.sub(FormatPercentScore(percentScore),1,-2);
+						local score = string.sub(FormatPercentScore(percentScore),1,-2)
 						
 						-- If the score is < 10.00% there will be leading whitespace, like " 9.45"
 						-- trim that too, so PLAYER_2's scores align properly.
 						score = string.gsub(score, " ", "")	
-						self:settext(score);
+						self:settext(score)
 					end
 				end		
-			};
+			}
 	
 			-- difficulty meter
 			t[#t+1] = LoadFont("_wendy small")..{
-				InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4);
+				InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4),
 				OnCommand=function(self)
 					if difficultyMeter then
 						if difficulty then
 							local y_offset = GetYOffsetByDifficulty(difficulty)
-							self:diffuse(DifficultyIndexColor(y_offset));
+							self:diffuse(DifficultyIndexColor(y_offset))
 						end
 				
-						self:settext(difficultyMeter);
+						self:settext(difficultyMeter)
 					end
 				end		
-			};
+			}
 	
 			-- stepartist
 			t[#t+1] = LoadFont("_misoreg hires")..{
-				InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28);
+				InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
 				OnCommand=function(self)
 					if stepartist then
-						self:settext(stepartist);
+						self:settext(stepartist)
 					end
 				end		
-			};
+			}
 	
 	
 			-- letter grade
 			t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"))..{
-				OnCommand=cmd(zoom,0.2; x, gradex);
-			};
+				OnCommand=cmd(zoom,0.2; x, gradex)
+			}
 	
 	
 			-- numbers
 			for i=1,#TNSTypes do
 		
 				t[#t+1] = LoadFont("_wendy small")..{
-					InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50);
+					InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50),
 					OnCommand=function(self)
 				
-						local val = playerStats:GetTapNoteScores(TNSTypes[i]);
+						local val = playerStats:GetTapNoteScores(TNSTypes[i])
 				
 						if val then
-							self:settext(val);
-						end;
+							self:settext(val)
+						end
 				
 						-- the only place in this theme that color is hard-coded...
 				
 						if i == 1 then						-- fantastic
-							self:diffuse(color("#21CCE8"));	-- blue
+							self:diffuse(color("#21CCE8"))	-- blue
 					
 						elseif i == 2 then					-- perfect
-							self:diffuse(color("#e29c18"));	-- gold
+							self:diffuse(color("#e29c18"))	-- gold
 					
 						elseif i == 3 then					-- great
-							self:diffuse(color("#66c955"));	-- green
+							self:diffuse(color("#66c955"))	-- green
 				
 						elseif i == 4 then					-- good
-							self:diffuse(color("#5b2b8e"));	-- purple
+							self:diffuse(color("#5b2b8e"))	-- purple
 					
 						elseif i == 5 then					-- decent
-							self:diffuse(color("#c9855e"));	-- peach?
+							self:diffuse(color("#c9855e"))	-- peach?
 					
 						else								--miss
-							self:diffuse(color("#ff0000"));	--red
+							self:diffuse(color("#ff0000"))	--red
 						end	
 				
-					end;
-				};
+					end
+				}
 			end
 		end
 	end	

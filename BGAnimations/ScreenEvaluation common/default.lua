@@ -70,7 +70,12 @@ local t = Def.ActorFrame{
 	LoadFont("_misoreg hires")..{
 		InitCommand=cmd(xy,_screen.cx, 173; shadowlength,1; zoom, 0.7),
 		OnCommand=function(self)	
+			-- what was the MusicRate for this song?
 			local MusicRate = SL.Global.ActiveModifiers.MusicRate
+			
+			-- Store the MusicRate for later retrieval on ScreenEvaluationSummary
+			SL.Global.Stages.MusicRate[#SL.Global.Stages.MusicRate + 1] = MusicRate
+			
 			local bpm = GetDisplayBPMs()
 			
 			if MusicRate ~= 1 then

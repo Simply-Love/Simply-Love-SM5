@@ -29,7 +29,8 @@ local GlobalDefaults = {
 				MusicRate = 1.0,
 			}
 			self.Stages = {
-				Remaining = PREFSMAN:GetPreference("SongsPerPlay")
+				Remaining = PREFSMAN:GetPreference("SongsPerPlay"),
+				MusicRate = {}
 			}
 			self.ScreenAfter = {
 				PlayerOptions = "ScreenGameplay",
@@ -46,7 +47,6 @@ SL = {
 	P1 = setmetatable( {}, PlayerDefaults),
 	P2 = setmetatable( {}, PlayerDefaults),
 	Global = setmetatable( {}, GlobalDefaults),
-	Vocalization = {}
 }
 
 function InitializeSimplyLove()
