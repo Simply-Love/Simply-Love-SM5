@@ -1,38 +1,52 @@
-local gridLength = 20;
-local gridZoomFactor = WideScale(0.27,0.29);
+local gridLength = 20
+local gridZoomFactor = 0.27
+if IsUsingWideScreen() then	gridZoomFactor = 0.28 end
 
 local t = Def.ActorFrame{
 	
-	InitCommand=cmd(xy, _screen.cx / WideScale(2, 1.73), _screen.cy + 70; );
+	InitCommand=function(self)
+		if IsUsingWideScreen() then
+			self:xy(_screen.cx - 173, _screen.cy + 70)
+		else
+			self:xy(_screen.cx - 163, _screen.cy + 70)
+		end
+	end,
 	
-	CurrentStepsP1ChangedMessageCommand=cmd(propagatecommand,"Reset");
-	CurrentStepsP2ChangedMessageCommand=cmd(propagatecommand,"Reset");
-	CurrentTrailP1ChangedMessageCommand=cmd(propagatecommand,"Reset");
-	CurrentTrailP2ChangedMessageCommand=cmd(propagatecommand,"Reset");
-	CurrentSongChangedMessageCommand=cmd(propagatecommand,"Reset");
+	CurrentStepsP1ChangedMessageCommand=cmd(propagatecommand,"Reset"),
+	CurrentStepsP2ChangedMessageCommand=cmd(propagatecommand,"Reset"),
+	CurrentTrailP1ChangedMessageCommand=cmd(propagatecommand,"Reset"),
+	CurrentTrailP2ChangedMessageCommand=cmd(propagatecommand,"Reset"),
+	CurrentSongChangedMessageCommand=cmd(propagatecommand,"Reset"),
 
 	-- background
 	Def.Quad{
-		Name="Background";
-		InitCommand=cmd(diffuse,color("#1e282f"); zoomto, _screen.w/WideScale(2.05, 2.47) - 10, _screen.h/5;);
-	};
+		Name="Background",
+		InitCommand=function(self)
+			self:diffuse(color("#1e282f"))
+			if IsUsingWideScreen() then
+				self:zoomto(320, _screen.h/5)
+			else
+				self:zoomto(310, _screen.h/5)
+			end
+		end
+	},
 
-	LoadActor("cursor", PLAYER_1);
-	LoadActor("cursor", PLAYER_2);
-};
+	LoadActor("cursor", PLAYER_1),
+	LoadActor("cursor", PLAYER_2)
+}
 
 -- the grey background blocks
 t[#t+1] = LoadActor("_block.png")..{
-	Name="BackgroundBlocks";
-	InitCommand=cmd(diffuse,color("#182025"); halign,0);
+	Name="BackgroundBlocks",
+	InitCommand=cmd(diffuse,color("#182025"); halign,0),
 	OnCommand=function(self)
-		width = self:GetWidth();
-		height= self:GetHeight();
-		self:x(-(width * gridLength)/4 + WideScale(32,26));
-		self:zoomto(width * gridLength * gridZoomFactor * 1.55, height * 5 * gridZoomFactor);
-		self:customtexturerect(0, 0, gridLength, 5);
-	end;
-};
+		width = self:GetWidth()
+		height= self:GetHeight()
+		self:x(-(width * gridLength)/4 + WideScale(32,26))
+		self:zoomto(width * gridLength * gridZoomFactor * 1.55, height * 5 * gridZoomFactor)
+		self:customtexturerect(0, 0, gridLength, 5)
+	end
+}
 
 
 for row=1,5 do

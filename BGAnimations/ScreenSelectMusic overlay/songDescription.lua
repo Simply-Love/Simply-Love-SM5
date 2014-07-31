@@ -1,180 +1,198 @@
 local t = Def.ActorFrame{
 
-	InitCommand=cmd(xy, _screen.cx/WideScale(2,1.73), _screen.cy - 40 );
-	
+	InitCommand=function(self)
+		if IsUsingWideScreen() then
+			self:xy(_screen.cx - 173, _screen.cy - 28)
+		else
+			self:xy(_screen.cx - 163, _screen.cy - 28)
+		end
+	end,
 
 	-- ----------------------------------------
 	-- Actorframe for Artist, BPM, and Song length
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
 		CurrentStepsP1ChangedMessageCommand=function(self)
 			self:playcommand("Set");
-		end;
+		end,
 		CurrentTrailP1ChangedMessageCommand=function(self)
 			self:playcommand("Set");
-		end;
+		end,
 		CurrentStepsP2ChangedMessageCommand=function(self)
 			self:playcommand("Set");
-		end;
+		end,
 		CurrentTrailP2ChangedMessageCommand=function(self)
 			self:playcommand("Set");
-		end;
+		end,
 		
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
-			InitCommand=cmd(diffuse, color("#1e282f"); zoomto, _screen.w/WideScale(2.05, 2.47) - 10, _screen.h/10; y, 12; )
-		};
+			InitCommand=function(self)
+				self:diffuse(color("#1e282f"))
+				if IsUsingWideScreen() then
+					self:zoomto(320, _screen.h/10)
+				else
+					self:zoomto(310, _screen.h/10)
+				end
+			end
+		},
 		
 	
 	
 		Def.ActorFrame{
 			
-			InitCommand=cmd(horizalign, left; x, -_screen.w/7.25);
+			InitCommand=cmd(x, -110),
 			
 			-- Artist Label
 			LoadFont("_misoreg hires")..{
-				Text="ARTIST";
-				InitCommand=cmd(horizalign, right; NoStroke;);
-				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"););
-			};
+				Text="ARTIST",
+				InitCommand=cmd(horizalign, right; y, -12),
+				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
+			},
 
 			-- Song Artist
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign,left; NoStroke; x, 5; maxwidth,WideScale(225,280) );
+				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,280) ),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
+					local song = GAMESTATE:GetCurrentSong()
 					
 					if song then
 						if song:GetDisplayArtist() then
-							self:settext(song:GetDisplayArtist());
+							self:settext(song:GetDisplayArtist())
 						end
 					else
-						self:settext("");
+						self:settext("")
 					end
-				end;
-			};
+				end
+			},
 
 
 
 			-- BPM Label
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, right; NoStroke; y, 20);
+				InitCommand=cmd(horizalign, right; NoStroke; y, 8),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
-					self:diffuse(0.5,0.5,0.5,1);
-					self:settext("BPM");
-				end;
-			};
+					local song = GAMESTATE:GetCurrentSong()
+					self:diffuse(0.5,0.5,0.5,1)
+					self:settext("BPM")
+				end
+			},
 
 			-- BPM value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, 5; diffuse, color("1,1,1,1"));
+				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, 5; diffuse, color("1,1,1,1")),
 				SetCommand=function(self)
 						
-					--defined in ./Scipts/SL-Other.lua
-					local text = GetDisplayBPMs();
+					--defined in ./Scipts/SL-CustomSpeedMods.lua
+					local text = GetDisplayBPMs()
 						
 					if text then	
-						self:settext(text);	
+						self:settext(text)
 					else
-						self:settext("");
+						self:settext("")
 					end
-				end;
-			};
+				end
+			},
 			
 			-- Song Length Label
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, right; NoStroke; y, 20; x, _screen.w/4.5);
+				InitCommand=cmd(horizalign, right; NoStroke; y, 8; x, _screen.w/4.5),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
-					self:diffuse(0.5,0.5,0.5,1);
-					self:settext("LENGTH");
-				end;
-			};
+					local song = GAMESTATE:GetCurrentSong()
+					self:diffuse(0.5,0.5,0.5,1)
+					self:settext("LENGTH")
+				end
+			},
 	
 			-- Song Length Value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 20; x, _screen.w/4.5 + 5);
+				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, _screen.w/4.5 + 5),
 				SetCommand=function(self)
-					local duration;
+					local duration
 			
 					if GAMESTATE:IsCourseMode() then
-						local Players = GAMESTATE:GetHumanPlayers();
-						local player = Players[1];		
-						local trail = GAMESTATE:GetCurrentTrail(player);
+						local Players = GAMESTATE:GetHumanPlayers()
+						local player = Players[1]
+						local trail = GAMESTATE:GetCurrentTrail(player)
 						
 						if trail then
-							duration = TrailUtil.GetTotalSeconds(trail);
+							duration = TrailUtil.GetTotalSeconds(trail)
 						end
 					else
-						local song = GAMESTATE:GetCurrentSong();
+						local song = GAMESTATE:GetCurrentSong()
 						if song then
-							duration = song:MusicLengthSeconds();
+							duration = song:MusicLengthSeconds()
 						end
-					end;
+					end
 					
 					
 					if duration then
-						self:diffuse(1,1,1,1);
+						self:diffuse(1,1,1,1)
 					
 						if duration == 105.0 then
 							-- r21 lol							
-							self:settext("not 1:45");
+							self:settext("not 1:45")
 						else
-							local finalText = SecondsToMSSMsMs(duration);
-							self:settext( string.sub(finalText, 0, string.len(finalText)-3) );
-						end;
+							local finalText = SecondsToMSSMsMs(duration)
+							self:settext( string.sub(finalText, 0, string.len(finalText)-3) )
+						end
 					else
 						self:settext("")
 					end
 			
-				end;
-			};
-		};
+				end
+			}
+		},
 	
 		Def.ActorFrame{
+			OnCommand=function(self)
+				if IsUsingWideScreen() then
+					self:x(102)
+				else
+					self:x(97)
+				end
+			end,
+			
 			LoadActor("bubble.png")..{
-				InitCommand=cmd(diffuse,GetCurrentColor();visible, false; zoom, 0.9; y,WideScale(42,41.5); x,WideScale(93.5,110.5));
+				InitCommand=cmd(diffuse,GetCurrentColor(); visible, false; zoom, 0.9; y, 30),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
+					local song = GAMESTATE:GetCurrentSong()
 				
 					if song then
 						if song:IsLong() then
-							self:visible(true);
+							self:visible(true)
 						elseif song:IsMarathon() then
-							self:visible(true);
+							self:visible(true)
 						else
-							self:visible(false);
+							self:visible(false)
 						end
 					else
-						self:visible(false);
+						self:visible(false)
 					end
-				end;
-			};
+				end
+			},
 			
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(diffuse, color("#000000"); zoom,0.8; y,46; x,WideScale(93.5,110.5));
+				InitCommand=cmd(diffuse, color("#000000"); zoom,0.8; y, 34),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong();
+					local song = GAMESTATE:GetCurrentSong()
 				
 					if song then
 						if song:IsLong() then
-							self:settext("COUNTS AS 2 ROUNDS");
+							self:settext("COUNTS AS 2 ROUNDS")
 						elseif song:IsMarathon() then
-							self:settext("COUNTS AS 3 ROUNDS");
+							self:settext("COUNTS AS 3 ROUNDS")
 						else
-							self:settext("");
+							self:settext("")
 						end
 					else
-						self:settext("");
+						self:settext("")
 					end
-				end;				
-			};
-		};	
-	};
-	
-};
+				end
+			}
+		}
+	}
+}
 
-
-return t;
+return t
