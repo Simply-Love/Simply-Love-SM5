@@ -75,14 +75,8 @@ function SaveProfileCustom(profile, dir)
 
 			if f:Open(fullFilename, 2) then
 				
-				local setting = SL[pn].ActiveModifiers[k]
-				
 				-- if a setting exists (it should) write that to the .cfg file
-				if setting then
-					f:Write( tostring( setting ) )
-					
-				-- if the setting doesn't exist (if was never initialized?) write a default value
-				else
+				if v then
 					f:Write( tostring( v ) )
 				end
 			else
