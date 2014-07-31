@@ -58,13 +58,19 @@ local cursor = Def.ActorFrame {
 						local stepstodisplay = GetStepsToDisplay(StepsOrTrails);
 						local offset = 0;
 						for k,chart in pairs(stepstodisplay) do
-							if chart:IsAnEdit() then
-								if chart:GetChartName()==CurrentStepsOrTrails:GetChartName() then
+							if GAMESTATE:IsCourseMode() then
+								if chart:GetDifficulty()==CurrentStepsOrTrails:GetDifficulty() then
 									offset = tonumber(k);
 								end
 							else
-								if chart:GetDifficulty()==CurrentStepsOrTrails:GetDifficulty() then
-									offset = tonumber(k);
+								if chart:IsAnEdit() then
+									if chart:GetChartName()==CurrentStepsOrTrails:GetChartName() then
+										offset = tonumber(k);
+									end
+								else
+									if chart:GetDifficulty()==CurrentStepsOrTrails:GetDifficulty() then
+										offset = tonumber(k);
+									end
 								end
 							end
 						end

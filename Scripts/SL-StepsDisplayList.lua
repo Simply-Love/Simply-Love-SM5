@@ -7,17 +7,21 @@ function GetStepsToDisplay(steps)
 	for k,chart in ipairs(steps) do
 		
 		local difficulty = chart:GetDifficulty();
-		
-		if chart:IsAnEdit() then
-			edits[#edits+1] = chart;
+		if GAMESTATE:IsCourseMode() then
+			local index = GetYOffsetByDifficulty(difficulty)
+			charts[index] = chart
 		else
-			local index = GetYOffsetByDifficulty(difficulty);
-			charts[index] = chart;	
+			if chart:IsAnEdit() then
+				edits[#edits+1] = chart
+			else
+				local index = GetYOffsetByDifficulty(difficulty)
+				charts[index] = chart
+			end
 		end
 	end
 	
 	-- if there are no edits we can safely bail now
-	if #edits == 0 then return charts end;
+	if #edits == 0 then return charts end
 	
 	
 	
