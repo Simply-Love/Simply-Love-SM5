@@ -1,6 +1,4 @@
-local t = Def.ActorFrame{
+return Def.ActorFrame{
 	-- the content
-	LoadActor( THEME:GetPathB("ScreenEvaluation","common") );
-};
-
-return t;
+	LoadActor( THEME:GetPathB("ScreenEvaluation","common") )
+}
