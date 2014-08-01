@@ -6,23 +6,24 @@ for p=1,2 do
 
 	t[#t+1] = Def.ActorFrame{
 		InitCommand=function(self)
-			self:horizalign(left)
-			
+						
 			if player == PLAYER_1 then
 				self:player(PLAYER_1)
+				self:horizalign(left)
 				self:y(_screen.cy + 43)
 				if IsUsingWideScreen() then
 					self:x(_screen.cx - 359)
 				else
-					self:x(_screen.cx - 344)
+					self:x(_screen.cx - 343)
 				end
 			elseif player == PLAYER_2 then
 				self:player(PLAYER_2)
+				self:horizalign(right)
 				self:y(_screen.cy + 97)
 				if IsUsingWideScreen() then
-					self:x(_screen.cx - 200)
+					self:x(_screen.cx - 213)
 				else
-					self:x(_screen.cx - 195)
+					self:x(_screen.cx - 208)
 				end
 			end
 			
@@ -48,8 +49,8 @@ for p=1,2 do
 		-- colored background quad		
 		Def.Quad{
 			InitCommand=function(self)
-				self:zoomto(161, _screen.h/28)
-				self:x(106)
+				self:zoomto(175, _screen.h/28)
+				self:x(113)
 				if p == 1 then
 					self:diffuse(PlayerColor(PLAYER_1))
 				end
@@ -71,24 +72,12 @@ for p=1,2 do
 	
 		--STEPS label
 		LoadFont("_misoreg hires")..{
-			OnCommand=function(self)
-				self:diffuse(color("0,0,0,1"))
-				self:settext("STEPS")
-				self:horizalign(left)
-				self:x(30)
-			end
+			OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, "STEPS")
 		},
 	
 		--stepartist text
 		LoadFont("_misoreg hires")..{
-			OnCommand=function(self)
-				self:diffuse(color("#1e282f"))
-				self:horizalign(left)
-				
-				self:zoom(WideScale(0.9,1))
-				self:maxwidth(WideScale(115,157))
-				self:x(80)
-			end,
+			OnCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
 			SetCommand=function(self)
 				local stepartist
 				local cs = GAMESTATE:GetCurrentSteps(player)
