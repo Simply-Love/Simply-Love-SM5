@@ -1,13 +1,12 @@
 local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
-	-- I'll uncomment this when SaveScreenshot() is in the master branch.
 	
-	-- CodeMessageCommand=function(self, params)
-	-- 	if params.Name == "Screenshot" then
-	-- 		SaveScreenshot(params.PlayerNumber, false, true)
-	-- 	end
-	-- end,
+	CodeMessageCommand=function(self, params)
+		if params.Name == "Screenshot" then
+			SaveScreenshot(params.PlayerNumber, false, true)
+		end
+	end,
 	
 	-- quad behind the song/course title text
 	Def.Quad{

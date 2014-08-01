@@ -7,9 +7,9 @@ local amountAbleToMoveUp = 0
 
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
-		-- if param.Name == "Screenshot" then
-		-- 	SaveScreenshot(param.PlayerNumber, false, true)
-		-- end
+		if param.Name == "Screenshot" then
+			SaveScreenshot(param.PlayerNumber, false, true)
+		end
 		
 		if param.Name == "Left" or param.Name == "MenuLeft" or param.Name == "Up" or param.Name == "MenuUp" then
 			if amountAbleToMoveUp > 0 then
