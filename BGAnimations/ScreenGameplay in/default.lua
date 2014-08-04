@@ -25,35 +25,33 @@ else
 	sStage = THEME:GetString("Stage", "Event")
 end
 
-
-
 local t = Def.ActorFrame {}
 
 t[#t+1] = Def.ActorFrame{
 
 	Def.Quad{
-		InitCommand=cmd(diffuse,Color.Black; Center; FullScreen;);
-		OnCommand=cmd(sleep,1.4; accelerate,0.6; diffusealpha,0;);
-	};
+		InitCommand=cmd(diffuse,Color.Black; Center; FullScreen),
+		OnCommand=cmd(sleep,1.4; accelerate,0.6; diffusealpha,0)
+	},
 	
 	
 	LoadActor("heartsplode")..{
-		InitCommand=cmd(diffusealpha,0);
-		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,1.1; diffusealpha,0;);
-	};
+		InitCommand=cmd(diffusealpha,0),
+		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,1.1; diffusealpha,0)
+	},
 	LoadActor("heartsplode")..{
-		InitCommand=cmd(diffusealpha,0);
-		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,1.3; diffusealpha,0;);
-	};
+		InitCommand=cmd(diffusealpha,0),
+		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,1.3; diffusealpha,0)
+	},
 	LoadActor("minisplode")..{
-		InitCommand=cmd(diffusealpha,0);
-		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.9; diffusealpha,0;)
-	};
+		InitCommand=cmd(diffusealpha,0),
+		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.9; diffusealpha,0)
+	},
 	
 	LoadFont("_wendy small")..{
-		InitCommand=cmd(Center; diffusealpha,0; shadowlength,1);
-		OnCommand=cmd(settext, sStage; accelerate, 0.5; diffusealpha, 1; sleep, 0.66; accelerate, 0.33; zoom, 0.4; y, _screen.h-30);
-	};
+		InitCommand=cmd(Center; diffusealpha,0; shadowlength,1),
+		OnCommand=cmd(settext, sStage; accelerate, 0.5; diffusealpha, 1; sleep, 0.66; accelerate, 0.33; zoom, 0.4; y, _screen.h-30)
+	}
 }
 
-return t;
+return t
