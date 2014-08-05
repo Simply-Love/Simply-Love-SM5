@@ -83,14 +83,15 @@ for i=1,#labels2_RC do
 	}
 	
 	-- possible value
-	n[#n+1] = Def.RollingNumbers{
-		Font="_ScreenEvaluation numbers",
-		InitCommand=cmd(shadowlength,1; zoom,0.5; Load, "RollingNumbersEvaluationC"),
+	n[#n+1] = LoadFont("_ScreenEvaluation numbers")..{
+		InitCommand=cmd(shadowlength,1; zoom,0.5),
 		BeginCommand=function(self)
 			self:y((i-1)*35 + 53)
 			self:x(possible_x)
-			self:targetnumber(possible)
 			self:horizalign(right)
+			self:settext(("%03.0f"):format(possible))
+			local leadingZeroAttr = { Length=3-tonumber(tostring(possible):len()); Diffuse=color("#5A6166") }
+			self:AddAttribute(0, leadingZeroAttr )
 		end
 	}
 
