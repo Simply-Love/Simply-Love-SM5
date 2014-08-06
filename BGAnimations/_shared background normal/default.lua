@@ -1,72 +1,23 @@
-local file = "loveheart.png";
+local file = "loveheart.png"
+local file_info = {
+	ColorRGB = {0,1,1,0,0,0,1,1,1,1},
+	diffusealpha = {0.05,0.2,0.1,0.1,0.1,0.1,0.1,0.05,0.1,0.1},
+	xy = {0,40,80,120,200,280,360,400,480,560},
+	texcoordvelocity = {{0.03,0.01},{0.03,0.02},{0.03,0.01},{0.02,0.02},{0.03,0.03},{0.02,0.02},{0.03,0.01},{-0.03,0.01},{0.05,0.03},{0.03,0.04}}
+}
 
 local t = Def.ActorFrame {
+		InitCommand=cmd(diffusealpha,0),
+		OnCommand=cmd(accelerate,0.8; diffusealpha,1)
+}
 
-	Def.ActorFrame {
-		
-		InitCommand=cmd(diffusealpha,0;);
-		OnCommand=cmd(accelerate,0.8;diffusealpha,1);
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(0)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(0)) self:diffusealpha(0.05) end;
-			OnCommand=cmd(zoom,1.3;x,000;y,000;z,-000;customtexturerect,0,0,1,1;texcoordvelocity,0.03,.01;diffusealpha,0.05);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(1)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(1)) self:diffusealpha(0.2) end;
-			OnCommand=cmd(zoom,1.3;x,040;y,040;z,-000;customtexturerect,0,0,1,1;texcoordvelocity,0.03,.02;diffusealpha,0.2);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(1)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(1)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,080;y,080;z,-100;customtexturerect,0,0,1,1;texcoordvelocity,0.03,.01;diffusealpha,0.1);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(0)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(0)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,120;y,120;z,-200;customtexturerect,0,0,1,1;texcoordvelocity,0.02,.02;diffusealpha,0.1);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(0)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(0)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,200;y,200;z,-100;customtexturerect,0,0,1,1;texcoordvelocity,0.03,.03;diffusealpha,0.1);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(0)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(0)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,280;y,280;z,-300;customtexturerect,0,0,1,1;texcoordvelocity,0.02,.02;diffusealpha,0.1);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(1)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(1)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,360;y,360;z,-100;customtexturerect,0,0,1,1;texcoordvelocity,0.03,.01;diffusealpha,0.1);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(1)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(1)) self:diffusealpha(0.05) end;
-			OnCommand=cmd(zoom,1.3;x,400;y,400;z,-350;customtexturerect,0,0,1,1;texcoordvelocity,-0.03,.01;diffusealpha,0.05);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(1)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(1)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,480;y,480;z,-400;customtexturerect,0,0,1,1;texcoordvelocity,0.05,.03;diffusealpha,0.1);
-		};
-		
-		LoadActor( file ) .. {
-			InitCommand=function(self) self:diffuse(ColorRGB(1)) end;
-			ColorSelectedMessageCommand=function(self) self:linear(.5) self:diffuse(ColorRGB(1)) self:diffusealpha(0.1) end;
-			OnCommand=cmd(zoom,1.3;x,560;y,560;z,-300;customtexturerect,0,0,1,1;texcoordvelocity,0.03,.04;diffusealpha,0.1);
-		};
-	};
-};
+for i=1,10 do
+	t[#t+1] = LoadActor( file )..{
+		InitCommand=cmd(diffuse, ColorRGB( file_info.ColorRGB[i] ) ),
+		ColorSelectedMessageCommand=cmd(linear, 0.5; diffuse, ColorRGB( file_info.ColorRGB[i] ); diffusealpha, file_info.diffusealpha[i] ),
+		OnCommand=cmd(zoom,1.3; xy, file_info.xy[i], file_info.xy[i]; customtexturerect,0,0,1,1;
+			texcoordvelocity, file_info.texcoordvelocity[i][1], file_info.texcoordvelocity[i][2]; diffusealpha, file_info.diffusealpha[i] )
+	}
+end
 
-return t;
+return t
