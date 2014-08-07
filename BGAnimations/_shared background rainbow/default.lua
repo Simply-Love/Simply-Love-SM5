@@ -1,27 +1,25 @@
-local rColor = -1;
-local delay = 0.7;
-local file = THEME:GetPathB("", "_shared background normal/loveheart.png");
+local rColor = -1
+local delay = 0.7
+local file = THEME:GetPathB("", "_shared background normal/loveheart.png")
 
 
 local t = Def.ActorFrame{
-	OnCommand=cmd(x,_screen.cx;y,_screen.cy;bob;effectmagnitude,0,50,0;effectperiod,8;);
+	OnCommand=cmd(Center; bob; effectmagnitude,0,50,0; effectperiod,8),
 	
 	Def.ActorFrame{
-		OnCommand=cmd(bob;effectmagnitude,0,0,50;effectperiod,12);
+		OnCommand=cmd(bob; effectmagnitude,0,0,50; effectperiod,12),
 		
 		Def.ActorFrame{
-			InitCommand=cmd(diffusealpha,0; queuecommand, 'Appear');
-			AppearCommand=cmd(linear,1; diffusealpha, 1; queuecommand, "Loop");
-			OffCommand=cmd(linear,1; diffusealpha,0);
+			InitCommand=cmd(diffusealpha,0; queuecommand, 'Appear'),
+			AppearCommand=cmd(linear,1; diffusealpha, 1; queuecommand, "Loop"),
+			OffCommand=cmd(linear,1; diffusealpha,0),
 			
 			LoopCommand=function(self)
-				rColor = rColor+1;
-				self:queuecommand('Rainbow');
-				self:sleep(delay);
-				self:queuecommand('Loop');
-			end;
-			
-			
+				rColor = rColor+1
+				self:queuecommand('Rainbow')
+				self:sleep(delay)
+				self:queuecommand('Loop')
+			end,
 			
 			LoadActor( file )..{
 				RainbowCommand=function(self) self:linear(delay) self:diffuse(ColorRGB(rColor+1)) self:diffusealpha(.3) end;
