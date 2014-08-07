@@ -1,16 +1,17 @@
 -- Lua stuff that didn't fit anywhere else...
 
 function GetCredits()
-	local coins=GAMESTATE:GetCoins();
-	local coinsPerCredit=PREFSMAN:GetPreference('CoinsPerCredit');
-	local credits=math.floor(coins/coinsPerCredit);
-	local remainder=math.mod(coins,coinsPerCredit);
+	local coins = GAMESTATE:GetCoins()
+	local coinsPerCredit = PREFSMAN:GetPreference('CoinsPerCredit')
+	local credits = math.floor(coins/coinsPerCredit)
+	local remainder = coins % coinsPerCredit
+	
 	local r = {
 		Credits=credits,
 		Remainder=remainder,
 		CoinsPerCredit=coinsPerCredit
-	};
-	return r;
+	}
+	return r
 end
 
 function ScreenSelectMusicSortCode2()
@@ -18,14 +19,6 @@ function ScreenSelectMusicSortCode2()
 		return "DownLeft-DownRight"
 	else
 		return "MenuLeft-MenuRight"
-	end
-end
-
-function SelectColorScrollerItems()
-	if IsUsingWideScreen() then
-		return 12
-	else
-		return 5
 	end
 end
 

@@ -67,7 +67,7 @@ local wheel_item_mt = {
 				OffCommand=function(self)
 					CalculateSleepBeforeAppear(self, index)
 					self:linear(0.2)
-					self:diffusealpha(0);
+					self:diffusealpha(0)
 				end
 			}
 
@@ -101,7 +101,9 @@ local wheel_item_mt = {
 				self.container:zoom(math.pow(math.abs(math.cos(offset*math.pi)*math.cos(math.pow(math.abs(offset),.5)*math.pi/6)/2),1.75))
 				self.container:rotationz(offset*15)
 				self.container:y(10*math.pow(offset,2)-40)
-		  	end
+			else
+				self.container:diffusealpha(clamp(3-math.abs(offset), 0, 1))
+			end
 			self.container:z(-1 * math.abs(x/n))
 
 		end,
