@@ -14,15 +14,6 @@ function GetCredits()
 	return r
 end
 
-function ScreenSelectMusicSortCode2()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		return "DownLeft-DownRight"
-	else
-		return "MenuLeft-MenuRight"
-	end
-end
-
-
 -- woo, hax
 function EmptyOptionRow()
 	local t = {
@@ -37,7 +28,6 @@ function EmptyOptionRow()
 		end,
 		SaveSelections = function(self, list, pn) end
 	}
-	setmetatable(t, t)
 	return t
 end
 
