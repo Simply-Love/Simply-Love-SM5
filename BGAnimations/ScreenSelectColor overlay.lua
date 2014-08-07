@@ -22,11 +22,11 @@ local function input(event)
 		local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
 
 		if event.button == "MenuRight" then
-			wheel:scroll_by_amount(-1)
+			wheel:scroll_by_amount(1)
 			overlay:GetChild("change_sound"):play()
 
 		elseif event.button == "MenuLeft" then
-			wheel:scroll_by_amount(1)
+			wheel:scroll_by_amount(-1)
 			overlay:GetChild("change_sound"):play()
 
 		elseif event.button == "Start" then
