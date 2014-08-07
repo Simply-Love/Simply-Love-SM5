@@ -5,25 +5,24 @@ function PlayerColor( pn )
 end
 
 function DefaultColor()
-	local color = SimplyLoveColor();
+	local color = SimplyLoveColor()
 	if color < 10 then
-		color = "0"..color;
+		color = "0"..color
 	end
 	
-	return color;	
+	return color
 end
 
 
 
 function SimplyLoveColor()
-	local slc = GetUserPref("SimplyLoveColor") or 1;
-	return tonumber(slc);
+	local slc = GetUserPref("SimplyLoveColor") or 1
+	return tonumber(slc)
 end
 
 function SetSimplyLoveColor( c )
-	SetUserPref('SimplyLoveColor', c);	
-	MESSAGEMAN:Broadcast("ColorSelected");
-	return c
+	SetUserPref('SimplyLoveColor', c)
+	MESSAGEMAN:Broadcast("ColorSelected")
 end
 
 function GetCurrentColor()
@@ -33,18 +32,18 @@ end
 
 
 function GetHexColor( n )
-	if n == 1  then return color("#FF7D00") end
-	if n == 2  then return color("#FF3C23") end
-	if n == 3  then return color("#FF003C") end
-	if n == 4  then return color("#C1006F") end
-	if n == 5  then return color("#8200A1") end
-	if n == 6  then return color("#413AD0") end
-	if n == 7  then return color("#0073FF") end
-	if n == 8  then return color("#00ADC0") end
-	if n == 9  then return color("#5CE087") end
-	if n == 10 then return color("#AEFA44") end
-	if n == 11 then return color("#FFFF00") end
-	if n == 12 then return color("#FFBE00") end
+	if n == 1  then return color("#FF3C23") end
+	if n == 2  then return color("#FF003C") end
+	if n == 3  then return color("#C1006F") end
+	if n == 4  then return color("#8200A1") end
+	if n == 5  then return color("#413AD0") end
+	if n == 6  then return color("#0073FF") end
+	if n == 7  then return color("#00ADC0") end
+	if n == 8  then return color("#5CE087") end
+	if n == 9 then return color("#AEFA44") end
+	if n == 10 then return color("#FFFF00") end
+	if n == 11 then return color("#FFBE00") end
+	if n == 12  then return color("#FF7D00") end
 	return color("#ffffff")
 end
 
@@ -53,9 +52,9 @@ end
 function DifficultyColor( difficulty )
 	
 	if  difficulty  == "Difficulty_Edit" then return color("#B4B7BA") end
-	local index = GetYOffsetByDifficulty(difficulty);
+	local index = GetYOffsetByDifficulty(difficulty)
 	
-	return DifficultyIndexColor(index);
+	return DifficultyIndexColor(index)
 end
 
 
@@ -77,26 +76,26 @@ function DifficultyIndexColor( i )
 	if clr == 11 then return color("#FFFF00") end
 	if clr == 12 then return color("#FFBE00") end
 	
-	return color("1,1,1,1");
+	return color("1,1,1,1")
 end
 
 
 function GetYOffsetByDifficulty(difficulty)
 	if  difficulty  == "Difficulty_Beginner" then
-		offset = 1;
+		offset = 1
 	elseif difficulty  == "Difficulty_Easy" then
-		offset = 2;
+		offset = 2
 	elseif difficulty  == "Difficulty_Medium" then
-		offset = 3;
+		offset = 3
 	elseif difficulty  == "Difficulty_Hard" then
-		offset = 4;
+		offset = 4
 	elseif difficulty  == "Difficulty_Challenge" then
-		offset = 5;
+		offset = 5
 	elseif difficulty  == "Difficulty_Edit" then
-		offset = 5;
+		offset = 5
 	end
 	
-	return offset;
+	return offset
 end
 
 

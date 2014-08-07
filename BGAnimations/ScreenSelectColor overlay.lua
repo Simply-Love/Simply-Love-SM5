@@ -31,7 +31,7 @@ local function input(event)
 
 		elseif event.button == "Start" then
 			overlay:GetChild("start_sound"):play()
-			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index - 1)
+			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 		end
 	end
@@ -118,7 +118,7 @@ local wheel_item_mt = {
 local t = Def.ActorFrame{
 	InitCommand=function(self)
 		wheel:set_info_set({""}, 1)
-		wheel:scroll_by_amount((SimplyLoveColor() - 5) % 12 )
+		wheel:scroll_by_amount((SimplyLoveColor() - 6) % 12 )
 		self:queuecommand("Capture")
 		self:GetChild("colorwheel"):SetDrawByZPosition(true)
 	end,
