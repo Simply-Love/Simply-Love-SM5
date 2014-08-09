@@ -1,29 +1,26 @@
-local function UnlockSomeStuff(text)
+local function UnlockSomeStuffMaybe(text)
 	
-	-- how many unlocks are there? Get the number.
-	local howMany = UNLOCKMAN:GetNumUnlocks();
+	-- How many unlocks are there? Get the number.
+	local howMany = UNLOCKMAN:GetNumUnlocks()
 	
 	if howMany > 0 then
 		
-		--this returns a table whether it finds anything or not...
-		local unlockSongs = UNLOCKMAN:GetSongsUnlockedByEntryID(text);
+		-- This returns a table whether it finds anything or not...
+		local unlockSongs = UNLOCKMAN:GetSongsUnlockedByEntryID(text)
 		
-		-- so check the size of that table
+		-- So check the size of that table.
 		if #unlockSongs > 0 then
 			
-			local group = unlockSongs[1]:GetGroupName();
-			local title = unlockSongs[1]:GetDisplayFullTitle();
-			local path = group.."/"..title;
+			local group = unlockSongs[1]:GetGroupName()
+			local title = unlockSongs[1]:GetDisplayFullTitle()
+			local path = group.."/"..title
 					
 			-- this env variable is used to tell us what the next screen will be
-			setenv("ScreenUnlock", "ScreenUnlockSuccess")
 			setenv("NewlyUnlockedSong", path)
 			
 			--unlock it!
-			UNLOCKMAN:UnlockEntryID(text);
-		else
-			
-			setenv("ScreenUnlock", "ScreenUnlockFailure")
+			UNLOCKMAN:UnlockEntryID(text)
+		else			
 			setenv("NewlyUnlockedSong", nil)
 		end
 	
@@ -32,7 +29,7 @@ end
 
 
 
-local textEntrySettings = {
+local TextEntrySettings = {
 	-- ScreenMessage to send on pop (optional, "SM_None" if omitted)
 	--SendOnPop = "",
 
@@ -52,7 +49,7 @@ local textEntrySettings = {
 	
 	-- On OK; function(answer)
 	OnOK = function(answer)
-		UnlockSomeStuff(answer)
+		UnlockSomeStuffMaybe(answer)
 	end,
 	
 	-- On Cancel; function()
@@ -63,18 +60,17 @@ local textEntrySettings = {
 	
 	-- Format answer for display; function(answer), must return string
 	FormatAnswerForDisplay = nil,
-};
+}
 
 
 
 
-local t =  Def.ActorFrame{
-	
+local t =  Def.ActorFrame{	
 	OnCommand=function(self)
-		SCREENMAN:GetTopScreen():Load(textEntrySettings);
-	end;
-};
+		SCREENMAN:GetTopScreen():Load(TextEntrySettings)
+	end
+}
 
-t[#t+1] = LoadActor( THEME:GetPathB("ScreenWithMenuElements","background") );
+t[#t+1] = LoadActor( THEME:GetPathB("ScreenWithMenuElements","background") )
 
-return t;
+return t
