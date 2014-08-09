@@ -19,20 +19,26 @@ local function input(event)
 	end
 
 	if event.type == "InputEventType_FirstPress" then
-		local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
+		local topscreen = SCREENMAN:GetTopScreen()
+		local overlay = topscreen:GetChild("Overlay")
 
-		if event.button == "MenuRight" then
+		if event.GameButton == "MenuRight" then
 			wheel:scroll_by_amount(1)
 			overlay:GetChild("change_sound"):play()
 
-		elseif event.button == "MenuLeft" then
+		elseif event.GameButton == "MenuLeft" then
 			wheel:scroll_by_amount(-1)
 			overlay:GetChild("change_sound"):play()
 
-		elseif event.button == "Start" then
+		elseif event.GameButton == "Start" then
 			overlay:GetChild("start_sound"):play()
 			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+			topscreen:RemoveInputCallback(input)
+			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+			
+		elseif event.GameButton == "Back" then
+			topscreen:RemoveInputCallback(input)
+			topscreen:Cancel()
 		end
 	end
 
