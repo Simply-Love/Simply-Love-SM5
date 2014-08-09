@@ -21,18 +21,21 @@ local function input(event)
 	if event.type == "InputEventType_FirstPress" then
 		local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
 
-		if event.button == "MenuRight" then
+		if event.GameButton == "MenuRight" then
 			sort_wheel:scroll_by_amount(1)
 			overlay:GetChild("change_sound"):play()
 
-		elseif event.button == "MenuLeft" then
+		elseif event.GameButton == "MenuLeft" then
 			sort_wheel:scroll_by_amount(-1)
 			overlay:GetChild("change_sound"):play()
 
-		elseif event.button == "Start" then
+		elseif event.GameButton == "Start" then
 			overlay:GetChild("start_sound"):play()			
 			MESSAGEMAN:Broadcast('Sort',{order=sort_wheel:get_actor_item_at_focus_pos().order})
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+			
+		elseif event.GameButton == "Back" then
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")	
 		end
 	end
 
@@ -55,19 +58,17 @@ local wheel_item_mt = {
 
 				InitCommand=function(subself)
 					self.container = subself
+					subself:MaskDest()
 				end
 			}
 
 			af[#af+1] = LoadFont("_wendy small")..{
 				Text=THEME:GetString("ScreenSortList", order),
-				InitCommand=cmd(diffusealpha,0),
+				InitCommand=cmd(diffusealpha,0;),
 				OnCommand=function(self)
-					self:linear(0.2)
+					self:sleep(0.13)
+					self:linear(0.05)
 					self:diffusealpha(1)
-				end,
-				OffCommand=function(self)
-					self:linear(0.2)
-					self:diffusealpha(0)
 				end
 			}
 
@@ -76,16 +77,14 @@ local wheel_item_mt = {
 
 		transform = function(self, item_index, num_items, has_focus)
 			self.container:finishtweening()
-			-- self.container:linear(0.1)
 			
 			if has_focus then
 				self.container:accelerate(0.15)
-				self.container:zoom(0.65)
+				self.container:zoom(0.6)
 				self.container:diffuse( GetCurrentColor() )
 				self.container:glow(color("1,1,1,0.5"))
-				self.container:decelerate(0.05)
-				self.container:glow(color("1,1,1,0") )
 			else
+				self.container:glow(color("1,1,1,0"))
 				self.container:accelerate(0.15)
 				self.container:zoom(0.5)
 				self.container:diffuse(color("#888888"))
@@ -119,21 +118,31 @@ local t = Def.ActorFrame {
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
-	--
+	
 	-- slightly darken the entire screen
 	Def.Quad {
 		InitCommand=cmd(FullScreen; diffuse,Color.Black; diffusealpha,0.6)
 	},
 
-	-- BG of the sortlist Screen
+	-- white border
+	Def.Quad {
+		InitCommand=cmd(Center; zoomto,202,152)
+	},
+	
+	-- BG of the sortlist box
 	Def.Quad {
 		InitCommand=cmd(Center; zoomto,200,150; diffuse,Color.Black)
 	},
-
-	-- white border
-	Border(200, 150, 2)..{
-		InitCommand=cmd(Center)
+		
+	-- top mask
+	Def.Quad {
+		InitCommand=cmd(Center; zoomto,200,_screen.h/2; y,50; MaskSource )
 	},
+	-- bottom mask
+	Def.Quad {
+		InitCommand=cmd(zoomto,200,_screen.h/2 ; xy,_screen.cx,_screen.cy+195; MaskSource)
+	},
+	
 	sort_wheel:create_actors( "sort_wheel", #sort_orders, wheel_item_mt, _screen.cx, _screen.cy ),
 	
 }
