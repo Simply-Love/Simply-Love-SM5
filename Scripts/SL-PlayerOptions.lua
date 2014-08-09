@@ -198,6 +198,7 @@ function OptionRowVocalize()
 	end
 	
 	vocalizations[#vocalizations+1] = "Random"
+	vocalizations[#vocalizations+1] = "Blender"
 	
 	local t = {
 		Name = "UserScoreVocalization",

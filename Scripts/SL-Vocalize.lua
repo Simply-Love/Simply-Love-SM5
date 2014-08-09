@@ -25,7 +25,7 @@ function ParseScores(scores)
 			if dec < 20 or dec % 10 == 0 then
 				digits[#digits+1] = {dec, "P"..k}
 			else
-				digits[#digits+1] = {dec - dec % 10, "P"..k}
+				digits[#digits+1] = {(dec - (dec % 10))/10, "P"..k}
 				digits[#digits+1] = {dec % 10, "P"..k}
 			end
 		end
@@ -438,7 +438,7 @@ Vocalization["Mad Matt"] = {
 	z80 = .5,
 	z90 = .5,
 	zpoint = .5,
-	quad = { z100percent1 = 1 }
+	quad = { z100percent1 = 1.4 }
 }
 
 Vocalization["WinDEU"] = {
@@ -740,7 +740,7 @@ Vocalization["Dando (Italian)"] = {
 	z80 = .7,
 	z90 = .7,
 	zpoint = .8,
-	quad = { z100percent1 = 1.2, z100percent2 = 2.2 }
+	quad = { z100percent1 = 1.8, z100percent2 = 2.2 }
 }
 
 Vocalization["Mandodo (Swedish)"] = {

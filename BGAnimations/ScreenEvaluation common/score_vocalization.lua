@@ -1,6 +1,23 @@
 local Players = GAMESTATE:GetHumanPlayers()
 local Digits = {}
 local ActiveDigit = 1
+local pn, voice
+
+local function RandomizeVocalization()
+		
+	-- what voice directories exist in ./Simply Love/Vocalize/ ?
+	local files = FILEMAN:GetDirListing("Themes/" .. THEME:GetThemeDisplayName() .. "/Vocalize/" , true, false)
+	local voices = {}
+
+	for k,dir in ipairs(files) do
+		-- Dynamically fill the table.
+		voices[#voices+1] = dir
+	end
+	local WhichVoice = math.random(#voices)
+	
+	return voices[WhichVoice]	
+end
+
 
 return Def.Actor{
 	OnCommand=function(self)
@@ -10,17 +27,31 @@ return Def.Actor{
 			scores[#scores+1] = self:GetParent():GetChild(pn.." AF Lower"):GetChild("PercentageContainer"..pn):GetText()
 		end
 		Digits = ParseScores(scores)
+		
 		self:queuecommand("Vocalize")
 	end,
 	VocalizeCommand=function(self)
 		
-		local number= Digits[ActiveDigit][1]
-		local pn 	= Digits[ActiveDigit][2]
-		local voice = SL[pn].ActiveModifiers.Vocalization
+		
+		-- if we are starting to vocalize a new player
+		if pn ~= Digits[ActiveDigit][2] then
+			pn = Digits[ActiveDigit][2]
+			voice = SL[pn].ActiveModifiers.Vocalization
+			
+			-- if "Random" was chosen as the vocalization, randomly select a voice from those available
+			if voice == "Random" then
+				voice = RandomizeVocalization()
+			end
+		end
+		
 		
 		-- Do we have a voice enabled?
 		if voice ~= "None" then
-
+			if SL[pn].ActiveModifiers.Vocalization == "Blender" then
+				voice = RandomizeVocalization()
+			end
+			
+			local number = Digits[ActiveDigit][1]
 			local soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Vocalize/" .. voice .. "/" .. number .. ".ogg"
 			local sleeptime = Vocalization[voice]["z"..number]
 			
@@ -43,7 +74,10 @@ return Def.Actor{
 		
 		ActiveDigit = ActiveDigit+1
 		
+		-- prevent infinite recursion by ensuring that there are still digits remaining to vocalize
 		if ActiveDigit <= #Digits then
+			
+			-- recurse
 			self:queuecommand('Vocalize')
 		end
 	end
