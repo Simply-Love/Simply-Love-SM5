@@ -26,7 +26,6 @@ TODO:
 * set long/marathon cutoff lengths via this menu like oITG
 * set per-screen MenuTimers via a menu
 * reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense
-* improve score vocalization's code
 
 **KNOWN BUGS**
 

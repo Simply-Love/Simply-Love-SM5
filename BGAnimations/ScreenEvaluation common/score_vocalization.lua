@@ -5,8 +5,8 @@ local pn, voice
 
 local function RandomizeVocalization()
 		
-	-- what voice directories exist in ./Simply Love/Vocalize/ ?
-	local files = FILEMAN:GetDirListing("Themes/" .. THEME:GetThemeDisplayName() .. "/Vocalize/" , true, false)
+	-- what voice directories exist in ./Simply Love//Other/Vocalize/ ?
+	local files = FILEMAN:GetDirListing("Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" , true, false)
 	local voices = {}
 
 	for k,dir in ipairs(files) do
@@ -51,8 +51,13 @@ return Def.Actor{
 				voice = RandomizeVocalization()
 			end
 			
+			if not Vocalization[voice] then
+				-- load the voice timings
+				dofile(THEME:GetPathO("","Vocalize/" .. voice .. "/default.lua"))
+			end
+			
 			local number = Digits[ActiveDigit][1]
-			local soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Vocalize/" .. voice .. "/" .. number .. ".ogg"
+			local soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" .. voice .. "/" .. number .. ".ogg"
 			local sleeptime = Vocalization[voice]["z"..number]
 			
 			-- Is the score a Quad Star? If so, we might need to pick one of the
@@ -65,7 +70,7 @@ return Def.Actor{
 				local WhichQuad = math.random(NumberOfQuads)
 				sleeptime = Vocalization[voice]["quad"]["z100percent" .. WhichQuad ]
 				number = "100percent" .. WhichQuad
-				soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Vocalize/" .. voice .. "/" .. number .. ".ogg"
+				soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" .. voice .. "/" .. number .. ".ogg"
 			end
 
 			SOUND:PlayOnce( soundbyte )
