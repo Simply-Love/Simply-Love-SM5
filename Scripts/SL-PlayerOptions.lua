@@ -197,8 +197,10 @@ function OptionRowVocalize()
 		vocalizations[#vocalizations+1] = dir
 	end
 	
-	vocalizations[#vocalizations+1] = "Random"
-	vocalizations[#vocalizations+1] = "Blender"
+	if #vocalizations > 1 then
+		vocalizations[#vocalizations+1] = "Random"
+		vocalizations[#vocalizations+1] = "Blender"
+	end
 	
 	local t = {
 		Name = "UserScoreVocalization",
