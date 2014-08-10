@@ -6,11 +6,11 @@ function SMPairs(t)
 	for k,v in pairs(t) do
 		temp = temp .. "key: " .. tostring(k) .. ", val: " .. tostring(v) .."\n"
 	end
-	SCREENMAN:SystemMessage(temp);
+	SCREENMAN:SystemMessage(temp)
 end
 
 function SM(str)
-	SCREENMAN:SystemMessage(tostring(str));
+	SCREENMAN:SystemMessage(tostring(str))
 end
 
 function FindInTable(needle, haystack)

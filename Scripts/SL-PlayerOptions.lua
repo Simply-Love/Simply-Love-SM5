@@ -46,7 +46,7 @@ function PlayerJudgment()
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			local sSave;
+			local sSave
 			
 			for i=1,#list do
 				if list[i] then
@@ -54,7 +54,7 @@ function PlayerJudgment()
 				end
 			end
 			
-			SL[ToEnumShortString(pn)].ActiveModifiers.JudgmentGraphic = sSave;
+			SL[ToEnumShortString(pn)].ActiveModifiers.JudgmentGraphic = sSave
 		end
 	}
 	return t
@@ -122,7 +122,7 @@ function OptionRowPlayerMini()
 			end
 			
 			SL[ToEnumShortString(pn)].ActiveModifiers.Mini = sSave
-			ApplyMini(pn);
+			ApplyMini(pn)
 		end
 	}
 	return t
@@ -223,7 +223,7 @@ function OptionRowVocalize()
 				end
 			end
 			
-			SL[ToEnumShortString(pn)].ActiveModifiers.Vocalization = sSave;
+			SL[ToEnumShortString(pn)].ActiveModifiers.Vocalization = sSave
 		end
 	}
 	return t

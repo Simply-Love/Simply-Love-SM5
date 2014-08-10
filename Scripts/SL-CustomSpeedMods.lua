@@ -1,5 +1,5 @@
 function SpeedModsType()
-	local modList = { "x", "C", "M" };
+	local modList = { "x", "C", "M" }
 	local t = {
 		Name = "SpeedType",
 		LayoutType = "ShowOneInRow",
@@ -13,7 +13,7 @@ function SpeedModsType()
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			local sSave;
+			local sSave
 			
 			for i=1, #list do
 				if list[i] then
@@ -21,7 +21,7 @@ function SpeedModsType()
 				end
 			end
 
-			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=sSave});
+			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=sSave})
 		end
 	}
 	return t
@@ -30,7 +30,7 @@ end
 
 function SpeedModsNew()
 	
-	local blank = {"       "};
+	local blank = {"       "}
 
 	local t = {
 		Name = "SpeedModNew",
@@ -43,7 +43,7 @@ function SpeedModsNew()
 			list[1] = true	
 		end,
 		SaveSelections = function(self, list, pn)
-			ApplySpeedMod(pn);
+			ApplySpeedMod(pn)
 		end	
 	}
 	return t
@@ -200,7 +200,7 @@ function GetDisplayBPMs()
 		
 	-- if we ARE in CourseMode		
 	else
-		local range = GetCourseModeBPMs();
+		local range = GetCourseModeBPMs()
 		if range then
 			local lowest = range[1]
 			local highest = range[2]

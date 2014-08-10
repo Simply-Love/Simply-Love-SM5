@@ -33,9 +33,9 @@ end
 
 
 function GetStepsTypeForThisGame(type)
-	local game = GAMESTATE:GetCurrentGame():GetName();
+	local game = GAMESTATE:GetCurrentGame():GetName()
 	-- capitalize the first letter
-	game = game:gsub("^%l", string.upper);
+	game = game:gsub("^%l", string.upper)
 	
-	return "StepsType_" .. game .. "_" .. type;
+	return "StepsType_" .. game .. "_" .. type
 end

@@ -18,7 +18,7 @@ end
 
 -- Let's pretend I understand why this is necessary
 Branch.AfterScreenSelectPlayMode = function()
-	local gameName = GAMESTATE:GetCurrentGame():GetName();
+	local gameName = GAMESTATE:GetCurrentGame():GetName()
 	if gameName=="techno" then
 		return "ScreenSelectStyleTechno"
 	else
@@ -40,7 +40,7 @@ Branch.SSMCancel = function()
 		return "ScreenEvaluationSummary"
 	end
 
-	return Branch.TitleMenu();
+	return Branch.TitleMenu()
 end
 
 Branch.AfterProfileSave = function()
@@ -52,20 +52,20 @@ Branch.AfterProfileSave = function()
 		-- If we don't allow players to fail out of a set early
 		if ThemePrefs.Get("AllowFailingOutOfSet") == "No" then
 		
-			local song = GAMESTATE:GetCurrentSong();
+			local song = GAMESTATE:GetCurrentSong()
 			if song:IsMarathon() then
-				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 3;
+				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 3
 			elseif song:IsLong() then
-				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 2;
+				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 2
 			else
-				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 1;
+				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 1
 			end
 			
 			-- check first to see how many songs are remaining
 			-- if none, send the player(s) on to ScreenEvalutationSummary
 			if SL.Global.Stages.Remaining == 0 then
 
-				return "ScreenEvaluationSummary";
+				return "ScreenEvaluationSummary"
 			
 			-- otherwise, there are some stages remaining
 			else
@@ -75,10 +75,10 @@ Branch.AfterProfileSave = function()
 				-- If we don't do this, and simply send the player(s) back to ScreenSelectMusic,
 				-- the MusicWheel will be empty! (I guess because SM thinks there are no stages remaining...?) 
 				if STATSMAN:GetCurStageStats():AllFailed() then
-					local Players = GAMESTATE:GetHumanPlayers();	
+					local Players = GAMESTATE:GetHumanPlayers()	
 					for pn in ivalues(Players) do
 						for i=1, SL.Global.Stages.Remaining do
-							GAMESTATE:AddStageToPlayer(pn);
+							GAMESTATE:AddStageToPlayer(pn)
 						end
 					end
 				end
@@ -90,7 +90,7 @@ Branch.AfterProfileSave = function()
 		else
 		
 			if STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay");		
+				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay")		
 				return "ScreenEvaluationSummary"
 			else
 				return SelectMusicOrCourse()

@@ -39,9 +39,9 @@ function OptionRowAllowFailingOutOfSet()
 		ExportOnChange = false,
 		Choices = failTypes,
 		LoadSelections = function(self, list, pn)
-			local failType = ThemePrefs.Get("AllowFailingOutOfSet") or "Yes";
-			local i = FindInTable(failType, failTypes) or 1;
-			list[i] = true;
+			local failType = ThemePrefs.Get("AllowFailingOutOfSet") or "Yes"
+			local i = FindInTable(failType, failTypes) or 1
+			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
 			for i=1, #failTypes do

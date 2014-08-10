@@ -40,7 +40,7 @@ TimingWindowValues["Pump Pro"] = {
 
 
 function TimingWindow()
-	local windows = { 'SM5','ITG','Pump Pro' };
+	local windows = { 'SM5','ITG','Pump Pro' }
 	local t = {
 		Name = "CustomTimingWindow",
 		LayoutType = "ShowAllInRow",
@@ -65,7 +65,7 @@ function TimingWindow()
 			end			
 						
 			for k,v in pairs(TimingWindowValues[windows[index]]) do
-				PREFSMAN:SetPreference("TimingWindowSeconds"..k, v );
+				PREFSMAN:SetPreference("TimingWindowSeconds"..k, v )
 			end
 			PREFSMAN:SavePreferences()
 		end
