@@ -49,7 +49,7 @@ function TimingWindow()
 		ExportOnChange = false,
 		Choices = windows,
 		LoadSelections = function(self, list, pn)
-			local userWindow = GetUserPref("TimingWindow")
+			local userWindow = ThemePrefs.Get("TimingWindow")
 			local i = FindInTable(userWindow, windows) or 1
 			list[i] = true
 		end,
@@ -59,7 +59,8 @@ function TimingWindow()
 			for i=1,#list do
 				if list[i] then
 					index=i
-					SetUserPref("TimingWindow", windows[i] )
+					ThemePrefs.Set("TimingWindow", windows[i] )
+					ThemePrefs.Save()
 				end
 			end			
 						

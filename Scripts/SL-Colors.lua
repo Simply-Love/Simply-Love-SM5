@@ -16,12 +16,13 @@ end
 
 
 function SimplyLoveColor()
-	local slc = GetUserPref("SimplyLoveColor") or 1
+	local slc = ThemePrefs.Get("SimplyLoveColor") or 1
 	return tonumber(slc)
 end
 
 function SetSimplyLoveColor( c )
-	SetUserPref('SimplyLoveColor', c)
+	ThemePrefs.Set("SimplyLoveColor", c)
+	ThemePrefs.Save()	
 	MESSAGEMAN:Broadcast("ColorSelected")
 end
 

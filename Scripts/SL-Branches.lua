@@ -50,7 +50,7 @@ Branch.AfterProfileSave = function()
 	else
 		
 		-- If we don't allow players to fail out of a set early
-		if GetUserPref("AllowFailingOutOfSet") == "No" then
+		if ThemePrefs.Get("AllowFailingOutOfSet") == "No" then
 		
 			local song = GAMESTATE:GetCurrentSong();
 			if song:IsMarathon() then
