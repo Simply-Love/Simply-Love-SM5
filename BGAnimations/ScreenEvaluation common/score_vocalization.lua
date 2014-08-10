@@ -24,7 +24,7 @@ return Def.Actor{
 		local scores = {}
 		for player in ivalues(Players) do
 			local pn = ToEnumShortString(player)
-			scores[#scores+1] = self:GetParent():GetChild(pn.." AF Lower"):GetChild("PercentageContainer"..pn):GetText()
+			scores[#scores+1] = {self:GetParent():GetChild(pn.." AF Lower"):GetChild("PercentageContainer"..pn):GetText(), pn}
 		end
 		Digits = ParseScores(scores)
 		
