@@ -1,7 +1,7 @@
 local Players = GAMESTATE:GetHumanPlayers()
 
 return Def.ActorFrame{
-	InitCommand=cmd(queuecommand, "Detect");
+	InitCommand=cmd(queuecommand, "Detect"),
 	DetectCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
@@ -16,5 +16,5 @@ return Def.ActorFrame{
 		else
 			self:queuecommand("Detect")
 		end
-	end;
+	end
 }

@@ -188,13 +188,11 @@ for pn in ivalues(Players) do
 		LoadActor("recordTexts", pn)..{
 			InitCommand=function(self)
 				if pn == PLAYER_1 then
-					self:xy(-69, 54)
-					self:horizalign(left)
+					self:xy(-80, 54)
 				elseif pn == PLAYER_2 then
-					self:xy(69, 54)
-					self:horizalign(right)
+					self:xy(80, 54)
 				end
-				self:zoom(0.42)
+				self:zoom(0.225)
 			end
 		},
 	
