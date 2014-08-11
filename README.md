@@ -19,13 +19,15 @@ TODO:
 
 **MISSING FEATURES**
 
-* DQ'd from Ranking with specific modifiers
+* ghost data
+* timed sets
+* surround lifebar for ScreenGameplay
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
-* set long/marathon cutoff lengths via this menu like oITG
-* set per-screen MenuTimers via a menu
-* reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense
+* set long/marathon cutoff lengths via Operator Menu like oITG
+* set per-screen MenuTimers via Operator Menu
+* ~~reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense~~ this is not going to happen short of an engine overhaul
 
 **KNOWN BUGS**
 
