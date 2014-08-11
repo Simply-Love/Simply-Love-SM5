@@ -320,8 +320,13 @@ for pn in ivalues(Players) do
 		},
 		
 		Def.GraphDisplay{
-			InitCommand=cmd(Load,"GraphDisplay"..SimplyLoveColor(); y, _screen.cy+150.5;),
+			InitCommand=cmd(y, _screen.cy+150.5;),
 			BeginCommand=function(self)
+				if pn == PLAYER_1 then
+					self:Load("GraphDisplay"..(SimplyLoveColor()-1)%12 + 1)
+				else
+					self:Load("GraphDisplay"..(SimplyLoveColor()+1)%12 + 1)
+				end
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 				local stageStats = STATSMAN:GetCurStageStats()
 				self:Set(stageStats, playerStageStats)
