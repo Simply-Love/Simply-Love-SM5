@@ -40,7 +40,7 @@ for player in ivalues(Players) do
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
 					
 			local oldtype = SL[pn].ActiveModifiers.SpeedModType
-			local newtype = params.Type
+			local newtype = params.SpeedModType
 	
 			if oldtype ~= newtype then
 				local bpm

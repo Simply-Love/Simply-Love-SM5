@@ -21,7 +21,7 @@ function SpeedModsType()
 				end
 			end
 
-			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{Type=sSave})
+			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set',{SpeedModType=sSave})
 		end
 	}
 	return t
