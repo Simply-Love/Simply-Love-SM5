@@ -11,12 +11,6 @@ local SL_ThemePrefs =
 		Default = "Yes",
 		Choices = { THEME:GetString('OptionTitles', 'Yes'), THEME:GetString('OptionTitles',  'No') },
 		Values = { "Yes", "No" }
-	},
-	TimingWindow =
-	{
-		Default = "SM5",
-		Choices = { "SM5", "ITG", "Pump Pro" },
-		Values = {  "SM5", "ITG", "Pump Pro" }
 	}
 }
 
