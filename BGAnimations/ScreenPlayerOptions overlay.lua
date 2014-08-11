@@ -101,8 +101,8 @@ for player in ivalues(Players) do
 	
 	-- the display that does math for you up at the top
 	t[#t+1] = LoadFont("_wendy small")..{
-		Name=pn.."SpeedModHelper";
-		Text="";
+		Name=pn.."SpeedModHelper",
+		Text="",
 		InitCommand=function(self)
 			self:diffuse(PlayerColor(player))
 			self:zoom(0.5)
@@ -113,26 +113,36 @@ for player in ivalues(Players) do
 			end
 			self:y(48)
 			self:diffusealpha(0)
-		end;
-		OnCommand=cmd(linear,0.4;diffusealpha,1);
+		end,
+		OnCommand=cmd(linear,0.4;diffusealpha,1)
 	}
 	
 	t[#t+1] = LoadFont("_misoreg hires")..{
-		Name=pn.."MusicRateHelper";
-		Text="";
+		Name=pn.."MusicRateHelper",
+		Text="",
 		InitCommand=function(self)
+			self:shadowlength(0.4)
 			self:diffuse(PlayerColor(player))
-			self:zoom(0.8)
-						
-			if player == PLAYER_1 then
-				self:x(-100)
-			elseif player == PLAYER_2 then
-				self:x(150)
+			self:zoom(0.9)
+			
+			if IsUsingWideScreen() then		
+				if player == PLAYER_1 then
+					self:x(-100)
+				elseif player == PLAYER_2 then
+					self:x(150)
+				end
+				self:y(26)
+			else
+				if player == PLAYER_1 then
+					self:x(-10)
+				elseif player == PLAYER_2 then
+					self:x(240)
+				end
+				self:y(50)
 			end
-			self:y(28)
 			self:diffusealpha(0)
-		end;
-		OnCommand=cmd(linear,0.4;diffusealpha,1);
+		end,
+		OnCommand=cmd(linear,0.4;diffusealpha,1),
 		SetCommand=function(self)
 			if SL[pn].ActiveModifiers.SpeedModType == "x" then
 				local musicrate = SL.Global.ActiveModifiers.MusicRate
@@ -145,7 +155,7 @@ for player in ivalues(Players) do
 				self:settext("")
 			end
 			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
-		end;
+		end,
 		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
 	}
 end
