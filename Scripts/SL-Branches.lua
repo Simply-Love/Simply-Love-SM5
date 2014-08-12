@@ -49,17 +49,17 @@ Branch.AfterProfileSave = function()
 		return SelectMusicOrCourse()
 	else
 		
+		local song = GAMESTATE:GetCurrentSong()
+		if song:IsMarathon() then
+			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 3
+		elseif song:IsLong() then
+			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 2
+		else
+			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 1
+		end
+		
 		-- If we don't allow players to fail out of a set early
 		if ThemePrefs.Get("AllowFailingOutOfSet") == "No" then
-		
-			local song = GAMESTATE:GetCurrentSong()
-			if song:IsMarathon() then
-				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 3
-			elseif song:IsLong() then
-				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 2
-			else
-				SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 1
-			end
 			
 			-- check first to see how many songs are remaining
 			-- if none, send the player(s) on to ScreenEvalutationSummary
