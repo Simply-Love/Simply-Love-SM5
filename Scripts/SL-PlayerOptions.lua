@@ -156,7 +156,9 @@ function OptionRowSongMusicRate()
 			end
 			
 			SL.Global.ActiveModifiers.MusicRate = tonumber(sSave)
-			GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate(tonumber(sSave))
+			local topscreen = SCREENMAN:GetTopScreen():GetName()
+			local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Song" or "ModsLevel_Preferred"
+			GAMESTATE:GetSongOptionsObject(modslevel):MusicRate(tonumber(sSave))
 			MESSAGEMAN:Broadcast("MusicRateChanged")
 		end
 	}
