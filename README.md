@@ -13,6 +13,10 @@ Requirements:
 You'll need to be running an up-to-date nightly build of StepMania 5 to run this port.  This will not work with StepMania 5 beta 3.
 
 
+Screenshots:
+------------
+Visit my imgur album for screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
+
 
 TODO:
 -----
@@ -27,7 +31,7 @@ TODO:
 
 * set long/marathon cutoff lengths via Operator Menu like oITG
 * set per-screen MenuTimers via Operator Menu
-* ~~reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense~~  this is not going to happen short of an engine overhaul
+* ~~reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense~~ this is not going to happen short of an engine overhaul
 
 **KNOWN BUGS**
 
