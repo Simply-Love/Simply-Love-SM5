@@ -314,8 +314,11 @@ for pn in ivalues(Players) do
 			end
 		},
 		
+		-- a quad used to initially mask the ComboGraph
 		Def.Quad{
 			InitCommand=cmd(zoomto,300,53; y, _screen.cy+150.5; MaskSource),
+			
+			-- tween the GraphDisplay into visibility by cropping away this quad
 			OnCommand=cmd(linear,1; cropleft,1)
 		},
 		
@@ -332,13 +335,22 @@ for pn in ivalues(Players) do
 				self:Set(stageStats, playerStageStats)
 				-- hide the GraphDisplay's stroke ("line")
 				self:GetChild("Line"):diffusealpha(0)
-				-- tween the GraphDisplay into visibility
+				
+				-- the second unnamed child of the GraphDisplay is its "body"
+				-- we want it initially masked by the quad above
 				self:GetChild("")[2]:MaskDest(true)
 			end
 		},
 		
 		Def.ComboGraph{
-			InitCommand=cmd(Load,"ComboGraphP1"; y, _screen.cy+182.5),
+			InitCommand=function(self)
+				if pn == PLAYER_1 then
+					self:Load("ComboGraphP1")
+				else
+					self:Load("ComboGraphP2")
+				end
+				self:y( _screen.cy+182.5)
+			end,
 			BeginCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 				local stageStats = STATSMAN:GetCurStageStats()
