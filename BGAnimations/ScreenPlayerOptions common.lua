@@ -13,7 +13,7 @@ return Def.ActorFrame{
 		-- if ScreenOptions is nil, get it now
 		if not ScreenOptions then
 			ScreenOptions = SCREENMAN:GetTopScreen()
-		else			
+		else
 			-- get the index of PLAYER_1's current row
 			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 				CurrentRowIndex.P1 = ScreenOptions:GetCurrentRowIndex(PLAYER_1)
