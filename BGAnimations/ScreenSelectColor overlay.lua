@@ -31,6 +31,12 @@ local function input(event)
 			overlay:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "Start" then
+			if not GAMESTATE:IsPlayerEnabled(event.PlayerNumber) then
+				if not GAMESTATE:JoinInput(event.PlayerNumber) then
+					return false
+				end
+			end
+			
 			overlay:GetChild("start_sound"):play()
 			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
 			topscreen:RemoveInputCallback(input)
