@@ -17,7 +17,13 @@ local t = Def.ActorFrame{
 	LoadFont("_misoreg hires")..{
 		InitCommand=cmd(xy,_screen.cx,54; NoStroke; shadowlength,1; maxwidth, 294 ),
 		OnCommand=function(self)
-			local songtitle = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+			local songtitle = ""
+			if GAMESTATE:IsCourseMode() then
+				songtitle = GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()
+			else
+				songtitle = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+			end
+			
 			if songtitle then
 				self:settext(songtitle)
 			end
@@ -31,7 +37,7 @@ local t = Def.ActorFrame{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 	
-	--songs's banner, if it has one
+	--songs or course banner, if there is one
 	Def.Sprite{
 		Name="Banner",
 		InitCommand=cmd(xy, _screen.cx, 121.5),
@@ -39,11 +45,16 @@ local t = Def.ActorFrame{
 			-- these need to be declared as empty variables here
 			-- otherwise, the banner from round1 can persist into round2
 			-- if round2 doesn't have banner!
-			local song, bannerpath
-			song = GAMESTATE:GetCurrentSong()
+			local SongOrCouse, bannerpath
+			
+			if GAMESTATE:IsCourseMode() then
+				SongOrCouse = GAMESTATE:GetCurrentCourse()
+			else
+				SongOrCouse = GAMESTATE:GetCurrentSong()
+			end
 			
 			if song then
-				 bannerpath = song:GetBannerPath()
+				 bannerpath = SongOrCouse:GetBannerPath()
 			end
 			
 			if bannerpath then
@@ -148,12 +159,19 @@ for pn in ivalues(Players) do
 				self:zoom(0.7)
 			end,
 			BeginCommand=function(self)					
-				local stepartist;
-				local cs = GAMESTATE:GetCurrentSteps(pn)
-			
-				if cs then
-					stepartist = cs:GetAuthorCredit()
+				local stepartist
+				if GAMESTATE:IsCourseMode() then
+					local course = GAMESTATE:GetCurrentCourse()
+					if course then
+						stepartist = course:GetScripter()
+					end
+				else
+					local cs = GAMESTATE:GetCurrentSteps(pn)
+					if cs then
+						stepartist = cs:GetAuthorCredit()
+					end
 				end
+				
 				self:settext(stepartist)
 			end
 		},
@@ -227,13 +245,21 @@ for pn in ivalues(Players) do
 				end
 			end,
 			BeginCommand=function(self)
-				local steps = GAMESTATE:GetCurrentSteps(pn);
-				if steps then
-					local meter = steps:GetMeter();
-			
-					if meter then	
-						self:settext(meter)
+				local steps, meter
+				if GAMESTATE:IsCourseMode() then
+					local trail = GAMESTATE:GetCurrentTrail(pn)
+					if trail then
+						meter = trail:GetMeter()
 					end
+				else
+					steps = GAMESTATE:GetCurrentSteps(pn)
+					if steps then
+						meter = steps:GetMeter()
+					end
+				end
+			
+				if meter then	
+					self:settext(meter)
 				end
 			end
 		}

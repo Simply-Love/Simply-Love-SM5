@@ -1,8 +1,5 @@
 -- Gameplay overlay.
 
--- variable used only to increment through CourseEntries in CourseMode
-local CurrentSongNumber = 0
-
 local t = Def.ActorFrame{
 	
 	InitCommand=cmd(addy,-10),
@@ -36,12 +33,7 @@ local t = Def.ActorFrame{
 			UpdateCommand=function(self)
 				local title = ""
 				
-				if GAMESTATE:IsCourseMode() then
-					CurrentSongNumber = CurrentSongNumber + 1
-					song = GAMESTATE:GetCurrentCourse():GetCourseEntries()[CurrentSongNumber]:GetSong()
-				else
-					song = GAMESTATE:GetCurrentSong()
-				end
+				song = GAMESTATE:GetCurrentSong()
 				
 				if song then
 					title = song:GetDisplayFullTitle()
