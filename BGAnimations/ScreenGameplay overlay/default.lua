@@ -1,5 +1,8 @@
 -- Gameplay overlay.
 
+-- variable used only to increment through CourseEntries in CourseMode
+local CurrentSongNumber = 0
+
 local t = Def.ActorFrame{
 	
 	InitCommand=cmd(addy,-10),
@@ -29,17 +32,19 @@ local t = Def.ActorFrame{
 		LoadFont("_misoreg hires")..{
 			Name="SongName",
 			InitCommand=cmd(zoom,0.8; shadowlength,0.6; maxwidth,_screen.w/2.5 - 10; NoStroke),
-			CurrentSongChangedMessageCommand=cmd(playcommand,"Update"),
+			CurrentSongChangedMessageCommand=cmd(playcommand, "Update"),
 			UpdateCommand=function(self)
-				local title
-				local song = GAMESTATE:GetCurrentSong()
-
+				local title = ""
+				
+				if GAMESTATE:IsCourseMode() then
+					CurrentSongNumber = CurrentSongNumber + 1
+					song = GAMESTATE:GetCurrentCourse():GetCourseEntries()[CurrentSongNumber]:GetSong()
+				else
+					song = GAMESTATE:GetCurrentSong()
+				end
+				
 				if song then
-					if GAMESTATE:IsCourseMode() then
-						title = GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()
-					else
-						title = song:GetDisplayFullTitle()
-					end
+					title = song:GetDisplayFullTitle()
 				end
 
 				-- DVNO

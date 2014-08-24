@@ -47,6 +47,10 @@ Branch.AfterProfileSave = function()
 	
 	if GAMESTATE:IsEventMode() then
 		return SelectMusicOrCourse()
+		
+	elseif GAMESTATE:IsCourseMode() then
+		return "ScreenNameEntryTraditional"
+		
 	else
 		
 		local song = GAMESTATE:GetCurrentSong()

@@ -1,6 +1,10 @@
 local sStage = ""
 
-if not GAMESTATE:IsEventMode() then
+if GAMESTATE:IsCourseMode() then
+		
+	sStage = THEME:GetString("Stage", "Course")
+		
+elseif not GAMESTATE:IsEventMode() then
 	
 	local CurrentSong = GAMESTATE:GetCurrentSong()
 	local bIsLong = CurrentSong:IsLong()
