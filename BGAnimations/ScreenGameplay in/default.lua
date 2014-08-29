@@ -6,22 +6,41 @@ if GAMESTATE:IsCourseMode() then
 		
 elseif not GAMESTATE:IsEventMode() then
 	
-	local CurrentSong = GAMESTATE:GetCurrentSong()
-	local bIsLong = CurrentSong:IsLong()
-	local bIsMarathon = CurrentSong:IsMarathon()
-	local iAdditionalStagesThisSongCountsFor = bIsLong and 1 or bIsMarathon and 2 or 0
+	local song = GAMESTATE:GetCurrentSong()
+	local Duration = song:GetLastSecond()
+	local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
+	
+	local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
+	local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
+	
+	local IsLong = DurationWithRate/LongCutoff > 1 and true or false
+	local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false		
 
+	local AdditionalStagesThisSongCountsFor = IsLong and 1 or IsMarathon and 2 or 0
+	local StagesToSubtract = 0
+	
+	if SL.Global.ActiveModifiers.MusicRate ~= 1 then
+
+		if song:IsMarathon() and not IsLongWithRate and not IsMarathonWithRate then
+			StagesToSubtract = 2
+		elseif song:IsMarathon() and IsLongWithRate and not IsMarathonWithRate then
+			StagesToSubtract = 1
+		elseif song:IsLong() and not IsLongWithRate and not IsMarathonWithRate then
+			StagesToSubtract = 1
+		end
+	end
+	
 	-- GAMESTATE:GetNumStagesLeft() asks for a playernumber because latejoin can
 	-- cause discrepencies between players.  For Simply Love, we only care about
 	-- which player has fewer stages remaining; we use that value for both.
-	local iStagesLeft = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer()
+	local StagesLeft = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer()
 
-	local iSongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
-	local iStageNumber = (iSongsPerPlay - iStagesLeft) + 1
+	local SongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
+	local iStageNumber = (SongsPerPlay - StagesLeft) + 1
 
 	sStage = THEME:GetString("Stage", "Stage") .. " " .. tostring(iStageNumber)
 
-	if iStageNumber + iAdditionalStagesThisSongCountsFor >= iSongsPerPlay then
+	if iStageNumber + AdditionalStagesThisSongCountsFor - StagesToSubtract >= SongsPerPlay then
 		sStage = THEME:GetString("Stage", "Final")
 	end
 	
