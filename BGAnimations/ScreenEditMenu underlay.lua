@@ -1,3 +1,12 @@
+--HACK: Reset MusicRate to 1.0 every time this screen is accessed
+-- because, otherwise, it can persist from editing one song with a
+-- ratemod applied into another, different song.
+--
+-- see: OptionRowSongMusicRate() in ./Scripts/SL-PlayerOptions.lua 
+GAMESTATE:ApplyGameCommand("mod,1.0xmusic")
+SL.Global.ActiveModifiers.MusicRate = 1
+
+
 -- down lower in this file, we loop seven times to create seven "rows" of grey quads
 -- one for each: group, song, type, steps, fill type, fill steps, action
 -- in that loop, rowYvalues will be filled with each row's Y value (defined in metrics)

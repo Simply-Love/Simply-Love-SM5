@@ -157,8 +157,19 @@ function OptionRowSongMusicRate()
 			
 			SL.Global.ActiveModifiers.MusicRate = tonumber(sSave)
 			local topscreen = SCREENMAN:GetTopScreen():GetName()
-			local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Song" or "ModsLevel_Preferred"
-			GAMESTATE:GetSongOptionsObject(modslevel):MusicRate(tonumber(sSave))
+		
+			-- Use the older GameCommand interface for applying rate mods in Edit Mode;
+			-- it seems to be the only way (probably due to how broken Edit Mode is, in general).
+			-- As an unintentional side-effect of setting musicrate mods this way, they STAY set
+			-- (between songs, between scressn, etc.) until you manually change them.  This is (probably)
+			-- not the desired behavior in EditMode, so when users change between different songs in EditMode,
+			-- always reset the musicrate mod.  See: ./BGAnimations/ScreenEditMeny underlay.lua
+			if topscreen == "ScreenEditOptions" then
+				GAMESTATE:ApplyGameCommand("mod," .. sSave .."xmusic")
+			else
+				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate(tonumber(sSave))
+			end
+		
 			MESSAGEMAN:Broadcast("MusicRateChanged")
 		end
 	}
