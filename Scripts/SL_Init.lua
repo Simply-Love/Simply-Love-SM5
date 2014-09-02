@@ -12,11 +12,11 @@ local PlayerDefaults = {
 				Vocalization = "None"
 			}
 			self.HighScores = {
-				EnteringName = false, 
+				EnteringName = false,
 				Name = nil
 			}
 			self.Stages = {
-				Played = {},
+				Stats = {}
 			}
 		end
 	}
@@ -29,12 +29,19 @@ local GlobalDefaults = {
 				MusicRate = 1.0,
 			}
 			self.Stages = {
+				PlayedThisGame = 0,
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay"),
-				MusicRate = {}
+				MusicRate = {},
+				Stats = {}
 			}
 			self.ScreenAfter = {
+				PlayAgain = "ScreenEvaluationSummary",
 				PlayerOptions = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay"
+			}
+			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed")
+			self.Gamestate = {
+				Style = nil
 			}
 		end
 	}

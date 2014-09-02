@@ -30,14 +30,14 @@ elseif pn == PLAYER_2 then
 	performance_x2 = 218
 	slash_x = 230
 	possible_x = 286
-end	
+end
 
 
 -- do the normals first
 for i=1,#TNSTypes do
-	
+
 	local number = stats:GetTapNoteScores(TNSTypes[i])
-	
+
 	-- actual numbers
 	n[#n+1] = Def.RollingNumbers{
 		Font="_ScreenEvaluation numbers",
@@ -49,12 +49,12 @@ for i=1,#TNSTypes do
 			self:horizalign(right)
 		end
 	}
-	
-end
-	
-	
 
-for i=1,#labels2_RC do	
+end
+
+
+
+for i=1,#labels2_RC do
 
 	local performance = stats:GetRadarActual():GetValue(labels2_RC[i])
 	local possible = stats:GetRadarPossible():GetValue(labels2_RC[i])
@@ -70,7 +70,7 @@ for i=1,#labels2_RC do
 			self:horizalign(right)
 		end
 	}
-	
+
 	--  slash
 	n[#n+1] = LoadFont("_misoreg hires")..{
 		Text="/",
@@ -81,7 +81,7 @@ for i=1,#labels2_RC do
 			self:horizalign(right)
 		end
 	}
-	
+
 	-- possible value
 	n[#n+1] = LoadFont("_ScreenEvaluation numbers")..{
 		InitCommand=cmd(shadowlength,1; zoom,0.5),
@@ -95,6 +95,6 @@ for i=1,#labels2_RC do
 		end
 	}
 
-end	
+end
 
 return n

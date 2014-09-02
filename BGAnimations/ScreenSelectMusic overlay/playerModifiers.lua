@@ -4,14 +4,19 @@
 -- be set from a previous game.
 
 return Def.ActorFrame{
-	OnCommand=cmd(queuecommand,"ApplyModifiers");
-	PlayerJoinedMessageCommand=cmd(queuecommand,"ApplyModifiers");
+	OnCommand=cmd(queuecommand,"ApplyModifiers"),
+	PlayerJoinedMessageCommand=cmd(queuecommand,"ApplyModifiers"),
 	ApplyModifiersCommand=function(self)
-		
-		local Players = GAMESTATE:GetHumanPlayers();
-		for pn in ivalues(Players) do
-			ApplySpeedMod(pn);
-			ApplyMini(pn);
+		-- there is the possibility a player just joined via latejoin
+		-- so ensure that this is set correctly now
+		if #GAMESTATE:GetHumanPlayers() > 1 then
+			SL.Global.Gamestate.Style = "versus"
 		end
-	end;
-};
+
+		local Players = GAMESTATE:GetHumanPlayers()
+		for pn in ivalues(Players) do
+			ApplySpeedMod(pn)
+			ApplyMini(pn)
+		end
+	end
+}

@@ -38,7 +38,7 @@ t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"));
 -- Credits
 t[#t+1] = Def.ActorFrame {
  	CreditsText( PLAYER_1 );
-	CreditsText( PLAYER_2 ); 
+	CreditsText( PLAYER_2 );
 };
 
 
@@ -79,40 +79,50 @@ t[#t+1] = LoadFont("_wendy small")..{
 	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh");
 	CoinsChangedMessageCommand=cmd(playcommand,"Refresh");
 	RefreshCommand=function(self)
-		
-		local screen = SCREENMAN:GetTopScreen();
-		local bShow = true;
+
+		local screen = SCREENMAN:GetTopScreen()
+		local bShow = true
 		if screen then
-			local sClass = screen:GetName();
-			bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" );
-			
+			local sClass = screen:GetName()
+			bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" )
+
 			-- hide this centered credit text for certain screens,
 			-- where it would more likely just be distracting and superfluous
-			if sClass == "ScreenPlayerOptions" or sClass == "ScreenPlayerOptions2" or sClass == "ScreenEvaluationStage" or sClass == "ScreenEvaluationCourse" or sClass == "ScreenEvaluationSummary" or sClass == "ScreenNameEntryActual" or sClass == "ScreenNameEntryTraditional" or sClass == "ScreenGameOver" then
+			if sClass == "ScreenPlayerOptions"
+				or sClass == "ScreenPlayerOptions2"
+				or sClass == "ScreenEvaluationStage"
+				or sClass == "ScreenEvaluationCourse"
+				or sClass == "ScreenEvaluationSummary"
+				or sClass == "ScreenNameEntryActual"
+				or sClass == "ScreenNameEntryTraditional"
+				or sClass == "ScreenGameOver" then
 				bShow = false
 			end
 		end
 
-		self:visible( bShow );
+		self:visible( bShow )
 
-		if GAMESTATE:IsEventMode() then
-			self:settext('EVENT MODE');
-		elseif GAMESTATE:GetCoinMode()== "CoinMode_Free" then
-			self:settext('FREE PLAY');
-		elseif GAMESTATE:GetCoinMode()== "CoinMode_Home" then
-			self:settext('');
-		elseif GAMESTATE:GetCoinMode()== "CoinMode_Pay" then
-			local Credits = GetCredits();
-			local text ='CREDIT(S)  ';
-		
-			if Credits["Credits"] > 0 then
-				 text = text..Credits["Credits"]..'  ';
+		if PREFSMAN:GetPreference("EventMode") then
+			self:settext('EVENT MODE')
+
+		elseif GAMESTATE:GetCoinMode() == "CoinMode_Pay" then
+			local credits = GetCredits()
+			local text ='CREDIT(S)  '
+
+			if credits.Credits > 0 then
+				 text = text..credits.Credits..'  '
 			end
-		
-			text = text .. Credits["Remainder"] .. '/' .. Credits["CoinsPerCredit"];
-			self:settext(text)
-		end
-	end;
-};
 
-return t;
+			text = text .. credits.Remainder .. '/' .. credits.CoinsPerCredit
+			self:settext(text)
+
+		elseif GAMESTATE:GetCoinMode() == "CoinMode_Free" then
+			self:settext('FREE PLAY')
+
+		elseif GAMESTATE:GetCoinMode() == "CoinMode_Home" then
+			self:settext('')
+		end
+	end
+}
+
+return t

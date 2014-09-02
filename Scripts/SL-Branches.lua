@@ -44,98 +44,108 @@ Branch.SSMCancel = function()
 end
 
 Branch.AfterProfileSave = function()
-	
-	if GAMESTATE:IsEventMode() then
+
+	if PREFSMAN:GetPreference("EventMode") then
 		return SelectMusicOrCourse()
-		
+
 	elseif GAMESTATE:IsCourseMode() then
 		return "ScreenNameEntryTraditional"
-		
-	else
-		
-		-- take rate mods into consideration when calculating stage "cost"
-		local song = GAMESTATE:GetCurrentSong()	
-		local Duration = song:GetLastSecond()
-		local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
-		
-		local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
-		local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
 
-		local IsMarathonWithRate = DurationWithRate/MarathonCutoff > 1 and true or false		
-		local IsLongWithRate = DurationWithRate/LongCutoff > 1 and true or false
-		
-		if song:IsMarathon() then			
-			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 3
-		elseif song:IsLong() then
-			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 2
-		else
-			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - 1
-		end
-		
+	else
+
+		local song = GAMESTATE:GetCurrentSong()
+		local SMSongCost = (song:IsLong() and 2) or (song:IsMarathon() and 3) or 1
+		SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - SMSongCost
+
+		-- calculate if stages should be "added back" because of rate mod
 		if SL.Global.ActiveModifiers.MusicRate ~= 1 then
-			
-			local StagesToAdd = 0
-			
-			if song:IsMarathon() and not IsLongWithRate and not IsMarathonWithRate then	
-				StagesToAdd = 2
-			elseif song:IsMarathon() and IsLongWithRate and not IsMarathonWithRate then			
-				StagesToAdd = 1
-			elseif song:IsLong() and not IsLongWithRate and not IsMarathonWithRate then				
-				StagesToAdd = 1
-			end
-			
-			local Players = GAMESTATE:GetHumanPlayers()	
-			for pn in ivalues(Players) do
-				for i=1, StagesToAdd do
-					GAMESTATE:AddStageToPlayer( pn )
-				end
-			end
-			
-			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAdd
+			local ActualSongCost = 1
+			local StagesToAddBack = 0
+
+			local Duration = song:GetLastSecond()
+			local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
+
+			local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
+			local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
+
+			local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false
+			local IsLong 	 = DurationWithRate/LongCutoff > 1 and true or false
+
+			ActualSongCost = (IsMarathon and 3) or (IsLong and 2) or 1
+			StagesToAddBack = SMSongCost - ActualSongCost
+			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
 		end
-		
 
 		-- If we don't allow players to fail out of a set early
 		if ThemePrefs.Get("AllowFailingOutOfSet") == "No" then
-			
+
 			-- check first to see how many songs are remaining
-			-- if none, send the player(s) on to ScreenEvalutationSummary
+			-- if none...
 			if SL.Global.Stages.Remaining == 0 then
 
-				return "ScreenEvaluationSummary"
-			
+				if SL.Global.ContinuesRemaining > 0 then
+
+					local CoinsNeeded = PREFSMAN:GetPreference("CoinsPerCredit")
+					local premium = PREFSMAN:GetPreference("Premium")
+
+					if premium == "Premium_DoubleFor1Credit" then
+						if SL.Global.Gamestate.Style == "versus" then
+							CoinsNeeded = CoinsNeeded * 2
+						end
+
+					elseif premium == "Premium_Off" then
+						if SL.Global.Gamestate.Style == "versus" or SL.Global.Gamestate.Style == "double" then
+							CoinsNeeded = CoinsNeeded * 2
+						end
+					end
+
+					if GAMESTATE:GetCoins() >= CoinsNeeded then
+						return "ScreenPlayAgain"
+					else
+						return "ScreenEvaluationSummary"
+					end
+				else
+					return "ScreenEvaluationSummary"
+				end
+
+
 			-- otherwise, there are some stages remaining
 			else
-				
+
 				-- However, if the player(s) just failed, then SM thinks there are no stages remaining
 				-- so IF the player(s) did fail, reinstate the appropriate number of stages.
 				-- If we don't do this, and simply send the player(s) back to ScreenSelectMusic,
-				-- the MusicWheel will be empty! (I guess because SM thinks there are no stages remaining...?) 
+				-- the MusicWheel will be empty (because SM believes there are no stages remaining)!
 				if STATSMAN:GetCurStageStats():AllFailed() then
-					local Players = GAMESTATE:GetHumanPlayers()	
+					local Players = GAMESTATE:GetHumanPlayers()
 					for pn in ivalues(Players) do
 						for i=1, SL.Global.Stages.Remaining do
 							GAMESTATE:AddStageToPlayer(pn)
 						end
 					end
 				end
-				
-				
+
 				return SelectMusicOrCourse()
 			end
-			
+
+		-- else we DO allow players to possibly fail out of a set
 		else
-		
+
 			if STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay")		
-				return "ScreenEvaluationSummary"
+				local credits = GetCredits()
+				if credits.Credits > 0 then
+					return "ScreenPlayAgain"
+				else
+					return "ScreenEvaluationSummary"
+				end
+
 			else
 				return SelectMusicOrCourse()
 			end
-			
+
 		end
 	end
-			
+
 	-- just in case?
 	return SelectMusicOrCourse()
 end

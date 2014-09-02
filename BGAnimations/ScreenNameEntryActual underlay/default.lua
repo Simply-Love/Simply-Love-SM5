@@ -16,35 +16,102 @@
 
 local Players = GAMESTATE:GetHumanPlayers()
 
+-- how long should each song display for before cycling to the next
+local durationPerSong = 4
 -- get the number of stages that were played
-local numStages = STATSMAN:GetStagesPlayed()
+local numStages = SL.Global.Stages.PlayedThisGame
 
 local t = Def.ActorFrame {}
 
 t[#t+1] = Def.ActorFrame {
-	
+
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
-	
+
 	Def.Quad{
 		Name="LeftMask";
 		InitCommand=cmd(halign,0),
 		OnCommand=cmd(xy, 0, _screen.cy; zoomto, _screen.cx-272, _screen.h; MaskSource)
 	},
-	
+
 	Def.Quad{
 		Name="CenterMask",
 		OnCommand=cmd(Center; zoomto, 110, _screen.h; MaskSource)
 	},
-	
+
 	Def.Quad{
 		Name="RightMask",
 		InitCommand=cmd(halign,1),
 		OnCommand=cmd(xy, _screen.w, _screen.cy; zoomto, _screen.cx-272, _screen.h; MaskSource)
 	}
 }
+
+-- Banner(s)
+if GAMESTATE:IsCourseMode() then
+
+	t[#t+1] = Def.Sprite{
+		Name="CourseBanner",
+		InitCommand=cmd(xy, _screen.cx, 121.5 ),
+		OnCommand=function(self)
+			local course, banner
+			course = GAMESTATE:GetCurrentCourse()
+
+			if course then
+				 bannerpath = course:GetBannerPath()
+			end
+
+			if bannerpath then
+				self:LoadBanner(bannerpath)
+				self:setsize(418,164)
+				self:zoom(0.7)
+			end
+		end
+	}
+
+else
+
+	local currentStage = 1
+	for i=numStages,1,-1 do
+
+		local song = SL.Global.Stages.Stats[currentStage].song
+
+		t[#t+1] = Def.Sprite{
+			Name="Banner"..i,
+			InitCommand=cmd(xy, _screen.cx, 121.5; diffusealpha, 0),
+			OnCommand=function(self)
+
+				if song then
+					 bannerpath = song:GetBannerPath()
+				end
+
+				if bannerpath then
+					self:LoadBanner(bannerpath)
+					self:setsize(418,164)
+					self:zoom(0.7)
+				end
+
+				self:sleep(durationPerSong * (math.abs(i-numStages)) );
+				self:queuecommand("Display")
+			end,
+			DisplayCommand=function(self)
+				self:diffusealpha(1)
+				self:sleep(durationPerSong)
+				self:diffusealpha(0)
+				self:queuecommand("Wait")
+			end,
+			WaitCommand=function(self)
+				self:sleep(durationPerSong * (numStages-1))
+				self:queuecommand("Display")
+			end
+		}
+
+		currentStage = currentStage + 1
+	end
+end
+
+
 
 
 t[#t+1] = Def.Actor {
@@ -63,11 +130,11 @@ t[#t+1] = Def.Actor {
 	end,
 	AttemptToFinishCommand=function(self)
 		local AnyEntering = false
-		
+
 		if SL.P1.HighScores.EnteringName or SL.P2.HighScores.EnteringName then
 			AnyEntering = true
 		end
-		
+
 		if not AnyEntering then
 			self:playcommand("Finish")
 		end
@@ -84,10 +151,10 @@ t[#t+1] = Def.Actor {
 			local playerName = SL[ToEnumShortString(pn)].HighScores.Name
 
 			if playerName then
-				
+
 				-- actually store the HighScoreName
 				GAMESTATE:StoreRankingName(pn, playerName)
-				
+
 				-- if the player is using a profile, set a LastUsedHighScoreName for him/her
 				if PROFILEMAN:IsPersistentProfile(pn) then
 					PROFILEMAN:GetProfile(pn):SetLastUsedHighScoreName(playerName)
@@ -101,7 +168,7 @@ t[#t+1] = Def.Actor {
 for pn in ivalues(Players) do
 	t[#t+1] = LoadActor("alphabet", pn)
 	t[#t+1] = LoadActor("highScores", pn)
-end 
+end
 
 --
 return t

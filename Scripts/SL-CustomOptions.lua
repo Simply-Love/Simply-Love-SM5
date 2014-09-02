@@ -30,9 +30,9 @@ end
 
 function OptionRowAllowFailingOutOfSet()
 	local failTypes = {"Yes", "No"}
-	
+
 	return {
-		Name = "Allow Fail Out Of Set",
+		Name = "AllowFailingOutOfSet",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
@@ -47,6 +47,33 @@ function OptionRowAllowFailingOutOfSet()
 			for i=1, #failTypes do
 				if list[i] then
 					ThemePrefs.Set("AllowFailingOutOfSet", failTypes[i])
+					ThemePrefs.Save()
+					break
+				end
+			end
+		end
+	}
+end
+
+function OptionRowNumberOfContinuesAllowed()
+	local numContinues = {0,1,2,3,4,5}
+
+	return {
+		Name = "NumberOfContinuesAllowed",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = numContinues,
+		LoadSelections = function(self, list, pn)
+			local default = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
+			local i = FindInTable(default, numContinues) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #list do
+				if list[i] then
+					ThemePrefs.Set("NumberOfContinuesAllowed", numContinues[i])
 					ThemePrefs.Save()
 					break
 				end

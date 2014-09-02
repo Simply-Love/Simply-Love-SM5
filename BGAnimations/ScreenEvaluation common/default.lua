@@ -1,13 +1,16 @@
 local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
-	
+
 	CodeMessageCommand=function(self, params)
 		if params.Name == "Screenshot" then
 			SaveScreenshot(params.PlayerNumber, false, true)
 		end
 	end,
-	
+
+	-- store player stats for later retrieval on EvaluationSummary and NameEntryActual
+	LoadActor("storage.lua"),
+
 	-- quad behind the song/course title text
 	Def.Quad{
 		InitCommand=cmd(diffuse,color("#1E282F"); xy,_screen.cx, 54.5; zoomto, 292.5,20)
@@ -23,20 +26,20 @@ local t = Def.ActorFrame{
 			else
 				songtitle = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 			end
-			
+
 			if songtitle then
 				self:settext(songtitle)
 			end
 		end
 	},
-		
-	
-	
+
+
+
 	--fallback banner
 	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner" .. SimplyLoveColor() .. ".png"))..{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
-	
+
 	--songs or course banner, if there is one
 	Def.Sprite{
 		Name="Banner",
@@ -46,17 +49,17 @@ local t = Def.ActorFrame{
 			-- otherwise, the banner from round1 can persist into round2
 			-- if round2 doesn't have banner!
 			local SongOrCouse, bannerpath
-			
+
 			if GAMESTATE:IsCourseMode() then
 				SongOrCouse = GAMESTATE:GetCurrentCourse()
 			else
 				SongOrCouse = GAMESTATE:GetCurrentSong()
 			end
-			
+
 			if song then
 				 bannerpath = SongOrCouse:GetBannerPath()
 			end
-			
+
 			if bannerpath then
 				self:LoadBanner(bannerpath)
 				self:setsize(418,164)
@@ -64,7 +67,7 @@ local t = Def.ActorFrame{
 			end
 		end
 	},
-	
+
 	--quad behind the ratemod, if there is one
 	Def.Quad{
 		InitCommand=cmd(diffuse,color("#1E282FCC"); xy,_screen.cx, 172; zoomto, 292.5,14 ),
@@ -75,19 +78,19 @@ local t = Def.ActorFrame{
 			end
 		end
 	},
-	
+
 	--the ratemod, if there is one
 	LoadFont("_misoreg hires")..{
 		InitCommand=cmd(xy,_screen.cx, 173; shadowlength,1; zoom, 0.7),
-		OnCommand=function(self)	
+		OnCommand=function(self)
 			-- what was the MusicRate for this song?
 			local MusicRate = SL.Global.ActiveModifiers.MusicRate
-			
+
 			-- Store the MusicRate for later retrieval on ScreenEvaluationSummary
 			SL.Global.Stages.MusicRate[#SL.Global.Stages.MusicRate + 1] = MusicRate
-			
+
 			local bpm = GetDisplayBPMs()
-			
+
 			if MusicRate ~= 1 then
 				self:settext(string.format("%.1f", MusicRate) .. " Music Rate")
 
@@ -105,7 +108,7 @@ local t = Def.ActorFrame{
 					else
 						bpm = tonumber(bpm) * MusicRate
 					end
-					
+
 					self:settext(self:GetText() .. " (" .. bpm .. " BPM)" )
 				end
 			else
@@ -114,13 +117,13 @@ local t = Def.ActorFrame{
 			end
 		end
 	},
-	
+
 	-- Score Vocalization
 	LoadActor("score_vocalization")
 }
 
 for pn in ivalues(Players) do
-	
+
 	t[#t+1] = Def.ActorFrame{
 		Name=ToEnumShortString(pn).." AF Upper",
 		OnCommand=function(self)
@@ -130,9 +133,9 @@ for pn in ivalues(Players) do
 				self:x(_screen.cx + 155)
 			end
 		end,
-		
-		
-	
+
+
+
 		--letter grade
 		LoadActor("letterGrade", pn)..{
 			InitCommand=function(self)
@@ -144,8 +147,8 @@ for pn in ivalues(Players) do
 			end,
 			OnCommand=cmd(zoom, 0.4)
 		},
-	
-	
+
+
 		--stepartist
 		LoadFont("_misoreg hires")..{
 			InitCommand=function(self)
@@ -158,7 +161,7 @@ for pn in ivalues(Players) do
 				end
 				self:zoom(0.7)
 			end,
-			BeginCommand=function(self)					
+			BeginCommand=function(self)
 				local stepartist
 				if GAMESTATE:IsCourseMode() then
 					local course = GAMESTATE:GetCurrentCourse()
@@ -171,11 +174,11 @@ for pn in ivalues(Players) do
 						stepartist = cs:GetAuthorCredit()
 					end
 				end
-				
+
 				self:settext(stepartist)
 			end
 		},
-		
+
 		--difficulty text
 		LoadFont("_misoreg hires")..{
 			InitCommand=function(self)
@@ -190,7 +193,7 @@ for pn in ivalues(Players) do
 			end,
 			OnCommand=function(self)
 				local currentSteps = GAMESTATE:GetCurrentSteps(pn)
-				
+
 				if currentSteps then
 					local difficulty = currentSteps:GetDifficulty();
 					-- GetDifficulty() returns a value from the Difficulty Enum
@@ -201,7 +204,7 @@ for pn in ivalues(Players) do
 				end
 			end
 		},
-		
+
 		-- Record Texts
 		LoadActor("recordTexts", pn)..{
 			InitCommand=function(self)
@@ -213,7 +216,7 @@ for pn in ivalues(Players) do
 				self:zoom(0.225)
 			end
 		},
-	
+
 		-- colored background for the chart's difficulty meter
 		Def.Quad{
 			InitCommand=function(self)
@@ -224,15 +227,15 @@ for pn in ivalues(Players) do
 					self:xy(134.5, _screen.cy-71)
 				end
 			end,
-			OnCommand=function(self)			
+			OnCommand=function(self)
 				local currentSteps = GAMESTATE:GetCurrentSteps(pn)
 				if currentSteps then
 					local currentDifficulty = currentSteps:GetDifficulty()
 					self:diffuse(DifficultyColor(currentDifficulty))
 				end
 			end
-		},					
-	
+		},
+
 		-- chart's difficulty meter
 		LoadFont("_wendy small")..{
 			InitCommand=function(self)
@@ -257,14 +260,14 @@ for pn in ivalues(Players) do
 						meter = steps:GetMeter()
 					end
 				end
-			
-				if meter then	
+
+				if meter then
 					self:settext(meter)
 				end
 			end
 		}
 	}
-	
+
 	t[#t+1] = Def.ActorFrame{
 		Name=ToEnumShortString(pn).." AF Lower",
 		OnCommand=function(self)
@@ -278,14 +281,14 @@ for pn in ivalues(Players) do
 				end
 			end
 		end,
-		
-				
+
+
 		-- background quad for player stats
 		Def.Quad{
 			InitCommand=cmd(diffuse,color("#1E282F"); y,_screen.cy+34; zoomto, 300,180 );
 		},
-	
-			
+
+
 		LoadActor("judgeLabels", pn)..{
 			InitCommand=function(self)
 				if pn == PLAYER_1 then
@@ -295,7 +298,7 @@ for pn in ivalues(Players) do
 				end
 			end
 		},
-		
+
 		-- dark background quad behind player percent score
 		Def.Quad{
 			InitCommand=function(self)
@@ -308,7 +311,7 @@ for pn in ivalues(Players) do
 				end
 			end
 		},
-		
+
 		-- percentage score
 		LoadActor("percentage", pn)..{
 			Name="PercentageContainer"..ToEnumShortString(pn),
@@ -339,15 +342,15 @@ for pn in ivalues(Players) do
 				self:zoom(0.8)
 			end
 		},
-		
+
 		-- a quad used to initially mask the ComboGraph
 		Def.Quad{
 			InitCommand=cmd(zoomto,300,53; y, _screen.cy+150.5; MaskSource),
-			
+
 			-- tween the GraphDisplay into visibility by cropping away this quad
 			OnCommand=cmd(linear,1; cropleft,1)
 		},
-		
+
 		Def.GraphDisplay{
 			InitCommand=cmd(y, _screen.cy+150.5;),
 			BeginCommand=function(self)
@@ -361,13 +364,13 @@ for pn in ivalues(Players) do
 				self:Set(stageStats, playerStageStats)
 				-- hide the GraphDisplay's stroke ("line")
 				self:GetChild("Line"):diffusealpha(0)
-				
+
 				-- the second unnamed child of the GraphDisplay is its "body"
 				-- we want it initially masked by the quad above
 				self:GetChild("")[2]:MaskDest(true)
 			end
 		},
-		
+
 		Def.ComboGraph{
 			InitCommand=function(self)
 				if pn == PLAYER_1 then
@@ -383,19 +386,17 @@ for pn in ivalues(Players) do
 				self:Set(stageStats, playerStageStats)
 			end
 		},
-		
+
 		LoadActor("playerOptions", pn)..{
 			InitCommand=cmd(y, _screen.cy+200.5)
 		},
-		
+
 		-- was this player disqualified from ranking?
 		LoadActor("disqualified", pn)..{
 			InitCommand=cmd(y, _screen.cy+138)
 		},
-		
+
 	}
 end
 
-
-
-return t;
+return t
