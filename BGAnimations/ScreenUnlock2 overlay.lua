@@ -3,8 +3,7 @@ local t =  Def.ActorFrame{}
 
 if path then
 	
-	local song
-	song = SONGMAN:FindSong(path)
+	local song = SONGMAN:FindSong(path)
 	
 	if song then
 		

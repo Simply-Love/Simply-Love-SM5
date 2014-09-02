@@ -90,7 +90,7 @@ function ApplySpeedMod(player)
 	
 	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
 	
-	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack!
+	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack?
 	playeroptions:XMod(1.00)
 	
 	if type == "x" then
