@@ -29,7 +29,7 @@ local function input(event)
 			end
 
 			underlay:GetChild("start_sound"):play()
-			local choice = choice_wheel:get_actor_item_at_focus_pos().choice
+			local choice = choice_wheel:get_actor_item_at_focus_pos().info
 			if choice == "Yes" then
 
 				local Players =  GAMESTATE:GetHumanPlayers()
@@ -77,32 +77,33 @@ local function input(event)
 	return false
 end
 
--- the metatable for an item in the sort_wheel
+-- the metatable for an item in the wheel
 local wheel_item_mt = {
 	__index = {
 		create_actors = function(self, name)
 			self.name=name
-			local index = tonumber((name:gsub("item","")))
-			self.index = index
-			local choice = choices[index]
-			self.choice = choice
-
+			
 			local af = Def.ActorFrame{
-				Name=name,
 
 				InitCommand=function(subself)
 					self.container = subself
-					if choice == "No" then
-						self.container:zoom(0.75)
-					end
 				end
 			}
 
 			af[#af+1] = LoadFont("_wendy small")..{
-				Text=choices[index],
-				OnCommand=function(self)
-					local scaled = scale(index,1,2,-1,1)
-					self:x(scaled * 100)
+				InitCommand=function(subself)
+					self.text= subself
+					subself:diffusealpha(0)
+				end,
+				OnCommand=function(subself)
+					if subself:GetText() == THEME:GetString("OptionTitles", "No") then
+						subself:x(100)
+					else
+						subself:x(-100)
+					end
+					subself:linear(0.15)
+					subself:diffusealpha(1)
+					
 				end
 			}
 
@@ -120,7 +121,7 @@ local wheel_item_mt = {
 			else
 				self.container:glow(color("1,1,1,0"))
 				self.container:accelerate(0.15)
-				self.container:zoom(0.75)
+				self.container:zoom(0.8)
 				self.container:diffuse(color("#888888"))
 				self.container:glow(color("1,1,1,0"))
 			end
@@ -130,6 +131,7 @@ local wheel_item_mt = {
 		set = function(self, info)
 			self.info= info
 			if not info then return end
+			self.text:settext(THEME:GetString("OptionTitles", info))
 		end
 	}
 }
@@ -140,7 +142,7 @@ local t = Def.ActorFrame{
 		--and we don't want that if a timeout occurs
 		SL.Global.ScreenAfter.PlayAgain = "ScreenEvaluationSummary"
 
-		choice_wheel:set_info_set({""}, 2)
+		choice_wheel:set_info_set(choices, 1)
 		self:queuecommand("Capture")
 	end,
 	CaptureCommand=function(self)
