@@ -1,5 +1,7 @@
 local choice_wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
 local choices = { THEME:GetString("OptionTitles", "Yes"), THEME:GetString("OptionTitles", "No") }
+local timeout = THEME:GetMetric("ScreenPlayAgain","TimerSeconds")
+local TimeSinceStart
 
 -- this handles user input
 local function input(event)
@@ -9,15 +11,15 @@ local function input(event)
 
 	if event.type == "InputEventType_FirstPress" then
 		local topscreen = SCREENMAN:GetTopScreen()
-		local overlay = topscreen:GetChild("Overlay")
+		local underlay = topscreen:GetChild("Underlay")
 
 		if event.GameButton == "MenuRight" then
 			choice_wheel:scroll_by_amount(1)
-			overlay:GetChild("change_sound"):play()
+			underlay:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "MenuLeft" then
 			choice_wheel:scroll_by_amount(-1)
-			overlay:GetChild("change_sound"):play()
+			underlay:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "Start" then
 			if not GAMESTATE:IsPlayerEnabled(event.PlayerNumber) then
@@ -26,7 +28,7 @@ local function input(event)
 				end
 			end
 
-			overlay:GetChild("start_sound"):play()
+			underlay:GetChild("start_sound"):play()
 			local choice = choice_wheel:get_actor_item_at_focus_pos().choice
 			if choice == "Yes" then
 
@@ -53,9 +55,6 @@ local function input(event)
 				end
 
 				GAMESTATE:InsertCoin(-coins)
-
-				-- set the style from the previously used one
-				GAMESTATE:SetCurrentStyle(SL.Global.Gamestate.Style)
 
 				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay")
 				SL.Global.ContinuesRemaining = SL.Global.ContinuesRemaining - 1
@@ -135,14 +134,36 @@ local wheel_item_mt = {
 	}
 }
 
-
 local t = Def.ActorFrame{
 	InitCommand=function(self)
+		--reset this now, otherwise it might still be set to SSM from a previous continue
+		--and we don't want that if a timeout occurs
+		SL.Global.ScreenAfter.PlayAgain = "ScreenEvaluationSummary"
+
 		choice_wheel:set_info_set({""}, 2)
 		self:queuecommand("Capture")
 	end,
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
+	end,
+
+	-- I'm not sure why the built-in MenuTimer doesn't force a transition to the nextscreen
+	-- when it runs out of time, but... it isn't.  So recursively listen for time remaining here
+	-- and force a screen transition when time runs out.
+	OnCommand=function(self)
+		if PREFSMAN:GetPreference("MenuTimer") then
+			self:queuecommand("Listen")
+		end
+	end,
+	ListenCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen()
+		local seconds = topscreen:GetChild("Timer"):GetSeconds()
+		if seconds <= 0 then
+			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+		else
+			self:sleep(0.5)
+			self:queuecommand("Listen")
+		end
 	end,
 
 	-- slightly darken the entire screen
@@ -151,7 +172,7 @@ local t = Def.ActorFrame{
 	},
 
 	LoadFont("_wendy small")..{
-		Text="Continue?",
+		Text=THEME:GetString("ScreenPlayAgain", "Continue"),
 		InitCommand=cmd(xy, _screen.cx, _screen.cy-30),
 	},
 
@@ -161,6 +182,5 @@ local t = Def.ActorFrame{
 
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
 t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }
-
 
 return t

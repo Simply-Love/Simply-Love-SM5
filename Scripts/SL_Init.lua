@@ -41,7 +41,7 @@ local GlobalDefaults = {
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed")
 			self.Gamestate = {
-				Style = nil
+				Style = "single"
 			}
 		end
 	}

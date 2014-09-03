@@ -109,11 +109,12 @@ t[#t+1] = LoadFont("_wendy small")..{
 			local credits = GetCredits()
 			local text ='CREDIT(S)  '
 
-			if credits.Credits > 0 then
-				 text = text..credits.Credits..'  '
-			end
+			text = text..credits.Credits..'  '
 
-			text = text .. credits.Remainder .. '/' .. credits.CoinsPerCredit
+
+			if credits.CoinsPerCredit > 1 then
+				text = text .. credits.Remainder .. '/' .. credits.CoinsPerCredit
+			end
 			self:settext(text)
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Free" then
