@@ -21,8 +21,7 @@ function SimplyLoveColor()
 end
 
 function SetSimplyLoveColor( c )
-	ThemePrefs.Set("SimplyLoveColor", c)
-	ThemePrefs.Save()	
+	ThemePrefs.Set("SimplyLoveColor", c)	
 	MESSAGEMAN:Broadcast("ColorSelected")
 end
 
