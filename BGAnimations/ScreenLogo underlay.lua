@@ -17,7 +17,10 @@ t[#t+1] = LoadActor(THEME:GetPathB("ScreenTitleMenu","underlay/SimplyLove.png"))
 t[#t+1] = LoadFont("_wendy small")..{
 	Text=THEME:GetString("ScreenLogo", "EnterCreditsToPlay"),
 	InitCommand=cmd(xy,_screen.cx,SCREEN_BOTTOM-100; visible,false; zoom,0.525),
-	OnCommand=function(self)
+	OnCommand=cmd(queuecommand,"Refresh"),
+	CoinModeChangedMessageCommand=cmd(queuecommand,"Refresh"),
+	RefreshCommand=function(self)
+		self:visible(false)
 		if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then
 			self:visible(true)
 			self:diffuseshift()
