@@ -77,7 +77,7 @@ Branch.AfterProfileSave = function()
 		end
 
 		-- If we don't allow players to fail out of a set early
-		if ThemePrefs.Get("AllowFailingOutOfSet") == "No" then
+		if not ThemePrefs.Get("AllowFailingOutOfSet") then
 
 			-- check first to see how many songs are remaining
 			-- if none...
