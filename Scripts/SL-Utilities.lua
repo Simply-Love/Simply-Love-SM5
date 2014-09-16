@@ -1,7 +1,7 @@
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -- Development Utility Functions
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-function SMPairs(t)
+local function SMPairs(t)
 	local temp = ""
 	for k,v in pairs(t) do
 		temp = temp .. "key: " .. tostring(k) .. ", val: " .. tostring(v) .."\n"
@@ -10,7 +10,11 @@ function SMPairs(t)
 end
 
 function SM(str)
-	SCREENMAN:SystemMessage(tostring(str))
+	if type(str) == "table" then
+		SMPairs(str)
+	else
+		SCREENMAN:SystemMessage(tostring(str))
+	end
 end
 
 function FindInTable(needle, haystack)
