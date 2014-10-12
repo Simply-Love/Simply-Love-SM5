@@ -28,7 +28,7 @@ local t = Def.ActorFrame{
 	end
 }
 
-t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"));
+t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
 
 
 for player in ivalues(Players) do
@@ -68,7 +68,7 @@ for player in ivalues(Players) do
 				self:queuecommand("Set" .. pn)
 				self:GetParent():GetChild(pn.."MusicRateHelper"):playcommand("Set")
 			end
-		end;
+		end,
 		
 		["Set" .. pn .. "Command"]=function(self)
 			local text = ""
@@ -83,14 +83,14 @@ for player in ivalues(Players) do
 			
 			SpeedModItems[pn]:settext( text )
 			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
-		end;
+		end,
 		
 		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
 			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == 1 then
 				ChangeSpeedMod( pn, -1 )
 				self:queuecommand("Set"..pn)
 			end	
-		end;
+		end,
 		["MenuRight" .. pn .. "MessageCommand"]=function(self)
 			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == 1 then
 				ChangeSpeedMod( pn, 1 )
@@ -144,8 +144,8 @@ for player in ivalues(Players) do
 		end,
 		OnCommand=cmd(linear,0.4;diffusealpha,1),
 		SetCommand=function(self)
+			local musicrate = SL.Global.ActiveModifiers.MusicRate
 			if SL[pn].ActiveModifiers.SpeedModType == "x" then
-				local musicrate = SL.Global.ActiveModifiers.MusicRate
 				if musicrate == 1 then
 					self:settext("")
 				else
@@ -155,6 +155,15 @@ for player in ivalues(Players) do
 				self:settext("")
 			end
 			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+			
+			local ScreenOptions = SCREENMAN:GetTopScreen()
+			local SpeedModTitle = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Title")
+			local bpms = GAMESTATE:GetCurrentSong():GetDisplayBpms()
+			if bpms[1] == bpms[2] then
+				SpeedModTitle:settext( "Speed Mod (" .. bpms[1] * musicrate .. ")" )
+			else
+				SpeedModTitle:settext( "Speed Mod (" .. bpms[1] * musicrate ..  " - " .. bpms[2] * musicrate  .. ")" )
+			end
 		end,
 		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
 	}
