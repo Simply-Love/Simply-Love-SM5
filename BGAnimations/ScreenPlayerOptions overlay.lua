@@ -41,7 +41,8 @@ for player in ivalues(Players) do
 					
 			local oldtype = SL[pn].ActiveModifiers.SpeedModType
 			local newtype = params.SpeedModType
-	
+			local song = GAMESTATE:GetCurrentSong()
+			
 			if oldtype ~= newtype then
 				local bpm
 				local oldspeed = SL[pn].ActiveModifiers.SpeedMod
@@ -49,7 +50,10 @@ for player in ivalues(Players) do
 				if GAMESTATE:IsCourseMode() then
 					bpm = GetCourseModeBPMs()
 				else
-					bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
+					bpm = song:GetDisplayBpms()
+					if bpm[1] <= 0 or bpm[2] <= 0 then
+						bpm = song:GetTimingData():GetActualBPM()
+					end
 				end
 				
 				if oldtype == "x" and (newtype == "C" or newtype == "M") then
@@ -158,7 +162,13 @@ for player in ivalues(Players) do
 			
 			local ScreenOptions = SCREENMAN:GetTopScreen()
 			local SpeedModTitle = ScreenOptions:GetOptionRow(1):GetChild(""):GetChild("Title")
-			local bpms = GAMESTATE:GetCurrentSong():GetDisplayBpms()
+			local song = GAMESTATE:GetCurrentSong()
+			local bpms = song:GetDisplayBpms()
+			
+			if bpms[1] <= 0 or bpms[2] <= 0 then
+				bpms = song:GetTimingData():GetActualBPM()
+			end
+			
 			if bpms[1] == bpms[2] then
 				SpeedModTitle:settext( "Speed Mod (" .. bpms[1] * musicrate .. ")" )
 			else

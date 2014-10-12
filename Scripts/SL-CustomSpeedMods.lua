@@ -112,6 +112,10 @@ function DisplaySpeedMod(pn)
 		bpm = GetCourseModeBPMs()
 	else
 		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
+		-- handle DisplayBPMs that are <= 0
+		if bpm[1] <= 0 or bpm[2] <= 0 then
+			bpm = GAMESTATE:GetCurrentSong():GetTimingData():GetActualBPM()
+		end
 	end
 		
 	-- if using an XMod
@@ -187,6 +191,11 @@ function GetDisplayBPMs()
 		
 		if song then
 			local bpm = song:GetDisplayBpms()
+			
+			-- handle DisplayBPMs that are <= 0
+			if bpm[1] <= 0 or bpm[2] <= 0 then
+				bpm = song:GetTimingData():GetActualBPM()
+			end
 			
 			--if a single bpm suffices
 			if bpm[1] == bpm[2] then
