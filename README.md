@@ -10,8 +10,7 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 Requirements:
 -------------
-You'll need to be running an up-to-date nightly build of StepMania 5 to run this port.  This will not work with StepMania 5 beta 3.
-
+You'll need to be running StepMania 5 beta 4 or newer to use this theme.
 
 Screenshots:
 ------------
