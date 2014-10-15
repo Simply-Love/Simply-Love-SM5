@@ -21,3 +21,4 @@ local SL_ThemePrefs =
 }
 
 ThemePrefs.InitAll(SL_ThemePrefs)
+ThemePrefs.ForceSave()
