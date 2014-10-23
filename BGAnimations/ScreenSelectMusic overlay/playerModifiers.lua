@@ -14,9 +14,16 @@ return Def.ActorFrame{
 		end
 
 		local Players = GAMESTATE:GetHumanPlayers()
-		for pn in ivalues(Players) do
-			ApplySpeedMod(pn)
-			ApplyMini(pn)
+		for player in ivalues(Players) do
+			ApplySpeedMod(player)
+			ApplyMini(player)
+			
+			local pn = ToEnumShortString(player)
+			
+			if SL[pn].CurrentPlayerOptions.String == "" then 
+				SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
+			end
+			GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", SL[pn].CurrentPlayerOptions.String)
 		end
 	end
 }

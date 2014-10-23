@@ -18,6 +18,10 @@ local PlayerDefaults = {
 			self.Stages = {
 				Stats = {}
 			}
+			self.CurrentPlayerOptions = 
+			{
+				String = ""
+			}
 		end
 	}
 }
