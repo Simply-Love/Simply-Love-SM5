@@ -29,6 +29,14 @@ else
 	text = THEME:GetString("Stage", "Event")
 end
 
+-- get the PlayerOptions string for any human players and store it now
+-- we'll retreive it the next time ScreenSelectMusic loads and re-apply those same mods
+-- in this way, we can override the effects of songs that forced modifiers during gameplay
+local Players = GAMESTATE:GetHumanPlayers()
+for player in ivalues(Players) do
+	local pn = ToEnumShortString(player)
+	SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred")
+end
 
 
 local t = Def.ActorFrame {}

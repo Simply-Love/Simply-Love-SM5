@@ -20,7 +20,7 @@ local PlayerDefaults = {
 			}
 			self.CurrentPlayerOptions = 
 			{
-				String = ""
+				String = nil
 			}
 		end
 	}

@@ -20,9 +20,12 @@ return Def.ActorFrame{
 			
 			local pn = ToEnumShortString(player)
 			
-			if SL[pn].CurrentPlayerOptions.String == "" then 
+			-- on first load of ScreenSelectMusic, PlayerOptions will be nil
+			-- so set them here to whatever is default
+			if not SL[pn].CurrentPlayerOptions.String then 
 				SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 			end
+			
 			GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", SL[pn].CurrentPlayerOptions.String)
 		end
 	end

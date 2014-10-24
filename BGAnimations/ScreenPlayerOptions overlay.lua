@@ -188,10 +188,7 @@ for player in ivalues(Players) do
 				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedModNew") .. " (" .. bpms[1] * musicrate ..  " - " .. bpms[2] * musicrate  .. ")" )
 			end
 		end,
-		MusicRateChangedMessageCommand=cmd(playcommand,"Set"),
-		OffCommand=function(self)
-			SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
-		end
+		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
 	}
 end
 
