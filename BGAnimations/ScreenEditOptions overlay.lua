@@ -11,7 +11,6 @@ local t = Def.ActorFrame{
 	OffCommand=cmd(linear,0.2;diffusealpha,0),
 	CaptureCommand=function(self)
 
-		ScreenOptions = GetScreenOptions()
 		local ScreenOptions = SCREENMAN:GetTopScreen()
 
 		-- reset for ScreenEditOptions
