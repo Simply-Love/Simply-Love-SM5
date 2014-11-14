@@ -1,4 +1,22 @@
-if not Branch then Branch = {}; end
+function AllowScreenNameEntry()
+	if ThemePrefs.Get("AllowScreenNameEntry") == 1 then
+		return "ScreenNameEntryTraditional"
+	else
+		return "ScreenProfileSaveSummary"
+	end
+end
+
+function AllowScreenEvalSummary()
+	if ThemePrefs.Get("AllowScreenEvalSummary") == 1 then
+		return "ScreenEvaluationSummary"
+	else
+		return AllowScreenNameEntry()
+	end
+end
+
+-------------------------------------------------------
+
+if not Branch then Branch = {} end
 
 function SelectMusicOrCourse()
 	local pm = GAMESTATE:GetPlayMode()
@@ -37,7 +55,7 @@ end
 Branch.SSMCancel = function()
 
 	if GAMESTATE:GetCurrentStageIndex() > 0 then
-		return "ScreenEvaluationSummary"
+		return AllowScreenEvalSummary()
 	end
 
 	return Branch.TitleMenu()
@@ -49,7 +67,7 @@ Branch.AfterProfileSave = function()
 		return SelectMusicOrCourse()
 
 	elseif GAMESTATE:IsCourseMode() then
-		return "ScreenNameEntryTraditional"
+		return AllowScreenNameEntry()
 
 	else
 
@@ -77,7 +95,7 @@ Branch.AfterProfileSave = function()
 		end
 
 		-- If we don't allow players to fail out of a set early
-		if not ThemePrefs.Get("AllowFailingOutOfSet") then
+		if ThemePrefs.Get("AllowFailingOutOfSet") == 0 then
 
 			-- check first to see how many songs are remaining
 			-- if none...
@@ -102,10 +120,10 @@ Branch.AfterProfileSave = function()
 					if GAMESTATE:GetCoins() >= CoinsNeeded then
 						return "ScreenPlayAgain"
 					else
-						return "ScreenEvaluationSummary"
+						return AllowScreenEvalSummary()
 					end
 				else
-					return "ScreenEvaluationSummary"
+					return AllowScreenEvalSummary()
 				end
 
 
@@ -136,7 +154,7 @@ Branch.AfterProfileSave = function()
 				if credits.Credits > 0 then
 					return "ScreenPlayAgain"
 				else
-					return "ScreenEvaluationSummary"
+					return AllowScreenEvalSummary()
 				end
 
 			else
@@ -148,4 +166,12 @@ Branch.AfterProfileSave = function()
 
 	-- just in case?
 	return SelectMusicOrCourse()
+end
+
+Branch.AfterProfileSaveSummary = function()
+	if ThemePrefs.Get("AllowScreenGameOver") == 1 then
+		return "ScreenGameOver"
+	else
+		return Branch.AfterInit()
+	end
 end
