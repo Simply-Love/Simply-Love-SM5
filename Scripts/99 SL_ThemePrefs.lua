@@ -46,15 +46,11 @@ ThemePrefs.InitAll(SL_CustomPrefs)
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefs.txt
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefsRows.txt
 
-
--- If no ThemePrefs section is found, make one.  We don't always want to ForceSave()
--- because this will write using the Default values established above.
+-- If no ThemePrefs section is found, make one by calling ForceSave()
+-- Alternatively, ForceSave() if old preferences need to be converted to new types.
+--
+-- We don't always want to ForceSave() because this will write using the default values established above.
 local file =  IniFile.ReadFile("Save/ThemePrefs.ini")
-if not file["Simply Love"] then
-  ThemePrefs.ForceSave()
-end
-
--- Check if old preferences need to be converted to new types
-if type(file["Simply Love"]["AllowFailingOutOfSet"]) ~= "number" then
-  ThemePrefs.ForceSave()
+if not file["Simply Love"] or type(file["Simply Love"]["AllowFailingOutOfSet"]) ~= "number" then
+	ThemePrefs.ForceSave()
 end
