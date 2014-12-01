@@ -17,16 +17,16 @@ return Def.ActorFrame{
 		for player in ivalues(Players) do
 			ApplySpeedMod(player)
 			ApplyMini(player)
-			
+
 			local pn = ToEnumShortString(player)
-			
-			-- on first load of ScreenSelectMusic, PlayerOptions will be nil
-			-- so set them here to whatever is default
-			if not SL[pn].CurrentPlayerOptions.String then 
-				SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
+
+			-- On first load of ScreenSelectMusic, PlayerOptions will be nil
+			-- So don't bother trying to use it to reset PlayerOptions
+			if SL[pn].CurrentPlayerOptions.String then
+				if SL[pn].CurrentPlayerOptions.String ~= GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred") then
+					GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", SL[pn].CurrentPlayerOptions.String)
+				end
 			end
-			
-			GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", SL[pn].CurrentPlayerOptions.String)
 		end
 	end
 }

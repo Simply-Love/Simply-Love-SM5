@@ -34,14 +34,18 @@ end
 -- in this way, we can override the effects of songs that forced modifiers during gameplay
 local Players = GAMESTATE:GetHumanPlayers()
 for player in ivalues(Players) do
+	-- The player SHOULD have a default noteskin set in Preferences.ini via DefaultModifiers=
+	-- under the section for the currently active game type, but apparently this is not ensured
+	-- and can cause crashes in SM5 beta4a.  This is a hackish workaround.
+	-- THANKFULLY, if the noteskin is "already set" in Preferences.ini (as it should be),
+	-- setting it again here seems to have no adverse affects!
+	local ns = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():NoteSkin()
 	local pn = ToEnumShortString(player)
-	SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred")
+	SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")..","..ns
 end
 
 
-local t = Def.ActorFrame {}
-
-t[#t+1] = Def.ActorFrame{
+local t = Def.ActorFrame{
 
 	Def.Quad{
 		InitCommand=cmd(diffuse,Color.Black; Center; FullScreen),
