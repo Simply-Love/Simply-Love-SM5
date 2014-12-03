@@ -66,4 +66,6 @@ function InitializeSimplyLove()
 	SL.Global:initialize()
 end
 
+-- Initialize preferences now (when this script is loaded when StepMania is initializing)
+-- and also from ScreenTitleMenu underlay.lua so that preferences reset between each game.
 InitializeSimplyLove()
