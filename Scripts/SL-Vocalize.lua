@@ -40,4 +40,8 @@ function ParseScores(args)
 	return digits
 end
 
+function GetVocalizeDir()
+	return THEME:GetCurrentThemeDirectory() .. "/Other/Vocalize/"
+end
+
 Vocalization = {}
