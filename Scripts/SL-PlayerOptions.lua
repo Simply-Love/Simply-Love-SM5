@@ -200,7 +200,7 @@ end
 
 function OptionRowVocalize()
 	
-	-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Vocalize/
+	-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 	-- and have those vocalizations be automatically detected
 	local files = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 	local vocalizations = { "None" }
