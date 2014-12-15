@@ -202,7 +202,7 @@ function OptionRowVocalize()
 	
 	-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Vocalize/
 	-- and have those vocalizations be automatically detected
-	local files = FILEMAN:GetDirListing("Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" , true, false)
+	local files = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 	local vocalizations = { "None" }
 	
 	for k,dir in ipairs(files) do

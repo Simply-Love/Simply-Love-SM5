@@ -6,7 +6,7 @@ local pn, voice
 local function RandomizeVocalization()
 		
 	-- what voice directories exist in ./Simply Love//Other/Vocalize/ ?
-	local files = FILEMAN:GetDirListing("Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" , true, false)
+	local files = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 	local voices = {}
 
 	for k,dir in ipairs(files) do
@@ -57,7 +57,7 @@ return Def.Actor{
 			end
 			
 			local number = Digits[ActiveDigit][1]
-			local soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" .. voice .. "/" .. number .. ".ogg"
+			local soundbyte = GetVocalizeDir() .. voice .. "/" .. number .. ".ogg"
 			local sleeptime = Vocalization[voice]["z"..number]
 			
 			-- Is the score a Quad Star? If so, we might need to pick one of the
@@ -70,7 +70,7 @@ return Def.Actor{
 				local WhichQuad = math.random(NumberOfQuads)
 				sleeptime = Vocalization[voice]["quad"]["z100percent" .. WhichQuad ]
 				number = "100percent" .. WhichQuad
-				soundbyte = "Themes/" .. THEME:GetThemeDisplayName() .. "/Other/Vocalize/" .. voice .. "/" .. number .. ".ogg"
+				soundbyte = GetVocalizeDir() .. voice .. "/" .. number .. ".ogg"
 			end
 
 			SOUND:PlayOnce( soundbyte )
