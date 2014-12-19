@@ -1,5 +1,5 @@
 function AllowScreenNameEntry()
-	if ThemePrefs.Get("AllowScreenNameEntry") == 1 then
+	if SL_CustomPrefs:get_data().AllowScreenNameEntry then
 		return "ScreenNameEntryTraditional"
 	else
 		return "ScreenProfileSaveSummary"
@@ -7,7 +7,7 @@ function AllowScreenNameEntry()
 end
 
 function AllowScreenEvalSummary()
-	if ThemePrefs.Get("AllowScreenEvalSummary") == 1 then
+	if SL_CustomPrefs:get_data().AllowScreenEvalSummary then
 		return "ScreenEvaluationSummary"
 	else
 		return AllowScreenNameEntry()
@@ -95,7 +95,7 @@ Branch.AfterProfileSave = function()
 		end
 
 		-- If we don't allow players to fail out of a set early
-		if ThemePrefs.Get("AllowFailingOutOfSet") == 0 then
+		if not SL_CustomPrefs:get_data().AllowFailingOutOfSet then
 
 			-- check first to see how many songs are remaining
 			-- if none...
@@ -169,7 +169,7 @@ Branch.AfterProfileSave = function()
 end
 
 Branch.AfterProfileSaveSummary = function()
-	if ThemePrefs.Get("AllowScreenGameOver") == 1 then
+	if SL_CustomPrefs:get_data().AllowScreenGameOver then
 		return "ScreenGameOver"
 	else
 		return Branch.AfterInit()
