@@ -48,15 +48,25 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
--- Banner(s)
+-- Banner(s) and Title(s)
 if GAMESTATE:IsCourseMode() then
+	local course = GAMESTATE:GetCurrentCourse()
+
+	t[#t+1] = LoadFont("_misoreg hires")..{
+		Name="CourseName",
+		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
+		OnCommand=function(self)
+			if course then
+				self:settext( course:GetDisplayFullTitle() )
+			end
+		end
+	}
 
 	t[#t+1] = Def.Sprite{
 		Name="CourseBanner",
 		InitCommand=cmd(xy, _screen.cx, 121.5 ),
 		OnCommand=function(self)
-			local course, banner
-			course = GAMESTATE:GetCurrentCourse()
+			local bannerpath
 
 			if course then
 				 bannerpath = course:GetBannerPath()
@@ -77,21 +87,12 @@ else
 
 		local song = SL.Global.Stages.Stats[currentStage].song
 
-		t[#t+1] = Def.Sprite{
-			Name="Banner"..i,
-			InitCommand=cmd(xy, _screen.cx, 121.5; diffusealpha, 0),
+
+		-- Create an ActorFrame for each Name + Banner pair
+		-- so that we can display/hide all children simultaneously.
+		local NameAndBanner = Def.ActorFrame{
+			InitCommand=cmd(diffusealpha, 0),
 			OnCommand=function(self)
-
-				if song then
-					 bannerpath = song:GetBannerPath()
-				end
-
-				if bannerpath then
-					self:LoadBanner(bannerpath)
-					self:setsize(418,164)
-					self:zoom(0.7)
-				end
-
 				self:sleep(durationPerSong * (math.abs(i-numStages)) );
 				self:queuecommand("Display")
 			end,
@@ -107,6 +108,37 @@ else
 			end
 		}
 
+		NameAndBanner[#NameAndBanner+1] = LoadFont("_misoreg hires")..{
+			Name="SongName"..i,
+			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
+			OnCommand=function(self)
+				if song then
+					self:settext( song:GetDisplayMainTitle() )
+				end
+			end
+		}
+
+
+		NameAndBanner[#NameAndBanner+1] = Def.Sprite{
+			Name="SongBanner"..i,
+			InitCommand=cmd(xy, _screen.cx, 121.5),
+			OnCommand=function(self)
+				local bannerpath
+				if song then
+					 bannerpath = song:GetBannerPath()
+				end
+
+				if bannerpath then
+					self:LoadBanner(bannerpath)
+					self:setsize(418,164)
+					self:zoom(0.7)
+				end
+			end
+
+		}
+
+		-- add each NameAndBanner ActorFrame to the primary ActorFrame
+		t[#t+1] = NameAndBanner
 		currentStage = currentStage + 1
 	end
 end
