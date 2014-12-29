@@ -9,7 +9,7 @@ local t = Def.ActorFrame{
 			SaveScreenshot(param.PlayerNumber, false, true)
 		end
 
-		if param.Name == "Left" or param.Name == "MenuLeft" or param.Name == "Up" or param.Name == "MenuUp" then
+		if param.Name == "MenuLeft" or param.Name == "MenuUp" then
 			if amountAbleToMoveUp > 0 then
 				self:linear(0.1)
 				self:addy( _screen.h/5.25 )
@@ -19,7 +19,7 @@ local t = Def.ActorFrame{
 			end
 		end
 
-		if param.Name == "Right" or param.Name == "MenuRight" or param.Name == "Down" or param.Name == "MenuDown" then
+		if param.Name == "MenuRight" or param.Name == "MenuDown" then
 			if amountAbleToMoveDown > 0 then
 				self:linear(0.1)
 				self:addy( -_screen.h/5.25 )
