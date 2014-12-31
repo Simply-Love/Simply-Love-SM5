@@ -7,17 +7,20 @@ local t = Def.ActorFrame {
 	CaptureCommand=function(self)
 		-- how many rows do we need to accommodate?
 		NumRows = #SCREENMAN:GetTopScreen():GetChild("Container"):GetChild("")
+		-- If there are more than 10 rows, they collapse into a scroller anyway,
+		-- so limit it to 10 if so.
+		if NumRows > 10 then NumRows = 10 end
 		self:queuecommand("Size")
 	end,
-	
-	
+
+
 	-- white border
 	Def.Quad{
-		SizeCommand=cmd(zoomto, 204, 32*NumRows)
+		SizeCommand=cmd(zoomto, 240, 28*NumRows)
 	},
 
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(x,-80; y,-60; halign,0; diffuse, Color.Black ),
+		InitCommand=cmd(x,-80; y,-118; halign,0; diffuse, Color.Black ),
 		BeginCommand=function(self)
 			local profile = GAMESTATE:GetEditLocalProfile()
 			if profile then
