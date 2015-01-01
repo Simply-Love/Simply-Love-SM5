@@ -1,5 +1,10 @@
 local wheel = setmetatable({disable_wrapping = true}, sick_wheel_mt)
 
+-- Ugh, so many calculations on this screen depend on the number of wheel
+-- items, or number of colors, but use constants instead of checking the
+-- values they depend on.  I'm not even going to try to sort it out.  I hope
+-- you don't do things this way in any future theme.  -Kyz
+
 local function CalculateSleepBeforeAppear( s,index )
 	local constantWait = 0.05
 	local center_index = wheel:get_actor_item_at_focus_pos().index
@@ -39,9 +44,10 @@ local function input(event)
 			
 			overlay:GetChild("start_sound"):play()
 			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
+			SL_CustomPrefs:save()
 			topscreen:RemoveInputCallback(input)
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
-			
+
 		elseif event.GameButton == "Back" then
 			topscreen:RemoveInputCallback(input)
 			topscreen:Cancel()
@@ -129,6 +135,9 @@ local wheel_item_mt = {
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
+		-- I don't know where I went wrong when explaining sick_wheel, but this is
+		-- so much the wrong way to do things.  You're supposed to pass an info
+		-- set that contains info useful to your elements, not garbage. -Kyz
 		wheel:set_info_set({""}, 1)
 		wheel:scroll_by_amount((SimplyLoveColor() - 6) % 12 )
 		self:queuecommand("Capture")

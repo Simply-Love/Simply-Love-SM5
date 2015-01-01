@@ -43,7 +43,7 @@ local GlobalDefaults = {
 				PlayerOptions = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay"
 			}
-			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed")
+			self.ContinuesRemaining = SL_CustomPrefs:get_data().NumberOfContinuesAllowed
 			self.Gamestate = {
 				Style = "single"
 			}

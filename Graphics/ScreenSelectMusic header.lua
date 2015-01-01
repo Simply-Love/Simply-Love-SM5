@@ -12,7 +12,7 @@ local t = Def.ActorFrame{
 		else
 
 			-- if the continue system is enabled, don't worry about determining "Final Stage"
-			if ThemePrefs.Get("NumberOfContinuesAllowed") > 0 then
+			if SL_CustomPrefs:get_data().NumberOfContinuesAllowed > 0 then
 				StageText = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
 
 			else
