@@ -13,7 +13,7 @@ local PlayerDefaults = {
 			}
 			self.HighScores = {
 				EnteringName = false,
-				Name = nil
+				Name = ""
 			}
 			self.Stages = {
 				Stats = {}
