@@ -1,7 +1,5 @@
 local choice_wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
 local choices = { THEME:GetString("OptionTitles", "Yes"), THEME:GetString("OptionTitles", "No") }
-local timeout = THEME:GetMetric("ScreenPlayAgain","TimerSeconds")
-local TimeSinceStart
 
 -- this handles user input
 local function input(event)

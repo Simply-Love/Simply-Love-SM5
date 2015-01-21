@@ -134,6 +134,24 @@ local t = Def.ActorFrame{
 		self:queuecommand("Capture")
 		self:GetChild("colorwheel"):SetDrawByZPosition(true)
 	end,
+	OnCommand=function(self)
+		if PREFSMAN:GetPreference("MenuTimer") then
+			self:queuecommand("Listen")
+		end
+	end,
+	ListenCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen()
+		local seconds = topscreen:GetChild("Timer"):GetSeconds()
+		if seconds <= 0 then
+			self:GetChild("start_sound"):play()
+			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
+			topscreen:RemoveInputCallback(input)
+			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+		else
+			self:sleep(0.5)
+			self:queuecommand("Listen")
+		end
+	end,
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
@@ -142,6 +160,5 @@ local t = Def.ActorFrame{
 
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
 t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }
-
 
 return t
