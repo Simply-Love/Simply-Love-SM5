@@ -1,14 +1,9 @@
 local Players = GAMESTATE:GetHumanPlayers()
+local HasSavedScreenShot = { P1=false, P2=false }
 
 local t = Def.ActorFrame{
 
-	CodeMessageCommand=function(self, params)
-		if params.Name == "Screenshot" then
-			SaveScreenshot(params.PlayerNumber, false, true)
-		end
-	end,
-
-	-- store player stats for later retrieval on EvaluationSummary and NameEntryActual
+	-- store player stats for later retrieval on EvaluationSummary and NameEntryTraditional
 	LoadActor("storage.lua"),
 
 	-- quad behind the song/course title text
@@ -398,5 +393,55 @@ for pn in ivalues(Players) do
 
 	}
 end
+
+t[#t+1] = Def.Sprite{
+		Name="ScreenshotSprite",
+		CodeMessageCommand=function(self, params)
+			if params.Name == "Screenshot" and not HasSavedScreenShot[ToEnumShortString(params.PlayerNumber)] then
+
+				-- (re)set these upon attempting to take a screenshot since we can potentially
+				-- reuse this same sprite for two screenshot animations (one for each player)
+				self:Center()
+				self:zoomto(_screen.w, _screen.h)
+
+				local success, path = SaveScreenshot(params.PlayerNumber, false, true)
+				if success and path then
+
+					-- only allow each player to save a screenshot once!
+					HasSavedScreenShot[ToEnumShortString(params.PlayerNumber)] = true
+					self:Load(path)
+
+					-- shrink it
+					self:accelerate(0.33)
+					self:zoom(0.2)
+
+					-- make it blink to to draw attention to it
+					self:glowshift()
+					self:effectperiod(0.5)
+					self:effectcolor1(1,1,1,0)
+					self:effectcolor2(1,1,1,0.2)
+
+					-- sleep with it blinking in the center of the screen for 2 seconds
+					self:sleep(2)
+
+					if PROFILEMAN:IsPersistentProfile(params.PlayerNumber) then
+						SM("Screenshot saved to " .. ToEnumShortString(params.PlayerNumber) .. "'s Profile.")
+						-- tween to the player's bottom corner
+						local x_target = params.PlayerNumber == PLAYER_1 and 20 or _screen.w-20
+						self:ease(2, 300)
+						self:xy(x_target, _screen.h+10)
+						self:zoom(0)
+					else
+						SM("Screenshot saved to Machine Profile.")
+						-- tween directly down
+						self:sleep(0.25)
+						self:ease(2, 300)
+						self:y(_screen.h+10)
+						self:zoom(0)
+					end
+				end
+			end
+		end
+}
 
 return t
