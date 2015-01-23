@@ -1,6 +1,5 @@
 local AlphabetWheels = {}
 local Players = GAMESTATE:GetHumanPlayers()
-local topscreen
 
 ---------------------------------------------------------------------------
 -- The number of stages that were played this game cycle
@@ -27,14 +26,13 @@ local PossibleCharacters = {
 	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "?", "!"
 }
 ---------------------------------------------------------------------------
-
 -- Primary ActorFrame
 local t = Def.ActorFrame {
 	InitCommand=function(self)
 		self:queuecommand("CaptureInput")
 	end,
 	CaptureInputCommand=function(self)
-		topscreen = SCREENMAN:GetTopScreen()
+		local topscreen = SCREENMAN:GetTopScreen()
 
 		for k,wheel in pairs(AlphabetWheels) do
 			-- set_info_set() takes two arguments:
@@ -54,6 +52,21 @@ local t = Def.ActorFrame {
 		end
 	end,
 	MenuTimerExpiredCommand=function(self, param)
+
+		-- if the timer runs out, check if either player hasn't finsihed entering his/her name
+		-- if so, fade out that player's cursor and alphabetwheel and play the "start" sound
+		for player in ivalues(Players) do
+			local pn = ToEnumShortString(player)
+			if SL[pn].HighScores.EnteringName then
+				-- hide this player's cursor
+				self:GetChild("PlayerNameAndDecorations_"..pn):GetChild("Cursor"):queuecommand("Hide")
+				-- hide this player's AlphabetWheel
+				self:GetChild("AlphabetWheel_"..pn):queuecommand("Hide")
+				-- play the "enter" sound
+				self:GetChild("enter"):playforplayer(player)
+			end
+		end
+
 		self:playcommand("Finish")
 	end,
 	FinishCommand=function(self)
@@ -135,7 +148,7 @@ else
 
 		-- Create an ActorFrame for each Name + Banner pair
 		-- so that we can display/hide all children simultaneously.
-		local NameAndBanner = Def.ActorFrame{
+		local SongNameAndBanner = Def.ActorFrame{
 			InitCommand=cmd(diffusealpha, 0),
 			OnCommand=function(self)
 				self:sleep(DurationPerStage * (math.abs(i-NumStages)) );
@@ -153,7 +166,7 @@ else
 			end
 		}
 
-		NameAndBanner[#NameAndBanner+1] = LoadFont("_misoreg hires")..{
+		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_misoreg hires")..{
 			Name="SongName"..i,
 			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 			OnCommand=function(self)
@@ -163,7 +176,7 @@ else
 			end
 		}
 
-		NameAndBanner[#NameAndBanner+1] = Def.Sprite{
+		SongNameAndBanner[#SongNameAndBanner+1] = Def.Sprite{
 			Name="SongBanner"..i,
 			InitCommand=cmd(xy, _screen.cx, 121.5),
 			OnCommand=function(self)
@@ -180,8 +193,8 @@ else
 			end
 		}
 
-		-- add each NameAndBanner ActorFrame to the primary ActorFrame
-		t[#t+1] = NameAndBanner
+		-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
+		t[#t+1] = SongNameAndBanner
 		currentStage = currentStage + 1
 	end
 end
@@ -209,10 +222,10 @@ for player in ivalues(Players) do
 end
 
 -- ActorSounds
-t[#t+1] = LoadActor( THEME:GetPathS("", "_change value")	)..{ Name="delete", SupportPan = true }
-t[#t+1] = LoadActor( THEME:GetPathS("Common", "start")	)..{ Name="enter", SupportPan = true }
+t[#t+1] = LoadActor( THEME:GetPathS("", "_change value"))..{ Name="delete", SupportPan = true }
+t[#t+1] = LoadActor( THEME:GetPathS("Common", "start"))..{ Name="enter", SupportPan = true }
 t[#t+1] = LoadActor( THEME:GetPathS("MusicWheel", "change"))..{ Name="move", SupportPan = true }
-t[#t+1] = LoadActor( THEME:GetPathS("common", "invalid")	)..{ Name="invalid", SupportPan = true }
+t[#t+1] = LoadActor( THEME:GetPathS("common", "invalid"))..{ Name="invalid", SupportPan = true }
 
 --
 return t
