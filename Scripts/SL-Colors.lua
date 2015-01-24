@@ -4,16 +4,6 @@ function PlayerColor( pn )
 	return color("1,1,1,1")
 end
 
-function DefaultColor()
-	local color = SimplyLoveColor()
-	if color < 10 then
-		color = "0"..color
-	end
-	
-	return color
-end
-
-
 
 function SimplyLoveColor()
 	local slc = ThemePrefs.Get("SimplyLoveColor") or 1
@@ -81,25 +71,17 @@ end
 
 
 function GetYOffsetByDifficulty(difficulty)
-	if  difficulty  == "Difficulty_Beginner" then
-		offset = 1
-	elseif difficulty  == "Difficulty_Easy" then
-		offset = 2
-	elseif difficulty  == "Difficulty_Medium" then
-		offset = 3
-	elseif difficulty  == "Difficulty_Hard" then
-		offset = 4
-	elseif difficulty  == "Difficulty_Challenge" then
-		offset = 5
-	elseif difficulty  == "Difficulty_Edit" then
+	-- Use Enum's reverse lookup functionality to find difficulty by index
+	-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
+	-- for our purposes, increment by one here
+	local offset = Difficulty:Reverse()[difficulty] + 1
+	
+	if difficulty  == "Difficulty_Edit" then
 		offset = 5
 	end
 	
 	return offset
 end
-
-
-
 
 
 function ColorRGB ( n )
