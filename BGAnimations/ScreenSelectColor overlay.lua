@@ -1,5 +1,10 @@
 local wheel = setmetatable({disable_wrapping = true}, sick_wheel_mt)
 
+-- a simple flag to determine if the color was actively selected by a player;
+-- we don't want the FinishCommand to double-trigger via the timer running out
+-- AND a player pressing start
+local ColorSelected = false
+
 local function CalculateSleepBeforeAppear( s,index )
 	local constantWait = 0.05
 	local center_index = wheel:get_actor_item_at_focus_pos().index
@@ -36,12 +41,10 @@ local function input(event)
 					return false
 				end
 			end
-			
-			overlay:GetChild("start_sound"):play()
-			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
-			topscreen:RemoveInputCallback(input)
-			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
-			
+
+			ColorSelected = true
+			overlay:playcommand("Finish")
+
 		elseif event.GameButton == "Back" then
 			topscreen:RemoveInputCallback(input)
 			topscreen:Cancel()
@@ -142,18 +145,22 @@ local t = Def.ActorFrame{
 	ListenCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
 		local seconds = topscreen:GetChild("Timer"):GetSeconds()
-		if seconds <= 0 then
-			self:GetChild("start_sound"):play()
-			SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
-			topscreen:RemoveInputCallback(input)
-			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+		if seconds <= 0 and not ColorSelected then
+			ColorSelected = true
+			self:playcommand("Finish")
 		else
-			self:sleep(0.5)
+			self:sleep(0.25)
 			self:queuecommand("Listen")
 		end
 	end,
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
+	end,
+	FinishCommand=function(self)
+		self:GetChild("start_sound"):play()
+		SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
+		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
 	wheel:create_actors( "colorwheel", 12, wheel_item_mt, _screen.cx, _screen.cy )
 }
