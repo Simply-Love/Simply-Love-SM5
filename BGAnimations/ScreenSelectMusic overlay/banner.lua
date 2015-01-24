@@ -1,5 +1,5 @@
 local t = Def.ActorFrame{
-	OnCommand=function(self)	
+	OnCommand=function(self)
 		if IsUsingWideScreen() then
 			self:zoom(0.7655)
 			self:xy(_screen.cx - 173, 112)
@@ -15,14 +15,14 @@ local t = Def.ActorFrame{
 		HideCommand=cmd(visible,false),
 		ShowCommand=cmd(visible,true)
 	},
-	
+
 	LoadActor("colored_banners/banner"..SimplyLoveColor()..".png")..{
 		Name="FallbackBanner",
 		OnCommand=cmd(diffuseshift; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1; setsize, 418,164),
 		HideCommand=cmd(visible,false),
 		ShowCommand=cmd(visible,true)
 	},
-		
+
 	Def.Banner{
 		Name="Banner",
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
@@ -41,14 +41,7 @@ local t = Def.ActorFrame{
 			-- if one is not available, hide this sprite, and rely
 			-- fallback banner(s) loaded above
 			if SongOrCourse then
-				local BannerPath = SongOrCourse:GetBannerPath()
-				-- attempt to read a cached banner out of memory first
-				-- if, for some reasons, it doesn't exist, try reading one from disk
-				if BannerPath then
-					self:LoadFromCachedBanner(BannerPath)
-				else
-					self:LoadFromSong(SongOrCourse)
-				end
+				self:LoadFromSong(SongOrCourse)
 				self:visible(true)
 				self:setsize(418,164)
 			elseif Group then
