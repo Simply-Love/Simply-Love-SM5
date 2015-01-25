@@ -23,34 +23,11 @@ local t = Def.ActorFrame{
 		ShowCommand=cmd(visible,true)
 	},
 
-	Def.Banner{
-		Name="Banner",
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
-		SetCommand=function(self)
-			local Group = SCREENMAN:GetTopScreen():GetChild("MusicWheel"):GetSelectedSection()
-			local SongOrCourse
-
-			if GAMESTATE:IsCourseMode() then
-				SongOrCourse = GAMESTATE:GetCurrentCourse()
-			else
-				SongOrCourse = GAMESTATE:GetCurrentSong()
-			end
-			-- try to load a song banner first,
-			-- if one is not avaiable, try to load a group banner
-			-- if one is not available, hide this sprite, and rely
-			-- fallback banner(s) loaded above
-			if SongOrCourse then
-				self:LoadFromSong(SongOrCourse)
-				self:visible(true)
-				self:setsize(418,164)
-			elseif Group then
-				self:visible(true)
-				self:LoadFromSongGroup(Group)
-				self:setsize(418,164)
-			else
-				self:visible(false)
-			end
+	Def.ActorProxy{
+		Name="BannerProxy",
+		BeginCommand=function(self)
+			local banner = SCREENMAN:GetTopScreen():GetChild('Banner')
+			self:SetTarget(banner)
 		end
 	}
 }
