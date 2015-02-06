@@ -1,4 +1,5 @@
-local file = "loveheart.png"
+local file = THEME:GetPathB("", "_shared background normal/loveheart.png")
+
 local file_info = {
 	ColorRGB = {0,1,1,0,0,0,1,1,1,1},
 	diffusealpha = {0.05,0.2,0.1,0.1,0.1,0.1,0.1,0.05,0.1,0.1},
@@ -7,12 +8,13 @@ local file_info = {
 }
 
 local t = Def.ActorFrame {
-		InitCommand=cmd(diffusealpha,0),
-		OnCommand=cmd(accelerate,0.8; diffusealpha,1)
+	InitCommand=cmd(diffusealpha,0),
+	OnCommand=cmd(accelerate,0.8; diffusealpha,1),
 }
 
 for i=1,10 do
-	t[#t+1] = LoadActor( file )..{
+	t[#t+1] = Def.Sprite {
+		Texture=file,
 		InitCommand=cmd(diffuse, ColorRGB( file_info.ColorRGB[i] ) ),
 		ColorSelectedMessageCommand=cmd(linear, 0.5; diffuse, ColorRGB( file_info.ColorRGB[i] ); diffusealpha, file_info.diffusealpha[i] ),
 		OnCommand=cmd(zoom,1.3; xy, file_info.xy[i], file_info.xy[i]; customtexturerect,0,0,1,1;
