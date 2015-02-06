@@ -3,7 +3,7 @@
 local NumRows
 
 local t = Def.ActorFrame {
-	InitCommand=cmd(xy,_screen.cx-_screen.w/6,_screen.cy-84; queuecommand, "Capture"),
+	InitCommand=cmd(xy,_screen.cx-_screen.w/6, -16; queuecommand, "Capture"),
 	CaptureCommand=function(self)
 		-- how many rows do we need to accommodate?
 		NumRows = #SCREENMAN:GetTopScreen():GetChild("Container"):GetChild("")
@@ -20,7 +20,7 @@ local t = Def.ActorFrame {
 	},
 
 	LoadFont("_misoreg hires")..{
-		InitCommand=cmd(x,-80; y,-118; halign,0; diffuse, Color.Black ),
+		InitCommand=cmd(xy,-80, -118; halign,0; diffuse, Color.Black ),
 		BeginCommand=function(self)
 			local profile = GAMESTATE:GetEditLocalProfile()
 			if profile then
