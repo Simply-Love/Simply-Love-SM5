@@ -33,6 +33,19 @@ t[#t+1] = LoadActor("graphics/star.png")..{
 	AppearCommand=function(self)
 		self:visible(true)
 		self:MaskSource(true)
+		self:sleep(5)
+		self:queuecommand('Animate')
+	end,
+	AnimateCommand=function(self)
+		self:vibrate()
+		local m = self:GetZoomedWidth() / 20
+		self:effectmagnitude(m, m, m)
+		self:sleep(5)
+		self:queuecommand('Animate2')
+	end,
+	Animate2Command=function(self)
+		local m = self:GetZoomedWidth() / 5
+		self:effectmagnitude(m, m, m)
 	end,
 }
 
