@@ -21,8 +21,14 @@ t[#t+1] = LoadActor("graphics/star.png")..{
 t[#t+1] = LoadActor("graphics/star.png")..{
 	OnCommand=function(self)
 		self:visible(false)
-		self:sleep(9)
-		self:queuecommand('Appear')
+		if pss ~= nil and pss:GetTapNoteScores('TapNoteScore_Miss') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W5') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W4') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W3') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W2') == 1 then
+			self:sleep(9)
+			self:queuecommand('Appear')
+		end
 	end,
 	AppearCommand=function(self)
 		self:visible(true)
@@ -37,8 +43,14 @@ t[#t+1] = LoadActor("graphics/affluent.png")..{
 		self:diffusealpha(0)
 		self.rotatepos = math.random() * 360
 		self:rotationz(self.rotatepos)
-		self:sleep(9)
-		self:queuecommand('Appear')
+		if pss ~= nil and pss:GetTapNoteScores('TapNoteScore_Miss') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W5') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W4') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W3') == 0 and
+				pss:GetTapNoteScores('TapNoteScore_W2') == 1 then
+			self:sleep(9)
+			self:queuecommand('Appear')
+		end
 	end,
 	AppearCommand=function(self)
 		self:linear(3)
