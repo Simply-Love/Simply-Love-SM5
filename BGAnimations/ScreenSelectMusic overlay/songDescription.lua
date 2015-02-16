@@ -13,19 +13,11 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentStepsP1ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end,
-		CurrentTrailP1ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end,
-		CurrentStepsP2ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end,
-		CurrentTrailP2ChangedMessageCommand=function(self)
-			self:playcommand("Set");
-		end,
-		
+		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set"),
+
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
 			InitCommand=function(self)
@@ -37,13 +29,11 @@ local t = Def.ActorFrame{
 				end
 			end
 		},
-		
-	
-	
+
 		Def.ActorFrame{
-			
+
 			InitCommand=cmd(x, -110),
-			
+
 			-- Artist Label
 			LoadFont("_misoreg hires")..{
 				Text="ARTIST",
@@ -53,14 +43,12 @@ local t = Def.ActorFrame{
 
 			-- Song Artist
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,280) ),
+				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,260) ),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
-					
-					if song then
-						if song:GetDisplayArtist() then
-							self:settext(song:GetDisplayArtist())
-						end
+
+					if song and song:GetDisplayArtist() then
+						self:settext(song:GetDisplayArtist())
 					else
 						self:settext("")
 					end
@@ -73,7 +61,6 @@ local t = Def.ActorFrame{
 			LoadFont("_misoreg hires")..{
 				InitCommand=cmd(horizalign, right; NoStroke; y, 8),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong()
 					self:diffuse(0.5,0.5,0.5,1)
 					self:settext("BPM")
 				end
@@ -83,39 +70,39 @@ local t = Def.ActorFrame{
 			LoadFont("_misoreg hires")..{
 				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, 5; diffuse, color("1,1,1,1")),
 				SetCommand=function(self)
-						
+
 					--defined in ./Scipts/SL-CustomSpeedMods.lua
 					local text = GetDisplayBPMs()
-						
-					if text then	
+
+					if text then
 						self:settext(text)
 					else
 						self:settext("")
 					end
 				end
 			},
-			
+
 			-- Song Length Label
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, right; NoStroke; y, 8; x, _screen.w/4.5),
+				InitCommand=cmd(horizalign, right; y, 8; x, _screen.w/4.5),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 					self:diffuse(0.5,0.5,0.5,1)
 					self:settext("LENGTH")
 				end
 			},
-	
+
 			-- Song Length Value
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, _screen.w/4.5 + 5),
+				InitCommand=cmd(horizalign, left; y, 8; x, _screen.w/4.5 + 5),
 				SetCommand=function(self)
 					local duration
-			
+
 					if GAMESTATE:IsCourseMode() then
 						local Players = GAMESTATE:GetHumanPlayers()
 						local player = Players[1]
 						local trail = GAMESTATE:GetCurrentTrail(player)
-						
+
 						if trail then
 							duration = TrailUtil.GetTotalSeconds(trail)
 						end
@@ -125,26 +112,23 @@ local t = Def.ActorFrame{
 							duration = song:MusicLengthSeconds()
 						end
 					end
-					
-					
+
+
 					if duration then
-						self:diffuse(1,1,1,1)
-					
 						if duration == 105.0 then
-							-- r21 lol							
+							-- r21 lol
 							self:settext("not 1:45")
 						else
 							local finalText = SecondsToMSSMsMs(duration)
-							self:settext( string.sub(finalText, 0, string.len(finalText)-3) )
+							self:settext( string.sub(finalText, 0, finalText:len()-3) )
 						end
 					else
 						self:settext("")
 					end
-			
 				end
 			}
 		},
-	
+
 		Def.ActorFrame{
 			OnCommand=function(self)
 				if IsUsingWideScreen() then
@@ -153,16 +137,14 @@ local t = Def.ActorFrame{
 					self:x(97)
 				end
 			end,
-			
+
 			LoadActor("bubble.png")..{
 				InitCommand=cmd(diffuse,GetCurrentColor(); visible, false; zoom, 0.9; y, 30),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
-				
+
 					if song then
-						if song:IsLong() then
-							self:visible(true)
-						elseif song:IsMarathon() then
+						if song:IsLong() or song:IsMarathon() then
 							self:visible(true)
 						else
 							self:visible(false)
@@ -172,12 +154,12 @@ local t = Def.ActorFrame{
 					end
 				end
 			},
-			
+
 			LoadFont("_misoreg hires")..{
-				InitCommand=cmd(diffuse, color("#000000"); zoom,0.8; y, 34),
+				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
-				
+
 					if song then
 						if song:IsLong() then
 							self:settext("COUNTS AS 2 ROUNDS")
