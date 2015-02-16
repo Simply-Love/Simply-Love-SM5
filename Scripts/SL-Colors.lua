@@ -4,69 +4,33 @@ function PlayerColor( pn )
 	return color("1,1,1,1")
 end
 
-
 function SimplyLoveColor()
 	local slc = ThemePrefs.Get("SimplyLoveColor") or 1
 	return tonumber(slc)
 end
 
 function SetSimplyLoveColor( c )
-	ThemePrefs.Set("SimplyLoveColor", c)	
+	ThemePrefs.Set("SimplyLoveColor", c)
 	MESSAGEMAN:Broadcast("ColorSelected")
 end
 
-function GetCurrentColor()
-	local n = (SimplyLoveColor()%12)+1
-	return GetHexColor(n)
-end
-
-
 function GetHexColor( n )
-	if n == 1  then return color("#FF3C23") end
-	if n == 2  then return color("#FF003C") end
-	if n == 3  then return color("#C1006F") end
-	if n == 4  then return color("#8200A1") end
-	if n == 5  then return color("#413AD0") end
-	if n == 6  then return color("#0073FF") end
-	if n == 7  then return color("#00ADC0") end
-	if n == 8  then return color("#5CE087") end
-	if n == 9 then return color("#AEFA44") end
-	if n == 10 then return color("#FFFF00") end
-	if n == 11 then return color("#FFBE00") end
-	if n == 12  then return color("#FF7D00") end
+	if SL.Colors[n] then return color(SL.Colors[n]) end
 	return color("#ffffff")
 end
 
 
-	
-function DifficultyColor( difficulty )
-	
-	if  difficulty  == "Difficulty_Edit" then return color("#B4B7BA") end
-	local index = GetYOffsetByDifficulty(difficulty)
-	
-	return DifficultyIndexColor(index)
+function GetCurrentColor()
+	local n = (SimplyLoveColor() % #SL.Colors)+1
+	return GetHexColor(n)
 end
 
+function DifficultyColor( difficulty )
 
-function DifficultyIndexColor( i )
-	
-	local clr = i + SimplyLoveColor() + 10
-	clr = math.mod(clr-1,12)+1
-		
-	if clr == 1 then return color("#FF7D00") end
-	if clr == 2 then return color("#FF3C23") end
-	if clr == 3 then return color("#FF003C") end
-	if clr == 4 then return color("#C1006F") end
-	if clr == 5 then return color("#8200A1") end
-	if clr == 6 then return color("#413AD0") end
-	if clr == 7 then return color("#0073FF") end
-	if clr == 8 then return color("#00ADC0") end
-	if clr == 9 then return color("#5CE087") end
-	if clr == 10 then return color("#AEFA44") end
-	if clr == 11 then return color("#FFFF00") end
-	if clr == 12 then return color("#FFBE00") end
-	
-	return color("1,1,1,1")
+	if  difficulty  == "Difficulty_Edit" then return color("#B4B7BA") end
+	local index = GetYOffsetByDifficulty(difficulty)
+
+	return DifficultyIndexColor(index)
 end
 
 
@@ -75,29 +39,24 @@ function GetYOffsetByDifficulty(difficulty)
 	-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
 	-- for our purposes, increment by one here
 	local offset = Difficulty:Reverse()[difficulty] + 1
-	
+
 	if difficulty  == "Difficulty_Edit" then
 		offset = 5
 	end
-	
+
 	return offset
 end
 
+-- These are almost certainly inflexible with regard to the total
+-- number of available colors to chose from...
+function DifficultyIndexColor( i )
+	local clr = i + SimplyLoveColor() + 8
+	clr = clr % #SL.Colors + 1
+	return GetHexColor(clr)
+end
 
 function ColorRGB ( n )
-	local clr = n + SimplyLoveColor() + 12
-	clr = math.mod(clr-1,12)+1
-	if clr == 1  then return color("1,0.49,0,1") end
-	if clr == 2  then return color("1,0.24,0.14,1") end
-	if clr == 3  then return color("1,0,0.24,1") end
-	if clr == 4  then return color("0.76,0,0.44,1") end
-	if clr == 5  then return color("0.51,0,0.63,1") end
-	if clr == 6  then return color("0.25,0.23,0.82,1") end
-	if clr == 7  then return color("0,0.45,1,1") end
-	if clr == 8  then return color("0,0.68,0.75,1") end
-	if clr == 9  then return color("0.36,0.88,0.53,1") end
-	if clr == 10 then return color("0.68,0.98,0.27,1") end
-	if clr == 11 then return color("1,1,0,1") end
-	if clr == 12 then return color("1,0.75,0,1") end
-	return color("1,1,1,1")
+	local clr = n + SimplyLoveColor() + #SL.Colors - 2
+	clr = (clr % #SL.Colors) + 1
+	return GetHexColor(clr)
 end

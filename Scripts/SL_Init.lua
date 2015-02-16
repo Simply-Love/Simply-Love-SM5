@@ -51,13 +51,26 @@ local GlobalDefaults = {
 	}
 }
 
-
 -- "SL" is a general-purpose table that can be accessed from anywhere
 -- within the theme and stores info that needs to be passed between screens
 SL = {
 	P1 = setmetatable( {}, PlayerDefaults),
 	P2 = setmetatable( {}, PlayerDefaults),
 	Global = setmetatable( {}, GlobalDefaults),
+	Colors = {
+		"#FF3C23",
+	    "#FF003C",
+	    "#C1006F",
+	    "#8200A1",
+	    "#413AD0",
+	    "#0073FF",
+	    "#00ADC0",
+	    "#5CE087",
+	    "#AEFA44",
+	    "#FFFF00",
+	    "#FFBE00",
+	    "#FF7D00"
+	}
 }
 
 function InitializeSimplyLove()
