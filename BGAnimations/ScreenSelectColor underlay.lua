@@ -1,21 +1,11 @@
-local wheel = setmetatable({disable_wrapping = true}, sick_wheel_mt)
+local wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
 
 -- a simple flag to determine if the color was actively selected by a player;
 -- we don't want the FinishCommand to double-trigger via the timer running out
 -- AND a player pressing start
 local ColorSelected = false
 
-local function CalculateSleepBeforeAppear( s,index )
-	local constantWait = 0.05
-	local center_index = wheel:get_actor_item_at_focus_pos().index
-
-	for i=1,9 do
-		if index == (center_index + (i - 5)) % 12 + 1 then
-			s:sleep(constantWait*i)
-			break
-		end
-	end
-end
+local NumHeartsToDraw = IsUsingWideScreen() and 11 or 7
 
 -- this handles user input
 local function input(event)
@@ -25,15 +15,15 @@ local function input(event)
 
 	if event.type == "InputEventType_FirstPress" then
 		local topscreen = SCREENMAN:GetTopScreen()
-		local overlay = topscreen:GetChild("Overlay")
+		local underlay = topscreen:GetChild("Underlay")
 
 		if event.GameButton == "MenuRight" then
 			wheel:scroll_by_amount(1)
-			overlay:GetChild("change_sound"):play()
+			underlay:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "MenuLeft" then
 			wheel:scroll_by_amount(-1)
-			overlay:GetChild("change_sound"):play()
+			underlay:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "Start" then
 			if not GAMESTATE:IsPlayerEnabled(event.PlayerNumber) then
@@ -43,7 +33,7 @@ local function input(event)
 			end
 
 			ColorSelected = true
-			overlay:playcommand("Finish")
+			underlay:playcommand("Finish")
 
 		elseif event.GameButton == "Back" then
 			topscreen:RemoveInputCallback(input)
@@ -60,29 +50,30 @@ local wheel_item_mt = {
 	__index = {
 		create_actors = function(self, name)
 			self.name=name
-			local index = tonumber((name:gsub("item","")))
-			self.index=index
 
 			local af = Def.ActorFrame{
 				Name=name,
-
 				InitCommand=function(subself)
 					self.container = subself
 				end
 			}
 
 			af[#af+1] = LoadActor(THEME:GetPathG("", "heart.png"))..{
-				InitCommand=cmd(diffusealpha,0),
-				OnCommand=function(self)
-					self:sleep(0.2)
-					CalculateSleepBeforeAppear(self, index)
-					self:linear(0.2)
-					self:diffusealpha(1)
+				InitCommand=function(subself)
+					self.heart = subself
+					subself:diffusealpha(0)
+					subself:zoom(0.25)
 				end,
-				OffCommand=function(self)
-					CalculateSleepBeforeAppear(self, index)
-					self:linear(0.2)
-					self:diffusealpha(0)
+				OnCommand=function(subself)
+					subself:sleep(0.2)
+					subself:sleep(0.05 * self.index)
+					subself:linear(0.2)
+					subself:diffusealpha(1)
+				end,
+				OffCommand=function(subself)
+					subself:sleep(0.05 * self.index)
+					subself:linear(0.2)
+					subself:diffusealpha(0)
 				end
 			}
 
@@ -92,50 +83,49 @@ local wheel_item_mt = {
 		transform = function(self, item_index, num_items, has_focus)
 			self.container:finishtweening()
 			self.container:linear(0.2)
+			self.index=item_index
 
-			local n = 80
-			local offset = item_index - num_items/2
+			local X_SpaceBetweenHearts = IsUsingWideScreen() and (_screen.w / (num_items-1)) or (_screen.w / (num_items))
+			local OffsetFromCenter = (item_index - math.floor(num_items/2))-1
+			local x = X_SpaceBetweenHearts * OffsetFromCenter
+			local z = -1 * math.abs(OffsetFromCenter)
+			local zoom = IsUsingWideScreen() and (z + math.floor(num_items/2))/4 or (z + math.floor(num_items/2) + 1)/4
 
-			local x = n*offset
-			if x > 6*n then
-				x = x-12*n
-			elseif x < -6*n then
-				x = x+12*n
+			if item_index <= 1 or item_index >= num_items then
+				self.container:diffusealpha(0)
+			else
+				self.container:diffusealpha(1)
 			end
-			local s = scale(math.abs(x),0,4*n,3,-1)
-			local z = clamp(s,1,3)
-			z = scale(z,1,3,1,1.5)
-			s = clamp(s,0,3)
 
 			self.container:x(x)
-			self.container:zoom(z/6)
-			self.container:diffuse(GetHexColor(self.index))
+			self.container:z( z )
+			self.heart:diffuse( color(self.color) )
 
 			if IsUsingWideScreen() then
-				self.container:diffusealpha(clamp(5-math.abs(offset), 0, 1))
-				self.container:zoom(math.pow(math.abs(math.cos(offset*math.pi)*math.cos(math.pow(math.abs(offset),.5)*math.pi/6)/2),1.75))
-				self.container:rotationz(offset*15)
-				self.container:y(10*math.pow(offset,2)-40)
+				local y = (12 * math.pow(OffsetFromCenter,2)) - 20
+				self.container:rotationz( OffsetFromCenter * 15 )
+				self.container:zoom( zoom )
+				self.container:y( y )
+
 			else
-				self.container:diffusealpha(clamp(3-math.abs(offset), 0, 1))
+				self.container:y( -20 )
+				self.container:zoom( zoom )
 			end
-			self.container:z(-1 * math.abs(x/n))
 
 		end,
 
-		set = function(self, info)
-			self.info= info
-			if not info then return end
+		set = function(self, color)
+			if not color then return end
+			self.color = color
 		end
 	}
 }
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		wheel:set_info_set({""}, 1)
-		wheel:scroll_by_amount((SimplyLoveColor() - 6) % 12 )
+		wheel:set_info_set(SL.Colors, SimplyLoveColor() )
 		self:queuecommand("Capture")
-		self:GetChild("colorwheel"):SetDrawByZPosition(true)
+		self:GetChild("ColorWheel"):SetDrawByZPosition(true)
 	end,
 	OnCommand=function(self)
 		if PREFSMAN:GetPreference("MenuTimer") then
@@ -158,11 +148,11 @@ local t = Def.ActorFrame{
 	end,
 	FinishCommand=function(self)
 		self:GetChild("start_sound"):play()
-		SetSimplyLoveColor(wheel:get_actor_item_at_focus_pos().index)
+		SetSimplyLoveColor( FindInTable( wheel:get_info_at_focus_pos(), SL.Colors ) )
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
-	wheel:create_actors( "colorwheel", 12, wheel_item_mt, _screen.cx, _screen.cy )
+	wheel:create_actors( "ColorWheel", NumHeartsToDraw, wheel_item_mt, _screen.cx, _screen.cy )
 }
 
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
