@@ -66,12 +66,12 @@ local wheel_item_mt = {
 				end,
 				OnCommand=function(subself)
 					subself:sleep(0.2)
-					subself:sleep(0.05 * self.index)
+					subself:sleep(0.04 * self.index)
 					subself:linear(0.2)
 					subself:diffusealpha(1)
 				end,
 				OffCommand=function(subself)
-					subself:sleep(0.05 * self.index)
+					subself:sleep(0.04 * self.index)
 					subself:linear(0.2)
 					subself:diffusealpha(0)
 				end
