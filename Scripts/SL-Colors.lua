@@ -50,13 +50,13 @@ end
 -- These are almost certainly inflexible with regard to the total
 -- number of available colors to chose from...
 function DifficultyIndexColor( i )
-	local clr = i + SimplyLoveColor() + 8
+	local clr = i + SimplyLoveColor() + 9
 	clr = clr % #SL.Colors + 1
 	return GetHexColor(clr)
 end
 
 function ColorRGB ( n )
-	local clr = n + SimplyLoveColor() + #SL.Colors - 2
+	local clr = n + SimplyLoveColor() + #SL.Colors - 1
 	clr = (clr % #SL.Colors) + 1
 	return GetHexColor(clr)
 end
