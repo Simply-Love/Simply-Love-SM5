@@ -1,15 +1,10 @@
-local t = Def.ActorFrame{
-	Name="WheelItemSectionOpened";
-
+return Def.ActorFrame{
+	InitCommand=cmd(x, 26),
 
 	Def.Quad{
-		Name="SectionBG";
-		InitCommand=cmd(zoomto,_screen.w/2,_screen.h/15; horizalign,left; addx,-_screen.w/10);
-		SetMessageCommand=function(self,params)
-			self:diffuse(color("#4c565d"));
-		end;
-	};
-	
-};
-
-return t;
+		InitCommand=cmd(diffuse, color("#000000"); zoomto, _screen.w/2.1675, _screen.h/15)
+	},
+	Def.Quad{
+		InitCommand=cmd(diffuse, color("#4c565d"); zoomto, _screen.w/2.1675, _screen.h/15 - 1)
+	}
+}

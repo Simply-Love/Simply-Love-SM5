@@ -1,12 +1,10 @@
-local t = Def.ActorFrame{
-	Name="WheelItemSectionNormal";
+return Def.ActorFrame{
+	InitCommand=cmd(x, 26),
 
-	LoadActor( "MusicWheelItem SectionCollapsed.png" )..{
-		Name="SectionBG";
-		InitCommand=cmd(zoomto,_screen.w/2,_screen.h/15; horizalign,left; addx,-_screen.w/10);
-		SetMessageCommand=function(self,params)
-		end;
-	};	
-};
-
-return t;
+	Def.Quad{
+		InitCommand=cmd(diffuse, color("#000000"); zoomto, _screen.w/2.1675, _screen.h/15)
+	},
+	Def.Quad{
+		InitCommand=cmd(diffuse, color("#283239"); zoomto, _screen.w/2.1675, _screen.h/15 - 1)
+	}
+}

@@ -1,11 +1,10 @@
 return Def.ActorFrame{
-	InitCommand=cmd(fov,90),
+	InitCommand=cmd(x, 26),
 
-	LoadActor("MusicWheelItem song.png")..{
-		Name="SongItemBG",
-		InitCommand=cmd(zoomto,_screen.w/2, _screen.h/15; horizalign,left; addx,-_screen.w/10),
-		SetMessageCommand=function(self,params)
-				
-		end
+	Def.Quad{
+		InitCommand=cmd(diffuse, color("#000a11"); zoomto, _screen.w/2.1675, _screen.h/15)
+	},
+	Def.Quad{
+		InitCommand=cmd(diffuse, color("#0a141b"); zoomto, _screen.w/2.1675, _screen.h/15 - 1)
 	}
 }
