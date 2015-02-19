@@ -3,7 +3,7 @@ return Def.ActorFrame{
 
 	Def.Quad{
 		InitCommand=cmd(x, _screen.cx; zoomto,_screen.w,40; ),
-		OnCommand=cmd(diffuse,color("0.65,0.65,0.65,0.9"))
+		OnCommand=cmd(diffuse,color("0.65,0.65,0.65,1"))
 	},
 
 	LoadFont("_wendy small")..{
