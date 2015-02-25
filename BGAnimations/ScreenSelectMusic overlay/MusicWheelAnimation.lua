@@ -1,54 +1,27 @@
-return Def.Actor{
-	InitCommand=cmd(queuecommand,"Capture"),
-	CaptureCommand=function(self)
+local NumWheelItems = THEME:GetMetric("MusicWheel", "NumWheelItems")
+local t = Def.ActorFrame{}
 
-		local Wheel = SCREENMAN:GetTopScreen():GetChild("MusicWheel")
-		local Items = Wheel:GetChild("MusicWheelItem")
-		local Highlight = Wheel:GetChild("Highlight")
+-- Each MusicWheelItem has two Quads drawn in front of it, blocking it from view.
+-- Each of these Quads is half the height of the MusicWheelItem, and their y-coordinates
+-- are such there is an "upper" and a "lower" Quad.
+-- The upper Quad has cropbottom applied while the lower Quad has croptop applied
+-- resulting in a visual effect where the MusicWheelItems appear to "grow" out of the center to full-height.
 
-		-- the parent MusicWheel has already had diffuselapha(0) applied via Metrics
-		-- see: MusicWheelOnCommand under [ScreenSelectMusic]
-		--
-		-- So, the parent is hidden, but we want to now apply a diffusealpha(0) to
-		-- each child MusicWheelItem.  This is admittedly hackish, but I haven't found
-		-- a better way to do this yet.
-		for key, item in ipairs(Items) do
-			item:diffusealpha(0)
-		end
+-- Since the background of this screen is Black, we can get away with drawing Black Quads on top
+-- of each MusicWheelItem and it looks fine.  If the background had been visually busy, these Quads
+-- would need to be Masks.  (The problem with Masks is that they kind of kill performance/framerate.)
 
-		-- unhide the parent MusicWheel first
-		-- the children MusicWheelItems will still be hidden
-		Wheel:diffusealpha(1)
+for i=1,NumWheelItems-1 do
+	-- upper
+	t[#t+1] = Def.Quad{
+		InitCommand=cmd(xy, _screen.cx+_screen.w/4, 9 + (_screen.h/(NumWheelItems+1))*i; zoomto, _screen.w/2, (_screen.h/(NumWheelItems))/2; diffuse, Color.Black),
+		OnCommand=cmd(sleep, i*0.06; linear,0.125; cropbottom,1; diffusealpha,0.5)
+	}
+	-- lower
+	t[#t+1] = Def.Quad{
+		InitCommand=cmd(xy, _screen.cx+_screen.w/4, 25 + (_screen.h/(NumWheelItems+1))*i; zoomto, _screen.w/2, (_screen.h/(NumWheelItems))/2; diffuse, Color.Black),
+		OnCommand=cmd(sleep, i*0.06; linear,0.125; croptop,1; diffusealpha,0.5)
+	}
+end
 
-		-- the MusicWheel is interesting in that it appears to index its children (MusicWheelItems)
-		-- like this (from top to bottom of the screen): 1, 2, 3, 4, 5, 6, 12, 11, 10, 9, 8, 7
-
-		-- so, sleep the first (top) half of the Items in a linearly incrementing fashion
-		for i=1, #Items/2 do
-			Items[i]:sleep(i/20)
-		end
-
-		-- decrement through the second (bottom) half of the Items
-		-- incrementing the sleep time as we go.  This is awkward and weird, yes, but
-		-- it is necessary to achieve the illusion of MusicWheelItems cascading into appearance
-		-- top to bottom given the peculiar indexing pattern they demonstrate.
-		local j = #Items/2 + 1
-		for i=#Items, j, -1 do
-			Items[i]:sleep(j/20)
-			j = j+1
-		end
-		Highlight:sleep(j/20)
-
-		-- with appropriate sleep times applied, tween into appearance
-		for key, item in ipairs(Items) do
-			item:linear(0.12)
-			item:diffusealpha(1)
-		end
-
-		Highlight:linear(0.2)
-		Highlight:diffuseshift()
-		Highlight:effectcolor1(0.8,0.8,0.8,0.3)
-		Highlight:effectcolor2(0.8,0.8,0.8,0.05)
-		Highlight:diffusealpha(1)
-	end
-}
+return t
