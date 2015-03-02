@@ -1,6 +1,5 @@
 -- filter code rewrite
-local Player = ...;
-assert(...);
+local Player = ...
 
 local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
 local NumPlayers = GAMESTATE:GetNumPlayersEnabled()
@@ -11,7 +10,7 @@ local fallbackColor = color("0,0,0,0.75")
 
 local function InitFilter()
 	pName = pname(Player)
-	
+
 	local darkness = SL[pName].ActiveModifiers.ScreenFilter
 	if darkness == "Dark" then
 		filterColor = color("#00000099")
@@ -22,7 +21,7 @@ local function InitFilter()
 	else
 		filterColor = color("#00000000")
 	end
-	
+
 end
 
 local function FilterPosition()
@@ -32,41 +31,40 @@ local function FilterPosition()
 	local strPlayer = (NumPlayers == 1) and "OnePlayer" or "TwoPlayers"
 	local strSide = (NumSides == 1) and "OneSide" or "TwoSides"
 	return THEME:GetMetric("ScreenGameplay","Player".. pName .. strPlayer .. strSide .."X")
-end;
+end
 
 -- updated by sillybear
 -- xxx: does this still only account for dance?
 local function FilterWidth()
-	
-	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then 
+
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
 		return ((_screen.w*1.058)/GetScreenAspectRatio())
 	else
 		return ((_screen.w*0.529)/GetScreenAspectRatio())
-	end;
-end;
+	end
+end
 
-InitFilter();
+InitFilter()
 
-local filter = Def.ActorFrame{
-	Def.Quad{
-		InitCommand=cmd(diffuse,filterColor;xy,FilterPosition(),_screen.cy;zoomto,FilterWidth(),_screen.h);
-		OffCommand=function(self)
-			local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player);
-			if pStats:FullCombo() then
-				local comboColor
-				if pStats:FullComboOfScore('TapNoteScore_W1') then
-					comboColor = color("#6BF0FF")
-				elseif pStats:FullComboOfScore('TapNoteScore_W2') then
-					comboColor = color("#FDDB85")
-				else
-					comboColor = color("#94FEC1")
-				end
-				self:accelerate(0.25);
-				self:diffuse( comboColor );
-				self:decelerate(0.75);
-				self:diffusealpha( 0 );
-			end;
-		end;
-	};
-};
-return filter;
+local filter = Def.Quad{
+	InitCommand=cmd(diffuse,filterColor; xy,FilterPosition(),_screen.cy; zoomto,FilterWidth(),_screen.h),
+	OffCommand=function(self)
+		local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player)
+		if pStats:FullCombo() then
+			local comboColor
+			if pStats:FullComboOfScore('TapNoteScore_W1') then
+				comboColor = color("#6BF0FF")
+			elseif pStats:FullComboOfScore('TapNoteScore_W2') then
+				comboColor = color("#FDDB85")
+			else
+				comboColor = color("#94FEC1")
+			end
+			self:accelerate(0.25)
+			self:diffuse( comboColor )
+			self:decelerate(0.75)
+			self:diffusealpha( 0 )
+		end
+	end
+}
+
+return filter
