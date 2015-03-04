@@ -11,8 +11,10 @@ local PlayerDefaults = {
 				SpeedMod = 1.00,
 				Vocalization = "None",
 				HideTargets = false,
-				HideJudgments = false,
 				HideSongBG = false,
+				HideCombo = false,
+				HideLifebar = false,
+				HideScore = false,
 			}
 			self.HighScores = {
 				EnteringName = false,

@@ -30,7 +30,8 @@ local meter = Def.ActorFrame{
 			self:visible(false);
 			return;
 		else
-			if GAMESTATE:IsPlayerEnabled(Player) then
+			if not SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar and
+					GAMESTATE:IsPlayerEnabled(Player) then
 				self:visible(true);
 			end;
 		end;
@@ -41,7 +42,8 @@ local meter = Def.ActorFrame{
 	Border(meterFillLength+4, meterFillHeight+4, 2)..{
 		OnCommand=function(self)
 			self:x(meterXOffset);
-			if GAMESTATE:IsPlayerEnabled(Player) then
+			if not SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar and
+					GAMESTATE:IsPlayerEnabled(Player) then
 				self:visible(true);
 			else
 				self:visible(false);
@@ -55,7 +57,8 @@ local meter = Def.ActorFrame{
 		InitCommand=cmd(zoomto,0,meterFillHeight;diffuse,PlayerColor(Player); horizalign, left;);
 		BeginCommand=function(self)
 			-- don't bother.
-			if not GAMESTATE:IsPlayerEnabled(Player) then
+			if SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar or
+					not GAMESTATE:IsPlayerEnabled(Player) then
 				self:visible(false);
 				return;
 			end;
@@ -89,7 +92,8 @@ local meter = Def.ActorFrame{
 		OnCommand=function(self)
 			self:x(meterXOffset - meterFillLength/2);
 			
-			if GAMESTATE:IsPlayerEnabled(Player) then
+			if not SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar and
+					GAMESTATE:IsPlayerEnabled(Player) then
 				self:customtexturerect(0,0,1,1);
 				--texcoordvelocity is handled by the Update function below
 			else

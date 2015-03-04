@@ -205,18 +205,22 @@ function OptionRowHide()
 		SelectType = "SelectMultiple",
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
-		Choices = { "Dark", "Blind", "Cover" },
+		Choices = { "Targets", "Background", "Combo", "Lifebar", "Score" },
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets or false
-			list[2] = mods.HideJudgments or false
-			list[3] = mods.HideSongBG or false
+			list[2] = mods.HideSongBG or false
+			list[3] = mods.HideCombo or false
+			list[4] = mods.HideLifebar or false
+			list[5] = mods.HideScore or false
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			mods.HideTargets = list[1]
-			mods.HideJudgments = list[2]
-			mods.HideSongBG = list[3]
+			mods.HideSongBG = list[2]
+			mods.HideCombo = list[3]
+			mods.HideLifebar = list[4]
+			mods.HideScore = list[5]
 			ApplyHide(pn)
 		end,
 	}
@@ -231,7 +235,6 @@ function ApplyHide(pn)
 
 	local opts = GAMESTATE:GetPlayerState(pn):GetPlayerOptions(modslevel)
 	opts:Dark(mods.HideTargets and 1 or 0)
-	opts:Blind(mods.HideJudgments and 1 or 0)
 	opts:Cover(mods.HideSongBG and 1 or 0)
 end
 

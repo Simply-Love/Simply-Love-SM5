@@ -100,7 +100,8 @@ local t = Def.ActorFrame{
 		Text="0.00",
 		InitCommand=cmd(x,_screen.cx - _screen.w/4.3; y,SCREEN_TOP+66; halign,1; zoom,0.5),
 		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1))
+			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1) and
+				not SL[ToEnumShortString(PLAYER_1)].ActiveModifiers.HideScore)
 		end,
 		JudgmentMessageCommand=function(self, param)
 			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
@@ -184,7 +185,8 @@ local t = Def.ActorFrame{
 		Text="0.00",
 		InitCommand=cmd(x,_screen.cx + _screen.w/2.85; y,SCREEN_TOP+66; halign,1; zoom,0.5),
 		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2))
+			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2) and
+				not SL[ToEnumShortString(PLAYER_2)].ActiveModifiers.HideScore)
 		end,
 		JudgmentMessageCommand=function(self, param)
 			if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
