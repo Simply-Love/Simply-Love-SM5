@@ -9,7 +9,10 @@ local PlayerDefaults = {
 				ScreenFilter = "Off",
 				SpeedModType = "x",
 				SpeedMod = 1.00,
-				Vocalization = "None"
+				Vocalization = "None",
+				HideTargets = false,
+				HideJudgments = false,
+				HideSongBG = false,
 			}
 			self.HighScores = {
 				EnteringName = false,

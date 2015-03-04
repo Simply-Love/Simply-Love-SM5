@@ -17,6 +17,7 @@ return Def.ActorFrame{
 		for player in ivalues(Players) do
 			ApplySpeedMod(player)
 			ApplyMini(player)
+			ApplyHide(player)
 
 			local pn = ToEnumShortString(player)
 
