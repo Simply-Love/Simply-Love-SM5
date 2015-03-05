@@ -43,7 +43,8 @@ local t = Def.ActorFrame {
 
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
-		if not iCombo or iCombo < ShowComboAt then
+		if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo or
+				not iCombo or iCombo < ShowComboAt then
 			c.Number:visible(false);
 			c.Label:visible(false);
 			return;

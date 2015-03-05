@@ -198,6 +198,47 @@ function ApplyMini(pn)
 end
 
 
+function OptionRowHide()
+	local t = {
+		Name = "Hide",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectMultiple",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
+		Choices = { "Targets", "Background", "Combo", "Lifebar", "Score" },
+		LoadSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			list[1] = mods.HideTargets or false
+			list[2] = mods.HideSongBG or false
+			list[3] = mods.HideCombo or false
+			list[4] = mods.HideLifebar or false
+			list[5] = mods.HideScore or false
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			mods.HideTargets = list[1]
+			mods.HideSongBG = list[2]
+			mods.HideCombo = list[3]
+			mods.HideLifebar = list[4]
+			mods.HideScore = list[5]
+			ApplyHide(pn)
+		end,
+	}
+	return t
+end
+
+function ApplyHide(pn)
+	local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+	local topscreen = SCREENMAN:GetTopScreen():GetName()
+	local modslevel = (topscreen == "ScreenEditOptions") and "ModsLevel_Stage" or "ModsLevel_Preferred"
+
+	local opts = GAMESTATE:GetPlayerState(pn):GetPlayerOptions(modslevel)
+	opts:Dark(mods.HideTargets and 1 or 0)
+	opts:Cover(mods.HideSongBG and 1 or 0)
+end
+
+
 function OptionRowVocalize()
 	
 	-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
