@@ -143,7 +143,7 @@ for pn in ivalues(Players) do
 
 
 			-- letter grade
-			t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"))..{
+			t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), STATSMAN:GetPlayedStageStats(STATSMAN:GetStagesPlayed()-stageNum+1):GetPlayerStageStats(pn))..{
 				OnCommand=cmd(zoom,0.2; x, gradex)
 			}
 
