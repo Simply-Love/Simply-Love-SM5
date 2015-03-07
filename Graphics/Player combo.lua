@@ -39,12 +39,12 @@ local t = Def.ActorFrame {
 		c = self:GetChildren();
 		c.Number:visible(false);
 		c.Label:visible(false);
+		self:visible(not SL[ToEnumShortString(player)].ActiveModifiers.HideCombo)
 	end;
 
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
-		if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo or
-				not iCombo or iCombo < ShowComboAt then
+		if not iCombo or iCombo < ShowComboAt then
 			c.Number:visible(false);
 			c.Label:visible(false);
 			return;
