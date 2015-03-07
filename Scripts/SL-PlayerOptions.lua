@@ -205,7 +205,7 @@ function OptionRowHide()
 		SelectType = "SelectMultiple",
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
-		Choices = { "Targets", "Background", "Combo", "Lifebar", "Score" },
+		Choices = { "Targets", "Background", "Combo", "Life", "Score" },
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets or false

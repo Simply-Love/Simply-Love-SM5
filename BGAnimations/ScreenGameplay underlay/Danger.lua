@@ -9,6 +9,7 @@ local prevHealth = "HealthState_Alive"
 local danger = Def.Quad{
 	Name="Danger" .. ToEnumShortString(Player),
 	InitCommand=function(self)
+		self:visible(not SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar)
 		self:diffusealpha(0)
 
 		if bDoubles then
