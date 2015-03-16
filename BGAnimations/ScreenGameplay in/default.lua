@@ -1,23 +1,24 @@
 local text = ""
+local SongNumberInCourse = 0
 
 if GAMESTATE:IsCourseMode() then
 
-	text = THEME:GetString("Stage", "Course")
+	text = THEME:GetString("Stage", "Stage") .. " 1"
 
 elseif not PREFSMAN:GetPreference("EventMode") then
 
-	local song = GAMESTATE:GetCurrentSong()
-	local Duration = song:GetLastSecond()
-	local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
-
-	local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
-	local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
-
-	local IsLong = DurationWithRate/LongCutoff > 1 and true or false
-	local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false
-
-	local SongCost = IsLong and 2 or IsMarathon and 3 or 1
-	local SongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
+	-- local song = GAMESTATE:GetCurrentSong()
+	-- local Duration = song:GetLastSecond()
+	-- local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
+	--
+	-- local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
+	-- local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
+	--
+	-- local IsLong = DurationWithRate/LongCutoff > 1 and true or false
+	-- local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false
+	--
+	-- local SongCost = IsLong and 2 or IsMarathon and 3 or 1
+	-- local SongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
 
 	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
 
@@ -67,8 +68,15 @@ local t = Def.ActorFrame{
 	},
 
 	LoadFont("_wendy small")..{
+		Text=text,
 		InitCommand=cmd(Center; diffusealpha,0; shadowlength,1),
-		OnCommand=cmd(settext, text; accelerate, 0.5; diffusealpha, 1; sleep, 0.66; accelerate, 0.33; zoom, 0.4; y, _screen.h-30)
+		OnCommand=cmd(accelerate, 0.5; diffusealpha, 1; sleep, 0.66; accelerate, 0.33; zoom, 0.4; y, _screen.h-30),
+		CurrentSongChangedMessageCommand=function(self)
+			if GAMESTATE:IsCourseMode() then
+				SongNumberInCourse = SongNumberInCourse + 1
+				self:settext( THEME:GetString("Stage", "Stage") .. " " .. SongNumberInCourse )
+			end
+		end
 	}
 }
 
