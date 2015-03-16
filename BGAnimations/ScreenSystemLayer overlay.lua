@@ -91,7 +91,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 			if sClass == "ScreenPlayerOptions"
 				or sClass == "ScreenPlayerOptions2"
 				or sClass == "ScreenEvaluationStage"
-				or sClass == "ScreenEvaluationCourse"
+				or sClass == "ScreenEvaluationNonstop"
 				or sClass == "ScreenEvaluationSummary"
 				or sClass == "ScreenNameEntryActual"
 				or sClass == "ScreenNameEntryTraditional"

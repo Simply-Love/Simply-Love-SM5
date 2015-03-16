@@ -85,6 +85,7 @@ local t = Def.ActorFrame{
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1))
 		end,
+		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
 		BeginCommand=function(self)
 			local steps = GAMESTATE:GetCurrentSteps(PLAYER_1)
 			local meter = steps:GetMeter()
@@ -167,6 +168,7 @@ local t = Def.ActorFrame{
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2))
 		end,
+		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
 		BeginCommand=function(self)			
 			local steps = GAMESTATE:GetCurrentSteps(PLAYER_2)
 			if steps then
