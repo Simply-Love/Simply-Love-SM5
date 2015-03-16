@@ -44,40 +44,39 @@ t[#t+1] = Def.ActorFrame {
 
 -- SystemMessage Text
 t[#t+1] = Def.ActorFrame {
-	Def.Quad {
-		InitCommand=cmd(zoomtowidth,_screen.w;zoomtoheight,30;horizalign,left;vertalign,top;y,SCREEN_TOP;diffuse,color("0,0,0,0"));
-		OnCommand=cmd(finishtweening;diffusealpha,0.85;);
-		OffCommand=cmd(sleep,3;linear,0.5;diffusealpha,0;);
-	};
-	LoadFont("_misoreg hires") .. {
-		Name="Text";
-		InitCommand=cmd(maxwidth,750; horizalign,left; vertalign,top; xy,SCREEN_LEFT+10, 10; diffusealpha,0;);
-		OnCommand=cmd(finishtweening;diffusealpha,1;zoom,0.8);
-		OffCommand=cmd(sleep,3;linear,0.5;diffusealpha,0;);
-	};
-	SystemMessageMessageCommand = function(self, params)
-		self:GetChild("Text"):settext( params.Message );
-		self:playcommand( "On" );
+	SystemMessageMessageCommand=function(self, params)
+		self:GetChild("Text"):settext( params.Message )
+		self:playcommand( "On" )
 		if params.NoAnimate then
-			self:finishtweening();
+			self:finishtweening()
 		end
-		self:playcommand( "Off" );
-	end;
-	HideSystemMessageMessageCommand = cmd(finishtweening);
-};
+		self:playcommand( "Off" )
+	end,
+	HideSystemMessageMessageCommand=cmd(finishtweening),
+	
+	Def.Quad {
+		InitCommand=cmd(zoomtowidth,_screen.w; zoomtoheight,30; horizalign,left; vertalign,top; y,SCREEN_TOP; diffuse, Color.Black; diffusealpha,0 ),
+		OnCommand=cmd(finishtweening; diffusealpha,0.85 ),
+		OffCommand=cmd(sleep,3; linear,0.5; diffusealpha,0 )
+	},
+
+	LoadFont("_misoreg hires")..{
+		Name="Text",
+		InitCommand=cmd(maxwidth,750; horizalign,left; vertalign,top; xy,SCREEN_LEFT+10, 10; diffusealpha,0),
+		OnCommand=cmd(finishtweening; diffusealpha,1; zoom,0.8 ),
+		OffCommand=cmd(sleep,3; linear,0.5; diffusealpha,0 )
+	}
+}
 
 -- Centered Credit Text
 t[#t+1] = LoadFont("_wendy small")..{
-	InitCommand=cmd(x,_screen.cx;
-					y,SCREEN_BOTTOM-16;
-					zoom,0.5;horizalign,center;
-	);
-	OnCommand=cmd(playcommand,"Refresh");
-	ScreenChangedMessageCommand=function(self)
-		self:playcommand("Refresh");
-	end;
-	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh");
-	CoinsChangedMessageCommand=cmd(playcommand,"Refresh");
+	InitCommand=cmd(xy, _screen.cx, _screen.h-16; zoom,0.5; horizalign,center ),
+
+	OnCommand=cmd(playcommand,"Refresh"),
+	ScreenChangedMessageCommand=cmd(playcommand,"Refresh"),
+	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh"),
+	CoinsChangedMessageCommand=cmd(playcommand,"Refresh"),
+
 	RefreshCommand=function(self)
 
 		local screen = SCREENMAN:GetTopScreen()
@@ -86,14 +85,13 @@ t[#t+1] = LoadFont("_wendy small")..{
 			local sClass = screen:GetName()
 			bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" )
 
-			-- hide this centered credit text for certain screens,
+			-- hide  just this centered credit text for certain screens,
 			-- where it would more likely just be distracting and superfluous
 			if sClass == "ScreenPlayerOptions"
 				or sClass == "ScreenPlayerOptions2"
 				or sClass == "ScreenEvaluationStage"
 				or sClass == "ScreenEvaluationNonstop"
 				or sClass == "ScreenEvaluationSummary"
-				or sClass == "ScreenNameEntryActual"
 				or sClass == "ScreenNameEntryTraditional"
 				or sClass == "ScreenGameOver" then
 				bShow = false
@@ -110,7 +108,6 @@ t[#t+1] = LoadFont("_wendy small")..{
 			local text ='CREDIT(S)  '
 
 			text = text..credits.Credits..'  '
-
 
 			if credits.CoinsPerCredit > 1 then
 				text = text .. credits.Remainder .. '/' .. credits.CoinsPerCredit
