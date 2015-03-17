@@ -161,7 +161,7 @@ function OptionRowSongMusicRate()
 			-- Use the older GameCommand interface for applying rate mods in Edit Mode;
 			-- it seems to be the only way (probably due to how broken Edit Mode is, in general).
 			-- As an unintentional side-effect of setting musicrate mods this way, they STAY set
-			-- (between songs, between scressn, etc.) until you manually change them.  This is (probably)
+			-- (between songs, between screens, etc.) until you manually change them.  This is (probably)
 			-- not the desired behavior in EditMode, so when users change between different songs in EditMode,
 			-- always reset the musicrate mod.  See: ./BGAnimations/ScreenEditMeny underlay.lua
 			if topscreen == "ScreenEditOptions" then

@@ -5,7 +5,7 @@ function GetCredits()
 	local coinsPerCredit = PREFSMAN:GetPreference('CoinsPerCredit')
 	local credits = math.floor(coins/coinsPerCredit)
 	local remainder = coins % coinsPerCredit
-	
+
 	local r = {
 		Credits=credits,
 		Remainder=remainder,
@@ -14,28 +14,18 @@ function GetCredits()
 	return r
 end
 
--- woo, hax
-function EmptyOptionRow()
-	local t = {
-		Name = "Fake",
-		LayoutType = "ShowOneInRow",
-		SelectType = "SelectOne",
-		OneChoiceForAllPlayers = false,
-		ExportOnChange = false,
-		Choices = {""},
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-		end,
-		SaveSelections = function(self, list, pn) end
-	}
-	return t
-end
-
-
 function GetStepsTypeForThisGame(type)
 	local game = GAMESTATE:GetCurrentGame():GetName()
 	-- capitalize the first letter
 	game = game:gsub("^%l", string.upper)
-	
+
 	return "StepsType_" .. game .. "_" .. type
+end
+
+-- shim to suppress errors resulting from SM3.95 charts
+function Actor:hidden(self, flag)
+	-- if a value other than 0 or 1 was passed, don't do anything...
+	if flag == 0 or flag == 1 then
+		self:visible(math.abs(flag - 1))
+	end
 end
