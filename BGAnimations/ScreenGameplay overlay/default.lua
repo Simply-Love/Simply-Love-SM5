@@ -1,9 +1,22 @@
--- Gameplay overlay.
+local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
 	
-	InitCommand=cmd(addy,-10),
-	
+	InitCommand=cmd(y ,-10),
+	JudgmentMessageCommand=function(self)
+		if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+			local dpP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints()
+			local dpP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints()
+			
+			if dpP1 > dpP2 then
+				self:GetChild("P1Score"):diffusealpha(1)
+				self:GetChild("P2Score"):diffusealpha(0.65)
+			elseif dpP2 > dpP1 then
+				self:GetChild("P1Score"):diffusealpha(0.65)
+				self:GetChild("P2Score"):diffusealpha(1)
+			end
+		end	
+	end,
 	
 	-- thanks shake
 	Def.ActorFrame{
@@ -54,36 +67,42 @@ local t = Def.ActorFrame{
 			end
 		}
 	},
+}
 
-
-
-
-	--[[ begin p1 ]]
-	-- p1 life
-	LoadActor("lifemeter",PLAYER_1),
+for player in ivalues(Players) do
 	
+	t[#t+1] = LoadActor("LifeMeter.lua", player)
+	
+	-- colored background for player's chart's difficulty meter
+	t[#t+1] = Def.Quad{
+		InitCommand=function(self)
+			self:zoomto(30, 30)
 
-	-- colored background for player 1's chart's difficulty meter
-	Def.Quad{
-		InitCommand=cmd(zoomto, 30, 30; xy, WideScale(27,84), 66 ),
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1))
-						
-			if GAMESTATE:IsHumanPlayer(PLAYER_1) then
-				local currentSteps = GAMESTATE:GetCurrentSteps(PLAYER_1)
-				if currentSteps then
-					local currentDifficulty = currentSteps:GetDifficulty()
-					self:diffuse(DifficultyColor(currentDifficulty))
-				end
+			if player == PLAYER_1 then
+				self:xy( WideScale(27,84), 66 )
+			elseif player == PLAYER_2 then
+				self:xy( _screen.w-WideScale(27,84), 66 )
+			end
+		end,
+		OnCommand=function(self)						
+			local currentSteps = GAMESTATE:GetCurrentSteps(player)
+			if currentSteps then
+				local currentDifficulty = currentSteps:GetDifficulty()
+				self:diffuse(DifficultyColor(currentDifficulty))
 			end
 		end
-	},							
-
-	-- player 1's chart's difficulty meter
-	LoadFont("_wendy small")..{
-		InitCommand=cmd(diffuse, color("#000000"); xy, WideScale(27,84), 66 zoom, 0.4 ),
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1))
+	}
+	
+	-- player's chart's difficulty meter
+	t[#t+1] = LoadFont("_wendy small")..{
+		InitCommand=function(self)
+			self:diffuse(Color.Black)
+			self:zoom( 0.4 )
+			if player == PLAYER_1 then
+				self:xy( WideScale(27,84), 66)
+			elseif player == PLAYER_2 then
+				self:xy( _screen.w-WideScale(27,84), 66 )
+			end
 		end,
 		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
 		BeginCommand=function(self)
@@ -94,117 +113,37 @@ local t = Def.ActorFrame{
 				self:settext(meter)
 			end
 		end
-	},
-
-	LoadFont("_wendy fixedWidth")..{
-		Name="P1Score",
+	}
+	
+	t[#t+1] = LoadFont("_wendy fixedWidth")..{
+		Name=ToEnumShortString(player).."Score",
 		Text="0.00",
-		InitCommand=cmd(x,_screen.cx - _screen.w/4.3; y,SCREEN_TOP+66; halign,1; zoom,0.5),
+		InitCommand=function(self)
+			self:y(66)
+			self:halign(1)
+			self:zoom(0.5)
+			if player == PLAYER_1 then
+				self:x( _screen.w/4.3 )
+			elseif player == PLAYER_2 then
+				self:x(_screen.cx + _screen.w/2.85 )
+			end
+		end,
 		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1) and
-				not SL[ToEnumShortString(PLAYER_1)].ActiveModifiers.HideScore)
+			self:visible( not SL[ToEnumShortString(player)].ActiveModifiers.HideScore )
 		end,
 		JudgmentMessageCommand=function(self, param)
 			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-				self:queuecommand("RedrawScoreP1")
+				self:queuecommand("RedrawScore")
 			end
 		end,
-		RedrawScoreP1MessageCommand=function(self)
-			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-				
-				local percent = FormatPercentScore(STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints())
-				percent = string.sub(percent,1,-2)
-				self:settext(percent)
-				
-				if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-					local dpP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints()
-					local dpP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints()
-					
-					if dpP1 > dpP2 then
-						self:diffusealpha(1)
-						self:GetParent():GetChild("P2Score"):diffusealpha(0.65)
-					elseif dpP2 > dpP1 then
-						self:diffusealpha(0.65)
-						self:GetParent():GetChild("P2Score"):diffusealpha(1)
-					end
-				end
-			end
-		end
-	},
-
-	
-	--[[ end p1 ]]
-	
-	
-	
-	
-	
-	
-	
-
-	--[[ begin p2 ]]
-	-- p2 life
-	LoadActor("lifemeter",PLAYER_2),
-	
-	-- colored background for player 2's chart's difficulty meter
-	Def.Quad{
-		InitCommand=cmd(zoomto, 30, 30; xy, _screen.w-WideScale(27,84), 66 ),
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2))
-			
-			if GAMESTATE:IsHumanPlayer(PLAYER_2) then
-				local currentSteps = GAMESTATE:GetCurrentSteps(PLAYER_2)
-				if currentSteps then
-					local currentDifficulty = currentSteps:GetDifficulty()
-					self:diffuse(DifficultyColor(currentDifficulty))
-				end
-			end
-		end
-	},							
-
-	-- player 2's chart's difficulty meter
-	LoadFont("_wendy small")..{
-		InitCommand=cmd(diffuse, color("#000000"); xy, _screen.w-WideScale(27,84), 66 zoom, 0.4 ),
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2))
-		end,
-		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
-		BeginCommand=function(self)			
-			local steps = GAMESTATE:GetCurrentSteps(PLAYER_2)
-			if steps then
-				local meter = steps:GetMeter()
-		
-				if meter then	
-					self:settext(meter)
-				end
-			end
-		end
-	},
-		
-
-	LoadFont("_wendy fixedWidth")..{
-		Name="P2Score",
-		Text="0.00",
-		InitCommand=cmd(x,_screen.cx + _screen.w/2.85; y,SCREEN_TOP+66; halign,1; zoom,0.5),
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2) and
-				not SL[ToEnumShortString(PLAYER_2)].ActiveModifiers.HideScore)
-		end,
-		JudgmentMessageCommand=function(self, param)
-			if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-				self:queuecommand("RedrawScoreP2")
-			end
-		end,
-		RedrawScoreP2MessageCommand=function(self)
-			local percent = FormatPercentScore(STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints())
-			percent = string.sub(percent,1,-2)
+		RedrawScoreCommand=function(self)
+			local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+			local percent = FormatPercentScore( dp ):sub(1,-2)
 			self:settext(percent)
 		end
-	};
-	--[[ end p2 ]]
-}
-
-t[#t+1] = LoadActor("BPMDisplay")
-
+	}
+end
+	
+t[#t+1] = LoadActor("BPMDisplay.lua")
 
 return t
