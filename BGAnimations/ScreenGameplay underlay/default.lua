@@ -10,7 +10,7 @@ local Players = GAMESTATE:GetHumanPlayers()
 local DefaultMods = PREFSMAN:GetPreference("DefaultModifiers")
 local FailString
 
-for k,modifier in ipairs(DefaultMods:split(",")) do
+for modifier in string.gmatch(DefaultMods, "%w+") do
 	if modifier:find("Fail") then
 		FailString = modifier
 	end
