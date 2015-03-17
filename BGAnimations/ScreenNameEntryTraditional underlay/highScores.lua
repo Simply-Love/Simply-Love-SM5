@@ -4,7 +4,7 @@ local Player = ...
 local machineProfile = PROFILEMAN:GetMachineProfile()
 
 -- get the number of stages that were played
-local numStages = SL.Global.Stages.PlayedThisGame
+local numStages = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame
 local durationPerSong = 4
 
 local months = {}
@@ -21,13 +21,16 @@ for i=numStages,1,-1 do
 	local stageStats = STATSMAN:GetPlayedStageStats(i)
 	local playerStageStats = stageStats:GetPlayerStageStats(Player)
 
-
-	local highscoreList, highscores, steps
-	local song = SL.Global.Stages.Stats[currentStage].song
+	local highscoreList, highscores, StepsOrTrail
+	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[currentStage].song
 	local stats = SL[ToEnumShortString(Player)].Stages.Stats[currentStage]
 
-	--stats might exist for one player but not the other due to latejoin
-	if stats then steps = stats.steps end
+	if GAMESTATE:IsCourseMode() then
+		StepsOrTrail = GAMESTATE:GetCurrentTrail(Player)
+	else
+		--stats might exist for one player but not the other due to latejoin
+		if stats then StepsOrTrail = stats.steps end
+	end
 
 	currentStage = currentStage + 1
 
@@ -35,8 +38,8 @@ for i=numStages,1,-1 do
 	local index = playerStageStats:GetMachineHighScoreIndex() + 1
 	local text = ""
 
-	if song and steps then
-		highscoreList = machineProfile:GetHighScoreList(song,steps)
+	if SongOrCourse and StepsOrTrail then
+		highscoreList = machineProfile:GetHighScoreList(SongOrCourse,StepsOrTrail)
 	end
 
 	if highscoreList then

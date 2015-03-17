@@ -204,8 +204,8 @@ for player in ivalues(Players) do
 	local pn = ToEnumShortString(player)
 	local x_offset = (player == PLAYER_1 and -120) or 200
 
-	t[#t+1] = LoadActor("PlayerNameAndDecorations", player)
-	t[#t+1] = LoadActor("highScores", player)
+	t[#t+1] = LoadActor("PlayerNameAndDecorations.lua", player)
+	t[#t+1] = LoadActor("HighScores.lua", player)
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
 	-- creat_actors() takes five arguments
