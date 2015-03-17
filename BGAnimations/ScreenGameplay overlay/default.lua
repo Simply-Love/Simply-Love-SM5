@@ -123,9 +123,9 @@ for player in ivalues(Players) do
 			self:halign(1)
 			self:zoom(0.5)
 			if player == PLAYER_1 then
-				self:x( _screen.w/4.3 )
+				self:x( _screen.cx - _screen.w/4.3 )
 			elseif player == PLAYER_2 then
-				self:x(_screen.cx + _screen.w/2.85 )
+				self:x( _screen.cx + _screen.w/2.85 )
 			end
 		end,
 		OnCommand=function(self)
