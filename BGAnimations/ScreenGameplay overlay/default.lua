@@ -106,7 +106,7 @@ for player in ivalues(Players) do
 		end,
 		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
 		BeginCommand=function(self)
-			local steps = GAMESTATE:GetCurrentSteps(PLAYER_1)
+			local steps = GAMESTATE:GetCurrentSteps(player)
 			local meter = steps:GetMeter()
 
 			if meter then	
@@ -132,9 +132,7 @@ for player in ivalues(Players) do
 			self:visible( not SL[ToEnumShortString(player)].ActiveModifiers.HideScore )
 		end,
 		JudgmentMessageCommand=function(self, param)
-			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-				self:queuecommand("RedrawScore")
-			end
+			self:queuecommand("RedrawScore")
 		end,
 		RedrawScoreCommand=function(self)
 			local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
