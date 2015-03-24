@@ -3,7 +3,7 @@
 -- possibility a player will not visit that screen, expecting mods to already
 -- be set from a previous game.
 
-return Def.ActorFrame{
+return Def.Actor{
 	OnCommand=cmd(queuecommand,"ApplyModifiers"),
 	PlayerJoinedMessageCommand=cmd(queuecommand,"ApplyModifiers"),
 	ApplyModifiersCommand=function(self)
