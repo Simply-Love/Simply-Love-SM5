@@ -24,6 +24,12 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { 1, 0 }
 	},
+	AllowScreenSelectStyle =
+	{
+		Default = 1,
+		Choices = { "Yes", "No" },
+		Values 	= { 1, 0 }
+	},
 	NumberOfContinuesAllowed =
 	{
 		Default = 0,
