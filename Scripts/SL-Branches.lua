@@ -37,15 +37,15 @@ end
 -- Let's pretend I understand why this is necessary
 Branch.AfterScreenSelectPlayMode = function()
 	if ThemePrefs.Get("AllowScreenSelectStyle") == 0 then
-		 return SelectMusicOrCourse()
-	 else
-		 local gameName = GAMESTATE:GetCurrentGame():GetName()
-		 if gameName=="techno" then
-			 return "ScreenSelectStyleTechno"
-		 else
-			 return "ScreenSelectStyle"
-		 end
-	 end
+		return SelectMusicOrCourse()
+	else
+		local gameName = GAMESTATE:GetCurrentGame():GetName()
+		if gameName=="techno" then
+			return "ScreenSelectStyleTechno"
+		else
+			return "ScreenSelectStyle"
+		end
+	end
 end
 
 Branch.PlayerOptions = function()
