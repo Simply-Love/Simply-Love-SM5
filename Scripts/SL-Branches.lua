@@ -36,16 +36,20 @@ end
 
 -- Let's pretend I understand why this is necessary
 Branch.AfterScreenSelectPlayMode = function()
-	if ThemePrefs.Get("AllowScreenSelectStyle") == 0 then
-		if table.getn(GAMESTATE:GetHumanPlayers()) == 1 then
+	local style = ThemePrefs.Get("DefaultStyle")
+	if style == "auto" then
+		if #GAMESTATE:GetHumanPlayers() == 1 then
 			GAMESTATE:SetCurrentStyle("single")
 		else
 			GAMESTATE:SetCurrentStyle("versus")
 		end
 		return SelectMusicOrCourse()
+	elseif style == "single" or style == "versus" or style == "double" then
+		GAMESTATE:SetCurrentStyle(style)
+		return SelectMusicOrCourse()
 	else
 		local gameName = GAMESTATE:GetCurrentGame():GetName()
-		if gameName=="techno" then
+		if gameName == "techno" then
 			return "ScreenSelectStyleTechno"
 		else
 			return "ScreenSelectStyle"

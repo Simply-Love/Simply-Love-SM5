@@ -24,12 +24,6 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { 1, 0 }
 	},
-	AllowScreenSelectStyle =
-	{
-		Default = 1,
-		Choices = { "Yes", "No" },
-		Values 	= { 1, 0 }
-	},
 	NumberOfContinuesAllowed =
 	{
 		Default = 0,
@@ -47,6 +41,12 @@ local SL_CustomPrefs =
 		Default = 0,
 		Choices = { "ITG", "IIDX" },
 		Values 	= { 0, 1 }
+	},
+	DefaultStyle =
+	{
+		Default = "none",
+		Choices = { "none", "auto", "1 Player", "2 Player", "Double" },
+		Values 	= { "none", "auto", "single", "versus", "double" }
 	},
 }
 
