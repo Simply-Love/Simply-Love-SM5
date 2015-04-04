@@ -43,10 +43,10 @@ Branch.AfterScreenSelectPlayMode = function()
 		else
 			GAMESTATE:SetCurrentStyle("versus")
 		end
-		return SelectMusicOrCourse()
+		return "ScreenProfileLoad"
 	elseif style == "single" or style == "versus" or style == "double" then
 		GAMESTATE:SetCurrentStyle(style)
-		return SelectMusicOrCourse()
+		return "ScreenProfileLoad"
 	else
 		local gameName = GAMESTATE:GetCurrentGame():GetName()
 		if gameName == "techno" then
