@@ -5,11 +5,13 @@ local sort_orders = {
 	"Artist",
 	"Genre",
 	"BPM",
+	"Length",
 	"BeginnerMeter",
 	"EasyMeter",
 	"MediumMeter",
 	"HardMeter",
-	"ChallengeMeter"
+	"ChallengeMeter",
+	"Popularity"
 }
 
 -- this handles user input
@@ -109,8 +111,8 @@ local wheel_item_mt = {
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
-		sort_wheel:set_info_set(sort_orders, 1)
-		-- override sick_wheel's default focus_pos, which is math.floor(num_items / 2) 
+		sort_wheel:set_info_set(sort_orders, 0)
+		-- override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		sort_wheel.focus_pos = 4
 		-- "scroll" the wheel (0 positions) just so that the override takes immediate effect
 		sort_wheel:scroll_by_amount(0)
