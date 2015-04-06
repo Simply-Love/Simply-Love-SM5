@@ -115,11 +115,12 @@ for player in ivalues(Players) do
 		end
 	}
 	
-	t[#t+1] = LoadFont("_wendy fixedWidth")..{
+	t[#t+1] = LoadFont("_wendy white")..{
 		Name=ToEnumShortString(player).."Score",
 		Text="0.00",
 		InitCommand=function(self)
 			self:y(66)
+			self:valign(1)
 			self:halign(1)
 			self:zoom(0.5)
 			if player == PLAYER_1 then

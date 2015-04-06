@@ -311,18 +311,14 @@ for pn in ivalues(Players) do
 		LoadActor("percentage", pn)..{
 			Name="PercentageContainer"..ToEnumShortString(pn),
 			InitCommand=function(self)
+				self:shadowlength(1)
+				self:valign(1)
 				self:y(_screen.cy-26)
-				self:zoom(0.65)
+				self:zoom(0.585)
 				self:horizalign(right)
 				if pn == PLAYER_2 then
 					self:x(140)
 				end
-			end,
-			OnCommand=function(self)
-				-- Format the Percentage string, removing the % symbol
-				local text = self:GetText()
-				text = text:gsub("%%", "")
-				self:settext(text)
 			end
 		},
 
