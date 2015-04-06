@@ -9,18 +9,14 @@ local t = Def.ActorFrame{
 		end
 	end,
 
-	LoadActor("colored_banners/banner"..SimplyLoveColor()..".png")..{
+	LoadActor("colored_banners/banner"..SimplyLoveColor().." (doubleres).png" )..{
 		Name="FallbackBanner",
-		OnCommand=cmd(rotationy,180; setsize,418,164; diffuseshift; effectoffset,3; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1),
-		HideCommand=cmd(visible,false),
-		ShowCommand=cmd(visible,true)
+		OnCommand=cmd(rotationy,180; setsize,418,164; diffuseshift; effectoffset,3; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1)
 	},
 
-	LoadActor("colored_banners/banner"..SimplyLoveColor()..".png")..{
+	LoadActor("colored_banners/banner"..SimplyLoveColor().." (doubleres).png" )..{
 		Name="FallbackBanner",
-		OnCommand=cmd(diffuseshift; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1; setsize, 418,164),
-		HideCommand=cmd(visible,false),
-		ShowCommand=cmd(visible,true)
+		OnCommand=cmd(diffuseshift; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1; setsize, 418,164)
 	},
 
 	Def.ActorProxy{

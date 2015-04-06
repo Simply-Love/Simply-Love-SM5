@@ -7,7 +7,7 @@ local song = SL.Global.Stages.Stats[stageNum].song
 local t = Def.ActorFrame{
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor()..".png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor().." (doubleres).png"))..{
 		InitCommand=cmd(y,-6; zoom, 0.333)
 	},
 
