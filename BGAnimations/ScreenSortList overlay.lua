@@ -111,11 +111,19 @@ local wheel_item_mt = {
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
-		sort_wheel:set_info_set(sort_orders, 0)
-		-- override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
+		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
+		--
+		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
+		-- NOT the total number of things you can eventually scroll through (#sort_orders = 12)
+		--
+		-- so, math.floor(7/2) gives focus to the third item in the wheel, which looks weird
+		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
 		sort_wheel.focus_pos = 4
-		-- "scroll" the wheel (0 positions) just so that the override takes immediate effect
-		sort_wheel:scroll_by_amount(0)
+
+		-- the second argument passed to set_info_set is the index of the item in sort_orders
+		-- that we want to have focus when the wheel is created
+		sort_wheel:set_info_set(sort_orders, 1)
+
 		self:queuecommand("Capture")
 	end,
 	CaptureCommand=function(self)
