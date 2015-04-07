@@ -1,13 +1,13 @@
 local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
-	
+
 	InitCommand=cmd(y ,-10),
 	JudgmentMessageCommand=function(self)
 		if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 			local dpP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints()
 			local dpP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints()
-			
+
 			if dpP1 > dpP2 then
 				self:GetChild("P1Score"):diffusealpha(1)
 				self:GetChild("P2Score"):diffusealpha(0.65)
@@ -15,9 +15,9 @@ local t = Def.ActorFrame{
 				self:GetChild("P1Score"):diffusealpha(0.65)
 				self:GetChild("P2Score"):diffusealpha(1)
 			end
-		end	
+		end
 	end,
-	
+
 	-- thanks shake
 	Def.ActorFrame{
 		Name="SongMeter",
@@ -28,7 +28,7 @@ local t = Def.ActorFrame{
 			StreamWidth=_screen.w/2-10,
 			Stream=Def.Quad{ InitCommand=cmd(zoomy,18;diffuse,DifficultyIndexColor(2) ) }
 		},
-		
+
 		Border(_screen.w/2-10, 22, 2)
 	},
 
@@ -45,9 +45,9 @@ local t = Def.ActorFrame{
 			CurrentSongChangedMessageCommand=cmd(playcommand, "Update"),
 			UpdateCommand=function(self)
 				local title = ""
-				
+
 				song = GAMESTATE:GetCurrentSong()
-				
+
 				if song then
 					title = song:GetDisplayFullTitle()
 				end
@@ -63,16 +63,16 @@ local t = Def.ActorFrame{
 					self:AddAttribute(0,attribDVNO)
 				end
 
-				self:settext(title)		
+				self:settext(title)
 			end
 		}
 	},
 }
 
 for player in ivalues(Players) do
-	
+
 	t[#t+1] = LoadActor("LifeMeter.lua", player)
-	
+
 	-- colored background for player's chart's difficulty meter
 	t[#t+1] = Def.Quad{
 		InitCommand=function(self)
@@ -84,7 +84,7 @@ for player in ivalues(Players) do
 				self:xy( _screen.w-WideScale(27,84), 66 )
 			end
 		end,
-		OnCommand=function(self)						
+		OnCommand=function(self)
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
 			if currentSteps then
 				local currentDifficulty = currentSteps:GetDifficulty()
@@ -92,7 +92,7 @@ for player in ivalues(Players) do
 			end
 		end
 	}
-	
+
 	-- player's chart's difficulty meter
 	t[#t+1] = LoadFont("_wendy small")..{
 		InitCommand=function(self)
@@ -109,13 +109,13 @@ for player in ivalues(Players) do
 			local steps = GAMESTATE:GetCurrentSteps(player)
 			local meter = steps:GetMeter()
 
-			if meter then	
+			if meter then
 				self:settext(meter)
 			end
 		end
 	}
-	
-	t[#t+1] = LoadFont("_wendy white")..{
+
+	t[#t+1] = LoadFont("_wendy monospace numbers")..{
 		Name=ToEnumShortString(player).."Score",
 		Text="0.00",
 		InitCommand=function(self)
@@ -142,7 +142,7 @@ for player in ivalues(Players) do
 		end
 	}
 end
-	
+
 t[#t+1] = LoadActor("BPMDisplay.lua")
 
 return t
