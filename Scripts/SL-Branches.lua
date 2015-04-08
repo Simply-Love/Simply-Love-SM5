@@ -37,15 +37,21 @@ end
 -- Let's pretend I understand why this is necessary
 Branch.AfterScreenSelectPlayMode = function()
 	local style = ThemePrefs.Get("DefaultStyle")
-	if style == "auto" then
+	if style == 1 then
 		if #GAMESTATE:GetHumanPlayers() == 1 then
 			GAMESTATE:SetCurrentStyle("single")
 		else
 			GAMESTATE:SetCurrentStyle("versus")
 		end
 		return "ScreenProfileLoad"
-	elseif style == "single" or style == "versus" or style == "double" then
-		GAMESTATE:SetCurrentStyle(style)
+	else if style == 2 then
+		GAMESTATE:SetCurrentStyle("single")
+		return "ScreenProfileLoad"
+	else if style == 3 then
+		GAMESTATE:SetCurrentStyle("versus")
+		return "ScreenProfileLoad"
+	else if style == 4 then
+		GAMESTATE:SetCurrentStyle("double")
 		return "ScreenProfileLoad"
 	else
 		local gameName = GAMESTATE:GetCurrentGame():GetName()

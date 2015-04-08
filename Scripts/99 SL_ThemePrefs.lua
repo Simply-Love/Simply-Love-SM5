@@ -44,9 +44,9 @@ local SL_CustomPrefs =
 	},
 	DefaultStyle =
 	{
-		Default = "none",
+		Default = 0,
 		Choices = { "none", "auto", "1 Player", "2 Player", "Double" },
-		Values 	= { "none", "auto", "single", "versus", "double" }
+		Values 	= { 0, 1, 2, 3, 4 }
 	},
 }
 
