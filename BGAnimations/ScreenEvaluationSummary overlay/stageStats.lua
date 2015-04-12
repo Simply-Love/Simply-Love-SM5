@@ -23,9 +23,11 @@ local t = Def.ActorFrame{
 			end
 
 			if bannerpath then
-				self:LoadBanner(bannerpath)
-				self:setsize(418,164)
-				self:zoom(0.333)
+				if FILEMAN:DoesFileExist(bannerpath) then
+					self:LoadBanner(bannerpath)
+					self:setsize(418,164)
+					self:zoom(0.333)
+				end
 			end
 		end
 	},

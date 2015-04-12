@@ -132,9 +132,11 @@ if GAMESTATE:IsCourseMode() then
 			end
 
 			if bannerpath then
-				self:LoadBanner(bannerpath)
-				self:setsize(418,164)
-				self:zoom(0.7)
+				if FILEMAN:DoesFileExist(bannerpath) then
+					self:LoadBanner(bannerpath)
+					self:setsize(418,164)
+					self:zoom(0.7)
+				end
 			end
 		end
 	}
@@ -186,9 +188,11 @@ else
 				end
 
 				if bannerpath then
-					self:LoadBanner(bannerpath)
-					self:setsize(418,164)
-					self:zoom(0.7)
+					if FILEMAN:DoesFileExist(bannerpath) then
+						self:LoadBanner(bannerpath)
+						self:setsize(418,164)
+						self:zoom(0.7)
+					end
 				end
 			end
 		}
