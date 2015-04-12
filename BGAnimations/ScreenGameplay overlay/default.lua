@@ -2,21 +2,7 @@ local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
 
-	InitCommand=cmd(y ,-10),
-	JudgmentMessageCommand=function(self)
-		if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-			local dpP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints()
-			local dpP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints()
-
-			if dpP1 > dpP2 then
-				self:GetChild("P1Score"):diffusealpha(1)
-				self:GetChild("P2Score"):diffusealpha(0.65)
-			elseif dpP2 > dpP1 then
-				self:GetChild("P1Score"):diffusealpha(0.65)
-				self:GetChild("P2Score"):diffusealpha(1)
-			end
-		end
-	end,
+	InitCommand=cmd(y, -10),
 
 	-- thanks shake
 	Def.ActorFrame{
@@ -132,13 +118,30 @@ for player in ivalues(Players) do
 		OnCommand=function(self)
 			self:visible( not SL[ToEnumShortString(player)].ActiveModifiers.HideScore )
 		end,
-		JudgmentMessageCommand=function(self, param)
-			self:queuecommand("RedrawScore")
-		end,
+		JudgmentMessageCommand=cmd(queuecommand, "RedrawScore"),
 		RedrawScoreCommand=function(self)
 			local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
 			local percent = FormatPercentScore( dp ):sub(1,-2)
 			self:settext(percent)
+		end
+	}
+end
+
+
+if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+	t[#t+1] = Def.Actor{
+		JudgmentMessageCommand=cmd(queuecommand, "Winning"),
+		WinningCommand=function(self)
+			local dpP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints()
+			local dpP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints()
+
+			if dpP1 > dpP2 then
+				self:GetParent():GetChild("P1Score"):diffusealpha(1)
+				self:GetParent():GetChild("P2Score"):diffusealpha(0.65)
+			elseif dpP2 > dpP1 then
+				self:GetParent():GetChild("P1Score"):diffusealpha(0.65)
+				self:GetParent():GetChild("P2Score"):diffusealpha(1)
+			end
 		end
 	}
 end
