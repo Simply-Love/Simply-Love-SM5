@@ -51,14 +51,16 @@ local t = Def.ActorFrame{
 				SongOrCouse = GAMESTATE:GetCurrentSong()
 			end
 
-			if song then
+			if SongOrCouse then
 				 bannerpath = SongOrCouse:GetBannerPath()
 			end
 
 			if bannerpath then
-				self:LoadBanner(bannerpath)
-				self:setsize(418,164)
-				self:zoom(0.7)
+				if FILEMAN:DoesFileExist(bannerpath) then
+					self:LoadBanner(bannerpath)
+					self:setsize(418,164)
+					self:zoom(0.7)
+				end
 			end
 		end
 	},
