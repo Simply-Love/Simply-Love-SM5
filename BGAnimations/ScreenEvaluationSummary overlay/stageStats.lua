@@ -12,7 +12,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the banner, if there is one
-	Def.Sprite{
+	Def.Banner{
 		Name="Banner",
 		InitCommand=function(self)
 			self:y(-6)
@@ -23,7 +23,7 @@ local t = Def.ActorFrame{
 			end
 
 			if bannerpath then
-				self:LoadBanner(bannerpath)
+				self:LoadFromCachedBanner(bannerpath)
 				self:setsize(418,164)
 				self:zoom(0.333)
 			end

@@ -121,7 +121,7 @@ if GAMESTATE:IsCourseMode() then
 		end
 	}
 
-	t[#t+1] = Def.Sprite{
+	t[#t+1] = Def.Banner{
 		Name="CourseBanner",
 		InitCommand=cmd(xy, _screen.cx, 121.5 ),
 		OnCommand=function(self)
@@ -132,7 +132,7 @@ if GAMESTATE:IsCourseMode() then
 			end
 
 			if bannerpath then
-				self:LoadBanner(bannerpath)
+				self:LoadFromCachedBanner(bannerpath)
 				self:setsize(418,164)
 				self:zoom(0.7)
 			end
@@ -146,7 +146,7 @@ else
 
 		local song = SL.Global.Stages.Stats[currentStage].song
 
-		-- Create an ActorFrame for each Name + Banner pair
+		-- Create an ActorFrame for each (Name + Banner) pair
 		-- so that we can display/hide all children simultaneously.
 		local SongNameAndBanner = Def.ActorFrame{
 			InitCommand=cmd(diffusealpha, 0),
@@ -166,6 +166,7 @@ else
 			end
 		}
 
+		-- song name
 		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_misoreg hires")..{
 			Name="SongName"..i,
 			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
@@ -176,7 +177,8 @@ else
 			end
 		}
 
-		SongNameAndBanner[#SongNameAndBanner+1] = Def.Sprite{
+		-- song banner
+		SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
 			Name="SongBanner"..i,
 			InitCommand=cmd(xy, _screen.cx, 121.5),
 			OnCommand=function(self)
@@ -186,7 +188,7 @@ else
 				end
 
 				if bannerpath then
-					self:LoadBanner(bannerpath)
+					self:LoadFromCachedBanner(bannerpath)
 					self:setsize(418,164)
 					self:zoom(0.7)
 				end

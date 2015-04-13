@@ -35,28 +35,28 @@ local t = Def.ActorFrame{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 
-	--songs or course banner, if there is one
-	Def.Sprite{
+	--song or course banner, if there is one
+	Def.Banner{
 		Name="Banner",
 		InitCommand=cmd(xy, _screen.cx, 121.5),
 		OnCommand=function(self)
 			-- these need to be declared as empty variables here
 			-- otherwise, the banner from round1 can persist into round2
 			-- if round2 doesn't have banner!
-			local SongOrCouse, bannerpath
+			local SongOrCourse, bannerpath
 
 			if GAMESTATE:IsCourseMode() then
-				SongOrCouse = GAMESTATE:GetCurrentCourse()
+				SongOrCourse = GAMESTATE:GetCurrentCourse()
 			else
-				SongOrCouse = GAMESTATE:GetCurrentSong()
+				SongOrCourse = GAMESTATE:GetCurrentSong()
 			end
 
-			if song then
-				 bannerpath = SongOrCouse:GetBannerPath()
+			if SongOrCourse then
+				 bannerpath = SongOrCourse:GetBannerPath()
 			end
 
 			if bannerpath then
-				self:LoadBanner(bannerpath)
+				self:LoadFromCachedBanner(bannerpath)
 				self:setsize(418,164)
 				self:zoom(0.7)
 			end
