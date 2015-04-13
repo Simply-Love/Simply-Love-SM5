@@ -17,13 +17,8 @@ local t = Def.ActorFrame{
 		InitCommand=function(self)
 			self:y(-6)
 
-			local bannerpath
 			if song then
-				bannerpath = song:GetBannerPath()
-			end
-
-			if bannerpath then
-				self:LoadFromCachedBanner(bannerpath)
+				self:LoadFromSong(song)
 				self:setsize(418,164)
 				self:zoom(0.333)
 			end

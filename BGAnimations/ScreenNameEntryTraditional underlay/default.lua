@@ -125,14 +125,9 @@ if GAMESTATE:IsCourseMode() then
 		Name="CourseBanner",
 		InitCommand=cmd(xy, _screen.cx, 121.5 ),
 		OnCommand=function(self)
-			local bannerpath
 
 			if course then
-				 bannerpath = course:GetBannerPath()
-			end
-
-			if bannerpath then
-				self:LoadFromCachedBanner(bannerpath)
+				self:LoadFromCourse(course)
 				self:setsize(418,164)
 				self:zoom(0.7)
 			end
@@ -182,13 +177,8 @@ else
 			Name="SongBanner"..i,
 			InitCommand=cmd(xy, _screen.cx, 121.5),
 			OnCommand=function(self)
-				local bannerpath
 				if song then
-					 bannerpath = song:GetBannerPath()
-				end
-
-				if bannerpath then
-					self:LoadFromCachedBanner(bannerpath)
+					self:LoadFromSong(song)
 					self:setsize(418,164)
 					self:zoom(0.7)
 				end
