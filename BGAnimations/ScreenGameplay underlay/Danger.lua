@@ -12,7 +12,7 @@ local danger = Def.Quad{
 		self:visible(not SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar)
 		self:diffusealpha(0)
 
-		if bDoubles then
+		if bDoubles or PREFSMAN:GetPreference("Center1Player") then
 			self:stretchto(0,0,_screen.w,_screen.h)
 		elseif not bDoubles and Player == PLAYER_1 then
 			self:faderight(0.1); self:stretchto(0,0,_screen.cx,_screen.h)
