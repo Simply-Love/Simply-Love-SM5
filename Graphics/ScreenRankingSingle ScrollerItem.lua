@@ -1,7 +1,6 @@
 local t = Def.ActorFrame{
 	-- setting ztest to true allows masking
-	InitCommand=cmd(runcommandsonleaves, cmd(ztest,true) ),
-	OffCommand=cmd(accelerate,0.1; diffusealpha,0 ),
+	InitCommand=cmd(ztest, true),
 
 	Def.Quad{
 		InitCommand=cmd(zoomto, _screen.w,60 ),
@@ -11,8 +10,8 @@ local t = Def.ActorFrame{
 	Def.Banner{
 		InitCommand=cmd(x,WideScale(-280,-320); halign,0; scaletoclipped,128,40; diffusealpha,0.2 ),
 		SetCommand=function(self, params)
-			if params.Song then
-				self:LoadFromSong( params.Song )
+			if params.Song and params.Song:GetBannerPath() then
+				self:LoadFromCachedBanner( params.Song:GetBannerPath() )
 			end
 		end
 	},
@@ -29,7 +28,8 @@ local t = Def.ActorFrame{
 }
 
 
-local Children
+
+local profile = PROFILEMAN:GetMachineProfile()
 
 -- How many difficulties do we want this ranking screen to show?  Defer to the Metrics.
 local NumDifficulties = THEME:GetMetric("ScreenRankingSingle", "NumColumns")
@@ -43,12 +43,28 @@ for i=1,NumDifficulties do
 end
 
 local Scores = Def.ActorFrame{
-	InitCommand=function(self)
-		Children = self:GetChildren()
+	SetCommand=function(self, params)
+		if not params.Song then return end
+
+		for i, steps in pairs(params.Entries) do
+			if profile and steps then
+				local hsl = profile:GetHighScoreList(params.Song, steps)
+				local HighScores = hsl and hsl:GetHighScores()
+				local difficulty = ToEnumShortString(steps:GetDifficulty())
+
+				if HighScores and #HighScores > 0 then
+					self:GetChild("HighScoreName_"..difficulty.."_"..i):settext( HighScores[1]:GetName() )
+					self:GetChild("HighScore_"..difficulty.."_"..i):settext( FormatPercentScore( HighScores[1]:GetPercentDP() ) )
+				else
+					self:GetChild("HighScoreName_"..difficulty.."_"..i):settext( "-----" )
+					self:GetChild("HighScore_"..difficulty.."_"..i):settext( FormatPercentScore( 0 ) )
+				end
+			end
+		end
 	end
 }
 
--- Add a name and score for each difficulty we are interested
+-- Add a name and score for each difficulty we are interested in
 -- These won't have actual text values assigned to them until the
 -- cumbersome SetCommand below...
 for key, difficulty in pairs(DifficultiesToShow) do
@@ -64,29 +80,6 @@ for key, difficulty in pairs(DifficultiesToShow) do
 		Name="HighScore_"..difficulty.."_"..key,
 		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; y,12; zoom,0.8)
 	}
-end
-
-Scores.SetCommand=function(self,param)
-	local profile = PROFILEMAN:GetMachineProfile()
-	local song = param.Song
-
-	if not song then return end
-
-	for i, steps in pairs(param.Entries) do
-		if profile and steps then
-			local hsl = profile:GetHighScoreList(song, steps)
-			local HighScores = hsl and hsl:GetHighScores()
-			local difficulty = ToEnumShortString(steps:GetDifficulty())
-
-			if HighScores and #HighScores > 0 then
-				Children["HighScoreName_"..difficulty.."_"..i]:settext( HighScores[1]:GetName() )
-				Children["HighScore_"..difficulty.."_"..i]:settext( FormatPercentScore( HighScores[1]:GetPercentDP() ) )
-			else
-				Children["HighScoreName_"..difficulty.."_"..i]:settext( "-----" )
-				Children["HighScore_"..difficulty.."_"..i]:settext( FormatPercentScore( 0 ) )
-			end
-		end
-	end
 end
 
 t[#t+1] = Scores
