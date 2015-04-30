@@ -1,5 +1,6 @@
 local t = Def.ActorFrame{}
 
+-- make the MusicWheel appear to cascade down
 t[#t+1] = LoadActor("MusicWheelAnimation.lua")
 
 -- Apply player modifiers from profile

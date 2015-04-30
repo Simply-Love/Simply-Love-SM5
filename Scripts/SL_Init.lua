@@ -23,8 +23,7 @@ local PlayerDefaults = {
 			self.Stages = {
 				Stats = {}
 			}
-			self.CurrentPlayerOptions = 
-			{
+			self.CurrentPlayerOptions = {
 				String = nil
 			}
 		end
