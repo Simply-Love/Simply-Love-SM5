@@ -2,27 +2,27 @@ local SL_CustomPrefs =
 {
 	AllowFailingOutOfSet =
 	{
-		Default = 0,
+		Default = true,
 		Choices = { "Yes", "No" },
-		Values 	= { 1, 0 }
+		Values 	= { true, false }
 	},
 	AllowScreenEvalSummary =
 	{
-		Default = 1,
+		Default = true,
 		Choices = { "Yes", "No" },
-		Values 	= { 1, 0 }
+		Values 	= { true, false }
 	},
 	AllowScreenGameOver =
 	{
-		Default = 1,
+		Default = true,
 		Choices = { "Yes", "No" },
-		Values 	= { 1, 0 }
+		Values 	= { true, false }
 	},
 	AllowScreenNameEntry =
 	{
-		Default = 1,
+		Default = true,
 		Choices = { "Yes", "No" },
-		Values 	= { 1, 0 }
+		Values 	= { true, false }
 	},
 	NumberOfContinuesAllowed =
 	{
@@ -34,13 +34,13 @@ local SL_CustomPrefs =
 	{
 		-- a nice pinkish-purple, by default
 		Default = 3,
-		Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 }
+		Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
+		Values = { 1,2,3,4,5,6,7,8,9,10,11,12 }
 	},
 	MusicWheelStyle =
 	{
-		Default = 0,
-		Choices = { "ITG", "IIDX" },
-		Values 	= { 0, 1 }
+		Default = "ITG",
+		Choices = { "ITG", "IIDX" }
 	},
 }
 
@@ -51,12 +51,3 @@ ThemePrefs.InitAll(SL_CustomPrefs)
 -- For more information on how this works, read:
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefs.txt
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefsRows.txt
-
--- If no ThemePrefs section is found, make one by calling ForceSave()
--- Alternatively, ForceSave() if old preferences need to be converted to new types.
---
--- We don't always want to ForceSave() because this will write using the default values established above.
-local file =  IniFile.ReadFile("Save/ThemePrefs.ini")
-if not file["Simply Love"] or type(file["Simply Love"]["AllowFailingOutOfSet"]) ~= "number" then
-	ThemePrefs.ForceSave()
-end
