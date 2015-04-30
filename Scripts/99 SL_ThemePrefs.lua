@@ -51,3 +51,33 @@ ThemePrefs.InitAll(SL_CustomPrefs)
 -- For more information on how this works, read:
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefs.txt
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefsRows.txt
+
+local file = IniFile.ReadFile("Save/ThemePrefs.ini")
+local NeedsRewrite = false
+
+-- If no [Simply Love] ThemePrefs section is found...
+if not file["Simply Love"] then
+
+	-- ...make one by calling Save()
+	ThemePrefs.Save()
+
+else
+
+	for k,v in pairs( file["Simply Love"] ) do
+
+		-- it's possible a setting exists in the ThemePrefs.ini file
+		-- but does not exist here, where we define the ThemePrefs for this theme!
+		-- Check to ensure that the master defintion returns something for
+		-- each key from ThemePrefs.ini
+		if SL_CustomPrefs[k] then
+
+			-- if we reach here, the setting exists in both the master definition
+			-- as well as the user's ThemePrefs.ini; check for type mismatch now
+			if type( v ) ~= type( SL_CustomPrefs[k].Default ) then
+
+				-- in the event of a type mismatch, overwrite the user's erroneous setting with the default value
+				ThemePrefs.Set(k, SL_CustomPrefs[k].Default)
+			end
+		end
+	end
+end
