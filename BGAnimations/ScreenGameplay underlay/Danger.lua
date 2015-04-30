@@ -1,7 +1,7 @@
 local Player = ...
 local style = GAMESTATE:GetCurrentStyle()
 local styleType = style:GetStyleType()
-local bDoubles = (styleType == 'StyleType_OnePlayerTwoSides' or styleType == 'StyleType_TwoPlayersSharedSides')
+local IsPlayingDouble = (styleType == 'StyleType_OnePlayerTwoSides' or styleType == 'StyleType_TwoPlayersSharedSides')
 
 -- initialize each stage at a HealthState of "alive"
 local prevHealth = "HealthState_Alive"
@@ -12,11 +12,11 @@ local danger = Def.Quad{
 		self:visible(not SL[ToEnumShortString(Player)].ActiveModifiers.HideLifebar)
 		self:diffusealpha(0)
 
-		if bDoubles or PREFSMAN:GetPreference("Center1Player") then
+		if IsPlayingDouble or PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
 			self:stretchto(0,0,_screen.w,_screen.h)
-		elseif not bDoubles and Player == PLAYER_1 then
+		elseif not IsPlayingDouble and Player == PLAYER_1 then
 			self:faderight(0.1); self:stretchto(0,0,_screen.cx,_screen.h)
-		elseif not bDoubles and Player == PLAYER_2 then
+		elseif not IsPlayingDouble and Player == PLAYER_2 then
 			self:fadeleft(0.1); self:stretchto(_screen.cx,0,_screen.w,_screen.h)
 		end
 	end,
