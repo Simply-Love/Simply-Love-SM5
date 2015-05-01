@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------------
 -- ./Grahpics/ScreenSelectStyle Icon Choice/default.lua
 ------------------------------------------------------------------------------------
-
+	
 local gc = Var("GameCommand")
 local iIndex = gc:GetIndex()
 local choiceName = gc:GetName()
@@ -63,7 +63,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth())
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "Solo" then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -91,7 +91,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 3)
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "Solo" then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -214,6 +214,11 @@ elseif choiceName == "Double" then -- Double
 	t[#t+1] = drawNinePanelPad(4, xshift - WideScale(60,70))..{
 		OffCommand=cmd(sleep,0.48; linear,0.2; diffusealpha,0)
 	}
+
+elseif choiceName == "Solo" then -- Solo
+	t[#t+1] = drawNinePanelPad(3, -xshift - 14)..{
+		OffCommand=cmd(linear,0.2; diffusealpha,0)
+	}	
 
 end
 

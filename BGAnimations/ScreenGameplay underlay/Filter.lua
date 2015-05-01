@@ -4,6 +4,7 @@ local Player = ...
 local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
 local NumPlayers = GAMESTATE:GetNumPlayersEnabled()
 local NumSides = GAMESTATE:GetNumSidesJoined()
+local IsPlayingDanceSolo = GAMESTATE:GetCurrentSteps(Player):GetStepsType() == "StepsType_Dance_Solo" and true or false
 
 local pName, filterColor
 local fallbackColor = color("0,0,0,0.75")
@@ -33,14 +34,15 @@ local function FilterPosition()
 	return THEME:GetMetric("ScreenGameplay","Player".. pName .. strPlayer .. strSide .."X")
 end
 
--- updated by sillybear
--- xxx: does this still only account for dance?
+
 local function FilterWidth()
 
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
-		return ((_screen.w*1.058)/GetScreenAspectRatio())
+		return _screen.w*1.058/GetScreenAspectRatio()
+	elseif IsPlayingDanceSolo then
+		return _screen.w*0.8/GetScreenAspectRatio()
 	else
-		return ((_screen.w*0.529)/GetScreenAspectRatio())
+		return _screen.w*0.529/GetScreenAspectRatio()
 	end
 end
 

@@ -42,6 +42,12 @@ local SL_CustomPrefs =
 		Default = "ITG",
 		Choices = { "ITG", "IIDX" }
 	},
+	AllowDanceSolo =
+	{
+		Default = false,
+		Choices = { "Yes", "No" },
+		Values 	= { true, false }
+	},
 }
 
 -- We need to InitAll() now so that ./Scripts/SL_Init.lua can use
