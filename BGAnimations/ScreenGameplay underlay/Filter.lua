@@ -4,7 +4,7 @@ local Player = ...
 local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
 local NumPlayers = GAMESTATE:GetNumPlayersEnabled()
 local NumSides = GAMESTATE:GetNumSidesJoined()
-local IsPlayingDanceSolo = GAMESTATE:GetCurrentSteps(Player):GetStepsType() == "StepsType_Dance_Solo" and true or false
+local IsPlayingDanceSolo = GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo" and true or false
 
 local pName, filterColor
 local fallbackColor = color("0,0,0,0.75")
