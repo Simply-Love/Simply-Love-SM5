@@ -57,7 +57,11 @@ local t = Def.ActorFrame{
 
 for player in ivalues(Players) do
 
-	t[#t+1] = LoadActor("LifeMeter.lua", player)
+	if SL[ToEnumShortString(player)].ActiveModifiers.SurroundLife == "On" then
+		t[#t+1] = LoadActor("surround_life.lua", player)
+	else
+		t[#t+1] = LoadActor("lifemeter.lua", player)
+	end
 
 	-- colored background for player's chart's difficulty meter
 	t[#t+1] = Def.Quad{

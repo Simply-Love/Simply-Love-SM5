@@ -7,6 +7,7 @@ local PlayerDefaults = {
 				JudgmentGraphic = "Love",
 				Mini = "Normal",
 				ScreenFilter = "Off",
+				SurroundLife = "Off",
 				SpeedModType = "x",
 				SpeedMod = 1.00,
 				Vocalization = "None",
@@ -25,6 +26,9 @@ local PlayerDefaults = {
 			}
 			self.CurrentPlayerOptions = {
 				String = nil
+			}
+			self.LifeColorChoices= {
+				1, 3, 6, 9
 			}
 		end
 	}
