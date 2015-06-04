@@ -2,12 +2,10 @@ local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
 
-	InitCommand=cmd(y, -10),
-
 	-- thanks shake
 	Def.ActorFrame{
 		Name="SongMeter",
-		InitCommand=cmd(x,_screen.cx; y,SCREEN_TOP+30; draworder,95; diffusealpha,0),
+		InitCommand=cmd(x,_screen.cx; y,20; draworder,95; diffusealpha,0),
 		OnCommand=cmd(decelerate,0.2; diffusealpha,1),
 
 		Def.SongMeterDisplay {
@@ -23,7 +21,7 @@ local t = Def.ActorFrame{
 	-- song info
 	Def.ActorFrame{
 		Name="SongInfoFrame",
-		InitCommand=cmd(x,_screen.cx;y,SCREEN_TOP+30;draworder,95),
+		InitCommand=cmd(x,_screen.cx;y,20;draworder,95),
 
 		LoadFont("_misoreg hires")..{
 			Name="SongName",
@@ -63,11 +61,10 @@ for player in ivalues(Players) do
 	t[#t+1] = Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(30, 30)
-
-			if player == PLAYER_1 then
-				self:xy( WideScale(27,84), 66 )
-			elseif player == PLAYER_2 then
-				self:xy( _screen.w-WideScale(27,84), 66 )
+			self:xy( WideScale(27,84), 56 )
+			
+			if player == PLAYER_2 then
+				self:x( _screen.w-WideScale(27,84) )
 			end
 		end,
 		OnCommand=function(self)
@@ -84,10 +81,10 @@ for player in ivalues(Players) do
 		InitCommand=function(self)
 			self:diffuse(Color.Black)
 			self:zoom( 0.4 )
-			if player == PLAYER_1 then
-				self:xy( WideScale(27,84), 66)
-			elseif player == PLAYER_2 then
-				self:xy( _screen.w-WideScale(27,84), 66 )
+			self:xy( WideScale(27,84), 56)
+
+			if player == PLAYER_2 then
+				self:x( _screen.w-WideScale(27,84) )
 			end
 		end,
 		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
@@ -105,7 +102,7 @@ for player in ivalues(Players) do
 		Name=ToEnumShortString(player).."Score",
 		Text="0.00",
 		InitCommand=function(self)
-			self:y(66)
+			self:y(56)
 			self:valign(1)
 			self:halign(1)
 			self:zoom(0.5)

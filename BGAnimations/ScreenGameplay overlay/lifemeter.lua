@@ -28,7 +28,7 @@ local meter = Def.ActorFrame{
 			self:visible(false)
 		end
 	end,
-	OnCommand=cmd(y, 30),
+	OnCommand=cmd(y, 20),
 
 	-- frame
 	Border(meterFillLength+4, meterFillHeight+4, 2)..{
