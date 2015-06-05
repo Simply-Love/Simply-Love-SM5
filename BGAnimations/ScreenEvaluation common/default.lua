@@ -395,7 +395,12 @@ t[#t+1] = Def.Sprite{
 				self:Center()
 				self:zoomto(_screen.w, _screen.h)
 
-				local success, path = SaveScreenshot(params.PlayerNumber, false, true)
+				-- organize Screenshots take using Simply Love into directories, like...
+				-- ./Screenshots/Simply_Love/2015/06-June/2015-06-05_121708.png
+				local prefix = "Simply_Love/" .. Year() .. "/"
+				prefix = prefix .. string.format("%02d", tostring(MonthOfYear()+1)) .. "-" .. THEME:GetString("Months", "Month"..MonthOfYear()+1) .. "/"
+
+				local success, path = SaveScreenshot(params.PlayerNumber, false, true, prefix)
 				if success and path then
 
 					-- only allow each player to save a screenshot once!
