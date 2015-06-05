@@ -189,7 +189,7 @@ for pn in ivalues(Players) do
 					-- GetDifficulty() returns a value from the Difficulty Enum
 					-- "Difficulty_Hard" for example.
 					-- Strip the characters up to and including the underscore.
-					difficulty = difficulty:gsub("Difficulty_", "")
+					difficulty = ToEnumShortString(difficulty)
 					self:settext(THEME:GetString("Difficulty", difficulty))
 				end
 			end

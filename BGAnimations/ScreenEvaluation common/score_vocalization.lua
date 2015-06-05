@@ -4,86 +4,99 @@ local ActiveDigit = 1
 local pn, voice
 
 local function RandomizeVocalization()
-		
-	-- what voice directories exist in ./Simply Love//Other/Vocalize/ ?
-	local files = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
-	local voices = {}
+	-- start by determining how many voices are available in the Vocalization table
+	-- they are indexed by key, so the # operator won't work here; we need to manually count
+	local keys = {}
 
-	for k,dir in ipairs(files) do
-		-- Dynamically fill the table.
-		voices[#voices+1] = dir
+	for k,v in pairs(Vocalization) do
+		keys[#keys+1] = k
 	end
-	local WhichVoice = math.random(#voices)
-	
-	return voices[WhichVoice]	
+
+	if #keys > 0 then
+		local index = math.random(#keys)
+		return keys[index]
+	else
+		return false
+	end
 end
 
 
 return Def.Actor{
+
 	OnCommand=function(self)
 		local scores = {}
 		for player in ivalues(Players) do
-			local pn = ToEnumShortString(player)
-			scores[#scores+1] = {self:GetParent():GetChild(pn.." AF Lower"):GetChild("PercentageContainer"..pn):GetText(), pn}
+			local player_number = ToEnumShortString(player)
+			-- fill the "scores" table with a string representing the score to 2 decimal places and the PlayerNumber
+			scores[#scores+1] = {self:GetParent():GetChild(player_number.." AF Lower"):GetChild("PercentageContainer"..player_number):GetText(), player_number}
 		end
+
 		Digits = ParseScores(scores)
-		
+
 		self:queuecommand("Vocalize")
 	end,
+
 	VocalizeCommand=function(self)
-		
-		
-		-- if we are starting to vocalize a new player
+
+		-- check if we are starting to vocalize a new player
+		-- pn should be nil at first, at which point we assign it to P1
+		-- eventually, we may need to vocalize P2's score, so we'll assign it to P2 then
 		if pn ~= Digits[ActiveDigit][2] then
+
 			pn = Digits[ActiveDigit][2]
 			voice = SL[pn].ActiveModifiers.Vocalization
-			
+
 			-- if "Random" was chosen as the vocalization, randomly select a voice from those available
 			if voice == "Random" then
 				voice = RandomizeVocalization()
 			end
 		end
-		
-		
+
+
 		-- Do we have a voice enabled?
-		if voice ~= "None" then
+		if voice and voice ~= "None" then
+
+			-- if "Blender" was chosen, we want to re-randomize the vocalization for each digit
 			if SL[pn].ActiveModifiers.Vocalization == "Blender" then
-				voice = RandomizeVocalization()
-			end
-			
-			if not Vocalization[voice] then
-				-- load the voice timings
-				dofile(THEME:GetPathO("","Vocalize/" .. voice .. "/default.lua"))
-			end
-			
-			local number = Digits[ActiveDigit][1]
-			local soundbyte = GetVocalizeDir() .. voice .. "/" .. number .. ".ogg"
-			local sleeptime = Vocalization[voice]["z"..number]
-			
-			-- Is the score a Quad Star? If so, we might need to pick one of the
-			-- many available Quad Star soundbytes available for this voice.
-			if number == "quad" then
-				local NumberOfQuads = 0
-				for k,v in pairs(Vocalization[voice]["quad"]) do
-					NumberOfQuads = NumberOfQuads + 1
-				end
-				local WhichQuad = math.random(NumberOfQuads)
-				sleeptime = Vocalization[voice]["quad"]["z100percent" .. WhichQuad ]
-				number = "100percent" .. WhichQuad
-				soundbyte = GetVocalizeDir() .. voice .. "/" .. number .. ".ogg"
+			    voice = RandomizeVocalization()
+				SM(voice)
 			end
 
-			SOUND:PlayOnce( soundbyte )
-			self:sleep( sleeptime )
-		end
-		
-		ActiveDigit = ActiveDigit+1
-		
-		-- prevent infinite recursion by ensuring that there are still digits remaining to vocalize
-		if ActiveDigit <= #Digits then
-			
-			-- recurse
-			self:queuecommand('Vocalize')
+			-- by now, a voice should be chosen...
+			-- but does the necessary directory actually exist in ./Other/Vocalize/ ?
+			-- the Vocalization table should contain all available voices (when ./Scripts/ was first loaded)
+			-- so check if the chosen voice actually exists
+			if Vocalization[voice] then
+
+			    local number = Digits[ActiveDigit][1]
+			    local soundbyte = GetVocalizeDir() .. voice .. "/" .. number .. ".ogg"
+			    local sleeptime = Vocalization[voice]["z"..number]
+
+			    -- Is the score a Quad Star? If so, we might need to pick one of the
+			    -- many available Quad Star soundbytes available for this voice.
+			    if number == "quad" then
+			        local NumberOfQuads = 0
+			        for k,v in pairs(Vocalization[voice]["quad"]) do
+			            NumberOfQuads = NumberOfQuads + 1
+			        end
+
+			        local WhichQuad = math.random(NumberOfQuads)
+			        sleeptime = Vocalization[voice]["quad"]["z100percent" .. WhichQuad ]
+			        number = "100percent" .. WhichQuad
+			        soundbyte = GetVocalizeDir() .. voice .. "/" .. number .. ".ogg"
+			    end
+
+			    SOUND:PlayOnce( soundbyte )
+			    self:sleep( sleeptime )
+			end
+
+			ActiveDigit = ActiveDigit+1
+
+			-- prevent infinite recursion by ensuring that there are still digits remaining to vocalize
+			if ActiveDigit <= #Digits then
+				-- recurse
+				self:queuecommand('Vocalize')
+			end
 		end
 	end
 }
