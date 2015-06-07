@@ -1,40 +1,101 @@
-local rv;
-local t = Def.ActorFrame{};
+local rv
+local zoom_factor = WideScale(0.8,0.9)
 
-local zoom_factor = WideScale(0.8,0.9);
+local labelX_col1 = WideScale(-70,-90)
+local dataX_col1  = WideScale(-75,-96)
 
-local labelX_col1 = WideScale(-70,-90);
-local dataX_col1  = WideScale(-75,-96);
+local labelX_col2 = WideScale(10,20)
+local dataX_col2  = WideScale(5,15)
 
-local labelX_col2 = WideScale(10,20);
-local dataX_col2  = WideScale(5,15);
-
-local highscoreX = WideScale(56, 80);
-local highscorenameX = WideScale(84, 120);
+local highscoreX = WideScale(56, 80)
+local highscorenameX = WideScale(84, 120)
 
 local Players = {PLAYER_1,PLAYER_2};
 
-local paneCategories = {
-	'RadarCategory_TapsAndHolds',
-	'RadarCategory_Jumps',
-	'RadarCategory_Holds',
-	'RadarCategory_Mines',
-	'RadarCategory_Hands',
-	'RadarCategory_Rolls'
-};
 
-local paneStrings = {
-	THEME:GetString("RadarCategory","Taps"),
-	THEME:GetString("RadarCategory","Jumps"),
-	THEME:GetString("RadarCategory","Holds"),
-	THEME:GetString("RadarCategory","Mines"),
-	THEME:GetString("RadarCategory","Hands"),
-	THEME:GetString("RadarCategory","Rolls")
-};
+
+local PaneItems = {}
+PaneItems[THEME:GetString("RadarCategory","Taps")] = {
+	-- "rc" is RadarCategory
+	rc = 'RadarCategory_TapsAndHolds',
+	label = {
+		x = labelX_col1,
+		y = 150,
+	},
+	data = {
+		x = dataX_col1,
+		y = 150
+	}
+}
+
+PaneItems[THEME:GetString("RadarCategory","Mines")] = {
+	rc = 'RadarCategory_Mines',
+	label = {
+		x = labelX_col2,
+		y = 150,
+	},
+	data = {
+		x = dataX_col2,
+		y = 150
+	}
+}
+
+PaneItems[THEME:GetString("RadarCategory","Jumps")] = {
+	rc = 'RadarCategory_Jumps',
+	label = {
+		x = labelX_col1,
+		y = 168,
+	},
+	data = {
+		x = dataX_col1,
+		y = 168
+	}
+}
+
+PaneItems[THEME:GetString("RadarCategory","Hands")] = {
+	rc = 'RadarCategory_Hands',
+	label = {
+		x = labelX_col2,
+		y = 168,
+	},
+	data = {
+		x = dataX_col2,
+		y = 168
+	}
+}
+
+PaneItems[THEME:GetString("RadarCategory","Holds")] = {
+	rc = 'RadarCategory_Holds',
+	label = {
+		x = labelX_col1,
+		y = 186,
+	},
+	data = {
+		x = dataX_col1,
+		y = 186
+	}
+}
+
+PaneItems[THEME:GetString("RadarCategory","Rolls")] = {
+	rc = 'RadarCategory_Rolls',
+	label = {
+		x = labelX_col2,
+		y = 186,
+	},
+	data = {
+		x = dataX_col2,
+		y = 186
+	}
+}
+
+-- each player is assigned his/her own PaneDisplay
+-- so each PaneDisplay will eventually be attached to a
+-- parent ActorFrame
+local t = Def.ActorFrame{}
 
 
 for pn in ivalues(Players) do
-			
+
 	local pd = Def.ActorFrame{
 		Name="PaneDisplay"..pn;
 		InitCommand=function(self)
@@ -43,48 +104,48 @@ for pn in ivalues(Players) do
 			if GAMESTATE:IsHumanPlayer(pn) then
 				self:visible(true)
 			end
-			
+
 			if pn == PLAYER_1 then
 				self:addx(-1 * _screen.w/4 - 5);
 			elseif pn == PLAYER_2 then
 				self:addx(1 * _screen.w/4 + 5);
-			end;
-		end;
+			end
+		end,
 
 		PlayerJoinedMessageCommand=function(self, params)
-						
+
 			if pn==params.Player then
-				self:visible(true);
-				self:zoom(0);
-				self:bounceend(0.3);
-				self:zoom(1);
-				self:playcommand("Set");
-			end;
-	 	end;
-	
-		-- These playcommand("Set") need to apply to the ENTIRE panedisplay 
+				self:visible(true)
+				self:zoom(0)
+				self:bounceend(0.3)
+				self:zoom(1)
+				self:playcommand("Set")
+			end
+		end,
+
+		-- These playcommand("Set") need to apply to the ENTIRE panedisplay
 		-- (all its children) so declare each here
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP1ChangedMessageCommand=function(self)
-			if pn == PLAYER_1 then self:playcommand("Set"); end;				
-		end;
+			if pn == PLAYER_1 then self:playcommand("Set") end
+		end,
 		CurrentTrailP1ChangedMessageCommand=function(self)
-			if pn == PLAYER_1 then self:playcommand("Set"); end;
-		end;
+			if pn == PLAYER_1 then self:playcommand("Set") end
+		end,
 		CurrentStepsP2ChangedMessageCommand=function(self)
-			if pn == PLAYER_2 then self:playcommand("Set"); end;
-		end;
+			if pn == PLAYER_2 then self:playcommand("Set") end
+		end,
 		CurrentTrailP2ChangedMessageCommand=function(self)
-			if pn == PLAYER_2 then self:playcommand("Set"); end;
-		end;
-	};
+			if pn == PLAYER_2 then self:playcommand("Set") end
+		end,
+	}
 
 	-- colored background for chart statistics
 	pd[#pd+1] = Def.Quad{
 		Name="BackgroundQuad"..ToEnumShortString(pn);
 		InitCommand=cmd(diffuse, PlayerColor(pn); zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33; );
-		SetCommand=function(self)			
+		SetCommand=function(self)
 			if GAMESTATE:IsHumanPlayer(pn) then
 				local currentSteps = GAMESTATE:GetCurrentSteps(pn);
 				if currentSteps then
@@ -92,338 +153,231 @@ for pn in ivalues(Players) do
 					self:diffuse(DifficultyColor(currentDifficulty));
 				end
 			end
-		end;
-	};
-	
-	
-	
-	for i=1,#paneCategories do
+		end
+	}
+
+
+
+	for key, item in pairs(PaneItems) do
 
 		pd[#pd+1] = Def.ActorFrame{
 
-			Name=ToEnumShortString(pn)..paneStrings[i];
-			OnCommand=cmd(x, -_screen.w/20; y,6 );
+			Name=key,
+			OnCommand=cmd(x, -_screen.w/20; y,6 ),
 
-			-- chart statistics labels
+			-- label
 			LoadFont("_misoreg hires")..{
-				Text=paneStrings[i];					
-				InitCommand=function(self)
-					self:zoom(zoom_factor);
-			
-					if i <= #paneCategories/2 then
-						self:x(labelX_col1);
-					else
-						self:x(labelX_col2);
-					end
-	
-					if 	paneStrings[i] == "Steps"  or paneStrings[i] == "Mines" then
-						self:y(150);
-					elseif paneStrings[i] == "Jumps" or paneStrings[i] == "Hands" then
-						self:y(168);	
-					elseif paneStrings[i] == "Holds" or paneStrings[i] == "Rolls" then
-						self:y(186);
-					end
-	
-					self:diffuse(color("#000000"));
-					self:shadowlength(0.2);
-					self:horizalign(left);
-					self:NoStroke();
-				end;
-			};
-
-
-			-- chart statistics numbers (values)
-			LoadFont("_misoreg hires")..{					
-				InitCommand=function(self)
-					self:zoom(zoom_factor);
-	
-					if i <= #paneCategories/2 then
-						self:x(dataX_col1);
-					else
-						self:x(dataX_col2);
-					end
-	
-					if 	i == 1  or i == 4 then
-						self:y(150);
-					elseif i == 2 or i == 5 then
-						self:y(168);	
-					elseif i == 3 or i == 6 then
-						self:y(186);
-					end
-	
-					self:diffuse(color("#000000"));
-					self:shadowlength(0.2);
-					self:horizalign(right);
-					self:NoStroke();
-					self:playcommand("Set");
-				end;
+				Text=key,
+				InitCommand=cmd(zoom, zoom_factor; xy, item.label.x, item.label.y; diffuse, Color.Black; shadowlength, 0.2; halign, 0)
+			},
+			--  numerical value
+			LoadFont("_misoreg hires")..{
+				InitCommand=cmd(zoom, zoom_factor; xy, item.data.x, item.data.y; diffuse, Color.Black; shadowlength, 0.2; halign, 1),
+				OnCommand=cmd(playcommand, "Set"),
 				SetCommand=function(self)
-									
-					local song, steps;
-				
-					if GAMESTATE:IsCourseMode() then
-						song = GAMESTATE:GetCurrentCourse();
-						steps = GAMESTATE:GetCurrentTrail(pn);
-					else
-						song = GAMESTATE:GetCurrentSong();
-						steps = GAMESTATE:GetCurrentSteps(pn);
-					end;
-				
-					if steps then		
-						rv = steps:GetRadarValues(pn);
-						local val = rv:GetValue(paneCategories[i]);
-						
-						-- negative ones show up for autogenerated courses
-						-- show a question mark instead
-						if val == -1 then
-							self:settext("?");
-						else
-							self:settext( val );
-						end
-					else
-						self:settext( "" );	
-					end
-				
+
+					local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
 					if not song then
 						self:settext("?")
+						return
 					end
 
-				end;
-
-			};
-
-			-- chart difficulty meter
-			LoadFont("_wendy small")..{
-				InitCommand=cmd(horizalign, right; NoStroke;);
-				SetCommand=function(self)		
-								
-					if GAMESTATE:IsCourseMode() then
-						steps = GAMESTATE:GetCurrentTrail(pn);
-					else
-						steps = GAMESTATE:GetCurrentSteps(pn);
-					end;
-					
-					self:xy(_screen.w/4 + 20, _screen.h/2 - 70);
-					self:diffuse(0,0,0,1);
-				
+					local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn)) or GAMESTATE:GetCurrentSteps(pn)
 					if steps then
-						if steps:GetMeter() then				
-							self:settext(steps:GetMeter());
+						rv = steps:GetRadarValues(pn);
+						local val = rv:GetValue( item.rc );
+
+						-- negative ones show up for autogenerated content
+						-- show a question mark instead
+						if val == -1 then
+							self:settext("?")
+						else
+							self:settext( val )
 						end
+					else
+						self:settext( "" )
 					end
+				end
+			}
+		}
+	end
 
-					local song = GAMESTATE:GetCurrentSong();
-					local course = GAMESTATE:GetCurrentCourse();
-				
-					if not(song or course) then
-						self:settext("?")
-					end
-				
-				end;
-			};
-		};
+	-- chart difficulty meter
+	pd[#pd+1] = LoadFont("_wendy small")..{
+		InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65),
+		SetCommand=function(self)
+			local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn)) or GAMESTATE:GetCurrentSteps(pn)
 
-	end;
 
+			self:diffuse(0,0,0,1);
+
+			if steps then
+				if steps:GetMeter() then
+					self:settext(steps:GetMeter());
+				end
+			end
+
+			local song = GAMESTATE:GetCurrentSong();
+			local course = GAMESTATE:GetCurrentCourse();
+
+			if not(song or course) then
+				self:settext("?")
+			end
+		end
+	}
 
 	--MACHINE high score
 	pd[#pd+1] = LoadFont("_misoreg hires")..{
-	
-		InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse,color("0,0,0,1"); halign, 1 );
+
+		InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1 ),
 		SetCommand=function(self)
-			local SongOrCourse, StepsOrTrail;
+			local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+			local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn)) or GAMESTATE:GetCurrentSteps(pn)
 
-			local text = "";
-			local profile, scorelist;
-	
-			if GAMESTATE:IsCourseMode() then
-				SongOrCourse = GAMESTATE:GetCurrentCourse();
-				StepsOrTrail = GAMESTATE:GetCurrentTrail(pn);
-			else
-				SongOrCourse = GAMESTATE:GetCurrentSong();
-				StepsOrTrail = GAMESTATE:GetCurrentSteps(pn);
-			end;
+			local text = ""
+			local profile, scorelist
 
-			if SongOrCourse then
-				if StepsOrTrail then
-					profile = PROFILEMAN:GetMachineProfile();
-					scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
-					local scores = scorelist:GetHighScores();
-					local topscore = scores[1];
-				
+			if song then
+				if steps then
+					profile = PROFILEMAN:GetMachineProfile()
+					scorelist = profile:GetHighScoreList(song,steps)
+					local scores = scorelist:GetHighScores()
+					local topscore = scores[1]
+
 					if not topscore then
-						text = string.format("%.2f%%", 0);
+						text = string.format("%.2f%%", 0)
 					else
-						text = string.format("%.2f%%", topscore:GetPercentDP()*100.0);
-					end;
+						text = string.format("%.2f%%", topscore:GetPercentDP()*100.0)
+					end
 				else
-					text = string.format("%.2f%%", 0);
-				end;
+					text = string.format("%.2f%%", 0)
+				end
 			else
-				text = "?";
-			end;
-		
-			self:settext( text );
+				text = "?"
+			end
 
-		end;
-	};
+			self:settext( text )
+		end
+	}
 
 
 	--MACHINE highscore name
 	pd[#pd+1] = LoadFont("_misoreg hires")..{
-	
-		InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1);
+
+		InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60),
 		SetCommand=function(self)
-			local SongOrCourse, StepsOrTrail;
+			local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+			local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn)) or GAMESTATE:GetCurrentSteps(pn)
+			local text = ""
 
-			local text = "";
-			local profile, name, scores, topscore, scorelist;
-					
-			if GAMESTATE:IsCourseMode() then
-				SongOrCourse = GAMESTATE:GetCurrentCourse();
-				StepsOrTrail = GAMESTATE:GetCurrentTrail(pn);
-			else
-				SongOrCourse = GAMESTATE:GetCurrentSong();
-				StepsOrTrail = GAMESTATE:GetCurrentSteps(pn);
-			end;
+			if song then
+				if steps then
+					local profile, name, scores, topscore, scorelist
 
-			if SongOrCourse then
-				if StepsOrTrail then
-				
-					profile = PROFILEMAN:GetMachineProfile();
-					scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
-					scores = scorelist:GetHighScores();
-					topscore = scores[1];
-				
+					profile = PROFILEMAN:GetMachineProfile()
+					scorelist = profile:GetHighScoreList(song,steps)
+					scores = scorelist:GetHighScores()
+					topscore = scores[1]
+
 					if topscore then
-						name = topscore:GetName();
-					end;
-									
-					if not name then
-						text = "????";
-					elseif name == "" then
-						text = "----"
-					else
-						text = name
-					end;
-				else
-					text = "???";
-				end;
-			else
-				text = "???";
-			end;
-		
-			self:settext( text );
+						name = topscore:GetName()
+					end
 
-		end;
-	};
+					text = name or "????"
+					if text == "" then text = "----" end
+				else
+					text = "????"
+				end
+			else
+				text = "????"
+			end
+			self:settext( text )
+		end
+	}
 
 
 
 
 	--PLAYER PROFILE high score
 	pd[#pd+1] = LoadFont("_misoreg hires")..{
-	
-		InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse,color("0,0,0,1"); halign, 1 );
+
+		InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 1 ),
 		SetCommand=function(self)
-		
+
 			if PROFILEMAN:IsPersistentProfile(pn) then
-			
-				local SongOrCourse, StepsOrTrail;
 
-				local text = "";
-				local profile, scorelist;
-			
-				if GAMESTATE:IsCourseMode() then
-					SongOrCourse = GAMESTATE:GetCurrentCourse();
-					StepsOrTrail = GAMESTATE:GetCurrentTrail(pn);
-				else
-					SongOrCourse = GAMESTATE:GetCurrentSong();
-					StepsOrTrail = GAMESTATE:GetCurrentSteps(pn);
-				end;
+				local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+				local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn)) or GAMESTATE:GetCurrentSteps(pn)
 
-				if SongOrCourse then
-					if StepsOrTrail then	
-						profile = PROFILEMAN:GetProfile(pn);
-						scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
-						local scores = scorelist:GetHighScores();
-						local topscore = scores[1];
-			
+				local text = ""
+
+				if song then
+					if steps then
+						local profile = PROFILEMAN:GetProfile(pn)
+						local scorelist = profile:GetHighScoreList(song,steps)
+						local scores = scorelist:GetHighScores()
+						local topscore = scores[1]
+
 						if not topscore then
-							text = string.format("%.2f%%", 0);
+							text = string.format("%.2f%%", 0)
 						else
-							text = string.format("%.2f%%", topscore:GetPercentDP()*100.0);
-						end;
+							text = string.format("%.2f%%", topscore:GetPercentDP()*100.0)
+						end
 					else
-						text = string.format("%.2f%%", 0);
-					end;
+						text = string.format("%.2f%%", 0)
+					end
 				else
-					text = "?";
-				end;
-		
-				self:settext( text );
-			
+					text = "?"
+				end
+
+				self:settext( text )
 			else
-				self:visible(false);
+				self:visible(false)
 			end
-		end;
-	};
+		end
+	}
 
 
 	--PLAYER PROFILE highscore name
 	pd[#pd+1] = LoadFont("_misoreg hires")..{
-	
-		InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1);
+
+		InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1),
 		SetCommand=function(self)
-		
+
 			if PROFILEMAN:IsPersistentProfile(pn) then
-				local SongOrCourse, StepsOrTrail;
 
-				local text = "";
-				local profile, name, scores, topscore, scorelist;
-		
-				if GAMESTATE:IsCourseMode() then
-					SongOrCourse = GAMESTATE:GetCurrentCourse();
-					StepsOrTrail = GAMESTATE:GetCurrentTrail(pn);
-				else
-					SongOrCourse = GAMESTATE:GetCurrentSong();
-					StepsOrTrail = GAMESTATE:GetCurrentSteps(pn);
-				end;
+				local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+				local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn)) or GAMESTATE:GetCurrentSteps(pn)
 
-				if SongOrCourse then
-					if StepsOrTrail then	
-						profile = PROFILEMAN:GetProfile(pn);
-						scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
-						scores = scorelist:GetHighScores();
-						topscore = scores[1];
-		
+				local text = ""
+
+				if song then
+					if steps then
+						local profile = PROFILEMAN:GetProfile(pn)
+						local scorelist = profile:GetHighScoreList(song,steps)
+						local scores = scorelist:GetHighScores()
+						local topscore = scores[1]
+
 						if topscore then
-							name = topscore:GetName();
-						end;
-							
-						if not name then
-							text = "????";
-						elseif name == "" then
-							text = "----"
-						else
-							text = name
-						end;
+							name = topscore:GetName()
+						end
+
+						text = name or "????"
+						if text == "" then text = "----" end
 					else
-						text = "???";
-					end;
+						text = "????"
+					end
 				else
-					text = "???";
-				end;
-		
-				self:settext( text );
+					text = "????"
+				end
+
+				self:settext( text )
 			else
-				self:visible(false);
-			end;
-		end;
-	};
-	t[#t+1] = pd;
-			
-end;
+				self:visible(false)
+			end
+		end
+	}
+	t[#t+1] = pd
+end
 
-
-return t;
+return t
