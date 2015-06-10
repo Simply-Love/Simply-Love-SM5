@@ -325,3 +325,59 @@ function ForwardOrBackward2()
 	}
 	return t
 end
+
+local life_color_names= {
+	"LifeFullOuter",
+	"LifeFullInner",
+	"LifeEmptyOuter",
+	"LifeEmptyInner",
+}
+function LifeColorChoice(index)
+	local choices= {}
+	for i= 1, #SL.Colors do
+		choices[i]= tostring(i)
+	end
+	return {
+		Name= life_color_names[index],
+		LayoutType= "ShowAllInRow",
+		SelectType= "SelectOne",
+		OneChoiceForAllPlayers= false,
+		ExportOnChange= false,
+		Choices= choices,
+		LoadSelections= function(self, list, pn)
+			local user_choice= SL[ToEnumShortString(pn)].LifeColorChoices[index]
+			list[user_choice]= true
+		end,
+		SaveSelections= function(self, list, pn)
+			for i= 1, #list do
+				if list[i] then
+					SL[ToEnumShortString(pn)].LifeColorChoices[index]= i
+				end
+			end
+		end
+	}
+end
+
+function OptionRowPlayerSurroundLife()
+	local choices= {"On", "Off"}
+	return {
+		Name= "SurroundLife",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
+		Choices= choices,
+		LoadSelections= function(self, list, pn)
+			local user_choice= SL[ToEnumShortString(pn)].ActiveModifiers.SurroundLife
+			local i= FindInTable(user_choice, choices)
+			list[i]= true
+		end,
+		SaveSelections= function(self, list, pn)
+			for i= 1, #choices do
+				if list[i] then
+					SL[ToEnumShortString(pn)].ActiveModifiers.SurroundLife= choices[i]
+				end
+			end
+		end
+	}
+end
