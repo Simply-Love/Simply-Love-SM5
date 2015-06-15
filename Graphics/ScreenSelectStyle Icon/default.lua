@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------------
 -- ./Grahpics/ScreenSelectStyle Icon Choice/default.lua
 ------------------------------------------------------------------------------------
-	
+
 local gc = Var("GameCommand")
 local iIndex = gc:GetIndex()
 local choiceName = gc:GetName()
@@ -13,8 +13,8 @@ local zoomFactor = WideScale(0.435,0.525)
 
 local t = Def.ActorFrame {
 	Name="Item"..iIndex,
-	GainFocusCommand=cmd(finishtweening; linear,0.2; zoom,1 ),
-	LoseFocusCommand=cmd(linear,0.2; zoom,0.5)
+	GainFocusCommand=cmd(stoptweening; linear,0.125; zoom,1 ),
+	LoseFocusCommand=cmd(stoptweening; linear,0.125; zoom,0.5)
 }
 
 t[#t+1] = LoadFont("_wendy small")..{
@@ -218,7 +218,7 @@ elseif choiceName == "Double" then -- Double
 elseif choiceName == "Solo" then -- Solo
 	t[#t+1] = drawNinePanelPad(3, -xshift - 14)..{
 		OffCommand=cmd(linear,0.2; diffusealpha,0)
-	}	
+	}
 
 end
 
