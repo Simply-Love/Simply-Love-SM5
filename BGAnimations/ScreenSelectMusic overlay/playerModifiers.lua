@@ -7,13 +7,15 @@ return Def.Actor{
 	OnCommand=cmd(queuecommand,"ApplyModifiers"),
 	PlayerJoinedMessageCommand=cmd(queuecommand,"ApplyModifiers"),
 	ApplyModifiersCommand=function(self)
+
+		local Players = GAMESTATE:GetHumanPlayers()
+
 		-- there is the possibility a player just joined via latejoin
 		-- so ensure that this is set correctly now
-		if #GAMESTATE:GetHumanPlayers() > 1 then
+		if #Players > 1 then
 			SL.Global.Gamestate.Style = "versus"
 		end
 
-		local Players = GAMESTATE:GetHumanPlayers()
 		for player in ivalues(Players) do
 			ApplySpeedMod(player)
 			ApplyMini(player)
