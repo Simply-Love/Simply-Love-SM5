@@ -1,6 +1,6 @@
 local Players = GAMESTATE:GetHumanPlayers()
 
--- SpeedModItems is a table that will contain the BitMapText Actors
+-- SpeedModItems is a table that will contain the Bitm apText Actors
 -- for the SpeedModNew OptionRow for both P1 and P2
 local SpeedModItems = {P1, P2}
 
