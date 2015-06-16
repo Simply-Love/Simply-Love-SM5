@@ -1,25 +1,25 @@
 function PlayerJudgment()
-	
+
 	-- Allow users to artbitrarily add new judgment graphics to /Graphics/_judgments/
 	-- without needing to modify this script;
 	-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN.
 	local path = THEME:GetPathG("","_judgments")
 	local files = FILEMAN:GetDirListing(path.."/")
 	local judgmentGraphics = {}
-	
+
 	for k,filename in ipairs(files) do
-		
+
 		-- A user might put something that isn't a suitable judgment graphic
 		-- into /Graphics/_judgments/ (also sometimes hidden files like .DS_Store show up here).
 		-- Do our best to filter out such files now.
 		if string.match(filename, " %dx%d.png") then
-			-- use regexp to get only the name of the graphic, stripping out the extension 
+			-- use regexp to get only the name of the graphic, stripping out the extension
 			local name = string.gsub(filename, " %dx%d.png", "")
-		
+
 			-- The 3_9 graphic is a special case;
 			-- we want it to appear in the options with a period (3.9 not 3_9).
 			if name == "3_9" then name = "3.9" end
-		
+
 			-- Dynamically fill the table.
 			-- Love is a special case; it should always be first.
 			if name == "Love" then
@@ -29,10 +29,10 @@ function PlayerJudgment()
 			end
 		end
 	end
-	
+
 	judgmentGraphics[#judgmentGraphics+1] = "None"
-	
-	
+
+
 	local t = {
 		Name = "UserPlayerJudgment",
 		LayoutType = "ShowAllInRow",
@@ -47,13 +47,13 @@ function PlayerJudgment()
 		end,
 		SaveSelections = function(self, list, pn)
 			local sSave
-			
+
 			for i=1,#list do
 				if list[i] then
 					sSave=judgmentGraphics[i]
 				end
 			end
-			
+
 			SL[ToEnumShortString(pn)].ActiveModifiers.JudgmentGraphic = sSave
 		end
 	}
@@ -81,7 +81,7 @@ function OptionRowPlayerFilter()
 
 			for i=1,#filters do
 				if list[i] then
-					sSave = filters[i]	
+					sSave = filters[i]
 				end
 			end
 
@@ -99,7 +99,7 @@ function OptionRowPlayerMini()
 	for i=5,150,5 do
 		mini[#mini+1] = tostring(i) .. "%"
 	end
-	
+
 	local t = {
 		Name = "Mini",
 		LayoutType = "ShowAllInRow",
@@ -117,10 +117,10 @@ function OptionRowPlayerMini()
 
 			for i=1,#mini do
 				if list[i] then
-					sSave = mini[i]	
+					sSave = mini[i]
 				end
 			end
-			
+
 			SL[ToEnumShortString(pn)].ActiveModifiers.Mini = sSave
 			ApplyMini(pn)
 		end
@@ -133,7 +133,7 @@ function OptionRowSongMusicRate()
 	for i=0.5,2.1,0.1 do
 		musicrate[#musicrate+1] = string.format("%.1f",i)
 	end
-	
+
 	local t = {
 		Name = "Music Rate",
 		LayoutType = "ShowAllInRow",
@@ -151,13 +151,13 @@ function OptionRowSongMusicRate()
 
 			for i=1,#musicrate do
 				if list[i] then
-					sSave = musicrate[i]	
+					sSave = musicrate[i]
 				end
 			end
-			
+
 			SL.Global.ActiveModifiers.MusicRate = tonumber(sSave)
 			local topscreen = SCREENMAN:GetTopScreen():GetName()
-		
+
 			-- Use the older GameCommand interface for applying rate mods in Edit Mode;
 			-- it seems to be the only way (probably due to how broken Edit Mode is, in general).
 			-- As an unintentional side-effect of setting musicrate mods this way, they STAY set
@@ -169,7 +169,7 @@ function OptionRowSongMusicRate()
 			else
 				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate(tonumber(sSave))
 			end
-		
+
 			MESSAGEMAN:Broadcast("MusicRateChanged")
 		end
 	}
@@ -182,16 +182,16 @@ end
 -- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua
 function ApplyMini(pn)
 	local mini = SL[ToEnumShortString(pn)].ActiveModifiers.Mini or "Normal"
-	
+
 	if mini == "Normal" then
 		mini = 0
 	else
 		mini = mini:gsub("%%","")/100
 	end
-	
+
 	local topscreen = SCREENMAN:GetTopScreen():GetName()
 	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
-	
+
 	-- to make the arrows smaller, pass Mini() a value between 0 and 1
 	-- (to make the arrows bigger, pass Mini() a value larger than 1)
 	GAMESTATE:GetPlayerState(pn):GetPlayerOptions(modslevel):Mini(mini)
@@ -240,22 +240,22 @@ end
 
 
 function OptionRowVocalize()
-	
+
 	-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 	-- and have those vocalizations be automatically detected
 	local files = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 	local vocalizations = { "None" }
-	
+
 	for k,dir in ipairs(files) do
 		-- Dynamically fill the table.
 		vocalizations[#vocalizations+1] = dir
 	end
-	
+
 	if #vocalizations > 1 then
 		vocalizations[#vocalizations+1] = "Random"
 		vocalizations[#vocalizations+1] = "Blender"
 	end
-	
+
 	local t = {
 		Name = "UserScoreVocalization",
 		LayoutType = "ShowAllInRow",
@@ -270,17 +270,53 @@ function OptionRowVocalize()
 		end,
 		SaveSelections = function(self, list, pn)
 			local sSave
-			
+
 			for i=1,#list do
 				if list[i] then
 					sSave=vocalizations[i]
 				end
 			end
-			
+
 			SL[ToEnumShortString(pn)].ActiveModifiers.Vocalization = sSave
 		end
 	}
 	return t
+end
+
+
+-- It is potentially dangerous to be modifying global StepMania preferences via the PlayerOptions menu
+-- Unless you, the themer, explicitly reset TimingWindowScale back to 1.0 after each game cycle
+-- It will REMAIN changed between games, between reboots of StepMania, and between Themes.
+-- After all, it's a global preference and not the sort of thing that was ever intended to be
+-- modified on-the-fly like this.
+--
+--
+-- Because of this, I am disabling this this OptionRow by default.
+-- It can be enabled in Metrics.ini under [ScreenPlayerOptions2] at the discretion of the user.
+
+function OptionRowTimingWindowScale()
+	local choices	= { "Normal", "90%", "80%", "70%", "60%", "50%", "40%", "30%", "20%", "10%" }
+	local values 	= { 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 }
+
+	return {
+		Name = "TimingWindowScale",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = choices,
+		LoadSelections = function(self, list, pn)
+			local i = FindInTable( PREFSMAN:GetPreference("TimingWindowScale"), values) or #values
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1,#list do
+				if list[i] then
+					PREFSMAN:SetPreference("TimingWindowScale", values[i])
+				end
+			end
+		end
+	}
 end
 
 
