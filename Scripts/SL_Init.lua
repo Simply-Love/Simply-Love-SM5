@@ -51,7 +51,14 @@ local GlobalDefaults = {
 			self.Gamestate = {
 				Style = "single"
 			}
-		end
+		end,
+
+		-- This will be assigned value only once, upon theme initialization, and should NOT be
+		-- reset each game cycle. Instead, we'll use this to check if the TimingWindowScale
+		-- preference has changed and needs to be reset back to its initial state.
+		-- Thus, define this outside the scope of initialize() above.  The values in there
+		-- are reset each game cycle.
+		InitialTimingWindowScale = PREFSMAN:GetPreference("TimingWindowScale")
 	}
 }
 
@@ -77,12 +84,17 @@ SL = {
 	}
 }
 
+
+-- Initialize preferences by calling this method.
+--  We typically do this from ./BGAnimations/ScreenTitleMenu underlay.lua
+--  so that preferences reset between each game cycle.
+
 function InitializeSimplyLove()
 	SL.P1:initialize()
 	SL.P2:initialize()
 	SL.Global:initialize()
-end
 
--- Initialize preferences now (when this script is loaded when StepMania is initializing)
--- and also from ScreenTitleMenu underlay.lua so that preferences reset between each game.
-InitializeSimplyLove()
+	if PREFSMAN:GetPreference("TimingWindowScale") ~= SL.Global.InitialTimingWindowScale then
+		PREFSMAN:SetPreference("TimingWindowScale", SL.Global.InitialTimingWindowScale)
+	end
+end
