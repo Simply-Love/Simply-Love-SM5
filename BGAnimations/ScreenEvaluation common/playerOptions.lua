@@ -21,7 +21,8 @@ for k,option in ipairs(PlayerOptions) do
 	end
 end
 
-if TimingWindowScale < 100 then
+-- Display TimingWindowScale as a modifier if it's set to anything other than 1.0
+if TimingWindowScale ~= 100 then
 	optionslist = optionslist .. ", " .. tostring(TimingWindowScale) .. "% Timing Window"
 end
 
