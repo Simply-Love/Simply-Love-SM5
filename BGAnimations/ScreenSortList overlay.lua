@@ -120,9 +120,19 @@ local t = Def.ActorFrame {
 		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
 		sort_wheel.focus_pos = 4
 
+		-- get the currenly active SortOrder and truncate the "SortOrder_" from the beginning
+		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
+		local current_sort_order_index = 1
+
+		for i=1, #sort_orders do
+			if sort_orders[i] == current_sort_order then
+				current_sort_order_index = i
+			end
+		end
+
 		-- the second argument passed to set_info_set is the index of the item in sort_orders
 		-- that we want to have focus when the wheel is created
-		sort_wheel:set_info_set(sort_orders, 1)
+		sort_wheel:set_info_set(sort_orders, current_sort_order_index)
 
 		self:queuecommand("Capture")
 	end,
