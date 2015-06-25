@@ -59,7 +59,6 @@ return Def.Actor{
 			-- if "Blender" was chosen, we want to re-randomize the vocalization for each digit
 			if SL[pn].ActiveModifiers.Vocalization == "Blender" then
 			    voice = RandomizeVocalization()
-				SM(voice)
 			end
 
 			-- by now, a voice should be chosen...
@@ -90,13 +89,14 @@ return Def.Actor{
 			    self:sleep( sleeptime )
 			end
 
-			ActiveDigit = ActiveDigit+1
+		end
 
-			-- prevent infinite recursion by ensuring that there are still digits remaining to vocalize
-			if ActiveDigit <= #Digits then
-				-- recurse
-				self:queuecommand('Vocalize')
-			end
+		ActiveDigit = ActiveDigit+1
+
+		-- prevent infinite recursion by ensuring that there are still digits remaining to vocalize
+		if ActiveDigit <= #Digits then
+			-- recurse
+			self:queuecommand('Vocalize')
 		end
 	end
 }
