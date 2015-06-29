@@ -2,7 +2,7 @@ local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 local numSides = GAMESTATE:GetNumSidesJoined()
 local bDoubles = (numPlayers == 1 and numSides == 2)
 local bUsingCenter1P = PREFSMAN:GetPreference('Center1Player')
-local MusicRate = SL.Global.ActiveModifiers.MusicRate 
+local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
 
 local function UpdateSingleBPM(self)
@@ -16,11 +16,11 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,_screen.cx, 52; valign,1; zoom,1.33),
-	
+
 	LoadFont("_misoreg hires")..{
 		Name="RatemodDisplay",
 		Text=MusicRate ~= 1 and MusicRate.."x rate" or "",
-		InitCommand=cmd(zoom,0.5; y, 3)
+		InitCommand=cmd(zoom,0.5; y, 12)
 	}
 }
 
@@ -70,7 +70,7 @@ else
 			local pState = GAMESTATE:GetPlayerState(pn)
 			local songPosition = pState:GetSongPosition()
 			local bpm = songPosition:GetCurBPS() * 60 * MusicRate
-			bpmDisplay:settext( round(bpm) )		
+			bpmDisplay:settext( round(bpm) )
 		end
 	end
 
