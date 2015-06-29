@@ -27,6 +27,7 @@ if TimingWindowScale ~= 100 then
 end
 
 return Def.ActorFrame{
+	OnCommand=cmd(y, _screen.cy+200.5),
 
 	Def.Quad{
 		InitCommand=cmd(diffuse,color("#1E282F"); zoomto, 300, 26)

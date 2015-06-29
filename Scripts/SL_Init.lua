@@ -53,7 +53,7 @@ local GlobalDefaults = {
 			}
 		end,
 
-		-- This will be assigned value only once, upon theme initialization, and should NOT be
+		-- This will be assigned value only once, upon starting StepMania, and should NOT be
 		-- reset each game cycle. Instead, we'll use this to check if the TimingWindowScale
 		-- preference has changed and needs to be reset back to its initial state.
 		-- Thus, define this outside the scope of initialize() above.  The values in there

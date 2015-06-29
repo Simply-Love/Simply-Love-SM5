@@ -1,4 +1,3 @@
-local Players = GAMESTATE:GetHumanPlayers()
 local Digits = {}
 local ActiveDigit = 1
 local pn, voice
@@ -25,10 +24,10 @@ return Def.Actor{
 
 	OnCommand=function(self)
 		local scores = {}
-		for player in ivalues(Players) do
-			local player_number = ToEnumShortString(player)
-			-- fill the "scores" table with a string representing the score to 2 decimal places and the PlayerNumber
-			scores[#scores+1] = {self:GetParent():GetChild(player_number.." AF Lower"):GetChild("PercentageContainer"..player_number):GetText(), player_number}
+		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
+			local pn = ToEnumShortString(player)
+			-- fill the "scores" table with a string representing the score to 2 decimal places and either "P1" or "P2"
+			scores[#scores+1] = {self:GetParent():GetChild(pn.."_AF_Lower"):GetChild("PercentageContainer"..pn):GetChild("Percent"):GetText(), pn}
 		end
 
 		Digits = ParseScores(scores)
@@ -64,7 +63,7 @@ return Def.Actor{
 			-- by now, a voice should be chosen...
 			-- but does the necessary directory actually exist in ./Other/Vocalize/ ?
 			-- the Vocalization table should contain all available voices (when ./Scripts/ was first loaded)
-			-- so check if the chosen voice actually exists
+			-- so check if the chosen voice was found (see: ./Scripts/SL-Vocalize.lua)
 			if Vocalization[voice] then
 
 			    local number = Digits[ActiveDigit][1]

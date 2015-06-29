@@ -51,30 +51,30 @@ local t = Def.ActorFrame{
 
 		self:GetChild("Stage Number"):playcommand("Text")
 	end,
+	OffCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen()
+		if topscreen then
+			if topscreen:GetName() == "ScreenEvaluationStage" then
+				SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + SongCost
+			end
+		end
+	end,
 
 
 	Def.Quad{
-		InitCommand=cmd(xy,_screen.cx,SCREEN_TOP; zoomto,_screen.w,40; diffuse,color("0.65,0.65,0.65,1")),
-		OffCommand=function(self)
-			local topscreen = SCREENMAN:GetTopScreen()
-			if topscreen then
-				if topscreen:GetName() == "ScreenEvaluationStage" then
-					SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + SongCost
-				end
-			end
-		end,
+		InitCommand=cmd(x,_screen.cx; zoomto,_screen.w,40; diffuse,color("0.65,0.65,0.65,1"))
 	},
 
 	LoadFont("_wendy small") .. {
 		Name="HeaderText",
-		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,16; horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText");),
+		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,16; horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText")),
 		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
 		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
 	},
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",
-		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, SCREEN_TOP),
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); x,_screen.cx ),
 		TextCommand=cmd(settext, StageText),
 		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
 		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
