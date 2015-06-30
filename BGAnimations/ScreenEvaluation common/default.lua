@@ -9,13 +9,13 @@ local t = Def.ActorFrame{
 		}
 	end,
 
+	LoadActor("./ScreenshotHandler.lua"),
+
 	LoadActor("./TitleAndBanner.lua"),
 
 	LoadActor("./RateMod.lua"),
 
-	LoadActor("./ScoreVocalization.lua"),
-
-	LoadActor("./ScreenshotHandler.lua")
+	LoadActor("./ScoreVocalization.lua")
 }
 
 
