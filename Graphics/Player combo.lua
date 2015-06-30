@@ -1,117 +1,102 @@
-local c, tc;
-local player = Var "Player";
-local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
+local player = Var "Player"
 
-local NumberMinZoom = 0.75;
-local NumberMaxZoom = 1.1;
-local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
+if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo then
+	return Def.Actor{}
 
+else
 
-local t = Def.ActorFrame {
-	
-	-- load the 100 combo milestone right now
-	-- it is hidden until the Milestone command is played
- 	LoadActor(THEME:GetPathG("Combo","100Milestone"))..{
-		Name="OneHundredMilestone";
-		HundredMilestoneCommand=cmd(playcommand,"Milestone");
-	};
-	
- 	LoadActor(THEME:GetPathG("Combo","1000Milestone"))..{
-		Name="OneThousandMilestone";
-		ThousandMilestoneCommand=cmd(playcommand,"Milestone");
-	};
-	
-	
-	LoadFont("_wendy small")..{
-		Name="Number";
-		OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
-	};
+	local kids
 
-	LoadFont("_wendy small")..{
-		Name="Label";
-		InitCommand=cmd(zoom,0.25);
-		OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
-	};
+	local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
+	local NumberMinZoom = 0.75
+	local NumberMaxZoom = 1.1
+	local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt")
+
+	return Def.ActorFrame {
+
+		InitCommand=function(self)
+			self:draworder(101)
+			kids = self:GetChildren()
+		end,
 
 
-	InitCommand=function(self)
-		self:draworder(101);
-		c = self:GetChildren();
-		c.Number:visible(false);
-		c.Label:visible(false);
-		self:visible(not SL[ToEnumShortString(player)].ActiveModifiers.HideCombo)
-	end;
+		ComboCommand=function(self, param)
+			local CurrentCombo = param.Misses or param.Combo
 
-	ComboCommand=function(self, param)
-		local iCombo = param.Misses or param.Combo;
-		if not iCombo or iCombo < ShowComboAt then
-			c.Number:visible(false);
-			c.Label:visible(false);
-			return;
-		end
+			if not CurrentCombo or CurrentCombo < ShowComboAt then
+				-- the combo isn't high enough to display, so hide the AF
+				self:visible( false )
+				return
+			end
 
-		local Label = c.Label;
-		local bComboOrMiss = false;
-		local bMiss = false;
+			-- the combo has reached the threshold to be shown
+			if CurrentCombo == ShowComboAt then
+				-- so, display the AF
+				self:visible( true )
 
-		if param.Combo then
-			c.Number:diffuseshift();
-			Label:settext( "Combo" );
-			
-			bComboOrMiss = true;
-			bMiss = false;
-		elseif param.Misses then
-			Label:settext( "Misses" );
-			c.Number:stopeffect();
-			
-			bComboOrMiss = true;
-			bMiss = true;
-		end
-		Label:visible(false);
+				if param.Combo then
 
-		param.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
-		param.Zoom = clamp( param.Zoom, NumberMinZoom, NumberMaxZoom );
+					kids.Label:settext( "Combo" )
 
-		if bComboOrMiss then
-			c.Number:visible(true);
-			c.Number:zoom(param.Zoom);
-			Label:visible(true);
-		end;
+				elseif param.Misses then
 
-		c.Number:settext( string.format("%i", iCombo) );		
+					kids.Label:settext( "Misses" )
+					kids.Number:stopeffect()
+				end
+			end
 
-		
-		local targetColor;
-		if param.FullComboW1 then
-			c.Number:effectcolor1(color("#C8FFFF"));
-			c.Number:effectcolor2(color("#6BF0FF"));
-			
-		elseif param.FullComboW2 then
-			c.Number:effectcolor1(color("#FDFFC9"));
-			c.Number:effectcolor2(color("#FDDB85"));
+			kids.Number:zoom( scale( CurrentCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom ) )
+			kids.Number:settext( CurrentCombo )
 
-		elseif param.FullComboW3 then
-			c.Number:effectcolor1(color("#C9FFC9"));
-			c.Number:effectcolor2(color("#94FEC1"));
+			if param.FullComboW1 then
+				-- blue combo
+				kids.Number:playcommand("ChangeColor", {Color1="#C8FFFF", Color2="#6BF0FF"})
 
-		elseif param.Combo then
-			c.Number:stopeffect();
-			-- c.Number2:stopeffect();
-			targetColor = color("#FFFFFF");
-		else
-			targetColor = color("#FF0000");
-		end
-		c.Number:effectperiod(0.8);		
-		Label:diffuse( color("#FFFFFF") );
-		
-	end;
+			elseif param.FullComboW2 then
+				-- gold combo
+				kids.Number:playcommand("ChangeColor", {Color1="#FDFFC9", Color2="#FDDB85"})
 
-	-- JudgmentMessageCommand=function(self, param)
-		-- if param.Player ~= player then return end;
-		-- if not param.TapNoteScore then return end;
-		-- if not UseToastyMeter then return end;
-		-- local tns = param.TapNoteScore;
-	-- end;
-};
+			elseif param.FullComboW3 then
+				-- green combo
+				kids.Number:playcommand("ChangeColor", {Color1="#C9FFC9", Color2="#94FEC1"})
 
-return t;
+			elseif param.Combo then
+				-- normal (white) combo
+				kids.Number:stopeffect():diffuse( Color.White )
+
+			else
+				-- miss (red) combo
+				kids.Number:diffuse( Color.Red )
+			end
+		end,
+
+		-- load the milestones actors now and trigger them to display
+		-- when then appropriate Milestone command is received from the engine
+	 	LoadActor( THEME:GetPathG("Combo","100Milestone") )..{
+			Name="OneHundredMilestone",
+			HundredMilestoneCommand=cmd(playcommand, "Milestone")
+		},
+
+	 	LoadActor( THEME:GetPathG("Combo","1000Milestone") )..{
+			Name="OneThousandMilestone",
+			ThousandMilestoneCommand=cmd(playcommand, "Milestone")
+		},
+
+
+		LoadFont("_wendy small")..{
+			Name="Number",
+			OnCommand=cmd(y,-20; shadowlength,1; vertalign,middle ),
+			ChangeColorCommand=function(self, params)
+				self:diffuseshift():effectperiod(0.8)
+				self:effectcolor1( color(params.Color1) )
+				self:effectcolor2( color(params.Color2) )
+			end
+		},
+
+		LoadFont("_wendy small")..{
+			Name="Label",
+			InitCommand=cmd(zoom,0.25 ),
+			OnCommand=cmd(xy,0,0; shadowlength,1; vertalign,top )
+		}
+	}
+end
