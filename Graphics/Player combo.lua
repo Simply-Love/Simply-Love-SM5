@@ -5,7 +5,7 @@ if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo then
 
 else
 
-	local kids
+	local kids, PreviousComboType
 
 	local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 	local NumberMinZoom = 0.75
@@ -29,11 +29,13 @@ else
 				return
 			end
 
-			-- the combo has reached the threshold to be shown
-			if CurrentCombo == ShowComboAt then
+			-- the combo has reached (or surpassed) the threshold to be shown
+			if CurrentCombo >= ShowComboAt then
 				-- so, display the AF
 				self:visible( true )
+			end
 
+			if (param.misses and PreviousComboType == "Combo") or (param.combo and PreviousComboType == "Misses") then
 				if param.Combo then
 
 					kids.Label:settext( "Combo" )
@@ -43,6 +45,7 @@ else
 					kids.Label:settext( "Misses" )
 					kids.Number:stopeffect()
 				end
+				PreviousComboType = (param.misses and "Misses") or "Combo"
 			end
 
 			kids.Number:zoom( scale( CurrentCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom ) )
