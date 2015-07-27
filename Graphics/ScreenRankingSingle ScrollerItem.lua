@@ -78,7 +78,7 @@ for key, difficulty in ipairs(DifficultiesToShow) do
 	HighScore[#HighScore+1] = Def.BitmapText{
 		Font="_misoreg hires",
 		Name="HighScore_"..difficulty,
-		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; y,-8; zoom,0.8; horizalign, center)
+		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; zoom,0.8; horizalign, center)
 	}
 
 end
