@@ -1,4 +1,4 @@
-local t = Def.ActorFrame{
+local HighScoreRow = Def.ActorFrame{
 	-- setting ztest to true allows masking
 	InitCommand=cmd(ztest, true),
 
@@ -8,7 +8,7 @@ local t = Def.ActorFrame{
 	},
 
 	Def.Banner{
-		InitCommand=cmd(x,WideScale(-280,-320); halign,0; scaletoclipped,128,40; diffusealpha,0.2 ),
+		InitCommand=cmd(x,WideScale(-280,-320); halign,0; scaletoclipped,102,40; diffusealpha,0.2 ),
 		SetCommand=function(self, params)
 			if params.Song and params.Song:GetBannerPath() then
 				self:LoadFromCachedBanner( params.Song:GetBannerPath() )
@@ -27,9 +27,7 @@ local t = Def.ActorFrame{
 	}
 }
 
-
-
-local profile = PROFILEMAN:GetMachineProfile()
+local MachineProfile = PROFILEMAN:GetMachineProfile()
 
 -- How many difficulties do we want this ranking screen to show?  Defer to the Metrics.
 local NumDifficulties = THEME:GetMetric("ScreenRankingSingle", "NumColumns")
@@ -42,22 +40,29 @@ for i=1,NumDifficulties do
 	DifficultiesToShow[#DifficultiesToShow+1] = ToEnumShortString(THEME:GetMetric("ScreenRankingSingle", "ColumnDifficulty"..i))
 end
 
-local Scores = Def.ActorFrame{
+local HighScore = Def.ActorFrame{
 	SetCommand=function(self, params)
 		if not params.Song then return end
 
-		for i, steps in pairs(params.Entries) do
-			if profile and steps then
-				local hsl = profile:GetHighScoreList(params.Song, steps)
-				local HighScores = hsl and hsl:GetHighScores()
+		for index, steps in pairs(params.Entries) do
+			if MachineProfile and steps then
+
+				local hsl = MachineProfile:GetHighScoreList(params.Song, steps)
+
+				-- hsl:GetHighScores() will return a table of HighScore objects ordered like {score#1, score#2, ...}
+				-- we're only interested in the best score per difficulty per song, so we want hsl:GetHighScores()[1]
+				local top_score = (hsl and (#hsl:GetHighScores() > 1)) and hsl:GetHighScores()[1]
 				local difficulty = ToEnumShortString(steps:GetDifficulty())
 
-				if HighScores and #HighScores > 0 then
-					self:GetChild("HighScoreName_"..difficulty.."_"..i):settext( HighScores[1]:GetName() )
-					self:GetChild("HighScore_"..difficulty.."_"..i):settext( FormatPercentScore( HighScores[1]:GetPercentDP() ) )
+				if top_score then
+
+					local text =  top_score:GetName() .. "\n" .. FormatPercentScore( top_score:GetPercentDP() )
+					self:GetChild("HighScore_"..difficulty):settext( text )
+
 				else
-					self:GetChild("HighScoreName_"..difficulty.."_"..i):settext( "-----" )
-					self:GetChild("HighScore_"..difficulty.."_"..i):settext( FormatPercentScore( 0 ) )
+					-- if there's no top_score for this particular difficulty of this particular chart
+					-- hibernate the BitmapText actor to prevent it from being drawn and maybe mitigate framerate issues
+					self:GetChild("HighScoreName_"..difficulty.."_"..index):hibernate( 100 )
 				end
 			end
 		end
@@ -66,22 +71,21 @@ local Scores = Def.ActorFrame{
 
 -- Add a name and score for each difficulty we are interested in
 -- These won't have actual text values assigned to them until the
--- cumbersome SetCommand below...
-for key, difficulty in pairs(DifficultiesToShow) do
+-- cumbersome SetCommand applied to the parent AF above...
+for key, difficulty in ipairs(DifficultiesToShow) do
 
-	-- the high score name
-	Scores[#Scores+1] = LoadFont("_misoreg hires")..{
-		Name="HighScoreName_"..difficulty.."_"..key,
-		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; y,-8; zoom,0.8)
+	-- BitmapText actor for the name of the player and the high score itself
+	HighScore[#HighScore+1] = Def.BitmapText{
+		Font="_misoreg hires",
+		Name="HighScore_"..difficulty,
+		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; y,-8; zoom,0.8; horizalign, center)
 	}
 
-	-- the high score
-	Scores[#Scores+1] = LoadFont("_misoreg hires")..{
-		Name="HighScore_"..difficulty.."_"..key,
-		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; y,12; zoom,0.8)
-	}
 end
 
-t[#t+1] = Scores
 
-return t
+-- add the HighScore to the primary AF
+HighScoreRow[#HighScoreRow+1] = HighScore
+
+-- return the primary AF
+return HighScoreRow
