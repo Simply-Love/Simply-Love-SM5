@@ -62,7 +62,7 @@ local HighScore = Def.ActorFrame{
 				else
 					-- if there's no top_score for this particular difficulty of this particular chart
 					-- hibernate the BitmapText actor to prevent it from being drawn and maybe mitigate framerate issues
-					self:GetChild("HighScoreName_"..difficulty.."_"..index):hibernate( 100 )
+					self:GetChild("HighScore_"..difficulty):hibernate( 100 )
 				end
 			end
 		end
