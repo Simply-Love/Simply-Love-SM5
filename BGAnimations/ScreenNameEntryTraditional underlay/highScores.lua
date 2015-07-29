@@ -126,7 +126,7 @@ for i=numStages,1,-1 do
 					if s == index then
 						self:diffuseshift()
 						self:effectperiod(durationPerSong/3)
-						self:effectcolor1(GetHexColor((SimplyLoveColor() - 4)%12 + 1))
+						self:effectcolor1(GetHexColor((SL.Global.ActiveColorIndex - 4)%12 + 1))
 						self:effectcolor2(Color.White)
 					end
 				end,

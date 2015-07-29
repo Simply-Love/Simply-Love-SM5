@@ -7,7 +7,7 @@ return Def.ActorFrame{
 		InitCommand=function(self)
 			self:y( _screen.cy + 151 )
 
-			local ColorIndex = player == PLAYER_1 and (SimplyLoveColor()-1)%12+1 or (SimplyLoveColor()+1)%12+1
+			local ColorIndex = player == PLAYER_1 and (SL.Global.ActiveColorIndex-1)%12+1 or (SL.Global.ActiveColorIndex+1)%12+1
 			self:Load("GraphDisplay" .. ColorIndex )
 
 			local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)

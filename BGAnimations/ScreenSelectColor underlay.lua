@@ -123,7 +123,7 @@ local wheel_item_mt = {
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		wheel:set_info_set(SL.Colors, SimplyLoveColor() )
+		wheel:set_info_set(SL.Colors, SL.Global.ActiveColorIndex)
 		self:queuecommand("Capture")
 		self:GetChild("ColorWheel"):SetDrawByZPosition(true)
 	end,
@@ -148,7 +148,10 @@ local t = Def.ActorFrame{
 	end,
 	FinishCommand=function(self)
 		self:GetChild("start_sound"):play()
-		SetSimplyLoveColor( FindInTable( wheel:get_info_at_focus_pos(), SL.Colors ) )
+
+		SL.Global.ActiveColorIndex = FindInTable( wheel:get_info_at_focus_pos(), SL.Colors )
+		MESSAGEMAN:Broadcast("ColorSelected")
+
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,

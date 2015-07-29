@@ -32,6 +32,9 @@ local PlayerDefaults = {
 
 local GlobalDefaults = {
 	__index = {
+
+		-- since the initialize() function is run every game cycle, the idea
+		-- is to define variables we want to reset every game cycle inside
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
@@ -47,11 +50,15 @@ local GlobalDefaults = {
 				PlayerOptions = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay"
 			}
-			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed")
+			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.Gamestate = {
 				Style = "single"
 			}
 		end,
+
+		-- This won't be reset each game cycle,
+		-- but is rather to be updated (maybe) on ScreenSelectColor
+		ActiveColorIndex = ThemePrefs.Get("SimplyLoveColor") or 1,
 
 		-- This will be assigned value only once, upon starting StepMania, and should NOT be
 		-- reset each game cycle. Instead, we'll use this to check if the TimingWindowScale

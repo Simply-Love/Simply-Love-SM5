@@ -5,6 +5,6 @@ return LoadFont("_wendy small") .. {
 	OffCommand=cmd(stoptweening;accelerate,0.3;diffusealpha,0;queuecommand,"Hide");
 	HideCommand=cmd(visible,false);
 
-	GainFocusCommand=cmd(diffuseshift;effectcolor1,GetHexColor((SimplyLoveColor()-1)%12);effectcolor2,GetHexColor((SimplyLoveColor()+1)%12););
+	GainFocusCommand=cmd(diffuseshift;effectcolor1,GetHexColor((SL.Global.ActiveColorIndex-1)%12);effectcolor2,GetHexColor((SL.Global.ActiveColorIndex+1)%12););
 	LoseFocusCommand=cmd(stopeffect);
 };

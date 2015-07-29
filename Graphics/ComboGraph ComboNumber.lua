@@ -1,5 +1,5 @@
 local textcolor = "#FFFFFF";
-if SimplyLoveColor() > 5 then
+if SL.Global.ActiveColorIndex > 5 then
 	textcolor = "#1E282F";
 end
 

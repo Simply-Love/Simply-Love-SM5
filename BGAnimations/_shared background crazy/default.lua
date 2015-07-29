@@ -1,4 +1,4 @@
-local file = THEME:GetPathB("", "_shared background normal/loveheart.png");
+local file = THEME:GetPathB("", "_shared background normal/loveheart.png")
 
 local t = Def.ActorFrame {
 	OnCommand=cmd(Center;bob;effectmagnitude,0,50,0;effectperiod,8);

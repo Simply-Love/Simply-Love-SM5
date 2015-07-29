@@ -1,4 +1,4 @@
-local slc = SimplyLoveColor()
+local slc = SL.Global.ActiveColorIndex
 local arrowData = {
 	sleep = {0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9},
 	xPos = {-150, -100, -50, 0, 50, 100, 150},

@@ -18,7 +18,7 @@ return Def.ActorFrame{
 	},
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner" .. SimplyLoveColor() .. " (doubleres).png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 
