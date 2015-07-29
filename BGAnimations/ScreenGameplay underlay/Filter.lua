@@ -12,7 +12,7 @@ local fallbackColor = color("0,0,0,0.75")
 local function InitFilter()
 	pName = pname(Player)
 
-	local darkness = SL[pName].ActiveModifiers.ScreenFilter
+	local darkness = SL[pName].ActiveModifiers.BackgroundFilter
 	if darkness == "Dark" then
 		filterColor = color("#00000099")
 	elseif darkness == "Darker" then

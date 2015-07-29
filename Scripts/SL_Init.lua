@@ -6,7 +6,7 @@ local PlayerDefaults = {
 			self.ActiveModifiers = {
 				JudgmentGraphic = "Love",
 				Mini = "Normal",
-				ScreenFilter = "Off",
+				BackgroundFilter = "Off",
 				SpeedModType = "x",
 				SpeedMod = 1.00,
 				Vocalization = "None",
@@ -105,3 +105,6 @@ function InitializeSimplyLove()
 		PREFSMAN:SetPreference("TimingWindowScale", SL.Global.InitialTimingWindowScale)
 	end
 end
+
+-- TODO: remove this; it's for debugging purposes (Control+F2 to reload scripts) only
+InitializeSimplyLove()
