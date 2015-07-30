@@ -69,7 +69,7 @@ else
 
 			else
 				-- miss (red) combo
-				kids.Number:diffuse( Color.Red )
+				kids.Number:stopeffect():diffuse( Color.Red )
 			end
 		end,
 
