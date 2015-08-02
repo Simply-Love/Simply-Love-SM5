@@ -73,13 +73,14 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Mini = {
 		Choices = function()
-			local mini = { "Normal" }
-			-- choices from 5 to 150 in increments of 5
-			-- ( notes become literally impossible to see around 175% mini )
-			for i=5,150,5 do
-				mini[#mini+1] = tostring(i) .. "%"
-			end
-			return mini
+
+			local first	= 0
+			local last 	= 150
+			local step 	= 5
+
+			local rates = stringify( range(first, last, step), "%g%%")
+			rates[1] = "Normal"
+			return rates
 		end,
 		SaveSelections = function(self, list, pn)
 			local sSave
@@ -97,16 +98,16 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MusicRate = {
 		Choices = function()
-			local musicrate = {}
-			for i=0.5,2.1,0.1 do
-				musicrate[#musicrate+1] = string.format("%.1f",i)
-			end
-			return musicrate
+			local first	= 0.5
+			local last 	= 2
+			local step 	= 0.05
+
+			return stringify( range(first, last, step), "%g")
 		end,
 		ExportOnChange = true,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
-			local rate = string.format("%.1f", SL.Global.ActiveModifiers.MusicRate)
+			local rate = ("%.2g"):format( SL.Global.ActiveModifiers.MusicRate )
 			local i = FindInTable(rate, self.Choices) or 1
 			list[i] = true
 		end,
