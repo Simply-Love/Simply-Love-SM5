@@ -1,10 +1,9 @@
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -- Utility Functions For Development
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--- local helper functions first
--- the handful of global utility functions below will depend on these
+-- define helper functions local to this file first
+-- global utility functions (below) will depend on these
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 -- TableToString_Recursive() function via:
 -- http://www.hpelbers.org/lua/print_r
@@ -47,9 +46,13 @@ end
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -- GLOBAL UTILITY FUNCTIONS
 -- use these to assist in theming/scripting efforts
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
--- shorthand for SystemMessage()
--- displays tables recursively until the message spills off the screen
+-- SM()
+-- Shorthand for SCREENMAN:SystemMessage(), this is useful for
+-- rapid iterative testing by allowing us to print variables to the screen.
+-- If passed a table, SM() will use the recursive TableToString (from above)
+-- to display children recursively until the SystemMessage spills off the screen.
 function SM( arg )
 	if type( arg ) == "table" then
 		SCREENMAN:SystemMessage( TableToString_Recursive(arg) )
@@ -57,6 +60,55 @@ function SM( arg )
 		SCREENMAN:SystemMessage( tostring(arg) )
 	end
 end
+
+
+-- range() generator via:
+-- http://lua-users.org/wiki/RangeIterator (update #3)
+-- The version here is a slight deviation from the one found at that URL.
+-- This one allows decimal increments good to 3 places.
+--
+-- range(start)             	returns an iterator from 1 to a (step = 1)
+-- range(start, stop)       	returns an iterator from a to b (step = 1)
+-- range(start, stop, step) 	returns an iterator from a to b, counting by step.
+function range(start, stop, step)
+	if start == nil then return end
+
+	if not stop then
+		stop = start
+		start  = stop == 0 and 0 or (stop > 0 and 1 or -1)
+	end
+
+	step = step or (start < stop and 1 or -1)
+
+	-- step back (once) before we start
+	start = start - step
+
+	return function()
+		-- Attempting to discern equivalence on floating points
+		-- is an exercise in futility.  Do a little fudging here
+		-- to only ascertain equivalence to 3 decimal places.
+		if ("%.0f"):format(start*10^3) == ("%.0f"):format(stop*10^3) then
+			return nil
+		end
+
+		start = start + step
+		return start, start
+	end
+end
+
+-- stringify() accepts an indexed table, applies tostring() to each element,
+-- and returns the results.  sprintf style format can be provided via an
+-- optional second argument.
+function stringify( tbl, form )
+	if not tbl then return end
+
+	local t = {}
+	for i in tbl do
+		t[#t+1] = ( form and form:format(i) ) or tostring(i)
+	end
+	return t
+end
+
 
 function FindInTable(needle, haystack)
 	for i = 1, #haystack do
