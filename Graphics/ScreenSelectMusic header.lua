@@ -62,22 +62,22 @@ local t = Def.ActorFrame{
 
 
 	Def.Quad{
-		InitCommand=cmd(x,_screen.cx; zoomto,_screen.w,40; diffuse,color("0.65,0.65,0.65,1"))
+		InitCommand=cmd(zoomto, _screen.w, 32; vertalign, top; diffuse,0.65,0.65,0.65,1; x, _screen.cx),
 	},
 
 	LoadFont("_wendy small") .. {
 		Name="HeaderText",
-		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,16; horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText")),
-		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
-		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
+		InitCommand=cmd(zoom,WideScale(0.5, 0.6); xy, 10, 15;  horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText")),
+		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
+		OffCommand=cmd(accelerate,0.33; diffusealpha,0)
 	},
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",
-		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); x,_screen.cx ),
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, 15 ),
 		TextCommand=cmd(settext, StageText),
-		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
-		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
+		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
+		OffCommand=cmd(accelerate,0.33; diffusealpha,0)
 	}
 }
 

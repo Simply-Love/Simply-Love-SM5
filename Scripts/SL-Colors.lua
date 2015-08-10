@@ -7,19 +7,19 @@ end
 function GetHexColor( n )
 	if SL.Colors[n] then
 		return color(SL.Colors[n])
-	
+
 	-- if passed an index that returns nil, wrap the index using modulus
 	elseif SL.Colors[(n % #SL.Colors) + 1] then
 		return color( SL.Colors[(n % #SL.Colors) + 1] )
-		
+
 	end
-	
+
 	-- if we were passed nil or a non-integer, return white
 	return Color.White
 end
 
 
-function GetCurrentColor()	
+function GetCurrentColor()
 	return GetHexColor( SL.Global.ActiveColorIndex )
 end
 

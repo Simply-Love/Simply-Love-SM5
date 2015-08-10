@@ -18,9 +18,8 @@ end
 
 if not Branch then Branch = {} end
 
-function SelectMusicOrCourse()
-	local pm = GAMESTATE:GetPlayMode()
-	if pm == "PlayMode_Nonstop"	then
+Branch.AfterSelectStyle = function()
+	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
 		return "ScreenSelectCourseNonstop"
 	else
 		return "ScreenSelectMusic"
@@ -32,16 +31,6 @@ Branch.AfterGameplay = function()
 	local pm = GAMESTATE:GetPlayMode()
 	if( pm == "PlayMode_Regular" )	then return "ScreenEvaluationStage" end
 	if( pm == "PlayMode_Nonstop" )	then return "ScreenEvaluationNonstop" end
-end
-
--- Let's pretend I understand why this is necessary
-Branch.AfterScreenSelectPlayMode = function()
-	local gameName = GAMESTATE:GetCurrentGame():GetName()
-	if gameName=="techno" then
-		return "ScreenSelectStyleTechno"
-	else
-		return "ScreenSelectStyle"
-	end
 end
 
 Branch.PlayerOptions = function()

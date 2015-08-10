@@ -1,7 +1,4 @@
-return Def.ActorFrame{
+return Def.Quad{
 	Name="Footer",
-
-	Def.Quad{
-		InitCommand=cmd(zoomto,_screen.w,36; diffuse,color("0.65,0.65,0.65,1") )
-	}
+	InitCommand=cmd(zoomto, _screen.w, 32; vertalign, bottom; diffuse,color("0.65,0.65,0.65,1") )
 }
