@@ -10,7 +10,7 @@ local DurationPerStage = 4
 for player in ivalues(Players) do
 	if SL[ToEnumShortString(player)].HighScores.EnteringName then
 		-- Add one AlphabetWheel per human player
-		AlphabetWheels[ToEnumShortString(player)] = setmetatable({disable_wrapping = false}, sick_wheel_mt)
+		AlphabetWheels[ToEnumShortString(player)] = setmetatable({}, sick_wheel_mt)
 	end
 end
 ---------------------------------------------------------------------------

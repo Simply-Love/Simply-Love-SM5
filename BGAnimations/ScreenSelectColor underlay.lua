@@ -1,4 +1,4 @@
-local wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
+local wheel = setmetatable({}, sick_wheel_mt)
 
 -- a simple flag to determine if the color was actively selected by a player;
 -- we don't want the FinishCommand to double-trigger via the timer running out

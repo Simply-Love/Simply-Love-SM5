@@ -1,4 +1,4 @@
-local sort_wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
+local sort_wheel = setmetatable({}, sick_wheel_mt)
 local sort_orders = {
 	"Group",
 	"Title",
