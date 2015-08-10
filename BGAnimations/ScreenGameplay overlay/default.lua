@@ -1,6 +1,11 @@
 local Players = GAMESTATE:GetHumanPlayers()
 
 local t = Def.ActorFrame{
+	-- semi-transparent quad at the top of ScreenGameplay
+	Def.Quad{
+		InitCommand=cmd(diffuse,color("0,0,0,0.85"); zoomto, _screen.w, _screen.h/5;),
+		OnCommand=cmd(xy, _screen.w/2, _screen.h/12 - 10 )
+	},
 
 	-- thanks shake
 	Def.ActorFrame{
@@ -15,8 +20,6 @@ local t = Def.ActorFrame{
 
 		Border(_screen.w/2-10, 22, 2)
 	},
-
-
 
 	-- song info
 	Def.ActorFrame{
