@@ -72,38 +72,43 @@ function SM( arg )
 end
 
 
--- range() generator via:
--- http://lua-users.org/wiki/RangeIterator (update #3)
--- The version here is a slight deviation from the one found at that URL.
--- This one allows decimal increments good to 3 places.
---
--- range(start)             	returns an iterator from 1 to a (step = 1)
--- range(start, stop)       	returns an iterator from a to b (step = 1)
--- range(start, stop, step) 	returns an iterator from a to b, counting by step.
+-- range() accepts one, two, or three arguments and returns a table
+-- Example Usage:
+
+-- range(4)			--> {1, 2, 3, 4}
+-- range(4, 7)		--> {4, 5, 6, 7}
+-- range(5, 27, 5) 	--> {5, 10, 15, 20, 25}
+
+-- either of these are acceptable
+-- range(-1,-3, 0.5)	--> {-1, -1.5, -2, -2.5, -3 }
+-- range(-1,-3, -0.5)	--> {-1, -1.5, -2, -2.5, -3 }
+
+-- but this just doens't make sense and will return an empty table
+-- range(1, 3, -0.5)	--> {}
+
 function range(start, stop, step)
 	if start == nil then return end
 
 	if not stop then
 		stop = start
-		start  = stop == 0 and 0 or (stop > 0 and 1 or -1)
+		start = 1
 	end
 
 	step = step or (start < stop and 1 or -1)
 
-	-- step back (once) before we start
-	start = start - step
-
-	return function()
-		-- Attempting to discern equivalence on floating points
-		-- is an exercise in futility.  Do a little fudging here
-		-- to only ascertain equivalence to 3 decimal places.
-		if ("%.0f"):format(start*10^3) == ("%.0f"):format(stop*10^3) then
-			return nil
-		end
-
-		start = start + step
-		return start, start
+	-- if step has been explicitly provided as a positve number
+	-- but the start and stop values tell us to decrement
+	-- multiple step by -1 to allow decrementing to occur
+	if step > 0 and start > stop then
+		step = -1 * step
 	end
+
+	local t = {}
+	while start < stop+step do
+		t[#t+1] = start
+		start = start + step
+	end
+	return t
 end
 
 -- stringify() accepts an indexed table, applies tostring() to each element,
