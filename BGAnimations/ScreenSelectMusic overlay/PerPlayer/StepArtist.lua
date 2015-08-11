@@ -43,7 +43,7 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=cmd(zoomto, 175, _screen.h/28; x, 113),
+		InitCommand=cmd(zoomto, 175, _screen.h/28; x, 113; diffuse, DifficultyIndexColor(1) ),
 		StepsHaveChangedCommand=function(self)
 			local steps = GAMESTATE:GetCurrentSteps(player)
 			if steps then

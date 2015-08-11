@@ -1,6 +1,6 @@
 local t = Def.ActorFrame{
 
-	InitCommand=function(self)
+	OnCommand=function(self)
 		if IsUsingWideScreen() then
 			self:xy(_screen.cx - 173, _screen.cy - 28)
 		else

@@ -4,42 +4,29 @@ local t = Def.ActorFrame{
 	end
 }
 
--- - - - - - - - - - - - - - - - - - - - - - - -
--- Shard screen elements
+-- Each file the code for a  particular screen element.
+-- I've made this table ordered so that I can specificy 
+-- a desired draworder later below.
 
--- make the MusicWheel appear to cascade down
-t[#t+1] = LoadActor("MusicWheelAnimation.lua")
+local files = {
+	-- make the MusicWheel appear to cascade down
+	"./MusicWheelAnimation.lua",
+	-- Apply player modifiers from profile
+	"./PlayerModifiers.lua",
+	-- Graphical Banner
+	"./Banner.lua",
+	-- Song Artist, BPM, Duration (Referred to in other themes as "PaneDisplay")
+	"./SongDescription.lua",
+	-- Difficulty Blocks
+	"./StepsDisplayList/Grid.lua",
+	-- a folder of Lua files to be loaded twice (once for each player)
+	"./PerPlayer"
+}
 
--- Apply player modifiers from profile
-t[#t+1] = LoadActor("PlayerModifiers.lua")
-
--- Banner
-t[#t+1] = LoadActor("Banner.lua")
-
--- Song Description (Artist, BPM, Duration)
-t[#t+1] = LoadActor("SongDescription.lua")
-
--- Difficulty Blocks
-t[#t+1] = LoadActor("StepsDisplayList/Grid.lua")
-
-
--- - - - - - - - - - - - - - - - - - - - - - - -
--- Per-player screen elements
-
-for player in ivalues({PLAYER_1, PLAYER_2}) do
-
-	-- StepArtist Box
-	t[#t+1] = LoadActor("StepArtist.lua", player)
-
-	-- bouncing Cursor inside the Grid of difficulty blocks
-	t[#t+1] = LoadActor("PerPlayer/Cursor.lua", player)
-
-	-- Step Data (Number of steps, jumps, holds, etc.)
-	t[#t+1] = LoadActor("PerPlayer/PaneDisplay.lua", player)
+for index, file in ipairs(files) do
+	t[#t+1] = LoadActor(file)..{ 
+		InitCommand=cmd(draworder, index)
+	}
 end
--- - - - - - - - - - - - - - - - - - - - - - - -
-
--- the fadeout that informs users to press START if they want options
-t[#t+1] = LoadActor("fadeOut.lua")
 
 return t
