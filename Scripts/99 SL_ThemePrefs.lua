@@ -6,6 +6,44 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { true, false }
 	},
+	NumberOfContinuesAllowed =
+	{
+		Default = 0,
+		Choices = { 0,1,2,3,4,5,6,7,8,9 },
+		Values = { 0,1,2,3,4,5,6,7,8,9 }
+	},
+
+
+	HideStockNoteSkins =
+	{
+		Default = false,
+		Choices = { "Hide", "Show" },
+		Values 	= { true, false }
+	},
+	MusicWheelStyle =
+	{
+		Default = "ITG",
+		Choices = { "ITG", "IIDX" }
+	},
+	AllowDanceSolo =
+	{
+		Default = false,
+		Choices = { "Yes", "No" },
+		Values 	= { true, false }
+	},
+
+	-- - - - - - - - - - - - - - - - - - - -
+	-- SimplyLoveColor saves the theme color for the next time
+	-- the StepMania application is started.
+	SimplyLoveColor =
+	{
+		-- a nice pinkish-purple, by default
+		Default = 3,
+		Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
+		Values = { 1,2,3,4,5,6,7,8,9,10,11,12 }
+	},
+	-- - - - - - - - - - - - - - - - - - - -
+	-- Enable/Disable Certain Screens
 	AllowScreenEvalSummary =
 	{
 		Default = true,
@@ -21,30 +59,6 @@ local SL_CustomPrefs =
 	AllowScreenNameEntry =
 	{
 		Default = true,
-		Choices = { "Yes", "No" },
-		Values 	= { true, false }
-	},
-	NumberOfContinuesAllowed =
-	{
-		Default = 0,
-		Choices = { 0,1,2,3,4,5,6,7,8,9 },
-		Values = { 0,1,2,3,4,5,6,7,8,9 }
-	},
-	SimplyLoveColor =
-	{
-		-- a nice pinkish-purple, by default
-		Default = 3,
-		Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
-		Values = { 1,2,3,4,5,6,7,8,9,10,11,12 }
-	},
-	MusicWheelStyle =
-	{
-		Default = "ITG",
-		Choices = { "ITG", "IIDX" }
-	},
-	AllowDanceSolo =
-	{
-		Default = false,
 		Choices = { "Yes", "No" },
 		Values 	= { true, false }
 	},

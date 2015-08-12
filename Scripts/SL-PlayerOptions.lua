@@ -27,6 +27,45 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	NoteSkin = {
+		Choices = function()
+
+			local all = NOTESKIN:GetNoteSkinNames()
+
+			if ThemePrefs.Get("HideStockNoteSkins") then
+
+				-- Apologies, midiman. :(
+				local stock = {
+					"default", "delta", "easyv2", "exactv2", "midi-note",
+					"midi-note-3d", "midi-routine-p1", "midi-routine-p2",
+					"midi-solo", "midi-vivid", "midi-vivid-3d", "retro",
+					"retrobar", "retrobar-splithand_whiteblue"
+				}
+
+				for stock_noteskin in ivalues(stock) do
+					for i=1,#all do
+						if stock_noteskin == all[i] then
+							table.remove(all, i)
+							break
+						end
+					end
+				end
+			end
+
+			return all
+		end,
+		SaveSelections = function(self, list, pn)
+			local choice
+			local modslevel = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+			for i=1,#list do
+				if list[i] then
+					modslevel:NoteSkin( self.Choices[i] )
+				end
+			end
+			modslevel:NoteSkin()
+		end
+	},
+	-------------------------------------------------------------------------
 	JudgmentGraphic = {
 		Choices = function()
 
@@ -246,7 +285,7 @@ local OptionRowDefault = {
 			self.Name = name
 			self.Choices = Overrides[name]:Choices()
 
-			-- if an override isn't specified define fallback values to use here
+			-- define fallback values to use here if an override isn't specified
 			self.LayoutType = Overrides[name].LayoutType or "ShowAllInRow"
 			self.SelectType = Overrides[name].SelectType or "SelectOne"
 			self.OneChoiceForAllPlayers = Overrides[name].OneChoiceForAllPlayers or false
