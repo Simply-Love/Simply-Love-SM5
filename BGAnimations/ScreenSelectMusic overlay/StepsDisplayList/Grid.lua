@@ -90,6 +90,7 @@ for RowNumber=1,GridRows do
 		Name="Blocks_"..RowNumber,
 		Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
+		InitCommand=cmd(diffusealpha,0),
 		OnCommand=function(self)
 			local width = self:GetWidth()
 			local height= self:GetHeight()

@@ -89,8 +89,10 @@ return Def.Sprite{
 
 			-- update cursor y position
 			local sdl = self:GetParent():GetParent():GetChild("StepsDisplayList")
-			local grid = sdl:GetChild("Grid")
-			self:y(sdl:GetY() + grid:GetY() + grid:GetChild("Blocks_"..RowIndex):GetY() )
+			if sdl then
+				local grid = sdl:GetChild("Grid")
+				self:y(sdl:GetY() + grid:GetY() + grid:GetChild("Blocks_"..RowIndex):GetY() )
+			end
 		end
 	end
 }
