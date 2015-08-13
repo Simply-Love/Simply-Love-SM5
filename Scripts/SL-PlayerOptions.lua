@@ -58,15 +58,16 @@ local Overrides = {
 
 			return all
 		end,
+
 		SaveSelections = function(self, list, pn)
 			local choice
 			local modslevel = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
 			for i=1,#list do
 				if list[i] then
 					modslevel:NoteSkin( self.Choices[i] )
+					SL[ToEnumShortString(pn)].ActiveModifiers.NoteSkin = self.Choices[i]
 				end
 			end
-			modslevel:NoteSkin()
 		end
 	},
 	-------------------------------------------------------------------------

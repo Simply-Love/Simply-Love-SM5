@@ -10,6 +10,7 @@ local PlayerDefaults = {
 				SpeedModType = "x",
 				SpeedMod = 1.00,
 				Vocalization = "None",
+				Noteskin = nil,
 				HideTargets = false,
 				HideSongBG = false,
 				HideCombo = false,
