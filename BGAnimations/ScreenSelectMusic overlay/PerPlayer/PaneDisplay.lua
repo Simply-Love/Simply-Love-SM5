@@ -229,16 +229,15 @@ end
 -- chart difficulty meter
 pd[#pd+1] = Def.BitmapText{
 	Font="_wendy small",
+	Name="DifficultyMeter",
 	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
 	SetCommand=function(self)
-		local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
-
-		if steps then
-			if steps:GetMeter() then
-				self:settext(steps:GetMeter())
-			end
+		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		if not song then
+			self:settext("")
 		else
-			self:settext("?")
+			local steps = GAMESTATE:GetCurrentSteps(player)
+			self:settext( steps and steps:GetMeter() or  "?" )
 		end
 	end
 }
