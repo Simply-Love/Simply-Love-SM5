@@ -55,25 +55,28 @@ local t = Def.ActorFrame {
 
 		-- frame check; actually relevant now.
 		local iNumStates = judgmentSet:GetNumStates()
-		local iFrame = TNSFrames[ param.TapNoteScore ]
-		if not iFrame then return end
+		local frame = TNSFrames[ param.TapNoteScore ]
+		if not frame then return end
 		if iNumStates == 12 then
-			iFrame = iFrame * 2
+			frame = frame * 2
 			if not param.Early then
-				iFrame = iFrame + 1
+				frame = frame + 1
 			end
 		end
 		self:playcommand("Reset")
 
 		-- begin commands
 		judgmentSet:visible( true )
-		judgmentSet:setstate( iFrame )
+		judgmentSet:setstate( frame )
 
-		if iFrame == 0 then
+		-- frame0 is like (-fantastic)
+		-- frame1 is like (fantastic-)
+		if frame == 0 or frame == 1 then
 			judgmentSet:zoom(0.85)
 		else
 			judgmentSet:zoom(0.9)
 		end
+	
 
 		judgmentSet:decelerate(0.1)
 		judgmentSet:zoom(0.8)
