@@ -90,6 +90,30 @@ PaneItems[THEME:GetString("RadarCategory","Rolls")] = {
 }
 
 
+local GetNameAndScore = function(profile)
+	local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+	local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+	local score = ""
+	local name = ""
+
+	if profile and song and steps then
+		local scorelist = profile:GetHighScoreList(song,steps)
+		local scores = scorelist:GetHighScores()
+		local topscore = scores[1]
+
+		if topscore then
+			score = string.format("%.2f%%", topscore:GetPercentDP()*100.0)
+			name = topscore:GetName()
+		else
+			score = string.format("%.2f%%", 0)
+			name = "????"
+		end
+	end
+
+	return score, name
+end
+
+
 local pd = Def.ActorFrame{
 	Name="PaneDisplay"..ToEnumShortString(player),
 
@@ -125,19 +149,32 @@ local pd = Def.ActorFrame{
 	OnCommand=cmd(queuecommand,"Set"),
 	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set"),
 	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"),
-	StepsHaveChangedCommand=cmd(queuecommand,"Set")
+	StepsHaveChangedCommand=cmd(queuecommand,"Set"),
+	SetCommand=function(self)
+		local machine_score, machine_name = GetNameAndScore( PROFILEMAN:GetMachineProfile() )
+		self:GetChild("MachineHighScore"):settext(machine_score)
+		self:GetChild("MachineHighScoreName"):settext(machine_name)
+
+		if PROFILEMAN:IsPersistentProfile(player) then
+			local player_score, plater_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
+			self:GetChild("PlayerHighScore"):settext(player_score)
+			self:GetChild("PlayerHighScoreName"):settext(player_name)
+		end
+	end
 }
 
 -- colored background for chart statistics
 pd[#pd+1] = Def.Quad{
 	Name="BackgroundQuad",
-	InitCommand=cmd(diffuse, PlayerColor(player); zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33 ),
+	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33; queuecommand, "Set" ),
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
 			local steps = GAMESTATE:GetCurrentSteps(player)
 			if steps then
 				local difficulty = steps:GetDifficulty()
 				self:diffuse( DifficultyColor(difficulty) )
+			else
+				self:diffuse( PlayerColor(player) )
 			end
 		end
 	end
@@ -190,177 +227,49 @@ for key, item in pairs(PaneItems) do
 end
 
 -- chart difficulty meter
-pd[#pd+1] = LoadFont("_wendy small")..{
-	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65),
-	OnCommand=cmd(playcommand, "Set"),
+pd[#pd+1] = Def.BitmapText{
+	Font="_wendy small",
+	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
 	SetCommand=function(self)
 		local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 
 		if steps then
 			if steps:GetMeter() then
-				self:settext(steps:GetMeter());
+				self:settext(steps:GetMeter())
 			end
-		end
-
-		local song = GAMESTATE:GetCurrentSong();
-		local course = GAMESTATE:GetCurrentCourse();
-
-		if not(song or course) then
+		else
 			self:settext("?")
 		end
 	end
 }
 
 --MACHINE high score
-pd[#pd+1] = LoadFont("_misoreg hires")..{
-
-	InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1 ),
-	SetCommand=function(self)
-		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-		local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
-
-		local text = ""
-		local profile, scorelist
-
-		if song then
-			if steps then
-				profile = PROFILEMAN:GetMachineProfile()
-				scorelist = profile:GetHighScoreList(song,steps)
-				local scores = scorelist:GetHighScores()
-				local topscore = scores[1]
-
-				if not topscore then
-					text = string.format("%.2f%%", 0)
-				else
-					text = string.format("%.2f%%", topscore:GetPercentDP()*100.0)
-				end
-			else
-				text = string.format("%.2f%%", 0)
-			end
-		else
-			text = "?"
-		end
-
-		self:settext( text )
-	end
+pd[#pd+1] = Def.BitmapText{
+	Font="_misoreg hires",
+	Name="MachineHighScore",
+	InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
 }
-
 
 --MACHINE highscore name
-pd[#pd+1] = LoadFont("_misoreg hires")..{
-
-	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60),
-	SetCommand=function(self)
-		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-		local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
-		local text = ""
-
-		if song then
-			if steps then
-				local profile, name, scores, topscore, scorelist
-
-				profile = PROFILEMAN:GetMachineProfile()
-				scorelist = profile:GetHighScoreList(song,steps)
-				scores = scorelist:GetHighScores()
-				topscore = scores[1]
-
-				if topscore then
-					name = topscore:GetName()
-				end
-
-				text = name or "????"
-				if text == "" then text = "----" end
-			else
-				text = "????"
-			end
-		else
-			text = "????"
-		end
-		self:settext( text )
-	end
+pd[#pd+1] = Def.BitmapText{
+	Font="_misoreg hires",
+	Name="MachineHighScoreName",
+	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60)
 }
-
-
 
 
 --PLAYER PROFILE high score
-pd[#pd+1] = LoadFont("_misoreg hires")..{
-
-	InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 1 ),
-	SetCommand=function(self)
-
-		if PROFILEMAN:IsPersistentProfile(player) then
-
-			local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-			local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
-
-			local text = ""
-
-			if song then
-				if steps then
-					local profile = PROFILEMAN:GetProfile(player)
-					local scorelist = profile:GetHighScoreList(song,steps)
-					local scores = scorelist:GetHighScores()
-					local topscore = scores[1]
-
-					if not topscore then
-						text = string.format("%.2f%%", 0)
-					else
-						text = string.format("%.2f%%", topscore:GetPercentDP()*100.0)
-					end
-				else
-					text = string.format("%.2f%%", 0)
-				end
-			else
-				text = "?"
-			end
-
-			self:settext( text )
-		else
-			self:visible(false)
-		end
-	end
+pd[#pd+1] = Def.BitmapText{
+	Font="_misoreg hires",
+	Name="PlayerHighScore",
+	InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
 }
 
-
 --PLAYER PROFILE highscore name
-pd[#pd+1] = LoadFont("_misoreg hires")..{
-
-	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1),
-	SetCommand=function(self)
-
-		if PROFILEMAN:IsPersistentProfile(player) then
-
-			local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-			local steps = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
-
-			local text = ""
-
-			if song then
-				if steps then
-					local profile = PROFILEMAN:GetProfile(player)
-					local scorelist = profile:GetHighScoreList(song,steps)
-					local scores = scorelist:GetHighScores()
-					local topscore = scores[1]
-
-					if topscore then
-						name = topscore:GetName()
-					end
-
-					text = name or "????"
-					if text == "" then text = "----" end
-				else
-					text = "????"
-				end
-			else
-				text = "????"
-			end
-
-			self:settext( text )
-		else
-			self:visible(false)
-		end
-	end
+pd[#pd+1] = Def.BitmapText{
+	Font="_misoreg hires",
+	Name="PlayerHighScoreName",
+	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1)
 }
 
 return pd
