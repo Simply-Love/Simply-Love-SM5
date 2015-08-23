@@ -1,12 +1,12 @@
 local GridColumns = 20
 local GridRows = 5
-local GridZoomX = IsUsingWideScreen() and 0.435 or 0.3
+local GridZoomX = IsUsingWideScreen() and 0.435 or 0.39
 local BlockZoomY = 0.275
 local StepsToDisplay, SongOrCourse, StepsOrTrails
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=cmd(vertalign, top; draworder, 2; xy, _screen.cx-173, _screen.cy + 70),
+	InitCommand=cmd(vertalign, top; draworder, 2; xy, _screen.cx-170, _screen.cy + 70),
 	-- - - - - - - - - - - - - -
 
 	OnCommand=cmd(queuecommand, "RedrawStepsDisplay"),
@@ -127,7 +127,7 @@ for RowNumber=1,GridRows do
 			local height = self:GetParent():GetChild("Blocks_"..RowNumber):GetHeight()
 			self:horizalign(right)
 			self:y(RowNumber * height * BlockZoomY)
-			self:x( -140 )
+			self:x( IsUsingWideScreen() and -140 or -126 )
 			self:zoom(0.3)
 		end,
 		SetCommand=function(self, params)

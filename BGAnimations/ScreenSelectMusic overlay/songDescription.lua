@@ -2,9 +2,9 @@ local t = Def.ActorFrame{
 
 	OnCommand=function(self)
 		if IsUsingWideScreen() then
-			self:xy(_screen.cx - 173, _screen.cy - 28)
+			self:xy(_screen.cx - 170, _screen.cy - 28)
 		else
-			self:xy(_screen.cx - 163, _screen.cy - 28)
+			self:xy(_screen.cx - 165, _screen.cy - 28)
 		end
 	end,
 
@@ -22,11 +22,8 @@ local t = Def.ActorFrame{
 		Def.Quad{
 			InitCommand=function(self)
 				self:diffuse(color("#1e282f"))
-				if IsUsingWideScreen() then
-					self:zoomto(320, _screen.h/10)
-				else
-					self:zoomto(310, _screen.h/10)
-				end
+				self:zoomtowidth( IsUsingWideScreen() and 320 or 310 )
+				self:zoomtoheight( 48 )
 			end
 		},
 

@@ -1,3 +1,5 @@
+local tweentime = 0.325
+
 return Def.ActorFrame{
 	InitCommand=function(self)
 		self:Center()
@@ -10,7 +12,7 @@ return Def.ActorFrame{
 			self:diffuse(0,0,0,0):FullScreen()
 		end,
 		OnCommand=function(self)
-			self:sleep(0.5):linear(0.5):diffusealpha(1)
+			self:sleep(tweentime):linear(tweentime):diffusealpha(1)
 		end
 	},
 
@@ -20,8 +22,8 @@ return Def.ActorFrame{
 			self:zoomto(_screen.w + 100,50):faderight(0.1):fadeleft(0.1):cropright(1)
 		end,
 		OnCommand=function(self)
-			self:linear(0.5):cropright(0):sleep(0.5)
-			self:linear(0.5):cropleft(1)
+			self:linear(tweentime):cropright(0):sleep(tweentime)
+			self:linear(tweentime):cropleft(1)
 			self:sleep(0.1):queuecommand("Load")
 		end,
 		LoadCommand=function(self)
