@@ -55,13 +55,13 @@ return Def.ActorFrame{
 
 	--STEPS label
 	Def.BitmapText{
-		Font="_misoreg hires",
+		Font="_miso",
 		OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, "STEPS")
 	},
 
 	--stepartist text
 	Def.BitmapText{
-		Font="_misoreg hires",
+		Font="_miso",
 		InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
 		StepsHaveChangedCommand=function(self)
 

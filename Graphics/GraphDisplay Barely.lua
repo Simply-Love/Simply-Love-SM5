@@ -4,7 +4,7 @@ return Def.ActorFrame{
 
 
 	Def.BitmapText{
-		Font="_misoreg hires",
+		Font="_miso",
 		Text="Barely!",
 		InitCommand=cmd(zoom, 0.75),
 	},

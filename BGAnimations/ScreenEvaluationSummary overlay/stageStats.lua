@@ -26,7 +26,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the title of the song
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350),
 		OnCommand=function(self)
 			if song then
@@ -36,7 +36,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the BPM(s) of the song
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350),
 		OnCommand=function(self)
 			if song then
@@ -127,7 +127,7 @@ for pn in ivalues(Players) do
 			}
 
 			-- stepartist
-			t[#t+1] = LoadFont("_misoreg hires")..{
+			t[#t+1] = LoadFont("_miso")..{
 				InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
 				OnCommand=function(self)
 					if stepartist then

@@ -33,7 +33,7 @@ return Def.ActorFrame{
 		InitCommand=cmd(diffuse,color("#1E282F"); zoomto, 300, 26)
 	},
 
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		Text=optionslist,
 		InitCommand=cmd(zoom,0.7; xy,-140,-5; horizalign,left; vertalign,top; vertspacing, -6; wrapwidthpixels, 290 / 0.7 )
 	}

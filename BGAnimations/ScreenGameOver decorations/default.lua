@@ -33,7 +33,7 @@ for pn in ivalues(Players) do
 	if PROFILEMAN:IsPersistentProfile(pn) then
 		t[#t+1] = LoadActor("PlayerStats", pn)
 	else
-		t[#t+1] = LoadFont("_misoreg hires")..{
+		t[#t+1] = LoadFont("_miso")..{
 			Text="No Card",
 			InitCommand=cmd(diffuse, PlayerColor(pn); y, 40),
 			OnCommand=function(self)

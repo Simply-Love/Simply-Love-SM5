@@ -32,7 +32,7 @@ t[#t+1] = Def.ActorFrame {
 		OffCommand=cmd(accelerate,0.3; zoomtoheight,0)
 	},
 
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		Text="theme by " .. THEME:GetThemeAuthor(),
 		InitCommand=cmd(diffuse,GetCurrentColor(); diffusealpha,0;),
 		OnCommand=cmd(sleep,3;linear,0.25;diffusealpha,1),

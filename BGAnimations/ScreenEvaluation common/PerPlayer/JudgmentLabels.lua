@@ -30,7 +30,7 @@ local t = Def.ActorFrame{
 
 --  labels: W1 ---> Miss
 for index, label in ipairs(TNSNames) do
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Text=label:upper(),
 		InitCommand=cmd(zoom,0.833; horizalign,right ),
 		BeginCommand=function(self)
@@ -42,7 +42,7 @@ end
 
 -- labels: holds, mines, hands, rolls
 for index, label in ipairs(RadarCategories) do
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Text=label,
 		InitCommand=cmd(NoStroke;zoom,0.833; horizalign,right ),
 		BeginCommand=function(self)

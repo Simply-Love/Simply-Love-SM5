@@ -190,12 +190,12 @@ for key, item in pairs(PaneItems) do
 		OnCommand=cmd(x, -_screen.w/20; y,6 ),
 
 		-- label
-		LoadFont("_misoreg hires")..{
+		LoadFont("_miso")..{
 			Text=key,
 			InitCommand=cmd(zoom, zoom_factor; xy, item.label.x, item.label.y; diffuse, Color.Black; shadowlength, 0.2; halign, 0)
 		},
 		--  numerical value
-		LoadFont("_misoreg hires")..{
+		LoadFont("_miso")..{
 			InitCommand=cmd(zoom, zoom_factor; xy, item.data.x, item.data.y; diffuse, Color.Black; shadowlength, 0.2; halign, 1),
 			OnCommand=cmd(playcommand, "Set"),
 			SetCommand=function(self)
@@ -244,14 +244,14 @@ pd[#pd+1] = Def.BitmapText{
 
 --MACHINE high score
 pd[#pd+1] = Def.BitmapText{
-	Font="_misoreg hires",
+	Font="_miso",
 	Name="MachineHighScore",
 	InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
 }
 
 --MACHINE highscore name
 pd[#pd+1] = Def.BitmapText{
-	Font="_misoreg hires",
+	Font="_miso",
 	Name="MachineHighScoreName",
 	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60)
 }
@@ -259,14 +259,14 @@ pd[#pd+1] = Def.BitmapText{
 
 --PLAYER PROFILE high score
 pd[#pd+1] = Def.BitmapText{
-	Font="_misoreg hires",
+	Font="_miso",
 	Name="PlayerHighScore",
 	InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
 }
 
 --PLAYER PROFILE highscore name
 pd[#pd+1] = Def.BitmapText{
-	Font="_misoreg hires",
+	Font="_miso",
 	Name="PlayerHighScoreName",
 	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1)
 }

@@ -16,7 +16,7 @@ local t = Def.ActorFrame{
 	OffCommand=cmd(linear,0.5; diffusealpha, 0)
 }
 	
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text=SongStats,
 	InitCommand=cmd(zoom,0.8; y, -120; diffusealpha,0),
 	OnCommand=cmd(linear,0.4; diffusealpha,1)

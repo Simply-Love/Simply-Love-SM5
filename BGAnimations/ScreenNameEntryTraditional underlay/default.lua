@@ -111,7 +111,7 @@ t[#t+1] = Def.ActorFrame {
 if GAMESTATE:IsCourseMode() then
 	local course = GAMESTATE:GetCurrentCourse()
 
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Name="CourseName",
 		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 		OnCommand=function(self)
@@ -162,7 +162,7 @@ else
 		}
 
 		-- song name
-		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_misoreg hires")..{
+		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
 			Name="SongName"..i,
 			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 			OnCommand=function(self)

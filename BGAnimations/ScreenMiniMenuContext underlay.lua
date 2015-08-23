@@ -19,7 +19,7 @@ local t = Def.ActorFrame {
 		SizeCommand=cmd(zoomto, 240, 28*NumRows)
 	},
 
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		InitCommand=cmd(xy,-80, -118; halign,0; diffuse, Color.Black ),
 		BeginCommand=function(self)
 			local profile = GAMESTATE:GetEditLocalProfile()

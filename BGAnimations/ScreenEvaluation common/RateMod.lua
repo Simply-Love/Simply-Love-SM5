@@ -12,7 +12,7 @@ return Def.ActorFrame{
 	},
 
 	--the ratemod, if there is one
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		InitCommand=cmd(xy,_screen.cx, 173; shadowlength,1; zoom, 0.7),
 		OnCommand=function(self)
 			-- what was the MusicRate for this song?

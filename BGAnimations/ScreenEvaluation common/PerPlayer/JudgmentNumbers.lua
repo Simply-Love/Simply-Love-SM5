@@ -64,7 +64,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	}
 
 	--  slash
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Text="/",
 		InitCommand=cmd(diffuse,color("#5A6166"); zoom, 1.25; horizalign, right),
 		BeginCommand=function(self)

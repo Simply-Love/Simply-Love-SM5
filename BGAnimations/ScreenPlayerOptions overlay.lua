@@ -193,7 +193,7 @@ for player in ivalues(Players) do
 		OnCommand=cmd(linear,0.4;diffusealpha,1)
 	}
 
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Name=pn.."MusicRateHelper",
 		Text="",
 		InitCommand=function(self)

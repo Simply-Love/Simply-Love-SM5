@@ -14,7 +14,7 @@ else
 end
 
 
-return LoadFont("_misoreg hires")..{
+return LoadFont("_miso")..{
 	Text=stepartist,
 	InitCommand=cmd(zoom, 0.7; xy, 115,_screen.cy-80 ),
 	OnCommand=function(self)

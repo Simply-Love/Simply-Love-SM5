@@ -17,7 +17,7 @@ end
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,_screen.cx, 52; valign,1; zoom,1.33),
 
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		Name="RatemodDisplay",
 		Text=MusicRate ~= 1 and MusicRate.."x rate" or "",
 		InitCommand=cmd(zoom,0.5; y, 12)
@@ -25,7 +25,7 @@ local t = Def.ActorFrame{
 }
 
 local displaySingle = Def.ActorFrame{
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		Name="BPMDisplay",
 		InitCommand=cmd(zoom,1)
 	}
@@ -76,11 +76,11 @@ else
 
 	local displayTwoPlayers = Def.ActorFrame{
 		-- manual bpm displays
-		LoadFont("_misoreg hires")..{
+		LoadFont("_miso")..{
 			Name="DisplayP1",
 			InitCommand=cmd(x,-32; zoom,1; shadowlength,1)
 		},
-		LoadFont("_misoreg hires")..{
+		LoadFont("_miso")..{
 			Name="DisplayP2",
 			InitCommand=cmd(x,32; zoom,1; shadowlength,1)
 		}

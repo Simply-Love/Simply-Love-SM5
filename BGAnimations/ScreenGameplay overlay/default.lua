@@ -26,7 +26,7 @@ local t = Def.ActorFrame{
 		Name="SongInfoFrame",
 		InitCommand=cmd(x,_screen.cx;y,20;draworder,95),
 
-		LoadFont("_misoreg hires")..{
+		LoadFont("_miso")..{
 			Name="SongName",
 			InitCommand=cmd(zoom,0.8; shadowlength,0.6; maxwidth,_screen.w/2.5 - 10; NoStroke),
 			CurrentSongChangedMessageCommand=cmd(playcommand, "Update"),

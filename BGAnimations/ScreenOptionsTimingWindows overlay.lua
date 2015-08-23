@@ -19,19 +19,19 @@ t[#t+1] = LoadFont("_wendy small")..{
 	OnCommand=cmd(diffuseshift; effectperiod,1; effectcolor1, Color.Red; effectcolor2, Color.White)
 }
 
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text=THEME:GetString("ScreenOptionsTimingWindows", "Warning"),
 	InitCommand=cmd(horizalign, left; xy,180, 20; zoom, 0.9)
 }
 
 
 -- Current (retrieved from Preferences.ini)
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text=THEME:GetString("ScreenOptionsTimingWindows", "CurrentTimingWindows"),
 	InitCommand=cmd(xy,_screen.cx-70, _screen.cy-90; zoom, 0.9; horizalign, right)
 }
 -- New (to be written to Preferences.ini)
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text=THEME:GetString("ScreenOptionsTimingWindows", "NewTimingWindows"),
 	InitCommand=cmd(xy,_screen.cx+70, _screen.cy-90; zoom, 0.9; horizalign, left)
 }
@@ -53,7 +53,7 @@ for i=1,#sequence do
 		if k == sequence[i] then
 
 			-- the current values
-			t[#t+1] = LoadFont("_misoreg hires")..{
+			t[#t+1] = LoadFont("_miso")..{
 				Text=("%0.6f"):format(v),
 				InitCommand=cmd(zoom, 0.9 ),
 				OnCommand=function(self)
@@ -62,7 +62,7 @@ for i=1,#sequence do
 			}
 
 			-- the values that will be written
-			t[#t+1] = LoadFont("_misoreg hires")..{
+			t[#t+1] = LoadFont("_miso")..{
 				Text=("%0.6f"):format(v),
 				InitCommand=cmd(zoom, 0.9 ),
 				OnCommand=function(self)
@@ -76,7 +76,7 @@ for i=1,#sequence do
 		end
 	end
 
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Text=sequenceStrings[i],
 		InitCommand=cmd(zoom, 0.9),
 		OnCommand=function(self)

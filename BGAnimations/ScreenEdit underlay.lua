@@ -13,7 +13,7 @@ local t = Def.ActorFrame{
 		ShowCommand=cmd(decelerate, 0.1; x, _screen.w-60),
 		HideCommand=cmd(accelerate, 0.1; x, _screen.w+60),
 
-		LoadFont("_misoreg hires") .. {
+		LoadFont("_miso") .. {
 			Name="InfoText",
 			Text=THEME:GetString("ScreenEdit","Info"),
 			InitCommand=cmd(zoom, 0.75)
@@ -48,7 +48,7 @@ for section, offset in pairs(sections) do
 		Def.Quad{
 			InitCommand=cmd(y,10; zoomto,30,1; horizalign, left; diffusealpha,0.75 )
 		},
-		LoadFont("_misoreg hires")..{
+		LoadFont("_miso")..{
 			Text=THEME:GetString("ScreenEdit", section.."Text"),
 			InitCommand=cmd(y, 14; zoom, 0.6; horizalign, left; xy, 10, 20; vertalign, top; vertspacing, -1 ),
 		},
