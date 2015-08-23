@@ -43,21 +43,21 @@ t[#t+1] = Def.Quad{
 
 
 -- Song title and progress bar for how much song remains
-t[#t+1] = LoadActor("SongInfoBar")
+t[#t+1] = LoadActor("./Shared/SongInfoBar.lua")
 
 
 -- More per-player stuff
 for player in ivalues(Players) do
-	t[#t+1] = LoadActor("./Score.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/LifeMeter/default.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
 end
 
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-	t[#t+1] = LoadActor("./WhoIsCurrentlyWinning.lua")
+	t[#t+1] = LoadActor("./Shared/WhoIsCurrentlyWinning.lua")
 end
 
-t[#t+1] = LoadActor("BPMDisplay.lua")
+t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
 return t
