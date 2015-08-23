@@ -3,10 +3,10 @@ return Def.Actor{
 	WinningCommand=function(self)
 		local dpP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetPercentDancePoints()
 		local dpP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2):GetPercentDancePoints()
-		
+
 		local p1_score = self:GetParent():GetChild("P1Score")
 		local p2_score = self:GetParent():GetChild("P2Score")
-		
+
 		if dpP1 == dpP2 then
 			p1_score:diffusealpha(1)
 			p2_score:diffusealpha(1)
