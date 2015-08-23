@@ -1,7 +1,6 @@
 return Def.ActorFrame{
 	InitCommand=function(self)
 		self:Center()
-		-- self:vertalign(top)
 	end,
 
 	Def.Quad{

@@ -1,4 +1,7 @@
 return Def.Quad{
 	Name="Footer",
-	InitCommand=cmd(zoomto, _screen.w, 32; vertalign, bottom; diffuse,color("0.65,0.65,0.65,1") )
+	InitCommand=function(self) 
+		self:zoomto(_screen.w, 32):vertalign(bottom):y(32)
+		self:diffuse(0.65,0.65,0.65,1)
+	end,
 }
