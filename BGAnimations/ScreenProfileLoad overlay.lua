@@ -1,22 +1,40 @@
-local t = Def.ActorFrame{};
+return Def.ActorFrame{
+	InitCommand=function(self)
+		self:Center()
+		-- self:vertalign(top)
+	end,
 
-t[#t+1] = Def.Quad{
-	InitCommand=cmd(Center; zoomto,_screen.w,_screen.h;diffuse,Color.Black);
-};
+	Def.Quad{
+		Name="FadeOut",
+		InitCommand=function(self)
+			self:horizalign(right):vertalign(bottom)
+			self:diffuse(0,0,0,0):FullScreen()
+		end,
+		OnCommand=function(self)
+			self:sleep(0.5):linear(0.5):diffusealpha(1)
+		end
+	},
 
-t[#t+1] = Def.Quad{
-	InitCommand=cmd(zoomto,_screen.w,0; Center; diffuse,Color.White);
-	OnCommand=cmd(decelerate, 0.3; zoomtoheight,50; sleep,0.5; sleep,0.1; queuecommand, "Load");
-	LoadCommand=function(self) 
-		SCREENMAN:GetTopScreen():Continue();
-	end;
-};
+	Def.Quad{
+		InitCommand=function(self)
+			self:horizalign(center):vertalign(middle)
+			self:zoomto(_screen.w + 100,50):faderight(0.1):fadeleft(0.1):cropright(1)
+		end,
+		OnCommand=function(self)
+			self:linear(0.5):cropright(0):sleep(0.5)
+			self:linear(0.5):cropleft(1)
+			self:sleep(0.1):queuecommand("Load")
+		end,
+		LoadCommand=function(self)
+			SCREENMAN:GetTopScreen():Continue()
+		end
+	},
 
-
-t[#t+1] = LoadFont("_wendy small")..{
-	Text=THEME:GetString("ScreenProfileLoad","Loading Profiles...");
-	InitCommand=cmd(Center;diffuse,color("#000000");shadowlength,0; zoom,0.6);
-	OffCommand=cmd(linear,0.2;diffusealpha,0);
-};
-
-return t;
+	Def.BitmapText{
+		Font="_wendy small",
+		Text=THEME:GetString("ScreenProfileLoad","Loading Profiles..."),
+		InitCommand=function(self)
+			self:diffuse(Color.Black):zoom(0.6)
+		end
+	}
+}
