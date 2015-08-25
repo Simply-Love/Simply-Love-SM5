@@ -3,7 +3,7 @@ return Def.ActorFrame{
 	-- Song Completion Meter
 	Def.ActorFrame{
 		Name="SongMeter",
-		InitCommand=cmd(x,_screen.cx; y,20; draworder,95; diffusealpha,0),
+		InitCommand=cmd(x,_screen.cx; y,20; diffusealpha,0),
 		OnCommand=cmd(decelerate,0.2; diffusealpha,1),
 
 		Def.SongMeterDisplay {
