@@ -10,8 +10,8 @@ t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
 	OnCommand=cmd(linear,0.5; diffusealpha, 1)
 }
 
-t[#t+1] = LoadActor(THEME:GetPathB("ScreenTitleMenu","underlay/SimplyLove.png"))..{
-	InitCommand=cmd(x, _screen.cx; y, _screen.cy; diffusealpha, 0; zoom, 0.333),
+t[#t+1] = LoadActor(THEME:GetPathB("ScreenTitleMenu","underlay/SimplyLove (doubleres).png"))..{
+	InitCommand=cmd(x, _screen.cx; y, _screen.cy; diffusealpha, 0; zoom, 0.695),
 	OnCommand=cmd(linear,0.5; diffusealpha, 1)
 }
 
@@ -36,7 +36,7 @@ local af = Def.ActorFrame{
 			self:visible( GAMESTATE:GetCoinMode() == "CoinMode_Pay" and credits.Credits <= 0 )
 		end
 	},
-	
+
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenTitleJoin", "Press Start"),
 		InitCommand=cmd(xy,_screen.cx, _screen.h-80; zoom,0.715; visible,false),
@@ -45,7 +45,7 @@ local af = Def.ActorFrame{
 			self:visible( (GAMESTATE:GetCoinMode() == "CoinMode_Pay" and credits.Credits > 0) or GAMESTATE:GetCoinMode() == "CoinMode_Free")
 		end
 	},
-	
+
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenSelectMusic","Start Button"),
 		InitCommand=cmd(x,_screen.cx - 12; y,_screen.h - 125; zoom,1.1; visible,false),
