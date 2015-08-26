@@ -5,7 +5,7 @@ local t = Def.ActorFrame{
 }
 
 -- Each file the code for a  particular screen element.
--- I've made this table ordered so that I can specificy 
+-- I've made this table ordered so that I can specificy
 -- a desired draworder later below.
 
 local files = {
@@ -24,7 +24,7 @@ local files = {
 }
 
 for index, file in ipairs(files) do
-	t[#t+1] = LoadActor(file)..{ 
+	t[#t+1] = LoadActor(file)..{
 		InitCommand=cmd(draworder, index)
 	}
 end

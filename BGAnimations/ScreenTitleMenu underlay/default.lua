@@ -24,8 +24,8 @@ t[#t+1] = LoadFont("_miso")..{
 	
 t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))
 
-t[#t+1] = LoadActor("SimplyLove.png") .. {
-	InitCommand=cmd(zoom, 0.333)
+t[#t+1] = LoadActor("SimplyLove (doubleres).png") .. {
+	InitCommand=cmd(zoom, 0.695)
 }
 
 return t

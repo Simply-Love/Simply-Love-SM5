@@ -131,6 +131,7 @@ local pd = Def.ActorFrame{
 		end
 
 		self:y(_screen.h/2 + 5)
+		self:queuecommand("Set")
 	end,
 
 	PlayerJoinedMessageCommand=function(self, params)
@@ -166,7 +167,7 @@ local pd = Def.ActorFrame{
 -- colored background for chart statistics
 pd[#pd+1] = Def.Quad{
 	Name="BackgroundQuad",
-	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33; queuecommand, "Set" ),
+	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33 ),
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
 			local steps = GAMESTATE:GetCurrentSteps(player)
