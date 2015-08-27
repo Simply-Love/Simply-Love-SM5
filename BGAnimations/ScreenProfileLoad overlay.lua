@@ -3,10 +3,11 @@ local tweentime = 0.325
 return Def.ActorFrame{
 	InitCommand=function(self)
 		self:Center()
+		self:draworder(101)
 	end,
 
 	Def.Quad{
-		Name="FadeOut",
+		Name="FadeToBlack",
 		InitCommand=function(self)
 			self:horizalign(right):vertalign(bottom)
 			self:diffuse(0,0,0,0):FullScreen()
@@ -17,6 +18,7 @@ return Def.ActorFrame{
 	},
 
 	Def.Quad{
+		Name="HorizontalWhiteSwoosh",
 		InitCommand=function(self)
 			self:horizalign(center):vertalign(middle)
 			self:zoomto(_screen.w + 100,50):faderight(0.1):fadeleft(0.1):cropright(1)
