@@ -77,12 +77,12 @@ else
 		-- when then appropriate Milestone command is received from the engine
 	 	LoadActor( THEME:GetPathG("Combo","100Milestone") )..{
 			Name="OneHundredMilestone",
-			HundredMilestoneCommand=cmd(playcommand, "Milestone")
+			HundredMilestoneCommand=cmd(queuecommand, "Milestone")
 		},
 
 	 	LoadActor( THEME:GetPathG("Combo","1000Milestone") )..{
 			Name="OneThousandMilestone",
-			ThousandMilestoneCommand=cmd(playcommand, "Milestone")
+			ThousandMilestoneCommand=cmd(queuecommand, "Milestone")
 		},
 
 
