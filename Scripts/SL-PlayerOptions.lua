@@ -205,6 +205,25 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
+	SubtractiveScoring = {
+		Choices = function() return { "Show", "Hide"} end,
+		LoadSelections = function(self, list, pn)
+			local values = { true, false }
+			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.SubtractiveScoring
+			local i = FindInTable(choice, values) or 2
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local values = { true, false }
+			for i=1,#list do
+				if list[i] then
+					SL[ToEnumShortString(pn)].ActiveModifiers.SubtractiveScoring = values[i]
+					return
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
 	Vocalize = {
 		Choices = function()
 			-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
@@ -330,10 +349,12 @@ end
 ------------------------------------------------------------
 -- Helper Functions for PlayerOptions
 ------------------------------------------------------------
+
 -- ApplyMini() is called above, from CustomOptionRow('Mini')
 -- but also, and less obviously, from
 -- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua, and
 -- /BGAnimations/ScreenPlayerOptions overlay.lua
+
 function ApplyMini(pn)
 	local mini = SL[ToEnumShortString(pn)].ActiveModifiers.Mini or "Normal"
 

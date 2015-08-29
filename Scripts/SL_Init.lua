@@ -16,6 +16,7 @@ local PlayerDefaults = {
 				HideCombo = false,
 				HideLifebar = false,
 				HideScore = false,
+				SubtractiveScoring = false,
 			}
 			self.HighScores = {
 				EnteringName = false,
