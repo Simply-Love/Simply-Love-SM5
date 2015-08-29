@@ -2,8 +2,7 @@ local tweentime = 0.325
 
 return Def.ActorFrame{
 	InitCommand=function(self)
-		self:Center()
-		self:draworder(101)
+		self:Center():draworder(101)
 	end,
 
 	Def.Quad{
