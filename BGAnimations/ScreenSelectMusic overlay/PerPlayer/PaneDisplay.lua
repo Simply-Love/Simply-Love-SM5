@@ -157,7 +157,7 @@ local pd = Def.ActorFrame{
 		self:GetChild("MachineHighScoreName"):settext(machine_name)
 
 		if PROFILEMAN:IsPersistentProfile(player) then
-			local player_score, plater_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
+			local player_score, player_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
 			self:GetChild("PlayerHighScore"):settext(player_score)
 			self:GetChild("PlayerHighScoreName"):settext(player_name)
 		end
