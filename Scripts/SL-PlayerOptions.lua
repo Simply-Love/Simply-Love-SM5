@@ -1,5 +1,20 @@
+------------------------------------------------------------
+-- Helper Functions for PlayerOptions
+------------------------------------------------------------
+
+local function GetModsAndPlayerOptions(player)
+	local mods = SL[ToEnumShortString(player)].ActiveModifiers
+	local topscreen = SCREENMAN:GetTopScreen():GetName()
+	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
+	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
+
+	return mods, playeroptions
+end
+
+------------------------------------------------------------
 -- Define what custom OptionRows there are, and override the
 -- generic OptionRow (defined later, below) for each as necessary.
+
 local Overrides = {
 
 	-------------------------------------------------------------------------
@@ -8,11 +23,11 @@ local Overrides = {
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
-			local choice
 			for i=1,#list do
-				if list[i] then choice=self.Choices[i] end
+				if list[i] then
+					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i]})
+				end
 			end
-			MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=choice})
 		end
 	},
 	-------------------------------------------------------------------------
@@ -23,7 +38,22 @@ local Overrides = {
 			list[1] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			ApplySpeedMod(pn)
+			-- ApplySpeedMod(pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			local type 	= mods.SpeedModType or "x"
+			local speed = mods.SpeedMod or 1.00
+
+			-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack?
+			playeroptions:XMod(1.00)
+
+			if type == "x" then
+				playeroptions:XMod(speed)
+			elseif type == "C" then
+				playeroptions:CMod(speed)
+			elseif type == "M" then
+				playeroptions:MMod(speed)
+			end
+
 		end
 	},
 	-------------------------------------------------------------------------
@@ -58,16 +88,16 @@ local Overrides = {
 
 			return all
 		end,
-
 		SaveSelections = function(self, list, pn)
-			local choice
-			local modslevel = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
 			for i=1,#list do
 				if list[i] then
-					modslevel:NoteSkin( self.Choices[i] )
-					SL[ToEnumShortString(pn)].ActiveModifiers.NoteSkin = self.Choices[i]
+					mods.NoteSkin = self.Choices[i]
 				end
 			end
+
+			playeroptions:NoteSkin( mods.NoteSkin )
 		end
 	},
 	-------------------------------------------------------------------------
@@ -127,16 +157,26 @@ local Overrides = {
 			return rates
 		end,
 		SaveSelections = function(self, list, pn)
-			local sSave
+
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
 			for i=1,#self.Choices do
 				if list[i] then
-					sSave = self.Choices[i]
+					mods.Mini = self.Choices[i]
 				end
 			end
 
-			SL[ToEnumShortString(pn)].ActiveModifiers.Mini = sSave
-			ApplyMini(pn)
+			local mini = mods.Mini or "Normal"
+
+			if mini == "Normal" then
+				mini = 0
+			else
+				mini = mini:gsub("%%","")/100
+			end
+
+			-- to make the arrows smaller, pass Mini() a value between 0 and 1
+			-- (to make the arrows bigger, pass Mini() a value larger than 1)
+			playeroptions:Mini(mini)
 		end
 	},
 	-------------------------------------------------------------------------
@@ -195,33 +235,36 @@ local Overrides = {
 			list[5] = mods.HideScore 	or false
 		end,
 		SaveSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 			mods.HideTargets= list[1]
 			mods.HideSongBG = list[2]
 			mods.HideCombo	= list[3]
 			mods.HideLifebar= list[4]
 			mods.HideScore	= list[5]
-			ApplyHide(pn)
+
+			-- ApplyHide(pn)
+			playeroptions:Dark(mods.HideTargets and 1 or 0)
+			playeroptions:Cover(mods.HideSongBG and 1 or 0)
 		end,
 	},
 	-------------------------------------------------------------------------
-	SubtractiveScoring = {
-		Choices = function() return { "Show", "Hide"} end,
+	GameplayExtras = {
+		SelectType = "SelectMultiple",
+		Choices = function() return { "Flash Column for Miss", "Subtractive Scoring"} end,
 		LoadSelections = function(self, list, pn)
-			local values = { true, false }
-			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.SubtractiveScoring
-			local i = FindInTable(choice, values) or 2
-			list[i] = true
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			list[1] = mods.ColumnFlashOnMiss	or false
+			list[2] = mods.SubtractiveScoring 	or false
 		end,
 		SaveSelections = function(self, list, pn)
-			local values = { true, false }
-			for i=1,#list do
-				if list[i] then
-					SL[ToEnumShortString(pn)].ActiveModifiers.SubtractiveScoring = values[i]
-					return
-				end
-			end
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			mods.MeasureCounter		= list[1]
+			mods.SubtractiveScoring	= list[2]
 		end
+	},
+	-------------------------------------------------------------------------
+	MeasureCounter = {
+		Choices = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end
 	},
 	-------------------------------------------------------------------------
 	Vocalize = {
@@ -279,7 +322,7 @@ local Overrides = {
 		LoadSelections = function(self, list, pn) list[1] = true end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions = Branch.GameplayScreen() end
-			if list[2] then SL.Global.ScreenAfter.PlayerOptions = "ScreenSelectMusic" end
+			if list[2] then SL.Global.ScreenAfter.PlayerOptions = SelectMusicOrCourse() end
 			if list[3] then SL.Global.ScreenAfter.PlayerOptions = "ScreenPlayerOptions2" end
 		end
 	},
@@ -289,9 +332,9 @@ local Overrides = {
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn) list[1] = true end,
 		SaveSelections = function(self, list, pn)
-			if list[1] then SL.Global.ScreenAfter.PlayerOptions = Branch.GameplayScreen() end
-			if list[2] then SL.Global.ScreenAfter.PlayerOptions = "ScreenSelectMusic" end
-			if list[3] then SL.Global.ScreenAfter.PlayerOptions = "ScreenPlayerOptions" end
+			if list[1] then SL.Global.ScreenAfter.PlayerOptions2 = Branch.GameplayScreen() end
+			if list[2] then SL.Global.ScreenAfter.PlayerOptions2 = SelectMusicOrCourse() end
+			if list[3] then SL.Global.ScreenAfter.PlayerOptions2 = "ScreenPlayerOptions" end
 		end
 	}
 	-------------------------------------------------------------------------
@@ -346,60 +389,17 @@ function CustomOptionRow( name )
 end
 
 
-------------------------------------------------------------
--- Helper Functions for PlayerOptions
-------------------------------------------------------------
+-- Mods are applied in their respective SaveSelections() functions when
+-- ScreenPlayerOptions receives its OffCommand(), but what happens
+-- if a player expects mods to have been set via a profile,
+-- and thus never visits ScreenPlayerOptions?
+--
+-- Thus, I've made this global function, ApplyMods()
+-- which we can call from the OnCommand of
+-- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua
 
--- ApplyMini() is called above, from CustomOptionRow('Mini')
--- but also, and less obviously, from
--- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua, and
--- /BGAnimations/ScreenPlayerOptions overlay.lua
-
-function ApplyMini(pn)
-	local mini = SL[ToEnumShortString(pn)].ActiveModifiers.Mini or "Normal"
-
-	if mini == "Normal" then
-		mini = 0
-	else
-		mini = mini:gsub("%%","")/100
+function ApplyMods(player)
+	for mod,values in ipairs(Overrides) do
+		values:SaveSelections( values.Choices, player )
 	end
-
-	local topscreen = SCREENMAN:GetTopScreen():GetName()
-	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
-
-	-- to make the arrows smaller, pass Mini() a value between 0 and 1
-	-- (to make the arrows bigger, pass Mini() a value larger than 1)
-	GAMESTATE:GetPlayerState(pn):GetPlayerOptions(modslevel):Mini(mini)
-end
-
-
-function ApplySpeedMod(player)
-	local type 	= SL[ToEnumShortString(player)].ActiveModifiers.SpeedModType or "x"
-	local speed = SL[ToEnumShortString(player)].ActiveModifiers.SpeedMod or 1.00
-	local topscreen = SCREENMAN:GetTopScreen():GetName()
-	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
-
-	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
-
-	-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack?
-	playeroptions:XMod(1.00)
-
-	if type == "x" then
-		playeroptions:XMod(speed)
-	elseif type == "C" then
-		playeroptions:CMod(speed)
-	elseif type == "M" then
-		playeroptions:MMod(speed)
-	end
-end
-
-function ApplyHide(pn)
-	local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-
-	local topscreen = SCREENMAN:GetTopScreen():GetName()
-	local modslevel = (topscreen == "ScreenEditOptions") and "ModsLevel_Stage" or "ModsLevel_Preferred"
-
-	local opts = GAMESTATE:GetPlayerState(pn):GetPlayerOptions(modslevel)
-	opts:Dark(mods.HideTargets and 1 or 0)
-	opts:Cover(mods.HideSongBG and 1 or 0)
 end

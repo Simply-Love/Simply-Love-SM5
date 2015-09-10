@@ -17,9 +17,9 @@ return Def.Actor{
 		end
 
 		for player in ivalues(Players) do
-			ApplySpeedMod(player)
-			ApplyMini(player)
-			ApplyHide(player)
+
+			-- see: ./Scripts/SL-PlayerOptions.lua
+			ApplyMods(player)
 
 			local pn = ToEnumShortString(player)
 
