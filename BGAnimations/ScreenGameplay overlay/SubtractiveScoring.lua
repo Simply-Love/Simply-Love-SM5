@@ -26,8 +26,8 @@ else
 		Font="_wendy small",
 		InitCommand=function(self)
 			self:horizalign(left)
-			self:diffuse(color("#ff4cff")):y(_screen.cy):zoom(0.35)
-			self:x( x_position + (notefield_width/2.7) )
+				:diffuse(color("#ff4cff")):zoom(0.35)
+				:xy( x_position + (notefield_width/2.9), _screen.cy )
 		end,
 		JudgmentMessageCommand=function(self, params)
 			tns = ToEnumShortString(params.TapNoteScore)
