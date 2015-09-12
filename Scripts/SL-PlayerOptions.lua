@@ -116,9 +116,9 @@ local Overrides = {
 				-- A user might put something that isn't a suitable judgment graphic
 				-- into /Graphics/_judgments/ (also sometimes hidden files like .DS_Store show up here).
 				-- Do our best to filter out such files now.
-				if string.match(filename, " %dx%d.png") then
+				if string.match(filename, " %dx%d") then
 					-- use regexp to get only the name of the graphic, stripping out the extension
-					local name = filename:gsub(" %dx%d.png", "")
+					local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
 
 					-- The 3_9 graphic is a special case;
 					-- we want it to appear in the options with a period (3.9 not 3_9).
