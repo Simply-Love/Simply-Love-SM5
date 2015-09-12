@@ -6,8 +6,12 @@ if game == "popn" or game == "beat" or game == "kb7" or game == "para" then
 end
 
 t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
-	InitCommand=cmd(x, _screen.cx; y, _screen.cy; diffusealpha, 0),
-	OnCommand=cmd(linear,0.5; diffusealpha, 1)
+	InitCommand=function(self)
+		self:xy(_screen.cx, _screen.cy-16):zoom(0.1):cropright(1)
+	end,
+	OnCommand=function(self)
+		self:linear(0.33):cropright(0)
+	end
 }
 
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenTitleMenu","underlay/SimplyLove (doubleres).png"))..{

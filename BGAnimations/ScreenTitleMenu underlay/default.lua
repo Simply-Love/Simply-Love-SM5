@@ -22,7 +22,11 @@ t[#t+1] = LoadFont("_miso")..{
 	OnCommand=cmd(linear,0.4; diffusealpha,1)
 }	
 	
-t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))
+t[#t+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
+	InitCommand=function(self)
+		self:y(-16):zoom(0.1)
+	end
+}
 
 t[#t+1] = LoadActor("SimplyLove (doubleres).png") .. {
 	InitCommand=cmd(zoom, 0.695)
