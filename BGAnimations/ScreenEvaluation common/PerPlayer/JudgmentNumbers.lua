@@ -49,7 +49,13 @@ end
 -- then handle holds, mines, hands, rolls
 for index, RCType in ipairs(RadarCategories.Types) do
 
-	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
+	local performance
+	if RCType == "Holds" then
+		performance = stats:GetHoldNoteScores('HoldNoteScore_Held');
+	else
+		performance = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
+	end
+
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
 
 	-- player performace value
