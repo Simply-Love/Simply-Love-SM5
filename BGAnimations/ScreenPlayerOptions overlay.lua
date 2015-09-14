@@ -138,7 +138,6 @@ for player in ivalues(Players) do
 
 				SL[pn].ActiveModifiers.SpeedModType = newtype
 
-				ApplySpeedMod(player)
 				self:queuecommand("Set" .. pn)
 				self:GetParent():GetChild(pn.."MusicRateHelper"):playcommand("Set")
 			end
