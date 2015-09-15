@@ -38,7 +38,6 @@ local Overrides = {
 			list[1] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			-- ApplySpeedMod(pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 			local type 	= mods.SpeedModType or "x"
 			local speed = mods.SpeedMod or 1.00
@@ -87,6 +86,12 @@ local Overrides = {
 			if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
 
 			return all
+		end,
+		LoadSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			mods.NoteSkin = playeroptions:NoteSkin() or "default"
+			local i = FindInTable(mods.NoteSkin, self.Choices) or 1
+			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
@@ -196,15 +201,15 @@ local Overrides = {
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			local sSave
+
+			local mods = SL.Global.ActiveModifiers
 
 			for i=1,#self.Choices do
 				if list[i] then
-					sSave = self.Choices[i]
+					mods.MusicRate = tonumber( self.Choices[i] )
 				end
 			end
 
-			SL.Global.ActiveModifiers.MusicRate = tonumber(sSave)
 			local topscreen = SCREENMAN:GetTopScreen():GetName()
 
 			-- Use the older GameCommand interface for applying rate mods in Edit Mode;
@@ -216,7 +221,7 @@ local Overrides = {
 			if topscreen == "ScreenEditOptions" then
 				GAMESTATE:ApplyGameCommand("mod," .. sSave .."xmusic")
 			else
-				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate(tonumber(sSave))
+				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate( mods.MusicRate )
 			end
 
 			MESSAGEMAN:Broadcast("MusicRateChanged")
@@ -366,12 +371,13 @@ local OptionRowDefault = {
 			end
 
 			self.SaveSelections = Overrides[name].SaveSelections or function(subself, list, pn)
-				local choice
-				for i=1,#list do
-					if list[i] then choice=self.Choices[i] end
-				end
+				local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
-				SL[ToEnumShortString(pn)].ActiveModifiers[name] = choice
+				for i=1,#list do
+					if list[i] then
+						mods[name] = Overrides[name]:Choices()[i]
+					end
+				end
 			end
 
 			return self
@@ -394,7 +400,7 @@ end
 -- if a player expects mods to have been set via a profile,
 -- and thus never visits ScreenPlayerOptions?
 --
--- Thus, I've made this global function, ApplyMods()
+-- Thus, we have this global function, ApplyMods()
 -- which we can call from the OnCommand of
 -- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua
 
