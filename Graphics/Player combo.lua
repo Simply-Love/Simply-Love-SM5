@@ -10,7 +10,7 @@ else
 	local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 	local NumberMinZoom = 0.75
 	local NumberMaxZoom = 1.1
-	local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt")
+	local NumberMaxZoomAt = tonumber(THEME:GetMetric("Combo", "NumberMaxZoomAt"))
 
 	return Def.ActorFrame {
 
@@ -48,7 +48,9 @@ else
 				PreviousComboType = (param.misses and "Misses") or "Combo"
 			end
 
-			kids.Number:zoom( scale( CurrentCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom ) )
+			if CurrentCombo <= NumberMaxZoomAt then
+				kids.Number:zoom( scale( CurrentCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom ) )
+			end
 			kids.Number:settext( CurrentCombo )
 
 			if param.FullComboW1 then
