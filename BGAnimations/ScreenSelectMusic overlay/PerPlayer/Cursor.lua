@@ -37,7 +37,11 @@ return Def.Sprite{
 	OnCommand=cmd(queuecommand,"Set"),
 	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set"),
 	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"),
-	StepsHaveChangedCommand=cmd(queuecommand,"Set"),
+
+	CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set"),
+	CurrentTrailP1ChangedMessageCommand=cmd(queuecommand,"Set"),
+	CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set"),
+	CurrentTrailP2ChangedMessageCommand=cmd(queuecommand,"Set"),
 
 	SetCommand=function(self)
 		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
