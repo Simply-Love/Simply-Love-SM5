@@ -52,6 +52,26 @@ function Actor:hidden(self, flag)
 end
 
 
+function GetNotefieldX( player )
+	local pn = ToEnumShortString(player)
+	if IsUsingSoloSingles and NumPlayersEnabled == 1 and NumSidesJoined == 1 then return _screen.cx end
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
+
+	local NumPlayersAndSides = ToEnumShortString( GAMESTATE:GetCurrentStyle():GetStyleType() )
+	return THEME:GetMetric("ScreenGameplay","Player".. pn .. NumPlayersAndSides .."X")
+end
+
+function GetNotefieldWidth()
+
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+		return _screen.w*1.058/GetScreenAspectRatio()
+	elseif IsPlayingDanceSolo then
+		return _screen.w*0.8/GetScreenAspectRatio()
+	else
+		return _screen.w*0.529/GetScreenAspectRatio()
+	end
+end
+
 ------------------------------------------------------------------------------
 -- Define what is necessary to maintain and/or increment your combo, per Gametype.
 -- For example, in dance Gametype, TapNoteScore_W3 (window #3) is commonly "Great"
