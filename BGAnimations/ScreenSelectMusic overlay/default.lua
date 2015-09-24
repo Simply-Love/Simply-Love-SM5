@@ -4,7 +4,7 @@ local t = Def.ActorFrame{
 	end
 }
 
--- Each file the code for a  particular screen element.
+-- Each file contains the code for a particular screen element.
 -- I've made this table ordered so that I can specificy
 -- a desired draworder later below.
 

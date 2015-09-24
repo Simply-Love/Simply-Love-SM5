@@ -33,6 +33,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	SpeedMod = {
 		Choices = function() return { "       " } end,
+		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		LoadSelections = function(self, list, pn)
 			list[1] = true
@@ -89,8 +90,8 @@ local Overrides = {
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			mods.NoteSkin = playeroptions:NoteSkin() or "default"
-			local i = FindInTable(mods.NoteSkin, self.Choices) or 1
+			local choice = mods.NoteSkins or playeroptions:NoteSkin() or "default"
+			local i = FindInTable(choice, self.Choices) or 1
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
@@ -158,8 +159,13 @@ local Overrides = {
 			local step 	= 5
 
 			local rates = stringify( range(first, last, step), "%g%%")
-			rates[1] = "Normal"
 			return rates
+		end,
+		LoadSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			local choice = mods.Mini or playeroptions:Mini() or "0%"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
 
@@ -171,17 +177,9 @@ local Overrides = {
 				end
 			end
 
-			local mini = mods.Mini or "Normal"
-
-			if mini == "Normal" then
-				mini = 0
-			else
-				mini = mini:gsub("%%","")/100
-			end
-
 			-- to make the arrows smaller, pass Mini() a value between 0 and 1
 			-- (to make the arrows bigger, pass Mini() a value larger than 1)
-			playeroptions:Mini(mini)
+			playeroptions:Mini( mods.Mini:gsub("%%","")/100 )
 		end
 	},
 	-------------------------------------------------------------------------
@@ -263,13 +261,27 @@ local Overrides = {
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			mods.MeasureCounter		= list[1]
+			mods.ColumnFlashOnMiss	= list[1]
 			mods.SubtractiveScoring	= list[2]
 		end
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
-		Choices = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end
+		Choices = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
+		LoadSelections = function(self, list, pn)
+			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.MeasureCounter or "None"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#list do
+				if list[i] then
+					mods.MeasureCounter = self.Choices[i]
+				end
+			end
+		end
 	},
 	-------------------------------------------------------------------------
 	Vocalize = {
@@ -300,26 +312,26 @@ local Overrides = {
 	--
 	-- Because of this, I am disabling this this OptionRow by default.
 	-- It can be enabled in Metrics.ini under [ScreenPlayerOptions2] at the discretion of the user.
-	TimingWindowScale = {
-		-- values is non-standard and I should probably have a better way of handling
-		-- data like this that I don't want to duplicate within multiple sub-functions
-		Values = { 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 },
-		Choices = function()
-			return { "Normal", "90%", "80%", "70%", "60%", "50%", "40%", "30%", "20%", "10%" }
-		end,
-		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			local i = FindInTable( PREFSMAN:GetPreference("TimingWindowScale"), self.Values) or 1
-			list[i] = true
-		end,
-		SaveSelections = function(self, list, pn)
-			for i=1,#list do
-				if list[i] then
-					PREFSMAN:SetPreference("TimingWindowScale", self.Values[i])
-				end
-			end
-		end
-	},
+
+	-- TimingWindowScale = {
+	-- 	Choices = function()
+	-- 		return { "Normal", "90%", "80%", "70%", "60%", "50%", "40%", "30%", "20%", "10%" }
+	-- 	end,
+	-- 	OneChoiceForAllPlayers = true,
+	-- 	LoadSelections = function(self, list, pn)
+	-- 		local Values = { 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 }
+	-- 		local i = FindInTable( PREFSMAN:GetPreference("TimingWindowScale"), Values) or 1
+	-- 		list[i] = true
+	-- 	end,
+	-- 	SaveSelections = function(self, list, pn)
+	-- 		local Values = { 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 }
+	-- 		for i=1,#list do
+	-- 			if list[i] then
+	-- 				PREFSMAN:SetPreference("TimingWindowScale", Values[i] or 1)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- },
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Choices = function() return { 'Gameplay', 'Select Music', 'Extra Modifiers' } end,
@@ -405,7 +417,9 @@ end
 -- /BGAnimations/ScreenSelectMusic overlay/playerModifiers.lua
 
 function ApplyMods(player)
-	for mod,values in ipairs(Overrides) do
-		values:SaveSelections( values.Choices, player )
+	for name,value in pairs(Overrides) do
+		OptRow = CustomOptionRow( name )
+		OptRow:LoadSelections( OptRow.Choices, player )
+		--OptRow:SaveSelections( OptRow.Choices, player )
 	end
 end

@@ -28,12 +28,11 @@ if not (FailString and FailString == "FailOff") then
 	end
 end
 
-
--- Screen Filter
+-- underlay stuff like BackgroundFilter, ColumnFlash, and MeasureCounter
 for pn in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", pn)
+	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", pn)
 end
-
 
 -- semi-transparent quad at the top of ScreenGameplay
 t[#t+1] = Def.Quad{
@@ -44,7 +43,6 @@ t[#t+1] = Def.Quad{
 
 -- Song title and progress bar for how much song remains
 t[#t+1] = LoadActor("./Shared/SongInfoBar.lua")
-
 
 -- More per-player stuff
 for player in ivalues(Players) do
