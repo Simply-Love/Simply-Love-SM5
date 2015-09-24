@@ -3,6 +3,12 @@ local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
+-- if no BackgroundFilter is necessary, it's safe to bail now
+if mods.BackgroundFilter == "Off" then
+	return Def.Actor{}
+end
+
+
 local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
 local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
 local NumSidesJoined = GAMESTATE:GetNumSidesJoined()
@@ -15,7 +21,7 @@ local FilterAlpha = {
 }
 
 local filter = Def.Quad{
-	InitCommand=function(self)
+	InitCommand=function(self)	
 		self:diffuse(Color.Black)
 			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
 			:xy( GetNotefieldX(player), _screen.cy )
@@ -23,12 +29,12 @@ local filter = Def.Quad{
 	end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
-		local pStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(Player)
-		if pStats:FullCombo() then
+		local StageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+		if StageStats:FullCombo() then
 			local comboColor
-			if pStats:FullComboOfScore('TapNoteScore_W1') then
+			if StageStats:FullComboOfScore('TapNoteScore_W1') then
 				comboColor = color("#6BF0FF")
-			elseif pStats:FullComboOfScore('TapNoteScore_W2') then
+			elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
 				comboColor = color("#FDDB85")
 			else
 				comboColor = color("#94FEC1")
