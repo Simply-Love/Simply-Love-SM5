@@ -31,6 +31,7 @@ end
 -- underlay stuff like BackgroundFilter, ColumnFlash, and MeasureCounter
 for pn in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", pn)
+	t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", pn)
 	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", pn)
 end
 
