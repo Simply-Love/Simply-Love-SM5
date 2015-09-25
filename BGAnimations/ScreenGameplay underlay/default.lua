@@ -37,6 +37,7 @@ end
 
 -- semi-transparent quad at the top of ScreenGameplay
 t[#t+1] = Def.Quad{
+	Name="TopBar",
 	InitCommand=cmd(diffuse,color("0,0,0,0.85"); zoomto, _screen.w, _screen.h/5;),
 	OnCommand=cmd(xy, _screen.w/2, _screen.h/12 - 10 )
 }
