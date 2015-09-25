@@ -217,7 +217,7 @@ local Overrides = {
 			-- not the desired behavior in EditMode, so when users change between different songs in EditMode,
 			-- always reset the musicrate mod.  See: ./BGAnimations/ScreenEditMeny underlay.lua
 			if topscreen == "ScreenEditOptions" then
-				GAMESTATE:ApplyGameCommand("mod," .. sSave .."xmusic")
+				GAMESTATE:ApplyGameCommand("mod," .. mods.MusicRate .."xmusic")
 			else
 				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate( mods.MusicRate )
 			end
