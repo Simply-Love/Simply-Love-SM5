@@ -90,7 +90,7 @@ local Overrides = {
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local choice = mods.NoteSkins or playeroptions:NoteSkin() or "default"
+			local choice = mods.NoteSkin or playeroptions:NoteSkin() or "default"
 			local i = FindInTable(choice, self.Choices) or 1
 			list[i] = true
 		end,
