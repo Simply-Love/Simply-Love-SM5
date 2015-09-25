@@ -148,7 +148,13 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
-		Choices = function() return { 'Off','Dark','Darker','Darkest' } end
+		Choices = function() return { 'Off','Dark','Darker','Darkest' } end,
+		LoadSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			local choice = mods.BackgroundFilter or "Off"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
 	},
 	-------------------------------------------------------------------------
 	Mini = {
@@ -420,6 +426,6 @@ function ApplyMods(player)
 	for name,value in pairs(Overrides) do
 		OptRow = CustomOptionRow( name )
 		OptRow:LoadSelections( OptRow.Choices, player )
-		--OptRow:SaveSelections( OptRow.Choices, player )
+		-- OptRow:SaveSelections( OptRow.Choices, player )
 	end
 end
