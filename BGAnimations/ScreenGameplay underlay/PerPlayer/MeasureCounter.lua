@@ -75,7 +75,7 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 
 			self:zoom(0.35)
-				:xy( GetNotefieldX(player) - ((width/NumColumns)*2), _screen.cy )
+				:xy( GetNotefieldX(player) - (width/NumColumns), _screen.cy )
 				:shadowlength(1)
 		end,
 		JudgmentMessageCommand=function(self, params)
