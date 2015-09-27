@@ -1,4 +1,4 @@
-local sort_wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
+local sort_wheel = setmetatable({}, sick_wheel_mt)
 local sort_orders = {
 	"Group",
 	"Title",
@@ -66,10 +66,10 @@ local wheel_item_mt = {
 					subself:diffusealpha(0)
 					self.text= subself
 				end,
-				OnCommand=function(self)
-					self:sleep(0.13)
-					self:linear(0.05)
-					self:diffusealpha(1)
+				OnCommand=function(subself)
+					subself:sleep(0.13)
+					subself:linear(0.05)
+					subself:diffusealpha(1)
 				end
 			}
 
@@ -120,9 +120,19 @@ local t = Def.ActorFrame {
 		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
 		sort_wheel.focus_pos = 4
 
+		-- get the currenly active SortOrder and truncate the "SortOrder_" from the beginning
+		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
+		local current_sort_order_index = 1
+
+		for i=1, #sort_orders do
+			if sort_orders[i] == current_sort_order then
+				current_sort_order_index = i
+			end
+		end
+
 		-- the second argument passed to set_info_set is the index of the item in sort_orders
 		-- that we want to have focus when the wheel is created
-		sort_wheel:set_info_set(sort_orders, 1)
+		sort_wheel:set_info_set(sort_orders, current_sort_order_index)
 
 		self:queuecommand("Capture")
 	end,

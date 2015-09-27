@@ -33,16 +33,11 @@ end
 -- get the PlayerOptions string for any human players and store it now
 -- we'll retreive it the next time ScreenSelectMusic loads and re-apply those same mods
 -- in this way, we can override the effects of songs that forced modifiers during gameplay
+-- the old-school (ie. ITG) way of GAMESTATE:ApplyGameCommand()
 local Players = GAMESTATE:GetHumanPlayers()
 for player in ivalues(Players) do
-	-- The player SHOULD have a default noteskin set in Preferences.ini via DefaultModifiers=
-	-- under the section for the currently active game type, but apparently this is not ensured
-	-- and can cause crashes in SM5 beta4a.  This is a hackish workaround.
-	-- THANKFULLY, if the noteskin is "already set" in Preferences.ini (as it should be),
-	-- setting it again here seems to have no adverse affects!
-	local ns = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():NoteSkin()
 	local pn = ToEnumShortString(player)
-	SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")..","..ns
+	SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 end
 
 

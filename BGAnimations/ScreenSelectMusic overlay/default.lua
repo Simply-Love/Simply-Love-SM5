@@ -1,26 +1,32 @@
-local t = Def.ActorFrame{}
+local t = Def.ActorFrame{
+	ChangeStepsMessageCommand=function(self, params)
+		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
+	end
+}
 
-t[#t+1] = LoadActor("MusicWheelAnimation.lua")
+-- Each file contains the code for a particular screen element.
+-- I've made this table ordered so that I can specificy
+-- a desired draworder later below.
 
--- Apply player modifiers from profile
-t[#t+1] = LoadActor("playerModifiers.lua")
+local files = {
+	-- make the MusicWheel appear to cascade down
+	"./MusicWheelAnimation.lua",
+	-- Apply player modifiers from profile
+	"./PlayerModifiers.lua",
+	-- Graphical Banner
+	"./Banner.lua",
+	-- Song Artist, BPM, Duration (Referred to in other themes as "PaneDisplay")
+	"./SongDescription.lua",
+	-- Difficulty Blocks
+	"./StepsDisplayList/Grid.lua",
+	-- a folder of Lua files to be loaded twice (once for each player)
+	"./PerPlayer"
+}
 
--- Banner
-t[#t+1] = LoadActor("banner.lua")
-
--- Song Description (Artist, BPM, Duration)
-t[#t+1] = LoadActor("songDescription.lua")
-
--- StepArtist Boxes
-t[#t+1] =  LoadActor("stepArtist.lua")
-
--- Difficulty Blocks
-t[#t+1] = LoadActor("CustomStepsDisplayList")
-
--- Step Data (Number of steps, jumps, holds, etc.)
-t[#t+1] = LoadActor("panedisplay.lua")
-
--- the fadeout that informs users to press START if they want options
-t[#t+1] = LoadActor("fadeOut.lua")
+for index, file in ipairs(files) do
+	t[#t+1] = LoadActor(file)..{
+		InitCommand=cmd(draworder, index)
+	}
+end
 
 return t

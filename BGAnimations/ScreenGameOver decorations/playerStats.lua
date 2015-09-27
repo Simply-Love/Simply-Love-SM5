@@ -18,22 +18,22 @@ end
  
 local t = Def.ActorFrame{};
 
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text=playerName;
 	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 40);
 };
 
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text="Calories Today:\n"..caloriesToday;
 	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 100);
 };
 
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text="Current Combo:\n"..currentCombo;
 	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 160);
 };
 
-t[#t+1] = LoadFont("_misoreg hires")..{
+t[#t+1] = LoadFont("_miso")..{
 	Text="Total Songs Played:\n"..totalSongs;
 	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 220);
 };

@@ -7,23 +7,18 @@ local song = SL.Global.Stages.Stats[stageNum].song
 local t = Def.ActorFrame{
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor().." (doubleres).png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
 		InitCommand=cmd(y,-6; zoom, 0.333)
 	},
 
 	-- the banner, if there is one
-	Def.Sprite{
+	Def.Banner{
 		Name="Banner",
 		InitCommand=function(self)
 			self:y(-6)
 
-			local bannerpath
 			if song then
-				bannerpath = song:GetBannerPath()
-			end
-
-			if bannerpath then
-				self:LoadBanner(bannerpath)
+				self:LoadFromSong(song)
 				self:setsize(418,164)
 				self:zoom(0.333)
 			end
@@ -31,7 +26,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the title of the song
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350),
 		OnCommand=function(self)
 			if song then
@@ -41,7 +36,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the BPM(s) of the song
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350),
 		OnCommand=function(self)
 			if song then
@@ -132,7 +127,7 @@ for pn in ivalues(Players) do
 			}
 
 			-- stepartist
-			t[#t+1] = LoadFont("_misoreg hires")..{
+			t[#t+1] = LoadFont("_miso")..{
 				InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
 				OnCommand=function(self)
 					if stepartist then

@@ -3,6 +3,7 @@ local SongsPerPlay = PREFSMAN:GetPreference("SongsPerPlay")
 local SongCost = 1
 
 local t = Def.ActorFrame{
+
 	InitCommand=cmd(queuecommand,"FigureStuffOut"),
 	FigureStuffOutCommand=function(self)
 
@@ -51,33 +52,33 @@ local t = Def.ActorFrame{
 
 		self:GetChild("Stage Number"):playcommand("Text")
 	end,
-
+	OffCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen()
+		if topscreen then
+			if topscreen:GetName() == "ScreenEvaluationStage" then
+				SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + SongCost
+			else
+				self:linear(0.1)
+				self:diffusealpha(0)
+			end
+		end
+	end,
 
 	Def.Quad{
-		InitCommand=cmd(xy,_screen.cx,SCREEN_TOP; zoomto,_screen.w,40; diffuse,color("0.65,0.65,0.65,1")),
-		OffCommand=function(self)
-			local topscreen = SCREENMAN:GetTopScreen()
-			if topscreen then
-				if topscreen:GetName() == "ScreenEvaluationStage" then
-					SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + SongCost
-				end
-			end
-		end,
+		InitCommand=cmd(zoomto, _screen.w, 32; vertalign, top; diffuse,0.65,0.65,0.65,1; x, _screen.cx),
 	},
 
-	LoadFont("_wendy small") .. {
+	LoadFont("_wendy small")..{
 		Name="HeaderText",
-		InitCommand=cmd(zoom,WideScale(0.5, 0.6); x,16; horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText");),
-		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
-		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
+		InitCommand=cmd(zoom,WideScale(0.5, 0.6); xy, 10, 15;  horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText")),
+		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
 	},
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",
-		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, SCREEN_TOP),
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, 15 ),
 		TextCommand=cmd(settext, StageText),
-		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
-		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
+		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
 	}
 }
 

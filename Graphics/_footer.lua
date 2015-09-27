@@ -1,7 +1,8 @@
-return Def.ActorFrame{
+return Def.Quad{
 	Name="Footer",
-
-	Def.Quad{
-		InitCommand=cmd(zoomto,_screen.w,36; diffuse,color("0.65,0.65,0.65,1") )
-	}
+	InitCommand=function(self)
+		self:draworder(90)
+		self:zoomto(_screen.w, 32):vertalign(bottom):y(32)
+		self:diffuse(0.65,0.65,0.65,1)
+	end
 }

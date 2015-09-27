@@ -1,5 +1,5 @@
 function AllowScreenNameEntry()
-	if ThemePrefs.Get("AllowScreenNameEntry") == 1 then
+	if ThemePrefs.Get("AllowScreenNameEntry") then
 		return "ScreenNameEntryTraditional"
 	else
 		return "ScreenProfileSaveSummary"
@@ -7,7 +7,7 @@ function AllowScreenNameEntry()
 end
 
 function AllowScreenEvalSummary()
-	if ThemePrefs.Get("AllowScreenEvalSummary") == 1 then
+	if ThemePrefs.Get("AllowScreenEvalSummary") then
 		return "ScreenEvaluationSummary"
 	else
 		return AllowScreenNameEntry()
@@ -18,9 +18,8 @@ end
 
 if not Branch then Branch = {} end
 
-function SelectMusicOrCourse()
-	local pm = GAMESTATE:GetPlayMode()
-	if pm == "PlayMode_Nonstop"	then
+Branch.AfterSelectStyle = function()
+	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
 		return "ScreenSelectCourseNonstop"
 	else
 		return "ScreenSelectMusic"
@@ -32,16 +31,6 @@ Branch.AfterGameplay = function()
 	local pm = GAMESTATE:GetPlayMode()
 	if( pm == "PlayMode_Regular" )	then return "ScreenEvaluationStage" end
 	if( pm == "PlayMode_Nonstop" )	then return "ScreenEvaluationNonstop" end
-end
-
--- Let's pretend I understand why this is necessary
-Branch.AfterScreenSelectPlayMode = function()
-	local gameName = GAMESTATE:GetCurrentGame():GetName()
-	if gameName=="techno" then
-		return "ScreenSelectStyleTechno"
-	else
-		return "ScreenSelectStyle"
-	end
 end
 
 Branch.PlayerOptions = function()
@@ -95,7 +84,7 @@ Branch.AfterProfileSave = function()
 		end
 
 		-- If we don't allow players to fail out of a set early
-		if ThemePrefs.Get("AllowFailingOutOfSet") == 0 then
+		if ThemePrefs.Get("AllowFailingOutOfSet") == false then
 
 			-- check first to see how many songs are remaining
 			-- if none...
@@ -169,7 +158,7 @@ Branch.AfterProfileSave = function()
 end
 
 Branch.AfterProfileSaveSummary = function()
-	if ThemePrefs.Get("AllowScreenGameOver") == 1 then
+	if ThemePrefs.Get("AllowScreenGameOver") then
 		return "ScreenGameOver"
 	else
 		return Branch.AfterInit()

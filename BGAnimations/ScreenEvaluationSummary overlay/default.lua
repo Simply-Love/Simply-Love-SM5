@@ -6,7 +6,13 @@ local amountAbleToMoveUp = 0
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
 		if param.Name == "Screenshot" then
-			SaveScreenshot(param.PlayerNumber, false, true)
+
+			-- organize Screenshots take using Simply Love into directories, like...
+			-- ./Screenshots/Simply_Love/2015/06-June/2015-06-05_121708.png
+			local prefix = "Simply_Love/" .. Year() .. "/"
+			prefix = prefix .. string.format("%02d", tostring(MonthOfYear()+1)) .. "-" .. THEME:GetString("Months", "Month"..MonthOfYear()+1) .. "/"
+
+			SaveScreenshot(param.PlayerNumber, false, true, prefix)
 		end
 
 		if param.Name == "MenuLeft" or param.Name == "MenuUp" then

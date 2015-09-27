@@ -1,10 +1,10 @@
 local t = Def.ActorFrame{
 
-	InitCommand=function(self)
+	OnCommand=function(self)
 		if IsUsingWideScreen() then
-			self:xy(_screen.cx - 173, _screen.cy - 28)
+			self:xy(_screen.cx - 170, _screen.cy - 28)
 		else
-			self:xy(_screen.cx - 163, _screen.cy - 28)
+			self:xy(_screen.cx - 165, _screen.cy - 28)
 		end
 	end,
 
@@ -22,11 +22,8 @@ local t = Def.ActorFrame{
 		Def.Quad{
 			InitCommand=function(self)
 				self:diffuse(color("#1e282f"))
-				if IsUsingWideScreen() then
-					self:zoomto(320, _screen.h/10)
-				else
-					self:zoomto(310, _screen.h/10)
-				end
+				self:zoomtowidth( IsUsingWideScreen() and 320 or 310 )
+				self:zoomtoheight( 48 )
 			end
 		},
 
@@ -35,14 +32,14 @@ local t = Def.ActorFrame{
 			InitCommand=cmd(x, -110),
 
 			-- Artist Label
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				Text="ARTIST",
 				InitCommand=cmd(horizalign, right; y, -12),
 				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
 			},
 
 			-- Song Artist
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,260) ),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
@@ -58,7 +55,7 @@ local t = Def.ActorFrame{
 
 
 			-- BPM Label
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				InitCommand=cmd(horizalign, right; NoStroke; y, 8),
 				SetCommand=function(self)
 					self:diffuse(0.5,0.5,0.5,1)
@@ -67,7 +64,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- BPM value
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, 5; diffuse, color("1,1,1,1")),
 				SetCommand=function(self)
 
@@ -83,7 +80,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- Song Length Label
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				InitCommand=cmd(horizalign, right; y, 8; x, _screen.w/4.5),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
@@ -93,7 +90,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- Song Length Value
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				InitCommand=cmd(horizalign, left; y, 8; x, _screen.w/4.5 + 5),
 				SetCommand=function(self)
 					local duration
@@ -155,7 +152,7 @@ local t = Def.ActorFrame{
 				end
 			},
 
-			LoadFont("_misoreg hires")..{
+			LoadFont("_miso")..{
 				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()

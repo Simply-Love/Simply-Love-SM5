@@ -10,7 +10,7 @@ local DurationPerStage = 4
 for player in ivalues(Players) do
 	if SL[ToEnumShortString(player)].HighScores.EnteringName then
 		-- Add one AlphabetWheel per human player
-		AlphabetWheels[ToEnumShortString(player)] = setmetatable({disable_wrapping = false}, sick_wheel_mt)
+		AlphabetWheels[ToEnumShortString(player)] = setmetatable({}, sick_wheel_mt)
 	end
 end
 ---------------------------------------------------------------------------
@@ -85,7 +85,7 @@ local t = Def.ActorFrame {
 t[#t+1] = Def.ActorFrame {
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SimplyLoveColor().." (doubleres).png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 
@@ -111,7 +111,7 @@ t[#t+1] = Def.ActorFrame {
 if GAMESTATE:IsCourseMode() then
 	local course = GAMESTATE:GetCurrentCourse()
 
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Name="CourseName",
 		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 		OnCommand=function(self)
@@ -121,18 +121,13 @@ if GAMESTATE:IsCourseMode() then
 		end
 	}
 
-	t[#t+1] = Def.Sprite{
+	t[#t+1] = Def.Banner{
 		Name="CourseBanner",
 		InitCommand=cmd(xy, _screen.cx, 121.5 ),
 		OnCommand=function(self)
-			local bannerpath
 
 			if course then
-				 bannerpath = course:GetBannerPath()
-			end
-
-			if bannerpath then
-				self:LoadBanner(bannerpath)
+				self:LoadFromCourse(course)
 				self:setsize(418,164)
 				self:zoom(0.7)
 			end
@@ -146,7 +141,7 @@ else
 
 		local song = SL.Global.Stages.Stats[currentStage].song
 
-		-- Create an ActorFrame for each Name + Banner pair
+		-- Create an ActorFrame for each (Name + Banner) pair
 		-- so that we can display/hide all children simultaneously.
 		local SongNameAndBanner = Def.ActorFrame{
 			InitCommand=cmd(diffusealpha, 0),
@@ -166,7 +161,8 @@ else
 			end
 		}
 
-		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_misoreg hires")..{
+		-- song name
+		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
 			Name="SongName"..i,
 			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 			OnCommand=function(self)
@@ -176,17 +172,13 @@ else
 			end
 		}
 
-		SongNameAndBanner[#SongNameAndBanner+1] = Def.Sprite{
+		-- song banner
+		SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
 			Name="SongBanner"..i,
 			InitCommand=cmd(xy, _screen.cx, 121.5),
 			OnCommand=function(self)
-				local bannerpath
 				if song then
-					 bannerpath = song:GetBannerPath()
-				end
-
-				if bannerpath then
-					self:LoadBanner(bannerpath)
+					self:LoadFromSong(song)
 					self:setsize(418,164)
 					self:zoom(0.7)
 				end

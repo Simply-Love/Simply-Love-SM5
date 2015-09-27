@@ -22,7 +22,7 @@ return Def.ActorFrame {
 	OffCommand=cmd(sleep,0.4);
 	
 	Def.DeviceList {
-		Font=THEME:GetPathF("","_misoreg hires");
+		Font=THEME:GetPathF("","_miso");
 		InitCommand=cmd(xy,_screen.cx,_screen.h-60; zoom,0.8; NoStroke);	
 	};
 		
