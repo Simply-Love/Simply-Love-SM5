@@ -11,12 +11,10 @@ local TapNoteScores = {
 }
 
 local RadarCategories = {
-	Types ={ 'Holds', 'Mines', 'Hands', 'Rolls' },
+	Types = { 'Holds', 'Mines', 'Hands', 'Rolls' },
 	-- x values for P1 and P2
 	x = { -180, 218 }
 }
-
-
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(zoom, 0.8; xy,90,_screen.cy-24),
@@ -49,13 +47,7 @@ end
 -- then handle holds, mines, hands, rolls
 for index, RCType in ipairs(RadarCategories.Types) do
 
-	local performance
-	if RCType == "Holds" then
-		performance = stats:GetHoldNoteScores('HoldNoteScore_Held');
-	else
-		performance = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-	end
-
+	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
 
 	-- player performace value
