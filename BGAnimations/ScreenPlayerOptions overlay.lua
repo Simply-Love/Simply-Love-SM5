@@ -1,13 +1,84 @@
+------------------------------------------------------------
+-- functions local to this file
+
+-- this prepares and returns a string to be used by the helper BitmapText
+-- at the top of the screen (one for each player)
+local function GetSpeedModHelperText(pn)
+	local bpm
+	local display = ""
+	local speed = SL[pn].ActiveModifiers.SpeedMod
+
+	if GAMESTATE:IsCourseMode() then
+		bpm = GetCourseModeBPMs()
+	else
+		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
+		-- handle DisplayBPMs that are <= 0
+		if bpm[1] <= 0 or bpm[2] <= 0 then
+			bpm = GAMESTATE:GetCurrentSong():GetTimingData():GetActualBPM()
+		end
+	end
+
+	-- if using an XMod
+	if SL[pn].ActiveModifiers.SpeedModType == "x" then
+		local musicrate = SL.Global.ActiveModifiers.MusicRate
+
+		--if a single bpm suffices
+		if bpm[1] == bpm[2] then
+			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. ")"
+
+		-- if we have a range of bpms
+		else
+			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. " - " .. round(speed * bpm[2] * musicrate) .. ")"
+		end
+
+	-- elseif using a CMod or an MMod
+	elseif SL[pn].ActiveModifiers.SpeedModType == "C" or SL[pn].ActiveModifiers.SpeedModType == "M" then
+		display = SL[pn].ActiveModifiers.SpeedModType .. tostring(speed)
+	end
+
+	return display
+end
+
+--- this manipulates the SpeedMod numbers set in the global SL table
+local function ChangeSpeedMod(pn, direction)
+
+	-- if using an XMod
+	if SL[pn].ActiveModifiers.SpeedModType == "x" then
+
+		if SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction) >= 20 then
+			SL[pn].ActiveModifiers.SpeedMod = 0.05
+		elseif SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction) <= 0 then
+			SL[pn].ActiveModifiers.SpeedMod = 20.00
+		else
+			SL[pn].ActiveModifiers.SpeedMod = SL[pn].ActiveModifiers.SpeedMod + (0.05 * direction)
+		end
+
+	-- elseif using a CMod or an MMod
+	elseif SL[pn].ActiveModifiers.SpeedModType == "C" or SL[pn].ActiveModifiers.SpeedModType == "M" then
+
+		if SL[pn].ActiveModifiers.SpeedMod + (10 * direction) >= 2000 then
+			SL[pn].ActiveModifiers.SpeedMod = 10
+		elseif SL[pn].ActiveModifiers.SpeedMod + (10 * direction) <= 0 then
+			SL[pn].ActiveModifiers.SpeedMod = 2000
+		else
+			SL[pn].ActiveModifiers.SpeedMod = SL[pn].ActiveModifiers.SpeedMod + (10 * direction)
+		end
+	end
+end
+
+------------------------------------------------------------
+
+
 local Players = GAMESTATE:GetHumanPlayers()
 
--- SpeedModItems is a table that will contain the BitMapText Actors
+-- SpeedModItems is a table that will contain the BitmapText Actors
 -- for the SpeedModNew OptionRow for both P1 and P2
 local SpeedModItems = {P1, P2}
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy,_screen.cx,0);
-	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1; queuecommand,"Capture");
-	OffCommand=cmd(linear,0.2;diffusealpha,0);
+	InitCommand=cmd(xy,_screen.cx,0),
+	OnCommand=cmd(diffusealpha,0; linear,0.2;diffusealpha,1; queuecommand,"Capture"),
+	OffCommand=cmd(linear,0.2; diffusealpha,0),
 	CaptureCommand=function(self)
 
 		local ScreenOptions = SCREENMAN:GetTopScreen()
@@ -67,7 +138,6 @@ for player in ivalues(Players) do
 
 				SL[pn].ActiveModifiers.SpeedModType = newtype
 
-				ApplySpeedMod(player)
 				self:queuecommand("Set" .. pn)
 				self:GetParent():GetChild(pn.."MusicRateHelper"):playcommand("Set")
 			end
@@ -78,14 +148,16 @@ for player in ivalues(Players) do
 
 			if  SL[pn].ActiveModifiers.SpeedModType == "x" then
 				text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
+
 			elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
 				text = "C" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
+
 			elseif  SL[pn].ActiveModifiers.SpeedModType == "M" then
 				text = "M" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
 			end
 
 			SpeedModItems[pn]:settext( text )
-			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
 		end,
 
 		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
@@ -120,7 +192,7 @@ for player in ivalues(Players) do
 		OnCommand=cmd(linear,0.4;diffusealpha,1)
 	}
 
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Name=pn.."MusicRateHelper",
 		Text="",
 		InitCommand=function(self)
@@ -161,7 +233,7 @@ for player in ivalues(Players) do
 			end
 
 			-- settext on the speedmod helper
-			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( DisplaySpeedMod(pn) )
+			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
 
 			-------------------------------
 			-- variables to be used for setting the text in the "Speed Mod" OptionRow title
@@ -189,9 +261,9 @@ for player in ivalues(Players) do
 
 			-- settext on "Speed Mod" OptionRow title
 			if bpms[1] == bpms[2] then
-				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedModNew") .. " (" .. bpms[1] * musicrate .. ")" )
+				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms[1] * musicrate .. ")" )
 			else
-				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedModNew") .. " (" .. bpms[1] * musicrate ..  " - " .. bpms[2] * musicrate  .. ")" )
+				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms[1] * musicrate ..  " - " .. bpms[2] * musicrate  .. ")" )
 			end
 		end,
 		MusicRateChangedMessageCommand=cmd(playcommand,"Set")

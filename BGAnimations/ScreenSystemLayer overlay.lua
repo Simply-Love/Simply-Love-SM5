@@ -2,7 +2,7 @@
 -- very minor modifications.
 
 local function CreditsText( pn )
-	local text = LoadFont("_misoreg hires") .. {
+	local text = LoadFont("_miso") .. {
 		InitCommand=function(self)
 			self:visible(false);
 			self:name("Credits" .. PlayerNumberToString(pn))
@@ -60,7 +60,7 @@ t[#t+1] = Def.ActorFrame {
 		OffCommand=cmd(sleep,3; linear,0.5; diffusealpha,0 )
 	},
 
-	LoadFont("_misoreg hires")..{
+	LoadFont("_miso")..{
 		Name="Text",
 		InitCommand=cmd(maxwidth,750; horizalign,left; vertalign,top; xy,SCREEN_LEFT+10, 10; diffusealpha,0),
 		OnCommand=cmd(finishtweening; diffusealpha,1; zoom,0.8 ),
