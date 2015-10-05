@@ -27,7 +27,7 @@ local function input(event)
 
 		elseif event.GameButton == "Start" then
 			if not GAMESTATE:IsPlayerEnabled(event.PlayerNumber) and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit" then
-				GAMESTATE:JoinInput(event.PlayerNumber)
+				GAMESTATE:JoinPlayer(event.PlayerNumber)
 			end
 
 			ColorSelected = true
