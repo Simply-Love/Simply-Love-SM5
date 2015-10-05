@@ -61,7 +61,7 @@ Branch.AfterProfileSave = function()
 	else
 
 		local song = GAMESTATE:GetCurrentSong()
-		local SMSongCost = (song:IsLong() and 2) or (song:IsMarathon() and 3) or 1
+		local SMSongCost = (song:IsMarathon() and 3) or (song:IsLong() and 2) or 1
 		SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - SMSongCost
 
 		-- calculate if stages should be "added back" because of rate mod
@@ -80,6 +80,7 @@ Branch.AfterProfileSave = function()
 
 			ActualSongCost = (IsMarathon and 3) or (IsLong and 2) or 1
 			StagesToAddBack = SMSongCost - ActualSongCost
+
 			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
 		end
 
@@ -88,7 +89,7 @@ Branch.AfterProfileSave = function()
 
 			-- check first to see how many songs are remaining
 			-- if none...
-			if SL.Global.Stages.Remaining == 0 then
+			if SL.Global.Stages.Remaining <= 0 then
 
 				if SL.Global.ContinuesRemaining > 0 then
 
