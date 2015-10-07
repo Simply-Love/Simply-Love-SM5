@@ -19,12 +19,12 @@ return Def.ActorFrame{
 			local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
 			-- Store the MusicRate for later retrieval on ScreenEvaluationSummary
-			SL.Global.Stages.MusicRate[#SL.Global.Stages.MusicRate + 1] = MusicRate
+			SL.Global.Stages.MusicRate[SL.Global.Stages.PlayedThisGame + 1] = MusicRate
 
 			local bpm = GetDisplayBPMs()
 
 			if MusicRate ~= 1 then
-				self:settext(string.format("%.1f", MusicRate) .. " Music Rate")
+				self:settext(("%g"):format(MusicRate) .. " Music Rate")
 
 				if bpm then
 

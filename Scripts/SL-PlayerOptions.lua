@@ -200,7 +200,7 @@ local Overrides = {
 		ExportOnChange = true,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
-			local rate = ("%.2g"):format( SL.Global.ActiveModifiers.MusicRate )
+			local rate = ("%g"):format( SL.Global.ActiveModifiers.MusicRate )
 			local i = FindInTable(rate, self.Choices) or 1
 			list[i] = true
 		end,
