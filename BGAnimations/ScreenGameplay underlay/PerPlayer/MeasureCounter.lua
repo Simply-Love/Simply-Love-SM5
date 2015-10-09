@@ -24,7 +24,7 @@ local function Update(self, delta)
 
 		if new_measure then
 
-			-- (npm - 1) because the sometimes the appropriate npm will be avieved
+			-- (npm - 1) because the sometimes the appropriate npm will be achieved
 			-- but not tracked/counted/something.  I'm not sure why this happens.
 			-- Maybe this is a normal amount of hiccups that any engine will experience.
 			-- Maybe I'm going about this the wrong way.  At any rate, this is
@@ -64,11 +64,6 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 		Font="_wendy small",
 		InitCommand=function(self)
 			MeasureCounterBMT = self
-
-			if mods.MeasureCounter and mods.MeasureCounter == "None" then
-				self:hibernate(math.huge)
-				return
-			end
 
 			local style = GAMESTATE:GetCurrentStyle(player)
 			local width = style:GetWidth(player)
