@@ -4,7 +4,7 @@
 -- be set from a previous game.
 
 return Def.Actor{
-	--OnCommand=cmd(queuecommand,"ApplyModifiers"),
+	OnCommand=cmd(queuecommand,"ApplyModifiers"),
 	PlayerJoinedMessageCommand=cmd(queuecommand,"ApplyModifiers"),
 	ApplyModifiersCommand=function(self)
 
