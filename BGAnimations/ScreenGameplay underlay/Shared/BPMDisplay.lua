@@ -6,12 +6,25 @@ local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
 
 local function UpdateSingleBPM(self)
+
+	-- BPM stuff first
 	local bpmDisplay = self:GetChild("BPMDisplay")
 	local pn = GAMESTATE:GetMasterPlayerNumber()
 	local pState = GAMESTATE:GetPlayerState(pn)
 	local songPosition = pState:GetSongPosition()
+
+	-- then, MusicRate stuff
+	local MusicRateDisplay = self:GetParent():GetChild("RatemodDisplay")
+	local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
+	local MusicRate = so:MusicRate()
+
+	-- BPM Display
 	local bpm = songPosition:GetCurBPS() * 60 * MusicRate
 	bpmDisplay:settext( round(bpm) )
+
+	-- MusicRate Display
+	MusicRate = string.format("%.2f", MusicRate )
+	MusicRateDisplay:settext( MusicRate ~= "1.00" and MusicRate.."x rate" or "" )
 end
 
 local t = Def.ActorFrame{
@@ -51,7 +64,6 @@ else
 	local timingP1 = stepsP1:GetTimingData()
 	local timingP2 = stepsP2:GetTimingData()
 
-	--if stP1 == stP2 and diffP1 == diffP2 then
 	if timingP1 == timingP2 then
 		-- both players are steps with the same TimingData; only need one.
 		t[#t+1] = displaySingle
@@ -64,6 +76,10 @@ else
 		local dispP1 = self:GetChild("DisplayP1")
 		local dispP2 = self:GetChild("DisplayP2")
 
+		local MusicRateDisplay = self:GetParent():GetChild("RatemodDisplay")
+		local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
+		local MusicRate = so:MusicRate()
+
 		-- needs current bpm for p1 and p2
 		for pn in ivalues(PlayerNumber) do
 			local bpmDisplay = (pn == PLAYER_1) and dispP1 or dispP2
@@ -72,6 +88,9 @@ else
 			local bpm = songPosition:GetCurBPS() * 60 * MusicRate
 			bpmDisplay:settext( round(bpm) )
 		end
+
+		MusicRate = string.format("%.2f", MusicRate )
+		MusicRateDisplay:settext( MusicRate ~= "1.00" and MusicRate.."x rate" or "" )
 	end
 
 	local displayTwoPlayers = Def.ActorFrame{
