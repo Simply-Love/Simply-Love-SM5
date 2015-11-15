@@ -10,7 +10,7 @@ else
 	-- grab the appropriate x position from ScreenGameplay's
 	-- metrics on Player positioning
 	local pn = ToEnumShortString(player)
-	local x_position = THEME:GetMetric( "ScreenGameplay", "Player"..pn..style.."X" )
+	local x_position = GetNotefieldX( player )
 
 	-- flag to determine whether to bother to continue counting excellents
 	-- or whether to just display percent away from 100%
