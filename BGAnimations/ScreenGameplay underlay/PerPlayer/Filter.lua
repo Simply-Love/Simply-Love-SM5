@@ -9,11 +9,6 @@ if mods.BackgroundFilter == "Off" then
 end
 
 
-local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
-local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
-local NumSidesJoined = GAMESTATE:GetNumSidesJoined()
-local IsPlayingDanceSolo = GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo" and true or false
-
 local FilterAlpha = {
 	Dark = 0.5,
 	Darker = 0.75,
@@ -21,7 +16,7 @@ local FilterAlpha = {
 }
 
 local filter = Def.Quad{
-	InitCommand=function(self)	
+	InitCommand=function(self)
 		self:diffuse(Color.Black)
 			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
 			:xy( GetNotefieldX(player), _screen.cy )
