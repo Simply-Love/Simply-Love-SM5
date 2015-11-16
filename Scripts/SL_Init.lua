@@ -20,6 +20,12 @@ local PlayerDefaults = {
 				SubtractiveScoring = false,
 				MeasureCounter = "None",
 			}
+			self.Streams = {
+				SongDir = nil,
+				StepsType = nil,
+				Difficulty = nil,
+				Measures = nil,
+			}
 			self.HighScores = {
 				EnteringName = false,
 				Name = ""

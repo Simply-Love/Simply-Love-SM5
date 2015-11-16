@@ -1,48 +1,48 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-local npm = tonumber( string.sub( mods.MeasureCounter, 1, -3))
+local streams = SL[pn].Streams
 local PlayerState = GAMESTATE:GetPlayerState(player)
 
-local current_beat, previous_beat
-local measure_count = 0
-local steps_this_measure = 0
+local current_measure, previous_measure
 local MeasureCounterBMT
+
+local current_count = 0
+local stream_index = 1
+local current_stream_length = 0
 
 local function Update(self, delta)
 
-	current_beat = PlayerState:GetSongPosition():GetSongBeatVisible()
+	if not streams.Measures then return end
 
-	-- previous_beat will initially be nil; set it to be the same as current_beat
-	if not previous_beat then previous_beat = current_beat end
+	current_measure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
 
-	local new_beat_has_occurred = math.floor(current_beat) > math.floor(previous_beat)
+	-- previous_measure will initially be nil; set it to be the same as current_measure
+	if not previous_measure then previous_measure = current_measure end
 
-	if new_beat_has_occurred then
-		previous_beat = current_beat
-	 	local new_measure = math.floor(current_beat % 4) == 0
+	local new_measure_has_occurred = current_measure > previous_measure
 
-		if new_measure then
+	if new_measure_has_occurred then
 
-			-- (npm - 1) because the sometimes the appropriate npm will be achieved
-			-- but not tracked/counted/something.  I'm not sure why this happens.
-			-- Maybe this is a normal amount of hiccups that any engine will experience.
-			-- Maybe I'm going about this the wrong way.  At any rate, this is
-			-- acceptable kludge for now because it works.
-			local okay_to_increment = steps_this_measure >= npm-1
+		previous_measure = current_measure
 
-			-- it's a new measure, so reset the step count for this measure
-			steps_this_measure = 0
-			local text = ""
+		-- if the current measure is within the of the current stream
+		if streams.Measures[stream_index]
+		and current_measure >= streams.Measures[stream_index].streamStart
+		and current_measure <= streams.Measures[stream_index].streamEnd then
 
-			if okay_to_increment then
-				measure_count = measure_count + 1
-				text = tostring(measure_count)
-			else
-				measure_count = 0
-			end
+			current_stream_length = streams.Measures[stream_index].streamEnd - streams.Measures[stream_index].streamStart
+			current_count = math.floor(current_measure - streams.Measures[stream_index].streamStart) + 1
 
+			text = tostring(current_count .. "/" .. current_stream_length)
 			MeasureCounterBMT:settext( text )
+
+			if current_count > current_stream_length then
+				stream_index = stream_index + 1
+				MeasureCounterBMT:settext( "" )
+			end
+		else
+			MeasureCounterBMT:settext( "" )
 		end
 	end
 
@@ -72,19 +72,6 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 			self:zoom(0.35)
 				:xy( GetNotefieldX(player) - (width/NumColumns), _screen.cy )
 				:shadowlength(1)
-		end,
-		JudgmentMessageCommand=function(self, params)
-
-			-- If this judgement message belongs to this player
-			-- and if there is at least one note that triggered it,
-			-- then increment the step count for the current measure.
-			--
-			-- Using params.Notes is the best way to do this that I've found so far.
-			-- params.Notes not being nil could mean a tapnote, a jump, or a hold head
-			-- params.Notes will be nil for mines and hold caps, as is desired here.
-			if params.Player == player and params.Notes ~= nil then
-				steps_this_measure = steps_this_measure + 1
-			end
 		end
 	}
 
