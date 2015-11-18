@@ -51,8 +51,6 @@ return Def.Actor{
 			end
 		end
 
-		SM(voice)
-
 		-- Do we have a voice enabled?
 		if voice and voice ~= "None" then
 
