@@ -84,6 +84,21 @@ Branch.AfterProfileSave = function()
 			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
 		end
 
+
+		-- This is somewhat hackish, but it serves to counteract Lua Hacks.
+		-- If ScreenGameplay was reloaded by a "gimmick" chart, then it is
+		-- very possible that the Engine's concept of remaining stages will
+		--  be incongruent with the Theme's.  Add stages back, engine-side, if necessary.
+		if GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()) < SL.Global.Stages.Remaining then
+			StagesToAddBack = math.abs(SL.Global.Stages.Remaining - GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()))
+			local Players = GAMESTATE:GetHumanPlayers()
+			for pn in ivalues(Players) do
+				for i=1, StagesToAddBack do
+					GAMESTATE:AddStageToPlayer(pn)
+				end
+			end
+		end
+
 		-- If we don't allow players to fail out of a set early
 		if ThemePrefs.Get("AllowFailingOutOfSet") == false then
 
