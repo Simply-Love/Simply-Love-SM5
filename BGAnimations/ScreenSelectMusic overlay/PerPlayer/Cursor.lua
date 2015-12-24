@@ -18,12 +18,12 @@ return Def.Sprite{
 		self:bounce():effectclock("beatnooffset")
 
 		if player == PLAYER_1 then
-			self:x( IsUsingWideScreen() and 96 or 0)
+			self:x( IsUsingWideScreen() and _screen.cx-330 or 0)
 			self:effectmagnitude(-3,0,0)
 
 		elseif player == PLAYER_2 then
 			self:rotationz(180)
-			self:x(IsUsingWideScreen() and 398 or 276)
+			self:x(IsUsingWideScreen() and _screen.cx-28 or 276)
 			self:effectmagnitude(3,0,0)
 		end
 
@@ -79,9 +79,16 @@ return Def.Sprite{
 			else
 				-- otherwise, we have been passed steps
 				for index,chart in pairs(params.Steps) do
-					if chart == GAMESTATE:GetCurrentSteps(player) then
-						RowIndex = index
-						break
+					if GAMESTATE:IsCourseMode() then
+						if chart == GAMESTATE:GetCurrentTrail(player) then
+							RowIndex = index
+							break
+						end
+					else
+						if chart == GAMESTATE:GetCurrentSteps(player) then
+							RowIndex = index
+							break
+						end
 					end
 				end
 			end
