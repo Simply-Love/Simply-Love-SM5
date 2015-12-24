@@ -209,84 +209,87 @@ for player in ivalues(Players) do
 	}
 
 
-	if IsUsingWideScreen() then
-		t[#t+1] = LoadFont("_miso")..{
-			Name=pn.."MusicRateHelper",
-			Text="",
-			InitCommand=function(self)
-				self:shadowlength(0.4)
-				self:diffuse(PlayerColor(player))
-				self:zoom(0.9)
+	t[#t+1] = LoadFont("_miso")..{
+		Name=pn.."MusicRateHelper",
+		Text="",
+		InitCommand=function(self)
+			if not IsUsingWideScreen() then
+				self:hibernate(math.huge)
+				return
+			end
 
-				if IsUsingWideScreen() then
-					if player == PLAYER_1 then
-						self:x(-100)
-					elseif player == PLAYER_2 then
-						self:x(150)
-					end
-					self:y(26)
-				else
-					if player == PLAYER_1 then
-						self:x(-10)
-					elseif player == PLAYER_2 then
-						self:x(240)
-					end
-					self:y(50)
+			self:shadowlength(0.4)
+			self:diffuse(PlayerColor(player))
+			self:zoom(0.9)
+
+			if IsUsingWideScreen() then
+				if player == PLAYER_1 then
+					self:x(-100)
+				elseif player == PLAYER_2 then
+					self:x(150)
 				end
-				self:diffusealpha(0)
-			end,
-			OnCommand=cmd(linear,0.4;diffusealpha,1),
-			SetCommand=function(self)
-				local musicrate = SL.Global.ActiveModifiers.MusicRate
+				self:y(26)
+			else
+				if player == PLAYER_1 then
+					self:x(-10)
+				elseif player == PLAYER_2 then
+					self:x(240)
+				end
+				self:y(50)
+			end
+			self:diffusealpha(0)
+		end,
+		OnCommand=cmd(linear,0.4;diffusealpha,1),
+		SetCommand=function(self)
+			local musicrate = SL.Global.ActiveModifiers.MusicRate
 
-				-- settext on the musicrate helper
-				if SL[pn].ActiveModifiers.SpeedModType == "x" then
-					if musicrate == 1 then
-						self:settext("")
-					else
-						self:settext(musicrate .. "x")
-					end
-				else
+			-- settext on the musicrate helper
+			if SL[pn].ActiveModifiers.SpeedModType == "x" then
+				if musicrate == 1 then
 					self:settext("")
-				end
-
-				-- settext on the speedmod helper
-				self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
-
-				-------------------------------
-				-- variables to be used for setting the text in the "Speed Mod" OptionRow title
-				local ScreenOptions = SCREENMAN:GetTopScreen()
-				local SpeedModTitle = ScreenOptions:GetOptionRow(FindSpeedModOptionRowIndex(ScreenOptions)):GetChild(""):GetChild("Title")
-				local song = GAMESTATE:GetCurrentSong()
-				local bpms
-
-				-- get the song's native display BPM(s)
-				if song then
-					bpms = song:GetDisplayBpms()
-					-- if either display BPM is negative or 0, use the actual BPMs instead...
-					if bpms[1] <= 0 or bpms[2] <= 0 then
-						bpms = song:GetTimingData():GetActualBPM()
-					end
 				else
-					bpms = GetCourseModeBPMs()
+					self:settext(musicrate .. "x")
 				end
+			else
+				self:settext("")
+			end
 
+			-- settext on the speedmod helper
+			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
 
+			-------------------------------
+			-- variables to be used for setting the text in the "Speed Mod" OptionRow title
+			local ScreenOptions = SCREENMAN:GetTopScreen()
+			local SpeedModTitle = ScreenOptions:GetOptionRow(FindSpeedModOptionRowIndex(ScreenOptions)):GetChild(""):GetChild("Title")
+			local song = GAMESTATE:GetCurrentSong()
+			local bpms
 
-				-- truncate possible decimal places
-				bpms[1] = ("%0.0f"):format(bpms[1])
-				bpms[2] = ("%0.0f"):format(bpms[2])
-
-				-- settext on "Speed Mod" OptionRow title
-				if bpms[1] == bpms[2] then
-					SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms[1] * musicrate .. ")" )
-				else
-					SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms[1] * musicrate ..  " - " .. bpms[2] * musicrate  .. ")" )
+			-- get the song's native display BPM(s)
+			if song then
+				bpms = song:GetDisplayBpms()
+				-- if either display BPM is negative or 0, use the actual BPMs instead...
+				if bpms[1] <= 0 or bpms[2] <= 0 then
+					bpms = song:GetTimingData():GetActualBPM()
 				end
-			end,
-			MusicRateChangedMessageCommand=cmd(playcommand,"Set")
-		}
-	end
+			else
+				bpms = GetCourseModeBPMs()
+			end
+
+
+
+			-- truncate possible decimal places
+			bpms[1] = ("%0.0f"):format(bpms[1])
+			bpms[2] = ("%0.0f"):format(bpms[2])
+
+			-- settext on "Speed Mod" OptionRow title
+			if bpms[1] == bpms[2] then
+				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms[1] * musicrate .. ")" )
+			else
+				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms[1] * musicrate ..  " - " .. bpms[2] * musicrate  .. ")" )
+			end
+		end,
+		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
+	}
 end
 
 return t
