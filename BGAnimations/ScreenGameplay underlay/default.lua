@@ -4,7 +4,7 @@ local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 
 
 -- FailType is not directly a Preference, not a GamePref, not ThemePref, etc.
--- FailType is stored as one of the DefaultModifiers in Prefernces.ini
+-- FailType is stored as one of the DefaultModifiers in Preferences.ini
 --
 -- It's also worth noting that if fail is set to "Immediate"
 -- no corresponding value will appear in DefaultModifiers and the engine assumes FailType_Immediate
@@ -21,7 +21,7 @@ end
 
 
 -- Don't bother loading Danger if FailOff is set as a DefaultModifier
-if not (FailString and FailString == "FailOff") then
+if not (FailString and FailString == "FailOff") or not (SL.Global.GameMode == "Casual") then
 	-- Load Danger for any available players
 	for pn in ivalues(Players) do
 		t[#t+1] = LoadActor("./PerPlayer/Danger.lua", pn)

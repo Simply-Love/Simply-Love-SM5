@@ -290,6 +290,28 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	DecentsWayOffs = {
+		Choices = function() return { "On", "Decents Only", "Off" } end,
+		OneChoiceForAllPlayers = true,
+		LoadSelections = function(self, list, pn)
+			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.DecentsWayOffs or "On"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			if list[2] then
+				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
+				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
+			elseif list[3] then
+				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW3)
+				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW3)
+			else
+				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
+				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW5)
+			end
+		end
+	},
+	-------------------------------------------------------------------------
 	Vocalize = {
 		Choices = function()
 			-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
@@ -309,35 +331,6 @@ local Overrides = {
 			return vocalizations
 		end
 	},
-	-------------------------------------------------------------------------
-	-- It is potentially dangerous to be modifying global StepMania preferences via the PlayerOptions menu
-	-- Unless you, the themer, explicitly reset TimingWindowScale back to 1.0 after each game cycle
-	-- It will REMAIN changed between games, between reboots of StepMania, and between Themes.
-	-- After all, it's a global preference and not the sort of thing that was never intended to be
-	-- modified on-the-fly like this.
-	--
-	-- Because of this, I am disabling this this OptionRow by default.
-	-- It can be enabled in Metrics.ini under [ScreenPlayerOptions2] at the discretion of the user.
-
-	-- TimingWindowScale = {
-	-- 	Choices = function()
-	-- 		return { "Normal", "90%", "80%", "70%", "60%", "50%", "40%", "30%", "20%", "10%" }
-	-- 	end,
-	-- 	OneChoiceForAllPlayers = true,
-	-- 	LoadSelections = function(self, list, pn)
-	-- 		local Values = { 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 }
-	-- 		local i = FindInTable( PREFSMAN:GetPreference("TimingWindowScale"), Values) or 1
-	-- 		list[i] = true
-	-- 	end,
-	-- 	SaveSelections = function(self, list, pn)
-	-- 		local Values = { 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 }
-	-- 		for i=1,#list do
-	-- 			if list[i] then
-	-- 				PREFSMAN:SetPreference("TimingWindowScale", Values[i] or 1)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- },
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Choices = function() return { 'Gameplay', 'Select Music', 'Extra Modifiers' } end,

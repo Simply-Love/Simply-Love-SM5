@@ -98,7 +98,7 @@ function range(start, stop, step)
 
 	-- if step has been explicitly provided as a positve number
 	-- but the start and stop values tell us to decrement
-	-- multiple step by -1 to allow decrementing to occur
+	-- multiply step by -1 to allow decrementing to occur
 	if step > 0 and start > stop then
 		step = -1 * step
 	end

@@ -19,6 +19,7 @@ local PlayerDefaults = {
 				ColumnFlashOnMiss = false,
 				SubtractiveScoring = false,
 				MeasureCounter = "None",
+				DecentsWayOffs = "On"
 			}
 			self.Streams = {
 				SongDir = nil,
@@ -64,18 +65,12 @@ local GlobalDefaults = {
 			self.Gamestate = {
 				Style = "single"
 			}
+			self.GameMode = THEME:GetString("ScreenSelectPlayMode", "Casual")
 		end,
 
-		-- This won't be reset each game cycle,
-		-- but is rather to be updated (maybe) on ScreenSelectColor
+		-- These values outside initialize() won't be reset each game cycle,
+		-- but are rather manipulated as needed by the theme.
 		ActiveColorIndex = ThemePrefs.Get("SimplyLoveColor") or 1,
-
-		-- This will be assigned value only once, upon starting StepMania, and should NOT be
-		-- reset each game cycle. Instead, we'll use this to check if the TimingWindowScale
-		-- preference has changed and needs to be reset back to its initial state.
-		-- Thus, define this outside the scope of initialize() above.  The values in there
-		-- are reset each game cycle.
-		InitialTimingWindowScale = PREFSMAN:GetPreference("TimingWindowScale")
 	}
 }
 
@@ -98,6 +93,194 @@ SL = {
 	    "#FFFF00",
 	    "#FFBE00",
 	    "#FF7D00"
+	},
+	Preferences = {
+		Casual = {
+			TimingWindowAdd=0.001500,
+			RegenComboAfterMiss=0,
+			MaxRegenComboAfterMiss=0,
+			MinTNSToHideNotes=W3,
+
+			TimingWindowSecondsW1=0.021500,
+			TimingWindowSecondsW2=0.043000,
+			TimingWindowSecondsW3=0.102000,
+			TimingWindowSecondsW4=0.102000,
+			TimingWindowSecondsW5=0.102000,
+			TimingWindowSecondsHold=0.320000,
+			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsRoll=0.350000,
+		},
+		Competitive = {
+			TimingWindowAdd=0.001500,
+			RegenComboAfterMiss=5,
+			MaxRegenComboAfterMiss=5,
+			MinTNSToHideNotes=W3,
+
+			TimingWindowSecondsW1=0.021500,
+			TimingWindowSecondsW2=0.043000,
+			TimingWindowSecondsW3=0.102000,
+			TimingWindowSecondsW4=0.135000,
+			TimingWindowSecondsW5=0.180000,
+			TimingWindowSecondsHold=0.320000,
+			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsRoll=0.350000,
+		},
+		StomperZ = {
+			TimingWindowAdd=0,
+			RegenComboAfterMiss=0,
+			MaxRegenComboAfterMiss=0,
+			MinTNSToHideNotes=W4,
+
+			TimingWindowSecondsW1=0.012500,
+			TimingWindowSecondsW2=0.025000,
+			TimingWindowSecondsW3=0.050000,
+			TimingWindowSecondsW4=0.100000,
+			TimingWindowSecondsW5=0.150000,
+			TimingWindowSecondsHold=0.350000,
+			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsRoll=0.350000,
+		},
+		Marathon = {
+			TimingWindowAdd=0.001500,
+			RegenComboAfterMiss=5,
+			MaxRegenComboAfterMiss=5,
+			MinTNSToHideNotes=W3,
+
+			TimingWindowSecondsW1=0.021500,
+			TimingWindowSecondsW2=0.043000,
+			TimingWindowSecondsW3=0.102000,
+			TimingWindowSecondsW4=0.135000,
+			TimingWindowSecondsW5=0.180000,
+			TimingWindowSecondsHold=0.320000,
+			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsRoll=0.350000,
+		},
+	},
+	GameModeMetrics = {
+		Casual = {
+			PercentScoreWeightW1=3,
+			PercentScoreWeightW2=2,
+			PercentScoreWeightW3=1,
+			PercentScoreWeightW4=0,
+			PercentScoreWeightW5=0,
+			PercentScoreWeightMiss=0,
+			PercentScoreWeightLetGo=0,
+			PercentScoreWeightHeld=3,
+			PercentScoreWeightHitMine=-1,
+
+			GradeWeightW1=3,
+			GradeWeightW2=2,
+			GradeWeightW3=1,
+			GradeWeightW4=0,
+			GradeWeightW5=0,
+			GradeWeightMiss=0,
+			GradeWeightLetGo=0,
+			GradeWeightHeld=3,
+			GradeWeightHitMine=-1,
+
+			LifePercentChangeW1=0,
+			LifePercentChangeW2=0,
+			LifePercentChangeW3=0,
+			LifePercentChangeW4=0,
+			LifePercentChangeW5=0,
+			LifePercentChangeMiss=0,
+			LifePercentChangeLetGo=0,
+			LifePercentChangeHeld=0,
+			LifePercentChangeHitMine=0,
+		},
+		Competitive = {
+			PercentScoreWeightW1=5,
+			PercentScoreWeightW2=4,
+			PercentScoreWeightW3=2,
+			PercentScoreWeightW4=0,
+			PercentScoreWeightW5=-6,
+			PercentScoreWeightMiss=-12,
+			PercentScoreWeightLetGo=0,
+			PercentScoreWeightHeld=5,
+			PercentScoreWeightHitMine=-6,
+
+			GradeWeightW1=5,
+			GradeWeightW2=4,
+			GradeWeightW3=2,
+			GradeWeightW4=0,
+			GradeWeightW5=-6,
+			GradeWeightMiss=-12,
+			GradeWeightLetGo=0,
+			GradeWeightHeld=5,
+			GradeWeightHitMine=-6,
+
+			LifePercentChangeW1=0.008,
+			LifePercentChangeW2=0.008,
+			LifePercentChangeW3=0.004,
+			LifePercentChangeW4=0.000,
+			LifePercentChangeW5=-0.050,
+			LifePercentChangeMiss=-0.100,
+			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
+			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
+			LifePercentChangeHitMine=-0.050,
+		},
+		StomperZ = {
+			PercentScoreWeightW1=3,
+			PercentScoreWeightW2=3,
+			PercentScoreWeightW3=2,
+			PercentScoreWeightW4=1,
+			PercentScoreWeightW5=1,
+			PercentScoreWeightMiss=0,
+			PercentScoreWeightLetGo=0,
+			PercentScoreWeightHeld=3,
+			PercentScoreWeightHitMine=-3,
+
+			GradeWeightW1=3,
+			GradeWeightW2=3,
+			GradeWeightW3=2,
+			GradeWeightW4=1,
+			GradeWeightW5=1,
+			GradeWeightMiss=0,
+			GradeWeightLetGo=0,
+			GradeWeightHeld=3,
+			GradeWeightHitMine=-3,
+
+			LifePercentChangeW1=0.004,
+			LifePercentChangeW2=0.004,
+			LifePercentChangeW3=0.004,
+			LifePercentChangeW4=0.004,
+			LifePercentChangeW5=-0.036,
+			LifePercentChangeMiss=-0.040,
+			LifePercentChangeLetGo=0.020,
+			LifePercentChangeHeld=0.004,
+			LifePercentChangeHitMine=-0.020,
+		},
+		Marathon = {
+			PercentScoreWeightW1=5,
+			PercentScoreWeightW2=4,
+			PercentScoreWeightW3=2,
+			PercentScoreWeightW4=0,
+			PercentScoreWeightW5=-6,
+			PercentScoreWeightMiss=-12,
+			PercentScoreWeightLetGo=0,
+			PercentScoreWeightHeld=5,
+			PercentScoreWeightHitMine=-6,
+
+			GradeWeightW1=5,
+			GradeWeightW2=4,
+			GradeWeightW3=2,
+			GradeWeightW4=0,
+			GradeWeightW5=-6,
+			GradeWeightMiss=-12,
+			GradeWeightLetGo=0,
+			GradeWeightHeld=5,
+			GradeWeightHitMine=-6,
+
+			LifePercentChangeW1=0.008,
+			LifePercentChangeW2=0.008,
+			LifePercentChangeW3=0.004,
+			LifePercentChangeW4=0.000,
+			LifePercentChangeW5=-0.050,
+			LifePercentChangeMiss=-0.100,
+			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
+			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
+			LifePercentChangeHitMine=-0.050,
+		},
 	}
 }
 
@@ -110,10 +293,6 @@ function InitializeSimplyLove()
 	SL.P1:initialize()
 	SL.P2:initialize()
 	SL.Global:initialize()
-
-	if PREFSMAN:GetPreference("TimingWindowScale") ~= SL.Global.InitialTimingWindowScale then
-		PREFSMAN:SetPreference("TimingWindowScale", SL.Global.InitialTimingWindowScale)
-	end
 end
 
 -- TODO: remove this; it's for debugging purposes (Control+F2 to reload scripts) only

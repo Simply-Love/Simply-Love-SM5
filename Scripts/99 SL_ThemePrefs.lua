@@ -73,7 +73,6 @@ ThemePrefs.InitAll(SL_CustomPrefs)
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefsRows.txt
 
 local file = IniFile.ReadFile("Save/ThemePrefs.ini")
-local NeedsRewrite = false
 
 -- If no [Simply Love] ThemePrefs section is found...
 if not file["Simply Love"] then

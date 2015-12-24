@@ -1,22 +1,27 @@
-function AllowScreenNameEntry()
-	if ThemePrefs.Get("AllowScreenNameEntry") then
+if not Branch then Branch = {} end
+
+Branch.AllowScreenNameEntry = function()
+
+	-- If we're in Casual mode, don't allow NameEntry, and don't
+	-- bother saving the profile(s). Skip directly to GameOver.
+	if SL.Global.GameMode == "Casual" then
+		return Branch.AfterProfileSaveSummary()
+
+	elseif ThemePrefs.Get("AllowScreenNameEntry") then
 		return "ScreenNameEntryTraditional"
+
 	else
 		return "ScreenProfileSaveSummary"
 	end
 end
 
-function AllowScreenEvalSummary()
+Branch.AllowScreenEvalSummary = function()
 	if ThemePrefs.Get("AllowScreenEvalSummary") then
 		return "ScreenEvaluationSummary"
 	else
-		return AllowScreenNameEntry()
+		return Branch.AllowScreenNameEntry()
 	end
 end
-
--------------------------------------------------------
-
-if not Branch then Branch = {} end
 
 Branch.AfterSelectStyle = function()
 	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
@@ -44,7 +49,7 @@ end
 Branch.SSMCancel = function()
 
 	if GAMESTATE:GetCurrentStageIndex() > 0 then
-		return AllowScreenEvalSummary()
+		return Branch.AllowScreenEvalSummary()
 	end
 
 	return Branch.TitleMenu()
@@ -56,7 +61,7 @@ Branch.AfterProfileSave = function()
 		return SelectMusicOrCourse()
 
 	elseif GAMESTATE:IsCourseMode() then
-		return AllowScreenNameEntry()
+		return Branch.AllowScreenNameEntry()
 
 	else
 
@@ -125,10 +130,10 @@ Branch.AfterProfileSave = function()
 					if GAMESTATE:GetCoins() >= CoinsNeeded then
 						return "ScreenPlayAgain"
 					else
-						return AllowScreenEvalSummary()
+						return Branch.AllowScreenEvalSummary()
 					end
 				else
-					return AllowScreenEvalSummary()
+					return Branch.AllowScreenEvalSummary()
 				end
 
 
@@ -159,7 +164,7 @@ Branch.AfterProfileSave = function()
 				if credits.Credits > 0 then
 					return "ScreenPlayAgain"
 				else
-					return AllowScreenEvalSummary()
+					return Branch.AllowScreenEvalSummary()
 				end
 
 			else

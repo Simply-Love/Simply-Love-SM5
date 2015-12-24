@@ -100,3 +100,20 @@ function GetComboThreshold()
 	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
 	return ComboThresholdTable[CurrentGame]
 end
+
+
+function GetPlayerOptionsLineNames()
+	if SL.Global.GameMode == "Casual" then
+		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty"
+	else
+		return "SpeedModType,SpeedMod,Mini,Perspective,NoteSkin2,Judgment,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
+	end
+end
+
+function GetPlayerOptions2LineNames()
+	if SL.Global.GameMode == "StomperZ" then
+		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,GameplayExtras,MeasureCounter,Vocalize,ScreenAfterPlayerOptions2"
+	else
+		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalize,ScreenAfterPlayerOptions2"
+	end
+end

@@ -2,7 +2,7 @@ local dc1 = DifficultyIndexColor(1)
 local dc2 = DifficultyIndexColor(2)
 
 local t = Def.ActorFrame{
-	OffCommand=cmd(linear,1);
+	OffCommand=cmd(linear,1)
 }
 
 -- centers
