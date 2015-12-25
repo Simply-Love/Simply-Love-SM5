@@ -8,7 +8,9 @@ local t = Def.ActorFrame{
 			song = GAMESTATE:GetCurrentSong()
 		}
 	end,
-
+	
+	LoadActor("./Triangles.lua"),
+	
 	LoadActor("./ScreenshotHandler.lua"),
 
 	LoadActor("./TitleAndBanner.lua"),

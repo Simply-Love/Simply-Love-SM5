@@ -18,11 +18,15 @@ end
 
 local files = FILEMAN:GetDirListing(path .. "/")
 local judgment_exists = false
-for k,filename in ipairs(files) do
-	local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
-	if mods.JudgmentGraphic == name then
-		judgment_exists = true
-		break
+for i,filename in ipairs(files) do
+	if string.match(filename, " %dx%d") then
+		local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
+		if mods.JudgmentGraphic == name then
+			judgment_exists = true
+			break
+		end
+	else
+		table.remove(files,i)
 	end
 end
 if not judgment_exists then
