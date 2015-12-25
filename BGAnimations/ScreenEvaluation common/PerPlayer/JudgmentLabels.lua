@@ -20,7 +20,7 @@ local StomperZColors = {
 	color("#FFFFFF"),	-- white
 	color("#e29c18"),	-- gold
 	color("#66c955"),	-- green
-	color("#5b2b8e"),	-- purple
+	color("#9e00f7"),	-- purple
 	color("#ff0000")	-- red
 }
 

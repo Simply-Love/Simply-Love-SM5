@@ -4,6 +4,33 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
 -- - - - - - - - - - - - - - - - - - - - - -
+
+-- a Judgment might be saved to a profile from a previous GameMode
+-- that doesn't exist in the current GameMode.  If so, attempt to set
+-- it to the first available Judgment graphic.  If none are available,
+-- set it to "None" as a last resort fallback.
+local path
+if SL.Global.GameMode == "StomperZ" then
+	path = THEME:GetPathG("", "_judgments/StomperZ")
+else
+	path = THEME:GetPathG("", "_judgments/Competitive")
+end
+
+local files = FILEMAN:GetDirListing(path .. "/")
+local judgment_exists = false
+for k,filename in ipairs(files) do
+	local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
+	if mods.JudgmentGraphic == name then
+		judgment_exists = true
+		break
+	end
+end
+if not judgment_exists then
+	mods.JudgmentGraphic = files[1] or "None"
+end
+
+-- - - - - - - - - - - - - - - - - - - - - -
+
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" ),
 	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" ),
@@ -25,7 +52,6 @@ local TNSFrames = {
 
 local t = Def.ActorFrame {
 	Name="Player Judgment"
-
 }
 
 if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
@@ -76,10 +102,16 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 			-- if we are on ScreenEdit, judgment font is always "Love"
 			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
 				self:Load( THEME:GetPathG("", "_judgments/Love") )
-			elseif mods.JudgmentGraphic == "3.9" then
-				self:Load( THEME:GetPathG("", "_judgments/3_9"))
 			else
-				self:Load( THEME:GetPathG("", "_judgments/" .. mods.JudgmentGraphic) )
+				if SL.Global.GameMode ~= "StomperZ" then
+					if mods.JudgmentGraphic == "3.9" then
+						self:Load( THEME:GetPathG("", "_judgments/3_9"))
+					else
+						self:Load( THEME:GetPathG("", "_judgments/Competitive/" .. mods.JudgmentGraphic) )
+					end
+				else
+					self:Load( THEME:GetPathG("", "_judgments/StomperZ/" .. mods.JudgmentGraphic) )
+				end
 			end
 
 		end,
