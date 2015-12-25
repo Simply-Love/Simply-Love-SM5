@@ -16,6 +16,16 @@ local RadarCategories = {
 	x = { -180, 218 }
 }
 
+local StomperZColors = {
+	color("#21CCE8"),	-- blue
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#5b2b8e"),	-- purple
+	color("#ff0000")	-- red
+}
+
+
 local t = Def.ActorFrame{
 	InitCommand=cmd(zoom, 0.8; xy,90,_screen.cy-24),
 	OnCommand=function(self)
@@ -34,7 +44,37 @@ for index, window in ipairs(TapNoteScores.Types) do
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
 		Font="_ScreenEvaluation numbers",
-		InitCommand=cmd(zoom,0.5; horizalign, right; Load, "RollingNumbersEvaluationA" ),
+		InitCommand=function(self)
+			self:zoom(0.5):horizalign(right)
+
+			-- if StomperZ, color the JudgmentNumbers
+			if SL.Global.GameMode == "StomperZ" then
+				self:Load("RollingNumbersEvaluationA")
+				self:diffuse( StomperZColors[index] )
+
+			-- for all other modes, check for Decents/Way Offs
+			else
+				local mods = SL[ToEnumShortString(player)].ActiveModifiers
+
+				-- If Way Offs were turned off, the leading 0s should not
+				-- be colored any differently than the (lack of) JudgmentNumber,
+				-- so load a unique Metric group.
+				if mods.DecentsWayOffs == "Decents Only" and window == "W5" then
+					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
+					self:diffuse(color("#5A6166"))
+
+				-- If both Decents and WayOffs were turned off, the same logic applies.
+				elseif mods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
+					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
+					self:diffuse(color("#5A6166"))
+
+				-- Otherwise, we want leading 0s to dimmed, so load the Metrics
+				-- group "RollingNumberEvaluationA"	which does that for us.
+				else
+					self:Load("RollingNumbersEvaluationA")
+				end
+			end
+		end,
 		BeginCommand=function(self)
 			self:x( TapNoteScores.x[pn] )
 			self:y((index-1)*35 -20)

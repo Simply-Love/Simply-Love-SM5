@@ -114,6 +114,9 @@ local Overrides = {
 			-- without needing to modify this script;
 			-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN.
 			local path = THEME:GetPathG("","_judgments")
+			if SL.Global.GameMode == "StomperZ" then
+				path = THEME:GetPathG("", "_judgments/StomperZ")
+			end
 			local files = FILEMAN:GetDirListing(path.."/")
 			local judgmentGraphics = {}
 
@@ -299,6 +302,13 @@ local Overrides = {
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			for i=1,#list do
+				if list[i] then
+					mods.DecentsWayOffs = self.Choices[i]
+				end
+			end
+
 			if list[2] then
 				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
 				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)

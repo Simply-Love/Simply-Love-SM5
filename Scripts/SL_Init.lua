@@ -156,7 +156,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 	},
-	GameModeMetrics = {
+	Metrics = {
 		Casual = {
 			PercentScoreWeightW1=3,
 			PercentScoreWeightW2=2,
