@@ -159,8 +159,14 @@ local t = Def.ActorFrame{
 		Name="Cursor",
 		InitCommand=function(self)
 			cursor = self
-			self:xy(-150, -60):zoomtowidth( choices[cursor_index+1].ZoomWidth )
+			self:x(-150):zoomtowidth( choices[cursor_index+1].ZoomWidth ) 
+			self:queuecommand("FirstPosition")
 		end,
+		FirstPositionCommand=function(self)
+			local index = SCREENMAN:GetTopScreen():GetSelectionIndex( GAMESTATE:GetMasterPlayerNumber() )
+			self:y( -60 + (40 * index) )
+		end,
+		
 		Def.Quad{
 			InitCommand=function(self) self:zoomto(241, 42):diffuse(1,1,1,1):x(-1):halign(1) end,
 			OffCommand=function(self) self:sleep(0.4):linear(0.2):cropleft(1) end

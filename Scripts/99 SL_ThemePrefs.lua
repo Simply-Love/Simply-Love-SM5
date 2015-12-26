@@ -31,6 +31,17 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { true, false }
 	},
+	DefaultGameMode =
+	{
+		Default = "Competitive",
+		Choices = {
+			THEME:GetString("ScreenSelectPlayMode", "Casual"),
+			THEME:GetString("ScreenSelectPlayMode", "Competitive"),
+			THEME:GetString("ScreenSelectPlayMode", "StomperZ"),
+			THEME:GetString("ScreenSelectPlayMode", "Marathon")
+		},
+		Values 	= { "Casual", "Competitive", "StomperZ", "Marathon" }
+	},
 
 	-- - - - - - - - - - - - - - - - - - - -
 	-- SimplyLoveColor saves the theme color for the next time
