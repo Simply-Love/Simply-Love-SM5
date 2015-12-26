@@ -61,12 +61,12 @@ for index, window in ipairs(TapNoteScores.Types) do
 				-- so load a unique Metric group.
 				if mods.DecentsWayOffs == "Decents Only" and window == "W5" then
 					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-					self:diffuse(color("#5A6166"))
+					self:diffuse(color("#444444"))
 
 				-- If both Decents and WayOffs were turned off, the same logic applies.
 				elseif mods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
 					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-					self:diffuse(color("#5A6166"))
+					self:diffuse(color("#444444"))
 
 				-- Otherwise, we want leading 0s to dimmed, so load the Metrics
 				-- group "RollingNumberEvaluationA"	which does that for us.

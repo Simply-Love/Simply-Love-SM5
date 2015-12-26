@@ -1,4 +1,5 @@
-local pn = ...
+local player = ...
+local p = ToEnumShortString(player)
 
 local TNSTypes = {
 	'TapNoteScore_W1',
@@ -12,9 +13,9 @@ local TNSTypes = {
 return Def.Actor{
 	OnCommand=function(self)
 
-		local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+		local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-		SL[ToEnumShortString(pn)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1] = {
+		SL[p].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1] = {
 			grade = stats:GetGrade(),
 			score = stats:GetPercentDancePoints(),
 			judgments = {
@@ -28,7 +29,9 @@ return Def.Actor{
 			difficulty = stats:GetPlayedSteps()[1]:GetDifficulty(),
 			difficultyMeter = stats:GetPlayedSteps()[1]:GetMeter(),
 			stepartist = stats:GetPlayedSteps()[1]:GetAuthorCredit(),
-			steps = GAMESTATE:GetCurrentSteps(pn)
+			steps = GAMESTATE:GetCurrentSteps(player),
+
+			DecentsWayOffs = SL[p].ActiveModifiers.DecentsWayOffs
 		}
 	end
 }

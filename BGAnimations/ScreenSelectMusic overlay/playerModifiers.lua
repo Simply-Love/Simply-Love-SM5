@@ -4,8 +4,8 @@
 -- be set from a previous game.
 
 return Def.Actor{
-	OnCommand=cmd(queuecommand,"ApplyModifiers"),
-	PlayerJoinedMessageCommand=cmd(queuecommand,"ApplyModifiers"),
+	OnCommand=function(self) self:queuecommand("ApplyModifiers") end,
+	PlayerJoinedMessageCommand=function(self) self:queuecommand("ApplyModifiers") end,
 	ApplyModifiersCommand=function(self)
 
 		local Players = GAMESTATE:GetHumanPlayers()
@@ -18,10 +18,16 @@ return Def.Actor{
 
 		for player in ivalues(Players) do
 
+			local pn = ToEnumShortString(player)
+
+			-- If we're in Casual mode, we want to reduce the number of judgments,
+			-- so turn Decents and WayOffs off now.
+			if SL.Global.GameMode == "Casual" then
+				SL[pn].ActiveModifiers.DecentsWayOffs = "Off"
+			end
+
 			-- see: ./Scripts/SL-PlayerOptions.lua
 			ApplyMods(player)
-
-			local pn = ToEnumShortString(player)
 
 			-- On first load of ScreenSelectMusic, PlayerOptions will be nil
 			-- So don't bother trying to use it to reset PlayerOptions

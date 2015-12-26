@@ -93,6 +93,7 @@ for pn in ivalues(Players) do
 		local stepartist = playerStats.stepartist
 		local grade = playerStats.grade
 		local score = playerStats.score
+		local DecentsWayOffs = playerStats.DecentsWayOffs
 
 		local TNSTypes = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 
@@ -124,7 +125,7 @@ for pn in ivalues(Players) do
 
 					-- If the score is < 10.00% there will be leading whitespace, like " 9.45"
 					-- trim that too, so PLAYER_2's scores align properly.
-					score = string.gsub(score, " ", "")
+					score = score:gsub(" ", "")
 					self:settext(score)
 				end
 			end
@@ -175,7 +176,13 @@ for pn in ivalues(Players) do
 					if SL.Global.GameMode == "StomperZ" then
 						self:diffuse( colors.StomperZ[i] )
 					else
-						self:diffuse( colors.Competitive[i] )
+						if DecentsWayOffs == "Decents Only" and i == 5 then
+							self:visible(false)
+						elseif DecentsWayOffs == "Off" and (i == 4 or i == 5) then
+							self:visible(false)
+						else
+							self:diffuse( colors.Competitive[i] )
+						end
 					end
 				end
 			}
