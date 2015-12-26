@@ -33,8 +33,10 @@ local t = Def.ActorFrame{
 				amountAbleToMoveUp = amountAbleToMoveUp + 1
 			end
 		end
-	end;
-};
+	end,
+	
+	LoadActor( THEME:GetPathB("", "Triangles.lua") )
+}
 
 -- i will increment so that we progress down the screen from top to bottom
 -- first song of the round at the top, most recently played song at the bottom

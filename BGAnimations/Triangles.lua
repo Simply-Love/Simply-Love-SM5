@@ -5,7 +5,9 @@ if SL.Global.GameMode == "StomperZ" then
 
 		-- HACK: change the header text
 		OnCommand=function(self)
-			SCREENMAN:GetTopScreen():GetChild("Header"):GetChild("HeaderText"):settext("STOMPERZ")
+			if SCREENMAN:GetTopScreen():GetName() == "ScreenEvaluationStage" then
+				SCREENMAN:GetTopScreen():GetChild("Header"):GetChild("HeaderText"):settext("STOMPERZ")
+			end
 		end
 	}
 end

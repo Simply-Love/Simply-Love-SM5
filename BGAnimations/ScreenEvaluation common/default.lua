@@ -9,7 +9,7 @@ local t = Def.ActorFrame{
 		}
 	end,
 	
-	LoadActor("./Triangles.lua"),
+	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
 	
 	LoadActor("./ScreenshotHandler.lua"),
 

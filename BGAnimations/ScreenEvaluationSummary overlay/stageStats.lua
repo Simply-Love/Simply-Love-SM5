@@ -3,6 +3,25 @@ local stageNum = ...
 local Players = GAMESTATE:GetHumanPlayers()
 local song = SL.Global.Stages.Stats[stageNum].song
 
+local colors = {
+	Competitive = {
+		color("#21CCE8"),	-- blue
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#5b2b8e"),	-- purple
+		color("#c9855e"),	-- peach?
+		color("#ff0000")	--red
+	},
+	StomperZ = {
+		color("#21CCE8"),	-- blue
+		color("#FFFFFF"),	-- white
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#9e00f7"),	-- purple
+		color("#ff0000")	-- red
+	}
+}
+
 --
 local t = Def.ActorFrame{
 
@@ -67,121 +86,101 @@ for pn in ivalues(Players) do
 
 	local playerStats = SL[ToEnumShortString(pn)].Stages.Stats[stageNum]
 
-		if playerStats then
+	if playerStats then
 
-			local difficultyMeter = playerStats.difficultyMeter
-			local difficulty = playerStats.difficulty
-			local stepartist = playerStats.stepartist
-			local grade = playerStats.grade
-			local score = playerStats.score
+		local difficultyMeter = playerStats.difficultyMeter
+		local difficulty = playerStats.difficulty
+		local stepartist = playerStats.stepartist
+		local grade = playerStats.grade
+		local score = playerStats.score
 
-			local TNSTypes = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
+		local TNSTypes = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 
-			-- variables for positioning and horizalign, dependent on playernumber
-			local col1x, col2x, gradex, align1, align2
+		-- variables for positioning and horizalign, dependent on playernumber
+		local col1x, col2x, gradex, align1, align2
 
-			if pn == PLAYER_1 then
-				col1x =  -90
-				col2x =  -_screen.w/2.5
-				gradex = -_screen.w/3.33
-				align1 = right
-				align2 = left
-			elseif pn == PLAYER_2 then
-				col1x = 90
-				col2x = _screen.w/2.5
-				gradex = _screen.w/3.33
-				align1= left
-				align2 = right
+		if pn == PLAYER_1 then
+			col1x =  -90
+			col2x =  -_screen.w/2.5
+			gradex = -_screen.w/3.33
+			align1 = right
+			align2 = left
+		elseif pn == PLAYER_2 then
+			col1x = 90
+			col2x = _screen.w/2.5
+			gradex = _screen.w/3.33
+			align1= left
+			align2 = right
+		end
+
+		--percent score
+		t[#t+1] = LoadFont("_wendy small")..{
+			InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24),
+			OnCommand=function(self)
+				if score then
+
+					-- trim off the % symbol
+					local score = string.sub(FormatPercentScore(score),1,-2)
+
+					-- If the score is < 10.00% there will be leading whitespace, like " 9.45"
+					-- trim that too, so PLAYER_2's scores align properly.
+					score = string.gsub(score, " ", "")
+					self:settext(score)
+				end
 			end
+		}
 
-			--percent score
-			t[#t+1] = LoadFont("_wendy small")..{
-				InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24),
-				OnCommand=function(self)
-					if score then
-
-						-- trim off the % symbol
-						local score = string.sub(FormatPercentScore(score),1,-2)
-
-						-- If the score is < 10.00% there will be leading whitespace, like " 9.45"
-						-- trim that too, so PLAYER_2's scores align properly.
-						score = string.gsub(score, " ", "")
-						self:settext(score)
+		-- difficulty meter
+		t[#t+1] = LoadFont("_wendy small")..{
+			InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4),
+			OnCommand=function(self)
+				if difficultyMeter then
+					if difficulty then
+						local y_offset = GetYOffsetByDifficulty(difficulty)
+						self:diffuse(DifficultyIndexColor(y_offset))
 					end
+
+					self:settext(difficultyMeter)
 				end
-			}
+			end
+		}
 
-			-- difficulty meter
-			t[#t+1] = LoadFont("_wendy small")..{
-				InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4),
-				OnCommand=function(self)
-					if difficultyMeter then
-						if difficulty then
-							local y_offset = GetYOffsetByDifficulty(difficulty)
-							self:diffuse(DifficultyIndexColor(y_offset))
-						end
-
-						self:settext(difficultyMeter)
-					end
+		-- stepartist
+		t[#t+1] = LoadFont("_miso")..{
+			InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
+			OnCommand=function(self)
+				if stepartist then
+					self:settext(stepartist)
 				end
-			}
+			end
+		}
 
-			-- stepartist
-			t[#t+1] = LoadFont("_miso")..{
-				InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
-				OnCommand=function(self)
-					if stepartist then
-						self:settext(stepartist)
-					end
-				end
-			}
-
-
+		if SL.Global.GameMode ~= "StomperZ" then
 			-- letter grade
 			t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), STATSMAN:GetPlayedStageStats(STATSMAN:GetStagesPlayed()-stageNum+1):GetPlayerStageStats(pn))..{
 				OnCommand=cmd(zoom,0.2; x, gradex)
 			}
-
-
-			-- numbers
-			for i=1,#TNSTypes do
-
-				t[#t+1] = LoadFont("_wendy small")..{
-					InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50),
-					OnCommand=function(self)
-
-						local val = playerStats.judgments[TNSTypes[i]]
-
-						if val then
-							self:settext(val)
-						end
-
-						-- the only place in this theme that color is hard-coded...
-
-						if i == 1 then						-- fantastic
-							self:diffuse(color("#21CCE8"))	-- blue
-
-						elseif i == 2 then					-- perfect
-							self:diffuse(color("#e29c18"))	-- gold
-
-						elseif i == 3 then					-- great
-							self:diffuse(color("#66c955"))	-- green
-
-						elseif i == 4 then					-- good
-							self:diffuse(color("#5b2b8e"))	-- purple
-
-						elseif i == 5 then					-- decent
-							self:diffuse(color("#c9855e"))	-- peach?
-
-						else								--miss
-							self:diffuse(color("#ff0000"))	--red
-						end
-
-					end
-				}
-			end
 		end
-	-- end
+
+		-- numbers
+		for i=1,#TNSTypes do
+
+			t[#t+1] = LoadFont("_wendy small")..{
+				InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50),
+				OnCommand=function(self)
+
+					local val = playerStats.judgments[TNSTypes[i]]
+					if val then self:settext(val) end
+
+					if SL.Global.GameMode == "StomperZ" then
+						self:diffuse( colors.StomperZ[i] )
+					else
+						self:diffuse( colors.Competitive[i] )
+					end
+				end
+			}
+		end
+	end
 end
 
 return t
