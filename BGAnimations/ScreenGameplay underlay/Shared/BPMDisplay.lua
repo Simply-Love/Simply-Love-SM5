@@ -28,7 +28,14 @@ local function UpdateSingleBPM(self)
 end
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy,_screen.cx, 52; valign,1; zoom,1.33),
+	InitCommand=function(self)
+		self:x(_screen.cx):valign(1)
+		if SL.Global.GameMode == "StomperZ" then
+			self:y(42):zoom(1.075)
+		else
+			self:y(52):zoom(1.33)
+		end
+	end,
 
 	LoadFont("_miso")..{
 		Name="RatemodDisplay",

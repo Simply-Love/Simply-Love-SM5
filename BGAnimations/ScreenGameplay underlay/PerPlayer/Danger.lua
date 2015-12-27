@@ -1,4 +1,4 @@
-if SL.Global.GameMode ~= "Casual" then
+if SL.Global.GameMode ~= "Casual" and SL.Global.GameMode ~= "StomperZ" then
 
 	-- FailType is not directly a Preference, not a GamePref, not ThemePref, etc.
 	-- FailType is stored as one of the DefaultModifiers in Preferences.ini

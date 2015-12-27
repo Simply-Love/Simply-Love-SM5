@@ -45,7 +45,7 @@ end
 
 
 function GetNotefieldX( player )
-	local pn = ToEnumShortString(player)
+	local p = ToEnumShortString(player)
 
 	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
 	local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
@@ -56,7 +56,7 @@ function GetNotefieldX( player )
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
 
 	local NumPlayersAndSides = ToEnumShortString( GAMESTATE:GetCurrentStyle():GetStyleType() )
-	return THEME:GetMetric("ScreenGameplay","Player".. pn .. NumPlayersAndSides .."X")
+	return THEME:GetMetric("ScreenGameplay","Player".. p .. NumPlayersAndSides .."X")
 end
 
 function GetNotefieldWidth()

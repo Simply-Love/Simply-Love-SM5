@@ -10,14 +10,18 @@ else
 
 		Name=ToEnumShortString(player).."Score",
 		InitCommand=function(self)
-			self:y(56)
-			self:valign(1)
-			self:halign(1)
-			self:zoom(0.5)
-			if player == PLAYER_1 then
-				self:x( _screen.cx - _screen.w/4.3 )
-			elseif player == PLAYER_2 then
-				self:x( _screen.cx + _screen.w/2.85 )
+			self:valign(1):halign(1)
+
+			if SL.Global.GameMode == "StomperZ" then
+				self:zoom(0.4):x( WideScale(160, 214) ):y(20)
+				if player == PLAYER_2 then
+					self:x( _screen.w - WideScale(50, 104) )
+				end
+			else
+				self:zoom(0.5):x( _screen.cx - _screen.w/4.3 ):y(56)
+				if player == PLAYER_2 then
+					self:x( _screen.cx + _screen.w/2.75 )
+				end
 			end
 		end,
 		JudgmentMessageCommand=function(self) self:queuecommand("RedrawScore") end,
