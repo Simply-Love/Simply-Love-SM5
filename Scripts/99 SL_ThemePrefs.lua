@@ -42,7 +42,11 @@ local SL_CustomPrefs =
 		},
 		Values 	= { "Casual", "Competitive", "StomperZ", "Marathon" }
 	},
-
+	VisualTheme =
+	{
+		Default = "Hearts",
+		Choices = { "Hearts", "Arrows" },
+	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- SimplyLoveColor saves the theme color for the next time
 	-- the StepMania application is started.

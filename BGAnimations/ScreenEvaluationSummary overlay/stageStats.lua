@@ -22,11 +22,11 @@ local colors = {
 	}
 }
 
---
+local banner_directory = ThemePrefs.Get("VisualTheme")
 local t = Def.ActorFrame{
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
 		InitCommand=cmd(y,-6; zoom, 0.333)
 	},
 
