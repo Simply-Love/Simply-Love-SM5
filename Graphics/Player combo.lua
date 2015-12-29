@@ -90,7 +90,7 @@ else
 
 		LoadFont("_wendy small")..{
 			Name="Number",
-			OnCommand=cmd(y,-20; shadowlength,1; vertalign,middle ),
+			OnCommand=cmd(shadowlength,1; vertalign,middle ),
 			ChangeColorCommand=function(self, params)
 				self:diffuseshift():effectperiod(0.8)
 				self:effectcolor1( color(params.Color1) )

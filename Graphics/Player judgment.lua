@@ -88,12 +88,12 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 		-- frame0 is like (-fantastic)
 		-- frame1 is like (fantastic-)
 		if frame == 0 or frame == 1 then
-			JudgmentSet:zoom(0.85)
+			JudgmentSet:zoom(0.80)
 		else
-			JudgmentSet:zoom(0.9)
+			JudgmentSet:zoom(0.85)
 		end
 
-		JudgmentSet:decelerate(0.1):zoom(0.8):sleep(1)
+		JudgmentSet:decelerate(0.1):zoom(0.75):sleep(1)
 		JudgmentSet:accelerate(0.2):zoom(0)
 	end
 
@@ -119,7 +119,7 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 			end
 
 		end,
-		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false)
+		ResetCommand=cmd(finishtweening; stopeffect; visible,false)
 	}
 end
 
