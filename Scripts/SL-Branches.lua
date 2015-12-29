@@ -23,7 +23,15 @@ Branch.AllowScreenEvalSummary = function()
 	end
 end
 
-Branch.AfterSelectStyle = function()
+Branch.AllowScreenSelectColor = function()
+	if ThemePrefs.Get("AllowScreenSelectColor") then
+		return "ScreenSelectColor"
+	else
+		return "ScreenSelectStyle"
+	end
+end
+
+Branch.AfterSelectPlayMode = function()
 	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
 		return "ScreenSelectCourseNonstop"
 	else
