@@ -91,9 +91,7 @@ local t = Def.ActorFrame{
 		SL.Global.GameMode = choices[cursor_index+1].Value
 
 		-- now that a GameMode has been selected, set related preferences now.
-		for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
-			PREFSMAN:SetPreference(key, val)
-		end
+		SetGameModePreferences()
 	end,
 
 	-- side mask

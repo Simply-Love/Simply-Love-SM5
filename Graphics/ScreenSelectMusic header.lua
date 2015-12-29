@@ -79,6 +79,13 @@ local t = Def.ActorFrame{
 		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, 15 ),
 		TextCommand=cmd(settext, StageText),
 		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
+	},
+
+	Def.BitmapText{
+		Name="GameModeText",
+		Font="_wendy small",
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.w-10, 15; halign, 1),
+		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1; settext, THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode)),
 	}
 }
 

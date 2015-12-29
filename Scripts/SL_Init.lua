@@ -66,6 +66,7 @@ local GlobalDefaults = {
 				Style = "single"
 			}
 			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "Competitive"
+			self.ScreenshotTexture = nil
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,

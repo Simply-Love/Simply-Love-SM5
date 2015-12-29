@@ -1,6 +1,13 @@
 local t = Def.ActorFrame{
 	ChangeStepsMessageCommand=function(self, params)
 		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
+	end,
+	PrepareToGoToSortListMessageCommand=function(self)
+		MESSAGEMAN:Broadcast("ScreenshotCurrentScreen")
+		self:queuecommand("GoToSortList")
+	end,
+	GoToSortListCommand=function(self)
+		SCREENMAN:SetNewScreen("ScreenSortList")
 	end
 }
 

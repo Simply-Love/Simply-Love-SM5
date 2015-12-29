@@ -1,4 +1,4 @@
-local file = THEME:GetPathB("", "_shared background normal/loveheart.png")
+local file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
 
 -- this variable will be used within the scope of this file like (index+1) and (index-1)
 -- to continue to diffuse each sprite as we shift through the colors available in SL.Colors

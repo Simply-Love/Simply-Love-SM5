@@ -24,6 +24,8 @@ return Def.Actor{
 			-- so turn Decents and WayOffs off now.
 			if SL.Global.GameMode == "Casual" then
 				SL[pn].ActiveModifiers.DecentsWayOffs = "Off"
+			else
+				SL[pn].ActiveModifiers.DecentsWayOffs = "On"
 			end
 
 			-- see: ./Scripts/SL-PlayerOptions.lua

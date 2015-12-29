@@ -102,6 +102,13 @@ function GetComboThreshold()
 end
 
 
+function SetGameModePreferences()
+	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
+		PREFSMAN:SetPreference(key, val)
+	end
+end
+
+
 function GetPlayerOptionsLineNames()
 	if SL.Global.GameMode == "Casual" then
 		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty"

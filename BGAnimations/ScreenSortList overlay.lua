@@ -1,19 +1,6 @@
 local sort_wheel = setmetatable({}, sick_wheel_mt)
-local sort_orders = {
-	"Group",
-	"Title",
-	"Artist",
-	"Genre",
-	"BPM",
-	"Length",
-	"BeginnerMeter",
-	"EasyMeter",
-	"MediumMeter",
-	"HardMeter",
-	"ChallengeMeter",
-	"Popularity"
-}
 
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -- this handles user input
 local function input(event)
 	if not event.PlayerNumber or not event.button then
@@ -33,10 +20,19 @@ local function input(event)
 
 		elseif event.GameButton == "Start" then
 			overlay:GetChild("start_sound"):play()
-			MESSAGEMAN:Broadcast('Sort',{order=sort_wheel:get_actor_item_at_focus_pos().info})
+			local focus = sort_wheel:get_actor_item_at_focus_pos()
+
+			if focus.kind == "SortBy" then
+				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
+
+			elseif focus.kind == "ChangeMode" then
+				SL.Global.GameMode = focus.change_mode
+				SetGameModePreferences()
+			end
+
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 
-		elseif event.GameButton == "Back" then
+		elseif event.GameButton == "Back" or event.GameButton == "Select" then
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 		end
 	end
@@ -57,19 +53,31 @@ local wheel_item_mt = {
 				InitCommand=function(subself)
 					self.container = subself
 					subself:MaskDest()
+					subself:diffusealpha(0)
+				end,
+			}
+
+			-- top text
+			af[#af+1] = Def.BitmapText{
+				Font="_miso",
+				InitCommand=function(subself)
+					self.top_text = subself
+					subself:zoom(1.15):y(-15):diffusealpha(0)
+				end,
+				OnCommand=function(subself)
+					subself:sleep(0.13):linear(0.05):diffusealpha(1)
 				end
 			}
 
-			af[#af+1] = LoadFont("_wendy small")..{
-				Text="",
+			-- bottom text
+			af[#af+1] = Def.BitmapText{
+				Font="_wendy small",
 				InitCommand=function(subself)
-					subself:diffusealpha(0)
-					self.text= subself
+					self.bottom_text = subself
+					subself:zoom(0.85):y(10):diffusealpha(0)
 				end,
 				OnCommand=function(subself)
-					subself:sleep(0.13)
-					subself:linear(0.05)
-					subself:diffusealpha(1)
+					subself:sleep(0.1):linear(0.15):diffusealpha(1)
 				end
 			}
 
@@ -92,7 +100,7 @@ local wheel_item_mt = {
 				self.container:glow(color("1,1,1,0"))
 			end
 
-			self.container:y(28 * (item_index - math.ceil(num_items/2)))
+			self.container:y(36 * (item_index - math.ceil(num_items/2)))
 
 			if item_index <= 1 or  item_index >= num_items then
 				self.container:diffusealpha(0)
@@ -102,15 +110,48 @@ local wheel_item_mt = {
 		end,
 
 		set = function(self, info)
-			self.info= info
-			if not info then self.text:settext("") return end
-			self.text:settext(THEME:GetString("ScreenSortList", info))
+			if not info then self.bottom_text:settext("") return end
+			self.info = info
+			self.kind = info[1]
+
+			if self.kind == "SortBy" then
+				self.sort_by = info[2]
+
+			elseif self.kind == "ChangeMode" then
+				self.change_mode = info[2]
+			end
+
+			self.top_text:settext(THEME:GetString("ScreenSortList", info[1]))
+			self.bottom_text:settext(THEME:GetString("ScreenSortList", info[2]))
 		end
 	}
 }
 
 local t = Def.ActorFrame {
-	InitCommand=function(self)
+	OnCommand=function(self)
+
+		local wheel_options = {
+			{"SortBy", "Group"},
+			{"SortBy", "Title"},
+			{"SortBy", "Artist"},
+			{"SortBy", "Genre"},
+			{"SortBy", "BPM"},
+			{"SortBy", "Length"},
+			{"SortBy", "BeginnerMeter"},
+			{"SortBy", "EasyMeter"},
+			{"SortBy", "MediumMeter"},
+			{"SortBy", "HardMeter"},
+			{"SortBy", "ChallengeMeter"},
+			{"SortBy", "Popularity"},
+		}
+
+		-- Allow players to switch out to a different GameMode if no stages have been played yet.
+		if SL.Global.Stages.PlayedThisGame == 0 then
+			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
+			table.insert(wheel_options, {"ChangeMode", "Casual"})
+			table.insert(wheel_options, {"ChangeMode", "Competitive"})
+		end
+
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
@@ -124,15 +165,22 @@ local t = Def.ActorFrame {
 		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
 		local current_sort_order_index = 1
 
-		for i=1, #sort_orders do
-			if sort_orders[i] == current_sort_order then
+		for i=1, #wheel_options do
+			if wheel_options[i][1] == "SortBy" and wheel_options[i][2] == current_sort_order then
 				current_sort_order_index = i
+				break
+			end
+		end
+		for i=1, #wheel_options do
+			if wheel_options[i][1] == "ChangeMode" and wheel_options[i][2] == SL.Global.GameMode then
+				table.remove(wheel_options, i)
+				break
 			end
 		end
 
 		-- the second argument passed to set_info_set is the index of the item in sort_orders
 		-- that we want to have focus when the wheel is created
-		sort_wheel:set_info_set(sort_orders, current_sort_order_index)
+		sort_wheel:set_info_set(wheel_options, current_sort_order_index)
 
 		self:queuecommand("Capture")
 	end,
@@ -140,28 +188,73 @@ local t = Def.ActorFrame {
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
 
+	Def.Sprite{
+		OnCommand=function(self)
+			self:Center()
+				:SetTexture(SL.Global.ScreenshotTexture)
+
+				--???
+				:stretchto( 0,0, _screen.w, _screen.h )
+		end
+	},
+
 	-- slightly darken the entire screen
 	Def.Quad {
-		InitCommand=cmd(FullScreen; diffuse,Color.Black; diffusealpha,0.6)
+		InitCommand=cmd(FullScreen; diffuse,Color.Black; diffusealpha,0.8)
+	},
+
+	-- OptionsList Header Quad
+	Def.Quad {
+		InitCommand=cmd(Center; zoomto,202,22; xy, _screen.cx, _screen.cy-92)
+	},
+	-- "Options" text
+	Def.BitmapText{
+		Font="_wendy small",
+		Text="Options",
+		InitCommand=function(self)
+			self:xy(_screen.cx, _screen.cy-92):zoom(0.4)
+				:diffuse( Color.Black )
+		end
 	},
 
 	-- white border
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,202,152)
+		InitCommand=cmd(Center; zoomto,202,162)
 	},
-
 	-- BG of the sortlist box
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,200,150; diffuse,Color.Black)
+		InitCommand=cmd(Center; zoomto,200,160; diffuse,Color.Black)
 	},
-
 	-- top mask
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,200,_screen.h/2; y,50; MaskSource )
+		InitCommand=cmd(Center; zoomto,200,_screen.h/2; y,40; MaskSource )
 	},
 	-- bottom mask
 	Def.Quad {
-		InitCommand=cmd(zoomto,200,_screen.h/2 ; xy,_screen.cx,_screen.cy+195; MaskSource)
+		InitCommand=cmd(zoomto,200,_screen.h/2 ; xy,_screen.cx,_screen.cy+200; MaskSource)
+	},
+
+	-- "Press SELECT To Cancel" text
+	Def.ActorFrame{
+		InitCommand=function(self)
+			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
+				self:hibernate(math.huge)
+			end
+		end,
+		Def.BitmapText{
+			Font="_wendy small",
+			Text=ScreenString("Cancel"),
+			InitCommand=function(self)
+				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffuse(0.4, 0.4, 0.4, 1)
+			end
+		},
+		Def.BitmapText{
+			Font="_wendy small",
+			Text=ScreenString("SelectButton"),
+			InitCommand=function(self)
+				self:xy(_screen.cx-13, _screen.cy+78):zoom(0.5)
+			end
+		}
 	},
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
