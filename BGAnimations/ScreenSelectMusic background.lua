@@ -4,9 +4,10 @@ return Def.ActorFrameTexture{
 		self:SetHeight( PREFSMAN:GetPreference("DisplayHeight") )
 			:SetWidth( PREFSMAN:GetPreference("DisplayHeight") * PREFSMAN:GetPreference("DisplayAspectRatio")  )
 			:Create()
+			:visible(false)
 	end,
 	RenderCommand=function(self)
-		self:Draw()
+		self:visible(true):Draw():visible(false)
 		SL.Global.ScreenshotTexture = self:GetTexture()
 	end,
 
