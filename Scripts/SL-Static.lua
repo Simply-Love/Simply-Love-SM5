@@ -19,6 +19,7 @@ local SM5_DEFAULTS = {
 	RegenComboAfterMiss=5,
 	MaxRegenComboAfterMiss=5,
 	MinTNSToHideNotes=W3,
+	HarshHotLifePenalty=1,
 	TimingWindowSecondsHold=0.250000,
 	TimingWindowSecondsMine=0.090000,
 	TimingWindowSecondsRoll=0.500000,

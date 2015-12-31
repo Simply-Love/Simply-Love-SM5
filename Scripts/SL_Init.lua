@@ -101,7 +101,8 @@ SL = {
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes=W3,
-
+			HarshHotLifePenalty=1,
+			
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
 			TimingWindowSecondsW3=0.102000,
@@ -116,6 +117,7 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=5,
 			MinTNSToHideNotes=W3,
+			HarshHotLifePenalty=1,
 
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
@@ -131,6 +133,7 @@ SL = {
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes=W4,
+			HarshHotLifePenalty=0,
 
 			TimingWindowSecondsW1=0.012500,
 			TimingWindowSecondsW2=0.025000,
@@ -146,6 +149,7 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=5,
 			MinTNSToHideNotes=W3,
+			HarshHotLifePenalty=1,
 
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
