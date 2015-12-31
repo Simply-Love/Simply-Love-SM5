@@ -180,14 +180,6 @@ for player in ivalues(Players) do
 		end
 	}
 
-	if SL.Global.GameMode ~= "StomperZ" then
-		-- letter grade
-		local player_stage_stats = STATSMAN:GetPlayedStageStats(STATSMAN:GetStagesPlayed()-StageNum+1):GetPlayerStageStats(player)
-		PlayerStatsAF[#PlayerStatsAF+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), player_stage_stats)..{
-			DrawStageCommand=cmd(zoom,0.2; x, gradex)
-		}
-	end
-
 	-- numbers
 	for i=1,#TNSTypes do
 

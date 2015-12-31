@@ -1,7 +1,7 @@
 local numStages = SL.Global.Stages.PlayedThisGame
 
 local page = 1
-local pages = (numStages%4)+1
+local pages = math.floor(numStages/4)+1
 
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
@@ -20,7 +20,7 @@ local t = Def.ActorFrame{
 			if param.Name == "MenuLeft" or param.Name == "MenuUp" then
 				if page > 1 then
 					page = page - 1
-					self:queuecommand("Hide")
+					self:stoptweening():queuecommand("Hide")
 				end
 			end
 
@@ -28,14 +28,14 @@ local t = Def.ActorFrame{
 			if param.Name == "MenuRight" or param.Name == "MenuDown" then
 				if page < pages then
 					page = page + 1
-					self:queuecommand("Hide")
+					self:stoptweening():queuecommand("Hide")
 				end
-			end			
+			end
 		end
 	end,
 
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
-	
+
 	Def.BitmapText{
 		Name="PageNumber",
 		Font="_wendy small",
@@ -58,10 +58,10 @@ for i=1,4 do
 			self:xy(_screen.cx, ((_screen.h/4.75) * i))
 				:queuecommand("Hide")
 		end,
-		ShowCommand=function(self) 
-			self:sleep(i*0.05):linear(0.15):diffusealpha(1) 
+		ShowCommand=function(self)
+			self:sleep(i*0.05):linear(0.15):diffusealpha(1)
 		end,
-		HideCommand=function(self) 
+		HideCommand=function(self)
 			self:playcommand("DrawPage", {Page=page})
 		end,
 	}
