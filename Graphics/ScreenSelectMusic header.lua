@@ -64,15 +64,7 @@ local t = Def.ActorFrame{
 		end
 	end,
 
-	Def.Quad{
-		InitCommand=cmd(zoomto, _screen.w, 32; vertalign, top; diffuse,0.65,0.65,0.65,1; x, _screen.cx),
-	},
-
-	LoadFont("_wendy small")..{
-		Name="HeaderText",
-		InitCommand=cmd(zoom,WideScale(0.5, 0.6); xy, 10, 15;  horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText")),
-		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
-	},
+	LoadActor( THEME:GetPathG("", "_header.lua") ),
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",

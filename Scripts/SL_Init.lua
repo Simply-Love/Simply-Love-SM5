@@ -102,7 +102,7 @@ SL = {
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes=W3,
 			HarshHotLifePenalty=1,
-			
+
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
 			TimingWindowSecondsW3=0.102000,
