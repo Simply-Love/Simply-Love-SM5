@@ -70,10 +70,9 @@ end
 
 local function FindSpeedModOptionRowIndex(ScreenOptions)
 	local num_rows = ScreenOptions:GetNumRows()
-	local SpeedModOptionRow_Index
 
 	-- OptionRows on ScreenOptions are 0-indexed, so start counting from 0
-	for i=0,num_rows do
+	for i=0,num_rows-1 do
 		if ScreenOptions:GetOptionRow(i):GetName() == "SpeedMod" then
 			return i
 		end
