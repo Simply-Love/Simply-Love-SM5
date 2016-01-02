@@ -115,7 +115,7 @@ SL = {
 		Competitive = {
 			TimingWindowAdd=0.001500,
 			RegenComboAfterMiss=5,
-			MaxRegenComboAfterMiss=5,
+			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes=W3,
 			HarshHotLifePenalty=1,
 
