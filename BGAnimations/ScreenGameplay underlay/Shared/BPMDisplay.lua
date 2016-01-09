@@ -81,7 +81,14 @@ else
 
 	if timingP1 == timingP2 then
 		-- both players are steps with the same TimingData; only need one.
-		t[#t+1] = displaySingle
+		t[#t+1] = Def.ActorFrame{
+			InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM),
+	
+			LoadFont("_miso")..{
+				Name="BPMDisplay",
+				InitCommand=cmd(zoom,1)
+			}
+		}
 		return t
 	end
 
