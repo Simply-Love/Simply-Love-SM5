@@ -2,11 +2,13 @@ local Players = GAMESTATE:GetHumanPlayers()
 local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 
 -- underlay stuff like BackgroundFilter, ColumnFlash, and MeasureCounter
-for pn in ivalues(Players) do
-	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", pn)
-	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", pn)
-	t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", pn)
-	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", pn)
+for player in ivalues(Players) do
+	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", player)
+	
+	if SL.GameMode ~= "StomperZ" then
+		t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
+	end
 end
 
 -- semi-transparent quad at the top of ScreenGameplay
@@ -19,6 +21,12 @@ t[#t+1] = LoadActor("./Shared/SongInfoBar.lua")
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/LifeMeter/default.lua", player)
+	
+	if SL.GameMode == "StomperZ" then
+		t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
+	end
+	
+	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
 end
 
