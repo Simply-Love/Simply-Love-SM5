@@ -92,6 +92,8 @@ local t = Def.ActorFrame{
 
 		-- now that a GameMode has been selected, set related preferences now.
 		SetGameModePreferences()
+		
+		THEME:ReloadMetrics()
 	end,
 
 	-- side mask

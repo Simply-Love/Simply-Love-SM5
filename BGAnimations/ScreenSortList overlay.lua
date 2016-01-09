@@ -28,6 +28,7 @@ local function input(event)
 			elseif focus.kind == "ChangeMode" then
 				SL.Global.GameMode = focus.change_mode
 				SetGameModePreferences()
+				THEME:ReloadMetrics()
 			end
 
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
