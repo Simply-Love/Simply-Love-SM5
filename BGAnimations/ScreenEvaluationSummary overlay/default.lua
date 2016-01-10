@@ -1,7 +1,7 @@
 local numStages = SL.Global.Stages.PlayedThisGame
 
 local page = 1
-local pages = math.floor(numStages/4)+1
+local pages = math.ceil(numStages/4)
 
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
