@@ -5,34 +5,35 @@ local mods = SL[pn].ActiveModifiers
 
 -- - - - - - - - - - - - - - - - - - - - - -
 
--- a Judgment might be saved to a profile from a previous GameMode
--- that doesn't exist in the current GameMode.  If so, attempt to set
--- it to the first available Judgment graphic.  If none are available,
--- set it to "None" as a last resort fallback.
-local path
-if SL.Global.GameMode == "StomperZ" then
-	path = THEME:GetPathG("", "_judgments/StomperZ")
-else
-	path = THEME:GetPathG("", "_judgments/Competitive")
-end
-
-local files = FILEMAN:GetDirListing(path .. "/")
-local judgment_exists = false
-for i,filename in ipairs(files) do
-	if string.match(filename, " %dx%d") then
-		local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
-		if mods.JudgmentGraphic == name then
-			judgment_exists = true
-			break
-		end
+if mods.JudgmentGraphic ~= "None" then
+	-- a Judgment might be saved to a profile from a previous GameMode
+	-- that doesn't exist in the current GameMode.  If so, attempt to set
+	-- it to the first available Judgment graphic.  If none are available,
+	-- set it to "None" as a last resort fallback.
+	local path
+	if SL.Global.GameMode == "StomperZ" then
+		path = THEME:GetPathG("", "_judgments/StomperZ")
 	else
-		table.remove(files,i)
+		path = THEME:GetPathG("", "_judgments/Competitive")
+	end
+
+	local files = FILEMAN:GetDirListing(path .. "/")
+	local judgment_exists = false
+	for i,filename in ipairs(files) do
+		if string.match(filename, " %dx%d") then
+			local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
+			if mods.JudgmentGraphic == name then
+				judgment_exists = true
+				break
+			end
+		else
+			table.remove(files,i)
+		end
+	end
+	if not judgment_exists then
+		mods.JudgmentGraphic = files[1] or "None"
 	end
 end
-if not judgment_exists then
-	mods.JudgmentGraphic = files[1] or "None"
-end
-
 -- - - - - - - - - - - - - - - - - - - - - -
 
 local JudgeCmds = {
@@ -57,6 +58,7 @@ local TNSFrames = {
 local t = Def.ActorFrame {
 	Name="Player Judgment"
 }
+
 
 if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 
