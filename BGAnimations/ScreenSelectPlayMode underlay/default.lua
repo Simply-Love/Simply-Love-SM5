@@ -90,6 +90,12 @@ local t = Def.ActorFrame{
 		-- to set certain Gameplay settings and determine which screen comes next
 		SL.Global.GameMode = choices[cursor_index+1].Value
 
+		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "Casual" then
+			GAMESTATE:SaveProfiles(false)
+		else
+			GAMESTATE:SaveProfiles(true)
+		end
+
 		-- now that a GameMode has been selected, set related preferences now.
 		SetGameModePreferences()
 		

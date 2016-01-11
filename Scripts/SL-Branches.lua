@@ -4,7 +4,7 @@ Branch.AllowScreenNameEntry = function()
 
 	-- If we're in Casual mode, don't allow NameEntry, and don't
 	-- bother saving the profile(s). Skip directly to GameOver.
-	if SL.Global.GameMode == "Casual" then
+	if SL.Global.GameMode == "Casual" or SL.Global.GameMode == "StomperZ" then
 		return Branch.AfterProfileSaveSummary()
 
 	elseif ThemePrefs.Get("AllowScreenNameEntry") then
@@ -28,6 +28,15 @@ Branch.AllowScreenSelectColor = function()
 		return "ScreenSelectColor"
 	else
 		return "ScreenSelectStyle"
+	end
+end
+
+Branch.AfterEvaluationStage = function()
+	-- If we're in Casual or StomperZ mode, don't save the profile(s).
+	if SL.Global.GameMode == "Casual" or SL.Global.GameMode == "StomperZ" then
+		return Branch.AfterProfileSave()
+	else
+		return "ScreenProfileSave"
 	end
 end
 
