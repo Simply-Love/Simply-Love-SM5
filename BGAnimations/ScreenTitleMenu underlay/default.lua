@@ -15,7 +15,9 @@ local sm_version = ""
 if ProductVersion():find("git") then
 	local date = VersionDate()
 	local year = date:sub(1,4)
-	local month = THEME:GetString("Months", "Month"..date:sub(5,6))
+	local month = date:sub(5,6)
+	if month:sub(1,1) == "0" then month = month:gsub("0", "") end 
+	month = THEME:GetString("Months", "Month"..month)
 	local day = date:sub(7,8)
 	
 	sm_version = ProductID() .. ", Built " .. month .. " " .. day .. ", " .. year
