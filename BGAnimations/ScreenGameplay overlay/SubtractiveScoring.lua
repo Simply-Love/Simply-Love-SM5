@@ -30,10 +30,12 @@ else
 				:xy( x_position + (notefield_width/2.9), _screen.cy )
 		end,
 		JudgmentMessageCommand=function(self, params)
-			tns = ToEnumShortString(params.TapNoteScore)
-			self:queuecommand("Set")
+			if player == params.Player then
+				tns = ToEnumShortString(params.TapNoteScore)
+				self:queuecommand("SetScore")
+			end
 		end,
-		SetCommand=function(self, params)
+		SetScoreCommand=function(self, params)
 
 			if tns == "W2" and not received_judgment_lower_than_w2 and w2_count < 10 then
 					-- increment for the first ten
@@ -41,7 +43,7 @@ else
 					-- and specificy literal W2 count
 					self:settext("-" .. w2_count)
 
-			elseif tns ~= "W1" then
+			elseif tns ~= "W1" and tns ~= "AvoidMine" then
 				received_judgment_lower_than_w2 = true
 
 				-- if not W1 or W2, specify percent away from 100%
