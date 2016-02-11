@@ -51,7 +51,7 @@ t[#t+1] = LoadActor("Cursor.png")..{
 	HideCommand=cmd(linear, 0.25; diffusealpha, 0)
 }
 
-t[#t+1] = LoadFont("ScreenNameEntryTraditional entry")..{
+t[#t+1] = LoadFont("_wendy white")..{
 	Name="PlayerName",
 	InitCommand=cmd(zoom,0.75; halign,0; x,-80; y,-12;),
 	OnCommand=function(self)

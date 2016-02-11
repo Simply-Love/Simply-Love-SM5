@@ -5,16 +5,26 @@ local PlayerDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				JudgmentGraphic = "Love",
-				Mini = "Normal",
-				ScreenFilter = "Off",
+				Mini = "0%",
+				BackgroundFilter = "Off",
 				SpeedModType = "x",
 				SpeedMod = 1.00,
 				Vocalization = "None",
+				Noteskin = nil,
 				HideTargets = false,
 				HideSongBG = false,
 				HideCombo = false,
 				HideLifebar = false,
 				HideScore = false,
+				ColumnFlashOnMiss = false,
+				SubtractiveScoring = false,
+				MeasureCounter = "None",
+			}
+			self.Streams = {
+				SongDir = nil,
+				StepsType = nil,
+				Difficulty = nil,
+				Measures = nil,
 			}
 			self.HighScores = {
 				EnteringName = false,
@@ -23,8 +33,7 @@ local PlayerDefaults = {
 			self.Stages = {
 				Stats = {}
 			}
-			self.CurrentPlayerOptions = 
-			{
+			self.CurrentPlayerOptions = {
 				String = nil
 			}
 		end
@@ -33,6 +42,9 @@ local PlayerDefaults = {
 
 local GlobalDefaults = {
 	__index = {
+
+		-- since the initialize() function is run every game cycle, the idea
+		-- is to define variables we want to reset every game cycle inside
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
@@ -48,11 +60,22 @@ local GlobalDefaults = {
 				PlayerOptions = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay"
 			}
-			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed")
+			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.Gamestate = {
 				Style = "single"
 			}
-		end
+		end,
+
+		-- This won't be reset each game cycle,
+		-- but is rather to be updated (maybe) on ScreenSelectColor
+		ActiveColorIndex = ThemePrefs.Get("SimplyLoveColor") or 1,
+
+		-- This will be assigned value only once, upon starting StepMania, and should NOT be
+		-- reset each game cycle. Instead, we'll use this to check if the TimingWindowScale
+		-- preference has changed and needs to be reset back to its initial state.
+		-- Thus, define this outside the scope of initialize() above.  The values in there
+		-- are reset each game cycle.
+		InitialTimingWindowScale = PREFSMAN:GetPreference("TimingWindowScale")
 	}
 }
 
@@ -78,12 +101,20 @@ SL = {
 	}
 }
 
+
+-- Initialize preferences by calling this method.
+--  We typically do this from ./BGAnimations/ScreenTitleMenu underlay.lua
+--  so that preferences reset between each game cycle.
+
 function InitializeSimplyLove()
 	SL.P1:initialize()
 	SL.P2:initialize()
 	SL.Global:initialize()
+
+	if PREFSMAN:GetPreference("TimingWindowScale") ~= SL.Global.InitialTimingWindowScale then
+		PREFSMAN:SetPreference("TimingWindowScale", SL.Global.InitialTimingWindowScale)
+	end
 end
 
--- Initialize preferences now (when this script is loaded when StepMania is initializing)
--- and also from ScreenTitleMenu underlay.lua so that preferences reset between each game.
+-- TODO: remove this; it's for debugging purposes (Control+F2 to reload scripts) only
 InitializeSimplyLove()

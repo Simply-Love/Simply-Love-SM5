@@ -16,7 +16,7 @@ local alphabet_character_mt = {
 				HideCommand=cmd(linear, 0.25; diffusealpha, 0),
 
 				Def.BitmapText{
-					Font="ScreenNameEntryTraditional entry",
+					Font="_wendy white",
 					InitCommand=function(subself)
 						self.bmt = subself
 						subself:zoom(0.475)

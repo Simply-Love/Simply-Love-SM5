@@ -126,7 +126,7 @@ for i=numStages,1,-1 do
 					if s == index then
 						self:diffuseshift()
 						self:effectperiod(durationPerSong/3)
-						self:effectcolor1(GetHexColor((SimplyLoveColor() - 4)%12 + 1))
+						self:effectcolor1(GetHexColor((SL.Global.ActiveColorIndex - 4)%12 + 1))
 						self:effectcolor2(Color.White)
 					end
 				end,
@@ -142,22 +142,22 @@ for i=numStages,1,-1 do
 				end
 			}
 
-			row[#row+1] = LoadFont("_misoreg hires")..{
+			row[#row+1] = LoadFont("_miso")..{
 				Text=s..". ",
 				InitCommand=cmd(horizalign,right; xy, -120, (s-(lower-1))*22 )
 			}
 
-			row[#row+1] = LoadFont("_misoreg hires")..{
+			row[#row+1] = LoadFont("_miso")..{
 				Text=name,
 				InitCommand=cmd(horizalign,left; xy, -110, (s-(lower-1))*22 )
 			}
 
-			row[#row+1] = LoadFont("_misoreg hires")..{
+			row[#row+1] = LoadFont("_miso")..{
 				Text=score,
 				InitCommand=cmd(horizalign,left; xy, -24, (s-(lower-1))*22 )
 			}
 
-			row[#row+1] = LoadFont("_misoreg hires")..{
+			row[#row+1] = LoadFont("_miso")..{
 				Text=date,
 				InitCommand=cmd(horizalign,left; xy, 50, (s-(lower-1))*22 )
 			}

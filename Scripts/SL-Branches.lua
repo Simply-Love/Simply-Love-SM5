@@ -1,5 +1,5 @@
 function AllowScreenNameEntry()
-	if ThemePrefs.Get("AllowScreenNameEntry") == 1 then
+	if ThemePrefs.Get("AllowScreenNameEntry") then
 		return "ScreenNameEntryTraditional"
 	else
 		return "ScreenProfileSaveSummary"
@@ -7,7 +7,7 @@ function AllowScreenNameEntry()
 end
 
 function AllowScreenEvalSummary()
-	if ThemePrefs.Get("AllowScreenEvalSummary") == 1 then
+	if ThemePrefs.Get("AllowScreenEvalSummary") then
 		return "ScreenEvaluationSummary"
 	else
 		return AllowScreenNameEntry()
@@ -18,9 +18,8 @@ end
 
 if not Branch then Branch = {} end
 
-function SelectMusicOrCourse()
-	local pm = GAMESTATE:GetPlayMode()
-	if pm == "PlayMode_Nonstop"	then
+Branch.AfterSelectStyle = function()
+	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
 		return "ScreenSelectCourseNonstop"
 	else
 		return "ScreenSelectMusic"
@@ -44,22 +43,17 @@ Branch.AfterScreenSelectPlayMode = function()
 			GAMESTATE:SetCurrentStyle("versus")
 		end
 		return "ScreenProfileLoad"
-	else if style == 2 then
+	elseif style == 2 then
 		GAMESTATE:SetCurrentStyle("single")
 		return "ScreenProfileLoad"
-	else if style == 3 then
+	elseif style == 3 then
 		GAMESTATE:SetCurrentStyle("versus")
 		return "ScreenProfileLoad"
-	else if style == 4 then
+	elseif style == 4 then
 		GAMESTATE:SetCurrentStyle("double")
 		return "ScreenProfileLoad"
 	else
-		local gameName = GAMESTATE:GetCurrentGame():GetName()
-		if gameName == "techno" then
-			return "ScreenSelectStyleTechno"
-		else
-			return "ScreenSelectStyle"
-		end
+		return "ScreenSelectStyle"
 	end
 end
 
@@ -91,7 +85,7 @@ Branch.AfterProfileSave = function()
 	else
 
 		local song = GAMESTATE:GetCurrentSong()
-		local SMSongCost = (song:IsLong() and 2) or (song:IsMarathon() and 3) or 1
+		local SMSongCost = (song:IsMarathon() and 3) or (song:IsLong() and 2) or 1
 		SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - SMSongCost
 
 		-- calculate if stages should be "added back" because of rate mod
@@ -110,15 +104,31 @@ Branch.AfterProfileSave = function()
 
 			ActualSongCost = (IsMarathon and 3) or (IsLong and 2) or 1
 			StagesToAddBack = SMSongCost - ActualSongCost
+
 			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
 		end
 
+
+		-- This is somewhat hackish, but it serves to counteract Lua Hacks.
+		-- If ScreenGameplay was reloaded by a "gimmick" chart, then it is
+		-- very possible that the Engine's concept of remaining stages will
+		--  be incongruent with the Theme's.  Add stages back, engine-side, if necessary.
+		if GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()) < SL.Global.Stages.Remaining then
+			StagesToAddBack = math.abs(SL.Global.Stages.Remaining - GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()))
+			local Players = GAMESTATE:GetHumanPlayers()
+			for pn in ivalues(Players) do
+				for i=1, StagesToAddBack do
+					GAMESTATE:AddStageToPlayer(pn)
+				end
+			end
+		end
+
 		-- If we don't allow players to fail out of a set early
-		if ThemePrefs.Get("AllowFailingOutOfSet") == 0 then
+		if ThemePrefs.Get("AllowFailingOutOfSet") == false then
 
 			-- check first to see how many songs are remaining
 			-- if none...
-			if SL.Global.Stages.Remaining == 0 then
+			if SL.Global.Stages.Remaining <= 0 then
 
 				if SL.Global.ContinuesRemaining > 0 then
 
@@ -188,7 +198,7 @@ Branch.AfterProfileSave = function()
 end
 
 Branch.AfterProfileSaveSummary = function()
-	if ThemePrefs.Get("AllowScreenGameOver") == 1 then
+	if ThemePrefs.Get("AllowScreenGameOver") then
 		return "ScreenGameOver"
 	else
 		return Branch.AfterInit()

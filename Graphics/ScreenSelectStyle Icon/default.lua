@@ -13,8 +13,8 @@ local zoomFactor = WideScale(0.435,0.525)
 
 local t = Def.ActorFrame {
 	Name="Item"..iIndex,
-	GainFocusCommand=cmd(finishtweening; linear,0.2; zoom,1 ),
-	LoseFocusCommand=cmd(linear,0.2; zoom,0.5)
+	GainFocusCommand=cmd(stoptweening; linear,0.125; zoom,1 ),
+	LoseFocusCommand=cmd(stoptweening; linear,0.125; zoom,0.5)
 }
 
 t[#t+1] = LoadFont("_wendy small")..{
@@ -63,7 +63,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth())
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "Solo" then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -91,7 +91,7 @@ function drawNinePanelPad(color, offset)
 				self:x(zoomFactor * self:GetWidth() * 3)
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" then
+				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "Solo" then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -213,6 +213,11 @@ elseif choiceName == "Double" then -- Double
 	}
 	t[#t+1] = drawNinePanelPad(4, xshift - WideScale(60,70))..{
 		OffCommand=cmd(sleep,0.48; linear,0.2; diffusealpha,0)
+	}
+
+elseif choiceName == "Solo" then -- Solo
+	t[#t+1] = drawNinePanelPad(3, -xshift - 14)..{
+		OffCommand=cmd(linear,0.2; diffusealpha,0)
 	}
 
 end

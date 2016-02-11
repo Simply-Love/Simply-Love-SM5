@@ -27,7 +27,7 @@ if path then
 		end
 		
 		-- regardless of banner or not-banner, display some reward text
-		t[#t+1] = LoadFont("_misoreg hires")..{
+		t[#t+1] = LoadFont("_miso")..{
 			Name="RewardText",
 			InitCommand=cmd(xy, _screen.cx, 110; zoom,1.25),
 			OnCommand=function(self)
@@ -50,7 +50,7 @@ if path then
 -- otherwise, nothing was unlocked, and the path variable is nil	
 else
 	
-	t[#t+1] = LoadFont("_misoreg hires")..{
+	t[#t+1] = LoadFont("_miso")..{
 		Name="FailureText",
 		Text="Not quite...",
 		InitCommand=cmd(xy, _screen.cx,_screen.cy-50; zoom,1.4)

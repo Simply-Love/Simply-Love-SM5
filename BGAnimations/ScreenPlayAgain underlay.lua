@@ -1,4 +1,4 @@
-local choice_wheel = setmetatable({disable_wrapping = false}, sick_wheel_mt)
+local choice_wheel = setmetatable({}, sick_wheel_mt)
 local choices = { THEME:GetString("OptionTitles", "Yes"), THEME:GetString("OptionTitles", "No") }
 
 -- this handles user input
