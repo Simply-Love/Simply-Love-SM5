@@ -62,6 +62,12 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { true, false }
 	},
+	DefaultStyle =
+	{
+		Default = 0,
+		Choices = { "none", "auto", "1 Player", "2 Player", "Double" },
+		Values 	= { 0, 1, 2, 3, 4 }
+	},
 }
 
 -- We need to InitAll() now so that ./Scripts/SL_Init.lua can use
