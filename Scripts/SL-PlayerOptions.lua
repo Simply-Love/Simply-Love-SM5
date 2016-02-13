@@ -261,6 +261,47 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
+	TargetStatus = {
+		Choices = function()
+			return { 'Disabled', 'Bars', 'Target', 'Both' }
+		end,
+		ExportOnChange = true,
+		LoadSelections = function(self, list, pn)
+			local chosenOne = SL[ToEnumShortString(pn)].ActiveModifiers.TargetStatus
+			local i = FindInTable(chosenOne, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.TargetStatus = self.Choices[i]
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
+	TargetBar = {
+		Choices = function()
+			return { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' }
+		end,
+		ExportOnChange = true,
+		LoadSelections = function(self, list, pn)
+			local chosenOne = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetBar)
+			list[chosenOne] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.TargetBar = i
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
 		Choices = function() return { "Flash Column for Miss", "Subtractive Scoring"} end,

@@ -19,7 +19,9 @@ local PlayerDefaults = {
 				ColumnFlashOnMiss = false,
 				SubtractiveScoring = false,
 				MeasureCounter = "None",
-				DecentsWayOffs = "On"
+				DecentsWayOffs = "On",
+				TargetStatus="Disabled",
+				TargetBar=11,
 			}
 			self.Streams = {
 				SongDir = nil,

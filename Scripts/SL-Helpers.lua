@@ -111,7 +111,7 @@ end
 
 function GetPlayerOptionsLineNames()
 	if SL.Global.GameMode == "Casual" then
-		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty"
+		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
 	else
 		return "SpeedModType,SpeedMod,Mini,Perspective,NoteSkin2,Judgment,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
 	end
@@ -119,8 +119,8 @@ end
 
 function GetPlayerOptions2LineNames()
 	if SL.Global.GameMode == "StomperZ" then
-		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,GameplayExtras,MeasureCounter,Vocalize,ScreenAfterPlayerOptions2"
+		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,Vocalize,ScreenAfterPlayerOptions2"
 	else
-		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalize,ScreenAfterPlayerOptions2"
+		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalize,ScreenAfterPlayerOptions2"
 	end
 end
