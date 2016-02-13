@@ -322,7 +322,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				InitCommand=function(self)
 					self:valign(1):halign(0)
 						:xy( barOffset + (barSpacing * 2) + barWidth, 0 )
-						:zoomto(barWidth, -percentToYCoordinate(PersScore(player)))
+						:zoomto(barWidth, -percentToYCoordinate(GetTopScore(player, "Personal")))
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Green)
