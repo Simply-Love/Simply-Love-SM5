@@ -118,9 +118,15 @@ function GetPlayerOptionsLineNames()
 end
 
 function GetPlayerOptions2LineNames()
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalize,ScreenAfterPlayerOptions2"
+
 	if SL.Global.GameMode == "StomperZ" then
-		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,Vocalize,ScreenAfterPlayerOptions2"
-	else
-		return "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalize,ScreenAfterPlayerOptions2"
+		mods = mods:gsub("DecentsWayOffs,", "")
 	end
+
+	if SL.Global.Gamestate.Style == "double" then
+		mods = mods:gsub("TargetStatus,TargetBar,", "")
+	end
+
+	return mods
 end
