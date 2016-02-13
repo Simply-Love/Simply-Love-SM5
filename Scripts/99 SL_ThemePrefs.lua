@@ -42,6 +42,17 @@ local SL_CustomPrefs =
 		},
 		Values 	= { "Casual", "Competitive", "StomperZ", "Marathon" }
 	},
+	AutoStyle =
+	{
+		Default = "none",
+		Choices = {
+			THEME:GetString("ScreenSelectStyle", "None"),
+			THEME:GetString("ScreenSelectStyle", "Single"),
+			THEME:GetString("ScreenSelectStyle", "Versus"),
+			THEME:GetString("ScreenSelectStyle", "Double")
+		},
+		Values 	= { "none", "single", "versus", "double" }
+	},
 	VisualTheme =
 	{
 		Default = "Hearts",

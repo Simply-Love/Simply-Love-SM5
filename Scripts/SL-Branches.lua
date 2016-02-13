@@ -27,8 +27,23 @@ Branch.AllowScreenSelectColor = function()
 	if ThemePrefs.Get("AllowScreenSelectColor") then
 		return "ScreenSelectColor"
 	else
-		return "ScreenSelectStyle"
+		return Branch.AfterScreenSelectColor()
 	end
+end
+
+Branch.AfterScreenSelectColor = function()
+	local preferred_style = ThemePrefs.Get("AutoStyle")
+	if preferred_style ~= "none" then
+		-- If "versus" ensure that both players are actually considered joined.
+		if preferred_style == "versus" then
+			GAMESTATE:JoinPlayer(PLAYER_1)
+			GAMESTATE:JoinPlayer(PLAYER_2)
+		end
+		GAMESTATE:SetCurrentStyle( preferred_style )
+		return "ScreenSelectPlayMode"
+	end
+
+	return "ScreenSelectStyle"
 end
 
 Branch.AfterEvaluationStage = function()
