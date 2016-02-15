@@ -21,6 +21,7 @@ else
 	local w2_count = 0
 	local judgment_count = 0
 	local tns
+	local hns
 
 	return Def.BitmapText{
 		Font="_wendy small",
@@ -29,19 +30,23 @@ else
 				:diffuse(color("#ff4cff")):zoom(0.35)
 				:xy( x_position + (notefield_width/2.9), _screen.cy )
 		end,
+
 		JudgmentMessageCommand=function(self, params)
 			if player == params.Player then
 				tns = ToEnumShortString(params.TapNoteScore)
+				hns = params.HoldNoteScore
 				self:queuecommand("SetScore")
 			end
 		end,
-		SetScoreCommand=function(self, params)
 
+		SetScoreCommand=function(self, params)
 			if tns == "W2" and not received_judgment_lower_than_w2 and w2_count < 10 then
+				if not hns then -- if this is the tail of a hold note, don't count it
 					-- increment for the first ten
 					w2_count = w2_count + 1
 					-- and specificy literal W2 count
 					self:settext("-" .. w2_count)
+				end
 
 			elseif tns ~= "W1" and tns ~= "AvoidMine" then
 				received_judgment_lower_than_w2 = true
