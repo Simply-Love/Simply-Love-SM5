@@ -41,8 +41,8 @@ else
 
     SetScoreCommand=function(self, params)
       -- This is a bit convoluted!
-      -- If this is an excellent, then we want to count up to 10 with them,
-      -- unless we get some other, shittier judgment.  The complication is in how
+      -- If this is a W2, then we want to count up to 10 with them,
+      -- unless we get some other judgment worse than W2.  The complication is in how
       -- hold notes are counted. Hold note judgments contain a copy of the tap
       -- note judgment that started it (because it affects your life regen?), so
       -- we have to be careful not to double count it against you.  But we also
