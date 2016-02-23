@@ -364,7 +364,7 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
-	Vocalize = {
+	Vocalization = {
 		Choices = function()
 			-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 			-- and have those vocalizations be automatically detected

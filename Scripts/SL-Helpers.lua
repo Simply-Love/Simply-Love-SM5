@@ -118,7 +118,7 @@ function GetPlayerOptionsLineNames()
 end
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalize,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
 
 	if SL.Global.GameMode == "StomperZ" then
 		mods = mods:gsub("DecentsWayOffs,", "")

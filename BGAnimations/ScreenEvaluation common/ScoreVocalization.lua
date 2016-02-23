@@ -43,7 +43,7 @@ return Def.Actor{
 		if pn ~= Digits[ActiveDigit][2] then
 
 			pn = Digits[ActiveDigit][2]
-			voice = SL[pn].ActiveModifiers.Vocalize
+			voice = SL[pn].ActiveModifiers.Vocalization
 
 			-- if "Random" was chosen as the vocalization, randomly select a voice from those available
 			if voice == "Random" then
@@ -55,7 +55,7 @@ return Def.Actor{
 		if voice and voice ~= "None" then
 
 			-- if "Blender" was chosen, we want to re-randomize the vocalization for each digit
-			if SL[pn].ActiveModifiers.Vocalize == "Blender" then
+			if SL[pn].ActiveModifiers.Vocalization == "Blender" then
 			    voice = RandomizeVocalization()
 			end
 
