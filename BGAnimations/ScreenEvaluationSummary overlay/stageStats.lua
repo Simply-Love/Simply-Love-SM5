@@ -151,6 +151,10 @@ for player in ivalues(Players) do
 				-- trim that too, so PLAYER_2's scores align properly.
 				score = score:gsub(" ", "")
 				self:settext(score)
+
+				if grade and grade == "Grade_Failed" then
+					self:diffuse(Color.Red)
+				end
 			end
 		end
 	}
