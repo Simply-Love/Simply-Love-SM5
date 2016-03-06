@@ -16,6 +16,15 @@ return Def.ActorFrame{
 			self:queuecommand("Appear" .. pn)
 		end
 	end,
+	PlayerUnjoinedMessageCommand=function(self, params)
+		if params.Player == player then
+			self:ease(0.5, 275):addy(scale(p,0,1,1,-1) * 30):diffusealpha(0)
+		end
+	end,
+
+	-- depending on the value of pn, this will either become
+	-- an AppearP1Command or an AppearP2Command when the screen initializes
+	["Appear"..pn.."Command"]=function(self) self:visible(true):ease(0.5, 275):addy(scale(p,0,1,-1,1) * 30) end,
 
 	InitCommand=function(self)
 		self:visible( false ):halign( p )
@@ -35,10 +44,6 @@ return Def.ActorFrame{
 			self:queuecommand("Appear" .. pn)
 		end
 	end,
-
-	-- depending on the value of pn, this will either become
-	-- an AppearP1Command or an AppearP2Command when the screen initializes
-	["Appear" .. pn .. "Command"]=cmd(visible, true; ease, 0.5, 275; addy, scale(p,0,1,-1,1) * 30),
 
 	-- colored background quad
 	Def.Quad{

@@ -26,9 +26,22 @@ local function input(event)
 				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
 
 			elseif focus.kind == "ChangeMode" then
-				SL.Global.GameMode = focus.change_mode
+				SL.Global.GameMode = focus.change
 				SetGameModePreferences()
 				THEME:ReloadMetrics()
+
+			elseif focus.kind == "ChangeStyle" then
+				local new_style = focus.change:lower()
+
+				-- local old_style = GAMESTATE:GetCurrentStyle():GetName()
+				-- if old_style == "versus" then
+				-- 	local other_player = PlayerNumber[(PlayerNumber:Reverse()[event.PlayerNumber]+1)%2+1]
+				-- 	GAMESTATE:UnjoinPlayer( other_player )
+				-- end
+
+				SL.Global.Gamestate.Style = new_style
+				GAMESTATE:SetCurrentStyle(new_style)
+				SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM")
 			end
 
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
@@ -118,8 +131,8 @@ local wheel_item_mt = {
 			if self.kind == "SortBy" then
 				self.sort_by = info[2]
 
-			elseif self.kind == "ChangeMode" then
-				self.change_mode = info[2]
+			elseif self.kind == "ChangeMode" or self.kind == "ChangeStyle" then
+				self.change = info[2]
 			end
 
 			self.top_text:settext(THEME:GetString("ScreenSortList", info[1]))
@@ -145,6 +158,13 @@ local t = Def.ActorFrame {
 			{"SortBy", "ChallengeMeter"},
 			{"SortBy", "Popularity"},
 		}
+
+		if SL.Global.Gamestate.Style == "single" then
+			table.insert(wheel_options, {"ChangeStyle", "Double"})
+		elseif SL.Global.Gamestate.Style == "double" then
+			table.insert(wheel_options, {"ChangeStyle", "Single"})
+		end
+
 
 		-- Allow players to switch out to a different GameMode if no stages have been played yet.
 		if SL.Global.Stages.PlayedThisGame == 0 then
@@ -189,21 +209,6 @@ local t = Def.ActorFrame {
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
 
-	Def.Sprite{
-		OnCommand=function(self)
-			self:Center()
-				:SetTexture(SL.Global.ScreenshotTexture)
-
-				--???
-				:stretchto( 0,0, _screen.w, _screen.h )
-		end
-	},
-
-	-- slightly darken the entire screen
-	Def.Quad {
-		InitCommand=cmd(FullScreen; diffuse,Color.Black; diffusealpha,0.8)
-	},
-
 	-- OptionsList Header Quad
 	Def.Quad {
 		InitCommand=cmd(Center; zoomto,202,22; xy, _screen.cx, _screen.cy-92)
@@ -239,7 +244,7 @@ local t = Def.ActorFrame {
 	Def.ActorFrame{
 		InitCommand=function(self)
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
-				self:hibernate(math.huge)
+				self:visible(false)
 			end
 		end,
 		Def.BitmapText{

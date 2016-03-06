@@ -138,10 +138,13 @@ local pd = Def.ActorFrame{
 
 		if player==params.Player then
 			self:visible(true)
-			self:zoom(0)
-			self:bounceend(0.3)
-			self:zoom(1)
-			self:playcommand("Set")
+				:zoom(0):croptop(0):bounceend(0.3):zoom(1)
+				:playcommand("Set")
+		end
+	end,
+	PlayerUnjoinedMessageCommand=function(self, params)
+		if player==params.Player then
+			self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0)
 		end
 	end,
 

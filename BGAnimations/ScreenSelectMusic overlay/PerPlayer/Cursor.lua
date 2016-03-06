@@ -62,9 +62,13 @@ return Def.Sprite{
 			self:playcommand( "Appear" .. pn)
 		end
 	end,
+	PlayerUnjoinedMessageCommand=function(self, params)
+		if params.Player == player then
+			self:visible(false)
+		end
+	end,
 
-	["Appear" .. pn .. "Command"]=cmd(visible, true),
-
+	["Appear" .. pn .. "Command"]=function(self) self:visible(true) end,
 
 	StepsHaveChangedCommand=function(self, params)
 
