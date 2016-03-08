@@ -2,12 +2,6 @@ local Players = GAMESTATE:GetHumanPlayers()
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
-
-	OnCommand=function(self)
-		SL.Global.Stages.Stats[SL.Global.Stages.PlayedThisGame + 1] = {
-			song = GAMESTATE:GetCurrentSong()
-		}
-	end,
 	
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
 	
@@ -17,7 +11,9 @@ local t = Def.ActorFrame{
 
 	LoadActor("./RateMod.lua"),
 
-	LoadActor("./ScoreVocalization.lua")
+	LoadActor("./ScoreVocalization.lua"),
+	
+	LoadActor("./GlobalStorage.lua")
 }
 
 

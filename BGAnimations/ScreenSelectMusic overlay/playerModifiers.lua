@@ -16,17 +16,18 @@ return Def.Actor{
 			SL.Global.Gamestate.Style = "versus"
 		end
 
+		-- If we're in Casual mode, we want to reduce the number of judgments,
+		-- so turn Decents and WayOffs off now.
+		if SL.Global.GameMode == "Casual" then
+			SL.Global.ActiveModifiers.DecentsWayOffs = "Off"
+
+		elseif SL.Global.GameMode ~= "Casual" and SL.Global.PlayedThisGame == 0 then
+			SL.Global.ActiveModifiers.DecentsWayOffs = "On"
+		end
+
 		for player in ivalues(Players) do
 
 			local pn = ToEnumShortString(player)
-
-			-- If we're in Casual mode, we want to reduce the number of judgments,
-			-- so turn Decents and WayOffs off now.
-			if SL.Global.GameMode == "Casual" then
-				SL[pn].ActiveModifiers.DecentsWayOffs = "Off"
-			else
-				SL[pn].ActiveModifiers.DecentsWayOffs = "On"
-			end
 
 			-- see: ./Scripts/SL-PlayerOptions.lua
 			ApplyMods(player)

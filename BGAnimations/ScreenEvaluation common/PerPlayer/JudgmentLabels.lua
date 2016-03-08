@@ -58,14 +58,14 @@ for index, label in ipairs(TNSNames) do
 
 			-- for all other modes, check for Decents/Way Offs
 			else
-				local mods = SL[pn].ActiveModifiers
+				local gmods = SL.Global.ActiveModifiers
 
 				-- if Way Offs were turned off
-				if mods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
+				if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
 					self:visible(false)
 
 				-- if both Decents and WayOffs were turned off
-				elseif mods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
+				elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
 					self:visible(false)
 				end
 			end

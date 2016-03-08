@@ -19,7 +19,6 @@ local PlayerDefaults = {
 				ColumnFlashOnMiss = false,
 				SubtractiveScoring = false,
 				MeasureCounter = "None",
-				DecentsWayOffs = "On",
 				TargetStatus="Disabled",
 				TargetBar=11,
 			}
@@ -51,11 +50,11 @@ local GlobalDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
+				DecentsWayOffs = "On",
 			}
 			self.Stages = {
 				PlayedThisGame = 0,
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay"),
-				MusicRate = {},
 				Stats = {}
 			}
 			self.ScreenAfter = {

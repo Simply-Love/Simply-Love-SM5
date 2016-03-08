@@ -339,13 +339,15 @@ local Overrides = {
 		Choices = function() return { "On", "Decents Only", "Off" } end,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
-			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.DecentsWayOffs or "On"
+			local choice = SL.Global.ActiveModifiers.DecentsWayOffs or "On"
 			local i = FindInTable(choice, self.Choices) or 1
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			for i=1,#list do
+
+			local mods = SL.Global.ActiveModifiers
+
+			for i=1,#self.Choices do
 				if list[i] then
 					mods.DecentsWayOffs = self.Choices[i]
 				end

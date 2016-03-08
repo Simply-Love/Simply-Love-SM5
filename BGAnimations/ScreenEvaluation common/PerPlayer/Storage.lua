@@ -30,8 +30,6 @@ return Def.Actor{
 			difficultyMeter = stats:GetPlayedSteps()[1]:GetMeter(),
 			stepartist = stats:GetPlayedSteps()[1]:GetAuthorCredit(),
 			steps = GAMESTATE:GetCurrentSteps(player),
-
-			DecentsWayOffs = SL[p].ActiveModifiers.DecentsWayOffs
 		}
 	end
 }

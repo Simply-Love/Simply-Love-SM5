@@ -54,17 +54,17 @@ for index, window in ipairs(TapNoteScores.Types) do
 
 			-- for all other modes, check for Decents/Way Offs
 			else
-				local mods = SL[ToEnumShortString(player)].ActiveModifiers
+				local gmods = SL.Global.ActiveModifiers
 
 				-- If Way Offs were turned off, the leading 0s should not
 				-- be colored any differently than the (lack of) JudgmentNumber,
 				-- so load a unique Metric group.
-				if mods.DecentsWayOffs == "Decents Only" and window == "W5" then
+				if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
 					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
 					self:diffuse(color("#444444"))
 
 				-- If both Decents and WayOffs were turned off, the same logic applies.
-				elseif mods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
+				elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
 					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
 					self:diffuse(color("#444444"))
 

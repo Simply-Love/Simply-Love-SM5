@@ -1,7 +1,7 @@
 local position_on_screen = ...
 
 local Players = GAMESTATE:GetHumanPlayers()
-local song, StageNum
+local song, StageNum, DecentsWayOffs
 
 local colors = {
 	Competitive = {
@@ -30,6 +30,7 @@ local t = Def.ActorFrame{
 		StageNum = ((params.Page-1)*4) + position_on_screen
 		local stage = SL.Global.Stages.Stats[StageNum]
 		song = stage ~= nil and stage.song or nil
+
 		self:queuecommand("DrawStage")
 	end,
 	DrawStageCommand=function(self)
@@ -80,7 +81,7 @@ local t = Def.ActorFrame{
 			if sog then
 				local text = ""
 				local BPMs = song:GetDisplayBpms()
-				local MusicRate = SL.Global.Stages.MusicRate[StageNum]
+				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
 
 				if BPMs then
 					if BPMs[1] == BPMs[2] then
@@ -100,10 +101,9 @@ local t = Def.ActorFrame{
 	}
 }
 
-
 for player in ivalues(Players) do
 
-	local playerStats, difficultyMeter, difficulty, stepartist, grade, score, DecentsWayOffs
+	local playerStats, difficultyMeter, difficulty, stepartist, grade, score
 	local TNSTypes = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 
 	-- variables for positioning and horizalign, dependent on playernumber
@@ -133,7 +133,6 @@ for player in ivalues(Players) do
 		 		stepartist = playerStats.stepartist
 		 		grade = playerStats.grade
 		 		score = playerStats.score
-		 		DecentsWayOffs = playerStats.DecentsWayOffs
 			end
 		end
 	}
@@ -193,6 +192,7 @@ for player in ivalues(Players) do
 				if playerStats then
 					local val = playerStats.judgments[TNSTypes[i]]
 					if val then self:settext(val) end
+					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs
 
 					if SL.Global.GameMode == "StomperZ" then
 						self:diffuse( colors.StomperZ[i] )
