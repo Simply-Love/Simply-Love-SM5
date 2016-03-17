@@ -1,4 +1,4 @@
-if SL.Global.GameMode == "Competitive" or SL.Global.GameMode == "Marathon" then
+if SL.Global.GameMode ~= "Casual" then
 
 	local player = ...
 	local pn = ToEnumShortString(player)

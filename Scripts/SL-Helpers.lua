@@ -106,6 +106,15 @@ function SetGameModePreferences()
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
 		PREFSMAN:SetPreference(key, val)
 	end
+
+	local prefix = {
+		Competitive = "",
+		Marathon = "",
+		StomperZ = "StomperZ-",
+		Casual = "Casual-"
+	}
+
+	PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])
 end
 
 
