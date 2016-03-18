@@ -114,7 +114,9 @@ function SetGameModePreferences()
 		Casual = "Casual-"
 	}
 
-	PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])
+	if PROFILEMAN:GetStatsPrefix() ~= prefix[SL.Global.GameMode] then
+		PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])
+	end
 end
 
 
