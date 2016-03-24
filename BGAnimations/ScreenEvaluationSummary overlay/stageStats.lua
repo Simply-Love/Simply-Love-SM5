@@ -78,7 +78,7 @@ local t = Def.ActorFrame{
 	LoadFont("_miso")..{
 		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350),
 		DrawStageCommand=function(self)
-			if sog then
+			if song then
 				local text = ""
 				local BPMs = song:GetDisplayBpms()
 				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
