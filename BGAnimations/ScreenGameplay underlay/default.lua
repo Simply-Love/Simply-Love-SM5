@@ -6,7 +6,7 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", player)
 	
-	if SL.GameMode ~= "StomperZ" then
+	if SL.Global.GameMode ~= "StomperZ" then
 		t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
 	end
 end
@@ -22,7 +22,7 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/LifeMeter/default.lua", player)
 	
-	if SL.GameMode == "StomperZ" then
+	if SL.Global.GameMode == "StomperZ" then
 		t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
 	end
 	
