@@ -1,41 +1,37 @@
-local Player = ...;
-local profile = PROFILEMAN:GetProfile(Player);
-local playerName = profile:GetLastUsedHighScoreName();
-local totalSongs = profile:GetNumTotalSongsPlayed();
-local caloriesToday = round(profile:GetCaloriesBurnedToday());
+local player = ...
+local profile = PROFILEMAN:GetProfile(player)
+local playerName = profile:GetLastUsedHighScoreName()
+local totalSongs = profile:GetNumTotalSongsPlayed()
+local calories = round(profile:GetCaloriesBurnedToday())
 
-local stageStats = STATSMAN:GetCurStageStats();
-local currentCombo = stageStats:GetPlayerStageStats(Player):GetCurrentCombo()
+local stageStats = STATSMAN:GetCurStageStats()
+local currentCombo = stageStats:GetPlayerStageStats(player):GetCurrentCombo()
+local x_pos = player == PLAYER_1 and 80 or _screen.w-80
 
-local x_pos;
-
-if Player == PLAYER_1 then
-	x_pos = 80;
-elseif Player == PLAYER_2 then
-	x_pos = _screen.w-80;
+local totalTime = 0
+for i,stats in ipairs(SL[ToEnumShortString(player)].Stages.Stats) do
+	totalTime = totalTime + stats.duration
 end
 
- 
-local t = Def.ActorFrame{};
+local minutes = math.floor(totalTime/60)
+local seconds = round(totalTime%60)
 
-t[#t+1] = LoadFont("_miso")..{
-	Text=playerName;
-	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 40);
-};
+local text = {
+	playerName,
+	THEME:GetString("ScreenGameOver", "CaloriesBurned") .. "\n" .. calories,
+	THEME:GetString("ScreenGameOver", "CurrentCombo") .. "\n"..currentCombo,
+	THEME:GetString("ScreenGameOver", "TotalSongsPlayed") .. "\n"..totalSongs,
+	THEME:GetString("ScreenGameOver", "TotalTimeSpent") .. ":\n".. minutes .. THEME:GetString("ScreenGameOver", "Minutes") .. " " .. seconds .. THEME:GetString("ScreenGameOver", "Seconds")
+}
 
-t[#t+1] = LoadFont("_miso")..{
-	Text="Calories Today:\n"..caloriesToday;
-	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 100);
-};
+local t = Def.ActorFrame{}
 
-t[#t+1] = LoadFont("_miso")..{
-	Text="Current Combo:\n"..currentCombo;
-	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 160);
-};
+for i,txt in ipairs(text) do
+	t[#t+1] = Def.BitmapText{
+		Font="_miso",
+		Text=txt,
+		InitCommand=cmd(diffuse, PlayerColor(player); xy, x_pos, (60*(i-1)) + 40)
+	}
+end
 
-t[#t+1] = LoadFont("_miso")..{
-	Text="Total Songs Played:\n"..totalSongs;
-	InitCommand=cmd(diffuse, PlayerColor(Player); xy, x_pos, 220);
-};
-
-return t;
+return t

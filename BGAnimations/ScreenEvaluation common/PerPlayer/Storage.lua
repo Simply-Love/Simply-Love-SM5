@@ -16,6 +16,7 @@ return Def.Actor{
 		local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 		SL[p].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1] = {
+			duration = GAMESTATE:GetCurrentSong():MusicLengthSeconds(),
 			grade = stats:GetGrade(),
 			score = stats:GetPercentDancePoints(),
 			judgments = {
