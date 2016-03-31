@@ -24,6 +24,13 @@ local text = {
 	THEME:GetString("ScreenGameOver", "TotalTimeSpent") .. ":\n".. minutes .. THEME:GetString("ScreenGameOver", "Minutes") .. " " .. seconds .. THEME:GetString("ScreenGameOver", "Seconds")
 }
 
+-- if the player has opted to ignore the engine's sense of Calories burned
+-- in favor of the HeartRate entry screen, then remove the line regarding
+-- calories burned, which relies on the engine.
+if profile:GetIgnoreStepCountCalories() then
+	table.remove(text, 2)
+end
+
 local t = Def.ActorFrame{}
 
 for i,txt in ipairs(text) do

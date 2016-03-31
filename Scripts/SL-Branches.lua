@@ -68,9 +68,27 @@ end
 
 
 Branch.AfterGameplay = function()
-	local pm = GAMESTATE:GetPlayMode()
-	if( pm == "PlayMode_Regular" )	then return "ScreenEvaluationStage" end
-	if( pm == "PlayMode_Nonstop" )	then return "ScreenEvaluationNonstop" end
+	if THEME:GetMetric("ScreenHeartEntry", "HeartEntryEnabled") then
+		local go_to_heart= false
+		for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+			local profile= PROFILEMAN:GetProfile(pn)
+			if profile and profile:GetIgnoreStepCountCalories() then
+				go_to_heart= true
+			end
+		end
+
+		if go_to_heart then
+			return "ScreenHeartEntry"
+		end
+	end
+
+	return Branch.AfterHeartEntry()
+end
+
+Branch.AfterHeartEntry = function()
+	local pm = ToEnumShortString(GAMESTATE:GetPlayMode())
+	if( pm == "Regular" ) then return "ScreenEvaluationStage" end
+	if( pm == "Nonstop" ) then return "ScreenEvaluationNonstop" end
 end
 
 Branch.PlayerOptions = function()
