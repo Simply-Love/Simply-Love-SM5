@@ -1,4 +1,6 @@
-if SL.Global.GameMode ~= "Casual" then
+if SL.Global.GameMode == "Casual" then
+	return LoadActor(THEME:GetPathB("","_shared background normal"))
+else
 	return Def.ActorFrame{
 
 		LoadActor(THEME:GetPathB("","_shared background normal")),
