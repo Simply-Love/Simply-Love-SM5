@@ -160,7 +160,7 @@ local Overrides = {
 	Mini = {
 		Choices = function()
 
-			local first	= 0
+			local first	= -100
 			local last 	= 150
 			local step 	= 5
 
