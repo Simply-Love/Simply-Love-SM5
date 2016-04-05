@@ -12,7 +12,7 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 Requirements:
 -------------
-You'll need to be running [StepMania 5.0.5](http://www.stepmania.com/download/) or newer to use this theme.
+You'll need to be running [StepMania 5.0.11](http://www.stepmania.com/download/) or newer to use this theme.  If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/) and [this issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64).
 
 Screenshots:
 ------------
@@ -32,7 +32,6 @@ TODO:
 
 * ghost data
 * timed sets
-* surround lifebar for ScreenGameplay
 
 **NICE THINGS I WOULD LIKE TO IMPLEMENT**
 
@@ -43,7 +42,6 @@ TODO:
 **KNOWN BUGS**
 
 * Custom DifficultyList breaks with certain combinations of edits
-* ~~CourseMode MusicWheel lags~~ this is engine-side
 
 
 ACKNOWLEDGEMENTS:
