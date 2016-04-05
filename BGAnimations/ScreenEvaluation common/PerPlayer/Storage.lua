@@ -15,22 +15,23 @@ return Def.Actor{
 
 		local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-		SL[p].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1] = {
-			duration = GAMESTATE:GetCurrentSong():MusicLengthSeconds(),
-			grade = stats:GetGrade(),
-			score = stats:GetPercentDancePoints(),
-			judgments = {
-				W1 = stats:GetTapNoteScores(TNSTypes[1]),
-				W2 = stats:GetTapNoteScores(TNSTypes[2]),
-				W3 = stats:GetTapNoteScores(TNSTypes[3]),
-				W4 = stats:GetTapNoteScores(TNSTypes[4]),
-				W5 = stats:GetTapNoteScores(TNSTypes[5]),
-				Miss = stats:GetTapNoteScores(TNSTypes[6])
-			},
-			difficulty = stats:GetPlayedSteps()[1]:GetDifficulty(),
-			difficultyMeter = stats:GetPlayedSteps()[1]:GetMeter(),
-			stepartist = stats:GetPlayedSteps()[1]:GetAuthorCredit(),
-			steps = GAMESTATE:GetCurrentSteps(player),
+		-- storage (the table) was initialized in Gameplay overlay's offcommand
+		-- when we created it to store the duration of seconds spent playing the song
+		local storage = SL[p].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
+
+		storage.grade = stats:GetGrade()
+		storage.score = stats:GetPercentDancePoints()
+		storage.judgments = {
+			W1 = stats:GetTapNoteScores(TNSTypes[1]),
+			W2 = stats:GetTapNoteScores(TNSTypes[2]),
+			W3 = stats:GetTapNoteScores(TNSTypes[3]),
+			W4 = stats:GetTapNoteScores(TNSTypes[4]),
+			W5 = stats:GetTapNoteScores(TNSTypes[5]),
+			Miss = stats:GetTapNoteScores(TNSTypes[6])
 		}
+		storage.difficulty = stats:GetPlayedSteps()[1]:GetDifficulty()
+		storage.difficultyMeter = stats:GetPlayedSteps()[1]:GetMeter()
+		storage.stepartist = stats:GetPlayedSteps()[1]:GetAuthorCredit()
+		storage.steps = GAMESTATE:GetCurrentSteps(player)
 	end
 }
