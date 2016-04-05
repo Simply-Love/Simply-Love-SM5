@@ -19,7 +19,7 @@ local t = Def.ActorFrame{
 			InitCommand=cmd(zoom, 0.75)
 		},
 		Def.Quad{
-			InitCommand=cmd(y,12; zoomto,120,1 )
+			InitCommand=cmd(y,12; zoomto,120,1)
 		}
 	}
 }
@@ -38,8 +38,8 @@ for section, offset in pairs(sections) do
 		Name=section,
 		InitCommand=cmd(xy, 0, offset; diffusealpha, 0),
 		OnCommand=cmd(queuecommand, "Show"),
-		ShowCommand=cmd(decelerate, 0.2; diffusealpha, 1),
-		HideCommand=cmd(diffusealpha, 0),
+		ShowCommand=cmd(visible, true; decelerate, 0.2; diffusealpha, 1),
+		HideCommand=cmd(diffusealpha, 0; visible, false),
 
 		LoadFont("_wendy small")..{
 			Text=THEME:GetString("ScreenEdit", section.."Label"),
