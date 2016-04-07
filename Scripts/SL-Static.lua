@@ -1,43 +1,80 @@
 local StaticPath = "Save/Static.ini"
-local file = IniFile.ReadFile( StaticPath )
 
+local CreateStatic = function()
+	local f = RageFileUtil.CreateRageFile()
 
--- This table contains various SM5 Preferences and their default values.
--- These particular preferences will be manipulated using PREFSMAN:SetPreference()
--- while a user uses Simply Love, so I'm hardcoding them here to be written out to
--- Static.ini as needed.
---
--- If no Static.ini file is found, one is written using these values.
---
--- If an empty Static.ini file is found, these values are added to it.
---
--- If a corresponding key/value pair is found already existing in Static.ini under
--- the "Options" section, those values are left alone; presumably the user wants them.
-
-local SM5_DEFAULTS = {
-	TimingWindowAdd = 0.000000,
-	RegenComboAfterMiss=5,
-	MaxRegenComboAfterMiss=5,
-	MinTNSToHideNotes=W3,
-	HarshHotLifePenalty=1,
-	TimingWindowSecondsHold=0.250000,
-	TimingWindowSecondsMine=0.090000,
-	TimingWindowSecondsRoll=0.500000,
-	TimingWindowSecondsW1=0.022500,
-	TimingWindowSecondsW2=0.045000,
-	TimingWindowSecondsW3=0.090000,
-	TimingWindowSecondsW4=0.135000,
-	TimingWindowSecondsW5=0.180000,
-}
-
-if file["Options"] == nil then
-	file["Options"] = {}
-end
-
-for key, value in pairs(SM5_DEFAULTS) do
-	if file["Options"][key] == nil then
-		file["Options"][key] = value
+	if f:Open(StaticPath, 2) then
+		f:Write( "" )
+	else
+		local fError = f:GetError()
+		Trace( "[FileUtils] Error writing to ".. fullFilename ..": ".. fError )
+		f:ClearError()
 	end
+
+	f:destroy()
 end
 
-IniFile.WriteFile( StaticPath, file )
+-- if a Static.ini already exists, either from previously running this theme,
+-- or from the user manually creating one, then don't do anything here.
+-- Just leave it.  If, however, no Static.ini is found...
+
+if not FILEMAN:DoesFileExist( StaticPath ) then
+
+	-- IniFile.ReadFile() just breaks progress if nothing is found at StaticPath
+	-- so ensure that a(n empty) file exists, first.
+	CreateStatic()
+
+	-- then, read that file in so we can work with it...
+	local file = IniFile.ReadFile( StaticPath )
+
+
+	-- The following preferences will be manipulated using PREFSMAN:SetPreference()
+	-- while a user uses Simply Love, so I'm hardcoding them here to be written out to
+	-- Static.ini as needed.
+	-- It is always possible (encouraged, even) that the user might switch themes, and in doing
+	-- so, s/he might be stuck with preferences set by this Theme.  Get around this by looking
+	-- up whatever values s/he has set in Preferences.ini for these particular preferences,
+	-- and writing them to Static.ini.
+	--
+	-- In general, themes should NOT set preferences, but there is no other way for me
+	-- to achieve multiple GameModes like Casual, Competitive, and StomperZ...
+
+	-- preferences that should be saved, as is
+	local Preferences_To_Save = {
+		"RegenComboAfterMiss",
+		"MaxRegenComboAfterMiss",
+		"MinTNSToHideNotes",
+		"HarshHotLifePenalty",
+	}
+
+	-- Some preferences are floating-point values and should
+	-- be rounded to 6 decimal places prior to being written
+	-- to disk.
+	local Preferences_To_Save_And_Round = {
+		"TimingWindowAdd",
+		"TimingWindowSecondsHold",
+		"TimingWindowSecondsMine",
+		"TimingWindowSecondsRoll",
+		"TimingWindowSecondsW1",
+		"TimingWindowSecondsW2",
+		"TimingWindowSecondsW3",
+		"TimingWindowSecondsW4",
+		"TimingWindowSecondsW5",
+	}
+
+	file["Options"] = {}
+
+	for i, pref in ipairs(Preferences_To_Save) do
+		if file["Options"][pref] == nil then
+			file["Options"][pref] = PREFSMAN:GetPreference(pref)
+		end
+	end
+	for i, pref in ipairs(Preferences_To_Save_And_Round) do
+		if file["Options"][pref] == nil then
+			file["Options"][pref] = round(PREFSMAN:GetPreference(pref), 6)
+		end
+	end
+
+
+	IniFile.WriteFile( StaticPath, file )
+end
