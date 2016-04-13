@@ -3,12 +3,12 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 local input = LoadActor("InputHandler.lua", sort_wheel)
 local wheel_item_mt = LoadActor("WheelItemMT.lua")
 
-local sortmenu = { w=210, h=160}
+local sortmenu = { w=210, h=160 }
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
-	ShowSortListMessageCommand=function(self)
+	ShowSortMenuMessageCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
@@ -16,7 +16,7 @@ local t = Def.ActorFrame {
 		end
 		self:visible(true)
 	end,
-	HideSortListCommand=function(self)
+	HideSortMenuCommand=function(self)
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			SCREENMAN:set_input_redirected(player, false)
@@ -111,7 +111,7 @@ local t = Def.ActorFrame {
 	Def.Quad {
 		InitCommand=cmd(Center; zoomto,sortmenu.w+2,sortmenu.h+2)
 	},
-	-- BG of the sortlist box
+	-- BG of the sortmenu box
 	Def.Quad {
 		InitCommand=cmd(Center; zoomto,sortmenu.w,sortmenu.h; diffuse,Color.Black)
 	},

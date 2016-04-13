@@ -23,13 +23,13 @@ local function input(event)
 
 			if focus.kind == "SortBy" then
 				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
-				overlay:queuecommand("HideSortList")
+				overlay:queuecommand("HideSortMenu")
 
 			elseif focus.kind == "ChangeMode" then
 				SL.Global.GameMode = focus.change
 				SetGameModePreferences()
 				THEME:ReloadMetrics()
-				overlay:queuecommand("HideSortList")
+				overlay:queuecommand("HideSortMenu")
 
 			elseif focus.kind == "ChangeStyle" then
 				local new_style = focus.change:lower()
@@ -47,7 +47,7 @@ local function input(event)
 			end
 
 		elseif event.GameButton == "Back" or event.GameButton == "Select" then
-			overlay:queuecommand("HideSortList")
+			overlay:queuecommand("HideSortMenu")
 		end
 	end
 

@@ -1,4 +1,5 @@
 local t = Def.ActorFrame{
+	OnCommand=function(self) self:queuecommand("HideSortMenu") end,
 	ChangeStepsMessageCommand=function(self, params)
 		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
 	end
