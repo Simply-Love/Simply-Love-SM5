@@ -173,9 +173,10 @@ pd[#pd+1] = Def.Quad{
 	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33 ),
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
-			local steps = GAMESTATE:GetCurrentSteps(player)
-			if steps then
-				local difficulty = steps:GetDifficulty()
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+
+			if StepsOrTrail then
+				local difficulty = StepsOrTrail:GetDifficulty()
 				self:diffuse( DifficultyColor(difficulty) )
 			else
 				self:diffuse( PlayerColor(player) )
@@ -236,13 +237,15 @@ pd[#pd+1] = Def.BitmapText{
 	Name="DifficultyMeter",
 	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
 	SetCommand=function(self)
-		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-		if not song then
-			self:settext("")
+		local meter
+		if GAMESTATE:IsCourseMode() then
+			local trail = GAMESTATE:GetCurrentTrail(player)
+			if trail then meter = trail:GetMeter() end
 		else
 			local steps = GAMESTATE:GetCurrentSteps(player)
-			self:settext( steps and steps:GetMeter() or  "?" )
+			if steps then meter = steps:GetMeter() end
 		end
+		self:settext( meter and meter or  "?" )
 	end
 }
 
