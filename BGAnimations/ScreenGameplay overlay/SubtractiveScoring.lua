@@ -1,15 +1,12 @@
 local player = ...
 
-if not SL[ ToEnumShortString(player) ].ActiveModifiers.SubtractiveScoring then
-  return false
-else
+if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
 
   local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
   local notefield_width = GAMESTATE:GetCurrentStyle():GetWidth(player)
 
   -- grab the appropriate x position from ScreenGameplay's
   -- metrics on Player positioning
-  local pn = ToEnumShortString(player)
   local x_position = GetNotefieldX( player )
 
   -- flag to determine whether to bother to continue counting excellents

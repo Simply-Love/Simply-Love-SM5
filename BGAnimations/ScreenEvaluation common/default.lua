@@ -1,10 +1,18 @@
 local Players = GAMESTATE:GetHumanPlayers()
+local game = GAMESTATE:GetCurrentGame():GetName()
+
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
-	
+	OnCommand=function(self)
+		-- sorry, kb7
+		if game == "dance" or game == "pump" or game ~= "techno" then
+			SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", self) )
+		end
+	end,
+
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
-	
+
 	LoadActor("./ScreenshotHandler.lua"),
 
 	LoadActor("./TitleAndBanner.lua"),
@@ -12,7 +20,7 @@ local t = Def.ActorFrame{
 	LoadActor("./RateMod.lua"),
 
 	LoadActor("./ScoreVocalization.lua"),
-	
+
 	LoadActor("./GlobalStorage.lua")
 }
 
@@ -49,7 +57,7 @@ for pn in ivalues(Players) do
 	}
 
 	-- the lower half of ScreenEvaluation
-	t[#t+1] = Def.ActorFrame{
+	local lower = Def.ActorFrame{
 		Name=ToEnumShortString(pn).."_AF_Lower",
 		OnCommand=function(self)
 
@@ -70,15 +78,6 @@ for pn in ivalues(Players) do
 			InitCommand=cmd(diffuse,color("#1E282F"); y,_screen.cy+34; zoomto, 300,180 )
 		},
 
-		-- labels (like "FANTASTIC, MISS, holds, rolls, etc.")
-		LoadActor("./PerPlayer/JudgmentLabels.lua", pn),
-
-		-- DP score displayed as a percentage
-		LoadActor("./PerPlayer/Percentage.lua", pn),
-
-		-- numbers (how many Fantastics? How many misses? etc.)
-		LoadActor("./PerPlayer/JudgmentNumbers.lua", pn),
-
 		-- "Look at this graph."
 		-- Some sort of meme on the Internet
 		LoadActor("./PerPlayer/Graphs.lua", pn),
@@ -87,8 +86,36 @@ for pn in ivalues(Players) do
 		LoadActor("./PerPlayer/PlayerModifiers.lua", pn),
 
 		-- was this player disqualified from ranking?
-		LoadActor("./PerPlayer/Disqualified.lua", pn)
+		LoadActor("./PerPlayer/Disqualified.lua", pn),
+
+		Def.ActorFrame{
+			Name="Pane1",
+
+			-- labels (like "FANTASTIC, MISS, holds, rolls, etc.")
+			LoadActor("./PerPlayer/Pane1/JudgmentLabels.lua", pn),
+
+			-- DP score displayed as a percentage
+			LoadActor("./PerPlayer/Pane1/Percentage.lua", pn),
+
+			-- numbers (how many Fantastics? How many misses? etc.)
+			LoadActor("./PerPlayer/Pane1/JudgmentNumbers.lua", pn),
+		},
 	}
+
+	if game ~= "dance" or game ~= "pump" or game ~= "techno" then
+		lower[#lower+1] = Def.ActorFrame{
+			Name="Pane2",
+			InitCommand=function(self) self:visible(false) end,
+
+			LoadActor("./PerPlayer/Pane2/Percentage.lua", pn),
+			LoadActor("./PerPlayer/Pane2/JudgmentLabels.lua", pn),
+			LoadActor("./PerPlayer/Pane2/Arrows.lua", pn)
+		}
+	end
+
+	t[#t+1] = lower
 end
+
+
 
 return t

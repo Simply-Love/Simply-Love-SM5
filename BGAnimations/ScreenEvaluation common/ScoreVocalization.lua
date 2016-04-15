@@ -27,7 +27,7 @@ return Def.Actor{
 		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local pn = ToEnumShortString(player)
 			-- fill the "scores" table with a string representing the score to 2 decimal places and either "P1" or "P2"
-			scores[#scores+1] = {self:GetParent():GetChild(pn.."_AF_Lower"):GetChild("PercentageContainer"..pn):GetChild("Percent"):GetText(), pn}
+			scores[#scores+1] = {self:GetParent():GetChild(pn.."_AF_Lower"):GetChild("Pane1"):GetChild("PercentageContainer"..pn):GetChild("Percent"):GetText(), pn}
 		end
 
 		Digits = ParseScores(scores)
