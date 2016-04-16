@@ -35,6 +35,18 @@ for i,column in ipairs( columns[game] ) do
 			OnCommand=function(self)
 				self:xy(i*column_width-104, _screen.cy-40 + j*24)
 					:zoom(0.9)
+
+
+				local gmods = SL.Global.ActiveModifiers
+
+				-- if Way Offs were turned off
+				if gmods.DecentsWayOffs == "Decents Only" and judgment == "W5" then
+					self:visible(false)
+
+				-- if both Decents and WayOffs were turned off
+				elseif gmods.DecentsWayOffs == "Off" and (judgment == "W4" or judgment == "W5") then
+					self:visible(false)
+				end
 			end
 		}
 	end

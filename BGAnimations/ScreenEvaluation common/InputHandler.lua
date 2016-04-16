@@ -26,17 +26,19 @@ return function(event)
 
 	if event.type == "InputEventType_FirstPress" and panes[pn] then
 
-		if event.GameButton == "MenuRight" then
-			active_pane[pn] = ((active_pane[pn] + 1) % num_panes)
-		elseif event.GameButton == "MenuLeft" then
-			active_pane[pn] = ((active_pane[pn] - 1) % num_panes)
-		end
+		if event.GameButton == "MenuRight" or event.GameButton == "MenuLeft" then
+			if event.GameButton == "MenuRight" then
+				active_pane[pn] = ((active_pane[pn] + 1) % num_panes)
+			elseif event.GameButton == "MenuLeft" then
+				active_pane[pn] = ((active_pane[pn] - 1) % num_panes)
+			end
 
-		for i=1,num_panes do
-			if active_pane[pn]+1 == i then
-				panes[pn][i]:visible(true)
-			else
-				panes[pn][i]:visible(false)
+			for i=1,num_panes do
+				if active_pane[pn]+1 == i then
+					panes[pn][i]:visible(true)
+				else
+					panes[pn][i]:visible(false)
+				end
 			end
 		end
 	end
