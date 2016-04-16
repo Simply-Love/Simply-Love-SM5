@@ -9,6 +9,7 @@ local sortmenu = { w=210, h=160 }
 local t = Def.ActorFrame {
 	Name="SortMenu",
 	ShowSortMenuMessageCommand=function(self)
+		SOUND:StopMusic()
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
