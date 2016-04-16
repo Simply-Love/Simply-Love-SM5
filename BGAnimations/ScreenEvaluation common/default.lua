@@ -75,7 +75,14 @@ for pn in ivalues(Players) do
 
 		-- background quad for player stats
 		Def.Quad{
-			InitCommand=cmd(diffuse,color("#1E282F"); y,_screen.cy+34; zoomto, 300,180 )
+			Name="LowerQuad",
+			InitCommand=cmd(diffuse,color("#1E282F"); y,_screen.cy+34; zoomto, 300,180 ),
+			ShrinkCommand=function(self)
+				self:zoomto(300,180):x(0)
+			end,
+			ExpandCommand=function(self)
+				self:zoomto(520,180):x(3)
+			end
 		},
 
 		-- "Look at this graph."
@@ -105,7 +112,14 @@ for pn in ivalues(Players) do
 	if game ~= "dance" or game ~= "pump" or game ~= "techno" then
 		lower[#lower+1] = Def.ActorFrame{
 			Name="Pane2",
-			InitCommand=function(self) self:visible(false) end,
+			InitCommand=function(self)
+				local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+				if style == "OnePlayerTwoSides" then
+					self:x(-_screen.w/8 )
+				end
+				
+				self:visible(false)
+			end,
 
 			LoadActor("./PerPlayer/Pane2/Percentage.lua", pn),
 			LoadActor("./PerPlayer/Pane2/JudgmentLabels.lua", pn),

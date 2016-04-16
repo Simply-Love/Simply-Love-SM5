@@ -4,6 +4,8 @@ if not af then return end
 local num_panes = 2
 local panes, active_pane = {}, {}
 
+local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
 	active_pane[pn] = 2
@@ -34,6 +36,13 @@ return function(event)
 			end
 
 			for i=1,num_panes do
+
+				if style == "OnePlayerTwoSides" and active_pane[pn]+1 == 2 then
+					af:queuecommand("Expand")
+				else
+					af:queuecommand("Shrink")
+				end
+
 				if active_pane[pn]+1 == i then
 					panes[pn][i]:visible(true)
 				else
