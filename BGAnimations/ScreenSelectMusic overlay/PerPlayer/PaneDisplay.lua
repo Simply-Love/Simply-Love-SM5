@@ -131,7 +131,6 @@ local pd = Def.ActorFrame{
 		end
 
 		self:y(_screen.h/2 + 5)
-		self:queuecommand("Set")
 	end,
 
 	PlayerJoinedMessageCommand=function(self, params)
@@ -237,15 +236,14 @@ pd[#pd+1] = Def.BitmapText{
 	Name="DifficultyMeter",
 	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
 	SetCommand=function(self)
-		local meter
-		if GAMESTATE:IsCourseMode() then
-			local trail = GAMESTATE:GetCurrentTrail(player)
-			if trail then meter = trail:GetMeter() end
+		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		if not SongOrCourse then
+			self:settext("")
 		else
-			local steps = GAMESTATE:GetCurrentSteps(player)
-			if steps then meter = steps:GetMeter() end
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter()			
+			self:settext( meter and meter or  "?" )
 		end
-		self:settext( meter and meter or  "?" )
 	end
 }
 

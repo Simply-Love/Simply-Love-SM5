@@ -73,10 +73,12 @@ return Def.ActorFrame{
 		InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
 		StepsHaveChangedCommand=function(self)
 
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
-			if not StepsOrCourse then
+
+			if not SongOrCourse then
 				self:settext("")
-			else
+			elseif StepsOrCourse then
 				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
 				self:settext(stepartist and stepartist or "")
 			end
