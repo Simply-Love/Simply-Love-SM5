@@ -8,7 +8,7 @@ local sortmenu = { w=210, h=160 }
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
-	ShowSortMenuMessageCommand=function(self)
+	ShowSortMenuCommand=function(self)
 		SOUND:StopMusic()
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 
