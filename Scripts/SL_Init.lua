@@ -45,7 +45,7 @@ local PlayerDefaults = {
 local GlobalDefaults = {
 	__index = {
 
-		-- since the initialize() function is run every game cycle, the idea
+		-- since the initialize() function is called every game cycle, the idea
 		-- is to define variables we want to reset every game cycle inside
 		initialize = function(self)
 			self.ActiveModifiers = {
@@ -140,8 +140,8 @@ SL = {
 			TimingWindowSecondsW2=0.025000,
 			TimingWindowSecondsW3=0.050000,
 			TimingWindowSecondsW4=0.100000,
-			TimingWindowSecondsW5=0.150000,
-			TimingWindowSecondsHold=0.350000,
+			TimingWindowSecondsW5=0.10000,
+			TimingWindowSecondsHold=0.10000,
 			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},
@@ -226,35 +226,35 @@ SL = {
 			LifePercentChangeHitMine=-0.050,
 		},
 		StomperZ = {
-			PercentScoreWeightW1=3,
-			PercentScoreWeightW2=3,
-			PercentScoreWeightW3=2,
-			PercentScoreWeightW4=1,
-			PercentScoreWeightW5=1,
+			PercentScoreWeightW1=10,
+			PercentScoreWeightW2=9,
+			PercentScoreWeightW3=8,
+			PercentScoreWeightW4=5,
+			PercentScoreWeightW5=0,
 			PercentScoreWeightMiss=0,
 			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=3,
-			PercentScoreWeightHitMine=-3,
+			PercentScoreWeightHeld=10,
+			PercentScoreWeightHitMine=-5,
 
-			GradeWeightW1=3,
-			GradeWeightW2=3,
-			GradeWeightW3=2,
-			GradeWeightW4=1,
-			GradeWeightW5=1,
+			GradeWeightW1=10,
+			GradeWeightW2=9,
+			GradeWeightW3=8,
+			GradeWeightW4=5,
+			GradeWeightW5=0,
 			GradeWeightMiss=0,
 			GradeWeightLetGo=0,
-			GradeWeightHeld=3,
-			GradeWeightHitMine=-3,
+			GradeWeightHeld=10,
+			GradeWeightHitMine=-5,
 
 			LifePercentChangeW1=0.004,
 			LifePercentChangeW2=0.004,
 			LifePercentChangeW3=0.004,
 			LifePercentChangeW4=0.004,
-			LifePercentChangeW5=-0.036,
-			LifePercentChangeMiss=-0.040,
-			LifePercentChangeLetGo=0.020,
-			LifePercentChangeHeld=0.004,
-			LifePercentChangeHitMine=-0.020,
+			LifePercentChangeW5=0,
+			LifePercentChangeMiss=-0.04,
+			LifePercentChangeLetGo=-0.04,
+			LifePercentChangeHeld=0,
+			LifePercentChangeHitMine=-0.04,
 		},
 		Marathon = {
 			PercentScoreWeightW1=5,
