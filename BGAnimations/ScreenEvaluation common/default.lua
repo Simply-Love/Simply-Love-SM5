@@ -3,10 +3,7 @@ local Players = GAMESTATE:GetHumanPlayers()
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
 	OnCommand=function(self)
-		-- sorry, kb7
-		if game == "dance" or game == "pump" or game ~= "techno" then
-			SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", self) )
-		end
+		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", self) )
 	end,
 
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
