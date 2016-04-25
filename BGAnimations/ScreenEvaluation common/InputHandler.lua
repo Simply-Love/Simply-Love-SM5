@@ -1,22 +1,20 @@
 local af = ...
 if not af then return end
 
-local num_panes = 2
+local num_panes = 3
 local panes, active_pane = {}, {}
 
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
-	active_pane[pn] = 2
-	local lower_af = af:GetChild(pn .. "_AF_Lower")
-
 	panes[pn] = {}
+	active_pane[pn] = num_panes
+
 	for i=1,num_panes do
-		panes[pn][i] = lower_af:GetChild("Pane"..i)
+		table.insert(panes[pn], af:GetChild(pn.."_AF_Lower"):GetChild("Pane"..i))
 	end
 end
-
 
 return function(event)
 
@@ -43,12 +41,9 @@ return function(event)
 					af:queuecommand("Shrink")
 				end
 
-				if active_pane[pn]+1 == i then
-					panes[pn][i]:visible(true)
-				else
-					panes[pn][i]:visible(false)
-				end
+				panes[pn][i]:visible(false)
 			end
+			panes[pn][active_pane[pn]+1]:visible(true)
 		end
 	end
 

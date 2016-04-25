@@ -19,7 +19,7 @@ local column_width = box_width/#columns[game]
 local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 
 -- need to store the number of columns PRIOR to looping
--- otherwise we enter an infinite loop because upper bound keep growing!
+-- otherwise we enter an infinite loop because the upper bound keeps growing!
 local num_columns = #columns[game]
 
 if style == "OnePlayerTwoSides" then

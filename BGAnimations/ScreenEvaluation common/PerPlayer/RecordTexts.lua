@@ -14,9 +14,7 @@ if SL.Global.GameMode ~= "Casual" then
 	local EarnedMachineRecord  = (  highScoreIndex.Machine ~= -1 ) and stats:GetPercentDancePoints() >= 0.01
 	local EarnedPersonalRecord = ( highScoreIndex.Personal ~= -1 ) and stats:GetPercentDancePoints() >= 0.01
 
-	if not EarnedMachineRecord and not EarnedPersonalRecord then
-		return Def.Actor{}
-	else
+	if EarnedMachineRecord or EarnedPersonalRecord then
 
 		-- else this player earned some record and the ability to enter a high score name
 		-- we'll check for this flag, later, in ./BGAnimations/ScreenNameEntryTradtional underlay/default.lua

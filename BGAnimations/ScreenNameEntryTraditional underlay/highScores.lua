@@ -14,9 +14,7 @@ end
 
 
 local t = Def.ActorFrame{}
--- local currentStage = 1
 
--- for i=numStages,1,-1 do
 for i=1, numStages do
 
 	local stageStats = STATSMAN:GetPlayedStageStats(i)
@@ -32,8 +30,6 @@ for i=1, numStages do
 		--stats might exist for one player but not the other due to latejoin
 		if stats then StepsOrTrail = stats.steps end
 	end
-
-	-- currentStage = currentStage + 1
 
 	-- +1 because GetMachineHighScoreIndex is 0-indexed
 	local index = playerStageStats:GetMachineHighScoreIndex() + 1
