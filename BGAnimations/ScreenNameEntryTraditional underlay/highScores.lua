@@ -1,4 +1,4 @@
-local Player = ...
+local player = ...
 
 -- machineProfile contains the overall high scores per song
 local machineProfile = PROFILEMAN:GetMachineProfile()
@@ -9,30 +9,31 @@ local durationPerSong = 4
 
 local months = {}
 for i=1,12 do
-	months[#months+1] = THEME:GetString("ScreenNameEntryActual", "Month"..i)
+	months[#months+1] = ScreenString("Month"..i)
 end
 
 
 local t = Def.ActorFrame{}
-local currentStage = 1
+-- local currentStage = 1
 
-for i=numStages,1,-1 do
+-- for i=numStages,1,-1 do
+for i=1, numStages do
 
 	local stageStats = STATSMAN:GetPlayedStageStats(i)
-	local playerStageStats = stageStats:GetPlayerStageStats(Player)
+	local playerStageStats = stageStats:GetPlayerStageStats(player)
 
 	local highscoreList, highscores, StepsOrTrail
-	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[currentStage].song
-	local stats = SL[ToEnumShortString(Player)].Stages.Stats[currentStage]
+	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[i].song
+	local stats = SL[ToEnumShortString(player)].Stages.Stats[i]
 
 	if GAMESTATE:IsCourseMode() then
-		StepsOrTrail = GAMESTATE:GetCurrentTrail(Player)
+		StepsOrTrail = GAMESTATE:GetCurrentTrail(player)
 	else
 		--stats might exist for one player but not the other due to latejoin
 		if stats then StepsOrTrail = stats.steps end
 	end
 
-	currentStage = currentStage + 1
+	-- currentStage = currentStage + 1
 
 	-- +1 because GetMachineHighScoreIndex is 0-indexed
 	local index = playerStageStats:GetMachineHighScoreIndex() + 1
@@ -107,19 +108,15 @@ for i=numStages,1,-1 do
 
 
 			local row = Def.ActorFrame{
-				Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(Player),
+				Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(player),
 				InitCommand=function(self)
-					self:diffusealpha(0)
-					self:zoom(0.95)
-					if Player == PLAYER_1 then
-						self:x(_screen.cx-160)
-					elseif Player == PLAYER_2 then
-						self:x(_screen.cx+160)
-					end
-					self:y(_screen.cy+60)
+					self:visible(false)
+						:zoom(0.95)
+						:x( (player == PLAYER_1 and _screen.cx-160) or (_screen.cx+160))
+						:y(_screen.cy+60)
 				end,
 				OnCommand=function(self)
-					self:sleep(durationPerSong * (math.abs(i-numStages)) )
+					self:sleep(durationPerSong * (i-1))
 					self:queuecommand("Display")
 
 					--if this row represents the new highscore, highlight it
@@ -131,12 +128,12 @@ for i=numStages,1,-1 do
 					end
 				end,
 				DisplayCommand=function(self)
-					self:diffusealpha(1)
+					self:visible(true)
 					self:sleep(durationPerSong)
-					self:diffusealpha(0)
 					self:queuecommand("Wait")
 				end,
 				WaitCommand=function(self)
+					self:visible(false)
 					self:sleep(durationPerSong * (numStages-1))
 					self:queuecommand("Display")
 				end
