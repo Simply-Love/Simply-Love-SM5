@@ -4,7 +4,7 @@ local player = ...
 local machineProfile = PROFILEMAN:GetMachineProfile()
 
 -- get the number of stages that were played
-local numStages = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame
+local NumStages = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame
 local durationPerSong = 4
 
 local months = {}
@@ -12,17 +12,17 @@ for i=1,12 do
 	months[#months+1] = ScreenString("Month"..i)
 end
 
-
 local t = Def.ActorFrame{}
 
-for i=1, numStages do
+local CurrentStage = 1
+for i=NumStages,1,-1 do
 
 	local stageStats = STATSMAN:GetPlayedStageStats(i)
-	local playerStageStats = stageStats:GetPlayerStageStats(player)
+	local pss = stageStats:GetPlayerStageStats(player)
 
 	local highscoreList, highscores, StepsOrTrail
-	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[i].song
-	local stats = SL[ToEnumShortString(player)].Stages.Stats[i]
+	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[CurrentStage].song
+	local stats = SL[ToEnumShortString(player)].Stages.Stats[CurrentStage]
 
 	if GAMESTATE:IsCourseMode() then
 		StepsOrTrail = GAMESTATE:GetCurrentTrail(player)
@@ -32,7 +32,7 @@ for i=1, numStages do
 	end
 
 	-- +1 because GetMachineHighScoreIndex is 0-indexed
-	local index = playerStageStats:GetMachineHighScoreIndex() + 1
+	local index = pss:GetMachineHighScoreIndex() + 1
 	local text = ""
 
 	if SongOrCourse and StepsOrTrail then
@@ -42,6 +42,7 @@ for i=1, numStages do
 	if highscoreList then
 		highscores = highscoreList:GetHighScores()
 	end
+	CurrentStage = CurrentStage+1
 
 	if highscores then
 
@@ -55,31 +56,10 @@ for i=1, numStages do
 		local lower = 1
 		local upper = 5
 
-
-		if MaxHighScores > 5 then
-			-- if the new highscore is 1st or 2nd place
-			if index < 3 then
-				lower = 1
-				upper = 5
-
-			-- elseif the new highscore is second to last
-			elseif index == MaxHighScores-1 then
-				lower = MaxHighScores - 5
-				upper = lower + 4
-
-			-- elseif the new highscore the last allowed by MaxHighScoresPerListForMachine
-			elseif index == MaxHighScores then
-				lower = MaxHighScores - 4
-				upper = MaxHighScores
-
-			-- else the new highscore is somewhere in the middle
-			elseif index > 4 and index < MaxHighScores -1 then
-				lower = index - 4
-				upper = index
-			end
+		if MaxHighScores > upper and index > upper then
+			lower = lower + (index-upper)
+			upper = index
 		end
-
-
 
 		for s=lower,upper do
 
@@ -106,15 +86,9 @@ for i=1, numStages do
 			local row = Def.ActorFrame{
 				Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(player),
 				InitCommand=function(self)
-					self:visible(false)
-						:zoom(0.95)
+					self:zoom(0.95)
 						:x( (player == PLAYER_1 and _screen.cx-160) or (_screen.cx+160))
 						:y(_screen.cy+60)
-				end,
-				OnCommand=function(self)
-					self:sleep(durationPerSong * (i-1))
-					self:queuecommand("Display")
-
 					--if this row represents the new highscore, highlight it
 					if s == index then
 						self:diffuseshift()
@@ -123,16 +97,18 @@ for i=1, numStages do
 						self:effectcolor2(Color.White)
 					end
 				end,
-				DisplayCommand=function(self)
-					self:visible(true)
-					self:sleep(durationPerSong)
-					self:queuecommand("Wait")
+				OnCommand=function(self)
+					self:visible(false)
+						:sleep(durationPerSong * math.abs(i-NumStages)):queuecommand("Display")
 				end,
 				WaitCommand=function(self)
 					self:visible(false)
-					self:sleep(durationPerSong * (numStages-1))
-					self:queuecommand("Display")
-				end
+					self:sleep(durationPerSong * (NumStages-1)):queuecommand("Display")
+				end,
+				DisplayCommand=function(self)
+					self:visible(true)
+					self:sleep(durationPerSong):queuecommand("Wait")
+				end,
 			}
 
 			row[#row+1] = LoadFont("_miso")..{
