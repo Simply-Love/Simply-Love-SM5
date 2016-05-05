@@ -42,6 +42,11 @@ local SL_CustomPrefs =
 		},
 		Values 	= { "Casual", "Competitive", "StomperZ", "Marathon" }
 	},
+	TimingWindowAdd = {
+		Default = 0,
+		Choices = { 0, 0.015 },
+		Values = { 0, 0.015 }
+	},
 	AutoStyle =
 	{
 		Default = "none",

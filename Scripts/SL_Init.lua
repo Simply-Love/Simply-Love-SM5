@@ -114,7 +114,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		Competitive = {
-			TimingWindowAdd=0.001500,
+			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes=W3,
@@ -146,7 +146,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		Marathon = {
-			TimingWindowAdd=0.001500,
+			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=5,
 			MinTNSToHideNotes=W3,
