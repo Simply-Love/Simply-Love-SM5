@@ -44,8 +44,8 @@ local SL_CustomPrefs =
 	},
 	TimingWindowAdd = {
 		Default = 0,
-		Choices = { 0, 0.015 },
-		Values = { 0, 0.015 }
+		Choices = { 0, 0.0015 },
+		Values = { 0, 0.0015 }
 	},
 	AutoStyle =
 	{
