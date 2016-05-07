@@ -12,9 +12,9 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 Requirements:
 -------------
-You'll need to be running [StepMania 5.0.11](http://www.stepmania.com/download/) or newer to use this theme.
+You'll need to be running [StepMania 5.0.11](http://www.stepmania.com/download/) or newer to use this theme.  Older versions of StepMania are not compatible.
 
-If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/) and [this issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64).
+If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/) and see [this issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64).
 
 Screenshots:
 ------------
@@ -22,7 +22,7 @@ Visit my imgur album for screenshots of this theme in action: [http://imgur.com/
 
 License:
 --------
-Copyright 2013-2015 Dan Guzek
+Copyright 2013-2016 Dan Guzek  
 See: [No License](http://choosealicense.com/licenses/no-license/)
 
 
@@ -39,11 +39,10 @@ TODO:
 
 * set long/marathon cutoff lengths via Operator Menu like oITG
 * set per-screen MenuTimers via Operator Menu
-* ~~reimplement Screen Resolution and Aspect Ratio OptionRows to make more sense~~ this is not going to happen short of an engine overhaul
 
 **KNOWN BUGS**
 
-* Custom DifficultyList breaks with certain combinations of edits
+* Custom DifficultyList breaks with certain combinations of edits charts
 
 
 ACKNOWLEDGEMENTS:
