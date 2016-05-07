@@ -1,41 +1,38 @@
-local Player = ...
+local player = ...
 
 -- machineProfile contains the overall high scores per song
 local machineProfile = PROFILEMAN:GetMachineProfile()
 
 -- get the number of stages that were played
-local numStages = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame
+local NumStages = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame
 local durationPerSong = 4
 
 local months = {}
 for i=1,12 do
-	months[#months+1] = THEME:GetString("ScreenNameEntryActual", "Month"..i)
+	months[#months+1] = ScreenString("Month"..i)
 end
 
-
 local t = Def.ActorFrame{}
-local currentStage = 1
 
-for i=numStages,1,-1 do
+local CurrentStage = 1
+for i=NumStages,1,-1 do
 
 	local stageStats = STATSMAN:GetPlayedStageStats(i)
-	local playerStageStats = stageStats:GetPlayerStageStats(Player)
+	local pss = stageStats:GetPlayerStageStats(player)
 
 	local highscoreList, highscores, StepsOrTrail
-	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[currentStage].song
-	local stats = SL[ToEnumShortString(Player)].Stages.Stats[currentStage]
+	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[CurrentStage].song
+	local stats = SL[ToEnumShortString(player)].Stages.Stats[CurrentStage]
 
 	if GAMESTATE:IsCourseMode() then
-		StepsOrTrail = GAMESTATE:GetCurrentTrail(Player)
+		StepsOrTrail = GAMESTATE:GetCurrentTrail(player)
 	else
 		--stats might exist for one player but not the other due to latejoin
 		if stats then StepsOrTrail = stats.steps end
 	end
 
-	currentStage = currentStage + 1
-
 	-- +1 because GetMachineHighScoreIndex is 0-indexed
-	local index = playerStageStats:GetMachineHighScoreIndex() + 1
+	local index = pss:GetMachineHighScoreIndex() + 1
 	local text = ""
 
 	if SongOrCourse and StepsOrTrail then
@@ -45,6 +42,7 @@ for i=numStages,1,-1 do
 	if highscoreList then
 		highscores = highscoreList:GetHighScores()
 	end
+	CurrentStage = CurrentStage+1
 
 	if highscores then
 
@@ -58,31 +56,10 @@ for i=numStages,1,-1 do
 		local lower = 1
 		local upper = 5
 
-
-		if MaxHighScores > 5 then
-			-- if the new highscore is 1st or 2nd place
-			if index < 3 then
-				lower = 1
-				upper = 5
-
-			-- elseif the new highscore is second to last
-			elseif index == MaxHighScores-1 then
-				lower = MaxHighScores - 5
-				upper = lower + 4
-
-			-- elseif the new highscore the last allowed by MaxHighScoresPerListForMachine
-			elseif index == MaxHighScores then
-				lower = MaxHighScores - 4
-				upper = MaxHighScores
-
-			-- else the new highscore is somewhere in the middle
-			elseif index > 4 and index < MaxHighScores -1 then
-				lower = index - 4
-				upper = index
-			end
+		if MaxHighScores > upper and index > upper then
+			lower = lower + (index-upper)
+			upper = index
 		end
-
-
 
 		for s=lower,upper do
 
@@ -107,21 +84,11 @@ for i=numStages,1,-1 do
 
 
 			local row = Def.ActorFrame{
-				Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(Player),
+				Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(player),
 				InitCommand=function(self)
-					self:diffusealpha(0)
 					self:zoom(0.95)
-					if Player == PLAYER_1 then
-						self:x(_screen.cx-160)
-					elseif Player == PLAYER_2 then
-						self:x(_screen.cx+160)
-					end
-					self:y(_screen.cy+60)
-				end,
-				OnCommand=function(self)
-					self:sleep(durationPerSong * (math.abs(i-numStages)) )
-					self:queuecommand("Display")
-
+						:x( (player == PLAYER_1 and _screen.cx-160) or (_screen.cx+160))
+						:y(_screen.cy+60)
 					--if this row represents the new highscore, highlight it
 					if s == index then
 						self:diffuseshift()
@@ -130,16 +97,18 @@ for i=numStages,1,-1 do
 						self:effectcolor2(Color.White)
 					end
 				end,
-				DisplayCommand=function(self)
-					self:diffusealpha(1)
-					self:sleep(durationPerSong)
-					self:diffusealpha(0)
-					self:queuecommand("Wait")
+				OnCommand=function(self)
+					self:visible(false)
+						:sleep(durationPerSong * math.abs(i-NumStages)):queuecommand("Display")
 				end,
 				WaitCommand=function(self)
-					self:sleep(durationPerSong * (numStages-1))
-					self:queuecommand("Display")
-				end
+					self:visible(false)
+					self:sleep(durationPerSong * (NumStages-1)):queuecommand("Display")
+				end,
+				DisplayCommand=function(self)
+					self:visible(true)
+					self:sleep(durationPerSong):queuecommand("Wait")
+				end,
 			}
 
 			row[#row+1] = LoadFont("_miso")..{

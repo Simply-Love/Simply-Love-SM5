@@ -4,36 +4,33 @@
 local function CreditsText( pn )
 	local text = LoadFont("_miso") .. {
 		InitCommand=function(self)
-			self:visible(false);
+			self:visible(false)
 			self:name("Credits" .. PlayerNumberToString(pn))
-			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen");
+			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
 		end;
 		UpdateTextCommand=function(self)
-			local str = ScreenSystemLayerHelpers.GetCreditsMessage(pn);
-			self:settext(str);
+			local str = ScreenSystemLayerHelpers.GetCreditsMessage(pn)
+			self:settext(str)
 		end;
 		UpdateVisibleCommand=function(self)
-			local screen = SCREENMAN:GetTopScreen();
-			local bShow = true;
+			local screen = SCREENMAN:GetTopScreen()
+			local bShow = true
 			if screen then
-				local sClass = screen:GetName();
-				bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" );
+				local sClass = screen:GetName()
+				bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" )
 			end
 
-			self:visible( bShow );
+			self:visible( bShow )
 		end
-	};
-	return text;
-end;
-
+	}
+	return text
+end
 
 
 local t = Def.ActorFrame {}
 
-
 -- Aux
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"));
-
 
 -- Credits
 t[#t+1] = Def.ActorFrame {
@@ -55,7 +52,7 @@ t[#t+1] = Def.ActorFrame {
 	HideSystemMessageMessageCommand=cmd(finishtweening),
 	
 	Def.Quad {
-		InitCommand=cmd(zoomtowidth,_screen.w; zoomtoheight,30; horizalign,left; vertalign,top; y,SCREEN_TOP; diffuse, Color.Black; diffusealpha,0 ),
+		InitCommand=cmd(zoomto,_screen.w, 30; horizalign,left; vertalign,top; diffuse, Color.Black; diffusealpha,0 ),
 		OnCommand=cmd(finishtweening; diffusealpha,0.85 ),
 		OffCommand=cmd(sleep,3; linear,0.5; diffusealpha,0 )
 	},

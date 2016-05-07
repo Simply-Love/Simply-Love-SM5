@@ -45,7 +45,7 @@ end
 
 
 function GetNotefieldX( player )
-	local pn = ToEnumShortString(player)
+	local p = ToEnumShortString(player)
 
 	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
 	local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
@@ -56,7 +56,7 @@ function GetNotefieldX( player )
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
 
 	local NumPlayersAndSides = ToEnumShortString( GAMESTATE:GetCurrentStyle():GetStyleType() )
-	return THEME:GetMetric("ScreenGameplay","Player".. pn .. NumPlayersAndSides .."X")
+	return THEME:GetMetric("ScreenGameplay","Player".. p .. NumPlayersAndSides .."X")
 end
 
 function GetNotefieldWidth()
@@ -99,4 +99,45 @@ local ComboThresholdTable = {
 function GetComboThreshold()
 	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
 	return ComboThresholdTable[CurrentGame]
+end
+
+
+function SetGameModePreferences()
+	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
+		PREFSMAN:SetPreference(key, val)
+	end
+
+	local prefix = {
+		Competitive = "",
+		Marathon = "",
+		StomperZ = "StomperZ-",
+		Casual = "Casual-"
+	}
+
+	if PROFILEMAN:GetStatsPrefix() ~= prefix[SL.Global.GameMode] then
+		PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])
+	end
+end
+
+
+function GetPlayerOptionsLineNames()
+	if SL.Global.GameMode == "Casual" then
+		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
+	else
+		return "SpeedModType,SpeedMod,Mini,Perspective,NoteSkin2,Judgment,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
+	end
+end
+
+function GetPlayerOptions2LineNames()
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
+
+	if SL.Global.GameMode == "StomperZ" then
+		mods = mods:gsub("DecentsWayOffs,", "")
+	end
+
+	if SL.Global.Gamestate.Style == "double" then
+		mods = mods:gsub("TargetStatus,TargetBar,", "")
+	end
+
+	return mods
 end

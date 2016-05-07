@@ -3,10 +3,9 @@ return Def.ActorFrame{
 	-- Song Completion Meter
 	Def.ActorFrame{
 		Name="SongMeter",
-		InitCommand=cmd(x,_screen.cx; y,20; diffusealpha,0),
-		OnCommand=cmd(decelerate,0.2; diffusealpha,1),
+		InitCommand=cmd(xy, _screen.cx, 20 ),
 
-		Def.SongMeterDisplay {
+		Def.SongMeterDisplay{
 			StreamWidth=_screen.w/2-10,
 			Stream=Def.Quad{ 
 				InitCommand=cmd(zoomy,18; diffuse,DifficultyIndexColor(2))

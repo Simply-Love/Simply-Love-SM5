@@ -131,17 +131,19 @@ local pd = Def.ActorFrame{
 		end
 
 		self:y(_screen.h/2 + 5)
-		self:queuecommand("Set")
 	end,
 
 	PlayerJoinedMessageCommand=function(self, params)
 
 		if player==params.Player then
 			self:visible(true)
-			self:zoom(0)
-			self:bounceend(0.3)
-			self:zoom(1)
-			self:playcommand("Set")
+				:zoom(0):croptop(0):bounceend(0.3):zoom(1)
+				:playcommand("Set")
+		end
+	end,
+	PlayerUnjoinedMessageCommand=function(self, params)
+		if player==params.Player then
+			self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0)
 		end
 	end,
 
@@ -170,9 +172,10 @@ pd[#pd+1] = Def.Quad{
 	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33 ),
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
-			local steps = GAMESTATE:GetCurrentSteps(player)
-			if steps then
-				local difficulty = steps:GetDifficulty()
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+
+			if StepsOrTrail then
+				local difficulty = StepsOrTrail:GetDifficulty()
 				self:diffuse( DifficultyColor(difficulty) )
 			else
 				self:diffuse( PlayerColor(player) )
@@ -233,12 +236,13 @@ pd[#pd+1] = Def.BitmapText{
 	Name="DifficultyMeter",
 	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
 	SetCommand=function(self)
-		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-		if not song then
+		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		if not SongOrCourse then
 			self:settext("")
 		else
-			local steps = GAMESTATE:GetCurrentSteps(player)
-			self:settext( steps and steps:GetMeter() or  "?" )
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter()			
+			self:settext( meter and meter or  "?" )
 		end
 	end
 }

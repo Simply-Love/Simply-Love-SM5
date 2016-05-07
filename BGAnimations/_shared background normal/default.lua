@@ -1,4 +1,4 @@
-local file = THEME:GetPathB("", "_shared background normal/loveheart.png")
+local file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
 
 local file_info = {
 	ColorRGB = {0,1,1,0,0,0,1,1,1,1},
@@ -18,7 +18,11 @@ for i=1,10 do
 		InitCommand=cmd(diffuse, ColorRGB( file_info.ColorRGB[i] ) ),
 		ColorSelectedMessageCommand=cmd(linear, 0.5; diffuse, ColorRGB( file_info.ColorRGB[i] ); diffusealpha, file_info.diffusealpha[i] ),
 		OnCommand=cmd(zoom,1.3; xy, file_info.xy[i], file_info.xy[i]; customtexturerect,0,0,1,1;
-			texcoordvelocity, file_info.texcoordvelocity[i][1], file_info.texcoordvelocity[i][2]; diffusealpha, file_info.diffusealpha[i] )
+			texcoordvelocity, file_info.texcoordvelocity[i][1], file_info.texcoordvelocity[i][2]; diffusealpha, file_info.diffusealpha[i] ),
+		BackgroundImageChangedMessageCommand=function(self)
+			local new_file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
+			self:Load(new_file)
+		end
 	}
 end
 

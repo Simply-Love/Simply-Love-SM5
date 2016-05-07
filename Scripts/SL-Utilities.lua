@@ -43,6 +43,42 @@ local function TableToString_Recursive(t, name, indent)
 end
 
 
+function table.val_to_str ( v )
+	if "string" == type( v ) then
+		v = string.gsub( v, "\n", "\\n" )
+
+		if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
+			return "'" .. v .. "'"
+		end
+		return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
+	else
+		return "table" == type( v ) and table.tostring( v ) or tostring( v )
+	end
+end
+
+function table.key_to_str ( k )
+	if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
+		return k
+	else
+		return "[" .. table.val_to_str( k ) .. "]"
+	end
+end
+
+function table.tostring( tbl )
+	local result, done = {}, {}
+	for k, v in ipairs( tbl ) do
+		table.insert( result, table.val_to_str( v ) )
+    	done[ k ] = true
+	end
+	for k, v in pairs( tbl ) do
+		if not done[ k ] then
+			table.insert( result, "\t" .. table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
+		end
+	end
+	return "{\n" .. table.concat( result, ",\n" ) .. "\n}"
+end
+
+
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -- GLOBAL UTILITY FUNCTIONS
 -- use these to assist in theming/scripting efforts
@@ -98,7 +134,7 @@ function range(start, stop, step)
 
 	-- if step has been explicitly provided as a positve number
 	-- but the start and stop values tell us to decrement
-	-- multiple step by -1 to allow decrementing to occur
+	-- multiply step by -1 to allow decrementing to occur
 	if step > 0 and start > stop then
 		step = -1 * step
 	end
@@ -141,4 +177,37 @@ function FindInTable(needle, haystack)
 		end
 	end
 	return nil
+end
+
+-- Finds the top score for the current song (or course)
+-- given a player.
+function GetTopScore(pn, kind)
+	local SongOrCourse, StepsOrTrail
+
+	local scorelist, text
+
+	if GAMESTATE:IsCourseMode() then
+		SongOrCourse = GAMESTATE:GetCurrentCourse()
+		StepsOrTrail = GAMESTATE:GetCurrentTrail(pn)
+	else
+		SongOrCourse = GAMESTATE:GetCurrentSong()
+		StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
+	end
+
+	if SongOrCourse and StepsOrTrail and kind then
+		if kind == "Machine" then
+			scorelist = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail)
+		elseif kind == "Personal" then
+			scorelist = PROFILEMAN:GetProfile(pn):GetHighScoreList(SongOrCourse,StepsOrTrail)
+		end
+
+		if scorelist then
+			local topscore = scorelist:GetHighScores()[1]
+			if topsore then
+				return topscore:GetPercentDP()
+			end
+		end
+	end
+
+	return 0
 end

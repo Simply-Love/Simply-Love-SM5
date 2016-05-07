@@ -1,4 +1,5 @@
 local t = Def.ActorFrame{
+	OnCommand=function(self) self:queuecommand("HideSortMenu") end,
 	ChangeStepsMessageCommand=function(self, params)
 		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
 	end
@@ -20,7 +21,9 @@ local files = {
 	-- Difficulty Blocks
 	"./StepsDisplayList/Grid.lua",
 	-- a folder of Lua files to be loaded twice (once for each player)
-	"./PerPlayer"
+	"./PerPlayer",
+	-- overlay for sorting the MusicWheel, hidden by default
+	"./SortMenu/default.lua"
 }
 
 for index, file in ipairs(files) do
