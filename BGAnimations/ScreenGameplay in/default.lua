@@ -6,10 +6,9 @@ if GAMESTATE:IsCourseMode() then
 	text = THEME:GetString("Stage", "Stage") .. " 1"
 
 elseif not PREFSMAN:GetPreference("EventMode") then
-
+	
 	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
 else
-
 	text = THEME:GetString("Stage", "Event")
 end
 
@@ -49,6 +48,7 @@ for player in ivalues(Players) do
 	end
 end
 
+local image = ThemePrefs.Get("VisualTheme")
 
 local t = Def.ActorFrame{
 
@@ -58,15 +58,15 @@ local t = Def.ActorFrame{
 	},
 
 
-	LoadActor("heartsplode")..{
+	LoadActor(image.."_splode")..{
 		InitCommand=cmd(diffusealpha,0),
 		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,1.1; diffusealpha,0)
 	},
-	LoadActor("heartsplode")..{
+	LoadActor(image.."_splode")..{
 		InitCommand=cmd(diffusealpha,0),
 		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,1.3; diffusealpha,0)
 	},
-	LoadActor("minisplode")..{
+	LoadActor(image.."_minisplode")..{
 		InitCommand=cmd(diffusealpha,0),
 		OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.9; diffusealpha,0)
 	},

@@ -64,7 +64,7 @@ t[#t+1] = LoadFont("_wendy white")..{
 }
 
 t[#t+1] = LoadFont("_wendy small")..{
-	Text=THEME:GetString("ScreenNameEntryActual","OutOfRanking"),
+	Text=ScreenString("OutOfRanking"),
 	OnCommand=cmd(zoom,0.7; diffuse,PlayerColor(Player); y, 58; visible, not CanEnterName)
 }
 

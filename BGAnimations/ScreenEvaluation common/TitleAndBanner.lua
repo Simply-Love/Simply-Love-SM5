@@ -1,3 +1,5 @@
+local banner_directory = ThemePrefs.Get("VisualTheme")
+
 return Def.ActorFrame{
 
 	-- quad behind the song/course title text
@@ -18,7 +20,7 @@ return Def.ActorFrame{
 	},
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory .."/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 

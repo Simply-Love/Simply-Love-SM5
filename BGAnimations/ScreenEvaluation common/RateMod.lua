@@ -17,10 +17,6 @@ return Def.ActorFrame{
 		OnCommand=function(self)
 			-- what was the MusicRate for this song?
 			local MusicRate = SL.Global.ActiveModifiers.MusicRate
-
-			-- Store the MusicRate for later retrieval on ScreenEvaluationSummary
-			SL.Global.Stages.MusicRate[SL.Global.Stages.PlayedThisGame + 1] = MusicRate
-
 			local bpm = GetDisplayBPMs()
 
 			if MusicRate ~= 1 then

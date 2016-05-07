@@ -27,12 +27,25 @@ local filter = Def.Quad{
 		local StageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		if StageStats:FullCombo() then
 			local comboColor
-			if StageStats:FullComboOfScore('TapNoteScore_W1') then
-				comboColor = color("#6BF0FF")
-			elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
-				comboColor = color("#FDDB85")
+			
+			if SL.Global.GameMode == "StomperZ" then
+				if StageStats:FullComboOfScore('TapNoteScore_W1') then
+					comboColor = color("#21CCE8") -- blue
+				elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
+					comboColor = color("#FFFFFF") -- white
+				elseif StageStats:FullComboOfScore('TapNoteScore_W3') then
+					comboColor = color("#e29c18") -- gold
+				else
+					comboColor = color("#66c955") -- green
+				end
 			else
-				comboColor = color("#94FEC1")
+				if StageStats:FullComboOfScore('TapNoteScore_W1') then
+					comboColor = color("#6BF0FF") -- ITG blue
+				elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
+					comboColor = color("#FDDB85") -- ITG gold
+				else
+					comboColor = color("#94FEC1") -- ITG green
+				end
 			end
 			self:accelerate(0.25):diffuse( comboColor )
 				:decelerate(0.75):diffusealpha( 0 )

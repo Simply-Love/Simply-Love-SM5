@@ -31,7 +31,7 @@ local t = Def.ActorFrame{
 
 for pn in ivalues(Players) do
 	if PROFILEMAN:IsPersistentProfile(pn) then
-		t[#t+1] = LoadActor("PlayerStats", pn)
+		t[#t+1] = LoadActor("PlayerStats.lua", pn)
 	else
 		t[#t+1] = LoadFont("_miso")..{
 			Text="No Card",

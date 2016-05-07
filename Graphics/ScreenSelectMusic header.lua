@@ -64,21 +64,28 @@ local t = Def.ActorFrame{
 		end
 	end,
 
-	Def.Quad{
-		InitCommand=cmd(zoomto, _screen.w, 32; vertalign, top; diffuse,0.65,0.65,0.65,1; x, _screen.cx),
-	},
-
-	LoadFont("_wendy small")..{
-		Name="HeaderText",
-		InitCommand=cmd(zoom,WideScale(0.5, 0.6); xy, 10, 15;  horizalign,left; diffusealpha,0; settext,ScreenString("HeaderText")),
-		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
-	},
+	LoadActor( THEME:GetPathG("", "_header.lua") ),
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",
 		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, 15 ),
 		TextCommand=cmd(settext, StageText),
 		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
+	},
+
+	Def.BitmapText{
+		Name="GameModeText",
+		Font="_wendy small",
+		InitCommand=function(self)
+			self:diffusealpha(0):zoom( WideScale(0.5,0.6)):xy(_screen.w-70, 15):halign(1)
+			if not PREFSMAN:GetPreference("MenuTimer") then
+				self:x(_screen.w-10)
+			end
+		end,
+		OnCommand=function(self)
+			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
+				:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
+		end
 	}
 }
 

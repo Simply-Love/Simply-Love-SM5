@@ -53,7 +53,7 @@ end
 -- we'll declare it here, and fill it with data below via dofile('path/to/voice/default.lua')
 Vocalization = {}
 
--- what voice directories exist in ./Simply Love//Other/Vocalize/ ?
+-- what voice directories exist in ./Simply Love/Other/Vocalize/ ?
 local directories = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 
 if #directories > 0 then

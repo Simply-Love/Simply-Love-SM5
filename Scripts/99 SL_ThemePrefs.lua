@@ -31,7 +31,38 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { true, false }
 	},
-
+	DefaultGameMode =
+	{
+		Default = "Competitive",
+		Choices = {
+			THEME:GetString("ScreenSelectPlayMode", "Casual"),
+			THEME:GetString("ScreenSelectPlayMode", "Competitive"),
+			THEME:GetString("ScreenSelectPlayMode", "StomperZ"),
+			THEME:GetString("ScreenSelectPlayMode", "Marathon")
+		},
+		Values 	= { "Casual", "Competitive", "StomperZ", "Marathon" }
+	},
+	TimingWindowAdd = {
+		Default = 0,
+		Choices = { 0, 0.0015 },
+		Values = { 0, 0.0015 }
+	},
+	AutoStyle =
+	{
+		Default = "none",
+		Choices = {
+			THEME:GetString("ScreenSelectStyle", "None"),
+			THEME:GetString("ScreenSelectStyle", "Single"),
+			THEME:GetString("ScreenSelectStyle", "Versus"),
+			THEME:GetString("ScreenSelectStyle", "Double")
+		},
+		Values 	= { "none", "single", "versus", "double" }
+	},
+	VisualTheme =
+	{
+		Default = "Hearts",
+		Choices = { "Hearts", "Arrows" },
+	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- SimplyLoveColor saves the theme color for the next time
 	-- the StepMania application is started.
@@ -44,6 +75,12 @@ local SL_CustomPrefs =
 	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- Enable/Disable Certain Screens
+	AllowScreenSelectColor =
+	{
+		Default = true,
+		Choices = { "Yes", "No" },
+		Values 	= { true, false }
+	},
 	AllowScreenEvalSummary =
 	{
 		Default = true,
@@ -73,7 +110,6 @@ ThemePrefs.InitAll(SL_CustomPrefs)
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefsRows.txt
 
 local file = IniFile.ReadFile("Save/ThemePrefs.ini")
-local NeedsRewrite = false
 
 -- If no [Simply Love] ThemePrefs section is found...
 if not file["Simply Love"] then
