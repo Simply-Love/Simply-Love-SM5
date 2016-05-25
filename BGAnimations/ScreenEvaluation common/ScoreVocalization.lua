@@ -27,7 +27,7 @@ return Def.Actor{
 		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local pn = ToEnumShortString(player)
 			-- fill the "scores" table with a string representing the score to 2 decimal places and either "P1" or "P2"
-			scores[#scores+1] = {self:GetParent():GetChild(pn.."_AF_Lower"):GetChild("PercentageContainer"..pn):GetChild("Percent"):GetText(), pn}
+			scores[#scores+1] = {self:GetParent():GetChild(pn.."_AF_Lower"):GetChild("Pane1"):GetChild("PercentageContainer"..pn):GetChild("Percent"):GetText(), pn}
 		end
 
 		Digits = ParseScores(scores)
@@ -43,7 +43,7 @@ return Def.Actor{
 		if pn ~= Digits[ActiveDigit][2] then
 
 			pn = Digits[ActiveDigit][2]
-			voice = SL[pn].ActiveModifiers.Vocalize
+			voice = SL[pn].ActiveModifiers.Vocalization
 
 			-- if "Random" was chosen as the vocalization, randomly select a voice from those available
 			if voice == "Random" then
@@ -55,7 +55,7 @@ return Def.Actor{
 		if voice and voice ~= "None" then
 
 			-- if "Blender" was chosen, we want to re-randomize the vocalization for each digit
-			if SL[pn].ActiveModifiers.Vocalize == "Blender" then
+			if SL[pn].ActiveModifiers.Vocalization == "Blender" then
 			    voice = RandomizeVocalization()
 			end
 

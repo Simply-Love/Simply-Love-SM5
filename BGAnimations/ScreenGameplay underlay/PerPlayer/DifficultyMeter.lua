@@ -1,16 +1,22 @@
 local player = ...
 
 return Def.ActorFrame{
-	
+	InitCommand=function(self)
+		self:xy( WideScale(27,84), 56 )
+		if player == PLAYER_2 then
+			self:x( _screen.w-WideScale(27,84) )
+		end
+
+		if SL.Global.GameMode == "StomperZ" then
+			self:y( 20 )
+		end
+	end,
+
+
 	-- colored background for player's chart's difficulty meter
 	Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(30, 30)
-			self:xy( WideScale(27,84), 56 )
-		
-			if player == PLAYER_2 then
-				self:x( _screen.w-WideScale(27,84) )
-			end
 		end,
 		OnCommand=function(self)
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
@@ -24,13 +30,8 @@ return Def.ActorFrame{
 	-- player's chart's difficulty meter
 	LoadFont("_wendy small")..{
 		InitCommand=function(self)
-			self:diffuse(Color.Black)
+			self:diffuse( Color.Black )
 			self:zoom( 0.4 )
-			self:xy( WideScale(27,84), 56)
-
-			if player == PLAYER_2 then
-				self:x( _screen.w-WideScale(27,84) )
-			end
 		end,
 		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
 		BeginCommand=function(self)

@@ -4,6 +4,38 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
 -- - - - - - - - - - - - - - - - - - - - - -
+
+if mods.JudgmentGraphic ~= "None" then
+	-- a Judgment might be saved to a profile from a previous GameMode
+	-- that doesn't exist in the current GameMode.  If so, attempt to set
+	-- it to the first available Judgment graphic.  If none are available,
+	-- set it to "None" as a last resort fallback.
+	local path
+	if SL.Global.GameMode == "StomperZ" then
+		path = THEME:GetPathG("", "_judgments/StomperZ")
+	else
+		path = THEME:GetPathG("", "_judgments/Competitive")
+	end
+
+	local files = FILEMAN:GetDirListing(path .. "/")
+	local judgment_exists = false
+	for i,filename in ipairs(files) do
+		if string.match(filename, " %dx%d") then
+			local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
+			if mods.JudgmentGraphic == name then
+				judgment_exists = true
+				break
+			end
+		else
+			table.remove(files,i)
+		end
+	end
+	if not judgment_exists then
+		mods.JudgmentGraphic = files[1] or "None"
+	end
+end
+-- - - - - - - - - - - - - - - - - - - - - -
+
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" ),
 	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" ),
@@ -25,8 +57,8 @@ local TNSFrames = {
 
 local t = Def.ActorFrame {
 	Name="Player Judgment"
-
 }
+
 
 if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 
@@ -58,12 +90,12 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 		-- frame0 is like (-fantastic)
 		-- frame1 is like (fantastic-)
 		if frame == 0 or frame == 1 then
-			JudgmentSet:zoom(0.85)
+			JudgmentSet:zoom(0.80)
 		else
-			JudgmentSet:zoom(0.9)
+			JudgmentSet:zoom(0.85)
 		end
 
-		JudgmentSet:decelerate(0.1):zoom(0.8):sleep(1)
+		JudgmentSet:decelerate(0.1):zoom(0.75):sleep(1)
 		JudgmentSet:accelerate(0.2):zoom(0)
 	end
 
@@ -76,14 +108,20 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 			-- if we are on ScreenEdit, judgment font is always "Love"
 			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
 				self:Load( THEME:GetPathG("", "_judgments/Love") )
-			elseif mods.JudgmentGraphic == "3.9" then
-				self:Load( THEME:GetPathG("", "_judgments/3_9"))
 			else
-				self:Load( THEME:GetPathG("", "_judgments/" .. mods.JudgmentGraphic) )
+				if SL.Global.GameMode ~= "StomperZ" then
+					if mods.JudgmentGraphic == "3.9" then
+						self:Load( THEME:GetPathG("", "_judgments/3_9"))
+					else
+						self:Load( THEME:GetPathG("", "_judgments/Competitive/" .. mods.JudgmentGraphic) )
+					end
+				else
+					self:Load( THEME:GetPathG("", "_judgments/StomperZ/" .. mods.JudgmentGraphic) )
+				end
 			end
 
 		end,
-		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false)
+		ResetCommand=cmd(finishtweening; stopeffect; visible,false)
 	}
 end
 

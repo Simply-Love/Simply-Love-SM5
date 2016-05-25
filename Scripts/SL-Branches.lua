@@ -1,24 +1,64 @@
-function AllowScreenNameEntry()
-	if ThemePrefs.Get("AllowScreenNameEntry") then
+if not Branch then Branch = {} end
+
+Branch.AllowScreenNameEntry = function()
+
+	-- If we're in Casual mode, don't allow NameEntry, and don't
+	-- bother saving the profile(s). Skip directly to GameOver.
+	if SL.Global.GameMode == "Casual" then
+		return Branch.AfterProfileSaveSummary()
+
+	elseif ThemePrefs.Get("AllowScreenNameEntry") then
 		return "ScreenNameEntryTraditional"
+
 	else
 		return "ScreenProfileSaveSummary"
 	end
 end
 
-function AllowScreenEvalSummary()
+Branch.AllowScreenEvalSummary = function()
 	if ThemePrefs.Get("AllowScreenEvalSummary") then
 		return "ScreenEvaluationSummary"
 	else
-		return AllowScreenNameEntry()
+		return Branch.AllowScreenNameEntry()
 	end
 end
 
--------------------------------------------------------
+Branch.AllowScreenSelectColor = function()
+	if ThemePrefs.Get("AllowScreenSelectColor") then
+		return "ScreenSelectColor"
+	else
+		return Branch.AfterScreenSelectColor()
+	end
+end
 
-if not Branch then Branch = {} end
+Branch.AfterScreenSelectColor = function()
+	local preferred_style = ThemePrefs.Get("AutoStyle")
+	if preferred_style ~= "none" then
+		-- If "versus" ensure that both players are actually considered joined.
+		if preferred_style == "versus" then
+			GAMESTATE:JoinPlayer(PLAYER_1)
+			GAMESTATE:JoinPlayer(PLAYER_2)
+		end
+		GAMESTATE:SetCurrentStyle( preferred_style )
+		-- set this here to be used later with the continue system
+		SL.Global.Gamestate.Style = preferred_style
 
-Branch.AfterSelectStyle = function()
+		return "ScreenSelectPlayMode"
+	end
+
+	return "ScreenSelectStyle"
+end
+
+Branch.AfterEvaluationStage = function()
+	-- If we're in Casual mode, don't save the profile(s).
+	if SL.Global.GameMode == "Casual" then
+		return Branch.AfterProfileSave()
+	else
+		return "ScreenProfileSave"
+	end
+end
+
+Branch.AfterSelectPlayMode = function()
 	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
 		return "ScreenSelectCourseNonstop"
 	else
@@ -28,9 +68,27 @@ end
 
 
 Branch.AfterGameplay = function()
-	local pm = GAMESTATE:GetPlayMode()
-	if( pm == "PlayMode_Regular" )	then return "ScreenEvaluationStage" end
-	if( pm == "PlayMode_Nonstop" )	then return "ScreenEvaluationNonstop" end
+	if THEME:GetMetric("ScreenHeartEntry", "HeartEntryEnabled") then
+		local go_to_heart= false
+		for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+			local profile= PROFILEMAN:GetProfile(pn)
+			if profile and profile:GetIgnoreStepCountCalories() then
+				go_to_heart= true
+			end
+		end
+
+		if go_to_heart then
+			return "ScreenHeartEntry"
+		end
+	end
+
+	return Branch.AfterHeartEntry()
+end
+
+Branch.AfterHeartEntry = function()
+	local pm = ToEnumShortString(GAMESTATE:GetPlayMode())
+	if( pm == "Regular" ) then return "ScreenEvaluationStage" end
+	if( pm == "Nonstop" ) then return "ScreenEvaluationNonstop" end
 end
 
 Branch.PlayerOptions = function()
@@ -44,7 +102,7 @@ end
 Branch.SSMCancel = function()
 
 	if GAMESTATE:GetCurrentStageIndex() > 0 then
-		return AllowScreenEvalSummary()
+		return Branch.AllowScreenEvalSummary()
 	end
 
 	return Branch.TitleMenu()
@@ -56,7 +114,7 @@ Branch.AfterProfileSave = function()
 		return SelectMusicOrCourse()
 
 	elseif GAMESTATE:IsCourseMode() then
-		return AllowScreenNameEntry()
+		return Branch.AllowScreenNameEntry()
 
 	else
 
@@ -125,10 +183,10 @@ Branch.AfterProfileSave = function()
 					if GAMESTATE:GetCoins() >= CoinsNeeded then
 						return "ScreenPlayAgain"
 					else
-						return AllowScreenEvalSummary()
+						return Branch.AllowScreenEvalSummary()
 					end
 				else
-					return AllowScreenEvalSummary()
+					return Branch.AllowScreenEvalSummary()
 				end
 
 
@@ -159,7 +217,7 @@ Branch.AfterProfileSave = function()
 				if credits.Credits > 0 then
 					return "ScreenPlayAgain"
 				else
-					return AllowScreenEvalSummary()
+					return Branch.AllowScreenEvalSummary()
 				end
 
 			else
