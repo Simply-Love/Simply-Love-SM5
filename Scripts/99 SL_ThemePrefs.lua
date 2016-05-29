@@ -75,6 +75,12 @@ local SL_CustomPrefs =
 	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- Enable/Disable Certain Screens
+	AllowScreenSelectProfile =
+	{
+		Default = false,
+		Choices = { "Yes", "No" },
+		Values 	= { true, false }
+	},
 	AllowScreenSelectColor =
 	{
 		Default = true,

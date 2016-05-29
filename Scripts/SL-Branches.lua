@@ -23,6 +23,14 @@ Branch.AllowScreenEvalSummary = function()
 	end
 end
 
+Branch.AllowScreenSelectProfile = function()
+	if ThemePrefs.Get("AllowScreenSelectProfile") then
+		return "ScreenSelectProfile"
+	else
+		return Branch.AllowScreenSelectColor()
+	end	
+end
+
 Branch.AllowScreenSelectColor = function()
 	if ThemePrefs.Get("AllowScreenSelectColor") then
 		return "ScreenSelectColor"
