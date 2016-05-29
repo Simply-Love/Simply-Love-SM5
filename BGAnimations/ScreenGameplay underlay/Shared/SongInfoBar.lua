@@ -22,7 +22,7 @@ return Def.ActorFrame{
 		CurrentSongChangedMessageCommand=cmd(playcommand, "Update"),
 		UpdateCommand=function(self)
 			local song = GAMESTATE:GetCurrentSong()
-			self:settext( song and song:GetDisplayFullTitle() )
+			self:settext( song and song:GetDisplayFullTitle() or "" )
 		end
 	}
 }
