@@ -286,9 +286,8 @@ local Overrides = {
 		end,
 		ExportOnChange = true,
 		LoadSelections = function(self, list, pn)
-			local chosenOne = SL[ToEnumShortString(pn)].ActiveModifiers.TargetBar
-			local i = FindInTable(chosenOne, self.Choices) or 1
-			list[chosenOne] = true
+			local i = SL[ToEnumShortString(pn)].ActiveModifiers.TargetBar
+			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
