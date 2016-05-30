@@ -262,9 +262,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetStatus = {
-		Choices = function()
-			return { 'Disabled', 'Bars', 'Target', 'Both' }
-		end,
+		Choices = function() return { 'Disabled', 'Bars', 'Target', 'Both' } end,
 		ExportOnChange = true,
 		LoadSelections = function(self, list, pn)
 			local chosenOne = SL[ToEnumShortString(pn)].ActiveModifiers.TargetStatus
@@ -288,7 +286,8 @@ local Overrides = {
 		end,
 		ExportOnChange = true,
 		LoadSelections = function(self, list, pn)
-			local chosenOne = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetBar)
+			local chosenOne = SL[ToEnumShortString(pn)].ActiveModifiers.TargetBar
+			local i = FindInTable(chosenOne, self.Choices) or 1
 			list[chosenOne] = true
 		end,
 		SaveSelections = function(self, list, pn)
