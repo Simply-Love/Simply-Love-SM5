@@ -189,7 +189,7 @@ for player in ivalues(Players) do
 		PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_wendy small")..{
 			InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50),
 			DrawStageCommand=function(self)
-				if playerStats then
+				if playerStats and playerStats.judgments then
 					local val = playerStats.judgments[TNSTypes[i]]
 					if val then self:settext(val) end
 					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs

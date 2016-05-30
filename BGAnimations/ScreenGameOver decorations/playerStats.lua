@@ -10,7 +10,7 @@ local x_pos = player == PLAYER_1 and 80 or _screen.w-80
 
 local totalTime = 0
 for i,stats in ipairs(SL[ToEnumShortString(player)].Stages.Stats) do
-	totalTime = totalTime + stats.duration
+	totalTime = stats.duration and (totalTime + stats.duration) or 0
 end
 
 local minutes = math.floor(totalTime/60)
