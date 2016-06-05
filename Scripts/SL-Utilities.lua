@@ -203,7 +203,7 @@ function GetTopScore(pn, kind)
 
 		if scorelist then
 			local topscore = scorelist:GetHighScores()[1]
-			if topsore then
+			if topscore then
 				return topscore:GetPercentDP()
 			end
 		end
