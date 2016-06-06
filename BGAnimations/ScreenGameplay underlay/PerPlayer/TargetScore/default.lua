@@ -7,7 +7,7 @@ local function get43size(size4_3)
 end
 
 -- if nobody wants us, we won't appear
-if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Disabled") then
+if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Disabled") or SL.Global.Gamestate.Style == "double" then
 	return false
 end
 
