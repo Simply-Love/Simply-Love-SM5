@@ -13,7 +13,7 @@ else
 			end
 		},
 
-		LoadActor(THEME:GetPathB("","_shared background " .. (ThemePrefs.Get("RainbowMode") and "rainbow" or "normal"))),
+		LoadActor(THEME:GetPathB("","_shared background normal")),
 
 		Def.ActorFrameTexture{
 			Name="Screenshot_AFT",

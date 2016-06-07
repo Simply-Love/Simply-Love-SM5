@@ -71,7 +71,12 @@ for player in ivalues(Players) do
 		-- background quad for player stats
 		Def.Quad{
 			Name="LowerQuad",
-			InitCommand=cmd(diffuse,color("#1E282F"); y,_screen.cy+34; zoomto, 300,180 ),
+			InitCommand=function(self)
+				self:diffuse(color("#1E282F")):y(_screen.cy+34):zoomto( 300,180 )
+				if ThemePrefs.Get("RainbowMode") then
+					self:diffusealpha(0.9)
+				end
+			end,
 			ShrinkCommand=function(self)
 				self:zoomto(300,180):x(0)
 			end,
