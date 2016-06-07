@@ -21,13 +21,9 @@ t[#t+1] = LoadFont("_wendy small")..{
 	Name="StyleName"..iIndex,
 	InitCommand=function(self)
 		self:settext(THEME:GetString("ScreenSelectStyle", choiceName))
-
-		if choiceName == "Versus" then
-			self:addx(-14)
-		end
-
-		self:addy(60)
-		self:zoom(0.5)
+			:shadowlength(1)
+			:y(60):zoom(0.5)
+		if choiceName == "Versus" then self:x(-14) end
 	end,
 	OffCommand=function(self)
 		if choiceName == "Versus" then

@@ -21,6 +21,7 @@ local t = Def.ActorFrame{
 	LoadActor(THEME:GetPathB("ScreenTitleMenu","underlay/Simply".. image .." (doubleres).png"))..{
 		InitCommand=function(self)
 			self:x(_screen.cx+2):diffusealpha(0):zoom(0.7)
+				:shadowlength(1)
 		end,
 		OnCommand=cmd(linear,0.5; diffusealpha, 1)
 	}

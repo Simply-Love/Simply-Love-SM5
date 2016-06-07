@@ -16,7 +16,7 @@ return Def.ActorFrame{
 
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenTitleJoin", "Press Start"),
-		InitCommand=cmd(xy,_screen.cx, _screen.h-80 ),
+		InitCommand=cmd(xy,_screen.cx, _screen.h-80; shadowlength,1 ),
 		OnCommand=cmd(zoom,0.715),
 	},
 	

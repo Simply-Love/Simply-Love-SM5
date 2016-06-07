@@ -63,6 +63,11 @@ local SL_CustomPrefs =
 		Default = "Hearts",
 		Choices = { "Hearts", "Arrows" },
 	},
+	RainbowMode = {
+		Default = false,
+		Choices = { "On", "Off" },
+		Values 	= { true , false }
+	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- SimplyLoveColor saves the theme color for the next time
 	-- the StepMania application is started.

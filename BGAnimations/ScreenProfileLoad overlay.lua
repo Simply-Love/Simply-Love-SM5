@@ -8,8 +8,8 @@ return Def.ActorFrame{
 	Def.Quad{
 		Name="FadeToBlack",
 		InitCommand=function(self)
-			self:horizalign(right):vertalign(bottom)
-			self:diffuse(0,0,0,0):FullScreen()
+			self:horizalign(right):vertalign(bottom):FullScreen()
+			self:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ):diffusealpha(0)
 		end,
 		OnCommand=function(self)
 			self:sleep(tweentime):linear(tweentime):diffusealpha(1)
@@ -20,7 +20,8 @@ return Def.ActorFrame{
 		Name="HorizontalWhiteSwoosh",
 		InitCommand=function(self)
 			self:horizalign(center):vertalign(middle)
-			self:zoomto(_screen.w + 100,50):faderight(0.1):fadeleft(0.1):cropright(1)
+				:diffuse( ThemePrefs.Get("RainbowMode") and Color.Black or Color.White )
+				:zoomto(_screen.w + 100,50):faderight(0.1):fadeleft(0.1):cropright(1)
 		end,
 		OnCommand=function(self)
 			self:linear(tweentime):cropright(0):sleep(tweentime)
@@ -36,7 +37,7 @@ return Def.ActorFrame{
 		Font="_wendy small",
 		Text=THEME:GetString("ScreenProfileLoad","Loading Profiles..."),
 		InitCommand=function(self)
-			self:diffuse(Color.Black):zoom(0.6)
+			self:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ):zoom(0.6)
 		end
 	}
 }

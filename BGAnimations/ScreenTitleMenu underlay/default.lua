@@ -1,3 +1,5 @@
+local TextColor = ThemePrefs.Get("RainbowMode") and Color.Black or Color.White
+
 local SongStats = SONGMAN:GetNumSongs() .. " songs in "
 SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, "
 SongStats = SongStats .. SONGMAN:GetNumCourses() .. " courses"
@@ -53,11 +55,12 @@ return Def.ActorFrame{
 		Def.BitmapText{
 			Font="_miso",
 			Text=sm_version,
-			InitCommand=function(self) self:y(-20) end
+			InitCommand=function(self) self:y(-20):diffuse(TextColor) end,
 		},
 		Def.BitmapText{
 			Font="_miso",
 			Text=SongStats,
+			InitCommand=function(self) self:diffuse(TextColor) end,
 		}
 	},
 
@@ -68,6 +71,7 @@ return Def.ActorFrame{
 	},
 
 	LoadActor("Simply".. image .." (doubleres).png") .. {
-		InitCommand=cmd(x,2; zoom, 0.7)
+		InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(1) end,
+		OffCommand=function(self) self:linear(0.5):shadowlength(0) end
 	}
 }

@@ -22,8 +22,11 @@ local t = Def.ActorFrame{
 		Def.Quad{
 			InitCommand=function(self)
 				self:diffuse(color("#1e282f"))
-				self:zoomtowidth( IsUsingWideScreen() and 320 or 310 )
-				self:zoomtoheight( 48 )
+					:zoomto( IsUsingWideScreen() and 320 or 310, 48 )
+
+				if ThemePrefs.Get("RainbowMode") then
+					self:diffusealpha(0.75)
+				end
 			end
 		},
 

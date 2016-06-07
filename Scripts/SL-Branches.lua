@@ -32,7 +32,7 @@ Branch.AllowScreenSelectProfile = function()
 end
 
 Branch.AllowScreenSelectColor = function()
-	if ThemePrefs.Get("AllowScreenSelectColor") then
+	if ThemePrefs.Get("AllowScreenSelectColor") and not ThemePrefs.Get("RainbowMode") then
 		return "ScreenSelectColor"
 	else
 		return Branch.AfterScreenSelectColor()

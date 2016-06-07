@@ -3,7 +3,17 @@ if SL.Global.GameMode == "Casual" then
 else
 	return Def.ActorFrame{
 
-		LoadActor(THEME:GetPathB("","_shared background normal")),
+		Def.Quad{
+			InitCommand=function(self)
+				if ThemePrefs.Get("RainbowMode") then
+					self:Center():FullScreen():diffuse(Color.White)
+				else
+					self:visible(false)
+				end
+			end
+		},
+
+		LoadActor(THEME:GetPathB("","_shared background " .. (ThemePrefs.Get("RainbowMode") and "rainbow" or "normal"))),
 
 		Def.ActorFrameTexture{
 			Name="Screenshot_AFT",
