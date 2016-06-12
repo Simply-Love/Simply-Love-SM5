@@ -1,4 +1,5 @@
 local player = ...
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 -- Pacemaker mod by JackG
 
@@ -214,11 +215,11 @@ local finalFrame = Def.ActorFrame{
 		self:xy(graphX, graphY)
 		
 		-- we can finally initialize these
-		songPossiblePoints = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPossibleDancePoints()
+		songPossiblePoints = pss:GetPossibleDancePoints()
 		songPointsForTarget = songPossiblePoints * targetGradeScore
 		songPointPerStepToTarget = songPointsForTarget / songTotalThings
 		
-		currentGrade = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetGrade()
+		currentGrade = pss:GetGrade()
 		previousGrade = currentGrade
 	end,
 	-- any time we receive a judgment
@@ -228,7 +229,7 @@ local finalFrame = Def.ActorFrame{
 			currentPointsForTarget = currentPointsForTarget + songPointPerStepToTarget
 		end
 		
-		currentGrade = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetGrade()
+		currentGrade = pss:GetGrade()
 		
 		-- this broadcasts a message to tell other actors that we have changed grade
 		if (currentGrade ~= previousGrade) then
@@ -261,7 +262,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				-- follow the player's score
 				UpdateCommand=function(self)
-					local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+					local dp = pss:GetPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(dp))
 				end
 			},
@@ -311,7 +312,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				-- follow the player's score
 				UpdateCommand=function(self)
-					local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+					local dp = pss:GetPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(dp))
 				end
 			},
@@ -427,7 +428,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Target" or SL
 			self:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
-			local percentDifference = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints() - (currentPointsForTarget/songPossiblePoints)
+			local percentDifference = pss:GetPercentDancePoints() - (currentPointsForTarget/songPossiblePoints)
 			self:settext(string.format("%+2.2f", percentDifference * 100))
 		end
 	}
