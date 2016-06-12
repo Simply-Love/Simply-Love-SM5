@@ -318,11 +318,16 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
+						:zoomto(barWidth, 1)
 						:xy( barOffset + (barSpacing * 2) + barWidth, 0 )
-						:zoomto(barWidth, -percentToYCoordinate(pbGradeScore))
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Green)
+				end,
+				JudgmentMessageCommand = function(self) self:queuecommand("Update") end,
+				UpdateCommand = function(self)
+					local currentDP = pbGradeScore * GetCurMaxPercentDancePoints()
+					self:zoomy(-percentToYCoordinate(currentDP))
 				end,
 			},
 			
