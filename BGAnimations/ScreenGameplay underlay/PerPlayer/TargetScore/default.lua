@@ -89,6 +89,9 @@ local previousGrade = nil
 -- possible targets
 -- { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '*', '**', '***', '****', 'Machine best', 'Personal best' }
 
+-- get personal best score
+local pbGradeScore = GetTopScore(player, "Personal")
+
 -- get the index of the target chosen in the options menu
 local targetGradeIndex = tonumber(SL[ToEnumShortString(player)].ActiveModifiers.TargetBar)
 local targetGradeScore = 0
@@ -96,7 +99,7 @@ local targetGradeScore = 0
 if (targetGradeIndex == 17) then
 	targetGradeScore = GetTopScore(player, "Machine")
 elseif (targetGradeIndex == 18) then
-	targetGradeScore = GetTopScore(player, "Personal")
+	targetGradeScore = pbGradeScore
 else
 	targetGradeScore = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", 17 - targetGradeIndex))
 end
@@ -316,7 +319,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				InitCommand=function(self)
 					self:valign(1):halign(0)
 						:xy( barOffset + (barSpacing * 2) + barWidth, 0 )
-						:zoomto(barWidth, -percentToYCoordinate(GetTopScore(player, "Personal")))
+						:zoomto(barWidth, -percentToYCoordinate(pbGradeScore))
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Green)
@@ -339,6 +342,13 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
+			},
+			
+			-- PERSONAL BEST BORDER
+			Border(barWidth+4, -percentToYCoordinate(pbGradeScore)+3, targetBarBorderWidth)..{
+				InitCommand=function(self)
+					self:xy(barOffset + (barSpacing * 2) + (barWidth/2) + barWidth * 1, percentToYCoordinate(pbGradeScore)/2)
+				end,
 			},
 			
 			-- TARGET BORDER
