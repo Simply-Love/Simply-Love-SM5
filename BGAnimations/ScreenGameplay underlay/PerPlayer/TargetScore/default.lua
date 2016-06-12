@@ -106,15 +106,6 @@ if targetGradeScore == 0 then
 	targetGradeScore = THEME:GetMetric("PlayerStageStats", "GradePercentTier06")
 end
 
--- calculate the total number of judgment events in the song
-local songTapsAndHolds = GAMESTATE:GetCurrentSteps(player):GetRadarValues(player):GetValue('RadarCategory_TapsAndHolds')
-local songHolds =  GAMESTATE:GetCurrentSteps(player):GetRadarValues(player):GetValue('RadarCategory_Holds') + GAMESTATE:GetCurrentSteps(player):GetRadarValues(player):GetValue('RadarCategory_Rolls')
-local songTotalThings = songTapsAndHolds + songHolds
-
--- these will be initialized later, since at this point the game doesn't know yet
-local songPossiblePoints = 0
-local songPointsForTarget = 0
-
 -- Converts a percentage to an exponential scale, returning the corresponding Y point in the graph
 function percentToYCoordinate(scorePercent)
 	return -(graphHeight*math.pow(100,scorePercent)/100)
@@ -225,10 +216,6 @@ local finalFrame = Def.ActorFrame{
 	OnCommand=function(self)
 		self:xy(graphX, graphY)
 		
-		-- we can finally initialize these
-		songPossiblePoints = pss:GetPossibleDancePoints()
-		songPointsForTarget = songPossiblePoints * targetGradeScore
-		
 		currentGrade = pss:GetGrade()
 		previousGrade = currentGrade
 	end,
@@ -286,7 +273,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				end,
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
-					local targetDP = songPointsForTarget * GetCurMaxPercentDancePoints()/songPossiblePoints
+					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
@@ -349,7 +336,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				end,
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
-					local targetDP = songPointsForTarget * GetCurMaxPercentDancePoints()/songPossiblePoints
+					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
@@ -434,7 +421,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Target" or SL
 			self:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
-			local percentDifference = pss:GetPercentDancePoints() - (songPointsForTarget * GetCurMaxPercentDancePoints()/songPossiblePoints)
+			local percentDifference = pss:GetPercentDancePoints() - (targetGradeScore * GetCurMaxPercentDancePoints())
 			self:settext(string.format("%+2.2f", percentDifference * 100))
 		end
 	}
