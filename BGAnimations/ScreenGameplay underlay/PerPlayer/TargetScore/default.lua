@@ -7,6 +7,19 @@ local function get43size(size4_3)
 	return 640*(size4_3/854)
 end
 
+-- Ported from PSS.cpp, can be removed if that gets exported to Lua
+local function GetCurMaxPercentDancePoints()
+	local possible = pss:GetPossibleDancePoints()
+	if possible == 0 then
+		return 0
+	end
+	local currentMax = pss:GetCurrentPossibleDancePoints()
+	if currentMax == possible then
+		return 1
+	end
+	return currentMax / possible
+end
+
 -- if nobody wants us, we won't appear
 if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Disabled") or SL.Global.Gamestate.Style == "double" then
 	return false
