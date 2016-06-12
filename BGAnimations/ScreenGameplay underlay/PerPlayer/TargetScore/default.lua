@@ -114,8 +114,6 @@ local songTotalThings = songTapsAndHolds + songHolds
 -- these will be initialized later, since at this point the game doesn't know yet
 local songPossiblePoints = 0
 local songPointsForTarget = 0
-local songPointPerStepToTarget = 0
-local currentPointsForTarget = 0
 
 -- Converts a percentage to an exponential scale, returning the corresponding Y point in the graph
 function percentToYCoordinate(scorePercent)
@@ -230,18 +228,12 @@ local finalFrame = Def.ActorFrame{
 		-- we can finally initialize these
 		songPossiblePoints = pss:GetPossibleDancePoints()
 		songPointsForTarget = songPossiblePoints * targetGradeScore
-		songPointPerStepToTarget = songPointsForTarget / songTotalThings
 		
 		currentGrade = pss:GetGrade()
 		previousGrade = currentGrade
 	end,
 	-- any time we receive a judgment
 	JudgmentMessageCommand=function(self,params)
-		-- avoiding (or hitting) a mine generates a judge, so we shouldn't increase the ghost score in those cases
-		if (params.TapNoteScore ~= "TapNoteScore_AvoidMine" and params.TapNoteScore ~= "TapNoteScore_HitMine" and params.Player == player) then
-			currentPointsForTarget = currentPointsForTarget + songPointPerStepToTarget
-		end
-		
 		currentGrade = pss:GetGrade()
 		
 		-- this broadcasts a message to tell other actors that we have changed grade
@@ -249,6 +241,7 @@ local finalFrame = Def.ActorFrame{
 			MESSAGEMAN:Broadcast("GradeChange")
 			previousGrade = currentGrade
 		end
+		self:queuecommand("Update")
 	end,
 
 }
@@ -293,7 +286,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				end,
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
-					local targetDP = currentPointsForTarget/songPossiblePoints
+					local targetDP = songPointsForTarget * GetCurMaxPercentDancePoints()/songPossiblePoints
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
@@ -356,7 +349,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				end,
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
-					local targetDP = currentPointsForTarget/songPossiblePoints
+					local targetDP = songPointsForTarget * GetCurMaxPercentDancePoints()/songPossiblePoints
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
@@ -441,7 +434,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Target" or SL
 			self:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
-			local percentDifference = pss:GetPercentDancePoints() - (currentPointsForTarget/songPossiblePoints)
+			local percentDifference = pss:GetPercentDancePoints() - (songPointsForTarget * GetCurMaxPercentDancePoints()/songPossiblePoints)
 			self:settext(string.format("%+2.2f", percentDifference * 100))
 		end
 	}
