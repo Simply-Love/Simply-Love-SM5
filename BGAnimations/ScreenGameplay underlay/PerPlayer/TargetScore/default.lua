@@ -1,9 +1,23 @@
 local player = ...
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 -- Pacemaker mod by JackG
 
 local function get43size(size4_3)
 	return 640*(size4_3/854)
+end
+
+-- Ported from PSS.cpp, can be removed if that gets exported to Lua
+local function GetCurMaxPercentDancePoints()
+	local possible = pss:GetPossibleDancePoints()
+	if possible == 0 then
+		return 0
+	end
+	local currentMax = pss:GetCurrentPossibleDancePoints()
+	if currentMax == possible then
+		return 1
+	end
+	return currentMax / possible
 end
 
 -- if nobody wants us, we won't appear
@@ -75,6 +89,9 @@ local previousGrade = nil
 -- possible targets
 -- { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '*', '**', '***', '****', 'Machine best', 'Personal best' }
 
+-- get personal best score
+local pbGradeScore = GetTopScore(player, "Personal")
+
 -- get the index of the target chosen in the options menu
 local targetGradeIndex = tonumber(SL[ToEnumShortString(player)].ActiveModifiers.TargetBar)
 local targetGradeScore = 0
@@ -82,7 +99,7 @@ local targetGradeScore = 0
 if (targetGradeIndex == 17) then
 	targetGradeScore = GetTopScore(player, "Machine")
 elseif (targetGradeIndex == 18) then
-	targetGradeScore = GetTopScore(player, "Personal")
+	targetGradeScore = pbGradeScore
 else
 	targetGradeScore = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", 17 - targetGradeIndex))
 end
@@ -91,17 +108,6 @@ end
 if targetGradeScore == 0 then
 	targetGradeScore = THEME:GetMetric("PlayerStageStats", "GradePercentTier06")
 end
-
--- calculate the total number of judgment events in the song
-local songTapsAndHolds = GAMESTATE:GetCurrentSteps(player):GetRadarValues(player):GetValue('RadarCategory_TapsAndHolds')
-local songHolds =  GAMESTATE:GetCurrentSteps(player):GetRadarValues(player):GetValue('RadarCategory_Holds') + GAMESTATE:GetCurrentSteps(player):GetRadarValues(player):GetValue('RadarCategory_Rolls')
-local songTotalThings = songTapsAndHolds + songHolds
-
--- these will be initialized later, since at this point the game doesn't know yet
-local songPossiblePoints = 0
-local songPointsForTarget = 0
-local songPointPerStepToTarget = 0
-local currentPointsForTarget = 0
 
 -- Converts a percentage to an exponential scale, returning the corresponding Y point in the graph
 function percentToYCoordinate(scorePercent)
@@ -213,28 +219,19 @@ local finalFrame = Def.ActorFrame{
 	OnCommand=function(self)
 		self:xy(graphX, graphY)
 		
-		-- we can finally initialize these
-		songPossiblePoints = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPossibleDancePoints()
-		songPointsForTarget = songPossiblePoints * targetGradeScore
-		songPointPerStepToTarget = songPointsForTarget / songTotalThings
-		
-		currentGrade = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetGrade()
+		currentGrade = pss:GetGrade()
 		previousGrade = currentGrade
 	end,
 	-- any time we receive a judgment
 	JudgmentMessageCommand=function(self,params)
-		-- avoiding (or hitting) a mine generates a judge, so we shouldn't increase the ghost score in those cases
-		if (params.TapNoteScore ~= "TapNoteScore_AvoidMine" and params.TapNoteScore ~= "TapNoteScore_HitMine" and params.Player == player) then
-			currentPointsForTarget = currentPointsForTarget + songPointPerStepToTarget
-		end
-		
-		currentGrade = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetGrade()
+		currentGrade = pss:GetGrade()
 		
 		-- this broadcasts a message to tell other actors that we have changed grade
 		if (currentGrade ~= previousGrade) then
 			MESSAGEMAN:Broadcast("GradeChange")
 			previousGrade = currentGrade
 		end
+		self:queuecommand("Update")
 	end,
 
 }
@@ -261,7 +258,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				-- follow the player's score
 				UpdateCommand=function(self)
-					local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+					local dp = pss:GetPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(dp))
 				end
 			},
@@ -279,7 +276,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				end,
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
-					local targetDP = currentPointsForTarget/songPossiblePoints
+					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
@@ -311,7 +308,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				-- follow the player's score
 				UpdateCommand=function(self)
-					local dp = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+					local dp = pss:GetPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(dp))
 				end
 			},
@@ -321,11 +318,16 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
+						:zoomto(barWidth, 1)
 						:xy( barOffset + (barSpacing * 2) + barWidth, 0 )
-						:zoomto(barWidth, -percentToYCoordinate(GetTopScore(player, "Personal")))
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Green)
+				end,
+				JudgmentMessageCommand = function(self) self:queuecommand("Update") end,
+				UpdateCommand = function(self)
+					local currentDP = pbGradeScore * GetCurMaxPercentDancePoints()
+					self:zoomy(-percentToYCoordinate(currentDP))
 				end,
 			},
 			
@@ -342,9 +344,16 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				end,
 				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
-					local targetDP = currentPointsForTarget/songPossiblePoints
+					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
+			},
+			
+			-- PERSONAL BEST BORDER
+			Border(barWidth+4, -percentToYCoordinate(pbGradeScore)+3, targetBarBorderWidth)..{
+				InitCommand=function(self)
+					self:xy(barOffset + (barSpacing * 2) + (barWidth/2) + barWidth * 1, percentToYCoordinate(pbGradeScore)/2)
+				end,
 			},
 			
 			-- TARGET BORDER
@@ -427,7 +436,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Target" or SL
 			self:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
-			local percentDifference = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints() - (currentPointsForTarget/songPossiblePoints)
+			local percentDifference = pss:GetPercentDancePoints() - (targetGradeScore * GetCurMaxPercentDancePoints())
 			self:settext(string.format("%+2.2f", percentDifference * 100))
 		end
 	}
