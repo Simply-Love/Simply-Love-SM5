@@ -149,7 +149,7 @@ for player in ivalues(Players) do
 				-- If the score is < 10.00% there will be leading whitespace, like " 9.45"
 				-- trim that too, so PLAYER_2's scores align properly.
 				score = score:gsub(" ", "")
-				self:settext(score)
+				self:settext(score):diffuse(Color.White)
 
 				if grade and grade == "Grade_Failed" then
 					self:diffuse(Color.Red)
