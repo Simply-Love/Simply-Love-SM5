@@ -1,7 +1,8 @@
 local player = ...
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
--- Pacemaker mod by JackG
+-- Pacemaker contributed by JackG
+-- minor cleanup by dguzek and djpohly
 
 local function get43size(size4_3)
 	return 640*(size4_3/854)
@@ -28,8 +29,8 @@ end
 local isTwoPlayers = (GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2))
 
 local bothWantBars = isTwoPlayers
-                     and (SL[ToEnumShortString(PLAYER_1)].ActiveModifiers.TargetStatus == "Bars" or SL[ToEnumShortString(PLAYER_1)].ActiveModifiers.TargetStatus == "Both")
-                     and (SL[ToEnumShortString(PLAYER_2)].ActiveModifiers.TargetStatus == "Bars" or SL[ToEnumShortString(PLAYER_2)].ActiveModifiers.TargetStatus == "Both")
+                     and (SL.P1.ActiveModifiers.TargetStatus == "Bars" or SL.P1.ActiveModifiers.TargetStatus == "Both")
+                     and (SL.P2.ActiveModifiers.TargetStatus == "Bars" or SL.P2.ActiveModifiers.TargetStatus == "Both")
 
 local targetBarBorderWidth = 2
 
@@ -44,13 +45,13 @@ if isTwoPlayers then
 	graphWidth = WideScale(25, 70)
 	-- tinier border for the target bar
 	targetBarBorderWidth = 1
-	
+
 	local separator = 0
-	
+
 	if IsUsingWideScreen() then
 		separator = 5
 	end
-	
+
 	-- put the graph right beside the note field
 	if (player == PLAYER_1) then
 		graphX = _screen.w / 2 - graphWidth - separator
@@ -58,11 +59,17 @@ if isTwoPlayers then
 		graphX = _screen.w / 2 + separator
 	end
 else
-	-- put the graph on the other side of the screen
-	if (player == PLAYER_1) then
-		graphX = WideScale( get43size(500), 500)
+	if PREFSMAN:GetPreference("Center1Player") then
+		-- tinier graph
+		graphWidth = WideScale(25, 70)
+		graphX = WideScale( get43size(_screen.cx+400), _screen.cx+300 )
 	else
-		graphX = WideScale( get43size(40), 40)
+		-- put the graph on the other side of the screen
+		if (player == PLAYER_1) then
+			graphX = WideScale( get43size(500), 500)
+		else
+			graphX = WideScale( get43size(40), 40)
+		end
 	end
 end
 
@@ -74,7 +81,7 @@ local barOffset = barSpacing / 3
 if isTwoPlayers then
 	barWidth = graphWidth * 0.3
 	barSpacing = barWidth / 3
-		
+
 	if IsUsingWideScreen() then
 		barOffset = barSpacing
 	else
@@ -119,13 +126,13 @@ function getYFromGradeEnum(gradeEnum)
 	return percentToYCoordinate(THEME:GetMetric("PlayerStageStats", "GradePercent" .. ToEnumShortString(gradeEnum)))
 end
 
--- Actor frame for the background of the graph
+-- ActorFrame for the background of the graph
 local barsBgActor = Def.ActorFrame{
 
 	InitCommand=function(self)
 		self:valign(0):halign(0)
 	end,
-	
+
 	-- black background
 	Def.Quad{
 		InitCommand=function(self)
@@ -134,7 +141,7 @@ local barsBgActor = Def.ActorFrame{
 				:xy( 0, 0 )
 		end,
 		OnCommand=function(self)
-			self:diffuse(color("#000000FF"))
+			self:diffuse(Color.Black)
 		end,
 	}
 }
@@ -146,7 +153,7 @@ for i=1,16 do
 	local tierEnd = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", i+1))
 	local yStart = percentToYCoordinate(tierStart)
 	local yEnd = percentToYCoordinate(tierEnd)
-	
+
 	barsBgActor[#barsBgActor+1] = Def.Quad{
 		InitCommand=function(self)
 			self:valign(0):halign(0)
@@ -171,7 +178,7 @@ local gradeNames = {"☆☆☆", "☆☆", "☆", "S", "A", "B", "C"}
 for i = 1,#gradeBorders do
 	local tierStart = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", gradeBorders[i]))
 	local yStart = percentToYCoordinate(tierStart)
-	
+
 	barsBgActor[#barsBgActor+1] = Def.Quad{
 		InitCommand=function(self)
 			self:valign(0):halign(0)
@@ -182,7 +189,7 @@ for i = 1,#gradeBorders do
 			self:diffuse(color("#FFFFFF4F"))
 		end,
 	}
-	
+
 	-- in 4:3 the graphs touch each other, so the labels for P2 are redundant
 	if not (isTwoPlayers and bothWantBars and player == PLAYER_2 and not IsUsingWideScreen()) then
 		barsBgActor[#barsBgActor+1] = Def.BitmapText{
@@ -197,7 +204,7 @@ for i = 1,#gradeBorders do
 				end
 			end,
 			-- zoom the label once we reach a grade, but only in 16:9
-			GradeChangeMessageCommand=function(self)
+			GradeChangedCommand=function(self)
 				if (bothWantBars and not IsUsingWideScreen()) then
 					return
 				end
@@ -209,7 +216,7 @@ for i = 1,#gradeBorders do
 	end
 end
 
--- this is the final actor frame where everything will be shoved
+-- this is the final ActorFrame where everything will be shoved
 local finalFrame = Def.ActorFrame{
 
 	InitCommand=function(self)
@@ -218,17 +225,17 @@ local finalFrame = Def.ActorFrame{
 	end,
 	OnCommand=function(self)
 		self:xy(graphX, graphY)
-		
+
 		currentGrade = pss:GetGrade()
 		previousGrade = currentGrade
 	end,
 	-- any time we receive a judgment
 	JudgmentMessageCommand=function(self,params)
 		currentGrade = pss:GetGrade()
-		
+
 		-- this broadcasts a message to tell other actors that we have changed grade
 		if (currentGrade ~= previousGrade) then
-			MESSAGEMAN:Broadcast("GradeChange")
+			self:queuecommand("GradeChanged")
 			previousGrade = currentGrade
 		end
 		self:queuecommand("Update")
@@ -243,7 +250,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 		finalFrame[#finalFrame+1] = Def.ActorFrame {
 			-- insert the background actor frame
 			barsBgActor,
-			
+
 			-- BAR 1
 			-- Current Score
 			Def.Quad{
@@ -255,14 +262,13 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				OnCommand=function(self)
 					self:diffuse(Color.Blue)
 				end,
-				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				-- follow the player's score
 				UpdateCommand=function(self)
 					local dp = pss:GetPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(dp))
 				end
 			},
-			
+
 			-- BAR 2
 			-- Target Score
 			Def.Quad{
@@ -274,13 +280,12 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				OnCommand=function(self)
 					self:diffuse(Color.Red)
 				end,
-				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
 					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
-			
+
 			-- TARGET BORDER
 			Border(barWidth+targetBarBorderWidth*2, -percentToYCoordinate(targetGradeScore)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
@@ -290,10 +295,10 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 		}
 	else
 		finalFrame[#finalFrame+1] = Def.ActorFrame {
-			
+
 			-- insert the background actor frame
 			barsBgActor,
-			
+
 			-- BAR 1
 			-- Current Score
 			Def.Quad{
@@ -305,14 +310,13 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				OnCommand=function(self)
 					self:diffuse(Color.Blue)
 				end,
-				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				-- follow the player's score
 				UpdateCommand=function(self)
 					local dp = pss:GetPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(dp))
 				end
 			},
-			
+
 			-- BAR 2
 			-- Personal Best Score
 			Def.Quad{
@@ -324,13 +328,12 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				OnCommand=function(self)
 					self:diffuse(Color.Green)
 				end,
-				JudgmentMessageCommand = function(self) self:queuecommand("Update") end,
 				UpdateCommand = function(self)
 					local currentDP = pbGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(currentDP))
 				end,
 			},
-			
+
 			-- BAR 3
 			-- Target Score
 			Def.Quad{
@@ -342,45 +345,41 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 				OnCommand=function(self)
 					self:diffuse(Color.Red)
 				end,
-				JudgmentMessageCommand=function(self) self:queuecommand("Update") end,
 				UpdateCommand=function(self)
 					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
-			
+
 			-- PERSONAL BEST BORDER
 			Border(barWidth+4, -percentToYCoordinate(pbGradeScore)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
 					self:xy(barOffset + (barSpacing * 2) + (barWidth/2) + barWidth * 1, percentToYCoordinate(pbGradeScore)/2)
 				end,
 			},
-			
+
 			-- TARGET BORDER
 			Border(barWidth+4, -percentToYCoordinate(targetGradeScore)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
 					self:xy(barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, percentToYCoordinate(targetGradeScore)/2)
 				end,
 			},
-			
+
 			-- pretty explody thingies for grade changes
-			
+
 			LoadActor("./heartsplode")..{
 				InitCommand=cmd(diffusealpha,0),
-				GradeChangeMessageCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,0.5; diffusealpha,0),
+				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,0.5; diffusealpha,0),
 			},
 			LoadActor("./heartsplode")..{
 				InitCommand=cmd(diffusealpha,0),
-				GradeChangeMessageCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,0.7; diffusealpha,0),
+				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,0.7; diffusealpha,0),
 			},
 			LoadActor("./minisplode")..{
 				InitCommand=cmd(diffusealpha,0),
-				GradeChangeMessageCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.4; diffusealpha,0),
+				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.4; diffusealpha,0),
 			},
-		}
-		
-		-- graph border and text labels for the bars
-		finalFrame[#finalFrame+1] = Def.ActorFrame {
+
 			-- white graph border
 			Border(graphWidth+4, graphHeight+4, 2)..{
 				InitCommand=function(self)
@@ -388,7 +387,16 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 					self:xy(graphWidth/2,-graphHeight/2)
 				end,
 			},
-			
+		}
+
+		-- text labels for the bars
+		finalFrame[#finalFrame+1] = Def.ActorFrame {
+			InitCommand=function(self)
+				if PREFSMAN:GetPreference("Center1Player") then
+					self:visible(false)
+				end
+			end,
+
 			Def.BitmapText{
 				Font="_miso",
 				Text="You",
@@ -404,7 +412,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 					self:xy( barOffset + (barSpacing * 2) + (barWidth/2) + barWidth, 20 )
 				end,
 			},
-			
+
 			Def.BitmapText{
 				Font="_miso",
 				Text="Target",
@@ -429,11 +437,8 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Target" or SL
 			else
 				noteX = GetNotefieldX(player) - (GetNotefieldWidth() / 4) - graphX - 15
 			end
-			
+
 			self:xy( noteX, 56 - graphY ):zoom(0.4)
-		end,
-		JudgmentMessageCommand=function(self,params)
-			self:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
 			local percentDifference = pss:GetPercentDancePoints() - (targetGradeScore * GetCurMaxPercentDancePoints())
