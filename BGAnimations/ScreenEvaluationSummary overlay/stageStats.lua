@@ -141,7 +141,7 @@ for player in ivalues(Players) do
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_wendy small")..{
 		InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24),
 		DrawStageCommand=function(self)
-			if score then
+			if playerStats and score then
 
 				-- trim off the % symbol
 				local score = string.sub(FormatPercentScore(score),1,-2)
@@ -154,6 +154,8 @@ for player in ivalues(Players) do
 				if grade and grade == "Grade_Failed" then
 					self:diffuse(Color.Red)
 				end
+			else
+				self:settext("")
 			end
 		end
 	}
@@ -162,13 +164,15 @@ for player in ivalues(Players) do
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_wendy small")..{
 		InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4),
 		DrawStageCommand=function(self)
-			if difficultyMeter then
+			if playerStats and difficultyMeter then
 				if difficulty then
 					local y_offset = GetYOffsetByDifficulty(difficulty)
 					self:diffuse(DifficultyIndexColor(y_offset))
 				end
 
 				self:settext(difficultyMeter)
+			else
+				self:settext("")
 			end
 		end
 	}
@@ -177,8 +181,10 @@ for player in ivalues(Players) do
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_miso")..{
 		InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
 		DrawStageCommand=function(self)
-			if stepartist then
+			if playerStats and stepartist then
 				self:settext(stepartist)
+			else
+				self:settext("")
 			end
 		end
 	}
@@ -205,6 +211,8 @@ for player in ivalues(Players) do
 							self:diffuse( colors.Competitive[i] )
 						end
 					end
+				else
+					self:settext("")
 				end
 			end
 		}
