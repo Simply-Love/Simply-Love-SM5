@@ -3,6 +3,17 @@ if SL.Global.GameMode ~= "Casual" then
 
 	return Def.ActorFrame{
 
+		-- Draw a semitransparent Quad behind the GraphDisplay (lifebar graph)
+		-- if RainbowMode is on.  This makes it easier to see with the wacky background.
+		Def.Quad{
+			InitCommand=function(self)
+				if ThemePrefs.Get("RainbowMode") then
+					self:y( _screen.cy + 151):zoomto(300, 53)
+						:diffuse(color("#00000088"))
+				end
+			end
+		},
+
 		Def.GraphDisplay{
 			Name="GraphDisplay",
 			InitCommand=function(self)
@@ -16,7 +27,7 @@ if SL.Global.GameMode ~= "Casual" then
 				self:Set(stageStats, playerStageStats)
 
 				-- hide the GraphDisplay's stroke ("line")
-				self:GetChild("Line"):diffusealpha(0)
+				self:GetChild("Line"):visible(false)
 			end
 		},
 
@@ -24,7 +35,7 @@ if SL.Global.GameMode ~= "Casual" then
 			Name="LifeBarGraph_MidwayQuad",
 			InitCommand=function(self)
 				if SL.Global.GameMode ~= "StomperZ" then
-					self:hibernate(math.huge)
+					self:visible(false)
 					return
 				end
 				self:xy( 0, _screen.cy+164 ):diffuse(0,0,0,0.33)
@@ -34,11 +45,7 @@ if SL.Global.GameMode ~= "Casual" then
 
 		Def.ComboGraph{
 			InitCommand=function(self)
-				if player == PLAYER_1 then
-					self:Load("ComboGraphP1")
-				else
-					self:Load("ComboGraphP2")
-				end
+				self:Load("ComboGraph" .. ToEnumShortString(player))
 				self:y( _screen.cy+182.5 )
 			end,
 			OnCommand=function(self)
