@@ -8,7 +8,7 @@ if SL.Global.GameMode ~= "Casual" then
 		Def.Quad{
 			InitCommand=function(self)
 				if ThemePrefs.Get("RainbowMode") then
-					self:y( _screen.cy + 151):zoomto(300, 53)
+					self:y( _screen.cy + 151):zoomto(300, 54)
 						:diffuse(color("#00000088"))
 				end
 			end

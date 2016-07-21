@@ -44,7 +44,7 @@ local t = Def.ActorFrame{
 				end
 			end
 		else
-			StepsOrTrails, StepsToDisplay = nil
+			StepsOrTrails, StepsToDisplay = nil, nil
 			self:playcommand("Unset")
 		end
 	end,
