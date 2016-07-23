@@ -78,6 +78,40 @@ local SL_CustomPrefs =
 		Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
 		Values = { 1,2,3,4,5,6,7,8,9,10,11,12 }
 	},
+
+	-- - - - - - - - - - - - - - - - - - - -
+	-- MenuTimer values for various screens
+	ScreenSelectMusicMenuTimer =
+	{
+		Default = 300,
+		Choices = range(60, 450, 15),
+		Values = range(60, 450, 15),
+	},
+	ScreenPlayerOptionsMenuTimer =
+	{
+		Default = 90,
+		Choices = range(30, 450, 15),
+		Values = range(30, 450, 15),
+	},
+	ScreenEvaluationMenuTimer =
+	{
+		Default = 60,
+		Choices = range(15, 450, 15),
+		Values = range(15, 450, 15),
+	},
+	ScreenEvaluationSummaryMenuTimer =
+	{
+		Default = 60,
+		Choices = range(30, 450, 15),
+		Values = range(30, 450, 15),
+	},
+	ScreenNameEntryMenuTimer =
+	{
+		Default = 60,
+		Choices = range(15, 450, 15),
+		Values = range(15, 450, 15),
+	},
+
 	-- - - - - - - - - - - - - - - - - - - -
 	-- Enable/Disable Certain Screens
 	AllowScreenSelectProfile =

@@ -68,6 +68,13 @@ local GlobalDefaults = {
 			}
 			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "Competitive"
 			self.ScreenshotTexture = nil
+			self.MenuTimer = {
+				ScreenSelectMusic = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),
+				ScreenPlayerOptions = ThemePrefs.Get("ScreenPlayerOptionsMenuTimer"),
+				ScreenEvaluation = ThemePrefs.Get("ScreenEvaluationMenuTimer"),
+				ScreenEvaluationSummary = ThemePrefs.Get("ScreenEvaluationSummaryMenuTimer"),
+				ScreenNameEntry = ThemePrefs.Get("ScreenNameEntryMenuTimer"),
+			}
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,
