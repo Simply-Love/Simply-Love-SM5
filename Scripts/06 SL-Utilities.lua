@@ -147,6 +147,16 @@ function range(start, stop, step)
 	return t
 end
 
+function SecondsToMMSS_range(start, stop, step)
+	local ret = {}
+	local range = range(start, stop, step)
+	for v in ivalues(range) do
+		ret[#ret+1] = SecondsToMMSS(v):gsub("^0*", "")
+	end
+	return ret
+end
+
+
 -- stringify() accepts an indexed table, applies tostring() to each element,
 -- and returns the results.  sprintf style format can be provided via an
 -- optional second argument.  Note that this function will ignores key/value pairs

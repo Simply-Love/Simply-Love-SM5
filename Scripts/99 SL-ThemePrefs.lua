@@ -84,31 +84,31 @@ local SL_CustomPrefs =
 	ScreenSelectMusicMenuTimer =
 	{
 		Default = 300,
-		Choices = range(60, 450, 15),
+		Choices = SecondsToMMSS_range(60, 450, 15),
 		Values = range(60, 450, 15),
 	},
 	ScreenPlayerOptionsMenuTimer =
 	{
 		Default = 90,
-		Choices = range(30, 450, 15),
+		Choices = SecondsToMMSS_range(30, 450, 15),
 		Values = range(30, 450, 15),
 	},
 	ScreenEvaluationMenuTimer =
 	{
 		Default = 60,
-		Choices = range(15, 450, 15),
+		Choices = SecondsToMMSS_range(15, 450, 15),
 		Values = range(15, 450, 15),
 	},
 	ScreenEvaluationSummaryMenuTimer =
 	{
 		Default = 60,
-		Choices = range(30, 450, 15),
+		Choices = SecondsToMMSS_range(30, 450, 15),
 		Values = range(30, 450, 15),
 	},
 	ScreenNameEntryMenuTimer =
 	{
 		Default = 60,
-		Choices = range(15, 450, 15),
+		Choices = SecondsToMMSS_range(15, 450, 15),
 		Values = range(15, 450, 15),
 	},
 
