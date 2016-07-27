@@ -28,6 +28,44 @@ function OptionRowEditorNoteskin()
 	}
 end
 
+function OptionRowLongAndMarathonTime( str )
+	local choices = {
+		Long={Choices=SecondsToMMSS_range(150, 300, 15), Values=range(150, 300, 15)},
+		Marathon={Choices=SecondsToMMSS_range(300, 600, 15), Values=range(300, 600, 15)}
+	}
+
+	choices.Long.Choices[#choices.Long.Choices+1] = "Off"
+	choices.Long.Values[#choices.Long.Values+1] = 999999
+	choices.Marathon.Choices[#choices.Marathon.Choices+1] = "Off"
+	choices.Marathon.Values[#choices.Marathon.Values+1] = 999999
+
+	return {
+		Name = str .. " Time",
+		LayoutType = "ShowOneInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = choices[str].Choices,
+		LoadSelections = function(self, list, pn)
+			if PREFSMAN:GetPreference(str.."VerSongSeconds") == 999999 then
+				list[#list] = true
+			else
+				local time = SecondsToMMSS(PREFSMAN:GetPreference(str.."VerSongSeconds")):gsub("^0*", "")
+				local i = FindInTable(time, choices[str].Choices) or 1
+				list[i] = true
+			end
+		end,
+		SaveSelections = function(self, list, pn)
+			for i = 1, #choices[str].Choices do
+				if list[i] then
+					PREFSMAN:SetPreference(str.."VerSongSeconds", choices[str].Values[i])
+					break
+				end
+			end
+		end,
+	}
+end
+
 function OptionRowMusicWheelSpeed()
 
 	local choices = { "Slow", "Normal", "Fast", "Faster", "Ridiculous", "Ludicrous", "Plaid" }

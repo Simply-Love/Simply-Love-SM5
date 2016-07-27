@@ -27,7 +27,7 @@ License:
 Copyright 2013-2016 Dan Guzek  
 See: [No License](http://choosealicense.com/licenses/no-license/)
 
-
+<hr>
 
 TODO:
 -----
@@ -36,10 +36,6 @@ TODO:
 
 * ghost data
 * timed sets
-
-**NICE THINGS I WOULD LIKE TO IMPLEMENT**
-
-* set long/marathon cutoff lengths via Operator Menu like oITG
 
 **KNOWN BUGS**
 
