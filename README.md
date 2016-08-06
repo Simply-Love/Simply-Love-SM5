@@ -16,6 +16,8 @@ You'll need to be running [StepMania 5.0.11](http://www.stepmania.com/download/)
 
 If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/) and see [this issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64).
 
+Installation
+--------------
 To install this theme, unzip it and move the resulting directory inside the *Themes* folder in your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).  The resulting directory structure should [look like this](http://www.personal.psu.edu/djg270/sites/sm5/?open=11-4).
 
 Screenshots:

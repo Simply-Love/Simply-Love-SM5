@@ -29,21 +29,32 @@ local function input(event)
 				SL.Global.GameMode = focus.change
 				SetGameModePreferences()
 				THEME:ReloadMetrics()
-				overlay:queuecommand("HideSortMenu")
+
+				-- Change the header text to reflect the newly selected GameMode.
+				overlay:GetParent():GetChild("Header"):playcommand("UpdateHeaderText")
+
+				-- Reload the SortMenu's available options and queue "HideSortMenu"
+				-- which also returns input back away from Lua back to the engine.
+				overlay:GetChild("SortMenu"):playcommand("On"):queuecommand("HideSortMenu")
 
 			elseif focus.kind == "ChangeStyle" then
+				-- If the MenuTimer is in effect, make sure to grab its current
+				-- value before reloading the screen.
+				if PREFSMAN:GetPreference("MenuTimer") then
+					overlay:playcommand("ShowPressStartForOptions")
+				end
+
+				-- Get the style we want to change to...
 				local new_style = focus.change:lower()
 
-				-- local old_style = GAMESTATE:GetCurrentStyle():GetName()
-				-- if old_style == "versus" then
-				-- 	local other_player = PlayerNumber[(PlayerNumber:Reverse()[event.PlayerNumber]+1)%2+1]
-				-- 	GAMESTATE:UnjoinPlayer( other_player )
-				-- end
-
+				-- ...and set it in the SL table and in the engine.
 				SL.Global.Gamestate.Style = new_style
 				GAMESTATE:SetCurrentStyle(new_style)
-				SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM")
-				SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+
+				-- finally, reload the screen.
+				local topscreen = SCREENMAN:GetTopScreen()
+				topscreen:SetNextScreenName("ScreenReloadSSM")
+				topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 			end
 
 		elseif event.GameButton == "Back" or event.GameButton == "Select" then

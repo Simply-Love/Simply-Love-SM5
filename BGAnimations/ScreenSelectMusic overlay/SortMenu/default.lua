@@ -8,6 +8,11 @@ local sortmenu = { w=210, h=160 }
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
+	InitCommand=function(self)
+		-- ALWAYS ensure that the SortMenu is hidden and that players have
+		-- input directed back to them on screen initialization.  Always.
+		self:queuecommand("HideSortMenu")
+	end,
 	ShowSortMenuCommand=function(self)
 		SOUND:StopMusic()
 		SCREENMAN:GetTopScreen():AddInputCallback(input)

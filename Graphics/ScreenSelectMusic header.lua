@@ -85,6 +85,9 @@ local t = Def.ActorFrame{
 		OnCommand=function(self)
 			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 				:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
+		end,
+		UpdateHeaderTextCommand=function(self)
+			self:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
 		end
 	}
 }
