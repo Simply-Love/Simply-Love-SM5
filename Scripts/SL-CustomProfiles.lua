@@ -1,4 +1,4 @@
-local path =  THEME:GetThemeDisplayName() .. " UserPrefs.lua"
+local path =  THEME:GetThemeDisplayName() .. " UserPrefs.ini"
 
 -- Hook called during profile load
 function LoadProfileCustom(profile, dir)
@@ -7,21 +7,16 @@ function LoadProfileCustom(profile, dir)
 	local pn
 
 	-- we've been passed a profile object as the variable "profile"
-	-- see if it matches against anything returned by PROFILEMAN:GetProfile(pn)
-	local Players = GAMESTATE:GetHumanPlayers()
-
-	if Players then
-		for player in ivalues(Players) do
-			if profile == PROFILEMAN:GetProfile(player) then
-				pn = ToEnumShortString(player)
-			end
+	-- see if it matches against anything returned by PROFILEMAN:GetProfile(player)
+	for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
+		if profile == PROFILEMAN:GetProfile(player) then
+			pn = ToEnumShortString(player)
+			break
 		end
 	end
 
-	if pn then
-		if FILEMAN:DoesFileExist(fullFilename) then
-			SL[pn].ActiveModifiers = LoadActor(fullFilename)
-		end
+	if pn and FILEMAN:DoesFileExist(fullFilename) then
+		SL[pn].ActiveModifiers = IniFile.ReadFile(fullFilename)["Simply Love"]
 	end
 
 	return true
@@ -31,29 +26,13 @@ end
 function SaveProfileCustom(profile, dir)
 
 	local fullFilename =  dir .. path
-	local pn
 
-	local Players = GAMESTATE:GetHumanPlayers()
-
-	for player in ivalues(Players) do
+	for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		if profile == PROFILEMAN:GetProfile(player) then
-			pn = ToEnumShortString(player)
+			local pn = ToEnumShortString(player)
+			IniFile.WriteFile( fullFilename, {["Simply Love"]=SL[pn].ActiveModifiers  } )
+			break
 		end
-	end
-
-	if pn then
-		-- a generic ragefile
-		local f = RageFileUtil.CreateRageFile()
-
-		if f:Open(fullFilename, 2) then
-			f:Write( "return " .. table.tostring(SL[pn].ActiveModifiers) )
-		else
-			local fError = f:GetError()
-			Trace( "[FileUtils] Error writing to ".. fullFilename ..": ".. fError )
-			f:ClearError()
-		end
-
-		f:destroy()
 	end
 
 	return true
