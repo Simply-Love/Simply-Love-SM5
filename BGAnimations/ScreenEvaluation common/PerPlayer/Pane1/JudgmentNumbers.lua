@@ -46,11 +46,13 @@ for index, window in ipairs(TapNoteScores.Types) do
 		Font="_ScreenEvaluation numbers",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
+				:set_chars_wide(4)
+				:set_approach_seconds(1)
+				:set_leading_attribute{ Diffuse=color("#444444") }
 
 			-- if StomperZ, color the JudgmentNumbers
 			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
-				self:Load("RollingNumbersEvaluationA")
-				self:diffuse( StomperZColors[index] )
+				self:set_number_attribute{ Diffuse=StomperZColors[index] }
 
 			-- for all other modes, check for Decents/Way Offs
 			else
@@ -60,25 +62,18 @@ for index, window in ipairs(TapNoteScores.Types) do
 				-- be colored any differently than the (lack of) JudgmentNumber,
 				-- so load a unique Metric group.
 				if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
-					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-					self:diffuse(color("#444444"))
+					self:set_number_attribute{ Diffuse=color("#444444") }
 
 				-- If both Decents and WayOffs were turned off, the same logic applies.
 				elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
-					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-					self:diffuse(color("#444444"))
-
-				-- Otherwise, we want leading 0s to dimmed, so load the Metrics
-				-- group "RollingNumberEvaluationA"	which does that for us.
-				else
-					self:Load("RollingNumbersEvaluationA")
+					self:set_number_attribute{ Diffuse=color("#444444") }
 				end
 			end
 		end,
 		BeginCommand=function(self)
 			self:x( TapNoteScores.x[pn] )
 			self:y((index-1)*35 -20)
-			self:targetnumber(number)
+			self:target_number(number)
 		end
 	}
 
@@ -93,11 +88,16 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	-- player performace value
 	t[#t+1] = Def.RollingNumbers{
 		Font="_ScreenEvaluation numbers",
-		InitCommand=cmd(zoom,0.5; horizalign, right; Load, "RollingNumbersEvaluationB"),
+		InitCommand=function(self)
+			self:zoom(0.5):halign(1)
+				:set_chars_wide(3)
+				:set_approach_seconds(1)
+				:set_leading_attribute{ Diffuse=color("#444444") }
+		end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)
 			self:x( RadarCategories.x[pn] )
-			self:targetnumber(performance)
+			self:target_number(performance)
 		end
 	}
 
