@@ -44,7 +44,7 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
       -- This is a bit convoluted!
       -- If this is a W2/undesirable_judgment, then we want to count up to 10 with them,
       -- unless we get some other judgment worse than W2/undesirable_judgment.
-	  -- The complication is in how hold notes are counted. 
+	  -- The complication is in how hold notes are counted.
 	  --
 	  -- Hold note judgments contain a copy of the tap
       -- note judgment that started it (because it affects your life regen?), so
@@ -60,13 +60,13 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
       -- if this is an undesirable judgment AND we can still count up AND it's not a dropped hold
       if tns == undesirable_judgment and not received_judgment_lower_than_desired and undesirable_judgment_count < 10 and (not hns or ToEnumShortString(hns) ~= "LetGo") then
         -- if this is the tail of a hold note, don't double count it
-        if not hns then 
+        if not hns then
           -- increment for the first ten
           undesirable_judgment_count = undesirable_judgment_count + 1
           -- and specificy literal W2 count
           self:settext("-" .. undesirable_judgment_count)
         end
-		
+
       -- else if this wouldn't subtract from percentage (W1 or mine miss)
       elseif ((FAplus and tns ~= "W1" and tns ~= "W2") or (not FAplus and tns ~= "W1") and tns ~= "AvoidMine") or
              -- unless it actually would subtract from percentage (W1 + let go)
@@ -80,7 +80,7 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
         local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
         local current_possible_dp = pss:GetCurrentPossibleDancePoints()
         local possible_dp = pss:GetPossibleDancePoints()
-        
+
         -- max to prevent subtractive scoring reading more than -100%
         local actual_dp = math.max(pss:GetActualDancePoints(), 0)
 
