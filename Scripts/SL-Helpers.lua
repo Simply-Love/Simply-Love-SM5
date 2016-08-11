@@ -112,6 +112,24 @@ function SetGameModePreferences()
 		PREFSMAN:SetPreference(key, val)
 	end
 
+	-- If we're switching to Casual mode,
+	-- we want to reduce the number of judgments,
+	-- so turn Decents and WayOffs off now.
+	if SL.Global.GameMode == "Casual" then
+		SL.Global.ActiveModifiers.DecentsWayOffs = "Off"
+
+	-- Otherwise, we want Decents and WayOffs enabled by default.
+	else
+ 		SL.Global.ActiveModifiers.DecentsWayOffs = "On"
+	end
+
+	-- Now that we've set the SL table for DecentsWayOffs appropriately
+	-- apply use that to apply the mods appropriately.
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		local OptRow = CustomOptionRow( "DecentsWayOffs" )
+		OptRow:LoadSelections( OptRow.Choices, player )
+	end
+
 	local prefix = {
 		Competitive = "",
 		Marathon = "",
