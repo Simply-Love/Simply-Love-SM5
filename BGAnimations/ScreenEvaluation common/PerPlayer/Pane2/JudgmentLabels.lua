@@ -5,7 +5,7 @@ local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 local TNSNames = {}
 
 local mode = ""
-if SL.Global.GameMode == "StomperZ" then mode = "StomperZ" end
+if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then mode = "StomperZ" end
 
 -- tap note types
 -- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...
@@ -44,7 +44,7 @@ for index, label in ipairs(TNSNames) do
 			self:y((index-1)*24 + 8)
 
 			-- if StomperZ, color the JudgmentLabel
-			if SL.Global.GameMode == "StomperZ" then
+			if mode == "StomperZ" then
 				self:diffuse( StomperZColors[index] )
 
 			-- for all other modes, check for Decents/Way Offs

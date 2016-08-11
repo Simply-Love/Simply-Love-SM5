@@ -11,7 +11,7 @@ if mods.JudgmentGraphic ~= "None" then
 	-- it to the first available Judgment graphic.  If none are available,
 	-- set it to "None" as a last resort fallback.
 	local path
-	if SL.Global.GameMode == "StomperZ" then
+	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 		path = THEME:GetPathG("", "_judgments/StomperZ")
 	else
 		path = THEME:GetPathG("", "_judgments/Competitive")
@@ -107,11 +107,11 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 
 			-- if we are on ScreenEdit, judgment font is always "Love"
 			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
-				self:Load( THEME:GetPathG("", "_judgments/Love") )
+				self:Load( THEME:GetPathG("", "_judgments/Competitive/Love") )
 			else
-				if SL.Global.GameMode ~= "StomperZ" then
+				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" then
 					if mods.JudgmentGraphic == "3.9" then
-						self:Load( THEME:GetPathG("", "_judgments/3_9"))
+						self:Load( THEME:GetPathG("", "_judgments/Competitive/3_9"))
 					else
 						self:Load( THEME:GetPathG("", "_judgments/Competitive/" .. mods.JudgmentGraphic) )
 					end

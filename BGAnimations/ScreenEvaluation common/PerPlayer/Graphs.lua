@@ -34,7 +34,7 @@ if SL.Global.GameMode ~= "Casual" then
 		Def.Quad{
 			Name="LifeBarGraph_MidwayQuad",
 			InitCommand=function(self)
-				if SL.Global.GameMode ~= "StomperZ" then
+				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" then
 					self:visible(false)
 					return
 				end

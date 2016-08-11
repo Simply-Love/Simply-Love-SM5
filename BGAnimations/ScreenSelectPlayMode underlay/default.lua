@@ -1,22 +1,27 @@
 local choices = {
 	{
 		Value = "Casual",
-		Text = THEME:GetString("ScreenSelectPlayMode", "Casual"),
+		Text = ScreenString("Casual"),
 		ZoomWidth = 0.475
 	},
 	{
 		Value = "Competitive",
-		Text = THEME:GetString("ScreenSelectPlayMode", "Competitive"),
+		Text = ScreenString("Competitive"),
 		ZoomWidth = 0.7
 	},
 	{
+		Value = "ECFA",
+		Text = ScreenString("ECFA"),
+		ZoomWidth = 0.45
+	},
+	{
 		Value = "StomperZ",
-		Text = THEME:GetString("ScreenSelectPlayMode", "StomperZ"),
+		Text = ScreenString("StomperZ"),
 		ZoomWidth = 0.65
 	},
 	{
 		Value = "Marathon",
-		Text = THEME:GetString("ScreenSelectPlayMode", "Marathon"),
+		Text = ScreenString("Marathon"),
 		ZoomWidth = 0.65
 	}
 }
@@ -73,7 +78,7 @@ local Update = function(af, delta)
 		cursor_index = index
 
 		cursor:stoptweening():linear(0.1)
-			:y( -60 + (40 * index) )
+			:y( -60 + (30 * index) )
 			:zoomtowidth( choices[index+1].ZoomWidth )
 		af:queuecommand("Update"):queuecommand("FirstLoop")
 	end
@@ -109,19 +114,23 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		InitCommand=function(self) self:x(-188) end,
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-60) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,28):y(-60) end,
 			OffCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-20) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,28):y(-30) end,
 			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(20) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,28):y(0) end,
+			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
+		},
+		Def.Quad{
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,28):y(30) end,
 			OffCommand=function(self) self:sleep(0.1):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(60) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,28):y(60) end,
 			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end
 		},
 	},
@@ -189,6 +198,11 @@ local t = Def.ActorFrame{
 			if cursor_index == 0 then
 				self:stoptweening():linear(0.25):diffusealpha(0)
 			else
+				if cursor_index == 2 then
+					self:settext("99.50")
+				else
+					self:settext("77.41")
+				end
 				self:stoptweening():linear(0.25):diffusealpha(1)
 			end
 		end,
@@ -200,7 +214,7 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor_index == 0 or cursor_index == 2 then
+			if cursor_index == 0 or cursor_index == 3 then
 				self:stoptweening():linear(0.25):diffusealpha(0)
 			else
 				self:stoptweening():linear(0.25):diffusealpha(1)
@@ -232,7 +246,7 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor_index == 2 then
+			if cursor_index == 3 then
 				self:stoptweening():linear(0.25):diffusealpha(1)
 			else
 				self:stoptweening():linear(0.25):diffusealpha(0)

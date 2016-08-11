@@ -28,7 +28,7 @@ local filter = Def.Quad{
 		if StageStats:FullCombo() then
 			local comboColor
 			
-			if SL.Global.GameMode == "StomperZ" then
+			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 				if StageStats:FullComboOfScore('TapNoteScore_W1') then
 					comboColor = color("#21CCE8") -- blue
 				elseif StageStats:FullComboOfScore('TapNoteScore_W2') then

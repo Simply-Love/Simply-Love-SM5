@@ -200,7 +200,7 @@ for player in ivalues(Players) do
 					if val then self:settext(val) end
 					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs
 
-					if SL.Global.GameMode == "StomperZ" then
+					if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 						self:diffuse( colors.StomperZ[i] )
 					else
 						if DecentsWayOffs == "Decents Only" and i == 5 then

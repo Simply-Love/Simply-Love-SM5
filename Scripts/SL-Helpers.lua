@@ -97,6 +97,11 @@ local ComboThresholdTable = {
 }
 
 function GetComboThreshold()
+	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
+		ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
+		ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
+	end
+
 	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
 	return ComboThresholdTable[CurrentGame]
 end
@@ -110,6 +115,7 @@ function SetGameModePreferences()
 	local prefix = {
 		Competitive = "",
 		Marathon = "",
+		ECFA = "ECFA-",
 		StomperZ = "StomperZ-",
 		Casual = "Casual-"
 	}
@@ -131,7 +137,7 @@ end
 function GetPlayerOptions2LineNames()
 	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
 
-	if SL.Global.GameMode == "StomperZ" then
+	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 		mods = mods:gsub("DecentsWayOffs,", "")
 	end
 

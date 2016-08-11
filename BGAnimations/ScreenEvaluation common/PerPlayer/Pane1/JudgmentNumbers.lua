@@ -48,7 +48,7 @@ for index, window in ipairs(TapNoteScores.Types) do
 			self:zoom(0.5):horizalign(right)
 
 			-- if StomperZ, color the JudgmentNumbers
-			if SL.Global.GameMode == "StomperZ" then
+			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 				self:Load("RollingNumbersEvaluationA")
 				self:diffuse( StomperZColors[index] )
 

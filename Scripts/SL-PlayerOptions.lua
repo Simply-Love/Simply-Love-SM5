@@ -114,7 +114,8 @@ local Overrides = {
 			-- without needing to modify this script;
 			-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN.
 			local path = THEME:GetPathG("","_judgments/Competitive")
-			if SL.Global.GameMode == "StomperZ" then
+
+			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 				path = THEME:GetPathG("", "_judgments/StomperZ")
 			end
 
