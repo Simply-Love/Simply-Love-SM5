@@ -21,6 +21,7 @@ local PlayerDefaults = {
 				MeasureCounter = "None",
 				TargetStatus="Disabled",
 				TargetBar=11,
+				ReceptorArrowsPosition="StomperZ",
 			}
 			self.Streams = {
 				SongDir = nil,
