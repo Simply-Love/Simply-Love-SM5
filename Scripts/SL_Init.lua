@@ -109,7 +109,7 @@ SL = {
 			TimingWindowAdd=0.001500,
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
-			MinTNSToHideNotes="W3",
+			MinTNSToHideNotes="TapNoteScore_W3",
 			HarshHotLifePenalty=1,
 
 			TimingWindowSecondsW1=0.021500,
@@ -125,7 +125,7 @@ SL = {
 			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
-			MinTNSToHideNotes="W3",
+			MinTNSToHideNotes="TapNoteScore_W3",
 			HarshHotLifePenalty=1,
 
 			TimingWindowSecondsW1=0.021500,
@@ -141,7 +141,7 @@ SL = {
 			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
-			MinTNSToHideNotes="W4",
+			MinTNSToHideNotes="TapNoteScore_W4",
 			HarshHotLifePenalty=1,
 
 			TimingWindowSecondsW1=0.011000,
@@ -157,7 +157,7 @@ SL = {
 			TimingWindowAdd=0,
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
-			MinTNSToHideNotes="W4",
+			MinTNSToHideNotes="TapNoteScore_W4",
 			HarshHotLifePenalty=0,
 
 			TimingWindowSecondsW1=0.012500,
@@ -173,7 +173,7 @@ SL = {
 			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=5,
-			MinTNSToHideNotes="W3",
+			MinTNSToHideNotes="TapNoteScore_W3",
 			HarshHotLifePenalty=1,
 
 			TimingWindowSecondsW1=0.021500,

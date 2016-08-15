@@ -97,12 +97,15 @@ local ComboThresholdTable = {
 }
 
 function GetComboThreshold()
-	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
-		ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
-		ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
+	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
+
+	if CurrentGame == "dance" then
+		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
+			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
+			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
+		end
 	end
 
-	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
 	return ComboThresholdTable[CurrentGame]
 end
 
