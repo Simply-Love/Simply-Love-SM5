@@ -32,9 +32,7 @@ return Def.Actor{
 
 		local scroll = playeroptions:UsingReverse() and "Reverse" or "Standard"
 		local position = SL[p].ActiveModifiers.ReceptorArrowsPosition
-
-		SM(SL[p].ActiveModifiers)
-
+		
 		topscreen:GetChild('Player'..p):GetChild("NoteField"):addy( ReceptorPositions[scroll][position] )
 	end
 }
