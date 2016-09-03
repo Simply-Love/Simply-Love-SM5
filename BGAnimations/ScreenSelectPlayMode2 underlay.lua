@@ -1,22 +1,12 @@
 local choices = {
 	{
-		Value = "Casual",
-		Text = ScreenString("Casual"),
-		ZoomWidth = 0.475
+		Value = "Regular",
+		Text = ScreenString("Regular"),
+		ZoomWidth = 0.55
 	},
 	{
-		Value = "Competitive",
-		Text = ScreenString("Competitive"),
-		ZoomWidth = 0.7
-	},
-	{
-		Value = "ECFA",
-		Text = ScreenString("ECFA"),
-		ZoomWidth = 0.45
-	},
-	{
-		Value = "StomperZ",
-		Text = ScreenString("StomperZ"),
+		Value = "Marathon",
+		Text = ScreenString("Marathon"),
 		ZoomWidth = 0.65
 	}
 }
@@ -85,16 +75,6 @@ local t = Def.ActorFrame{
 			:xy(_screen.cx+90, _screen.cy)
 			:zoom(1.25)
 	end,
-	OffCommand=function(self)
-		-- set the GameMode now; we'll use it throughout the theme
-		-- to set certain Gameplay settings and determine which screen comes next
-		SL.Global.GameMode = choices[cursor_index+1].Value
-
-		-- now that a GameMode has been selected, set related preferences now.
-		SetGameModePreferences()
-		
-		THEME:ReloadMetrics()
-	end,
 
 	-- side mask
 	Def.Quad{
@@ -116,14 +96,6 @@ local t = Def.ActorFrame{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-20) end,
 			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
 		},
-		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(20) end,
-			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
-		},
-		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(60) end,
-			OffCommand=function(self) self:sleep(0.1):linear(0.1):diffusealpha(0) end
-		},
 	},
 
 	-- border
@@ -141,7 +113,7 @@ local t = Def.ActorFrame{
 	-- description
 	Def.BitmapText{
 		Font="_miso",
-		Text=THEME:GetString("ScreenSelectPlayMode", "CasualDescription"),
+		Text=THEME:GetString("ScreenSelectPlayMode", "RegularDescription"),
 		InitCommand=function(self)
 			self:zoom(0.825):croptop(1):halign(0):valign(0):xy(-130,-60)
 			description_text = self
@@ -182,35 +154,26 @@ local t = Def.ActorFrame{
 		Font="_wendy monospace numbers",
 		Text="77.41",
 		InitCommand=function(self)
-			self:zoom(0.225):xy(124,-68):diffusealpha(0)
+			self:zoom(0.225):xy(124,-68)
 		end,
-		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
-		UpdateCommand=function(self)
-			if cursor_index == 0 then
-				self:stoptweening():linear(0.25):diffusealpha(0)
+		OnCommand=function(self)
+			if SL.Global.GameMode == "ECFA" then
+				self:settext("99.50")
 			else
-				if cursor_index == 2 then
-					self:settext("99.50")
-				else
-					self:settext("77.41")
-				end
-				self:stoptweening():linear(0.25):diffusealpha(1)
+				self:settext("77.41")
 			end
 		end,
-
+		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 	},
 	-- LifeMeter
 	Def.ActorFrame{
 		Name="LifeMeter",
-		InitCommand=function(self) self:diffusealpha(0) end,
-		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
-		UpdateCommand=function(self)
-			if cursor_index == 0 or cursor_index == 3 then
-				self:stoptweening():linear(0.25):diffusealpha(0)
-			else
-				self:stoptweening():linear(0.25):diffusealpha(1)
+		OnCommand=function(self)
+			if SL.Global.GameMode ~= "Competitive" then
+				self:visible(false)
 			end
 		end,
+		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		-- lifemeter white border
 		Def.Quad{
 			InitCommand=function(self) self:zoomto(60,16):xy(68,-64) end
@@ -234,15 +197,13 @@ local t = Def.ActorFrame{
 	--StomperZLifeMeter
 	Def.ActorFrame{
 		Name="StomperZLifeMeter",
-		InitCommand=function(self) self:diffusealpha(0) end,
-		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
-		UpdateCommand=function(self)
-			if cursor_index == 3 then
-				self:stoptweening():linear(0.25):diffusealpha(1)
-			else
-				self:stoptweening():linear(0.25):diffusealpha(0)
+		OnCommand=function(self)
+			if SL.Global.GameMode == "Competitive" then
+				self:visible(false)
 			end
 		end,
+		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
+		
 		LoadActor(THEME:GetPathG("", "Triangles.png"))..{
 			InitCommand=function(self) self:zoom(0.25):xy(200,10) end,
 			OnCommand=function(self)
@@ -284,7 +245,7 @@ for i, column in ipairs( arrow.columns[game] ) do
 	local file = "arrow-body.png"
 	if column == "center" then file = "center-body.png" end
 
-	notefield[#notefield+1] = LoadActor( file )..{
+	notefield[#notefield+1] = LoadActor( THEME:GetPathB("ScreenSelectPlayMode", "underlay/"..file) )..{
 		InitCommand=function(self)
 			self:rotationz( arrow.rotation[column] )
 				:x( arrow.x[game][column] )
@@ -313,16 +274,27 @@ local function YieldStepPattern(i, dir)
 			self:y( -55 + (i * (arrow.h+5)))
 				:rotationz( arrow.rotation[dir] )
 				:x( arrow.x[game][dir] )
-				:MaskDest()
-				:linear(timePerArrow * i)
-				:y(-55)
-				:queuecommand("Loop")
+				:MaskDest();
+			-- apply tweens appropriately
+			if choices[cursor_index+1].Value == "Marathon" then
+				self:ease(timePerArrow * i, 75):addrotationz(720)
+			else
+				self:linear(timePerArrow * i)
+			end
+			self:y(-55)
+			self:queuecommand("Loop")
 
 		end,
 		LoopCommand=function(self)
 			-- reset the y of this arrow to a lower position
 			self:y(#pattern[game] * arrow.h)
-				:linear(timePerArrow *  #pattern[game])
+
+			-- apply tweens appropriately
+			if choices[cursor_index+1].Value == "Marathon" then
+				self:ease(timePerArrow * #pattern[game], 75):addrotationz(720)
+			else
+				self:linear(timePerArrow *  #pattern[game])
+			end
 
 			--  -55 seems to be a good static y value to tween up to
 			--  before recursing and effectively doing this again
@@ -339,7 +311,7 @@ local function YieldStepPattern(i, dir)
 	end
 
 	for index,file in ipairs(files) do
-		step[#step+1] = LoadActor( file )..{
+		step[#step+1] = LoadActor( THEME:GetPathB("ScreenSelectPlayMode", "underlay/"..file) )..{
 			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.18 ),
 			OnCommand=function(self)
 				if file == "center-feet.png" or file == "arrow-stripes.png" then

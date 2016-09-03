@@ -134,7 +134,6 @@ function SetGameModePreferences()
 
 	local prefix = {
 		Competitive = "",
-		Marathon = "",
 		ECFA = "ECFA-",
 		StomperZ = "StomperZ-",
 		Casual = "Casual-"
