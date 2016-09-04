@@ -64,7 +64,7 @@ return Def.ActorFrame{
 	--STEPS label
 	Def.BitmapText{
 		Font="_miso",
-		OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, Screen.String("STEPS"))
+		OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, GAMESTATE:IsCourseMode() and Screen.String("SONGS") or Screen.String("STEPS"))
 	},
 
 	--stepartist text

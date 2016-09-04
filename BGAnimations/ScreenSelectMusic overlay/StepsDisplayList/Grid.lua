@@ -26,21 +26,38 @@ local t = Def.ActorFrame{
 			if StepsOrTrails then
 
 				StepsToDisplay = GetStepsToDisplay(StepsOrTrails)
+				if GAMESTATE:IsCourseMode() == false then
+					for RowNumber=1,GridRows do
+						if StepsToDisplay[RowNumber] then
+							-- if this particular song has a stepchart for this row, update the Meter
+							-- and BlockRow coloring appropriately
+							local meter = StepsToDisplay[RowNumber]:GetMeter()
+							local difficulty = StepsToDisplay[RowNumber]:GetDifficulty()
+							self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
+							self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
+						else
+							-- otherwise, set the meter to "?" and hide this particular colored BlockRow
+							self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Unset")
+							self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Unset")
 
-				for RowNumber=1,GridRows do
-					if StepsToDisplay[RowNumber] then
-						-- if this particular song has a stepchart for this row, update the Meter
-						-- and BlockRow coloring appropriately
-						local meter = StepsToDisplay[RowNumber]:GetMeter()
-						local difficulty = StepsToDisplay[RowNumber]:GetDifficulty()
-						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
-						self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
-					else
-						-- otherwise, set the meter to "?" and hide this particular colored BlockRow
-						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Unset")
-						self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Unset")
+						end
+					end
+				else
+					--Load the songs from the course
+					local course_entries = SongOrCourse:GetCourseEntries()
+					local songList = ""
+
+					for i=1,#course_entries do
+						local song = course_entries[i]:GetSong()
+						--TODO: Figure out why the above statement returns nil/null
+						if song then
+							songList = songList .. "\n" .. song
+						else 
+							songList = songList .. "\n" .. "null song"
+						end
 
 					end
+					SCREENMAN:SystemMessage(songList)
 				end
 			end
 		else
@@ -73,74 +90,76 @@ local Grid = Def.ActorFrame{
 
 -- A grid of decorative faux-blocks that will exist
 -- behind the changing difficulty blocks.
-Grid[#Grid+1] = Def.Sprite{
-	Name="BackgroundBlocks",
-	Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
-
-	InitCommand=cmd(diffuse, color("#182025") ),
-	OnCommand=function(self)
-		local width = self:GetWidth()
-		local height= self:GetHeight()
-		self:zoomto(width * GridColumns * GridZoomX, height * GridRows * BlockZoomY)
-		self:y( 3 * height * BlockZoomY )
-		self:customtexturerect(0, 0, GridColumns, GridRows)
-	end
-}
-
-for RowNumber=1,GridRows do
-
-	Grid[#Grid+1] =	Def.Sprite{
-		Name="Blocks_"..RowNumber,
+if GAMESTATE:IsCourseMode() == false then
+	Grid[#Grid+1] = Def.Sprite{
+		Name="BackgroundBlocks",
 		Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
-		InitCommand=cmd(diffusealpha,0),
+		InitCommand=cmd(diffuse, color("#182025") ),
 		OnCommand=function(self)
 			local width = self:GetWidth()
 			local height= self:GetHeight()
-			self:y( RowNumber * height * BlockZoomY)
-			self:zoomto(width * GridColumns * GridZoomX, height * BlockZoomY)
-		end,
-		SetCommand=function(self, params)
-
-			local meter = params.Meter
-
-			-- our grid only supports charts with up to a 20-block difficulty meter
-			-- but charts can have higher difficulties
-			-- handle that here by setting a maximum number to worry about displaying
-			if meter > GridColumns then
-				meter = GridColumns
-			end
-
-			self:customtexturerect(0, 0, GridColumns, 1)
-			self:cropright( 1 - (meter * (1/GridColumns)) )
-
-			-- diffuse and set each chart's difficulty meter
-			self:diffuse( DifficultyColor(params.Difficulty) )
-		end,
-		UnsetCommand=function(self)
-			self:customtexturerect(0,0,0,0)
+			self:zoomto(width * GridColumns * GridZoomX, height * GridRows * BlockZoomY)
+			self:y( 3 * height * BlockZoomY )
+			self:customtexturerect(0, 0, GridColumns, GridRows)
 		end
 	}
 
-	Grid[#Grid+1] = Def.BitmapText{
-		Name="Meter_"..RowNumber,
-		Font="_wendy small",
 
-		InitCommand=function(self)
-			local height = self:GetParent():GetChild("Blocks_"..RowNumber):GetHeight()
-			self:horizalign(right)
-			self:y(RowNumber * height * BlockZoomY)
-			self:x( IsUsingWideScreen() and -140 or -126 )
-			self:zoom(0.3)
-		end,
-		SetCommand=function(self, params)
+	for RowNumber=1,GridRows do
+		Grid[#Grid+1] =	Def.Sprite{
+			Name="Blocks_"..RowNumber,
+			Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
-			-- diffuse and set each chart's difficulty meter
-			self:diffuse( DifficultyColor(params.Difficulty) )
-			self:settext(params.Meter)
-		end,
-		UnsetCommand=cmd(settext, ""; diffuse,color("#182025")),
-	}
+			InitCommand=cmd(diffusealpha,0),
+			OnCommand=function(self)
+				local width = self:GetWidth()
+				local height= self:GetHeight()
+				self:y( RowNumber * height * BlockZoomY)
+				self:zoomto(width * GridColumns * GridZoomX, height * BlockZoomY)
+			end,
+			SetCommand=function(self, params)
+
+				local meter = params.Meter
+
+				-- our grid only supports charts with up to a 20-block difficulty meter
+				-- but charts can have higher difficulties
+				-- handle that here by setting a maximum number to worry about displaying
+				if meter > GridColumns then
+					meter = GridColumns
+				end
+
+				self:customtexturerect(0, 0, GridColumns, 1)
+				self:cropright( 1 - (meter * (1/GridColumns)) )
+
+				-- diffuse and set each chart's difficulty meter
+				self:diffuse( DifficultyColor(params.Difficulty) )
+			end,
+			UnsetCommand=function(self)
+				self:customtexturerect(0,0,0,0)
+			end
+		}
+
+		Grid[#Grid+1] = Def.BitmapText{
+			Name="Meter_"..RowNumber,
+			Font="_wendy small",
+
+			InitCommand=function(self)
+				local height = self:GetParent():GetChild("Blocks_"..RowNumber):GetHeight()
+				self:horizalign(right)
+				self:y(RowNumber * height * BlockZoomY)
+				self:x( IsUsingWideScreen() and -140 or -126 )
+				self:zoom(0.3)
+			end,
+			SetCommand=function(self, params)
+
+				-- diffuse and set each chart's difficulty meter
+				self:diffuse( DifficultyColor(params.Difficulty) )
+				self:settext(params.Meter)
+			end,
+			UnsetCommand=cmd(settext, ""; diffuse,color("#182025")),
+		}
+	end
 end
 
 t[#t+1] = Grid
