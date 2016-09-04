@@ -46,18 +46,13 @@ local t = Def.ActorFrame{
 					--Load the songs from the course
 					local course_entries = SongOrCourse:GetCourseEntries()
 					local songList = ""
-
+					
+					local songs = {}
 					for i=1,#course_entries do
-						local song = course_entries[i]:GetSong()
-						--TODO: Figure out why the above statement returns nil/null
-						if song then
-							songList = songList .. "\n" .. song
-						else 
-							songList = songList .. "\n" .. "null song"
-						end
-
+						songs[i] = course_entries[i]:GetSong()
 					end
-					SCREENMAN:SystemMessage(songList)
+					--TODO: course_entries[i]:GetSong() returns nil for every course entry, why?
+					SM(songs)
 				end
 			end
 		else
