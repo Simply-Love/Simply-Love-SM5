@@ -45,8 +45,7 @@ local t = Def.ActorFrame{
 				else
 					--Load the songs from the course
 					local course_entries = SongOrCourse:GetCourseEntries()
-					local songList = ""
-					
+
 					local songs = {}
 					for i=1,#course_entries do
 						songs[i] = course_entries[i]:GetSong()
