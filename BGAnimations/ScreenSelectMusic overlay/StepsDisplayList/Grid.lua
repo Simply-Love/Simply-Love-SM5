@@ -43,15 +43,24 @@ local t = Def.ActorFrame{
 						end
 					end
 				else
-					--Load the songs from the course
-					local course_entries = SongOrCourse:GetCourseEntries()
+					--Get the list of songs by the MasterPlayerNumber
+					local player = GAMESTATE:GetMasterPlayerNumber()
+					local trail_entries = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()
+					local songsToDisplay = {}
 
-					local songs = {}
-					for i=1,#course_entries do
-						songs[i] = course_entries[i]:GetSong()
+					for i=1, #trail_entries do
+						local songTitle = trail_entries[i]:GetSong():GetDisplayMainTitle()
+						local songDifficulty = trail_entries[i]:GetSteps():GetDifficulty()
+						local songMeter = trail_entries[i]:GetSteps():GetMeter()
+
+						local song = {}
+						song["Title"] = songTitle
+						song["DifficultyColor"] = DifficultyColor(songDifficulty)
+						song["Meter"] = songMeter
+						songsToDisplay[i] = song
 					end
-					--TODO: course_entries[i]:GetSong() returns nil for every course entry, why?
-					SM(songs)
+
+					SM(songsToDisplay)
 				end
 			end
 		else
