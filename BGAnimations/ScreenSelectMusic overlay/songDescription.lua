@@ -171,6 +171,7 @@ local t = Def.ActorFrame{
 					if SongOrCourse then
 						if GAMESTATE:IsCourseMode() then
 							if SongOrCourse:HasMods() then
+								self:settext("HAS MODS")
 							else 
 								self:settext("")
 							end
