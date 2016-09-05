@@ -141,13 +141,21 @@ local t = Def.ActorFrame{
 			LoadActor("bubble.png")..{
 				InitCommand=cmd(diffuse,GetCurrentColor(); visible, false; zoom, 0.9; y, 30),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong()
+					local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 
-					if song then
-						if song:IsLong() or song:IsMarathon() then
-							self:visible(true)
+					if SongOrCourse then
+						if GAMESTATE:IsCourseMode() then
+							if SongOrCourse:HasMods() then
+								self:visible(true)
+							else
+								self:visible(false)
+							end
 						else
-							self:visible(false)
+							if SongOrCourse:IsLong() or SongOrCourse:IsMarathon() then
+								self:visible(true)
+							else
+								self:visible(false)
+							end
 						end
 					else
 						self:visible(false)
@@ -158,15 +166,23 @@ local t = Def.ActorFrame{
 			LoadFont("_miso")..{
 				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong()
+					local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 
-					if song then
-						if song:IsLong() then
-							self:settext("COUNTS AS 2 ROUNDS")
-						elseif song:IsMarathon() then
-							self:settext("COUNTS AS 3 ROUNDS")
+					if SongOrCourse then
+						if GAMESTATE:IsCourseMode() then
+							if SongOrCourse:HasMods() then
+								self:settext("HAS MODS")
+							else 
+								self:settext("")
+							end
 						else
-							self:settext("")
+							if SongOrCourse:IsLong() then
+								self:settext("COUNTS AS 2 ROUNDS")
+							elseif SongOrCourse:IsMarathon() then
+								self:settext("COUNTS AS 3 ROUNDS")
+							else
+								self:settext("")
+							end
 						end
 					else
 						self:settext("")
