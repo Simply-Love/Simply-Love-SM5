@@ -65,8 +65,6 @@ local t = Def.ActorFrame{
 						 	self:GetChild("Grid"):GetChild("CourseSongName"..i):playcommand("Set", {SongToDisplay=song})
 						end
 					end
-
-					SM("# Songs: " .. #trail_entries)
 				end
 			end
 		else
