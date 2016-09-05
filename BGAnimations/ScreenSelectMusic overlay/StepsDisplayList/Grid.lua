@@ -55,7 +55,7 @@ local t = Def.ActorFrame{
 						song["Title"] = trail_entries[i]:GetSong():GetDisplayMainTitle()
 						song["DifficultyColor"] = DifficultyColor( trail_entries[i]:GetSteps():GetDifficulty() )
 						song["Meter"] = trail_entries[i]:GetSteps():GetMeter()
-						
+
 						songsToDisplay[i] = song
 					end
 
@@ -162,6 +162,9 @@ if GAMESTATE:IsCourseMode() == false then
 			UnsetCommand=cmd(settext, ""; diffuse,color("#182025")),
 		}
 	end
+
+else
+	--TODO: Add the Grid Children for the Course song list here
 end
 
 t[#t+1] = Grid
