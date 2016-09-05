@@ -23,7 +23,7 @@ local ReceptorPositions = {
 
 
 return Def.Actor{
-	InitCommand=function(self) self:queuecommand("Position") end,
+	DoneLoadingNextSongMessageCommand=function(self) self:queuecommand("Position") end,
 	PositionCommand=function(self)
 
 		local topscreen = SCREENMAN:GetTopScreen()
