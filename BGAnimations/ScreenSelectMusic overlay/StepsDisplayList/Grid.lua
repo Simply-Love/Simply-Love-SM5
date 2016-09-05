@@ -43,7 +43,7 @@ local t = Def.ActorFrame{
 						end
 					end
 				else
-					--Get the list of songs by the MasterPlayerNumber
+					--Get the list of songs by the MasterPlayerNumber (better way to do this?)
 					local player = GAMESTATE:GetMasterPlayerNumber()
 					local trail_entries = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()
 					local songsToDisplay = {}
