@@ -92,7 +92,7 @@ return Def.ActorFrame {
 	},
 
 
-	LoadFont("_wendy small")..{
+	LoadFont("_wendy combo")..{
 		Name="Number",
 		OnCommand=function(self)
 			self:shadowlength(1):vertalign(middle)
@@ -104,7 +104,7 @@ return Def.ActorFrame {
 		end
 	},
 
-	LoadFont("_wendy small")..{
+	LoadFont("_wendy combo")..{
 		Name="Label",
 		InitCommand=cmd(zoom,0.25 ),
 		OnCommand=function(self)
