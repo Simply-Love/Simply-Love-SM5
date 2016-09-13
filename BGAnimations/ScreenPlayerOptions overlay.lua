@@ -58,12 +58,12 @@ local function ChangeSpeedMod(pn, direction)
 	-- elseif using a CMod or an MMod
 	elseif mods.SpeedModType == "C" or mods.SpeedModType == "M" then
 
-		if mods.SpeedMod + (10 * direction) >= 2000 then
-			mods.SpeedMod = 10
-		elseif mods.SpeedMod + (10 * direction) <= 0 then
+		if mods.SpeedMod + (5 * direction) >= 2000 then
+			mods.SpeedMod = 5
+		elseif mods.SpeedMod + (5 * direction) <= 0 then
 			mods.SpeedMod = 2000
 		else
-			mods.SpeedMod = mods.SpeedMod + (10 * direction)
+			mods.SpeedMod = mods.SpeedMod + (5 * direction)
 		end
 	end
 end
