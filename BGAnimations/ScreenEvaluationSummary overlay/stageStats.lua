@@ -10,14 +10,22 @@ local colors = {
 		color("#66c955"),	-- green
 		color("#5b2b8e"),	-- purple
 		color("#c9855e"),	-- peach?
-		color("#ff0000")	--red
+		color("#ff0000")	-- red
+	},
+	ECFA = {
+		color("#21CCE8"),	-- blue
+		color("#ffffff"),	-- white
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#5b2b8e"),	-- purple
+		color("#ff0000")	-- red
 	},
 	StomperZ = {
-		color("#21CCE8"),	-- blue
 		color("#FFFFFF"),	-- white
 		color("#e29c18"),	-- gold
 		color("#66c955"),	-- green
-		color("#9e00f7"),	-- purple
+		color("#21CCE8"),	-- blue
+		color("#000000"),	-- black
 		color("#ff0000")	-- red
 	}
 }
@@ -200,8 +208,10 @@ for player in ivalues(Players) do
 					if val then self:settext(val) end
 					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs
 
-					if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
+					if SL.Global.GameMode == "StomperZ" then
 						self:diffuse( colors.StomperZ[i] )
+					elseif SL.Global.GameMode == "ECFA" then
+						self:diffuse( colors.ECFA[i] )
 					else
 						if DecentsWayOffs == "Decents Only" and i == 5 then
 							self:visible(false)

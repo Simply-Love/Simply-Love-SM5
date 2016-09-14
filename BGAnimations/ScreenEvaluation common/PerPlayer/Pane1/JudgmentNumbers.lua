@@ -17,6 +17,15 @@ local RadarCategories = {
 }
 
 local StomperZColors = {
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#21CCE8"),	-- blue
+	color("#000000"),	-- black
+	color("#ff0000")	-- red
+}
+
+local ECFAColors = {
 	color("#21CCE8"),	-- blue
 	color("#FFFFFF"),	-- white
 	color("#e29c18"),	-- gold
@@ -51,6 +60,11 @@ for index, window in ipairs(TapNoteScores.Types) do
 			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 				self:Load("RollingNumbersEvaluationA")
 				self:diffuse( StomperZColors[index] )
+
+			-- if ECFA, color the JudgmentNumbers
+			elseif SL.Global.GameMode == "ECFA" then
+				self:Load("RollingNumbersEvaluationA")
+				self:diffuse( ECFAColors[index] )
 
 			-- for all other modes, check for Decents/Way Offs
 			else
