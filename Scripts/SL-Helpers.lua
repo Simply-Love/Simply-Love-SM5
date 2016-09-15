@@ -161,7 +161,7 @@ function GetPlayerOptions2LineNames()
 		mods = mods:gsub("ReceptorArrowsPosition", "")
 	end
 
-	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
+	if SL.Global.GameMode == "StomperZ" then
 		mods = mods:gsub("DecentsWayOffs,", "")
 	end
 

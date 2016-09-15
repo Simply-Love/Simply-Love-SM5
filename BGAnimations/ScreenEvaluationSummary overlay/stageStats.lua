@@ -213,14 +213,15 @@ for player in ivalues(Players) do
 					elseif SL.Global.GameMode == "ECFA" then
 						self:diffuse( colors.ECFA[i] )
 					else
-						if DecentsWayOffs == "Decents Only" and i == 5 then
-							self:visible(false)
-						elseif DecentsWayOffs == "Off" and (i == 4 or i == 5) then
-							self:visible(false)
-						else
-							self:diffuse( colors.Competitive[i] )
-						end
+						self:diffuse( colors.Competitive[i] )
 					end
+
+					if DecentsWayOffs == "Decents Only" and i == 5 then
+						self:visible(false)
+					elseif DecentsWayOffs == "Off" and (i == 4 or i == 5) then
+						self:visible(false)
+					end
+
 				else
 					self:settext("")
 				end

@@ -68,21 +68,21 @@ for index, label in ipairs(TNSNames) do
 
 			elseif SL.Global.GameMode == "ECFA" then
 				self:diffuse( ECFAColors[index] )
-
-			-- for all other modes, check for Decents/Way Offs
-			else
-				local gmods = SL.Global.ActiveModifiers
-
-				-- if Way Offs were turned off
-				if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
-					self:visible(false)
-
-				-- if both Decents and WayOffs were turned off
-				elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
-					self:visible(false)
-				end
 			end
 
+
+			local gmods = SL.Global.ActiveModifiers
+			local mode = SL.Global.GameMode
+			if (mode == "Casual" or mode == "Competitive") then mode = "" end
+
+			-- if Way Offs were turned off
+			if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore" .. mode, "W5") then
+				self:visible(false)
+
+			-- if both Decents and WayOffs were turned off
+			elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore" .. mode, "W4") or label == THEME:GetString("TapNoteScore" .. mode, "W5")) then
+				self:visible(false)
+			end
 		end
 	}
 end

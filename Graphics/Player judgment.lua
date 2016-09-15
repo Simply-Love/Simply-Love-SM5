@@ -9,7 +9,8 @@ local kids, JudgmentSet
 -- that doesn't exist in the current GameMode.  If so, attempt to set
 -- it to the first available Judgment graphic.  If none are available,
 -- set it to "None" as a last resort fallback.
-local path = THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode )
+local mode = SL.Global.GameMode ~= "Casual" and SL.Global.GameMode or "Competitive"
+local path = THEME:GetPathG("", "_judgments/" .. mode )
 
 if SL.Global.GameMode == "Casual" then
 	path = THEME:GetPathG("", "_judgments/Competitive")

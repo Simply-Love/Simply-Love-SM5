@@ -58,35 +58,32 @@ for index, window in ipairs(TapNoteScores.Types) do
 
 			-- if StomperZ, color the JudgmentNumbers
 			if SL.Global.GameMode == "StomperZ" then
-				self:Load("RollingNumbersEvaluationA")
 				self:diffuse( StomperZColors[index] )
 
 			-- if ECFA, color the JudgmentNumbers
 			elseif SL.Global.GameMode == "ECFA" then
-				self:Load("RollingNumbersEvaluationA")
 				self:diffuse( ECFAColors[index] )
+			end
 
-			-- for all other modes, check for Decents/Way Offs
+			-- check for Decents/Way Offs
+			local gmods = SL.Global.ActiveModifiers
+
+			-- If Way Offs were turned off, the leading 0s should not
+			-- be colored any differently than the (lack of) JudgmentNumber,
+			-- so load a unique Metric group.
+			if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
+				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
+				self:diffuse(color("#444444"))
+
+			-- If both Decents and WayOffs were turned off, the same logic applies.
+			elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
+				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
+				self:diffuse(color("#444444"))
+
+			-- Otherwise, We want leading 0s to be dimmed, so load the Metrics
+			-- group "RollingNumberEvaluationA"	which does that for us.
 			else
-				local gmods = SL.Global.ActiveModifiers
-
-				-- If Way Offs were turned off, the leading 0s should not
-				-- be colored any differently than the (lack of) JudgmentNumber,
-				-- so load a unique Metric group.
-				if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
-					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-					self:diffuse(color("#444444"))
-
-				-- If both Decents and WayOffs were turned off, the same logic applies.
-				elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
-					self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-					self:diffuse(color("#444444"))
-
-				-- Otherwise, we want leading 0s to dimmed, so load the Metrics
-				-- group "RollingNumberEvaluationA"	which does that for us.
-				else
-					self:Load("RollingNumbersEvaluationA")
-				end
+				self:Load("RollingNumbersEvaluationA")
 			end
 		end,
 		BeginCommand=function(self)

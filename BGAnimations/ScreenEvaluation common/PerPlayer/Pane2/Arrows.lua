@@ -33,12 +33,16 @@ local af = Def.ActorFrame{}
 
 for i,column in ipairs( columns[game] ) do
 
+
+	-- The arrow for this column
 	af[#af+1] = NOTESKIN:LoadActorForNoteSkin( column, "Tap Note", noteskin)..{
 		OnCommand=function(self)
 			self:xy( i*column_width - 104, _screen.cy-41):zoom(0.4)
 		end
 	}
 
+
+	-- the number of judgments for each possible judgment for this column
 	for j, judgment in ipairs(judgments) do
 		af[#af+1] = Def.BitmapText{
 			Font="_miso",
