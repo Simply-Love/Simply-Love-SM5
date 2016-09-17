@@ -1,6 +1,9 @@
 Simply Love (StepMania 5)
 ======================
 
+![Arrow Logo](http://i.imgur.com/FyeguCQ.png)
+======================
+
 This is a recreation of hurtpiggypig's Simply Love SM3.95 theme made to now run in StepMania 5.
 
 I use the word "recreation" (as opposed to "port") because virtually no code was brought over from the SM3.95 counterpart.  My general process was to visually inspect the original SM3.95 theme, and recreate it screen by screen in SM5.
