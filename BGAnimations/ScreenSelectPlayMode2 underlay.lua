@@ -169,7 +169,7 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		Name="LifeMeter",
 		OnCommand=function(self)
-			if SL.Global.GameMode ~= "Competitive" then
+			if SL.Global.GameMode == "StopmerZ" then
 				self:visible(false)
 			end
 		end,
@@ -198,7 +198,7 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		Name="StomperZLifeMeter",
 		OnCommand=function(self)
-			if SL.Global.GameMode == "Competitive" then
+			if SL.Global.GameMode ~= "StomperZ" then
 				self:visible(false)
 			end
 		end,
