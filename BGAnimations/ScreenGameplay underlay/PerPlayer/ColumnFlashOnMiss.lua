@@ -6,9 +6,11 @@ local columns = {}
 
 if mods.ColumnFlashOnMiss then
 
+	local y_offset = SL.Global.GameMode == "StomperZ" and 40 or 80
+
 	local af = Def.ActorFrame{
 		InitCommand=function(self)
-			self:xy( GetNotefieldX(player), _screen.cy )
+			self:xy( GetNotefieldX(player), y_offset)
 			-- Via empirical observation/testing, it seems that 200% mini is the effective cap.
 			-- At 200% mini, arrows are effectively invisible; they reach a zoom_factor of 0.
 			-- So, keeping that cap in mind, the spectrum of possible mini values in this theme
@@ -16,7 +18,7 @@ if mods.ColumnFlashOnMiss then
 			-- a mini value like 35% to a zoom factor like 0.825, or
 			-- a mini value like 150% to a zoom factor like 0.25
 			local zoom_factor = 1 - scale( mods.Mini:gsub("%%","")/100, 0, 2, 0, 1)
-			self:zoom( zoom_factor )
+			self:zoomx( zoom_factor )
 		end,
 		JudgmentMessageCommand=function(self, params)
 			if params.Player == player and (params.Notes or params.Holds) then
@@ -38,7 +40,9 @@ if mods.ColumnFlashOnMiss then
 				local width = style:GetWidth(player)
 				self:diffuse(0,0,0,0)
 					:x((ColumnIndex-2.5) * (width/NumColumns))
-					:setsize(width/NumColumns, _screen.h*100)
+					:vertalign(top)
+					:setsize(width/NumColumns, _screen.h - y_offset)
+					:fadebottom(0.333)
 	        end,
 			FlashCommand=function(self)
 				self:diffuse(1,0,0,0.66)

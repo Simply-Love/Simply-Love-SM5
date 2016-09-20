@@ -379,9 +379,9 @@ local Overrides = {
 			return vocalizations
 		end
 	},
+	-------------------------------------------------------------------------
 	ReceptorArrowsPosition = {
 		Choices = function() return { "StomperZ", "ITG" } end,
-		OneChoiceForAllPlayers = false,
 		LoadSelections = function(self, list, pn)
 			local choice = 	SL[ToEnumShortString(pn)].ActiveModifiers.ReceptorArrowsPosition or "StomperZ"
 			local i = FindInTable(choice, self.Choices) or 1
@@ -394,6 +394,25 @@ local Overrides = {
 			for i=1,#self.Choices do
 				if list[i] then
 					mods.ReceptorArrowsPosition = self.Choices[i]
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
+	LifeMeterType = {
+		Choices = function() return { "Standard", "Surround" } end,
+		LoadSelections = function(self, list, pn)
+			local choice = 	SL[ToEnumShortString(pn)].ActiveModifiers.LifeMeterType or "Standard"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.LifeMeterType = self.Choices[i]
 				end
 			end
 		end

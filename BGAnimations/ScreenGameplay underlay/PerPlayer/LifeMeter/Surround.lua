@@ -29,7 +29,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Left",
 			InitCommand=function(self)
-				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 )
+				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 80):zoomto( 50, _screen.h-80 )
 					:diffuserightedge(0,0,0,1):diffuseleftedge(0.666,0.666,0.666,1)
 			end,
 			ChangeSizeCommand=function(self, params)
@@ -43,7 +43,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Right",
 			InitCommand=function(self)
-				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 )
+				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 80):zoomto( 50, _screen.h-80 )
 					:diffuseleftedge(0,0,0,1):diffuserightedge(0.666,0.666,0.666,1)
 			end,
 			ChangeSizeCommand=function(self, params)

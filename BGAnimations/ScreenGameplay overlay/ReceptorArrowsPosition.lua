@@ -1,7 +1,7 @@
 -- ReceptorArrow positions are hardcoded using Metrics.ini
 -- in both Casual and Competitive modes.  If we're in one
 -- of those modes, bail now.
-if SL.Global.GameMode == "Casual" or SL.Global.GameMode == "Competitive" then
+if SL.Global.GameMode ~= "StomperZ" then
 	return false
 end
 

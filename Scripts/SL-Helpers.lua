@@ -154,15 +154,15 @@ function GetPlayerOptionsLineNames()
 end
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
 
 
-	if SL.Global.GameMode == "Competitive" or SL.Global.GameMode == "Casual" then
+	if SL.Global.GameMode ~= "StomperZ" then
 		mods = mods:gsub("ReceptorArrowsPosition", "")
 	end
 
 	if SL.Global.GameMode == "StomperZ" then
-		mods = mods:gsub("DecentsWayOffs,", "")
+		mods = mods:gsub("DecentsWayOffs,", ""):gsub("LifeMeterType", "")
 	end
 
 	if SL.Global.Gamestate.Style == "double" then

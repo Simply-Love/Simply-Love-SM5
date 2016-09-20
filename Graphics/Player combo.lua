@@ -19,7 +19,7 @@ return Def.ActorFrame {
 		kids = self:GetChildren()
 	end,
 	OnCommand=function(self)
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
+		if SL.Global.GameMode == "StomperZ" then
 			self:y(-20)
 		end
 	end,
