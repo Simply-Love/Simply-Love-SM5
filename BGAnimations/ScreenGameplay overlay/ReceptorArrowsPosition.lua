@@ -1,5 +1,5 @@
 -- ReceptorArrow positions are hardcoded using Metrics.ini
--- in both Casual and Competitive modes.  If we're in one
+-- in both Casual, Competitive, and ECFA modes.  If we're in one
 -- of those modes, bail now.
 if SL.Global.GameMode ~= "StomperZ" then
 	return false
@@ -33,6 +33,8 @@ return Def.Actor{
 		local scroll = playeroptions:UsingReverse() and "Reverse" or "Standard"
 		local position = SL[p].ActiveModifiers.ReceptorArrowsPosition
 
-		topscreen:GetChild('Player'..p):GetChild("NoteField"):addy( ReceptorPositions[scroll][position] )
+		-- The "Player ActorFrame contains several things like NoteField, Judgment, HoldJudgment, etc.
+		-- Shift the entire ActorFrame up/down, rather than try to position its children individually.
+		topscreen:GetChild('Player'..p):addy( ReceptorPositions[scroll][position] )
 	end
 }
