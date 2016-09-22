@@ -1,39 +1,45 @@
-local kids, JudgmentSet
 local player = Var "Player"
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
+local kids, JudgmentSet
 
+if mods.JudgmentGraphic == "None" then
+	return Def.Actor{}
+end
 -- - - - - - - - - - - - - - - - - - - - - -
 
-if mods.JudgmentGraphic ~= "None" then
-	-- a Judgment might be saved to a profile from a previous GameMode
-	-- that doesn't exist in the current GameMode.  If so, attempt to set
-	-- it to the first available Judgment graphic.  If none are available,
-	-- set it to "None" as a last resort fallback.
-	local path
-	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
-		path = THEME:GetPathG("", "_judgments/StomperZ")
-	else
-		path = THEME:GetPathG("", "_judgments/Competitive")
-	end
+-- a Judgment might be saved to a profile from a previous GameMode
+-- that doesn't exist in the current GameMode.  If so, attempt to set
+-- it to the first available Judgment graphic.  If none are available,
+-- set it to "None" as a last resort fallback.
+local mode = SL.Global.GameMode ~= "Casual" and SL.Global.GameMode or "Competitive"
+local path = THEME:GetPathG("", "_judgments/" .. mode )
 
-	local files = FILEMAN:GetDirListing(path .. "/")
-	local judgment_exists = false
-	for i,filename in ipairs(files) do
-		if string.match(filename, " %dx%d") then
-			local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
-			if mods.JudgmentGraphic == name then
-				judgment_exists = true
-				break
-			end
-		else
-			table.remove(files,i)
+if SL.Global.GameMode == "Casual" then
+	path = THEME:GetPathG("", "_judgments/Competitive")
+end
+
+
+local files = FILEMAN:GetDirListing(path .. "/")
+local judgment_exists = false
+
+for i,filename in ipairs(files) do
+	if string.match(filename, " %dx%d") then
+		local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
+		if mods.JudgmentGraphic == name then
+			judgment_exists = true
+			break
 		end
-	end
-	if not judgment_exists then
-		mods.JudgmentGraphic = files[1] or "None"
+	else
+		table.remove(files,i)
 	end
 end
+
+if not judgment_exists then
+	mods.JudgmentGraphic = files[1] or "None"
+end
+
+
 -- - - - - - - - - - - - - - - - - - - - - -
 
 local JudgeCmds = {
@@ -54,19 +60,15 @@ local TNSFrames = {
 	TapNoteScore_Miss = 5
 }
 
-
 local t = Def.ActorFrame {
-	Name="Player Judgment"
-}
+	Name="Player Judgment",
 
-
-if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
-
-	t.InitCommand=function(self)
+	InitCommand=function(self)
 		kids = self:GetChildren()
 		JudgmentSet = kids.JudgmentWithOffsets
-	end
-	t.JudgmentMessageCommand=function(self, param)
+	end,
+
+	JudgmentMessageCommand=function(self, param)
 		if param.Player ~= player then return end
 		if not param.TapNoteScore then return end
 		if param.HoldNoteScore then return end
@@ -97,32 +99,40 @@ if mods.JudgmentGraphic and mods.JudgmentGraphic ~= "None" then
 
 		JudgmentSet:decelerate(0.1):zoom(0.75):sleep(1)
 		JudgmentSet:accelerate(0.2):zoom(0)
-	end
+	end,
 
-	t[#t+1] = Def.Sprite{
+	Def.Sprite{
 		Name="JudgmentWithOffsets",
 		InitCommand=function(self)
 
 			self:pause():visible(false)
 
 			-- if we are on ScreenEdit, judgment font is always "Love"
+			-- because ScreenEdit is a mess and not worth bothering with.
 			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
 				self:Load( THEME:GetPathG("", "_judgments/Competitive/Love") )
+
 			else
+
 				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" then
+					-- We are in Competitive or Casual GameMode.  Both will pull judgment
+					-- graphics from the same folder (_judgments/Competitive/)
 					if mods.JudgmentGraphic == "3.9" then
 						self:Load( THEME:GetPathG("", "_judgments/Competitive/3_9"))
 					else
 						self:Load( THEME:GetPathG("", "_judgments/Competitive/" .. mods.JudgmentGraphic) )
 					end
 				else
-					self:Load( THEME:GetPathG("", "_judgments/StomperZ/" .. mods.JudgmentGraphic) )
+					-- We are either in StomperZ or ECFA GameMode.
+					-- StomperZ will pull judgment graphics from "_judgments/StomperZ/"
+					-- while ECFA will pull from "_judgment/ECFA"
+					self:Load( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. mods.JudgmentGraphic) )
 				end
 			end
 
 		end,
 		ResetCommand=cmd(finishtweening; stopeffect; visible,false)
 	}
-end
+}
 
 return t

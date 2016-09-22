@@ -2,7 +2,8 @@ local player = ...
 local pn = ToEnumShortString(player)
 
 local mode = ""
-if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then mode = "StomperZ" end
+if SL.Global.GameMode == "StomperZ" then mode = "StomperZ" end
+if SL.Global.GameMode == "ECFA" then mode = "ECFA" end
 
 -- tap note types
 -- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...
@@ -16,6 +17,15 @@ local TNSNames = {
 }
 
 local StomperZColors = {
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#21CCE8"),	-- blue
+	color("#000000"),	-- black
+	color("#ff0000")	-- red
+}
+
+local ECFAColors = {
 	color("#21CCE8"),	-- blue
 	color("#FFFFFF"),	-- white
 	color("#e29c18"),	-- gold
@@ -52,24 +62,27 @@ for index, label in ipairs(TNSNames) do
 			self:x( (player == PLAYER_1 and 28) or -28 )
 			self:y((index-1)*28 -16)
 
-			-- if StomperZ, color the JudgmentLabel
-			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
+			-- if StomperZ, diffuse the JudgmentLabel the StomperZ colors
+			if SL.Global.GameMode == "StomperZ" then
 				self:diffuse( StomperZColors[index] )
 
-			-- for all other modes, check for Decents/Way Offs
-			else
-				local gmods = SL.Global.ActiveModifiers
-
-				-- if Way Offs were turned off
-				if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
-					self:visible(false)
-
-				-- if both Decents and WayOffs were turned off
-				elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
-					self:visible(false)
-				end
+			elseif SL.Global.GameMode == "ECFA" then
+				self:diffuse( ECFAColors[index] )
 			end
 
+
+			local gmods = SL.Global.ActiveModifiers
+			local mode = SL.Global.GameMode
+			if (mode == "Casual" or mode == "Competitive") then mode = "" end
+
+			-- if Way Offs were turned off
+			if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore" .. mode, "W5") then
+				self:visible(false)
+
+			-- if both Decents and WayOffs were turned off
+			elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore" .. mode, "W4") or label == THEME:GetString("TapNoteScore" .. mode, "W5")) then
+				self:visible(false)
+			end
 		end
 	}
 end

@@ -13,11 +13,6 @@ local newBPS, oldBPS
 local meter = Def.ActorFrame{
 
 	InitCommand=cmd(horizalign, left),
-	BeginCommand=function(self)
-		if SL[ToEnumShortString(player)].ActiveModifiers.HideLifebar then
-			self:visible(false)
-		end
-	end,
 	OnCommand=cmd(y, 20),
 
 	-- frame

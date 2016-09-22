@@ -113,11 +113,8 @@ local Overrides = {
 			-- Allow users to artbitrarily add new judgment graphics to /Graphics/_judgments/
 			-- without needing to modify this script;
 			-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN.
-			local path = THEME:GetPathG("","_judgments/Competitive")
-
-			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
-				path = THEME:GetPathG("", "_judgments/StomperZ")
-			end
+			local mode = SL.Global.GameMode ~= "Casual" and SL.Global.GameMode or "Competitive"
+			local path = THEME:GetPathG("","_judgments/" .. mode )
 
 			local files = FILEMAN:GetDirListing(path .. "/")
 			local judgmentGraphics = {}
@@ -198,7 +195,7 @@ local Overrides = {
 		Choices = function()
 			local first	= 0.05
 			local last 	= 2
-			local step 	= 0.05
+			local step 	= 0.01
 
 			return stringify( range(first, last, step), "%g")
 		end,
@@ -380,6 +377,44 @@ local Overrides = {
 				vocalizations[#vocalizations+1] = "Blender"
 			end
 			return vocalizations
+		end
+	},
+	-------------------------------------------------------------------------
+	ReceptorArrowsPosition = {
+		Choices = function() return { "StomperZ", "ITG" } end,
+		LoadSelections = function(self, list, pn)
+			local choice = 	SL[ToEnumShortString(pn)].ActiveModifiers.ReceptorArrowsPosition or "StomperZ"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.ReceptorArrowsPosition = self.Choices[i]
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
+	LifeMeterType = {
+		Choices = function() return { "Standard", "Surround" } end,
+		LoadSelections = function(self, list, pn)
+			local choice = 	SL[ToEnumShortString(pn)].ActiveModifiers.LifeMeterType or "Standard"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.LifeMeterType = self.Choices[i]
+				end
+			end
 		end
 	},
 	-------------------------------------------------------------------------

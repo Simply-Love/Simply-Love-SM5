@@ -5,7 +5,9 @@ local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 local TNSNames = {}
 
 local mode = ""
-if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then mode = "StomperZ" end
+if SL.Global.GameMode == "StomperZ" then mode = "StomperZ"
+elseif SL.Global.GameMode == "ECFA" then mode = "ECFA" end
+
 
 -- tap note types
 -- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...
@@ -14,6 +16,15 @@ for i, judgment in ipairs(judgments) do
 end
 
 local StomperZColors = {
+	color("#21CCE8"),	-- blue
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#9e00f7"),	-- purple
+	color("#ff0000")	-- red
+}
+
+local ECFAColors = {
 	color("#21CCE8"),	-- blue
 	color("#FFFFFF"),	-- white
 	color("#e29c18"),	-- gold
@@ -47,19 +58,24 @@ for index, label in ipairs(TNSNames) do
 			if mode == "StomperZ" then
 				self:diffuse( StomperZColors[index] )
 
-			-- for all other modes, check for Decents/Way Offs
-			else
-				local gmods = SL.Global.ActiveModifiers
-
-				-- if Way Offs were turned off
-				if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
-					self:visible(false)
-
-				-- if both Decents and WayOffs were turned off
-				elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
-					self:visible(false)
-				end
+			-- if ECFA, color the JudgmentLabel
+			elseif mode == "ECFA" then
+				self:diffuse( ECFAColors[index] )
 			end
+
+
+			-- Check for Decents/Way Offs
+			local gmods = SL.Global.ActiveModifiers
+
+			-- if Way Offs were turned off
+			if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
+				self:visible(false)
+
+			-- if both Decents and WayOffs were turned off
+			elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
+				self:visible(false)
+			end
+
 
 		end
 	}

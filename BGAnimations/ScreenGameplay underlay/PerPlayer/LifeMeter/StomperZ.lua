@@ -8,12 +8,6 @@ local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:xy(x,0)
 	end,
-	OnCommand=function(self)
-		-- ECFA starts with the LifeMeter at half (ie, NotHot)
-		if SL.Global.GameMode == "ECFA" then
-			full:playcommand("NotHot")
-		end
-	end,
 	HealthStateChangedMessageCommand=function(self,params)
 		if(params.PlayerNumber == player) then
 			if(params.HealthState == 'HealthState_Hot') then

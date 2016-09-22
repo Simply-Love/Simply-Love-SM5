@@ -17,6 +17,15 @@ local RadarCategories = {
 }
 
 local StomperZColors = {
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#21CCE8"),	-- blue
+	color("#000000"),	-- black
+	color("#ff0000")	-- red
+}
+
+local ECFAColors = {
 	color("#21CCE8"),	-- blue
 	color("#FFFFFF"),	-- white
 	color("#e29c18"),	-- gold
@@ -54,20 +63,23 @@ for index, window in ipairs(TapNoteScores.Types) do
 			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
 				self:set_number_attribute{ Diffuse=StomperZColors[index] }
 
-			-- for all other modes, check for Decents/Way Offs
-			else
-				local gmods = SL.Global.ActiveModifiers
+			-- if ECFA, color the JudgmentNumbers
+			elseif SL.Global.GameMode == "ECFA" then
+				self:set_number_attribute{ Diffuse=ECFAColors[index] }
+			end
 
-				-- If Way Offs were turned off, the leading 0s should not
-				-- be colored any differently than the (lack of) JudgmentNumber,
-				-- so load a unique Metric group.
-				if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
-					self:set_number_attribute{ Diffuse=color("#444444") }
 
-				-- If both Decents and WayOffs were turned off, the same logic applies.
-				elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
-					self:set_number_attribute{ Diffuse=color("#444444") }
-				end
+			local gmods = SL.Global.ActiveModifiers
+
+			-- If Way Offs were turned off, the leading 0s should not
+			-- be colored any differently than the (lack of) JudgmentNumber,
+			-- so load a unique Metric group.
+			if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
+				self:set_number_attribute{ Diffuse=color("#444444") }
+
+			-- If both Decents and WayOffs were turned off, the same logic applies.
+			elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
+				self:set_number_attribute{ Diffuse=color("#444444") }
 			end
 		end,
 		BeginCommand=function(self)

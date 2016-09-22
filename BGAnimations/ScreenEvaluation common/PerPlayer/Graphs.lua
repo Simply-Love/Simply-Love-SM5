@@ -38,7 +38,7 @@ if SL.Global.GameMode ~= "Casual" then
 					self:visible(false)
 					return
 				end
-				self:xy( 0, _screen.cy+164 ):diffuse(0,0,0,0.33)
+				self:xy( 0, _screen.cy+165 ):diffuse(0,0,0,0.33)
 					:zoomto( THEME:GetMetric("GraphDisplay","BodyWidth"), THEME:GetMetric("GraphDisplay","BodyHeight")/2 )
 			end
 		},

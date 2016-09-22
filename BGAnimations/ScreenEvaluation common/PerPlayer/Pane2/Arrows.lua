@@ -3,7 +3,7 @@ local pn = ToEnumShortString(player)
 
 local ps = GAMESTATE:GetPlayerState(player)
 -- NOTESKIN:LoadActorForNoteSkin() expects the noteskin name to be all lowercase?
-local noteskin = ps:GetCurrentPlayerOptions():NoteSkin():lower()
+-- local noteskin = ps:GetCurrentPlayerOptions():NoteSkin():lower()
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local game = GAMESTATE:GetCurrentGame():GetName()
@@ -33,12 +33,16 @@ local af = Def.ActorFrame{}
 
 for i,column in ipairs( columns[game] ) do
 
-	af[#af+1] = NOTESKIN:LoadActorForNoteSkin( column, "Tap Note", noteskin)..{
-		OnCommand=function(self)
-			self:xy( i*column_width - 104, _screen.cy-41):zoom(0.4)
-		end
-	}
 
+	-- The arrow for this column
+	-- af[#af+1] = NOTESKIN:LoadActorForNoteSkin( column, "Tap Note", noteskin)..{
+	-- 	OnCommand=function(self)
+	-- 		self:xy( i*column_width - 104, _screen.cy-41):zoom(0.4)
+	-- 	end
+	-- }
+
+
+	-- the number of judgments for each possible judgment for this column
 	for j, judgment in ipairs(judgments) do
 		af[#af+1] = Def.BitmapText{
 			Font="_miso",

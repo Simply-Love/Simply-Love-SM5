@@ -7,7 +7,7 @@ return Def.ActorFrame{
 			self:x( _screen.w-WideScale(27,84) )
 		end
 
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
+		if SL.Global.GameMode == "StomperZ" then
 			self:y( 20 )
 		end
 	end,

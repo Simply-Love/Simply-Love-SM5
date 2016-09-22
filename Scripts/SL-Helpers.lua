@@ -79,31 +79,33 @@ end
 -- Define what is necessary to maintain and/or increment your combo, per Gametype.
 -- For example, in dance Gametype, TapNoteScore_W3 (window #3) is commonly "Great"
 -- so in dance, a "Great" will not only maintain a player's combo, it will also increment it.
+--
+-- We reference this function in Metrics.ini under the [Gameplay] section.
+function GetComboThreshold( MaintainOrContinue )
+	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
 
--- Setting values here in ComboThresholdsTable doesn't inherently do anything.
--- This is just a convenient place to define all of them.
--- We reference this table in Metrics.ini under the [Gameplay] section.
-local ComboThresholdTable = {
-	dance	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-	pump	=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
-	techno	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-	kb7		=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
-	-- these values are chosen to match Deluxe's PARASTAR
-	para	=	{ Maintain = "TapNoteScore_W5", Continue = "TapNoteScore_W3" },
+	local ComboThresholdTable = {
+		dance	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+		pump	=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
+		techno	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+		kb7		=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
+		-- these values are chosen to match Deluxe's PARASTAR
+		para	=	{ Maintain = "TapNoteScore_W5", Continue = "TapNoteScore_W3" },
 
-	-- I don't know what these values are supposed to actually be...
-	popn	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-	beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
-}
+		-- I don't know what these values are supposed to actually be...
+		popn	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+		beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+	}
 
-function GetComboThreshold()
-	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
-		ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
-		ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
+
+	if CurrentGame == "dance" then
+		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
+			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
+			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
+		end
 	end
 
-	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
-	return ComboThresholdTable[CurrentGame]
+	return ComboThresholdTable[CurrentGame][MaintainOrContinue]
 end
 
 
@@ -132,7 +134,6 @@ function SetGameModePreferences()
 
 	local prefix = {
 		Competitive = "",
-		Marathon = "",
 		ECFA = "ECFA-",
 		StomperZ = "StomperZ-",
 		Casual = "Casual-"
@@ -153,10 +154,15 @@ function GetPlayerOptionsLineNames()
 end
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,GameplayExtras,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
 
-	if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
-		mods = mods:gsub("DecentsWayOffs,", "")
+
+	if SL.Global.GameMode ~= "StomperZ" then
+		mods = mods:gsub("ReceptorArrowsPosition", "")
+	end
+
+	if SL.Global.GameMode == "StomperZ" then
+		mods = mods:gsub("DecentsWayOffs,", ""):gsub("LifeMeterType", "")
 	end
 
 	if SL.Global.Gamestate.Style == "double" then

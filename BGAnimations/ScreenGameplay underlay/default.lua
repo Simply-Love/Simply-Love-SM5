@@ -10,10 +10,6 @@ local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", player)
-	
-	if SL.Global.GameMode ~= "StomperZ" then
-		t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
-	end
 end
 
 -- semi-transparent quad at the top of ScreenGameplay
@@ -26,11 +22,7 @@ t[#t+1] = LoadActor("./Shared/SongInfoBar.lua")
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/LifeMeter/default.lua", player)
-	
-	if SL.Global.GameMode == "StomperZ" then
-		t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
-	end
-	
+	t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/TargetScore/default.lua", player)

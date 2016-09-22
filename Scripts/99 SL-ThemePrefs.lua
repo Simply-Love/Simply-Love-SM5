@@ -37,10 +37,10 @@ local SL_CustomPrefs =
 		Choices = {
 			THEME:GetString("ScreenSelectPlayMode", "Casual"),
 			THEME:GetString("ScreenSelectPlayMode", "Competitive"),
+			THEME:GetString("ScreenSelectPlayMode", "ECFA"),
 			THEME:GetString("ScreenSelectPlayMode", "StomperZ"),
-			THEME:GetString("ScreenSelectPlayMode", "Marathon")
 		},
-		Values 	= { "Casual", "Competitive", "StomperZ", "Marathon" }
+		Values 	= { "Casual", "Competitive", "ECFA", "StomperZ" }
 	},
 	TimingWindowAdd = {
 		Default = 0,

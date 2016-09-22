@@ -12,7 +12,7 @@ else
 		InitCommand=function(self)
 			self:valign(1):halign(1)
 
-			if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA" then
+			if SL.Global.GameMode == "StomperZ" then
 				self:zoom(0.4):x( WideScale(160, 214) ):y(20)
 				if player == PLAYER_2 then
 					self:x( _screen.w - WideScale(50, 104) )

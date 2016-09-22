@@ -203,7 +203,7 @@ for player in ivalues(Players) do
 	--		the number of wheel actors to actually create onscreen
 	--			note that this is NOT equal to how many items you want to be able to scroll through
 	--			it is how many you want visually onscreen at a given moment
-	--		a metatable defining a generica item in the wheel
+	--		a metatable defining a generic item in the wheel
 	--		x position
 	--		y position
 	if SL[pn].HighScores.EnteringName then
