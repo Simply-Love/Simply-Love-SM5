@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 Requirements:
 -------------
-You'll need to be running [StepMania 5.0.11](http://www.stepmania.com/download/) or newer to use this theme.  Older versions of StepMania are not compatible.
+You'll need to be running [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) to use this theme.  Older versions of StepMania are not compatible.
 
 If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/) and see [this issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64).
 
