@@ -57,55 +57,55 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
-	NoteSkin = {
-		Choices = function()
-
-			local all = NOTESKIN:GetNoteSkinNames()
-
-			if ThemePrefs.Get("HideStockNoteSkins") then
-
-				-- Apologies, midiman. :(
-				local stock = {
-					"default", "delta", "easyv2", "exactv2", "midi-note",
-					"midi-note-3d", "midi-routine-p1", "midi-routine-p2",
-					"midi-solo", "midi-vivid", "midi-vivid-3d", "retro",
-					"retrobar", "retrobar-splithand_whiteblue"
-				}
-
-				for stock_noteskin in ivalues(stock) do
-					for i=1,#all do
-						if stock_noteskin == all[i] then
-							table.remove(all, i)
-							break
-						end
-					end
-				end
-			end
-
-			-- It's possible a user might want to hide stock notesksins
-			-- but only have stock noteskins.  If so, just return all noteskins.
-			if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
-
-			return all
-		end,
-		LoadSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local choice = mods.NoteSkin or playeroptions:NoteSkin() or "default"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#list do
-				if list[i] then
-					mods.NoteSkin = self.Choices[i]
-				end
-			end
-
-			playeroptions:NoteSkin( mods.NoteSkin )
-		end
-	},
+	-- NoteSkin = {
+	-- 	Choices = function()
+	--
+	-- 		local all = NOTESKIN:GetNoteSkinNames()
+	--
+	-- 		if ThemePrefs.Get("HideStockNoteSkins") then
+	--
+	-- 			-- Apologies, midiman. :(
+	-- 			local stock = {
+	-- 				"default", "delta", "easyv2", "exactv2", "midi-note",
+	-- 				"midi-note-3d", "midi-routine-p1", "midi-routine-p2",
+	-- 				"midi-solo", "midi-vivid", "midi-vivid-3d", "retro",
+	-- 				"retrobar", "retrobar-splithand_whiteblue"
+	-- 			}
+	--
+	-- 			for stock_noteskin in ivalues(stock) do
+	-- 				for i=1,#all do
+	-- 					if stock_noteskin == all[i] then
+	-- 						table.remove(all, i)
+	-- 						break
+	-- 					end
+	-- 				end
+	-- 			end
+	-- 		end
+	--
+	-- 		-- It's possible a user might want to hide stock notesksins
+	-- 		-- but only have stock noteskins.  If so, just return all noteskins.
+	-- 		if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
+	--
+	-- 		return all
+	-- 	end,
+	-- 	LoadSelections = function(self, list, pn)
+	-- 		local mods, playeroptions = GetModsAndPlayerOptions(pn)
+	-- 		local choice = mods.NoteSkin or playeroptions:NoteSkin() or "default"
+	-- 		local i = FindInTable(choice, self.Choices) or 1
+	-- 		list[i] = true
+	-- 	end,
+	-- 	SaveSelections = function(self, list, pn)
+	-- 		local mods, playeroptions = GetModsAndPlayerOptions(pn)
+	--
+	-- 		for i=1,#list do
+	-- 			if list[i] then
+	-- 				mods.NoteSkin = self.Choices[i]
+	-- 			end
+	-- 		end
+	--
+	-- 		playeroptions:NoteSkin( mods.NoteSkin )
+	-- 	end
+	-- },
 	-------------------------------------------------------------------------
 	JudgmentGraphic = {
 		Choices = function()
