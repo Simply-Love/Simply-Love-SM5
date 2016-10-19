@@ -3,7 +3,7 @@ local Players = GAMESTATE:GetHumanPlayers()
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
 	OnCommand=function(self)
-		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", self) )
+		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua") )
 	end,
 
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
@@ -18,7 +18,6 @@ local t = Def.ActorFrame{
 
 	LoadActor("./GlobalStorage.lua")
 }
-
 
 
 -- Then, load the player-specific actors.
@@ -52,7 +51,7 @@ for player in ivalues(Players) do
 	}
 
 	-- the lower half of ScreenEvaluation
-	local lower = Def.ActorFrame{
+	t[#t+1] = Def.ActorFrame{
 		Name=ToEnumShortString(player).."_AF_Lower",
 		OnCommand=function(self)
 
@@ -95,14 +94,11 @@ for player in ivalues(Players) do
 		-- was this player disqualified from ranking?
 		LoadActor("./PerPlayer/Disqualified.lua", player),
 
-
+		-- Evaluation Info Panes
+		LoadActor("./PerPlayer/Pane1/", player),
+		LoadActor("./PerPlayer/Pane2/", player),
+		LoadActor("./PerPlayer/Pane3/", player),
 	}
-	
-	lower[#lower+1] = LoadActor("./PerPlayer/Pane1", player)
-	lower[#lower+1] = LoadActor("./PerPlayer/Pane2", player)
-	lower[#lower+1] = LoadActor("./PerPlayer/Pane3", player)
-
-	t[#t+1] = lower
 end
 
 

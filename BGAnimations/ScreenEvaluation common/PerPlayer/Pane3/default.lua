@@ -4,7 +4,9 @@ local pane = Def.ActorFrame{
 	Name="Pane3",
 	InitCommand=function(self)
 		self:visible(false)
-	end
+	end,
+	HidePaneCommand=function(self) self:visible(false) end,
+	ShowPaneCommand=function(self) self:visible(true) end,
 }
 
 

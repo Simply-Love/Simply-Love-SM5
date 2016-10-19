@@ -12,6 +12,8 @@ if game == "dance" or game == "pump" or game == "techno" then
 
 			self:visible(false)
 		end,
+		HidePaneCommand=function(self) self:visible(false) end,
+		ShowPaneCommand=function(self) self:visible(true) end,
 
 		LoadActor("./Percentage.lua", player),
 		LoadActor("./JudgmentLabels.lua", player),
