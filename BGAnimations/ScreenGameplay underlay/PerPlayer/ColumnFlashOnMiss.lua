@@ -37,7 +37,7 @@ if mods.ColumnFlashOnMiss then
 			InitCommand=function(self)
 				columns[ColumnIndex] = self
 				local style = GAMESTATE:GetCurrentStyle(player)
-				local width = style:GetWidth(player)
+				local width = GetNotefieldWidth()
 				self:diffuse(0,0,0,0)
 					:x((ColumnIndex-2.5) * (width/NumColumns))
 					:vertalign(top)

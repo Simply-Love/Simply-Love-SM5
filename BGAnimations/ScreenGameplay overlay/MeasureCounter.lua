@@ -26,7 +26,7 @@ local function Update(self, delta)
 
 		previous_measure = current_measure
 
-		-- if the current measure is within the of the current stream
+		-- if the current measure is within the bounds of the current stream
 		if streams.Measures[stream_index]
 		and current_measure >= streams.Measures[stream_index].streamStart
 		and current_measure <= streams.Measures[stream_index].streamEnd then
@@ -65,8 +65,7 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 		InitCommand=function(self)
 			MeasureCounterBMT = self
 
-			local style = GAMESTATE:GetCurrentStyle(player)
-			local width = style:GetWidth(player)
+			local width = GetNotefieldWidth()
 			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 
 			self:zoom(0.35)

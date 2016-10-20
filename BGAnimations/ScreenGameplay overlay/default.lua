@@ -26,6 +26,7 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1] = {}
 
 	t[#t+1] = LoadActor("./SubtractiveScoring.lua", player)
+	t[#t+1] = LoadActor("./MeasureCounter.lua", player)
 	t[#t+1] = LoadActor("./PerColumnJudgmentTracking.lua", player)
 	t[#t+1] = LoadActor("./ReceptorArrowsPosition.lua", player)
 end

@@ -3,7 +3,7 @@ local player = ...
 if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
 
   local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-  local notefield_width = GAMESTATE:GetCurrentStyle():GetWidth(player)
+  local notefield_width = GetNotefieldWidth()
 
   -- grab the appropriate x position from ScreenGameplay's
   -- metrics on Player positioning
