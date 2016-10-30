@@ -1,7 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
-local ps = GAMESTATE:GetPlayerState(player)
+-- local ps = GAMESTATE:GetPlayerState(player)
 -- NOTESKIN:LoadActorForNoteSkin() expects the noteskin name to be all lowercase?
 -- local noteskin = ps:GetCurrentPlayerOptions():NoteSkin():lower()
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
@@ -11,6 +11,11 @@ local columns = {
 	pump = { "DownLeft", "UpLeft", "Center", "UpRight", "DownRight" },
 	techno = { "DownLeft", "Left", "UpLeft", "Down", "Up", "UpRight", "Right", "DownRight" },
 	dance = { "Left", "Down", "Up", "Right" }
+}
+
+local rotation_z = {
+	Left = -45, Down = -135, Up = 45, Right = 135,
+	UpLeft = 0, DownLeft = -90, Center = 0, UpRight = 90, DownRight = 180
 }
 
 local box_width = 230
@@ -33,13 +38,37 @@ local af = Def.ActorFrame{}
 
 for i,column in ipairs( columns[game] ) do
 
-
 	-- The arrow for this column
 	-- af[#af+1] = NOTESKIN:LoadActorForNoteSkin( column, "Tap Note", noteskin)..{
-	-- 	OnCommand=function(self)
-	-- 		self:xy( i*column_width - 104, _screen.cy-41):zoom(0.4)
-	-- 	end
-	-- }
+
+	af[#af+1] = Def.ActorFrame{
+		OnCommand=function(self)
+			self:xy( i*column_width - 104, _screen.cy-41):zoom(0.175)
+				:rotationz( rotation_z[column] )
+		end,
+
+		Def.Sprite{
+			InitCommand=function(self)
+				local file = column == "Center" and "center" or "arrow"
+				self:Load( THEME:GetPathB("ScreenSelectPlayMode", "underlay/" .. file .. "-border.png") )
+					:diffuse(1,1,1,1)
+			end
+		},
+		Def.Sprite{
+			InitCommand=function(self)
+				local file = column == "Center" and "center" or "arrow"
+				self:Load( THEME:GetPathB("ScreenSelectPlayMode", "underlay/" .. file .. "-body.png") )
+					:diffuse( PlayerColor(player) )
+			end
+		},
+		Def.Sprite{
+			InitCommand=function(self)
+				local file = column == "Center" and "center" or "arrow"
+				self:Load( THEME:GetPathB("ScreenSelectPlayMode", "underlay/" .. file .. "-stripes.png") )
+					:diffuse(1,1,1,1):blend(Blend.Multiply)
+			end
+		},
+	}
 
 
 	-- the number of judgments for each possible judgment for this column
