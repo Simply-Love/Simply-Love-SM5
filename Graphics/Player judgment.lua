@@ -66,6 +66,7 @@ local t = Def.ActorFrame {
 	InitCommand=function(self)
 		kids = self:GetChildren()
 		JudgmentSet = kids.JudgmentWithOffsets
+		self:draworder(350)
 	end,
 
 	JudgmentMessageCommand=function(self, param)
