@@ -8,6 +8,11 @@ local choices = {
 		Value = "Marathon",
 		Text = ScreenString("Marathon"),
 		ZoomWidth = 0.65
+	},
+	{
+		Value = "Endless",
+		Text = ScreenString("Endless"),
+		ZoomWidth = 0.65
 	}
 }
 
@@ -94,6 +99,10 @@ local t = Def.ActorFrame{
 		},
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-20) end,
+			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
+		},
+		Def.Quad{
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(20) end,
 			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
 		},
 	},
