@@ -1,4 +1,4 @@
--- if the MenuTimer is enabled, we should SSM's MenuTimer now that we've reached Gameplay
+-- if the MenuTimer is enabled, we should reset SSM's MenuTimer now that we've reached Gameplay
 if PREFSMAN:GetPreference("MenuTimer") then
 	SL.Global.MenuTimer.ScreenSelectMusic = ThemePrefs.Get("ScreenSelectMusicMenuTimer")
 end
