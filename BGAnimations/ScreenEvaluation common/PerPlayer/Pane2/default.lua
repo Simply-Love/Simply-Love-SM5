@@ -7,7 +7,11 @@ if game == "dance" or game == "pump" or game == "techno" then
 		InitCommand=function(self)
 			local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 			if style == "OnePlayerTwoSides" then
-				self:x(-_screen.w/8 )
+				if IsUsingWideScreen() then
+					self:x( -_screen.w/8 )
+				else
+					self:x( -_screen.w/6 )
+				end
 			end
 
 			self:visible(false)
