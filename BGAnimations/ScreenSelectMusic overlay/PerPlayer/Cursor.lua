@@ -102,11 +102,13 @@ return Def.Sprite{
 			elseif RowIndex < 1 then RowIndex = 1
 			end
 
-			-- update cursor y position
-			local sdl = self:GetParent():GetParent():GetChild("StepsDisplayList")
-			if sdl then
-				local grid = sdl:GetChild("Grid")
-				self:y(sdl:GetY() + grid:GetY() + grid:GetChild("Blocks_"..RowIndex):GetY() + 1 )
+			-- update cursor y position (only in non-course mode)
+			if GAMESTATE:IsCourseMode() == false then
+				local sdl = self:GetParent():GetParent():GetChild("StepsDisplayList")
+				if sdl then
+					local grid = sdl:GetChild("Grid")
+					self:y(sdl:GetY() + grid:GetY() + grid:GetChild("Blocks_"..RowIndex):GetY() + 1 )
+				end
 			end
 		end
 	end
