@@ -5,7 +5,7 @@ return Def.ActorFrame{
 
 	Def.BitmapText{
 		Font="_miso",
-		Text="Barely!",
+		Text=THEME:GetString("GraphDisplay", "Barely"),
 		InitCommand=cmd(zoom, 0.75),
 	},
 

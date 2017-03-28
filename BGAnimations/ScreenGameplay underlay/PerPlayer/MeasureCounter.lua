@@ -30,7 +30,7 @@ local function Update(self, delta)
 
 		previous_measure = current_measure
 
-		-- if the current measure is within the of the current stream
+		-- if the current measure is within the scope of the current stream
 		if streams.Measures[stream_index]
 		and current_measure >= streams.Measures[stream_index].streamStart
 		and current_measure <= streams.Measures[stream_index].streamEnd then

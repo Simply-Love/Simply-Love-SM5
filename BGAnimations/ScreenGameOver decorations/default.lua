@@ -34,7 +34,7 @@ for pn in ivalues(Players) do
 		t[#t+1] = LoadActor("PlayerStats.lua", pn)
 	else
 		t[#t+1] = LoadFont("_miso")..{
-			Text="No Card",
+			Text=THEME:GetString("ScreenGameOver", "NoCard") ,
 			InitCommand=cmd(diffuse, PlayerColor(pn); y, 40),
 			OnCommand=function(self)
 				if pn == PLAYER_1 then

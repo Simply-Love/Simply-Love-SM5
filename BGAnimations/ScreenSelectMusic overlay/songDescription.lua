@@ -36,7 +36,7 @@ local t = Def.ActorFrame{
 
 			-- Artist Label
 			LoadFont("_miso")..{
-				Text="ARTIST",
+				Text=THEME:GetString("SongDescription", "Artist"),
 				InitCommand=cmd(horizalign, right; y, -12),
 				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
 			},
@@ -62,7 +62,7 @@ local t = Def.ActorFrame{
 				InitCommand=cmd(horizalign, right; NoStroke; y, 8),
 				SetCommand=function(self)
 					self:diffuse(0.5,0.5,0.5,1)
-					self:settext("BPM")
+					self:settext( THEME:GetString("SongDescription", "BPM")  )
 				end
 			},
 
@@ -88,7 +88,7 @@ local t = Def.ActorFrame{
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 					self:diffuse(0.5,0.5,0.5,1)
-					self:settext("LENGTH")
+					self:settext( THEME:GetString("SongDescription", "Length") )
 				end
 			},
 
@@ -117,7 +117,7 @@ local t = Def.ActorFrame{
 					if duration then
 						if duration == 105.0 then
 							-- r21 lol
-							self:settext("not 1:45")
+							self:settext( THEME:GetString("SongDescription", "r21") )
 						else
 							local finalText = SecondsToMSSMsMs(duration)
 							self:settext( string.sub(finalText, 0, finalText:len()-3) )
@@ -162,9 +162,9 @@ local t = Def.ActorFrame{
 
 					if song then
 						if song:IsLong() then
-							self:settext("COUNTS AS 2 ROUNDS")
+							self:settext( THEME:GetString("SongDescription", "IsLong") )
 						elseif song:IsMarathon() then
-							self:settext("COUNTS AS 3 ROUNDS")
+							self:settext( THEME:GetString("SongDescription", "IsMarathon")  )
 						else
 							self:settext("")
 						end
