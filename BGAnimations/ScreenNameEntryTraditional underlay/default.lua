@@ -73,6 +73,12 @@ local t = Def.ActorFrame {
 		-- store the highscore name for this game
 		for player in ivalues(Players) do
 			GAMESTATE:StoreRankingName(player, SL[ToEnumShortString(player)].HighScores.Name)
+
+			-- if a profile is in use
+			if PROFILEMAN:IsPersistentProfile(player) then
+				-- update that profile's LastUsedHighScoreName attribute
+				PROFILEMAN:GetProfile(player):SetLastUsedHighScoreName( SL[ToEnumShortString(player)].HighScores.Name )
+			end
 		end
 
 		-- manually transition to the next screen (defined in Metrics)
