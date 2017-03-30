@@ -1,36 +1,24 @@
 local t = Def.ActorFrame{
 	ChangeStepsMessageCommand=function(self, params)
 		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
-	end
-}
+	end,
 
--- Each file contains the code for a particular screen element.
--- I've made this table ordered so that I can specificy
--- a desired draworder later below.
-
-local files = {
 	-- make the MusicWheel appear to cascade down
-	"./MusicWheelAnimation.lua",
+	LoadActor("./MusicWheelAnimation.lua"),
 	-- Apply player modifiers from profile
-	"./PlayerModifiers.lua",
+	LoadActor("./PlayerModifiers.lua"),
+	-- Difficulty Blocks (normal) or CourseContentsList (CourseMode)
+	LoadActor("./StepsDisplayList/default.lua"),
 	-- Graphical Banner
-	"./Banner.lua",
+	LoadActor("./Banner.lua"),
 	-- Song Artist, BPM, Duration (Referred to in other themes as "PaneDisplay")
-	"./SongDescription.lua",
-	-- Difficulty Blocks
-	"./StepsDisplayList/Grid.lua",
+	LoadActor("./SongDescription.lua"),
 	-- a folder of Lua files to be loaded twice (once for each player)
-	"./PerPlayer",
+	LoadActor("./PerPlayer/default.lua"),
 	-- MenuTimer code for preserving SSM's timer value
-	"./MenuTimer.lua",
+	LoadActor("./MenuTimer.lua"),
 	-- overlay for sorting the MusicWheel, hidden by default
-	"./SortMenu/default.lua"
+	LoadActor("./SortMenu/default.lua")
 }
-
-for index, file in ipairs(files) do
-	t[#t+1] = LoadActor(file)..{
-		InitCommand=cmd(draworder, index)
-	}
-end
 
 return t
