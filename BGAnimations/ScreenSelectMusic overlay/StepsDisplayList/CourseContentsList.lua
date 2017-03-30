@@ -16,7 +16,8 @@ local af = Def.ActorFrame{
 	-- lower mask
 	Def.Quad{
 		InitCommand=function(self)
-			self:xy(-44,98):zoomto(_screen.w/2, 40)
+			self:xy(IsUsingWideScreen() and -44 or 0,98)
+				:zoomto(_screen.w/2, 40)
 				:MaskSource()
 		end
 	},
@@ -25,7 +26,8 @@ local af = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:vertalign(bottom)
-				:xy(-44,-18):zoomto(_screen.w/2, 100)
+				:xy(IsUsingWideScreen() and -44 or 0,-18)
+				:zoomto(_screen.w/2, 100)
 				:MaskSource()
 		end
 	},
@@ -54,7 +56,7 @@ af[#af+1] = Def.CourseContentsList {
 	CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 
 	InitCommand=function(self)
-		self:xy(36,-4)
+		self:xy(40,-4)
 	end,
 
 	-- ???
