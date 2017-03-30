@@ -36,8 +36,11 @@ local t = Def.ActorFrame{
 
 			-- Artist Label
 			LoadFont("_miso")..{
-				Text=THEME:GetString("SongDescription", "Artist"),
-				InitCommand=cmd(horizalign, right; y, -12),
+				InitCommand=function(self)
+					local text = GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"
+					self:settext( THEME:GetString("SongDescription", text) )
+						:horizalign(right):y(-12)
+				end,
 				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
 			},
 
@@ -45,12 +48,20 @@ local t = Def.ActorFrame{
 			LoadFont("_miso")..{
 				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,260) ),
 				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong()
-
-					if song and song:GetDisplayArtist() then
-						self:settext(song:GetDisplayArtist())
+					if GAMESTATE:IsCourseMode() then
+						local course = GAMESTATE:GetCurrentCourse()
+						if course then
+							self:settext( #course:GetCourseEntries() )
+						else
+							self:settext("")
+						end
 					else
-						self:settext("")
+						local song = GAMESTATE:GetCurrentSong()
+						if song and song:GetDisplayArtist() then
+							self:settext( song:GetDisplayArtist() )
+						else
+							self:settext("")
+						end
 					end
 				end
 			},
