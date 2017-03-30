@@ -1,6 +1,31 @@
+local numItemsToDraw = 8
+local scrolling_down = true
+
 local transform_function = function(self,offsetFromCenter,itemIndex,numitems)
 	self:y( offsetFromCenter * 23 )
 end
+
+-- ccl is a reference to the CourseContentsList actor that this update function is called on
+-- dt is "delta time" (time in seconds since the last frame); we don't need it here
+local update = function(ccl, dt)
+
+	-- CourseContentsList:GetCurrentItem() returns a float, so call math.floor() on it
+	-- while it's scrolling down or math.ceil() while its scrolling up to do integer comparison.
+	--
+	-- if we've reached the bottom of the list and want the CCL to scroll up
+	if math.floor(ccl:GetCurrentItem()) == (ccl:GetNumItems() - (numItemsToDraw/2)) then
+		scrolling_down = false
+		ccl:SetDestinationItem( 0 )
+
+	-- elseif we've reached the top of the list and want the CCL to scroll down
+	elseif math.ceil(ccl:GetCurrentItem()) == 0 then
+		scrolling_down = true
+		ccl:SetDestinationItem( ccl:GetNumItems() - numItemsToDraw/2 )
+
+	end
+end
+
+
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
@@ -50,13 +75,14 @@ af[#af+1] = Def.CourseContentsList {
 	-- ???
 	MaxSongs=1000,
 	-- ???
-	NumItemsToDraw=8,
+	NumItemsToDraw=numItemsToDraw,
 
 	CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
 	CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 
 	InitCommand=function(self)
 		self:xy(40,-4)
+			:SetUpdateFunction( update )
 	end,
 
 	-- ???
@@ -69,7 +95,12 @@ af[#af+1] = Def.CourseContentsList {
 			:SetLoop(false)
 			:SetPauseCountdownSeconds(1)
 			:SetSecondsPauseBetweenItems( 0.2 )
-			:SetDestinationItem( math.max(0,self:GetNumItems() - 4) )
+
+		if scrolling_down then
+			self:SetDestinationItem( math.max(0,self:GetNumItems() - numItemsToDraw/2) )
+		else
+			self:SetDestinationItem( 0 )
+		end
 	end,
 
 	-- a generic row in the CourseContentsList
