@@ -33,10 +33,14 @@ local af = Def.ActorFrame{
 	end,
 
 	---------------------------------------------------------------------
-	-- Masks (here) are just Quads that serve to hide the rows
+	-- Masks (as used here) are just Quads that serve to hide the rows
 	-- of the CourseContentsList above and below where we want to see them.
-	-- To see what I mean, try uncommenting the two calls to MaskSource()
+	-- To see what I mean, try commenting out the two calls to MaskSource()
 	-- (one per Quad) and refreshing the screen.
+	--
+	-- Normally, we would also have to call MaskDest() on the thing we wanted to
+	-- be hidden by the mask, but that is effectively already called on the
+	-- entire "Display" ActorFrame of the CourseContentsList in the engine's code.
 
 	-- lower mask
 	Def.Quad{
