@@ -76,11 +76,12 @@ return Def.ActorFrame{
 			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
 
+			-- if we're hovering over a group title, clear the stepartist text
 			if not SongOrCourse then
 				self:settext("")
 			elseif StepsOrCourse then
 				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
-				self:settext(stepartist and stepartist or "")
+				self:settext(stepartist or "")
 			end
 		end
 	}

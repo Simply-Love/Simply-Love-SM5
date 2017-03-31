@@ -21,7 +21,6 @@ local update = function(ccl, dt)
 	elseif math.ceil(ccl:GetCurrentItem()) == 0 then
 		scrolling_down = true
 		ccl:SetDestinationItem( math.max(0,ccl:GetNumItems() - numItemsToDraw/2) )
-
 	end
 end
 
@@ -76,21 +75,26 @@ local af = Def.ActorFrame{
 }
 
 af[#af+1] = Def.CourseContentsList {
-	-- ???
+	-- I guess just set this to be arbitrarily large so as not to truncate longer
+	-- courses from fully displaying their list of songs...
 	MaxSongs=1000,
-	-- ???
-	NumItemsToDraw=numItemsToDraw,
 
-	CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
-	CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
+	-- this is how many rows the ActorScroller should draw at a given moment
+	NumItemsToDraw=numItemsToDraw,
 
 	InitCommand=function(self)
 		self:xy(40,-4)
 			:SetUpdateFunction( update )
 	end,
 
-	-- ???
+	CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
+	CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 	SetCommand=function(self)
+
+		-- I have a very flimsy understanding of what most of these methods do,
+		-- as they were all copied from the default theme's CourseContentsList, but
+		-- commenting each one out broke the behavior of the ActorScroller in a unique
+		-- way, so I'm leaving them intact here.
 		self:SetFromGameState()
 			:SetCurrentAndDestinationItem(0)
 			:SetTransformFromFunction(transform_function)
@@ -130,7 +134,7 @@ af[#af+1] = Def.CourseContentsList {
 				if params.Song then
 					self:settext( params.Song:GetDisplayFullTitle() )
 				else
-					self:SetFromString( "??????????", "??????????", "", "", "", "" )
+					self:settext( "??????????" )
 				end
 			end
 		},
@@ -138,28 +142,26 @@ af[#af+1] = Def.CourseContentsList {
 		-- PLAYER_1 song difficulty
 		Def.BitmapText{
 			Font="_miso",
-			Text="",
 			InitCommand=function(self)
 				self:xy(-170, 0):horizalign(right)
 			end,
 			SetSongCommand=function(self, params)
 				if params.PlayerNumber ~= PLAYER_1 then return end
 
-				self:settext( params.Meter ):diffuse( CustomDifficultyToColor(params.Difficulty) )
+				self:settext( params.Meter or "?" ):diffuse( CustomDifficultyToColor(params.Difficulty) )
 			end
 		},
 
 		-- PLAYER_2 song difficulty
 		Def.BitmapText{
 			Font="_miso",
-			Text="",
 			InitCommand=function(self)
 				self:xy(114,0):horizalign(right)
 			end,
 			SetSongCommand=function(self, params)
 				if params.PlayerNumber ~= PLAYER_2 then return end
 
-				self:settext( params.Meter ):diffuse( CustomDifficultyToColor(params.Difficulty) )
+				self:settext( params.Meter or "?" ):diffuse( CustomDifficultyToColor(params.Difficulty) )
 			end
 		}
 	}
