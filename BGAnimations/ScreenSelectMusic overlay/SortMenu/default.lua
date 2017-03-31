@@ -12,6 +12,7 @@ local t = Def.ActorFrame {
 		-- ALWAYS ensure that the SortMenu is hidden and that players have
 		-- input directed back to them on screen initialization.  Always.
 		self:queuecommand("HideSortMenu")
+			:draworder(1)
 	end,
 	ShowSortMenuCommand=function(self)
 		SOUND:StopMusic()

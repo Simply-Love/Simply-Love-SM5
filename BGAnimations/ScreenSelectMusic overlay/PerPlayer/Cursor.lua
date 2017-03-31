@@ -11,7 +11,6 @@ return Def.Sprite{
 	Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/PerPlayer/arrow.png"),
 	Name="Cursor"..pn,
 	InitCommand=function(self)
-		self:draworder( 2 )
 		self:visible( false ):halign( p )
 
 		self:zoom(0.575)

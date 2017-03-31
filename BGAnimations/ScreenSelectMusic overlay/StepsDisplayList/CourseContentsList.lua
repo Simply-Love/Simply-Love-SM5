@@ -20,7 +20,7 @@ local update = function(ccl, dt)
 	-- elseif we've reached the top of the list and want the CCL to scroll down
 	elseif math.ceil(ccl:GetCurrentItem()) == 0 then
 		scrolling_down = true
-		ccl:SetDestinationItem( ccl:GetNumItems() - numItemsToDraw/2 )
+		ccl:SetDestinationItem( math.max(0,ccl:GetNumItems() - numItemsToDraw/2) )
 
 	end
 end
