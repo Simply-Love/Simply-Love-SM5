@@ -41,6 +41,9 @@ local t = Def.ActorFrame{
 							StageText = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + SongCost)
 						end
 
+					elseif topscreen:GetName() == "ScreenEvaluationNonstop" then
+						StageText = THEME:GetString("ScreenSelectPlayMode", "Marathon")
+
 					-- else if we're on ScreenSelectMusic
 					else
 						StageText = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
