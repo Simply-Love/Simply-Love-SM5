@@ -72,13 +72,16 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 		InitCommand=function(self)
 			MeasureCounterBMT = self
 
-			local style = GAMESTATE:GetCurrentStyle(player)
-			local width = style:GetWidth(player)
-			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+			self:zoom(0.35):shadowlength(1)
 
-			self:zoom(0.35)
-				:xy( GetNotefieldX(player) - (width/NumColumns), _screen.cy )
-				:shadowlength(1)
+			if mods.MeasureCounterPosition == "Center" then
+				self:xy( GetNotefieldX(player), _screen.cy )
+			else
+				local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+				local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+
+				self:xy( GetNotefieldX(player) - (width/NumColumns), _screen.cy )
+			end
 		end
 	}
 

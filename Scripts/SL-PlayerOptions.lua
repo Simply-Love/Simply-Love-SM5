@@ -311,6 +311,24 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	MeasureCounterPosition = {
+		Choices = function() return { "Left", "Center" } end,
+		LoadSelections = function(self, list, pn)
+			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.MeasureCounterPosition or "Left"
+			local i = FindInTable(choice, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#list do
+				if list[i] then
+					mods.MeasureCounterPosition = self.Choices[i]
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Choices = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
 		LoadSelections = function(self, list, pn)
