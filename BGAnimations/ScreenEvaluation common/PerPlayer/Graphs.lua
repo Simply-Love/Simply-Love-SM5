@@ -10,6 +10,8 @@ if SL.Global.GameMode ~= "Casual" then
 				if ThemePrefs.Get("RainbowMode") then
 					self:y( _screen.cy + 151):zoomto(300, 54)
 						:diffuse(color("#00000088"))
+				else
+					self:visible(false)
 				end
 			end
 		},

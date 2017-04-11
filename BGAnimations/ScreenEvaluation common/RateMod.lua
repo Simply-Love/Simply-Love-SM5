@@ -41,7 +41,7 @@ return Def.ActorFrame{
 				end
 			else
 				-- else MusicRate was 1.0
-				self:settext("")
+				self:visible(false)
 			end
 		end
 	}

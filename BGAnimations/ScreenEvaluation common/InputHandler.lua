@@ -1,7 +1,9 @@
-local af = ...
+local args = ...
+local af = args.af
+local num_panes = args.num_panes
+
 if not af then return end
 
-local num_panes = 3
 local panes, active_pane = {}, {}
 
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())

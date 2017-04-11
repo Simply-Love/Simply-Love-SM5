@@ -1,21 +1,33 @@
 local Players = GAMESTATE:GetHumanPlayers()
+local NumPanes = 4
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
+	
+	-- add a lua-based InputCalllback to this screen so that we can navigate
+	-- through multiple panes of information; pass a reference to this ActorFrame
+	-- and the number of panes there are to InputHanlder.lua
 	OnCommand=function(self)
-		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", self) )
+		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {af=self, num_panes=NumPanes}) )
 	end,
 
+	-- ./Graphics/Triangles.lua, shows up if we're in StomperZ mode
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
 
+	-- code for triggering a screenshot and animating a "screenshot" texture
 	LoadActor("./ScreenshotHandler.lua"),
 
+	-- the title of the song and its graphical banner, if there is one
 	LoadActor("./TitleAndBanner.lua"),
 
+	-- the ratemod text that appears at the bottom of the banner if music rate ~= 1.0
 	LoadActor("./RateMod.lua"),
 
+	-- code for handling score vocalization
 	LoadActor("./ScoreVocalization.lua"),
 
+	-- store some attributes of this playthrough of this song in the global SL table
+	-- for later retrieval on ScreenEvaluationSummary
 	LoadActor("./GlobalStorage.lua")
 }
 
@@ -38,16 +50,16 @@ for player in ivalues(Players) do
 		-- store player stats for later retrieval on EvaluationSummary and NameEntryTraditional
 		LoadActor("./PerPlayer/Storage.lua", player),
 
-		--letter grade
+		-- letter grade
 		LoadActor("./PerPlayer/LetterGrade.lua", player),
 
-		--stepartist
+		-- stepartist
 		LoadActor("./PerPlayer/StepArtist.lua", player),
 
-		--difficulty text and meter
+		-- difficulty text and meter
 		LoadActor("./PerPlayer/Difficulty.lua", player),
 
-		-- Record Texts
+		-- Record Texts (Machine and/or Personal)
 		LoadActor("./PerPlayer/RecordTexts.lua", player)
 	}
 
@@ -77,6 +89,9 @@ for player in ivalues(Players) do
 					self:diffusealpha(0.9)
 				end
 			end,
+			-- this background Quad may need to shrink and expand if we're playing double 
+			-- and need more space to accommodate more columns of arrows;  these commands
+			-- are queued as needed from the InputHandler
 			ShrinkCommand=function(self)
 				self:zoomto(300,180):x(0)
 			end,
@@ -85,8 +100,7 @@ for player in ivalues(Players) do
 			end
 		},
 
-		-- "Look at this graph."
-		-- Some sort of meme on the Internet
+		-- "Look at this graph."  –Some sort of meme on The Internet
 		LoadActor("./PerPlayer/Graphs.lua", player),
 
 		-- list of modifiers used by this player for this song
@@ -94,17 +108,16 @@ for player in ivalues(Players) do
 
 		-- was this player disqualified from ranking?
 		LoadActor("./PerPlayer/Disqualified.lua", player),
-
-
 	}
 	
-	lower[#lower+1] = LoadActor("./PerPlayer/Pane1", player)
-	lower[#lower+1] = LoadActor("./PerPlayer/Pane2", player)
-	lower[#lower+1] = LoadActor("./PerPlayer/Pane3", player)
+	-- add available Panes to the lower ActorFrame via a loop
+	for i=1, NumPanes do
+		lower[#lower+1] = LoadActor("./PerPlayer/Pane"..i, player)
+	end
 
+	-- add lower ActorFrame to the primary ActorFrame
 	t[#t+1] = lower
 end
-
 
 
 return t

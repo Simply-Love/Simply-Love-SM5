@@ -1,7 +1,7 @@
 if SL.Global.GameMode ~= "Casual" then
-	local pn = ...
+	local player = ...
 
-	local PlayerState = GAMESTATE:GetPlayerState(pn)
+	local PlayerState = GAMESTATE:GetPlayerState(player)
 	-- grab the song options from this PlayerState.
 	local PlayerOptions = PlayerState:GetPlayerOptionsArray(0)
 	-- start with an empty string...

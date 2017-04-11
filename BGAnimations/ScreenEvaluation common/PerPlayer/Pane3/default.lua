@@ -37,7 +37,7 @@ if highscores then
 
 	local MaxHighScores = PREFSMAN:GetPreference("MaxHighScoresPerListForMachine")
 
-	-- this screen can display up to eight highscores at once
+	-- this screen can display up to ten highscores at once
 	-- below, we'll loop from (lower to higher) to only display the (up to) eight scores that are relevant
 	local lower = 1
 	local upper = 10
