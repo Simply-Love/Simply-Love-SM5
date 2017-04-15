@@ -64,7 +64,7 @@ local smooth_offsets = {}
 -- gaussian distribution for smoothing the histogram's jagged peaks and troughs
 local ScaleFactor = { 0.045, 0.090, 0.180, 0.370, 0.180, 0.090, 0.045 }
 
-local y
+local y, index
 for offset=-worst_window, worst_window, 0.001 do
 	offset = round(offset,3)
 	y = 0
@@ -107,7 +107,7 @@ local verts = {}
 -- + 1 for the offset of 0.000
 local total_width = worst_window * 2 * 1000 + 1
 local w = pane_width/total_width
-local index, x, c
+local x, c
 
 local i=1
 for offset=-worst_window, worst_window, 0.001 do
