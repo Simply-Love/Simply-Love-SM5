@@ -81,17 +81,73 @@ for offset=-worst_window, worst_window, 0.001 do
 	smooth_offsets[offset] = y
 end
 
+-- ---------------------------------------------
+-- MEDIAN, MODE, and AVG TIMING ERROR VARIABLES
+-- initialize all to zero
 
--- find the mode of the collected judgment offsets for this player
--- and save how many times that particular offset occurred
-local highest_offset_count = 0
+-- mode_offset is the offset that occured the most commonly
+-- for example, if a player hit notes with an offset of -0.010
+-- more commonly than any other offset, that would be the mode
 local mode_offset = 0
 
-for k,v in pairs(smooth_offsets) do
+-- median_offset is the offset in the middle of an ordered list of all offsets
+-- 2 is the median in a set of { 1, 1, 2, 3, 4 } because it is in the middle
+local median_offset = 0
+
+-- highest_offset_count is how many times the mode_offset occurred
+-- we'll use it to scale the histrogram to be an appropriate height
+local highest_offset_count = 0
+
+local sum_timing_error = 0
+local avg_timing_error = 0
+
+-- ---------------------------------------------
+-- OKAY, TIME TO CALCULATE MEDIAN, MODE, and AVG TIMING ERROR
+
+-- find the mode of the collected judgment offsets for this player
+-- loop through ALL offsets
+for k,v in pairs(offsets) do
+
+	-- compare this particular offset to the current highest_offset
+	-- if higher, it's the new mode
 	if v > highest_offset_count then
 		highest_offset_count = v
-		mode_offset = k
+		mode_offset = round(k,3)
 	end
+end
+
+-- transform a key=value table in the format of offset_value=count
+-- into an ordered list of offset values
+-- this will make calculating the median very straightforward
+local list = {}
+for offset=-worst_window, worst_window, 0.001 do
+	offset = round(offset,3)
+
+	if offsets[offset] then
+		for i=1,offsets[offset] do
+			list[#list+1] = offset
+		end
+	end
+end
+
+if #list > 0 then
+
+	-- calculate median offset
+	if #list % 2 == 1 then
+		median_offset = list[math.ceil(#list/2)]
+	else
+		median_offset = (list[#list/2] + list[#list/2+1])/2
+	end
+
+	-- loop throguh all offsets collected
+	-- take the absolute value (because this offset could be negative)
+	-- and add it to the running measure of total timing error
+	for i=1,#list do
+		sum_timing_error = sum_timing_error + math.abs(list[i])
+	end
+
+	-- calculate the avg timing error, rounded to 3 decimals
+	avg_timing_error = round(sum_timing_error/#list,3)
 end
 -- ---------------------------------------------
 
@@ -100,13 +156,21 @@ end
 
 local verts = {}
 
--- total_width of the histogram
+-- total_width of the histogram in offset units
 -- take the number of milliseconds in worst_window
 -- multiply by 2 (to encompass both negative and positive judgment offsets)
--- and multiply by 1000 to get an integer
+-- multiply by 1000 to get an integer
 -- + 1 for the offset of 0.000
 local total_width = worst_window * 2 * 1000 + 1
+
+-- w is a ratio of how wide the pane is in pixels
+-- to how wide the total TimingWindow interval is in ms
+-- so, pixels per ms
 local w = pane_width/total_width
+
+-- x and c are variables that will be reused in the loop below
+-- x is the x position of this particular histogram bar
+-- c is the color of this particular histogram bar
 local x, c
 
 local i=1
@@ -115,15 +179,19 @@ for offset=-worst_window, worst_window, 0.001 do
 	x = i * w
 	y = smooth_offsets[offset] or 0
 
+	-- scale the highst point on the histogram to be 0.75 times as high as the pane
 	y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
 	c = colors[SL.Global.GameMode][DetermineTimingWindow(offset)]
 
-	verts[#verts+1] = {{x, 0, 0}, c, {1,1}}
-	verts[#verts+1] = {{x, y, 0}, c, {0,0}}
+	-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads places next to one another
+	-- each vertex is a table of two tables:
+	-- {x, y, z}, {r, g, b, a}
+	verts[#verts+1] = {{x, 0, 0}, c }
+	verts[#verts+1] = {{x, y, 0}, c }
 
 	i = i+1
 end
-
+-- ---------------------------------------------
 
 -- ---------------------------------------------
 -- Actors
@@ -141,8 +209,9 @@ pane[#pane+1] = Def.BitmapText{
 	Font="_wendy small",
 	Text=ScreenString("Early"),
 	InitCommand=function(self)
-		self:addx(50):addy(-146)
-			:zoom(0.4)
+		self:addx(10):addy(-125)
+			:zoom(0.3)
+			:horizalign(left)
 	end,
 }
 
@@ -151,17 +220,30 @@ pane[#pane+1] = Def.BitmapText{
 	Font="_wendy small",
 	Text=ScreenString("Late"),
 	InitCommand=function(self)
-		self:addx(250):addy(-146)
-			:zoom(0.4)
+		self:addx(pane_width-10):addy(-125)
+			:zoom(0.3)
+			:horizalign(right)
 	end,
 }
+
+
+-- darkened quad behind bottom judment labels
+pane[#pane+1] = Def.Quad{
+	InitCommand=function(self)
+		self:vertalign(top)
+			:zoomto(pane_width, 13 )
+			:xy(pane_width/2, 0)
+			:diffuse(color("#101519"))
+	end,
+}
+
 
 -- centered text for W1
 pane[#pane+1] = Def.BitmapText{
 	Font="_miso",
 	Text=abbreviations[SL.Global.GameMode][1],
 	InitCommand=function(self)
-		local x = scale(0, -worst_window, worst_window, 0, pane_width )
+		local x = pane_width/2
 
 		self:diffuse( colors[SL.Global.GameMode][1] )
 			:addx(x):addy(7)
@@ -211,18 +293,6 @@ for i=2,num_judgments_available do
 
 end
 
--- the line dropping down from the mode_offset text
-pane[#pane+1] = Def.Quad{
-	InitCommand=function(self)
-		local x = scale(mode_offset, -worst_window, worst_window, 0, pane_width )
-
-		self:zoomto(1, pane_height/2)
-			:vertalign(bottom)
-			:addx(x):addy(-pane_height/2 + 42)
-			:diffuseshift():effectperiod(1.5):effectcolor1(Color.White):effectcolor2(Color.Black)
-	end,
-}
-
 -- --------------------------------------------------------
 -- LOOK AT THIS GRAPH
 
@@ -234,35 +304,95 @@ pane[#pane+1] = Def.ActorMultiVertex{
 			:SetVertices(verts)
 	end
 }
-
 -- --------------------------------------------------------
--- THINGS DRAWN OVER THE HISTOGRAM BELOW THIS COMMENT
 
 -- the line in the middle indicating where truly flawless timing (0ms offset) is
 pane[#pane+1] = Def.Quad{
 	InitCommand=function(self)
-		local x = scale(0, -worst_window, worst_window, 0, pane_width )
+		local x = pane_width/2
 
-		self:zoomto(1, pane_height - 14 )
-			:addx(x):y(-83)
+		self:vertalign(top)
+			:zoomto(1, pane_height - 40 )
+			:xy(x, -140)
+			:diffuse(1,1,1,0.666)
 
 		if SL.Global.GameMode == "StomperZ" then
-			self:diffuse(Color.Black)
+			self:diffuse(0,0,0,0.666)
 		end
 	end,
 }
 
--- mode_offset text
+-- --------------------------------------------------------
+-- TOPBAR WITH STATISTICS
+
+-- topbar background quad
+pane[#pane+1] = Def.Quad{
+	InitCommand=function(self)
+		self:vertalign(top)
+			:zoomto(pane_width, 26 )
+			:xy(pane_width/2, -pane_height+13)
+			:diffuse(color("#101519"))
+	end,
+}
+
+-- avg_timing_error label
+pane[#pane+1] = Def.BitmapText{
+	Font="_miso",
+	Text=ScreenString("MeanTimingError"),
+	InitCommand=function(self)
+		self:x(40):y(-pane_height+20)
+			:zoom(0.575)
+	end,
+}
+
+-- avg_timing_error value
+pane[#pane+1] = Def.BitmapText{
+	Font="_miso",
+	Text=(avg_timing_error*1000).."ms",
+	InitCommand=function(self)
+		self:x(40):y(-pane_height+32)
+			:zoom(0.8)
+	end,
+}
+
+
+-- median_offset label
+pane[#pane+1] = Def.BitmapText{
+	Font="_miso",
+	Text=ScreenString("Median"),
+	InitCommand=function(self)
+		self:x(pane_width/2):y(-pane_height+20)
+			:zoom(0.575)
+	end,
+}
+
+-- median_offset value
+pane[#pane+1] = Def.BitmapText{
+	Font="_miso",
+	Text=(median_offset*1000).."ms",
+	InitCommand=function(self)
+		self:x(pane_width/2):y(-pane_height+32)
+			:zoom(0.8)
+	end,
+}
+
+-- mode_offset label
+pane[#pane+1] = Def.BitmapText{
+	Font="_miso",
+	Text=ScreenString("Mode"),
+	InitCommand=function(self)
+		self:x(pane_width-40):y(-pane_height+20)
+			:zoom(0.575)
+	end,
+}
+
+-- mode_offset value
 pane[#pane+1] = Def.BitmapText{
 	Font="_miso",
 	Text=(mode_offset*1000).."ms",
 	InitCommand=function(self)
-		local x = scale(mode_offset, -worst_window, worst_window, 0, pane_width )
-
-		self:horizalign(center)
-			:addx(x):addy(-pane_height+36)
-			:zoom(0.75)
-			:diffuseshift():effectperiod(1.5):effectcolor1(Color.White):effectcolor2(Color.Black)
+		self:x(pane_width-40):y(-pane_height+32)
+			:zoom(0.8)
 	end,
 }
 
