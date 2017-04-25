@@ -59,7 +59,7 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty)
 			-- Find the chart that matches our difficulty and game type
 			if(chart:match("#STEPSTYPE:"..regexEncode(StepsType)) and chart:match("#DIFFICULTY:"..regexEncode(Difficulty))) then
 				--Find just the notes and remove comments
-				measuresString = chart:match("#NOTES:[\r\n]+([^;]*)\n$"):gsub("\\[^\r\n]*","")
+				measuresString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$"):gsub("\\[^\r\n]*","")
 			end
 		end
 	else
@@ -68,7 +68,7 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty)
 		for chart in SimfileString:gmatch("#NOTES[^;]*") do
 			if(chart:match(regexEncode(StepsType)..":") and chart:match(regexEncode(Difficulty)..":")) then
 				-- Find just the notes and remove comments
-				measuresString = chart:match("#NOTES:.*:[\r\n]+(.*)\n$"):gsub("//[^\r\n]*","")
+				measuresString = chart:match("#NOTES:.*:[\r\n]+(.*)\n?$"):gsub("//[^\r\n]*","")
 			end
 		end
 	end
