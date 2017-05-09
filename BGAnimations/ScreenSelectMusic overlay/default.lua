@@ -3,8 +3,6 @@ local t = Def.ActorFrame{
 		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
 	end,
 
-	-- make the MusicWheel appear to cascade down
-	LoadActor("./MusicWheelAnimation.lua"),
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),
 	-- Difficulty Blocks (normal) or CourseContentsList (CourseMode)

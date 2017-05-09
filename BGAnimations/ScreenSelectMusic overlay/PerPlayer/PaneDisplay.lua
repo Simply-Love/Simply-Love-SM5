@@ -137,13 +137,13 @@ local pd = Def.ActorFrame{
 
 		if player==params.Player then
 			self:visible(true)
-				:zoom(0):croptop(0):bounceend(0.3):zoom(1)
+				:diffusealpha(0):smooth(0.3):diffusealpha(1)
 				:playcommand("Set")
 		end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if player==params.Player then
-			self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0)
+			self:diffusealpha(1):smooth(0.3):diffusealpha(0)
 		end
 	end,
 
@@ -241,7 +241,7 @@ pd[#pd+1] = Def.BitmapText{
 			self:settext("")
 		else
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-			local meter = StepsOrTrail and StepsOrTrail:GetMeter()			
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter()
 			self:settext( meter and meter or  "?" )
 		end
 	end

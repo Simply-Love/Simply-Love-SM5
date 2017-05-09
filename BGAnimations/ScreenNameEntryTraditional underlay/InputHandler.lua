@@ -4,7 +4,7 @@ local t = args[1]
 local AlphabetWheels = args[2]
 
 -- the highscore name character limit
-local CharacterLimit = 4
+local CharacterLimit = 7
 
 -- Define the input handler
 local InputHandler = function(event)
