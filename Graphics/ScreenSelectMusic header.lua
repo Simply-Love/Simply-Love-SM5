@@ -71,7 +71,7 @@ local t = Def.ActorFrame{
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",
-		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, 15 ),
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); xy,_screen.cx, 16 ),
 		TextCommand=cmd(settext, StageText),
 		OnCommand=cmd(sleep,0.1; decelerate,0.33; diffusealpha,1),
 	},
@@ -80,7 +80,7 @@ local t = Def.ActorFrame{
 		Name="GameModeText",
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:diffusealpha(0):zoom( WideScale(0.5,0.6)):xy(_screen.w-70, 15):halign(1)
+			self:diffusealpha(0):zoom( WideScale(0.5,0.6)):xy(_screen.w-70, 16):halign(1)
 			if not PREFSMAN:GetPreference("MenuTimer") then
 				self:x(_screen.w-10)
 			end
@@ -92,7 +92,22 @@ local t = Def.ActorFrame{
 		UpdateHeaderTextCommand=function(self)
 			self:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
 		end
-	}
+	},
+
+	LoadFont("_wendy small") .. {
+		InitCommand=cmd(zoom,WideScale(0.4, 0.5); xy, _screen.cx, SCREEN_BOTTOM-13; horizalign,center; diffusealpha,0; queuecommand,"TextSet"),
+		TextSetCommand=function(self)
+		--we only want the date to show on the evaluation stage, so we're going to restrict settext to only work on that screen
+			local topscreen = SCREENMAN:GetTopScreen()
+			if topscreen then
+				if topscreen:GetName() == "ScreenEvaluationStage" or topscreen:GetName() == ScreenEvaluationCourse then
+					self:settext( string.format('%s %02i %04i', MonthToString(MonthOfYear()), DayOfMonth(), Year()) )
+				end
+			end
+		end,
+		OnCommand=cmd(decelerate,0.5; diffusealpha,1),
+		OffCommand=cmd(accelerate,0.5;diffusealpha,0)
+	},
 }
 
 return t

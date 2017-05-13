@@ -187,7 +187,7 @@ for player in ivalues(Players) do
 
 	-- stepartist
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_miso")..{
-		InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
+		InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28; maxwidth,250),
 		DrawStageCommand=function(self)
 			if playerStats and stepartist then
 				self:settext(stepartist)

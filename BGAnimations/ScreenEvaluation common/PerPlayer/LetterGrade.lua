@@ -9,7 +9,7 @@ if SL.Global.GameMode ~= "StomperZ" then
 	if title == "D" then grade = "Grade_Tier99" end
 
 	return LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), playerStats)..{
-		InitCommand=cmd(xy, 70, _screen.cy-134),
+		InitCommand=cmd(xy, 70, _screen.cy-129),
 		OnCommand=function(self)
 			self:zoom(0.4)
 			if pn == PLAYER_1 then
