@@ -53,7 +53,7 @@ t[#t+1] = LoadActor("Cursor.png")..{
 
 t[#t+1] = LoadFont("_wendy white")..{
 	Name="PlayerName",
-	InitCommand=cmd(zoom,0.75; halign,0; x,-80; y,-12;),
+	InitCommand=cmd(zoom,0.60; horizalign,center; x,-80; y,-12;),
 	OnCommand=function(self)
 		self:visible( CanEnterName )
 		self:settext( SL[pn].HighScores.Name or "" )

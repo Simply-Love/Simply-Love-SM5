@@ -258,7 +258,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="MachineHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60)
+	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 40 )
 }
 
 
@@ -273,7 +273,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="PlayerHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1)
+	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1; maxwidth, 40)
 }
 
 return pd

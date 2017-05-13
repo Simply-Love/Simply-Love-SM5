@@ -118,7 +118,7 @@ for i=NumStages,1,-1 do
 
 			row[#row+1] = LoadFont("_miso")..{
 				Text=name,
-				InitCommand=cmd(horizalign,left; xy, -110, (s-(lower-1))*22 )
+				InitCommand=cmd(horizalign,left; xy, -110, (s-(lower-1))*22; maxwidth,70 )
 			}
 
 			row[#row+1] = LoadFont("_miso")..{
