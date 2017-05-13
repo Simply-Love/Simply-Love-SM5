@@ -94,14 +94,17 @@ local t = Def.ActorFrame{
 
 			-- Song Folder Label
 			LoadFont("_miso")..{
-				Text="FOLDER",
-				--InitCommand=cmd(horizalign, right; y, -20),
 				InitCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						self:visible(false)
 					end
 					self:horizalign(right);
 					self:y(-20)
+					if ThemePrefs.Get("VerboseSongFolder") then
+						self:settext(THEME:GetString("SongDescription", "Folder"))
+					else
+						self:settext(THEME:GetString("SongDescription", "Group"))
+					end
 				end,
 				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
 			},
@@ -112,30 +115,28 @@ local t = Def.ActorFrame{
 				SetCommand=function( actor )
 					local song = GAMESTATE:GetCurrentSong()
 				    local text = ""
-						if song then
-								--I would like to find a better method to trim up GetSongDir, but this will work for now, because I highly doubt people will name their packs "Songs" or "AdditionalSongs"
-							local fulldir = song:GetSongDir();
-								--removes the "/ " suffix placed by GetSongDir() (will not impact
-							local remove_end = string.sub(fulldir, 0, -2);
-								--removes "/Songs/" prefix, but if a songs folder is called "Songs" you'll get weird formatting
-							local trimmed_dir = string.gsub(remove_end, "/Songs/", "", 1)
-								--removes "/AdditionalSongs/" from the directory string, and will cause formatting weirdness if there is a song folder with that name
-							local SongDir = string.gsub(trimmed_dir, "/AdditionalSongs/", "", 1)
-							text = SongDir
-						end
-				   actor:settext( text )
+						if ThemePrefs.Get("VerboseSongFolder") then
+							if song then
+									--I would like to find a better method to trim up GetSongDir, but this will work for now, because I highly doubt people will name their packs "Songs" or "AdditionalSongs"
+								local fulldir = song:GetSongDir();
+									--removes the "/ " suffix placed by GetSongDir() (will not impact
+								local remove_end = string.sub(fulldir, 0, -2);
+									--removes "/Songs/" prefix, but if a songs folder is called "Songs" you'll get weird formatting
+								local trimmed_dir = string.gsub(remove_end, "/Songs/", "", 1)
+									--removes "/AdditionalSongs/" from the directory string, and will cause formatting weirdness if there is a song folder with that name
+								local SongDir = string.gsub(trimmed_dir, "/AdditionalSongs/", "", 1)
+								text = SongDir
+							end
+					   actor:settext( text )
+					 else
 
-				--  This is a cleaner way to call the group name of a selected song, but I prefer the above method because it shows the actual songfolder directory, which sometimes has information in it
-
-					 -- local song = GAMESTATE:GetCurrentSong()
-					 -- if song then
-						 -- actor:settext(song:GetGroupName());
-						 -- actor:diffusealpha(1);
-					 -- else
-						 -- actor:settext("Unknown")
-						 -- actor:diffusealpha(0);
-					 -- end
-
+				--  This is a cleaner way to call the group name of a selected song, but I prefer the above method because it shows the actual songfolder directory, which sometimes has information in it. You can set your preference in Simply Love Options for which method you prefer.
+						 if song then
+							 actor:settext(song:GetGroupName());
+						 else
+							 actor:settext("")
+						 end
+					 end
 				end
 			},
 
