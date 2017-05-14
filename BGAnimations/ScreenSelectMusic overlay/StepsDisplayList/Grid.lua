@@ -6,11 +6,15 @@ local StepsToDisplay, SongOrCourse, StepsOrTrails
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	--InitCommand=cmd(vertalign, top; draworder, 1; xy, _screen.cx-170, _screen.cy + 70),
 	InitCommand=function(self)
 		self:vertalign(top);
 		self:draworder(1);
-		self:xy(_screen.cx-197, _screen.cy + 70);
+		self:y(_screen.cy + 70)
+		if IsUsingWideScreen() then
+			self:x(_screen.cx-197);
+		else
+			self:x(_screen.cx - 170)
+		end
 	end,
 	-- - - - - - - - - - - - - -
 
@@ -137,6 +141,7 @@ for RowNumber=1,GridRows do
 			self:y(RowNumber * height * BlockZoomY)
 			self:x( IsUsingWideScreen() and -140 or -126 )
 			self:zoom(0.3)
+			self:maxwidth(60)
 		end,
 		SetCommand=function(self, params)
 

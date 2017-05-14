@@ -31,13 +31,13 @@ return Def.ActorFrame{
 
 		if player == PLAYER_1 then
 
-			self:y(_screen.cy + 14)
-			self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
+			self:y(_screen.cy + 15)
+			self:x( _screen.cx - (IsUsingWideScreen() and 356 or 320))
 
 		elseif player == PLAYER_2 then
 
-			self:y(_screen.cy + 127)
-			self:x( _screen.cx - 210)
+			self:y(_screen.cy + 126)
+			self:x( _screen.cx - (IsUsingWideScreen() and 210 or 183))
 		end
 
 		if GAMESTATE:IsHumanPlayer(player) then
@@ -79,7 +79,8 @@ return Def.ActorFrame{
 		OnCommand=function(self)
 				self:diffuse(0,0,0,1)
 				self:horizalign(left)
-				self:settext("STEPS")
+				self:settext(THEME:GetString("ScreenSelectMusic", "STEPS"))
+				self:maxwidth(40)
 				if player == PLAYER_1 then
 					self:x(3)
 					self:y(-3)
