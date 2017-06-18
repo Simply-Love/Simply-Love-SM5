@@ -125,8 +125,8 @@ function SetGameModePreferences()
  		SL.Global.ActiveModifiers.DecentsWayOffs = "On"
 	end
 
-	-- Now that we've set the SL table for DecentsWayOffs appropriately
-	-- apply use that to apply the mods appropriately.
+	-- Now that we've set the SL table for DecentsWayOffs appropriately,
+	-- use it to apply DecentsWayOffs as a mod.
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local OptRow = CustomOptionRow( "DecentsWayOffs" )
 		OptRow:LoadSelections( OptRow.Choices, player )
