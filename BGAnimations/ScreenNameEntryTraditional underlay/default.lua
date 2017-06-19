@@ -35,17 +35,20 @@ local t = Def.ActorFrame {
 		local topscreen = SCREENMAN:GetTopScreen()
 
         for player in ivalues(Players) do
+			local wheel = AlphabetWheels[ToEnumShortString(player)]
+			
+			if wheel then
+	            local profile = PROFILEMAN:GetProfile(player)
+				-- if a profile is in use and has a HighScoreName, make the starting index 2 ("ok"); otherwise, 3 ("A")
+	            local StartingCharIndex = (profile and (profile:GetLastUsedHighScoreName() ~= "") and 2) or 3
 
-            local profile = PROFILEMAN:GetProfile(player)
-			-- if a profile is in use and has a HighScoreName, make the starting index 2 ("ok"); otherwise, 3 ("A")
-            local StartingCharIndex = profile and (profile:GetLastUsedHighScoreName() ~= "") and 2 or 3
-
-			-- set_info_set() takes two arguments:
-			--		a table of meaningful data to divvy up to wheel items
-			--		the index of which wheel item we want to initially give focus to
-			-- here, we are passing it all the possible characters,
-            -- and either 2 ("ok") or 3 ("A") as the starting index
-			AlphabetWheels[ToEnumShortString(player)]:set_info_set(PossibleCharacters, StartingCharIndex)
+				-- set_info_set() takes two arguments:
+				--		a table of meaningful data to divvy up to wheel items
+				--		the index of which wheel item we want to initially give focus to
+				-- here, we are passing it all the possible characters,
+	            -- and either 2 ("ok") or 3 ("A") as the starting index
+				AlphabetWheels[ToEnumShortString(player)]:set_info_set(PossibleCharacters, StartingCharIndex)
+			end
 		end
 
 		-- actually attach the InputHandler function to our screen
