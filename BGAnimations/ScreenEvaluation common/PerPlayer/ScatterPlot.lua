@@ -70,31 +70,31 @@ local amv = Def.ActorMultiVertex{
 			:SetDrawState{Mode="DrawMode_Quads"}
 
 		for t in ivalues(sequential_offsets) do
-            CurrentSecond = t[1]
-            Offset = t[2]
+			CurrentSecond = t[1]
+			Offset = t[2]
 
-            x = scale(CurrentSecond-FirstSecond, 0 , TotalSeconds, 0, GraphWidth)
+			x = scale(CurrentSecond-FirstSecond, 0 , TotalSeconds, 0, GraphWidth)
 
-            if Offset ~= "Miss" then
+			if Offset ~= "Miss" then
 				-- DetermineTimingWindow() is defined in ./Scripts/SL-Helpers.lua
-                TimingWindow = DetermineTimingWindow(Offset)
-                y = scale(Offset, worst_window, -worst_window, 0, GraphHeight)
+				TimingWindow = DetermineTimingWindow(Offset)
+				y = scale(Offset, worst_window, -worst_window, 0, GraphHeight)
 
 				table.insert( verts, {{x, y, 0}, colors[SL.Global.GameMode][TimingWindow]} )
 				table.insert( verts, {{x+1.5, y, 0}, colors[SL.Global.GameMode][TimingWindow]} )
 				table.insert( verts, {{x+1.5, y+1.5, 0}, colors[SL.Global.GameMode][TimingWindow]} )
 				table.insert( verts, {{x, y+1.5, 0}, colors[SL.Global.GameMode][TimingWindow]} )
-            else
+			else
 
 				table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
 				table.insert( verts, {{x+1, 0, 0}, color("#ff000077")} )
 				table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000077")} )
 				table.insert( verts, {{x, GraphHeight, 0}, color("#ff000077")} )
-            end
+			end
 		end
 
 		self:SetVertices(verts)
-    end,
+	end,
 }
 
 return amv
