@@ -1,20 +1,20 @@
 if SL.Global.GameMode ~= "Casual" then
 	local player = ...
 
+    local GraphWidth = THEME:GetMetric("GraphDisplay", "BodyWidth")
+    local GraphHeight = THEME:GetMetric("GraphDisplay", "BodyHeight")
+
 	return Def.ActorFrame{
 
-		-- Draw a semitransparent Quad behind the GraphDisplay (lifebar graph)
-		-- if RainbowMode is on.  This makes it easier to see with the wacky background.
+		-- Draw a Quad behind the GraphDisplay (lifebar graph) and Judgment ScatterPlot
 		Def.Quad{
 			InitCommand=function(self)
-				if ThemePrefs.Get("RainbowMode") then
-					self:y( _screen.cy + 151):zoomto(300, 54)
-						:diffuse(color("#00000088"))
-				else
-					self:visible(false)
-				end
+				self:y( _screen.cy + 151):zoomto(GraphWidth, GraphHeight+1)
+					:diffuse(color("#101519"))
 			end
 		},
+
+        LoadActor("./ScatterPlot.lua", {player=player, GraphWidth=GraphWidth, GraphHeight=GraphHeight} ),
 
 		Def.GraphDisplay{
 			Name="GraphDisplay",
@@ -28,15 +28,20 @@ if SL.Global.GameMode ~= "Casual" then
 				local stageStats = STATSMAN:GetCurStageStats()
 				self:Set(stageStats, playerStageStats)
 
-				-- hide the GraphDisplay's stroke ("line")
-				self:GetChild("Line"):visible(false)
+				if GAMESTATE:IsCourseMode() then
+					-- hide the GraphDisplay's stroke ("line")
+					self:GetChild("Line"):visible(false)
+				else
+				    -- hide the GraphDisplay's body
+				    self:GetChild("")[2]:visible(false)
+				end
 			end
 		},
 
 		Def.Quad{
 			Name="LifeBarGraph_MidwayQuad",
 			InitCommand=function(self)
-				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" then
+				if SL.Global.GameMode ~= "StomperZ" then
 					self:visible(false)
 					return
 				end

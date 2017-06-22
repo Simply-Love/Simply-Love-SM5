@@ -42,16 +42,6 @@ local abbreviations = {
 }
 
 -- ---------------------------------------------
--- helper function used to detmerine which timing_window a particular offset belongs to
-local DetermineTimingWindow = function(offset)
-	for i=1,5 do
-		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] then
-			return i
-		end
-	end
-	return 5
-end
--- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
 local num_judgments_available = (SL.Global.ActiveModifiers.DecentsWayOffs=="Decents Only" and 4) or (SL.Global.ActiveModifiers.DecentsWayOffs=="Off" and 3) or 5

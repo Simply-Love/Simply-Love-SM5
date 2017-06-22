@@ -20,6 +20,17 @@ end
 ------------------------------------------------------------------------------
 -- Misc Lua functions that didn't fit anywhere else...
 
+-- helper function used to detmerine which timing_window a given offset belongs to
+function DetermineTimingWindow(offset)
+	for i=1,5 do
+		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] then
+			return i
+		end
+	end
+	return 5
+end
+
+
 function GetCredits()
 	local coins = GAMESTATE:GetCoins()
 	local coinsPerCredit = PREFSMAN:GetPreference('CoinsPerCredit')
@@ -125,8 +136,8 @@ function SetGameModePreferences()
  		SL.Global.ActiveModifiers.DecentsWayOffs = "On"
 	end
 
-	-- Now that we've set the SL table for DecentsWayOffs appropriately
-	-- apply use that to apply the mods appropriately.
+	-- Now that we've set the SL table for DecentsWayOffs appropriately,
+	-- use it to apply DecentsWayOffs as a mod.
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local OptRow = CustomOptionRow( "DecentsWayOffs" )
 		OptRow:LoadSelections( OptRow.Choices, player )
