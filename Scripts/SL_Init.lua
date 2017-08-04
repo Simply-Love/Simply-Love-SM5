@@ -22,6 +22,7 @@ local PlayerDefaults = {
 				MeasureCounter = "None",
 				TargetStatus="Disabled",
 				TargetBar=11,
+				TargetScore=false,
 				ReceptorArrowsPosition="StomperZ",
 				LifeMeterType="Standard",
 			}
@@ -92,19 +93,20 @@ SL = {
 	P1 = setmetatable( {}, PlayerDefaults),
 	P2 = setmetatable( {}, PlayerDefaults),
 	Global = setmetatable( {}, GlobalDefaults),
+	-- Colors that Simply Love's background can be
 	Colors = {
 		"#FF3C23",
-	    "#FF003C",
-	    "#C1006F",
-	    "#8200A1",
-	    "#413AD0",
-	    "#0073FF",
-	    "#00ADC0",
-	    "#5CE087",
-	    "#AEFA44",
-	    "#FFFF00",
-	    "#FFBE00",
-	    "#FF7D00"
+		"#FF003C",
+		"#C1006F",
+		"#8200A1",
+		"#413AD0",
+		"#0073FF",
+		"#00ADC0",
+		"#5CE087",
+		"#AEFA44",
+		"#FFFF00",
+		"#FFBE00",
+		"#FF7D00"
 	},
 	Preferences = {
 		Casual = {
