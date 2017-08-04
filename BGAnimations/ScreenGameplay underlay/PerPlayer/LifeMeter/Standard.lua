@@ -2,18 +2,28 @@ local player = ...
 
 local meterFillLength = 136
 local meterFillHeight = 18
-local meterXOffset = _screen.cx - WideScale(238, 288)
-
-if player == PLAYER_2 then
-	meterXOffset = _screen.cx + WideScale(238, 288)
-end
+local meterXOffset = _screen.cx + (player==PLAYER_1 and -1 or 1) * WideScale(238, 288)
 
 local newBPS, oldBPS
+local swoosh, move
+
+local Update = function(self)
+
+	newBPS = GAMESTATE:GetSongBPS()
+	move = (newBPS*-1)/2
+
+	if GAMESTATE:GetSongFreeze() then move = 0 end
+	if swoosh then swoosh:texcoordvelocity(move,0) end
+
+	oldBPS = newBPS
+end
 
 local meter = Def.ActorFrame{
 
-	InitCommand=cmd(horizalign, left),
-	OnCommand=cmd(y, 20),
+	InitCommand=function(self)
+		self:SetUpdateFunction(Update)
+			:y(20)
+	end,
 
 	-- frame
 	Border(meterFillLength+4, meterFillHeight+4, 2)..{
@@ -25,8 +35,8 @@ local meter = Def.ActorFrame{
 	-- // start meter proper //
 	Def.Quad{
 		Name="MeterFill";
-		InitCommand=cmd(zoomto,0,meterFillHeight; diffuse,PlayerColor(player); horizalign, left),
-		OnCommand=cmd(x, meterXOffset - meterFillLength/2),
+		InitCommand=function(self) self:zoomto(0,meterFillHeight):diffuse(PlayerColor(player)):horizalign(left) end,
+		OnCommand=function(self) self:x( meterXOffset - meterFillLength/2 ) end,
 
 		-- check state of mind
 		HealthStateChangedMessageCommand=function(self,params)
@@ -52,7 +62,13 @@ local meter = Def.ActorFrame{
 
 	LoadActor("swoosh.png")..{
 		Name="MeterSwoosh",
-		InitCommand=cmd(zoomto,meterFillLength,meterFillHeight; diffusealpha,0.2; horizalign, left; ),
+		InitCommand=function(self)
+			swoosh = self
+
+			self:zoomto(meterFillLength,meterFillHeight)
+				 :diffusealpha(0.2)
+				 :horizalign( left )
+		end,
 		OnCommand=function(self)
 			self:x(meterXOffset - meterFillLength/2);
 			self:customtexturerect(0,0,1,1);
@@ -77,22 +93,6 @@ local meter = Def.ActorFrame{
 		end
 	}
 }
-
-
-
-local function Update(self)
-
-	local swoosh = self:GetChild("MeterSwoosh")
-
-	newBPS = GAMESTATE:GetSongBPS()
-	local move = (newBPS*-1)/2
-	if GAMESTATE:GetSongFreeze() then move = 0 end
-	if swoosh then swoosh:texcoordvelocity(move,0) end
-
-	oldBPS = newBPS
-end
-
-meter.InitCommand=cmd(SetUpdateFunction,Update)
 
 return meter
 
