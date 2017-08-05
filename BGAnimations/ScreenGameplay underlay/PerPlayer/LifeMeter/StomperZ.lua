@@ -42,7 +42,7 @@ local af = Def.ActorFrame{
 			Name="Left",
 			InitCommand=function(self)
 				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
-					:diffuseupperleft(color("#c2c000")):diffuselowerleft(color("#c20200"))
+					:diffuseupperleft(color("#00c263")):diffuselowerleft(color("#00c263"))
 			end,
 			ChangeSizeCommand=function(self, params)
 				self:finishtweening():decelerate(0.2):croptop(params.CropAmount)
@@ -52,7 +52,7 @@ local af = Def.ActorFrame{
 			Name="Right",
 			InitCommand=function(self)
 				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
-					:diffuseupperright(color("#c2c000")):diffuselowerright(color("#c20200"))
+					:diffuseupperright(color("#00c263")):diffuselowerright(color("#00c263"))
 			end,
 			ChangeSizeCommand=function(self, params)
 				self:finishtweening():decelerate(0.2):croptop(params.CropAmount)
@@ -68,7 +68,7 @@ local af = Def.ActorFrame{
 			Name="Left",
 			InitCommand=function(self)
 				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
-					:diffuseupperleft(color("#006dc7")):diffuselowerleft(color("#00c263"))
+					:diffuseupperleft(color("#0073ff")):diffuselowerleft(color("#0073ff"))
 			end,
 			ChangeSizeCommand=function(self, params)
 				self:finishtweening():decelerate(0.2):croptop(params.CropAmount)
@@ -78,7 +78,7 @@ local af = Def.ActorFrame{
 			Name="Right",
 			InitCommand=function(self)
 				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
-					:diffuseupperright(color("#006dc7")):diffuselowerright(color("#00c263"))
+					:diffuseupperright(color("#0073ff")):diffuselowerright(color("#0073ff"))
 			end,
 			ChangeSizeCommand=function(self, params)
 				self:finishtweening():decelerate(0.2):croptop(params.CropAmount)
