@@ -6,6 +6,10 @@ af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:diffuse(Color.Black):diffusealpha(0.95)
 			:zoomto(_screen.w/2,_screen.h)
+
+		if SL.Global.GameMode == "StomperZ" then
+			self:y(-40)
+		end
 	end
 }
 

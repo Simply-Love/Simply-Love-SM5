@@ -9,12 +9,7 @@ end
 return Def.ActorFrame{
 	InitCommand=function(self)
 		self:x( _screen.w/4 * (player==PLAYER_1 and 3 or 1) )
-
-		if SL.Global.GameMode == "StomperZ" then
-			self:y(_screen.cy + 40)
-		else
-			self:y(_screen.cy + 80)
-		end
+			:y(_screen.cy + 80)
 	end,
 
 	LoadActor("./BackgroundAndBanner.lua", player),
