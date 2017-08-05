@@ -21,11 +21,11 @@ local colors = {
 		color("#ff0000")	-- red
 	},
 	StomperZ = {
-		color("#FFFFFF"),	-- white
-		color("#e29c18"),	-- gold
+		color("#5b2b8e"),	-- purple
+		color("#0073ff"),	-- dark blue
 		color("#66c955"),	-- green
-		color("#21CCE8"),	-- blue
-		color("#000000"),	-- black
+		color("#e29c18"),	-- gold
+		color("#dddddd"),	-- grey
 		color("#ff0000")	-- red
 	}
 }

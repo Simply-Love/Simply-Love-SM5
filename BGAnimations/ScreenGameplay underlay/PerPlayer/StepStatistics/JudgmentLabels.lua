@@ -25,20 +25,20 @@ local Colors = {
 		color("#c9855e"),	-- peach?
 		color("#ff0000")	-- red
 	},
-	StomperZ = {
-		color("#FFFFFF"),	-- white
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#21CCE8"),	-- blue
-		color("#000000"),	-- black
-		color("#ff0000")	-- red
-	},
 	ECFA = {
 		color("#21CCE8"),	-- blue
 		color("#FFFFFF"),	-- white
 		color("#e29c18"),	-- gold
 		color("#66c955"),	-- green
 		color("#9e00f7"),	-- purple
+		color("#ff0000")	-- red
+	},
+	StomperZ = {
+		color("#5b2b8e"),	-- purple
+		color("#0073ff"),	-- dark blue
+		color("#66c955"),	-- green
+		color("#e29c18"),	-- gold
+		color("#dddddd"),	-- grey
 		color("#ff0000")	-- red
 	}
 }
