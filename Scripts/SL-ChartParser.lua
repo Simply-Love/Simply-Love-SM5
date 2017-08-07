@@ -172,7 +172,8 @@ end
 -- 		StepsType, a string like "dance-single" or "pump-double"
 -- 		Difficulty, a string like "Beginner" or "Challenge"
 
-function GetNoteDensity(SongDir, StepsType, Difficulty)
+function GetNPSperMeasure(Song, StepsType, Difficulty)
+	local SongDir = Song:GetSongDir()
 	local SimfileString = GetSimfileString( SongDir )
 	if not SimfileString then return end
 
@@ -189,18 +190,28 @@ function GetNoteDensity(SongDir, StepsType, Difficulty)
 	-- the main density table, indexed by measure number
 	local Density = {}
 	-- Keep track of the measure
-	local measureCount = 1
+	local measureCount = 0
 	-- Keep track of the number of notes in the current measure while we iterate
 	local NotesInThisMeasure = 0
-	local PeakNoteDensity = 0
+
+	local NPSforThisMeasure, PeakNPS, BPM = 0, 0, 0
+	local TimingData = Song:GetTimingData()
 
 	-- Loop through each line in our string of measures
 	for line in ChartString:gmatch("[^\r\n]+") do
 
 		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
 		if(line:match("^[,;]%s*")) then
-			Density[measureCount] = NotesInThisMeasure
-			if NotesInThisMeasure > PeakNoteDensity then PeakNoteDensity = NotesInThisMeasure end
+			-- store the note density of this measure in the Density table, indexed by the current measure number
+			-- Density[measureCount] = NotesInThisMeasure
+
+			DurationOfMeasureInSeconds = TimingData:GetElapsedTimeFromBeat((measureCount+1)*4) - TimingData:GetElapsedTimeFromBeat(measureCount*4)
+			NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds
+
+			Density[measureCount] = NPSforThisMeasure
+
+			if NPSforThisMeasure > PeakNPS then PeakNPS = NPSforThisMeasure end
+
 			measureCount = measureCount + 1
 			NotesInThisMeasure = 0
 		else
@@ -211,7 +222,7 @@ function GetNoteDensity(SongDir, StepsType, Difficulty)
 		end
 	end
 
-	return PeakNoteDensity, Density
+	return PeakNPS, Density
 end
 
 

@@ -15,4 +15,5 @@ return Def.ActorFrame{
 	LoadActor("./BackgroundAndBanner.lua", player),
 	LoadActor("./JudgmentLabels.lua", player),
 	LoadActor("./JudgmentNumbers.lua", player),
+	LoadActor("./DensityGraphs/default.lua", player),
 }
