@@ -1,3 +1,7 @@
+if GAMESTATE:IsCourseMode() then
+	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+end
+
 local player = ...
 
 local Song = GAMESTATE:GetCurrentSong()
