@@ -14,7 +14,7 @@ local af = Def.ActorFrame{
 		InitCommand=function(self) self:FullScreen():Center():diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ) end,
 		BackgroundImageChangedMessageCommand=function(self)
 			THEME:ReloadMetrics()
-			SL.Global.ActiveColorIndex = 3
+			SL.Global.ActiveColorIndex = ThemePrefs.Get("RainbowMode") and 3 or ThemePrefs.Get("SimplyLoveColor")
 			self:linear(1):diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
 		end,
 	}
