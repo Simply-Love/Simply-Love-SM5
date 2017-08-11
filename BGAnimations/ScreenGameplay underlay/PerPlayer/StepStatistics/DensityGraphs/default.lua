@@ -13,6 +13,8 @@ if NPSperMeasure and #NPSperMeasure > 1 then
 	local height = GetNotefieldWidth(player)/2.25
 
 	local LifeMeter, life_verts = nil, {}
+	local LifeLineThickness = 2
+
 	local TimingData = Song:GetTimingData()
 
 	-- Don't use Song:MusicLengthSeconds() because it includes time
@@ -73,7 +75,8 @@ if NPSperMeasure and #NPSperMeasure > 1 then
 			self:SetDrawState{Mode="DrawMode_QuadStrip"}
 				:SetVertices(verts)
 				:align(0, 0)
-				:x( WideScale(0,60) )
+				-- offset the graph's x-position by half the thickness of the LifeLine
+				:x( WideScale(0,60) + LifeLineThickness/2 )
 				:y(height)
 				:MaskSource()
 		end
@@ -93,7 +96,7 @@ if NPSperMeasure and #NPSperMeasure > 1 then
 		Name="LifeLine_AMV",
 		InitCommand=function(self)
 			self:SetDrawState{Mode="DrawMode_LineStrip"}
-				:SetLineWidth(2)
+				:SetLineWidth( LifeLineThickness )
 				:align(0, 0)
 				:x( WideScale(0,60) )
 		end,
