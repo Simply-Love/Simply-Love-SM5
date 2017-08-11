@@ -1,49 +1,68 @@
-if GAMESTATE:IsCourseMode() then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
-end
-
 local player = ...
 
-local Song = GAMESTATE:GetCurrentSong()
-local Steps = GAMESTATE:GetCurrentSteps(player)
-local StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
-local Difficulty = ToEnumShortString( Steps:GetDifficulty() )
+local SongNumberInCourse = 0
+local LifeLineThickness = 2
+local LifeMeter = nil
+local life_verts = {}
+local width = GetNotefieldWidth(player)
+local height = GetNotefieldWidth(player)/2.25
 
-local PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, StepsType, Difficulty)
 
-if NPSperMeasure and #NPSperMeasure > 1 then
+local Song, Steps, StepsType, Difficulty, TrailEntry
+local PeakNPS, NPSperMeasure, PeakNPS_BMT
+local TimingData, FirstSecond, TotalSeconds
+local verts, x, y, t
 
-	local width = GetNotefieldWidth(player)
-	local height = GetNotefieldWidth(player)/2.25
+-- -------------------------------------------------
+local InitializeNPSHistogram = function()
 
-	local LifeMeter, life_verts = nil, {}
-	local LifeLineThickness = 2
-
-	local TimingData = Song:GetTimingData()
-
-	-- Don't use Song:MusicLengthSeconds() because it includes time
-	-- at the beginning before beat 0 has occurred
-	local FirstSecond =  Song:GetFirstSecond()
-	local TotalSeconds = Song:GetLastSecond() - FirstSecond
-
-	local verts = {}
-	local x, y, t
-
-	for i, nps in ipairs(NPSperMeasure) do
-		-- i will represent the current measure number but will be 1 larger than
-		-- it should be (measures in SM start at 0; indexed Lua tables start at 1)
-		-- subtract 1 from i now to get the actual measure number to calculate time
-		t = TimingData:GetElapsedTimeFromBeat((i-1)*4)
-
-		x = scale(t, 0, TotalSeconds, 0, width)
-		y = -1 * scale(nps, 0, PeakNPS, 0, height)
-
-		verts[#verts+1] = {{x, 0, 0}, {1,1,1,1}}
-		verts[#verts+1] = {{x, y, 0}, {1,1,1,1}}
+	if GAMESTATE:IsCourseMode() then
+		TrailEntry = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[SongNumberInCourse+1]
+		Steps = TrailEntry:GetSteps()
+		Song = TrailEntry:GetSong()
+	else
+		Steps = GAMESTATE:GetCurrentSteps(player)
+		Song = GAMESTATE:GetCurrentSong()
 	end
 
-	-- -------------------------------------------------
-	-- Actors defined below this line
+	StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
+	Difficulty = ToEnumShortString( Steps:GetDifficulty() )
+
+	PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, StepsType, Difficulty)
+
+
+	if PeakNPS and NPSperMeasure and #NPSperMeasure > 1 then
+
+		TimingData = Song:GetTimingData()
+
+		-- Don't use Song:MusicLengthSeconds() because it includes time
+		-- at the beginning before beat 0 has occurred
+		FirstSecond =  Song:GetFirstSecond()
+		TotalSeconds = Song:GetLastSecond() - FirstSecond
+
+		verts = {}
+		x, y, t = nil, nil, nil
+
+		for i, nps in ipairs(NPSperMeasure) do
+			-- i will represent the current measure number but will be 1 larger than
+			-- it should be (measures in SM start at 0; indexed Lua tables start at 1)
+			-- subtract 1 from i now to get the actual measure number to calculate time
+			t = TimingData:GetElapsedTimeFromBeat((i-1)*4)
+
+			x = scale(t, 0, TotalSeconds, 0, width)
+			y = -1 * scale(nps, 0, PeakNPS, 0, height)
+
+			verts[#verts+1] = {{x, 0, 0}, {1,1,1,1}}
+			verts[#verts+1] = {{x, y, 0}, {1,1,1,1}}
+		end
+	end
+end
+
+InitializeNPSHistogram()
+
+-- -------------------------------------------------
+-- Actors defined below this line
+if PeakNPS and NPSperMeasure and #NPSperMeasure > 1 then
 
 	local af = Def.ActorFrame{
 		InitCommand=function(self)
@@ -52,17 +71,19 @@ if NPSperMeasure and #NPSperMeasure > 1 then
 		end,
 		OnCommand=function(self)
 			LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..ToEnumShortString(player))
-		end,
+		end
 	}
 
 	local text = Def.BitmapText{
 		Font="_miso",
-		Text=ScreenString("PeakNPS") .. ": " .. round(PeakNPS,2),
 		InitCommand=function(self)
+			self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(PeakNPS,2) )
 			self:x( _screen.w/2 - self:GetWidth()/2 - 2 + WideScale(0,-60) )
 				:y( -self:GetHeight()/2 - 2 )
 				:zoom(0.9)
-		end
+
+			PeakNPS_BMT = self
+		end,
 	}
 
 	local bg = Def.Quad{
@@ -77,12 +98,30 @@ if NPSperMeasure and #NPSperMeasure > 1 then
 		Name="DensityGraph_AMV",
 		InitCommand=function(self)
 			self:SetDrawState{Mode="DrawMode_QuadStrip"}
-				:SetVertices(verts)
 				:align(0, 0)
 				-- offset the graph's x-position by half the thickness of the LifeLine
 				:x( WideScale(0,60) + LifeLineThickness/2 )
 				:y(height)
 				:MaskSource()
+		end,
+		CurrentSongChangedMessageCommand=function(self)
+			-- we've reached a new song, so reset the vertices for the density graph
+			-- this will occur at the start of each new song in CourseMode
+			-- and at the start of "normal" gameplay
+			verts = {}
+			self:SetNumVertices(#verts):SetVertices(verts)
+			self:queuecommand("Reinitalize")
+		end,
+		ReinitalizeCommand=function(self)
+			InitializeNPSHistogram()
+			SongNumberInCourse = SongNumberInCourse + 1
+			self:queuecommand("SetVerts")
+		end,
+		SetVertsCommand=function(self)
+			-- update the text for PeakNPS and reposition since it may now be longer/shorter
+			PeakNPS_BMT:queuecommand( "Init" )
+			-- update the density graph's vertices
+			self:SetVertices(verts)
 		end
 	}
 
@@ -116,6 +155,10 @@ if NPSperMeasure and #NPSperMeasure > 1 then
 			-- sample the player's LifeMeter every 1/3 second
 			-- TODO: maybe replace this later with something more sensible?
 			self:sleep(0.333):queuecommand("Sample")
+		end,
+		CurrentSongChangedMessageCommand=function(self)
+			life_verts = {}
+			self:SetNumVertices(#life_verts):SetVertices(life_verts)
 		end
 	}
 
