@@ -18,36 +18,7 @@ local FirstSecond = GAMESTATE:GetCurrentSong():GetFirstSecond()
 local TotalSeconds = GAMESTATE:GetCurrentSong():GetLastSecond() - FirstSecond
 
 -- variables that will be used and re-used in the loop while calculating the AMV's vertices
-local Offset, CurrentSecond, TimingWindow, x, y, TempQuad
-
--- ---------------------------------------------
--- Standard colors, but with slight opacity.
-local colors = {
-	Competitive = {
-		color("#21CCE8aa"),	-- blue
-		color("#e29c18aa"),	-- gold
-		color("#66c955aa"),	-- green
-		color("#5b2b8eaa"),	-- purple
-		color("#c9855eaa"),	-- peach?
-		color("#ff0000aa")	-- red
-	},
-	ECFA = {
-		color("#21CCE8aa"),	-- blue
-		color("#ffffffaa"),	-- white
-		color("#e29c18aa"),	-- gold
-		color("#66c955aa"),	-- green
-		color("#5b2b8eaa"),	-- purple
-		color("#ff0000aa")	-- red
-	},
-	StomperZ = {
-		color("#5b2b8eaa"),	-- purple
-		color("#0073ffaa"),	-- dark blue
-		color("#66c955aa"),	-- green
-		color("#e29c18aa"),	-- gold
-		color("#ddddddaa"),	-- grey
-		color("#ff0000aa")	-- red
-	}
-}
+local Offset, CurrentSecond, TimingWindow, x, y, c
 
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
@@ -80,10 +51,16 @@ local amv = Def.ActorMultiVertex{
 				TimingWindow = DetermineTimingWindow(Offset)
 				y = scale(Offset, worst_window, -worst_window, 0, GraphHeight)
 
-				table.insert( verts, {{x, y, 0}, colors[SL.Global.GameMode][TimingWindow]} )
-				table.insert( verts, {{x+1.5, y, 0}, colors[SL.Global.GameMode][TimingWindow]} )
-				table.insert( verts, {{x+1.5, y+1.5, 0}, colors[SL.Global.GameMode][TimingWindow]} )
-				table.insert( verts, {{x, y+1.5, 0}, colors[SL.Global.GameMode][TimingWindow]} )
+				-- get the appropriate color from the global SL table
+				c = SL.JudgmentColors[SL.Global.GameMode][TimingWindow]
+				-- the colors, as defined in SL_Init.lua, weren't given alpha (opacity) values
+				-- so they default to 1; we want the alpha to be slightly less than 1 here
+				c[4] = 0.666
+
+				table.insert( verts, {{x, y, 0}, c} )
+				table.insert( verts, {{x+1.5, y, 0}, c} )
+				table.insert( verts, {{x+1.5, y+1.5, 0}, c} )
+				table.insert( verts, {{x, y+1.5, 0}, c} )
 			else
 
 				table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
