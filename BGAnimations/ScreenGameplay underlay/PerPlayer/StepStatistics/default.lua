@@ -2,7 +2,11 @@ local player = ...
 local pn = ToEnumShortString(player)
 
 -- if the conditions aren't right, don't bother
-if SL[pn].ActiveModifiers.TargetStatus ~= "Step Statistics" or SL.Global.Gamestate.Style ~= "single" or PREFSMAN:GetPreference("Center1Player") then
+if SL[pn].ActiveModifiers.TargetStatus ~= "Step Statistics"
+or SL.Global.Gamestate.Style ~= "single"
+or SL.Global.GameMode == "Casual"
+or PREFSMAN:GetPreference("Center1Player")
+then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
 
