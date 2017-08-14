@@ -1,30 +1,52 @@
 local choices = {
-	{
-		Value = "Casual",
-		Text = ScreenString("Casual"),
-		ZoomWidth = 0.475
+	ScreenSelectPlayMode = {
+		{
+			Value = "Casual",
+			Text = ScreenString("Casual"),
+			ZoomWidth = 0.475
+		},
+		{
+			Value = "Competitive",
+			Text = ScreenString("Competitive"),
+			ZoomWidth = 0.7
+		},
+		{
+			Value = "ECFA",
+			Text = ScreenString("ECFA"),
+			ZoomWidth = 0.45
+		},
+		{
+			Value = "StomperZ",
+			Text = ScreenString("StomperZ"),
+			ZoomWidth = 0.65
+		}
 	},
-	{
-		Value = "Competitive",
-		Text = ScreenString("Competitive"),
-		ZoomWidth = 0.7
-	},
-	{
-		Value = "ECFA",
-		Text = ScreenString("ECFA"),
-		ZoomWidth = 0.45
-	},
-	{
-		Value = "StomperZ",
-		Text = ScreenString("StomperZ"),
-		ZoomWidth = 0.65
+	ScreenSelectPlayMode2 = {
+		{
+			Value = "Regular",
+			Text = ScreenString("Regular"),
+			ZoomWidth = 0.55
+		},
+		{
+			Value = "Marathon",
+			Text = ScreenString("Marathon"),
+			ZoomWidth = 0.65
+		}
 	}
 }
 
-local game = GAMESTATE:GetCurrentGame():GetName()
-local cursor, description_text
+-- give this a value now, before the TopScreen has been prepared and we can fetch its name
+-- we'll reassign it appropriately below, once the TopScreen is available
+local ScreenName = "ScreenSelectPlayMode"
 
-local cursor_index = 0
+local game = GAMESTATE:GetCurrentGame():GetName()
+
+local cursor = {
+	actor = nil,
+	h = 40, w = 240,
+	index = 0
+}
+
 
 local viewport 	= { w = 200, h = 150}
 local arrow	= {
@@ -69,13 +91,16 @@ end
 
 local Update = function(af, delta)
 	local index = SCREENMAN:GetTopScreen():GetSelectionIndex( GAMESTATE:GetMasterPlayerNumber() )
-	if index ~= cursor_index then
-		cursor_index = index
+	if index ~= cursor.index then
+		cursor.index = index
 
-		cursor:stoptweening():linear(0.1)
+		cursor.actor:stoptweening():linear(0.1)
 			:y( -60 + (40 * index) )
-			:zoomtowidth( choices[index+1].ZoomWidth )
-		af:queuecommand("Update"):queuecommand("FirstLoop")
+			:zoomtowidth( choices[ScreenName][index+1].ZoomWidth )
+
+		-- queue an "Update" to the AF containing the description text, score, and lifemeter actors
+		-- since they are children of that AF, they will also listen for that command
+		af:queuecommand("Update")
 	end
 end
 
@@ -86,14 +111,16 @@ local t = Def.ActorFrame{
 			:zoom(1.25)
 	end,
 	OffCommand=function(self)
-		-- set the GameMode now; we'll use it throughout the theme
-		-- to set certain Gameplay settings and determine which screen comes next
-		SL.Global.GameMode = choices[cursor_index+1].Value
+		if ScreenName == "ScreenSelectPlayMode" then
+			-- set the GameMode now; we'll use it throughout the theme
+			-- to set certain Gameplay settings and determine which screen comes next
+			SL.Global.GameMode = choices[ScreenName][cursor.index+1].Value
 
-		-- now that a GameMode has been selected, set related preferences now.
-		SetGameModePreferences()
-		
-		THEME:ReloadMetrics()
+			-- now that a GameMode has been selected, set related preferences
+			SetGameModePreferences()
+			-- and reload the theme's Metrics
+			THEME:ReloadMetrics()
+		end
 	end,
 
 	-- side mask
@@ -118,10 +145,12 @@ local t = Def.ActorFrame{
 		},
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(20) end,
+			OnCommand=function(self) if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then self:visible(false) end end,
 			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(60) end,
+			OnCommand=function(self) if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then self:visible(false) end end,
 			OffCommand=function(self) self:sleep(0.1):linear(0.1):diffusealpha(0) end
 		},
 	},
@@ -144,12 +173,11 @@ local t = Def.ActorFrame{
 		Text=THEME:GetString("ScreenSelectPlayMode", "CasualDescription"),
 		InitCommand=function(self)
 			self:zoom(0.825):croptop(1):halign(0):valign(0):xy(-130,-60)
-			description_text = self
 		end,
 		OnCommand=function(self) self:linear(0.15):croptop(0) end,
 		UpdateCommand=function(self)
 			self:stoptweening():linear(0.1):croptop(1)
-				:settext( THEME:GetString("ScreenSelectPlayMode", choices[cursor_index+1].Value .. "Description") )
+				:settext( THEME:GetString("ScreenSelectPlayMode", choices[ScreenName][cursor.index+1].Value .. "Description") )
 				:linear(0.1):croptop(0)
 		end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end
@@ -158,21 +186,23 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		Name="Cursor",
 		InitCommand=function(self)
-			cursor = self
-			self:x(-150):zoomtowidth( choices[cursor_index+1].ZoomWidth ) 
-			self:queuecommand("FirstPosition")
+			cursor.actor = self
 		end,
-		FirstPositionCommand=function(self)
-			local index = SCREENMAN:GetTopScreen():GetSelectionIndex( GAMESTATE:GetMasterPlayerNumber() )
-			self:y( -60 + (40 * index) )
+		OnCommand=function(self)
+			ScreenName = SCREENMAN:GetTopScreen():GetName()
+			if ScreenName == "ScreenSelectPlayMode" then
+				cursor.index = FindInTable( ThemePrefs.Get("DefaultGameMode"), ThemePrefsRows.GetRow("DefaultGameMode").Choices )-1
+			end
+			self:zoomtowidth( choices[ScreenName][cursor.index+1].ZoomWidth )
+			self:x(-150):y( -60 + (cursor.h * cursor.index) )
 		end,
-		
+
 		Def.Quad{
-			InitCommand=function(self) self:zoomto(241, 42):diffuse(1,1,1,1):x(-1):halign(1) end,
+			InitCommand=function(self) self:zoomto(cursor.w+1, cursor.h+2):diffuse(1,1,1,1):x(-1):halign(1) end,
 			OffCommand=function(self) self:sleep(0.4):linear(0.2):cropleft(1) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:zoomto(240, 40):diffuse(0,0,0,1):halign(1) end,
+			InitCommand=function(self) self:zoomto(cursor.w, cursor.h):diffuse(0,0,0,1):halign(1) end,
 			OffCommand=function(self) self:sleep(0.4):linear(0.2):cropleft(1) end
 		}
 	},
@@ -180,16 +210,16 @@ local t = Def.ActorFrame{
 	-- Score
 	Def.BitmapText{
 		Font="_wendy monospace numbers",
-		Text="77.41",
+		Text=cursor.index ~= 2 and "77.41" or "99.50",
 		InitCommand=function(self)
 			self:zoom(0.225):xy(124,-68):diffusealpha(0)
 		end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor_index == 0 then
+			if cursor.index == 0 then
 				self:stoptweening():linear(0.25):diffusealpha(0)
 			else
-				if cursor_index == 2 then
+				if cursor.index == 2 then
 					self:settext("99.50")
 				else
 					self:settext("77.41")
@@ -205,7 +235,7 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor_index == 0 or cursor_index == 3 then
+			if cursor.index == 0 or cursor.index == 3 then
 				self:stoptweening():linear(0.25):diffusealpha(0)
 			else
 				self:stoptweening():linear(0.25):diffusealpha(1)
@@ -237,7 +267,7 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor_index == 3 then
+			if cursor.index == 3 then
 				self:stoptweening():linear(0.25):diffusealpha(1)
 			else
 				self:stoptweening():linear(0.25):diffusealpha(0)
@@ -304,7 +334,7 @@ local function YieldStepPattern(i, dir)
 		OnCommand=function(self) self:queuecommand("FirstLoop") end,
 		UpdateCommand=function(self)
 			self:visible(true)
-			if cursor_index == 0 and i % 2 == 0 then
+			if cursor.index == 0 and i % 2 == 0 then
 				self:visible(false)
 			end
 		end,
@@ -314,20 +344,31 @@ local function YieldStepPattern(i, dir)
 				:rotationz( arrow.rotation[dir] )
 				:x( arrow.x[game][dir] )
 				:MaskDest()
-				:linear(timePerArrow * i)
-				:y(-55)
-				:queuecommand("Loop")
+			-- apply tweens appropriately
+			if choices[ScreenName][cursor.index+1].Value == "Marathon" then
+				self:ease(timePerArrow * i, 75):addrotationz(720)
+			else
+				self:linear(timePerArrow * i)
+			end
 
+			self:y(-55)
+				:queuecommand("Loop")
 		end,
 		LoopCommand=function(self)
 			-- reset the y of this arrow to a lower position
 			self:y(#pattern[game] * arrow.h)
-				:linear(timePerArrow *  #pattern[game])
+
+			-- apply tweens appropriately
+			if choices[ScreenName][cursor.index+1].Value == "Marathon" then
+				self:ease(timePerArrow * #pattern[game], 75):addrotationz(720)
+			else
+				self:linear(timePerArrow *  #pattern[game])
+			end
 
 			--  -55 seems to be a good static y value to tween up to
 			--  before recursing and effectively doing this again
 			self:y(-55)
-			self:queuecommand('Loop')
+				:queuecommand('Loop')
 		end
 	}
 
