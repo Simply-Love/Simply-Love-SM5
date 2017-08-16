@@ -110,6 +110,7 @@ local t = Def.ActorFrame{
 			:xy(_screen.cx+90, _screen.cy)
 			:zoom(1.25)
 	end,
+	OnCommand=function(self) self:queuecommand("Update") end,
 	OffCommand=function(self)
 		if ScreenName == "ScreenSelectPlayMode" then
 			-- set the GameMode now; we'll use it throughout the theme
@@ -170,15 +171,11 @@ local t = Def.ActorFrame{
 	-- description
 	Def.BitmapText{
 		Font="_miso",
-		Text=THEME:GetString("ScreenSelectPlayMode", "CasualDescription"),
 		InitCommand=function(self)
-			self:zoom(0.825):croptop(1):halign(0):valign(0):xy(-130,-60)
+			self:zoom(0.825):halign(0):valign(0):xy(-130,-60)
 		end,
-		OnCommand=function(self) self:linear(0.15):croptop(0) end,
 		UpdateCommand=function(self)
-			self:stoptweening():linear(0.1):croptop(1)
-				:settext( THEME:GetString("ScreenSelectPlayMode", choices[ScreenName][cursor.index+1].Value .. "Description") )
-				:linear(0.1):croptop(0)
+			self:settext( THEME:GetString("ScreenSelectPlayMode", choices[ScreenName][cursor.index+1].Value .. "Description") )
 		end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end
 	},
@@ -210,21 +207,29 @@ local t = Def.ActorFrame{
 	-- Score
 	Def.BitmapText{
 		Font="_wendy monospace numbers",
-		Text=cursor.index ~= 2 and "77.41" or "99.50",
 		InitCommand=function(self)
 			self:zoom(0.225):xy(124,-68):diffusealpha(0)
 		end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor.index == 0 then
-				self:stoptweening():linear(0.25):diffusealpha(0)
+			if ScreenName == "ScreenSelectPlayMode" then
+				if cursor.index == 0 then
+					self:stoptweening():linear(0.25):diffusealpha(0)
+				else
+					if cursor.index == 2 then
+						self:settext("99.50")
+					else
+						self:settext("77.41")
+					end
+					self:stoptweening():linear(0.25):diffusealpha(1)
+				end
 			else
-				if cursor.index == 2 then
+				self:diffusealpha(1)
+				if SL.Global.GameMode == "ECFA" then
 					self:settext("99.50")
 				else
 					self:settext("77.41")
 				end
-				self:stoptweening():linear(0.25):diffusealpha(1)
 			end
 		end,
 
@@ -235,10 +240,18 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor.index == 0 or cursor.index == 3 then
-				self:stoptweening():linear(0.25):diffusealpha(0)
+			if ScreenName == "ScreenSelectPlayMode" then
+				if cursor.index == 0 or cursor.index == 3 then
+					self:stoptweening():linear(0.25):diffusealpha(0)
+				else
+					self:stoptweening():linear(0.25):diffusealpha(1)
+				end
 			else
-				self:stoptweening():linear(0.25):diffusealpha(1)
+				if SL.Global.GameMode == "StomperZ" then
+					self:diffusealpha(0)
+				else
+					self:diffusealpha(1)
+				end
 			end
 		end,
 		-- lifemeter white border
@@ -267,10 +280,16 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
-			if cursor.index == 3 then
-				self:stoptweening():linear(0.25):diffusealpha(1)
+			if ScreenName == "ScreenSelectPlayMode" then
+				if cursor.index == 3 then
+					self:stoptweening():linear(0.25):diffusealpha(1)
+				else
+					self:stoptweening():linear(0.25):diffusealpha(0)
+				end
 			else
-				self:stoptweening():linear(0.25):diffusealpha(0)
+				if SL.Global.GameMode == "StomperZ" then
+					self:diffusealpha(1)
+				end
 			end
 		end,
 		LoadActor(THEME:GetPathG("", "Triangles.png"))..{
