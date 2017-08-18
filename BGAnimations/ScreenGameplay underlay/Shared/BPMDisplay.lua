@@ -1,8 +1,7 @@
-local numPlayers = GAMESTATE:GetNumPlayersEnabled()
+local Players = GAMESTATE:GetHumanPlayers()
 local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
-local MasterPlayerNumber = GAMESTATE:GetMasterPlayerNumber()
-local MasterPlayerState = GAMESTATE:GetPlayerState(MasterPlayerNumber)
+local MasterPlayerState = GAMESTATE:GetPlayerState(GAMESTATE:GetMasterPlayerNumber())
 local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
 
 local bpmDisplay, SongPosition
@@ -30,9 +29,9 @@ local Update2PBPM = function(self)
 	MusicRate = so:MusicRate()
 
 	-- need current bpm for p1 and p2
-	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-		bpmDisplay = (pn == PLAYER_1) and dispP1 or dispP2
-		SongPosition = GAMESTATE:GetPlayerState(pn):GetSongPosition()
+	for player in ivalues(Players) do
+		bpmDisplay = (player == PLAYER_1) and dispP1 or dispP2
+		SongPosition = GAMESTATE:GetPlayerState(player):GetSongPosition()
 		bpmDisplay:settext( round( SongPosition:GetCurBPS() * 60 * MusicRate ) )
 	end
 
@@ -110,12 +109,12 @@ if SL.Global.GameMode == "StomperZ" then
 end
 
 
-if numPlayers == 1 then
+if #Players == 1 then
 	t[#t+1] = SingleBPMDisplay()
 end
 
 
-if numPlayers == 2 then
+if #Players == 2 then
 
 	if not GAMESTATE:IsCourseMode() then
 		-- check if both players are playing the same steps
@@ -144,7 +143,22 @@ if numPlayers == 2 then
 			-- both players have the same trail; only need one BPM Display.
 			t[#t+1] = SingleBPMDisplay()
 		else
-			t[#t+1] = DualBPMDisplay()
+			-- Two different Trails may effectively share the the same TimingData for each of their TrailEntries,
+			-- but this is not guaranteed.  A single song within the course may feature split BPMs, for example.
+			-- So, loop through the TrailEntries of both and compare the TimingData of each.
+			-- If there is even one discrepancy, break from the loop and use a DualBPMDisplay.
+			local TrailEntriesP1 = TrailP1:GetTrailEntries()
+			local TrailEntriesP2 = TrailP2:GetTrailEntries()
+			local DivergentTimingData = false
+
+			for i=1, #TrailEntriesP1 do
+				if TrailEntriesP1[i]:GetSteps():GetTimingData() ~= TrailEntriesP2[i]:GetSteps():GetTimingData() then
+					DivergentTimingData = true
+					break
+				end
+			end
+
+			t[#t+1] = DivergentTimingData and DualBPMDisplay() or SingleBPMDisplay()
 		end
 	end
 end
