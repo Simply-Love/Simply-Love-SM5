@@ -1,104 +1,27 @@
-local choices = {
-	ScreenSelectPlayMode = {
-		{
-			Value = "Casual",
-			Text = ScreenString("Casual"),
-			ZoomWidth = 0.475
-		},
-		{
-			Value = "Competitive",
-			Text = ScreenString("Competitive"),
-			ZoomWidth = 0.7
-		},
-		{
-			Value = "ECFA",
-			Text = ScreenString("ECFA"),
-			ZoomWidth = 0.45
-		},
-		{
-			Value = "StomperZ",
-			Text = ScreenString("StomperZ"),
-			ZoomWidth = 0.65
-		}
-	},
-	ScreenSelectPlayMode2 = {
-		{
-			Value = "Regular",
-			Text = ScreenString("Regular"),
-			ZoomWidth = 0.55
-		},
-		{
-			Value = "Marathon",
-			Text = ScreenString("Marathon"),
-			ZoomWidth = 0.65
-		}
-	}
-}
-
+local choices, choice_actors = {}, {}
+local TopScreen = nil
 -- give this a value now, before the TopScreen has been prepared and we can fetch its name
 -- we'll reassign it appropriately below, once the TopScreen is available
 local ScreenName = "ScreenSelectPlayMode"
 
-local game = GAMESTATE:GetCurrentGame():GetName()
-
 local cursor = {
-	actor = nil,
-	h = 40, w = 240,
-	index = 0
+	h = 40,
+	index = 0,
+	-- the width of the cursor will be clamped to exist between these two values
+	min_w = 90, max_w = 170,
 }
-
-
-local viewport 	= { w = 200, h = 150}
-local arrow	= {
-	w = 12,
-	h = 20,
-	rotation = {
-		center = 0,
-		up = 45,
-		upright = 90,
-		right = 135,
-		downright= 180,
-		down = 225,
-		downleft = 270,
-		left = 315,
-		upleft = 0,
-	},
-	x = {
-		pump = { downleft=-48, upleft=-24, center=0, upright=24, downright=48 },
-		techno = { downleft=-84, left=-60, upleft=-36, down=-12, up=12, upright=36, right=60, downright=84 },
-		dance = { left=-36, down=-12, up=12, right=36 }
-	},
-	columns = {
-		pump = { "downleft", "upleft", "center", "upright", "downright" },
-		techno = { "downleft", "left", "upleft", "down", "up", "upright", "right", "downright" },
-		dance = { "left", "down", "up", "right" }
-	}
- }
-
-
-local timePerArrow = 0.2
-local pattern = {
-	dance =	{"left", "down", "left", "up", "down", "right", "up", "right", "down", "up", "left", "down", "up", "right" },
-	pump = 	{"upleft", "upright", "center", "downright", "upright", "center", "upleft", "upright", "center", "downright", "downleft", "center"},
-	techno = {"upleft", "upright", "down", "downright", "downleft", "up", "down", "right", "left", "downright", "downleft", "up"},
-}
-
--- I don't intend to include visualization for kb7, beat, or pop'n,
--- so fall back on the visualization for dance if necessary.
-if not pattern[game] then
-	game = "dance"
-end
 
 local Update = function(af, delta)
-	local index = SCREENMAN:GetTopScreen():GetSelectionIndex( GAMESTATE:GetMasterPlayerNumber() )
+	local index = TopScreen:GetSelectionIndex( GAMESTATE:GetMasterPlayerNumber() )
 	if index ~= cursor.index then
 		cursor.index = index
 
-		cursor.actor:stoptweening():linear(0.1)
-			:y( -60 + (40 * index) )
-			:zoomtowidth( choices[ScreenName][index+1].ZoomWidth )
+		-- queue the appropiate command to the faux playfield, if needed
+		if choices[cursor.index+1] == "Marathon" or choices[cursor.index+1] == "Regular" then
+			af:queuecommand("FirstLoop"..choices[cursor.index+1])
+		end
 
-		-- queue an "Update" to the AF containing the description text, score, and lifemeter actors
+		-- queue an "Update" to the AF containing the cursor, description text, score, and lifemeter actors
 		-- since they are children of that AF, they will also listen for that command
 		af:queuecommand("Update")
 	end
@@ -110,12 +33,26 @@ local t = Def.ActorFrame{
 			:xy(_screen.cx+90, _screen.cy)
 			:zoom(1.25)
 	end,
-	OnCommand=function(self) self:queuecommand("Update") end,
+	OnCommand=function(self)
+		-- Get the Topscreen and its name, now that that TopScreen itself actually exists
+		TopScreen = SCREENMAN:GetTopScreen()
+		ScreenName = TopScreen:GetName()
+
+		-- now that we have the TopScreen's name, get the single string containing this
+		-- screen's choices from Metrics.ini, and split it on commas; store those choices
+		-- in the choices table, and do similarly with actors associated with those choices
+		for choice in THEME:GetMetric(ScreenName, "ChoiceNames"):gmatch('([^,]+)') do
+			choices[#choices+1] = choice
+			choice_actors[#choice_actors+1] = TopScreen:GetChild("IconChoice"..choice)
+		end
+
+		self:queuecommand("Update")
+	end,
 	OffCommand=function(self)
 		if ScreenName == "ScreenSelectPlayMode" then
 			-- set the GameMode now; we'll use it throughout the theme
 			-- to set certain Gameplay settings and determine which screen comes next
-			SL.Global.GameMode = choices[ScreenName][cursor.index+1].Value
+			SL.Global.GameMode = choices[cursor.index+1]
 
 			-- now that a GameMode has been selected, set related preferences
 			SetGameModePreferences()
@@ -138,20 +75,20 @@ local t = Def.ActorFrame{
 		InitCommand=function(self) self:x(-188) end,
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-60) end,
-			OffCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0) end
+			OffCommand=function(self) self:sleep(0.4):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-20) end,
-			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
+			OffCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(20) end,
-			OnCommand=function(self) if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then self:visible(false) end end,
+			OnCommand=function(self) if choices[3]==nil then self:visible(false) end end,
 			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
 			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(60) end,
-			OnCommand=function(self) if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then self:visible(false) end end,
+			OnCommand=function(self) if choices[4]==nil then self:visible(false) end end,
 			OffCommand=function(self) self:sleep(0.1):linear(0.1):diffusealpha(0) end
 		},
 	},
@@ -175,31 +112,33 @@ local t = Def.ActorFrame{
 			self:zoom(0.825):halign(0):valign(0):xy(-130,-60)
 		end,
 		UpdateCommand=function(self)
-			self:settext( THEME:GetString("ScreenSelectPlayMode", choices[ScreenName][cursor.index+1].Value .. "Description") )
+			self:settext( THEME:GetString("ScreenSelectPlayMode", choices[cursor.index+1] .. "Description") )
 		end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end
 	},
+
 	-- cursor to highlight the current choice
 	Def.ActorFrame{
 		Name="Cursor",
-		InitCommand=function(self)
-			cursor.actor = self
-		end,
 		OnCommand=function(self)
-			ScreenName = SCREENMAN:GetTopScreen():GetName()
 			if ScreenName == "ScreenSelectPlayMode" then
 				cursor.index = FindInTable( ThemePrefs.Get("DefaultGameMode"), ThemePrefsRows.GetRow("DefaultGameMode").Choices )-1
 			end
-			self:zoomtowidth( choices[ScreenName][cursor.index+1].ZoomWidth )
 			self:x(-150):y( -60 + (cursor.h * cursor.index) )
+		end,
+		UpdateCommand=function(self)
+			self:stoptweening():linear(0.1)
+				:y( -60 + (cursor.h * cursor.index) )
 		end,
 
 		Def.Quad{
-			InitCommand=function(self) self:zoomto(cursor.w+1, cursor.h+2):diffuse(1,1,1,1):x(-1):halign(1) end,
+			InitCommand=function(self) self:zoomtoheight(cursor.h+2):diffuse(1,1,1,1):x(-1):halign(1) end,
+			UpdateCommand=function(self) self:zoomtowidth( clamp( choice_actors[cursor.index+1]:GetWidth()/1.4, cursor.min_w, cursor.max_w) ) end,
 			OffCommand=function(self) self:sleep(0.4):linear(0.2):cropleft(1) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:zoomto(cursor.w, cursor.h):diffuse(0,0,0,1):halign(1) end,
+			InitCommand=function(self) self:zoomtoheight(cursor.h):diffuse(0,0,0,1):halign(1) end,
+			UpdateCommand=function(self) self:zoomtowidth( clamp(choice_actors[cursor.index+1]:GetWidth()/1.4, cursor.min_w, cursor.max_w) ) end,
 			OffCommand=function(self) self:sleep(0.4):linear(0.2):cropleft(1) end
 		}
 	},
@@ -213,10 +152,10 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if cursor.index == 0 then
+				if choices[cursor.index+1] == "Casual" then
 					self:stoptweening():linear(0.25):diffusealpha(0)
 				else
-					if cursor.index == 2 then
+					if choices[cursor.index+1] == "ECFA" then
 						self:settext("99.50")
 					else
 						self:settext("77.41")
@@ -241,10 +180,10 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if cursor.index == 0 or cursor.index == 3 then
-					self:stoptweening():linear(0.25):diffusealpha(0)
-				else
+				if choices[cursor.index+1] == "Competitive" or choices[cursor.index+1] == "ECFA" then
 					self:stoptweening():linear(0.25):diffusealpha(1)
+				else
+					self:stoptweening():linear(0.25):diffusealpha(0)
 				end
 			else
 				if SL.Global.GameMode == "StomperZ" then
@@ -281,7 +220,7 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if cursor.index == 3 then
+				if choices[cursor.index+1] == "StomperZ" then
 					self:stoptweening():linear(0.25):diffusealpha(1)
 				else
 					self:stoptweening():linear(0.25):diffusealpha(0)
@@ -311,112 +250,6 @@ local t = Def.ActorFrame{
 	}
 }
 
-local notefield = Def.ActorFrame{
-	InitCommand=function(self)
-		if game == "dance" then
-			self:zoom(1):xy(90,15)
-		elseif game == "techno" then
-			self:zoom(0.6):xy(90,-10)
-		elseif game == "pump" then
-			self:zoom(0.9):xy(90, 10)
-		end
-	end,
-	OffCommand=function(self) self:sleep(0.4):diffusealpha(0) end
-}
-
-t[#t+1] = notefield
-
-
--- loop through columns for this gametype and add Receptor arrows
-for i, column in ipairs( arrow.columns[game] ) do
-
-	local file = "arrow-body.png"
-	if column == "center" then file = "center-body.png" end
-
-	notefield[#notefield+1] = LoadActor( file )..{
-		InitCommand=function(self)
-			self:rotationz( arrow.rotation[column] )
-				:x( arrow.x[game][column] )
-				:y(-55)
-				:zoom(0.18)
-		end
-	}
-end
-
-
-
-
-local function YieldStepPattern(i, dir)
-
-	local step = Def.ActorFrame{
-		InitCommand=function(self) self:queuecommand("Update") end,
-		OnCommand=function(self) self:queuecommand("FirstLoop") end,
-		UpdateCommand=function(self)
-			self:visible(true)
-			if cursor.index == 0 and i % 2 == 0 then
-				self:visible(false)
-			end
-		end,
-		FirstLoopCommand=function(self)
-			self:stoptweening()
-			self:y( -55 + (i * (arrow.h+5)))
-				:rotationz( arrow.rotation[dir] )
-				:x( arrow.x[game][dir] )
-				:MaskDest()
-			-- apply tweens appropriately
-			if choices[ScreenName][cursor.index+1].Value == "Marathon" then
-				self:ease(timePerArrow * i, 75):addrotationz(720)
-			else
-				self:linear(timePerArrow * i)
-			end
-
-			self:y(-55)
-				:queuecommand("Loop")
-		end,
-		LoopCommand=function(self)
-			-- reset the y of this arrow to a lower position
-			self:y(#pattern[game] * arrow.h)
-
-			-- apply tweens appropriately
-			if choices[ScreenName][cursor.index+1].Value == "Marathon" then
-				self:ease(timePerArrow * #pattern[game], 75):addrotationz(720)
-			else
-				self:linear(timePerArrow *  #pattern[game])
-			end
-
-			--  -55 seems to be a good static y value to tween up to
-			--  before recursing and effectively doing this again
-			self:y(-55)
-				:queuecommand('Loop')
-		end
-	}
-
-
-	if dir == "center" then
-		files = { "center-body.png", "center-border.png", "center-feet.png" }
-	else
-		files = {"arrow-border.png", "arrow-body.png", "arrow-stripes.png" }
-	end
-
-	for index,file in ipairs(files) do
-		step[#step+1] = LoadActor( file )..{
-			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.18 ),
-			OnCommand=function(self)
-				if file == "center-feet.png" or file == "arrow-stripes.png" then
-					self:blend(Blend.Multiply)
-				end
-				if file == "center-body.png" or file == "center-feet.png" or file == "arrow-body.png" then
-					self:diffuse( GetHexColor(i) )
-				end
-			end,
-		}
-	end
-
-	return step
-end
-
-for index, direction in ipairs(pattern[game]) do
-	notefield[#notefield+1] = YieldStepPattern(index, direction)
-end
+t[#t+1] = LoadActor("./GameplayDemo.lua" )
 
 return t
