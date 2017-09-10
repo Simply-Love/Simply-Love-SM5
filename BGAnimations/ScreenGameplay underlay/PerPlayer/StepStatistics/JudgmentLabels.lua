@@ -19,37 +19,21 @@ local TNSNames = {
 local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Holds'),
 	THEME:GetString("ScreenEvaluation", 'Mines'),
-	THEME:GetString("ScreenEvaluation", 'Hands'),
 	THEME:GetString("ScreenEvaluation", 'Rolls')
 }
 
 
-local t = Def.ActorFrame{
-	InitCommand=cmd(xy, 50, _screen.cy-24),
-	OnCommand=function(self)
-		if player == PLAYER_2 then
-			self:x( self:GetX() * -1)
-		end
-	end
-}
+local af = Def.ActorFrame{}
 
 
---  labels: W1 ---> Miss
-for index, label in ipairs(TNSNames) do
-	t[#t+1] = LoadFont("_miso")..{
+--  labels: W1, W2, W3, W4, W5, Miss
+for i, label in ipairs(TNSNames) do
+	af[#af+1] = LoadFont("_miso")..{
 		Text=label:upper(),
 		InitCommand=cmd(zoom,0.833; horizalign,right ),
 		BeginCommand=function(self)
-			self:x( (player == PLAYER_1 and 28) or -28 )
-			self:y((index-1)*28 -16)
-
-			-- if StomperZ, diffuse the JudgmentLabel the StomperZ colors
-			if SL.Global.GameMode == "StomperZ" then
-				self:diffuse( SL.JudgmentColors.StomperZ[index] )
-
-			elseif SL.Global.GameMode == "ECFA" then
-				self:diffuse( SL.JudgmentColors.ECFA[index] )
-			end
+			self:x(80):y((i-1)*28 - 226)
+				:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 
 
 			local gmods = SL.Global.ActiveModifiers
@@ -68,16 +52,15 @@ for index, label in ipairs(TNSNames) do
 	}
 end
 
--- labels: holds, mines, hands, rolls
-for index, label in ipairs(RadarCategories) do
-	t[#t+1] = LoadFont("_miso")..{
+-- labels: holds, mines, rolls
+for i, label in ipairs(RadarCategories) do
+	af[#af+1] = LoadFont("_miso")..{
 		Text=label,
-		InitCommand=cmd(NoStroke;zoom,0.833; horizalign,right ),
+		InitCommand=cmd(zoom,0.833; horizalign,right ),
 		BeginCommand=function(self)
-			self:x( (player == PLAYER_1 and -160) or 90 )
-			self:y((index-1)*28 + 41)
+			self:x(-94):y((i-1)*28 - 143)
 		end
 	}
 end
 
-return t
+return af

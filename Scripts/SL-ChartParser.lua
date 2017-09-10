@@ -172,7 +172,8 @@ end
 -- 		StepsType, a string like "dance-single" or "pump-double"
 -- 		Difficulty, a string like "Beginner" or "Challenge"
 
-function GetNoteDensity(SongDir, StepsType, Difficulty)
+function GetNPSperMeasure(Song, StepsType, Difficulty)
+	local SongDir = Song:GetSongDir()
 	local SimfileString = GetSimfileString( SongDir )
 	if not SimfileString then return end
 
@@ -189,19 +190,31 @@ function GetNoteDensity(SongDir, StepsType, Difficulty)
 	-- the main density table, indexed by measure number
 	local Density = {}
 	-- Keep track of the measure
-	local measureCount = 1
+	local measureCount = 0
 	-- Keep track of the number of notes in the current measure while we iterate
 	local NotesInThisMeasure = 0
-	local PeakNoteDensity = 0
+
+	local NPSforThisMeasure, PeakNPS, BPM = 0, 0, 0
+	local TimingData = Song:GetTimingData()
 
 	-- Loop through each line in our string of measures
 	for line in ChartString:gmatch("[^\r\n]+") do
 
 		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
 		if(line:match("^[,;]%s*")) then
-			Density[measureCount] = NotesInThisMeasure
-			if NotesInThisMeasure > PeakNoteDensity then PeakNoteDensity = NotesInThisMeasure end
+
+			DurationOfMeasureInSeconds = TimingData:GetElapsedTimeFromBeat((measureCount+1)*4) - TimingData:GetElapsedTimeFromBeat(measureCount*4)
+			NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds
+
+			-- measureCount in SM truly starts at 0, but indexed Lua tables start at 1
+			-- add 1 now to the table behaves and subtract 1 later when drawing the histogram
+			Density[measureCount+1] = NPSforThisMeasure
+
+			-- determine whether this measure contained the PeakNPS
+			if NPSforThisMeasure > PeakNPS then PeakNPS = NPSforThisMeasure end
+			-- increment the measureCount
 			measureCount = measureCount + 1
+			-- and reset NotesInThisMeasure
 			NotesInThisMeasure = 0
 		else
 			-- does this line contain a note?
@@ -211,7 +224,7 @@ function GetNoteDensity(SongDir, StepsType, Difficulty)
 		end
 	end
 
-	return PeakNoteDensity, Density
+	return PeakNPS, Density
 end
 
 

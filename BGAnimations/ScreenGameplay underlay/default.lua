@@ -26,6 +26,7 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/TargetScore/default.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
 end
 
 

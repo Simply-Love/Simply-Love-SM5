@@ -15,25 +15,6 @@ for i, judgment in ipairs(judgments) do
 	TNSNames[#TNSNames+1] = THEME:GetString("TapNoteScore" .. mode, judgment)
 end
 
-local StomperZColors = {
-	color("#21CCE8"),	-- blue
-	color("#FFFFFF"),	-- white
-	color("#e29c18"),	-- gold
-	color("#66c955"),	-- green
-	color("#9e00f7"),	-- purple
-	color("#ff0000")	-- red
-}
-
-local ECFAColors = {
-	color("#21CCE8"),	-- blue
-	color("#FFFFFF"),	-- white
-	color("#e29c18"),	-- gold
-	color("#66c955"),	-- green
-	color("#9e00f7"),	-- purple
-	color("#ff0000")	-- red
-}
-
-
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy, 50, _screen.cy-24),
@@ -56,11 +37,11 @@ for index, label in ipairs(TNSNames) do
 
 			-- if StomperZ, color the JudgmentLabel
 			if mode == "StomperZ" then
-				self:diffuse( StomperZColors[index] )
+				self:diffuse( SL.JudgmentColors.StomperZ[index] )
 
 			-- if ECFA, color the JudgmentLabel
 			elseif mode == "ECFA" then
-				self:diffuse( ECFAColors[index] )
+				self:diffuse( SL.JudgmentColors.ECFA[index] )
 			end
 
 

@@ -150,6 +150,9 @@ local t = Def.ActorFrame{
 		self:GetChild("start_sound"):play()
 
 		SL.Global.ActiveColorIndex = FindInTable( wheel:get_info_at_focus_pos(), SL.Colors )
+		ThemePrefs.Set("SimplyLoveColor", SL.Global.ActiveColorIndex)
+		ThemePrefs.Save()
+
 		MESSAGEMAN:Broadcast("ColorSelected")
 
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)

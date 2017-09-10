@@ -174,9 +174,11 @@ local Overrides = {
 			local choice = mods.Mini or playeroptions:Mini() or "0%"
 			local i = FindInTable(choice, self.Choices) or 1
 			list[i] = true
+			-- set mini now, in case the player doesn't visit ScreenPlayerOptions and SaveSelections() never gets called
+			-- it is unclear why I need to do this for Mini and not other PlayerOptions (NoteSkin, SpeedMod, etc.)
+			playeroptions:Mini( choice:gsub("%%","")/100 )
 		end,
 		SaveSelections = function(self, list, pn)
-
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
 			for i=1,#self.Choices do
@@ -260,7 +262,13 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetStatus = {
-		Choices = function() return { 'Disabled', 'Bars', 'Target', 'Both' } end,
+		Choices = function()
+			local choices = { "Disabled", "Target Score Graph" }
+			if GAMESTATE:GetCurrentStyle():GetName() == "single" and not PREFSMAN:GetPreference("Center1Player") then
+				choices[#choices+1] = "Step Statistics"
+			end
+			return choices
+		end,
 		LoadSelections = function(self, list, pn)
 			local chosenOne = SL[ToEnumShortString(pn)].ActiveModifiers.TargetStatus
 			local i = FindInTable(chosenOne, self.Choices) or 1
@@ -298,16 +306,18 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
-		Choices = function() return { "Flash Column for Miss", "Subtractive Scoring"} end,
+		Choices = function() return { "Flash Column for Miss", "Subtractive Scoring", "Target Score"} end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			list[1] = mods.ColumnFlashOnMiss	or false
-			list[2] = mods.SubtractiveScoring 	or false
+			list[1] = mods.ColumnFlashOnMiss or false
+			list[2] = mods.SubtractiveScoring or false
+			list[3] = mods.TargetScore or false
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			mods.ColumnFlashOnMiss	= list[1]
+			mods.ColumnFlashOnMiss = list[1]
 			mods.SubtractiveScoring	= list[2]
+			mods.TargetScore = list[3]
 		end
 	},
 	-------------------------------------------------------------------------
@@ -438,10 +448,18 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Choices = function()
-			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
-				return { 'Gameplay', 'Select Music', 'Extra Modifiers' }
+			if SL.Global.GameMode == "Casual" then
+				if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
+					return { 'Gameplay', 'Select Music' }
+				else
+					return { 'Gameplay' }
+				end
 			else
-				return { 'Gameplay', 'Extra Modifiers' }
+				if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
+					return { 'Gameplay', 'Select Music', 'Extra Modifiers' }
+				else
+					return { 'Gameplay', 'Extra Modifiers' }
+				end
 			end
 		end,
 		OneChoiceForAllPlayers = true,

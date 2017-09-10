@@ -1,31 +1,83 @@
-local numPlayers = GAMESTATE:GetNumPlayersEnabled()
-local numSides = GAMESTATE:GetNumSidesJoined()
-local bDoubles = (numPlayers == 1 and numSides == 2)
-local bUsingCenter1P = PREFSMAN:GetPreference('Center1Player')
+local Players = GAMESTATE:GetHumanPlayers()
 local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
+local MasterPlayerState = GAMESTATE:GetPlayerState(GAMESTATE:GetMasterPlayerNumber())
+local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
 
-local function UpdateSingleBPM(self)
+local bpmDisplay, SongPosition
+local StepsP1, StepsP2
 
+
+-- the update function when a single BPM Display is in use
+local UpdateSingleBPM = function(af)
 	-- BPM stuff first
-	local bpmDisplay = self:GetChild("BPMDisplay")
-	local pn = GAMESTATE:GetMasterPlayerNumber()
-	local pState = GAMESTATE:GetPlayerState(pn)
-	local songPosition = pState:GetSongPosition()
+	SongPosition = MasterPlayerState:GetSongPosition()
 
 	-- then, MusicRate stuff
-	local MusicRateDisplay = self:GetParent():GetChild("RatemodDisplay")
-	local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
-	local MusicRate = so:MusicRate()
+	MusicRate = so:MusicRate()
 
 	-- BPM Display
-	local bpm = songPosition:GetCurBPS() * 60 * MusicRate
-	bpmDisplay:settext( round(bpm) )
+	bpmDisplay:settext( round(SongPosition:GetCurBPS() * 60 * MusicRate) )
 
 	-- MusicRate Display
 	MusicRate = string.format("%.2f", MusicRate )
 	MusicRateDisplay:settext( MusicRate ~= "1.00" and MusicRate.."x rate" or "" )
 end
+
+-- the update function when two BPM Displays are needed for divergent TimingData (split BPMs)
+local Update2PBPM = function(self)
+	MusicRate = so:MusicRate()
+
+	-- need current bpm for p1 and p2
+	for player in ivalues(Players) do
+		bpmDisplay = (player == PLAYER_1) and dispP1 or dispP2
+		SongPosition = GAMESTATE:GetPlayerState(player):GetSongPosition()
+		bpmDisplay:settext( round( SongPosition:GetCurBPS() * 60 * MusicRate ) )
+	end
+
+	MusicRate = string.format("%.2f", MusicRate )
+	MusicRateDisplay:settext( MusicRate ~= "1.00" and MusicRate.."x rate" or "" )
+end
+
+
+
+local SingleBPMDisplay = function()
+	return Def.ActorFrame{
+		InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM),
+
+		LoadFont("_miso")..{
+			Name="BPMDisplay",
+			InitCommand=function(self)
+				self:zoom(1)
+				bpmDisplay = self
+			end
+		}
+	}
+end
+
+local DualBPMDisplay = function()
+	return Def.ActorFrame{
+		InitCommand=function(self) self:SetUpdateFunction(Update2PBPM) end,
+
+		-- manual bpm displays
+		LoadFont("_miso")..{
+			Name="DisplayP1",
+			InitCommand=function(self)
+				self:x(-18):zoom(1):shadowlength(1)
+				dispP1 = self
+			end
+		},
+		LoadFont("_miso")..{
+			Name="DisplayP2",
+			InitCommand=function(self)
+				self:x(18):zoom(1):shadowlength(1)
+				dispP2 = self
+			end
+		}
+	}
+end
+
+-- -------------------------------------
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
@@ -41,93 +93,74 @@ local t = Def.ActorFrame{
 	LoadFont("_miso")..{
 		Name="RatemodDisplay",
 		Text=MusicRate ~= 1 and MusicRate.."x rate" or "",
-		InitCommand=cmd(zoom,0.5; y, 12)
+		InitCommand=function(self)
+			self:zoom(0.5):y(12)
+			MusicRateDisplay = self
+		end
 	}
 }
 
 if SL.Global.GameMode == "StomperZ" then
 	t[#t+1] = Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(0,0,0,0.85):zoomto(66,40):valign(0):xy( 0, -20 )	
+			self:diffuse(0,0,0,0.85):zoomto(66,40):valign(0):xy( 0, -20 )
 		end
 	}
 end
 
 
--- in CourseMode, both players should always be playing the same charts, right?
-if numPlayers == 1 or GAMESTATE:IsCourseMode() then
-	t[#t+1] = Def.ActorFrame{
-		InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM),
-	
-		LoadFont("_miso")..{
-			Name="BPMDisplay",
-			InitCommand=cmd(zoom,1)
-		}
-	}
-else
-	-- check if both players are playing the same steps
-	local stepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
-	local stepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
+if #Players == 1 then
+	t[#t+1] = SingleBPMDisplay()
+end
 
-	local stP1 = stepsP1:GetStepsType()
-	local stP2 = stepsP2:GetStepsType()
 
-	local diffP1 = stepsP1:GetDifficulty()
-	local diffP2 = stepsP2:GetDifficulty()
+if #Players == 2 then
 
-	-- get timing data...
-	local timingP1 = stepsP1:GetTimingData()
-	local timingP2 = stepsP2:GetTimingData()
+	if not GAMESTATE:IsCourseMode() then
+		-- check if both players are playing the same steps
+		StepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
+		StepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
 
-	if timingP1 == timingP2 then
-		-- both players are steps with the same TimingData; only need one.
-		t[#t+1] = Def.ActorFrame{
-			InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM),
-	
-			LoadFont("_miso")..{
-				Name="BPMDisplay",
-				InitCommand=cmd(zoom,1)
-			}
-		}
-		return t
-	end
+		-- get timing data...
+		local TimingDataP1 = StepsP1:GetTimingData()
+		local TimingDataP2 = StepsP2:GetTimingData()
 
-	-- otherwise, we have some more work to do.
+		local dispP1, dispP2
 
-	local function Update2PBPM(self)
-		local dispP1 = self:GetChild("DisplayP1")
-		local dispP2 = self:GetChild("DisplayP2")
-
-		local MusicRateDisplay = self:GetParent():GetChild("RatemodDisplay")
-		local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
-		local MusicRate = so:MusicRate()
-
-		-- needs current bpm for p1 and p2
-		for pn in ivalues(PlayerNumber) do
-			local bpmDisplay = (pn == PLAYER_1) and dispP1 or dispP2
-			local pState = GAMESTATE:GetPlayerState(pn)
-			local songPosition = pState:GetSongPosition()
-			local bpm = songPosition:GetCurBPS() * 60 * MusicRate
-			bpmDisplay:settext( round(bpm) )
+		if TimingDataP1 == TimingDataP2 then
+			-- both players have the same TimingData; only need one BPM Display.
+			t[#t+1] = SingleBPMDisplay()
+		else
+			t[#t+1] = DualBPMDisplay()
 		end
 
-		MusicRate = string.format("%.2f", MusicRate )
-		MusicRateDisplay:settext( MusicRate ~= "1.00" and MusicRate.."x rate" or "" )
-	end
+	-- if we ARE in CourseMode
+	else
+		local TrailP1 = GAMESTATE:GetCurrentTrail(PLAYER_1)
+		local TrailP2 = GAMESTATE:GetCurrentTrail(PLAYER_2)
 
-	t[#t+1] = Def.ActorFrame{
-		InitCommand=cmd(SetUpdateFunction,Update2PBPM),
-		
-		-- manual bpm displays
-		LoadFont("_miso")..{
-			Name="DisplayP1",
-			InitCommand=cmd(x,-18; zoom,1; shadowlength,1)
-		},
-		LoadFont("_miso")..{
-			Name="DisplayP2",
-			InitCommand=cmd(x,18; zoom,1; shadowlength,1)
-		}
-	}
+		if TrailP1 == TrailP2 then
+			-- both players have the same trail; only need one BPM Display.
+			t[#t+1] = SingleBPMDisplay()
+		else
+			-- Two different Trails may effectively share the the same TimingData for each of their TrailEntries,
+			-- but this is not guaranteed.  A single song within the course may feature split BPMs, for example.
+			-- So, loop through the TrailEntries of both and compare the TimingData of each.
+			-- If there is even one discrepancy, break from the loop and use a DualBPMDisplay.
+			local TrailEntriesP1 = TrailP1:GetTrailEntries()
+			local TrailEntriesP2 = TrailP2:GetTrailEntries()
+			local DivergentTimingData = false
+
+			for i=1, #TrailEntriesP1 do
+				if TrailEntriesP1[i]:GetSteps():GetTimingData() ~= TrailEntriesP2[i]:GetSteps():GetTimingData() then
+					DivergentTimingData = true
+					break
+				end
+			end
+
+			t[#t+1] = DivergentTimingData and DualBPMDisplay() or SingleBPMDisplay()
+		end
+	end
 end
 
 return t
