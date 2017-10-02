@@ -108,6 +108,32 @@ SL = {
 		"#FFBE00",
 		"#FF7D00"
 	},
+	JudgmentColors = {
+		Competitive = {
+			color("#21CCE8"),	-- blue
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#5b2b8e"),	-- purple
+			color("#c9855e"),	-- peach?
+			color("#ff0000")	-- red
+		},
+		ECFA = {
+			color("#21CCE8"),	-- blue
+			color("#ffffff"),	-- white
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#5b2b8e"),	-- purple
+			color("#ff0000")	-- red
+		},
+		StomperZ = {
+			color("#5b2b8e"),	-- purple
+			color("#0073ff"),	-- dark blue
+			color("#66c955"),	-- green
+			color("#e29c18"),	-- gold
+			color("#dddddd"),	-- grey
+			color("#ff0000")	-- red
+		}
+	},
 	Preferences = {
 		Casual = {
 			TimingWindowAdd=0.001500,
