@@ -1,17 +1,16 @@
-function GetCourseModeBPMs()
-	local Players, player, trail, trailEntries, lowest, highest, text, range
+function GetCourseModeBPMs(course)
+	local player, courseEntries, lowest, highest, text, range
 
-	Players = GAMESTATE:GetHumanPlayers()
-	player = Players[1]
+	player = GAMESTATE:GetMasterPlayerNumber()
 
 	if player then
-		trail = GAMESTATE:GetCurrentTrail(player)
+		course = course or GAMESTATE:GetCurrentCourse(player)
 
-		if trail then
-			trailEntries = trail:GetTrailEntries()
+		if course then
+			courseEntries = course:GetCourseEntries()
 
-			for k,trailEntry in ipairs(trailEntries) do
-				local song = trailEntry:GetSong()
+			for k,courseEntry in ipairs(courseEntries) do
+				local song = courseEntry:GetSong()
 				local bpms = song:GetDisplayBpms()
 
 				-- if either display BPM is negative or 0, use the actual BPMs instead...
