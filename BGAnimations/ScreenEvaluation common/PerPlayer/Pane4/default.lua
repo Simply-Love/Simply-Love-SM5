@@ -8,10 +8,37 @@ local pane_width, pane_height = 300, 180
 
 -- ---------------------------------------------
 
+local colors = {
+	Competitive = {
+		color("#21CCE8"),	-- blue
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#5b2b8e"),	-- purple
+		color("#c9855e"),	-- peach?
+		color("#ff0000")	-- red
+	},
+	ECFA = {
+		color("#21CCE8"),	-- blue
+		color("#ffffff"),	-- white
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#5b2b8e"),	-- purple
+		color("#ff0000")	-- red
+	},
+	StomperZ = {
+		color("#5b2b8e"),	-- purple
+		color("#0073ff"),	-- dark blue
+		color("#66c955"),	-- green
+		color("#e29c18"),	-- gold
+		color("#dddddd"),	-- grey
+		color("#ff0000")	-- red
+	}
+}
+
 local abbreviations = {
 	Competitive = { "Fan", "Ex", "Gr", "Dec", "WO" },
 	ECFA = { "Fan", "Fan", "Ex", "Gr", "Dec" },
-	StomperZ = { "Perf", "Def", "Gr", "Good", "" }
+	StomperZ = { "Perf", "Perf", "Gr", "Good", "" }
 }
 
 -- ---------------------------------------------
@@ -144,7 +171,7 @@ for offset=-worst_window, worst_window, 0.001 do
 
 	-- scale the highst point on the histogram to be 0.75 times as high as the pane
 	y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-	c = SL.JudgmentColors[SL.Global.GameMode][DetermineTimingWindow(offset)]
+	c = colors[SL.Global.GameMode][DetermineTimingWindow(offset)]
 
 	-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads places next to one another
 	-- each vertex is a table of two tables:
@@ -208,7 +235,7 @@ pane[#pane+1] = Def.BitmapText{
 	InitCommand=function(self)
 		local x = pane_width/2
 
-		self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+		self:diffuse( colors[SL.Global.GameMode][1] )
 			:addx(x):addy(7)
 			:zoom(0.65)
 	end,
@@ -230,7 +257,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			self:diffuse( colors[SL.Global.GameMode][i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,
@@ -248,7 +275,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			self:diffuse( colors[SL.Global.GameMode][i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,

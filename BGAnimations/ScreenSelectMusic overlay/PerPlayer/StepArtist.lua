@@ -106,14 +106,6 @@ return Def.ActorFrame{
 					self:x(126)
 					self:y(2)
 				end
-				self:queuecommand('LoopC')
-		end,
-		LoopCCommand=function(self)
-			self:diffusealpha(1)
-			self:sleep(2)
-			self:diffusealpha(0)
-			self:sleep(4)
-			self:queuecommand('LoopC')
 		end,
 		StepsHaveChangedCommand=function(self)
 
@@ -128,100 +120,5 @@ return Def.ActorFrame{
 				self:settext(stepartist or "")
 			end
 		end
-	},
-
-	--Steps Discription Text
-	Def.BitmapText{
-		Font="_miso",
-		--InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
-		InitCommand=function(self)
-			self:diffusealpha(0)
-			self:diffuse(color("#1e282f"))
-			self:maxwidth(122)
-				if player == PLAYER_1 then
-					self:horizalign(left)
-					self:x(46)
-					self:y(-3)
-				elseif player == PLAYER_2 then
-					self:horizalign(right)
-					self:x(126)
-					self:y(2)
-				end
-			self:queuecommand('LoopD')
-		end,
-		LoopDCommand=function(self)
-			self:diffusealpha(0)
-			self:sleep(2)
-			self:diffusealpha(1)
-			self:sleep(2)
-			self:diffusealpha(0)
-			self:sleep(2)
-			self:queuecommand('LoopD')
-		end,
-		StepsHaveChangedCommand=function(self)
-
-			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
-
-			if not SongOrCourse then
-				self:settext("")
-			elseif StepsOrCourse then
-				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
-					if
-						GAMESTATE:GetCurrentSteps(player):GetDescription() == ""
-					then
-							self:settext(stepartist and stepartist or "")
-					else
-						self:settext(GAMESTATE:GetCurrentSteps(player):GetDescription())
-					end
-			end
-		end
-	},
-
-	--Steps ChartName Text
-	Def.BitmapText{
-		Font="_miso",
-		--InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
-		InitCommand=function(self)
-			self:diffusealpha(0)
-			self:diffuse(color("#1e282f"))
-			self:maxwidth(122)
-				if player == PLAYER_1 then
-					self:horizalign(left)
-					self:x(46)
-					self:y(-3)
-				elseif player == PLAYER_2 then
-					self:horizalign(right)
-					self:x(126)
-					self:y(2)
-				end
-			self:queuecommand('LoopN')
-		end,
-		LoopNCommand=function(self)
-			self:diffusealpha(0)
-			self:sleep(4)
-			self:diffusealpha(1)
-			self:sleep(2)
-			self:diffusealpha(0)
-			self:queuecommand('LoopN')
-		end,
-		StepsHaveChangedCommand=function(self)
-
-			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
-
-			if not SongOrCourse then
-				self:settext("")
-			elseif StepsOrCourse then
-				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
-				if
-					GAMESTATE:GetCurrentSteps(player):GetChartName() == ""
-				then
-						self:settext(stepartist and stepartist or "")
-				else
-					self:settext(GAMESTATE:GetCurrentSteps(player):GetChartName())
-				end
-			end
-		end
-	},
+	}
 }

@@ -9,6 +9,34 @@ local RadarCategoryJudgments = { Holds=0, Mines=0, Rolls=0 }
 
 local leadingZeroAttr
 
+local Colors = {
+	Competitive = {
+		color("#21CCE8"),	-- blue
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#5b2b8e"),	-- purple
+		color("#c9855e"),	-- peach?
+		color("#ff0000")	-- red
+	},
+	ECFA = {
+		color("#21CCE8"),	-- blue
+		color("#FFFFFF"),	-- white
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#9e00f7"),	-- purple
+		color("#ff0000")	-- red
+	},
+	StomperZ = {
+		color("#5b2b8e"),	-- purple
+		color("#0073ff"),	-- dark blue
+		color("#66c955"),	-- green
+		color("#e29c18"),	-- gold
+		color("#dddddd"),	-- grey
+		color("#ff0000")	-- red
+	}
+}
+
+
 local t = Def.ActorFrame{
 	InitCommand=function(self)
 		self:zoom(0.8)
@@ -24,9 +52,9 @@ for index, window in ipairs(TapNoteScores) do
 		Text="0000",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
-				:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
+				:diffuse( Colors[SL.Global.GameMode][index] )
 
-			leadingZeroAttr = { Length=3, Diffuse=Brightness(SL.JudgmentColors[SL.Global.GameMode][index], 0.5) }
+			leadingZeroAttr = { Length=3, Diffuse=Brightness(Colors[SL.Global.GameMode][index], 0.5) }
 			self:AddAttribute(0, leadingZeroAttr )
 		end,
 		BeginCommand=function(self)
@@ -41,7 +69,7 @@ for index, window in ipairs(TapNoteScores) do
 				TapNoteJudgments[window] = TapNoteJudgments[window] + 1
 				self:settext( string.format("%04d", TapNoteJudgments[window]) )
 
-				leadingZeroAttr = { Length=(4-tonumber(tostring(TapNoteJudgments[window]):len())), Diffuse=Brightness(SL.JudgmentColors[SL.Global.GameMode][index], 0.5) }
+				leadingZeroAttr = { Length=(4-tonumber(tostring(TapNoteJudgments[window]):len())), Diffuse=Brightness(Colors[SL.Global.GameMode][index], 0.5) }
 				self:AddAttribute(0, leadingZeroAttr )
 			end
 		end

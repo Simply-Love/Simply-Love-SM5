@@ -1,76 +1,61 @@
 local player = ...
+local p = ToEnumShortString(player)
+local x = GetNotefieldX( player )
+local full
 
 local af = Def.ActorFrame{
-	Name="LifeMeter_"..ToEnumShortString(player),
+	Name="LifeMeter_"..p,
 	InitCommand=function(self)
-		self:xy(0,0)
+		self:xy(x,0)
 	end,
 	HealthStateChangedMessageCommand=function(self,params)
 		if (params.PlayerNumber == player) then
 			if params.HealthState == "HealthState_Dead" then
-				self:queuecommand("Dead")
+				full:queuecommand("Dead")
 			end
 		end
 	end,
 	LifeChangedMessageCommand=function(self,params)
 		if (params.Player == player) then
-			self:playcommand("ChangeSize", {CropAmount=(1-params.LifeMeter:GetLife()) })
+			local life = 1-params.LifeMeter:GetLife()
+			full:playcommand("ChangeSize", {CropAmount=life })
 		end
 	end,
-}
 
--- if double style, we want two quads flanking the left/right sides of the screen that move in unison
-if SL.Global.Gamestate.Style == "double" then
-	af[#af+1] = Def.Quad{
-		Name="Left",
-		InitCommand=function(self)
-			self:vertalign(top):horizalign(left)
-				:zoomto( _screen.w/2, _screen.h-80 ):diffuse(0.2,0.2,0.2,1)
-				:faderight(0.8):xy(0, 80)
-		end,
-		ChangeSizeCommand=function(self, params)
-			self:finishtweening():smooth(0.2):croptop(params.CropAmount)
-		end,
-		DeadCommand=function(self)
-			self:finishtweening():smooth(0.2):croptop(1)
-		end
-	}
+	Def.ActorFrame{
+		Name="Full",
+		InitCommand=function(self) full = self end,
 
-	af[#af+1] = Def.Quad{
-		Name="Right",
-		InitCommand=function(self)
-			self:vertalign(top):horizalign(right)
-				:zoomto( _screen.w/2, _screen.h-80 ):diffuse(0.2,0.2,0.2,1)
-				:fadeleft(0.8):xy(_screen.w, 80)
-		end,
-		ChangeSizeCommand=function(self, params)
-			self:finishtweening():smooth(0.2):croptop(params.CropAmount)
-		end,
-		DeadCommand=function(self)
-			self:finishtweening():smooth(0.2):croptop(1)
-		end
-	}
-
--- if single or versus style, we want one uniquely-moving quad per player
-else
-	af[#af+1] = Def.Quad{
-		InitCommand=function(self)
-			self:vertalign(top)
-				:zoomto( _screen.w/2, _screen.h-80 )
-
-			if player == PLAYER_1 then
-				self:horizalign(left):diffuse(0.2,0.2,0.2,1):faderight(0.8):xy(0, 80)
-			else
-				self:horizalign(right):diffuse(0.2,0.2,0.2,1):fadeleft(0.8):xy(_screen.w, 80)
+		Def.Quad{
+			Name="Left",
+			InitCommand=function(self)
+				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 80):zoomto( 50, _screen.h-80 )
+					:diffuserightedge(0,0,0,1):diffuseleftedge(0.666,0.666,0.666,1)
+			end,
+			ChangeSizeCommand=function(self, params)
+				self:finishtweening():decelerate(0.2):croptop(params.CropAmount)
+			end,
+			DeadCommand=function(self)
+				self:diffuseupperleft(1,0,0,0):diffuselowerleft(1,0,0,0):croptop(0)
+					:accelerate(0.2):diffusealpha(1):decelerate(0.3):diffusealpha(0)
 			end
-		end,
-		ChangeSizeCommand=function(self, params)
-			self:finishtweening():smooth(0.2):croptop(params.CropAmount)
-		end,
-		DeadCommand=function(self)
-			self:finishtweening():smooth(0.2):croptop(1)
-		end
-	}
-end
+		},
+		Def.Quad{
+			Name="Right",
+			InitCommand=function(self)
+				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 80):zoomto( 50, _screen.h-80 )
+					:diffuseleftedge(0,0,0,1):diffuserightedge(0.666,0.666,0.666,1)
+			end,
+			ChangeSizeCommand=function(self, params)
+				self:finishtweening():decelerate(0.2):croptop(params.CropAmount)
+			end,
+			DeadCommand=function(self)
+				self:diffuseupperright(1,0,0,0):diffuselowerright(1,0,0,0):croptop(0)
+					:accelerate(0.2):diffusealpha(1):decelerate(0.3):diffusealpha(0)
+			end
+		}
+	},
+
+}
 
 return af

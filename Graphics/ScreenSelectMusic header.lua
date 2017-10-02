@@ -58,7 +58,7 @@ local t = Def.ActorFrame{
 	OffCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
-			if topscreen:GetName() == "ScreenEvaluationStage" or topscreen:GetName() == "ScreenEvaluationNonstop" then
+			if topscreen:GetName() == "ScreenEvaluationStage" then
 				SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + SongCost
 			else
 				self:linear(0.1)

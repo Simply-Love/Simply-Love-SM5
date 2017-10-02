@@ -174,11 +174,9 @@ local Overrides = {
 			local choice = mods.Mini or playeroptions:Mini() or "0%"
 			local i = FindInTable(choice, self.Choices) or 1
 			list[i] = true
-			-- set mini now, in case the player doesn't visit ScreenPlayerOptions and SaveSelections() never gets called
-			-- it is unclear why I need to do this for Mini and not other PlayerOptions (NoteSkin, SpeedMod, etc.)
-			playeroptions:Mini( choice:gsub("%%","")/100 )
 		end,
 		SaveSelections = function(self, list, pn)
+
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
 			for i=1,#self.Choices do

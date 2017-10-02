@@ -1,7 +1,7 @@
 local player = Var "Player"
 
 if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+	return
 end
 
 

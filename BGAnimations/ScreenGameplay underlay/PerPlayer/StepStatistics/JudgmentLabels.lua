@@ -16,6 +16,33 @@ local TNSNames = {
 	THEME:GetString("TapNoteScore" .. mode, "Miss")
 }
 
+local Colors = {
+	Competitive = {
+		color("#21CCE8"),	-- blue
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#5b2b8e"),	-- purple
+		color("#c9855e"),	-- peach?
+		color("#ff0000")	-- red
+	},
+	ECFA = {
+		color("#21CCE8"),	-- blue
+		color("#FFFFFF"),	-- white
+		color("#e29c18"),	-- gold
+		color("#66c955"),	-- green
+		color("#9e00f7"),	-- purple
+		color("#ff0000")	-- red
+	},
+	StomperZ = {
+		color("#5b2b8e"),	-- purple
+		color("#0073ff"),	-- dark blue
+		color("#66c955"),	-- green
+		color("#e29c18"),	-- gold
+		color("#dddddd"),	-- grey
+		color("#ff0000")	-- red
+	}
+}
+
 local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Holds'),
 	THEME:GetString("ScreenEvaluation", 'Mines'),
@@ -33,7 +60,7 @@ for i, label in ipairs(TNSNames) do
 		InitCommand=cmd(zoom,0.833; horizalign,right ),
 		BeginCommand=function(self)
 			self:x(80):y((i-1)*28 - 226)
-				:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+				:diffuse( Colors[SL.Global.GameMode][i] )
 
 
 			local gmods = SL.Global.ActiveModifiers

@@ -29,7 +29,7 @@ Visit my imgur album for screenshots of this theme in action: [http://imgur.com/
 
 License:
 --------
-Copyright 2013-2017 Dan Guzek  
+Copyright 2013-2016 Dan Guzek  
 See: [No License](http://choosealicense.com/licenses/no-license/)
 
 <hr>

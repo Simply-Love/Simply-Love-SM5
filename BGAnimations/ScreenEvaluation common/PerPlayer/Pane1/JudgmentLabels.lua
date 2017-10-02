@@ -16,6 +16,25 @@ local TNSNames = {
 	THEME:GetString("TapNoteScore" .. mode, "Miss")
 }
 
+local StomperZColors = {
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#21CCE8"),	-- blue
+	color("#000000"),	-- black
+	color("#ff0000")	-- red
+}
+
+local ECFAColors = {
+	color("#21CCE8"),	-- blue
+	color("#FFFFFF"),	-- white
+	color("#e29c18"),	-- gold
+	color("#66c955"),	-- green
+	color("#9e00f7"),	-- purple
+	color("#ff0000")	-- red
+}
+
+
 local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Holds'),
 	THEME:GetString("ScreenEvaluation", 'Mines'),
@@ -45,10 +64,10 @@ for index, label in ipairs(TNSNames) do
 
 			-- if StomperZ, diffuse the JudgmentLabel the StomperZ colors
 			if SL.Global.GameMode == "StomperZ" then
-				self:diffuse( SL.JudgmentColors.StomperZ[index] )
+				self:diffuse( StomperZColors[index] )
 
 			elseif SL.Global.GameMode == "ECFA" then
-				self:diffuse( SL.JudgmentColors.ECFA[index] )
+				self:diffuse( ECFAColors[index] )
 			end
 
 

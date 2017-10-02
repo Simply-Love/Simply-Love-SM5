@@ -38,12 +38,11 @@ t[#t+1] = Def.ActorFrame {
 	CreditsText( PLAYER_2 );
 };
 
-local SystemMessageText = nil
 
 -- SystemMessage Text
 t[#t+1] = Def.ActorFrame {
 	SystemMessageMessageCommand=function(self, params)
-		SystemMessageText:settext( params.Message )
+		self:GetChild("Text"):settext( params.Message )
 		self:playcommand( "On" )
 		if params.NoAnimate then
 			self:finishtweening()
@@ -53,26 +52,16 @@ t[#t+1] = Def.ActorFrame {
 	HideSystemMessageMessageCommand=cmd(finishtweening),
 
 	Def.Quad {
-		InitCommand=function(self)
-			self:zoomto(_screen.w, 30):horizalign(left):vertalign(top)
-				:diffuse(Color.Black):diffusealpha(0)
-		end,
-		OnCommand=function(self)
-			self:finishtweening():diffusealpha(0.85)
-				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * 0.8 )
-		end,
-		OffCommand=function(self) self:sleep(3):linear(0.5):diffusealpha(0) end,
+		InitCommand=cmd(zoomto,_screen.w, 30; horizalign,left; vertalign,top; diffuse, Color.Black; diffusealpha,0 ),
+		OnCommand=cmd(finishtweening; diffusealpha,0.85 ),
+		OffCommand=cmd(sleep,3; linear,0.5; diffusealpha,0 )
 	},
 
 	LoadFont("_miso")..{
 		Name="Text",
-		InitCommand=function(self)
-			self:maxwidth(750):horizalign(left):vertalign(top)
-				:xy(SCREEN_LEFT+10, 10):diffusealpha(0):zoom(0.8)
-			SystemMessageText = self
-		end,
-		OnCommand=function(self) self:finishtweening():diffusealpha(1) end,
-		OffCommand=function(self) self:sleep(3):linear(0.5):diffusealpha(0) end,
+		InitCommand=cmd(maxwidth,750; horizalign,left; vertalign,top; xy,SCREEN_LEFT+10, 10; diffusealpha,0),
+		OnCommand=cmd(finishtweening; diffusealpha,1; zoom,0.8 ),
+		OffCommand=cmd(sleep,3; linear,0.5; diffusealpha,0 )
 	}
 }
 
@@ -88,16 +77,25 @@ t[#t+1] = LoadFont("_wendy small")..{
 	RefreshCommand=function(self)
 
 		local screen = SCREENMAN:GetTopScreen()
-
+		local bShow = true
 		if screen then
-			-- if this screen's Metric for ShowCreditDisplay=false, then hide this BitmapText actor
-			if not (THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" )) then
-				self:settext(""):visible(false)
-				return
+			local sClass = screen:GetName()
+			bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" )
+
+			-- hide  just this centered credit text for certain screens,
+			-- where it would more likely just be distracting and superfluous
+			if sClass == "ScreenPlayerOptions"
+				or sClass == "ScreenPlayerOptions2"
+				or sClass == "ScreenEvaluationStage"
+				or sClass == "ScreenEvaluationNonstop"
+				or sClass == "ScreenEvaluationSummary"
+				or sClass == "ScreenNameEntryTraditional"
+				or sClass == "ScreenGameOver" then
+				bShow = false
 			end
 		end
 
-		self:visible( true )
+		self:visible( bShow )
 
 		if PREFSMAN:GetPreference("EventMode") then
 			self:settext('EVENT MODE')
