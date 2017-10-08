@@ -23,7 +23,7 @@ end
 -- helper function used to detmerine which timing_window a given offset belongs to
 function DetermineTimingWindow(offset)
 	for i=1,5 do
-		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] then
+		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] + SL.Preferences[SL.Global.GameMode]["TimingWindowAdd"] then
 			return i
 		end
 	end
