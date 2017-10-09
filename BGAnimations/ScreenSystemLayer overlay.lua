@@ -2,41 +2,39 @@
 -- very minor modifications.
 
 local function CreditsText( pn )
-	local text = LoadFont("_miso") .. {
+	return LoadFont("_miso") .. {
 		InitCommand=function(self)
 			self:visible(false)
 			self:name("Credits" .. PlayerNumberToString(pn))
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
-		end;
+		end,
 		UpdateTextCommand=function(self)
 			local str = ScreenSystemLayerHelpers.GetCreditsMessage(pn)
 			self:settext(str)
-		end;
+		end,
 		UpdateVisibleCommand=function(self)
 			local screen = SCREENMAN:GetTopScreen()
 			local bShow = true
-			if screen then
-				local sClass = screen:GetName()
-				bShow = THEME:GetMetric( sClass, "ShowCreditDisplay" )
+			-- we always want to show the CreditText for each player on ScreenEval, regardless of the ShowCreditDisplay metric
+			if screen and (screen:GetName() ~= "ScreenEvaluationStage") and (screen:GetName() ~= "ScreenEvaluationNonstop") then
+				bShow = THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" )
 			end
-
 			self:visible( bShow )
 		end
 	}
-	return text
 end
 
 
-local t = Def.ActorFrame {}
+local t = Def.ActorFrame{}
 
 -- Aux
-t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"));
+t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"))
 
 -- Credits
 t[#t+1] = Def.ActorFrame {
  	CreditsText( PLAYER_1 );
 	CreditsText( PLAYER_2 );
-};
+}
 
 local SystemMessageText = nil
 
@@ -76,28 +74,23 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
--- Centered Credit Text
+-- Wendy CreditText at lower-center of screen
 t[#t+1] = LoadFont("_wendy small")..{
 	InitCommand=cmd(xy, _screen.cx, _screen.h-16; zoom,0.5; horizalign,center ),
 
-	OnCommand=cmd(playcommand,"Refresh"),
-	ScreenChangedMessageCommand=cmd(playcommand,"Refresh"),
-	CoinModeChangedMessageCommand=cmd(playcommand,"Refresh"),
-	CoinsChangedMessageCommand=cmd(playcommand,"Refresh"),
+	OnCommand=function(self) self:playcommand("Refresh") end,
+	ScreenChangedMessageCommand=function(self) self:playcommand("Refresh") end,
+	CoinModeChangedMessageCommand=function(self) self:playcommand("Refresh") end,
+	CoinsChangedMessageCommand=function(self) self:playcommand("Refresh") end,
 
 	RefreshCommand=function(self)
 
 		local screen = SCREENMAN:GetTopScreen()
 
+		-- if this screen's Metric for ShowCreditDisplay=false, then hide this BitmapText actor
 		if screen then
-			-- if this screen's Metric for ShowCreditDisplay=false, then hide this BitmapText actor
-			if not (THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" )) then
-				self:settext(""):visible(false)
-				return
-			end
+			self:visible( THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" ) )
 		end
-
-		self:visible( true )
 
 		if PREFSMAN:GetPreference("EventMode") then
 			self:settext('EVENT MODE')
