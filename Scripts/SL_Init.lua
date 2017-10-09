@@ -168,7 +168,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		ECFA = {
-			TimingWindowAdd=0.0015, -- per AIJ ECFA posts
+			TimingWindowAdd=0,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
