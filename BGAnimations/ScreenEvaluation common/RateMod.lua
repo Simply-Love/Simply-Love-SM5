@@ -23,20 +23,6 @@ return Def.ActorFrame{
 				self:settext(("%g"):format(MusicRate) .. " Music Rate")
 
 				if bpm then
-
-					--if there is a range of BPMs
-					if string.match(bpm, "%-") then
-						local bpms = {}
-						for i in string.gmatch(bpm, "%d+") do
-							bpms[#bpms+1] = round(tonumber(i) * MusicRate)
-						end
-						if bpms[1] and bpms[2] then
-							bpm = bpms[1] .. "-" .. bpms[2]
-						end
-					else
-						bpm = tonumber(bpm) * MusicRate
-					end
-
 					self:settext(self:GetText() .. " (" .. bpm .. " BPM)" )
 				end
 			else

@@ -47,6 +47,7 @@ end
 
 function GetDisplayBPMs()
 	local text = ""
+	local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
 	-- if in "normal" mode
 	if not GAMESTATE:IsCourseMode() then
@@ -62,11 +63,19 @@ function GetDisplayBPMs()
 
 			--if a single bpm suffices
 			if bpm[1] == bpm[2] then
-				text = round(bpm[1])
+				if MusicRate == 1 then
+					text = round(bpm[1])
+				else
+					text = round(bpm[1] * MusicRate, 1)
+				end
 
 			-- if we have a range of bpms
 			else
-				text = round(bpm[1]) .. " - " .. round(bpm[2])
+				if MusicRate == 1 then
+					text = round(bpm[1]) .. " - " .. round(bpm[2])
+				else
+					text = round(bpm[1] * MusicRate, 1) .. " - " .. round(bpm[2] * MusicRate, 1)
+				end
 			end
 		end
 
@@ -77,12 +86,11 @@ function GetDisplayBPMs()
 			local lowest = range[1]
 			local highest = range[2]
 
-
 			if lowest and highest then
 				if lowest == highest then
-					text = round(lowest)
+					text = round(lowest * MusicRate)
 				else
-					text = round(lowest) .. " - " .. round(highest)
+					text = round(lowest * MusicRate) .. " - " .. round(highest * MusicRate)
 				end
 			end
 		end
