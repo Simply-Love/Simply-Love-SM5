@@ -14,6 +14,10 @@ if SL.Global.GameMode ~= "Casual" then
 
 		-- these don't need to show up in the mods list
 		if option ~= "FailAtEnd" and option ~= "FailImmediateContinue" and option ~= "FailImmediate" then
+			if option:match("Mini") then
+				option = SL[ToEnumShortString(player)].ActiveModifiers.Mini .. " Mini"
+			end
+
 			if k < #PlayerOptions then
 				optionslist = optionslist..option..", "
 			else
