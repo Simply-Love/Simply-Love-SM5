@@ -211,10 +211,7 @@ for player in ivalues(Players) do
 		Name=pn.."MusicRateHelper",
 		Text="",
 		InitCommand=function(self)
-			if not IsUsingWideScreen() then
-				self:visble(false)
-				return
-			end
+			self:visible( IsUsingWideScreen() )
 
 			self:shadowlength(0.4)
 			self:diffuse(PlayerColor(player))
