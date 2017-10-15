@@ -10,7 +10,7 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
   local x_position = GetNotefieldX( player )
 
   -- a flag to determine if we are using a GameMode that utilizes FA+ timing windows
-  local FAplus = (SL.Global.GameMode == "StomperZ" or SL.Global.GameMode == "ECFA")
+  local FAplus = (SL.Global.GameMode == "ECFA")
   local undesirable_judgment = FAplus and "W3" or "W2"
 
   -- flag to determine whether to bother to continue counting excellents
@@ -68,7 +68,7 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
         end
 
       -- else if this wouldn't subtract from percentage (W1 or mine miss)
-      elseif ((FAplus and tns ~= "W1" and tns ~= "W2") or (not FAplus and tns ~= "W1") and tns ~= "AvoidMine") or
+      elseif (((FAplus and tns ~= "W1" and tns ~= "W2") or (not FAplus and tns ~= "W1")) and tns ~= "AvoidMine") or
              -- unless it actually would subtract from percentage (W1 + let go)
              (hns and ToEnumShortString(hns) == "LetGo") or
              -- or we're already dead (and so can't gain any percentage.)

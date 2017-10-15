@@ -10,7 +10,7 @@ local PlayerDefaults = {
 				SpeedModType = "x",
 				SpeedMod = 1.00,
 				Vocalization = "None",
-				Noteskin = nil,
+				NoteSkin = nil,
 				HideTargets = false,
 				HideSongBG = false,
 				HideCombo = false,
@@ -136,7 +136,7 @@ SL = {
 	},
 	Preferences = {
 		Casual = {
-			TimingWindowAdd=0.001500,
+			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W3",
@@ -168,7 +168,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		ECFA = {
-			TimingWindowAdd=0.0015,
+			TimingWindowAdd=0,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
