@@ -88,24 +88,6 @@ local Overrides = {
 
 			return all
 		end,
-		LoadSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local choice = mods.NoteSkin or playeroptions:NoteSkin() or "default"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#list do
-				if list[i] then
-					mods.NoteSkin = self.Choices[i]
-				end
-			end
-
-			playeroptions:NoteSkin( mods.NoteSkin )
-		end
 	},
 	-------------------------------------------------------------------------
 	JudgmentGraphic = {
@@ -152,13 +134,6 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
 		Choices = function() return { 'Off','Dark','Darker','Darkest' } end,
-		LoadSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local choice = mods.BackgroundFilter or "Off"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
 	},
 	-------------------------------------------------------------------------
 	Mini = {
@@ -167,15 +142,7 @@ local Overrides = {
 			local last 	= 150
 			local step 	= 5
 
-			local rates = stringify( range(first, last, step), "%g%%")
-			return rates
-		end,
-		LoadSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local choice = mods.Mini or playeroptions:Mini() or "0%"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
+			return stringify( range(first, last, step), "%g%%")
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
@@ -270,21 +237,6 @@ local Overrides = {
 			end
 			return choices
 		end,
-		LoadSelections = function(self, list, pn)
-			local chosenOne = SL[ToEnumShortString(pn)].ActiveModifiers.TargetStatus
-			local i = FindInTable(chosenOne, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.TargetStatus = self.Choices[i]
-				end
-			end
-		end
 	},
 	-------------------------------------------------------------------------
 	TargetBar = {
@@ -327,40 +279,10 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MeasureCounterPosition = {
 		Choices = function() return { "Left", "Center" } end,
-		LoadSelections = function(self, list, pn)
-			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.MeasureCounterPosition or "Left"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#list do
-				if list[i] then
-					mods.MeasureCounterPosition = self.Choices[i]
-				end
-			end
-		end
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Choices = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
-		LoadSelections = function(self, list, pn)
-			local choice = SL[ToEnumShortString(pn)].ActiveModifiers.MeasureCounter or "None"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#list do
-				if list[i] then
-					mods.MeasureCounter = self.Choices[i]
-				end
-			end
-		end
 	},
 	-------------------------------------------------------------------------
 	DecentsWayOffs = {
@@ -417,42 +339,10 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ReceptorArrowsPosition = {
 		Choices = function() return { "StomperZ", "ITG" } end,
-		LoadSelections = function(self, list, pn)
-			local choice = 	SL[ToEnumShortString(pn)].ActiveModifiers.ReceptorArrowsPosition or "StomperZ"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.ReceptorArrowsPosition = self.Choices[i]
-				end
-			end
-		end
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
 		Choices = function() return { "Standard", "Surround" } end,
-		LoadSelections = function(self, list, pn)
-			local choice = 	SL[ToEnumShortString(pn)].ActiveModifiers.LifeMeterType or "Standard"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.LifeMeterType = self.Choices[i]
-				end
-			end
-		end
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
@@ -535,14 +425,15 @@ local OptionRowDefault = {
 			self.ReloadRowMessages = Overrides[name].ReloadRowMessages or {}
 
 			self.LoadSelections = Overrides[name].LoadSelections or function(subself, list, pn)
-				local choice = SL[ToEnumShortString(pn)].ActiveModifiers[name]
+				local mods, playeroptions = GetModsAndPlayerOptions(pn)
+				local choice = mods[name] or (playeroptions[name] ~= nil and playeroptions[name](playeroptions)) or self.Choices[1]
 				local i = FindInTable(choice, self.Choices) or 1
 				list[i] = true
 				return list
 			end
 
 			self.SaveSelections = Overrides[name].SaveSelections or function(subself, list, pn)
-				local mods, playeroptions = GetModsAndPlayerOptions(pn)
+				local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 
 				for i=1,#list do
 					if list[i] then
@@ -588,7 +479,7 @@ function ApplyMods(player)
 		--
 		-- for LoadSelections() use a table of all false values, one for each entry in this OptionRow's Choices table
 		-- LoadSelections() will process that table, and set the appropriate entries to true using the SL[pn].ActiveModifiers table
-		-- when done setting one or more entires to true, LoadSelections() will return that table of true/false values
+		-- when done setting one or more entries to true, LoadSelections() will return that table of true/false values
 		--
 		-- SaveSelections() expects the same sort of arguments, but it expects the true/false table to be already set appropriately
 		-- thus, we pass in the list that was returned from LoadSelections()
