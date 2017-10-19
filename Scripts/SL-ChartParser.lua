@@ -4,12 +4,12 @@ local function GetSimfileString(path)
 	local files = FILEMAN:GetDirListing(path)
 
 	for file in ivalues(files) do
-		if file:find(".+%.ssc$") then
+		if file:find(".+%.[sS][sS][cC]$") then
 			-- Finding a .ssc file is preferable.
 			-- If we find one, stop looking.
 			ssc = file
 			break
-		elseif file:find(".+%.sm$") then
+		elseif file:find(".+%.[sS][mM]$") then
 			-- Don't break if we find a .sm file first;
 			-- there might still be a .ssc file waiting.
 			sm = file
