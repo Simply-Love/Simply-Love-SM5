@@ -60,49 +60,6 @@ local steps_display_x= title_x
 local steps_display_y= title_y + (spacer * 1.75)
 local steps_display_items= (_screen.h - steps_display_y) / steps_type_item_space
 
-local menu_params= {
-	name= "menu", x= _screen.cx*.5, y= 10, width= _screen.cx,
-	translation_section= "ScreenEditMenu",
-	menu_sounds= {
-		pop= THEME:GetPathS("Common", "Cancel"),
-		push= THEME:GetPathS("_common", "row"),
-		act= THEME:GetPathS("Common", "start"),
-		move= THEME:GetPathS("_switch", "down"),
-		move_up= THEME:GetPathS("_next", "row"),
-		move_down= THEME:GetPathS("_prev", "row"),
-		inc= THEME:GetPathS("_switch", "up"),
-		dec= THEME:GetPathS("_switch", "down"),
-	},
-	num_displays= 1, el_height= 24, display_params= {
-		no_status= true,
-		height= _screen.h-32, el_zoom= menu_zoom,
-		item_mt= cons_option_item_mt, item_params= {
-			text_commands= {
-				Font= "Common Normal", OnCommand= function(self)
-					self:diffusealpha(0):linear(1):diffusealpha(1)
-				end,
-			},
-			text_width= .7,
-			value_text_commands= {
-				Font= "Common Normal", OnCommand= function(self)
-					self:diffusealpha(0):linear(1):diffusealpha(1)
-				end,
-			},
-			value_image_commands= {
-				OnCommand= function(self)
-					self:diffusealpha(0):linear(1):diffusealpha(1)
-				end,
-			},
-			value_width= .25,
-			type_images= {
-				bool= THEME:GetPathG("", "menu_icons/bool"),
-				choice= THEME:GetPathG("", "menu_icons/bool"),
-				menu= THEME:GetPathG("", "menu_icons/menu"),
-			},
-		},
-	},
-}
-
 local frame= Def.ActorFrame{
 	edit_menu_selection_changedMessageCommand=edit_pick_menu_update_steps_display_info(steps_display),
 
@@ -121,7 +78,7 @@ local frame= Def.ActorFrame{
 		OnCommand=function(self) self:linear(0.5):cropbottom(0) end
  	},
 
-	edit_pick_menu_actor(menu_params),
+	edit_pick_menu_actor(LoadActor(THEME:GetPathG("", "generic_menu"), 1, _screen.cx, _screen.h-32*2, 1, 5, 45, 24)),
 
 
 	Def.Sprite{
