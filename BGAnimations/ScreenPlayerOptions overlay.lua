@@ -102,7 +102,7 @@ local t = Def.ActorFrame{
 			local noteskin_row_index = FindOptionRowIndex(ScreenOptions, "NoteSkin")
 
 			if noteskin_row_index then
-				NoteSkinProxies[pn] = ScreenOptions:GetOptionRow(FindOptionRowIndex(ScreenOptions, "NoteSkin")):GetChild(""):GetChild("Frame"):GetChild("OptionRowProxy"..pn)
+				NoteSkinProxies[pn] = ScreenOptions:GetOptionRow(noteskin_row_index):GetChild(""):GetChild("Frame"):GetChild("OptionRowProxy"..pn)
 			end
 
 			-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
