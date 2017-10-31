@@ -1,24 +1,25 @@
 local function GetSimfileString(path)
 
-	local ssc, sm
+	local filename, filetype
 	local files = FILEMAN:GetDirListing(path)
 
 	for file in ivalues(files) do
 		if file:find(".+%.[sS][sS][cC]$") then
 			-- Finding a .ssc file is preferable.
 			-- If we find one, stop looking.
-			ssc = file
+			filename = file
+			filetype = "ssc"
 			break
 		elseif file:find(".+%.[sS][mM]$") then
 			-- Don't break if we find a .sm file first;
 			-- there might still be a .ssc file waiting.
-			sm = file
+			filename = file
+			filetype = "sm"
 		end
 	end
 
 	-- if neither a .ssc nor a .sm file were found, bail now
-	if not ssc and not sm then return end
-	local filename = ssc or sm
+	if not filename and filetype then return end
 
 	-- create a generic RageFile that we'll use to read the contents
 	-- of the desired .ssc or .sm file
@@ -33,7 +34,7 @@ local function GetSimfileString(path)
 
 	-- destroy the generic RageFile now that we have the contents
 	f:destroy()
-	return contents
+	return contents, filetype
 end
 
 -- ----------------------------------------------------------------
@@ -49,10 +50,10 @@ local function regexEncode(var)
 end
 
 -- Parse the measures section out of our sim file
-local function GetSimfileChartString(SimfileString, StepsType, Difficulty)
+local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
 	local measuresString = nil
 
-	if(SimfileString:match("#NOTEDATA")) then
+	if Filetype == "ssc" then
 		-- SSC File
 		-- Loop through each chart in the SSC file
 		for chart in SimfileString:gmatch("#NOTEDATA.-#NOTES:[^;]*") do
@@ -62,7 +63,7 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty)
 				measuresString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$"):gsub("\\[^\r\n]*","")
 			end
 		end
-	else
+	elseif Filetype == "sm" then
 		-- SM FILE
 		-- Loop through each chart in the SM file
 		for chart in SimfileString:gmatch("#NOTES[^;]*") do
@@ -167,18 +168,26 @@ local function getStreamSequences(streamMeasures, measureSequenceThreshold)
 end
 
 
--- GetNoteDensity() accepts three arguments:
--- 		SongDir, a string representing the directory of the current song
+-- GetNPSperMeasure() accepts three arguments:
+-- 		Song, a song object provided by something like GAMESTATE:GetCurrentSong()
 -- 		StepsType, a string like "dance-single" or "pump-double"
 -- 		Difficulty, a string like "Beginner" or "Challenge"
+-- GetNPSperMeasure() returns two values
+--		PeakNPS, a number representing the peak notes-per-second for the given stepchart
+--			This is an imperfect measurement, as we sample the note density per-second-per-measure, not per-second.
+--			It is (unlikely but) possible for the true PeakNPS to be spread across the boundary of two measures.
+--		Density, a numerically indexed table containing the notes-per-second value for each measure
+--			The Density table is indexed from 1 (as Lua tables go); simfile charts, however, start at measure 0.
+--			So if you're looping through the Density table, subtract 1 from the current index to get the
+--			actual measure number.
 
 function GetNPSperMeasure(Song, StepsType, Difficulty)
 	local SongDir = Song:GetSongDir()
-	local SimfileString = GetSimfileString( SongDir )
+	local SimfileString, Filetype = GetSimfileString( SongDir )
 	if not SimfileString then return end
 
 	-- Discard header info; parse out only the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty)
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
 	if not ChartString then return end
 
 	-- Make our stream notes array into a string for regex
@@ -231,11 +240,13 @@ end
 
 function GetStreams(SongDir, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
 
-	local SimfileString = GetSimfileString( SongDir )
+	local SimfileString, Filetype = GetSimfileString( SongDir )
 	if not SimfileString then return end
 
 	-- Parse out just the contents of the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty)
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+	if not ChartString then return end
+
 	-- Which measures have enough notes to be considered as part of a stream?
 	local StreamMeasures = getStreamMeasures(ChartString, NotesPerMeasure)
 

@@ -88,6 +88,17 @@ local Overrides = {
 
 			return all
 		end,
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#list do
+				if list[i] then
+					mods.NoteSkin = self.Choices[i]
+				end
+			end
+
+			playeroptions:NoteSkin( mods.NoteSkin )
+		end
 	},
 	-------------------------------------------------------------------------
 	JudgmentGraphic = {

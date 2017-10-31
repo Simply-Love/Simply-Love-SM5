@@ -3,7 +3,7 @@ local pn = ToEnumShortString(player)
 
 -- table of offet values obtained during this song's playthrough
 -- obtained via ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
-local offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].timing_offsets
+local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local pane_width, pane_height = 300, 180
 
 -- ---------------------------------------------
@@ -21,7 +21,31 @@ local num_judgments_available = (SL.Global.ActiveModifiers.DecentsWayOffs=="Dece
 local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..num_judgments_available]
 
 -- ---------------------------------------------
--- first, smooth the offset distribution and store values in a new table, smooth_offsets
+-- sequential_offsets is a table of all timing offsets in the order they were earned.
+-- The sequence is important for the Scatter Plot, but irrelevant here; we are only really
+-- interested in how many +0.001 offsets were earned, how many -0.001, how many +0.002, etc.
+-- So, we loop through sequential_offsets, and tally offset counts into a new offsets table.
+local offsets = {}
+local val
+
+for t in ivalues(sequential_offsets) do
+	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
+	-- the second value in t is the offset value or the string "Miss"
+	val = t[2]
+
+	if val ~= "Miss" then
+		val = (math.floor(val*1000))/1000
+
+		if not offsets[val] then
+			offsets[val] = 1
+		else
+			offsets[val] = offsets[val] + 1
+		end
+	end
+end
+
+-- ---------------------------------------------
+-- next, smooth the offset distribution and store values in a new table, smooth_offsets
 local smooth_offsets = {}
 
 -- gaussian distribution for smoothing the histogram's jagged peaks and troughs

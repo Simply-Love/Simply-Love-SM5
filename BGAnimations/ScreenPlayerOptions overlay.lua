@@ -67,12 +67,12 @@ local function ChangeSpeedMod(pn, direction)
 	end
 end
 
-local function FindSpeedModOptionRowIndex(ScreenOptions)
+local function FindOptionRowIndex(ScreenOptions, Name)
 	local num_rows = ScreenOptions:GetNumRows()
 
 	-- OptionRows on ScreenOptions are 0-indexed, so start counting from 0
 	for i=0,num_rows-1 do
-		if ScreenOptions:GetOptionRow(i):GetName() == "SpeedMod" then
+		if ScreenOptions:GetOptionRow(i):GetName() == Name then
 			return i
 		end
 	end
@@ -85,9 +85,9 @@ end
 
 local Players = GAMESTATE:GetHumanPlayers()
 
--- SpeedModItems is a table that will contain the BitmapText Actors
--- for the SpeedModNew OptionRow for both P1 and P2
-local SpeedModItems = {P1, P2}
+-- SpeedModItems is a table that will contain the BitmapText actors for the SpeedMod OptionRow for both P1 and P2
+local SpeedModItems = {}
+local NoteSkinProxies = {}
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,_screen.cx,0),
@@ -97,28 +97,45 @@ local t = Def.ActorFrame{
 
 		local ScreenOptions = SCREENMAN:GetTopScreen()
 
-		-- reset for ScreenEditOptions
-		SpeedModItems = {P1 = nil, P2 = nil}
+		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
+			local pn = ToEnumShortString(player)
+			local noteskin_row_index = FindOptionRowIndex(ScreenOptions, "NoteSkin")
 
-		-- The bitmaptext actors for P1 and P2 speedmod are both named "Item"
-		SpeedModItems.P1 = ScreenOptions:GetOptionRow(FindSpeedModOptionRowIndex(ScreenOptions)):GetChild(""):GetChild("Item")[1]
-		SpeedModItems.P2 = ScreenOptions:GetOptionRow(FindSpeedModOptionRowIndex(ScreenOptions)):GetChild(""):GetChild("Item")[2]
+			if noteskin_row_index then
+				NoteSkinProxies[pn] = ScreenOptions:GetOptionRow(noteskin_row_index):GetChild(""):GetChild("Frame"):GetChild("OptionRowProxy"..pn)
+			end
 
-		if SpeedModItems.P1 and GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-			self:playcommand("SetP1")
-		end
-		if SpeedModItems.P2 and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-			self:playcommand("SetP2")
+			-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
+			SpeedModItems[pn] = ScreenOptions:GetOptionRow(FindOptionRowIndex(ScreenOptions,"SpeedMod")):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
+			self:playcommand("Set"..pn)
 		end
 	end
 }
+
+-- This doesn't handle every game type that SM5 supports, but could, if I knew more about NoteSkins...
+local column = {
+	dance = "Up",
+	pump = "UpRight",
+	techno = "Up",
+	kb7 = "Key1"
+}
+
+-- Add noteskin actors to the primary AF and hide them immediately.
+-- We'll refer to these later via ActorProxy in the "Frame" of NoteSkin OptionRow
+for noteskin in ivalues( CustomOptionRow("NoteSkin").Choices ) do
+	t[#t+1] = NOTESKIN:LoadActorForNoteSkin(column[GAMESTATE:GetCurrentGame():GetName() or "Up"], "Tap Note", noteskin)..{
+		Name="NoteSkin_"..noteskin,
+		InitCommand=function(self) self:visible(false) end,
+	}
+end
+
 
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
 
 for player in ivalues(Players) do
 	local pn = ToEnumShortString(player)
 
-	t[#t+1] = Def.ActorFrame{
+	t[#t+1] = Def.Actor{
 
 		-- Commands for player speedmod
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
@@ -175,15 +192,26 @@ for player in ivalues(Players) do
 		end,
 
 		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
-			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == FindSpeedModOptionRowIndex(SCREENMAN:GetTopScreen()) then
+			local topscreen = SCREENMAN:GetTopScreen()
+			local row_index = topscreen:GetCurrentRowIndex(player)
+
+			if row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "SpeedMod") then
 				ChangeSpeedMod( pn, -1 )
 				self:queuecommand("Set"..pn)
+
+			elseif row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "NoteSkin") then
+				NoteSkinProxies[pn]:queuecommand("Update")
 			end
 		end,
 		["MenuRight" .. pn .. "MessageCommand"]=function(self)
-			if SCREENMAN:GetTopScreen():GetCurrentRowIndex(player) == FindSpeedModOptionRowIndex(SCREENMAN:GetTopScreen()) then
+			local topscreen = SCREENMAN:GetTopScreen()
+			local row_index = topscreen:GetCurrentRowIndex(player)
+			if row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "SpeedMod") then
 				ChangeSpeedMod( pn, 1 )
 				self:queuecommand("Set"..pn)
+
+			elseif row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "NoteSkin") then
+				NoteSkinProxies[pn]:queuecommand("Update")
 			end
 		end
 	}
@@ -247,7 +275,7 @@ for player in ivalues(Players) do
 			-------------------------------
 			-- variables to be used for setting the text in the "Speed Mod" OptionRow title
 			local ScreenOptions = SCREENMAN:GetTopScreen()
-			local SpeedModTitle = ScreenOptions:GetOptionRow(FindSpeedModOptionRowIndex(ScreenOptions)):GetChild(""):GetChild("Title")
+			local SpeedModTitle = ScreenOptions:GetOptionRow(FindOptionRowIndex(ScreenOptions, "SpeedMod")):GetChild(""):GetChild("Title")
 
 			local bpms = GetDisplayBPMs()
 			SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms .. ")" )

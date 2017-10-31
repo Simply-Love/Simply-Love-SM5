@@ -44,7 +44,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 -- ninePanel definition
 ------------------------------------------------------------------------------------
 
-function drawNinePanelPad(color, offset)
+local drawNinePanelPad = function(color, offset)
 
 	return Def.ActorFrame {
 
