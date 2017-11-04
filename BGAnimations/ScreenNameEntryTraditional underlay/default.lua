@@ -122,85 +122,59 @@ t[#t+1] = Def.ActorFrame {
 }
 
 -- Banner(s) and Title(s)
-if GAMESTATE:IsCourseMode() then
-	local course = GAMESTATE:GetCurrentCourse()
+for i=1,NumStages do
 
-	t[#t+1] = LoadFont("_miso")..{
-		Name="CourseName",
+	local SongOrCourse = SL.Global.Stages.Stats[i].song
+
+	-- Create an ActorFrame for each (Name + Banner) pair
+	-- so that we can display/hide all children simultaneously.
+	local SongNameAndBanner = Def.ActorFrame{
+		InitCommand=function(self) self:visible(false) end,
+		OnCommand=function(self)
+			self:sleep(DurationPerStage * (i-1) );
+			self:queuecommand("Display")
+		end,
+		DisplayCommand=function(self)
+			self:visible(true)
+			self:sleep(DurationPerStage)
+			self:queuecommand("Wait")
+		end,
+		WaitCommand=function(self)
+			self:visible(false)
+			self:sleep(DurationPerStage * (NumStages-1))
+			self:queuecommand("Display")
+		end
+	}
+
+	-- song name
+	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
+		Name="SongName"..i,
 		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 		OnCommand=function(self)
-			if course then
-				self:settext( course:GetDisplayFullTitle() )
+			if SongOrCourse then
+				self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
 			end
 		end
 	}
 
-	t[#t+1] = Def.Banner{
-		Name="CourseBanner",
-		InitCommand=cmd(xy, _screen.cx, 121.5 ),
+	-- song banner
+	SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
+		Name="SongBanner"..i,
+		InitCommand=cmd(xy, _screen.cx, 121.5),
 		OnCommand=function(self)
-
-			if course then
-				self:LoadFromCourse(course)
-				self:setsize(418,164)
-				self:zoom(0.7)
+			if SongOrCourse then
+				if GAMESTATE:IsCourseMode() then
+					self:LoadFromCourse(SongOrCourse)
+				else
+					self:LoadFromSong(SongOrCourse)
+				end
+				self:setsize(418,164):zoom(0.7)
 			end
 		end
 	}
 
-else
-
-	for i=1,NumStages do
-
-		local song = SL.Global.Stages.Stats[i].song
-
-		-- Create an ActorFrame for each (Name + Banner) pair
-		-- so that we can display/hide all children simultaneously.
-		local SongNameAndBanner = Def.ActorFrame{
-			InitCommand=function(self) self:visible(false) end,
-			OnCommand=function(self)
-				self:sleep(DurationPerStage * (i-1) );
-				self:queuecommand("Display")
-			end,
-			DisplayCommand=function(self)
-				self:visible(true)
-				self:sleep(DurationPerStage)
-				self:queuecommand("Wait")
-			end,
-			WaitCommand=function(self)
-				self:visible(false)
-				self:sleep(DurationPerStage * (NumStages-1))
-				self:queuecommand("Display")
-			end
-		}
-
-		-- song name
-		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
-			Name="SongName"..i,
-			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
-			OnCommand=function(self)
-				if song then
-					self:settext( song:GetDisplayMainTitle() )
-				end
-			end
-		}
-
-		-- song banner
-		SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
-			Name="SongBanner"..i,
-			InitCommand=cmd(xy, _screen.cx, 121.5),
-			OnCommand=function(self)
-				if song then
-					self:LoadFromSong(song)
-					self:setsize(418,164)
-					self:zoom(0.7)
-				end
-			end
-		}
-
-		-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
-		t[#t+1] = SongNameAndBanner
-	end
+	-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
+	t[#t+1] = SongNameAndBanner
 end
 
 

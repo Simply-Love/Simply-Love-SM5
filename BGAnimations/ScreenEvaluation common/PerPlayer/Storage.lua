@@ -32,6 +32,6 @@ return Def.Actor{
 		storage.difficulty = stats:GetPlayedSteps()[1]:GetDifficulty()
 		storage.difficultyMeter = stats:GetPlayedSteps()[1]:GetMeter()
 		storage.stepartist = stats:GetPlayedSteps()[1]:GetAuthorCredit()
-		storage.steps = GAMESTATE:GetCurrentSteps(player)
+		storage.steps = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 	end
 }

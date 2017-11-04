@@ -4,7 +4,7 @@ local player = ...
 local machineProfile = PROFILEMAN:GetMachineProfile()
 
 -- get the number of stages that were played
-local NumStages = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame
+local NumStages = SL.Global.Stages.PlayedThisGame
 local durationPerSong = 4
 
 local months = {}
@@ -19,20 +19,16 @@ for i=NumStages,1,-1 do
 
 	local stageStats = STATSMAN:GetPlayedStageStats(i)
 	local pss = stageStats:GetPlayerStageStats(player)
-
-	local highscoreList, highscores, StepsOrTrail
-	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or SL.Global.Stages.Stats[CurrentStage].song
-	local stats = SL[ToEnumShortString(player)].Stages.Stats[CurrentStage]
-
-	if GAMESTATE:IsCourseMode() then
-		StepsOrTrail = GAMESTATE:GetCurrentTrail(player)
-	else
-		--stats might exist for one player but not the other due to latejoin
-		if stats then StepsOrTrail = stats.steps end
-	end
-
 	-- +1 because GetMachineHighScoreIndex is 0-indexed
 	local index = pss:GetMachineHighScoreIndex() + 1
+
+	local highscoreList, highscores, StepsOrTrail
+	local SongOrCourse = SL.Global.Stages.Stats[CurrentStage].song
+	local stats = SL[ToEnumShortString(player)].Stages.Stats[CurrentStage]
+
+	--stats might exist for one player but not the other due to latejoin
+	if stats then StepsOrTrail = stats.steps end
+
 	local text = ""
 
 	if SongOrCourse and StepsOrTrail then
@@ -82,7 +78,6 @@ for i=NumStages,1,-1 do
 				date	= "----------"
 			end
 
-
 			local row = Def.ActorFrame{
 				Name="HighScore" .. i .. "Row" .. s .. ToEnumShortString(player),
 				InitCommand=function(self)
@@ -90,11 +85,11 @@ for i=NumStages,1,-1 do
 						:x( (player == PLAYER_1 and _screen.cx-160) or (_screen.cx+160))
 						:y(_screen.cy+60)
 					--if this row represents the new highscore, highlight it
-					if s == index then
-						self:diffuseshift()
-						self:effectperiod(durationPerSong/3)
-						self:effectcolor1(GetHexColor((SL.Global.ActiveColorIndex - 4)%12 + 1))
-						self:effectcolor2(Color.White)
+					if (PREFSMAN:GetPreference("EventMode") and highscores[s] and pss:GetHighScore():GetPercentDP() == highscores[s]:GetPercentDP() )
+					or s == index then
+						self:diffuseshift():effectperiod(durationPerSong/3)
+							:effectcolor1( PlayerColor(player) )
+							:effectcolor2( Color.White )
 					end
 				end,
 				OnCommand=function(self)
