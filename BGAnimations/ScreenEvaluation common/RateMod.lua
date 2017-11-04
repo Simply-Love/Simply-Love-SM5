@@ -1,47 +1,24 @@
 return Def.ActorFrame{
+	-- don't bother drawing the ActorFrame if MusicRate==1
+	InitCommand=function(self)
+		self:visible(SL.Global.ActiveModifiers.MusicRate ~= 1)
+			:xy(_screen.cx, 172):zoom(0.7)
+	end,
 
-	--quad behind the ratemod, if there is one
+	--quad behind the MusicRate text
 	Def.Quad{
-		InitCommand=cmd(diffuse,color("#1E282FCC"); xy,_screen.cx, 172; zoomto, 292.5,14 ),
-		OnCommand=function(self)
-			local MusicRate = SL.Global.ActiveModifiers.MusicRate
-			if MusicRate == 1 then
-				self:visible(false)
-			end
-		end
+		InitCommand=function(self) self:diffuse( color("#1E282FCC") ):zoomto(418,20) end,
 	},
 
-	--the ratemod, if there is one
+	--the MusicRate text
 	LoadFont("_miso")..{
-		InitCommand=cmd(xy,_screen.cx, 173; shadowlength,1; zoom, 0.7),
+		InitCommand=function(self) self:shadowlength(1) end,
 		OnCommand=function(self)
-			-- what was the MusicRate for this song?
-			local MusicRate = SL.Global.ActiveModifiers.MusicRate
+			self:settext( ("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate") )
+
 			local bpm = GetDisplayBPMs()
-
-			if MusicRate ~= 1 then
-				self:settext(("%g"):format(MusicRate) .. " Music Rate")
-
-				if bpm then
-
-					--if there is a range of BPMs
-					if string.match(bpm, "%-") then
-						local bpms = {}
-						for i in string.gmatch(bpm, "%d+") do
-							bpms[#bpms+1] = round(tonumber(i) * MusicRate)
-						end
-						if bpms[1] and bpms[2] then
-							bpm = bpms[1] .. "-" .. bpms[2]
-						end
-					else
-						bpm = tonumber(bpm) * MusicRate
-					end
-
-					self:settext(self:GetText() .. " (" .. bpm .. " BPM)" )
-				end
-			else
-				-- else MusicRate was 1.0
-				self:visible(false)
+			if bpm then
+				self:settext(self:GetText() .. " (" .. bpm .. " BPM)" )
 			end
 		end
 	}

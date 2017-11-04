@@ -18,7 +18,7 @@ local FirstSecond = GAMESTATE:GetCurrentSong():GetFirstSecond()
 local TotalSeconds = GAMESTATE:GetCurrentSong():GetLastSecond() - FirstSecond
 
 -- variables that will be used and re-used in the loop while calculating the AMV's vertices
-local Offset, CurrentSecond, TimingWindow, x, y, c
+local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
@@ -53,16 +53,18 @@ local amv = Def.ActorMultiVertex{
 
 				-- get the appropriate color from the global SL table
 				c = SL.JudgmentColors[SL.Global.GameMode][TimingWindow]
-				-- the colors, as defined in SL_Init.lua, weren't given alpha (opacity) values
-				-- so they default to 1; we want the alpha to be slightly less than 1 here
-				c[4] = 0.666
+				-- get the red, green, and blue values from that color
+				r = c[1]
+				g = c[2]
+				b = c[3]
 
-				table.insert( verts, {{x, y, 0}, c} )
-				table.insert( verts, {{x+1.5, y, 0}, c} )
-				table.insert( verts, {{x+1.5, y+1.5, 0}, c} )
-				table.insert( verts, {{x, y+1.5, 0}, c} )
+				-- insert four datapoints into the verts tables, effectively generating a single quadrilateral
+				table.insert( verts, {{x, y, 0}, {r,g,b,0.666} } )
+				table.insert( verts, {{x+1.5, y, 0}, {r,g,b,0.666} } )
+				table.insert( verts, {{x+1.5, y+1.5, 0}, {r,g,b,0.666} } )
+				table.insert( verts, {{x, y+1.5, 0}, {r,g,b,0.666} } )
 			else
-
+				-- else, a miss should be a quadrilateral that is the height of the entire graph and red
 				table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
 				table.insert( verts, {{x+1, 0, 0}, color("#ff000077")} )
 				table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000077")} )

@@ -77,7 +77,7 @@ if PeakNPS and NPSperMeasure and #NPSperMeasure > 1 then
 	local text = Def.BitmapText{
 		Font="_miso",
 		InitCommand=function(self)
-			self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(PeakNPS,2) )
+			self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(PeakNPS * SL.Global.ActiveModifiers.MusicRate,2) )
 			self:x( _screen.w/2 - self:GetWidth()/2 - 2 + WideScale(0,-60) )
 				:y( -self:GetHeight()/2 - 2 )
 				:zoom(0.9)

@@ -39,8 +39,12 @@ local t = Def.ActorFrame{
 			self:y(-6)
 
 			if song then
-				self:LoadFromSong(song)
-					:setsize(418,164):zoom(0.333)
+				if GAMESTATE:IsCourseMode() then
+					self:LoadFromCourse(song)
+				else
+					self:LoadFromSong(song)
+				end
+				self:setsize(418,164):zoom(0.333)
 			end
 		end
 	},
@@ -61,7 +65,7 @@ local t = Def.ActorFrame{
 		DrawStageCommand=function(self)
 			if song then
 				local text = ""
-				local BPMs = song:GetDisplayBpms()
+				local BPMs = GAMESTATE:IsCourseMode() and GetCourseModeBPMs(song) or song:GetDisplayBpms()
 				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
 
 				if BPMs then
