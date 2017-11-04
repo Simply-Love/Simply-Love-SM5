@@ -25,32 +25,26 @@ end
 
 function DifficultyColor( difficulty )
 
-	if  difficulty  == "Difficulty_Edit" then return color("#B4B7BA") end
+	if difficulty  == "Difficulty_Edit" then return color("#B4B7BA") end
 	local index = GetYOffsetByDifficulty(difficulty)
 
 	return DifficultyIndexColor(index)
 end
 
-
 function GetYOffsetByDifficulty(difficulty)
 
 	if difficulty == "Difficulty_Edit" then
 		return 5
-	else
-		-- Use Enum's reverse lookup functionality to find difficulty by index
-		-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
-		-- for our purposes, increment by one here
-		return Difficulty:Reverse()[difficulty] + 1
 	end
-
-	return 1
+	
+	-- Use Enum's reverse lookup functionality to find difficulty by index
+	-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
+	-- for our purposes, increment by one here
+	return Difficulty:Reverse()[difficulty] + 1
 end
 
--- These are almost certainly inflexible with regard to the total
--- number of available colors to chose from...
 function DifficultyIndexColor( i )
-	local clr = i + SL.Global.ActiveColorIndex + 9
-	clr = clr % #SL.Colors + 1
+	local clr = SL.Global.ActiveColorIndex + (i-2)
 	return GetHexColor(clr)
 end
 
