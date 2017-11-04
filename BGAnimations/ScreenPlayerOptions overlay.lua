@@ -87,7 +87,6 @@ local Players = GAMESTATE:GetHumanPlayers()
 
 -- SpeedModItems is a table that will contain the BitmapText actors for the SpeedMod OptionRow for both P1 and P2
 local SpeedModItems = {}
-local NoteSkinProxies = {}
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy,_screen.cx,0),
@@ -99,12 +98,6 @@ local t = Def.ActorFrame{
 
 		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local pn = ToEnumShortString(player)
-			local noteskin_row_index = FindOptionRowIndex(ScreenOptions, "NoteSkin")
-
-			if noteskin_row_index then
-				NoteSkinProxies[pn] = ScreenOptions:GetOptionRow(noteskin_row_index):GetChild(""):GetChild("Frame"):GetChild("OptionRowProxy"..pn)
-			end
-
 			-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
 			SpeedModItems[pn] = ScreenOptions:GetOptionRow(FindOptionRowIndex(ScreenOptions,"SpeedMod")):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
 			self:playcommand("Set"..pn)
@@ -198,20 +191,15 @@ for player in ivalues(Players) do
 			if row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "SpeedMod") then
 				ChangeSpeedMod( pn, -1 )
 				self:queuecommand("Set"..pn)
-
-			elseif row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "NoteSkin") then
-				NoteSkinProxies[pn]:queuecommand("Update")
 			end
 		end,
 		["MenuRight" .. pn .. "MessageCommand"]=function(self)
 			local topscreen = SCREENMAN:GetTopScreen()
 			local row_index = topscreen:GetCurrentRowIndex(player)
+
 			if row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "SpeedMod") then
 				ChangeSpeedMod( pn, 1 )
 				self:queuecommand("Set"..pn)
-
-			elseif row_index == FindOptionRowIndex(SCREENMAN:GetTopScreen(), "NoteSkin") then
-				NoteSkinProxies[pn]:queuecommand("Update")
 			end
 		end
 	}

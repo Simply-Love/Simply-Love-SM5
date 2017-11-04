@@ -2,11 +2,13 @@ local t = Def.ActorFrame{}
 
 -- a row
 t[#t+1] = Def.Quad {
+	Name="RowBackgroundQuad",
 	OnCommand=cmd(zoomto,_screen.w*0.85,_screen.h*0.0625;);
 }
 
 -- black quad behind the title
 t[#t+1] = Def.Quad {
+	Name="TitleBackgroundQuad",
 	OnCommand=cmd(halign, 0; x, -_screen.cx/1.1775; zoomto,_screen.w*WideScale(0.18,0.15),_screen.h*0.0625; diffuse, Color.Black; diffusealpha,0.25);
 }
 
@@ -23,7 +25,7 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 
 	t[#t+1] = Def.ActorProxy{
 		Name="OptionRowProxy" ..pn,
-		BeginCommand=function(self)
+		OnCommand=function(self)
 			local optrow = self:GetParent():GetParent():GetParent()
 
 			if optrow:GetName() == "NoteSkin" then
@@ -31,29 +33,19 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 				-- to actually SetTarget() to the appropriate NoteSkin actor
 				self:x(-_screen.cx/1.1775 + _screen.w*WideScale(0.18,0.15) - (player==PLAYER_1 and 45 or 15))
 					:zoom(0.4)
-					:queuecommand("Update")
+					:diffusealpha(0):sleep(0.01):diffusealpha(1)
 			else
 				-- if this OptionRow isn't NoteSkin, this ActorProxy isn't needed
 				-- and can be cut out of the render pipeline
 				self:hibernate(math.huge)
 			end
 		end,
-		-- UpdateCommand() gets queued from ScreenPlayerOptions overlay.lua
-		-- when MenuLeft or MenuRight is pressed while the NoteSkin OptionRow is active
-		UpdateCommand=function(self)
-			local bmt
-			-- Typically, there are multiple NoteSkins to choose from, resulting in there being one BitmapText actor per player,
-			-- and one (one player joined) or both (two players joined) will be nested in an indexed table.
-			--
-			-- If there is only a single NoteSkin available, however, the engine will only draw one BitmapText actor ("Item")
-			-- and it won't be nested in a table,  So, check how many "Item" actors there are before attempting to index
-			-- a table that might not exist.
-			if #self:GetParent():GetParent():GetChild("Item") > 0 then
-				bmt = self:GetParent():GetParent():GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
-			else
-				bmt = self:GetParent():GetParent():GetChild("Item")
+		-- NoteSkinChanged is broadcast by the SaveSelections() function for the NoteSkin OptionRow definition
+		-- in ./Scripts/SL-PlayerOptions.lua
+		NoteSkinChangedMessageCommand=function(self, params)
+			if player == params.Player then
+				self:SetTarget( SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin) )
 			end
-			self:SetTarget( SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..bmt:GetText()) )
 		end
 	}
 end
