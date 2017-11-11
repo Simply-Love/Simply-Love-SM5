@@ -14,7 +14,7 @@ return Def.ActorFrame{
 	LoadFont("_miso")..{
 		InitCommand=function(self) self:shadowlength(1) end,
 		OnCommand=function(self)
-			self:settext( ("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. " " .. THEME:GetString("OptionTitles", "MusicRate") )
+			self:settext( ("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate") )
 
 			local bpm = GetDisplayBPMs()
 			if bpm then

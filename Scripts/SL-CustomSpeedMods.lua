@@ -10,7 +10,10 @@ function GetCourseModeBPMs(course)
 			courseEntries = course:GetCourseEntries()
 
 			for k,courseEntry in ipairs(courseEntries) do
+				-- courseEntry:GetSong() will return nil randomly generated courses :(
 				local song = courseEntry:GetSong()
+				if song==nil then return end
+
 				local bpms = song:GetDisplayBpms()
 
 				-- if either display BPM is negative or 0, use the actual BPMs instead...
@@ -79,7 +82,7 @@ function GetDisplayBPMs()
 			end
 		end
 
-	-- if we ARE in CourseMode
+	-- if we are in CourseMode
 	else
 		local range = GetCourseModeBPMs()
 		if range then

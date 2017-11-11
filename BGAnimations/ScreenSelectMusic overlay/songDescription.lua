@@ -232,6 +232,7 @@ local t = Def.ActorFrame{
 
 
 					if duration then
+						duration = duration / SL.Global.ActiveModifiers.MusicRate
 						if duration == 105.0 then
 							-- r21 lol
 							self:settext( THEME:GetString("SongDescription", "r21") )
