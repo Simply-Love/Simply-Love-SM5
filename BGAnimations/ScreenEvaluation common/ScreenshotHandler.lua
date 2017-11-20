@@ -24,7 +24,7 @@ if SL.Global.GameMode ~= "Casual" then
 		-- (Using a lua-based InputCallback would also have worked here.)
 		CodeMessageCommand=function(self, params)
 
-			if params.Name == "Screenshot" then
+			if params.Name == "Screenshot1" or params.Name == "Screenshot2" then
 				-- organize Screenshots take using Simply Love into directories, like...
 				-- ./Screenshots/Simply_Love/2015/06-June/2015-06-05_121708.png
 				local prefix = "Simply_Love/" .. Year() .. "/"
