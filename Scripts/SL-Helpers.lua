@@ -91,7 +91,8 @@ end
 -- For example, in dance Gametype, TapNoteScore_W3 (window #3) is commonly "Great"
 -- so in dance, a "Great" will not only maintain a player's combo, it will also increment it.
 --
--- We reference this function in Metrics.ini under the [Gameplay] section.
+-- We reference this function in Metrics.ini under the [Gameplay] section
+-- and in 'Player combo.lua'.
 function GetComboThreshold( MaintainOrContinue )
 	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
 
@@ -108,12 +109,14 @@ function GetComboThreshold( MaintainOrContinue )
 		beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
 	}
 
-
+	-- TODO we may want to revamp how other GameModes interact with this,
+	-- as it seems to be mainly made with Dance in mind
 	if CurrentGame == "dance" then
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
-			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
-			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
-		end
+		local theTNS = SL.Preferences[SL.Global.GameMode].MinTNSToHideNotes
+		ComboThresholdTable.dance = {
+			Maintain = theTNS,
+			Continue = theTNS
+		}
 	end
 
 	return ComboThresholdTable[CurrentGame][MaintainOrContinue]
