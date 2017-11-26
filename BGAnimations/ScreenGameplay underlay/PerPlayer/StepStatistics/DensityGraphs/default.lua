@@ -50,10 +50,20 @@ local InitializeNPSHistogram = function()
 			t = TimingData:GetElapsedTimeFromBeat((i-1)*4)
 
 			x = scale(t, 0, TotalSeconds, 0, width)
-			y = -1 * scale(nps, 0, PeakNPS, 0, height)
+			y = round(-1 * scale(nps, 0, PeakNPS, 0, height))
 
-			verts[#verts+1] = {{x, 0, 0}, {1,1,1,1}}
-			verts[#verts+1] = {{x, y, 0}, {1,1,1,1}}
+			-- if the height of this measure is the same as the previous two measures
+			-- we don't need to add two more points (bottom and top) to the verts table,
+			-- we can just "extend" the previous two points by updating their x position
+			-- to that of the current measure.  For songs with long streams, this should
+			-- cut down on the overall size of the verts table significantly.
+			if i > 2 and verts[#verts][1][2] == y and verts[#verts-2][1][2] == y then
+				verts[#verts][1][1] = x
+				verts[#verts-1][1][1] = x
+			else
+				verts[#verts+1] = {{x, 0, 0}, {1,1,1,1}}
+				verts[#verts+1] = {{x, y, 0}, {1,1,1,1}}
+			end
 		end
 	end
 end
