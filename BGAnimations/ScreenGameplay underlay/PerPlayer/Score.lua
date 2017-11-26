@@ -26,10 +26,6 @@ return Def.BitmapText{
 				self:x( _screen.cx + _screen.w/2.75 )
 			end
 		end
-<<<<<<< HEAD
-	}
-end
-=======
 	end,
 	JudgmentMessageCommand=function(self) self:queuecommand("RedrawScore") end,
 	RedrawScoreCommand=function(self)
@@ -38,4 +34,3 @@ end
 		self:settext(percent)
 	end
 }
->>>>>>> refs/remotes/dguzek/master
