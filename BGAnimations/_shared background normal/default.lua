@@ -1,3 +1,8 @@
+-- the best way to spread holiday cheer is singing loud for all to hear
+if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
+	return LoadActor( THEME:GetPathB("", "_shared background normal/snow.mp4") )..{ InitCommand=function(self) self:FullScreen():Center() end }
+end
+
 local file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
 
 -- this variable will be used within the scope of this file like (index+1) and (index-1)
