@@ -18,6 +18,38 @@ local function get43size(size4_3)
 	return 640*(size4_3/854)
 end
 
+ -- Finds the top score for the current song (or course) given a player.
+local function GetTopScore(pn, kind)
+	local SongOrCourse, StepsOrTrail
+
+	local scorelist, text
+
+	if GAMESTATE:IsCourseMode() then
+		SongOrCourse = GAMESTATE:GetCurrentCourse()
+		StepsOrTrail = GAMESTATE:GetCurrentTrail(pn)
+	else
+		SongOrCourse = GAMESTATE:GetCurrentSong()
+		StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
+	end
+
+	if SongOrCourse and StepsOrTrail and kind then
+		if kind == "Machine" then
+			scorelist = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail)
+		elseif kind == "Personal" then
+			scorelist = PROFILEMAN:GetProfile(pn):GetHighScoreList(SongOrCourse,StepsOrTrail)
+		end
+
+		if scorelist then
+			local topscore = scorelist:GetHighScores()[1]
+			if topscore then
+				return topscore:GetPercentDP()
+			end
+		end
+	end
+
+	return 0
+end
+
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 -- Ported from PSS.cpp, can be removed if that gets exported to Lua
