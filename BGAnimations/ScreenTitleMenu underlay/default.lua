@@ -79,9 +79,9 @@ local af = Def.ActorFrame{
 -- the best way to spread holiday cheer is singing loud for all to hear
 if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
 	af[#af+1] = Def.Sprite{
-		Texture="hat.png",
+		Texture=THEME:GetPathB("ScreenTitleMenu", "underlay/hat.png"),
 		InitCommand=function(self) self:zoom(0.225):xy( 130, -self:GetHeight()/2 ):rotationz(15) end,
-		OnCommand=function(self) self:sleep(1):smooth(1.666):y(-110) end
+		OnCommand=function(self) self:decelerate(1.333):y(-110) end
 	}
 end
 
