@@ -1,3 +1,3 @@
 return Def.ActorFrame{
-	OnCommand=cmd(sleep,1);
-};
+	OnCommand=cmd(sleep,1)
+}
