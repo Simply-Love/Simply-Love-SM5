@@ -19,7 +19,7 @@ local function GetSimfileString(path)
 	end
 
 	-- if neither a .ssc nor a .sm file were found, bail now
-	if not filename and filetype then return end
+	if not (filename and filetype) then return end
 
 	-- create a generic RageFile that we'll use to read the contents
 	-- of the desired .ssc or .sm file
