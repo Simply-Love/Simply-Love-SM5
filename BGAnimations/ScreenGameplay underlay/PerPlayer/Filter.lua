@@ -25,41 +25,21 @@ local filter = Def.Quad{
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
 		local StageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-		if StageStats:FullCombo() then
-			local comboColor
 
-			if SL.Global.GameMode == "StomperZ" then
-				if StageStats:FullComboOfScore('TapNoteScore_W1') then
-					comboColor = color("#e29c18") -- gold
-				elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
-					comboColor = color("#e29c18") -- gold
-				elseif StageStats:FullComboOfScore('TapNoteScore_W3') then
-					comboColor = color("#66c955") -- green
-				else
-					comboColor = color("#FFFFFF") -- white
-				end
-			elseif SL.Global.GameMode == "ECFA" then
-				if StageStats:FullComboOfScore('TapNoteScore_W1') then
-					comboColor = color("#21CCE8") -- blue
-				elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
-					comboColor = color("#21CCE8") -- blue
-				elseif StageStats:FullComboOfScore('TapNoteScore_W3') then
-					comboColor = color("#e29c18") -- gold
-				else
-					comboColor = color("#66c955") -- green
-				end
-			else
-				if StageStats:FullComboOfScore('TapNoteScore_W1') then
-					comboColor = color("#6BF0FF") -- ITG blue
-				elseif StageStats:FullComboOfScore('TapNoteScore_W2') then
-					comboColor = color("#FDDB85") -- ITG gold
-				else
-					comboColor = color("#94FEC1") -- ITG green
-				end
+		-- see Player combo.lua for more details
+		local fullComboType
+
+		for i=1,tonumber(string.sub(GetComboThreshold('Maintain'), -1)) do
+			if (StageStats:FullComboOfScore('TapNoteScore_W' .. i)) then
+				fullComboType = i
+				break
 			end
-			self:accelerate(0.25):diffuse( comboColor )
-				:decelerate(0.75):diffusealpha( 0 )
 		end
+
+		if not fullComboType then return end
+
+		self:accelerate(0.25):diffuse( SL.JudgmentColors[SL.Global.GameMode][fullComboType] )
+			:decelerate(0.75):diffusealpha( 0 )
 	end
 }
 

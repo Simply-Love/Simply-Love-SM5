@@ -33,23 +33,9 @@ return Def.ActorFrame {
 			return
 		end
 
-		-- the combo has reached (or surpassed) the threshold to be shown
 		if CurrentCombo >= ShowComboAt then
-			-- so, display the AF
+			-- the combo has reached (or surpassed) the threshold to be shown, so show the AF
 			self:visible( true )
-		end
-
-		if (param.misses and PreviousComboType == "Combo") or (param.combo and PreviousComboType == "Misses") then
-			if param.Combo then
-
-				kids.Label:settext( "Combo" )
-
-			elseif param.Misses then
-
-				kids.Label:settext( "Misses" )
-				kids.Number:stopeffect()
-			end
-			PreviousComboType = (param.misses and "Misses") or "Combo"
 		end
 
 		if CurrentCombo <= NumberMaxZoomAt then
@@ -57,23 +43,44 @@ return Def.ActorFrame {
 		end
 		kids.Number:settext( CurrentCombo )
 
+		-- check if it's an FC
+		local fullComboType
+		-- StepMania always seems to keep param.FullComboW4 around,
+		-- but our current game mode might not want that.
+		for i=1,tonumber(string.sub(GetComboThreshold('Maintain'), -1)) do
+			if (param["FullComboW" .. i]) then
+				fullComboType = i
+				break
+			end
+		end
 
-		if (SL.Global.GameMode ~= "ECFA" and param.FullComboW1) or (SL.Global.GameMode == "ECFA" and (param.FullComboW1 or param.FullComboW2)) then
-			-- blue combo
-			kids.Number:playcommand("ChangeColor", {Color1="#C8FFFF", Color2="#6BF0FF"})
+		if (fullComboType) then
+			-- grab the base color out of the judgement table
+			local theColor = SL.JudgmentColors[SL.Global.GameMode][fullComboType]
+			local otherColor = ColorToHSV(theColor)
 
-		elseif (SL.Global.GameMode ~= "ECFA" and param.FullComboW2) or (SL.Global.GameMode == "ECFA" and param.FullComboW3) then
-			-- gold combo
-			kids.Number:playcommand("ChangeColor", {Color1="#FDFFC9", Color2="#FDDB85"})
+			-- the colored combo fades between two colors
+			-- in the past, the second color was a lighter version of the judgement color
+			-- but if the judgement color is already close to white,
+			-- we won't be able to tell the difference (and it will look like normal combo)
+			-- colors close to white have high value and low saturation
 
-		elseif (SL.Global.GameMode ~= "ECFA" and param.FullComboW3) or (SL.Global.GameMode == "ECFA" and param.FullComboW4) then
-			-- green combo
-			kids.Number:playcommand("ChangeColor", {Color1="#C9FFC9", Color2="#94FEC1"})
+			if (otherColor.Value + (1 - otherColor.Sat) < 1.5) then
+				-- this is the normal case
+				otherColor.Value = 0.6 + (0.4 * otherColor.Value) -- lighten the color
+				otherColor.Sat = otherColor.Sat * 0.5 -- desaturate it, to bring it closer to white
+			else
+				-- a light, faint color
+				otherColor.Value = otherColor.Value * 0.5 -- darken it
+			end
+
+			otherColor = HSVToColor(otherColor)
+
+			kids.Number:playcommand("ChangeColor", {Color1=theColor, Color2=otherColor})
 
 		elseif param.Combo then
 			-- normal (white) combo
 			kids.Number:stopeffect():diffuse( Color.White )
-
 		else
 			-- miss (red) combo
 			kids.Number:stopeffect():diffuse( Color.Red )
@@ -100,16 +107,8 @@ return Def.ActorFrame {
 		end,
 		ChangeColorCommand=function(self, params)
 			self:diffuseshift():effectperiod(0.8)
-			self:effectcolor1( color(params.Color1) )
-			self:effectcolor2( color(params.Color2) )
+			self:effectcolor1( params.Color1 )
+			self:effectcolor2( params.Color2 )
 		end
 	},
-
-	LoadFont("_wendy combo")..{
-		Name="Label",
-		InitCommand=cmd(zoom,0.25 ),
-		OnCommand=function(self)
-			self:zoom(0.25):xy(0,0):shadowlength(1):vertalign(top)
-		end
-	}
 }

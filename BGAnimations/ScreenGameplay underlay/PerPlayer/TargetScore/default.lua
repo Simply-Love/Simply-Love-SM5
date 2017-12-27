@@ -461,25 +461,46 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 	end
 end
 
--- pacemaker text (or subtractive scoring, if that's your thing)
+-- pacemaker text
 if SL[pn].ActiveModifiers.TargetScore then
 	finalFrame[#finalFrame+1] = Def.BitmapText{
 		Font="_wendy small",
 		Text="+0.00",
 		InitCommand=function(self)
 			local noteX
+			local noteY
+			local zoomF = 0.4
+			local origX = GetNotefieldX( player )
+
 			-- aligned to the score
 			if (player == PLAYER_1) then
-				noteX = GetNotefieldX(player) + (GetNotefieldWidth() / 4) - graphX
+				noteX = origX + (GetNotefieldWidth() / 4) - graphX
 			else
-				noteX = GetNotefieldX(player) - (GetNotefieldWidth() / 4) - graphX - 15
+				noteX = origX - (GetNotefieldWidth() / 4) - graphX - 15
 			end
 
-			self:xy( noteX, 56 - graphY ):zoom(0.4)
+			-- If we have StomperZ and higher receptors, those will overlap the pacemaker
+			-- move it to around where subtractive scoring is
+			if SL.Global.GameMode == "StomperZ" and SL[pn].ActiveModifiers.ReceptorArrowsPosition == "StomperZ" and nil then
+				-- TODO this is stubbed out, because this fix doesn't work
+				-- it is left as a guide to whoever fixes this issue
+				noteX = origX + GetNotefieldWidth() / 3
+				noteY = _screen.cy
+				zoomF = 0.35
+			else
+				noteY = 56 - graphY
+			end
+
+			self:xy( noteX, noteY ):zoom(zoomF)
 		end,
 		UpdateCommand=function(self)
 			local percentDifference = pss:GetPercentDancePoints() - (targetGradeScore * GetCurMaxPercentDancePoints())
 			self:settext(string.format("%+2.2f", percentDifference * 100))
+
+			-- is the goal still possible?
+			if ((pss:GetCurrentPossibleDancePoints() - pss:GetActualDancePoints()) > (pss:GetPossibleDancePoints() * (1 - targetGradeScore))) then
+				self:diffusealpha(0.55)
+			end
 		end
 	}
 end
