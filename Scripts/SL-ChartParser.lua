@@ -19,7 +19,7 @@ local function GetSimfileString(path)
 	end
 
 	-- if neither a .ssc nor a .sm file were found, bail now
-	if not filename and filetype then return end
+	if not (filename and filetype) then return end
 
 	-- create a generic RageFile that we'll use to read the contents
 	-- of the desired .ssc or .sm file
@@ -213,7 +213,11 @@ function GetNPSperMeasure(Song, StepsType, Difficulty)
 		if(line:match("^[,;]%s*")) then
 
 			DurationOfMeasureInSeconds = TimingData:GetElapsedTimeFromBeat((measureCount+1)*4) - TimingData:GetElapsedTimeFromBeat(measureCount*4)
-			NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds
+			if (DurationOfMeasureInSeconds == 0) then
+				NPSforThisMeasure = 0
+			else
+				NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds
+			end
 
 			-- measureCount in SM truly starts at 0, but indexed Lua tables start at 1
 			-- add 1 now to the table behaves and subtract 1 later when drawing the histogram
