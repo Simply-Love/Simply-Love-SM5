@@ -67,39 +67,6 @@ t = Def.ActorFrame{
 				end
 			end
 
-			-- check difficulty
-			local meter
-			if GAMESTATE:IsCourseMode() then -- course mode
-				local trail = GAMESTATE:GetCurrentTrail(pn)
-				if trail then
-					meter = trail:GetMeter()
-					if string.match(tostring(meter), "69") ~= nil then
-						self:visible(true)
-					end
-				end
-			else
-				local steps = GAMESTATE:GetCurrentSteps(pn) -- regular mod
-				if steps then
-					meter = steps:GetMeter()
-					if string.match(tostring(meter), "69") ~= nil then
-						self:visible(true)
-					end
-				end
-			end
-
-			-- song title
-			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
-
-			if songtitle then
-				if string.match(tostring(songtitle), "69") ~= nil then
-					self:visible(true)
-				end
-			end
-
-			-- potential extensions that i don't wanna do
-			-- artist?
-			-- max combo from combo graph?
-
 		end,
 	}
 }
