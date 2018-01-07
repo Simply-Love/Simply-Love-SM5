@@ -1,7 +1,6 @@
 local pss = ...
 local t = Def.ActorFrame{}
 
--- flag (all fantastics except 1 ex): stars
 t[#t+1] = LoadActor("graphics/star.png")..{
 	OnCommand=function(self)
 		if pss ~= nil and pss:GetTapNoteScores('TapNoteScore_Miss') == 0 and
@@ -91,7 +90,6 @@ t[#t+1] = LoadActor("graphics/goldstar (stretch).png")..{
 	end,
 	OnCommand=function(self)
 		self:draworder(100)
-		-- if worse score than 1 great
 		if pss == nil or pss:GetTapNoteScores('TapNoteScore_Miss') > 0 or
 				pss:GetTapNoteScores('TapNoteScore_W5') > 0 or
 				pss:GetTapNoteScores('TapNoteScore_W4') > 0 or
@@ -99,11 +97,11 @@ t[#t+1] = LoadActor("graphics/goldstar (stretch).png")..{
 			-- Nothing special
 			self:visible(false)
 		elseif pss:GetTapNoteScores('TapNoteScore_W3') == 1 then
-			-- Black flag; one great
+			-- Black flag
 			self:visible(true)
 			self:diffuse(Color.Black)
 		elseif pss:GetTapNoteScores('TapNoteScore_W2') == 1 then
-			-- Lol; one ex
+			-- Lol
 			self:visible(true)
 			self:diffuse(Color.Black)
 			self:sleep(2)
