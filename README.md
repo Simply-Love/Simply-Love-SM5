@@ -76,7 +76,7 @@ See: [No License](http://choosealicense.com/licenses/no-license/)
 
 <hr>
 
-## ACKNOWLEDGEMENTS:
+## ACKNOWLEDGEMENTS
 
 * [hurtpiggypig](http://www.shirtpiggypig.com/) -- Lara designed the original Simply Love theme for StepMania 3.95.
 * [djpohly](https://github.com/djpohly) -- Devin was a constant source of knowledge and help during the months I spent porting this.
