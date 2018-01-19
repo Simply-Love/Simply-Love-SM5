@@ -189,11 +189,11 @@ Branch.AfterProfileSave = function()
 			-- check first to see how many songs are remaining
 			-- if none...
 			if SL.Global.Stages.Remaining <= 0 then
-
-				local credits = GetCredits()
-
-				if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
-					return "ScreenPlayAgain"
+				if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
+					local credits = GetCredits()
+					if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
+						return "ScreenPlayAgain"
+					end
 				end
 
 				return Branch.AllowScreenEvalSummary()
@@ -220,33 +220,22 @@ Branch.AfterProfileSave = function()
 		-- else we DO allow players to possibly fail out of a set
 		else
 
-			-- if CoinMode is set to Home or Free (that is, not Pay mode)
-			-- then there should be no concept of credits, and thus,
-			-- no concept of possibly continuing via ScreenPlayAgain
-			-- All we need to do is either send the player to SelectMusic or EvalSummary
-			if PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay" then
-				if STATSMAN:GetCurStageStats():AllFailed() or SL.Global.Stages.Remaining <= 0 then
-					return Branch.AllowScreenEvalSummary()
-				else
-					return SelectMusicOrCourse()
-				end
-			end
-
-			-- if we're down here, we are presumably in Pay mode
 			if STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 or SL.Global.Stages.Remaining <= 0 then
-				-- since we're in Pay mode, there might be credits remaining
-				local credits = GetCredits()
 
-				if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
-					return "ScreenPlayAgain"
-				else
-					return Branch.AllowScreenEvalSummary()
+				if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
+					local credits = GetCredits()
+					if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
+						return "ScreenPlayAgain"
+					end
 				end
 
-			else
-				return SelectMusicOrCourse()
+				-- if CoinMode is set to Home or Free (that is, not Pay mode)
+				-- then there should be no concept of credits, and thus,
+				-- no concept of possibly continuing via ScreenPlayAgain
+				return Branch.AllowScreenEvalSummary()
 			end
 
+			return SelectMusicOrCourse()
 		end
 	end
 
