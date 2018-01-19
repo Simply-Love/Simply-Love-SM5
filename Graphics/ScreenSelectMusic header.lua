@@ -3,11 +3,6 @@ local SongCost = 1
 
 local StageText = function()
 
-	-- if EventMode is enabled
-	if PREFSMAN:GetPreference("EventMode") then
-		return THEME:GetString("Stage", "Event")
-	end
-
 	-- if the continue system is enabled, don't worry about determining "Final Stage"
 	if ThemePrefs.Get("NumberOfContinuesAllowed") > 0 then
 		return THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
@@ -50,7 +45,32 @@ local StageText = function()
 	end
 end
 
+local bmt_actor
+
+local Update = function(af, dt)
+	local seconds = GetTimeSinceStart() - SL.Global.TimeAtSessionStart
+
+	-- if this game session is less than 1 hour in duration so far
+	if seconds < 3600 then
+		bmt_actor:settext( SecondsToMMSS(seconds) )
+	else
+		bmt_actor:settext( SecondsToHHMMSS(seconds) )
+	end
+end
+
 local t = Def.ActorFrame{
+	InitCommand=function(self)
+		if PREFSMAN:GetPreference("EventMode") then
+			-- TimeAtSessionStart will be reset to nil between game sesssions
+			-- thus, if it's currently nil, we're loading ScreenSelectMusic
+			-- for the first time this particular game session
+			if SL.Global.TimeAtSessionStart == nil then
+				SL.Global.TimeAtSessionStart = GetTimeSinceStart()
+			end
+
+			self:SetUpdateFunction( Update )
+		end
+	end,
 	OffCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
@@ -67,10 +87,16 @@ local t = Def.ActorFrame{
 
 	LoadFont("_wendy small")..{
 		Name="Stage Number",
-		InitCommand=function(self) self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy(_screen.cx, 15) end,
+		InitCommand=function(self)
+			bmt_actor = self
+			self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy(_screen.cx, 15)
+		end,
 		OnCommand=function(self)
-			self:settext( StageText() )
-				:sleep(0.1):decelerate(0.33):diffusealpha(1)
+			if not PREFSMAN:GetPreference("EventMode") then
+				self:settext( StageText() )
+			end
+
+			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 		end,
 	},
 
