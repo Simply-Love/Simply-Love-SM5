@@ -190,19 +190,13 @@ Branch.AfterProfileSave = function()
 			-- if none...
 			if SL.Global.Stages.Remaining <= 0 then
 
-				if SL.Global.ContinuesRemaining > 0 then
+				local credits = GetCredits()
 
-					local credits = GetCredits()
-
-					if credits.Credits > 0 then
-						return "ScreenPlayAgain"
-					else
-						return Branch.AllowScreenEvalSummary()
-					end
-				else
-					return Branch.AllowScreenEvalSummary()
+				if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
+					return "ScreenPlayAgain"
 				end
 
+				return Branch.AllowScreenEvalSummary()
 
 			-- otherwise, there are some stages remaining
 			else
