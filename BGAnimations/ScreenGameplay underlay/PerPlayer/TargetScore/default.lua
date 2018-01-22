@@ -1,5 +1,15 @@
 local player = ...
-local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local pn = ToEnumShortString(player)
+
+-- if nobody wants us, we won't appear
+if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
+or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"
+or SL.Global.Gamestate.Style == "double")
+and (not SL[pn].ActiveModifiers.TargetScore)
+then
+	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+end
+
 
 -- Pacemaker contributed by JackG
 -- minor cleanup by dguzek and djpohly
@@ -7,6 +17,40 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local function get43size(size4_3)
 	return 640*(size4_3/854)
 end
+
+ -- Finds the top score for the current song (or course) given a player.
+local function GetTopScore(pn, kind)
+	local SongOrCourse, StepsOrTrail
+
+	local scorelist, text
+
+	if GAMESTATE:IsCourseMode() then
+		SongOrCourse = GAMESTATE:GetCurrentCourse()
+		StepsOrTrail = GAMESTATE:GetCurrentTrail(pn)
+	else
+		SongOrCourse = GAMESTATE:GetCurrentSong()
+		StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
+	end
+
+	if SongOrCourse and StepsOrTrail and kind then
+		if kind == "Machine" then
+			scorelist = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail)
+		elseif kind == "Personal" then
+			scorelist = PROFILEMAN:GetProfile(pn):GetHighScoreList(SongOrCourse,StepsOrTrail)
+		end
+
+		if scorelist then
+			local topscore = scorelist:GetHighScores()[1]
+			if topscore then
+				return topscore:GetPercentDP()
+			end
+		end
+	end
+
+	return 0
+end
+
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 -- Ported from PSS.cpp, can be removed if that gets exported to Lua
 local function GetCurMaxPercentDancePoints()
@@ -21,16 +65,9 @@ local function GetCurMaxPercentDancePoints()
 	return currentMax / possible
 end
 
--- if nobody wants us, we won't appear
-if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Disabled") or SL.Global.Gamestate.Style == "double" then
-	return false
-end
-
 local isTwoPlayers = (GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2))
 
-local bothWantBars = isTwoPlayers
-                     and (SL.P1.ActiveModifiers.TargetStatus == "Bars" or SL.P1.ActiveModifiers.TargetStatus == "Both")
-                     and (SL.P2.ActiveModifiers.TargetStatus == "Bars" or SL.P2.ActiveModifiers.TargetStatus == "Both")
+local bothWantBars = isTwoPlayers and (SL.P1.ActiveModifiers.TargetStatus == "Target Score Graph") and (SL.P2.ActiveModifiers.TargetStatus == "Target Score Graph")
 
 local targetBarBorderWidth = 2
 
@@ -100,7 +137,7 @@ local previousGrade = nil
 local pbGradeScore = GetTopScore(player, "Personal")
 
 -- get the index of the target chosen in the options menu
-local targetGradeIndex = tonumber(SL[ToEnumShortString(player)].ActiveModifiers.TargetBar)
+local targetGradeIndex = tonumber(SL[pn].ActiveModifiers.TargetBar)
 local targetGradeScore = 0
 
 if (targetGradeIndex == 17) then
@@ -244,7 +281,7 @@ local finalFrame = Def.ActorFrame{
 }
 
 -- if the player wants the bar graph
-if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Both") then
+if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 	if isTwoPlayers then
 		-- only two bars in 2 players mode
 		finalFrame[#finalFrame+1] = Def.ActorFrame {
@@ -425,7 +462,7 @@ if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Bars" or SL[T
 end
 
 -- pacemaker text (or subtractive scoring, if that's your thing)
-if (SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Target" or SL[ToEnumShortString(player)].ActiveModifiers.TargetStatus == "Both") then
+if SL[pn].ActiveModifiers.TargetScore then
 	finalFrame[#finalFrame+1] = Def.BitmapText{
 		Font="_wendy small",
 		Text="+0.00",

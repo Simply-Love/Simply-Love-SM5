@@ -34,17 +34,25 @@ local t = Def.ActorFrame {
 	CaptureInputCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
 
-		for k,wheel in pairs(AlphabetWheels) do
-			-- set_info_set() takes two arguments:
-			--		a table of meaningful data to divvy up to wheel items
-			--		the index of which wheel item we want to initially give focus to
-			--			here, we are passing it all the possible characters, and the index of "A"
-			wheel:set_info_set(PossibleCharacters, 3)
+		for player in ivalues(Players) do
+			local wheel = AlphabetWheels[ToEnumShortString(player)]
+
+			if wheel then
+				local profile = PROFILEMAN:GetProfile(player)
+				-- if a profile is in use and has a HighScoreName, make the starting index 2 ("ok"); otherwise, 3 ("A")
+				local StartingCharIndex = (profile and (profile:GetLastUsedHighScoreName() ~= "") and 2) or 3
+
+				-- set_info_set() takes two arguments:
+				--		a table of meaningful data to divvy up to wheel items
+				--		the index of which wheel item we want to initially give focus to
+				-- here, we are passing it all the possible characters,
+				-- and either 2 ("ok") or 3 ("A") as the starting index
+				AlphabetWheels[ToEnumShortString(player)]:set_info_set(PossibleCharacters, StartingCharIndex)
+			end
 		end
 
 		-- actually attach the InputHandler function to our screen
 		topscreen:AddInputCallback( LoadActor("InputHandler.lua", {self, AlphabetWheels}) )
-
 	end,
 	AttemptToFinishCommand=function(self)
 		if not SL.P1.HighScores.EnteringName and not SL.P2.HighScores.EnteringName then
@@ -114,85 +122,59 @@ t[#t+1] = Def.ActorFrame {
 }
 
 -- Banner(s) and Title(s)
-if GAMESTATE:IsCourseMode() then
-	local course = GAMESTATE:GetCurrentCourse()
+for i=1,NumStages do
 
-	t[#t+1] = LoadFont("_miso")..{
-		Name="CourseName",
+	local SongOrCourse = SL.Global.Stages.Stats[i].song
+
+	-- Create an ActorFrame for each (Name + Banner) pair
+	-- so that we can display/hide all children simultaneously.
+	local SongNameAndBanner = Def.ActorFrame{
+		InitCommand=function(self) self:visible(false) end,
+		OnCommand=function(self)
+			self:sleep(DurationPerStage * (i-1) );
+			self:queuecommand("Display")
+		end,
+		DisplayCommand=function(self)
+			self:visible(true)
+			self:sleep(DurationPerStage)
+			self:queuecommand("Wait")
+		end,
+		WaitCommand=function(self)
+			self:visible(false)
+			self:sleep(DurationPerStage * (NumStages-1))
+			self:queuecommand("Display")
+		end
+	}
+
+	-- song name
+	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
+		Name="SongName"..i,
 		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 		OnCommand=function(self)
-			if course then
-				self:settext( course:GetDisplayFullTitle() )
+			if SongOrCourse then
+				self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
 			end
 		end
 	}
 
-	t[#t+1] = Def.Banner{
-		Name="CourseBanner",
-		InitCommand=cmd(xy, _screen.cx, 121.5 ),
+	-- song banner
+	SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
+		Name="SongBanner"..i,
+		InitCommand=cmd(xy, _screen.cx, 121.5),
 		OnCommand=function(self)
-
-			if course then
-				self:LoadFromCourse(course)
-				self:setsize(418,164)
-				self:zoom(0.7)
+			if SongOrCourse then
+				if GAMESTATE:IsCourseMode() then
+					self:LoadFromCourse(SongOrCourse)
+				else
+					self:LoadFromSong(SongOrCourse)
+				end
+				self:setsize(418,164):zoom(0.7)
 			end
 		end
 	}
 
-else
-
-	for i=1,NumStages do
-
-		local song = SL.Global.Stages.Stats[i].song
-
-		-- Create an ActorFrame for each (Name + Banner) pair
-		-- so that we can display/hide all children simultaneously.
-		local SongNameAndBanner = Def.ActorFrame{
-			InitCommand=function(self) self:visible(false) end,
-			OnCommand=function(self)
-				self:sleep(DurationPerStage * (i-1) );
-				self:queuecommand("Display")
-			end,
-			DisplayCommand=function(self)
-				self:visible(true)
-				self:sleep(DurationPerStage)
-				self:queuecommand("Wait")
-			end,
-			WaitCommand=function(self)
-				self:visible(false)
-				self:sleep(DurationPerStage * (NumStages-1))
-				self:queuecommand("Display")
-			end
-		}
-
-		-- song name
-		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
-			Name="SongName"..i,
-			InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
-			OnCommand=function(self)
-				if song then
-					self:settext( song:GetDisplayMainTitle() )
-				end
-			end
-		}
-
-		-- song banner
-		SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
-			Name="SongBanner"..i,
-			InitCommand=cmd(xy, _screen.cx, 121.5),
-			OnCommand=function(self)
-				if song then
-					self:LoadFromSong(song)
-					self:setsize(418,164)
-					self:zoom(0.7)
-				end
-			end
-		}
-
-		-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
-		t[#t+1] = SongNameAndBanner
-	end
+	-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
+	t[#t+1] = SongNameAndBanner
 end
 
 

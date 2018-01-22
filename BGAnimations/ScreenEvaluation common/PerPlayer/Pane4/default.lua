@@ -3,54 +3,17 @@ local pn = ToEnumShortString(player)
 
 -- table of offet values obtained during this song's playthrough
 -- obtained via ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
-local offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].timing_offsets
+local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local pane_width, pane_height = 300, 180
 
 -- ---------------------------------------------
 
-local colors = {
-	Competitive = {
-		color("#21CCE8"),	-- blue
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#5b2b8e"),	-- purple
-		color("#c9855e"),	-- peach?
-		color("#ff0000")	-- red
-	},
-	ECFA = {
-		color("#21CCE8"),	-- blue
-		color("#ffffff"),	-- white
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#5b2b8e"),	-- purple
-		color("#ff0000")	-- red
-	},
-	StomperZ = {
-		color("#FFFFFF"),	-- white
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#21CCE8"),	-- blue
-		color("#000000"),	-- black
-		color("#ff0000")	-- red
-	}
-}
-
 local abbreviations = {
 	Competitive = { "Fan", "Ex", "Gr", "Dec", "WO" },
 	ECFA = { "Fan", "Fan", "Ex", "Gr", "Dec" },
-	StomperZ = { "Perf", "Perf", "Gr", "Good", "" }
+	StomperZ = { "Perf", "Def", "Gr", "Good", "" }
 }
 
--- ---------------------------------------------
--- helper function used to detmerine which timing_window a particular offset belongs to
-local DetermineTimingWindow = function(offset)
-	for i=1,5 do
-		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] then
-			return i
-		end
-	end
-	return 5
-end
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
@@ -58,7 +21,31 @@ local num_judgments_available = (SL.Global.ActiveModifiers.DecentsWayOffs=="Dece
 local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..num_judgments_available]
 
 -- ---------------------------------------------
--- first, smooth the offset distribution and store values in a new table, smooth_offsets
+-- sequential_offsets is a table of all timing offsets in the order they were earned.
+-- The sequence is important for the Scatter Plot, but irrelevant here; we are only really
+-- interested in how many +0.001 offsets were earned, how many -0.001, how many +0.002, etc.
+-- So, we loop through sequential_offsets, and tally offset counts into a new offsets table.
+local offsets = {}
+local val
+
+for t in ivalues(sequential_offsets) do
+	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
+	-- the second value in t is the offset value or the string "Miss"
+	val = t[2]
+
+	if val ~= "Miss" then
+		val = (math.floor(val*1000))/1000
+
+		if not offsets[val] then
+			offsets[val] = 1
+		else
+			offsets[val] = offsets[val] + 1
+		end
+	end
+end
+
+-- ---------------------------------------------
+-- next, smooth the offset distribution and store values in a new table, smooth_offsets
 local smooth_offsets = {}
 
 -- gaussian distribution for smoothing the histogram's jagged peaks and troughs
@@ -181,7 +168,7 @@ for offset=-worst_window, worst_window, 0.001 do
 
 	-- scale the highst point on the histogram to be 0.75 times as high as the pane
 	y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-	c = colors[SL.Global.GameMode][DetermineTimingWindow(offset)]
+	c = SL.JudgmentColors[SL.Global.GameMode][DetermineTimingWindow(offset)]
 
 	-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads places next to one another
 	-- each vertex is a table of two tables:
@@ -245,7 +232,7 @@ pane[#pane+1] = Def.BitmapText{
 	InitCommand=function(self)
 		local x = pane_width/2
 
-		self:diffuse( colors[SL.Global.GameMode][1] )
+		self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
 			:addx(x):addy(7)
 			:zoom(0.65)
 	end,
@@ -267,7 +254,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( colors[SL.Global.GameMode][i] )
+			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,
@@ -285,7 +272,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( colors[SL.Global.GameMode][i] )
+			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,

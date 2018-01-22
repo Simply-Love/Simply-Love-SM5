@@ -10,7 +10,7 @@ local PlayerDefaults = {
 				SpeedModType = "x",
 				SpeedMod = 1.00,
 				Vocalization = "None",
-				Noteskin = nil,
+				NoteSkin = nil,
 				HideTargets = false,
 				HideSongBG = false,
 				HideCombo = false,
@@ -22,6 +22,7 @@ local PlayerDefaults = {
 				MeasureCounter = "None",
 				TargetStatus="Disabled",
 				TargetBar=11,
+				TargetScore=false,
 				ReceptorArrowsPosition="StomperZ",
 				LifeMeterType="Standard",
 			}
@@ -78,6 +79,7 @@ local GlobalDefaults = {
 				ScreenEvaluationSummary = ThemePrefs.Get("ScreenEvaluationSummaryMenuTimer"),
 				ScreenNameEntry = ThemePrefs.Get("ScreenNameEntryMenuTimer"),
 			}
+			self.TimeAtSessionStart = nil
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,
@@ -92,23 +94,50 @@ SL = {
 	P1 = setmetatable( {}, PlayerDefaults),
 	P2 = setmetatable( {}, PlayerDefaults),
 	Global = setmetatable( {}, GlobalDefaults),
+	-- Colors that Simply Love's background can be
 	Colors = {
 		"#FF3C23",
-	    "#FF003C",
-	    "#C1006F",
-	    "#8200A1",
-	    "#413AD0",
-	    "#0073FF",
-	    "#00ADC0",
-	    "#5CE087",
-	    "#AEFA44",
-	    "#FFFF00",
-	    "#FFBE00",
-	    "#FF7D00"
+		"#FF003C",
+		"#C1006F",
+		"#8200A1",
+		"#413AD0",
+		"#0073FF",
+		"#00ADC0",
+		"#5CE087",
+		"#AEFA44",
+		"#FFFF00",
+		"#FFBE00",
+		"#FF7D00"
+	},
+	JudgmentColors = {
+		Competitive = {
+			color("#21CCE8"),	-- blue
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#5b2b8e"),	-- purple
+			color("#c9855e"),	-- peach?
+			color("#ff0000")	-- red
+		},
+		ECFA = {
+			color("#21CCE8"),	-- blue
+			color("#ffffff"),	-- white
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#5b2b8e"),	-- purple
+			color("#ff0000")	-- red
+		},
+		StomperZ = {
+			color("#5b2b8e"),	-- purple
+			color("#0073ff"),	-- dark blue
+			color("#66c955"),	-- green
+			color("#e29c18"),	-- gold
+			color("#dddddd"),	-- grey
+			color("#ff0000")	-- red
+		}
 	},
 	Preferences = {
 		Casual = {
-			TimingWindowAdd=0.001500,
+			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W3",
@@ -140,7 +169,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		ECFA = {
-			TimingWindowAdd=0.0015,
+			TimingWindowAdd=0,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
@@ -167,7 +196,7 @@ SL = {
 			TimingWindowSecondsW3=0.050000,
 			TimingWindowSecondsW4=0.100000,
 			TimingWindowSecondsW5=0.10000,
-			TimingWindowSecondsHold=0.10000,
+			TimingWindowSecondsHold=0.20000,
 			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},

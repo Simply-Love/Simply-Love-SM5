@@ -3,33 +3,6 @@ local position_on_screen = ...
 local Players = GAMESTATE:GetHumanPlayers()
 local song, StageNum, DecentsWayOffs
 
-local colors = {
-	Competitive = {
-		color("#21CCE8"),	-- blue
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#5b2b8e"),	-- purple
-		color("#c9855e"),	-- peach?
-		color("#ff0000")	-- red
-	},
-	ECFA = {
-		color("#21CCE8"),	-- blue
-		color("#ffffff"),	-- white
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#5b2b8e"),	-- purple
-		color("#ff0000")	-- red
-	},
-	StomperZ = {
-		color("#FFFFFF"),	-- white
-		color("#e29c18"),	-- gold
-		color("#66c955"),	-- green
-		color("#21CCE8"),	-- blue
-		color("#000000"),	-- black
-		color("#ff0000")	-- red
-	}
-}
-
 local banner_directory = ThemePrefs.Get("VisualTheme")
 local t = Def.ActorFrame{
 	DrawPageCommand=function(self, params)
@@ -66,8 +39,12 @@ local t = Def.ActorFrame{
 			self:y(-6)
 
 			if song then
-				self:LoadFromSong(song)
-					:setsize(418,164):zoom(0.333)
+				if GAMESTATE:IsCourseMode() then
+					self:LoadFromCourse(song)
+				else
+					self:LoadFromSong(song)
+				end
+				self:setsize(418,164):zoom(0.333)
 			end
 		end
 	},
@@ -88,7 +65,7 @@ local t = Def.ActorFrame{
 		DrawStageCommand=function(self)
 			if song then
 				local text = ""
-				local BPMs = song:GetDisplayBpms()
+				local BPMs = GAMESTATE:IsCourseMode() and GetCourseModeBPMs(song) or song:GetDisplayBpms()
 				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
 
 				if BPMs then
@@ -209,11 +186,11 @@ for player in ivalues(Players) do
 					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs
 
 					if SL.Global.GameMode == "StomperZ" then
-						self:diffuse( colors.StomperZ[i] )
+						self:diffuse( SL.JudgmentColors.StomperZ[i] )
 					elseif SL.Global.GameMode == "ECFA" then
-						self:diffuse( colors.ECFA[i] )
+						self:diffuse( SL.JudgmentColors.ECFA[i] )
 					else
-						self:diffuse( colors.Competitive[i] )
+						self:diffuse( SL.JudgmentColors.Competitive[i] )
 					end
 
 					if DecentsWayOffs == "Decents Only" and i == 5 then

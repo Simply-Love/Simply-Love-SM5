@@ -36,7 +36,7 @@ local t = Def.ActorFrame{
 						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
 						self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
 					else
-						-- otherwise, set the meter to "?" and hide this particular colored BlockRow
+						-- otherwise, set the meter to an empty string and hide this particular colored BlockRow
 						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Unset")
 						self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Unset")
 
@@ -101,15 +101,10 @@ for RowNumber=1,GridRows do
 			self:zoomto(width * GridColumns * GridZoomX, height * BlockZoomY)
 		end,
 		SetCommand=function(self, params)
-
-			local meter = params.Meter
-
 			-- our grid only supports charts with up to a 20-block difficulty meter
 			-- but charts can have higher difficulties
-			-- handle that here by setting a maximum number to worry about displaying
-			if meter > GridColumns then
-				meter = GridColumns
-			end
+			-- handle that here by clamping the value to be between 1 and, at most, 20
+			local meter = clamp( params.Meter, 1, GridColumns )
 
 			self:customtexturerect(0, 0, GridColumns, 1)
 			self:cropright( 1 - (meter * (1/GridColumns)) )
@@ -134,7 +129,6 @@ for RowNumber=1,GridRows do
 			self:zoom(0.3)
 		end,
 		SetCommand=function(self, params)
-
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( DifficultyColor(params.Difficulty) )
 			self:settext(params.Meter)

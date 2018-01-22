@@ -4,6 +4,13 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 		self:Center():draworder(101)
 	end,
+	OffCommand=function(self)
+		-- by the time this screen's OffCommand is called, player mods should already have been read from file
+		-- and applied to the SL[pn].ActiveModifiers table, so it is now safe to call ApplyMods() on any human players
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			ApplyMods(player)
+		end
+	end,
 
 	Def.Quad{
 		Name="FadeToBlack",
