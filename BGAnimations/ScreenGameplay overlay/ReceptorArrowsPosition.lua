@@ -15,7 +15,7 @@ local ReceptorPositions = {
 		StomperZ = 0
 	},
 	Reverse = {
-		ITG = -30,
+		ITG = -90,
 		StomperZ = 0
 	}
 }
