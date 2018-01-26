@@ -9,7 +9,6 @@ local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 -- underlay stuff like BackgroundFilter, ColumnFlash, and MeasureCounter
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/Filter.lua", player)
 end
 
 -- semi-transparent quad at the top of ScreenGameplay
