@@ -1,12 +1,5 @@
 -- filter code rewrite
-local player = ...
-local pn = ToEnumShortString(player)
-local mods = SL[pn].ActiveModifiers
-
--- if no BackgroundFilter is necessary, it's safe to bail now
-if mods.BackgroundFilter == "Off" then
-	return Def.Actor{}
-end
+local player, pn, mods
 
 
 local FilterAlpha = {
@@ -17,10 +10,21 @@ local FilterAlpha = {
 
 local filter = Def.Quad{
 	InitCommand=function(self)
-		self:diffuse(Color.Black)
-			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
-			:xy( GetNotefieldX(player), _screen.cy )
-			:zoomto( GetNotefieldWidth(), _screen.h )
+		self:diffuse(Color.Black):hibernate(math.huge)
+	end,
+	PlayerStateSetCommand=function(self, param)
+		player = param.PlayerNumber
+		pn = ToEnumShortString(player)
+		mods = SL[pn].ActiveModifiers
+
+		--if not needed, keep sleeping
+		if mods.BackgroundFilter == "Off" then
+			return
+		end
+
+		self:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
+			:setsize( GAMESTATE:GetCurrentStyle(player):GetWidth(player), _screen.h*4096 )
+			:hibernate(0)
 	end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
@@ -63,4 +67,4 @@ local filter = Def.Quad{
 	end
 }
 
-return filter
+return Def.ActorFrame{filter}
