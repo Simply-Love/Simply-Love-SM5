@@ -9,6 +9,7 @@ if SL.Global.GameMode ~= "StomperZ" then
 	if title == "D" then grade = "Grade_Tier99" end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	return LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), playerStats)..{
 		InitCommand=cmd(xy, 70, _screen.cy-129),
 		OnCommand=function(self)
@@ -16,6 +17,8 @@ if SL.Global.GameMode ~= "StomperZ" then
 			if pn == PLAYER_1 then
 				self:x( self:GetX() * -1 )
 =======
+=======
+>>>>>>> refs/remotes/dguzek/master
 	local t = Def.ActorFrame{
 
 		LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), playerStats)..{
@@ -25,13 +28,17 @@ if SL.Global.GameMode ~= "StomperZ" then
 				if pn == PLAYER_1 then
 					self:x( self:GetX() * -1 )
 				end
+<<<<<<< HEAD
 >>>>>>> upstream/master
+=======
+>>>>>>> refs/remotes/dguzek/master
 			end
 		},
 
 	    LoadActor("nice.lua",pn)
 
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 end
 =======
@@ -40,3 +47,9 @@ end
 
 end
 >>>>>>> upstream/master
+=======
+
+	return t
+
+end
+>>>>>>> refs/remotes/dguzek/master
