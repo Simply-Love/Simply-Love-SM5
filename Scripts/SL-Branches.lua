@@ -1,3 +1,47 @@
+-- ---------------------------------------------
+-- helper functions local to this file
+
+local CalculateStageCost = function()
+	local song = GAMESTATE:GetCurrentSong()
+	local SMSongCost = (song:IsMarathon() and 3) or (song:IsLong() and 2) or 1
+	SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - SMSongCost
+end
+
+local FactorInMusicRate = function()
+	if SL.Global.ActiveModifiers.MusicRate ~= 1 then
+		local ActualSongCost = 1
+		local StagesToAddBack = 0
+
+		local Duration = song:GetLastSecond()
+		local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
+
+		local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
+		local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
+
+		local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false
+		local IsLong 	 = DurationWithRate/LongCutoff > 1 and true or false
+
+		ActualSongCost = (IsMarathon and 3) or (IsLong and 2) or 1
+		StagesToAddBack = SMSongCost - ActualSongCost
+
+		SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
+	end
+end
+
+local CounteractGameplayReloading = function()
+	if GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()) < SL.Global.Stages.Remaining then
+		StagesToAddBack = math.abs(SL.Global.Stages.Remaining - GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()))
+		local Players = GAMESTATE:GetHumanPlayers()
+		for pn in ivalues(Players) do
+			for i=1, StagesToAddBack do
+				GAMESTATE:AddStageToPlayer(pn)
+			end
+		end
+	end
+end
+
+-- ---------------------------------------------
+
 if not Branch then Branch = {} end
 
 Branch.AllowScreenNameEntry = function()
@@ -28,7 +72,7 @@ Branch.AllowScreenSelectProfile = function()
 		return "ScreenSelectProfile"
 	else
 		return Branch.AllowScreenSelectColor()
-	end	
+	end
 end
 
 Branch.AllowScreenSelectColor = function()
@@ -126,44 +170,18 @@ Branch.AfterProfileSave = function()
 
 	else
 
-		local song = GAMESTATE:GetCurrentSong()
-		local SMSongCost = (song:IsMarathon() and 3) or (song:IsLong() and 2) or 1
-		SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - SMSongCost
+		-- deduct the appropriate stage cost from SL.Global.Stages.Remaining
+		CalculateStageCost()
 
-		-- calculate if stages should be "added back" because of rate mod
-		if SL.Global.ActiveModifiers.MusicRate ~= 1 then
-			local ActualSongCost = 1
-			local StagesToAddBack = 0
-
-			local Duration = song:GetLastSecond()
-			local DurationWithRate = Duration / SL.Global.ActiveModifiers.MusicRate
-
-			local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
-			local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
-
-			local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false
-			local IsLong 	 = DurationWithRate/LongCutoff > 1 and true or false
-
-			ActualSongCost = (IsMarathon and 3) or (IsLong and 2) or 1
-			StagesToAddBack = SMSongCost - ActualSongCost
-
-			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
-		end
-
+		-- assess if stages should be "added back" to SL.Global.Stages.Remaining because of rate mod
+		FactorInMusicRate()
 
 		-- This is somewhat hackish, but it serves to counteract Lua Hacks.
 		-- If ScreenGameplay was reloaded by a "gimmick" chart, then it is
 		-- very possible that the Engine's concept of remaining stages will
-		--  be incongruent with the Theme's.  Add stages back, engine-side, if necessary.
-		if GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()) < SL.Global.Stages.Remaining then
-			StagesToAddBack = math.abs(SL.Global.Stages.Remaining - GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()))
-			local Players = GAMESTATE:GetHumanPlayers()
-			for pn in ivalues(Players) do
-				for i=1, StagesToAddBack do
-					GAMESTATE:AddStageToPlayer(pn)
-				end
-			end
-		end
+		-- be incongruent with the Theme's.  Add stages back to the egnine if necessary.
+		CounteractGameplayReloading()
+
 
 		-- If we don't allow players to fail out of a set early
 		if ThemePrefs.Get("AllowFailingOutOfSet") == false then
@@ -171,32 +189,14 @@ Branch.AfterProfileSave = function()
 			-- check first to see how many songs are remaining
 			-- if none...
 			if SL.Global.Stages.Remaining <= 0 then
-
-				if SL.Global.ContinuesRemaining > 0 then
-
-					local CoinsNeeded = PREFSMAN:GetPreference("CoinsPerCredit")
-					local premium = PREFSMAN:GetPreference("Premium")
-
-					if premium == "Premium_DoubleFor1Credit" then
-						if SL.Global.Gamestate.Style == "versus" then
-							CoinsNeeded = CoinsNeeded * 2
-						end
-
-					elseif premium == "Premium_Off" then
-						if SL.Global.Gamestate.Style == "versus" or SL.Global.Gamestate.Style == "double" then
-							CoinsNeeded = CoinsNeeded * 2
-						end
-					end
-
-					if GAMESTATE:GetCoins() >= CoinsNeeded then
+				if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
+					local credits = GetCredits()
+					if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
 						return "ScreenPlayAgain"
-					else
-						return Branch.AllowScreenEvalSummary()
 					end
-				else
-					return Branch.AllowScreenEvalSummary()
 				end
 
+				return Branch.AllowScreenEvalSummary()
 
 			-- otherwise, there are some stages remaining
 			else
@@ -220,18 +220,22 @@ Branch.AfterProfileSave = function()
 		-- else we DO allow players to possibly fail out of a set
 		else
 
-			if STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-				local credits = GetCredits()
-				if credits.Credits > 0 then
-					return "ScreenPlayAgain"
-				else
-					return Branch.AllowScreenEvalSummary()
+			if STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 or SL.Global.Stages.Remaining <= 0 then
+
+				if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
+					local credits = GetCredits()
+					if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
+						return "ScreenPlayAgain"
+					end
 				end
 
-			else
-				return SelectMusicOrCourse()
+				-- if CoinMode is set to Home or Free (that is, not Pay mode)
+				-- then there should be no concept of credits, and thus,
+				-- no concept of possibly continuing via ScreenPlayAgain
+				return Branch.AllowScreenEvalSummary()
 			end
 
+			return SelectMusicOrCourse()
 		end
 	end
 
