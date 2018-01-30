@@ -156,9 +156,15 @@ if PeakNPS and NPSperMeasure and #NPSperMeasure > 1 then
 		SampleCommand=function(self)
 			if GAMESTATE:GetCurMusicSeconds() > 0 then
 				x = scale( GAMESTATE:GetCurMusicSeconds(), 0, TotalSeconds, 0, width )
-				y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
+				y = round( scale( LifeMeter:GetLife(), 1, 0, 0, height ), 1 )
 
-				life_verts[#life_verts+1] = {{x, y, 0}, {1,1,1,1}}
+				-- if the lifemeter hasn't changed since the previous two samples, its y-value should be the same, and we
+				-- can extend the previous vertex a little further to the right to avoid adding unnecessary vert data
+				if #life_verts > 1 and life_verts[#life_verts][1][2] == y and life_verts[#life_verts-1][1][2] == y then
+					life_verts[#life_verts][1][1] = x
+				else
+					life_verts[#life_verts+1] = {{x, y, 0}, {1,1,1,1}}
+				end
 				self:SetVertices(life_verts)
 			end
 

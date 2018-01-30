@@ -37,8 +37,6 @@ for i, label in ipairs(TNSNames) do
 
 
 			local gmods = SL.Global.ActiveModifiers
-			local mode = SL.Global.GameMode
-			if (mode == "Casual" or mode == "Competitive") then mode = "" end
 
 			-- if Way Offs were turned off
 			if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore" .. mode, "W5") then
