@@ -1,47 +1,39 @@
 local slc = SL.Global.ActiveColorIndex
-local arrowData = {
-	sleep = {0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9},
-	xPos = {-150, -100, -50, 0, 50, 100, 150},
-	color = {slc-3, slc-2, slc-1, slc, slc+1, slc+2, slc+3}
-}
 
-local function RainbowArrows( x )
+local RainbowArrows = function( x )
 
 	return Def.ActorFrame {
-		InitCommand=cmd(Center),
+		InitCommand=function(self) self:Center() end,
 
 		LoadActor("white_logo.png")..{
-			InitCommand=cmd(zoom,0.1; diffuse, GetHexColor(arrowData.color[x]%12+1); diffusealpha,0; x, arrowData.xPos[x] ),
-			OnCommand=cmd(sleep,arrowData.sleep[x]; linear,0.75; diffusealpha,1; linear,0.75;diffusealpha,0)
+			InitCommand=cmd(zoom, 0.1; diffuse, GetHexColor(slc-x-3); diffusealpha,0; x, (x-4)*50 ),
+			OnCommand=cmd(sleep, x*0.1 + 0.2; linear,0.75; diffusealpha,1; linear,0.75;diffusealpha,0)
 		},
 		LoadActor("highlight.png")..{
-			InitCommand=cmd(zoom,0.1; diffusealpha,0; x, arrowData.xPos[x]),
-			OnCommand=cmd(sleep,arrowData.sleep[x]; linear,0.75; diffusealpha,0.75; linear,0.75;diffusealpha,0)
+			InitCommand=cmd(zoom,0.1; diffusealpha,0; x, (x-4)*50),
+			OnCommand=cmd(sleep, x*0.1 + 0.2; linear,0.75; diffusealpha,0.75; linear,0.75;diffusealpha,0)
 		}
 	}
 end
 
-local t = Def.ActorFrame {}
+local af = Def.ActorFrame{}
 
-t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(Center),
-
-	Def.Quad {
-		InitCommand=cmd(zoomto,_screen.w,0; diffuse, Color.Black),
-		OnCommand=cmd( accelerate,0.3; zoomtoheight,128; diffusealpha,0.9; sleep,2.5; linear,0.25),
-		OffCommand=cmd(accelerate,0.3; zoomtoheight,0)
-	},
-
-	LoadFont("_miso")..{
-		Text="theme by " .. THEME:GetThemeAuthor(),
-		InitCommand=cmd(diffuse,GetCurrentColor(); diffusealpha,0;),
-		OnCommand=cmd(sleep,3;linear,0.25;diffusealpha,1),
-		OffCommand=cmd(linear, 0.25; diffusealpha,0)
-	}
+af[#af+1] = Def.Quad{
+	InitCommand=cmd(zoomto,_screen.w,0; diffuse, Color.Black; Center),
+	OnCommand=cmd( accelerate,0.3; zoomtoheight,128; diffusealpha,0.9; sleep,2.5; linear,0.25),
+	OffCommand=cmd(accelerate,0.3; zoomtoheight,0)
 }
 
+af[#af+1] = LoadFont("_miso")..{
+	Text="theme by " .. THEME:GetThemeAuthor(),
+	InitCommand=cmd(diffuse,GetHexColor(slc); diffusealpha,0; Center),
+	OnCommand=cmd(sleep,3;linear,0.25;diffusealpha,1),
+	OffCommand=cmd(linear, 0.25; diffusealpha,0)
+}
+
+-- loop to add 7 SM5 arrows to the primary ActorFrame
 for i=1,7 do
-	t[#t+1] = RainbowArrows(i)
+	af[#af+1] = RainbowArrows(i)
 end
 
-return t
+return af
