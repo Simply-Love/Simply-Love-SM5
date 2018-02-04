@@ -9,7 +9,7 @@ return Def.ActorFrame{
 		Name="HeaderText",
 		Font="_wendy small",
 		Text=ScreenString("HeaderText"),
-		InitCommand=cmd(diffusealpha,0; zoom,0.6; horizalign, left; xy, 10, 14 ),
+		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); horizalign, left; xy, 10, 15 ),
 		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha,1),
 		OffCommand=cmd(accelerate,0.33; diffusealpha,0)
 	}

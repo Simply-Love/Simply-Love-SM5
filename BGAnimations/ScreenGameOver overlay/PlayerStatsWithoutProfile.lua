@@ -14,17 +14,23 @@ for i,stats in pairs( SL[ToEnumShortString(player)].Stages.Stats ) do
 	songsPlayedThisGame = songsPlayedThisGame + (stats and 1 or 0)
 end
 
-local minutes = math.floor(totalTime/60)
+local hours = math.floor(totalTime/3600)
+local minutes = math.floor((totalTime-(hours*3600))/60)
 local seconds = round(totalTime%60)
 
 local lines = {
-	"",
-	"",
-	"",
-	"---",
 	ScreenString("CurrentCombo") .. "\n"..currentCombo,
 	ScreenString("SongsPlayedThisGame") .. "\n"..songsPlayedThisGame,
 	ScreenString("TimeSpentThisGame") .. "\n".. minutes .. THEME:GetString("ScreenGameOver", "Minutes") .. " " .. seconds .. THEME:GetString("ScreenGameOver", "Seconds")
 }
+
+-- assume above that the gameplay session was < 1 hour, but check now
+-- just in case, and modify the last line accordingly if needed
+if hours > 0 then
+	lines[3] = ScreenString("TimeSpentThisGame") .. "\n"..
+		hours .. ScreenString("Hours") .. " " ..
+		minutes .. ScreenString("Minutes") .. " " ..
+		seconds .. ScreenString("Seconds")
+end
 
 return lines

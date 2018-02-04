@@ -79,6 +79,7 @@ local GlobalDefaults = {
 				ScreenEvaluationSummary = ThemePrefs.Get("ScreenEvaluationSummaryMenuTimer"),
 				ScreenNameEntry = ThemePrefs.Get("ScreenNameEntryMenuTimer"),
 			}
+			self.TimeAtSessionStart = nil
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,

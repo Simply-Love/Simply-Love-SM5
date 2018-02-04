@@ -14,9 +14,11 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 ## Requirements
 
-You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) (or build your own executable of [StepMania's 5_1-new branch](https://github.com/stepmania/stepmania/tree/5_1-new)) to use this theme.
+You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) or [StepMania 5.1 beta 1](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b1) to use this theme.
 
 Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible.
+
+#### Troubleshooting StepMania
 
 If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/).  Additionally, you may find these links helpful for your given operating system:
 
@@ -76,7 +78,7 @@ See: [No License](http://choosealicense.com/licenses/no-license/)
 
 <hr>
 
-## ACKNOWLEDGEMENTS:
+## ACKNOWLEDGEMENTS
 
 * [hurtpiggypig](http://www.shirtpiggypig.com/) -- Lara designed the original Simply Love theme for StepMania 3.95.
 * [djpohly](https://github.com/djpohly) -- Devin was a constant source of knowledge and help during the months I spent porting this.
