@@ -15,7 +15,7 @@ local sequential_offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.
 local verts= {}
 -- TotalSeconds is used in scaling the x-coordinates of the AMV's vertices
 local FirstSecond = GAMESTATE:GetCurrentSong():GetFirstSecond()
-local TotalSeconds = GAMESTATE:GetCurrentSong():GetLastSecond() - FirstSecond
+local TotalSeconds = GAMESTATE:GetCurrentSong():GetLastSecond()
 
 -- variables that will be used and re-used in the loop while calculating the AMV's vertices
 local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
@@ -31,7 +31,14 @@ for t in ivalues(sequential_offsets) do
 	CurrentSecond = t[1]
 	Offset = t[2]
 
-	x = scale(CurrentSecond-FirstSecond, 0 , TotalSeconds, 0, GraphWidth)
+	if Offset ~= "Miss" then
+		CurrentSecond = CurrentSecond - Offset
+	else
+		CurrentSecond = CurrentSecond - worst_window
+	end
+
+	-- pad the right end because the time measured seems to lag a little...
+	x = scale(CurrentSecond, FirstSecond, TotalSeconds + 0.05, 0, GraphWidth)
 
 	if Offset ~= "Miss" then
 		-- DetermineTimingWindow() is defined in ./Scripts/SL-Helpers.lua
