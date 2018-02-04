@@ -19,9 +19,9 @@ return Def.ActorFrame{
 		InitCommand=cmd(xy,_screen.cx, _screen.h-80; shadowlength,1 ),
 		OnCommand=cmd(zoom,0.715),
 	},
-	
+
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenSelectMusic","Start Button");
-		InitCommand=cmd(x,_screen.cx - 12; y,_screen.h - 125; zoom,1.1);
+		InitCommand=cmd(x,_screen.cx - 13; y,_screen.h - 126; zoom,1.1);
 	}
 }
