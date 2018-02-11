@@ -155,6 +155,18 @@ function SetGameModePreferences()
 	end
 end
 
+function GetOperatorMenuLineNames()
+	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Reload"
+
+	-- CustomSongs preferences don't exist in 5.0.x, which many players may still be using
+	-- thus, if the preference for CustomSongsEnable isn't found in this version of SM, don't let players
+	-- get into the CustomSongs submenu in the OperatorMenu by removing that OptionRow
+	if not PREFSMAN:PreferenceExists("CustomSongsEnable") then
+		lines = lines:gsub("CustomSongs,", "")
+	end
+	return lines
+end
+
 
 function GetPlayerOptionsLineNames()
 	if SL.Global.GameMode == "Casual" then
