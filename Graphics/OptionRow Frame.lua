@@ -44,7 +44,10 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		-- in ./Scripts/SL-PlayerOptions.lua
 		NoteSkinChangedMessageCommand=function(self, params)
 			if player == params.Player then
-				self:SetTarget( SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin) )
+				local noteskin_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin)
+				if noteskin_actor then
+					self:SetTarget( noteskin_actor )
+				end
 			end
 		end
 	}

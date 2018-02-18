@@ -113,13 +113,32 @@ local column = {
 	kb7 = "Key1"
 }
 
+local GetNoteSkinActor = function(noteskin)
+
+	local status, err = pcall(NOTESKIN:LoadActorForNoteSkin(column[GAMESTATE:GetCurrentGame():GetName() or "Up"], "Tap Note", noteskin))
+
+	-- it seems like EVERY NoteSkin throws an error of "attempt to call a table value"
+	-- so I guess we'll just ignore those for now?
+	if (status==true or (status==false and err=="attempt to call a table value")) then
+
+		return NOTESKIN:LoadActorForNoteSkin(column[GAMESTATE:GetCurrentGame():GetName() or "Up"], "Tap Note", noteskin)..{
+					Name="NoteSkin_"..noteskin,
+					InitCommand=function(self) self:visible(false) end,
+				}
+	else
+		SM("There are Lua errors in your " .. noteskin .. " NoteSkin.\nYou should fix them, or delete the NoteSkin.")
+
+		return Def.Actor{
+			Name="NoteSkin_"..noteskin,
+			InitCommand=function(self) self:visible(false) end
+		}
+	end
+end
+
 -- Add noteskin actors to the primary AF and hide them immediately.
 -- We'll refer to these later via ActorProxy in the "Frame" of NoteSkin OptionRow
 for noteskin in ivalues( CustomOptionRow("NoteSkin").Choices ) do
-	t[#t+1] = NOTESKIN:LoadActorForNoteSkin(column[GAMESTATE:GetCurrentGame():GetName() or "Up"], "Tap Note", noteskin)..{
-		Name="NoteSkin_"..noteskin,
-		InitCommand=function(self) self:visible(false) end,
-	}
+	t[#t+1] = GetNoteSkinActor(noteskin)
 end
 
 
