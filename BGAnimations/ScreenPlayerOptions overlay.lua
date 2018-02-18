@@ -105,6 +105,7 @@ local t = Def.ActorFrame{
 	end
 }
 
+local game_name = GAMESTATE:GetCurrentGame():GetName()
 -- This doesn't handle every game type that SM5 supports, but could, if I knew more about NoteSkins...
 local column = {
 	dance = "Up",
@@ -115,7 +116,7 @@ local column = {
 
 local GetNoteSkinActor = function(noteskin)
 
-	local status, err = pcall(NOTESKIN:LoadActorForNoteSkin(column[GAMESTATE:GetCurrentGame():GetName() or "Up"], "Tap Note", noteskin))
+	local status, err = pcall(NOTESKIN:LoadActorForNoteSkin(column[game_name] or "Up", "Tap Note", noteskin))
 
 	-- it seems like EVERY NoteSkin throws an error of "attempt to call a table value"
 	-- so I guess we'll just ignore those for now?
@@ -136,7 +137,7 @@ local GetNoteSkinActor = function(noteskin)
 end
 
 -- Add noteskin actors to the primary AF and hide them immediately.
--- We'll refer to these later via ActorProxy in the "Frame" of NoteSkin OptionRow
+-- We'll refer to these later via ActorProxy in ./Graphics/OptionRow Frame.lua
 for noteskin in ivalues( CustomOptionRow("NoteSkin").Choices ) do
 	t[#t+1] = GetNoteSkinActor(noteskin)
 end
