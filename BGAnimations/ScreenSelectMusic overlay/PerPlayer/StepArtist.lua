@@ -127,6 +127,9 @@ return Def.ActorFrame{
 				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
 				self:settext(stepartist or "")
 			end
+		end,
+		OffCommand=function(self)
+			self:stoptweening()
 		end
 	},
 
@@ -175,6 +178,9 @@ return Def.ActorFrame{
 						self:settext(GAMESTATE:GetCurrentSteps(player):GetDescription())
 					end
 			end
+		end,
+		OffCommand=function(self)
+			self:stoptweening()
 		end
 	},
 
@@ -222,6 +228,9 @@ return Def.ActorFrame{
 					self:settext(GAMESTATE:GetCurrentSteps(player):GetChartName())
 				end
 			end
+		end,
+		OffCommand=function(self)
+			self:stoptweening()
 		end
 	},
 }
