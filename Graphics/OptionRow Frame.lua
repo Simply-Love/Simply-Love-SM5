@@ -44,7 +44,13 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		-- in ./Scripts/SL-PlayerOptions.lua
 		NoteSkinChangedMessageCommand=function(self, params)
 			if player == params.Player then
-				self:SetTarget( SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin) )
+				-- attempt to find the hidden NoteSkin actor added by ./BGAnimations/ScreenPlayerOptions overlay.lua
+				local noteskin_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin)
+
+				-- ensure that that NoteSkin actor exists before attempting to set it as the target of this ActorProxy
+				if noteskin_actor then
+					self:SetTarget( noteskin_actor )
+				end
 			end
 		end
 	}
