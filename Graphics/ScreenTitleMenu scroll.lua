@@ -7,7 +7,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 	Name="Choice"..index,
 	Text=THEME:GetString( 'ScreenTitleMenu', Var("GameCommand"):GetText() ),
 
-	InitCommand=cmd(zoom,0.3;addy,10),
+	InitCommand=cmd(zoom,0.3),
 	OnCommand=cmd(diffusealpha,0; sleep,tonumber(index) * 0.075; linear,0.2;diffusealpha,1),
 	OffCommand=cmd(sleep,tonumber(index) * 0.075; linear,0.18; diffusealpha, 0),
 

@@ -6,16 +6,7 @@ local StepsToDisplay, SongOrCourse, StepsOrTrails
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=function(self)
-		self:vertalign(top);
-		self:draworder(1);
-		self:y(_screen.cy + 70)
-		if IsUsingWideScreen() then
-			self:x(_screen.cx-197);
-		else
-			self:x(_screen.cx - 170)
-		end
-	end,
+	InitCommand=cmd(vertalign, top; draworder, 1; xy, _screen.cx-170, _screen.cy + 70),
 	-- - - - - - - - - - - - - -
 
 	OnCommand=cmd(queuecommand, "RedrawStepsDisplay"),
@@ -136,7 +127,6 @@ for RowNumber=1,GridRows do
 			self:y(RowNumber * height * BlockZoomY)
 			self:x( IsUsingWideScreen() and -140 or -126 )
 			self:zoom(0.3)
-			self:maxwidth(60)
 		end,
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter

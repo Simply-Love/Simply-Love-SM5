@@ -12,9 +12,7 @@ local labelX_col2 = WideScale(10,20)
 local dataX_col2  = WideScale(5,15)
 
 local highscoreX = WideScale(56, 80)
-local highscorenameX = WideScale(107, 145)
-
-local difficultywidescale = WideScale(40, 50)
+local highscorenameX = WideScale(84, 120)
 
 local PaneItems = {}
 
@@ -139,13 +137,13 @@ local pd = Def.ActorFrame{
 
 		if player==params.Player then
 			self:visible(true)
-				:diffusealpha(0):smooth(0.3):diffusealpha(1)
+				:zoom(0):croptop(0):bounceend(0.3):zoom(1)
 				:playcommand("Set")
 		end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if player==params.Player then
-			self:diffusealpha(1):smooth(0.3):diffusealpha(0)
+			self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0)
 		end
 	end,
 
@@ -236,14 +234,14 @@ end
 pd[#pd+1] = Def.BitmapText{
 	Font="_wendy small",
 	Name="DifficultyMeter",
-	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; maxwidth, difficultywidescale; queuecommand, "Set"),
+	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
 	SetCommand=function(self)
 		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
 		if not SongOrCourse then
 			self:settext("")
 		else
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-			local meter = StepsOrTrail and StepsOrTrail:GetMeter()
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter()			
 			self:settext( meter and meter or  "?" )
 		end
 	end
@@ -260,7 +258,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="MachineHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60  )
+	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60)
 }
 
 
@@ -275,7 +273,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="PlayerHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1; maxwidth, 60)
+	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1)
 }
 
 return pd
