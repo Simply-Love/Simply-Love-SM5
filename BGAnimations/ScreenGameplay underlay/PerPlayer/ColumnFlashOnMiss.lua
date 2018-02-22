@@ -3,6 +3,8 @@ local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local columns = {}
+local style = GAMESTATE:GetCurrentStyle(player)
+local width = style:GetWidth(player)
 
 if mods.ColumnFlashOnMiss then
 
@@ -36,10 +38,9 @@ if mods.ColumnFlashOnMiss then
 		af[#af+1] = Def.Quad{
 			InitCommand=function(self)
 				columns[ColumnIndex] = self
-				local style = GAMESTATE:GetCurrentStyle(player)
-				local width = style:GetWidth(player)
+
 				self:diffuse(0,0,0,0)
-					:x((ColumnIndex-2.5) * (width/NumColumns))
+					:x((ColumnIndex - (NumColumns/2 + 0.5)) * (width/NumColumns))
 					:vertalign(top)
 					:setsize(width/NumColumns, _screen.h - y_offset)
 					:fadebottom(0.333)
