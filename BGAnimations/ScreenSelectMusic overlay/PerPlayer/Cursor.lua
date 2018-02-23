@@ -17,12 +17,12 @@ return Def.Sprite{
 		self:bounce():effectclock("beatnooffset")
 
 		if player == PLAYER_1 then
-			self:x( IsUsingWideScreen() and _screen.cx-330 or 0)
+			self:x( IsUsingWideScreen() and _screen.cx-356 or 0)
 			self:effectmagnitude(-3,0,0)
 
 		elseif player == PLAYER_2 then
 			self:rotationz(180)
-			self:x(IsUsingWideScreen() and _screen.cx-28 or 276)
+			self:x(IsUsingWideScreen() and _screen.cx-56 or 276)
 			self:effectmagnitude(3,0,0)
 		end
 
