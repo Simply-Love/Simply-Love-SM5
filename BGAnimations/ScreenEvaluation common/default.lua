@@ -3,7 +3,7 @@ local NumPanes = SL.Global.GameMode=="Casual" and 1 or 4
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
-	
+
 	-- add a lua-based InputCalllback to this screen so that we can navigate
 	-- through multiple panes of information; pass a reference to this ActorFrame
 	-- and the number of panes there are to InputHanlder.lua
@@ -56,6 +56,12 @@ for player in ivalues(Players) do
 		-- stepartist
 		LoadActor("./PerPlayer/StepArtist.lua", player),
 
+		-- steps chart name
+		LoadActor("./PerPlayer/StepsChartName.lua", player),
+
+		-- steps description
+		LoadActor("./PerPlayer/StepsDescription.lua", player),
+
 		-- difficulty text and meter
 		LoadActor("./PerPlayer/Difficulty.lua", player),
 
@@ -89,7 +95,7 @@ for player in ivalues(Players) do
 					self:diffusealpha(0.9)
 				end
 			end,
-			-- this background Quad may need to shrink and expand if we're playing double 
+			-- this background Quad may need to shrink and expand if we're playing double
 			-- and need more space to accommodate more columns of arrows;  these commands
 			-- are queued as needed from the InputHandler
 			ShrinkCommand=function(self)
@@ -109,7 +115,7 @@ for player in ivalues(Players) do
 		-- was this player disqualified from ranking?
 		LoadActor("./PerPlayer/Disqualified.lua", player),
 	}
-	
+
 	-- add available Panes to the lower ActorFrame via a loop
 	for i=1, NumPanes do
 		lower[#lower+1] = LoadActor("./PerPlayer/Pane"..i, player)
