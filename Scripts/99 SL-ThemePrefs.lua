@@ -74,6 +74,12 @@ local SL_CustomPrefs =
 		Choices = { "On", "Off" },
 		Values 	= { true , false }
 	},
+	VerboseSongFolder = {
+		Default = false,
+		Choices = { "Yes", "No" },
+		Values 	= { true , false }
+	},
+
 	-- - - - - - - - - - - - - - - - - - - -
 	-- SimplyLoveColor saves the theme color for the next time
 	-- the StepMania application is started.
