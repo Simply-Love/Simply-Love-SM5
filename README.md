@@ -72,10 +72,6 @@ Or, *things that were in the original Simply Love for StepMania 3.95 that are no
   * timed sets
 
 
-## License
-
-See: [No License](http://choosealicense.com/licenses/no-license/)
-
 <hr>
 
 ## ACKNOWLEDGEMENTS
