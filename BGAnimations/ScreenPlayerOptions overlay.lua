@@ -170,14 +170,21 @@ for player in ivalues(Players) do
 					end
 				end
 
-				if oldtype == "x" and (newtype == "C" or newtype == "M") then
-					-- convert to the nearest MMod/CMod-appropriate integer by rounding to nearest increment
-					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / increments[newtype])) * increments[newtype]
+				-- round to the nearest speed increment in the new mode
 
+				-- if we have an active rate mod, then we have to
+				-- undo/redo our automatic rate mod compensation
+
+				if oldtype == "x" and (newtype == "C" or newtype == "M") then
+					-- apply rate compensation now
+					oldspeed = oldspeed * SL.Global.ActiveModifiers.MusicRate
+
+					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / increments[newtype])) * increments[newtype]
 				elseif newtype == "x" then
-					-- convert to the nearest XMod-appropriate integer by rounding to 2 decimal places
-					-- and then rounding that to the nearest increment
-					SL[pn].ActiveModifiers.SpeedMod = (round(round(oldspeed / bpm[2], 2) / increments[newtype])) * increments[newtype]
+					-- revert rate compensation since its handled for XMod
+					oldspeed = oldspeed / SL.Global.ActiveModifiers.MusicRate
+
+					SL[pn].ActiveModifiers.SpeedMod = (round(oldspeed / bpm[2] / increments[newtype])) * increments[newtype]
 				end
 
 				SL[pn].ActiveModifiers.SpeedModType = newtype
