@@ -30,8 +30,16 @@ local arrow	= {
 
 local timePerArrow = 0.2
 local pattern = {
-	dance =	{"left", "down", "left", "up", "down", "right", "up", "right", "down", "up", "left", "down", "up", "right" },
-	pump = 	{"upleft", "upright", "center", "downright", "upright", "center", "upleft", "upright", "center", "downright", "downleft", "center"},
+	dance =	{
+		"left", "down", "left", "right", "down", "up",
+		"left", "right", "left", "down", "up", "right",
+		"left", "right", "down", "up", "down", "right",
+		"left", "right", "up", "down", "up", "right"},
+	pump = {
+		"upright", "center", "downright", "downleft", "center", "upleft",
+		"upright", "downleft", "downright", "center", "upright", "downleft",
+		"upleft", "center", "upright", "center", "downright", "upleft",
+		"downright", "upright", "center", "upleft", "center", "downleft"},
 	techno = {"upleft", "upright", "down", "downright", "downleft", "up", "down", "right", "left", "downright", "downleft", "up"},
 }
 
@@ -62,6 +70,11 @@ local notefield = Def.ActorFrame{
 	OffCommand=function(self) self:sleep(0.4):diffusealpha(0) end
 }
 
+local function ColumnZoom(column)
+	if (game ~= "pump") then return 0.18 end
+	return (column == "center") and 0.165 or 0.2
+end
+
 -- loop through columns for this gametype and add Receptor arrows
 for i, column in ipairs( arrow.columns[game] ) do
 
@@ -73,7 +86,7 @@ for i, column in ipairs( arrow.columns[game] ) do
 			self:rotationz( arrow.rotation[column] )
 				:x( arrow.x[game][column] )
 				:y(-55)
-				:zoom(0.18)
+				:zoom(ColumnZoom(column))
 		end
 	}
 end
@@ -85,7 +98,7 @@ local function YieldStepPattern(i, dir)
 		OnCommand=function(self) self:queuecommand("FirstLoopRegular") end,
 		UpdateCommand=function(self)
 			self:visible(true)
-			if ScreenName == "ScreenSelectPlayMode" and TopScreen:GetSelectionIndex(MPN) == 0 and i % 2 == 0 then
+			if ScreenName == "ScreenSelectPlayMode" and TopScreen:GetSelectionIndex(MPN) == 0 and i % 3 ~= 0 then
 				self:visible(false)
 			end
 		end,
@@ -138,7 +151,7 @@ local function YieldStepPattern(i, dir)
 
 	for index,file in ipairs(files) do
 		step[#step+1] = LoadActor( file )..{
-			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, 0.18 ),
+			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, ColumnZoom(dir) ),
 			OnCommand=function(self)
 				if file == "center-feet.png" or file == "arrow-stripes.png" then
 					self:blend(Blend.Multiply)
