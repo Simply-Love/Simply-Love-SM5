@@ -30,8 +30,12 @@ local arrow	= {
 
 local timePerArrow = 0.2
 local pattern = {
-	dance =	{"left", "down", "left", "up", "down", "right", "up", "right", "down", "up", "left", "down", "up", "right" },
-	pump = 	{"upleft", "upright", "center", "downright", "upright", "center", "upleft", "upright", "center", "downright", "downleft", "center"},
+	dance =	{
+		"left", "down", "left", "right", "down", "up",
+		"left", "right", "left", "down", "up", "down",
+		"left", "right", "down", "up", "down", "right",
+		"left", "right", "up", "down", "up", "right"},
+	pump = {"upleft", "upright", "center", "downright", "upright", "center", "upleft", "upright", "center", "downright", "downleft", "center"},
 	techno = {"upleft", "upright", "down", "downright", "downleft", "up", "down", "right", "left", "downright", "downleft", "up"},
 }
 
@@ -85,7 +89,7 @@ local function YieldStepPattern(i, dir)
 		OnCommand=function(self) self:queuecommand("FirstLoopRegular") end,
 		UpdateCommand=function(self)
 			self:visible(true)
-			if ScreenName == "ScreenSelectPlayMode" and TopScreen:GetSelectionIndex(MPN) == 0 and i % 2 == 0 then
+			if ScreenName == "ScreenSelectPlayMode" and TopScreen:GetSelectionIndex(MPN) == 0 and i % 3 ~= 0 then
 				self:visible(false)
 			end
 		end,
