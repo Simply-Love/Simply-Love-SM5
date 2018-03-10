@@ -131,8 +131,21 @@ local t = Def.ActorFrame{
 							-- r21 lol
 							self:settext( THEME:GetString("SongDescription", "r21") )
 						else
-							local finalText = SecondsToMSSMsMs(duration)
-							self:settext( string.sub(finalText, 0, finalText:len()-3) )
+							local hours = 0
+							if duration > 3600 then
+								hours = math.floor(duration / 3600)
+								duration = duration % 3600
+							end
+
+							local finalText
+							if hours > 0 then
+								-- where's HMMSS when you need it?
+								finalText = hours .. ":" .. SecondsToMMSS(duration)
+							else
+								finalText = SecondsToMSS(duration)
+							end
+
+							self:settext( finalText )
 						end
 					else
 						self:settext("")
