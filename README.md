@@ -74,10 +74,23 @@ Or, *things that were in the original Simply Love for StepMania 3.95 that are no
 
 <hr>
 
+## FAQ
+
+#### Why are my high scores ranking out of order?
+You need to set `PercentageScoring=1` in your Preferences.ini file.  Please note that you must quit StepMania before opening and editing Preferences.ini.
+
+Your existing scores will remain ranked out of order, but all scores going forward after making this change will be ranked correctly.
+
+#### Where is my Preferences.ini file?
+See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/wiki/Manually-Changing-Preferences) page on StepMania's GitHub Wiki.
+
+
+<hr>
+
 ## ACKNOWLEDGEMENTS
 
 * [hurtpiggypig](http://www.shirtpiggypig.com/) -- Lara designed the original Simply Love theme for StepMania 3.95.
-* [djpohly](https://github.com/djpohly) -- Devin was a constant source of knowledge and help during the months I spent porting this.
+* [djpohly](https://github.com/djpohly) -- djpohly was a constant source of knowledge and help during the months I spent porting this.
 * [sigatrev](https://github.com/sigatrev) -- Matt helped Lara implement some of the more technical aspects of the original theme and was always available to respond to my questions.
 * [freem](https://github.com/freem) -- I used AJ's StepMania 5 theme, [Moonlight](http://ssc.ajworld.net/?p=moonlight), as the foundation/starting point for this port.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.
 * [kyzentun](https://github.com/kyzentun) -- kyzentun answered many of my theming questions on IRC and even went out of his way to fix source-related issues that helped me out along my way.
