@@ -67,8 +67,8 @@ local Overrides = {
 
 				-- Apologies, midiman. :(
 				local stock = {
-					"default", "delta", "easyv2", "exactv2", "midi-note",
-					"midi-note-3d", "midi-routine-p1", "midi-routine-p2",
+					"default", "delta", "easyv2", "exactv2", "lambda", "midi-note",
+					"midi-note-3d", "midi-rainbow", "midi-routine-p1", "midi-routine-p2",
 					"midi-solo", "midi-vivid", "midi-vivid-3d", "retro",
 					"retrobar", "retrobar-splithand_whiteblue"
 				}
