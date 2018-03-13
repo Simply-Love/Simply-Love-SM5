@@ -10,7 +10,7 @@ end
 local update = function(ccl, dt)
 
 	-- CourseContentsList:GetCurrentItem() returns a float, so call math.floor() on it
-	-- while it's scrolling down or math.ceil() while its scrolling up to do integer comparison.
+	-- while it's scrolling down or math.ceil() while it's scrolling up to do integer comparison.
 	--
 	-- if we've reached the bottom of the list and want the CCL to scroll up
 	if math.floor(ccl:GetCurrentItem()) == (ccl:GetNumItems() - (numItemsToDraw/2)) then
@@ -76,7 +76,7 @@ local af = Def.ActorFrame{
 
 af[#af+1] = Def.CourseContentsList {
 	-- I guess just set this to be arbitrarily large so as not to truncate longer
-	-- courses from fully displaying their list of songs...
+	-- courses from fully displaying their list of songs...?
 	MaxSongs=1000,
 
 	-- this is how many rows the ActorScroller should draw at a given moment

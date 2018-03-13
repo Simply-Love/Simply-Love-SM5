@@ -3,13 +3,13 @@ local t = Def.ActorFrame{}
 
 -- Each MusicWheelItem has two Quads drawn in front of it, blocking it from view.
 -- Each of these Quads is half the height of the MusicWheelItem, and their y-coordinates
--- are such there is an "upper" and a "lower" Quad.
+-- are such that there is an "upper" and a "lower" Quad.
 -- The upper Quad has cropbottom applied while the lower Quad has croptop applied
 -- resulting in a visual effect where the MusicWheelItems appear to "grow" out of the center to full-height.
 
 -- Since the background of this screen is Black, we can get away with drawing Black Quads on top
 -- of each MusicWheelItem and it looks fine.  If the background had been visually busy, these Quads
--- would need to be Masks.  (The problem with Masks is that they kind of kill performance/framerate.)
+-- would need to be Masks.
 
 for i=1,NumWheelItems-1 do
 	-- upper

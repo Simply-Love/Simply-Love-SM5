@@ -67,7 +67,7 @@ local t = Def.ActorFrame {
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
-		-- NOT the total number of things you can eventually scroll through (#sort_orders = 12)
+		-- NOT the total number of things you can eventually scroll through (#wheel_options = 14)
 		--
 		-- so, math.floor(7/2) gives focus to the third item in the wheel, which looks weird
 		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
@@ -90,7 +90,7 @@ local t = Def.ActorFrame {
 			end
 		end
 
-		-- the second argument passed to set_info_set is the index of the item in sort_orders
+		-- the second argument passed to set_info_set is the index of the item in wheel_options
 		-- that we want to have focus when the wheel is created
 		sort_wheel:set_info_set(wheel_options, current_sort_order_index)
 	end,
