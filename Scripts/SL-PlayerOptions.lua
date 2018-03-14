@@ -246,7 +246,7 @@ local Overrides = {
 	TargetStatus = {
 		Choices = function()
 			local choices = { "Disabled", "Target Score Graph" }
-			if GAMESTATE:GetCurrentStyle():GetName() == "single" and not PREFSMAN:GetPreference("Center1Player") then
+			if GAMESTATE:GetCurrentStyle():GetName() == "single" and not (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen()) then
 				choices[#choices+1] = "Step Statistics"
 			end
 			return choices

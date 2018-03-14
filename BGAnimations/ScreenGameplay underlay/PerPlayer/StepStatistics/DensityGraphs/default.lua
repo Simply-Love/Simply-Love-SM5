@@ -99,6 +99,16 @@ if HasData() then
 		InitCommand=function(self)
 			self:xy( WideScale(-160, -214), 48 )
 				:queuecommand("Sample")
+
+			if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
+				-- 16:9 aspect ratio (approximately 1.7778)
+				if GetScreenAspectRatio() > 1.7 then
+					self:y(60)
+				-- if 16:10 aspect ratio
+				else
+					self:y(80)
+				end
+			end
 		end,
 		OnCommand=function(self)
 			LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..ToEnumShortString(player))
@@ -122,6 +132,17 @@ if HasData() then
 			self:zoomto(_screen.w/2,height)
 				:align(0,0)
 				:diffuse(color("#1E282F"))
+
+			if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
+				-- 16:9 aspect ratio (approximately 1.7778)
+				if GetScreenAspectRatio() > 1.7 then
+					self:x(45 * (player==PLAYER_1 and 1 or -1))
+
+				-- if 16:10 aspect ratio
+				else
+					self:x(36 * (player==PLAYER_1 and 1 or -1))
+				end
+			end
 		end
 	}
 
