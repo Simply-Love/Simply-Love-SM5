@@ -40,12 +40,14 @@ local t = Def.ActorFrame{
 		Name="PageNumber",
 		Font="_wendy small",
 		Text="Page 1/" .. pages,
-		InitCommand=cmd(diffusealpha,0; zoom,0.6; xy, _screen.cx, 14 ),
+		InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
 		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha, 1),
 		OffCommand=cmd(accelerate,0.33; diffusealpha,0),
 		HideCommand=function(self) self:sleep(0.5):settext( "Page "..page.."/"..pages ) end
 	}
 }
+
+t[#t+1] = LoadActor("./LetterGrades.lua")
 
 -- i will increment so that we progress down the screen from top to bottom
 -- first song of the round at the top, more recently played song at the bottom
