@@ -22,10 +22,10 @@ local StageText = function()
 			local LongCutoff = PREFSMAN:GetPreference("LongVerSongSeconds")
 			local MarathonCutoff = PREFSMAN:GetPreference("MarathonVerSongSeconds")
 
-			local IsMarathon = DurationWithRate/MarathonCutoff > 1 and true or false
-			local IsLong 	 = DurationWithRate/LongCutoff > 1 and true or false
+			local IsMarathon = (DurationWithRate/MarathonCutoff > 1)
+			local IsLong 	 = (DurationWithRate/LongCutoff > 1)
 
-			local SongCost = IsLong and 2 or IsMarathon and 3 or 1
+			local SongCost = (IsMarathon and 3) or (IsLong and 2) or 1
 
 			if SL.Global.Stages.PlayedThisGame + SongCost >= SongsPerPlay then
 				return THEME:GetString("Stage", "Final")
