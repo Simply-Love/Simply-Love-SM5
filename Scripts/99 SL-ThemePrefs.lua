@@ -150,6 +150,13 @@ local SL_CustomPrefs =
 		Choices = { "Yes", "No" },
 		Values 	= { true, false }
 	},
+	-- - - - - - - - - - - - - - - - - - - -
+	-- memes
+	nice = {
+		Default = false,
+		Choices = { "On", "Off" },
+		Values  = { true, false }
+	},
 }
 
 -- We need to InitAll() now so that ./Scripts/SL_Init.lua can use
