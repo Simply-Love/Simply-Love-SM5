@@ -110,6 +110,14 @@ SL = {
 		"#FF7D00"
 	},
 	JudgmentColors = {
+		Casual = {
+			color("#21CCE8"),	-- blue
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#5b2b8e"),	-- purple
+			color("#c9855e"),	-- peach?
+			color("#ff0000")	-- red
+		},
 		Competitive = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
