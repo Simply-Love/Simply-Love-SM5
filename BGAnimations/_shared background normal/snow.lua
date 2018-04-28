@@ -19,8 +19,8 @@ local amv
 
 local Update = function(self, delta)
 
-	-- each snowflake is a quadrilateral comprised of four vertices (with a texture applied)
-	-- we want to update each of those four vertices for each of the snowflakes
+	-- each particle is a quadrilateral comprised of four vertices (with a texture applied)
+	-- we want to update each of those four vertices for each of the quadrilateral
 	for i=1, num_particles*4, 4 do
 		index = math.floor(i/4)+1
 
