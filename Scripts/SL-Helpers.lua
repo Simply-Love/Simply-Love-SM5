@@ -196,3 +196,9 @@ function GetPlayerOptions2LineNames()
 
 	return mods
 end
+
+BrighterOptionRows = function()
+	if ThemePrefs.Get("RainbowMode") then return true end
+	if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then return true end -- holiday cheer
+	return false
+end

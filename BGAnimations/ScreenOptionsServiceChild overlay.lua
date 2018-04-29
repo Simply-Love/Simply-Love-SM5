@@ -17,9 +17,9 @@ end
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto(bg_width, bg_height)
-			:diffuse(Color.Black)
-			:diffusealpha( ThemePrefs.Get("RainbowMode") and 0.8 or 0.65)
-	end
+			:diffuse(color("#666666"))
+			:diffusealpha( BrighterOptionRows() and 0.95 or 0.75)
+	end,
 }
 
 af[#af+1] = Def.BitmapText{
