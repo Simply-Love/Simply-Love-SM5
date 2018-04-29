@@ -1,9 +1,9 @@
 -- variables you might want to configure to your liking
 local num_particles = 1000
--- pixels
+-- particle size in pixels
 local min_size = 2
 local max_size = 14
--- pixels per second
+-- particle velocity in pixels per second
 local min_vx = -7
 local max_vx = 7
 local min_vy = 55
