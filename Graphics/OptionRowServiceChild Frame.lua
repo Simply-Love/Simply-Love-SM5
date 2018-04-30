@@ -12,7 +12,7 @@ t[#t+1] = Def.Quad {
 	Name="TitleBackgroundQuad",
 	OnCommand=function(self)
 		self:zoomto(title_bg_width, _screen.h*0.0625)
-			:x( -self:GetParent():GetX() + WideScale(70,90) )
+			:x( -WideScale(94,128) )
 			:diffuse(Color.Black):diffusealpha( BrighterOptionRows() and 0.75 or 0.25)
 	end
 }
