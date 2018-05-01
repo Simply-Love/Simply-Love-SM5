@@ -58,7 +58,7 @@ local t = Def.ActorFrame{
 		InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
 		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha, 1),
 		OffCommand=cmd(accelerate,0.33; diffusealpha,0),
-		HideCommand=function(self) self:sleep(0.5):settext( "Page "..page.."/"..pages ) end
+		HideCommand=function(self) self:sleep(0.5):settext( ScreenString("Page").." "..page.."/"..pages ) end
 	}
 }
 

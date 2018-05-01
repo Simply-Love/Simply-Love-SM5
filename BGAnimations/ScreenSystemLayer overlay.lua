@@ -93,11 +93,11 @@ t[#t+1] = LoadFont("_wendy small")..{
 		end
 
 		if PREFSMAN:GetPreference("EventMode") then
-			self:settext('EVENT MODE')
+			self:settext( THEME:GetString("ScreenSystemLayer", "EventMode") )
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Pay" then
 			local credits = GetCredits()
-			local text ='CREDIT(S)  '
+			local text = THEME:GetString("ScreenSystemLayer", "Credits")..'  '
 
 			text = text..credits.Credits..'  '
 
@@ -107,7 +107,7 @@ t[#t+1] = LoadFont("_wendy small")..{
 			self:settext(text)
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Free" then
-			self:settext('FREE PLAY')
+			self:settext( THEME:GetString("ScreenSystemLayer", "FreePlay") )
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Home" then
 			self:settext('')
