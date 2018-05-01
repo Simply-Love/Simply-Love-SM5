@@ -3,7 +3,7 @@ local SL_CustomPrefs =
 	AllowFailingOutOfSet =
 	{
 		Default = true,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	NumberOfContinuesAllowed =
@@ -17,7 +17,7 @@ local SL_CustomPrefs =
 	HideStockNoteSkins =
 	{
 		Default = false,
-		Choices = { "Hide", "Show" },
+		Choices = { THEME:GetString("ThemePrefs", "Hide"), THEME:GetString("ThemePrefs", "Show") },
 		Values 	= { true, false }
 	},
 	MusicWheelStyle =
@@ -28,7 +28,7 @@ local SL_CustomPrefs =
 	AllowDanceSolo =
 	{
 		Default = false,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	DefaultGameMode =
@@ -67,7 +67,12 @@ local SL_CustomPrefs =
 	VisualTheme =
 	{
 		Default = "Hearts",
-		Choices = { "Hearts", "Arrows", "Bears" },
+		Choices = {
+			THEME:GetString("ThemePrefs", "Hearts"),
+			THEME:GetString("ThemePrefs", "Arrows"),
+			THEME:GetString("ThemePrefs", "Bears")
+		},
+		Values  = { "Hearts", "Arrows", "Bears" },
 	},
 	RainbowMode = {
 		Default = false,
@@ -123,38 +128,38 @@ local SL_CustomPrefs =
 	AllowScreenSelectProfile =
 	{
 		Default = false,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	AllowScreenSelectColor =
 	{
 		Default = true,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	AllowScreenEvalSummary =
 	{
 		Default = true,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	AllowScreenGameOver =
 	{
 		Default = true,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	AllowScreenNameEntry =
 	{
 		Default = true,
-		Choices = { "Yes", "No" },
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- memes
 	nice = {
 		Default = false,
-		Choices = { "On", "Off" },
+		Choices = { THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","Off") },
 		Values  = { true, false }
 	},
 }
