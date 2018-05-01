@@ -1,4 +1,4 @@
-local banner_directory = ThemePrefs.Get("VisualTheme")
+local banner_directory = { Hearts="Hearts", Arrows="Arrows", Bears="Hearts" }
 local SongOrCourse, banner
 
 local t = Def.ActorFrame{
@@ -24,12 +24,12 @@ local t = Def.ActorFrame{
 			end
 		end,
 
-		LoadActor("colored_banners/".. banner_directory .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png" )..{
+		LoadActor("colored_banners/".. banner_directory[ThemePrefs.Get("VisualTheme")] .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png" )..{
 			Name="FallbackBanner",
 			OnCommand=cmd(rotationy,180; setsize,418,164; diffuseshift; effectoffset,3; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1)
 		},
 
-		LoadActor("colored_banners/".. banner_directory .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png" )..{
+		LoadActor("colored_banners/".. banner_directory[ThemePrefs.Get("VisualTheme")] .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png" )..{
 			Name="FallbackBanner",
 			OnCommand=cmd(diffuseshift; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1; setsize, 418,164)
 		},

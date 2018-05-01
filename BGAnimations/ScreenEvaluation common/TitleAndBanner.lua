@@ -1,4 +1,4 @@
-local banner_directory = ThemePrefs.Get("VisualTheme")
+local banner_directory = { Hearts="Hearts", Arrows="Arrows", Bears="Hearts" }
 
 return Def.ActorFrame{
 
@@ -20,8 +20,14 @@ return Def.ActorFrame{
 	},
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory .."/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
-		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory[ThemePrefs.Get("VisualTheme")] .."/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
+		OnCommand=function(self)
+			self:xy( _screen.cx, 121.5):zoom(0.7)
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			if SongOrCourse and SongOrCourse:HasBanner() then
+				self:visible(false)
+			end
+		end
 	},
 
 	--song or course banner, if there is one

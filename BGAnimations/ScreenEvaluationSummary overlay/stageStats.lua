@@ -3,7 +3,7 @@ local position_on_screen = ...
 local Players = GAMESTATE:GetHumanPlayers()
 local song, StageNum, DecentsWayOffs, LetterGradesAF
 
-local banner_directory = ThemePrefs.Get("VisualTheme")
+local banner_directory = { Hearts="Hearts", Arrows="Arrows", Bears="Hearts" }
 
 local t = Def.ActorFrame{
 	OnCommand=function(self)
@@ -32,7 +32,7 @@ local t = Def.ActorFrame{
 	},
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory[ThemePrefs.Get("VisualTheme")] .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
 		InitCommand=cmd(y,-6; zoom, 0.333)
 	},
 
