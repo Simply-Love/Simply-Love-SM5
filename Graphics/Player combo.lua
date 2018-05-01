@@ -5,7 +5,7 @@ if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo then
 end
 
 
-local kids, PreviousComboType
+local kids
 
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 local NumberMinZoom = 0.75
@@ -37,19 +37,6 @@ return Def.ActorFrame {
 		if CurrentCombo >= ShowComboAt then
 			-- so, display the AF
 			self:visible( true )
-		end
-
-		if (param.misses and PreviousComboType == "Combo") or (param.combo and PreviousComboType == "Misses") then
-			if param.Combo then
-
-				kids.Label:settext( "Combo" )
-
-			elseif param.Misses then
-
-				kids.Label:settext( "Misses" )
-				kids.Number:stopeffect()
-			end
-			PreviousComboType = (param.misses and "Misses") or "Combo"
 		end
 
 		if CurrentCombo <= NumberMaxZoomAt then
@@ -104,12 +91,4 @@ return Def.ActorFrame {
 			self:effectcolor2( color(params.Color2) )
 		end
 	},
-
-	LoadFont("_wendy combo")..{
-		Name="Label",
-		InitCommand=cmd(zoom,0.25 ),
-		OnCommand=function(self)
-			self:zoom(0.25):xy(0,0):shadowlength(1):vertalign(top)
-		end
-	}
 }
