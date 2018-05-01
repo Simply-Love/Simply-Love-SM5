@@ -62,8 +62,10 @@ for i=1,10 do
 		OnCommand=cmd(zoom,1.3; xy, file_info.xy[i], file_info.xy[i]; customtexturerect,0,0,1,1;
 			texcoordvelocity, file_info.texcoordvelocity[i][1], file_info.texcoordvelocity[i][2]; diffusealpha, file_info.diffusealpha[i] ),
 		BackgroundImageChangedMessageCommand=function(self)
-			local new_file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
-			self:Load(new_file)
+			if not ThemePrefs.Get("RainbowMode") then
+				local new_file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
+				self:Load(new_file)
+			end
 		end
 	}
 end
@@ -98,9 +100,17 @@ af[#af+1] = Def.ActorFrame{
 			OnCommand=function(self)
 				delay = 0.7
 			end,
-
 			AppearCommand=cmd(linear,1; diffusealpha, 1; queuecommand, "Loop"),
-			-- OffCommand=cmd(linear,1; diffusealpha,0),
+			BackgroundImageChangedMessageCommand=function(self)
+				if ThemePrefs.Get("RainbowMode") then
+					local children = self:GetChild("")
+
+					for _, child in ipairs( children ) do
+						local new_file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
+						child:Load(new_file)
+					end
+				end
+			end,
 
 			LoopCommand=function(self)
 				index = index + 1
