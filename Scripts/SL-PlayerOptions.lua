@@ -15,6 +15,13 @@ end
 -- Define what custom OptionRows there are, and override the
 -- generic OptionRow (defined later, below) for each as necessary.
 
+-- Each OptionRow needs choices to present to the players.  Sometimes these choices can be hardcoded strings,
+-- but many times, it will be nice if they can be translatable.
+--
+-- For each of these subtables, you can specify a "Choices" function or a "Values" function
+-- Both are defined here as a table of strings, but
+-- a Values table will require corresponding language strings in en.ini (or es.ini, fr.ini, etc.)
+-- whereas the strings in a Choices table will presented to the players as-is.
 local Overrides = {
 
 	-------------------------------------------------------------------------
@@ -147,7 +154,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
-		Choices = function() return { 'Off','Dark','Darker','Darkest' } end,
+		Values = function() return { 'Off','Dark','Darker','Darkest' } end,
 	},
 	-------------------------------------------------------------------------
 	Mini = {
@@ -219,7 +226,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
-		Choices = function() return { "Targets", "Background", "Combo", "Life", "Score" } end,
+		Values = function() return { "Targets", "Background", "Combo", "Life", "Score" } end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets 	or false
@@ -244,7 +251,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetStatus = {
-		Choices = function()
+		Values = function()
 			local choices = { "Disabled", "Target Score Graph" }
 			if GAMESTATE:GetCurrentStyle():GetName() == "single" and not (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen()) then
 				choices[#choices+1] = "Step Statistics"
@@ -254,7 +261,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetBar = {
-		Choices = function()
+		Values = function()
 			return { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' }
 		end,
 		LoadSelections = function(self, list, pn)
@@ -275,7 +282,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
-		Choices = function() return { "Flash Column for Miss", "Subtractive Scoring", "Target Score"} end,
+		Values = function() return { "ColumnFlashOnMiss", "SubtractiveScoring", "TargetScore" } end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.ColumnFlashOnMiss or false
@@ -292,15 +299,15 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	MeasureCounterPosition = {
-		Choices = function() return { "Left", "Center" } end,
+		Values = function() return { "Left", "Center" } end,
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
-		Choices = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
+		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
 	},
 	-------------------------------------------------------------------------
 	DecentsWayOffs = {
-		Choices = function() return { "On", "Decents Only", "Off" } end,
+		Values = function() return { "On", "Decents Only", "Off" } end,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
 			local choice = SL.Global.ActiveModifiers.DecentsWayOffs or "On"
@@ -356,11 +363,11 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
-		Choices = function() return { "Standard", "Surround" } end,
+		Values = function() return { "Standard", "Surround" } end,
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
-		Choices = function()
+		Values = function()
 			if SL.Global.GameMode == "Casual" then
 				if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
 					return { 'Gameplay', 'Select Music' }
@@ -393,7 +400,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions2 = {
-		Choices = function()
+		Values = function()
 			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
 				return { 'Gameplay', 'Select Music', 'Normal Modifiers' }
 			else
@@ -429,7 +436,15 @@ local OptionRowDefault = {
 		initialize = function(self, name)
 
 			self.Name = name
-			self.Choices = Overrides[name]:Choices()
+
+			if Overrides[name].Values then
+				self.Choices = {}
+				for i, v in ipairs( Overrides[name].Values() ) do
+					self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
+				end
+			else
+				self.Choices = Overrides[name]:Choices()
+			end
 
 			-- define fallback values to use here if an override isn't specified
 			self.LayoutType = Overrides[name].LayoutType or "ShowAllInRow"
@@ -441,7 +456,7 @@ local OptionRowDefault = {
 			self.LoadSelections = Overrides[name].LoadSelections or function(subself, list, pn)
 				local mods, playeroptions = GetModsAndPlayerOptions(pn)
 				local choice = mods[name] or (playeroptions[name] ~= nil and playeroptions[name](playeroptions)) or self.Choices[1]
-				local i = FindInTable(choice, self.Choices) or 1
+				local i = FindInTable(choice, (Overrides[name].Values and Overrides[name].Values() or self.Choices)) or 1
 				list[i] = true
 				return list
 			end
@@ -451,7 +466,7 @@ local OptionRowDefault = {
 
 				for i=1,#list do
 					if list[i] then
-						mods[name] = Overrides[name]:Choices()[i]
+						mods[name] = Overrides[name].Values and Overrides[name].Values()[i] or Overrides[name]:Choices()[i]
 					end
 				end
 			end
