@@ -267,12 +267,14 @@ local finalFrame = Def.ActorFrame{
 		previousGrade = currentGrade
 	end,
 	-- any time we receive a judgment
-	JudgmentMessageCommand=function(self,params)
+	JudgmentMessageCommand=function(self,params)		
 		currentGrade = pss:GetGrade()
 
 		-- this broadcasts a message to tell other actors that we have changed grade
 		if (currentGrade ~= previousGrade) then
-			self:queuecommand("GradeChanged")
+			if currentGrade ~= "Grade_Failed" then
+				self:queuecommand("GradeChanged")
+			end
 			previousGrade = currentGrade
 		end
 		self:queuecommand("Update")
