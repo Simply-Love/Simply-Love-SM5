@@ -63,7 +63,7 @@ return {
 		{
 			Name="Sujeet / teejusb",
 			Img="teejusb.png",
-			About="Sujeet was a great fund of general CS knowledge, and patiently answered my questions about data structures and algorithms many times.\n\nHe also runs the U.P.S. tournament series, which showcases custom contennt for SM5 in a lighthearted and fun way."
+			About="Sujeet was a great fund of general CS knowledge, and patiently answered my questions about data structures and algorithms many times.\n\nHe also runs the U.P.S. tournament series, which showcases custom content for SM5 in a lighthearted and fun way."
 		},
 
 		{
@@ -78,7 +78,7 @@ return {
 		{
 			Name="Dance Dance Maniacs",
 			Img="ddm.png",
-			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including AndyBeard, NBCrescendo, Grace, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Richard, Rime, Weston, and more."
+			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including:\n\nAndyBeard, NBCrescendo, Silverheart97, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Jonathan, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Captain Swagonforce, Weston, Vale, Rime, and more."
 		},
 		{
 			Name="DDRIllini",
@@ -91,18 +91,18 @@ return {
 	{
 		{
 			Name="Ian / Archi",
-			Img="",
-			About="Streamz are pretty cool, I guess.  The ECS events are inspiring."
+			Img="archi.png",
+			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that. When he's not busy streaming, he encourages others to through groovestats, the ECS events, and an overly-enthusiastic-soccer-mom coaching stlye."
 		},
 		{
 			Name="Alan / TaroNuke",
-			Img="",
-			About="Modding at the speed of light."
+			Img="taronuke.png",
+			About="Alan's scripting work with the Mawaru and UKSRT series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
 		},
 		{
 			Name="Riakodoadm",
 			Img="",
-			About="Support and menu music."
+			About="Riakodoadm wrote menu music for Simply Love and provided social support when I needed it. We spent many late nights comiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
 		},
 		{
 			Name="Jose_Varela",
@@ -110,4 +110,11 @@ return {
 			About="Spanish translation."
 		},
 	},
+	{
+		{
+			Name="Dan / dbk2",
+			Img="",
+			About="Here in the darkness\nthat knows no end,\nthis world that we are aboard\ncontinues to revolve."
+		}
+	}
 }
