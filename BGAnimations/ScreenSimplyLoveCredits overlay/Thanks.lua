@@ -9,7 +9,7 @@ return {
 		{
 			Name="Mad Matt",
 			Img="madmatt.png",
-			About="Matt helped Lara implement some of the more technical aspects of the original Simply Love theme. He was also responsible for the Final Fantasy Tactics and Super Meatboy themes for ITG.\n\nMatt is probably best known for dance gaming inhumnanly fast (though, he assures me that he is, in fact, quite human).\n\nMost recently, he has led development efforts for Rhythm Horizon."
+			About="Matt helped Lara implement some of the more technical aspects of the original Simply Love theme. He was also responsible for the Final Fantasy Tactics and Super Meatboy themes for ITG.\n\nMatt is probably best known for dance gaming inhumnanly fast (though he assures me that he is, in fact, quite human).\n\nMost recently, he has led development efforts for Rhythm Horizon."
 		}
 
 	},
@@ -39,7 +39,7 @@ return {
 		{
 			Name="SM5 Dev Team",
 			Img="stepmania.png",
-			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!"
+			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of StepMania, including jousway, Lirodon, tertu, Mr.ThatKid, etc."
 		},
 		{
 			Name="David / mute",
@@ -51,6 +51,63 @@ return {
 			Img="GitHub.png",
 			About="Many thanks go to andrewipark and Kauhsa for repeatedly submitting fantastic pull requests that fixed bugs, improved performance, and made my life easier.\n\nAdditional thanks go to OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, and StefanoFiumara.  Every little bit helps!"
 		}
+	},
 
+	-- page 4
+	{
+		{
+			Name="Caitlin",
+			Img="caitlin.png",
+			About="Caitlin redrew many of Simply Love's visual assets to be high-res, always provided feedback and assurance, and generally loved and supported me while I juggled 18 months of grad school and the initial Simply Love port."
+		},
+		{
+			Name="Sujeet / teejusb",
+			Img="teejusb.png",
+			About="Sujeet was a great fund of general CS knowledge, and patiently answered my questions about data structures and algorithms many times.\n\nHe also runs the U.P.S. tournament series, which showcases custom contennt for SM5 in a lighthearted and fun way."
+		},
+
+		{
+			Name="Paul J Kim",
+			Img="pjk.png",
+			About="Paul provided support when I needed it, and helped make Simply Love more robust by testing odd combinations of things that would never have occurred to me otherwise.\n\nFor example, placing a reasonable upper limit on user-input strings: maybe it's a good idea, maybe sometimes it's not. Maybe players SHOULD be allowed put whatever they want as the DisplayName in Editable.ini.  Maybe Simply Love SHOULD'T do anything to keep string length in check. Who's really to say? Whether 'tis nobler in the mind to suffer the mines and arrows of Ride, or to take arms against a sea of memes, and by opposing what I am doing?"
+		}
+	},
+
+	-- page 5
+	{
+		{
+			Name="Dance Dance Maniacs",
+			Img="ddm.png",
+			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including AndyBeard, NBCrescendo, Grace, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Richard, Rime, Weston, and more."
+		},
+		{
+			Name="DDRIllini",
+			Img="",
+			About=""
+		}
+	},
+
+	-- page 6
+	{
+		{
+			Name="Ian / Archi",
+			Img="",
+			About="Streamz are pretty cool, I guess.  The ECS events are inspiring."
+		},
+		{
+			Name="Alan / TaroNuke",
+			Img="",
+			About="Modding at the speed of light."
+		},
+		{
+			Name="Riakodoadm",
+			Img="",
+			About="Support and menu music."
+		},
+		{
+			Name="Jose_Varela",
+			Img="",
+			About="Spanish translation."
+		},
 	},
 }

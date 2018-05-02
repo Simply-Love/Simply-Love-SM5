@@ -1,6 +1,6 @@
 local pages = LoadActor("./Thanks.lua")
 
-local t = Def.ActorFrame{
+local af = Def.ActorFrame{
 	InitCommand=function(self) af = self end,
 	OnCommand=function(self)
 		self:queuecommand("ShowPage1")
@@ -9,7 +9,7 @@ local t = Def.ActorFrame{
 }
 
 -- header text
-t[#t+1] = Def.BitmapText{
+af[#af+1] = Def.BitmapText{
 	Font="_wendy small",
 	InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
 	OnCommand=function(self) self:sleep(0.1):decelerate(0.33):diffusealpha(1):playcommand("Update",{page=1}) end,
@@ -19,7 +19,7 @@ t[#t+1] = Def.BitmapText{
 
 for i=1,#pages do
 
-	t[#t+1] = Def.ActorFrame{
+	af[#af+1] = Def.ActorFrame{
 		Name="Page"..i,
 		InitCommand=function(self) self:visible(false):Center() end,
 		HideCommand=function(self) self:visible(false) end,
@@ -29,4 +29,4 @@ for i=1,#pages do
 
 end
 
-return t
+return af

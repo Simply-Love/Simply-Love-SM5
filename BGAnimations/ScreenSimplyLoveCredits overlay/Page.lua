@@ -22,15 +22,17 @@ for i=1, #people do
 	}
 
 	-- picture
-	af[#af+1] = Def.Sprite{
-		Texture="./img/"..people[i].Img,
-		InitCommand=function(self)
-			self:zoomto(img_height, img_height)
-				:halign(0):valign(0)
-				:x(-space.w/2 + padding*2)
-				:y(padding + quad_y)
-		end
-	}
+	if people[i].Img and people[i].Img ~= "" then
+		af[#af+1] = Def.Sprite{
+			Texture="./img/"..people[i].Img,
+			InitCommand=function(self)
+				self:zoomto(img_height, img_height)
+					:halign(0):valign(0)
+					:x(-space.w/2 + padding*2)
+					:y(padding + quad_y)
+			end
+		}
+	end
 
 	-- name / handle
 	af[#af+1] = Def.BitmapText{
@@ -38,6 +40,7 @@ for i=1, #people do
 		Text=people[i].Name,
 		InitCommand=function(self)
 			self:valign(0)
+				:maxwidth(img_height + padding)
 				:x(-space.w/2 + padding*2 + img_height/2)
 				:y(padding*1.5 + quad_y + img_height)
 		end
