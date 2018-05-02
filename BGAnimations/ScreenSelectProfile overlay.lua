@@ -81,9 +81,9 @@ function LoadPlayerStuff(Player)
 		children = GetLocalProfiles()
 	}
 
-	t[#t+1] = Def.ActorFrame {
-		Name="EffectFrame"
-	}
+	-- t[#t+1] = Def.ActorFrame {
+	-- 	Name="EffectFrame"
+	-- }
 
 	t[#t+1] = LoadFont("_miso") .. {
 		Name='SelectedProfileText',
@@ -124,14 +124,14 @@ function UpdateInternal3(self, Player)
 					smallframe:visible(false);
 					bigframe:visible(false);
 					scroller:visible(false);
-					seltext:settext('No profile');
+					seltext:settext(ScreenString("NoProfile"));
 				end;
 			end;
 		else
 			--using card
 			smallframe:visible(false);
 			scroller:visible(false);
-			seltext:settext('CARD');
+			seltext:settext(ScreenString("Card"));
 			SCREENMAN:GetTopScreen():SetProfileIndex(Player, 0);
 		end;
 	else
