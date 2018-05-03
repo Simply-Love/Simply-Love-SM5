@@ -3,9 +3,30 @@ local people = ...
 local padding = 10
 local header_height = 32
 local space = { w=640, h=_screen.h - header_height }
-local box_height = math.min( (space.h - (padding * (#people+1))) / #people, space.h/2)
+local box_height = (space.h - (padding * (#people+1))) / math.max(#people,2)
 local img_width = box_height-padding*4
 local src_width, src_height, img_height
+
+local fade_time = 0.25
+local display_time = 3
+
+local PictureActor = function( path, _y )
+	return Def.Sprite{
+		Texture="./img/"..path,
+		InitCommand=function(self)
+			src_width  = self:GetTexture():GetSourceWidth()
+			src_height = self:GetTexture():GetSourceHeight()
+			img_height = img_width * (src_height/src_width)
+
+			self:zoomto(img_width, img_height)
+				:halign(0):valign(0)
+				:x(-space.w/2 + padding*2)
+				:y(padding + _y)
+		end
+	}
+end
+
+
 
 local af = Def.ActorFrame{ InitCommand=function(self) self:y(header_height) end }
 
@@ -23,21 +44,31 @@ for i=1, #people do
 	}
 
 	-- picture
-	if people[i].Img and people[i].Img ~= "" then
-		af[#af+1] = Def.Sprite{
-			Texture="./img/"..people[i].Img,
-			InitCommand=function(self)
-				src_width  = self:GetTexture():GetSourceWidth()
-				src_height = self:GetTexture():GetSourceHeight()/self:GetTexture():GetNumFrames()
-				img_height = img_width * (src_height/src_width)
+	if people[i].Img then
+		if type(people[i].Img)=="string" and people[i].Img ~= "" then
+			af[#af+1] = PictureActor( people[i].Img, quad_y )
+		elseif type(people[i].Img)=="table" then
 
-				self:zoomto(img_width, img_height)
-					:halign(0):valign(0)
-					:x(-space.w/2 + padding*2)
-					:y(padding + quad_y)
-					:SetAllStateDelays(2)
+			af[#af+1] = Def.ActorFrame{}
+
+			for j=1, #people[i].Img do
+				af[#af][j] = PictureActor( people[i].Img[j], quad_y )..{
+					OnCommand=function(self)
+						self:diffusealpha( j==1 and 1 or 0 ):sleep( (j-1)*display_time ):queuecommand("Loop")
+					end,
+					LoopCommand=function(self)
+						if self:GetDiffuseAlpha() == 0 then
+							self:linear(fade_time):diffusealpha(1)
+						end
+
+						self:sleep( display_time )
+							:linear(fade_time):diffusealpha(0)
+							:sleep( (#people[i].Img-1) * display_time )
+							:queuecommand("Loop")
+					end
+				}
 			end
-		}
+		end
 	end
 
 	-- name / handle

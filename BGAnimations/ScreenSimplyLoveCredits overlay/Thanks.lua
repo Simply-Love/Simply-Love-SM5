@@ -77,13 +77,13 @@ return {
 	{
 		{
 			Name="Dance Dance Maniacs",
-			Img="ddm.png",
+			Img={ "ddm/2017.png", "ddm/2015.png", "ddm/2018.png", "ddm/2012.png" },
 			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including:\n\nAndyBeard, NBCrescendo, Silverheart97, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Jonathan, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Captain Swagonforce, Weston, Vale, Rime, and more."
 		},
 		{
 			Name="DDRIllini",
 			Img="",
-			About=""
+			About="Thanks to the DDRIllini crew for being DDM's loving counterpart a timezone away.  I have fond memories of driving with DDM friends to DDRIllini's annual Rumble in the Prairie events each spring.\n\nThank you, Kyt-Xune, Z0rk, feedbacker, Sudzi, ian5v, Benpai, pez, et al!"
 		}
 	},
 
@@ -92,7 +92,7 @@ return {
 		{
 			Name="Ian / Archi",
 			Img="archi.png",
-			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that. When he's not busy streaming, he encourages others to through groovestats, the ECS events, and an overly-enthusiastic-soccer-mom coaching stlye."
+			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that. When he's not busy streaming, he encourages others to through groovestats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
 		},
 		{
 			Name="Alan / TaroNuke",
@@ -102,19 +102,19 @@ return {
 		{
 			Name="Riakodoadm",
 			Img="",
-			About="Riakodoadm wrote menu music for Simply Love and provided social support when I needed it. We spent many late nights comiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
+			About="Riakodoadm wrote menu music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
 		},
 		{
 			Name="Jose_Varela",
 			Img="",
-			About="Spanish translation."
+			About="Jose graciously translated Simply Love's UI into Spanish."
 		},
 	},
 	{
 		{
 			Name="Dan / dbk2",
-			Img="",
-			About="Here in the darkness\nthat knows no end,\nthis world that we are aboard\ncontinues to revolve."
+			Img="dbk2.png",
+			About="I wonder what I should say here."
 		}
 	}
 }
