@@ -19,7 +19,7 @@ return {
 		{
 			Name="djpohly",
 			Img="djpohly.png",
-			About="djpohly was a constant source of knowledge, help, and measured encouragement during the initial 18 months I spent porting Simply Love to SM5.\n\nHe is also responsible for the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware feasible."
+			About="djpohly was a constant source of knowledge, help, and measured encouragement during the initial 18 months I spent porting Simply Love to SM5.\n\nHe also authored the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware feasible."
 		},
 		{
 			Name="AJ / freem",
@@ -39,7 +39,7 @@ return {
 		{
 			Name="SM5 Dev Team",
 			Img="stepmania.png",
-			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of StepMania, including jousway, Lirodon, tertu, Mr.ThatKid, etc."
+			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of StepMania, including Lirodon, jousway, tertu, Mr.ThatKid, etc."
 		},
 		{
 			Name="David / mute",
@@ -102,7 +102,7 @@ return {
 		{
 			Name="Riakodoadm",
 			Img="",
-			About="Riakodoadm wrote menu music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
+			About="Riakodoadm wrote music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
 		},
 		{
 			Name="Jose_Varela",
@@ -114,7 +114,7 @@ return {
 		{
 			Name="Dan / dbk2",
 			Img="dbk2.png",
-			About="I wonder what I should say here."
+			About="Dan is a human being, perhaps not so unlike you. He enjoys eating mochi, explaining recursion, and finding new absurdist/ergodic literature to read.\n\nIn addition to leading development for this theme, he has composed music for the Tachyon series, published prose and poetry, and dabbled in photograph, cinematography, and screenplay writing. He wishes to assure you that he sucks at it all, but has fun trying to improve.\n\nWhen he's not working on some sort of creative project, you can find him going on long walks to nowhere late at night, especially if it is snowing."
 		}
 	}
 }

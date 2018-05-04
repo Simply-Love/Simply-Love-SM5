@@ -10,6 +10,11 @@ local src_width, src_height, img_height
 local fade_time = 0.25
 local display_time = 3
 
+-- sometimes we just want a single static image to be the avatar
+-- sometimes we have a set of images we want to cycle through that
+-- collectively reprsent a single avatar
+-- abstract out what is common between both those scenarios into this function
+-- and append extra functionality (fading, etc.) later, if needed
 local PictureActor = function( path, _y )
 	return Def.Sprite{
 		Texture="./img/"..path,
@@ -65,6 +70,9 @@ for i=1, #people do
 							:linear(fade_time):diffusealpha(0)
 							:sleep( (#people[i].Img-1) * display_time )
 							:queuecommand("Loop")
+					end,
+					HideCommand=function(self)
+						self:stoptweening():queuecommand("On")
 					end
 				}
 			end
