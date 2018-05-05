@@ -85,11 +85,16 @@ local t = Def.ActorFrame{
 
 	LoadActor( THEME:GetPathG("", "_header.lua") ),
 
-	LoadFont("_wendy monospace numbers")..{
+	Def.BitmapText{
+		Font=PREFSMAN:GetPreference("EventMode") and "_wendy monospace numbers" or "_wendy small",
 		Name="Stage Number",
 		InitCommand=function(self)
 			bmt_actor = self
-			self:diffusealpha(0):zoom( WideScale(0.305,0.365) ):xy(_screen.cx, WideScale(10,9))
+			if PREFSMAN:GetPreference("EventMode") then
+				self:diffusealpha(0):zoom( WideScale(0.305,0.365) ):xy(_screen.cx, WideScale(10,9))
+			else
+				self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy(_screen.cx, 15)
+			end
 		end,
 		OnCommand=function(self)
 			if not PREFSMAN:GetPreference("EventMode") then
