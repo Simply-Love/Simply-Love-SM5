@@ -2,6 +2,35 @@ local numStages = SL.Global.Stages.PlayedThisGame
 
 local page = 1
 local pages = math.ceil(numStages/4)
+local GCM = GAMESTATE:GetCoinMode()
+
+local MovePageOn = {
+	['Global'] = {
+		['MenuLeft'] = 1,
+		['MenuUp'] = 1,
+		['MenuRight'] = -1,
+		['MenuDown'] = -1, 
+	},
+	['CoinMode_Home'] = {
+		['Left'] = 1,
+		['Up'] = 1,
+		['Right'] = -1,
+		['Down'] = -1, 
+	},
+}
+
+local function MovePage(Inp,Pinp)
+	for k,v in pairs(Pinp) do
+		if k == 'Global' or k == GCM then
+			if v[Inp] then
+				return v[Inp]
+			end
+		end	
+	end
+	return 0
+end
+
+
 
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
@@ -16,21 +45,12 @@ local t = Def.ActorFrame{
 		end
 
 		if pages > 1 then
-			-- previous page
-			if param.Name == "MenuLeft" or param.Name == "MenuUp" then
-				if page > 1 then
-					page = page - 1
-					self:stoptweening():queuecommand("Hide")
-				end
-			end
-
-			-- next page
-			if param.Name == "MenuRight" or param.Name == "MenuDown" then
-				if page < pages then
-					page = page + 1
-					self:stoptweening():queuecommand("Hide")
-				end
-			end
+			Reload = true
+			nextpage = MovePage(param.Name,MovePageOn)
+			page = page + nextpage
+			if page > pages then page = pages Reload = false end
+			if page < 1 then page = 1 Reload = false end			
+			if nextpage ~= 0 and Reload then self:stoptweening():queuecommand("Hide") end
 		end
 	end,
 
