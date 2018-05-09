@@ -5,7 +5,7 @@ local delay = args.delay
 local song = args.song
 local max_width = args.width
 
-local font_zoom = 0.225
+local font_zoom = 0.55
 local bgm_volume = 10
 
 local af = Def.ActorFrame{
@@ -34,7 +34,7 @@ af[#af+1] = Def.Quad{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/typo slab serif 16x16.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/_typoslabserif-light 20px.ini"),
 	Text=header,
 	InitCommand=function(self)
 		self:zoom(font_zoom)
@@ -46,10 +46,10 @@ af[#af+1] = Def.BitmapText{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/typo slab serif 16x16.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/_typoslabserif-light 20px.ini"),
 	InitCommand=function(self)
 		self:zoom(font_zoom)
-			:align(0,0):xy(_screen.cx - max_width/2, 80)
+			:align(0,0):xy(_screen.cx - max_width/2, 74)
 			:diffuse(Color.Black)
 			:wrapwidthpixels(max_width/font_zoom)
 	end,

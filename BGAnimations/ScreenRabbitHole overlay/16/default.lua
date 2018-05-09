@@ -5,7 +5,7 @@ local scene = 1
 
 local scene1 = {
 	delay=0.0625,
-	width=400,
+	width=355,
 	song="14/dear.ogg",
 	header="FROM: Ben\nTO: Zoe\nDATE: Jan-07-2006\nSUBJECT: RE: get to know you\n---------------------------------------------------------",
 	body="Hi Zoe,\n\nI wasn't expecting to receive an email like that, but it was certainly a pleasant surprise. How did you find my blog?  I'm curious, because no one I didn't already know \"in real life\" has ever contacted me because of it.\n\nSo.\n\nAre you asking why I write, or why I write my private thoughts in a public blog on the internet?\n\nThis is my mind posing a question where you asked none. It does this constantly.\nPose questions, that is.\n\nThere's satisfaction, I think, to be found in getting my thoughts down in writing from time to time. It's lasting.  Even if I were to now disagree with something I wrote a year earlier, it's there in writing, a definitive testament to a thought I once held valuable enough to write about.\n\nI guess you could say that I write in a public blog because I hoped someone like you would read it.\n\nBen"

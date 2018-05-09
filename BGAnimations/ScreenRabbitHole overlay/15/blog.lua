@@ -3,7 +3,7 @@ local date = args.date
 local body = args.body
 local song = args.song
 
-local font_zoom = 0.15
+local font_zoom = 0.675
 local max_width = 420
 local padding = 12
 
@@ -46,20 +46,20 @@ af[#af+1] = Def.Quad{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana bold 16x6.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana Bold 20px.ini"),
 	Text="Ben is...",
 	InitCommand=function(self)
-		self:zoom(0.275)
+		self:zoom(font_zoom*1.5)
 			:align(0,0)
 			:xy(_screen.cx - max_width/2 + padding, 20)
 	end
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana bold 16x6.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana Bold 20px.ini"),
 	Text="...just another guy with a blog",
 	InitCommand=function(self)
-		self:zoom(0.15)
+		self:zoom(font_zoom)
 			:align(0,0)
 			:xy(_screen.cx - max_width/2 + padding, 50)
 	end
@@ -82,7 +82,7 @@ af[#af+1] = Def.Quad{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana 16x6.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana 20px.ini"),
 	Text=date,
 	InitCommand=function(self)
 		self:zoom(font_zoom)
@@ -100,7 +100,7 @@ af[#af+1] = Def.Quad{
 
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana 16x6.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana 20px.ini"),
 	Text=body,
 	InitCommand=function(self)
 		self:zoom(font_zoom)

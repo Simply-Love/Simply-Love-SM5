@@ -3,7 +3,7 @@ local conversation = ...
 local sounds = { sent=nil, received=nil }
 local im = { w=280, h=400, topbar=20, icon=12 }
 local h = 0
-local font_zoom = 0.14
+local font_zoom = 0.65
 local padding = 10
 
 local typing_data = {}
@@ -109,7 +109,7 @@ local im_af = Def.ActorFrame{
 
 -- BitmapText for things Ben is typing and has not yet sent
 local t = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana 16x6.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana 20px.ini"),
 	Name="Typing",
 	InitCommand=function(self)
 		self:zoom(font_zoom):wrapwidthpixels((im.w-padding*2)/font_zoom)
@@ -171,7 +171,7 @@ for i=1, #conversation do
 
 			local chat_bubble = self:GetChild("chat-bubble")
 
-			if (chat_bubble:GetY()+chat_bubble:GetZoomY()+i*padding) > (im.h * 0.8) then
+			if (chat_bubble:GetY()+chat_bubble:GetZoomY()+(i*padding)) > (im.h * 0.8) then
 				self:GetParent():addy( -(chat_bubble:GetZoomY()+padding) )
 			end
 
@@ -192,7 +192,7 @@ for i=1, #conversation do
 
 				local kids = self:GetParent():GetChild("")
 
-				self:zoomto(im.w-padding, kids[1]:GetHeight()*font_zoom + kids[2]:GetHeight()*font_zoom)
+				self:zoomto(im.w-padding, kids[1]:GetHeight()*font_zoom + kids[2]:GetHeight()*font_zoom + padding*2)
 					:xy(im.w/2, h)
 
 				self:GetParent():y(i*padding + im.topbar)
@@ -201,7 +201,7 @@ for i=1, #conversation do
 
 		-- BitmapText for author
 		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana bold 16x6.ini"),
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana Bold 20px.ini"),
 			Text=conversation[i].author .. ":",
 			InitCommand=function(self)
 				self:zoom(font_zoom):wrapwidthpixels((im.w-padding)/font_zoom)
@@ -218,14 +218,14 @@ for i=1, #conversation do
 			OnCommand=function(self)
 				if conversation[i].startDeleting then self:hibernate(math.huge); return end
 
-				self:y(h)
-				h = h + self:GetHeight() * font_zoom
+				self:y(h + padding/2)
+				h = h + self:GetHeight() * font_zoom + padding/2
 			end
 		},
 
 		-- BitmapText for words
 		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/verdana" .. (conversation[i].author=="System" and " bold" or "") .. " 16x6.ini"),
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana" .. (conversation[i].author=="System" and " Bold" or "") .. " 20px.ini"),
 			Text=conversation[i].words,
 			InitCommand=function(self)
 				self:zoom(font_zoom):wrapwidthpixels((im.w-padding)/font_zoom)
@@ -236,8 +236,8 @@ for i=1, #conversation do
 			OnCommand=function(self)
 				if conversation[i].startDeleting then self:hibernate(math.huge); return end
 
-				self:y(h)
-				h = h + self:GetHeight() * font_zoom
+				self:y(h + padding * 0.75)
+				h = h + self:GetHeight() * font_zoom + padding
 			end
 		},
 	}
