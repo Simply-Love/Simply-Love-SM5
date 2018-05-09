@@ -49,7 +49,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to andrewipark and Kauhsa for repeatedly submitting fantastic pull requests that fixed bugs, improved performance, and made my life easier.\n\nAdditional thanks go to OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, and StefanoFiumara.  Every little bit helps!"
+			About="Many thanks go to andrewipark and Kauhsa for repeatedly submitting fantastic pull requests that fixed bugs, improved performance, and made my life easier.\n\nAdditional thanks go to OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, StefanoFiumara, and dougshell.  Every little bit helps!"
 		}
 	},
 
