@@ -5,6 +5,12 @@ local af = Def.ActorFrame{
 	OnCommand=function(self)
 		self:queuecommand("ShowPage1")
 		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {self, #pages}) )
+	end,
+	OffCommand=function(self)
+		if ThemePrefs.Get("RabbitHole")==0 then
+			ThemePrefs.Set("RabbitHole", 1)
+			ThemePrefs.Save()
+		end
 	end
 }
 
