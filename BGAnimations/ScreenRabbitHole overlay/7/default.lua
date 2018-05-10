@@ -43,7 +43,7 @@ local bricks = {
 }
 
 -- handles to actors
-local amv, paddle, ball, bmt_af
+local amv, paddle, ball, bmt_af, give_up_text
 
 -- ball variables
 local dx, dy = 0, 0
@@ -53,7 +53,7 @@ local velocity = 150
 local paddle_v = 300
 local paddle_dx = 0
 
-local input = { left=false, right=false }
+local input = { left=false, right=false, start=false, back=false }
 
 local playing = false
 local brick_size = 40
@@ -63,11 +63,32 @@ local verts = {}
 local hidden_bricks = 0
 local canvas_w, canvas_h = 640,480
 
+local give_up_time = 3
+local held_duration, old_time = 0, 0
+
 local Update = function(af, delta)
 
 	paddle:playcommand("Update", {delta})
 	ball:playcommand("Update", {delta})
 	amv:playcommand("Update", {delta})
+
+	if input.start or input.back then
+
+		if old_time == 0 then
+			old_time = GetTimeSinceStart()
+			held_duration = 0
+		else
+			held_duration = GetTimeSinceStart() - old_time
+		end
+
+		if held_duration > (give_up_time * 0.15) then
+			give_up_text:queuecommand("Show")
+		end
+
+		if held_duration > give_up_time then
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+		end
+	end
 
 end
 
@@ -85,18 +106,29 @@ local af = Def.ActorFrame{
 		end
 
 		if event.type ~= "InputEventType_Release" then
-			if (event.button=="Left" or event.button=="DownLeft") then
-				input.left = true
-			elseif (event.button=="Right" or event.button=="DownRight") then
-				input.right = true
-			end
+			if (event.button=="Left" or event.button=="DownLeft") then input.left = true end
+			if (event.button=="Right" or event.button=="DownRight") then input.right = true end
+			if (event.button=="Start") then input.start = true end
+			if (event.button=="Back") then input.back = true end
 		end
 
 		if event.type == "InputEventType_Release" then
 			if (event.button=="Left" or event.button=="DownLeft") then
 				input.left = false
-			elseif (event.button=="Right" or event.button=="DownRight") then
+			end
+			if (event.button=="Right" or event.button=="DownRight") then
 				input.right = false
+			end
+
+			if (event.button=="Start") then
+				held_duration, old_time = 0, 0
+				give_up_text:queuecommand("Hide")
+				input.start = false
+			end
+			if (event.button=="Back") then
+				held_duration, old_time = 0, 0
+				give_up_text:queuecommand("Hide")
+				input.back = false
 			end
 		end
 	end,
@@ -130,7 +162,7 @@ canvas[#canvas+1] = Def.ActorMultiVertex{
 		self:SetDrawState( {Mode="DrawMode_Quads"} )
 			:LoadTexture( THEME:GetPathB("ScreenRabbitHole", "overlay/7/brick.png") )
 			:SetVertices( verts )
-			-- :xy(offset.x, offset.y)
+
 		amv = self
 	end,
 	UpdateCommand=function(self, params)
@@ -143,32 +175,31 @@ canvas[#canvas+1] = Def.ActorMultiVertex{
 			if verts[i][2][4] == 1 then
 
 				-- collision checking LEFT and RIGHT
-				if (ball:GetY() >= verts[i][1][2] and ball:GetY() <= verts[i+1][1][2]) then
+				if (ball:GetY()-brick_size/4 >= verts[i][1][2] and ball:GetY()+brick_size/4 <= verts[i+2][1][2]) then
 					-- ball collides with LEFT of this brick
-					if (ball:GetX() <= verts[i][1][1] and ball:GetX()+dx >= verts[i][1][1] ) then
-						dx = -dx
+					if (ball:GetX()-brick_size/4 <= verts[i][1][1] and ball:GetX()+(brick_size/4)+dx >= verts[i][1][1] ) then
+						dx = -math.abs(dx)
 						vert_to_remove = i
 						break
 
 					-- ball collides with RIGHT of this brick
-					elseif (ball:GetX() >= verts[i+1][1][1] and ball:GetX()+dx <= verts[i+1][1][1]) then
-						dx = -dx
+					elseif (ball:GetX()+brick_size/4 >= verts[i+1][1][1] and ball:GetX()-(brick_size/4)-dx <= verts[i+1][1][1]) then
+						dx = math.abs(dx)
 						vert_to_remove = i
 						break
 					end
-				end
 
 				-- collision checking TOP and BOTTOM
-				if (ball:GetX() >= verts[i][1][1] and ball:GetX() <= verts[i+1][1][1]) then
+				elseif (ball:GetX()+brick_size/4 >= verts[i][1][1] and ball:GetX()-brick_size/4 <= verts[i+1][1][1]) then
 					-- ball collides with TOP of this brick
-					if (ball:GetY() <= verts[i][1][2] and ball:GetY()+dy >= verts[i][1][2]) then
-						dy = -dy
+					if (ball:GetY()+brick_size/4 <= verts[i][1][2] and ball:GetY()+(brick_size/4)+dy >= verts[i][1][2]) then
+						dy = -math.abs(dy)
 						vert_to_remove = i
 						break
 
 					-- ball collides with BOTTOM of this brick
-					elseif (ball:GetY() >= verts[i+2][1][2] and ball:GetY()+dy <= verts[i+2][1][2]) then
-						dy = -dy
+					elseif (ball:GetY()+brick_size/4 >= verts[i+2][1][2] and ball:GetY()-(brick_size/4)-dy <= verts[i+2][1][2]) then
+						dy = math.abs(dy)
 						vert_to_remove = i
 						break
 					end
@@ -176,7 +207,7 @@ canvas[#canvas+1] = Def.ActorMultiVertex{
 			end
 		end
 
-		-- actually remove 4 vertices would (I think?) require calling table.remove(vert_to_remove) 4 times
+		-- actually removing 4 vertices would (I think?) require calling table.remove(vert_to_remove) 4 times
 		-- and waiting for the verts table to left-shift everything 4 times.  so just hide it.
 		if (vert_to_remove) then
 			verts[vert_to_remove][2][4] = 0
@@ -204,7 +235,8 @@ for i, brick in ipairs(bricks) do
 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 		Text=brick.text,
 		InitCommand=function(self)
-			self:zoom(0.35):diffuse(Color.Black):visible(false)
+			self:zoom(0.35):diffuse(Color.Black)
+				:visible(false)
 				:xy(brick.x*brick_size+offset.x+brick_size/2, brick.y*brick_size+offset.y+brick_size/2)
 		end,
 		RevealCommand=function(self)
@@ -220,7 +252,7 @@ end
 canvas[#canvas+1] = Def.Quad{
 	InitCommand=function(self)
 		paddle = self
-		self:diffuse(Color.Black):zoomto(brick_size*2, paddle_h):xy(0, _screen.h/2 - 24)
+		self:diffuse(Color.Black):zoomto(brick_size*2, paddle_h):xy(brick_size/2, _screen.h/2 - 24)
 	end,
 	UpdateCommand=function(self, params)
 		local delta = params[1]
@@ -256,7 +288,7 @@ canvas[#canvas+1] = Def.Sprite{
 		ball = self
 		self:zoomto(brick_size/2, brick_size/2)
 			:diffuse(color("#00bfff"))
-			:queuecommand("Reset")
+			:xy(paddle:GetX(), paddle:GetY() - paddle_h/2 - brick_size/4)
 	end,
 	UpdateCommand=function(self, params)
 		local delta = params[1]
@@ -331,5 +363,16 @@ canvas[#canvas+1] = Def.Sprite{
 }
 
 af[#af+1] = canvas
+
+af[#af+1] = Def.BitmapText{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
+	Text="continue holding to quit",
+	InitCommand=function(self)
+		give_up_text = self
+		self:xy(_screen.cx, _screen.cy+100):zoom(1):diffuse( Color.Black ):visible(false)
+	end,
+	ShowCommand=function(self) self:visible(true) end,
+	HideCommand=function(self) self:visible(false) end,
+}
 
 return af
