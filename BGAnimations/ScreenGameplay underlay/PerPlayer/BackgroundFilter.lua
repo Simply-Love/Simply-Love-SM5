@@ -12,14 +12,17 @@ local FilterAlpha = {
 	Darkest = 0.95
 }
 
-local filter = Def.Quad{
+local filter = Def.ActorFrame{ 
+	InitCommand=function(self) self:xy(GetNotefieldX(player), _screen.cy ) end,
+	OffCommand=function(self) self:queuecommand("ComboFlash") end,
+}
+
+filter[#filter+1] = Def.Quad{
 	InitCommand=function(self)
 		self:diffuse(Color.Black)
 			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
-			:xy( GetNotefieldX(player), _screen.cy )
 			:zoomto( GetNotefieldWidth(), _screen.h )
 	end,
-	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local FlashColor = nil
@@ -40,5 +43,20 @@ local filter = Def.Quad{
 		end
 	end
 }
+
+if ThemePrefs.Get("nice") then
+	filter[#filter+1] = LoadActor(THEME:GetPathG("","_grades/graphics/nice.png"))..{
+		InitCommand=function(self) self:visible(false):zoom(0.5) end,
+		ComboFlashCommand=function(self)
+			local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+			local PercentDP = pss:GetPercentDancePoints()
+			local percent = FormatPercentScore(PercentDP):gsub("%%", "")
+			
+			if string.match(percent, "69") ~= nil then
+				self:visible(true):linear(0.8):addy(-50):zoom(3):diffusealpha(0)
+			end
+		end
+	}
+end
 
 return filter
