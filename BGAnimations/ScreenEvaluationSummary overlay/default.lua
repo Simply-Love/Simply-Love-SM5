@@ -62,7 +62,9 @@ local t = Def.ActorFrame{
 	}
 }
 
-t[#t+1] = LoadActor("./LetterGrades.lua")
+if SL.Global.GameMode ~= "StomperZ" then
+	t[#t+1] = LoadActor("./LetterGrades.lua")
+end
 
 -- i will increment so that we progress down the screen from top to bottom
 -- first song of the round at the top, more recently played song at the bottom
