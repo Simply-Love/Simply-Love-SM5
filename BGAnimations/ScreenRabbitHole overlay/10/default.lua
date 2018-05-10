@@ -22,7 +22,7 @@ af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/10/13 Ghosts II.mp4"),
 	InitCommand=function(self)
 		self:Center():loop(false)
-		if IsUsingWideScreen() then self:FullScreen() end
+		if not IsUsingWideScreen() then self:FullScreen() end
 	end
 }
 

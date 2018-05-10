@@ -21,7 +21,7 @@ return Def.ActorFrame{
 	},
 
 	Def.BitmapText{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/_typoslabserif-light 20px.ini"),
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/typo slab serif/_typoslabserif-light 20px.ini"),
 		InitCommand=function(self)
 			local max_width = 380
 

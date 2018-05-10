@@ -34,7 +34,7 @@ af[#af+1] = Def.Quad{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/_typoslabserif-light 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/typo slab serif/_typoslabserif-light 20px.ini"),
 	Text=header,
 	InitCommand=function(self)
 		self:zoom(font_zoom)
@@ -46,7 +46,7 @@ af[#af+1] = Def.BitmapText{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typo slab serif/_typoslabserif-light 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/typo slab serif/_typoslabserif-light 20px.ini"),
 	InitCommand=function(self)
 		self:zoom(font_zoom)
 			:align(0,0):xy(_screen.cx - max_width/2, 74)

@@ -109,7 +109,7 @@ local im_af = Def.ActorFrame{
 
 -- BitmapText for things Ben is typing and has not yet sent
 local t = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana 20px.ini"),
 	Name="Typing",
 	InitCommand=function(self)
 		self:zoom(font_zoom):wrapwidthpixels((im.w-padding*2)/font_zoom)
@@ -201,7 +201,7 @@ for i=1, #conversation do
 
 		-- BitmapText for author
 		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana Bold 20px.ini"),
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana Bold 20px.ini"),
 			Text=conversation[i].author .. ":",
 			InitCommand=function(self)
 				self:zoom(font_zoom):wrapwidthpixels((im.w-padding)/font_zoom)
@@ -225,7 +225,7 @@ for i=1, #conversation do
 
 		-- BitmapText for words
 		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana" .. (conversation[i].author=="System" and " Bold" or "") .. " 20px.ini"),
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana" .. (conversation[i].author=="System" and " Bold" or "") .. " 20px.ini"),
 			Text=conversation[i].words,
 			InitCommand=function(self)
 				self:zoom(font_zoom):wrapwidthpixels((im.w-padding)/font_zoom)

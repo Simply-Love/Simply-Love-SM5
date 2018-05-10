@@ -27,7 +27,7 @@ af[#af+1] = Def.Sprite{
 
 for i=1,#haiku do
 	af[#af+1] = Def.BitmapText{
-		Font="_miso",
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 		Text=haiku[i],
 		InitCommand=function(self) self:halign(0):valign(0):xy((_screen.cx-100) + i*60, 25+(i-1)*80):zoom(0.85):diffusealpha(0) end,
 		OnCommand=function(self) self:sleep( naps[i] ):smooth(3):diffusealpha(1) end

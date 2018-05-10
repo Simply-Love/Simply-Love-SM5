@@ -201,15 +201,14 @@ for i, brick in ipairs(bricks) do
 	table.insert( verts, {{brick.x*brick_size+offset.x, brick.y*brick_size+brick_size+offset.y, 0}, color(brick.c), {0,1} } )
 
 	canvas[#canvas][i] = Def.BitmapText{
-		Font="_miso",
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 		Text=brick.text,
-		-- Text=brick.x*brick_size+offset.x .. " "..brick.y*brick_size+offset.y,
 		InitCommand=function(self)
 			self:zoom(0.35):diffuse(Color.Black):visible(false)
 				:xy(brick.x*brick_size+offset.x+brick_size/2, brick.y*brick_size+offset.y+brick_size/2)
 		end,
 		RevealCommand=function(self)
-			self:visible(true):linear(1.1):zoom(1):addy(-50):diffusealpha(0):queuecommand("Hide")
+			self:visible(true):linear(1.1):zoom(1):addy(-30):diffusealpha(0):queuecommand("Hide")
 		end,
 		HideCommand=function(self)
 			self:visible(false)

@@ -22,7 +22,7 @@ af[#af+1] = Def.Sound{
 }
 
 af[#af+1] = Def.BitmapText{
-	Font="_miso",
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 	Text=intro,
 	InitCommand=function(self) self:xy( _screen.cx, _screen.cy-self:GetHeight()/2 ):diffusealpha(0) end,
 	IntroCommand=function(self)
@@ -41,7 +41,7 @@ local hallway = Def.ActorFrame{
 
 for i=#footsteps, 1, -1 do
 	hallway[i] = Def.BitmapText{
-		Font="_miso",
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 		Text=footsteps[i],
 		InitCommand=function(self) self:xy(_screen.cx+(i%2==0 and -20 or 20), i*-70):rotationx(85):diffusealpha(0) end,
 		WalkCommand=function(self) self:sleep(i*0.5):accelerate(1.25):diffusealpha(1) end

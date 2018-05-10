@@ -15,7 +15,7 @@ af[#af+1] = Def.Sound{
 }
 
 af[#af+1] = Def.BitmapText{
-	Font="_miso",
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 	Text=haiku,
 	InitCommand=function(self) self:halign(0):xy(_screen.cx - self:GetWidth()/2, _screen.cy):diffusealpha(0) end,
 	OnCommand=function(self) self:sleep(2.5):linear(1):diffusealpha(1) end
@@ -24,7 +24,7 @@ af[#af+1] = Def.BitmapText{
 af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/3/mask.png"),
 	InitCommand=function(self) self:zoom(0.25):Center() end,
-	OnCommand=function(self) self:sleep(2):pulse():effectmagnitude(11,1,1):effectperiod(6) end
+	OnCommand=function(self) self:sleep(0.5):pulse():effectmagnitude(12,1,1):effectperiod(6) end
 }
 
 -- cursor

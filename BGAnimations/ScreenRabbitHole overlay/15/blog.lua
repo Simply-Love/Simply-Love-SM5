@@ -46,7 +46,7 @@ af[#af+1] = Def.Quad{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana Bold 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana Bold 20px.ini"),
 	Text="Ben is...",
 	InitCommand=function(self)
 		self:zoom(font_zoom*1.5)
@@ -56,7 +56,7 @@ af[#af+1] = Def.BitmapText{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana Bold 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana Bold 20px.ini"),
 	Text="...just another guy with a blog",
 	InitCommand=function(self)
 		self:zoom(font_zoom)
@@ -82,7 +82,7 @@ af[#af+1] = Def.Quad{
 }
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana 20px.ini"),
 	Text=date,
 	InitCommand=function(self)
 		self:zoom(font_zoom)
@@ -100,7 +100,7 @@ af[#af+1] = Def.Quad{
 
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/verdana/_verdana 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana 20px.ini"),
 	Text=body,
 	InitCommand=function(self)
 		self:zoom(font_zoom)

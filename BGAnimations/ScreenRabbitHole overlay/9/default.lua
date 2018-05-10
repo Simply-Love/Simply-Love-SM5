@@ -1,6 +1,6 @@
 -- juxaposition
 
-local max_width = 350
+local max_width = { 400, 380 }
 local quote_bmt
 
 local page = 1
@@ -22,23 +22,23 @@ local af = Def.ActorFrame{
 }
 
 af[#af+1] = Def.BitmapText{
-	Font="_miso",
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 	Text=pages[1],
 	InitCommand=function(self)
 		quote_bmt = self
-		self:wrapwidthpixels(max_width)
+		self:wrapwidthpixels(max_width[page])
 			:Center():addx(-self:GetWidth()/2):halign(0)
 	end,
 	RefreshCommand=function(self)
-		self:settext( pages[2] )
 		page = 2
+		self:settext( pages[page] ):wrapwidthpixels(max_width[page])
 	end
 }
 
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:zoomto(0,0):diffuse(0.5, 0.5, 0.5, 1) end,
 	RefreshCommand=function(self)
-		self:zoomto(2, quote_bmt:GetHeight()):Center():addx(-quote_bmt:GetWidth()/2 - 14)
+		self:zoomto(2, quote_bmt:GetHeight()):Center():addx(-quote_bmt:GetWidth()/2 - 24)
 	end
 }
 
