@@ -1,6 +1,6 @@
-local banner_directory = { Hearts="Hearts", Arrows="Arrows", Bears="Hearts" }
+local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
 
-return Def.ActorFrame{
+local af = Def.ActorFrame{
 
 	-- quad behind the song/course title text
 	Def.Quad{
@@ -17,21 +17,14 @@ return Def.ActorFrame{
 				self:settext(songtitle)
 			end
 		end
-	},
+	}
+}
 
-	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. banner_directory[ThemePrefs.Get("VisualTheme")] .."/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
-		OnCommand=function(self)
-			self:xy( _screen.cx, 121.5):zoom(0.7)
-			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-			if SongOrCourse and SongOrCourse:HasBanner() then
-				self:visible(false)
-			end
-		end
-	},
+local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 
+if SongOrCourse and SongOrCourse:HasBanner() then
 	--song or course banner, if there is one
-	Def.Banner{
+	af[#af+1] = Def.Banner{
 		Name="Banner",
 		InitCommand=function(self)
 			if GAMESTATE:IsCourseMode() then
@@ -42,4 +35,11 @@ return Def.ActorFrame{
 		end,
 		OnCommand=cmd(xy, _screen.cx, 121.5; setsize,418,164; zoom, 0.7 )
 	}
-}
+else
+	--fallback banner
+	af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/" .. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .. "/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
+		InitCommand=function(self) self:xy( _screen.cx, 121.5):zoom(0.7) end
+	}
+end
+
+return af
