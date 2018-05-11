@@ -7,7 +7,7 @@ local ColorSelected = false
 
 local NumHeartsToDraw = IsUsingWideScreen() and 11 or 7
 
-local image = string.sub(ThemePrefs.Get("VisualTheme"),1,-2)
+local image = ThemePrefs.Get("VisualTheme")
 
 -- this handles user input
 local function input(event)
@@ -55,10 +55,15 @@ local wheel_item_mt = {
 				Name=name,
 				InitCommand=function(subself)
 					self.container = subself
+				end,
+				OffCommand=function(subself)
+					subself:sleep(0.04 * self.index)
+					subself:linear(0.2)
+					subself:diffusealpha(0)
 				end
 			}
 
-			af[#af+1] = LoadActor(THEME:GetPathG("", image .. ".png"))..{
+			af[#af+1] = LoadActor(THEME:GetPathG("", "_VisualThemeIcons/" .. image .. ".png"))..{
 				InitCommand=function(subself)
 					self.heart = subself
 					subself:diffusealpha(0)
@@ -70,12 +75,15 @@ local wheel_item_mt = {
 					subself:linear(0.2)
 					subself:diffusealpha(1)
 				end,
-				OffCommand=function(subself)
-					subself:sleep(0.04 * self.index)
-					subself:linear(0.2)
-					subself:diffusealpha(0)
-				end
 			}
+
+			if ThemePrefs.Get("VisualTheme") == "Gay" then
+				af[#af+1] = Def.BitmapText{
+					Font="_miso",
+					Text=name~="item7" and "i'm gay" or "i've gay",
+					InitCommand=function(subself) subself:y(-6):diffuse(Color.Black):zoom(1.2) end
+				}
+			end
 
 			return af
 		end,

@@ -34,13 +34,8 @@ local af = Def.ActorFrame{
 	InitCommand=function(self)
 		--see: ./Scripts/SL_Initialize.lua
 		InitializeSimplyLove()
-	end,
-	OnCommand=function(self)
-		self:Center()
 		
-		if image == "Arrows" then
-			self:y(_screen.cy + 10)
-		end
+		self:Center()
 	end,
 	OffCommand=cmd(linear,0.5; diffusealpha, 0),
 
