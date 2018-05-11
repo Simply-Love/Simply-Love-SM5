@@ -33,10 +33,10 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing
 	OnCommand=function(self) self:queuecommand("StartScene") end,
 }
 
--- scene 2: life continued for Ben
+-- scene 2: the speed of life
 
 
--- scene 3: But I do think I'll never have as much time to spend at my computer again.
+-- scene 3: It's funny all the things I never thought I'd be able to do.
 
 
 -- scene 4: epilogue
