@@ -50,10 +50,14 @@ local t = Def.ActorFrame {
 			{"SortBy", "Recent"}
 		}
 
-		if SL.Global.Gamestate.Style == "single" then
-			table.insert(wheel_options, {"ChangeStyle", "Double"})
-		elseif SL.Global.Gamestate.Style == "double" then
-			table.insert(wheel_options, {"ChangeStyle", "Single"})
+		-- Allow players to switch from single to double and single to double
+		-- but only present these options if Joint Double or Joint Premium is enabled
+		if PREFSMAN:GetPreference("Premium") ~= "Off" then
+			if SL.Global.Gamestate.Style == "single" then
+				table.insert(wheel_options, {"ChangeStyle", "Double"})
+			elseif SL.Global.Gamestate.Style == "double" then
+				table.insert(wheel_options, {"ChangeStyle", "Single"})
+			end
 		end
 
 
