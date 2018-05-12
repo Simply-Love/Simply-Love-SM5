@@ -1,7 +1,7 @@
 local conversation = ...
 
 local sounds = { sent=nil, received=nil }
-local im = { w=280, h=400, topbar=20, icon=12 }
+local im = { w=300, h=400, topbar=20, icon=12 }
 local h = 0
 local font_zoom = 0.65
 local padding = 10
@@ -170,9 +170,10 @@ for i=1, #conversation do
 		ShowCommand=function(self)
 
 			local chat_bubble = self:GetChild("chat-bubble")
+			local over = (im.h*0.8 - im.topbar) - (chat_bubble:GetY()+chat_bubble:GetZoomY()+(i*padding)) - padding
 
-			if (chat_bubble:GetY()+chat_bubble:GetZoomY()+(i*padding)) > (im.h * 0.8) then
-				self:GetParent():addy( -(chat_bubble:GetZoomY()+padding) )
+			if (over < 0) then
+				self:GetParent():y( over )
 			end
 
 			self:visible(true)
@@ -228,7 +229,7 @@ for i=1, #conversation do
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana" .. (conversation[i].author=="System" and " Bold" or "") .. " 20px.ini"),
 			Text=conversation[i].words,
 			InitCommand=function(self)
-				self:zoom(font_zoom):wrapwidthpixels((im.w-padding)/font_zoom)
+				self:zoom(font_zoom):wrapwidthpixels((im.w-padding*2)/font_zoom)
 					:halign(0):valign(0)
 					:x(padding)
 					:diffuse(Color.Black)
