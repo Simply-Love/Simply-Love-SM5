@@ -26,7 +26,7 @@ local af = Def.ActorFrame{
 	StartSceneCommand=function(self)
 		self:visible(true):SetUpdateFunction(Update)
 	end,
-	InputEventCommand=function(self, event)
+	Ch4Sc3InputCommand=function(self, event)
 		if (time_in_scene >= scene_duration) or (bmt:GetText():len() >= smitten:len()) then
 			if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 				self:GetParent():queuecommand("TransitionScene")
