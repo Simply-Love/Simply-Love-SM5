@@ -11,18 +11,23 @@ local scene2 = {
 	body="I've been thinking a lot about you and the US recently. I hope everything is wonderful for you right now.\n\nI am exceedingly cheerful and motivated at uni and just in general. It's funny all the things I never thought I'd be able to do. I'm more than a sixth of the way to getting a degree, which amazes me.\n\nI'm studying logic, which made me think of you. Logic in words is so much harder than I thought it would be, but you might be a natural with your programming finesse.\n\nOtherwise, I'm pretty good.  I see a lot more people here and have made a few good friends.\n\nOne guy I think you would really like is an astronomy PhD, but also legally blind, which he thinks nothing of, but I find fascinating.  He is a little nerdy but completely sweet and joyous, which I like.  He makes me think of you sometimes.\n\nAnyway, write back when you get a chance and feel free to rant on about whatever you'd like. I hope you are happy and safe and warm where you are.\n\nLove,\nZ",
 }
 
+
 local scene5 = {
-	{ author="Zoe", delay=0, words="I am having a tough day today. It's nice to feel you out there." },
-	{ author="Zoe", delay=3, words="I'm so glad we've stayed friends all this time. " },
-	{ author="Zoe", delay=7, words="It's nice to be reminded I didn't just become worthy of love as I grew up, that I've always been an okay person." },
-	{ author="Ben", startTyping=9, send=12, words="You've always been good to me." },
-	{ author="Zoe", delay=14, words="I do wonder sometimes." },
-	{ author="Ben", startTyping=16, send=21, words="Hmm.  Life is weird.  I work a lot.  Too much, probably." },
-	{ author="Ben", startTyping=23, send=27, words="I have a girlfriend now.  She's very kind to me." },
-	{ author="Ben", startTyping=28.5, send=30.5, words="I miss you, too." },
-	{ author="Ben", startTyping=32.5, send=37, words="I don't even understand how I can miss someone I've never met." },
-	{ author="Zoe", delay=40, words="It's maybe because we've known each other for such a long time now." },
-	{ author="Zoe", delay=44, words="But I don't feel the same way about lots of other people." },
+	{ author="Zoe", delay=0, words="I miss you, Ben.  What's up with you?"},
+
+	{ author="Ben", delay=5, words="Life is weird.  I work a lot.  Too much, probably." },
+	{ author="Ben", delay=9, words="I miss you, too." },
+
+	{ author="Zoe", delay=13, words="I'm glad we've stayed friends all this time. " },
+	{ author="Zoe", delay=19, words="It's nice to be reminded I didn't just become worthy of love as I grew up, that I've always been an okay person." },
+	{ author="Ben", delay=24, words="You've always been good to me." },
+	{ author="Zoe", delay=27, words="I do wonder sometimes." },
+
+	{ author="Ben", delay=31, words="I miss you.  I don't even understand how I can miss someone I've never met." },
+	{ author="Zoe", delay=36.5, words="It's maybe because we've known each other for such a long time now." },
+	{ author="Zoe", delay=42, words="But I don't feel the same way about lots of other people I've known this long." },
+	{ author="Ben", delay=46, words="I know what you mean." },
+	{ author="Zoe", delay=53, words="I am having a tough day today, so it's nice to feel you out there." },
 }
 
 
@@ -85,7 +90,7 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/sms.lua") 
 
 
 -- scene 5: the speed of life
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing.lua") )..{
+af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing.lua"), scene5 )..{
 	InitCommand=function(self)
 		scenes[5] = self
 		self:visible(false)
