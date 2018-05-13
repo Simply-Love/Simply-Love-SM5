@@ -3,6 +3,7 @@ local bgm_volume = 10
 local font_zoom = 1
 
 return Def.ActorFrame{
+	StartSceneCommand=function(self) self:visible(true) end,
 
 	Def.Sound{
 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/typing.ogg"),
@@ -30,7 +31,7 @@ return Def.ActorFrame{
 				:xy(_screen.cx-max_width/2, _screen.cy - 100)
 				:wrapwidthpixels(max_width/font_zoom)
 		end,
-		OnCommand=function(self)
+		StartSceneCommand=function(self)
 			self:sleep(1):queuecommand("Type")
 			typing:sleep(1):queuecommand("Play")
 		end,

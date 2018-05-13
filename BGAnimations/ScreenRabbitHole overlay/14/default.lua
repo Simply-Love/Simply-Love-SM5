@@ -1,4 +1,4 @@
--- Connection: Intro
+-- Connection: Chapter 1
 
 local scenes = {}
 local scene = 1
@@ -50,34 +50,39 @@ local af = Def.ActorFrame{
 	end
 }
 
--- prelude
-af[#af+1] = LoadActor("./prelude.lua")..{
-	InitCommand=function(self)
-		scenes[1] = self
-	end,
-	OnCommand=function(self) self:queuecommand("StartScene") end,
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), 1)..{
+	InitCommand=function(self) scenes[1] = self end,
+	OnCommand=function(self) self:queuecommand("StartScene") end
 }
 
--- scene 2: hey Ben
-af[#af+1] = LoadActor("./im-window.lua", scene2 )..{
+-- prelude
+af[#af+1] = LoadActor("./prelude.lua")..{
 	InitCommand=function(self)
 		scenes[2] = self
 		self:visible(false)
 	end,
 }
 
--- scene 3: monarach butterflies
-af[#af+1] = LoadActor("./email.lua", scene3)..{
+-- scene 3: hey Ben
+af[#af+1] = LoadActor("./im-window.lua", scene2 )..{
 	InitCommand=function(self)
 		scenes[3] = self
 		self:visible(false)
 	end,
 }
 
--- scene 4: three lines of poem
-af[#af+1] = LoadActor("./email.lua", scene4)..{
+-- scene 4: monarach butterflies
+af[#af+1] = LoadActor("./email.lua", scene3)..{
 	InitCommand=function(self)
 		scenes[4] = self
+		self:visible(false)
+	end,
+}
+
+-- scene 5: three lines of poem
+af[#af+1] = LoadActor("./email.lua", scene4)..{
+	InitCommand=function(self)
+		scenes[5] = self
 		self:visible(false)
 	end,
 }

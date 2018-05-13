@@ -10,6 +10,6 @@ return Def.ActorFrame{
 	InitCommand=function(self) af=self end,
 	OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback(InputHandler) end,
 	OffCommand=function(self) ThemePrefs.Set( "RabbitHole", ThemePrefs.Get("RabbitHole")+1 ) end,
-	LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..(ThemePrefs.Get("RabbitHole")%count+1).."/default.lua"))
-	-- LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..count.."/default.lua"))
+	-- LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..(ThemePrefs.Get("RabbitHole")%count+1).."/default.lua"))
+	LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..count.."/default.lua"))
 }
