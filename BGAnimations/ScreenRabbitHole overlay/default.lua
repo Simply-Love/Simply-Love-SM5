@@ -2,7 +2,7 @@ local af
 local count = 17
 
 local InputHandler = function(event)
-	if not event.PlayerNumber or not event.button then return false end
+	if count ~= 17 and (not event.PlayerNumber or not event.button) then return false end
 	af:playcommand("InputEvent", event)
 end
 

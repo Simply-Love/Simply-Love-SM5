@@ -3,19 +3,6 @@ local bgm_volume = 10
 
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true) end }
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/since.ogg"),
-	StartSceneCommand=function(self) self:play() end,
-	FadeOutAudioCommand=function(self)
-		if bgm_volume >= 0 then
-			local ragesound = self:get()
-			bgm_volume = bgm_volume-1
-			ragesound:volume(bgm_volume*0.1)
-			self:sleep(0.1):queuecommand("FadeOutAudio")
-		end
-	end
-}
-
 for i=1, max_stars do
 	local x = math.random(1, _screen.w)
 	local y = math.random(1, _screen.h)
