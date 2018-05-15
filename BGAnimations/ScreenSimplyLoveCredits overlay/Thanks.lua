@@ -78,7 +78,7 @@ return {
 		{
 			Name="Dance Dance Maniacs",
 			Img={ "ddm/2017.png", "ddm/2015.png", "ddm/2018.png", "ddm/2012.png" },
-			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including:\n\nAndyBeard, NBCrescendo, Silverheart97, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Jonathan, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Captain Swagonforce, Weston, Vale, Rime, and more."
+			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including:\n\nAndyBeard, NBCrescendo, Silverheart97, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Jonathan, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Zyroplex, Captain Swagonforce, Weston, Vale, Rime, and more."
 		},
 		{
 			Name="DDRIllini",
@@ -106,8 +106,8 @@ return {
 		},
 		{
 			Name="Jose_Varela",
-			Img="",
-			About="Jose graciously translated Simply Love's UI into Spanish."
+			Img="jose.png",
+			About="An up-and-coming StepMania themer, Jose graciously translated Simply Love's UI into Spanish.\n\nAs of this writing, he's working on three unique themes for SM5 and each is looking great.  By the time you read this, he will probably have undertaken at least a fourth."
 		},
 	},
 	{
