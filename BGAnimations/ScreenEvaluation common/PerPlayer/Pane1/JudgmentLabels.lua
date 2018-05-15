@@ -41,6 +41,13 @@ local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Rolls')
 }
 
+local EnglishRadarCategories = {
+	[THEME:GetString("ScreenEvaluation", 'Holds')] = "Holds",
+	[THEME:GetString("ScreenEvaluation", 'Mines')] = "Mines",
+	[THEME:GetString("ScreenEvaluation", 'Hands')] = "Hands",
+	[THEME:GetString("ScreenEvaluation", 'Rolls')] = "Rolls",
+}
+
 local scores_table = {}
 for index, window in ipairs(TapNoteScores.Types) do
 	local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
@@ -95,8 +102,8 @@ end
 -- labels: holds, mines, hands, rolls
 for index, label in ipairs(RadarCategories) do
 
-	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(label) )
-	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(label) )
+	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
+	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
 	t[#t+1] = LoadFont("_miso")..{
 		-- lua ternary operators are adorable
