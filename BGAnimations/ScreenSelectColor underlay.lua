@@ -55,6 +55,9 @@ local wheel_item_mt = {
 				Name=name,
 				InitCommand=function(subself)
 					self.container = subself
+					if ThemePrefs.Get("VisualTheme")=="Gay" then
+						subself:bob():effectmagnitude(0,0,0):effectclock('bgm'):effectperiod(0.666)
+					end
 				end,
 				OffCommand=function(subself)
 					subself:sleep(0.04 * self.index)
@@ -120,6 +123,11 @@ local wheel_item_mt = {
 				self.container:zoom( zoom )
 			end
 
+			if ThemePrefs.Get("VisualTheme")=="Gay" and item_index == (IsUsingWideScreen() and 6 or 4) then
+				self.container:effectmagnitude(0,4,0)
+			else
+				self.container:effectmagnitude(0,0,0)
+			end
 		end,
 
 		set = function(self, color)

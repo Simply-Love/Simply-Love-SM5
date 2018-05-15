@@ -13,8 +13,18 @@ local zoomFactor = WideScale(0.435,0.525)
 
 local t = Def.ActorFrame {
 	Name="Item"..iIndex,
-	GainFocusCommand=cmd(stoptweening; linear,0.125; zoom,1 ),
-	LoseFocusCommand=cmd(stoptweening; linear,0.125; zoom,0.5)
+	InitCommand=function(self)
+		if ThemePrefs.Get("VisualTheme")=="Gay" then
+			self:bob():effectmagnitude(0,0,0):effectclock('bgm'):effectperiod(0.666)
+		end
+	end,
+	GainFocusCommand=function(self) 
+		self:stoptweening():linear(0.125):zoom(1)
+		if ThemePrefs.Get("VisualTheme")=="Gay" then
+			self:effectmagnitude(0,4,0)
+		end
+	end,
+	LoseFocusCommand=function(self) self:stoptweening():linear(0.125):zoom(0.5):effectmagnitude(0,0,0) end,
 }
 
 t[#t+1] = LoadFont("_wendy small")..{
