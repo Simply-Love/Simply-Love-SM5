@@ -14,13 +14,15 @@ local scene2 = {
 local scene3 = {
 	delay=0.09,
 	filename="3.txt",
+	initial_text="",
 	body="Starting in the late morning, it snowed here all day - light, fluffy, wet snowflakes eventually accumulating to a few inches. There was a gentle breeze as I walked back to my apartment after class, as the snow silently covered everything, making tired sights new again.\n\nI am just now back from a brisk run through it, around town and up a steep hill, running as hard as I could until my legs felt like deadweight, my skin stung from the wind, and my heart rate raised to a point where I could feel it in my neck.\n\nAnd I found my thoughts were with you today and tonight. That is to say:\n\nI love you as I love standing amidst a silent snowfall, being gently covered by it until my hair is white and I appear old.\n\nI love you as I love running fiercely through a sharp, stinging wind, understanding that I am still human and alive.\n\nBen"
 }
 
 local scene5 = {
-	delay=0.06,
+	delay=0.09,
 	filename="28.txt",
-	body="The heavy snowfall today consumes the sounds, sights, and feelings that would otherwise cue spring's anticipated approach. With the snow comes peace in the middle of the night during a long walk to nowhere, but I have walked alone so many times this winter. It is spring that carries the hope of something new.\n\nGazing out my ice-crusted window into the remote distance, far beyond the confines of this apartment, or this city, or my mind, I wished to convey that my thoughts are with you; that I am with you.\n\nI love you as I love the anticipation of warm breezes gently kissing the skin of my arms.\n\nI love you as I love a months's worth of of love letters.\n\nThank you for being my friend."
+	initial_text="echo \"hi zoe\"\ncurl somesortofurl.com > ./smitten.txt\n",
+	body="The heavy snowfall today consumes the sounds, sights, and feelings that would otherwise cue spring's anticipated approach. With the snow comes peace in the middle of the night during a long walk to nowhere, but I have walked alone so many times this winter. It is spring that carries the hope of something new.\n\nGazing out my ice-crusted window into the remote distance, far beyond the confines of this apartment, or this city, or my mind, I wished to convey that my thoughts are with you; that I am with you.\n\nI love you as I love the anticipation of warm breezes gently kissing the skin of my arms.\n\nI love you as I love a months's worth of of love letters.\n\nThank you for being my friend.\n\nBen"
 }
 
 local scene8 = {
@@ -45,8 +47,12 @@ local scene8 = {
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)
 		if not event.PlayerNumber or not event.button then return false end
-		if  event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-			self:queuecommand("TransitionScene")
+		if scene == 3 then
+			scenes[3]:playcommand("Ch4Sc3InputEvent", event)
+		else
+			if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
+				self:queuecommand("TransitionScene")
+			end
 		end
 	end,
 	TransitionSceneCommand=function(self)
@@ -75,17 +81,17 @@ af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua")
 af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/17/newer-email.lua"), scene2)..{
 	InitCommand=function(self)
 		scenes[2] = self
-		self:visible(false)
+		self:visible(false):diffuse(0,0,0,1)
 	end,
 }
 
 -- scene 3: love letters
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.lua"), scene3 )..{
-	InitCommand=function(self)
-		scenes[3] = self
-		self:visible(false)
-	end,
-}
+-- af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.lua"), scene3 )..{
+-- 	InitCommand=function(self)
+-- 		scenes[3] = self
+-- 		self:visible(false):diffuse(0,0,0,1)
+-- 	end,
+-- }
 
 -- scene 4: err_network_changed
 
@@ -93,8 +99,8 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-lette
 -- scene 5: love letters, continued
 af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.lua"), scene5 )..{
 	InitCommand=function(self)
-		scenes[5] = self
-		self:visible(false)
+		scenes[3] = self
+		self:visible(false):diffuse(0,0,0,1)
 	end,
 }
 
@@ -103,7 +109,7 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-lette
 af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing.lua"), scene8 )..{
 	InitCommand=function(self)
 		scenes[6] = self
-		self:visible(false)
+		self:visible(false):diffuse(0,0,0,1)
 	end,
 }
 
@@ -111,7 +117,7 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing
 af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/sms.lua") )..{
 	InitCommand=function(self)
 		scenes[7] = self
-		self:visible(false)
+		self:visible(false):diffuse(0,0,0,1)
 	end,
 }
 
@@ -120,7 +126,7 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/sms.lua") 
 af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing.lua"), scene8 )..{
 	InitCommand=function(self)
 		scenes[8] = self
-		self:visible(false)
+		self:visible(false):diffuse(0,0,0,1)
 	end,
 }
 

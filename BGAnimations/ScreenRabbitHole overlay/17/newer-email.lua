@@ -10,7 +10,7 @@ local font_zoom = 0.585
 local bgm_volume = 10
 
 local af = Def.ActorFrame{
-	StartSceneCommand=function(self) self:visible(true) end,
+	StartSceneCommand=function(self) self:visible(true):smooth(1):diffuse(1,1,1,1) end,
 	TransitionCommand=function(self) self:queuecommand("Hide") end
 }
 
