@@ -14,7 +14,7 @@ local font_zoom = 0.55
 local font_height = 26
 
 local monitor = { w=540, h=_screen.h-100, c=color("#202020") }
-local terminal = { w=char_width*font_zoom*chars_per_line + char_width, h=monitor.h-50 }
+local terminal = { w=char_width*font_zoom*chars_per_line + char_width, h=monitor.h-50, padding=6 }
 local dragbar = { w=terminal.w, h=10 }
 
 local accepting_input = false
@@ -28,15 +28,16 @@ end
 
 
 local af = Def.ActorFrame{
-	StartSceneCommand=function(self) self:visible(true):smooth(1):diffuse(1,1,1,1) end,
-	Ch4Sc3InputEventCommand=function(self, event)
+	StartSceneCommand=function(self) self:visible(true):sleep(0.5):smooth(1.5):diffuse(1,1,1,1) end,
+	Ch4Sc4InputEventCommand=function(self, event)
 		if accepting_input then
 			if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 				accepting_input = false
 
 				if not done then
 					bmt:settext( "vim ./" .. filename ):sleep(2):queuecommand("CD")
-					cursor:xy( (bmt:GetText():len()+1)*char_width*font_zoom, char_width*font_zoom ):sleep(2):queuecommand("Reset")
+					cursor:xy( (bmt:GetText():len()+1)*char_width*font_zoom, char_width*font_zoom )
+						:queuecommand("Show"):sleep(2):queuecommand("Reset")
 				else
 					self:GetParent():queuecommand("TransitionScene")
 				end
@@ -51,18 +52,19 @@ af[#af+1] = Def.Sprite{
 	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-80):valign(0) end,
 }
 
--- af[#af+1] = Def.Sound{
--- 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/Since.ogg"),
--- 	StartSceneCommand=function(self) self:play() end,
--- 	FadeOutAudioCommand=function(self)
--- 		if bgm_volume >= 0 then
--- 			local ragesound = self:get()
--- 			bgm_volume = bgm_volume-1
--- 			ragesound:volume(bgm_volume*0.1)
--- 			self:sleep(0.1):queuecommand("FadeOutAudio")
--- 		end
--- 	end
--- }
+af[#af+1] = Def.Sound{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.ogg"),
+	StartSceneCommand=function(self) self:sleep(0):queuecommand("Play") end,
+	PlayCommand=function(self) self:play() end,
+	FadeOutAudioCommand=function(self)
+		if bgm_volume >= 0 then
+			local ragesound = self:get()
+			bgm_volume = bgm_volume-1
+			ragesound:volume(bgm_volume*0.1)
+			self:sleep(0.1):queuecommand("FadeOutAudio")
+		end
+	end
+}
 
 
 -- blinds
@@ -85,8 +87,6 @@ af[#af+1] = Def.Quad{
 
 -- monitor
 af[#af+1] = Def.ActorFrame{
-
-	-- InitCommand=function(self) self:fov(90):rotationy(-1) end,
 
 	-- stand
 	Def.Quad{
@@ -117,13 +117,13 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) self:xy(_screen.cx-dragbar.w/2, (_screen.h-monitor.h)/2+26) end,
 
 		Def.Quad{
-			InitCommand=function(self) self:align(0,0):zoomto(terminal.w, monitor.h-50):diffuse(0,0,0,0.75) end
+			InitCommand=function(self) self:align(0,0):zoomto(terminal.w+terminal.padding, monitor.h-50):diffuse(0,0,0,0.75) end
 		},
 
 		-- dragbar texture
 		Def.Sprite{
 			Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/14/dragbar.png"),
-			InitCommand=function(self) self:zoomto(dragbar.w, dragbar.h):halign(0) end
+			InitCommand=function(self) self:zoomto(dragbar.w+terminal.padding, dragbar.h):halign(0) end
 		},
 		-- close
 		Def.Sprite{
@@ -148,7 +148,7 @@ af[#af+1] = Def.ActorFrame{
 			InitCommand=function(self)
 				bmt = self
 				self:xy(char_width/2,char_width):align(0,0)
-					:zoom(font_zoom):wrapwidthpixels(terminal.w/font_zoom)
+					:zoom(font_zoom):wrapwidthpixels(terminal.w/font_zoom - terminal.padding)
 			end,
 			StartSceneCommand=function(self)
 				if initial_text == "" then
@@ -178,7 +178,7 @@ af[#af+1] = Def.ActorFrame{
 					cursor:queuecommand("Move")
 				else
 					self:sleep(1.5):queuecommand("Reset"):sleep(1.5):queuecommand("Type")
-					cursor:sleep(1.5):queuecommand("Hide")
+					-- cursor:sleep(1.5):queuecommand("Hide")
 					tildes:sleep(1.5):queuecommand("Show")
 				end
 			end,
@@ -234,8 +234,8 @@ af[#af+1] = Def.ActorFrame{
 					:zoom(font_zoom):diffuse(color("#593ced"))
 			end,
 			ShowCommand=function(self)
-				accepting_input = true
 				cursor:queuecommand("Hide")
+				accepting_input = true
 				while ( self:GetHeight()*font_zoom < terminal.h-char_width*font_zoom*2 ) do
 					self:settext( self:GetText() .. "~\n" )
 				end
@@ -258,6 +258,7 @@ af[#af+1] = Def.ActorFrame{
 				self:y( bmt:GetHeight()*font_zoom )
 				self:addx( char_width*font_zoom)
 			end,
+			ShowCommand=function(self) self:visible( true ) end,
 			HideCommand=function(self) self:visible( false ) end
 		},
 

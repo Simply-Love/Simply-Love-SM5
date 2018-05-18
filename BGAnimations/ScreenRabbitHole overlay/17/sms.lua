@@ -4,7 +4,7 @@ local bgm_volume = 10
 local count, max = 1, 4
 local _phone = { w=225, h=400 }
 
-local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true) end }
+local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):diffuse(1,1,1,1) end }
 
 af[#af+1] = Def.Sound{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/buzz.ogg"),
@@ -28,8 +28,8 @@ af[#af+1] = Def.Sound{
 
 -- phone
 af[#af+1] = Def.ActorFrame{
-	InitCommand=function(self) self:diffusealpha(0) end,
-	StartSceneCommand=function(self) self:sleep(6):smooth(0.75):diffusealpha(1) end,
+	InitCommand=function(self) self:diffuse(0,0,0,1) end,
+	StartSceneCommand=function(self) self:sleep(6):smooth(0.75):diffuse(1,1,1,1) end,
 
 	-- screen
 	Def.Quad{
