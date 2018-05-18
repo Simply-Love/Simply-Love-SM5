@@ -9,12 +9,21 @@ local bgm_volume = 10
 
 local bmt, tildes, cursor
 local char_width = 12
-local chars_per_line = 60
+local char_height = 26
 local font_zoom = 0.55
-local font_height = 26
-
 local monitor = { w=540, h=_screen.h-100, c=color("#202020") }
-local terminal = { w=char_width*font_zoom*chars_per_line + char_width, h=monitor.h-50, padding=6 }
+
+local terminal = {}
+terminal.rows = 23
+terminal.cols = 60
+terminal.padding=6
+
+terminal.w = terminal.cols*char_width*font_zoom + terminal.padding*2
+terminal.h = terminal.rows*char_height*font_zoom + terminal.padding*2
+
+terminal.x = _screen.cx-terminal.w/2
+terminal.y = _screen.cy-terminal.h/2 + terminal.padding/2
+
 local dragbar = { w=terminal.w, h=10 }
 
 local accepting_input = false
@@ -29,7 +38,7 @@ end
 
 local af = Def.ActorFrame{
 	StartSceneCommand=function(self) self:visible(true):sleep(0.5):smooth(1.5):diffuse(1,1,1,1) end,
-	Ch4Sc4InputEventCommand=function(self, event)
+	Ch4Sc3InputEventCommand=function(self, event)
 		if accepting_input then
 			if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 				accepting_input = false
@@ -114,10 +123,10 @@ af[#af+1] = Def.ActorFrame{
 
 	--  terminal window
 	Def.ActorFrame{
-		InitCommand=function(self) self:xy(_screen.cx-dragbar.w/2, (_screen.h-monitor.h)/2+26) end,
+		InitCommand=function(self) self:xy(terminal.x, terminal.y) end,
 
 		Def.Quad{
-			InitCommand=function(self) self:align(0,0):zoomto(terminal.w+terminal.padding, monitor.h-50):diffuse(0,0,0,0.75) end
+			InitCommand=function(self) self:align(0,0):zoomto(terminal.w+terminal.padding, terminal.h):diffuse(0,0,0,0.75) end
 		},
 
 		-- dragbar texture
@@ -151,12 +160,8 @@ af[#af+1] = Def.ActorFrame{
 					:zoom(font_zoom):wrapwidthpixels(terminal.w/font_zoom - terminal.padding)
 			end,
 			StartSceneCommand=function(self)
-				if initial_text == "" then
-					self:sleep(2.5):queuecommand("TypeFilename")
-				else
-					self:settext(initial_text):sleep(1.333):queuecommand("Clear")
-					cursor:queuecommand("Init")
-				end
+				self:settext(initial_text):sleep(1.333):queuecommand("Clear")
+				cursor:queuecommand("Init")
 			end,
 			ResetCommand=function(self)
 				self:settext("")
@@ -178,7 +183,6 @@ af[#af+1] = Def.ActorFrame{
 					cursor:queuecommand("Move")
 				else
 					self:sleep(1.5):queuecommand("Reset"):sleep(1.5):queuecommand("Type")
-					-- cursor:sleep(1.5):queuecommand("Hide")
 					tildes:sleep(1.5):queuecommand("Show")
 				end
 			end,
@@ -230,15 +234,19 @@ af[#af+1] = Def.ActorFrame{
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 			InitCommand=function(self)
 				tildes = self
-				self:xy(char_width/2,terminal.h + char_width*1.15):align(0,1)
+				self:x(terminal.x-terminal.w/2-char_width/2)
+					:y(terminal.y+(terminal.h-char_height*5*font_zoom))
+					:align(1,1)
 					:zoom(font_zoom):diffuse(color("#593ced"))
 			end,
 			ShowCommand=function(self)
 				cursor:queuecommand("Hide")
 				accepting_input = true
-				while ( self:GetHeight()*font_zoom < terminal.h-char_width*font_zoom*2 ) do
-					self:settext( self:GetText() .. "~\n" )
+				local s = ""
+				for i=1, terminal.rows-1 do
+					s = s .. "~\n"
 				end
+				self:settext(s)
 			end,
 			NewLineCommand=function(self)
 				self:settext( self:GetText():sub(1, self:GetText():len()-2 ) )
