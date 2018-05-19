@@ -13,7 +13,7 @@ local scene2 = {
 local scene3 = {
 	delay=0.085,
 	width=400,
-	song="16/without_strings_short.ogg",
+	song="16/without-strings.ogg",
 	header="FROM: Zoe\nTO: Ben\nDATE: Oct-22-2006\nSUBJECT: (no subject)\n---------------------------------------------------------",
 	body="I wish you hadn't signed off so suddenly.  I worry about you, Ben.\n\nYou're the only person on my buddy list whom I talk to regularly, and if I wasn't talking to you it'd be a waste of... something. Time. Energy.  That thing on my computer that gets angry when I have too many programs open simultaneously.\n\nThe question now is, do I really want to stay up this morning wondering if you'll come back online?\nProbably.\n\nBut you won't.\nSo I won't.\n\nYours,\nZoe"
 }

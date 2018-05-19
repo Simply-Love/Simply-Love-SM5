@@ -46,7 +46,7 @@ local scene6 = {
 
 	{ author="Ben", delay=88, words="Was sense ever on our side to begin with? :P" },
 	{ author="Zoe", delay=91, words="One of these days I'm gonna clobber you." },
-	{ author="Zoe", delay=92, words="With a hug." },
+	{ author="Zoe", delay=92.5, words="With a hug." },
 	{ author="Ben", delay=96, words="I wouldn't miss it for the world." },
 
 	{ author="Zoe", delay=100, words="I have to run now!  Until then!" },
@@ -54,10 +54,10 @@ local scene6 = {
 }
 
 local scene7 = {
-	delay=0.0925,
-	song="",
-	pauses=2.5,
-	body={ "So.\n\n", "Right NOW I've just got back from work. I'm lying in bed.\nIt's satisfying.\n\nI love that part before sleep where your mind just\nstretches and moans, waiting to fall apart.\n\nI put off those amazing moments of lost thought, so I can\nread, watch TV on my laptop, whatever. I wish I could just\ngo to sleep, but something in me doesn't want to let me\nuntil the desire is uncontrollable. Until I have no choice.\n\nSo I'm awake, cold, half-dressed. And rambling. I wrote\nyou THIS because you messaged me, and I wasn't there.\nSo I missed you again. Vicious cycle. Anyway, in about\ntwenty minutes I think I might try and get to that weird\npre-sleep head-space.\n\n", "And maybe you'll be there, too." },
+	delay=0.0675,
+	song="17/see-you-there.ogg",
+	pauses=2.75,
+	body={ "So.\n\n", "Right NOW I've just got back from work. I'm lying in bed.\nIt's satisfying.\n\n", "I love that part before sleep where your mind just\nstretches and moans, waiting to fall apart.\n\nI put off those amazing moments of lost thought, so I can\nread, watch TV on my laptop, whatever. I wish I could just\ngo to sleep, but something in me doesn't want to let me\nuntil the desire is uncontrollable. Until I have no choice.\n\n", "So I'm awake, cold, half-dressed. And rambling. I wrote\nyou THIS because you messaged me, and I wasn't there.\nSo I missed you again. Vicious cycle. Anyway, in about\ntwenty minutes I think I might try and get to that weird\npre-sleep head-space.\n\n", "And maybe you'll be there, too." },
 }
 
 local af = Def.ActorFrame{
