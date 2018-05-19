@@ -1,7 +1,6 @@
 -- I miss you, Ben.
 
 local bgm_volume = 10
-local count, max = 1, 4
 local _phone = { w=225, h=400 }
 
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):diffuse(1,1,1,1) end }
@@ -9,13 +8,7 @@ local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):d
 af[#af+1] = Def.Sound{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/buzz.ogg"),
 	StartSceneCommand=function(self) self:sleep(0.5):queuecommand("Play") end,
-	PlayCommand=function(self)
-		self:play()
-		if count < max then
-			count = count + 1
-			self:sleep(1.5):queuecommand("Play")
-		end
-	end,
+	PlayCommand=function(self) self:play() end,
 	FadeOutAudioCommand=function(self)
 		if bgm_volume >= 0 then
 			local ragesound = self:get()

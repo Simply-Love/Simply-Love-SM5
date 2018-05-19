@@ -11,7 +11,7 @@ local scene2 = {
 	body="I've been thinking a lot about you and the US recently. I hope everything is wonderful for you right now.\n\nI am exceedingly cheerful and motivated at uni and just in general. It's funny all the things I never thought I'd be able to do. I'm more than a sixth of the way to getting a degree, which amazes me.\n\nI'm studying logic, which made me think of you. Logic in words is so much harder than I thought it would be, but you might be a natural with your programming finesse.\n\nOtherwise, I'm pretty good.  I see a lot more people here and have made a few good friends.\n\nOne guy I think you would really like is an astronomy PhD, but also legally blind, which he thinks nothing of, but I find fascinating.  He is a little nerdy but completely sweet and joyous, which I like.  He makes me think of you sometimes.\n\nAnyway, write back when you get a chance and feel free to rant on about whatever you'd like. I hope you are happy and safe and warm where you are.\n\nLove,\nZ",
 }
 
-local scene3= {
+local scene3 = {
 	delay=0.0715,
 	filename="28.txt",
 	initial_text="echo \"hi zoe\"\ncurl somesortofurl.com > ./smitten.txt\n",
@@ -41,7 +41,7 @@ local scene6 = {
 	{ author="Zoe", delay=65, words="Harp, eh?  Marx Bros?  Like this?  youtube.com/watch?v=_O8_oMHh60A" },
 	{ author="Ben", delay=72, words="Hmm.  He can certainly arpeggiate." },
 	{ author="Ben", delay=75.5, words="It's a technically challenging song, though I don't think it holds any meaning for me." },
-	{ author="Ben", delay=81, words="I certainly wouldn't trade superhuman technical prowess and Mozartian speed-induced arpeggios for my time with you." },
+	{ author="Ben", delay=81, words="I certainly wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
 	{ author="Zoe", delay=85, words="No sensible human would make that trade with you anyway." },
 
 	{ author="Ben", delay=88, words="Was sense ever on our side to begin with? :P" },
@@ -53,6 +53,12 @@ local scene6 = {
 	{ author="Ben", delay=105.5, words="Until then." },
 }
 
+local scene7 = {
+	delay=0.0925,
+	song="",
+	pauses=2.5,
+	body={ "So.\n\n", "Right NOW I've just got back from work. I'm lying in bed.\nIt's satisfying.\n\nI love that part before sleep where your mind just\nstretches and moans, waiting to fall apart.\n\nI put off those amazing moments of lost thought, so I can\nread, watch TV on my laptop, whatever. I wish I could just\ngo to sleep, but something in me doesn't want to let me\nuntil the desire is uncontrollable. Until I have no choice.\n\nSo I'm awake, cold, half-dressed. And rambling. I wrote\nyou THIS because you messaged me, and I wasn't there.\nSo I missed you again. Vicious cycle. Anyway, in about\ntwenty minutes I think I might try and get to that weird\npre-sleep head-space.\n\n", "And maybe you'll be there, too." },
+}
 
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)
@@ -66,8 +72,13 @@ local af = Def.ActorFrame{
 		end
 	end,
 	TransitionSceneCommand=function(self)
-		scenes[scene]:queuecommand("FadeOutAudio"):smooth(1):diffuse( Color.Black )
-		self:sleep(1):queuecommand("SwitchScene")
+		if scene == 7 then
+			scenes[7]:queuecommand("FadeOutAudio")
+			self:sleep(2):queuecommand("SwitchScene")
+		else
+			scenes[scene]:queuecommand("FadeOutAudio"):smooth(1):diffuse( Color.Black )
+			self:sleep(1):queuecommand("SwitchScene")
+		end
 	end,
 	SwitchSceneCommand=function(self)
 		scenes[scene]:hibernate(math.huge)
@@ -119,7 +130,6 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/new-text-m
 	end,
 }
 
-
 -- scene 6: the speed of life
 af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/sms.lua"), scene6 )..{
 	InitCommand=function(self)
@@ -128,6 +138,13 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/sms.lua"),
 	end,
 }
 
+-- scene 7: Right NOW
+af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/right-now.lua"), scene7 )..{
+	InitCommand=function(self)
+		scenes[7] = self
+		self:visible(false):diffuse(0,0,0,1)
+	end,
+}
 
 -- scene 8: epilogue
 
