@@ -50,7 +50,7 @@ local t = Def.ActorFrame {
 			{"SortBy", "Recent"}
 		}
 
-		-- Allow players to switch from single to double and single to double
+		-- Allow players to switch from single to double and from double to single
 		-- but only present these options if Joint Double or Joint Premium is enabled
 		if PREFSMAN:GetPreference("Premium") ~= "Off" then
 			if SL.Global.Gamestate.Style == "single" then
