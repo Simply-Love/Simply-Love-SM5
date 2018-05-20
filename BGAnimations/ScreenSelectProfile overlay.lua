@@ -4,6 +4,12 @@
 -- SelectProfileFrames for both PLAYER_1 and PLAYER_2, but only the MasterPlayerNumber
 local AutoStyle = ThemePrefs.Get("AutoStyle")
 
+-- retrieve the MasterPlayerNumber now, at initialization, so that if AutoStyle is set
+-- to "single" or "double" and that singular player unjoins, we still have a handle on
+-- which PlayerNumber they're supposed to be...
+local mpn = GAMESTATE:GetMasterPlayerNumber()
+
+
 function GetLocalProfiles()
 	local t = {}
 
@@ -145,7 +151,7 @@ local t = Def.ActorFrame {
 	end,
 
 	CodeMessageCommand=function(self, params)
-		if (AutoStyle=="single" or AutoStyle=="double") and params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then
+		if (AutoStyle=="single" or AutoStyle=="double") and params.PlayerNumber ~= mpn then
 			return
 		end
 
@@ -206,7 +212,7 @@ local t = Def.ActorFrame {
 			UpdateInternal3(self, PLAYER_1)
 			UpdateInternal3(self, PLAYER_2)
 		else
-			UpdateInternal3(self, GAMESTATE:GetMasterPlayerNumber())
+			UpdateInternal3(self, mpn)
 		end
 	end,
 
@@ -242,13 +248,12 @@ end
 
 -- load SelectProfileFrames for both
 if AutoStyle=="none" or AutoStyle=="versus" then
-	for i, player in ipairs({PLAYER_1, PLAYER_2}) do
-		t.children[#t.children+1] = PlayerFrame(player)
-	end
+	t.children[#t.children+1] = PlayerFrame(PLAYER_1)
+	t.children[#t.children+1] = PlayerFrame(PLAYER_2)
 
 -- load only for the MasterPlayerNumber
 else
-	t.children[#t.children+1] = PlayerFrame(GAMESTATE:GetMasterPlayerNumber())
+	t.children[#t.children+1] = PlayerFrame(mpn)
 end
 
 return t
