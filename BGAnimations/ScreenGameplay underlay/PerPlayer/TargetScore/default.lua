@@ -406,15 +406,15 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			-- pretty explody thingies for grade changes
 
-			LoadActor("./heartsplode")..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_splode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,0.5; diffusealpha,0),
 			},
-			LoadActor("./heartsplode")..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_splode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,0.7; diffusealpha,0),
 			},
-			LoadActor("./minisplode")..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_minisplode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.4; diffusealpha,0),
 			},
@@ -438,7 +438,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			Def.BitmapText{
 				Font="_miso",
-				Text="You",
+				Text=THEME:GetString("TargetScoreGraph", "You"),
 				InitCommand=function(self)
 					self:xy( barOffset + barSpacing + (barWidth/2), 20 )
 				end,
@@ -446,7 +446,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			Def.BitmapText{
 				Font="_miso",
-				Text="Personal",
+				Text=THEME:GetString("TargetScoreGraph", "Personal"),
 				InitCommand=function(self)
 					self:xy( barOffset + (barSpacing * 2) + (barWidth/2) + barWidth, 20 )
 				end,
@@ -454,7 +454,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			Def.BitmapText{
 				Font="_miso",
-				Text="Target",
+				Text=THEME:GetString("TargetScoreGraph", "Target"),
 				InitCommand=function(self)
 					self:xy( barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, 20 )
 				end,
@@ -463,7 +463,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 	end
 end
 
--- pacemaker text (or subtractive scoring, if that's your thing)
+-- pacemaker text
 if SL[pn].ActiveModifiers.TargetScore then
 	finalFrame[#finalFrame+1] = Def.BitmapText{
 		Font="_wendy small",
