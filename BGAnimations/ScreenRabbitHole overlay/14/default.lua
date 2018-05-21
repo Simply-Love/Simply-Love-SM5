@@ -1,7 +1,7 @@
 -- Connection: Chapter 1
 
 local scenes = {}
-local scene = 1
+local duration = { 10, 8.5, 17, 49, 60 }
 
 local scene2 = {
 	{ author="Zoe", delay=0, words="hey Ben" },
@@ -28,34 +28,15 @@ local scene4={
 }
 
 
-local af = Def.ActorFrame{
-	InputEventCommand=function(self, event)
-		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-			self:queuecommand("TransitionScene")
-		end
-	end,
-	TransitionSceneCommand=function(self)
-		scenes[scene]:queuecommand("FadeOutAudio"):smooth(1):diffuse( Color.Black )
-		self:sleep(1):queuecommand("SwitchScene")
-	end,
-	SwitchSceneCommand=function(self)
-		scenes[scene]:hibernate(math.huge)
+local af = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
 
-		if scenes[scene+1] then
-			scene = scene + 1
-			scenes[scene]:queuecommand("StartScene")
-		else
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-		end
-	end
-}
-
+-- scene 1: Chapter Title
 af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), 1)..{
 	InitCommand=function(self) scenes[1] = self end,
 	OnCommand=function(self) self:queuecommand("StartScene") end
 }
 
--- prelude
+-- scene 2: Prelude
 af[#af+1] = LoadActor("./prelude.lua")..{
 	InitCommand=function(self)
 		scenes[2] = self
@@ -86,5 +67,7 @@ af[#af+1] = LoadActor("./email.lua", scene4)..{
 		self:visible(false)
 	end,
 }
+
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/Connection/Proceed.lua"))
 
 return af

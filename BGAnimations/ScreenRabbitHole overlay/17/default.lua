@@ -2,6 +2,7 @@
 
 local scenes = {}
 local scene = 1
+local duration = { 10, 58, 75, 60, 9.5, 108, 65 }
 
 local scene2 = {
 	delay=0.0545,
@@ -40,7 +41,7 @@ local scene6 = {
 	{ author="Ben", delay=61, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
 	{ author="Zoe", delay=65, words="Harp, eh?  Marx Bros?  Like this?  youtube.com/watch?v=_O8_oMHh60A" },
 	{ author="Ben", delay=72, words="Hmm.  He can certainly arpeggiate." },
-	{ author="Ben", delay=75.5, words="It's a technically challenging song, though I don't think it holds any meaning for me." },
+	{ author="Ben", delay=76, words="It's a technically challenging song, though I don't think it holds any meaning for me." },
 	{ author="Ben", delay=81, words="I certainly wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
 	{ author="Zoe", delay=85, words="No sensible human would make that trade with you anyway." },
 
@@ -71,7 +72,12 @@ local af = Def.ActorFrame{
 			end
 		end
 	end,
+	OnCommand=function(self)
+		self:GetChild("Proceed"):sleep( duration[1] ):queuecommand("Show")
+	end,
 	TransitionSceneCommand=function(self)
+		self:GetChild("Proceed"):stoptweening():queuecommand("Hide")
+
 		if scene == 7 then
 			scenes[7]:queuecommand("FadeOutAudio")
 			self:sleep(2):queuecommand("SwitchScene")
@@ -85,6 +91,7 @@ local af = Def.ActorFrame{
 
 		if scenes[scene+1] then
 			scene = scene + 1
+			self:GetChild("Proceed"):sleep( duration[scene] ):queuecommand("Show")
 			scenes[scene]:queuecommand("StartScene")
 		else
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
@@ -149,5 +156,6 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/right-now.
 -- scene 8: epilogue
 
 
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/Connection/Proceed.lua"))
 
 return af

@@ -44,6 +44,7 @@ local af = Def.ActorFrame{
 				accepting_input = false
 
 				if not done then
+					self:GetParent():GetChild("Proceed"):stoptweening():queuecommand("Hide")
 					bmt:settext( "vim ./" .. filename ):sleep(2):queuecommand("CD")
 					cursor:xy( (bmt:GetText():len()+1)*char_width*font_zoom, char_width*font_zoom )
 						:queuecommand("Show"):sleep(2):queuecommand("Reset")
