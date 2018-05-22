@@ -1,4 +1,5 @@
 -- love letters
+
 local args = ...
 local delay = args.delay
 local filename = args.filename
@@ -7,25 +8,35 @@ local body = args.body
 
 local bgm_volume = 10
 
+-- references to actors
 local bmt, tildes, cursor
+
+-- properties of the monaco font
 local char_width = 12
 local char_height = 26
+-- how much we'll be zooming the monaco font
 local font_zoom = 0.55
+
+-- Ben's monitor
 local monitor = { w=540, h=_screen.h-100, c=color("#202020") }
 
+-- because monaco is a monospace font, we can (more easily) calculate
+-- rows and columns for Ben's terminal window
 local terminal = {}
 terminal.rows = 23
 terminal.cols = 60
+-- padding in px
 terminal.padding=6
-
+-- width and height in px
 terminal.w = terminal.cols*char_width*font_zoom + terminal.padding*2
 terminal.h = terminal.rows*char_height*font_zoom + terminal.padding*2
 
 terminal.x = _screen.cx-terminal.w/2
 terminal.y = _screen.cy-terminal.h/2 + terminal.padding/2
-
+-- the topbar for Ben's terminal window
 local dragbar = { w=terminal.w, h=10 }
 
+-- two flags used for managing viewer input
 local accepting_input = false
 local done = false
 
@@ -35,6 +46,7 @@ local CountNewlines = function( s )
 	return n
 end
 
+-- ----------------------------------------------------
 
 local af = Def.ActorFrame{
 	StartSceneCommand=function(self) self:visible(true):sleep(0.5):smooth(1.5):diffuse(1,1,1,1) end,
@@ -56,12 +68,6 @@ local af = Def.ActorFrame{
 	end
 }
 
-af[#af+1] = LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") )
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/frost.png"),
-	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-80):valign(0) end,
-}
-
 af[#af+1] = Def.Sound{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.ogg"),
 	StartSceneCommand=function(self) self:sleep(0):queuecommand("Play") end,
@@ -76,21 +82,30 @@ af[#af+1] = Def.Sound{
 	end
 }
 
+-- "heavy snowfall today"
+af[#af+1] = LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") )
+
+-- "my ice-crusted window"
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/frost.png"),
+	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-80):valign(0) end,
+}
 
 -- blinds
 af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/blind.png"),
 	InitCommand=function(self) self:xy(_screen.cx, _screen.cy-100):zoomtoheight(_screen.h-100):zoomtowidth(_screen.w):customtexturerect(0,0,1,12) end,
 }
--- blind strings
+-- blind strings - left
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:xy(30, 0):valign(0):zoomto(2, _screen.h-150):diffuse(color("#6a6664")) end
 }
+-- blind strings - right
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:xy(_screen.w-30, 0):valign(0):zoomto(2, _screen.h-150):diffuse(color("#6a6664")) end
 }
 
--- desk?
+-- desk
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 80):diffuse(0.05,0.05,0.05,1):diffusetopedge(0,0,0,1) end
 }
@@ -270,8 +285,6 @@ af[#af+1] = Def.ActorFrame{
 			ShowCommand=function(self) self:visible( true ) end,
 			HideCommand=function(self) self:visible( false ) end
 		},
-
-
 	}
 }
 

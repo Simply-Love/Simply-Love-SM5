@@ -29,17 +29,13 @@ af[#af+1] = Def.Sound{
 	SwitchSceneCommand=function(self) self:stop() end
 }
 
-af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:FullScreen():Center():diffuse(0.7,0.9,1,0) end,
-	StartSceneCommand=function(self) self:linear(1):diffusealpha(1) end
-}
-
+-- grass texture
 af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/grass.png"),
 	InitCommand=function(self) self:Center():zoom(0.9) end
 }
 
-
+-- laptop
 af[#af+1] = Def.ActorFrame{
 
 	InitCommand=function(self) self:fov(90):rotationx(-3):zoom(0.9):xy(30,WideScale(32, 36)) end,
@@ -49,6 +45,7 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h):zoomto(max_width+60, _screen.h-70):valign(1) end
 	},
 
+	-- email header
 	Def.BitmapText{
 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 		Text=header,
@@ -61,10 +58,12 @@ af[#af+1] = Def.ActorFrame{
 		StartSceneCommand=function(self) self:linear(1):diffusealpha(1) end
 	},
 
+	-- <hr>
 	Def.Quad{
 		InitCommand=function(self) self:xy(_screen.cx, 150):zoomto(max_width, 1):diffuse(0.75, 0.75, 0.75, 1) end
 	},
 
+	-- email body
 	Def.BitmapText{
 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 		InitCommand=function(self)
@@ -83,6 +82,7 @@ af[#af+1] = Def.ActorFrame{
 		end
 	},
 
+	-- laptop texture
 	Def.Sprite{
 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/laptop.png"),
 		InitCommand=function(self) self:valign(1):xy(_screen.cx, _screen.h):zoom(0.65) end

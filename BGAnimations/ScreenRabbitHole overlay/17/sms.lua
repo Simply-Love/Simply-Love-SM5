@@ -1,15 +1,10 @@
 local conversation = ...
 
-local max_stars = 60
-local bgm_volume = 10
-
 local sounds = { sent=nil, received=nil }
 local im = { w=300, h=400, topbar=20, icon=12 }
 local h = 0
 local font_zoom = 0.75
 local padding = 10
-
-local typing_delay = 0.065
 
 local chat_aligns = { Ben=1, Zoe=0 }
 local chat_colors = { Ben=color("#1ec34b"), Zoe=color("#e5e5ea") }
@@ -118,6 +113,5 @@ end
 
 im_af[#im_af+1] = chat
 af[#af+1] = im_af
-
 
 return af
