@@ -1,12 +1,13 @@
 -- recalling
 local haiku = "as my cursor blinks\nidle, my mind is active\nrecalling your voice"
 
-local af = Def.ActorFrame{}
-af.InputEventCommand=function(self, event)
-	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+local af = Def.ActorFrame{
+	InputEventCommand=function(self, event)
+		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+		end
 	end
-end
+}
 
 
 af[#af+1] = Def.Sound{
@@ -17,7 +18,7 @@ af[#af+1] = Def.Sound{
 af[#af+1] = Def.BitmapText{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 	Text=haiku,
-	InitCommand=function(self) self:halign(0):xy(_screen.cx - self:GetWidth()/2, _screen.cy):diffusealpha(0) end,
+	InitCommand=function(self) self:Center():diffusealpha(0) end,
 	OnCommand=function(self) self:sleep(2.5):linear(1):diffusealpha(1) end
 }
 
