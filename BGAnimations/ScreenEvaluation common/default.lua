@@ -28,7 +28,10 @@ local t = Def.ActorFrame{
 
 	-- store some attributes of this playthrough of this song in the global SL table
 	-- for later retrieval on ScreenEvaluationSummary
-	LoadActor("./GlobalStorage.lua")
+	LoadActor("./GlobalStorage.lua"),
+	
+	-- help text that appears if we're in Casual gamemode
+	LoadActor("./CasualHelpText.lua")
 }
 
 
@@ -67,16 +70,11 @@ for player in ivalues(Players) do
 	local lower = Def.ActorFrame{
 		Name=ToEnumShortString(player).."_AF_Lower",
 		OnCommand=function(self)
-
 			-- if double style, center the gameplay stats
 			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
 				self:x(_screen.cx)
 			else
-				if player == PLAYER_1 then
-					self:x(_screen.cx - 155)
-				elseif player == PLAYER_2 then
-					self:x(_screen.cx + 155)
-				end
+				self:x(_screen.cx + (player==PLAYER_1 and -155 or 155))
 			end
 		end,
 
