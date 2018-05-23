@@ -56,6 +56,7 @@ local af = Def.ActorFrame{
 				accepting_input = false
 
 				if not done then
+					self:queuecommand("StopAudio")
 					self:GetParent():GetChild("Proceed"):stoptweening():queuecommand("Hide")
 					bmt:settext( "vim ./" .. filename ):sleep(2):queuecommand("CD")
 					cursor:xy( (bmt:GetText():len()+1)*char_width*font_zoom, char_width*font_zoom )
@@ -72,6 +73,7 @@ af[#af+1] = Def.Sound{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.ogg"),
 	StartSceneCommand=function(self) self:sleep(0):queuecommand("Play") end,
 	PlayCommand=function(self) self:play() end,
+	StopAudioCommand=function(self) self:stop() end,
 	FadeOutAudioCommand=function(self)
 		if bgm_volume >= 0 then
 			local ragesound = self:get()

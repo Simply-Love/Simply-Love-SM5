@@ -1,117 +1,197 @@
 local conversation = ...
 
-local sounds = { sent=nil, received=nil }
-local im = { w=300, h=400, topbar=20, icon=12 }
-local h = 0
-local font_zoom = 0.75
+local font_zoom = 0.55
 local padding = 10
 
-local chat_aligns = { Ben=1, Zoe=0 }
-local chat_colors = { Ben=color("#1ec34b"), Zoe=color("#e5e5ea") }
-local chat_text = { Ben=color("#ffffff"), Zoe=color("#333333") }
+-- local _phone = { w=500, h=1000, zoom=0.45, bar=15 }
+
+local _phone = {
+	Ben = {
+		w = 500,
+		h = 1000,
+		zoom = 0.45,
+		bar = 34,
+		x = _screen.cx - 246,
+		aligns = { Ben=1, Zoe=0 },
+		bubble = { Ben=color("#1ec34b"), Zoe=color("#e5e5ea") },
+		text = { Ben=color("#ffffff"), Zoe=color("#333333") },
+	},
+	Zoe = {
+		w = 500,
+		h = 1000,
+		zoom = 0.45,
+		bar = 44,
+		x = _screen.cx + 56,
+		aligns = { Ben=0, Zoe=1 },
+		bubble = { Ben=color("#f1580c"), Zoe=color("#ffffff") },
+		text = { Ben=color("#ffffff"), Zoe=color("#333333") },
+	}
+}
 
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):smooth(1.5):diffuse(1,1,1,1) end }
 
-local im_af = Def.ActorFrame{
-	InitCommand=function(self) self:xy(im.w/2+10, 10) end,
+-- left mask to hide sms bubbles that have scrolled up in Ben's phone
+af[#af+1] = Def.Quad{
+	InitCommand=function(self) self:zoomto(_screen.w, 1000):xy(0,106):valign(1):MaskSource() end
+}
+-- right mask to hide sms bubbles that have scrolled up in Zoe's phone
+af[#af+1] = Def.Quad{
+	InitCommand=function(self) self:zoomto(_screen.w/2, 1000):xy(_screen.cx, 109):align(0,1):MaskSource() end
+}
 
-	-- mask to hide chat-bubbles that have scrolled up
+-- Ben's phone
+af[#af+1] = Def.ActorFrame{
+	InitCommand=function(self) self:xy(_screen.cx-((_phone.Ben.w*_phone.Ben.zoom)/2) - 40, _screen.cy) end,
+
+	-- screen
 	Def.Quad{
-		InitCommand=function(self) self:zoomto(im.w*2, 1000):y(im.topbar+4):valign(1):MaskSource() end
+		InitCommand=function(self) self:zoomto((_phone.Ben.w*_phone.Ben.zoom)*0.875,(_phone.Ben.h*_phone.Ben.zoom)*0.85):diffuse(color("#576274")) end,
+	},
+	-- topbar
+	Def.Quad{
+		InitCommand=function(self) self:zoomto((_phone.Ben.w*_phone.Ben.zoom)*0.875, _phone.Ben.bar):y(-_phone.Ben.h/2*_phone.Ben.zoom + 74):diffuse(1,1,1,0.75) end,
+	},
+	-- wifi bars
+	Def.Sprite{
+		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/wifi-bars.png"),
+		InitCommand=function(self) self:xy(-74, -_phone.Ben.h/2*_phone.Ben.zoom + 68):zoom(0.1) end
+	},
+	-- time
+	Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text="4:14 AM",
+		InitCommand=function(self) self:y(-_phone.Ben.h/2*_phone.Ben.zoom + 68):zoom(0.55):diffuse(0,0,0,1) end
+	},
+	-- Ben is chattig with Zoe
+	Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text="Zoe",
+		InitCommand=function(self) self:y(-_phone.Ben.h/2*_phone.Ben.zoom + 82):zoom(0.65):diffuse(0,0,0,1) end
 	},
 
-	Def.Sound{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/sent.ogg"),
-		InitCommand=function(self) sounds.sent = self end,
-		PlayCommand=function(self) self:stop():play() end
-	},
-	Def.Sound{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/14/received.ogg"),
-		InitCommand=function(self) sounds.received = self end,
-		PlayCommand=function(self) self:stop():play() end
+
+	-- shell
+	Def.Sprite{
+		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone.png"),
+		InitCommand=function(self) self:zoom(_phone.Ben.zoom) end
 	},
 }
 
--- chat is the ActorFrame that contains all the chat bubbles and sent conversation
--- it is separate from im_af so that we can tween all the chat bubbles simultaneously
--- without tweening the the entire IM window
-local chat = Def.ActorFrame{ InitCommand=function(self) self:MaskDest() end }
+-- Zoe's phone
+af[#af+1] = Def.ActorFrame{
+	InitCommand=function(self) self:xy(_screen.cx + ((_phone.Zoe.w*_phone.Zoe.zoom)/2) + 40, _screen.cy) end,
 
-for i=1, #conversation do
+	-- screen
+	Def.Quad{
+		InitCommand=function(self) self:zoomto(_phone.Zoe.w*_phone.Zoe.zoom*0.875,_phone.Zoe.h*_phone.Zoe.zoom*0.85):diffuse(color("#cccccc")) end,
+	},
+	-- topbar
+	Def.Quad{
+		InitCommand=function(self) self:zoomto((_phone.Zoe.w*_phone.Zoe.zoom)*0.875, _phone.Zoe.bar+4):y(-_phone.Zoe.h/2*_phone.Zoe.zoom + 70):diffuse(color("#c3440a")) end,
+	},
+	-- cell signal strength
+	Def.Sprite{
+		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/cell-strength.png"),
+		InitCommand=function(self) self:xy(40, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.4) end
+	},
+	-- time
+	Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text="4:14 PM",
+		InitCommand=function(self) self:xy(72, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.55):diffuse(1,1,1,1) end
+	},
+	-- arrow
+	Def.Sprite{
+		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/arrow.png"),
+		InitCommand=function(self) self:zoom(0.185):xy(-82, -_phone.Ben.h/2*_phone.Ben.zoom + 82) end
+	},
+	-- Zoe is chattig with Ben
+	Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text="Ben",
+		InitCommand=function(self) self:xy(-60, -_phone.Ben.h/2*_phone.Ben.zoom + 82):zoom(0.65):diffuse(1,1,1,1) end
+	},
 
-	chat[#chat+1] = Def.ActorFrame{
-		InitCommand=function(self)
-			self:x(-im.w/2):diffusealpha(0)
-		end,
-		StartSceneCommand=function(self)
-			if conversation[i].delay then
-				self:sleep(conversation[i].delay):queuecommand("Show")
-				if i > 1 then
-					if conversation[i].author == "Zoe" then
-						self:queuecommand("Receive")
-					else
-						self:queuecommand("Send")
-					end
+	-- shell
+	Def.Sprite{
+		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone2.png"),
+		InitCommand=function(self) self:zoom(_phone.Zoe.zoom) end
+	},
+}
+
+
+
+for human in ivalues({"Ben", "Zoe"}) do
+
+	-- chat is the ActorFrame that contains all the chat bubbles and sent conversation
+	-- it is separate from im_af so that we can tween all the chat bubbles simultaneously
+	-- without tweening the the entire IM window
+	local chat = Def.ActorFrame{ InitCommand=function(self) self:MaskDest():y(50+_phone[human].bar) end }
+	local h = 0
+
+	for i=1, #conversation do
+
+		chat[#chat+1] = Def.ActorFrame{
+			InitCommand=function(self)
+				self:x( _phone[human].x )
+					:diffusealpha(0)
+			end,
+			StartSceneCommand=function(self)
+				if conversation[i].delay then
+					self:sleep(conversation[i].delay):queuecommand("Show")
 				end
-			end
-		end,
-		ShowCommand=function(self)
-
-			local chat_bubble = self:GetChild("chat-bubble")
-			local over = (im.h*0.8 - im.topbar) - (chat_bubble:GetY()+chat_bubble:GetZoomY()+(i*padding)) - padding
-
-			if (over < 0) then
-				self:GetParent():y( over )
-			end
-
-			self:linear(0.1):diffusealpha(1)
-		end,
-		SendCommand=function(self) sounds.sent:queuecommand("Play") end,
-		ReceiveCommand=function(self) sounds.received:queuecommand("Play") end,
-
-		-- "chat-bubble" behind each set of words
-		Def.Quad{
-			Name="chat-bubble",
-			InitCommand=function(self)
-				self:valign(0)
-					:halign( chat_aligns[conversation[i].author] )
-					:diffuse( chat_colors[conversation[i].author] )
 			end,
-			OnCommand=function(self)
-				if conversation[i].startDeleting then self:hibernate(math.huge); return end
+			ShowCommand=function(self)
 
-				local words = self:GetParent():GetChild("")
+				local chat_bubble = self:GetChild("chat-bubble")
+				local over = (_phone[human].h*_phone[human].zoom - 64) - (chat_bubble:GetY()+chat_bubble:GetZoomY()+(i*padding)) - padding
 
-				self:zoomto(im.w-padding, words:GetHeight()*font_zoom + padding*2)
-					:x(conversation[i].author=="Ben" and im.w+padding or padding)
-					:y(h)
+				if (over < self:GetParent():GetY()) then
+					self:GetParent():y( over )
+				end
 
-				self:GetParent():y(i*padding + im.topbar)
-			end
-		},
-
-		-- BitmapText for words
-		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-			Text=conversation[i].words,
-			InitCommand=function(self)
-				self:zoom(font_zoom):wrapwidthpixels((im.w-padding*3)/font_zoom)
-					:halign(0):valign(0)
-					:x(conversation[i].author=="Ben" and padding*3 or padding*2)
-					:diffuse( chat_text[conversation[i].author] )
+				self:linear(0.1):diffusealpha(1)
 			end,
-			OnCommand=function(self)
-				if conversation[i].startDeleting then self:hibernate(math.huge); return end
 
-				self:y(h + padding * 0.75)
-				h = h + self:GetHeight() * font_zoom + padding*2
-			end
-		},
-	}
+			-- "chat-bubble" behind each set of words
+			Def.Quad{
+				Name="chat-bubble",
+				InitCommand=function(self)
+					self:valign(0)
+						:halign( _phone[human].aligns[conversation[i].author] )
+						:diffuse( _phone[human].bubble[conversation[i].author] )
+				end,
+				OnCommand=function(self)
+					local words = self:GetParent():GetChild("")
 
+					self:zoomto(_phone[human].w*_phone[human].zoom-60, words:GetHeight()*font_zoom + padding*2)
+						:x(conversation[i].author==human and self:GetZoomX()+padding*2 or padding)
+						:y(h)
+
+					self:GetParent():y(i*(padding) + padding*2)
+				end
+			},
+
+			-- BitmapText for words
+			Def.BitmapText{
+				File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+				Text=conversation[i].words,
+				InitCommand=function(self)
+					self:zoom(font_zoom)
+						:wrapwidthpixels((_phone[human].w*_phone[human].zoom-60-padding*1.5)/font_zoom)
+						:halign(0):valign(0)
+						:x(conversation[i].author==human and padding*2.5 or padding*1.5)
+						:diffuse( _phone[human].text[conversation[i].author] )
+				end,
+				OnCommand=function(self)
+					self:y(h + padding * 0.75)
+					h = h + self:GetHeight() * font_zoom + padding*2
+				end
+			},
+		}
+
+	end
+	af[#af+1] = chat
 end
-
-im_af[#im_af+1] = chat
-af[#af+1] = im_af
 
 return af
