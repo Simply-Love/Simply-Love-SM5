@@ -1,5 +1,17 @@
 if not Branch then Branch = {} end
 
+local SelectMusicOrCourse = function()
+	if GAMESTATE:IsCourseMode() then
+		return "ScreenSelectCourse"
+	else
+		if SL.Global.GameMode == "Casual" then
+			return "ScreenSelectMusicCasual"
+		end
+
+		return "ScreenSelectMusic"
+	end
+end
+
 Branch.AllowScreenNameEntry = function()
 
 	-- If we're in Casual mode, don't allow NameEntry, and don't
@@ -67,11 +79,12 @@ Branch.AfterEvaluationStage = function()
 end
 
 Branch.AfterSelectPlayMode = function()
-	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
-		return "ScreenSelectCourseNonstop"
-	else
-		return "ScreenSelectMusic"
-	end
+	return SelectMusicOrCourse()
+	-- if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
+	-- 	return "ScreenSelectCourseNonstop"
+	-- else
+	-- 	return "ScreenSelectMusic"
+	-- end
 end
 
 
