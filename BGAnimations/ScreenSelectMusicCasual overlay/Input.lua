@@ -1,5 +1,4 @@
 local args = ...
-local af = args.af
 local GroupWheel = args.GroupWheel
 local SongWheel = args.SongWheel
 local OptionsWheel = args.OptionsWheel
@@ -8,6 +7,11 @@ local OptionRows = args.OptionRows
 
 local Players = GAMESTATE:GetHumanPlayers()
 local WheelWithFocus, ActiveOptionRow
+
+-----------------------------------------------------
+-- input handler
+local t = {}
+-----------------------------------------------------
 
 local SwitchInputFocus = function(button)
 
@@ -40,11 +44,6 @@ local AllPlayersAreAtLastRow = function()
 	end
 	return true
 end
-
------------------------------------------------------
--- input handler
-local t = {}
------------------------------------------------------
 
 local CloseCurrentFolder = function()
 	t.Enabled = false
@@ -89,9 +88,7 @@ t.Handler = function(event)
 	if event.type ~= "InputEventType_Release" then
 
 		if event.GameButton == "Back" then
-			local topscreen = SCREENMAN:GetTopScreen()
-			topscreen:SetNextScreenName( Branch.SSMCancel() )
-			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
 		end
 
 		--------------------------------------------------------------
@@ -109,10 +106,10 @@ t.Handler = function(event)
 
 			-- navigate the wheel up and down
 			elseif event.GameButton == "MenuUp" then
-				WheelWithFocus:scroll_by_amount(-3)
+				WheelWithFocus:scroll_by_amount(WheelWithFocus==GroupWheel and -3 or -1)
 				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 			elseif event.GameButton == "MenuDown" then
-				WheelWithFocus:scroll_by_amount(3)
+				WheelWithFocus:scroll_by_amount(WheelWithFocus==GroupWheel and 3 or 1)
 				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 
 

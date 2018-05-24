@@ -1,9 +1,9 @@
 -- because no one wants "Invalid PlayMode 7"
 GAMESTATE:SetCurrentPlayMode(0)
 
-
 ---------------------------------------------------------------------------
 -- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
+-- there has got to be a better way to do this...
 local steps_type = "StepsType_"..GAMESTATE:GetCurrentGame():GetName():gsub("^%l", string.upper).."_"
 if GAMESTATE:GetCurrentStyle():GetName() == "double" then
 	steps_type = steps_type .. "Double"
@@ -12,7 +12,7 @@ else
 end
 
 ---------------------------------------------------------------------------
--- variables local to just this file
+-- variables local to this file
 local margin = {
 	w = -WideScale(54,72),
 	h = -30
@@ -56,7 +56,7 @@ local row = {
 ---------------------------------------------------------------------------
 -- a table of params from this file that we pass into the InputHandler file
 -- so that the code there can work with them easily
-local params = { af=self, GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows }
+local params = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows }
 
 ---------------------------------------------------------------------------
 
@@ -103,7 +103,19 @@ local t = Def.ActorFrame {
 		-- It should be safe to enable input for players now
 		self:queuecommand("EnableInput")
 	end,
-	OnCommand=function(self)
+	CodeMessageCommand=function(self, params)
+		if params.Name == "Exit" then
+			if PREFSMAN:GetPreference("EventMode") then
+				SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
+			else
+				if SL.Global.Stages.PlayedThisGame == 0 then
+					SL.Global.GameMode = "Competitive"
+					SetGameModePreferences()
+					THEME:ReloadMetrics()
+					SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM"):StartTransitioningScreen("SM_GoToNextScreen")
+				end
+			end
+		end
 	end,
 
 	-- a hackish solution to prevent users from button-spamming and breaking input :O
@@ -147,11 +159,13 @@ local t = Def.ActorFrame {
 
 	SongWheel:create_actors( "SongWheel", row.how_many * col.how_many, song_mt, 0, 0),
 
-	-- we want the SongWheelTopBorder drawn over the SongWheel
-	-- so that Song jackets scroll down from underneath it
-	LoadActor("./Header.lua", row),
+	-- SongHeader needs to be over the SongWheel but under the GroupWheel
+	LoadActor("./SongHeader.lua", row),
 
 	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0),
+
+	-- we want the GroupHeader drawn over the GroupWheel so that Group folder scroll underneath it
+	LoadActor("./GroupHeader.lua", row),
 
 	StandardDecorationFromFile( "Footer", "footer" ),
 }
