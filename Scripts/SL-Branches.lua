@@ -80,11 +80,6 @@ end
 
 Branch.AfterSelectPlayMode = function()
 	return SelectMusicOrCourse()
-	-- if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
-	-- 	return "ScreenSelectCourseNonstop"
-	-- else
-	-- 	return "ScreenSelectMusic"
-	-- end
 end
 
 
