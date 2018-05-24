@@ -4,6 +4,13 @@ local TransitionTime = args[2]
 local row = args[3]
 local col = args[4]
 
+local max_chars = { title=32, artist=32, genre=40 }
+
+BitmapText.Truncate = function(bmt, kind)
+	local text = bmt:GetText()
+	if text:len() <= max_chars[kind] then return end
+	bmt:settext( text:sub(1, max_chars[kind]) .. "…" )
+end
 
 local song_mt = {
 	__index = {
@@ -74,48 +81,55 @@ local song_mt = {
 					subself:x( col.w )
 				end,
 
+				--
+				Def.ActorFrame{
+					GainFocusCommand=function(subself) subself:y(10) end,
+					LoseFocusCommand=function(subself) subself:y(0) end,
+					SlideToTopCommand=function(subself) subself:y(0) end,
+					SlideBackIntoGridCommand=function(subself) subself:y(10) end,
 
-				Def.Quad{
-					InitCommand=cmd( diffuse, Color.Black; zoomto, 70,70; diffusealpha, 0),
-					OnCommand=cmd(playcommand, "Refresh"),
-					GainFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
-							subself:visible(false)
-						else
-							subself:visible(true):linear(0.2):diffusealpha(1):zoomto(108, 108)
-								:diffuseshift()
-								:effectcolor1(0.75,0.75,0.75,1):effectcolor2(0,0,0,1)
-						end
-					end,
-					LoseFocusCommand=cmd(visible, false; diffusealpha, 0; stopeffect; zoomto, 70,70),
-					SlideToTopCommand=cmd(linear,0.12; zoomto, 112, 112),
-					SlideBackIntoGridCommand=cmd(linear,0.12; zoomto, 108,108)
-				},
+					Def.Quad{
+						InitCommand=cmd( diffuse, Color.Black; zoomto, 0,0; diffusealpha, 0),
+						OnCommand=cmd(playcommand, "Refresh"),
+						GainFocusCommand=function(subself)
+							if self.song == "CloseThisFolder" then
+								subself:visible(false)
+							else
+								subself:visible(true):linear(0.2):diffusealpha(1):zoomto(128, 128)
+									:diffuseshift()
+									:effectcolor1(0.75,0.75,0.75,1):effectcolor2(0,0,0,1)
+							end
+						end,
+						LoseFocusCommand=cmd(visible, false; diffusealpha, 0; stopeffect; zoomto, 0,0),
+						SlideToTopCommand=cmd(linear,0.12; zoomto, 112, 112),
+						SlideBackIntoGridCommand=cmd(linear,0.12; zoomto, 128,128)
+					},
 
-				Def.Banner{
-					Name="Banner",
-					InitCommand=function(subself)
-						self.banner = subself
-					end,
-					OnCommand=cmd(queuecommand,"Refresh"),
-					RefreshCommand=cmd(scaletoclipped,110,110),
-					GainFocusCommand=function(subself)
-						subself:linear(0.2):zoom(0.975):stopeffect()
-						if self.song == "CloseThisFolder" then
-							subself:diffuseshift():effectcolor1(1,0.65,0.65,1):effectcolor2(1,1,1,1)
-						end
-					end,
-					LoseFocusCommand=cmd(linear,0.2; zoom,0.5; stopeffect),
-					SlideToTopCommand=cmd(linear,0.2; zoom, 1; linear,0.3; rotationy, 360; sleep, 0; rotationy, 0),
-					SlideBackIntoGridCommand=cmd(linear,0.12; zoom, 0.975)
+					Def.Banner{
+						Name="Banner",
+						InitCommand=function(subself)
+							self.banner = subself
+						end,
+						OnCommand=cmd(queuecommand,"Refresh"),
+						RefreshCommand=cmd(scaletoclipped,110,110),
+						GainFocusCommand=function(subself)
+							subself:linear(0.2):zoom(1.15):stopeffect()
+							if self.song == "CloseThisFolder" then
+								subself:diffuseshift():effectcolor1(1,0.65,0.65,1):effectcolor2(1,1,1,1)
+							end
+						end,
+						LoseFocusCommand=cmd(linear,0.2; zoom,0.5; stopeffect),
+						SlideToTopCommand=cmd(linear,0.3; zoom, 1; rotationy, 360; sleep, 0; rotationy, 0),
+						SlideBackIntoGridCommand=cmd(linear,0.12; zoom, 1.15)
+					},
 				},
 
 				-- text
 				Def.ActorFrame{
-					GainFocusCommand=function(subself) subself:y(0) end,
+					GainFocusCommand=function(subself) subself:y(8) end,
 					LoseFocusCommand=function(subself) subself:y(0) end,
-					SlideToTopCommand=cmd(linear,0.12; zoom, 1.1),
-					SlideBackIntoGridCommand=cmd(linear,0.12; zoom, 1),
+					SlideToTopCommand=function(subself) subself:linear(0.12):zoom(1.1):y(0) end,
+					SlideBackIntoGridCommand=function(subself) subself:linear(0.12):zoom(1):y(8) end,
 
 					-- title
 					Def.BitmapText{
@@ -126,7 +140,7 @@ local song_mt = {
 						end,
 						GainFocusCommand=function(subself)
 							subself:zoom(1.2):xy(80,-40):horizalign(left)
-							if self.song == "CloseThisFolder" then subself:xy(0,0):zoom(0.85):horizalign(center) end
+							if self.song == "CloseThisFolder" then subself:xy(0,6):zoom(0.85):horizalign(center) end
 						end,
 						LoseFocusCommand=function(subself)
 							subself:x(0):horizalign(center)
@@ -216,10 +230,18 @@ local song_mt = {
 					-- GetDisplayBPMs() relies on GAMESTATE:GetCurrentSong() which we just set
 					self.bpm_bmt:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs())
 					play_sample_music()
+
+					-- undo Truncate()
+					self.title_bmt:settext( self.song:GetDisplayFullTitle() )
+					self.artist_bmt:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. self.song:GetDisplayArtist() )
+					self.genre_bmt:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. self.song:GetGenre() )
 				end
 				self.container:playcommand("GainFocus")
 			else
 				self.container:playcommand("LoseFocus")
+				self.title_bmt:Truncate("title")
+				self.artist_bmt:Truncate("artist")
+				self.genre_bmt:Truncate("genre")
 			end
 
 			-- handle row hiding
@@ -255,9 +277,6 @@ local song_mt = {
 				self.container:y( row.h * 2 ):x( col.w )
 
 			end
-
-			-- self.container:y( row.h * self.changing_row )
-
 		end,
 
 		set = function(self, song)
@@ -281,9 +300,9 @@ local song_mt = {
 
 				-- we are passed in a Song object as info
 				self.song = song
-				self.title_bmt:settext( self.song:GetDisplayFullTitle() )
-				self.artist_bmt:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. self.song:GetDisplayArtist() )
-				self.genre_bmt:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. self.song:GetGenre() )
+				self.title_bmt:settext( self.song:GetDisplayFullTitle() ):Truncate("title")
+				self.artist_bmt:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. self.song:GetDisplayArtist() ):Truncate("artist")
+				self.genre_bmt:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. self.song:GetGenre() ):Truncate("genre")
 				self.length_bmt:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(self.song:MusicLengthSeconds()):gsub("^0*","") )
 
 				if song:HasJacket() then
