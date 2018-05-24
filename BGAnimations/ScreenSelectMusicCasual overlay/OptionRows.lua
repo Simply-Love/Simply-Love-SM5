@@ -1,7 +1,7 @@
 local OptionRows = {
 	{
 		name = "Charts",
-		helptext = "SELECT YOUR DIFFICULTY",
+		helptext = THEME:GetString("ScreenSelectMusicCasual", "SelectDifficulty"),
 		choices = {},
 		values = {},
 		OnSave=function(self, pn, choice, choices, values)
@@ -10,17 +10,20 @@ local OptionRows = {
 	},
 	{
 		Name = "Speed",
-		helptext = "SELECT YOUR ARROW SPACING",
-		choices = {"Normal", "More Space", "Less Space"},
-		values = {1.5, 2, 1},
+		helptext = THEME:GetString("ScreenSelectMusicCasual", "SelectSpeedMod"),
+		choices = {
+			THEME:GetString("ScreenSelectMusicCasual", "Normal"),
+			THEME:GetString("ScreenSelectMusicCasual", "MoreSpace"),
+			THEME:GetString("ScreenSelectMusicCasual", "LessSpace"),
+		},
+		values = {300, 400, 200},
 		OnSave=function(self, pn, choice, choices, values)
 			local index = FindInTable(choice, choices)
 			local player_options = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
-			player_options:XMod(values[index])
+			player_options:CMod(values[index])
 		end,
 	},
 }
-
 
 -- add Exit row last
 OptionRows[#OptionRows + 1] = {

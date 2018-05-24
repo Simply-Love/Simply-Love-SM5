@@ -213,6 +213,8 @@ local song_mt = {
 					stop_music()
 				else
 					GAMESTATE:SetCurrentSong(self.song)
+					-- GetDisplayBPMs() relies on GAMESTATE:GetCurrentSong() which we just set
+					self.bpm_bmt:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs())
 					play_sample_music()
 				end
 				self.container:playcommand("GainFocus")
@@ -283,7 +285,6 @@ local song_mt = {
 				self.artist_bmt:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. self.song:GetDisplayArtist() )
 				self.genre_bmt:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. self.song:GetGenre() )
 				self.length_bmt:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(self.song:MusicLengthSeconds()):gsub("^0*","") )
-				self.bpm_bmt:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs())
 
 				if song:HasJacket() then
 					imgPath = song:GetJacketPath()

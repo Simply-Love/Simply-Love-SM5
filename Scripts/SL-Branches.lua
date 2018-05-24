@@ -1,6 +1,6 @@
 if not Branch then Branch = {} end
 
-local SelectMusicOrCourse = function()
+SelectMusicOrCourse = function()
 	if GAMESTATE:IsCourseMode() then
 		return "ScreenSelectCourse"
 	else

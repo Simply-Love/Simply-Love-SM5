@@ -18,9 +18,9 @@ return Def.ActorFrame{
 
 	LoadFont("_miso")..{
 		Name="Text",
-		Text="PRESS",
+		Text=THEME:GetString("ScreenSelectMusicCasual", "Press"),
 		InitCommand=cmd(diffuse, Color.Black; zoom, 0.95),
-		SwitchFocusToSingleSongMessageCommand=cmd(settext,"PRESS"),
-		BothPlayersAreReadyMessageCommand=cmd(settext, "START")
+		SwitchFocusToSingleSongMessageCommand=cmd(settext, THEME:GetString("ScreenSelectMusicCasual", "Press")),
+		BothPlayersAreReadyMessageCommand=cmd(settext, THEME:GetString("ScreenSelectMusicCasual", "Start"))
 	}
 }
