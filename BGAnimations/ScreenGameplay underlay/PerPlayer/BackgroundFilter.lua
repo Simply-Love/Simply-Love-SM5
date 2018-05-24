@@ -2,9 +2,7 @@ local player = ...
 local mods = SL[ ToEnumShortString(player) ].ActiveModifiers
 
 -- if no BackgroundFilter is necessary, it's safe to bail now
-if mods.BackgroundFilter == "Off" then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
-end
+if mods.BackgroundFilter == "Off" then return end
 
 local FilterAlpha = {
 	Dark = 0.5,

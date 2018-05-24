@@ -3,9 +3,7 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local kids, JudgmentSet
 
-if mods.JudgmentGraphic == "None" then
-	return Def.Actor{}
-end
+if mods.JudgmentGraphic == "None" then return end
 -- - - - - - - - - - - - - - - - - - - - - -
 
 -- a Judgment might be saved to a profile from a previous GameMode

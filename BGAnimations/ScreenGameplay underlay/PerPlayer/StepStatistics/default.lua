@@ -7,7 +7,7 @@ or SL.Global.Gamestate.Style ~= "single"
 or SL.Global.GameMode == "Casual"
 or (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen())
 then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+	return
 end
 
 return Def.ActorFrame{

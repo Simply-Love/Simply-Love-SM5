@@ -1,6 +1,6 @@
 -- if we're in CourseMode, bail now
 -- the normal LifeMeter graph (Def.GraphDisplay) will be drawn
-if GAMESTATE:IsCourseMode() then return Def.Actor{} end
+if GAMESTATE:IsCourseMode() then return end
 
 -- arguments passed in from Graphs.lua
 local args = ...
