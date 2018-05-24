@@ -1,12 +1,10 @@
 -- if there is only one player, don't bother
-if #GAMESTATE:GetHumanPlayers() < 2 then
-	return Def.Actor{}
-end
+if #GAMESTATE:GetHumanPlayers() < 2 then return end
 
 -- if either of the two players have HideScore enabled, don't bother
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	if SL[ ToEnumShortString(player) ].ActiveModifiers.HideScore then
-		return Def.Actor{}
+		return
 	end
 end
 

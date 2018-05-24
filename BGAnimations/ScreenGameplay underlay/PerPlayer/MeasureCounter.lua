@@ -1,3 +1,6 @@
+-- don't allow MeasureCounter to appear in Casual gamemode via profile settings
+if SL.Global.GameMode == "Casual" then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers

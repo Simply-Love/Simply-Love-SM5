@@ -1,8 +1,6 @@
 local player = ...
 
-if SL[ ToEnumShortString(player) ].ActiveModifiers.HideScore then
-	return Def.Actor{}
-end
+if SL[ ToEnumShortString(player) ].ActiveModifiers.HideScore then return end
 
 local dance_points, percent
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)

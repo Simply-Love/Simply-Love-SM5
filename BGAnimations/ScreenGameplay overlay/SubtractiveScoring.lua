@@ -1,5 +1,8 @@
 local player = ...
 
+-- don't allow SubtractiveScoring to appear in Casual gamemode via profile settings
+if SL.Global.GameMode == "Casual" then return end
+
 if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
 
 	local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())

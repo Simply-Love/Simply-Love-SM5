@@ -4,10 +4,11 @@ local pn = ToEnumShortString(player)
 -- if nobody wants us, we won't appear
 if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
 or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"
+or SL.Global.GameMode == "Casual"
 or SL.Global.Gamestate.Style == "double")
 and (not SL[pn].ActiveModifiers.TargetScore)
 then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+	return
 end
 
 

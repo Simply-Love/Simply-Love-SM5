@@ -1,12 +1,15 @@
-local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+-- don't allow ColumnFlashOnMiss to appear in Casual gamemode via profile settings
+if SL.Global.GameMode == "Casual" then return end
+
 local player = ...
-local pn = ToEnumShortString(player)
-local mods = SL[pn].ActiveModifiers
-local columns = {}
-local style = GAMESTATE:GetCurrentStyle(player)
-local width = style:GetWidth(player)
+local mods = SL[ToEnumShortString(player)].ActiveModifiers
 
 if mods.ColumnFlashOnMiss then
+
+	local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+	local columns = {}
+	local style = GAMESTATE:GetCurrentStyle(player)
+	local width = style:GetWidth(player)
 
 	local y_offset = SL.Global.GameMode == "StomperZ" and 40 or 80
 
