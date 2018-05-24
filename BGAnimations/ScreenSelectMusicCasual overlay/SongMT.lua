@@ -100,14 +100,14 @@ local song_mt = {
 					OnCommand=cmd(queuecommand,"Refresh"),
 					RefreshCommand=cmd(scaletoclipped,110,110),
 					GainFocusCommand=function(subself)
-						subself:linear(0.2):zoom(0.925):stopeffect()
+						subself:linear(0.2):zoom(0.975):stopeffect()
 						if self.song == "CloseThisFolder" then
 							subself:diffuseshift():effectcolor1(1,0.65,0.65,1):effectcolor2(1,1,1,1)
 						end
 					end,
 					LoseFocusCommand=cmd(linear,0.2; zoom,0.5; stopeffect),
 					SlideToTopCommand=cmd(linear,0.2; zoom, 1; linear,0.3; rotationy, 360; sleep, 0; rotationy, 0),
-					SlideBackIntoGridCommand=cmd(linear,0.12; zoom, 0.9)
+					SlideBackIntoGridCommand=cmd(linear,0.12; zoom, 0.975)
 				},
 
 				-- text

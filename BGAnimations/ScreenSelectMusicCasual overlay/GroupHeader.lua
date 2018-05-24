@@ -6,8 +6,8 @@ local af = Def.ActorFrame{
 		Name="SongWheelTopBorder",
 		InitCommand=cmd(diffuse, color("#999999"); zoomto,_screen.w, 32; valign, 0),
 		OnCommand=function(self) self:xy( _screen.cx, 0 ) end,
-		SwitchFocusToSongsMessageCommand=cmd(sleep,0.3; linear,0.1; zoomtoheight, 0),
-		SwitchFocusToGroupsMessageCommand=cmd(sleep,0.3; linear,0.1; zoomtoheight, 32),
+		SwitchFocusToSongsMessageCommand=cmd(zoomtoheight, 0),
+		SwitchFocusToGroupsMessageCommand=cmd(sleep,0.2; zoomtoheight, 32),
 	},
 
 	-- "Choose Your Song"

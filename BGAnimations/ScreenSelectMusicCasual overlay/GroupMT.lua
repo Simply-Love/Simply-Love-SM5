@@ -125,13 +125,13 @@ local item_mt = {
 					Font="_miso",
 					InitCommand=function(subself)
 						self.bmt = subself
-						--subself:zoom(0.55)
 						subself:diffuse(Color.White)
 						subself:y(6)
 					end,
 					GainFocusCommand=cmd(linear, 0.15; y,16; zoom,1.1),
 					LoseFocusCommand=cmd(linear, 0.15; y, 6; zoom, 1),
-					SlideToTopCommand=cmd(horizalign, left; sleep, 0.3; linear, 0.2; xy, 150,-6; zoom, 2.25),
+					SlideToTopCommand=cmd(sleep, 0.3; queuecommand, "SlideToTop2"),
+					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3),
 					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,16; zoom, 1.1),
 				}
 			}
