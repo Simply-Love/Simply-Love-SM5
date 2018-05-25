@@ -9,7 +9,6 @@ local AutoStyle = ThemePrefs.Get("AutoStyle")
 -- which PlayerNumber they're supposed to be...
 local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-
 function GetLocalProfiles()
 	local t = {}
 
@@ -45,56 +44,6 @@ function LoadCard(cColor)
 	}
 end
 
-
-function LoadPlayerStuff(Player)
-	local t = {}
-
-	t[#t+1] = Def.ActorFrame {
-		Name='JoinFrame',
-		LoadCard(Color.Black),
-
-		LoadFont("_miso") .. {
-			Text=THEME:GetString("ScreenSelectProfile", "PressStartToJoin"),
-			OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5")),
-		},
-	}
-
-	t[#t+1] = Def.ActorFrame {
-		Name='BigFrame',
-		LoadCard(PlayerColor(Player))
-	}
-
-	t[#t+1] = Def.ActorFrame {
-		Name='SmallFrame',
-		InitCommand=cmd(y,-2),
-
-		Def.Quad {
-			InitCommand=cmd(zoomto,200-10,40+2),
-			OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5),
-		},
-	}
-
-	t[#t+1] = Def.ActorScroller{
-		Name='Scroller',
-		NumItemsToDraw=6,
-		OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15),
-		TransformFunction=function(self, offset, itemIndex, numItems)
-			local focus = scale(math.abs(offset),0,2,1,0)
-			self:visible(false)
-			self:y(math.floor( offset*40 ))
-
-		end;
-		children = GetLocalProfiles()
-	}
-
-	t[#t+1] = LoadFont("_miso") .. {
-		Name='SelectedProfileText',
-		InitCommand=cmd(y,160;)
-	}
-
-	return t
-end
-
 function UpdateInternal3(self, Player)
 	local frame = self:GetChild(ToEnumShortString(Player) .. 'Frame')
 	local scroller = frame:GetChild('Scroller')
@@ -102,16 +51,21 @@ function UpdateInternal3(self, Player)
 	local joinframe = frame:GetChild('JoinFrame')
 	local smallframe = frame:GetChild('SmallFrame')
 	local bigframe = frame:GetChild('BigFrame')
+	local usbsprite = frame:GetChild('USBIcon')
 
 	if GAMESTATE:IsHumanPlayer(Player) then
+
 		frame:visible(true)
+
 		if MEMCARDMAN:GetCardState(Player) == 'MemoryCardState_none' then
 			--using profile if any
 			joinframe:visible(false)
+			usbsprite:visible(false)
 			smallframe:visible(true)
 			bigframe:visible(true)
 			seltext:visible(true)
 			scroller:visible(true)
+
 			local ind = SCREENMAN:GetTopScreen():GetProfileIndex(Player)
 			if ind > 0 then
 				scroller:SetDestinationItem(ind-1)
@@ -130,12 +84,18 @@ function UpdateInternal3(self, Player)
 			end
 		else
 			--using card
+			bigframe:visible(false)
+			joinframe:visible(false)
 			smallframe:visible(false)
 			scroller:visible(false)
-			seltext:settext(ScreenString("Card"))
+
+			usbsprite:visible(true)
+			seltext:visible(true):settext(MEMCARDMAN:GetName(Player))
+
 			SCREENMAN:GetTopScreen():SetProfileIndex(Player, 0)
 		end
 	else
+		usbsprite:visible(false)
 		joinframe:visible(true)
 		scroller:visible(false)
 		seltext:visible(false)
@@ -242,7 +202,60 @@ local PlayerFrame = function(player)
 				self:zoom(1.15):bounceend(0.175):zoom(1)
 			end
 		end,
-		children = LoadPlayerStuff(player)
+
+		children = {
+			Def.ActorFrame {
+				Name='JoinFrame',
+				LoadCard(Color.Black),
+
+				LoadFont("_miso") .. {
+					Text=THEME:GetString("ScreenSelectProfile", "PressStartToJoin"),
+					OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5")),
+				},
+			},
+
+			Def.ActorFrame {
+				Name='BigFrame',
+				LoadCard(PlayerColor(player))
+			},
+
+			Def.ActorFrame {
+				Name='SmallFrame',
+				InitCommand=cmd(y,-2),
+
+				Def.Quad {
+					InitCommand=cmd(zoomto,200-10,40+2),
+					OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5),
+				},
+			},
+
+			Def.Sprite{
+				Name="USBIcon",
+				Texture=THEME:GetPathB("ScreenMemoryCard", "overlay/usbicon.png"),
+				InitCommand=function(self)
+					self:rotationz(90):zoom(0.75):visible(false):diffuseshift()
+						:effectperiod(1.5):effectcolor1(1,1,1,1):effectcolor2(1,1,1,0.5)
+				end
+			},
+
+			Def.ActorScroller{
+				Name='Scroller',
+				NumItemsToDraw=6,
+				OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15),
+				TransformFunction=function(self, offset, itemIndex, numItems)
+					local focus = scale(math.abs(offset),0,2,1,0)
+					self:visible(false)
+					self:y(math.floor( offset*40 ))
+
+				end;
+				children = GetLocalProfiles()
+			},
+
+			LoadFont("_miso")..{
+				Name='SelectedProfileText',
+				InitCommand=cmd(y,160; zoom, 1.35)
+			}
+		}
 	}
 end
 
