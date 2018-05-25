@@ -104,6 +104,7 @@ function UpdateInternal3(self, Player)
 	end
 end
 
+
 local t = Def.ActorFrame {
 
 	StorageDevicesChangedMessageCommand=function(self, params)
@@ -111,21 +112,38 @@ local t = Def.ActorFrame {
 	end,
 
 	CodeMessageCommand=function(self, params)
+
 		if (AutoStyle=="single" or AutoStyle=="double") and params.PlayerNumber ~= mpn then
 			return
 		end
 
-		if params.Name == 'Start' or params.Name == 'Center' then
+		if params.Name == "Select" then
+			if GAMESTATE:GetNumPlayersEnabled()==0 then
+				SCREENMAN:GetTopScreen():Cancel()
+			else
+				-- only attempt to unjoin the player if that side is currently joined
+				if GAMESTATE:IsSideJoined(params.PlayerNumber) then
+					MESSAGEMAN:Broadcast("BackButton")
+					SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -2)
+					GAMESTATE:UnjoinPlayer(params.PlayerNumber)
+				end
+			end
+			return
+		end
+
+		if params.Name == 'Start' or params.Name== 'Center' then
 			MESSAGEMAN:Broadcast("StartButton")
 			if not GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -1)
 			else
 				SCREENMAN:GetTopScreen():Finish()
 			end
+			return
 		end
 		if params.Name == 'Up' or params.Name == 'Left' or params.Name == 'DownLeft' then
 			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber)
+
 				if ind > 1 then
 					if SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, ind - 1 ) then
 						MESSAGEMAN:Broadcast("DirectionButton")
@@ -133,10 +151,12 @@ local t = Def.ActorFrame {
 					end
 				end
 			end
+			return
 		end
 		if params.Name == 'Down' or params.Name == 'Right' or params.Name == 'DownRight' then
 			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber)
+
 				if ind > 0 then
 					if SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, ind + 1 ) then
 						MESSAGEMAN:Broadcast("DirectionButton")
@@ -144,6 +164,7 @@ local t = Def.ActorFrame {
 					end
 				end
 			end
+			return
 		end
 		if params.Name == 'Back' then
 			if GAMESTATE:GetNumPlayersEnabled()==0 then
