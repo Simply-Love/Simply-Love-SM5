@@ -1,15 +1,6 @@
--- because no one wants "Invalid PlayMode 7"
-GAMESTATE:SetCurrentPlayMode(0)
-
 ---------------------------------------------------------------------------
--- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
--- there has got to be a better way to do this...
-local steps_type = "StepsType_"..GAMESTATE:GetCurrentGame():GetName():gsub("^%l", string.upper).."_"
-if GAMESTATE:GetCurrentStyle():GetName() == "double" then
-	steps_type = steps_type .. "Double"
-else
-	steps_type = steps_type .. "Single"
-end
+-- determine appropriate steps_type; set up available groups and group_index
+local steps_type, Groups, group_index = LoadActor("./Setup.lua")
 
 ---------------------------------------------------------------------------
 -- variables local to this file
@@ -32,6 +23,9 @@ local Players = GAMESTATE:GetHumanPlayers()
 local GroupWheel = setmetatable({}, sick_wheel_mt)
 local SongWheel = setmetatable({}, sick_wheel_mt)
 local OptionsWheel = {}
+
+GroupWheel.ActiveRow = 2
+SongWheel.ActiveRow = 2
 
 for player in ivalues(Players) do
 	-- create the options wheel for this player
@@ -59,37 +53,21 @@ local row = {
 local params = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows }
 
 ---------------------------------------------------------------------------
+-- load the InputHandler and pass it the table of params
+local Input = LoadActor( "./Input.lua", params )
 
 -- metatables
-local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col})
+local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col,Input})
 local song_mt = LoadActor("./SongMT.lua", {SongWheel,TransitionTime,row,col})
 local optionrow_mt = LoadActor("./OptionRowMT.lua")
 local optionrow_item_mt = LoadActor("./OptionRowItemMT.lua")
 
--- load the InputHandler and pass it the table of params
-local Input = LoadActor( "./Input.lua", params )
-
--- Input, declared here so it has file-scope
--- local Input = setmetatable({}, inputhandler_mt)
 ---------------------------------------------------------------------------
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
-		GroupWheel.ActiveRow = 2
-		SongWheel.ActiveRow = 2
+		GroupWheel:set_info_set(Groups, group_index)
 
-		-- prune out packs that have no valid steps
-		local Groups = {}
-		for group in ivalues(SONGMAN:GetSongGroupNames()) do
-			for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
-				if song:HasStepsType(steps_type) then
-					Groups[#Groups+1] = group
-					break
-				end
-			end
-		end
-
-		GroupWheel:set_info_set(Groups, 1)
 		self:queuecommand("Capture")
 	end,
 	CaptureCommand=function(self)
@@ -147,9 +125,9 @@ local t = Def.ActorFrame {
 
 	Def.Quad{
 		Name="SongWheelBackground",
-		InitCommand=cmd(zoomto, _screen.w, _screen.h/(row.how_many-2); diffuse, Color.Black; diffusealpha,0),
-		OnCommand=cmd(xy, _screen.cx, math.ceil((row.how_many-2)/2) * row.h + 10),
-		SwitchFocusToSongsMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0.4),
+		InitCommand=cmd(zoomto, _screen.w, _screen.h/(row.how_many-2); diffuse, Color.Black; diffusealpha,1),
+		OnCommand=cmd(xy, _screen.cx, math.ceil((row.how_many-2)/2) * row.h + 10; finishtweening),
+		SwitchFocusToSongsMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0.65),
 		SwitchFocusToGroupsMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0),
 		SwitchFocusToSingleSongMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0),
 	},

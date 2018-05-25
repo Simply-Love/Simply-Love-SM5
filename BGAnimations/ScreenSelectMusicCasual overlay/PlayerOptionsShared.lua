@@ -3,7 +3,7 @@ local row = args[1]
 local col = args[2]
 
 return Def.ActorFrame{
-	OnCommand=cmd(diffusealpha, 0),
+	InitCommand=cmd(diffusealpha, 0),
 	SwitchFocusToSongsMessageCommand=cmd(linear,0.1; diffusealpha,0),
 	SwitchFocusToGroupsMessageCommand=cmd(linear,0.1; diffusealpha,0),
 	SwitchFocusToSingleSongMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,1),

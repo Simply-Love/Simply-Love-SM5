@@ -5,6 +5,26 @@ local TransitionTime = args[3]
 local steps_type = args[4]
 local row = args[5]
 local col = args[6]
+local Input = args[7]
+
+local switch_to_songs = function(group_name)
+	local songs = {}
+	local current_song = GAMESTATE:GetCurrentSong()
+	local index = 1
+
+	-- prune out songs that don't have valid steps
+	for i,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
+		if current_song == song then index = i end
+
+		if song:HasStepsType(steps_type) then
+			songs[#songs+1] = song
+		end
+	end
+
+	songs[#songs+1] = "CloseThisFolder"
+
+	SongWheel:set_info_set(songs, index)
+end
 
 
 local item_mt = {
@@ -25,20 +45,30 @@ local item_mt = {
 
 				InitCommand=function(subself)
 					self.container = subself
-					subself:zoom(0.5)
-					subself:diffusealpha(0)
-				end,
-				OnCommand=function(subself)
 
 					subself:x(col.w * self.column)
-					subself:sleep(0.13)
-					subself:linear(0.05)
-					subself:diffusealpha(1)
-					-- hide the outmost two rows
-					if self.changing_row <= 0 or self.changing_row == math.ceil(GroupWheel.num_items/col.how_many) - 1 then
-						subself:diffusealpha(0)
+					subself:y(row.h * (self.changing_row-1))
+
+					if GAMESTATE:GetCurrentSong() then
+
+						if self.index ~= GroupWheel:get_actor_item_at_focus_pos().index then
+							subself:playcommand("LoseFocus"):diffusealpha(0)
+						else
+							-- position this folder in the header
+							subself:playcommand("GainFocus"):xy(70,35):zoom(0.35)
+
+							switch_to_songs(GAMESTATE:GetCurrentSong():GetGroupName())
+							MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+						end
+					else
+						-- hide the outmost two rows
+						if self.changing_row <= 0 or self.changing_row == math.ceil(GroupWheel.num_items/col.how_many) - 1 then
+							subself:diffusealpha(0)
+						end
 					end
 				end,
+				OnCommand=function(subself) subself:finishtweening() end,
+
 				StartCommand=function(subself)
 					-- hide everything but the chosen Actor
 					if self.index ~= GroupWheel:get_actor_item_at_focus_pos().index then
@@ -49,10 +79,8 @@ local item_mt = {
 						subself:queuecommand("SlideToTop")
 						MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 					end
-
 				end,
 				UnhideCommand=function(subself)
-
 					-- we're going back to group selection
 					-- slide the chosen group Actor back into grid position
 					if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
@@ -75,20 +103,7 @@ local item_mt = {
 					subself:linear( 0.2 ):x( self.column * col.w )
 					subself:linear( 0.12 ):zoom( 0.8 ):y( row.h * self.changing_row )
 				end,
-				SwitchCommand=function(subself)
-					local songs = {}
-
-					-- prune out songs that don't have valid steps
-					for song in ivalues(SONGMAN:GetSongsInGroup(self.groupName)) do
-						if song:HasStepsType(steps_type) then
-							songs[#songs+1] = song
-						end
-					end
-
-					songs[#songs+1] = "CloseThisFolder"
-
-					SongWheel:set_info_set(songs, 1)
-				end,
+				SwitchCommand=function(subself) switch_to_songs(self.groupName) end,
 
 
 
@@ -110,7 +125,6 @@ local item_mt = {
 				},
 
 
-
 				LoadActor("./img/folderFront.png")..{
 					Name="front",
 					InitCommand=cmd(zoom,0.75; valign,1),
@@ -119,20 +133,20 @@ local item_mt = {
 					LoseFocusCommand=cmd( diffusebottomedge, color("#6d6e73"); diffusetopedge, color("#6d6e73"); decelerate,0.15; rotationx,0; ),
 				},
 
-
-
+				-- group text
 				Def.BitmapText{
 					Font="_miso",
-					InitCommand=function(subself)
-						self.bmt = subself
-						subself:diffuse(Color.White)
-						subself:y(6)
+					InitCommand=function(subself) self.bmt = subself end,
+					OnCommand=function(subself)
+						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
+							subself:horizalign(left):diffuse(Color.Black):xy(150,-6):zoom(3)
+						end
 					end,
-					GainFocusCommand=cmd(linear, 0.15; y,16; zoom,1.1),
-					LoseFocusCommand=cmd(linear, 0.15; y, 6; zoom, 1),
-					SlideToTopCommand=cmd(sleep, 0.3; queuecommand, "SlideToTop2"),
+					GainFocusCommand=cmd(x, 0; horizalign, center; linear, 0.15; y,16; zoom,1.1),
+					LoseFocusCommand=cmd(x, 0; horizalign, center; linear, 0.15; y, 6; zoom, 1; diffuse, Color.White),
+					SlideToTopCommand=cmd(sleep, 0.3; diffuse, Color.Black; queuecommand, "SlideToTop2"),
 					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3),
-					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,16; zoom, 1.1),
+					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,16; zoom, 1.1; diffuse, Color.White),
 				}
 			}
 
@@ -140,6 +154,8 @@ local item_mt = {
 		end,
 
 		transform = function(self, item_index, num_items, has_focus)
+
+			if Input.WheelWithFocus ~= GroupWheel then return end
 
 			self.container:finishtweening()
 

@@ -30,15 +30,17 @@ local song_mt = {
 
 				InitCommand=function(subself)
 					self.container = subself
-					subself:diffusealpha(0)
+					-- subself:diffusealpha(0)
+					-- subself:x(col.w * self.column)
 				end,
 				OnCommand=function(subself)
-					subself:x(col.w * self.column)
-					if self.changing_row <= 0 and self.changing_row ~= math.ceil(SongWheel.num_items/col.how_many) - 1 then
-						subself:sleep(0.3)
-						subself:linear(0.2)
-						subself:diffusealpha(1)
-					end
+					subself:finishtweening()
+
+					-- if self.changing_row <= 0 and self.changing_row ~= math.ceil(SongWheel.num_items/col.how_many) - 1 then
+					-- 	subself:sleep(0.3)
+					-- 	subself:linear(0.2)
+					-- 	subself:diffusealpha(1)
+					-- end
 				end,
 				StartCommand=function(subself)
 					-- slide the chosen Actor into place
@@ -91,7 +93,6 @@ local song_mt = {
 					-- blinking quad behind banner
 					Def.Quad{
 						InitCommand=cmd( diffuse, Color.Black; zoomto, 0,0; diffusealpha, 0),
-						OnCommand=cmd(playcommand, "Refresh"),
 						GainFocusCommand=function(subself)
 							if self.song == "CloseThisFolder" then
 								subself:visible(false)
@@ -109,9 +110,17 @@ local song_mt = {
 					-- banner
 					Def.Banner{
 						Name="Banner",
-						InitCommand=function(subself) self.banner = subself end,
+						InitCommand=function(subself) self.banner = subself; subself:diffusealpha(0) end,
 						OnCommand=cmd(queuecommand,"Refresh"),
-						RefreshCommand=cmd(scaletoclipped,110,110),
+						RefreshCommand=function(subself)
+							subself:scaletoclipped(110,110)
+							if self.index ~= SongWheel:get_actor_item_at_focus_pos().index then
+								subself:zoom(0.5)
+							else
+								subself:zoom(1.15)
+							end
+							subself:diffusealpha(1)
+						end,
 						GainFocusCommand=function(subself)
 							subself:linear(0.2):zoom(1.15):stopeffect()
 							if self.song == "CloseThisFolder" then
@@ -286,7 +295,7 @@ local song_mt = {
 			local imgPath = ""
 
 			-- this SongMT was passed the string "CloseThisFolder"
-			-- then this is a special case song metatable item
+			-- so this is a special case song metatable item
 			if type(song) == "string" then
 				self.song = song
 				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
