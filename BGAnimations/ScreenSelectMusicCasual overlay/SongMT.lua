@@ -123,92 +123,27 @@ local song_mt = {
 					},
 				},
 
-				-- text
-				Def.ActorFrame{
-					GainFocusCommand=function(subself) subself:y(8) end,
-					LoseFocusCommand=function(subself) subself:y(0) end,
-					SlideToTopCommand=function(subself) subself:linear(0.12):zoom(1.1):y(0) end,
-					SlideBackIntoGridCommand=function(subself) subself:linear(0.12):zoom(1):y(8) end,
-
-					-- title
-					Def.BitmapText{
-						Font="_miso",
-						InitCommand=function(subself)
-							self.title_bmt = subself
-							subself:zoom(0.8):diffuse(Color.White):horizalign(left)
-						end,
-						GainFocusCommand=function(subself)
-							subself:zoom(1.2):xy(80,-40):horizalign(left)
-							if self.song == "CloseThisFolder" then subself:xy(0,6):zoom(0.85):horizalign(center) end
-						end,
-						LoseFocusCommand=function(subself)
-							subself:x(0):horizalign(center)
-
-							if self.song == "CloseThisFolder"
-							then subself:linear(0.2):y(0):zoom(0.45)
-							else subself:linear(0.2):y(40):zoom(0.725)
-							end
-						end,
-						SlideToTopCommand=cmd(horizalign, left; diffuse, Color.Black),
-						SlideBackIntoGridCommand=cmd(horizalign, left; diffuse, Color.White)
-					},
-
-					-- artist
-					Def.BitmapText{
-						Font="_miso",
-						InitCommand=function(subself)
-							self.artist_bmt = subself
-							subself:zoom(0.8):diffuse(Color.White)
-								:y(-20):horizalign(left)
-						end,
-						GainFocusCommand=function(subself)
-							subself:diffusealpha(1):diffuse(Color.White):visible(true):x(80):zoom(0.8)
-						end,
-						LoseFocusCommand=function(subself)
-							subself:diffusealpha(0):visible(false):x(0)
-						end,
-						SlideToTopCommand=cmd(diffuse, Color.Black),
-						SlideBackIntoGridCommand=cmd(queuecommand, "GainFocus")
-					},
-
-					-- BPM
-					Def.BitmapText{
-						Font="_miso",
-						InitCommand=function(subself)
-							self.bpm_bmt = subself
-							subself:zoom(0.65):diffuse(Color.White):xy(80, 18):horizalign(left)
-						end,
-						GainFocusCommand=function(subself) subself:visible(true):diffuse(Color.White) end,
-						LoseFocusCommand=function(subself) subself:visible(false) end,
-						SlideToTopCommand=cmd(diffuse,Color.Black),
-						SlideBackIntoGridCommand=cmd(diffuse,Color.White)
-					},
-					-- length
-					Def.BitmapText{
-						Font="_miso",
-						InitCommand=function(subself)
-							self.length_bmt = subself
-							subself:zoom(0.65):diffuse(Color.White):xy(80, 32):horizalign(left)
-						end,
-						GainFocusCommand=function(subself) subself:visible(true):diffuse(Color.White) end,
-						LoseFocusCommand=function(subself) subself:visible(false) end,
-						SlideToTopCommand=cmd(diffuse, Color.Black),
-						SlideBackIntoGridCommand=cmd(diffuse,Color.White)
-					},
-					-- genre
-					Def.BitmapText{
-						Font="_miso",
-						InitCommand=function(subself)
-							self.genre_bmt = subself
-							subself:zoom(0.65):diffuse(Color.White)
-								:xy(80, 46):horizalign(left)
-						end,
-						GainFocusCommand=function(subself) subself:visible(true):diffuse(Color.White) end,
-						LoseFocusCommand=function(subself) subself:visible(false) end,
-						SlideToTopCommand=cmd(diffuse, Color.Black),
-						SlideBackIntoGridCommand=cmd(diffuse,Color.White)
-					},
-				}
+				-- title
+				Def.BitmapText{
+					Font="_miso",
+					InitCommand=function(subself)
+						self.title_bmt = subself
+						subself:zoom(0.8):diffuse(Color.White):y(40):zoom(0.725)
+					end,
+					GainFocusCommand=function(subself)
+						if self.song == "CloseThisFolder" then
+							subself:y(10):zoom(0.9)
+						else
+							subself:visible(false)
+						end
+					end,
+					LoseFocusCommand=function(subself)
+						if self.song == "CloseThisFolder" then
+							subself:y(40):zoom(0.8)
+						end
+						subself:visible(true)
+					end,
+				},
 			}
 
 			return af
@@ -222,23 +157,16 @@ local song_mt = {
 			if has_focus then
 				if self.song ~= "CloseThisFolder" then
 					GAMESTATE:SetCurrentSong(self.song)
-					-- GetDisplayBPMs() relies on GAMESTATE:GetCurrentSong() which we just set
-					self.bpm_bmt:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs())
+					MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
 
 					-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
-
-					-- undo Truncate()
-					self.title_bmt:settext( self.song:GetDisplayFullTitle() )
-					self.artist_bmt:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. self.song:GetDisplayArtist() )
-					self.genre_bmt:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. self.song:GetGenre() )
+				else
+					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 				end
 				self.container:playcommand("GainFocus")
 			else
 				self.container:playcommand("LoseFocus")
-				self.title_bmt:Truncate("title")
-				self.artist_bmt:Truncate("artist")
-				self.genre_bmt:Truncate("genre")
 			end
 
 			-- handle row hiding
@@ -287,10 +215,6 @@ local song_mt = {
 			if type(song) == "string" then
 				self.song = song
 				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
-				self.artist_bmt:settext( "" )
-				self.genre_bmt:settext( "" )
-				self.length_bmt:settext( "")
-				self.bpm_bmt:settext( "" )
 				imgPath = THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/CloseThisFolder.png")
 
 			else
@@ -298,9 +222,6 @@ local song_mt = {
 				-- we are passed in a Song object as info
 				self.song = song
 				self.title_bmt:settext( self.song:GetDisplayFullTitle() ):Truncate("title")
-				self.artist_bmt:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. self.song:GetDisplayArtist() ):Truncate("artist")
-				self.genre_bmt:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. self.song:GetGenre() ):Truncate("genre")
-				self.length_bmt:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(self.song:MusicLengthSeconds()):gsub("^0*","") )
 
 				if song:HasJacket() then
 					imgPath = song:GetJacketPath()

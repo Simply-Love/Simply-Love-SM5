@@ -6,7 +6,7 @@ return Def.Quad{
 		if ThemePrefs.Get("RainbowMode") then
 			self:diffuse(color("#000000dd"))
 		else
-			self:diffuse(color("#999999"))
+			self:diffuse(0.86, 0.86, 0.86, 0.75)
 		end
 		self:zoomto(_screen.w, row.h*0.5):valign(0):xy( _screen.cx, 0 )
 	end,

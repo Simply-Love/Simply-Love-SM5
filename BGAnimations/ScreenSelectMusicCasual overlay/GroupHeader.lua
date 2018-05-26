@@ -12,7 +12,7 @@ local af = Def.ActorFrame{
 			if ThemePrefs.Get("RainbowMode") then
 				self:diffuse(color("#000000dd"))
 			else
-				self:diffuse(color("#999999"))
+				self:diffuse(0.86, 0.86, 0.86, 0.75)
 			end
 
 			self:zoomto(_screen.w, 32):valign(0)
@@ -26,11 +26,14 @@ local af = Def.ActorFrame{
 	Def.BitmapText{
 		Name="HeaderText",
 		Font="_wendy small",
-		InitCommand=cmd(diffusealpha,0; zoom,WideScale(0.5,0.6); horizalign, left; xy, 10, 15 ),
-		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha,1),
+		InitCommand=function(self)
+			self:diffusealpha(0):zoom(WideScale(0.5,0.6)):horizalign(left):xy(10, 15)
+			if not ThemePrefs.Get("RainbowMode") then self:diffuse(0,0,0,0.9) end
+		end,
+		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha,0.9),
 		OffCommand=cmd(accelerate,0.33; diffusealpha,0),
 		HideCommand=function(self) self:settext(""):diffusealpha(0) end,
-		ShowCommand=function(self) self:settext(text):sleep(0.2):linear(0.2):diffusealpha(1) end,
+		ShowCommand=function(self) self:settext(text):sleep(0.2):linear(0.2):diffusealpha(0.9) end,
 	},
 }
 

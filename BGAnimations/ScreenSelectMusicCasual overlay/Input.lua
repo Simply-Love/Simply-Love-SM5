@@ -49,6 +49,10 @@ end
 
 -- calls needed to close the current group folder and return to choosing a group
 local CloseCurrentFolder = function()
+	-- if focus is already on the GroupWheel, we don't need to do anything more
+	if t.WheelWithFocus == GroupWheel then return end
+
+	-- otherwise...
 	t.Enabled = false
 	t.WheelWithFocus.container:queuecommand("Hide")
 	t.WheelWithFocus = GroupWheel
