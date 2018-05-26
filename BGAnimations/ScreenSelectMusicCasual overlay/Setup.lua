@@ -49,19 +49,12 @@ local GetGroups = function()
 	end
 
 	local groups = {}
-	-- this double for-loop acts under the assumption that the contents of
-	-- CasualMode-Groups.txt will be substantially smaller than the full list of Groups
-	for group in ivalues(SONGMAN:GetSongGroupNames()) do
-		if #preliminary_groups == 0 then break end
 
-		for i, prelim_group in ipairs(preliminary_groups) do
-			-- if we have a match
-			if prelim_group == group then
-				-- add this preliminary group to the table of finalized groups
-				groups[#groups+1] = group
-				table.remove(preliminary_groups, i)
-				break
-			end
+	for prelim_group in ivalues(preliminary_groups) do
+		-- if this group exists
+		if SONGMAN:DoesSongGroupExist( prelim_group ) then
+			-- add this preliminary group to the table of finalized groups
+			groups[#groups+1] = prelim_group
 		end
 	end
 
