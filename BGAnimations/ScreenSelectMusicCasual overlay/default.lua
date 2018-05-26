@@ -24,9 +24,6 @@ local GroupWheel = setmetatable({}, sick_wheel_mt)
 local SongWheel = setmetatable({}, sick_wheel_mt)
 local OptionsWheel = {}
 
-GroupWheel.ActiveRow = 2
-SongWheel.ActiveRow = 2
-
 for player in ivalues(Players) do
 	-- create the options wheel for this player
 	OptionsWheel[player] = setmetatable({disable_wrapping = true}, sick_wheel_mt)

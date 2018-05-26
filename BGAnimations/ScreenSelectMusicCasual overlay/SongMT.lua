@@ -20,10 +20,6 @@ local song_mt = {
 			-- this is a terrible way to do this
 			local item_index = name:gsub("item", "")
 			self.index = item_index
-			self.column = ((item_index-1) % col.how_many) + 1
-
-			self.static_row = math.ceil((item_index/col.how_many)-1) % row.how_many + 1
-			self.changing_row = self.static_row
 
 			local af = Def.ActorFrame{
 				Name=name,
@@ -68,6 +64,8 @@ local song_mt = {
 					subself:linear( 0.1 ):x( col.w )
 				end,
 
+				-- wrap the function that plays the preview music in its own Actor so that we can
+				-- call sleep() and queuecommand() and stoptweening() on it and not mess up other Actors
 				Def.Actor{
 					InitCommand=function(subself) self.preview_music = subself end,
 					PlayMusicPreviewCommand=function(subself) play_sample_music() end,
@@ -169,8 +167,10 @@ local song_mt = {
 				self.container:playcommand("LoseFocus")
 			end
 
+			-- self.title_bmt:settext(item_index)
+
 			-- handle row hiding
-			if self.changing_row <= 0 or self.changing_row == math.ceil(num_items/col.how_many) - 1 then
+			if item_index < num_items*0.2 or item_index > num_items*0.8 then
 				self.container:visible(false)
 			else
 				self.container:visible(true)
@@ -179,26 +179,30 @@ local song_mt = {
 			-- handle row shifting
 			self.container:linear(0.2)
 
-			local focal_point_index = math.floor(num_items/2)
+			local middle_index = math.floor(num_items/2)
 
 			-- top row
-			if item_index < focal_point_index  then
-				if item_index < focal_point_index - col.how_many then
-					self.container:y( -100 )
+			if item_index < middle_index  then
+				-- if we need to tween this song jacket off the top edge of the screen
+				if item_index < middle_index - col.how_many then
+					self.container:y( -100 ):x( col.w * col.how_many )
+				-- otherwise, it is somewhere in the top row
 				else
-					self.container:y( row.h * 1 ):x( col.w * (focal_point_index-item_index) )
+					self.container:y( row.h ):x( col.w * (middle_index-item_index) )
 				end
 
 			-- bottom row
-			elseif item_index > focal_point_index then
-				if item_index > focal_point_index + col.how_many then
-					self.container:y( row.h * row.how_many )
+			elseif item_index > middle_index then
+				-- if we need to tween this song jacket off the bottom edge of the screen
+				if item_index > middle_index + col.how_many then
+					self.container:y( row.h * row.how_many ):x(col.w * col.how_many)
+				-- otherwise, it is somewhere in the bottom row
 				else
-					self.container:y( row.h * 3 ):x( col.w * math.abs(focal_point_index-item_index))
+					self.container:y( row.h * 3 ):x( col.w * math.abs(middle_index-item_index))
 				end
 
 			-- center row
-			elseif item_index == focal_point_index then
+			elseif item_index == middle_index then
 				self.container:y( row.h * 2 ):x( col.w )
 
 			end
@@ -233,20 +237,6 @@ local song_mt = {
 			end
 
 			self.banner:LoadBanner(imgPath)
-
-			-- determine if we have row shifting to do
-			local ActiveActor = SongWheel:get_actor_item_at_focus_pos()
-
-			-- we'll only get into this if statement once...
-			if SongWheel.ActiveRow ~= ActiveActor.static_row then
-				local change = SongWheel.ActiveRow - ActiveActor.static_row
-				SongWheel.ActiveRow = ActiveActor.static_row
-
-				-- ... so update every item's changing_row attribute now for the transform that comes next
-				for i=1,SongWheel.num_items do
-					SongWheel.items[i].changing_row = (SongWheel.items[i].changing_row + change) % row.how_many
-				end
-			end
 		end
 	}
 }
