@@ -90,7 +90,7 @@ function OptionRowMusicWheelSpeed()
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = choices,
+		Choices = localized_choices,
 		LoadSelections = function(self, list, pn)
 			local i = FindInTable(user_setting, values) or 1
 			list[i] = true
