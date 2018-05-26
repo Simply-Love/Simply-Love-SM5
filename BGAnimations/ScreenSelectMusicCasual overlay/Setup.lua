@@ -16,13 +16,72 @@ else
 end
 
 ---------------------------------------------------------------------------
+-- parse ./Other/CasualMode-Groups.txt to create a fully custom Casual MusicWheel
+
+local GetGroups = function()
+
+	local contents
+
+	-- the second argument here (the 1) signifies
+	-- that we are opening the file in read-only mode
+	local path = THEME:GetCurrentThemeDirectory() .. "Other/CasualMode-Groups.txt"
+
+	if FILEMAN:DoesFileExist(path) then
+		-- create a generic RageFile that we'll use to read the contents
+		local file = RageFileUtil.CreateRageFile()
+		if file:Open(path, 1) then
+			contents = file:Read()
+		end
+
+		-- destroy the generic RageFile now that we have the contents
+		file:destroy()
+	end
+
+	if contents == nil or contents == "" then
+		return SONGMAN:GetSongGroupNames()
+	end
+
+	-- split the contents of the file on newline and create a table of "preliminary groups"
+	-- some may not actually exist due to human error, typos, etc.
+	local preliminary_groups = {}
+	for line in contents:gmatch("[^\r\n]+") do
+		preliminary_groups[#preliminary_groups+1] = line
+	end
+
+	local groups = {}
+	-- this double for-loop acts under the assumption that the contents of
+	-- CasualMode-Groups.txt will be substantially smaller than the full list of Groups
+	for group in ivalues(SONGMAN:GetSongGroupNames()) do
+		if #preliminary_groups == 0 then break end
+
+		for i, prelim_group in ipairs(preliminary_groups) do
+			-- if we have a match
+			if prelim_group == group then
+				-- add this preliminary group to the table of finalized groups
+				groups[#groups+1] = group
+				table.remove(preliminary_groups, i)
+				break
+			end
+		end
+	end
+
+	if #groups > 0 then
+		return groups
+	else
+		return SONGMAN:GetSongGroupNames()
+	end
+end
+
+
+
+---------------------------------------------------------------------------
+-- here, we prune out packs that have no valid steps
+
 local current_song = GAMESTATE:GetCurrentSong()
 local group_index = 1
-
--- prune out packs that have no valid steps
 local Groups = {}
 
-for group in ivalues(SONGMAN:GetSongGroupNames()) do
+for group in ivalues( GetGroups() ) do
 	local group_has_been_added = false
 
 	for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
@@ -41,11 +100,10 @@ for group in ivalues(SONGMAN:GetSongGroupNames()) do
 end
 
 if current_song then
-	group_index = FindInTable(current_song:GetGroupName(), Groups)
-end
+	group_index = FindInTable(current_song:GetGroupName(), Groups) or 1
 
 -- if no current_song, choose the first song in the first pack as a last resort...
-if not current_song then
+else
 	current_song = SONGMAN:GetSongsInGroup(Groups[1])[1]
 	GAMESTATE:SetCurrentSong(current_song)
 end
