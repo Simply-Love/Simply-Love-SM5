@@ -70,6 +70,26 @@ local t = Def.ActorFrame {
 
 		self:queuecommand("Capture")
 	end,
+	OnCommand=function(self)
+		if PREFSMAN:GetPreference("MenuTimer") then self:queuecommand("Listen") end
+	end,
+	ListenCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen()
+		local seconds = topscreen:GetChild("Timer"):GetSeconds()
+
+		-- if necessary, force the players into Gameplay because the MenuTimer has run out
+		if seconds <= 0 then
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local steps = SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )[1]
+				GAMESTATE:SetCurrentSteps(player, steps)
+				local player_options = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
+				player_options:CMod(250)
+			end
+			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+		else
+			self:sleep(0.5):queuecommand("Listen")
+		end
+	end,
 	CaptureCommand=function(self)
 
 		-- One element of the table returned above is an internal function, handler

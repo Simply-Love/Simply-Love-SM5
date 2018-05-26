@@ -16,7 +16,7 @@ local OptionRows = {
 			THEME:GetString("ScreenSelectMusicCasual", "MoreSpace"),
 			THEME:GetString("ScreenSelectMusicCasual", "LessSpace"),
 		},
-		values = {300, 400, 200},
+		values = {250, 350, 150},
 		OnSave=function(self, pn, choice, choices, values)
 			local index = FindInTable(choice, choices)
 			local player_options = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")

@@ -100,6 +100,12 @@ local SL_CustomPrefs =
 		Choices = SecondsToMMSS_range(60, 450, 15),
 		Values = range(60, 450, 15),
 	},
+	ScreenSelectMusicCasualMenuTimer =
+	{
+		Default = 300,
+		Choices = SecondsToMMSS_range(60, 450, 15),
+		Values = range(60, 450, 15),
+	},
 	ScreenPlayerOptionsMenuTimer =
 	{
 		Default = 90,
