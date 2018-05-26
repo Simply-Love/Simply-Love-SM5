@@ -2,7 +2,14 @@ return Def.ActorFrame{
 	Name="Header",
 
 	Def.Quad{
-		InitCommand=cmd(zoomto, _screen.w, 32; vertalign, top; diffuse,0.65,0.65,0.65,1; x, _screen.cx),
+		InitCommand=function(self)
+			self:zoomto(_screen.w, 32):vertalign(top):x(_screen.cx)
+			if ThemePrefs.Get("RainbowMode") then
+				self:diffuse(color("#000000dd"))
+			else
+				self:diffuse(0.65,0.65,0.65,1)
+			end
+		end,
 	},
 
 	Def.BitmapText{
