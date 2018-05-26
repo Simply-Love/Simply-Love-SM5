@@ -158,6 +158,14 @@ local SL_CustomPrefs =
 		Values 	= { true, false }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
+	-- Casual GameMode Settings
+	CasualMaxMeter = {
+		Default = 10,
+		Choices = range(5, 15, 1),
+		Values = range(5, 15, 1)
+	},
+
+	-- - - - - - - - - - - - - - - - - - - -
 	-- memes
 	nice = {
 		Default = false,

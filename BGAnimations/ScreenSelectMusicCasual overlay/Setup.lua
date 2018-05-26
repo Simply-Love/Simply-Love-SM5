@@ -21,12 +21,22 @@ local group_index = 1
 
 -- prune out packs that have no valid steps
 local Groups = {}
-for i,group in ipairs(SONGMAN:GetSongGroupNames()) do
+
+for group in ivalues(SONGMAN:GetSongGroupNames()) do
+	local group_has_been_added = false
+
 	for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
 		if song:HasStepsType(steps_type) then
-			Groups[#Groups+1] = group
-			break
+
+			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then
+					Groups[#Groups+1] = group
+					group_has_been_added = true
+					break
+				end
+			end
 		end
+		if group_has_been_added then break end
 	end
 end
 

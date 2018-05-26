@@ -16,8 +16,15 @@ local switch_to_songs = function(group_name)
 	for i,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
 		if current_song == song then index = i end
 
+		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(steps_type) then
-			songs[#songs+1] = song
+
+			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then
+					songs[#songs+1] = song
+					break
+				end
+			end
 		end
 	end
 

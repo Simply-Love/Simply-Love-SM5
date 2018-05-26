@@ -105,7 +105,14 @@ local t = Def.ActorFrame {
 	end,
 	SwitchFocusToSingleSongMessageCommand=function(self)
 
-		local steps = SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )
+		local steps = {}
+		-- prune out charts whose meter exceeds the specified max
+		for chart in ivalues(SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )) do
+			if chart:GetMeter() <= ThemePrefs.Get("CasualMaxMeter") then
+				steps[#steps+1] = chart
+			end
+		end
+
 		OptionRows[1].choices = steps
 
 		for pn in ivalues(Players) do
