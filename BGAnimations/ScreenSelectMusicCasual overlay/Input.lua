@@ -36,6 +36,8 @@ local SwitchInputFocus = function(button)
 	end
 end
 
+-- determine whether all human players are done selecting song options
+-- and have their cursors at the glowing green START button
 local AllPlayersAreAtLastRow = function()
 	for player in ivalues(Players) do
 		if ActiveOptionRow[player] ~= #OptionRows then
@@ -45,6 +47,7 @@ local AllPlayersAreAtLastRow = function()
 	return true
 end
 
+-- calls needed to close the current group folder and return to choosing a group
 local CloseCurrentFolder = function()
 	t.Enabled = false
 	t.WheelWithFocus.container:queuecommand("Hide")
@@ -63,7 +66,7 @@ t.Init = function()
 	-- initialize so that GroupWheel has focus when the screen loads
 	t.WheelWithFocus = GAMESTATE:GetCurrentSong() and SongWheel or GroupWheel
 
-	-- table that P1 and P2's currently active option row (1 if hidden)
+	-- table that stores P1 and P2's currently active optionrow
 	ActiveOptionRow = {}
 
 	for pn in ivalues(Players) do
@@ -196,9 +199,7 @@ t.Handler = function(event)
 				end
 
 				-- if all available players are done selecting options, animate cursors
-				if GAMESTATE:IsHumanPlayer(PLAYER_1) and not GAMESTATE:IsHumanPlayer(PLAYER_2) and ActiveOptionRow[PLAYER_1] == #OptionRows
-				or GAMESTATE:IsHumanPlayer(PLAYER_2) and not GAMESTATE:IsHumanPlayer(PLAYER_1) and ActiveOptionRow[PLAYER_2] == #OptionRows
-				or ActiveOptionRow[PLAYER_1] == #OptionRows and ActiveOptionRow[PLAYER_2] == #OptionRows then
+				if AllPlayersAreAtLastRow() then
 					MESSAGEMAN:Broadcast("BothPlayersAreReady")
 				end
 
