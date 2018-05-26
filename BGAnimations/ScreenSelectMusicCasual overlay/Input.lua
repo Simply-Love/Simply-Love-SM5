@@ -195,8 +195,10 @@ t.Handler = function(event)
 					t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):playcommand("ExitRow", {PlayerNumber=event.PlayerNumber})
 				end
 
-				-- if both players are done selecting options, animate both players' cusors
-				if ActiveOptionRow[PLAYER_1] == #OptionRows and ActiveOptionRow[PLAYER_2] == #OptionRows then
+				-- if all available players are done selecting options, animate cursors
+				if GAMESTATE:IsHumanPlayer(PLAYER_1) and not GAMESTATE:IsHumanPlayer(PLAYER_2) and ActiveOptionRow[PLAYER_1] == #OptionRows
+				or GAMESTATE:IsHumanPlayer(PLAYER_2) and not GAMESTATE:IsHumanPlayer(PLAYER_1) and ActiveOptionRow[PLAYER_2] == #OptionRows
+				or ActiveOptionRow[PLAYER_1] == #OptionRows and ActiveOptionRow[PLAYER_2] == #OptionRows then
 					MESSAGEMAN:Broadcast("BothPlayersAreReady")
 				end
 

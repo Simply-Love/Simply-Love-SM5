@@ -144,12 +144,13 @@ local t = Def.ActorFrame {
 
 	SongWheel:create_actors( "SongWheel", row.how_many * col.how_many, song_mt, 0, 0),
 
-	-- SongHeader needs to be over the SongWheel but under the GroupWheel
+	-- SongHeader needs to be over the SongWheel (so that song jackets scroll under it)
+	-- but under the GroupWheel (so that the chosen Group folder can tween up to be on top of it)
 	LoadActor("./SongHeader.lua", row),
 
 	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0),
 
-	-- we want the GroupHeader drawn over the GroupWheel so that Group folder scroll underneath it
+	-- we want the GroupHeader drawn over the GroupWheel so that Group folders scroll under it
 	LoadActor("./GroupHeader.lua", row),
 
 	StandardDecorationFromFile( "Footer", "footer" ),
