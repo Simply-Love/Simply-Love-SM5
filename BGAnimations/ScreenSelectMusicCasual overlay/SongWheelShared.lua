@@ -33,6 +33,7 @@ af[#af+1] = Def.ActorFrame{
 				self:settext( params.song:GetDisplayFullTitle() )
 			end
 		end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
 		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
@@ -51,6 +52,7 @@ af[#af+1] = Def.ActorFrame{
 				self:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. params.song:GetDisplayArtist() )
 			end
 		end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
 		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
@@ -68,6 +70,7 @@ af[#af+1] = Def.ActorFrame{
 				self:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs() )
 			end
 		end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
 		SwitchFocusToSingleSongMessageCommand=cmd(diffuse,Color.Black),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
@@ -84,6 +87,7 @@ af[#af+1] = Def.ActorFrame{
 	 			self:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
 			end
  		end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
  		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
 		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
@@ -101,6 +105,7 @@ af[#af+1] = Def.ActorFrame{
 				self:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. params.song:GetGenre() )
 			end
 		end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
 		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
