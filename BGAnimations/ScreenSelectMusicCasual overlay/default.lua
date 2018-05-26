@@ -132,8 +132,8 @@ local t = Def.ActorFrame {
 
 	Def.Quad{
 		Name="SongWheelBackground",
-		InitCommand=cmd(zoomto, _screen.w, _screen.h/(row.how_many-2); diffuse, Color.Black; diffusealpha,1),
-		OnCommand=cmd(xy, _screen.cx, math.ceil((row.how_many-2)/2) * row.h + 10; finishtweening),
+		InitCommand=cmd(zoomto, _screen.w, _screen.h/(row.how_many-2); diffuse, Color.Black; diffusealpha,1; cropright,1),
+		OnCommand=cmd(xy, _screen.cx, math.ceil((row.how_many-2)/2) * row.h + 10; finishtweening; linear, 0.35; cropright,0),
 		SwitchFocusToSongsMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0.7),
 		SwitchFocusToGroupsMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0),
 		SwitchFocusToSingleSongMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,0),

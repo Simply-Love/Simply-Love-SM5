@@ -30,18 +30,12 @@ local song_mt = {
 
 				InitCommand=function(subself)
 					self.container = subself
-					-- subself:diffusealpha(0)
-					-- subself:x(col.w * self.column)
+					subself:diffusealpha(0)
 				end,
 				OnCommand=function(subself)
-					subself:finishtweening()
-
-					-- if self.changing_row <= 0 and self.changing_row ~= math.ceil(SongWheel.num_items/col.how_many) - 1 then
-					-- 	subself:sleep(0.3)
-					-- 	subself:linear(0.2)
-					-- 	subself:diffusealpha(1)
-					-- end
+					subself:finishtweening():sleep(0.25):linear(0.25):diffusealpha(1):queuecommand("PlayMusicPreview")
 				end,
+
 				StartCommand=function(subself)
 					-- slide the chosen Actor into place
 					if self.index == SongWheel:get_actor_item_at_focus_pos().index then
@@ -50,14 +44,12 @@ local song_mt = {
 
 					-- hide everything else
 					else
-						subself:linear(0.2)
-						subself:diffusealpha(0)
+						subself:visible(false)
 					end
 				end,
 				HideCommand=function(subself)
 					stop_music()
-					subself:linear(0.2)
-					subself:diffusealpha(0)
+					subself:visible(false):diffusealpha(0)
 				end,
 				UnhideCommand=function(subself)
 
@@ -68,20 +60,18 @@ local song_mt = {
 						MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 					end
 
-					-- only unhide the middle rows, of course
-					if self.changing_row > 0 and self.changing_row ~= math.ceil(SongWheel.num_items/col.how_many) - 1 then
-						subself:sleep(0.3)
-						subself:linear(0.2)
-						subself:diffusealpha(1)
-					end
+					subself:visible(true):sleep(0.3):linear(0.2):diffusealpha(1)
 				end,
 				SlideToTopCommand=cmd(linear,0.1; x, WideScale(col.w*0.7, col.w); linear, 0.1; y, _screen.cy - 80 ),
 				SlideBackIntoGridCommand=function(subself)
-					subself:linear( 0.1 )
-					subself:y( row.h * 2 )
-					subself:linear( 0.1 )
-					subself:x( col.w )
+					subself:linear( 0.1 ):y( row.h * 2 )
+					subself:linear( 0.1 ):x( col.w )
 				end,
+
+				Def.Actor{
+					InitCommand=function(subself) self.preview_music = subself end,
+					PlayMusicPreviewCommand=function(subself) play_sample_music() end,
+				},
 
 				-- AF for Banner and blinking Quad
 				Def.ActorFrame{
@@ -172,8 +162,7 @@ local song_mt = {
 								:y(-20):horizalign(left)
 						end,
 						GainFocusCommand=function(subself)
-							subself:diffusealpha(1):diffuse(Color.White):visible(true)
-								:x(80):zoom(0.8)
+							subself:diffusealpha(1):diffuse(Color.White):visible(true):x(80):zoom(0.8)
 						end,
 						LoseFocusCommand=function(subself)
 							subself:diffusealpha(0):visible(false):x(0)
@@ -187,8 +176,7 @@ local song_mt = {
 						Font="_miso",
 						InitCommand=function(subself)
 							self.bpm_bmt = subself
-							subself:zoom(0.65):diffuse(Color.White)
-								:xy(80, 18):horizalign(left)
+							subself:zoom(0.65):diffuse(Color.White):xy(80, 18):horizalign(left)
 						end,
 						GainFocusCommand=function(subself) subself:visible(true):diffuse(Color.White) end,
 						LoseFocusCommand=function(subself) subself:visible(false) end,
@@ -200,8 +188,7 @@ local song_mt = {
 						Font="_miso",
 						InitCommand=function(subself)
 							self.length_bmt = subself
-							subself:zoom(0.65):diffuse(Color.White)
-								:xy(80, 32):horizalign(left)
+							subself:zoom(0.65):diffuse(Color.White):xy(80, 32):horizalign(left)
 						end,
 						GainFocusCommand=function(subself) subself:visible(true):diffuse(Color.White) end,
 						LoseFocusCommand=function(subself) subself:visible(false) end,
@@ -230,15 +217,16 @@ local song_mt = {
 		transform = function(self, item_index, num_items, has_focus)
 
 			self.container:finishtweening()
+			stop_music()
 
 			if has_focus then
-				if self.song == "CloseThisFolder" then
-					stop_music()
-				else
+				if self.song ~= "CloseThisFolder" then
 					GAMESTATE:SetCurrentSong(self.song)
 					-- GetDisplayBPMs() relies on GAMESTATE:GetCurrentSong() which we just set
 					self.bpm_bmt:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs())
-					play_sample_music()
+
+					-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
+					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 
 					-- undo Truncate()
 					self.title_bmt:settext( self.song:GetDisplayFullTitle() )
@@ -255,9 +243,9 @@ local song_mt = {
 
 			-- handle row hiding
 			if self.changing_row <= 0 or self.changing_row == math.ceil(num_items/col.how_many) - 1 then
-				self.container:diffusealpha(0)
+				self.container:visible(false)
 			else
-				self.container:diffusealpha(1)
+				self.container:visible(true)
 			end
 
 			-- handle row shifting
@@ -268,7 +256,7 @@ local song_mt = {
 			-- top row
 			if item_index < focal_point_index  then
 				if item_index < focal_point_index - col.how_many then
-					self.container:y( 0 )
+					self.container:y( -100 )
 				else
 					self.container:y( row.h * 1 ):x( col.w * (focal_point_index-item_index) )
 				end
