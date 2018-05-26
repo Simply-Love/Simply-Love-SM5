@@ -146,12 +146,21 @@ local item_mt = {
 					InitCommand=function(subself) self.bmt = subself end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):diffuse(Color.Black):xy(150,-6):zoom(3)
+							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.Black)
+							if ThemePrefs.Get("RainbowMode") then subself:diffuse(Color.White) end
 						end
 					end,
 					GainFocusCommand=cmd(x, 0; horizalign, center; linear, 0.15; y,16; zoom,1.1),
 					LoseFocusCommand=cmd(x, 0; horizalign, center; linear, 0.15; y, 6; zoom, 1; diffuse, Color.White),
-					SlideToTopCommand=cmd(sleep, 0.3; diffuse, Color.Black; queuecommand, "SlideToTop2"),
+					SlideToTopCommand=function(subself)
+						subself:sleep(0.3)
+						if ThemePrefs.Get("RainbowMode") then
+							subself:diffuse(Color.White)
+						else
+							subself:diffuse(Color.Black)
+						end
+						subself:queuecommand("SlideToTop2")
+					end,
 					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3),
 					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,16; zoom, 1.1; diffuse, Color.White),
 				}

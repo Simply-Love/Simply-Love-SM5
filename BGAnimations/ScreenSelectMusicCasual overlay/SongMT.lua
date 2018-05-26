@@ -4,7 +4,7 @@ local TransitionTime = args[2]
 local row = args[3]
 local col = args[4]
 
-local max_chars = { title=32, artist=32, genre=40 }
+local max_chars = { title=28, artist=32, genre=40 }
 
 BitmapText.Truncate = function(bmt, kind)
 	local text = bmt:GetText()
@@ -156,7 +156,7 @@ local song_mt = {
 
 							if self.song == "CloseThisFolder"
 							then subself:linear(0.2):y(0):zoom(0.45)
-							else subself:linear(0.2):y(40):zoom(0.8)
+							else subself:linear(0.2):y(40):zoom(0.725)
 							end
 						end,
 						SlideToTopCommand=cmd(horizalign, left; diffuse, Color.Black),

@@ -8,7 +8,15 @@ local af = Def.ActorFrame{
 
 	Def.Quad{
 		Name="SongWheelTopBorder",
-		InitCommand=cmd(diffuse, color("#999999"); zoomto,_screen.w, 32; valign, 0),
+		InitCommand=function(self)
+			if ThemePrefs.Get("RainbowMode") then
+				self:diffuse(color("#000000dd"))
+			else
+				self:diffuse(color("#999999"))
+			end
+
+			self:zoomto(_screen.w, 32):valign(0)
+		end,
 		OnCommand=function(self) self:xy( _screen.cx, 0 ) end,
 		HideCommand=cmd(zoomtoheight, 0),
 		ShowCommand=cmd(sleep,0.2; zoomtoheight, 32),
