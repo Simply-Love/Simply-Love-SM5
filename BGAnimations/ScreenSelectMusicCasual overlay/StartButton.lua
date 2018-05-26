@@ -1,6 +1,6 @@
 return Def.ActorFrame{
 	Name="StartButton",
-	OnCommand=cmd(diffusealpha, 0; xy,_screen.cx, _screen.h-76),
+	InitCommand=cmd(diffusealpha, 0; xy,_screen.cx, _screen.h-76),
 	SwitchFocusToSongsMessageCommand=cmd(linear,0.1; diffusealpha,0),
 	SwitchFocusToGroupsMessageCommand=cmd(linear,0.1; diffusealpha,0),
 	SwitchFocusToSingleSongMessageCommand=cmd(sleep,0.3; linear,0.1; diffusealpha,1),

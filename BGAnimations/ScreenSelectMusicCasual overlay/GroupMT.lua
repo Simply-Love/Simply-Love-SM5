@@ -44,8 +44,8 @@ local item_mt = {
 			self.index = item_index
 			self.column = ((item_index-1) % col.how_many) + 1
 
-			self.static_row = math.ceil((item_index/col.how_many)-1) % row.how_many + 1
-			self.changing_row = self.static_row
+			-- self.static_row = math.ceil((item_index/col.how_many)-1) % row.how_many + 1
+			-- self.changing_row = self.static_row
 
 			local af = Def.ActorFrame{
 				Name=name,
@@ -53,8 +53,7 @@ local item_mt = {
 				InitCommand=function(subself)
 					self.container = subself
 
-					subself:x(col.w * self.column)
-					subself:y(row.h * (self.changing_row-1))
+					subself:xy(_screen.cx, _screen.cy)
 
 					if GAMESTATE:GetCurrentSong() then
 
@@ -67,24 +66,18 @@ local item_mt = {
 							switch_to_songs(GAMESTATE:GetCurrentSong():GetGroupName())
 							MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 						end
-					else
-						-- hide the outmost two rows
-						if self.changing_row <= 0 or self.changing_row == math.ceil(GroupWheel.num_items/col.how_many) - 1 then
-							subself:diffusealpha(0)
-						end
 					end
 				end,
 				OnCommand=function(subself) subself:finishtweening() end,
 
 				StartCommand=function(subself)
-					-- hide everything but the chosen Actor
-					if self.index ~= GroupWheel:get_actor_item_at_focus_pos().index then
-						subself:linear(0.2)
-						subself:diffusealpha(0)
-					else
+					if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
 						-- slide the chosen Actor into place
 						subself:queuecommand("SlideToTop")
 						MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+					else
+						-- hide everything else
+						subself:linear(0.2):diffusealpha(0)
 					end
 				end,
 				UnhideCommand=function(subself)
@@ -93,22 +86,16 @@ local item_mt = {
 					if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
 						subself:playcommand("SlideBackIntoGrid")
 						MESSAGEMAN:Broadcast("SwitchFocusToGroups")
+					else
+						subself:sleep(0.25):linear(0.2):diffusealpha(1)
 					end
-
-					-- only unhide the middle rows, of course
-					if self.changing_row > 0 and self.changing_row ~= math.ceil(GroupWheel.num_items/col.how_many) - 1 then
-						subself:sleep(0.3)
-						subself:linear(0.2)
-						subself:diffusealpha(1)
-					end
-
 				end,
 				GainFocusCommand=cmd(linear,0.2; zoom,0.8),
 				LoseFocusCommand=cmd(linear,0.2; zoom,0.6),
 				SlideToTopCommand=cmd( linear, 0.12; y, 35; zoom, 0.35; linear, 0.2; x, 70; queuecommand, "Switch" ),
 				SlideBackIntoGridCommand=function(subself)
-					subself:linear( 0.2 ):x( self.column * col.w )
-					subself:linear( 0.12 ):zoom( 0.8 ):y( row.h * self.changing_row )
+					subself:linear( 0.2 ):x( _screen.cx )
+						:linear( 0.12 ):zoom( 0.9 ):y( _screen.cy )
 				end,
 				SwitchCommand=function(subself) switch_to_songs(self.groupName) end,
 
@@ -124,11 +111,8 @@ local item_mt = {
 
 				Def.Banner{
 					Name="Banner",
-					InitCommand=function(subself)
-						self.banner = subself
-					end,
-					OnCommand=cmd(playcommand,"Refresh"),
-					RefreshCommand=cmd(y,-30; setsize,418,164; zoom, 0.48),
+					InitCommand=function(subself) self.banner = subself end,
+					OnCommand=cmd(y,-30; setsize,418,164; zoom, 0.48),
 				},
 
 
@@ -137,13 +121,16 @@ local item_mt = {
 					InitCommand=cmd(zoom,0.75; valign,1),
 					OnCommand=cmd(y, 64),
 					GainFocusCommand=cmd( diffusetopedge, color("#eebc54"); diffusebottomedge, color("#7c5505"); decelerate,0.33; rotationx,50; ),
-					LoseFocusCommand=cmd( diffusebottomedge, color("#6d6e73"); diffusetopedge, color("#6d6e73"); decelerate,0.15; rotationx,0; ),
+					LoseFocusCommand=cmd( diffusebottomedge, color("#3d3e43"); diffusetopedge, color("#8d8e93"); decelerate,0.15; rotationx,0; ),
 				},
 
 				-- group text
 				Def.BitmapText{
 					Font="_miso",
-					InitCommand=function(subself) self.bmt = subself end,
+					InitCommand=function(subself)
+						self.bmt = subself
+						subself:wrapwidthpixels(150):vertspacing(-4)
+					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
 							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.Black)
@@ -171,23 +158,27 @@ local item_mt = {
 
 		transform = function(self, item_index, num_items, has_focus)
 
-			if Input.WheelWithFocus ~= GroupWheel then return end
-
+			local offset = item_index - math.floor(num_items/2)
+			local zm = scale(math.abs(offset),0,math.floor(num_items/2),0.9,0.05 )
+			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()
 
-			if has_focus then
-				self.container:playcommand("GainFocus")
-			else
-				self.container:playcommand("LoseFocus")
-			end
+			-- if we are initializing the screen, the focus starts (should start) on the SongWheel
+			-- so we want to position all the folders "behind the scenes", and then call Init
+			-- on the group folder with focus so that it is positioned correctly at the top
+			if Input.WheelWithFocus ~= GroupWheel then
+				self.container:x( offset * col.w * zm + _screen.cx ):z( -1 * math.abs(offset) ):zoom( zm ):rotationy( ry )
+				if has_focus then self.container:playcommand("Init") end
 
-			if self.changing_row <= 0 or self.changing_row == math.ceil(num_items/col.how_many) - 1 then
-				self.container:diffusealpha(0)
+			-- otherwise, we are performing a normal transform
 			else
-				self.container:diffusealpha(1)
+				if has_focus then
+					self.container:playcommand("GainFocus")
+				else
+					self.container:playcommand("LoseFocus")
+				end
+				self.container:x( offset * col.w * zm + _screen.cx ):z( -1 * math.abs(offset) ):zoom( zm ):rotationy( ry )
 			end
-
-			self.container:y( row.h * self.changing_row )
 		end,
 
 		set = function(self, groupName)
@@ -200,20 +191,6 @@ local item_mt = {
 			-- handle banner
 			self.banner:LoadFromSongGroup(self.groupName)
 			self.banner:playcommand( "Refresh" )
-
-			-- determine if we have row shifting to do
-			local ActiveActor = GroupWheel:get_actor_item_at_focus_pos()
-
-			-- we'll only get into this if statement once...
-			if GroupWheel.ActiveRow ~= ActiveActor.static_row then
-				local change = GroupWheel.ActiveRow - ActiveActor.static_row
-				GroupWheel.ActiveRow = ActiveActor.static_row
-
-				-- ... so update every item's changing_row attribute now for the transform that comes next
-				for i=1,GroupWheel.num_items do
-					GroupWheel.items[i].changing_row = (GroupWheel.items[i].changing_row + change) % row.how_many
-				end
-			end
 		end
 	}
 }

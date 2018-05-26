@@ -139,7 +139,7 @@ local t = Def.ActorFrame {
 	-- but under the GroupWheel (so that the chosen Group folder can tween up to be on top of it)
 	LoadActor("./SongHeader.lua", row),
 
-	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0),
+	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0, true),
 
 	-- we want the GroupHeader drawn over the GroupWheel so that Group folders scroll under it
 	LoadActor("./GroupHeader.lua", row),
