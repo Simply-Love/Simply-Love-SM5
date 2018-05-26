@@ -13,13 +13,34 @@ af[#af+1] = Def.Quad{
 	SwitchFocusToSingleSongMessageCommand=cmd(smooth,0.3; cropright,1),
 }
 
+-- glowing border top
+af[#af+1] = Def.Quad{
+	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2)*-0.5; faderight, 10),
+	OnCommand=cmd(sleep,0.3; diffusealpha, 0.65; queuecommand, "FadeMe"),
+	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,3; faderight, 10; diffusealpha,0.65; queuecommand, "FadeMe"),
+	SwitchFocusToGroupsMessageCommand=cmd(visible, false),
+	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
+	SwitchFocusToSongsMessageCommand=cmd(visible,true)
+}
+
+-- glowing border bottom
+af[#af+1] = Def.Quad{
+	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2) * 0.5; faderight, 10),
+	OnCommand=cmd(sleep,0.3; diffusealpha, 0.65; queuecommand, "FadeMe"),
+	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,3; faderight, 10; diffusealpha,0.65; queuecommand, "FadeMe"),
+	SwitchFocusToGroupsMessageCommand=cmd(visible, false),
+	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
+	SwitchFocusToSongsMessageCommand=cmd(visible,true)
+}
+
+
 af[#af+1] = Def.ActorFrame{
 	Name="CurrentSongInfoAF",
 	InitCommand=function(self) self:y( row.h * 2 + 10 ):x( col.w + 80):diffusealpha(0) end,
 	OnCommand=function(self) self:sleep(0.15):linear(0.15):diffusealpha(1) end,
 	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
 	SwitchFocusToSongsMessageCommand=function(self) self:visible(true):linear(0.12):zoom(1):y(row.h*2+10):x(col.w+80) end,
-	SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.12):zoom(1):xy(col.w+25, row.h+30) end,
+	SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.12):zoom(1):xy(col.w+WideScale(20,65), row.h+30) end,
 
 	-- title
 	Def.BitmapText{

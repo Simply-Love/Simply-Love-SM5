@@ -100,7 +100,7 @@ local item_mt = {
 				SwitchCommand=function(subself) switch_to_songs(self.groupName) end,
 
 
-
+				-- back of folder
 				LoadActor("./img/folderBack.png")..{
 					Name="back",
 					InitCommand=cmd(zoom,0.75),
@@ -109,13 +109,14 @@ local item_mt = {
 					LoseFocusCommand=cmd(diffuse, color("#4e4f54"))
 				},
 
+				-- group banner
 				Def.Banner{
 					Name="Banner",
 					InitCommand=function(subself) self.banner = subself end,
 					OnCommand=cmd(y,-30; setsize,418,164; zoom, 0.48),
 				},
 
-
+				-- front of folder
 				LoadActor("./img/folderFront.png")..{
 					Name="front",
 					InitCommand=cmd(zoom,0.75; valign,1),
@@ -137,8 +138,8 @@ local item_mt = {
 							if ThemePrefs.Get("RainbowMode") then subself:diffuse(Color.White) end
 						end
 					end,
-					GainFocusCommand=cmd(x, 0; horizalign, center; linear, 0.15; y,16; zoom,1.1),
-					LoseFocusCommand=cmd(x, 0; horizalign, center; linear, 0.15; y, 6; zoom, 1; diffuse, Color.White),
+					GainFocusCommand=cmd(x, 0 horizalign, center; linear, 0.15; y, 20; zoom,1.1),
+					LoseFocusCommand=cmd(xy, 0, 6; horizalign, center; linear, 0.15; zoom, 1; diffuse, Color.White),
 					SlideToTopCommand=function(subself)
 						subself:sleep(0.3)
 						if ThemePrefs.Get("RainbowMode") then
@@ -149,7 +150,7 @@ local item_mt = {
 						subself:queuecommand("SlideToTop2")
 					end,
 					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3),
-					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,16; zoom, 1.1; diffuse, Color.White),
+					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,20; zoom, 1.1; diffuse, Color.White),
 				}
 			}
 
@@ -189,8 +190,7 @@ local item_mt = {
 			self.bmt:settext(self.groupName)
 
 			-- handle banner
-			self.banner:LoadFromSongGroup(self.groupName)
-			self.banner:playcommand( "Refresh" )
+			self.banner:LoadFromSongGroup(self.groupName):playcommand("On")
 		end
 	}
 }
