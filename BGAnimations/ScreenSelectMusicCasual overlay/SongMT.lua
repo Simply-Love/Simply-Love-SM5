@@ -126,7 +126,7 @@ local song_mt = {
 					Font="_miso",
 					InitCommand=function(subself)
 						self.title_bmt = subself
-						subself:zoom(0.8):diffuse(Color.White):y(40):zoom(0.725)
+						subself:zoom(0.8):diffuse(Color.White)
 					end,
 					GainFocusCommand=function(subself)
 						if self.song == "CloseThisFolder" then
@@ -137,9 +137,11 @@ local song_mt = {
 					end,
 					LoseFocusCommand=function(subself)
 						if self.song == "CloseThisFolder" then
-							subself:y(40):zoom(0.8)
+							subself:zoom(0.8)
+						else
+							subself:zoom(0.725)
 						end
-						subself:visible(true)
+						subself:y(40):visible(true)
 					end,
 				},
 			}
@@ -225,7 +227,7 @@ local song_mt = {
 
 				-- we are passed in a Song object as info
 				self.song = song
-				self.title_bmt:settext( self.song:GetDisplayFullTitle() ):Truncate("title")
+				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate("title")
 
 				if song:HasJacket() then
 					imgPath = song:GetJacketPath()

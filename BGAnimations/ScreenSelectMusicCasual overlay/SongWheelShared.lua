@@ -40,18 +40,36 @@ af[#af+1] = Def.ActorFrame{
 	OnCommand=function(self) self:sleep(0.15):linear(0.15):diffusealpha(1) end,
 	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
 	SwitchFocusToSongsMessageCommand=function(self) self:visible(true):linear(0.12):zoom(1):y(row.h*2+10):x(col.w+80) end,
-	SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.12):zoom(1):xy(col.w+WideScale(20,65), row.h+30) end,
+	SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.12):zoom(0.9):xy(col.w+WideScale(20,65), row.h+30) end,
 
-	-- title
+	-- main title
 	Def.BitmapText{
 		Font="_miso",
 		Name="Title",
 		InitCommand=function(self)
-			self:zoom(1.2):diffuse(Color.White):horizalign(left):y(-40)
+			self:zoom(1.2):diffuse(Color.White):horizalign(left):y(-50):maxwidth(300)
 		end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
-				self:settext( params.song:GetDisplayFullTitle() )
+				self:settext( params.song:GetDisplayMainTitle() )
+			end
+		end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
+		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
+		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
+		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
+	},
+
+	-- sub title (just according to keikaku)
+	Def.BitmapText{
+		Font="_miso",
+		Name="Title",
+		InitCommand=function(self)
+			self:zoom(0.8):diffuse(Color.White):horizalign(left):y(-30):maxwidth(300)
+		end,
+		CurrentSongChangedMessageCommand=function(self, params)
+			if params.song then
+				self:settext( params.song:GetDisplaySubTitle() )
 			end
 		end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
@@ -65,8 +83,7 @@ af[#af+1] = Def.ActorFrame{
 		Font="_miso",
 		Name="Artist",
 		InitCommand=function(self)
-			self:zoom(0.8):diffuse(Color.White)
-				:y(-20):horizalign(left)
+			self:zoom(0.8):diffuse(Color.White):y(-2):horizalign(left)
 		end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
@@ -84,7 +101,7 @@ af[#af+1] = Def.ActorFrame{
 		Font="_miso",
 		Name="BPM",
 		InitCommand=function(self)
-			self:zoom(0.65):diffuse(Color.White):y(18):horizalign(left)
+			self:zoom(0.65):diffuse(Color.White):y(28):horizalign(left)
 		end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
@@ -101,7 +118,7 @@ af[#af+1] = Def.ActorFrame{
 		Font="_miso",
 		Name="Length",
 		InitCommand=function(self)
-			self:zoom(0.65):diffuse(Color.White):y(32):horizalign(left)
+			self:zoom(0.65):diffuse(Color.White):y(42):horizalign(left)
 		end,
  		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
@@ -118,8 +135,7 @@ af[#af+1] = Def.ActorFrame{
 		Font="_miso",
 		Name="Genre",
 		InitCommand=function(self)
-			self:zoom(0.65):diffuse(Color.White)
-				:y(46):horizalign(left)
+			self:zoom(0.65):diffuse(Color.White):y(56):horizalign(left)
 		end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
