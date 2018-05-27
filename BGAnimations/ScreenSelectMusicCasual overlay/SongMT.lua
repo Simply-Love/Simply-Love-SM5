@@ -6,10 +6,10 @@ local col = args[4]
 
 local max_chars = { title=28, artist=32, genre=40 }
 
-BitmapText.Truncate = function(bmt, kind)
+BitmapText.Truncate = function(bmt, m)
 	local text = bmt:GetText()
-	if text:len() <= max_chars[kind] then return end
-	bmt:settext( text:sub(1, max_chars[kind]) .. "…" )
+	if text:len() <= m then return end
+	bmt:settext( text:sub(1, m) .. "…" )
 end
 
 local song_mt = {
@@ -227,7 +227,7 @@ local song_mt = {
 
 				-- we are passed in a Song object as info
 				self.song = song
-				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate("title")
+				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars.title)
 
 				if song:HasJacket() then
 					imgPath = song:GetJacketPath()

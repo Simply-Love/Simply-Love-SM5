@@ -7,6 +7,8 @@ local row = args[5]
 local col = args[6]
 local Input = args[7]
 
+local max_chars = 64
+
 local switch_to_songs = function(group_name)
 	local songs = {}
 	local current_song = GAMESTATE:GetCurrentSong()
@@ -134,10 +136,13 @@ local item_mt = {
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.Black)
+							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.Black):wrapwidthpixels(480):playcommand("Untruncate")
 							if ThemePrefs.Get("RainbowMode") then subself:diffuse(Color.White) end
 						end
 					end,
+					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
+					TruncateCommand=function(subself) subself:settext(self.groupName):Truncate(max_chars) end,
+
 					GainFocusCommand=cmd(x, 0 horizalign, center; linear, 0.15; y, 20; zoom,1.1),
 					LoseFocusCommand=cmd(xy, 0, 6; horizalign, center; linear, 0.15; zoom, 1; diffuse, Color.White),
 					SlideToTopCommand=function(subself)
@@ -149,8 +154,8 @@ local item_mt = {
 						end
 						subself:queuecommand("SlideToTop2")
 					end,
-					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3),
-					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,20; zoom, 1.1; diffuse, Color.White),
+					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3; wrapwidthpixels, 480; playcommand, "Untruncate"),
+					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,20; zoom, 1.1; diffuse, Color.White; wrapwidthpixels, 150; playcommand, "Truncate"),
 				}
 			}
 
@@ -187,7 +192,7 @@ local item_mt = {
 			self.groupName = groupName
 
 			-- handle text
-			self.bmt:settext(self.groupName)
+			self.bmt:settext(self.groupName):Truncate(max_chars)
 
 			-- handle banner
 			self.banner:LoadFromSongGroup(self.groupName):playcommand("On")
