@@ -75,6 +75,11 @@ local t = Def.ActorFrame {
 		self:queuecommand("EnableInput")
 	end,
 	CodeMessageCommand=function(self, params)
+		-- I'm using Metrics-based code detection because the engine is already good at handling
+		-- simultaneous button presses (CancelSingleSong when ThreeKeyNavigation=1),
+		-- as well as long input patterns (Exit from EventMode) and I see no need to
+		-- reinvent that funtionality for the Lua InputCallback that I'm using otherwise.
+
 		if params.Name == "Exit" then
 			if PREFSMAN:GetPreference("EventMode") then
 				SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
@@ -86,6 +91,12 @@ local t = Def.ActorFrame {
 					SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM"):StartTransitioningScreen("SM_GoToNextScreen")
 				end
 			end
+		end
+		if params.Name == "CancelSingleSong" then
+			-- if focus is not on OptionsWheel, we don't want to do anything
+			if Input.WheelWithFocus ~= OptionsWheel then return end
+			-- otherwise, run the function to cancel this single song choice
+			Input.CancelSongChoice()
 		end
 	end,
 
@@ -137,7 +148,7 @@ local t = Def.ActorFrame {
 	-- we want the GroupHeader drawn over the GroupWheel so that Group folders scroll under it
 	LoadActor("./GroupHeader.lua", row),
 
-	StandardDecorationFromFile( "Footer", "footer" ),
+	LoadActor("FooterHelpText.lua"),
 }
 
 -- Add player options ActorFrames to our primary ActorFrame
@@ -154,5 +165,9 @@ for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		t[#t+1] = OptionsWheel[pn][i]:create_actors(ToEnumShortString(pn).."OptionWheel"..i, 3, optionrow_item_mt, WideScale(30, 130) + 140 * x_offset, _screen.cy - 5 + i * 62)
 	end
 end
+
+-- FIXME: This is dumb.  Add the player option StartButton visual last so it
+--  draws over everything else and we can hide cusors behind it when needed...
+t[#t+1] = LoadActor("./StartButton.lua")
 
 return t

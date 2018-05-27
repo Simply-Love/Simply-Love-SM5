@@ -76,6 +76,26 @@ t.Init = function()
 	for pn in ivalues(Players) do
 		ActiveOptionRow[pn] = 1
 	end
+
+	t.CancelSongChoice = function()
+		t.Enabled = false
+		for pn in ivalues(Players) do
+
+			-- reset the ActiveOptionRow for this player
+			ActiveOptionRow[pn] = 1
+			-- hide this player's OptionsWheel
+			t.WheelWithFocus[pn].container:playcommand("Hide")
+			-- hide this player's OptionRows
+			for i=1,#OptionRows do
+				t.WheelWithFocus[pn][i].container:queuecommand("Hide")
+			end
+			-- ensure that this player's OptionsWheel understands it has been reset
+			t.WheelWithFocus[pn]:scroll_to_pos(1)
+		end
+		MESSAGEMAN:Broadcast("SingleSongCanceled")
+		t.WheelWithFocus = SongWheel
+		t.WheelWithFocus.container:queuecommand("Unhide")
+	end
 end
 
 t.Handler = function(event)
@@ -206,23 +226,7 @@ t.Handler = function(event)
 				end
 
 			elseif event.GameButton == "Select" then
-
-				t.Enabled = false
-				for pn in ivalues(Players) do
-
-					ActiveOptionRow[pn] = 1
-
-					t.WheelWithFocus[pn].container:playcommand("Hide")
-
-					for i=1,#OptionRows do
-						t.WheelWithFocus[pn][i].container:queuecommand("Hide")
-					end
-
-					t.WheelWithFocus[pn]:scroll_to_pos(1)
-				end
-				MESSAGEMAN:Broadcast("SingleSongCanceled")
-				SwitchInputFocus(event.GameButton)
-				t.WheelWithFocus.container:queuecommand("Unhide")
+				t.CancelSongChoice()
 			end
 		end
 	end
