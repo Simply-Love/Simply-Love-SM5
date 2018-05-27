@@ -126,7 +126,7 @@ local song_mt = {
 					Font="_miso",
 					InitCommand=function(subself)
 						self.title_bmt = subself
-						subself:zoom(0.8):diffuse(Color.White)
+						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75)
 					end,
 					GainFocusCommand=function(subself)
 						if self.song == "CloseThisFolder" then

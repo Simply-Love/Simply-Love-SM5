@@ -26,11 +26,8 @@ local optionrow_mt = {
 					Font="_miso",
 					InitCommand=function(subself)
 						self.helptext = subself
-						subself:horizalign(left)
-						-- subself:zoom(0.4)
-						subself:zoom(0.9)
-						subself:diffuse(Color.Black)
-						subself:diffusealpha(0)
+						subself:horizalign(left):zoom(0.9)
+							:diffuse(ThemePrefs.Get("RainbowMode") and Color.White or Color.Black):diffusealpha(0)
 					end,
 					OnCommand=cmd(sleep, 0.13; linear, 0.05; ),
 					GainFocusCommand=cmd(diffusealpha, 0.85 ),
@@ -41,21 +38,16 @@ local optionrow_mt = {
 				Def.Quad{
 					InitCommand=function(subself)
 						self.bgQuad = subself
-						subself:horizalign( left )
-						subself:zoomto( 200, 28 )
-						subself:diffuse( Color.White )
-						subself:diffusealpha( 0 )
+						subself:horizalign(left):zoomto(200, 28):diffuse(Color.White):diffusealpha(0)
 					end,
 					OnCommand=cmd(y, 26),
-					GainFocusCommand=cmd( diffusealpha,1 ),
-					LoseFocusCommand=cmd( diffusealpha,0.5 ),
+					GainFocusCommand=cmd(diffusealpha, 1),
+					LoseFocusCommand=cmd(diffusealpha, 0.5),
 				},
 
 				Def.ActorFrame{
 					Name="Cursor",
-					InitCommand=function(subself)
-						self.cursor = subself
-					end,
+					InitCommand=function(subself) self.cursor = subself end,
 					OnCommand=function(self) self:y(26) end,
 					LoseFocusCommand=cmd(diffusealpha, 0),
 					GainFocusCommand=cmd(diffusealpha, 1),
@@ -76,12 +68,19 @@ local optionrow_mt = {
 
 						LoadActor("./img/arrow_glow.png")..{
 							Name="RightArrowGlow",
-							InitCommand=cmd(zoom,0.15 ),
-							OnCommand=cmd( diffuseshift; effectcolor1, color("#00000000"); effectcolor2, color("#000000ff"))
+							InitCommand=cmd(zoom,0.15),
+							OnCommand=function(subself)
+								subself:diffuseshift()
+								if ThemePrefs.Get("RainbowMode") then
+									subself:effectcolor1(1,1,1,0):effectcolor2(1,1,1,1)
+								else
+									subself:effectcolor1(0,0,0,0):effectcolor2(0,0,0,1)
+								end
+							end
 						},
 						LoadActor("./img/arrow.png")..{
 							Name="RightArrow",
-							InitCommand=cmd(zoom,0.15; diffuse, Color.Black;  ),
+							InitCommand=cmd(zoom,0.15; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ),
 						}
 					},
 
@@ -89,12 +88,10 @@ local optionrow_mt = {
 					Def.ActorFrame{
 						Name="LeftArrow",
 						OnCommand=cmd(x, -16),
-						PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00");),
+						PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00")),
 						ExitRowCommand=function(self, params)
 							self:y(-15)
-							if params.PlayerNumber == PLAYER_1 then
-								self:x(180)
-							end
+							if params.PlayerNumber == PLAYER_1 then self:x(180) end
 						end,
 						SingleSongCanceledMessageCommand=cmd(rotationz, 0),
 						BothPlayersAreReadyMessageCommand=cmd(sleep,0.2;linear,0.2; rotationz, 180),
@@ -102,11 +99,18 @@ local optionrow_mt = {
 						LoadActor("./img/arrow_glow.png")..{
 							Name="LeftArrowGlow",
 							InitCommand=cmd(zoom,0.15; rotationz, 180),
-							OnCommand=cmd(diffuseshift; effectcolor1, color("#00000000"); effectcolor2, color("#000000ff");)
+							OnCommand=function(subself)
+								subself:diffuseshift()
+								if ThemePrefs.Get("RainbowMode") then
+									subself:effectcolor1(1,1,1,0):effectcolor2(1,1,1,1)
+								else
+									subself:effectcolor1(0,0,0,0):effectcolor2(0,0,0,1)
+								end
+							end
 						},
 						LoadActor("./img/arrow.png")..{
 							Name="LeftArrow",
-							InitCommand=cmd(zoom,0.15; diffuse, Color.Black; rotationz, 180),
+							InitCommand=cmd(zoom,0.15; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black; rotationz, 180),
 
 						}
 					}

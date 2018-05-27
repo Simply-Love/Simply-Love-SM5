@@ -47,7 +47,7 @@ af[#af+1] = Def.ActorFrame{
 		Font="_miso",
 		Name="Title",
 		InitCommand=function(self)
-			self:zoom(1.2):diffuse(Color.White):horizalign(left):y(-50):maxwidth(300)
+			self:zoom(1.3):diffuse(Color.White):horizalign(left):y(-45):maxwidth(300)
 		end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
@@ -56,25 +56,7 @@ af[#af+1] = Def.ActorFrame{
 		end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
-	},
-
-	-- sub title (just according to keikaku)
-	Def.BitmapText{
-		Font="_miso",
-		Name="Title",
-		InitCommand=function(self)
-			self:zoom(0.8):diffuse(Color.White):horizalign(left):y(-30):maxwidth(300)
-		end,
-		CurrentSongChangedMessageCommand=function(self, params)
-			if params.song then
-				self:settext( params.song:GetDisplaySubTitle() )
-			end
-		end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
+		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 	},
 
@@ -83,7 +65,7 @@ af[#af+1] = Def.ActorFrame{
 		Font="_miso",
 		Name="Artist",
 		InitCommand=function(self)
-			self:zoom(0.8):diffuse(Color.White):y(-2):horizalign(left)
+			self:zoom(0.85):diffuse(Color.White):y(-20):horizalign(left)
 		end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
@@ -92,61 +74,65 @@ af[#af+1] = Def.ActorFrame{
 		end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
+		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 	},
 
-	-- BPM
-	Def.BitmapText{
-		Font="_miso",
-		Name="BPM",
-		InitCommand=function(self)
-			self:zoom(0.65):diffuse(Color.White):y(28):horizalign(left)
-		end,
-		CurrentSongChangedMessageCommand=function(self, params)
-			if params.song then
-				self:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs() )
-			end
-		end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse,Color.Black),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
-	},
-	-- length
-	Def.BitmapText{
-		Font="_miso",
-		Name="Length",
-		InitCommand=function(self)
-			self:zoom(0.65):diffuse(Color.White):y(42):horizalign(left)
-		end,
- 		CurrentSongChangedMessageCommand=function(self, params)
-			if params.song then
-	 			self:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
-			end
- 		end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
- 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
-	},
-	-- genre
-	Def.BitmapText{
-		Font="_miso",
-		Name="Genre",
-		InitCommand=function(self)
-			self:zoom(0.65):diffuse(Color.White):y(56):horizalign(left)
-		end,
-		CurrentSongChangedMessageCommand=function(self, params)
-			if params.song then
-				self:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. params.song:GetGenre() )
-			end
-		end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.Black),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse,Color.White)
-	},
+	Def.ActorFrame{
+		InitCommand=function(self) self:y(25) end,
+
+		-- BPM
+		Def.BitmapText{
+			Font="_miso",
+			Name="BPM",
+			InitCommand=function(self)
+				self:zoom(0.65):diffuse(Color.White):y(0):horizalign(left)
+			end,
+			CurrentSongChangedMessageCommand=function(self, params)
+				if params.song then
+					self:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs() )
+				end
+			end,
+			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
+			CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
+			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
+		},
+		-- length
+		Def.BitmapText{
+			Font="_miso",
+			Name="Length",
+			InitCommand=function(self)
+				self:zoom(0.65):diffuse(Color.White):y(14):horizalign(left)
+			end,
+	 		CurrentSongChangedMessageCommand=function(self, params)
+				if params.song then
+		 			self:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
+				end
+	 		end,
+			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
+	 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
+			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
+		},
+		-- genre
+		Def.BitmapText{
+			Font="_miso",
+			Name="Genre",
+			InitCommand=function(self)
+				self:zoom(0.65):diffuse(Color.White):y(28):horizalign(left)
+			end,
+			CurrentSongChangedMessageCommand=function(self, params)
+				if params.song then
+					self:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. params.song:GetGenre() )
+				end
+			end,
+			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
+			CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
+			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
+		},
+	}
 }
 
 

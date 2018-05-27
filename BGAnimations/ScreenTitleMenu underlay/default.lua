@@ -27,7 +27,6 @@ else
 	sm_version = ProductID() .. sm_version
 end
 -- - - - - - - - - - - - - - - - - - - - -
-
 local image = ThemePrefs.Get("VisualTheme")
 
 local af = Def.ActorFrame{
@@ -40,13 +39,9 @@ local af = Def.ActorFrame{
 	OffCommand=cmd(linear,0.5; diffusealpha, 0),
 
 	Def.ActorFrame{
-		InitCommand=function(self)
-			self:zoom(0.8):y(-120):diffusealpha(0)
-		end,
-		OnCommand=function(self)
-			self:sleep(0.2):linear(0.4):diffusealpha(1)
-		end,
-		
+		InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,
+		OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
+
 		Def.BitmapText{
 			Font="_miso",
 			Text=sm_version,
@@ -75,8 +70,8 @@ local af = Def.ActorFrame{
 if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
 	af[#af+1] = Def.Sprite{
 		Texture=THEME:GetPathB("ScreenTitleMenu", "underlay/hat.png"),
-		InitCommand=function(self) self:zoom(0.225):xy( 130, -self:GetHeight()/2 ):rotationz(15) end,
-		OnCommand=function(self) self:decelerate(1.333):y(-110) end
+		InitCommand=function(self) self:zoom(0.225):xy( 130, -self:GetHeight()/2 ):rotationz(15):queuecommand("Drop") end,
+		DropCommand=function(self) self:decelerate(1.333):y(-110) end,
 	}
 end
 
