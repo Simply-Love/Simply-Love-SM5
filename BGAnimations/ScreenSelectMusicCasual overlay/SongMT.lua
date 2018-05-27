@@ -95,7 +95,7 @@ local song_mt = {
 						SlideBackIntoGridCommand=cmd(linear,0.12; zoomto, 128,128)
 					},
 
-					-- banner / jacket 
+					-- banner / jacket
 					Def.Banner{
 						Name="Banner",
 						InitCommand=function(subself) self.banner = subself; subself:diffusealpha(0) end,
@@ -170,7 +170,7 @@ local song_mt = {
 			end
 
 			-- handle row hiding
-			if item_index < num_items*0.2 or item_index > num_items*0.8 then
+			if item_index == 1 or item_index > num_items-1 then
 				self.container:visible(false)
 			else
 				self.container:visible(true)
@@ -183,9 +183,9 @@ local song_mt = {
 
 			-- top row
 			if item_index < middle_index  then
-				-- if we need to tween this song jacket off the top edge of the screen
+				-- if we need to tween this song jacket off the right edge of the screen
 				if item_index < middle_index - col.how_many then
-					self.container:y( -100 ):x( col.w * col.how_many )
+					self.container:y( row.h ):x( _screen.w + col.w )
 				-- otherwise, it is somewhere in the top row
 				else
 					self.container:y( row.h ):x( col.w * (middle_index-item_index) )
@@ -193,9 +193,9 @@ local song_mt = {
 
 			-- bottom row
 			elseif item_index > middle_index then
-				-- if we need to tween this song jacket off the bottom edge of the screen
+				-- if we need to tween this song jacket off the right edge of the screen
 				if item_index > middle_index + col.how_many then
-					self.container:y( row.h * row.how_many ):x(col.w * col.how_many)
+					self.container:y( row.h * 3 ):x(_screen.w + col.w)
 				-- otherwise, it is somewhere in the bottom row
 				else
 					self.container:y( row.h * 3 ):x( col.w * math.abs(middle_index-item_index))
@@ -212,31 +212,30 @@ local song_mt = {
 
 			if not song then return end
 
-			local imgPath = ""
+			self.img_path = ""
 
 			-- this SongMT was passed the string "CloseThisFolder"
 			-- so this is a special case song metatable item
 			if type(song) == "string" then
 				self.song = song
 				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
-				imgPath = THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/CloseThisFolder.png")
+				self.img_path = THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/CloseThisFolder.png")
 
 			else
-
 				-- we are passed in a Song object as info
 				self.song = song
 				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars)
 
 				if song:HasJacket() then
-					imgPath = song:GetJacketPath()
+					self.img_path = song:GetJacketPath()
 				elseif song:HasBackground() then
-					imgPath = song:GetBackgroundPath()
+					self.img_path = song:GetBackgroundPath()
 				elseif song:HasBanner() then
-					imgPath = song:GetBannerPath()
+					self.img_path = song:GetBannerPath()
 				end
 			end
 
-			self.banner:LoadBanner(imgPath)
+			self.banner:LoadBanner(self.img_path)
 		end
 	}
 }

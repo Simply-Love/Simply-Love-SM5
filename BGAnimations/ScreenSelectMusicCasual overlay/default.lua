@@ -154,7 +154,7 @@ local t = Def.ActorFrame {
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}),
 
 
-	SongWheel:create_actors( "SongWheel", row.how_many * col.how_many, song_mt, 0, songwheel_y_offset),
+	SongWheel:create_actors( "SongWheel", 12, song_mt, 0, songwheel_y_offset),
 
 	-- SongHeader needs to be over the SongWheel (so that song jackets scroll under it)
 	-- but under the GroupWheel (so that the chosen Group folder can tween up to be on top of it)
