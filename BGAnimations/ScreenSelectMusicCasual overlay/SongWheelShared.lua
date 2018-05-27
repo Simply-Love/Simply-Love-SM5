@@ -2,7 +2,10 @@ local args = ...
 local row = args[1]
 local col = args[2]
 
-local af = Def.ActorFrame{}
+local af = Def.ActorFrame{ Name="SongWheelShared" }
+
+-----------------------------------------------------------------
+-- background quads
 
 af[#af+1] = Def.Quad{
 	Name="SongWheelBackground",
@@ -32,7 +35,54 @@ af[#af+1] = Def.Quad{
 	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
 	SwitchFocusToSongsMessageCommand=cmd(visible,true)
 }
+-----------------------------------------------------------------
+-- left/right arrows
 
+af[#af+1] = Def.ActorFrame{
+	Name="Arrows",
+	InitCommand=function(self) self:diffusealpha(0):xy(_screen.cx, _screen.cy+30) end,
+	OnCommand=function(self) self:sleep(0.1):linear(0.2):diffusealpha(1) end,
+	SwitchFocusToGroupsMessageCommand=cmd(linear, 0.2; diffusealpha, 0),
+	SwitchFocusToSingleSongMessageCommand=cmd(linear, 0.1; diffusealpha, 0),
+	SwitchFocusToSongsMessageCommand=cmd(sleep, 0.2; linear, 0.2; diffusealpha, 1),
+
+	-- right arrow
+	Def.ActorFrame{
+		Name="RightArrow",
+		OnCommand=cmd(x, _screen.cx-50),
+		PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00");),
+
+		LoadActor("./img/arrow_glow.png")..{
+			Name="RightArrowGlow",
+			InitCommand=cmd(zoom,0.25),
+			OnCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1) end
+		},
+		LoadActor("./img/arrow.png")..{
+			Name="RightArrow",
+			InitCommand=cmd(zoom,0.25; diffuse, Color.White ),
+		}
+	},
+
+	-- left arrow
+	Def.ActorFrame{
+		Name="LeftArrow",
+		OnCommand=cmd(x, -_screen.cx+50),
+		PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00")),
+
+		LoadActor("./img/arrow_glow.png")..{
+			Name="LeftArrowGlow",
+			InitCommand=cmd(zoom,0.25; rotationz, 180),
+			OnCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1) end
+		},
+		LoadActor("./img/arrow.png")..{
+			Name="LeftArrow",
+			InitCommand=cmd(zoom,0.25; diffuse, Color.White; rotationz, 180),
+
+		}
+	}
+}
+-----------------------------------------------------------------
+-- text
 
 af[#af+1] = Def.ActorFrame{
 	Name="CurrentSongInfoAF",

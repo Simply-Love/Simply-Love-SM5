@@ -100,20 +100,18 @@ t.Handler = function(event)
 		if t.WheelWithFocus ~= OptionsWheel then
 
 			-- navigate the wheel left and right
-			if event.GameButton == "MenuRight" then
+			if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" then
 				t.WheelWithFocus:scroll_by_amount(1)
 				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-			elseif event.GameButton == "MenuLeft" then
+				if t.WheelWithFocus==SongWheel then
+					SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("SongWheelShared"):GetChild("Arrows"):GetChild("RightArrow"):playcommand("Press")
+				end
+			elseif event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
 				t.WheelWithFocus:scroll_by_amount(-1)
 				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-
-			-- navigate the wheel up and down
-			elseif event.GameButton == "MenuUp" then
-				t.WheelWithFocus:scroll_by_amount(t.WheelWithFocus==GroupWheel and -3 or -1)
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-			elseif event.GameButton == "MenuDown" then
-				t.WheelWithFocus:scroll_by_amount(t.WheelWithFocus==GroupWheel and 3 or 1)
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
+				if t.WheelWithFocus==SongWheel then
+					SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("SongWheelShared"):GetChild("Arrows"):GetChild("LeftArrow"):playcommand("Press")
+				end
 
 
 			-- proceed to the next wheel
