@@ -4,7 +4,8 @@ local TransitionTime = args[2]
 local row = args[3]
 local col = args[4]
 
-local max_chars = { title=28, artist=32, genre=40 }
+-- max number of characters allowed in a song title before truncating to ellipsis
+local max_chars = 28
 
 BitmapText.Truncate = function(bmt, m)
 	local text = bmt:GetText()
@@ -58,10 +59,9 @@ local song_mt = {
 
 					subself:visible(true):sleep(0.3):linear(0.2):diffusealpha(1)
 				end,
-				SlideToTopCommand=cmd(linear,0.1; x, WideScale(col.w*0.7, col.w); linear, 0.1; y, _screen.cy - 80 ),
+				SlideToTopCommand=cmd(linear,0.2; xy, WideScale(col.w*0.7, col.w), _screen.cy - 67 ),
 				SlideBackIntoGridCommand=function(subself)
-					subself:linear( 0.1 ):y( row.h * 2 )
-					subself:linear( 0.1 ):x( col.w )
+					subself:linear( 0.2 ):xy( col.w, row.h * 2 )
 				end,
 
 				-- wrap the function that plays the preview music in its own Actor so that we can
@@ -95,7 +95,7 @@ local song_mt = {
 						SlideBackIntoGridCommand=cmd(linear,0.12; zoomto, 128,128)
 					},
 
-					-- banner
+					-- banner / jacket 
 					Def.Banner{
 						Name="Banner",
 						InitCommand=function(subself) self.banner = subself; subself:diffusealpha(0) end,
@@ -169,8 +169,6 @@ local song_mt = {
 				self.container:playcommand("LoseFocus")
 			end
 
-			-- self.title_bmt:settext(item_index)
-
 			-- handle row hiding
 			if item_index < num_items*0.2 or item_index > num_items*0.8 then
 				self.container:visible(false)
@@ -227,7 +225,7 @@ local song_mt = {
 
 				-- we are passed in a Song object as info
 				self.song = song
-				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars.title)
+				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars)
 
 				if song:HasJacket() then
 					imgPath = song:GetJacketPath()

@@ -5,15 +5,12 @@ local steps_type, Groups, group_index = LoadActor("./Setup.lua")
 ---------------------------------------------------------------------------
 -- variables local to this file
 local margin = {
-	w = -WideScale(54,72),
-	h = -30
+	w = WideScale(54,72),
+	h = 30
 }
 
 local numCols = 3
 local numRows = 5
-
--- simple option definitions
-local OptionRows = LoadActor("./OptionRows.lua")
 
 local Players = GAMESTATE:GetHumanPlayers()
 
@@ -24,10 +21,14 @@ local GroupWheel = setmetatable({}, sick_wheel_mt)
 local SongWheel = setmetatable({}, sick_wheel_mt)
 local OptionsWheel = {}
 
+-- simple option definitions
+local OptionRows = LoadActor("./OptionRows.lua")
+
 for player in ivalues(Players) do
-	-- create the options wheel for this player
+	-- create the optionwheel for this player
 	OptionsWheel[player] = setmetatable({disable_wrapping = true}, sick_wheel_mt)
 
+	-- set up each optionrow for each optionwheel
 	for i=1,#OptionRows do
 		OptionsWheel[player][i] = setmetatable({}, sick_wheel_mt)
 	end
@@ -37,12 +38,15 @@ local TransitionTime = 0.5
 
 local col = {
 	how_many = numCols,
-	w = (_screen.w/numCols) + margin.w,
+	w = (_screen.w/numCols) - margin.w,
 }
 local row = {
 	how_many = numRows,
-	h = ((_screen.h + (margin.h*(numRows-2))) / (numRows-2)),
+	h = ((_screen.h - (margin.h*(numRows-2))) / (numRows-2)),
 }
+
+-- FIXME: don't hardcode this?
+local songwheel_y_offset = -13
 
 ---------------------------------------------------------------------------
 -- a table of params from this file that we pass into the InputHandler file
@@ -147,10 +151,10 @@ local t = Def.ActorFrame {
 	end,
 
 	LoadActor("./PlayerOptionsShared.lua", {row, col}),
-	LoadActor("./SongWheelShared.lua", {row, col}),
+	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}),
 
 
-	SongWheel:create_actors( "SongWheel", row.how_many * col.how_many, song_mt, 0, 0),
+	SongWheel:create_actors( "SongWheel", row.how_many * col.how_many, song_mt, 0, songwheel_y_offset),
 
 	-- SongHeader needs to be over the SongWheel (so that song jackets scroll under it)
 	-- but under the GroupWheel (so that the chosen Group folder can tween up to be on top of it)
