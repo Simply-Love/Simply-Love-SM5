@@ -27,5 +27,7 @@ return Def.ActorFrame{
 		Name="PlayerOptionsDivider",
 		InitCommand=cmd(diffuse, divider_c; zoomto, 2, row.h*1.25),
 		OnCommand=cmd(xy, _screen.cx, _screen.cy + row.h/1.5 ),
-	}
+	},
+
+	LoadActor("./StartButton.lua")
 }

@@ -155,14 +155,14 @@ t.Handler = function(event)
 				-- scroll to the next opionrow_item in this optionrow
 				t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(1)
 				-- animate the right cursor
-				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("RightArrow"):playcommand("Press")
+				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("RightArrow"):finishtweening():playcommand("Press")
 
 
 			elseif event.GameButton == "MenuLeft" then
 				-- scroll to the previous opionrow_item in this optionrow
 				t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(-1)
 				-- animate the left cursor
-				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("LeftArrow"):playcommand("Press")
+				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("LeftArrow"):finishtweening():playcommand("Press")
 
 
 

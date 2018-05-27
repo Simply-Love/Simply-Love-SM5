@@ -1,9 +1,48 @@
--- I think the idea with this file is just to throw setup related
--- stuff in here that we don't want cluttering up default.lua
-
+-- You know that spot under the rug where you sweep away all the dirty
+-- details and then hope no one finds them?  This file is that spot.
+--
+-- The idea is basically to just throw setup-related stuff
+-- in here that we don't want cluttering up default.lua
 ---------------------------------------------------------------------------
 -- because no one wants "Invalid PlayMode 7"
 GAMESTATE:SetCurrentPlayMode(0)
+
+---------------------------------------------------------------------------
+-- local junk
+local margin = {
+	w = WideScale(54,72),
+	h = 30
+}
+
+local numCols = 3
+local numRows = 5
+
+---------------------------------------------------------------------------
+-- variables that are to be passed between files
+local OptionsWheel = {}
+
+-- simple option definitions
+local OptionRows = LoadActor("./OptionRows.lua")
+
+for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+	-- create the optionwheel for this player
+	OptionsWheel[player] = setmetatable({disable_wrapping = true}, sick_wheel_mt)
+
+	-- set up each optionrow for each optionwheel
+	for i=1,#OptionRows do
+		OptionsWheel[player][i] = setmetatable({}, sick_wheel_mt)
+	end
+end
+
+local col = {
+	how_many = numCols,
+	w = (_screen.w/numCols) - margin.w,
+}
+local row = {
+	how_many = numRows,
+	h = ((_screen.h - (margin.h*(numRows-2))) / (numRows-2)),
+}
+
 
 ---------------------------------------------------------------------------
 -- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
@@ -101,4 +140,4 @@ else
 	GAMESTATE:SetCurrentSong(current_song)
 end
 
-return steps_type, Groups, group_index
+return {steps_type=steps_type, Groups=Groups, group_index=group_index, OptionsWheel=OptionsWheel, OptionRows=OptionRows, row=row, col=col}

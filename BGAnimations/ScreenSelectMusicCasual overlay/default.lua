@@ -1,61 +1,33 @@
 ---------------------------------------------------------------------------
--- determine appropriate steps_type; set up available groups and group_index
-local steps_type, Groups, group_index = LoadActor("./Setup.lua")
+-- do as much setup work as possible in another file to keep default.lua
+-- from becoming overly cluttered
 
----------------------------------------------------------------------------
--- variables local to this file
-local margin = {
-	w = WideScale(54,72),
-	h = 30
-}
+local setup = LoadActor("./Setup.lua")
 
-local numCols = 3
-local numRows = 5
+local steps_type = setup.steps_type
+local Groups = setup.Groups
+local group_index = setup.group_index
 
-local Players = GAMESTATE:GetHumanPlayers()
-
----------------------------------------------------------------------------
-
--- variables that are to be passed between files
+local OptionRows = setup.OptionRows
+local OptionsWheel = setup.OptionsWheel
 local GroupWheel = setmetatable({}, sick_wheel_mt)
 local SongWheel = setmetatable({}, sick_wheel_mt)
-local OptionsWheel = {}
 
--- simple option definitions
-local OptionRows = LoadActor("./OptionRows.lua")
-
-for player in ivalues(Players) do
-	-- create the optionwheel for this player
-	OptionsWheel[player] = setmetatable({disable_wrapping = true}, sick_wheel_mt)
-
-	-- set up each optionrow for each optionwheel
-	for i=1,#OptionRows do
-		OptionsWheel[player][i] = setmetatable({}, sick_wheel_mt)
-	end
-end
+local row = setup.row
+local col = setup.col
 
 local TransitionTime = 0.5
-
-local col = {
-	how_many = numCols,
-	w = (_screen.w/numCols) - margin.w,
-}
-local row = {
-	how_many = numRows,
-	h = ((_screen.h - (margin.h*(numRows-2))) / (numRows-2)),
-}
-
 -- FIXME: don't hardcode this?
 local songwheel_y_offset = -13
 
 ---------------------------------------------------------------------------
 -- a table of params from this file that we pass into the InputHandler file
 -- so that the code there can work with them easily
-local params = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows }
+local params_for_input = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows }
 
 ---------------------------------------------------------------------------
 -- load the InputHandler and pass it the table of params
-local Input = LoadActor( "./Input.lua", params )
+local Input = LoadActor( "./Input.lua", params_for_input )
 
 -- metatables
 local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col,Input})
@@ -93,7 +65,7 @@ local t = Def.ActorFrame {
 	end,
 	CaptureCommand=function(self)
 
-		-- One element of the table returned above is an internal function, handler
+		-- One element of the Input table is an internal function, Handler
 		SCREENMAN:GetTopScreen():AddInputCallback( Input.Handler )
 
 		-- set up initial variable states and the players' OptionRows
@@ -136,7 +108,7 @@ local t = Def.ActorFrame {
 
 		OptionRows[1].choices = steps
 
-		for pn in ivalues(Players) do
+		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 			OptionsWheel[pn]:set_info_set( OptionRows, 1)
 
 			for i=1,#OptionRows do
@@ -169,7 +141,7 @@ local t = Def.ActorFrame {
 }
 
 -- Add player options ActorFrames to our primary ActorFrame
-for pn in ivalues(Players) do
+for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local x_offset = (pn==PLAYER_1 and -1) or 1
 
 	-- create an optionswheel that has enough items to handle the number of optionrows necessary
@@ -182,7 +154,5 @@ for pn in ivalues(Players) do
 		t[#t+1] = OptionsWheel[pn][i]:create_actors(ToEnumShortString(pn).."OptionWheel"..i, 3, optionrow_item_mt, WideScale(30, 130) + 140 * x_offset, _screen.cy - 5 + i * 62)
 	end
 end
-
-t[#t+1] = LoadActor("./StartButton.lua")
 
 return t
