@@ -169,7 +169,7 @@ local pd = Def.ActorFrame{
 -- colored background for chart statistics
 pd[#pd+1] = Def.Quad{
 	Name="BackgroundQuad",
-	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33 ),
+	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/2 - 67 ),
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
