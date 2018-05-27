@@ -16,8 +16,6 @@ local switch_to_songs = function(group_name)
 
 	-- prune out songs that don't have valid steps
 	for i,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
-		if current_song == song then index = i end
-
 		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(steps_type) then
 
@@ -28,6 +26,8 @@ local switch_to_songs = function(group_name)
 				end
 			end
 		end
+		-- we need to retain the index of the currnt song so we can set the SongWheel to start on it
+		if current_song == song then index = #songs end
 	end
 
 	songs[#songs+1] = "CloseThisFolder"
