@@ -120,14 +120,14 @@ end
 -- default to when SSNCasual first loads
 -- returns a song object
 
-local GetDefaultSong = function(Groups)
+local GetDefaultSong = function(groups)
 
 	local path = THEME:GetCurrentThemeDirectory() .. "Other/CasualMode-DefaultSong.txt"
 	local preliminary_songs = GetFileContents(path)
 
 	-- the file was empty or doesn't exist, return the first song in the first group
 	if preliminary_songs == nil or #preliminary_songs == 0 then
-		return SONGMAN:GetSongsInGroup(Groups[1])[1]
+		return SONGMAN:GetSongsInGroup(groups[1])[1]
 	end
 
 	-- verify that the song(s) specified actually exist
@@ -138,7 +138,7 @@ local GetDefaultSong = function(Groups)
 		local _group = prelim_song:gsub("/[%w%s]*", "")
 
 		-- if this song exists and is part of a group returned by PruneGroups()
-		if SONGMAN:FindSong( prelim_song ) and FindInTable(_group, Groups) then
+		if SONGMAN:FindSong( prelim_song ) and FindInTable(_group, groups) then
 			-- add this prelim_song to the table of songs that do exist
 			songs[#songs+1] = prelim_song
 		end
@@ -157,7 +157,7 @@ local GetDefaultSong = function(Groups)
 	end
 
 	-- fall back on first song from first group if needed
-	return SONGMAN:GetSongsInGroup(Groups[1])[1]
+	return SONGMAN:GetSongsInGroup(groups[1])[1]
 end
 
 
@@ -187,20 +187,98 @@ local PruneGroups = function()
 	end
 	return groups
 end
+
 ---------------------------------------------------------------------------
+
+local PruneSongsFromGroup = function(group)
+	local songs = {}
+
+	-- prune out songs that don't have valid steps
+	for i,song in ipairs(SONGMAN:GetSongsInGroup(group)) do
+		-- this should be guaranteed by this point, but better safe than segfault
+		if song:HasStepsType(steps_type) then
+
+			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then
+					songs[#songs+1] = song
+					break
+				end
+			end
+		end
+	end
+
+	return songs
+end
+
+---------------------------------------------------------------------------
+
+local GetGroupInfo = function(groups)
+	local info = {}
+	for group in ivalues(groups) do
+		local songs = PruneSongsFromGroup(group)
+		local artists, genres, charts = {}, {}, {}
+
+		info[group] = {}
+		info[group].num_songs = #songs
+		info[group].artists = ""
+		info[group].genres = ""
+		info[group].charts = ""
+
+		for song in ivalues(songs) do
+			if #artists < 5 then
+				if song:GetDisplayArtist() ~= "" then
+					artists[#artists+1] = song:GetDisplayArtist()
+				end
+			end
+
+			if #genres < 5 then
+				if song:GetGenre() ~= "" then
+					genres[#genres+1] = song:GetGenre()
+				end
+			end
+
+			for i,difficulty in ipairs(Difficulty) do
+				-- don't care about edits
+				if i>5 then break end
+				if charts[difficulty] == nil then charts[difficulty] = 0 end
+
+				if song:HasStepsTypeAndDifficulty(steps_type, difficulty) then
+					charts[difficulty] = charts[difficulty] + 1
+				end
+			end
+		end
+
+		for i, a in ipairs(artists) do
+			info[group].artists = info[group].artists .. "• " .. a .. (i ~= #artists and "\n" or "")
+		end
+		for i, g in ipairs(genres) do
+			info[group].genres = info[group].genres .. "• " .. g .. (i ~= #genres and "\n" or "")
+		end
+		for i,difficulty in ipairs(Difficulty) do
+			if i>5 then break end
+			info[group].charts = info[group].charts .. charts[difficulty] .. " " .. THEME:GetString( "CustomDifficulty", ToEnumShortString(difficulty) ) .. "\n"
+		end
+
+	end
+	return info
+end
+
+---------------------------------------------------------------------------
+
 
 local current_song = GAMESTATE:GetCurrentSong()
 local group_index = 1
-local Groups = PruneGroups()
+local groups = PruneGroups()
 
--- there will be a current_song if this is stage 2 or later
-if current_song then
-	group_index = FindInTable(current_song:GetGroupName(), Groups) or 1
-
+-- there will be a current_song if we're on stage 2 or later
 -- if no current_song, check ./Other/CasualMode-DefaultSong.txt
-else
-	current_song = GetDefaultSong(Groups)
+if current_song == nil then
+	current_song = GetDefaultSong(groups)
 	GAMESTATE:SetCurrentSong(current_song)
 end
 
-return {steps_type=steps_type, Groups=Groups, group_index=group_index, OptionsWheel=OptionsWheel, OptionRows=OptionRows, row=row, col=col}
+group_index = FindInTable(current_song:GetGroupName(), groups) or 1
+
+-- local group_info = GetGroupInfo(groups)
+
+return {steps_type=steps_type, Groups=groups, group_index=group_index, group_info=group_info, OptionsWheel=OptionsWheel, OptionRows=OptionRows, row=row, col=col}

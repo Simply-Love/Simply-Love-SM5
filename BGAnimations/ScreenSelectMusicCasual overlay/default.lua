@@ -7,6 +7,7 @@ local setup = LoadActor("./Setup.lua")
 local steps_type = setup.steps_type
 local Groups = setup.Groups
 local group_index = setup.group_index
+local group_info = setup.group_info
 
 local OptionRows = setup.OptionRows
 local OptionsWheel = setup.OptionsWheel
@@ -17,7 +18,6 @@ local row = setup.row
 local col = setup.col
 
 local TransitionTime = 0.5
--- FIXME: don't hardcode this?
 local songwheel_y_offset = -13
 
 ---------------------------------------------------------------------------
@@ -136,6 +136,7 @@ local t = Def.ActorFrame {
 	LoadActor("./PlayerOptionsShared.lua", {row, col}),
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}),
 
+	-- LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
 
 	SongWheel:create_actors( "SongWheel", 12, song_mt, 0, songwheel_y_offset),
 

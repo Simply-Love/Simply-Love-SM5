@@ -65,8 +65,10 @@ local item_mt = {
 							-- position this folder in the header
 							subself:playcommand("GainFocus"):xy(70,35):zoom(0.35)
 
-							switch_to_songs(GAMESTATE:GetCurrentSong():GetGroupName())
+							local starting_group = GAMESTATE:GetCurrentSong():GetGroupName()
+							switch_to_songs(starting_group)
 							MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+							MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=starting_group})
 						end
 					end
 				end,
@@ -127,12 +129,12 @@ local item_mt = {
 					LoseFocusCommand=cmd( diffusebottomedge, color("#3d3e43"); diffusetopedge, color("#8d8e93"); decelerate,0.15; rotationx,0; ),
 				},
 
-				-- group text
+				-- group title bmt
 				Def.BitmapText{
 					Font="_miso",
 					InitCommand=function(subself)
 						self.bmt = subself
-						subself:wrapwidthpixels(150):vertspacing(-4)
+						subself:wrapwidthpixels(150):vertspacing(-4):shadowlength(0.5)
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
@@ -180,6 +182,7 @@ local item_mt = {
 			else
 				if has_focus then
 					self.container:playcommand("GainFocus")
+					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
 				else
 					self.container:playcommand("LoseFocus")
 				end
