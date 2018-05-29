@@ -24,7 +24,7 @@ af[#af+1] = Def.Quad{
 af[#af+1] = Def.Quad{
 	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2)*-0.5; faderight, 10; rainbow),
 	OnCommand=cmd(sleep,0.3; diffusealpha, 0.75; queuecommand, "FadeMe"),
-	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,3; faderight, 10; diffusealpha,0.75; queuecommand, "FadeMe"),
+	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,1.5; faderight, 10; diffusealpha,0.75; queuecommand, "FadeMe"),
 	SwitchFocusToGroupsMessageCommand=cmd(visible, false),
 	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
 	SwitchFocusToSongsMessageCommand=cmd(visible,true)
@@ -34,7 +34,7 @@ af[#af+1] = Def.Quad{
 af[#af+1] = Def.Quad{
 	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2) * 0.5; faderight, 10; rainbow),
 	OnCommand=cmd(sleep,0.3; diffusealpha, 0.75; queuecommand, "FadeMe"),
-	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,3; faderight, 10; diffusealpha,0.75; queuecommand, "FadeMe"),
+	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,1.5; faderight, 10; diffusealpha,0.75; queuecommand, "FadeMe"),
 	SwitchFocusToGroupsMessageCommand=cmd(visible, false),
 	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
 	SwitchFocusToSongsMessageCommand=cmd(visible,true)
@@ -110,7 +110,7 @@ af[#af+1] = Def.ActorFrame{
 		end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 	},
 
@@ -128,7 +128,7 @@ af[#af+1] = Def.ActorFrame{
 		end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
 		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 	},
 
@@ -149,7 +149,7 @@ af[#af+1] = Def.ActorFrame{
 			end,
 			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 			CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
 			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 		},
 		-- length
@@ -166,7 +166,7 @@ af[#af+1] = Def.ActorFrame{
 	 		end,
 			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 	 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
 			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 		},
 		-- genre
@@ -183,7 +183,7 @@ af[#af+1] = Def.ActorFrame{
 			end,
 			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 			CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
+			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
 			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 		},
 	}

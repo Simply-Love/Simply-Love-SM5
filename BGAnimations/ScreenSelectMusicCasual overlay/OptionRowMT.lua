@@ -27,7 +27,7 @@ local optionrow_mt = {
 					InitCommand=function(subself)
 						self.helptext = subself
 						subself:horizalign(left):zoom(0.9)
-							:diffuse(ThemePrefs.Get("RainbowMode") and Color.White or Color.Black):diffusealpha(0)
+							:diffuse(Color.White):diffusealpha(0)
 					end,
 					OnCommand=cmd(sleep, 0.13; linear, 0.05; ),
 					GainFocusCommand=cmd(diffusealpha, 0.85 ),
@@ -70,17 +70,12 @@ local optionrow_mt = {
 							Name="RightArrowGlow",
 							InitCommand=cmd(zoom,0.15),
 							OnCommand=function(subself)
-								subself:diffuseshift()
-								if ThemePrefs.Get("RainbowMode") then
-									subself:effectcolor1(1,1,1,0):effectcolor2(1,1,1,1)
-								else
-									subself:effectcolor1(0,0,0,0):effectcolor2(0,0,0,1)
-								end
+								subself:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1)
 							end
 						},
 						LoadActor("./img/arrow.png")..{
 							Name="RightArrow",
-							InitCommand=cmd(zoom,0.15; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ),
+							InitCommand=cmd(zoom,0.15; diffuse, Color.White ),
 						}
 					},
 
@@ -100,17 +95,12 @@ local optionrow_mt = {
 							Name="LeftArrowGlow",
 							InitCommand=cmd(zoom,0.15; rotationz, 180),
 							OnCommand=function(subself)
-								subself:diffuseshift()
-								if ThemePrefs.Get("RainbowMode") then
-									subself:effectcolor1(1,1,1,0):effectcolor2(1,1,1,1)
-								else
-									subself:effectcolor1(0,0,0,0):effectcolor2(0,0,0,1)
-								end
+								subself:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1)
 							end
 						},
 						LoadActor("./img/arrow.png")..{
 							Name="LeftArrow",
-							InitCommand=cmd(zoom,0.15; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black; rotationz, 180),
+							InitCommand=cmd(zoom,0.15; diffuse, Color.White; rotationz, 180),
 
 						}
 					}

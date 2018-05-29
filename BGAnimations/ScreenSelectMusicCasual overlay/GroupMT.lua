@@ -138,8 +138,7 @@ local item_mt = {
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.Black):wrapwidthpixels(480):playcommand("Untruncate")
-							if ThemePrefs.Get("RainbowMode") then subself:diffuse(Color.White) end
+							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.White):wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate")
 						end
 					end,
 					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
@@ -148,16 +147,10 @@ local item_mt = {
 					GainFocusCommand=cmd(x, 0 horizalign, center; linear, 0.15; y, 20; zoom,1.1),
 					LoseFocusCommand=cmd(xy, 0, 6; horizalign, center; linear, 0.15; zoom, 1; diffuse, Color.White),
 					SlideToTopCommand=function(subself)
-						subself:sleep(0.3)
-						if ThemePrefs.Get("RainbowMode") then
-							subself:diffuse(Color.White)
-						else
-							subself:diffuse(Color.Black)
-						end
-						subself:queuecommand("SlideToTop2")
+						subself:sleep(0.3):diffuse(Color.White):queuecommand("SlideToTop2")
 					end,
-					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3; wrapwidthpixels, 480; playcommand, "Untruncate"),
-					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,20; zoom, 1.1; diffuse, Color.White; wrapwidthpixels, 150; playcommand, "Truncate"),
+					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3; wrapwidthpixels, 480; shadowlength, 0; playcommand, "Untruncate"),
+					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,20; zoom, 1.1; diffuse, Color.White; wrapwidthpixels, 150; shadowlength, 0.5; playcommand, "Truncate"),
 				}
 			}
 

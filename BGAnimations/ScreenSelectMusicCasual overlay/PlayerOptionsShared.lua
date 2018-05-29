@@ -2,8 +2,8 @@ local args = ...
 local row = args[1]
 local col = args[2]
 
-local bg_color = ThemePrefs.Get("RainbowMode") and {0,0,0,0.9} or {0.86, 0.86, 0.86, 0.75}
-local divider_color = ThemePrefs.Get("RainbowMode") and {1,1,1,0.75} or {0,0,0,0.75}
+local bg_color = {0,0,0,0.9}
+local divider_color = {1,1,1,0.75}
 
 return Def.ActorFrame{
 	InitCommand=cmd(diffusealpha, 0),
