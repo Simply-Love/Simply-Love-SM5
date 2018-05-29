@@ -85,6 +85,30 @@ local GetFileContents = function(path)
 end
 
 ---------------------------------------------------------------------------
+-- provided a group title as a string, prune out songs that don't have valid steps
+-- returns an indexed table of song objects
+
+local PruneSongsFromGroup = function(group)
+	local songs = {}
+
+	-- prune out songs that don't have valid steps
+	for i,song in ipairs(SONGMAN:GetSongsInGroup(group)) do
+		-- this should be guaranteed by this point, but better safe than segfault
+		if song:HasStepsType(steps_type) then
+			-- ensure that at least one stepchart has a meter ≤ CasualMaxMeter (10, by default)
+			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				if steps:GetMeter() <= ThemePrefs.Get("CasualMaxMeter") then
+					songs[#songs+1] = song
+					break
+				end
+			end
+		end
+	end
+
+	return songs
+end
+
+---------------------------------------------------------------------------
 -- parse ./Other/CasualMode-Groups.txt to find which groups will appear in SSMCasual
 -- returns an indexed table of group names as strings
 
@@ -156,8 +180,8 @@ local GetDefaultSong = function(groups)
 		if song then return song end
 	end
 
-	-- fall back on first song from first group if needed
-	return SONGMAN:GetSongsInGroup(groups[1])[1]
+	-- fall back on first valid song from first valid group if needed
+	return PruneSongsFromGroup( groups[1] )[1]
 end
 
 
@@ -186,28 +210,6 @@ local PruneGroups = function()
 		end
 	end
 	return groups
-end
-
----------------------------------------------------------------------------
-
-local PruneSongsFromGroup = function(group)
-	local songs = {}
-
-	-- prune out songs that don't have valid steps
-	for i,song in ipairs(SONGMAN:GetSongsInGroup(group)) do
-		-- this should be guaranteed by this point, but better safe than segfault
-		if song:HasStepsType(steps_type) then
-
-			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-				if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then
-					songs[#songs+1] = song
-					break
-				end
-			end
-		end
-	end
-
-	return songs
 end
 
 ---------------------------------------------------------------------------
