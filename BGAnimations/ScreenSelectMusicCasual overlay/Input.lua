@@ -72,6 +72,7 @@ local UnhideOptionRows = function(pn)
 end
 
 t.AllowLateJoin = function()
+	if GAMESTATE:GetCurrentStyle():GetName() ~= "single" then return false end
 	if PREFSMAN:GetPreference("EventMode") then return true end
 	if GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then return true end
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit" then return true end
