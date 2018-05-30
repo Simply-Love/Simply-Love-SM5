@@ -4,8 +4,10 @@ local SongWheel = args.SongWheel
 local OptionsWheel = args.OptionsWheel
 local OptionRows = args.OptionRows
 
-
+-- initialize Players to be any HumanPlayers at screen init
+-- we'll update this later via latejoin if needed
 local Players = GAMESTATE:GetHumanPlayers()
+
 local ActiveOptionRow
 
 -----------------------------------------------------
@@ -59,6 +61,23 @@ local CloseCurrentFolder = function()
 	t.WheelWithFocus.container:queuecommand("Unhide")
 end
 
+local UnhideOptionRows = function(pn)
+	-- unhide optionrows for this player
+	t.WheelWithFocus[pn].container:queuecommand("Unhide")
+
+	-- unhide optionrowitems for this player
+	for i=1,#OptionRows do
+		t.WheelWithFocus[pn][i].container:queuecommand("Unhide")
+	end
+end
+
+t.AllowLateJoin = function()
+	if PREFSMAN:GetPreference("EventMode") then return true end
+	if GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then return true end
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit" then return true end
+	return false
+end
+
 -----------------------------------------------------
 -- start internal functions
 
@@ -71,11 +90,10 @@ t.Init = function()
 	t.WheelWithFocus = GAMESTATE:GetCurrentSong() and SongWheel or GroupWheel
 
 	-- table that stores P1 and P2's currently active optionrow
-	ActiveOptionRow = {}
-
-	for pn in ivalues(Players) do
-		ActiveOptionRow[pn] = 1
-	end
+	ActiveOptionRow = {
+		[PLAYER_1] = 1,
+		[PLAYER_2] = 1
+	}
 
 	t.CancelSongChoice = function()
 		t.Enabled = false
@@ -104,7 +122,15 @@ t.Handler = function(event)
 		return false
 	end
 
-	if not GAMESTATE:IsPlayerEnabled(event.PlayerNumber) then
+	if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
+		if not t.AllowLateJoin() then return false end
+
+		-- latejoin
+		if t.WheelWithFocus == OptionsWheel and event.GameButton == "Start" then
+			GAMESTATE:JoinPlayer( event.PlayerNumber )
+			Players = GAMESTATE:GetHumanPlayers()
+			UnhideOptionRows(event.PlayerNumber)
+		end
 		return false
 	end
 
@@ -150,11 +176,7 @@ t.Handler = function(event)
 					t.WheelWithFocus.container:queuecommand("Unhide")
 				else
 					for pn in ivalues(Players) do
-						t.WheelWithFocus[pn].container:queuecommand("Unhide")
-
-						for i=1,#OptionRows do
-							t.WheelWithFocus[pn][i].container:queuecommand("Unhide")
-						end
+						UnhideOptionRows(pn)
 					end
 				end
 

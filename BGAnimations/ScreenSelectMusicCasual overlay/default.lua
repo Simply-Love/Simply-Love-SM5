@@ -119,7 +119,7 @@ local t = Def.ActorFrame {
 
 		OptionRows[1].choices = steps
 
-		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+		for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
 			OptionsWheel[pn]:set_info_set( OptionRows, 1)
 
 			for i=1,#OptionRows do
@@ -133,27 +133,23 @@ local t = Def.ActorFrame {
 		Input.Enabled = true
 	end,
 
-	LoadActor("./PlayerOptionsShared.lua", {row, col}),
+	LoadActor("./PlayerOptionsShared.lua", {row, col, Input}),
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}),
 
+	-- commented out for now
 	-- LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
 
 	SongWheel:create_actors( "SongWheel", 12, song_mt, 0, songwheel_y_offset),
 
-	-- SongHeader needs to be over the SongWheel (so that song jackets scroll under it)
-	-- but under the GroupWheel (so that the chosen Group folder can tween up to be on top of it)
 	LoadActor("./Header.lua", row),
 
 	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0, true),
-
-	-- we want the GroupHeader drawn over the GroupWheel so that Group folders scroll under it
-	-- LoadActor("./GroupHeader.lua", row),
 
 	LoadActor("FooterHelpText.lua"),
 }
 
 -- Add player options ActorFrames to our primary ActorFrame
-for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
+for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
 	local x_offset = (pn==PLAYER_1 and -1) or 1
 
 	-- create an optionswheel that has enough items to handle the number of optionrows necessary

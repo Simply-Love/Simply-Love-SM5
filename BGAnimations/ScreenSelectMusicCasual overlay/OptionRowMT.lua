@@ -16,8 +16,8 @@ local optionrow_mt = {
 				OnCommand=cmd(y, item_index * 62),
 
 				HideCommand=cmd( linear, 0.2; diffusealpha, 0; queuecommand, "Hide2"),
-				Hide2Command=function(self) self:visible(false) end,
-				UnhideCommand=function(self) self:visible(true):queuecommand("Unhide2") end,
+				Hide2Command=function(subself) subself:visible(false) end,
+				UnhideCommand=function(subself) subself:visible(true):queuecommand("Unhide2") end,
 				Unhide2Command=cmd( sleep, 0.3; linear, 0.2; diffusealpha, 1),
 
 
@@ -27,9 +27,8 @@ local optionrow_mt = {
 					InitCommand=function(subself)
 						self.helptext = subself
 						subself:horizalign(left):zoom(0.9)
-							:diffuse(Color.White):diffusealpha(0)
+							:diffuse(Color.White):diffusealpha(0.5)
 					end,
-					OnCommand=cmd(sleep, 0.13; linear, 0.05; ),
 					GainFocusCommand=cmd(diffusealpha, 0.85 ),
 					LoseFocusCommand=cmd(diffusealpha, 0.5 )
 				},
@@ -38,7 +37,7 @@ local optionrow_mt = {
 				Def.Quad{
 					InitCommand=function(subself)
 						self.bgQuad = subself
-						subself:horizalign(left):zoomto(200, 28):diffuse(Color.White):diffusealpha(0)
+						subself:horizalign(left):zoomto(200, 28):diffuse(Color.White):diffusealpha(0.5)
 					end,
 					OnCommand=cmd(y, 26),
 					GainFocusCommand=cmd(diffusealpha, 1),
@@ -57,10 +56,10 @@ local optionrow_mt = {
 						Name="RightArrow",
 						OnCommand=cmd(x, 216),
 						PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00");),
-						ExitRowCommand=function(self, params)
-							self:y(-15)
+						ExitRowCommand=function(subself, params)
+							subself:y(-15)
 							if params.PlayerNumber == PLAYER_2 then
-								self:x(20)
+								subself:x(20)
 							end
 						end,
 						SingleSongCanceledMessageCommand=cmd(rotationz, 0),
@@ -84,9 +83,9 @@ local optionrow_mt = {
 						Name="LeftArrow",
 						OnCommand=cmd(x, -16),
 						PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00")),
-						ExitRowCommand=function(self, params)
-							self:y(-15)
-							if params.PlayerNumber == PLAYER_1 then self:x(180) end
+						ExitRowCommand=function(subself, params)
+							subself:y(-15)
+							if params.PlayerNumber == PLAYER_1 then subself:x(180) end
 						end,
 						SingleSongCanceledMessageCommand=cmd(rotationz, 0),
 						BothPlayersAreReadyMessageCommand=cmd(sleep,0.2;linear,0.2; rotationz, 180),

@@ -24,7 +24,7 @@ local OptionsWheel = {}
 -- simple option definitions
 local OptionRows = LoadActor("./OptionRows.lua")
 
-for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+for player in ivalues( {PLAYER_1, PLAYER_2} ) do
 	-- create the optionwheel for this player
 	OptionsWheel[player] = setmetatable({disable_wrapping = true}, sick_wheel_mt)
 
@@ -52,7 +52,6 @@ if GAMESTATE:GetCurrentStyle():GetName() == "double" then
 else
 	steps_type = steps_type .. "Single"
 end
-
 
 ---------------------------------------------------------------------------
 -- helper function used by GetGroups() and GetDefaultSong()
