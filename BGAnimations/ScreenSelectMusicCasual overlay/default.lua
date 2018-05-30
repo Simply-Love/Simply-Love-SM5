@@ -40,6 +40,7 @@ local optionrow_item_mt = LoadActor("./OptionRowItemMT.lua")
 local t = Def.ActorFrame {
 	InitCommand=function(self)
 		GroupWheel:set_info_set(Groups, group_index)
+		self:GetChild("GroupWheel"):SetDrawByZPosition(true)
 
 		self:queuecommand("Capture")
 	end,

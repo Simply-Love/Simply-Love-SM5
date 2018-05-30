@@ -34,7 +34,7 @@ local function check_metatable(item_metatable)
 	assert(item_metatable.__index.set, "The metatable must have a set function.  The set function must take an instance of info, which it should use to set its actors to display the info.")
 end
 
-function sick_wheel:create_actors(name, num_items, item_metatable, mx, my, draw_by_z)
+function sick_wheel:create_actors(name, num_items, item_metatable, mx, my)
 	self.name= name
 	self.info_pos= 1
 	self.info_map= {}
@@ -44,12 +44,11 @@ function sick_wheel:create_actors(name, num_items, item_metatable, mx, my, draw_
 	self.focus_pos= math.floor(num_items / 2)
 	mx= mx or SCREEN_CENTER_X
 	my= my or SCREEN_TOP
-	draw_by_z = draw_by_z or false
 	self.items= {}
 	local args= {
 		Name= self.name,
 		InitCommand= function(subself)
-			subself:xy(mx, my):SetDrawByZPosition(draw_by_z)
+			subself:xy(mx, my)
 			self.container= subself
 		end
 	}
