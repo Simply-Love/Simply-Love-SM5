@@ -29,14 +29,14 @@ local EnableChoices = function()
 	-- everything is enabled
 	if PREFSMAN:GetPreference("EventMode")
 	or PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay"
-	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit" then
+	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit" then
 		for i, child in ipairs( af:GetChild("") ) do
 			child.Enabled = true
 		end
 	end
 
 	-- double for 1 credit
-	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_DoubleFor1Credit" then
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit" then
 		af:GetChild("")[1].Enabled = true
 		af:GetChild("")[3].Enabled = true
 		if GAMESTATE:EnoughCreditsToJoin() then
@@ -45,7 +45,7 @@ local EnableChoices = function()
 	end
 	
 	-- premium off
-	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_Off" then
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_Off" then
 		af:GetChild("")[1].Enabled = true
 		if GAMESTATE:EnoughCreditsToJoin() then
 			af:GetChild("")[2].Enabled = true
@@ -84,17 +84,24 @@ local GetNextEnabledLeft = function()
 end
 
 
-local JoinOrUnjoinPlayersMaybe = function(style)
+local JoinOrUnjoinPlayersMaybe = function(style, player)
 	-- if going into versus, ensure that both players are joined
 	if style == "versus" then
 		for player in ivalues({PLAYER_1, PLAYER_2}) do
 			if not GAMESTATE:IsHumanPlayer(player) then GAMESTATE:JoinPlayer(player) end
 		end
+		return
 	end
 	
-	-- if going into double, ensure that only the MPN is joined
+	-- if either player pressed START to choose a style, that player will have
+	-- been passed into this function, and we want to unjoin the other player
+	-- now for the sake of single or double
+	-- if time ran out, no one will have pressed START, so unjoin whichever player
+	-- isn't the MasterPlayerNumber
+	player = player or GAMESTATE:GetMasterPlayerNumber()
+	
 	if style == "single" or style == "double" then
-		if GAMESTATE:GetMasterPlayerNumber() == PLAYER_1 then
+		if player == PLAYER_1 then
 			GAMESTATE:UnjoinPlayer(PLAYER_2)
 		else
 			GAMESTATE:UnjoinPlayer(PLAYER_1)
@@ -103,19 +110,18 @@ local JoinOrUnjoinPlayersMaybe = function(style)
 end
 
 local DeductCreditsMaybe = function(style)
-	-- if GAMESTATE:GetNumSidesJoined()==2 then return end
 	
 	-- no need to deduct credits; just move on
 	if (PREFSMAN:GetPreference("EventMode")
 	or PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay"
-	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit")
+	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit")
 	and (style == "versus" or style == "double") then			
 		return
 	end
 	
 	-- double for 1 credit; deduct 1 credit if entering versus
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
-	and PREFSMAN:GetPreference("Premium") == "Premium_DoubleFor1Credit"
+	and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit"
 	and (style == "versus") then
 		-- deduct 1 credit
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
@@ -124,12 +130,11 @@ local DeductCreditsMaybe = function(style)
 	
 	-- premium off; deduct 1 credit if entering versus or double
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
-	and PREFSMAN:GetPreference("Premium") == "Premium_Off" 
+	and GAMESTATE:GetPremium() == "Premium_Off" 
 	and (style=="versus" or style=="double") then
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
 	end
-	
 end
 
 ------------------------------------------------------------------------------------
@@ -138,7 +143,19 @@ local function input(event)
 	if not event or not event.PlayerNumber or not event.button then
 		return false
 	end
+	
+	-- handle the case of joining an unjoined player
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
+	and GAMESTATE:GetPremium() ~= "Premium_2PlayersFor1Credit"
+	and not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+		if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
+			GAMESTATE:JoinPlayer(event.PlayerNumber)
+			af:GetChild("Start"):play()
+		end
+		return false
+	end
 
+	-- normal input handling
 	if event.type == "InputEventType_FirstPress" then
 		local topscreen = SCREENMAN:GetTopScreen()
 		
@@ -166,7 +183,7 @@ local function input(event)
 			
 		elseif event.GameButton == "Start" then
 			af:GetChild("Start"):play()
-			af:playcommand("Finish")
+			af:playcommand("Finish", {PlayerNumber=event.PlayerNumber})
 
 		elseif event.GameButton == "Back" then
 			topscreen:RemoveInputCallback(input)
@@ -215,10 +232,10 @@ local t = Def.ActorFrame{
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
-	FinishCommand=function(self)		
+	FinishCommand=function(self, params)		
 		local style = choices[current_index].name
 		
-		JoinOrUnjoinPlayersMaybe(style)
+		JoinOrUnjoinPlayersMaybe(style, params.PlayerNumber)
 		DeductCreditsMaybe(style)
 		
 		-- ah, yes, techno mode
