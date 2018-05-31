@@ -20,8 +20,6 @@ end
 local starting_index = 1
 local current_index = starting_index
 
-local change_sound, start_sound
-
 ------------------------------------------------------------------------------------
 
 local EnableChoices = function()
@@ -243,7 +241,6 @@ local t = Def.ActorFrame{
 		GAMESTATE:SetCurrentStyle(style)
 		SL.Global.Gamestate.Style = GAMESTATE:GetCurrentStyle():GetName()
 
-		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
 }
