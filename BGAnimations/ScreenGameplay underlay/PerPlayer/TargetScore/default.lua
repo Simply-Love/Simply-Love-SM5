@@ -1,6 +1,8 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
+local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
+
 -- if nobody wants us, we won't appear
 if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
 or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"

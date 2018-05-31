@@ -58,10 +58,10 @@ end
 function GetNotefieldX( player )
 	local p = ToEnumShortString(player)
 
-	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player')
+	local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
+	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player') or IsPlayingDanceSolo
 	local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
 	local NumSidesJoined = GAMESTATE:GetNumSidesJoined()
-	local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
 
 	if IsUsingSoloSingles and NumPlayersEnabled == 1 and NumSidesJoined == 1 then return _screen.cx end
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end

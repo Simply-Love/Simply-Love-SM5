@@ -21,7 +21,7 @@ local drawNinePanelPad = function(color, xoffset)
 				self:x(zoomFactor * self:GetWidth())
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "Solo" then
+				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "solo" then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -49,7 +49,7 @@ local drawNinePanelPad = function(color, xoffset)
 				self:x(zoomFactor * self:GetWidth() * 3)
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "Solo" then
+				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "solo" then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)

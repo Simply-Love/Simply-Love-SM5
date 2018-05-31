@@ -5,6 +5,7 @@ local pn = ToEnumShortString(player)
 if SL[pn].ActiveModifiers.TargetStatus ~= "Step Statistics"
 or SL.Global.Gamestate.Style ~= "single"
 or SL.Global.GameMode == "Casual"
+or GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo"
 or (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen())
 then
 	return
