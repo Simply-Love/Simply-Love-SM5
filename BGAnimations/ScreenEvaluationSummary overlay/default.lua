@@ -54,11 +54,11 @@ local t = Def.ActorFrame{
 	Def.BitmapText{
 		Name="PageNumber",
 		Font="_wendy small",
-		Text="Page 1/" .. pages,
+		Text=THEME:GetString("ScreenEvaluationSummary", "Page") .. " 1/" .. pages,
 		InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
 		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha, 1),
 		OffCommand=cmd(accelerate,0.33; diffusealpha,0),
-		HideCommand=function(self) self:sleep(0.5):settext( ScreenString("Page").." "..page.."/"..pages ) end
+		HideCommand=function(self) self:sleep(0.5):settext( THEME:GetString("ScreenEvaluationSummary", "Page").." "..page.."/"..pages ) end
 	}
 }
 
