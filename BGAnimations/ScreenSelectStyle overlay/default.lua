@@ -28,7 +28,7 @@ local EnableChoices = function()
 	
 	-- everything is enabled
 	if PREFSMAN:GetPreference("EventMode")
-	or PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay"
+	or GAMESTATE:GetCoinMode() ~= "CoinMode_Pay"
 	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit" then
 		for i, child in ipairs( af:GetChild("") ) do
 			child.Enabled = true
@@ -123,7 +123,6 @@ local DeductCreditsMaybe = function(style)
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
 	and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit"
 	and (style == "versus") then
-		-- deduct 1 credit
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
 	end
@@ -144,7 +143,7 @@ local function input(event)
 		return false
 	end
 	
-	-- handle the case of joining an unjoined player
+	-- handle the case of joining an unjoined player in CoinMode_Pay
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
 	and GAMESTATE:GetPremium() ~= "Premium_2PlayersFor1Credit"
 	and not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then

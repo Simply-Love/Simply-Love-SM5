@@ -21,7 +21,7 @@ local drawNinePanelPad = function(color, xoffset)
 				self:x(zoomFactor * self:GetWidth())
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "solo" then
+				if gameName == "pump" or gameName == "techno" or (gameName == "dance" and choiceName == "solo") then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -49,7 +49,7 @@ local drawNinePanelPad = function(color, xoffset)
 				self:x(zoomFactor * self:GetWidth() * 3)
 				self:y(zoomFactor * self:GetHeight())
 
-				if gameName == "pump" or gameName == "techno" or gameName == "dance" and choiceName == "solo" then
+				if gameName == "pump" or gameName == "techno" or (gameName == "dance" and choiceName == "solo") then
 					self:diffuse(DifficultyIndexColor(color))
 				else
 					self:diffuse(0.2,0.2,0.2,1)
@@ -153,19 +153,11 @@ end
 local af = Def.ActorFrame{
 	Enabled = false,
 	InitCommand=function(self)
-		-- self.container = self
 		self:zoom(0.5):xy( args[1].x, _screen.cy )
 
 		if ThemePrefs.Get("VisualTheme")=="Gay" then
 			self:bob():effectmagnitude(0,0,0):effectclock('bgm'):effectperiod(0.666)
 		end
-	end,
-	OnCommand=function(self)
-		-- self:finishtweening()
-		-- if self.index == wheel:get_actor_item_at_focus_pos().index then
-		-- 	self:zoom(1)
-		-- end
-		-- self.bmt:settext(self.index)
 	end,
 	OffCommand=function(self)
 		self:sleep(0.04 * index)
@@ -197,33 +189,11 @@ local af = Def.ActorFrame{
 	}
 }
 
-
-if choiceName == "single" then -- 1 Player
-	af[#af+1] = drawNinePanelPad(pads[1][1], pads[1][2])..{
+-- draw as many pads as needed for this choice
+for pad in ivalues(pads) do
+	af[#af+1] = drawNinePanelPad(pad[1], pad[2])..{
 		OffCommand=cmd(linear,0.2; diffusealpha,0)
 	}
-
-elseif choiceName == "versus" then -- 2 Players
-	af[#af+1] = drawNinePanelPad(pads[1][1],pads[1][2])..{
-		OffCommand=cmd(sleep,0.12; linear,0.2; diffusealpha,0)
-	}
-	af[#af+1] = drawNinePanelPad(pads[2][1], pads[2][2])..{
-		OffCommand=cmd(sleep,0.24; linear,0.2; diffusealpha,0)
-	}
-
-elseif choiceName == "double" then -- Double
-	af[#af+1] = drawNinePanelPad(pads[1][1],pads[1][2])..{
-		OffCommand=cmd(sleep,0.36; linear,0.2; diffusealpha,0)
-	}
-	af[#af+1] = drawNinePanelPad(pads[2][1], pads[2][2])..{
-		OffCommand=cmd(sleep,0.48; linear,0.2; diffusealpha,0)
-	}
-
-elseif choiceName == "solo" then -- Solo
-	af[#af+1] = drawNinePanelPad(pads[1][1], pads[1][2])..{
-		OffCommand=cmd(linear,0.2; diffusealpha,0)
-	}
-
 end
 
 return af
