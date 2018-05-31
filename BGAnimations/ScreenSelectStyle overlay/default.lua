@@ -25,7 +25,7 @@ local change_sound, start_sound
 ------------------------------------------------------------------------------------
 
 local EnableChoices = function()
-	
+
 	-- everything is enabled
 	if PREFSMAN:GetPreference("EventMode")
 	or GAMESTATE:GetCoinMode() ~= "CoinMode_Pay"
@@ -43,7 +43,7 @@ local EnableChoices = function()
 			af:GetChild("")[2].Enabled = true
 		end
 	end
-	
+
 	-- premium off
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_Off" then
 		af:GetChild("")[1].Enabled = true
@@ -52,7 +52,7 @@ local EnableChoices = function()
 			af:GetChild("")[3].Enabled = true
 		end
 	end
-	
+
 	-- dance solo
 	if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
 		af:GetChild("")[4].Enabled = true
@@ -63,7 +63,7 @@ end
 local GetNextEnabledRight = function()
 	for i=current_index+1, #choices+current_index-1 do
 		local index = ((i-1) % #choices) + 1
-		
+
 		if af:GetChild("")[index].Enabled then
 			current_index = index
 			return
@@ -75,7 +75,7 @@ end
 local GetNextEnabledLeft = function()
 	for i=#choices+current_index-1,current_index+1,-1 do
 		local index = ((i-1) % #choices) + 1
-		
+
 		if af:GetChild("")[index].Enabled then
 			current_index = index
 			return
@@ -92,14 +92,14 @@ local JoinOrUnjoinPlayersMaybe = function(style, player)
 		end
 		return
 	end
-	
+
 	-- if either player pressed START to choose a style, that player will have
 	-- been passed into this function, and we want to unjoin the other player
 	-- now for the sake of single or double
 	-- if time ran out, no one will have pressed START, so unjoin whichever player
 	-- isn't the MasterPlayerNumber
 	player = player or GAMESTATE:GetMasterPlayerNumber()
-	
+
 	if style == "single" or style == "double" then
 		if player == PLAYER_1 then
 			GAMESTATE:UnjoinPlayer(PLAYER_2)
@@ -110,26 +110,25 @@ local JoinOrUnjoinPlayersMaybe = function(style, player)
 end
 
 local DeductCreditsMaybe = function(style)
-	
-	-- no need to deduct credits; just move on
-	if (PREFSMAN:GetPreference("EventMode")
+
+	-- no need to deduct additional credits; just move on
+	if PREFSMAN:GetPreference("EventMode")
 	or PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay"
-	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit")
-	and (style == "versus" or style == "double") then			
+	or (GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit") then
 		return
 	end
-	
+
 	-- double for 1 credit; deduct 1 credit if entering versus
-	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
 	and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit"
-	and (style == "versus") then
+	and style == "versus" then
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
 	end
-	
+
 	-- premium off; deduct 1 credit if entering versus or double
-	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
-	and GAMESTATE:GetPremium() == "Premium_Off" 
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
+	and GAMESTATE:GetPremium() == "Premium_Off"
 	and (style=="versus" or style=="double") then
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
@@ -142,7 +141,7 @@ local function input(event)
 	if not event or not event.PlayerNumber or not event.button then
 		return false
 	end
-	
+
 	-- handle the case of joining an unjoined player in CoinMode_Pay
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
 	and GAMESTATE:GetPremium() ~= "Premium_2PlayersFor1Credit"
@@ -157,7 +156,7 @@ local function input(event)
 	-- normal input handling
 	if event.type == "InputEventType_FirstPress" then
 		local topscreen = SCREENMAN:GetTopScreen()
-		
+
 		if event.GameButton == "MenuRight" then
 			GetNextEnabledRight()
 			for i, child in ipairs( af:GetChild("") ) do
@@ -168,7 +167,7 @@ local function input(event)
 				end
 			end
 			af:GetChild("Change"):play()
-			
+
 		elseif event.GameButton == "MenuLeft" then
 			GetNextEnabledLeft()
 			for i, child in ipairs( af:GetChild("") ) do
@@ -179,7 +178,7 @@ local function input(event)
 				end
 			end
 			af:GetChild("Change"):play()
-			
+
 		elseif event.GameButton == "Start" then
 			af:GetChild("Start"):play()
 			af:playcommand("Finish", {PlayerNumber=event.PlayerNumber})
@@ -201,19 +200,19 @@ local t = Def.ActorFrame{
 		self:queuecommand("Capture")
 		EnableChoices()
 		self:playcommand("Enable")
-		
+
 		for i, child in ipairs( self:GetChild("") ) do
 			if i == starting_index then
 				child:queuecommand("GainFocus")
 			end
 		end
 	end,
-	OnCommand=function(self)			
+	OnCommand=function(self)
 		if PREFSMAN:GetPreference("MenuTimer") then
 			self:queuecommand("Listen")
 		end
 	end,
-	CoinsChangedMessageCommand=function(self) 
+	CoinsChangedMessageCommand=function(self)
 		EnableChoices()
 		self:playcommand("Enable")
 	end,
@@ -231,30 +230,29 @@ local t = Def.ActorFrame{
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
-	FinishCommand=function(self, params)		
+	FinishCommand=function(self, params)
 		local style = choices[current_index].name
-		
+
 		JoinOrUnjoinPlayersMaybe(style, params.PlayerNumber)
 		DeductCreditsMaybe(style)
-		
+
 		-- ah, yes, techno mode
+		-- techo doesn't have styles like "single" and "double", it has "single8", "versus8", and "double8"
 		if current_game=="techno" then style = style.."8" end
-		
+
 		GAMESTATE:SetCurrentStyle(style)
 		SL.Global.Gamestate.Style = GAMESTATE:GetCurrentStyle():GetName()
 
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
-	
-	children = {}
 }
 
 for i,choice in ipairs(choices) do
-	t.children[#t.children+1] = LoadActor("./choice.lua", {choice, i} )
+	t[#t+1] = LoadActor("./choice.lua", {choice, i} )
 end
 
-t.children[#t.children+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="Change", SupportPan=false }
-t.children[#t.children+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="Start", SupportPan=false }
+t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="Change", SupportPan=false }
+t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="Start", SupportPan=false }
 
 return t
