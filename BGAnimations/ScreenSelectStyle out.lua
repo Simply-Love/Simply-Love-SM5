@@ -1,3 +1,1 @@
-return Def.ActorFrame{
-	OffCommand=cmd(queuecommand, "Style"; sleep, 0.25),
-}
+return Def.ActorFrame{ OffCommand=cmd(sleep, 0.333) }

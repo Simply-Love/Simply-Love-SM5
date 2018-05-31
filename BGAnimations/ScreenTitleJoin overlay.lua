@@ -1,5 +1,5 @@
 return Def.ActorFrame{
-	InitCommand=cmd(queuecommand,"Refresh"),
+	InitCommand=cmd(playcommand,"Refresh"),
 	OnCommand=cmd(diffuseblink; effectperiod,1; effectcolor1,1,1,1,0; effectcolor2,1,1,1,1),
 	OffCommand=cmd(visible,false),
 	CoinsChangedMessageCommand=cmd(playcommand,"Refresh"),

@@ -83,49 +83,51 @@ local GetNextEnabledLeft = function()
 	end
 end
 
-local JoinInputMaybe = function(style)
-	-- if GAMESTATE:GetNumSidesJoined()==2 then return end
-	
-	-- no need to deduct credits; just join player and move on
-	if (PREFSMAN:GetPreference("EventMode")
-	or PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay"
-	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit")
-	and style == "versus" then
+
+local JoinOrUnjoinPlayersMaybe = function(style)
+	-- if going into versus, ensure that both players are joined
+	if style == "versus" then
 		for player in ivalues({PLAYER_1, PLAYER_2}) do
 			if not GAMESTATE:IsHumanPlayer(player) then GAMESTATE:JoinPlayer(player) end
 		end
+	end
+	
+	-- if going into double, ensure that only the MPN is joined
+	if style == "single" or style == "double" then
+		if GAMESTATE:GetMasterPlayerNumber() == PLAYER_1 then
+			GAMESTATE:UnjoinPlayer(PLAYER_2)
+		else
+			GAMESTATE:UnjoinPlayer(PLAYER_1)
+		end
+	end
+end
+
+local DeductCreditsMaybe = function(style)
+	-- if GAMESTATE:GetNumSidesJoined()==2 then return end
+	
+	-- no need to deduct credits; just move on
+	if (PREFSMAN:GetPreference("EventMode")
+	or PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay"
+	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit")
+	and (style == "versus" or style == "double") then			
 		return
 	end
 	
-	-- double for 1 credit
+	-- double for 1 credit; deduct 1 credit if entering versus
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
 	and PREFSMAN:GetPreference("Premium") == "Premium_DoubleFor1Credit"
-	and style == "versus" then
-		for player in ivalues({PLAYER_1, PLAYER_2}) do
-			if not GAMESTATE:IsHumanPlayer(player) then 
-				GAMESTATE:JoinPlayer(player)
-			end
-		end
+	and (style == "versus") then
 		-- deduct 1 credit
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
 	end
 	
-	-- premium off
+	-- premium off; deduct 1 credit if entering versus or double
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" 
 	and PREFSMAN:GetPreference("Premium") == "Premium_Off" 
 	and (style=="versus" or style=="double") then
-		-- if going to versus, join the unjoined player
-		if style=="versus" then
-			for player in ivalues({PLAYER_1, PLAYER_2}) do
-				if not GAMESTATE:IsHumanPlayer(player) then 
-					GAMESTATE:JoinPlayer(player)
-				end
-			end
-		end
-		
-		-- either way, deduct 1 credit
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
+		return
 	end
 	
 end
@@ -215,7 +217,9 @@ local t = Def.ActorFrame{
 	end,
 	FinishCommand=function(self)		
 		local style = choices[current_index].name
-		if style ~= "single" then JoinInputMaybe(style) end
+		
+		JoinOrUnjoinPlayersMaybe(style)
+		DeductCreditsMaybe(style)
 		
 		-- ah, yes, techno mode
 		if current_game=="techno" then style = style.."8" end

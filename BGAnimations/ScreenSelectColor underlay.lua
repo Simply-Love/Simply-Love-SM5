@@ -28,10 +28,6 @@ local function input(event)
 			underlay:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "Start" then
-			if not GAMESTATE:IsPlayerEnabled(event.PlayerNumber) and PREFSMAN:GetPreference("Premium") == "Premium_2PlayersFor1Credit" then
-				GAMESTATE:JoinPlayer(event.PlayerNumber)
-			end
-
 			ColorSelected = true
 			underlay:playcommand("Finish")
 
