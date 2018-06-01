@@ -9,8 +9,11 @@ local naps = { 4, 13, 22 }
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)
 	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+		self:smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
 	end
+end
+af.NextScreenCommand=function(self)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
 

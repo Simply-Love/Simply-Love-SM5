@@ -1,31 +1,18 @@
--- humor keeps me going
-local max_width = 440
-local font_zoom = 0.9
-local quote_bmt
+-- "Don't you think it looks a little like snow?"
 
-local af = Def.ActorFrame{
-	InputEventCommand=function(self, event)
-		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-		end
-	end
+local af = Def.ActorFrame{}
+af.OnCommand=function(self) self:sleep(12):queuecommand("Transition") end
+af.TransitionCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end
+
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/1/snowfall.mp4"),
+	InitCommand=function(self) self:diffuse(0,0,0,1):Center():zoom(2/3) end,
+	OnCommand=function(self) self:smooth(2):diffuse(1,1,1,1):sleep(9):smooth(1):diffuse(0,0,0,1) end
 }
 
-af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-	Text="At 15:30:08 UTC on Sun, 4 December 292277026596, 64-bit versions of the Unix time stamp will cease to work, as it will overflow the largest value that can be held in a signed 64-bit number.\n\nThis is not anticipated to pose a problem, as it is considerably longer than the time it would take the Sun to theoretically expand to a red giant and swallow the Earth.\n\n-Wikipedia",
-	InitCommand=function(self)
-		quote_bmt = self
-		self:zoom(font_zoom):wrapwidthpixels(max_width/font_zoom)
-			:Center():addx(-self:GetWidth()/2):halign(0)
-	end,
-}
-
-af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:diffuse(0.5, 0.5, 0.5, 1) end,
-	OnCommand=function(self)
-		self:zoomto(2, quote_bmt:GetHeight()*font_zoom):Center():addx(-quote_bmt:GetWidth()/2 - 14)
-	end
+af[#af+1] = Def.Sound{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/1/snowfall.ogg"),
+	OnCommand=function(self) self:play() end
 }
 
 return af

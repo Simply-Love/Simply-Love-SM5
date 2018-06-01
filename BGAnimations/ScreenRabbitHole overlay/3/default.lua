@@ -4,8 +4,11 @@ local haiku = "as my cursor blinks\nidle, my mind is active\nrecalling your voic
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)
 		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+			self:smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
 		end
+	end,
+	NextScreenCommand=function(self)
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
 }
 

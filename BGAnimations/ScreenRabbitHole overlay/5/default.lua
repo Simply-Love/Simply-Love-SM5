@@ -2,12 +2,15 @@
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)
 	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+		self:smooth(1):diffuse(0,0,0,1):sleep(0.5):queuecommand("NextScreen")
 	end
 end
 af.InitCommand=function(self) self:xy(_screen.cx,0):diffusealpha(0) end
 af.OnCommand=function(self)
-	self:sleep(2):linear(1):diffusealpha(1)
+	self:sleep(2):smooth(1):diffusealpha(1)
+end
+af.NextScreenCommand=function(self)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
 af[#af+1] = Def.Sound{

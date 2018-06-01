@@ -134,7 +134,10 @@ local af = Def.ActorFrame{
 	end,
 }
 
-local canvas = Def.ActorFrame{ InitCommand=function(self) self:Center():SetUpdateFunction(Update) end }
+local canvas = Def.ActorFrame{
+	InitCommand=function(self) self:Center():SetUpdateFunction(Update) end,
+	NextScreenCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end
+}
 
 -- gymnopedie no.1
 canvas[#canvas+1] = Def.Sound{
@@ -338,6 +341,7 @@ canvas[#canvas+1] = Def.Sprite{
 				dx, dy = 0, 0
 				ball:visible(false)
 				paddle:linear(1):diffusealpha(0):queuecommand("Hide")
+				canvas:sleep(2.5):smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
 			end
 		end
 
