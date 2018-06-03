@@ -110,6 +110,12 @@ local t = Def.ActorFrame {
 	InitCommand=function(self) self:queuecommand("Capture"); main_af = self end,
 	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", self) ) end,
 
+	-- the OffCommand will have been queued, when it is appropriate, from Input.lua
+	-- sleep for 0.5 seconds to give the playerframes time to tween out
+	-- and queue a call to finish() so that the engine can wrap things up
+	OffCommand=function(self) self:sleep(0.5):queuecommand("Finish") end,
+	FinishCommand=function(self) SCREENMAN:GetTopScreen():Finish() end,
+
 	StorageDevicesChangedMessageCommand=function(self, params)
 		self:queuecommand('UpdateInternal2')
 	end,
@@ -165,6 +171,9 @@ local t = Def.ActorFrame {
 		LoadActor( THEME:GetPathS("ScreenSelectMaster","change") )..{
 			DirectionButtonMessageCommand=cmd(play)
 		},
+		LoadActor( THEME:GetPathS("Common", "invalid") )..{
+			InvalidChoiceMessageCommand=function(self) self:play() end
+		}
 	}
 }
 
@@ -174,6 +183,11 @@ local PlayerFrame = function(player)
 		InitCommand=function(self) self:xy(_screen.cx+(160*(player==PLAYER_1 and -1 or 1)), _screen.cy):rotationy(-90) end,
 		OnCommand=function(self) self:smooth(0.35):rotationy(0) end,
 		OffCommand=function(self) self:bouncebegin(0.35):zoom(0) end,
+		InvalidChoiceMessageCommand=function(self, params)
+			if params.PlayerNumber == player then
+				self:finishtweening():bounceend(0.1):addx(5):bounceend(0.1):addx(-10):bounceend(0.1):addx(5)
+			end
+		end,
 
 		PlayerJoinedMessageCommand=function(self,param)
 			if param.Player == player then

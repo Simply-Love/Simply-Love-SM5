@@ -1,14 +1,32 @@
 local af = ...
 
 local AutoStyle = ThemePrefs.Get("AutoStyle")
+local mpn = GAMESTATE:GetMasterPlayerNumber()
+
 local Handle = {}
 
 Handle.Start = function(event)
-	MESSAGEMAN:Broadcast("StartButton")
+	local topscreen = SCREENMAN:GetTopScreen()
+
 	if not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-		SCREENMAN:GetTopScreen():SetProfileIndex(event.PlayerNumber, -1)
+		topscreen:SetProfileIndex(event.PlayerNumber, -1)
 	else
-		SCREENMAN:GetTopScreen():Finish()
+
+		-- if both players have joined
+		if #GAMESTATE:GetHumanPlayers() > 1 then
+			-- and both players are trying to choose the same profile
+			if topscreen:GetProfileIndex(PLAYER_1) == topscreen:GetProfileIndex(PLAYER_2) then
+				-- broadcast an InvalidChoice message to play the "Common invalid" sound
+				-- and "shake" the playerframe for the player that just pressed start
+				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
+				return
+			end
+		end
+
+		-- otherwise, play the StartButton sound
+		MESSAGEMAN:Broadcast("StartButton")
+		-- and queue the OffCommand for the entire screen
+		topscreen:queuecommand("Off"):sleep(0.4)
 	end
 end
 Handle.Center = Handle.Start
