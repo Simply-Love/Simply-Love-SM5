@@ -8,9 +8,7 @@ local pages = {}
 local page = 1
 local book = LoadActor("./a-beige-colored-bookmark.lua")
 
-local left_page, right_page
-
-local count = 0
+local left_page
 
 -- initialize pages
 local InitializePages = function()
@@ -126,7 +124,6 @@ af[#af+1] = Def.BitmapText{
 af[#af+1] = Def.BitmapText{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/palatino/_palatino 20px.ini"),
 	InitCommand=function(self)
-		right_page = self
 		self:zoom(font_zoom):wrapwidthpixels(max_width/font_zoom):vertspacing(-4)
 			:xy(_screen.cx + padding*1.25, padding*2):align(0,0):diffuse(color("#603e25"))
 			:settext(""):queuecommand("Refresh")
