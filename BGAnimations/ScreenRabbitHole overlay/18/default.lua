@@ -43,12 +43,17 @@ end
 
 
 local af = Def.ActorFrame{
+	InitCommand=function(self) self:zoom(0.95):xy(20,12):diffuse(0,0,0,1) end,
+	OnCommand=function(self) self:sleep(1):smooth(1):diffuse(1,1,1,1) end,
+	CloseCommand=function(self) self:smooth(2):diffuse(0,0,0,1):queuecommand("Transition") end,
+	TransitionCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end,
+
 	InputEventCommand=function(self, event)
 
 		if event.type == "InputEventType_FirstPress" then
 
 			if event.GameButton=="Start" or event.GameButton=="Back" then
-				SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+				SCREENMAN:GetTopScreen():playcommand("Off"):StartTransitioningScreen("SM_GoToNextScreen")
 
 			elseif event.GameButton == "MenuRight" then
 				if page + 2 < #pages then
@@ -93,76 +98,43 @@ local af = Def.ActorFrame{
 	}
 }
 
-af[#af+1] = Def.ActorFrame{
-	InitCommand=function(self) self:zoom(0.95):xy(20,12):diffusealpha(0) end,
-	OnCommand=function(self) self:sleep(0.5):smooth(1):diffusealpha(1) end,
-	CloseCommand=function(self) self:smooth(2):diffusealpha(0):queuecommand("Transition") end,
-	TransitionCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end,
+af[#af+1] =	Def.Sprite{
+	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/18/pages.png"),
+	InitCommand=function(self) self:zoom(0.54):Center() end,
+}
 
-	-- left
-	Def.ActorFrame{
 
-		-- cover
-		Def.Sprite{
-			Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/18/cover.png"),
-			InitCommand=function(self) self:zoomx(0.445):zoomy(0.48):xy(_screen.cx, _screen.cy):horizalign(left):rotationy(180) end,
-		},
+-- left
+af[#af+1] = Def.BitmapText{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/palatino/_palatino 20px.ini"),
+	InitCommand=function(self)
+		left_page = self
 
-		-- page
-		Def.Sprite{
-			Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/18/left.png"),
-			InitCommand=function(self) self:zoomy(0.45):zoomx(0.45):xy(_screen.cx+6, _screen.cy):horizalign(right) end,
-		},
-		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/palatino/_palatino 20px.ini"),
-			InitCommand=function(self)
-				left_page = self
+		self:zoom(font_zoom):wrapwidthpixels(max_width/font_zoom):vertspacing(-4)
+			:xy(WideScale(padding*2, padding*6.5), padding*2):align(0,0):diffuse(color("#603e25"))
 
-				self:zoom(font_zoom):wrapwidthpixels(max_width/font_zoom):vertspacing(-4)
-					:xy(WideScale(padding*1.5, padding*6.5), padding*2):align(0,0):diffuse(color("#603e25"))
+		InitializePages()
+		self:settext(""):queuecommand("Refresh")
+	end,
+	RefreshCommand=function(self)
+		self:settext(pages[page])
+	end,
+	CloseCommand=function(self) self:settext("") end
+}
 
-				InitializePages()
-				self:settext(""):queuecommand("Refresh")
-			end,
-			RefreshCommand=function(self)
-				self:settext(pages[page])
-			end,
-			CloseCommand=function(self) self:settext("") end
-		}
-	},
-
-	-- right
-	Def.ActorFrame{
-
-		InitCommand=function(self) self:xy(_screen.cx - padding*0.5, _screen.cy) end,
-
-		-- cover
-		Def.Sprite{
-			Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/18/cover.png"),
-			InitCommand=function(self) self:zoomx(0.45):zoomy(0.48):xy(0,0):horizalign(left) end,
-		},
-
-		-- page
-		Def.Sprite{
-			Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/18/right.png"),
-			InitCommand=function(self) self:zoomy(0.448):zoomx(0.47):halign(0):y(-1) end,
-			CloseCommand=function(self) self:smooth(3):zoomx(0.45) end
-		},
-
-		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/palatino/_palatino 20px.ini"),
-			InitCommand=function(self)
-				right_page = self
-				self:zoom(font_zoom):wrapwidthpixels(max_width/font_zoom):vertspacing(-4)
-					:xy(padding*1.25, -max_height/2):align(0,0):diffuse(color("#603e25"))
-					:settext(""):queuecommand("Refresh")
-			end,
-			RefreshCommand=function(self)
-				self:settext(pages[page+1])
-			end,
-			CloseCommand=function(self) self:settext("") end
-		}
-	},
+-- right
+af[#af+1] = Def.BitmapText{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/palatino/_palatino 20px.ini"),
+	InitCommand=function(self)
+		right_page = self
+		self:zoom(font_zoom):wrapwidthpixels(max_width/font_zoom):vertspacing(-4)
+			:xy(_screen.cx + padding*1.25, padding*2):align(0,0):diffuse(color("#603e25"))
+			:settext(""):queuecommand("Refresh")
+	end,
+	RefreshCommand=function(self)
+		self:settext(pages[page+1])
+	end,
+	CloseCommand=function(self) self:settext("") end
 }
 
 return af
