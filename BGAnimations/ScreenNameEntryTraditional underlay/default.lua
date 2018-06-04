@@ -20,7 +20,7 @@ local alphabet_character_mt = LoadActor("./AlphabetCharacterMT.lua")
 ---------------------------------------------------------------------------
 -- Alphanumeric Characters available to our players for highscore name use
 local PossibleCharacters = {
-	"back", "ok",
+	"&BACK;", "&OK;",
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "?", "!"
@@ -61,7 +61,7 @@ local t = Def.ActorFrame {
 	end,
 	MenuTimerExpiredCommand=function(self, param)
 
-		-- if the timer runs out, check if either player hasn't finsihed entering his/her name
+		-- if the timer runs out, check if either player hasn't finished entering his/her name
 		-- if so, fade out that player's cursor and alphabetwheel and play the "start" sound
 		for player in ivalues(Players) do
 			local pn = ToEnumShortString(player)
@@ -195,7 +195,7 @@ for player in ivalues(Players) do
 	--		x position
 	--		y position
 	if SL[pn].HighScores.EnteringName then
-		t[#t+1] = AlphabetWheels[pn]:create_actors( "AlphabetWheel_"..pn, 7, alphabet_character_mt, _screen.cx + x_offset, _screen.cy+30)
+		t[#t+1] = AlphabetWheels[pn]:create_actors( "AlphabetWheel_"..pn, 7, alphabet_character_mt, _screen.cx + x_offset, _screen.cy+38)
 	end
 end
 

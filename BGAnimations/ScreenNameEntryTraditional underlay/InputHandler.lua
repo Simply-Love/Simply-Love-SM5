@@ -46,12 +46,21 @@ local InputHandler = function(event)
 
 			if SL[pn].HighScores.EnteringName then
 				-- This gets us the value selected out of the PossibleCharacters table
-				-- for example, "A" or "2" or "back"
 				local SelectedCharacter = AlphabetWheels[pn]:get_info_at_focus_pos()
 
-				-- if the player has pressed START on an alphanumeric character
-				if not (SelectedCharacter == "ok" or SelectedCharacter == "back") then
+				if SelectedCharacter == "&OK;" then
+					SL[pn].HighScores.EnteringName = false
+					-- hide this player's cursor
+					t:GetChild("PlayerNameAndDecorations_"..pn):GetChild("Cursor"):queuecommand("Hide")
+					-- hide this player's AlphabetWheel
+					t:GetChild("AlphabetWheel_"..pn):queuecommand("Hide")
+					-- play the "enter" sound
+					t:GetChild("enter"):playforplayer(event.PlayerNumber)
 
+				elseif SelectedCharacter == "&BACK;" then
+					RemoveLastCharacter(pn)
+
+				else -- it must be a normal character
 					if SL[pn].HighScores.Name:len() < CharacterLimit then
 						-- append the new character
 						SL[pn].HighScores.Name = SL[pn].HighScores.Name .. SelectedCharacter
@@ -67,18 +76,8 @@ local InputHandler = function(event)
 						AlphabetWheels[pn]:scroll_to_pos(2)
 					end
 
-				elseif SelectedCharacter == "ok" then
-					SL[pn].HighScores.EnteringName = false
-					-- hide this player's cursor
-					t:GetChild("PlayerNameAndDecorations_"..pn):GetChild("Cursor"):queuecommand("Hide")
-					-- hide this player's AlphabetWheel
-					t:GetChild("AlphabetWheel_"..pn):queuecommand("Hide")
-					-- play the "enter" sound
-					t:GetChild("enter"):playforplayer(event.PlayerNumber)
-
-				elseif SelectedCharacter == "back" then
-					RemoveLastCharacter(pn)
 				end
+
 			end
 
 			-- check if we're ready to save scores and proceed to the next screen
