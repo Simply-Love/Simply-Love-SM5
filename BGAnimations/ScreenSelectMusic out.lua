@@ -14,12 +14,4 @@ return Def.ActorFrame{
 		ShowEnteringOptionsCommand=cmd(linear,0.125; diffusealpha,0; queuecommand, "NewText"),
 		NewTextCommand=cmd(hibernate,0.1; settext,THEME:GetString("ScreenSelectMusic", "Entering Options..."); linear,0.125; diffusealpha,1; hurrytweening,0.1; sleep,1)
 	},
-
-	LoadFont("_wendy small")..{
-		Text=THEME:GetString("ScreenSelectMusic","Start Button"),
-		InitCommand=cmd(xy, _screen.cx-51, _screen.cy-43),
-		OnCommand=cmd(visible,false),
-		ShowPressStartForOptionsCommand=cmd(visible,true),
-		ShowEnteringOptionsCommand=cmd(linear,0.1; diffusealpha,0)
-	}
 }
