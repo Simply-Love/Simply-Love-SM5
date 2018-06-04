@@ -15,7 +15,8 @@ Handle.Start = function(event)
 		-- if both players have joined
 		if #GAMESTATE:GetHumanPlayers() > 1 then
 			-- and both players are trying to choose the same profile
-			if topscreen:GetProfileIndex(PLAYER_1) == topscreen:GetProfileIndex(PLAYER_2) then
+			if topscreen:GetProfileIndex(PLAYER_1) == topscreen:GetProfileIndex(PLAYER_2)
+			and not (MEMCARDMAN:GetCardState(PLAYER_1)~='MemoryCardState_none' and MEMCARDMAN:GetCardState(PLAYER_2)~='MemoryCardState_none') then
 				-- broadcast an InvalidChoice message to play the "Common invalid" sound
 				-- and "shake" the playerframe for the player that just pressed start
 				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
