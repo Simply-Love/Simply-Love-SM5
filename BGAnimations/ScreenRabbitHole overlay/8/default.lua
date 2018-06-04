@@ -39,8 +39,13 @@ local quotes = {
 		}
 	},
 	{
-		text="I didn't know whether to feel happy because we'd been intelligent enough to design something that will surely outsurvive us, or sad because we don't get that much time in the grand scheme of things.\n\nIt felt like a building the most elaborate snowcastle knowing that summer is coming.",
+		text="I didn't know whether to feel happy because we'd been intelligent enough to design something that will surely outsurvive us, or sad because we don't get that much time in the grand scheme of things before everything falls apart.",
 		color={0.666, 0.666, 0.8, 1},
+	},
+	{
+		text="Somtimes I worry about not having enough time.\n\nTo see all the things I want to see and experience all the things I want to experience.  To describe all the thoughts in my mind in adequate detail.\n\nI worry I'm building most elaborate snowcastle with summer just around the corner.",
+		color={0.666, 0.666, 0.8, 1},
+
 	},
 	{
 		text="Sounds intense.",
@@ -87,8 +92,13 @@ af[#af+1] = Def.BitmapText{
 	RefreshCommand=function(self)
 		if quotes[count].text then
 			self:settext(quotes[count].text):diffuse(quotes[count].color)
+			if quotes[count].color[1] == 0.8 then
+				self:y(140)
+			else
+				self:y(70)
+			end
 		else
-			self:settext(quotes[count][1].text):diffuse(quotes[count][1].color)
+			self:settext(quotes[count][1].text):diffuse(quotes[count][1].color):y(70)
 		end
 		self:x(-max_width/2)
 	end,
