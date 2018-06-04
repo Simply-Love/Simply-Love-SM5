@@ -1,31 +1,53 @@
--- elsewhere, far away
+-- hallways
+local intro = "walking on the balls of my feet\nI led her down a dark hallway"
+local footsteps = { "our","feet","gently","tip","tap","tapping","on","the","hard","dark","floor","as we","walked","hand in hand","together" }
+local outro = "where were we going?\nhow would we know when we got there?\nI gripped her hand more tightly"
+
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)
 	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-		self:smooth(1):diffuse(0,0,0,1):sleep(0.5):queuecommand("NextScreen")
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
 end
-af.InitCommand=function(self) self:xy(_screen.cx,0):diffusealpha(0) end
 af.OnCommand=function(self)
-	self:sleep(2):smooth(1):diffusealpha(1)
-end
-af.NextScreenCommand=function(self)
-	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+	self:queuecommand("Intro")
+		:sleep(11):queuecommand("Walk")
+		:sleep(#footsteps/1.475):queuecommand("Outro")
 end
 
+
 af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/5/seaside_catchball.ogg"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/4/hallways-v1.ogg"),
 	OnCommand=function(self) self:play() end
 }
 
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/5/seaside_catchball.mp4"),
-	InitCommand=function(self) self:valign(0):y(0):loop(true) end
+af[#af+1] = Def.BitmapText{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+	Text=intro,
+	InitCommand=function(self) self:xy( _screen.cx, _screen.cy-self:GetHeight()/2 ):diffusealpha(0) end,
+	IntroCommand=function(self)
+		self:sleep(2):linear(2):diffusealpha(1):sleep(5):linear(2):diffusealpha(0)
+	end,
+	OutroCommand=function(self)
+		self:settext(outro):queuecommand("Intro")
+	end
 }
 
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/5/yt.png"),
-	InitCommand=function(self) self:valign(1):y(_screen.h+40):zoom(0.582) end
+local hallway = Def.ActorFrame{
+	InitCommand=function(self) self:y(_screen.cy+20):fov(90):rotationx(-80) end,
+	WalkCommand=function(self) self:linear(#footsteps/1.475):addz(#footsteps*100):addy(250) end,
+	OutroCommand=function(self) self:visible(false) end
 }
+
+for i=#footsteps, 1, -1 do
+	hallway[i] = Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text=footsteps[i],
+		InitCommand=function(self) self:xy(_screen.cx+(i%2==0 and -20 or 20), i*-70):rotationx(85):diffusealpha(0) end,
+		WalkCommand=function(self) self:sleep(i*0.5):accelerate(1.25):diffusealpha(1) end
+	}
+end
+
+af[#af+1] = hallway
 
 return af

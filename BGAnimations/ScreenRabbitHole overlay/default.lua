@@ -1,5 +1,5 @@
 local af
-local count = 17
+local count = 3
 
 local InputHandler = function(event)
 	if count ~= 17 and (not event.PlayerNumber or not event.button) then return false end
