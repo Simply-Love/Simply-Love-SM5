@@ -13,8 +13,7 @@ local af = Def.ActorFrame{
 }
 
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/3/recalling.ogg"),
+af[#af+1] = LoadActor("./recalling.ogg")..{
 	OnCommand=function(self) self:play() end
 }
 
@@ -25,10 +24,9 @@ af[#af+1] = Def.BitmapText{
 	OnCommand=function(self) self:sleep(2.5):linear(1):diffusealpha(1) end
 }
 
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/3/mask.png"),
+af[#af+1] = LoadActor("./mask.png")..{
 	InitCommand=function(self) self:zoom(0.25):Center() end,
-	OnCommand=function(self) self:sleep(0.5):pulse():effectmagnitude(12,1,1):effectperiod(6) end
+	OnCommand=function(self) self:sleep(0.5):pulse():effectmagnitude(14,1,1):effectperiod(6) end
 }
 
 -- cursor

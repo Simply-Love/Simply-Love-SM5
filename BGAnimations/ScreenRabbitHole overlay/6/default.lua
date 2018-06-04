@@ -13,18 +13,15 @@ af.NextScreenCommand=function(self)
 	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/5/seaside_catchball.ogg"),
+af[#af+1] = LoadActor("./seaside_catchball.ogg")..{
 	OnCommand=function(self) self:play() end
 }
 
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/5/seaside_catchball.mp4"),
+af[#af+1] = LoadActor("./seaside_catchball.mp4")..{
 	InitCommand=function(self) self:valign(0):y(0):loop(true) end
 }
 
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/5/yt.png"),
+af[#af+1] = LoadActor("./yt.png")..{
 	InitCommand=function(self) self:valign(1):y(_screen.h+40):zoom(0.582) end
 }
 

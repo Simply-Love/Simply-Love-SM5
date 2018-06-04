@@ -58,22 +58,18 @@ af[#af+1] = Def.BitmapText{
 		quote_bmt = self
 		self:wrapwidthpixels(max_width)
 			:align(0,0)
-			:xy(-self:GetWidth()/2, 60)
+			:xy(-self:GetWidth()/2, 70)
 			:diffusealpha(0)
 			:playcommand("Refresh")
 	end,
 	RefreshCommand=function(self)
 		self:settext(quotes[count].text):diffuse(quotes[count].color)
+		if quotes[count].color[1] == 0.8 then
+			self:y(140)
+		else
+			self:y(70)
+		end
 	end,
 }
-
-af[#af+1] = Def.Quad{
-	InitCommand=function(self)
-		self:diffuse(0.5, 0.5, 0.5, 1):Center():xy(-max_width/2 - 12, 60):valign(0)
-	end,
-	OnCommand=function(self) self:playcommand("Refresh") end,
-	RefreshCommand=function(self) self:zoomto(2, quote_bmt:GetHeight()) end
-}
-
 
 return af

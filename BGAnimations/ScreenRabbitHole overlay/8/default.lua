@@ -140,8 +140,7 @@ local canvas = Def.ActorFrame{
 }
 
 -- gymnopedie no.1
-canvas[#canvas+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/7/gymnopedie_no1.ogg"),
+canvas[#canvas+1] = LoadActor("./gymnopedie_no1.ogg")..{
 	OnCommand=function(self) self:stop():play():sleep(86):queuecommand("On") end,
 }
 
@@ -152,8 +151,7 @@ canvas[#canvas+1] = Def.Quad{
 }
 
 -- grass
-canvas[#canvas+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/7/grass.png"),
+canvas[#canvas+1] = LoadActor("./grass.png")..{
 	InitCommand=function(self)
 		self:zoomto(canvas_w, canvas_h)
 	end
@@ -163,7 +161,7 @@ canvas[#canvas+1] = Def.Sprite{
 canvas[#canvas+1] = Def.ActorMultiVertex{
 	InitCommand=function(self)
 		self:SetDrawState( {Mode="DrawMode_Quads"} )
-			:LoadTexture( THEME:GetPathB("ScreenRabbitHole", "overlay/7/brick.png") )
+			:LoadTexture( THEME:GetPathB("ScreenRabbitHole", "overlay/8/brick.png") )
 			:SetVertices( verts )
 
 		amv = self
@@ -285,8 +283,7 @@ canvas[#canvas+1] = Def.Quad{
 }
 
 -- ball
-canvas[#canvas+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/7/ball.png"),
+canvas[#canvas+1] = LoadActor("./ball.png")..{
 	InitCommand=function(self)
 		ball = self
 		self:zoomto(brick_size/2, brick_size/2)
@@ -369,7 +366,7 @@ canvas[#canvas+1] = Def.Sprite{
 af[#af+1] = canvas
 
 af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 	Text="continue holding to quit",
 	InitCommand=function(self)
 		give_up_text = self

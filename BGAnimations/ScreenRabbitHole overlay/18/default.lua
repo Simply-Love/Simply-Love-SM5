@@ -43,7 +43,7 @@ end
 local af = Def.ActorFrame{
 	InitCommand=function(self) self:zoom(0.95):xy(20,12):diffuse(0,0,0,1) end,
 	OnCommand=function(self) self:sleep(1):smooth(1):diffuse(1,1,1,1) end,
-	CloseCommand=function(self) self:smooth(2):diffuse(0,0,0,1):queuecommand("Transition") end,
+	CloseCommand=function(self) self:smooth(2):diffuse(0,0,0,1):queuecommand("Off"):queuecommand("Transition") end,
 	TransitionCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end,
 
 	InputEventCommand=function(self, event)

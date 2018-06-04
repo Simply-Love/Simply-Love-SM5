@@ -24,7 +24,7 @@ local quotes = {
 			color={0.666, 0.666, 0.8, 1},
 		},
 		{
-			text="At 15:30:08 UTC on Sun, 4 December 292277026596, 64-bit versions of the Unix time stamp will cease to work, as it will overflow the largest value that can be held in a signed 64-bit number.\n\nThis is not anticipated to pose a problem, as it is considerably longer than the time it would take the Sun to theoretically expand to a red giant and swallow the Earth.",
+			text="At 15:30:08 UTC on Sun, 4 December 292277026596, 64-bit versions of the Unix timestamp will cease to work, as it will overflow the largest value that can be held in a signed 64-bit number.\n\nThis is not anticipated to pose a problem, as it is considerably longer than the time it would take the Sun to theoretically expand to a red giant and swallow the Earth.",
 			color={0.75,0.75,0.75,1},
 		}
 	},

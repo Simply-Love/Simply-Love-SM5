@@ -16,8 +16,7 @@ af.OnCommand=function(self)
 end
 
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/4/hallways-v1.ogg"),
+af[#af+1] = LoadActor("hallways-v1.ogg")..{
 	OnCommand=function(self) self:play() end
 }
 
@@ -27,9 +26,15 @@ af[#af+1] = Def.BitmapText{
 	InitCommand=function(self) self:xy( _screen.cx, _screen.cy-self:GetHeight()/2 ):diffusealpha(0) end,
 	IntroCommand=function(self)
 		self:sleep(2):linear(2):diffusealpha(1):sleep(5):linear(2):diffusealpha(0)
+		if self:GetText()==outro then
+			self:sleep(3):queuecommand("Transition")
+		end
 	end,
 	OutroCommand=function(self)
 		self:settext(outro):queuecommand("Intro")
+	end,
+	TransitionCommand=function(self)
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
 }
 
