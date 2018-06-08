@@ -37,10 +37,26 @@ function GetLocalProfiles()
 	return t
 end
 
-function LoadCard(cColor)
+function LoadCard(c, player)
 	return Def.ActorFrame {
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") )..{ InitCommand=function(self) self:diffuse(cColor) end },
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") )
+		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") )..{
+			InitCommand=function(self) self:diffuse(c):cropbottom(1) end,
+			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
+			OffCommand=function(self)
+				if not GAMESTATE:IsSideJoined(player) then
+					self:accelerate(0.25):cropbottom(1)
+				end
+			end
+		},
+		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") )..{
+			InitCommand=function(self) self:cropbottom(1) end,
+			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
+			OffCommand=function(self)
+				if not GAMESTATE:IsSideJoined(player) then
+					self:accelerate(0.25):cropbottom(1)
+				end
+			end
+		}
 	}
 end
 
@@ -180,9 +196,13 @@ local t = Def.ActorFrame {
 local PlayerFrame = function(player)
 	return Def.ActorFrame {
 		Name=ToEnumShortString(player) .. "Frame",
-		InitCommand=function(self) self:xy(_screen.cx+(160*(player==PLAYER_1 and -1 or 1)), _screen.cy):rotationy(-90) end,
-		OnCommand=function(self) self:smooth(0.35):rotationy(0) end,
-		OffCommand=function(self) self:bouncebegin(0.35):zoom(0) end,
+		InitCommand=function(self) self:xy(_screen.cx+(160*(player==PLAYER_1 and -1 or 1)), _screen.cy) end,
+		-- OnCommand=function(self) self:smooth(0.35):rotationy(0) end,
+		OffCommand=function(self)
+			if GAMESTATE:IsSideJoined(player) then
+				self:bouncebegin(0.35):zoom(0)
+			end
+		end,
 		InvalidChoiceMessageCommand=function(self, params)
 			if params.PlayerNumber == player then
 				self:finishtweening():bounceend(0.1):addx(5):bounceend(0.1):addx(-10):bounceend(0.1):addx(5)
@@ -198,17 +218,19 @@ local PlayerFrame = function(player)
 		children = {
 			Def.ActorFrame {
 				Name='JoinFrame',
-				LoadCard(Color.Black),
+				LoadCard(Color.Black, player),
 
 				LoadFont("_miso") .. {
 					Text=THEME:GetString("ScreenSelectProfile", "PressStartToJoin"),
-					OnCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5")),
+					InitCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"); diffusealpha, 0),
+					OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
+					OffCommand=function(self) self:linear(0.1):diffusealpha(0) end
 				},
 			},
 
 			Def.ActorFrame {
 				Name='BigFrame',
-				LoadCard(PlayerColor(player))
+				LoadCard(PlayerColor(player), player)
 			},
 
 			Def.ActorFrame {
@@ -216,8 +238,8 @@ local PlayerFrame = function(player)
 				InitCommand=cmd(y,-2),
 
 				Def.Quad {
-					InitCommand=cmd(zoomto,200-10,40+2),
-					OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5),
+					InitCommand=cmd(zoomto,200-10,40+2; diffuse,Color('Black'); diffusealpha,0),
+					OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
 				},
 			},
 
@@ -233,7 +255,8 @@ local PlayerFrame = function(player)
 			Def.ActorScroller{
 				Name='Scroller',
 				NumItemsToDraw=6,
-				OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15),
+				InitCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15; diffusealpha,0),
+				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
 				TransformFunction=function(self, offset, itemIndex, numItems)
 					local focus = scale(math.abs(offset),0,2,1,0)
 					self:visible(false)
@@ -245,7 +268,7 @@ local PlayerFrame = function(player)
 
 			LoadFont("_miso")..{
 				Name='SelectedProfileText',
-				InitCommand=cmd(y,160; zoom, 1.35)
+				InitCommand=cmd(y,160; zoom, 1.35; shadowlength, ThemePrefs.Get("RainbowMode") and 0.5 or 0)
 			}
 		}
 	}
