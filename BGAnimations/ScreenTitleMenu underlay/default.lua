@@ -18,10 +18,10 @@ if ProductVersion():find("git") then
 	local date = VersionDate()
 	local year = date:sub(1,4)
 	local month = date:sub(5,6)
-	if month:sub(1,1) == "0" then month = month:gsub("0", "") end 
+	if month:sub(1,1) == "0" then month = month:gsub("0", "") end
 	month = THEME:GetString("Months", "Month"..month)
 	local day = date:sub(7,8)
-	
+
 	sm_version = ProductID() .. ", Built " .. month .. " " .. day .. ", " .. year
 else
 	sm_version = ProductID() .. sm_version
@@ -33,7 +33,7 @@ local af = Def.ActorFrame{
 	InitCommand=function(self)
 		--see: ./Scripts/SL_Initialize.lua
 		InitializeSimplyLove()
-		
+
 		self:Center()
 	end,
 	OffCommand=cmd(linear,0.5; diffusealpha, 0),
@@ -61,7 +61,7 @@ local af = Def.ActorFrame{
 	},
 
 	LoadActor("Simply".. image .." (doubleres).png") .. {
-		InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(1) end,
+		InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(0.75) end,
 		OffCommand=function(self) self:linear(0.5):shadowlength(0) end
 	}
 }
