@@ -5,7 +5,7 @@ return Def.ActorFrame{
 		InitCommand=function(self)
 			self:zoomto(_screen.w, 32):vertalign(top):x(_screen.cx)
 			if ThemePrefs.Get("RainbowMode") then
-				self:diffuse(color("#000000dd"))
+				self:diffuse(0,0,0,0.9)
 			else
 				self:diffuse(0.65,0.65,0.65,1)
 			end
