@@ -103,21 +103,21 @@ local song_mt = {
 						RefreshCommand=function(subself)
 							subself:scaletoclipped(110,110)
 							if self.index ~= SongWheel:get_actor_item_at_focus_pos().index then
-								subself:zoom(0.5)
+								subself:zoomto(55,55)
 							else
-								subself:zoom(1.15)
+								subself:zoomto(126,126)
 							end
 							subself:diffusealpha(1)
 						end,
 						GainFocusCommand=function(subself)
-							subself:linear(0.2):zoom(1.15):stopeffect()
+							subself:linear(0.2):zoomto(126,126):stopeffect()
 							if self.song == "CloseThisFolder" then
 								subself:diffuseshift():effectcolor1(1,0.65,0.65,1):effectcolor2(1,1,1,1)
 							end
 						end,
-						LoseFocusCommand=cmd(linear,0.2; zoom,0.5; stopeffect),
-						SlideToTopCommand=cmd(linear,0.3; zoom, 1; rotationy, 360; sleep, 0; rotationy, 0),
-						SlideBackIntoGridCommand=cmd(linear,0.12; zoom, 1.15),
+						LoseFocusCommand=cmd(linear,0.2; zoomto,55,55; stopeffect),
+						SlideToTopCommand=cmd(linear,0.3; zoomto, 110,110; rotationy, 360; sleep, 0; rotationy, 0),
+						SlideBackIntoGridCommand=cmd(linear,0.12; zoomto,126,126),
 					},
 				},
 

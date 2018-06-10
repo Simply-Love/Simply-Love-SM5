@@ -9,8 +9,7 @@ local af = Def.ActorFrame{
 }
 
 -----------------------------------------------------------------
--- background quads
-
+-- black background quad
 af[#af+1] = Def.Quad{
 	Name="SongWheelBackground",
 	InitCommand=cmd(zoomto, _screen.w, _screen.h/(row.how_many-2); diffuse, Color.Black; diffusealpha,1; cropbottom,1),
@@ -20,7 +19,7 @@ af[#af+1] = Def.Quad{
 	SwitchFocusToSingleSongMessageCommand=cmd(smooth,0.3; cropright,1),
 }
 
--- glowing border top
+-- rainbow glowing border top
 af[#af+1] = Def.Quad{
 	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2)*-0.5; faderight, 10; rainbow),
 	OnCommand=cmd(sleep,0.3; diffusealpha, 0.75; queuecommand, "FadeMe"),
@@ -30,7 +29,7 @@ af[#af+1] = Def.Quad{
 	SwitchFocusToSongsMessageCommand=cmd(visible,true)
 }
 
--- glowing border bottom
+-- rainbow glowing border bottom
 af[#af+1] = Def.Quad{
 	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2) * 0.5; faderight, 10; rainbow),
 	OnCommand=cmd(sleep,0.3; diffusealpha, 0.75; queuecommand, "FadeMe"),
@@ -40,7 +39,7 @@ af[#af+1] = Def.Quad{
 	SwitchFocusToSongsMessageCommand=cmd(visible,true)
 }
 -----------------------------------------------------------------
--- left/right arrows
+-- left/right UI arrows
 
 af[#af+1] = Def.ActorFrame{
 	Name="Arrows",
