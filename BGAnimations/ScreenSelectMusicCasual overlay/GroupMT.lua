@@ -44,10 +44,6 @@ local item_mt = {
 			-- this is a terrible way to do this
 			local item_index = name:gsub("item", "")
 			self.index = item_index
-			self.column = ((item_index-1) % col.how_many) + 1
-
-			-- self.static_row = math.ceil((item_index/col.how_many)-1) % row.how_many + 1
-			-- self.changing_row = self.static_row
 
 			local af = Def.ActorFrame{
 				Name=name,

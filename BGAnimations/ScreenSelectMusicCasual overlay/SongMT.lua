@@ -4,6 +4,8 @@ local TransitionTime = args[2]
 local row = args[3]
 local col = args[4]
 
+local CloseFolderTexture = nil
+
 -- max number of characters allowed in a song title before truncating to ellipsis
 local max_chars = 28
 
@@ -96,7 +98,7 @@ local song_mt = {
 					},
 
 					-- banner / jacket
-					Def.Banner{
+					Def.Sprite{
 						Name="Banner",
 						InitCommand=function(subself) self.banner = subself; subself:diffusealpha(0) end,
 						OnCommand=cmd(queuecommand,"Refresh"),
@@ -213,6 +215,7 @@ local song_mt = {
 			if not song then return end
 
 			self.img_path = ""
+			self.img_type = ""
 
 			-- this SongMT was passed the string "CloseThisFolder"
 			-- so this is a special case song metatable item
@@ -221,6 +224,14 @@ local song_mt = {
 				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
 				self.img_path = THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/CloseThisFolder.png")
 
+				if CloseFolderTexture ~= nil then
+					self.banner:SetTexture(CloseFolderTexture)
+				else
+					-- we should only get in here and need to Load() directly from
+					-- from disk once, on screen init
+					self.banner:Load(self.img_path)
+					CloseFolderTexture = self.banner:GetTexture()
+				end
 			else
 				-- we are passed in a Song object as info
 				self.song = song
@@ -228,14 +239,24 @@ local song_mt = {
 
 				if song:HasJacket() then
 					self.img_path = song:GetJacketPath()
+					self.img_type = "Jacket"
 				elseif song:HasBackground() then
 					self.img_path = song:GetBackgroundPath()
+					self.img_type = "Background"
 				elseif song:HasBanner() then
 					self.img_path = song:GetBannerPath()
+					self.img_type = "Banner"
+				end
+
+				-- thank you, based Jousway
+				if (Sprite.LoadFromCached ~= nil) then
+					self.banner:LoadFromCached(self.img_type, self.img_path)
+
+				-- support SM5.0.12 begrudgingly
+				else
+					self.banner:LoadBanner(self.img_path)
 				end
 			end
-
-			self.banner:LoadBanner(self.img_path)
 		end
 	}
 }
