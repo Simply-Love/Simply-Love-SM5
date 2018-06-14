@@ -82,7 +82,7 @@ return {
 		},
 		{
 			Name="DDRIllini",
-			Img="",
+			Img="uiuc.jpg",
 			About="Thanks to the DDRIllini crew for being DDM's loving counterpart a timezone away.  I have fond memories of driving with DDM friends to DDRIllini's annual Rumble in the Prairie events each spring.\n\nThank you, Kyt-Xune, Z0rk, feedbacker, Sudzi, ian5v, Benpai, pez, mtgmackid, Krysel, Kasemei, Juni, rikame, Mary, andrewipark, et al!"
 		}
 	},
