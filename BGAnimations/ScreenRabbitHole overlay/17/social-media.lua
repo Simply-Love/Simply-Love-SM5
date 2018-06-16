@@ -25,6 +25,18 @@ local af = Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.4):valign(0):xy(_screen.cx-100, 2) end,
 	},
 
+	-- profile photo
+	LoadActor("./profile-photo.png")..{
+		InitCommand=function(self) self:zoom(0.175):valign(0):xy(_screen.cx+100, 6) end,
+	},
+
+	-- title
+	Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text="Ben",
+		InitCommand=function(self) self:align(0,0):xy(_screen.cx+120,8):zoom(0.85) end
+	},
+
 	-- searchbar
 	LoadActor("./like-comment-share.png")..{
 		InitCommand=function(self) self:zoom(0.4):valign(0):xy(_screen.cx, _screen.h - self:GetHeight()/1.5) end,
