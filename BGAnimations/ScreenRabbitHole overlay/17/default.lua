@@ -2,7 +2,7 @@
 
 local scenes = {}
 local scene = 1
-local duration = { 10, 58, 75, 60, 9.5, 108, 65 }
+local duration = { 10, 58, 75, 45, 9.5, 108, 65 }
 
 local scene2 = {
 	delay=0.0545,
@@ -15,7 +15,6 @@ local scene2 = {
 local scene3 = {
 	delay=0.0715,
 	filename="28.txt",
-	initial_text="echo \"hi zoe\"\ncurl somesortofurl.com > ./smitten.txt\n",
 	song="17/love-letters.ogg",
 	body="The heavy snowfall today consumes the sounds, sights, and feelings that would otherwise cue spring's anticipated approach.  With the snow comes peace in the middle of the night during a long walk to nowhere, but I have walked alone so many times this winter.  It is spring that carries the hope of something new.\n\nGazing out my ice-crusted window into the remote distance, far beyond the confines of this apartment, or this city, or my mind, I wished to convey that my thoughts are with you, that I am with you.  That is to say:\n\nToday I love you as I love standing still amidst a silent snowfall until my hair is white and I appear old.\n\nTomorrow I love you as I love the anticipation of warm breezes gently kissing the skin of my arms.\n\nI love you as I love a months's worth of love letters.\n\nThank you for being my friend.\n\nBen"
 }
@@ -56,7 +55,7 @@ local scene6 = {
 
 local scene7 = {
 	delay=0.0675,
-	song="17/see-you-there.ogg",
+	song="17/and-maybe-you'll-be-there-too.ogg",
 	pauses=2.75,
 	body={ "So.\n\n", "Right NOW I've just got back from work. I'm lying in bed.\nIt's satisfying.\n\n", "I love that part before sleep where your mind just\nstretches and moans, waiting to fall apart.\n\nI put off those amazing moments of lost thought, so I can\nread, watch TV on my laptop, whatever. I wish I could just\ngo to sleep, but something in me doesn't want to let me\nuntil the desire is uncontrollable. Until I have no choice.\n\n", "So I'm awake, cold, half-dressed. And rambling. I wrote\nyou THIS because you messaged me, and I wasn't there.\nSo I missed you again. Vicious cycle. Anyway, in about\ntwenty minutes I think I might try and get to that weird\npre-sleep head-space.\n\n", "And maybe you'll be there, too." },
 }
@@ -121,8 +120,8 @@ af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-lette
 	end,
 }
 
--- scene 4: I've known her now, what, the last four or five years?
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/stargazing.lua") )..{
+-- scene 4: smitten
+af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/social-media.lua") )..{
 	InitCommand=function(self)
 		scenes[4] = self
 		self:visible(false):diffuse(0,0,0,1)

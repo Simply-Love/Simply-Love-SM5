@@ -1,7 +1,7 @@
 -- Connection: Chapter 3
 
 local scenes = {}
-local duration = { 10, 59, 46, 59, 100 }
+local duration = { 10, 59, 46, 59, 100, 60 }
 
 local scene2 = {
 	delay=0.0625,
@@ -83,6 +83,14 @@ af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/im-window.l
 	InitCommand=function(self)
 		scenes[5] = self
 		self:visible(false)
+	end,
+}
+
+-- scene 6: I've known her now, what, the last four or five years?
+af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/16/stargazing.lua") )..{
+	InitCommand=function(self)
+		scenes[6] = self
+		self:visible(false):diffuse(0,0,0,1)
 	end,
 }
 

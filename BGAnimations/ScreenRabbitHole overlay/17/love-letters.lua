@@ -3,7 +3,6 @@
 local args = ...
 local delay = args.delay
 local filename = args.filename
-local initial_text = args.initial_text
 local body = args.body
 
 local bgm_volume = 10
@@ -109,7 +108,7 @@ af[#af+1] = Def.Quad{
 
 -- desk
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 80):diffuse(0.05,0.05,0.05,1):diffusetopedge(0,0,0,1) end
+	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 80):diffuse(0.05,0.05,0.05,1):diffusetopedge(0.085,0.075,0.1,1) end
 }
 
 -- monitor
@@ -178,21 +177,12 @@ af[#af+1] = Def.ActorFrame{
 					:zoom(font_zoom):wrapwidthpixels(terminal.w/font_zoom - terminal.padding)
 			end,
 			StartSceneCommand=function(self)
-				self:settext(initial_text):sleep(1.333):queuecommand("Clear")
+				self:sleep(2.5):queuecommand("TypeFilename")
 				cursor:queuecommand("Init")
 			end,
 			ResetCommand=function(self)
 				self:settext("")
 				cursor:queuecommand("Reset")
-			end,
-			ClearCommand=function(self)
-				local s = initial_text .. "clear"
-				if s:len() > self:GetText():len() then
-					self:settext( s:sub(0,self:GetText():len()+1) ):sleep( delay ):queuecommand("Clear")
-					cursor:queuecommand("Move")
-				else
-					self:sleep(0.8):queuecommand("Reset"):sleep(1.5):queuecommand("TypeFilename")
-				end
 			end,
 			TypeFilenameCommand=function(self)
 				local s = "vim ./" .. filename

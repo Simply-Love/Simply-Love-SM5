@@ -17,18 +17,18 @@ for i=1, max_stars do
 end
 
 af[#af+1]=Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/ben.png"),
+	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/16/ben.png"),
 	InitCommand=function(self) self:align(1,1):xy(_screen.w, _screen.h):zoom(0.6) end,
 }
 
 af[#af+1]=Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/glow.png"),
+	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/16/glow.png"),
 	InitCommand=function(self) self:align(1,1):xy(_screen.w, _screen.h):zoom(0.6) end,
 	StartSceneCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0.1):effectcolor2(1,1,1,1):effectperiod(4) end
 }
 
 af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/since.ogg"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/16/since.ogg"),
 	StartSceneCommand=function(self) self:sleep(0.5):queuecommand("Play") end,
 	PlayCommand=function(self) self:play() end,
 	FadeOutAudioCommand=function(self)
