@@ -74,10 +74,9 @@ local Update = function(af, delta)
 
 	paddle:playcommand("Update", {delta})
 	ball:playcommand("Update", {delta})
+	amv:playcommand("Update", {delta})
 
-	if time_until_next_brick <= 0 then
-		amv:playcommand("Update", {delta})
-	else
+	if time_until_next_brick > 0 then
 		time_until_next_brick = time_until_next_brick - delta
 	end
 
@@ -223,9 +222,11 @@ canvas[#canvas+1] = Def.ActorMultiVertex{
 		end
 
 		-- actually removing 4 vertices would (I think?) require calling table.remove(vert_to_remove) 4 times
-		-- and waiting for the verts table to left-shift everything 4 times.  so just hide it.
-		if (vert_to_remove) then
+		-- and waiting for the verts table to left-shift everything 4 times,  so just hide it (alpha of 0)
+		if (vert_to_remove and time_until_next_brick <= 0) then
 
+			-- set a 0.1 second window in which no additional bricks can be broken
+			-- this prevents two (or more) bricks from being broken too quickly to read
 			time_until_next_brick = 0.1
 
 			verts[vert_to_remove][2][4] = 0
