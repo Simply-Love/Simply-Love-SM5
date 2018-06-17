@@ -22,7 +22,7 @@ local bricks = {
 	{ x=2, y=0, c="#cccccc", text="Recalling your smile." },
 
 	{ x=3, y=5, c="#888888", text="A smile happy with a secret." },
-	{ x=3, y=4, c="#888888", text="Finding peace during a midnight walk." },
+	{ x=3, y=4, c="#888888", text="Finding solace during a midnight walk." },
 	{ x=3, y=3, c="#bbbbbb", text="You help me feel less alone." },
 
 	{ x=4, y=5, c="#888888", text="The warmth of your embrace." },
@@ -37,13 +37,13 @@ local bricks = {
 
 	{ x=6, y=5, c="#cccccc", text="Fall leaves on the pavement." },
 	{ x=6, y=4, c="#cccccc", text="I can't turn my mind off." },
-	{ x=6, y=3, c="#cccccc", text="Where'd you go?" },
+	{ x=6, y=3, c="#cccccc", text="It's so lonely here." },
 	{ x=6, y=2, c="#cccccc", text="Please leave me alone." },
 	{ x=6, y=1, c="#cccccc", text="Can I love without fear?" },
 }
 
 -- handles to actors
-local amv, paddle, ball, bmt_af, give_up_text
+local amv, paddle, ball, bmt_af, give_up_text, main_af
 
 -- ball variables
 local dx, dy = 0, 0
@@ -54,6 +54,10 @@ local paddle_v = 300
 local paddle_dx = 0
 
 local input = { left=false, right=false, start=false, back=false }
+
+-- don't allow two bricks to be broken in too quick of succession
+local time_until_next_brick = 0
+local intro_is_over = false
 
 local playing = false
 local brick_size = 40
@@ -70,7 +74,12 @@ local Update = function(af, delta)
 
 	paddle:playcommand("Update", {delta})
 	ball:playcommand("Update", {delta})
-	amv:playcommand("Update", {delta})
+
+	if time_until_next_brick <= 0 then
+		amv:playcommand("Update", {delta})
+	else
+		time_until_next_brick = time_until_next_brick - delta
+	end
 
 	if input.start or input.back then
 
@@ -94,6 +103,8 @@ end
 
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)
+		if not intro_is_over then return false end
+
 		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 			if paddle:GetVisible() then
 				playing = true
@@ -122,12 +133,12 @@ local af = Def.ActorFrame{
 
 			if (event.button=="Start") then
 				held_duration, old_time = 0, 0
-				give_up_text:queuecommand("Hide")
+				give_up_text:playcommand("Hide")
 				input.start = false
 			end
 			if (event.button=="Back") then
 				held_duration, old_time = 0, 0
-				give_up_text:queuecommand("Hide")
+				give_up_text:playcommand("Hide")
 				input.back = false
 			end
 		end
@@ -135,7 +146,10 @@ local af = Def.ActorFrame{
 }
 
 local canvas = Def.ActorFrame{
-	InitCommand=function(self) self:Center():SetUpdateFunction(Update) end,
+	InitCommand=function(self)
+		main_af = self
+		self:Center():SetUpdateFunction(Update)
+	end,
 	NextScreenCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end
 }
 
@@ -211,6 +225,9 @@ canvas[#canvas+1] = Def.ActorMultiVertex{
 		-- actually removing 4 vertices would (I think?) require calling table.remove(vert_to_remove) 4 times
 		-- and waiting for the verts table to left-shift everything 4 times.  so just hide it.
 		if (vert_to_remove) then
+
+			time_until_next_brick = 0.1
+
 			verts[vert_to_remove][2][4] = 0
 			verts[vert_to_remove+1][2][4] = 0
 			verts[vert_to_remove+2][2][4] = 0
@@ -338,7 +355,7 @@ canvas[#canvas+1] = LoadActor("./ball.png")..{
 				dx, dy = 0, 0
 				ball:visible(false)
 				paddle:linear(1):diffusealpha(0):queuecommand("Hide")
-				canvas:sleep(2.5):smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
+				main_af:sleep(2.5):smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
 			end
 		end
 
@@ -370,10 +387,30 @@ af[#af+1] = Def.BitmapText{
 	Text="continue holding to quit",
 	InitCommand=function(self)
 		give_up_text = self
-		self:xy(_screen.cx, _screen.cy+100):zoom(1):diffuse( Color.Black ):visible(false)
+		self:xy(_screen.cx, _screen.cy+100):zoom(1):diffuse( 0,0,0,0 )
 	end,
-	ShowCommand=function(self) self:visible(true) end,
-	HideCommand=function(self) self:visible(false) end,
+	ShowCommand=function(self) self:finishtweening():linear(0.1):diffusealpha(1) end,
+	HideCommand=function(self) self:finishtweening():linear(0.1):diffusealpha(0) end,
+}
+
+-- intro (thanks, xkcd)
+af[#af+1] = Def.ActorFrame{
+	InitCommand=function(self) self:diffuse(0,0,0,1) end,
+	OnCommand=function(self) self:sleep(1.5):smooth(1):diffuse(1,1,1,1):sleep(6.4):smooth(1):diffusealpha(0):queuecommand("Hide") end,
+	HideCommand=function(self)
+		self:visible(false)
+		intro_is_over = true
+	end,
+
+	Def.Quad{ InitCommand=function(self) self:FullScreen():diffuse(Color.Black) end },
+
+	LoadActor("./_856 (doubleres).png")..{
+		InitCommand=function(self) self:xy(_screen.cx, _screen.cy+50) end
+	},
+	LoadActor("./_855 (doubleres).png")..{
+		InitCommand=function(self) self:xy(_screen.cx, _screen.cy+50) end,
+		OnCommand=function(self) self:sleep(5.5):smooth(0.25):diffusealpha(0) end
+	}
 }
 
 return af

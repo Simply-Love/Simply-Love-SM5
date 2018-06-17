@@ -10,10 +10,13 @@ local pages = {
 }
 
 local af = Def.ActorFrame{
+	InitCommand=function(self) self:diffusealpha(0) end,
+	OnCommand=function(self) self:smooth(0.15):diffusealpha(1) end,
+
 	InputEventCommand=function(self, event)
 		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 			if page == 1 then
-				self:queuecommand("Refresh")
+				self:diffusealpha(0):queuecommand("Refresh"):smooth(0.15):diffusealpha(1)
 			else
 				SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 			end
