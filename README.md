@@ -41,7 +41,7 @@ Or, *things I've added that were not present in the original Simply Love for Ste
 
 #### New GameModes
 
-* [Casual](http://i.imgur.com/zLLhDWQh.png) – Intended for novice players; no failing, no LifeMeter, simplified modifier menu, simplified evaluation screen, etc.
+* [Casual](http://i.imgur.com/zLLhDWQh.png) – Intended for novice players; restricted song list, no failing, no LifeMeter, simplified UI, etc.  You can read more about customizing what content appears in Casual Mode [here](./CasualMode-README.md).
 * [Competitive](http://i.imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
 * [ECFA](http://i.imgur.com/teZtlbih.png) – Similar to Competitive, but features tighter TimingWindows; can be used to qualify for ECFA events
 * [StomperZ](http://i.imgur.com/dOKTpVbh.png) – Emulates a very small set of features from Rhythm Horizon gameplay
@@ -72,7 +72,7 @@ Or, *things that were in the original Simply Love for StepMania 3.95 that are no
   * timed sets
 
 
-<hr>
+---
 
 ## FAQ
 
@@ -85,7 +85,7 @@ Your existing scores will remain ranked out of order, but all scores going forwa
 See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/wiki/Manually-Changing-Preferences) page on StepMania's GitHub Wiki.
 
 
-<hr>
+---
 
 ## ACKNOWLEDGEMENTS
 
