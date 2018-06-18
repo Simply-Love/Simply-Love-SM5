@@ -2,7 +2,7 @@
 
 local scenes = {}
 local scene = 1
-local duration = { 10, 58, 75, 45, 9.5, 108, 65 }
+local duration = { 10, 58, 75, 30, 9.5, 108, 65 }
 
 local scene2 = {
 	delay=0.0545,
@@ -36,12 +36,12 @@ local scene6 = {
 	{ author="Ben", delay=46, words="I know what you mean." },
 	{ author="Zoe", delay=53, words="I am having a tough day today, so it's nice to feel you out there." },
 
-	{ author="Zoe", delay=56.5, words="How are you?" },
+	{ author="Zoe", delay=56.4, words="How are you, Ben?" },
 	{ author="Ben", delay=61, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
 	{ author="Zoe", delay=65, words="Harp, eh?  Marx Bros?  Like this?  [YouTube]" },
-	{ author="Ben", delay=72, words="Hmm.  He can certainly arpeggiate.  It's technically impressive." },
-	{ author="Ben", delay=77, words="But I wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
-	{ author="Zoe", delay=82, words="No sensible human would make that trade with you anyway." },
+	{ author="Ben", delay=70, words="Hmm.  He can certainly arpeggiate.  It's technically impressive." },
+	{ author="Ben", delay=74.4, words="But I wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
+	{ author="Zoe", delay=81, words="No sensible human would make that trade with you anyway." },
 
 	{ author="Ben", delay=86, words="Was sense ever on our side to begin with? :P" },
 	{ author="Zoe", delay=90, words="One of these days I'm gonna clobber you." },

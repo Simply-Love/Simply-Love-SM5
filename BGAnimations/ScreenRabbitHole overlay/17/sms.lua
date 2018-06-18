@@ -31,8 +31,7 @@ local _phone = {
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):smooth(1.5):diffuse(1,1,1,1) end }
 
 af[#af+1] = LoadActor("./The-Long-Walk-Home.ogg")..{
-	StartSceneCommand=function(self) self:sleep(2):queuecommand("Play") end,
-	PlayCommand=function(self) self:play() end,
+	StartSceneCommand=function(self) self:play() end,
 	FadeOutAudioCommand=function(self)
 		if bgm_volume >= 0 then
 			local ragesound = self:get()
@@ -48,10 +47,6 @@ af[#af+1] = LoadActor("./The-Long-Walk-Home.ogg")..{
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:zoomto(_screen.w, 1000):xy(0,106):align(0,1):MaskSource() end
 }
--- -- right mask to hide sms bubbles that have scrolled up in Zoe's phone
--- af[#af+1] = Def.Quad{
--- 	InitCommand=function(self) self:zoomto(_screen.w/2, 1000):xy(_screen.cx, 109):align(0,1):MaskSource() end
--- }
 
 -- Ben's phone
 af[#af+1] = Def.ActorFrame{
@@ -83,57 +78,12 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) self:y(-_phone.Ben.h/2*_phone.Ben.zoom + 82):zoom(0.65):diffuse(0,0,0,1) end
 	},
 
-
 	-- shell
 	Def.Sprite{
 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone.png"),
 		InitCommand=function(self) self:zoom(_phone.Ben.zoom) end
 	},
 }
-
--- Zoe's phone
--- af[#af+1] = Def.ActorFrame{
--- 	InitCommand=function(self) self:xy(_screen.cx + ((_phone.Zoe.w*_phone.Zoe.zoom)/2) + 40, _screen.cy) end,
---
--- 	-- screen
--- 	Def.Quad{
--- 		InitCommand=function(self) self:zoomto(_phone.Zoe.w*_phone.Zoe.zoom*0.875,_phone.Zoe.h*_phone.Zoe.zoom*0.85):diffuse(color("#cccccc")) end,
--- 	},
--- 	-- topbar
--- 	Def.Quad{
--- 		InitCommand=function(self) self:zoomto((_phone.Zoe.w*_phone.Zoe.zoom)*0.875, _phone.Zoe.bar+4):y(-_phone.Zoe.h/2*_phone.Zoe.zoom + 70):diffuse(color("#c3440a")) end,
--- 	},
--- 	-- cell signal strength
--- 	Def.Sprite{
--- 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/cell-strength.png"),
--- 		InitCommand=function(self) self:xy(40, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.4) end
--- 	},
--- 	-- time
--- 	Def.BitmapText{
--- 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
--- 		Text="4:14 PM",
--- 		InitCommand=function(self) self:xy(72, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.55):diffuse(1,1,1,1) end
--- 	},
--- 	-- arrow
--- 	Def.Sprite{
--- 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/arrow.png"),
--- 		InitCommand=function(self) self:zoom(0.185):xy(-82, -_phone.Ben.h/2*_phone.Ben.zoom + 82) end
--- 	},
--- 	-- Zoe is chattig with Ben
--- 	Def.BitmapText{
--- 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
--- 		Text="Ben",
--- 		InitCommand=function(self) self:xy(-60, -_phone.Ben.h/2*_phone.Ben.zoom + 82):zoom(0.65):diffuse(1,1,1,1) end
--- 	},
---
--- 	-- shell
--- 	Def.Sprite{
--- 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone2.png"),
--- 		InitCommand=function(self) self:zoom(_phone.Zoe.zoom) end
--- 	},
--- }
-
-
 
 for human in ivalues({"Ben"}) do
 
