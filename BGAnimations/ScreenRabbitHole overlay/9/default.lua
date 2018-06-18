@@ -1,4 +1,4 @@
--- humor keeps me going
+-- Gibberish, maybe.
 
 local max_width = 395
 local quote_bmts = {}

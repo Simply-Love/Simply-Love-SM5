@@ -51,8 +51,7 @@ local af = Def.ActorFrame{
 	end
 }
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/12/I5.ogg"),
+af[#af+1] = LoadActor("./I5.ogg")..{
 	OnCommand=function(self) self:play() end,
 	TransitionCommand=function(self) self:stop() end
 }
