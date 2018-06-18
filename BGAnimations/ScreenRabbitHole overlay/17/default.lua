@@ -38,19 +38,18 @@ local scene6 = {
 
 	{ author="Zoe", delay=56.5, words="How are you?" },
 	{ author="Ben", delay=61, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
-	{ author="Zoe", delay=65, words="Harp, eh?  Marx Bros?  Like this?  youtube.com/watch?v=_O8_oMHh60A" },
-	{ author="Ben", delay=72, words="Hmm.  He can certainly arpeggiate." },
-	{ author="Ben", delay=76, words="It's a technically challenging song, though I don't think it holds any meaning for me." },
-	{ author="Ben", delay=81, words="I certainly wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
-	{ author="Zoe", delay=85, words="No sensible human would make that trade with you anyway." },
+	{ author="Zoe", delay=65, words="Harp, eh?  Marx Bros?  Like this?  [YouTube]" },
+	{ author="Ben", delay=72, words="Hmm.  He can certainly arpeggiate.  It's technically impressive." },
+	{ author="Ben", delay=77, words="But I wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
+	{ author="Zoe", delay=82, words="No sensible human would make that trade with you anyway." },
 
-	{ author="Ben", delay=88, words="Was sense ever on our side to begin with? :P" },
-	{ author="Zoe", delay=91, words="One of these days I'm gonna clobber you." },
-	{ author="Zoe", delay=92.5, words="With a hug." },
-	{ author="Ben", delay=96, words="I wouldn't miss it for the world." },
+	{ author="Ben", delay=86, words="Was sense ever on our side to begin with? :P" },
+	{ author="Zoe", delay=90, words="One of these days I'm gonna clobber you." },
+	{ author="Zoe", delay=91.5, words="With a hug." },
+	{ author="Ben", delay=95, words="I wouldn't miss it for the world." },
 
 	{ author="Zoe", delay=100, words="I have to run now!  Until then!" },
-	{ author="Ben", delay=105.5, words="Until then." },
+	{ author="Ben", delay=104.5, words="Until then." },
 }
 
 local scene7 = {

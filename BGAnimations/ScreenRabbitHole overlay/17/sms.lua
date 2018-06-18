@@ -2,8 +2,7 @@ local conversation = ...
 
 local font_zoom = 0.55
 local padding = 10
-
--- local _phone = { w=500, h=1000, zoom=0.45, bar=15 }
+local bgm_volume = 10
 
 local _phone = {
 	Ben = {
@@ -11,7 +10,8 @@ local _phone = {
 		h = 1000,
 		zoom = 0.45,
 		bar = 34,
-		x = _screen.cx - 246,
+		-- x = _screen.cx - 246,
+		x = _screen.cx,
 		aligns = { Ben=1, Zoe=0 },
 		bubble = { Ben=color("#1ec34b"), Zoe=color("#e5e5ea") },
 		text = { Ben=color("#ffffff"), Zoe=color("#333333") },
@@ -30,18 +30,32 @@ local _phone = {
 
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):smooth(1.5):diffuse(1,1,1,1) end }
 
+af[#af+1] = LoadActor("./The-Long-Walk-Home.ogg")..{
+	StartSceneCommand=function(self) self:sleep(2):queuecommand("Play") end,
+	PlayCommand=function(self) self:play() end,
+	FadeOutAudioCommand=function(self)
+		if bgm_volume >= 0 then
+			local ragesound = self:get()
+			bgm_volume = bgm_volume-1
+			ragesound:volume(bgm_volume*0.1)
+			self:sleep(0.1):queuecommand("FadeOutAudio")
+		end
+	end,
+	SwitchSceneCommand=function(self) self:stop() end
+}
+
 -- left mask to hide sms bubbles that have scrolled up in Ben's phone
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:zoomto(_screen.w, 1000):xy(0,106):valign(1):MaskSource() end
+	InitCommand=function(self) self:zoomto(_screen.w, 1000):xy(0,106):align(0,1):MaskSource() end
 }
--- right mask to hide sms bubbles that have scrolled up in Zoe's phone
-af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:zoomto(_screen.w/2, 1000):xy(_screen.cx, 109):align(0,1):MaskSource() end
-}
+-- -- right mask to hide sms bubbles that have scrolled up in Zoe's phone
+-- af[#af+1] = Def.Quad{
+-- 	InitCommand=function(self) self:zoomto(_screen.w/2, 1000):xy(_screen.cx, 109):align(0,1):MaskSource() end
+-- }
 
 -- Ben's phone
 af[#af+1] = Def.ActorFrame{
-	InitCommand=function(self) self:xy(_screen.cx-((_phone.Ben.w*_phone.Ben.zoom)/2) - 40, _screen.cy) end,
+	InitCommand=function(self) self:xy(_phone.Ben.x, _screen.cy) end,
 
 	-- screen
 	Def.Quad{
@@ -78,50 +92,50 @@ af[#af+1] = Def.ActorFrame{
 }
 
 -- Zoe's phone
-af[#af+1] = Def.ActorFrame{
-	InitCommand=function(self) self:xy(_screen.cx + ((_phone.Zoe.w*_phone.Zoe.zoom)/2) + 40, _screen.cy) end,
+-- af[#af+1] = Def.ActorFrame{
+-- 	InitCommand=function(self) self:xy(_screen.cx + ((_phone.Zoe.w*_phone.Zoe.zoom)/2) + 40, _screen.cy) end,
+--
+-- 	-- screen
+-- 	Def.Quad{
+-- 		InitCommand=function(self) self:zoomto(_phone.Zoe.w*_phone.Zoe.zoom*0.875,_phone.Zoe.h*_phone.Zoe.zoom*0.85):diffuse(color("#cccccc")) end,
+-- 	},
+-- 	-- topbar
+-- 	Def.Quad{
+-- 		InitCommand=function(self) self:zoomto((_phone.Zoe.w*_phone.Zoe.zoom)*0.875, _phone.Zoe.bar+4):y(-_phone.Zoe.h/2*_phone.Zoe.zoom + 70):diffuse(color("#c3440a")) end,
+-- 	},
+-- 	-- cell signal strength
+-- 	Def.Sprite{
+-- 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/cell-strength.png"),
+-- 		InitCommand=function(self) self:xy(40, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.4) end
+-- 	},
+-- 	-- time
+-- 	Def.BitmapText{
+-- 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+-- 		Text="4:14 PM",
+-- 		InitCommand=function(self) self:xy(72, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.55):diffuse(1,1,1,1) end
+-- 	},
+-- 	-- arrow
+-- 	Def.Sprite{
+-- 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/arrow.png"),
+-- 		InitCommand=function(self) self:zoom(0.185):xy(-82, -_phone.Ben.h/2*_phone.Ben.zoom + 82) end
+-- 	},
+-- 	-- Zoe is chattig with Ben
+-- 	Def.BitmapText{
+-- 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+-- 		Text="Ben",
+-- 		InitCommand=function(self) self:xy(-60, -_phone.Ben.h/2*_phone.Ben.zoom + 82):zoom(0.65):diffuse(1,1,1,1) end
+-- 	},
+--
+-- 	-- shell
+-- 	Def.Sprite{
+-- 		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone2.png"),
+-- 		InitCommand=function(self) self:zoom(_phone.Zoe.zoom) end
+-- 	},
+-- }
 
-	-- screen
-	Def.Quad{
-		InitCommand=function(self) self:zoomto(_phone.Zoe.w*_phone.Zoe.zoom*0.875,_phone.Zoe.h*_phone.Zoe.zoom*0.85):diffuse(color("#cccccc")) end,
-	},
-	-- topbar
-	Def.Quad{
-		InitCommand=function(self) self:zoomto((_phone.Zoe.w*_phone.Zoe.zoom)*0.875, _phone.Zoe.bar+4):y(-_phone.Zoe.h/2*_phone.Zoe.zoom + 70):diffuse(color("#c3440a")) end,
-	},
-	-- cell signal strength
-	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/cell-strength.png"),
-		InitCommand=function(self) self:xy(40, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.4) end
-	},
-	-- time
-	Def.BitmapText{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-		Text="4:14 PM",
-		InitCommand=function(self) self:xy(72, -_phone.Zoe.h/2*_phone.Zoe.zoom + 62):zoom(0.55):diffuse(1,1,1,1) end
-	},
-	-- arrow
-	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/arrow.png"),
-		InitCommand=function(self) self:zoom(0.185):xy(-82, -_phone.Ben.h/2*_phone.Ben.zoom + 82) end
-	},
-	-- Zoe is chattig with Ben
-	Def.BitmapText{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-		Text="Ben",
-		InitCommand=function(self) self:xy(-60, -_phone.Ben.h/2*_phone.Ben.zoom + 82):zoom(0.65):diffuse(1,1,1,1) end
-	},
-
-	-- shell
-	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone2.png"),
-		InitCommand=function(self) self:zoom(_phone.Zoe.zoom) end
-	},
-}
 
 
-
-for human in ivalues({"Ben", "Zoe"}) do
+for human in ivalues({"Ben"}) do
 
 	-- chat is the ActorFrame that contains all the chat bubbles and sent conversation
 	-- it is separate from im_af so that we can tween all the chat bubbles simultaneously
@@ -133,7 +147,7 @@ for human in ivalues({"Ben", "Zoe"}) do
 
 		chat[#chat+1] = Def.ActorFrame{
 			InitCommand=function(self)
-				self:x( _phone[human].x )
+				self:x( _phone[human].x - _phone[human].w/2 * _phone[human].zoom + padding*2 )
 					:diffusealpha(0)
 			end,
 			StartSceneCommand=function(self)

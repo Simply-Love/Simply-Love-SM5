@@ -242,7 +242,7 @@ af[#af+1] = Def.ActorFrame{
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 			InitCommand=function(self)
 				tildes = self
-				self:x(terminal.x-terminal.w/2-char_width/2)
+				self:x(14)
 					:y(terminal.y+(terminal.h-char_height*5*font_zoom))
 					:align(1,1)
 					:zoom(font_zoom):diffuse(color("#593ced"))
