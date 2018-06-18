@@ -1,10 +1,9 @@
 -- And maybe you'll be there, too.
 
-local args = ...
-local delay = args.delay
-local song = args.song
-local body = args.body
-local pause_duration = args.pauses
+local delay = 0.0675
+local song = "17/and-maybe-you'll-be-there-too.ogg"
+local body = { "So.\n\n", "Right NOW I've just got back from work. I'm lying in bed.\nIt's satisfying.\n\n", "I love that part before sleep where your mind just\nstretches and moans, waiting to fall apart.\n\nI put off those amazing moments of lost thought, so I can\nread, watch TV on my laptop, whatever. I wish I could just\ngo to sleep, but something in me doesn't want to let me\nuntil the desire is uncontrollable. Until I have no choice.\n\n", "So I'm awake, cold, half-dressed. And rambling. I wrote\nyou THIS because you messaged me, and I wasn't there.\nSo I missed you again. Vicious cycle. Anyway, in about\ntwenty minutes I think I might try and get to that weird\npre-sleep head-space.\n\n", "And maybe you'll be there, too." }
+local pause_duration = 2.75
 local paragraph = 1
 
 local full_body = ""

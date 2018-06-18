@@ -1,4 +1,37 @@
-local conversation = ...
+local conversation = {
+	{ author="Zoe", delay=0, words="I miss you, Ben.  What's up with you?"},
+
+	{ author="Ben", delay=3.9, words="Life is weird.  I work a lot.  Too much, probably." },
+	{ author="Ben", delay=8.04, words="I miss you, too." },
+
+	{ author="Zoe", delay=12.18, words="I'm glad we've stayed friends all this time. " },
+	{ author="Zoe", delay=16.315, words="It's nice to be reminded I didn't just become worthy of love as I grew up, that I've always been an okay person." },
+	{ author="Zoe", delay=20.47, words="I do wonder sometimes." },
+	{ author="Ben", delay=24.6, words="You've always been good to me." },
+	{ author="Zoe", delay=28.73, words="You're a good person too, you know?" },
+	{ author="Ben", delay=32.86, words="Sigh." },
+
+	{ author="Ben", delay=37, words="I miss you.  I don't even understand how I can miss someone I've never met." },
+	{ author="Zoe", delay=41.25, words="It's maybe because we've known each other for such a long time now." },
+	{ author="Zoe", delay=45.7, words="But I don't feel the same way about lots of other people I've known this long." },
+	{ author="Zoe", delay=50.06, words="I am having a tough day today, so it's nice to feel you out there." },
+	{ author="Zoe", delay=56.18, words="How are you, Ben?" },
+
+	{ author="Ben", delay=59.277, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
+	{ author="Zoe", delay=65.25, words="Harp, eh?  Marx Bros?  Like this?  [YouTube]" },
+	{ author="Ben", delay=73.34, words="Hmm.  He can certainly arpeggiate.  It's technically impressive." },
+
+	{ author="Ben", delay=77.32, words="But I wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
+	{ author="Zoe", delay=81.3, words="No sensible human would make that trade with you anyway." },
+	{ author="Ben", delay=85.45, words="Was sense ever on our side to begin with? :P" },
+	{ author="Zoe", delay=89.58, words="One of these days I'm gonna clobber you." },
+	{ author="Zoe", delay=91.9, words="With a hug." },
+	{ author="Ben", delay=93.7, words="I wouldn't miss it for the world." },
+
+	{ author="Ben", delay=97.9, words="Zoe..." },
+	{ author="Zoe", delay=102.14, words="I have to run now!  Until then!" },
+	{ author="Ben", delay=106.45, words="Until then." },
+}
 
 local font_zoom = 0.55
 local padding = 10
@@ -30,7 +63,7 @@ local _phone = {
 
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):smooth(1.5):diffuse(1,1,1,1) end }
 
-af[#af+1] = LoadActor("./The-Long-Walk-Home.ogg")..{
+af[#af+1] = LoadActor("./the-long-walk-home.ogg")..{
 	StartSceneCommand=function(self) self:play() end,
 	FadeOutAudioCommand=function(self)
 		if bgm_volume >= 0 then
