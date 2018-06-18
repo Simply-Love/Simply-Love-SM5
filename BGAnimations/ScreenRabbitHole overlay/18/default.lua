@@ -50,10 +50,10 @@ local af = Def.ActorFrame{
 
 		if event.type == "InputEventType_FirstPress" then
 
-			if event.GameButton=="Start" or event.GameButton=="Back" then
-				SCREENMAN:GetTopScreen():playcommand("Off"):StartTransitioningScreen("SM_GoToNextScreen")
+			if event.GameButton=="Back" then
+				self:queuecommand("Transition")
 
-			elseif event.GameButton == "MenuRight" then
+			elseif event.GameButton=="Start" or event.GameButton == "MenuRight" then
 				if page + 2 < #pages then
 					page = page + 2
 					self:queuecommand("Refresh")
@@ -71,33 +71,30 @@ local af = Def.ActorFrame{
 		end
 	end,
 
-	Def.Sound{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/18/rain.ogg"),
+	LoadActor("./rain.ogg")..{
 		InitCommand=function(self)
-			self:get():volume(0.65)
+			self:get():volume(0.75)
 		end,
 		OnCommand=function(self) self:stoptweening():stop():queuecommand("Play") end,
 		PlayCommand=function(self)
 			self:play():sleep(71):queuecommand("Play")
 		end,
-		OffCommand=function(self) self:stoptweening():stop() end
+		TransitionCommand=function(self) self:finishtweening():stop() end
 	},
 
-	Def.Sound{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/18/rain.ogg"),
+	LoadActor("./rain.ogg")..{
 		InitCommand=function(self)
-			self:get():volume(0.5)
+			self:get():volume(0.6)
 		end,
-		OnCommand=function(self) self:stoptweening():stop():sleep(45):queuecommand("Play") end,
+		OnCommand=function(self) self:sleep(45):queuecommand("Play") end,
 		PlayCommand=function(self)
 			self:play():sleep(71):queuecommand("Play")
 		end,
-		OffCommand=function(self) self:stoptweening():stop() end
+		TransitionCommand=function(self) self:finishtweening():stop() end
 	}
 }
 
-af[#af+1] =	Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/18/pages.png"),
+af[#af+1] =	LoadActor("./pages.png")..{
 	InitCommand=function(self) self:zoom(0.54):Center() end,
 }
 
