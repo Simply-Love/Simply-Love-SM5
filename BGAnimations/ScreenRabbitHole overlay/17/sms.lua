@@ -19,7 +19,7 @@ local conversation = {
 
 	{ author="Ben", delay=59.277, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
 	{ author="Zoe", delay=65.25, words="Harp, eh?  Marx Bros?  Like this?  [YouTube]" },
-	{ author="Ben", delay=73.34, words="Hmm.  He can certainly arpeggiate.  It's technically impressive." },
+	{ author="Ben", delay=73.24, words="Hmm.  He can certainly arpeggiate.  It's technically impressive." },
 
 	{ author="Ben", delay=77.32, words="But I wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
 	{ author="Zoe", delay=81.3, words="No sensible human would make that trade with you anyway." },

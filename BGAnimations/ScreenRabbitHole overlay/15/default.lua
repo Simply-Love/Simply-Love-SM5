@@ -1,10 +1,10 @@
 -- Connection: Chapter 2
 
 local scenes = {}
-local duration = { 10, 20, 26, 22, 49 }
+local duration = { 10, 18, 26, 22, 49 }
 
 local scene2 = { date="March 25, 2008", body="When the Intro to Networking assignment started with the phrase \"Imagine two households...\" and proceeded to develop a TCP metaphor involving packets and pipes and three-way handshakes, the only thing that came to my mind was:\n\nTwo households, both alike in dignity,\nIn fair Verona, where we lay our scene\n\nI do often worry I'm not cut out to be a programmer.  I see such innate brilliance in my peers while I struggle with the most simple concepts daily.  I fear I'm more taken by code as a means rather than an end.\n\n// Lost in nested loops\n// I write haiku in the grey\n// comments of my code..." }
-local scene3 = { song="15/dreams.ogg", date="August 3, 2008", body="I had another dream about her last night.\n\nWhen I first entered, she smiled and gave me a hug.  I could see the corners of her lips curling upward in a sign of affection and feel her arms pressing into my back, holding me close to her body for the embrace.  I could sense the warmth from her torso diffusing into mine.  I could smell the fragrance from her shampoo in her hair.  When she kissed me, I could taste the flavor of her lip gloss and feel the warmth of her lips pressed against my own.  And when she whispered I love you into my ear, I not only heard it, but felt the words tickling the inner recesses of my ear.\n\nBeing there with her, in that moment, I believed it." }
+local scene3 = { song="15/dreams.ogg", date="August 3, 2008", body="I had another dream about her last night.\n\nWhen I first entered, she smiled and gave me a hug.  I could see the corners of her lips curling upward in a sign of affection and feel her arms pressing into my back, holding me close to her body for the embrace.  I could sense the warmth from her torso diffusing into mine.  I could smell the fragrance from her shampoo in her hair.\n\nWhen she kissed me, I could taste the flavor of her lip gloss and feel the warmth of her lips pressed against my own.  And when she whispered I love you into my ear, I not only heard it, but felt the words tickling the inner recesses of my ear.\n\nBeing there with her, in that moment, I believed it." }
 
 local scene4 = {
 	{ author="Ben", startTyping=0.4, send=9.4, words="You said, once, to me that you live for the next good thing." },

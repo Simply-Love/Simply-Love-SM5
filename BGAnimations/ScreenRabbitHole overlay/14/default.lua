@@ -1,7 +1,7 @@
 -- Connection: Chapter 1
 
 local scenes = {}
-local duration = { 10, 8.5, 17, 49, 60 }
+local duration = { 10, 8.5, 17, 49, 59 }
 
 local scene2 = {
 	{ author="Zoe", delay=0, words="hey Ben" },

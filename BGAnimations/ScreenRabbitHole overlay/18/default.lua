@@ -4,6 +4,7 @@ local max_width = 260
 local max_height = 390
 local font_zoom = 0.785
 
+local rain1, rain2
 local pages = {}
 local page = 1
 local book = LoadActor("./a-beige-colored-bookmark.lua")
@@ -44,7 +45,11 @@ local af = Def.ActorFrame{
 	InitCommand=function(self) self:zoom(0.95):xy(20,12):diffuse(0,0,0,1) end,
 	OnCommand=function(self) self:sleep(1):smooth(1):diffuse(1,1,1,1) end,
 	CloseCommand=function(self) self:smooth(2):diffuse(0,0,0,1):queuecommand("Off"):queuecommand("Transition") end,
-	TransitionCommand=function(self) SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen") end,
+	TransitionCommand=function(self)
+		rain1:stop()
+		-- rain2:stop()
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+	end,
 
 	InputEventCommand=function(self, event)
 
@@ -73,25 +78,28 @@ local af = Def.ActorFrame{
 
 	LoadActor("./rain.ogg")..{
 		InitCommand=function(self)
+			rain1 = self
 			self:get():volume(0.75)
 		end,
 		OnCommand=function(self) self:stoptweening():stop():queuecommand("Play") end,
 		PlayCommand=function(self)
-			self:play():sleep(71):queuecommand("Play")
+			self:play():sleep(120):queuecommand("Play")
 		end,
-		TransitionCommand=function(self) self:finishtweening():stop() end
+
+		TransitionCommand=function(self) self:stop() end
 	},
 
-	LoadActor("./rain.ogg")..{
-		InitCommand=function(self)
-			self:get():volume(0.6)
-		end,
-		OnCommand=function(self) self:sleep(45):queuecommand("Play") end,
-		PlayCommand=function(self)
-			self:play():sleep(71):queuecommand("Play")
-		end,
-		TransitionCommand=function(self) self:finishtweening():stop() end
-	}
+	-- LoadActor("./rain.ogg")..{
+	-- 	InitCommand=function(self)
+	-- 		rain2 = self
+	-- 		self:get():volume(0.6)
+	-- 	end,
+	-- 	OnCommand=function(self) self:sleep(100):queuecommand("Play") end,
+	-- 	PlayCommand=function(self)
+	-- 		self:play():sleep(120):queuecommand("Play")
+	-- 	end,
+	-- 	TransitionCommand=function(self) self:finishtweening():stop() end
+	-- }
 }
 
 af[#af+1] =	LoadActor("./pages.png")..{
