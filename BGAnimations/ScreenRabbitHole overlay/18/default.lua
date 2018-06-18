@@ -47,7 +47,6 @@ local af = Def.ActorFrame{
 	CloseCommand=function(self) self:smooth(2):diffuse(0,0,0,1):queuecommand("Off"):queuecommand("Transition") end,
 	TransitionCommand=function(self)
 		rain1:stop()
-		-- rain2:stop()
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
 
@@ -83,23 +82,11 @@ local af = Def.ActorFrame{
 		end,
 		OnCommand=function(self) self:stoptweening():stop():queuecommand("Play") end,
 		PlayCommand=function(self)
-			self:play():sleep(120):queuecommand("Play")
+			self:play()
 		end,
 
 		TransitionCommand=function(self) self:stop() end
 	},
-
-	-- LoadActor("./rain.ogg")..{
-	-- 	InitCommand=function(self)
-	-- 		rain2 = self
-	-- 		self:get():volume(0.6)
-	-- 	end,
-	-- 	OnCommand=function(self) self:sleep(100):queuecommand("Play") end,
-	-- 	PlayCommand=function(self)
-	-- 		self:play():sleep(120):queuecommand("Play")
-	-- 	end,
-	-- 	TransitionCommand=function(self) self:finishtweening():stop() end
-	-- }
 }
 
 af[#af+1] =	LoadActor("./pages.png")..{
