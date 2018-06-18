@@ -1,48 +1,92 @@
--- juxaposition
+-- humor keeps me going
 
-local max_width = { 400, 380 }
-local quote_bmt
+local max_width = 395
+local quote_bmts = {}
+local count = 1
 
-local page = 1
-local pages = {
-   "She was partially undressed in the photo she sent me that night. Her face was obscured by the angle, but it was the first time I'd gotten any sense of what her body looked like.\n\nHer figure was slender and athletically toned, her bright pink underwear stood out in sharp contrast against her long, dark hair. If I'd been paying attention to and wanting her physical form more, I'm sure it would have checked all the boxes.\n\nBut in that moment, all I could focus on was the set of five fist-sized holes in the wall behind her. Even now, years later, when my mind scans the image it's all I can see.",
-   "In that moment, I felt as though I knew where eternity, our hearts, and our souls all lay. I felt as though we had shared all the experiences of my years.\n\nAnd then, the next moment, I was filled with an insufferable sadness. Her warmth, her soul – how was I supposed to help them, and where could I take them? I did not know.\n\nI clearly saw from that point on that we would never be together.\n\n- 5cm Per Second",
+local quotes = {
+	{
+		text="I recall you saying, once, that silence was a thing you couldn't do without.",
+		color={0.666, 0.666, 0.8, 0},
+		y=70,
+	},
+	{
+		text="I like silence in person. I like our frequencies to vibrate without any background noise.",
+		color={0.8, 0.666, 0.666, 0},
+		y=140,
+	},
+	{
+		text="It would suggest an inherent harmony.",
+		color={0.666, 0.666, 0.8, 0},
+		y=70,
+	},
+	{
+		text="...",
+		color={0.666, 0.666, 0.8, 0},
+		y=70,
+	},
+	{
+		text="That is a nice thought. I got pleasantly lost in it for several moments, stirred back to reality only by the blinking cursor on my screen.",
+		color={0.666, 0.666, 0.8, 0},
+		y=70,
+	},
+	{
+		text="That cursor is the path to communicating with you here and now, but maybe someday we can meet via thought.\n\nYou'll send some wonderful combination of words and derail me from my computer long enough to meet you in dreams, in silence, where words via technology aren't necessary.",
+		color={0.666, 0.666, 0.8, 0},
+		y=70,
+	},
 }
 
 local af = Def.ActorFrame{
-	InitCommand=function(self) self:diffusealpha(0) end,
-	OnCommand=function(self) self:smooth(0.15):diffusealpha(1) end,
+	InitCommand=function(self) self:x(_screen.cx):diffusealpha(0) end,
+	OnCommand=function(self) self:smooth(1):diffusealpha(1) end,
 
 	InputEventCommand=function(self, event)
-		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-			if page == 1 then
-				self:diffusealpha(0):queuecommand("Refresh"):smooth(0.15):diffusealpha(1)
+		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back" or event.GameButton=="MenuRight") then
+			quote_bmts[count]:playcommand("FadeOut")
+
+			if quotes[count+1] then
+				count = count + 1
+				quote_bmts[count]:queuecommand("FadeIn")
 			else
-				SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+				self:sleep(1.5):queuecommand("Transition")
 			end
 		end
-	end
-}
-
-af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-	Text=pages[1],
-	InitCommand=function(self)
-		quote_bmt = self
-		self:wrapwidthpixels(max_width[page])
-			:Center():addx(-self:GetWidth()/2):halign(0)
 	end,
-	RefreshCommand=function(self)
-		page = 2
-		self:settext( pages[page] ):wrapwidthpixels(max_width[page])
+	TransitionCommand=function(self)
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
 }
 
-af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:zoomto(0,0):diffuse(0.5, 0.5, 0.5, 1) end,
-	RefreshCommand=function(self)
-		self:zoomto(2, quote_bmt:GetHeight()):Center():addx(-quote_bmt:GetWidth()/2 - 24)
-	end
+af[#af+1] = Def.Sound{
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/12/I5.ogg"),
+	OnCommand=function(self) self:play() end,
+	TransitionCommand=function(self) self:stop() end
 }
+
+for i=1, #quotes do
+
+	af[#af+1] = Def.BitmapText{
+		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+		Text=quotes[i].text,
+		InitCommand=function(self)
+			quote_bmts[i] = self
+
+			self:wrapwidthpixels(max_width)
+				:align(0,0)
+				:xy(-self:GetWidth()/2, 70)
+				:diffuse(quotes[i].color):y( quotes[i].y )
+				:visible(false)
+				:playcommand("Refresh")
+		end,
+		FadeInCommand=function(self) self:visible(true):sleep(0.5):smooth(0.65):diffusealpha(1) end,
+		FadeOutCommand=function(self) self:finishtweening():smooth(0.65):diffusealpha(0):queuecommand("Hide") end,
+		HideCommand=function(self) self:visible(false) end
+	}
+
+	if i==1 then
+		af[#af].OnCommand=function(self) self:visible(true):sleep(1.5):smooth(1):diffusealpha(1) end
+	end
+end
 
 return af
