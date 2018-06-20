@@ -28,8 +28,8 @@ local conversation = {
 	{ author="Zoe", delay=91.9, words="With a hug." },
 	{ author="Ben", delay=93.7, words="I wouldn't miss it for the world." },
 
-	{ author="Ben", delay=97.9, words="Zoe..." },
-	{ author="Zoe", delay=97.925, words="I have to run now!  Until then!" },
+	{ author="Zoe", delay=97.9, words="I have to run now!  Until then!" },
+	{ author="Ben", delay=102.14, words="Zoe..." },
 	{ author="Ben", delay=106.45, words="Until then." },
 }
 

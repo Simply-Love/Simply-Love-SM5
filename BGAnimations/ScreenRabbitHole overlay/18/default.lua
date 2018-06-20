@@ -4,7 +4,7 @@ local max_width = 260
 local max_height = 390
 local font_zoom = 0.785
 
-local rain1, rain2
+local rain1
 local pages = {}
 local page = 1
 local book = LoadActor("./a-beige-colored-bookmark.lua")
@@ -54,7 +54,7 @@ local af = Def.ActorFrame{
 
 		if event.type == "InputEventType_FirstPress" then
 
-			if event.GameButton=="Back" then
+			if event.GameButton=="Back" or event.GameButton=="Select" then
 				self:queuecommand("Transition")
 
 			elseif event.GameButton=="Start" or event.GameButton == "MenuRight" then
