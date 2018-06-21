@@ -52,7 +52,7 @@ local t = Def.ActorFrame {
 		local seconds = topscreen:GetChild("Timer"):GetSeconds()
 
 		-- if necessary, force the players into Gameplay because the MenuTimer has run out
-		if seconds <= 0 then
+		if not Input.AllDone and seconds <= 0 then
 			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 				local steps = SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )[1]
 				GAMESTATE:SetCurrentSteps(player, steps)
@@ -133,6 +133,7 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
+
 
 	LoadActor("./PlayerOptionsShared.lua", {row, col, Input}),
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}),

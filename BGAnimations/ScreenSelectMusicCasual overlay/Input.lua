@@ -96,6 +96,8 @@ t.Init = function()
 		[PLAYER_2] = 1
 	}
 
+	t.AllDone = false
+
 	t.CancelSongChoice = function()
 		t.Enabled = false
 		for pn in ivalues(Players) do
@@ -215,7 +217,10 @@ t.Handler = function(event)
 				-- it means it's time to start gameplay
 				if event.GameButton == "Start" and AllPlayersAreAtLastRow() then
 					local topscreen = SCREENMAN:GetTopScreen()
-					if topscreen then topscreen:StartTransitioningScreen("SM_GoToNextScreen") end
+					if topscreen then
+						t.AllDone = true
+						topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+					end
 					return false
 				end
 
