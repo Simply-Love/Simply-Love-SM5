@@ -2,7 +2,7 @@
 
 local scenes = {}
 local scene = 1
-local duration = { 10, 58, 75, 30, 9.5, 114, 65 }
+local duration = { 10, 58, 75, 30, 9.5, 115, 65 }
 
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)

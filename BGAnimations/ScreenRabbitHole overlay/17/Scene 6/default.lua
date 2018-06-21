@@ -68,7 +68,10 @@ local _phone = {
 	}
 }
 
-local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):smooth(1.5):diffuse(1,1,1,1) end }
+local af = Def.ActorFrame{
+	InitCommand=function(self) self:zoom(1.3):xy( WideScale(-100, -130), -72 ) end,
+	StartSceneCommand=function(self) self:visible(true):smooth(1.5):diffuse(1,1,1,1) end
+}
 
 af[#af+1] = LoadActor("./the-long-walk-home.ogg")..{
 	StartSceneCommand=function(self) self:play() end,
