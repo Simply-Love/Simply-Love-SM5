@@ -1,36 +1,43 @@
+local fade_in_time = 0.1
+
 local conversation = {
-	{ author="Zoe", delay=0, words="I miss you, Ben.  What's up with you?"},
+	{ author="Zoe", delay=fade_in_time, words="I miss you, Ben.  What's up with you?"},
 
-	{ author="Ben", delay=3.9, words="Life is weird.  I work a lot.  Too much, probably." },
-	{ author="Ben", delay=8.04, words="I miss you, too." },
+	{ author="Ben", delay=4.0, words="Life is weird.  I work a lot.  Too much, probably." },
+	{ author="Ben", delay=8.138, words="I miss you, too." },
 
-	{ author="Zoe", delay=12.18, words="I'm glad we've stayed friends all this time. " },
-	{ author="Zoe", delay=16.315, words="It's nice to be reminded I didn't just become worthy of love as I grew up, that I've always been an okay person." },
-	{ author="Zoe", delay=20.47, words="I do wonder sometimes." },
-	{ author="Ben", delay=24.6, words="You've always been good to me." },
-	{ author="Zoe", delay=28.73, words="You're a good person too, you know?" },
-	{ author="Ben", delay=32.86, words="Sigh." },
+	{ author="Zoe", delay=12.276, words="I'm glad we've stayed friends all this time. " },
+	{ author="Zoe", delay=16.414, words="It's nice to be reminded I didn't just become worthy of love as I grew up, that I've always been an okay person." },
+	{ author="Zoe", delay=20.522, words="I do wonder sometimes." },
+	{ author="Ben", delay=24.689, words="You've always been good to me." },
+	{ author="Zoe", delay=28.827, words="You're a good person too, you know?" },
+	{ author="Ben", delay=32.965, words="Sigh." },
 
-	{ author="Ben", delay=37, words="I miss you.  I don't even understand how I can miss someone I've never met." },
-	{ author="Zoe", delay=41.25, words="It's maybe because we've known each other for such a long time now." },
-	{ author="Zoe", delay=45.7, words="But I don't feel the same way about lots of other people I've known this long." },
-	{ author="Zoe", delay=50.06, words="I am having a tough day today, so it's nice to feel you out there." },
-	{ author="Zoe", delay=56.18, words="How are you, Ben?" },
+	{ author="Ben", delay=37.103, words="I miss you.  I don't even understand how I can miss someone I've never met." },
+	{ author="Zoe", delay=41.339, words="It's maybe because we've known each other for such a long time now." },
+	{ author="Zoe", delay=45.729, words="But I don't feel the same way about lots of other people I've known this long." },
+	{ author="Zoe", delay=50.174, words="I am having a tough day today, so it's nice to feel you out there." },
 
-	{ author="Ben", delay=59.277, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
-	{ author="Zoe", delay=65.25, words="Harp, eh?  Marx Bros?  Like this?  [YouTube]" },
-	{ author="Ben", delay=73.24, words="Wow.  That's pretty technically impressive.  He can certainly arpeggiate." },
+	{ author="Zoe", delay=56.286, words="How are you, Ben?" },
+	{ author="Ben", delay=59.286, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
 
-	{ author="Ben", delay=77.32, words="But I wouldn't trade superhuman technical prowess and Mozartian speed-arpeggios for my time with you." },
-	{ author="Zoe", delay=81.3, words="No sensible human would make that trade with you anyway." },
-	{ author="Ben", delay=85.45, words="Was sense ever on our side to begin with? :P" },
-	{ author="Zoe", delay=89.58, words="One of these days I'm gonna clobber you." },
-	{ author="Zoe", delay=91.9, words="With a hug." },
-	{ author="Ben", delay=93.7, words="I wouldn't miss it for the world." },
+	{ author="Zoe", delay=63.787, words="Harp, eh?  Like this?  [YouTube]" },
+	{ author="Ben", delay=67.787, words="Wow." },
+	{ author="Ben", delay=69.787, words="That's..." },
+	{ author="Ben", delay=71.787, words="That's beautiful." },
+	{ author="Ben", delay=73.787, words="It's like the harp is singing." },
+	{ author="Ben", delay=77.787, words="I wish I could be so evocative with the things I create." },
 
-	{ author="Zoe", delay=97.9, words="I have to run now!  Until then!" },
-	{ author="Ben", delay=102.14, words="Zoe..." },
-	{ author="Ben", delay=106.45, words="Until then." },
+	{ author="Ben", delay=81.832, words="But I wouldn't trade technical prowess and Mozartian arpeggios for my time with you." },
+	{ author="Zoe", delay=85.923, words="No sensible human would make that trade with you anyway." },
+	{ author="Ben", delay=90.014, words="Was sense ever on our side to begin with? :P" },
+	{ author="Zoe", delay=94.105, words="One of these days I'm gonna clobber you." },
+	{ author="Zoe", delay=96.150, words="With a hug." },
+	{ author="Ben", delay=98.268, words="I wouldn't miss it for the world." },
+
+	{ author="Zoe", delay=102.503, words="I have to run now!  Until then!" },
+	{ author="Ben", delay=106.738, words="Zoe..." },
+	{ author="Ben", delay=110.974, words="Until then." },
 }
 
 local font_zoom = 0.55
@@ -94,8 +101,7 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) self:zoomto((_phone.Ben.w*_phone.Ben.zoom)*0.875, _phone.Ben.bar):y(-_phone.Ben.h/2*_phone.Ben.zoom + 74):diffuse(1,1,1,0.75) end,
 	},
 	-- wifi bars
-	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/wifi-bars.png"),
+	LoadActor("./wifi-bars.png")..{
 		InitCommand=function(self) self:xy(-74, -_phone.Ben.h/2*_phone.Ben.zoom + 68):zoom(0.1) end
 	},
 	-- time
@@ -113,7 +119,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- shell
 	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/phone.png"),
+		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/Scene 5/phone.png"),
 		InitCommand=function(self) self:zoom(_phone.Ben.zoom) end
 	},
 }
@@ -135,7 +141,7 @@ for human in ivalues({"Ben"}) do
 			end,
 			StartSceneCommand=function(self)
 				if conversation[i].delay then
-					self:sleep(conversation[i].delay):queuecommand("Show")
+					self:sleep(conversation[i].delay-fade_in_time):queuecommand("Show")
 				end
 			end,
 			ShowCommand=function(self)
@@ -147,7 +153,7 @@ for human in ivalues({"Ben"}) do
 					self:GetParent():y( over )
 				end
 
-				self:linear(0.1):diffusealpha(1)
+				self:linear(fade_in_time):diffusealpha(1)
 			end,
 
 			-- "chat-bubble" behind each set of words

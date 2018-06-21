@@ -1,7 +1,7 @@
 local header = "To: Ben\nFrom: Zoe\nDate: July 10, 2010\nSubject: It's been a while."
 local body = "I've been thinking a lot about you and the US recently. I hope everything is wonderful for you right now.\n\nI am exceedingly cheerful and motivated at uni and just in general. It's funny all the things I never thought I'd be able to do. I'm more than a sixth of the way to getting a degree, which amazes me.\n\nI'm studying logic, which made me think of you. Logic in words is so much harder than I thought it would be, but you might be a natural with your programming finesse.\n\nOtherwise, I'm pretty good.  I see a lot more people here and have made a few good friends.\n\nOne guy I think you would really like is an astronomy PhD, but also legally blind, which he thinks nothing of, but I find fascinating.  He is a little nerdy but completely sweet and joyous, which I like.  He makes me think of you sometimes.\n\nAnyway, write back when you get a chance and feel free to rant on about whatever you'd like. I hope you are happy and safe and warm where you are.\n\nLove,\nZ"
 local delay = 0.0545
-local song = "17/Wings.ogg"
+local song = "./wings.ogg"
 local max_width = 520
 
 local header_zoom = 0.55
@@ -13,8 +13,7 @@ local af = Def.ActorFrame{
 	TransitionCommand=function(self) self:queuecommand("Hide") end
 }
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/" .. song),
+af[#af+1] = LoadActor(song)..{
 	StartSceneCommand=function(self) self:sleep(2):queuecommand("Play") end,
 	PlayCommand=function(self) self:stop():play() end,
 	FadeOutAudioCommand=function(self)
@@ -29,8 +28,7 @@ af[#af+1] = Def.Sound{
 }
 
 -- grass texture
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/grass.png"),
+af[#af+1] = LoadActor("./grass.png")..{
 	InitCommand=function(self) self:Center():zoom(0.9) end
 }
 
@@ -82,8 +80,7 @@ af[#af+1] = Def.ActorFrame{
 	},
 
 	-- laptop texture
-	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/laptop.png"),
+	LoadActor("./laptop.png")..{
 		InitCommand=function(self) self:valign(1):xy(_screen.cx, _screen.h):zoom(0.65) end
 	}
 }

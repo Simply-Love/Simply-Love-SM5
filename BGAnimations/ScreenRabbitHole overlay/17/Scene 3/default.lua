@@ -67,8 +67,7 @@ local af = Def.ActorFrame{
 	end
 }
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.ogg"),
+af[#af+1] = LoadActor("./love-letters.ogg")..{
 	StartSceneCommand=function(self) self:sleep(0):queuecommand("Play") end,
 	PlayCommand=function(self) self:play() end,
 	StopAudioCommand=function(self) self:stop() end,
@@ -86,28 +85,26 @@ af[#af+1] = Def.Sound{
 af[#af+1] = LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") )
 
 -- "my ice-crusted window"
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/frost.png"),
-	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-80):valign(0) end,
+af[#af+1] = LoadActor("./frost.png")..{
+	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-40):valign(0) end,
 }
 
 -- blinds
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/blind.png"),
-	InitCommand=function(self) self:xy(_screen.cx, _screen.cy-100):zoomtoheight(_screen.h-100):zoomtowidth(_screen.w):customtexturerect(0,0,1,12) end,
+af[#af+1] = LoadActor("./blind.png")..{
+	InitCommand=function(self) self:xy(_screen.cx, _screen.cy-100):zoomtoheight(_screen.h-40):zoomtowidth(_screen.w):customtexturerect(0,0,1,12) end,
 }
 -- blind strings - left
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:xy(30, 0):valign(0):zoomto(2, _screen.h-150):diffuse(color("#6a6664")) end
+	InitCommand=function(self) self:xy(30, 0):valign(0):zoomto(2, _screen.h-120):diffuse(color("#6a6664")) end
 }
 -- blind strings - right
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:xy(_screen.w-30, 0):valign(0):zoomto(2, _screen.h-150):diffuse(color("#6a6664")) end
+	InitCommand=function(self) self:xy(_screen.w-30, 0):valign(0):zoomto(2, _screen.h-120):diffuse(color("#6a6664")) end
 }
 
 -- desk
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 80):diffuse(0.05,0.05,0.05,1):diffusetopedge(0.085,0.075,0.1,1) end
+	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 40):diffuse(0.05,0.05,0.05,1):diffusetopedge(0.085,0.075,0.1,1) end
 }
 
 -- monitor
@@ -132,8 +129,7 @@ af[#af+1] = Def.ActorFrame{
 	},
 
 	-- wallpaper
-	Def.Sprite{
-		Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/17/space.png"),
+	LoadActor("./space.png")..{
 		InitCommand=function(self) self:zoomto(monitor.w-24, monitor.h-24):Center() end,
 	},
 

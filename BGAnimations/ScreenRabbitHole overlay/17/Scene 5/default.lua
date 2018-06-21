@@ -5,8 +5,7 @@ local _phone = { w=225, h=400 }
 
 local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):diffuse(1,1,1,1) end }
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/17/buzz.ogg"),
+af[#af+1] = LoadActor("./buzz.ogg")..{
 	StartSceneCommand=function(self) self:sleep(0.5):queuecommand("Play") end,
 	PlayCommand=function(self) self:play() end,
 	FadeOutAudioCommand=function(self)

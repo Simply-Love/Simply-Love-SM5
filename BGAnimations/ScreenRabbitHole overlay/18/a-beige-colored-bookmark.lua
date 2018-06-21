@@ -23,7 +23,7 @@ return {
 		"“How ‘bout the game last night?” she asks me, attempting to make conversation. “Which game?” I reply, delaying the inevitable. “The Pens. The Pens of course.”",
 		"“I'm sorry, I don't really follow sports. What, uh, what sport do the Pens play?” I try to sound as earnestly inquisitive as I can muster. She laughs heartily. “You've gotta be the first person I've ever met around here that doesn't follow hockey.” She chuckles some more, shaking her head with a smile. I feel my mouth form a sheepish half smile. “I'm glad I could at least provide some humor to your day.”",
 		"“Well, okay then,” she continues, “you don't like sports. What do you like to do?”",
-		"“Well, I go to work, and... come home and read things, and...” My voice trails off.",
+		"“Well, I go to work, and… come home and read things, and…” My voice trails off.",
 		"“Mm,” she nods. “You sound a little lost.”",
 		"“Yeah, I guess, maybe.” I have a sense of my mind leaving the tracks in front of it for uncharted rumination. It's too late already, but I try to steer a little longer. “How about you? What do you like to do?”",
 		"“Oh, well, I live a quiet life now, mostly just driving like this to make ends meet and keep myself busy. Things were tough when my husband passed three years ago. I barely got out of bed for six months. Hardly ate anything. It was tough. But I couldn't do that forever. Life goes on, you know? The days continue to come.”",

@@ -2,7 +2,7 @@
 
 local scenes = {}
 local scene = 1
-local duration = { 10, 58, 75, 30, 9.5, 108.5, 65 }
+local duration = { 10, 58, 75, 30, 9.5, 114, 65 }
 
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)
@@ -49,55 +49,21 @@ af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua")
 }
 
 -- scene 2: It's funny all the things I never thought I'd be able to do.
-af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/17/newer-email.lua") )..{
-	InitCommand=function(self)
-		scenes[2] = self
-		self:visible(false):diffuse(0,0,0,1)
-	end,
-}
-
 -- scene 3: love letters
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/love-letters.lua") )..{
-	InitCommand=function(self)
-		scenes[3] = self
-		self:visible(false):diffuse(0,0,0,1)
-	end,
-}
-
 -- scene 4: smitten
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/social-media.lua") )..{
-	InitCommand=function(self)
-		scenes[4] = self
-		self:visible(false):diffuse(0,0,0,1)
-	end,
-}
-
 -- scene 5: I miss you, Ben.
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/new-text-message.lua") )..{
-	InitCommand=function(self)
-		scenes[5] = self
-		self:visible(false):diffuse(0,0,0,1)
-	end,
-}
-
 -- scene 6: the speed of life
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/sms.lua") )..{
-	InitCommand=function(self)
-		scenes[6] = self
-		self:visible(false):diffuse(0,0,0,1)
-	end,
-}
-
--- scene 7: Right NOW
-af[#af+1] = LoadActor( THEME:GetPathB("ScreenRabbitHole", "overlay/17/right-now.lua") )..{
-	InitCommand=function(self)
-		scenes[7] = self
-		self:visible(false):diffuse(0,0,0,1)
-	end,
-}
-
+-- scene 7: right now
 -- scene 8: epilogue
 
+for i=2, #duration do
+	af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/17/Scene ".. i .."/default.lua") )..{
+		InitCommand=function(self)
+			scenes[i] = self
+			self:visible(false):diffuse(0,0,0,1)
+		end,
+	}
+end
 
 af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/Connection/Proceed.lua"))
 
