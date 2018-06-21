@@ -57,8 +57,7 @@ local function input(event)
 				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay")
 				SL.Global.ContinuesRemaining = SL.Global.ContinuesRemaining - 1
 
-
-				SL.Global.ScreenAfter.PlayAgain = "ScreenSelectMusic"
+				SL.Global.ScreenAfter.PlayAgain = (SL.Global.GameMode == "Casual" and "ScreenSelectMusicCasual") or "ScreenSelectMusic"
 			else
 				SL.Global.ScreenAfter.PlayAgain = "ScreenEvaluationSummary"
 			end
@@ -80,7 +79,7 @@ local wheel_item_mt = {
 	__index = {
 		create_actors = function(self, name)
 			self.name=name
-			
+
 			local af = Def.ActorFrame{
 
 				InitCommand=function(subself)
@@ -101,7 +100,7 @@ local wheel_item_mt = {
 					end
 					subself:linear(0.15)
 					subself:diffusealpha(1)
-					
+
 				end
 			}
 
