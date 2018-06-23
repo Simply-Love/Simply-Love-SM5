@@ -21,7 +21,7 @@ return Def.ActorFrame{
 	LoadFont("_wendy white")..{
 		Text=percent,
 		Name="Percent",
-		InitCommand=cmd(valign, 1; horizalign, right; zoom,0.585 ),
+		InitCommand=cmd(vertalign, middle; horizalign, right; zoom,0.585 ),
 		OnCommand=cmd(x, 70)
 	}
 }

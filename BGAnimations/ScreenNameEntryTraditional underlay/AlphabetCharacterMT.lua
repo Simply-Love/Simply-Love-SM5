@@ -19,7 +19,7 @@ local alphabet_character_mt = {
 					Font="_wendy white",
 					InitCommand=function(subself)
 						self.bmt = subself
-						subself:zoom(0.475)
+						subself:zoom(0.5)
 						subself:diffuse(0.75,0.75,0.75,1)
 					end,
 					OnCommand=cmd(sleep, 0.2; linear, 0.25 ),
@@ -54,11 +54,7 @@ local alphabet_character_mt = {
 
 			if not character then return end
 
-			-- special case characters
-			if character == "ok" then self.bmt:settext( "&OK;" )
-			elseif character == "back" then self.bmt:settext( "&BACK;" )
-			-- "normal" characters
-			else self.bmt:settext( character ) end
+			self.bmt:settext( character )
 
 		end
 	}
