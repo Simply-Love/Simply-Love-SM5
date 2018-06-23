@@ -59,7 +59,7 @@ local af = Def.ActorFrame{
 }
 
 af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/12/I5.ogg"),
+	File=THEME:GetPathB("ScreenRabbitHole", "overlay/4/recalling.ogg"),
 	OnCommand=function(self) self:play() end,
 	TransitionCommand=function(self) self:stop() end
 }

@@ -109,7 +109,6 @@ af[#af+1] = Def.BitmapText{
 	RefreshCommand=function(self)
 		self:settext(pages[page])
 	end,
-	CloseCommand=function(self) self:settext("") end
 }
 
 -- right
@@ -123,7 +122,6 @@ af[#af+1] = Def.BitmapText{
 	RefreshCommand=function(self)
 		self:settext(pages[page+1])
 	end,
-	CloseCommand=function(self) self:settext("") end
 }
 
 return af
