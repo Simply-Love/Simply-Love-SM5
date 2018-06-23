@@ -53,6 +53,33 @@ else
 	steps_type = steps_type .. "Single"
 end
 
+
+---------------------------------------------------------------------------
+-- initializes sick_wheel OptionRows for the CurrentSong with needed information
+-- this function is called when choosing a song, either actively (pressing START)
+-- or passively (MenuTimer running out)
+
+local InitOptionRowsForSingleSong = function()
+	local steps = {}
+	-- prune out charts whose meter exceeds the specified max
+	for chart in ivalues(SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )) do
+		if chart:GetMeter() <= ThemePrefs.Get("CasualMaxMeter") then
+			steps[#steps+1] = chart
+		end
+	end
+
+	OptionRows[1].choices = steps
+
+	for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
+		OptionsWheel[pn]:set_info_set( OptionRows, 1)
+
+		for i=1,#OptionRows do
+			OptionsWheel[pn][i]:set_info_set( OptionRows[i].choices, 1)
+		end
+	end
+end
+
+
 ---------------------------------------------------------------------------
 -- helper function used by GetGroups() and GetDefaultSong()
 -- returns the contents of a txt file as an indexed table, split on newline
@@ -282,4 +309,14 @@ group_index = FindInTable(current_song:GetGroupName(), groups) or 1
 
 -- local group_info = GetGroupInfo(groups)
 
-return {steps_type=steps_type, Groups=groups, group_index=group_index, group_info=group_info, OptionsWheel=OptionsWheel, OptionRows=OptionRows, row=row, col=col}
+return {
+	steps_type=steps_type,
+	Groups=groups,
+	group_index=group_index,
+	group_info=group_info,
+	OptionsWheel=OptionsWheel,
+	OptionRows=OptionRows,
+	row=row,
+	col=col,
+	InitOptionRowsForSingleSong=InitOptionRowsForSingleSong,
+}

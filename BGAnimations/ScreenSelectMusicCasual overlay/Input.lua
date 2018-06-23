@@ -40,7 +40,7 @@ end
 
 -- determine whether all human players are done selecting song options
 -- and have their cursors at the glowing green START button
-local AllPlayersAreAtLastRow = function()
+t.AllPlayersAreAtLastRow = function()
 	for player in ivalues(Players) do
 		if ActiveOptionRow[player] ~= #OptionRows then
 			return false
@@ -95,8 +95,6 @@ t.Init = function()
 		[PLAYER_1] = 1,
 		[PLAYER_2] = 1
 	}
-
-	t.AllDone = false
 
 	t.CancelSongChoice = function()
 		t.Enabled = false
@@ -215,10 +213,9 @@ t.Handler = function(event)
 
 				-- if both players are ALREADY here (before changing the row)
 				-- it means it's time to start gameplay
-				if event.GameButton == "Start" and AllPlayersAreAtLastRow() then
+				if event.GameButton == "Start" and t.AllPlayersAreAtLastRow() then
 					local topscreen = SCREENMAN:GetTopScreen()
 					if topscreen then
-						t.AllDone = true
 						topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 					end
 					return false
@@ -235,21 +232,19 @@ t.Handler = function(event)
 					t.WheelWithFocus[event.PlayerNumber]:scroll_by_amount(1)
 				end
 
-				-- update the index
-				index = index + 1
-				-- prevent out of bounds by stopping at the last row
-				if index > #OptionRows then index = #OptionRows end
+				-- update the index, bounding it to not exceed the number of rows
+				index = math.min(index+1, #OptionRows)
+
 				-- set the currently active option row to the updated index
 				ActiveOptionRow[event.PlayerNumber] = index
 
 				-- handle cursor position shifting for exit row as needed
 				if index == #OptionRows then
-					-- local arrow_direction = event.PlayerNumber == PLAYER_1 and "Left" or "Right"
 					t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):playcommand("ExitRow", {PlayerNumber=event.PlayerNumber})
 				end
 
-				-- if all available players are done selecting options, animate cursors
-				if AllPlayersAreAtLastRow() then
+				-- if all available players are now at the final row (start icon), animate cursors spinning
+				if t.AllPlayersAreAtLastRow() then
 					MESSAGEMAN:Broadcast("BothPlayersAreReady")
 				end
 

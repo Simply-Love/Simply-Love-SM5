@@ -52,12 +52,23 @@ local t = Def.ActorFrame {
 		local seconds = topscreen:GetChild("Timer"):GetSeconds()
 
 		-- if necessary, force the players into Gameplay because the MenuTimer has run out
-		if not Input.AllDone and seconds <= 0 then
+		if not Input.AllPlayersAreAtLastRow() and seconds <= 0 then
+
+			-- if we we're not currently in the optionrows,
+			-- we'll need to iniitialize them for the current song, first
+			if Input.WheelWithFocus ~= OptionsWheel then
+				setup.InitOptionRowsForSingleSong()
+			end
+
 			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-				local steps = SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )[1]
-				GAMESTATE:SetCurrentSteps(player, steps)
-				local player_options = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
-				player_options:CMod(250)
+
+				for index=1, #OptionRows-1 do
+					local choice = OptionsWheel[player][index]:get_info_at_focus_pos()
+					local choices= OptionRows[index].choices
+					local values = OptionRows[index].values
+
+					OptionRows[index]:OnSave(player, choice, choices, values)
+				end
 			end
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 		else
@@ -109,24 +120,7 @@ local t = Def.ActorFrame {
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,
 	SwitchFocusToSingleSongMessageCommand=function(self)
-
-		local steps = {}
-		-- prune out charts whose meter exceeds the specified max
-		for chart in ivalues(SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )) do
-			if chart:GetMeter() <= ThemePrefs.Get("CasualMaxMeter") then
-				steps[#steps+1] = chart
-			end
-		end
-
-		OptionRows[1].choices = steps
-
-		for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
-			OptionsWheel[pn]:set_info_set( OptionRows, 1)
-
-			for i=1,#OptionRows do
-				OptionsWheel[pn][i]:set_info_set( OptionRows[i].choices, 1)
-			end
-		end
+		setup.InitOptionRowsForSingleSong()
 
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,
