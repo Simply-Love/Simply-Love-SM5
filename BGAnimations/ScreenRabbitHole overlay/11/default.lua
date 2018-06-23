@@ -1,9 +1,9 @@
 -- A troubled sea.
 
-local max_width = 440
+local max_width = 450
 local quote_bmts = {}
 local quote_line
-local font_zoom = 0.95
+local font_zoom = 0.975
 local count = 1
 local bgm_volume = 1
 
@@ -16,7 +16,7 @@ local quotes = {
 	"And I don't.\n\nI am suddenly free.\n\nAwake, in bed, vaguely aware that I have just screamed, I take note of how wet my face is, doused in a mixture of sweat and saliva.\n\nI am shaken, but alive.",
 	"The effects of the adrenaline remain noticeable for ten to fifteen minutes, and I am aware of this passing of time.",
 	"I am aware that I was very literally just fighting for my survival.",
-	"I am aware that my life must still mean something to me."
+	"I am aware\nthat my life\nmust still\nmean something\nto me."
 }
 
 local af = Def.ActorFrame{
