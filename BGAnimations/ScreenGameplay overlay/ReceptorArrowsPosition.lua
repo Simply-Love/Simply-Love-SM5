@@ -13,10 +13,10 @@ local player = ...
 -- positions already specified in Metrics
 local ReceptorPositions = {
 -- not exclusive to StomperZ anymre
---	Standard = {
---		ITG = 45,
---		StomperZ = 0
---	},
+	Standard = {
+		ITG = 0,
+		StomperZ = 0
+	},
 	Reverse = {
 		ITG = -30,
 		StomperZ = 0
