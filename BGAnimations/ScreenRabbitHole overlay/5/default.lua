@@ -5,7 +5,7 @@ local outro = "where were we going?\nhow would we know when we got there?\nI gri
 
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)
-	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
+	if event.type == "InputEventType_FirstPress" and event.GameButton=="Back" then
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
 end
