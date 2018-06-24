@@ -1,17 +1,20 @@
 -- ReceptorArrow positions are hardcoded using Metrics.ini
 -- in both Casual, Competitive, and ECFA modes.  If we're in one
 -- of those modes, bail now.
-if SL.Global.GameMode ~= "StomperZ" then
-	return Def.Actor{}
-end
+
+-- not exclusive to StomperZ anymre
+--if SL.Global.GameMode ~= "StomperZ" then
+--	return Def.Actor{}
+--end
 
 local player = ...
 
 -- these numbers are relative to the ReceptorArrowsYStandard and ReceptorArrowsYReverse
 -- positions already specified in Metrics
 local ReceptorPositions = {
+-- not exclusive to StomperZ anymre
 	Standard = {
-		ITG = 45,
+		ITG = 0,
 		StomperZ = 0
 	},
 	Reverse = {

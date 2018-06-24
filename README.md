@@ -1,3 +1,8 @@
+# Simply MORE Love (StepMania 5)
+Forked from https://github.com/dguzek/Simply-Love-SM5, "MORE" attempts to bring additional modifications in form of player-modifiers or machine-options to the best theme in the world (your mileage may vary). MORE means MORE: all additions to dguzek's work stay intact (and defaulted in most cases), and a player can choose via modifiers if he wants(literally) Simply MORE Love.
+
+
+
 # Simply Love (StepMania 5)
 
 ![Arrow Logo](http://i.imgur.com/FyeguCQ.png)
