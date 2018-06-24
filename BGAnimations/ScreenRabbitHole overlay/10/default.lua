@@ -3,7 +3,7 @@
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)
 	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-		self:queuecommand("Transition")
+		self:stoptweening():queuecommand("Transition")
 	end
 end
 af.InitCommand=function(self) self:diffuse( Color.Black ) end
