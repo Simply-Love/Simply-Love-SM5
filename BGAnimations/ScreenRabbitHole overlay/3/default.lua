@@ -17,13 +17,11 @@ af.NextScreenCommand=function(self)
 end
 
 
-af[#af+1] = Def.Sound{
-	File=THEME:GetPathB("ScreenRabbitHole", "overlay/2/quietly-turning.ogg"),
+af[#af+1] = LoadActor("./quietly-turning.ogg")..{
 	OnCommand=function(self) self:play() end
 }
 
-af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathB("ScreenRabbitHole", "overlay/2/earth.png"),
+af[#af+1] = LoadActor("./earth.png")..{
 	InitCommand=function(self) self:halign(0):valign(1):xy(0,_screen.h):zoom(0.5):diffusealpha(0) end,
 	OnCommand=function(self) self:sleep(1):smooth(2):diffusealpha(1) end
 }
