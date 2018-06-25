@@ -98,12 +98,14 @@ local JoinOrUnjoinPlayersMaybe = function(style, player)
 	-- isn't the MasterPlayerNumber
 	player = player or GAMESTATE:GetMasterPlayerNumber()
 
-	if style == "single" or style == "double" then
-		if player == PLAYER_1 then
-			GAMESTATE:UnjoinPlayer(PLAYER_2)
-		else
-			GAMESTATE:UnjoinPlayer(PLAYER_1)
-		end
+	-- it's possible that PLAYER_1 was the MPN, but then PLAYER_2 selected single on this screen
+	-- ensure that player is actually joined now to avoid having no one joined in ScreenSelectPlayMode
+	if not GAMESTATE:IsHumanPlayer(player) then GAMESTATE:JoinPlayer(player) end
+
+	if player == PLAYER_1 then
+		GAMESTATE:UnjoinPlayer(PLAYER_2)
+	else
+		GAMESTATE:UnjoinPlayer(PLAYER_1)
 	end
 end
 
@@ -178,6 +180,7 @@ local function input(event)
 			af:GetChild("Change"):play()
 
 		elseif event.GameButton == "Start" then
+			StyleSelected = true
 			af:GetChild("Start"):play()
 			af:playcommand("Finish", {PlayerNumber=event.PlayerNumber})
 
@@ -231,7 +234,7 @@ local t = Def.ActorFrame{
 	FinishCommand=function(self, params)
 		local style = choices[current_index].name
 
-		JoinOrUnjoinPlayersMaybe(style, params.PlayerNumber)
+		JoinOrUnjoinPlayersMaybe(style, (params and params.PlayerNumber or nil))
 		DeductCreditsMaybe(style)
 
 		-- ah, yes, techno mode
