@@ -320,6 +320,14 @@ if #groups == 0 then
 	groups = PruneGroups(SONGMAN:GetSongGroupNames())
 end
 
+-- If there are STILL no valid groups, we aren't going to find any.
+-- return nil, which default.lua will interpret to mean the
+-- player needs to be informed that this machine has no suitable
+-- casual content...  D:
+if #groups == 0 then
+	return nil
+end
+
 -- there will be a current_song if we're on stage 2 or later
 -- if no current_song, check ./Other/CasualMode-DefaultSong.txt
 if current_song == nil then

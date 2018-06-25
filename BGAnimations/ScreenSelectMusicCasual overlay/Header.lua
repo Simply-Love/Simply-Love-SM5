@@ -5,15 +5,11 @@ local af = Def.ActorFrame{
 
 	Def.Quad{
 		InitCommand=function(self)
-			-- if ThemePrefs.Get("RainbowMode") then
-				self:diffuse(color("#000000dd"))
-			-- else
-			-- 	self:diffuse(0.86, 0.86, 0.86, 0.75)
-			-- end
+			self:diffuse(color("#000000dd"))
 			self:zoomto(_screen.w, row.h*0.5):valign(0):xy( _screen.cx, 0 )
 		end,
 		SwitchFocusToSongsMessageCommand=function(self)
-				self:sleep(0.1):linear(0.1):zoomtoheight(row.h*0.5)
+			self:sleep(0.1):linear(0.1):zoomtoheight(row.h*0.5)
 		end,
 		SwitchFocusToGroupsMessageCommand=cmd(linear,0.1; zoomtoheight, 32),
 	},

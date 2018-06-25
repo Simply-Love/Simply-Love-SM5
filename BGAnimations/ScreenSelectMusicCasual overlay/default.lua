@@ -4,6 +4,10 @@
 
 local setup = LoadActor("./Setup.lua")
 
+if setup == nil then
+	return LoadActor(THEME:GetPathB("ScreenSelectMusicCasual", "overlay/NoValidSongs.lua"))
+end
+
 local steps_type = setup.steps_type
 local Groups = setup.Groups
 local group_index = setup.group_index
