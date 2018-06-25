@@ -18,7 +18,9 @@ af[#af+1] = Def.BitmapText{
 		quote_bmt = self
 		self:wrapwidthpixels(max_width)
 			:Center():addx(-self:GetWidth()/2):halign(0)
+			:diffusealpha(0)
 	end,
+	OnCommand=function(self) self:sleep(0.25):smooth(0.75):diffusealpha(1) end
 }
 
 return af
