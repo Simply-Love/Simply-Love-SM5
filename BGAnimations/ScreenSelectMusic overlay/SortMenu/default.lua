@@ -63,9 +63,9 @@ local t = Def.ActorFrame {
 
 		-- Allow players to switch out to a different GameMode if no stages have been played yet.
 		if SL.Global.Stages.PlayedThisGame == 0 then
-			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
-			table.insert(wheel_options, {"ChangeMode", "ECFA"})
 			table.insert(wheel_options, {"ChangeMode", "Competitive"})
+			table.insert(wheel_options, {"ChangeMode", "ECFA"})
+			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
 		end
 
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
@@ -136,26 +136,16 @@ local t = Def.ActorFrame {
 	},
 
 	-- "Press SELECT To Cancel" text
-	Def.ActorFrame{
+	Def.BitmapText{
+		Font="_wendy small",
+		Text=ScreenString("Cancel"),
 		InitCommand=function(self)
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
 				self:visible(false)
+			else
+				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffusealpha(0.6)
 			end
-		end,
-		Def.BitmapText{
-			Font="_wendy small",
-			Text=ScreenString("Cancel"),
-			InitCommand=function(self)
-				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffuse(0.4, 0.4, 0.4, 1)
-			end
-		},
-		Def.BitmapText{
-			Font="_wendy small",
-			Text=ScreenString("SelectButton"),
-			InitCommand=function(self)
-				self:xy(_screen.cx-13, _screen.cy+78):zoom(0.5)
-			end
-		}
+		end
 	},
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )

@@ -79,7 +79,9 @@ return {
 			end
 
 			self.top_text:settext(THEME:GetString("ScreenSelectMusic", info[1]))
-			self.bottom_text:settext(THEME:GetString("ScreenSelectMusic", info[2]))
+			-- don't duplicate the names of game modes in en.ini.
+			-- but "single", "double" has different semantic meaning in 1P.
+			self.bottom_text:settext(THEME:GetString(self.kind == "ChangeMode" and "ScreenSelectPlayMode" or "ScreenSelectMusic", info[2]))
 		end
 	}
 }
