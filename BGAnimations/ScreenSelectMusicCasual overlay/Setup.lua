@@ -45,13 +45,22 @@ local row = {
 
 ---------------------------------------------------------------------------
 -- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
--- there has got to be a better way to do this...
-local steps_type = "StepsType_"..GAMESTATE:GetCurrentGame():GetName():gsub("^%l", string.upper).."_"
+-- (there has got to be a better way to do this...)
+local game_name = GAMESTATE:GetCurrentGame():GetName()
+local style
+
 if GAMESTATE:GetCurrentStyle():GetName() == "double" then
-	steps_type = steps_type .. "Double"
+	style = "Double"
 else
-	steps_type = steps_type .. "Single"
+	-- "single" and  "versus" both map to "Single" here
+	style = "Single"
 end
+
+local steps_type = "StepsType_"..game_name:gsub("^%l", string.upper).."_"..style
+
+-- techno is a special case with steps_type like "StepsType_Techno_Single8"
+if game_name == "techno" then steps_type = steps_type.."8" end
+
 
 
 ---------------------------------------------------------------------------
@@ -213,12 +222,13 @@ end
 
 ---------------------------------------------------------------------------
 -- prune out groups that have no valid steps
+-- passed an indexed table of strings representing potential group names
 -- returns an indexed table of group names as strings
 
-local PruneGroups = function()
+local PruneGroups = function(_groups)
 	local groups = {}
 
-	for group in ivalues( GetGroups() ) do
+	for group in ivalues( _groups ) do
 		local group_has_been_added = false
 
 		for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
@@ -235,6 +245,7 @@ local PruneGroups = function()
 			if group_has_been_added then break end
 		end
 	end
+
 	return groups
 end
 
@@ -296,7 +307,18 @@ end
 
 local current_song = GAMESTATE:GetCurrentSong()
 local group_index = 1
-local groups = PruneGroups()
+
+-- GetGroups() will read from ./Other/CasualMode-Groups.txt
+local groups = GetGroups()
+-- prune the list of potential groups down to valid groups
+groups = PruneGroups(groups)
+
+-- it's possible the list that GetGroups() was too limited and we
+-- just pruned the table to be completely empty
+-- in that case, try again using ALL groups available to StepMania
+if #groups == 0 then
+	groups = PruneGroups(SONGMAN:GetSongGroupNames())
+end
 
 -- there will be a current_song if we're on stage 2 or later
 -- if no current_song, check ./Other/CasualMode-DefaultSong.txt
