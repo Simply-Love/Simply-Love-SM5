@@ -40,16 +40,21 @@ af[#af+1] = Def.BitmapText{
 
 local hallway = Def.ActorFrame{
 	InitCommand=function(self) self:y(_screen.cy+20):fov(90):rotationx(-80) end,
-	WalkCommand=function(self) self:linear(#footsteps/1.475):addz(#footsteps*100):addy(250) end,
+	WalkCommand=function(self) self:linear(#footsteps/1.475) end,
 	OutroCommand=function(self) self:visible(false) end
 }
 
 for i=#footsteps, 1, -1 do
-	hallway[i] = Def.BitmapText{
-		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-		Text=footsteps[i],
-		InitCommand=function(self) self:xy(_screen.cx+(i%2==0 and -20 or 20), i*-70):rotationx(85):diffusealpha(0) end,
-		WalkCommand=function(self) self:sleep(i*0.5):accelerate(1.25):diffusealpha(1) end
+	 hallway[i]= Def.ActorFrame{
+		InitCommand=function(self) self:diffuse(0,0,0,1) end,
+		WalkCommand=function(self) self:sleep(i*0.5):accelerate(1.25):diffuse(1,1,1,1) end,
+
+		Def.BitmapText{
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
+			Text=footsteps[i],
+			InitCommand=function(self) self:xy(_screen.cx+(i%2==0 and -20 or 20), -70):rotationx(82.5) end,
+			WalkCommand=function(self) self:sleep(i*0.5):linear(3.5):y(_screen.h) end
+		}
 	}
 end
 
