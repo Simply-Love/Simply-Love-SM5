@@ -1,6 +1,6 @@
 -- hallways
 local intro = "walking on the balls of my feet\nI led her down a dark hallway"
-local footsteps = { "our","feet","gently","tip","tap","tapping","on","the","hard","dark","floor","as we","walked","hand in hand","together" }
+local footsteps = { "our","feet","gently","tip","tap","tapping","on","the","cold","dark","floor","as we","walked","hand in hand","together" }
 local outro = "where were we going?\nhow would we know when we got there?\nI gripped her hand more tightly"
 
 local af = Def.ActorFrame{}

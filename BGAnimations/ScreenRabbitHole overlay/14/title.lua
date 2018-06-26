@@ -1,4 +1,4 @@
-local chapter = ...
+local args = ...
 local af = Def.ActorFrame{}
 local bgm_volume = 10
 
@@ -17,12 +17,17 @@ af[#af+1] = Def.Sound{
 	SwitchSceneCommand=function(self) self:stop() end
 }
 
+for i=1, #args.img do
+	af[#af+1] = args.img[i]
+end
+
 af[#af+1] = Def.BitmapText{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/typo slab serif/_typoslabserif-light 20px.ini"),
-	Text="Connection: Chapter "..chapter,
-	InitCommand=function(self) self:xy(_screen.cx, 100):diffusealpha(0) end,
+	Text="Connection: Chapter "..args.chapter,
+	InitCommand=function(self) self:xy(_screen.cx, _screen.cy-12):diffusealpha(0):zoom(1.5) end,
 	OnCommand=function(self) self:sleep(1):smooth(2):diffusealpha(1) end,
 	StartScene=function(self) self:hibernate(math.huge) end
 }
+
 
 return af

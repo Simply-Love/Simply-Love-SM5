@@ -49,7 +49,21 @@ local scene5 = {
 
 local af = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
 
-af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), 3)..{
+local title = {
+	chapter=3,
+	img={
+		LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/17/Scene 8/1.png"))..{
+			InitCommand=function(self) self:Center():zoom(2/3):diffuse(0,0,0,1) end,
+			OnCommand=function(self)
+				self:sleep(2):smooth(3):diffuse(0.8,0.8,0.8,1):queuecommand("Pulse")
+			end,
+			PulseCommand=function(self) self:diffuseshift():effectperiod(5):effectcolor1(0.8,0.8,0.8,1):effectcolor2(0.4,0.4,0.4,1) end
+		},
+	}
+}
+
+
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), title)..{
 	InitCommand=function(self) scenes[1] = self end,
 	OnCommand=function(self) self:queuecommand("StartScene") end
 }

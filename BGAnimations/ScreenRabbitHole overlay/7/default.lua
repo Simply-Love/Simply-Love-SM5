@@ -17,13 +17,16 @@ af[#af+1] = Def.BitmapText{
 		quote_bmt = self
 		self:wrapwidthpixels(max_width)
 			:Center():addx(-self:GetWidth()/2):halign(0)
+			:addy(-self:GetHeight()/2)
 	end,
 }
 
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:diffuse(0.5, 0.5, 0.5, 1) end,
 	OnCommand=function(self)
-		self:zoomto(2, quote_bmt:GetHeight()):Center():addx(-quote_bmt:GetWidth()/2 - 14)
+		self:zoomto(2, quote_bmt:GetHeight()):Center()
+			:addx(-quote_bmt:GetWidth()/2 - 14)
+			:addy(-quote_bmt:GetHeight()/2)
 	end
 }
 

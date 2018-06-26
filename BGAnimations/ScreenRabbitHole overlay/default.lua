@@ -1,15 +1,23 @@
 local af
-local count = 18
+local current = ThemePrefs.Get("RabbitHole")
 
 local InputHandler = function(event)
-	if count ~= 17 and (not event.PlayerNumber or not event.button) then return false end
+	if not event or not event.button then return false end
 	af:playcommand("InputEvent", event)
 end
 
-return Def.ActorFrame{
+local t = Def.ActorFrame{
 	InitCommand=function(self) af=self end,
 	OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback(InputHandler) end,
-	OffCommand=function(self) ThemePrefs.Set( "RabbitHole", ThemePrefs.Get("RabbitHole")+1 ) end,
-	LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..(ThemePrefs.Get("RabbitHole")%count+1).."/default.lua"))
-	-- LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..count.."/default.lua"))
+	OffCommand=function(self) if current < 20 then ThemePrefs.Set( "RabbitHole", current+1 ) end end,
 }
+
+if SL.Global.RabbitHole then
+	t[#t+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..SL.Global.RabbitHole.."/default.lua"))..{
+		OffCommand=function(self) SL.Global.RabbitHole = nil end
+	}
+else
+	t[#t+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..current.."/default.lua"))
+end
+
+return t

@@ -86,7 +86,7 @@ af[#af+1] = LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") 
 
 -- "my ice-crusted window"
 af[#af+1] = LoadActor("./frost.png")..{
-	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-40):valign(0) end,
+	InitCommand=function(self) self:xy(_screen.cx,0):zoomto(_screen.w, _screen.h-30):valign(0) end,
 }
 
 -- blinds
@@ -104,7 +104,7 @@ af[#af+1] = Def.Quad{
 
 -- desk
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 40):diffuse(0.05,0.05,0.05,1):diffusetopedge(0.085,0.075,0.1,1) end
+	InitCommand=function(self) self:xy(_screen.cx, _screen.h):valign(1):zoomto(_screen.w, 30):diffuse(0.05,0.05,0.05,1):diffusetopedge(0.085,0.075,0.1,1) end
 }
 
 -- monitor

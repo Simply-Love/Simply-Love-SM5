@@ -42,8 +42,25 @@ local af = Def.ActorFrame{
 	end
 }
 
+local title = {
+	chapter=4,
+	img={
+		LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/17/Scene 8/monarch 2x1.png"))..{
+			InitCommand=function(self) self:zoom(1/3):xy(_screen.cx+126, _screen.cy-42):diffuse(0,0,0,1):SetAllStateDelays(0.145) end,
+			OnCommand=function(self)
+				self:animate(false)
+					:sleep(2):smooth(3):diffuse(0.8,0.8,0.8,1):queuecommand("Wings1")
+			end,
+			Wings1Command=function(self) self:animate(true):sleep(0.3):queuecommand("Wings2") end,
+			Wings2Command=function(self) self:animate(false):sleep(4.5):queuecommand("Wings3") end,
+			Wings3Command=function(self) self:animate(true):sleep(0.3):queuecommand("Wings1") end,
+		},
+	}
+}
+
+
 -- scene 1: Chapter Title
-af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), 4)..{
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), title)..{
 	InitCommand=function(self) scenes[1] = self end,
 	OnCommand=function(self) self:queuecommand("StartScene") end
 }
