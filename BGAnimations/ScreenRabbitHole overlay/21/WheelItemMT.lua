@@ -9,12 +9,10 @@ return {
 
 				InitCommand=function(subself)
 					self.container = subself
-					subself:MaskDest()
-						:diffusealpha(0)
 				end,
 				OnCommand=function(subself)
 					subself:y((((self.rh_index-1)%10)+1)*30)
-					subself:addx(self.rh_index <= 10 and -150 or 150)
+					subself:addx(self.rh_index <= 10 and -150 or WideScale(90,150))
 				end
 			}
 
@@ -22,7 +20,7 @@ return {
 			af[#af+1] = Def.BitmapText{
 				File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 				InitCommand=function(subself)
-					self.bottom_text = subself
+					self.bmt = subself
 					subself:diffusealpha(0):halign(0):x(-100)
 				end,
 				OnCommand=function(subself)
@@ -55,7 +53,7 @@ return {
 			self.info = info
 			self.rh_index = info[1]
 			self.text = info[2]
-			self.bottom_text:settext(self.text)
+			self.bmt:settext(self.text)
 		end
 	}
 }

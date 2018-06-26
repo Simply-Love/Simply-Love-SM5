@@ -13,11 +13,11 @@ local t = Def.ActorFrame{
 }
 
 if SL.Global.RabbitHole then
-	t[#t+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..SL.Global.RabbitHole.."/default.lua"))..{
+	t[#t+1] = LoadActor("./"..SL.Global.RabbitHole.."/default.lua")..{
 		OffCommand=function(self) SL.Global.RabbitHole = nil end
 	}
 else
-	t[#t+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/"..current.."/default.lua"))
+	t[#t+1] = LoadActor("./"..current.."/default.lua")
 end
 
 return t

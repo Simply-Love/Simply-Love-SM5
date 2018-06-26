@@ -40,7 +40,6 @@ local t = Def.ActorFrame {
 		end
 
 		if event.type == "InputEventType_FirstPress" then
-			local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
 
 			if event.GameButton == "MenuRight" or event.GameButton=="MenuDown" then
 				rh_wheel:scroll_by_amount(1)
