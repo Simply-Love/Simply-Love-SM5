@@ -31,7 +31,7 @@ local scene4={
 local af = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
 
 -- scene 1: Chapter Title
-af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), 1)..{
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenRabbitHole", "overlay/14/title.lua"), {chapter=1, img={}})..{
 	InitCommand=function(self) scenes[1] = self end,
 	OnCommand=function(self) self:queuecommand("StartScene") end
 }
