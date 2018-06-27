@@ -25,10 +25,11 @@ local conversation = {
 	{ author="Ben", delay=67.787, words="Wow." },
 	{ author="Ben", delay=69.787, words="That's..." },
 	{ author="Ben", delay=71.787, words="That's beautiful." },
-	{ author="Ben", delay=73.787, words="It's like the harp is singing." },
+	{ author="Ben", delay=73.787, words="It feels like I'm flying." },
+	{ author="Ben", delay=75.787, words="Kept aloft by its notes." }
 	{ author="Ben", delay=77.787, words="I wish I could be so evocative with the things I create." },
 
-	{ author="Ben", delay=81.832, words="But I wouldn't trade technical prowess and Mozartian arpeggios for my time with you." },
+	{ author="Ben", delay=81.832, words="But I wouldn't trade my time with you for technical prowess and Mozartian arpeggios." },
 	{ author="Zoe", delay=85.923, words="No sensible human would make that trade with you anyway." },
 	{ author="Ben", delay=90.014, words="Was sense ever on our side to begin with? :P" },
 	{ author="Zoe", delay=94.105, words="One of these days I'm gonna clobber you." },

@@ -13,6 +13,10 @@ return {
 				OnCommand=function(subself)
 					subself:y((((self.rh_index-1)%10)+1)*30)
 					subself:addx(self.rh_index <= 10 and -180 or WideScale(60,100))
+
+					if self.rh_index > 19 then
+						subself:xy( 100, (self.rh_index-8)*30 )
+					end
 				end
 			}
 
@@ -35,16 +39,12 @@ return {
 			self.container:finishtweening()
 
 			if has_focus then
-				self.container:accelerate(0.15)
-				self.container:zoom(1.2)
-				self.container:diffuse( GetCurrentColor() )
-				self.container:glow(color("1,1,1,0.5"))
+				self.container:accelerate(0.15):zoom(1.2)
+					:diffuse(GetCurrentColor()):glow(color("1,1,1,0.5"))
 			else
 				self.container:glow(color("1,1,1,0"))
-				self.container:accelerate(0.15)
-				self.container:zoom(1.1)
-				self.container:diffuse(color("#888888"))
-				self.container:glow(color("1,1,1,0"))
+					:accelerate(0.15):zoom(1.1)
+					:diffuse(color("#888888")):glow(color("1,1,1,0"))
 			end
 		end,
 
@@ -53,7 +53,11 @@ return {
 			self.info = info
 			self.rh_index = info[1]
 			self.text = info[2]
-			self.bmt:settext(self.rh_index .. ". " .. self.text)
+			if self.rh_index < 20 then
+				self.bmt:settext(self.rh_index .. ". " .. self.text)
+			else
+				self.bmt:settext(self.text):halign(0.5)
+			end
 		end
 	}
 }

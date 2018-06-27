@@ -21,11 +21,15 @@ local wheel_options = {
 	{17, "Connection: Chapter 4"},
 	{18, "A Beige Colored Bookmark"},
 	{19, "A Walk In the Snow"},
-	{20, "– Acknowledgments & Thanks –"}
+	{20, "– Acknowledgments & Thanks –"},
+	{21, "Exit" }
 }
 
-if PREFSMAN:GetPreference("ThreeKeyNavigation") then
-	wheel_options[#wheel_options+1] = {20, "Exit"}
+local Cancel = function()
+	SL.Global.RabbitHole = nil
+	local topscreen = SCREENMAN:GetTopScreen()
+	topscreen:SetNextScreenName("ScreenAcknowledgmentsMenu")
+	topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 end
 
 local InputHandler = function(event)
@@ -43,6 +47,11 @@ local InputHandler = function(event)
 
 		elseif event.GameButton == "Start" then
 			local focus = rh_wheel:get_actor_item_at_focus_pos()
+			if focus.rh_index == 21 then
+				Cancel()
+				return false
+			end
+
 			-- set index to persist through reload
 			SL.Global.RabbitHole = focus.rh_index
 			-- reload
@@ -51,10 +60,7 @@ local InputHandler = function(event)
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 
 		elseif event.GameButton == "Back" or event.GameButton == "Select" then
-			SL.Global.RabbitHole = nil
-			local topscreen = SCREENMAN:GetTopScreen()
-			topscreen:SetNextScreenName("ScreenAcknowledgmentsMenu")
-			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+			Cancel()
 		end
 	end
 end
@@ -69,7 +75,7 @@ local t = Def.ActorFrame {
 	end,
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
-	rh_wheel:create_actors( "rh_wheel", #wheel_options, wheel_item_mt, _screen.cx, 60 )
+	rh_wheel:create_actors( "rh_wheel", #wheel_options, wheel_item_mt, _screen.cx, 40 )
 }
 
 return t
