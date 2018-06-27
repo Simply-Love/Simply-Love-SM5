@@ -12,7 +12,7 @@ return {
 				end,
 				OnCommand=function(subself)
 					subself:y((((self.rh_index-1)%10)+1)*30)
-					subself:addx(self.rh_index <= 10 and -150 or WideScale(90,150))
+					subself:addx(self.rh_index <= 10 and -180 or WideScale(60,100))
 				end
 			}
 
@@ -53,7 +53,7 @@ return {
 			self.info = info
 			self.rh_index = info[1]
 			self.text = info[2]
-			self.bmt:settext(self.text)
+			self.bmt:settext(self.rh_index .. ". " .. self.text)
 		end
 	}
 }

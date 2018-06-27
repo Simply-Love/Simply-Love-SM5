@@ -12,10 +12,20 @@ local t = Def.ActorFrame{
 	OffCommand=function(self) if current < 20 then ThemePrefs.Set( "RabbitHole", current+1 ) end end,
 }
 
-if SL.Global.RabbitHole then
-	t[#t+1] = LoadActor("./"..SL.Global.RabbitHole.."/default.lua")..{
-		OffCommand=function(self) SL.Global.RabbitHole = nil end
-	}
+if current > 20 then
+	if SL.Global.RabbitHole then
+		t[#t+1] = LoadActor("./"..SL.Global.RabbitHole.."/default.lua")..{
+			OffCommand=function(self) SL.Global.RabbitHole = nil end
+		}
+	else
+		t[#t+1] = Def.Actor{
+			OnCommand=function(self)
+				local topscreen = SCREENMAN:GetTopScreen()
+				topscreen:SetNextScreenName("ScreenRabbitHoleSelect")
+				topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+			end
+		}
+	end
 else
 	t[#t+1] = LoadActor("./"..current.."/default.lua")
 end
