@@ -37,6 +37,8 @@ af[#af+1] = LoadActor(song)..{
 			bgm_volume = bgm_volume-1
 			ragesound:volume(bgm_volume*0.1)
 			self:sleep(0.1):queuecommand("FadeOutAudio")
+		else
+			self:stop()
 		end
 	end
 }

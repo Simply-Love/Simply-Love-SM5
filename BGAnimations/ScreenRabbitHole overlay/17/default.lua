@@ -2,7 +2,7 @@
 
 local scenes = {}
 local scene = 1
-local duration = { 10, 58, 75, 30, 9.5, 115, 65 }
+local duration = { 10, 58, 75, 30, 9.5, 115, 65, 75 }
 
 local af = Def.ActorFrame{
 	InputEventCommand=function(self, event)
@@ -33,7 +33,10 @@ local af = Def.ActorFrame{
 		scenes[scene]:hibernate(math.huge)
 
 		if scenes[scene+1] then
-			scene = scene + 1
+			if scene == 1 then scene = 7
+			else scene = scene + 1
+			end
+
 			self:GetChild("Proceed"):sleep( duration[scene] ):queuecommand("Show")
 			scenes[scene]:queuecommand("StartScene")
 		else
