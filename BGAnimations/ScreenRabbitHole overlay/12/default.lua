@@ -19,7 +19,7 @@ local quotes = {
 		y=140,
 	},
 	{
-		text="If I found you there, I'd smile to finally see you as you are - your mind, your physical form, you, all at once, in color and motion, with sound and texture.",
+		text="If I found you there, I'd smile to finally see you as you are–your mind, your physical form, you, all at once, in color and motion, with sound and texture.",
 		color={0.666, 0.666, 0.8, 0},
 		y=70,
 	},

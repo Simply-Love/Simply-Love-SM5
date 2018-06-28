@@ -2,11 +2,11 @@ local page = 1
 local pages = {
 	{
 		header="Credits",
-		body="Rabbit Hole #1\nfeatures audio from the film 5cm Per Second\n\nRabbit Hole #3\nfeatures a photograph of Earth that I can no longer track down the source of :(\n\nRabbit Hole #6\nfeatures video from YouTube user maxxlover's channel\n\nRabbit Hole #8\nfeatures visual art from xkcd#1190, \"Time\"\n\nRabbit Hole #10\nfeatures the song \"13 Ghosts II\" by nine inch nails\n\nRabbit Hole #12\nfeatures a melody inspired by bt's \"The Antikythera Mechanism\""
+		body="Rabbit Hole #1\nfeatures audio from the film 5 Centimeters per Second\n\nRabbit Hole #3\nfeatures a photograph of Earth that I can no longer track down the source of :(\n\nRabbit Hole #6\nfeatures video from YouTube user maxxlover's channel\n\nRabbit Hole #8\nfeatures visual art from xkcd#1190, \"Time\"\n\nRabbit Hole #10\nfeatures the song \"13 Ghosts II\" by nine inch nails\n\nRabbit Hole #12\nfeatures a melody inspired by bt's \"The Antikythera Mechanism\""
 	},
 	{
-		header="Credits: Rabbit Holes #14-17 (Connection)",
-		body="Luizsan – contributed primary visual art\n\nMahendor – composed Connection's main theme\n\nLumisauVA - voice acted in Chapter 4\n\nkbts – contributed visual art to Chapter 3\n\nEvocait - contrbuted visual art to Chapter 4"
+		header="Credits: Rabbit Holes #14–17 (Connection)",
+		body="Luizsan – contributed primary visual art\n\nMahendor – composed Connection's main theme\n\nLumisauVA – voice acted in Chapter 4\n\nkbts – contributed visual art to Chapter 3\n\nEvocait – contrbuted visual art to Chapter 4"
 	},
 	{
 		header="Thanks",

@@ -24,7 +24,7 @@ local scene4={
 	width=420,
 	song="14/dear.ogg",
 	header="FROM: Ben\nTO: Zoe\nDATE: Jul-30-2008\nSUBJECT: RE: I wrote this out of words. A present. I miss you.\n---------------------------------------------------------",
-	body = "Three lines of poem\nare justified word for word\nin reviving me.\n\nI smiled to read\nyour epic ballad haiku\nand lengthy heading.\n\nWriting my reply,\nI thought of things I wanted\nto convey to you.\n\nI miss you, was one.\nYou and I have yet to meet,\nyet still I miss you.\n\nBy geography\nwe may be separated;\nToday I care not.\n\nAcross your three lines\nyou conveyed reassurance:\nyou are not alone.\n\nThree lines of poem\ncould be too much to work with\nwhen three words suffice."
+	body="Three lines of poem\nare justified word for word\nin reviving me.\n\nI smiled to read\nyour epic ballad haiku\nand lengthy heading.\n\nWriting my reply,\nI thought of things I wanted\nto convey to you.\n\nI miss you, was one.\nYou and I have yet to meet,\nyet still I miss you.\n\nBy geography\nwe may be separated;\ntoday I care not.\n\nAcross your three lines\nyou conveyed reassurance:\nyou are not alone.\n\nThree lines of poem\ncould be too much to work with\nwhen three words suffice."
 }
 
 

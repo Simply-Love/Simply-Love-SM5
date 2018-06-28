@@ -1,7 +1,7 @@
 -- hallways
-local intro = "walking on the balls of my feet\nI led her down a dark hallway"
+local intro = "Walking on the balls of my feet\nI led her down a dark hallway."
 local footsteps = { "our","feet","gently","tip","tap","tapping","on","the","cold","dark","floor","as we","walked","hand in hand","together" }
-local outro = "where were we going?\nhow would we know when we got there?\nI gripped her hand more tightly"
+local outro = "Where were we going?\nHow would we know when we got there?\nI gripped her hand more tightly."
 
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)
@@ -53,7 +53,7 @@ for i=#footsteps, 1, -1 do
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 			Text=footsteps[i],
 			InitCommand=function(self) self:xy(_screen.cx+(i%2==0 and -20 or 20), -70):rotationx(82.5) end,
-			WalkCommand=function(self) self:sleep(i*0.5):linear(3.5):y(_screen.h) end
+			WalkCommand=function(self) self:sleep(i*0.5):linear(2.4):y(_screen.h * 0.75) end
 		}
 	}
 end

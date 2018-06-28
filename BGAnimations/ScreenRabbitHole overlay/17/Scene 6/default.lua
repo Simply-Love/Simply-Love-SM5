@@ -26,7 +26,7 @@ local conversation = {
 	{ author="Ben", delay=69.787, words="That's..." },
 	{ author="Ben", delay=71.787, words="That's beautiful." },
 	{ author="Ben", delay=73.787, words="It feels like I'm flying." },
-	{ author="Ben", delay=75.787, words="Kept aloft by its notes." }
+	{ author="Ben", delay=75.787, words="Kept aloft by its notes." },
 	{ author="Ben", delay=77.787, words="I wish I could be so evocative with the things I create." },
 
 	{ author="Ben", delay=81.832, words="But I wouldn't trade my time with you for technical prowess and Mozartian arpeggios." },
