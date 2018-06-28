@@ -9,7 +9,7 @@ return {
 		{
 			Name="Mad Matt",
 			Img="madmatt.png",
-			About="Matt helped Lara implement some of the more technical aspects of the original Simply Love theme. He was also responsible for the Final Fantasy Tactics and Super Meatboy themes for ITG.\n\nMatt is probably best known for dance gaming inhumnanly fast (though he assures me that he is, in fact, quite human).\n\nMost recently, he has led development efforts for Rhythm Horizon."
+			About="Matt helped Lara implement some of the more technical aspects of the original Simply Love theme. He was also responsible for the Final Fantasy Tactics and Super Meat Boy themes for ITG.\n\nMatt is probably best known for dance gaming inhumnanly fast (though he assures me that he is, in fact, quite human).\n\nMost recently, he has led development efforts for Rhythm Horizon."
 		}
 
 	},
@@ -63,13 +63,13 @@ return {
 		{
 			Name="Sujeet / teejusb",
 			Img="teejusb.png",
-			About="Sujeet was a great fund of general CS knowledge, and patiently answered my questions about data structures and algorithms many times.\n\nHe also runs the U.P.S. tournament series, which showcases custom content for SM5 in a lighthearted and fun way."
+			About="Sujeet was a great fount of general CS knowledge, and patiently answered my questions about data structures and algorithms many times.\n\nHe also runs the U.P.S. tournament series, which showcases custom content for SM5 in a lighthearted and fun way."
 		},
 
 		{
 			Name="Paul J Kim",
 			Img="pjk.png",
-			About="Paul provided support when I needed it, and helped make Simply Love more robust by testing odd combinations of things that would never have occurred to me otherwise.\n\nFor example, placing a reasonable upper limit on user-input strings: maybe it's a good idea, maybe sometimes it's not. Maybe players SHOULD be allowed put whatever they want as the DisplayName in Editable.ini.  Maybe Simply Love SHOULD'T do anything to keep string length in check. Who's really to say? Whether 'tis nobler in the mind to suffer the mines and arrows of Ride, or to take arms against a sea of memes, and by opposing what I am doing?"
+			About="Paul provided support when I needed it, and helped make Simply Love more robust by testing odd combinations of things that would never have occurred to me otherwise.\n\nFor example, placing a reasonable upper limit on user-input strings: maybe it's a good idea, maybe sometimes it's not. Maybe players SHOULD be allowed put whatever they want as the DisplayName in Editable.ini.  Maybe Simply Love SHOULDN'T do anything to keep string length in check. Who's really to say? Whether 'tis nobler in the mind to suffer the mines and arrows of Ride, or to take arms against a sea of memes, and by opposing what I am doing?"
 		}
 	},
 
@@ -83,7 +83,7 @@ return {
 		{
 			Name="DDRIllini",
 			Img="uiuc.jpg",
-			About="Thanks to the DDRIllini crew for being DDM's loving counterpart a timezone away.  I have fond memories of driving with DDM friends to DDRIllini's annual Rumble in the Prairie events each spring.\n\nThank you, Kyt-Xune, Z0rk, feedbacker, Sudzi, ian5v, Benpai, pez, mtgmackid, Krysel, Kasemei, Juni, rikame, Mary, andrewipark, et al!"
+			About="Thanks to the DDRIllini crew for being DDM's loving counterpart a time zone away.  I have fond memories of driving with DDM friends to DDRIllini's annual Rumble in the Prairie events each spring.\n\nThank you, Kyt-Xune, Z0rk, feedbacker, Sudzi, ian5v, Benpai, pez, mtgmackid, Krysel, Kasemei, Juni, rikame, Mary, andrewipark, et al!"
 		}
 	},
 
@@ -92,7 +92,7 @@ return {
 		{
 			Name="Ian / Archi",
 			Img="archi.png",
-			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that. When he's not busy streaming, he encourages others to through groovestats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
+			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that. When he's not busy streaming, he encourages others to through GrooveStats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
 		},
 		{
 			Name="Alan / TaroNuke",
