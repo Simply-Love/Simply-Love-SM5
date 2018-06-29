@@ -2,7 +2,7 @@ local TextColor = ThemePrefs.Get("RainbowMode") and Color.Black or Color.White
 
 local SongStats = SONGMAN:GetNumSongs() .. " songs in "
 SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, "
-SongStats = SongStats .. SONGMAN:GetNumCourses() .. " courses"
+SongStats = SongStats .. #SONGMAN:GetAllCourses(PREFSMAN:GetPreference("AutogenGroupCourses")) .. " courses"
 
 -- - - - - - - - - - - - - - - - - - - - -
 
