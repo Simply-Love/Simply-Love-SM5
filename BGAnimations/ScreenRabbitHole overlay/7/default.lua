@@ -3,6 +3,8 @@ local max_width = 350
 local quote_bmt
 
 local af = Def.ActorFrame{
+	InitCommand=function(self) self:diffuse(0,0,0,1) end,
+	OnCommand=function(self) self:smooth(1):diffuse(1,1,1,1) end,
 	InputEventCommand=function(self, event)
 		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")

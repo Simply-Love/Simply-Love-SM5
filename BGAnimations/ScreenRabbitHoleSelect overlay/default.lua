@@ -10,7 +10,7 @@ local wheel_options = {
 	{6, "Seaside Catchball"},
 	{7, "Dragons"},
 	{8, "I like our castle."},
-	{9, "Gibberish, maybe."},
+	{9, "Gibberish, Maybe"},
 	{10, "13 Ghosts II"},
 	{11, "A Troubled Sea"},
 	{12, "Where the Hallway Ends"},

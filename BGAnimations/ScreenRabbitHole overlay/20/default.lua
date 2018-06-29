@@ -6,7 +6,7 @@ local pages = {
 	},
 	{
 		header="Credits: Rabbit Holes #14–17 (Connection)",
-		body="Luizsan – contributed primary visual art\n\nMahendor – composed Connection's main theme\n\nLumisauVA – voice acted in Chapter 4\n\nkbts – contributed visual art to Chapter 3\n\nEvocait – contrbuted visual art to Chapter 4"
+		body="Luizsan – contributed primary visual art\n\nMahendor – composed Connection's main theme\n\nLumisauVA – voice acted in Chapter 4\n\nkbts87 – contributed visual art to Chapter 3\n\nEvocait – contributed visual art to Chapter 4"
 	},
 	{
 		header="Thanks",
