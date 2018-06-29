@@ -16,7 +16,7 @@ return Def.ActorFrame{
 		Def.BitmapText{
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 			Text="Keep writing or I will jump on you!",
-			InitCommand=function(self) self:xy(_screen.cx-350, 200):halign(0):diffuse(0.8, 0.666, 0.666, 1) end,
+			InitCommand=function(self) self:xy(_screen.cx-WideScale(250,350), 200):halign(0):diffuse(0.8, 0.666, 0.666, 1) end,
 		},
 	},
 
@@ -27,7 +27,7 @@ return Def.ActorFrame{
 		Def.BitmapText{
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 			Text="I think I might be lonely.",
-			InitCommand=function(self) self:xy(_screen.cx+50, 350):halign(0):diffuse(0.666, 0.666, 0.8, 1) end,
+			InitCommand=function(self) self:xy(_screen.cx+WideScale(0,50), 350):halign(0):diffuse(0.666, 0.666, 0.8, 1) end,
 		},
 	},
 
@@ -38,7 +38,7 @@ return Def.ActorFrame{
 		Def.BitmapText{
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 			Text="I've never thought of you that way.",
-			InitCommand=function(self) self:xy(_screen.cx-400, 100):halign(0):diffuse(0.8, 0.666, 0.666, 1) end,
+			InitCommand=function(self) self:xy(_screen.cx-WideScale(300,400), 100):halign(0):diffuse(0.8, 0.666, 0.666, 1) end,
 		},
 	},
 

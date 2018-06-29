@@ -11,7 +11,7 @@ return Def.ActorFrame{
 	},
 
 	LoadActor("./8.png")..{
-		InitCommand=function(self) self:zoom(2/3):Center():diffuse(0,0,0,0) end,
+		InitCommand=function(self) self:zoom(2/3):Center():diffuse(1,1,1,0) end,
 		StartSceneCommand=function(self) self:sleep(61):smooth(1):diffuse(1,1,1,1) end
 	}
 }
