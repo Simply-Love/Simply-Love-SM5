@@ -9,7 +9,11 @@ local typing = {
 }
 
 return Def.ActorFrame{
-	StartSceneCommand=function(self) self:sleep(13.607):smooth(2):diffuse(0,0,0,0):queuecommand("Hide") end,
+	StartSceneCommand=function(self) self:sleep(13.607):queuecommand("FadeOut") end,
+	FadeOutCommand=function(self)
+		self:smooth(2):diffuse(0,0,0,0):queuecommand("Hide")
+		cursor:diffuse(0,0,0,0)
+	end,
 	HideCommand=function(self) self:visible(false) end,
 
 	-- cursor

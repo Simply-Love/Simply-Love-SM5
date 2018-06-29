@@ -7,6 +7,7 @@ return Def.ActorFrame{
 	HideCommand=function(self) self:visible(false) end,
 
 	LoadActor("./3.png")..{
-		InitCommand=function(self) self:zoom(2/3):Center() end,
+		InitCommand=function(self) self:zoom(1):Center() end,
+		ShowCommand=function(self) self:smooth(3):zoom(1.0075) end,
 	}
 }

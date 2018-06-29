@@ -49,7 +49,7 @@ return Def.ActorFrame{
 
 		Def.BitmapText{
 			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
-			Text="Even after all this time,\nI still love you.",
+			Text="Even after all these years,\nI still love you.",
 			InitCommand=function(self) self:xy(_screen.cx-160, 200):halign(0):diffuse(0.666, 0.666, 0.8, 1) end,
 		},
 	},

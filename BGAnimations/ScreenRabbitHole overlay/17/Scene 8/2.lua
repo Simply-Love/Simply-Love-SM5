@@ -6,12 +6,18 @@ return Def.ActorFrame{
 	ShowCommand=function(self) self:visible(true):smooth(1.666):diffuse(1,1,1,1):sleep(1):smooth(1.666):diffuse(0,0,0,1):queuecommand("Hide") end,
 	HideCommand=function(self) self:visible(false) end,
 
-	LoadActor("./1.png")..{
-		InitCommand=function(self) self:zoom(2/3):Center() end,
-	},
 
-	LoadActor("./1b.png")..{
-		InitCommand=function(self) self:zoom(2/3):Center():diffusealpha(0) end,
-		StartSceneCommand=function(self) self:sleep(sleep_time):smooth(1.5):diffusealpha(1) end
+	Def.ActorFrame{
+		InitCommand=function(self) self:zoom(1.025) end,
+		ShowCommand=function(self) self:smooth(4.333):addx(-5) end,
+
+		LoadActor("./1.png")..{
+			InitCommand=function(self) self:zoom(2/3):align(0,0):xy(0,0) end,
+		},
+
+		LoadActor("./1b.png")..{
+			InitCommand=function(self) self:zoom(2/3):align(0,0):xy(0,0):diffusealpha(0) end,
+			StartSceneCommand=function(self) self:sleep(sleep_time):smooth(1.5):diffusealpha(1) end
+		}
 	}
 }
