@@ -19,8 +19,8 @@ return Def.Actor{
 	end,
 	JudgmentMessageCommand=function(self) self:queuecommand("Winning") end,
 	WinningCommand=function(self)
-		p1_dp = p1_pss:GetPercentDancePoints()
-		p2_dp = p2_pss:GetPercentDancePoints()
+		p1_dp = p1_pss:GetActualDancePoints()
+		p2_dp = p2_pss:GetActualDancePoints()
 
 		if p1_dp == p2_dp then
 			p1_score:diffusealpha(1)
