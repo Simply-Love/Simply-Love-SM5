@@ -75,7 +75,7 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 		InitCommand=function(self)
 			MeasureCounterBMT = self
 
-			self:zoom(0.35):shadowlength(1)
+			self:zoom(0.35):shadowlength(1):horizalign(center)
 
 			if mods.MeasureCounterPosition == "Center" then
 				self:xy( GetNotefieldX(player), _screen.cy )

@@ -1,9 +1,11 @@
 local player = ...
+local pn = ToEnumShortString(player)
+local mods = SL[pn].ActiveModifiers
 
 -- don't allow SubtractiveScoring to appear in Casual gamemode via profile settings
 if SL.Global.GameMode == "Casual" then return end
 
-if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
+if mods.SubtractiveScoring then
 
 	local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 	local notefield_width = GAMESTATE:GetCurrentStyle():GetWidth(player)
@@ -30,9 +32,22 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
 	return Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:horizalign(left)
-				:diffuse(color("#ff4cff")):zoom(0.35):shadowlength(1)
-				:xy( x_position + (notefield_width/2.9), _screen.cy )
+
+			self:diffuse(color("#ff55cc"))
+			:zoom(0.35):shadowlength(1):horizalign(left)
+
+			-- mirror image of MeasureCounter.lua
+			local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+
+			self:xy( GetNotefieldX(player) + (width/NumColumns), _screen.cy )
+
+			-- Fix overlap issues for MeasureCounter in center
+			-- since in this case we don't need symmetry.
+			if (mods.MeasureCounterPosition == "Center") then
+				self:horizalign(left)
+			end
+
 		end,
 
 		JudgmentMessageCommand=function(self, params)
