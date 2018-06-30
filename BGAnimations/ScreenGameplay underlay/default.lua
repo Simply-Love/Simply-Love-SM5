@@ -6,9 +6,9 @@ end
 local Players = GAMESTATE:GetHumanPlayers()
 local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 
--- life warning and screen filter background UI elements
--- must go first since they are actual underlays
+
 for player in ivalues(Players) do
+	-- actual underlays
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/BackgroundFilter.lua", player)
 end
@@ -16,9 +16,8 @@ end
 -- shared UI elements for both players
 t[#t+1] = LoadActor("./Shared/Header.lua")
 t[#t+1] = LoadActor("./Shared/SongInfoBar.lua") -- title and progress bar
-t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
--- other per-player UI elements
+-- per-player UI elements
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
@@ -31,6 +30,9 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/SubtractiveScoring.lua", player)
 end
+
+-- gets overlapped by StepStatistics otherwise...?
+t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	t[#t+1] = LoadActor("./Shared/WhoIsCurrentlyWinning.lua")
