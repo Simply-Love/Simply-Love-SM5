@@ -466,26 +466,78 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 	end
 end
 
+
 -- pacemaker text
 if SL[pn].ActiveModifiers.TargetScore then
 	finalFrame[#finalFrame+1] = Def.BitmapText{
 		Font="_wendy small",
-		Text="+0.00",
 		InitCommand=function(self)
+
 			local noteX
-			-- aligned to the score
-			if (player == PLAYER_1) then
-				noteX = GetNotefieldX(player) + (GetNotefieldWidth() / 4) - graphX
+			local noteY
+			local zoomF = 0.4
+			local origX = GetNotefieldX(player)
+
+			-- special casing: StomperZ with its receptor positions would appear over the normal pacemaker position
+			if SL.Global.GameMode == "StomperZ" and SL[pn].ActiveModifiers.ReceptorArrowsPosition == "StomperZ" then
+				-- put ourself just over the combo
+				noteY = _screen.cy - 60
+				zoomF = 0.35
+
+				-- copied from MeasureCounter.lua
+				local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+				local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+
+				noteX = (width/NumColumns)
+
+				self:shadowlength(1) -- match other playfield counters
 			else
-				noteX = GetNotefieldX(player) - (GetNotefieldWidth() / 4) - graphX - 15
+				noteY = 56
+				noteX = GetNotefieldWidth() / 4
 			end
 
-			self:xy( noteX, 56 - graphY ):zoom(0.4)
+			-- flip x-coordinate based on player
+			if (player ~= PLAYER_1) then
+				noteX = -1 * noteX
+			end
+			noteX = noteX + origX
+
+			-- compensate so that we can use "normal" coordinate systems
+			self:horizalign(center):xy( noteX - graphX, noteY - graphY ):zoom(zoomF)
+
 		end,
 		UpdateCommand=function(self)
-			local percentDifference = pss:GetPercentDancePoints() - (targetGradeScore * GetCurMaxPercentDancePoints())
-			self:settext(string.format("%+2.2f", percentDifference * 100))
-		end
+			local DPCurr = pss:GetActualDancePoints()
+			local DPCurrMax = pss:GetCurrentPossibleDancePoints()
+			local DPMax = pss:GetPossibleDancePoints()
+
+			local percentDifference = (DPCurr - (targetGradeScore * DPCurrMax)) / DPMax
+
+			local places = 2
+
+			-- if there's enough dance points so that our current precision is ambiguous,
+			-- i.e. each dance point is less than half of a digit in the last place,
+			-- and we don't already display 2.5 digits,
+			-- i.e. 2 significant figures and a leading 1,
+			-- add a decimal point.
+			-- .1995 prevents flickering between ".01995", which is rounded and displayed as ".0200", and
+			-- and an actual ".0200", which is displayed as ".020"
+			while (math.abs(percentDifference) < 0.1995 / math.pow(10, places))
+				and (DPMax >= 2 * math.pow(10, places + 2)) and (places < 4) do
+				places = places + 1
+			end
+
+			self:settext(string.format("%+."..places.."f", percentDifference * 100))
+
+			-- have we already missed so many dance points
+			-- that the current goal is not possible anymore?
+			if ((DPCurrMax - DPCurr) > (DPMax * (1 - targetGradeScore))) then
+				self:diffuse(color("#999999ff"))
+			end
+		end,
+
+
+
 	}
 end
 
