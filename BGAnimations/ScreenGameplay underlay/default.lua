@@ -27,8 +27,8 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/TargetScore/default.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/SubtractiveScoring.lua", player)
 end
-
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	t[#t+1] = LoadActor("./Shared/WhoIsCurrentlyWinning.lua")
