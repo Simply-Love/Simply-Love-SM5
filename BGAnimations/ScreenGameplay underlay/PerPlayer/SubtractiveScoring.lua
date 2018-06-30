@@ -15,15 +15,15 @@ if mods.SubtractiveScoring then
 	local x_position = GetNotefieldX( player )
 
 	-- a flag to determine if we are using a GameMode that utilizes FA+ timing windows
-	local FAplus = (SL.Global.GameMode == "ECFA")
+	local the_metrics = SL.Metrics[SL.Global.GameMode]
+	local FAplus = (the_metrics.PercentScoreWeightW1 == the_metrics.PercentScoreWeightW2)
 	local undesirable_judgment = FAplus and "W3" or "W2"
 
 	-- flag to determine whether to bother to continue counting excellents
 	-- or whether to just display percent away from 100%
 	local received_judgment_lower_than_desired = false
 
-	-- these start at 0 for each new song
-	-- FIXME: What about course mode?
+	-- these start at 0 for each song/course
 	local undesirable_judgment_count = 0
 	local judgment_count = 0
 	local tns
@@ -34,7 +34,7 @@ if mods.SubtractiveScoring then
 		InitCommand=function(self)
 
 			self:diffuse(color("#ff55cc"))
-			:zoom(0.35):shadowlength(1):horizalign(left)
+			:zoom(0.35):shadowlength(1):horizalign(center)
 
 			-- mirror image of MeasureCounter.lua
 			local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
