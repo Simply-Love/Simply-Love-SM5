@@ -1,16 +1,15 @@
 -- if there is only one player, don't bother
 if #GAMESTATE:GetHumanPlayers() < 2 then return end
 
--- if either of the two players have HideScore enabled, don't bother
-for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-	if SL[ ToEnumShortString(player) ].ActiveModifiers.HideScore then
-		return
-	end
-end
-
 local p1_score, p2_score, p1_dp, p2_dp
 local p1_pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1)
 local p2_pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2)
+
+-- allow for HideScore, which outright removes score actors
+local try_diffusealpha = function(af, alpha)
+	if not af or not (af.diffusealpha) then return end
+	af:diffusealpha(alpha)
+end
 
 return Def.Actor{
 	OnCommand=function(self)
@@ -25,14 +24,14 @@ return Def.Actor{
 		p2_dp = p2_pss:GetActualDancePoints() / p2_pss:GetPossibleDancePoints()
 
 		if p1_dp == p2_dp then
-			p1_score:diffusealpha(1)
-			p2_score:diffusealpha(1)
+			try_diffusealpha(p1_score, 1)
+			try_diffusealpha(p2_score, 1)
 		elseif p1_dp > p2_dp then
-			p1_score:diffusealpha(1)
-			p2_score:diffusealpha(0.65)
+			try_diffusealpha(p1_score, 1)
+			try_diffusealpha(p2_score, 0.65)
 		elseif p2_dp > p1_dp then
-			p1_score:diffusealpha(0.65)
-			p2_score:diffusealpha(1)
+			try_diffusealpha(p1_score, 0.65)
+			try_diffusealpha(p2_score, 1)
 		end
 	end
 }
