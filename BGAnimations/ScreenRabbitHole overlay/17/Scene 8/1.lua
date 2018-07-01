@@ -61,13 +61,13 @@ return Def.ActorFrame{
 	Def.BitmapText{
 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
 		Text="",
-		InitCommand=function(self) self:xy(220,140):halign(0):zoom(1.25) end,
+		InitCommand=function(self) self:xy(205,140):halign(0):zoom(1.25) end,
 		StartSceneCommand=function(self)
 			self:sleep(12.536):queuecommand("Type")
 		end,
 		TypeCommand=function(self)
 			if self:GetText():len() == 0 then
-				cursor:xy(220,132)
+				cursor:xy(205,132)
 			end
 			if typing.text[3]:len() > self:GetText():len() then
 				self:settext( typing.text[3]:sub(0,self:GetText():len()+1) ):sleep( typing.delay ):queuecommand("Type")

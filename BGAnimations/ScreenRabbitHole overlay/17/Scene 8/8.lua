@@ -14,7 +14,7 @@ return Def.ActorFrame{
 		StartSceneCommand=function(self) self:sleep(reveal_time[1]-leadin):smooth(0.15):diffuse(1,1,1,1):sleep(reveal_time[2]-reveal_time[1]):smooth(0.5):diffuse(0,0,0,0) end,
 
 		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/verdana/_verdana 20px.ini"),
 			Text="Keep writing or I will jump on you!",
 			InitCommand=function(self) self:xy(_screen.cx-WideScale(250,350), 200):halign(0):diffuse(0.8, 0.666, 0.666, 1) end,
 		},
@@ -36,7 +36,7 @@ return Def.ActorFrame{
 		StartSceneCommand=function(self) self:sleep(reveal_time[3]-leadin):smooth(0.15):diffuse(1,1,1,1):sleep(reveal_time[4]-reveal_time[3]):smooth(0.5):diffuse(0,0,0,0) end,
 
 		Def.BitmapText{
-			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/monaco/_monaco 20px.ini"),
+			File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 			Text="I've never thought of you that way.",
 			InitCommand=function(self) self:xy(_screen.cx-WideScale(300,400), 100):halign(0):diffuse(0.8, 0.666, 0.666, 1) end,
 		},
