@@ -19,8 +19,10 @@ return Def.Actor{
 	end,
 	JudgmentMessageCommand=function(self) self:queuecommand("Winning") end,
 	WinningCommand=function(self)
-		p1_dp = p1_pss:GetActualDancePoints()
-		p2_dp = p2_pss:GetActualDancePoints()
+		-- calculate the percentage DP manually rather than use GetPercentDancePoints.
+		-- That function rounds to the nearest .01%, which is inaccurate on long songs.
+		p1_dp = p1_pss:GetActualDancePoints() / p1_pss:GetPossibleDancePoints()
+		p2_dp = p2_pss:GetActualDancePoints() / p2_pss:GetPossibleDancePoints()
 
 		if p1_dp == p2_dp then
 			p1_score:diffusealpha(1)
