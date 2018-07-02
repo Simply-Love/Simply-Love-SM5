@@ -9,7 +9,7 @@ local AutoStyle = ThemePrefs.Get("AutoStyle")
 -- which PlayerNumber they're supposed to be...
 local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-function GetLocalProfiles()
+local GetLocalProfiles = function()
 	local t = {}
 
 	function GetSongsPlayedString(numSongs)
@@ -37,7 +37,7 @@ function GetLocalProfiles()
 	return t
 end
 
-function LoadCard(c, player)
+local LoadCard = function(c, player)
 	return Def.ActorFrame {
 		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") )..{
 			InitCommand=function(self) self:diffuse(c):cropbottom(1) end,
@@ -60,7 +60,7 @@ function LoadCard(c, player)
 	}
 end
 
-function UpdateInternal3(self, Player)
+local UpdateInternal3 = function(self, Player)
 	local frame = self:GetChild(ToEnumShortString(Player) .. 'Frame')
 	local scroller = frame:GetChild('Scroller')
 	local seltext = frame:GetChild('SelectedProfileText')
@@ -74,7 +74,7 @@ function UpdateInternal3(self, Player)
 		frame:visible(true)
 
 		if MEMCARDMAN:GetCardState(Player) == 'MemoryCardState_none' then
-			--using profile if any
+			--using local profile
 			joinframe:visible(false)
 			usbsprite:visible(false)
 			smallframe:visible(true)
@@ -99,7 +99,7 @@ function UpdateInternal3(self, Player)
 				end
 			end
 		else
-			--using card
+			--using memorycard profile
 			bigframe:visible(false)
 			joinframe:visible(false)
 			smallframe:visible(false)
@@ -197,7 +197,6 @@ local PlayerFrame = function(player)
 	return Def.ActorFrame {
 		Name=ToEnumShortString(player) .. "Frame",
 		InitCommand=function(self) self:xy(_screen.cx+(160*(player==PLAYER_1 and -1 or 1)), _screen.cy) end,
-		-- OnCommand=function(self) self:smooth(0.35):rotationy(0) end,
 		OffCommand=function(self)
 			if GAMESTATE:IsSideJoined(player) then
 				self:bouncebegin(0.35):zoom(0)
