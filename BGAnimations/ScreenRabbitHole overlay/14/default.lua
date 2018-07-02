@@ -9,18 +9,20 @@ local scene2 = {
 	{ author="Zoe", delay=7, words="I really liked your recent entry.  The one about randomly meeting an old friend." },
 	{ author="Zoe", delay=10, words="Just wanted to let you know." },
 	{ author="Ben", startTyping=8.5, send=12, words="Thanks." },
-	{ author="System", delay=12.3, words="Zoe did not receive the last message because he or she is currently offline." },
+	{ author="System", delay=12.3, words="Zoe did not receive the last message because they are currently offline." },
 }
 local scene3 = {
 	delay=0.085,
+	song_delay=2,
 	width=420,
 	song="14/monarchButterflies.ogg",
 	header="FROM:  Zoe\nTO:  Ben\nDATE:  Jul-30-2008\nSUBJECT:  I wrote this out of words. A present. I miss you.\n---------------------------------------------------------",
-	body="I would never feel\njustified to write\nthree lines of poem.\n\nEven for you, dear,\neven if you asked nicely.\nIt would seem like fraud.\n\nQuality info,\nit comes in graphs and tables.\nAnd in spreadsheets, too.\n\nBut haikus feel nice.\nAnd feeling nice is rare, now.\nMonarch butterflies.\n\nI wish I could show\nall the grotesque, beautiful\nthings to everyone.\n\nIn spreadsheets, or in\ncalico shopping bags or\njust out of my mouth,\n\nand into your head.\nWrote you a tonne of haikus\nin this email. Blargh.\n\nlove and love,\n-zoe",
+	body="I would never feel\njustified to write\nthree lines of poem.\n\nEven for you, dear,\neven if you asked nicely.\nIt would seem like fraud.\n\nQuality info,\nit comes in graphs and tables.\nAnd in spreadsheets, too.\n\nBut haikus feel nice.\nAnd feeling nice is rare, now.\nMonarch butterflies.\n\nI wish I could show\nall the grotesque, beautiful\nthings to everyone.\n\nIn spreadsheets, or in\ncalico shopping bags or\njust out of my mouth,\n\nand into your head.\nWrote you a tonne of haikus\nin this email. Blargh.\n\nlove and love,\n-Zoe",
 }
 
 local scene4={
 	delay=0.1075,
+	song_delay=0,
 	width=420,
 	song="14/dear.ogg",
 	header="FROM: Ben\nTO: Zoe\nDATE: Jul-30-2008\nSUBJECT: RE: I wrote this out of words. A present. I miss you.\n---------------------------------------------------------",

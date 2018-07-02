@@ -2,6 +2,7 @@ local args = ...
 local header = args.header
 local body = args.body
 local delay = args.delay
+local song_delay = args.song_delay
 local song = args.song
 local max_width = args.width
 
@@ -15,7 +16,7 @@ local af = Def.ActorFrame{
 
 af[#af+1] = Def.Sound{
 	File=THEME:GetPathB("ScreenRabbitHole", "overlay/" .. song),
-	StartSceneCommand=function(self) self:sleep(2):queuecommand("Play") end,
+	StartSceneCommand=function(self) self:sleep(song_delay):queuecommand("Play") end,
 	PlayCommand=function(self) self:stop():play() end,
 	FadeOutAudioCommand=function(self)
 		if bgm_volume >= 0 then
