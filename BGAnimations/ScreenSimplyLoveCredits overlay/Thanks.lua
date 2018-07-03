@@ -101,7 +101,7 @@ return {
 		},
 		{
 			Name="Riakodoadm",
-			Img="",
+			Img="Riakodoadm.jpg",
 			About="Riakodoadm wrote music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
 		},
 		{
