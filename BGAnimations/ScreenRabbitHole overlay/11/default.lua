@@ -11,7 +11,8 @@ local quotes = {
 	"But the wicked are like a troubled sea\nthat knows no rest\nwhose waves cast up mire and mud.",
 	"I always want to retroactively apply the question \"why,\" despite what actually occurs in the moment. After waking, I try to re-imagine myself asking why.\n\nWhy are you doing this?\nWhy can't I move?\nWhy are you holding me down? \nWhy are you putting your mouth on me? \nWhy can't I scream?\nWhy?",
 	"The truth is that in the moment, I don't pause to ask why. Maybe there isn't time, or maybe I'm too taken by panic to reason. I don't know.\n\nThe reality is that there are only raw emotions and non-verbal feelings.",
-	"It starts as discomfort as I gain awareness that you are holding me down. It doesn't matter how I got here; I am here again.\n\nThe discomfort quickly rises within me, transforming to fear as I understand that I cannot move a muscle. My arms, my legs, my mouth–all unable to respond. Fear overwhelms me so quickly, as though I am a drinking glass being filled with a terrible ocean.\n\nIs it instantaneous? The question is meaningless. There is no understanding of time here. The previous fear gives way to new terror. What was the previous thing that happened? The previous feeling I experienced? They are gone, one moment violently torn away by the furious storm as a new one is swept in to replace it.",
+	"It starts as discomfort as I gain awareness that you are holding me down. It doesn't matter how I got here; I am here again.\n\nThe discomfort quickly rises within me, transforming to fear as I understand that I cannot move a muscle. My arms, my legs, my mouth–all unable to respond. Fear overwhelms me so quickly, as though I am a drinking glass being filled with a terrible ocean.",
+	"Is it instantaneous? The question is meaningless. There is no understanding of time here. The previous fear gives way to new terror. What was the previous thing that happened? The previous feeling I experienced? They are gone, one moment violently torn away by the furious storm as a new one is swept in to replace it.",
 	"You are on me, sucking on me, pulling me as an undercurrent does, and it is now that language finally breaks through into my consciousness: no.\n\nNo no no no no no NO.\n\nI cannot speak it, I cannot control the muscles in my lips to scream it, but that is how it takes form in my mind. I am motionless, powerless, I lack bodily autonomy. I want to scream, but I cannot. I want to fight back, but I cannot.\n\nFear is now wholly consuming, and all I can comprehend. I understand that I'm going to die like this, drowning in the still-rising sea inside me, and I cannot bear any more.",
 	"And I don't.\n\nI am suddenly free.\n\nAwake, in bed, vaguely aware that I have just screamed, I take note of how wet my face is, doused in a mixture of sweat and saliva.\n\nI am shaken, but alive.",
 	"The effects of the adrenaline remain noticeable for ten to fifteen minutes, and I am aware of this passing of time.",
@@ -28,8 +29,8 @@ local af = Def.ActorFrame{
 			if quotes[count+1] then
 				count = count + 1
 				quote_bmts[count]:queuecommand("FadeIn")
-				if count == 5 then self:queuecommand("Fear") end
-				if count == 6 then self:queuecommand("WakeUp") end
+				if count == 6 then self:queuecommand("Fear") end
+				if count == 7 then self:queuecommand("WakeUp") end
 			else
 				self:sleep(1.5):queuecommand("Transition")
 			end

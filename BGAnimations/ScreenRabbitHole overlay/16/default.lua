@@ -1,7 +1,7 @@
 -- Connection: Chapter 3
 
 local scenes = {}
-local duration = { 10, 58, 46, 59, 100, 60 }
+local duration = { 10, 58, 46, 58, 100, 60 }
 
 local scene2 = {
 	delay=0.0625,
