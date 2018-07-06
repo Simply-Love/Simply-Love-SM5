@@ -17,7 +17,7 @@ af[#af+1] = LoadActor(song)..{
 	end
 }
 
-local sleep_time = { 0, 15.6, 20.34, 25.632, 29.660, 39, 45.5, 52.125, 58.352 }
+local sleep_time = { 0, 15.6, 20.34, 25.632, 29.660, 39, 45, 52.125, 58.352 }
 
 for i=1, #sleep_time do
 	af[#af+1] = LoadActor("./".. i ..".lua", sleep_time[i])

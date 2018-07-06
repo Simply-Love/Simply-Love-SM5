@@ -14,10 +14,5 @@ return Def.ActorFrame{
 		LoadActor("./1.png")..{
 			InitCommand=function(self) self:zoom(2/3):align(0,0):xy(0,0) end,
 		},
-
-		LoadActor("./1b.png")..{
-			InitCommand=function(self) self:zoom(2/3):align(0,0):xy(0,0):diffusealpha(0) end,
-			StartSceneCommand=function(self) self:sleep(sleep_time):smooth(1.5):diffusealpha(1) end
-		}
 	}
 }
