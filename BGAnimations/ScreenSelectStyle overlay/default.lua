@@ -17,8 +17,8 @@ if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
 	choices[4] = { name="solo", pads={ {3, -xshift-14}}, x=_screen.w-_screen.w/8 }
 end
 
-local starting_index = 1
-local current_index = starting_index
+-- either 1 (single) or 2 (versus)
+local current_index = #GAMESTATE:GetHumanPlayers()
 
 ------------------------------------------------------------------------------------
 
@@ -203,7 +203,7 @@ local t = Def.ActorFrame{
 		self:playcommand("Enable")
 
 		for i, child in ipairs( self:GetChild("") ) do
-			if i == starting_index then
+			if i == current_index then
 				child:queuecommand("GainFocus")
 			end
 		end
