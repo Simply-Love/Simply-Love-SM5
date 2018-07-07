@@ -5,6 +5,7 @@ local row = args[3]
 local col = args[4]
 
 local CloseFolderTexture = nil
+local NoJacketTexture = nil
 
 -- max number of characters allowed in a song title before truncating to ellipsis
 local max_chars = 28
@@ -246,6 +247,17 @@ local song_mt = {
 				elseif song:HasBanner() then
 					self.img_path = song:GetBannerPath()
 					self.img_type = "Banner"
+				else
+					self.img_path = nil
+					self.img_type = nil
+
+					if NoJacketTexture ~= nil then
+						self.banner:SetTexture(NoJacketTexture)
+					else
+						self.banner:Load( THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/no-jacket.png") )
+						NoJacketTexture = self.banner:GetTexture()
+					end
+					return
 				end
 
 				-- thank you, based Jousway
