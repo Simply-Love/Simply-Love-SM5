@@ -17,8 +17,9 @@ local switch_to_songs = function(group_name)
 	-- prune out songs that don't have valid steps
 	for i,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
 		-- this should be guaranteed by this point, but better safe than segfault
-		if song:HasStepsType(steps_type) then
-
+		if song:HasStepsType(steps_type)
+		-- respect StepMania's cutoff for 1-round songs
+		and song:MusicLengthSeconds() < PREFSMAN:GetPreference("LongVerSongSeconds") then
 			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
 				if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then
 					songs[#songs+1] = song
