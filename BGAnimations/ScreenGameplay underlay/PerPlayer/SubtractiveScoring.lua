@@ -1,9 +1,11 @@
 local player = ...
+local pn = ToEnumShortString(player)
+local mods = SL[pn].ActiveModifiers
 
 -- don't allow SubtractiveScoring to appear in Casual gamemode via profile settings
 if SL.Global.GameMode == "Casual" then return end
 
-if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
+if mods.SubtractiveScoring then
 
 	local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 	local notefield_width = GAMESTATE:GetCurrentStyle():GetWidth(player)
@@ -13,15 +15,15 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
 	local x_position = GetNotefieldX( player )
 
 	-- a flag to determine if we are using a GameMode that utilizes FA+ timing windows
-	local FAplus = (SL.Global.GameMode == "ECFA")
+	local the_metrics = SL.Metrics[SL.Global.GameMode]
+	local FAplus = (the_metrics.PercentScoreWeightW1 == the_metrics.PercentScoreWeightW2)
 	local undesirable_judgment = FAplus and "W3" or "W2"
 
 	-- flag to determine whether to bother to continue counting excellents
 	-- or whether to just display percent away from 100%
 	local received_judgment_lower_than_desired = false
 
-	-- these start at 0 for each new song
-	-- FIXME: What about course mode?
+	-- these start at 0 for each song/course
 	local undesirable_judgment_count = 0
 	local judgment_count = 0
 	local tns
@@ -30,9 +32,22 @@ if SL[ToEnumShortString(player)].ActiveModifiers.SubtractiveScoring then
 	return Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:horizalign(left)
-				:diffuse(color("#ff4cff")):zoom(0.35):shadowlength(1)
-				:xy( x_position + (notefield_width/2.9), _screen.cy )
+
+			self:diffuse(color("#ff55cc"))
+			:zoom(0.35):shadowlength(1):horizalign(center)
+
+			-- mirror image of MeasureCounter.lua
+			local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+
+			self:xy( GetNotefieldX(player) + (width/NumColumns), _screen.cy )
+
+			-- Fix overlap issues for MeasureCounter in center
+			-- since in this case we don't need symmetry.
+			if (mods.MeasureCounterPosition == "Center") then
+				self:horizalign(left)
+			end
+
 		end,
 
 		JudgmentMessageCommand=function(self, params)
