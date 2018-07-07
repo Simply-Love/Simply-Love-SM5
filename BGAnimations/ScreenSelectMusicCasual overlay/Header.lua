@@ -35,10 +35,15 @@ if not PREFSMAN:GetPreference("EventMode") then
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
-			self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy(_screen.cx, 15)
+			self:diffusealpha(0):halign(1):zoom(0.5):x(_screen.w-8)
+			if PREFSMAN:GetPreference("MenuTimer") then
+				self:y(44)
+			else
+				self:y(34)
+			end
 		end,
-		SwitchFocusToSongsMessageCommand=function(self) self:linear(0.1):diffusealpha(0) end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:sleep(0.25):linear(0.1):diffusealpha(1) end
+		SwitchFocusToGroupsMessageCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+		SwitchFocusToSongsMessageCommand=function(self) self:sleep(0.25):linear(0.1):diffusealpha(1) end,
 	}
 end
 
