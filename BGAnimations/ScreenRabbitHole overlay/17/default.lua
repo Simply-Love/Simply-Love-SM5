@@ -33,9 +33,6 @@ local af = Def.ActorFrame{
 		scenes[scene]:hibernate(math.huge)
 
 		if scenes[scene+1] then
-			-- if scene == 1 then scene = 7
-			-- else scene = scene + 1
-			-- end
 			scene = scene + 1
 
 			self:GetChild("Proceed"):sleep( duration[scene] ):queuecommand("Show")

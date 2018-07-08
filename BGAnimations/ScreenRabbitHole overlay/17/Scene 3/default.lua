@@ -55,7 +55,7 @@ local af = Def.ActorFrame{
 
 				if not done then
 					self:queuecommand("StopAudio")
-					self:GetParent():GetChild("Proceed"):stoptweening():queuecommand("Hide")
+					self:GetParent():GetChild("Proceed"):stoptweening():queuecommand("Ch4Sc3Hide")
 					bmt:settext( "vim ./" .. filename ):sleep(2):queuecommand("CD")
 					cursor:xy( (bmt:GetText():len()+1)*char_width*font_zoom, char_width*font_zoom )
 						:queuecommand("Show"):sleep(2):queuecommand("Reset")
@@ -238,7 +238,7 @@ af[#af+1] = Def.ActorFrame{
 			InitCommand=function(self)
 				tildes = self
 				self:x(14)
-					:y(terminal.y+(terminal.h-char_height*5*font_zoom))
+					:y(terminal.y+(terminal.h-char_height*4.6*font_zoom))
 					:align(1,1)
 					:zoom(font_zoom):diffuse(color("#593ced"))
 			end,

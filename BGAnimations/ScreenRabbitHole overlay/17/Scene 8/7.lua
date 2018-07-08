@@ -12,9 +12,12 @@ return Def.ActorFrame{
 	LoadActor("./6b.png")..{
 		InitCommand=function(self) self:zoom(2/3):Center():diffusealpha(0) end,
 		ShowCommand=function(self)
-			self:sleep(2.35):diffusealpha(1):sleep(0.15):diffusealpha(0)
-				:sleep(1):diffusealpha(1):sleep(0.15):diffusealpha(0)
-				:sleep(0.15):diffusealpha(1):sleep(0.15):diffusealpha(0)
+			self:sleep(2.2):linear(0.1):diffusealpha(1)
+				:sleep(0.1):linear(0.1):diffusealpha(0)
+				:sleep(1.0):linear(0.1):diffusealpha(1)
+				:sleep(0.1):linear(0.1):diffusealpha(0)
+				:sleep(0.1):linear(0.1):diffusealpha(1)
+				:sleep(0.1):linear(0.1):diffusealpha(0)
 		end
 	}
 }
