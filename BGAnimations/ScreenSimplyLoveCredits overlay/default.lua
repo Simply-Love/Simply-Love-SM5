@@ -1,7 +1,6 @@
 local pages = LoadActor("./Thanks.lua")
 
 local af = Def.ActorFrame{
-	InitCommand=function(self) af = self end,
 	OnCommand=function(self)
 		self:queuecommand("ShowPage1")
 		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {self, #pages}) )
@@ -10,8 +9,9 @@ local af = Def.ActorFrame{
 
 -- header text
 af[#af+1] = Def.BitmapText{
+	Name="PageNumber",
 	Font="_wendy small",
-	InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
+	InitCommand=function(self) self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy( _screen.cx, 15 ) end,
 	OnCommand=function(self) self:sleep(0.1):decelerate(0.33):diffusealpha(1):playcommand("Update",{page=1}) end,
 	OffCommand=function(self) self:accelerate(0.33):diffusealpha(0) end,
 	UpdateCommand=function(self, params) self:sleep(0.5):settext(THEME:GetString("ScreenEvaluationSummary","Page").." "..params.page.."/"..#pages ) end

@@ -38,8 +38,8 @@ local InputHandler = function(event)
 
 			if next_page > 0 and next_page < pages+1 then
 				page = next_page
-				af:stoptweening():queuecommand("Hide"):queuecommand("ShowPage"..page)
-				af:playcommand("Update",{page=page})
+				af:finishtweening():queuecommand("Hide"):queuecommand("ShowPage"..page)
+				af:GetChild("PageNumber"):finishtweening():playcommand("Update",{page=page})
 			end
 		end
 	end
