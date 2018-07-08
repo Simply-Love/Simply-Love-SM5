@@ -61,7 +61,10 @@ local SL_CustomPrefs =
 	ShowGradesInMusicWheel =
 	{
 		Default = false,
-		Choices = { "Show", "Hide "},
+		Choices = {
+			THEME:GetString("ThemePrefs", "Show"),
+			THEME:GetString("ThemePrefs", "Hide")
+		},
 		Values = { true, false }
 	},
 	VisualTheme =
@@ -78,7 +81,10 @@ local SL_CustomPrefs =
 	},
 	RainbowMode = {
 		Default = false,
-		Choices = { "On", "Off" },
+		Choices = {
+			THEME:GetString("ThemePrefs", "On"),
+			THEME:GetString("ThemePrefs", "Off")
+		},
 		Values 	= { true , false }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
