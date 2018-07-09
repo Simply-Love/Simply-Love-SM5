@@ -58,12 +58,11 @@ local optionrow_mt = {
 						PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00");),
 						ExitRowCommand=function(subself, params)
 							subself:y(-15)
-							if params.PlayerNumber == PLAYER_2 then
-								subself:x(20)
-							end
+							if params.PlayerNumber == PLAYER_2 then subself:x(20) end
 						end,
 						SingleSongCanceledMessageCommand=cmd(rotationz, 0),
-						BothPlayersAreReadyMessageCommand=cmd(sleep,0.2; linear,0.2; rotationz, 180),
+						BothPlayersAreReadyMessageCommand=cmd(finishtweening; sleep,0.2; linear,0.2; rotationz, 180),
+						CancelBothPlayersAreReadyMessageCommand=cmd(rotationz, 0),
 
 						LoadActor("./img/arrow_glow.png")..{
 							Name="RightArrowGlow",
@@ -88,7 +87,8 @@ local optionrow_mt = {
 							if params.PlayerNumber == PLAYER_1 then subself:x(180) end
 						end,
 						SingleSongCanceledMessageCommand=cmd(rotationz, 0),
-						BothPlayersAreReadyMessageCommand=cmd(sleep,0.2;linear,0.2; rotationz, 180),
+						BothPlayersAreReadyMessageCommand=cmd(finishtweening; sleep,0.2; linear,0.2; rotationz, 180),
+						CancelBothPlayersAreReadyMessageCommand=cmd(rotationz, 0),
 
 						LoadActor("./img/arrow_glow.png")..{
 							Name="LeftArrowGlow",

@@ -84,10 +84,11 @@ end
 
 t.Init = function()
 	-- flag used to determind whether input is permitted
-	-- false by default
+	-- false at initialization
 	t.Enabled = false
 
-	-- initialize so that GroupWheel has focus when the screen loads
+	-- initialize which wheel gets focus to start based on whether or not
+	-- GAMESTATE has a CurrentSong (it always should at screen init)
 	t.WheelWithFocus = GAMESTATE:GetCurrentSong() and SongWheel or GroupWheel
 
 	-- table that stores P1 and P2's currently active optionrow
@@ -195,19 +196,28 @@ t.Handler = function(event)
 			local index = ActiveOptionRow[event.PlayerNumber]
 
 			if event.GameButton == "MenuRight" then
-				-- scroll to the next opionrow_item in this optionrow
+				-- scroll to the next optionrow_item in this optionrow
 				t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(1)
 				-- animate the right cursor
 				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("RightArrow"):finishtweening():playcommand("Press")
 
 
 			elseif event.GameButton == "MenuLeft" then
-				-- scroll to the previous opionrow_item in this optionrow
+				-- scroll to the previous optionrow_item in this optionrow
 				t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(-1)
 				-- animate the left cursor
 				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("LeftArrow"):finishtweening():playcommand("Press")
 
 
+			elseif event.GameButton == "MenuUp" then
+
+				if ActiveOptionRow[event.PlayerNumber] > 1 then
+					-- set the currently active option row, bounding it to not go below 1
+					ActiveOptionRow[event.PlayerNumber] = math.max(index-1, 1)
+					-- scroll up to previous optionrow for this player
+					t.WheelWithFocus[event.PlayerNumber]:scroll_by_amount( -1 )
+					MESSAGEMAN:Broadcast("CancelBothPlayersAreReady")
+				end
 
 			elseif event.GameButton == "Start" or event.GameButton == "MenuDown" then
 
