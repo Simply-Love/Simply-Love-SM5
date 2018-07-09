@@ -178,6 +178,14 @@ local SL_CustomPrefs =
 	},
 
 	-- - - - - - - - - - - - - - - - - - - -
+	-- SM5.1's ImageCache System (used in CasualMode)
+	UseImageCache = {
+		Default = false,
+		Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values	= { true, false }
+	},
+
+	-- - - - - - - - - - - - - - - - - - - -
 	-- memes
 	nice = {
 		Default = false,

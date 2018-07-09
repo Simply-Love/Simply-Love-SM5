@@ -168,6 +168,15 @@ function GetOperatorMenuLineNames()
 end
 
 
+function GetSimplyLoveOptionsLineNames()
+	local lines = "CasualMaxMeter,AutoStyle,DefaultGameMode,TimingWindowAdd,CustomFailSet,CreditStacking,MusicWheelStyle,MusicWheelSpeed,SelectProfile,SelectColor,EvalSummary,NameEntry,GameOver,HideStockNoteSksins,DanceSolo,GradesInMusicWheel,Nice,VisualTheme,RainbowMode"
+	if Sprite.LoadFromCached ~= nil then
+		lines = lines .. ",UseImageCache"
+	end
+	return lines
+end
+
+
 function GetPlayerOptionsLineNames()
 	if SL.Global.GameMode == "Casual" then
 		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
