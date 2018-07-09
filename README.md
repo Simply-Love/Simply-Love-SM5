@@ -64,6 +64,15 @@ Or, *things I've added that were not present in the original Simply Love for Ste
   * [MenuTimer Options](http://imgur.com/DPffsdQh.png) – Set the MenuTimers for various screens.
   * [Long/Marathon Song Cutoffs](http://i.imgur.com/fzNJDVDh.png) – The cutoffs for songs that cost 2 and 3 rounds can be set in *Arcade Options*.
 
+#### Language Support
+
+Simply Love has full support for:
+
+  * English
+  * Español
+  * Français
+
+The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
 
 ## Missing Features
 Or, *things that were in the original Simply Love for StepMania 3.95 that are not present here.*
