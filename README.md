@@ -84,10 +84,12 @@ Your existing scores will remain ranked out of order, but all scores going forwa
 #### Where is my Preferences.ini file?
 See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/wiki/Manually-Changing-Preferences) page on StepMania's GitHub Wiki.
 
+#### How can I get more songs to show up in Casual Mode?
+Please refer to the [Casual Mode README](./CasualMode-README.md).
 
 ---
 
-## ACKNOWLEDGEMENTS
+## Acknowledgements
 
 * [hurtpiggypig](http://www.shirtpiggypig.com/) -- Lara designed the original Simply Love theme for StepMania 3.95.
 * [djpohly](https://github.com/djpohly) -- djpohly was a constant source of knowledge and help during the months I spent porting this.
