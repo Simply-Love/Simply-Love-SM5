@@ -104,12 +104,23 @@ return {
 			Img="Riakodoadm.jpg",
 			About="Riakodoadm wrote music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
 		},
+	},
+
+	-- page 7
+	{
 		{
 			Name="Jose_Varela",
 			Img="jose.png",
 			About="An up-and-coming StepMania themer, Jose graciously translated Simply Love's UI into Spanish.\n\nAs of this writing, he's working on three unique themes for SM5 and each is looking great.  By the time you read this, he will probably have undertaken at least a fourth."
 		},
+		{
+			Name="HeySora",
+			Img="heysora.png",
+			About="HeySora kindly translated Simply Love's UI into French.\n\nHe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
+		}
 	},
+
+	-- page 8
 	{
 		{
 			Name="Dan / dbk2",
