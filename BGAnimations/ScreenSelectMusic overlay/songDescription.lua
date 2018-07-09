@@ -36,6 +36,7 @@ local t = Def.ActorFrame{
 					local text = GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"
 					self:settext( THEME:GetString("SongDescription", text) )
 						:horizalign(right):y(-12)
+						:maxwidth(44)
 				end,
 				OnCommand=function(self) self:diffuse(0.5,0.5,0.5,1) end
 			},

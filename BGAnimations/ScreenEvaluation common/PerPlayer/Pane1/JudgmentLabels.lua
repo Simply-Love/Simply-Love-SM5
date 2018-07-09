@@ -71,7 +71,7 @@ for index, window in ipairs(TapNoteScores.Types) do
 
 	t[#t+1] = LoadFont("_miso")..{
 		Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper();
-		InitCommand=cmd(zoom,0.833; horizalign,right ),
+		InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 76),
 		BeginCommand=function(self)
 			self:x( (player == PLAYER_1 and 28) or -28 )
 			self:y((index-1)*28 -16)
