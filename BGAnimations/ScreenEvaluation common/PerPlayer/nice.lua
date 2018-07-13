@@ -1,5 +1,5 @@
 -- draws a "nice" underneath if a 69 appears somewhere on ScreenEvaluation
--- with love, ian klatzco
+-- with love, ian klatzco and din
 local pn = ...
 local t = nil
 
