@@ -20,7 +20,7 @@ if SL.Global.GameMode ~= "StomperZ" then
 		end
 	}
 
-	if ThemePrefs.Get("nice") then
+	if ThemePrefs.Get("nice") > 0 then
 		t[#t+1] = LoadActor("nice.lua", pn)
 	end
 

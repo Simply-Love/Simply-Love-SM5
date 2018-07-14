@@ -80,7 +80,9 @@ local function IsNice()
 	end
 
 	-- song title
-	local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+	local songtitle = (GAMESTATE:IsCourseMode() 
+						and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) 
+						or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 
 	if songtitle then
 		if string.match(tostring(songtitle), "69") ~= nil then
@@ -114,8 +116,16 @@ if IsNice() then
 				if pn == PLAYER_1 then
 					self:x( self:GetX() * -1 )
 				end
-
-				SOUND:PlayOnce( THEME:GetPathS("", "nice.ogg") )
+				
+				--If the value is 2, then this indicates they want sound.
+				if ThemePrefs.Get("nice") == 2 then
+					--For some reason Stepmania could play 
+					--this sound lounder than the
+					--system preference, so let's ensure 
+					--we are turned down for the meme.
+					SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
+					SOUND:PlayOnce(THEME:GetPathS("", "nice.ogg"))
+				end
 
 			end,
 		};
