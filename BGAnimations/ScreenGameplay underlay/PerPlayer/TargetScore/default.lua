@@ -494,6 +494,12 @@ if SL[pn].ActiveModifiers.TargetScore then
 			else
 				noteY = 56
 				noteX = GetNotefieldWidth() / 4
+				-- this serendipitiously works for doubles, somehow
+
+				-- ugly, ugly, U G L Y antisymmetry kludge
+				if (player ~= PLAYER_1 and isTwoPlayers) then
+					noteX = noteX + 25 -- this gets reversed...
+				end
 			end
 
 			-- flip x-coordinate based on player
