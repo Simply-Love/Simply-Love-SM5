@@ -494,6 +494,12 @@ if SL[pn].ActiveModifiers.TargetScore then
 			else
 				noteY = 56
 				noteX = GetNotefieldWidth() / 4
+				-- this serendipitiously works for doubles, somehow
+
+				-- ugly, ugly, U G L Y antisymmetry kludge
+				if (player ~= PLAYER_1 and isTwoPlayers) then
+					noteX = noteX + 25 -- this gets reversed...
+				end
 			end
 
 			-- flip x-coordinate based on player
@@ -513,15 +519,17 @@ if SL[pn].ActiveModifiers.TargetScore then
 
 			local percentDifference = (DPCurr - (targetGradeScore * DPCurrMax)) / DPMax
 
-			local places = 2
+			-- cap negative score displays
+			percentDifference = math.max(percentDifference, -targetGradeScore)
 
+			local places = 2
 			-- if there's enough dance points so that our current precision is ambiguous,
 			-- i.e. each dance point is less than half of a digit in the last place,
 			-- and we don't already display 2.5 digits,
-			-- i.e. 2 significant figures and a leading 1,
+			-- i.e. 2 significant figures and (possibly) a leading 1,
 			-- add a decimal point.
-			-- .1995 prevents flickering between ".01995", which is rounded and displayed as ".0200", and
-			-- and an actual ".0200", which is displayed as ".020"
+			-- .1995 prevents flickering between .01995, which is rounded and displayed as ".0200", and
+			-- and an actual .0200, which is displayed as ".020"
 			while (math.abs(percentDifference) < 0.1995 / math.pow(10, places))
 				and (DPMax >= 2 * math.pow(10, places + 2)) and (places < 4) do
 				places = places + 1
@@ -532,7 +540,7 @@ if SL[pn].ActiveModifiers.TargetScore then
 			-- have we already missed so many dance points
 			-- that the current goal is not possible anymore?
 			if ((DPCurrMax - DPCurr) > (DPMax * (1 - targetGradeScore))) then
-				self:diffuse(color("#999999ff"))
+				self:diffusealpha(0.65)
 			end
 		end,
 
