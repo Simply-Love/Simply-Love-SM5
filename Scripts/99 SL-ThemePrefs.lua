@@ -186,11 +186,12 @@ local SL_CustomPrefs =
 	},
 
 	-- - - - - - - - - - - - - - - - - - - -
-	-- memes
+	-- nice meme
+	-- 0 is off, 1 is visuals only, 2 is visuals and sound.
 	nice = {
-		Default = false,
-		Choices = { THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","Off") },
-		Values  = { true, false }
+		Default = 0,
+		Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound"),  },
+		Values  = { 0, 1, 2 }
 	},
 }
 
