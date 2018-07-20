@@ -25,7 +25,7 @@ filter[#filter+1] = Def.Quad{
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local FlashColor = nil
 
-		local WorstAcceptableFC = { Casual=3, Competitive=3, ECFA=4, StomperZ=4 }
+		local WorstAcceptableFC = { Casual=3, Competitive=3, Expert=4, ECFA=4, StomperZ=4 }
 
 		for i=1,WorstAcceptableFC[SL.Global.GameMode] do
 			if pss:FullComboOfScore("TapNoteScore_W"..i) then

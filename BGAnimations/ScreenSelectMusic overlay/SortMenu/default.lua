@@ -64,6 +64,7 @@ local t = Def.ActorFrame {
 		-- Allow players to switch out to a different GameMode if no stages have been played yet.
 		if SL.Global.Stages.PlayedThisGame == 0 then
 			table.insert(wheel_options, {"ChangeMode", "Competitive"})
+			table.insert(wheel_options, {"ChangeMode", "Expert"})
 			table.insert(wheel_options, {"ChangeMode", "ECFA"})
 			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
 		end

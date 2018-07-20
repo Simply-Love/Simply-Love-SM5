@@ -4,6 +4,7 @@ local pn = ToEnumShortString(player)
 local mode = ""
 if SL.Global.GameMode == "StomperZ" then mode = "StomperZ" end
 if SL.Global.GameMode == "ECFA" then mode = "ECFA" end
+if SL.Global.GameMode == "Expert" then mode = "Expert" end
 
 -- tap note types
 -- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...

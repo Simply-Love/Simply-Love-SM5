@@ -5,7 +5,7 @@ local TopScreen = nil
 local ScreenName = "ScreenSelectPlayMode"
 
 local cursor = {
-	h = 40,
+	h = 31,
 	index = 0,
 	-- the width of the cursor will be clamped to exist between these two values
 	min_w = 90, max_w = 170,
@@ -78,17 +78,22 @@ local t = Def.ActorFrame{
 			OffCommand=function(self) self:sleep(0.4):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-20) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(-30) end,
 			OffCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(20) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(0) end,
 			OnCommand=function(self) if choices[3]==nil then self:visible(false) end end,
 			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
 		},
 		Def.Quad{
-			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(60) end,
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(30) end,
 			OnCommand=function(self) if choices[4]==nil then self:visible(false) end end,
+			OffCommand=function(self) self:sleep(0.2):linear(0.1):diffusealpha(0) end
+		},
+		Def.Quad{
+			InitCommand=function(self) self:diffuse(0.2,0.2,0.2,1):zoomto(90,38):y(60) end,
+			OnCommand=function(self) if choices[5]==nil then self:visible(false) end end,
 			OffCommand=function(self) self:sleep(0.1):linear(0.1):diffusealpha(0) end
 		},
 	},
@@ -159,7 +164,7 @@ local t = Def.ActorFrame{
 				if choices[cursor.index+1] == "Casual" then
 					self:stoptweening():linear(0.25):diffusealpha(0)
 				else
-					if choices[cursor.index+1] == "ECFA" then
+					if choices[cursor.index+1] == "ECFA" or choices[cursor.index+1] == "Expert" then
 						self:settext("99.50")
 					else
 						self:settext("77.41")
@@ -168,7 +173,7 @@ local t = Def.ActorFrame{
 				end
 			else
 				self:diffusealpha(1)
-				if SL.Global.GameMode == "ECFA" then
+				if SL.Global.GameMode == "ECFA" or SL.Global.GameMode == "Expert" then
 					self:settext("99.50")
 				else
 					self:settext("77.41")
@@ -184,7 +189,7 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "Competitive" or choices[cursor.index+1] == "ECFA" then
+				if choices[cursor.index+1] == "Competitive" or choices[cursor.index+1] == "ECFA" or choices[cursor.index+1] == "Expert" then
 					self:stoptweening():linear(0.25):diffusealpha(1)
 				else
 					self:stoptweening():linear(0.25):diffusealpha(0)

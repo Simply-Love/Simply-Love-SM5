@@ -5,6 +5,7 @@ local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 local mode = ""
 if SL.Global.GameMode == "StomperZ" then mode = "StomperZ" end
 if SL.Global.GameMode == "ECFA" then mode = "ECFA" end
+if SL.Global.GameMode == "Expert" then mode = "Expert" end
 
 function firstToUpper(str)
     return (str:gsub("^%l", string.upper))
@@ -83,6 +84,9 @@ for index, window in ipairs(TapNoteScores.Types) do
 
 			elseif SL.Global.GameMode == "ECFA" then
 				self:diffuse( SL.JudgmentColors.ECFA[index] )
+				
+			elseif SL.Global.GameMode == "Expert" then
+				self:diffuse( SL.JudgmentColors.Expert[index] )
 			end
 
 
