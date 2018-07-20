@@ -86,8 +86,9 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filet
 			-- and its difficulty string matches the desired Difficulty
 			if (st == StepsType) and (diff == Difficulty) then
 				-- then index 7 contains the notedata that we're looking for
-				-- store it and break out of the chart loop now
-				measuresString = pieces[7] .. ";"
+				-- use gsub to remove comments, store the resulting string,
+				-- and break out of the chart loop now
+				measuresString = pieces[7]:gsub("//[^\r\n]*","") .. ";"
 				break
 			end
 		end
