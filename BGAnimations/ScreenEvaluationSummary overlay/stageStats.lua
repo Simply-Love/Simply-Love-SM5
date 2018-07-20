@@ -207,6 +207,8 @@ for player in ivalues(Players) do
 
 					if SL.Global.GameMode == "StomperZ" then
 						self:diffuse( SL.JudgmentColors.StomperZ[i] )
+					elseif SL.Global.GameMode == "Expert" then
+						self:diffuse( SL.JudgmentColors.Expert[i] )
 					elseif SL.Global.GameMode == "ECFA" then
 						self:diffuse( SL.JudgmentColors.ECFA[i] )
 					else

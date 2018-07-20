@@ -110,7 +110,7 @@ function GetComboThreshold( MaintainOrContinue )
 
 
 	if CurrentGame == "dance" then
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
+		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" or SL.Global.GameMode=="Expert" then
 			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
 			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
 		end
@@ -145,6 +145,7 @@ function SetGameModePreferences()
 
 	local prefix = {
 		Competitive = "",
+		Expert = "Expert-",
 		ECFA = "ECFA-",
 		StomperZ = "StomperZ-",
 		Casual = "Casual-"

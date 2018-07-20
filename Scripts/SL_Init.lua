@@ -127,6 +127,14 @@ SL = {
 			color("#c9855e"),	-- peach?
 			color("#ff0000")	-- red
 		},
+		Expert = {
+			color("#ffffff"),	-- white
+			color("#21CCE8"),	-- blue
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#5b2b8e"),	-- purple
+			color("#ff0000")	-- red
+		},
 		ECFA = {
 			color("#21CCE8"),	-- blue
 			color("#ffffff"),	-- white
@@ -173,6 +181,22 @@ SL = {
 			TimingWindowSecondsW3=0.102000,
 			TimingWindowSecondsW4=0.135000,
 			TimingWindowSecondsW5=0.180000,
+			TimingWindowSecondsHold=0.320000,
+			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsRoll=0.350000,
+		},		
+		Expert = {
+			TimingWindowAdd=0,
+			RegenComboAfterMiss=5,
+			MaxRegenComboAfterMiss=10,
+			MinTNSToHideNotes="TapNoteScore_W4",
+			HarshHotLifePenalty=1,
+
+			TimingWindowSecondsW1=0.010750,
+			TimingWindowSecondsW2=0.021500,
+			TimingWindowSecondsW3=0.043000,
+			TimingWindowSecondsW4=0.102000,
+			TimingWindowSecondsW5=0.135000,
 			TimingWindowSecondsHold=0.320000,
 			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
@@ -267,6 +291,37 @@ SL = {
 			LifePercentChangeW2=0.008,
 			LifePercentChangeW3=0.004,
 			LifePercentChangeW4=0.000,
+			LifePercentChangeW5=-0.050,
+			LifePercentChangeMiss=-0.100,
+			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
+			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
+			LifePercentChangeHitMine=-0.050,
+		},
+		Expert = {
+			PercentScoreWeightW1=5,
+			PercentScoreWeightW2=5,
+			PercentScoreWeightW3=4,
+			PercentScoreWeightW4=2,
+			PercentScoreWeightW5=-6,
+			PercentScoreWeightMiss=-12,
+			PercentScoreWeightLetGo=0,
+			PercentScoreWeightHeld=5,
+			PercentScoreWeightHitMine=-6,
+
+			GradeWeightW1=5,
+			GradeWeightW2=5,
+			GradeWeightW3=4,
+			GradeWeightW4=2,
+			GradeWeightW5=-6,
+			GradeWeightMiss=-12,
+			GradeWeightLetGo=0,
+			GradeWeightHeld=5,
+			GradeWeightHitMine=-6,
+
+			LifePercentChangeW1=0.008,
+			LifePercentChangeW2=0.008,
+			LifePercentChangeW3=0.008,
+			LifePercentChangeW4=0.004,
 			LifePercentChangeW5=-0.050,
 			LifePercentChangeMiss=-0.100,
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,

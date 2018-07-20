@@ -6,6 +6,7 @@ local TNSNames = {}
 
 local mode = ""
 if SL.Global.GameMode == "StomperZ" then mode = "StomperZ"
+elseif SL.Global.GameMode == "Expert" then mode = "Expert"
 elseif SL.Global.GameMode == "ECFA" then mode = "ECFA" end
 
 
@@ -42,6 +43,10 @@ for index, label in ipairs(TNSNames) do
 			-- if ECFA, color the JudgmentLabel
 			elseif mode == "ECFA" then
 				self:diffuse( SL.JudgmentColors.ECFA[index] )
+				
+			-- if Expert, color the JudgmentLabel
+			elseif mode == "Expert" then
+				self:diffuse( SL.JudgmentColors.Expert[index] )
 			end
 
 

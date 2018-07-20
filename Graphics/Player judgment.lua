@@ -95,7 +95,7 @@ local t = Def.ActorFrame {
 
 			else
 
-				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" then
+				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" and SL.Global.GameMode ~= "Expert" then
 					-- We are in Competitive or Casual GameMode.  Both will pull judgment
 					-- graphics from the same folder (_judgments/Competitive/)
 					if mods.JudgmentGraphic == "3.9" then
@@ -106,6 +106,7 @@ local t = Def.ActorFrame {
 				else
 					-- We are either in StomperZ or ECFA GameMode.
 					-- StomperZ will pull judgment graphics from "_judgments/StomperZ/"
+					-- Expert will pull judgment graphics from "_judgments/Expert/"
 					-- while ECFA will pull from "_judgment/ECFA"
 					self:Load( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. mods.JudgmentGraphic) )
 				end

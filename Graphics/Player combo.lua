@@ -41,16 +41,19 @@ return Def.ActorFrame {
 		end
 		kids.Number:settext( CurrentCombo )
 
+		if (SL.Global.GameMode == "Expert" and param.FullComboW1) then
+			-- silver combo
+			kids.Number:playcommand("ChangeColor", {Color1="#D7E5E5", Color2="#EFFDFF"})
 
-		if (SL.Global.GameMode ~= "ECFA" and param.FullComboW1) or (SL.Global.GameMode == "ECFA" and (param.FullComboW1 or param.FullComboW2)) then
+		elseif (SL.Global.GameMode ~= "ECFA" and SL.Global.GameMode ~= "Expert" and param.FullComboW1) or (SL.Global.GameMode == "ECFA" (param.FullComboW1 or param.FullComboW2)) or (SL.Global.GameMode == "Expert" and param.FullComboW2) then
 			-- blue combo
 			kids.Number:playcommand("ChangeColor", {Color1="#C8FFFF", Color2="#6BF0FF"})
 
-		elseif (SL.Global.GameMode ~= "ECFA" and param.FullComboW2) or (SL.Global.GameMode == "ECFA" and param.FullComboW3) then
+		elseif (SL.Global.GameMode ~= "ECFA" and SL.Global.GameMode ~= "Expert" and param.FullComboW2) or (SL.Global.GameMode == "ECFA" or SL.Global.GameMode == "Expert" and param.FullComboW3) then
 			-- gold combo
 			kids.Number:playcommand("ChangeColor", {Color1="#FDFFC9", Color2="#FDDB85"})
 
-		elseif (SL.Global.GameMode ~= "ECFA" and param.FullComboW3) or (SL.Global.GameMode == "ECFA" and param.FullComboW4) then
+		elseif (SL.Global.GameMode ~= "ECFA" and SL.Global.GameMode ~= "Expert" and param.FullComboW3) or (SL.Global.GameMode == "ECFA" or SL.Global.GameMode == "Expert" and param.FullComboW4) then
 			-- green combo
 			kids.Number:playcommand("ChangeColor", {Color1="#C9FFC9", Color2="#94FEC1"})
 

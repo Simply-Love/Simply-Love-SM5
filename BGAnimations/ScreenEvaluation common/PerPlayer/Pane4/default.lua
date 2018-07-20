@@ -10,6 +10,7 @@ local pane_width, pane_height = 300, 180
 
 local abbreviations = {
 	Competitive = { "Fan", "Ex", "Gr", "Dec", "WO" },
+	Expert = { "Fan", "Fan", "Ex", "Gr", "Dec" },
 	ECFA = { "Fan", "Fan", "Ex", "Gr", "Dec" },
 	StomperZ = { "Perf", "Gr", "Good", "Hit", "" }
 }
