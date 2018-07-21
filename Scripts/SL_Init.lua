@@ -178,7 +178,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		ECFA = {
-			TimingWindowAdd=0,
+			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
@@ -190,7 +190,7 @@ SL = {
 			TimingWindowSecondsW4=0.102000,
 			TimingWindowSecondsW5=0.135000,
 			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsMine=0.006500,
 			TimingWindowSecondsRoll=0.350000,
 		},
 		StomperZ = {
