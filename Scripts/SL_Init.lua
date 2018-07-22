@@ -190,7 +190,7 @@ SL = {
 			TimingWindowSecondsW4=0.102000,
 			TimingWindowSecondsW5=0.135000,
 			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.006500,
+			TimingWindowSecondsMine=0.065000,
 			TimingWindowSecondsRoll=0.350000,
 		},
 		StomperZ = {
