@@ -41,8 +41,10 @@ local InputHandler = function(event)
 			af:finishtweening():queuecommand("Hide"):queuecommand("ShowPage"..page)
 			af:GetChild("PageNumber"):finishtweening():playcommand("Update",{page=page})
 
-			left_arrow:visible( page > 1 )
-			right_arrow:visible( page < num_pages )
+			if left_arrow and right_arrow then
+				left_arrow:visible( page > 1 )
+				right_arrow:visible( page < num_pages )
+			end
 		end
 	end
 end

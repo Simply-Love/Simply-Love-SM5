@@ -69,7 +69,7 @@ return {
 		{
 			Name="Paul J Kim",
 			Img="pjk.png",
-			About="Paul provided support when I needed it, and helped make Simply Love more robust by testing odd combinations of things that would never have occurred to me otherwise.\n\nFor example, placing a reasonable upper limit on user-input strings: maybe it's a good idea, maybe sometimes it's not. Maybe players SHOULD be allowed put whatever they want as the DisplayName in Editable.ini.  Maybe Simply Love SHOULDN'T do anything to keep string length in check. Who's really to say? Whether 'tis nobler in the mind to suffer the mines and arrows of Ride, or to take arms against a sea of memes, and by opposing what I am doing?"
+			About="Paul provided support when I needed it, and helped make Simply Love more robust by testing odd combinations of things that would never have occurred to me otherwise.\n\nFor example, placing a reasonable upper limit on user-input strings: maybe it's a good idea, maybe sometimes it's not. Maybe players SHOULD be allowed to put whatever they want as the DisplayName in Editable.ini.  Maybe Simply Love SHOULDN'T do anything to keep string length in check. Who's really to say? Whether 'tis nobler in the mind to suffer the mines and arrows of Ride, or to take arms against a sea of memes, and by opposing what I am doing?"
 		}
 	},
 

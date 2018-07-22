@@ -49,7 +49,7 @@ local function regexEncode(var)
 	return (var:gsub('%%', '%%%'):gsub('%^', '%%^'):gsub('%$', '%%$'):gsub('%(', '%%('):gsub('%)', '%%)'):gsub('%.', '%%.'):gsub('%[', '%%['):gsub('%]', '%%]'):gsub('%*', '%%*'):gsub('%+', '%%+'):gsub('%-', '%%-'):gsub('%?', '%%?'))
 end
 
--- Parse the measures section out of our sim file
+-- Parse the measures section out of our simfile
 local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
 	local measuresString = nil
 
@@ -67,9 +67,29 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filet
 		-- SM FILE
 		-- Loop through each chart in the SM file
 		for chart in SimfileString:gmatch("#NOTES[^;]*") do
-			if(chart:match(regexEncode(StepsType)..":") and chart:match(regexEncode(Difficulty)..":")) then
-				-- Find just the notes and remove comments
-				measuresString = chart:match("#NOTES:.*:[\r\n]+(.*)\n?$"):gsub("//[^\r\n]*","") .. ";"
+			-- split the entire chart string into pieces on ":"
+			local pieces = {}
+			for str in chart:gmatch("[^:]+") do
+				pieces[#pieces+1] = str
+			end
+
+			-- the pieces table should contain 7 numerically indexed items
+			-- 2, 4, and 7 are the indices we care about for finding the correct chart
+			-- index 2 will contain the steps_type (like "dance-single")
+			-- index 4 will contain the difficulty (like "challenge")
+
+			-- use gsub to scrub out line breaks (and other irrelevant characters?)
+			local st = pieces[2]:gsub("[^%w-]", "")
+			local diff = pieces[4]:gsub("[^%w]", "")
+
+			-- if this particular chart's steps_type matches the desired StepsType
+			-- and its difficulty string matches the desired Difficulty
+			if (st == StepsType) and (diff == Difficulty) then
+				-- then index 7 contains the notedata that we're looking for
+				-- use gsub to remove comments, store the resulting string,
+				-- and break out of the chart loop now
+				measuresString = pieces[7]:gsub("//[^\r\n]*","") .. ";"
+				break
 			end
 		end
 	end

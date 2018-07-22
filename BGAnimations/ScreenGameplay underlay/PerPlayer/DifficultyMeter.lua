@@ -4,7 +4,7 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 		self:xy( WideScale(27,84), 56 )
 		if player == PLAYER_2 then
-			self:x( _screen.w - self:GetX() )
+			self:x( _screen.w-WideScale(27,84) )
 		end
 
 		if SL.Global.GameMode == "StomperZ" then

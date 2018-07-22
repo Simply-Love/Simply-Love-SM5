@@ -186,7 +186,7 @@ function GetPlayerOptionsLineNames()
 end
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then
@@ -200,7 +200,14 @@ function GetPlayerOptions2LineNames()
 
 	-- remove TargetStatus and TargetBar (IIDX pacemaker) if style is double
 	if SL.Global.Gamestate.Style == "double" then
-		mods = mods:gsub("TargetStatus,TargetBar,", "")
+		mods = mods:gsub("TargetStatus,TargetBar,ActionOnMissedTarget,", "")
+	end
+	
+	-- only show if the user is in event mode
+	-- no need to have this show up in arcades.
+	-- the pref is also checked against EventMode during runtime.
+	if not PREFSMAN:GetPreference("EventMode") then
+		mods = mods:gsub("ActionOnMissedTarget,", "")
 	end
 
 	return mods

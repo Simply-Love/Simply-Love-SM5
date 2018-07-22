@@ -10,7 +10,7 @@ local function GetSpeedModHelperText(pn)
 	local speed = mods.SpeedMod
 
 	if GAMESTATE:IsCourseMode() then
-		bpm = GetCourseModeBPMs()
+		bpm = GetCourseModeBPMs() or GetTrailBPMs("PlayerNumber_"..pn)
 	else
 		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
 		-- handle DisplayBPMs that are <= 0
@@ -159,7 +159,8 @@ for player in ivalues(Players) do
 				local oldspeed = SL[pn].ActiveModifiers.SpeedMod
 
 				if GAMESTATE:IsCourseMode() then
-					bpm = GetCourseModeBPMs()
+					bpm = GetCourseModeBPMs() or GetTrailBPMs(player)
+
 				else
 					bpm = song:GetDisplayBpms()
 					if bpm[1] <= 0 or bpm[2] <= 0 then

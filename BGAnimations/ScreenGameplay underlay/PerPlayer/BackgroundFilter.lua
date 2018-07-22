@@ -42,7 +42,8 @@ filter[#filter+1] = Def.Quad{
 	end
 }
 
-if ThemePrefs.Get("nice") then
+--Let's see if we need to let  the player know that they are nice.
+if ThemePrefs.Get("nice") > 0 then
 	filter[#filter+1] = LoadActor(THEME:GetPathG("","_grades/graphics/nice.png"))..{
 		InitCommand=function(self) self:visible(false):zoom(0.5) end,
 		ComboFlashCommand=function(self)

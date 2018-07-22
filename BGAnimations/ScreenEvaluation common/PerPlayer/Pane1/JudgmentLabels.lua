@@ -14,7 +14,8 @@ function getStringFromTheme( arg )
 	return THEME:GetString("TapNoteScore" .. mode, arg);
 end
 
-local nice = ThemePrefs.Get("nice")
+--Values above 0 means the user wants to be shown or told they are nice.
+local nice = ThemePrefs.Get("nice") > 0
 
 -- i'm learning haskell okay? map is nice
 function map(func, array)
