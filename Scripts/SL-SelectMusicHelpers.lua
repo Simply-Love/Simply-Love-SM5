@@ -1,10 +1,16 @@
+-- ----------------------------------------------------------------------------------------
+-- functions used by ScreenSelectMusicCasual
+
+-- used by SSMCasual to play preview music of the current song
+-- this is invoked each time the custom MusicWheel changes focus
 function play_sample_music()
 	if GAMESTATE:IsCourseMode() then return end
-	local song= GAMESTATE:GetCurrentSong()
+	local song = GAMESTATE:GetCurrentSong()
+
 	if song then
-		local songpath= song:GetMusicPath()
-		local sample_start= song:GetSampleStart()
-		local sample_len= song:GetSampleLength()
+		local songpath = song:GetMusicPath()
+		local sample_start = song:GetSampleStart()
+		local sample_len = song:GetSampleLength()
 
 		if songpath and sample_start and sample_len then
 			SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"), math.huge)
@@ -17,9 +23,45 @@ function play_sample_music()
 	end
 end
 
+-- used by SSMCasual to stop playing preview music,
+-- this is invoked every time the custom MusicWheel changes focus
+-- if the new focus is on song item, play_sample_music() will be invoked immediately afterwards
+-- ths is also invoked when the player closes the current group to choose some other group
 function stop_music()
 	SOUND:PlayMusicPart("", 0, 0)
 end
+
+
+----------------------------------------------------------------------------------------
+-- functions used by ScreenSelectMusic
+
+-- TextBanner is an engine-defined ActorFrame that contains three BitmapText actors named
+-- "Title", "Subtitle", and "Artist".  Simply Love's MusicWheel only uses the first two.
+--
+-- It has two unique Metrics, "AfterSetCommand" and "ArtistPrependString"
+-- Simply Love is only concerned with "AfterSetCommand"
+-- because the song Artist does not appear in each MusicWheelItem
+
+function TextBannerAfterSet(self)
+	-- acquire handles to two of the BitmapText children of this TextBanner ActorFrame
+	-- we'll use them to style each song's Title and Subtitle as they appear in the MusicWheel
+	local Title = self:GetChild("Title")
+	local Subtitle = self:GetChild("Subtitle")
+
+	-- assume the song's Subtitle is an empty string by default
+	Title:zoom(0.85):xy( WideScale(-85, -100), 0 ):maxwidth( WideScale(300,400) )
+
+	-- if the Subtitle isn't an empty string
+	if Subtitle:GetText() ~= "" then
+		-- offset the Title's y() by -6 pixels
+		Title:y(-6)
+		-- apply commands to Subtitle
+		Subtitle:zoom(0.7):xy( WideScale(-85, -100), 6 ):maxwidth( WideScale(300,400) )
+	end
+end
+
+----------------------------------------------------------------------------------------
+-- functions used by both SSM and SSMCasual
 
 function SSM_Header_StageText()
 
