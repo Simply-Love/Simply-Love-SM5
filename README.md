@@ -14,7 +14,7 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 ## Requirements
 
-You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) or [StepMania 5.1 beta 1](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b1) to use this theme.
+You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) or [StepMania 5.1 beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) to use this theme.
 
 Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible.
 
@@ -23,7 +23,7 @@ Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible
 If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/).  Additionally, you may find these links helpful for your given operating system:
 
   * **Windows** -  [This issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64) provides links to the needed DirectX and VS2013 redistributable packages.
-  * **macOS** - If you are encountering the "No NoteSkins found" error, [this GitHub comment](https://github.com/stepmania/stepmania/issues/1299#issuecomment-275114142) provides a means of resolving it on your computer until it is properly fixed upstream.
+  * **macOS** - If you are unable to open the dmg installer with an error like "No mountable file systems", you'll need to [update your copy of macOS](https://github.com/stepmania/stepmania/issues/1726) for the time being. If you are encountering the "No NoteSkins found" error, [this GitHub comment](https://github.com/stepmania/stepmania/issues/1299#issuecomment-275114142) provides a means of resolving it on your computer until it is properly fixed upstream.
   * **Linux** - It is more or less assumed that you will build your own executables if you are using Linux.  StepMania's GitHub wiki provides both a [list of dependencies](https://github.com/stepmania/stepmania/wiki/Linux-Dependencies) and some [instructions on compiling](https://github.com/stepmania/stepmania/wiki/Compiling-StepMania).
 
 
