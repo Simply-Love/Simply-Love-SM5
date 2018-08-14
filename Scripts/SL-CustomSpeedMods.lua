@@ -32,6 +32,8 @@ end
 
 function GetCourseModeBPMs(course)
 	local course = course or GAMESTATE:GetCurrentCourse( GAMESTATE:GetMasterPlayerNumber() )
+	if not course then return false end
+
 	local courseEntries = course:GetCourseEntries()
 	return GetCourseOrTrailBPMs( courseEntries )
 end
@@ -39,6 +41,8 @@ end
 function GetTrailBPMs(player)
 	if not player then return false end
 	local trail = GAMESTATE:GetCurrentTrail(player)
+	if not trail then return false end
+
 	local trailEntries = trail:GetTrailEntries()
 	return GetCourseOrTrailBPMs( trailEntries )
 end
