@@ -98,9 +98,13 @@ local t = Def.ActorFrame{
 
 		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local pn = ToEnumShortString(player)
-			-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
-			SpeedModItems[pn] = ScreenOptions:GetOptionRow(FindOptionRowIndex(ScreenOptions,"SpeedMod")):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
-			self:playcommand("Set"..pn)
+			local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions,"SpeedMod")
+
+			if SpeedModRowIndex then
+				-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
+				SpeedModItems[pn] = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
+				self:playcommand("Set"..pn)
+			end
 		end
 	end
 }
@@ -267,31 +271,35 @@ for player in ivalues(Players) do
 			self:y(26)
 			self:diffusealpha(0)
 		end,
-		OnCommand=cmd(linear,0.4;diffusealpha,1),
+		OnCommand=function(self) self:linear(0.4):diffusealpha(1) end,
 		SetCommand=function(self)
-			local musicrate = SL.Global.ActiveModifiers.MusicRate
-
-			-- settext on the musicrate helper
-			if SL[pn].ActiveModifiers.SpeedModType == "x" then
-				if musicrate == 1 then
-					self:settext("")
-				else
-					self:settext(musicrate .. "x")
-				end
-			else
-				self:settext("")
-			end
-
-			-- settext on the speedmod helper
-			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
-
-			-------------------------------
 			-- variables to be used for setting the text in the "Speed Mod" OptionRow title
 			local ScreenOptions = SCREENMAN:GetTopScreen()
-			local SpeedModTitle = ScreenOptions:GetOptionRow(FindOptionRowIndex(ScreenOptions, "SpeedMod")):GetChild(""):GetChild("Title")
+			local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions, "SpeedMod")
 
-			local bpms = GetDisplayBPMs()
-			SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms .. ")" )
+			-- the speedmod row doesn't exist for ScreenAttackMenu, and SpeedModRowIndex will be false
+			if SpeedModRowIndex then
+
+				local musicrate = SL.Global.ActiveModifiers.MusicRate
+
+				-- settext on the musicrate helper
+				if SL[pn].ActiveModifiers.SpeedModType == "x" then
+					if musicrate == 1 then
+						self:settext("")
+					else
+						self:settext(musicrate .. "x")
+					end
+				else
+					self:settext("")
+				end
+
+				-- settext on the speedmod helper
+				self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
+
+				local SpeedModTitle = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Title")
+				local bpms = GetDisplayBPMs()
+				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms .. ")" )
+			end
 		end,
 		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
 	}
