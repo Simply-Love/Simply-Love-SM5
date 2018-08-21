@@ -117,44 +117,13 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	JudgmentGraphic = {
 		Choices = function()
-
-			-- Allow users to artbitrarily add new judgment graphics to /Graphics/_judgments/
-			-- without needing to modify this script;
-			-- instead of hardcoding a list of judgment fonts, get directory listing via FILEMAN.
-			local mode = SL.Global.GameMode ~= "Casual" and SL.Global.GameMode or "Competitive"
-			local path = THEME:GetPathG("","_judgments/" .. mode )
-
-			local files = FILEMAN:GetDirListing(path .. "/")
-			local judgmentGraphics = {}
-
-			for k,filename in ipairs(files) do
-
-				-- A user might put something that isn't a suitable judgment graphic
-				-- into /Graphics/_judgments/ (also sometimes hidden files like .DS_Store show up here).
-				-- Do our best to filter out such files now.
-				if string.match(filename, " %dx%d") then
-					-- use regexp to get only the name of the graphic, stripping out the extension
-					local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
-
-					-- The 3_9 graphic is a special case;
-					-- we want it to appear in the options with a period (3.9 not 3_9).
-					if name == "3_9" then name = "3.9" end
-
-					-- Dynamically fill the table.
-					-- Love is a special case; it should always be first.
-					if name == "Love" then
-						table.insert(judgmentGraphics, 1, name)
-					else
-						judgmentGraphics[#judgmentGraphics+1] = name
-					end
-				end
+			graphics = GetJudgmentGraphics(SL.Global.GameMode)
+			for i,g in ipairs(graphics) do
+				graphics[i] = CleanString(g)
 			end
-
-			-- always have "None" appear last
-			judgmentGraphics[#judgmentGraphics+1] = "None"
-
-			return judgmentGraphics
-		end
+			return graphics
+		end,
+		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
