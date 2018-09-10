@@ -10,13 +10,13 @@ local life_verts = {}
 -- the density graph otherwise becomes too horizontally compressed (squeezed in, so to speak)
 -- and it's dificult get any useful information out of it, visually.
 --
--- So, we hardcode it to 4 minutes here. If the song is longer than 5 minutes, the density graph will
--- scroll with the song.  If the song is shorter than 5 minutes, we'll scale the width of the graph
--- to take up the full width available in the Step Statistics sidebar.
+-- So, we hardcode it to 4 minutes here. If the song is longer than 4 minutes, the density graph will
+-- scroll with the song.  If the song is shorter than 4 minutes, we'll scale the width of the graph
+-- to take up the full width available in the StepStatistics sidebar.
 local max_seconds = 4 * 60
 
 -- width is how wide, in pixels, the density graph will be
--- it will be given a larger value in InitializeNPSHistogram(), if the song is longer than max_seconds
+-- it will be given a larger value in InitializeNPSHistogram() if the song is longer than max_seconds
 local width = GetNotefieldWidth(player)
 -- height is how tall, in pixels, the density graph will be
 local height = GetNotefieldWidth(player)/2.25
@@ -63,6 +63,10 @@ local InitializeNPSHistogram = function()
 		FirstSecond =  Song:GetFirstSecond()
 		TotalSeconds = Song:GetLastSecond() - FirstSecond
 
+		-- assume the song is shorter than max_seconds and make the width of the graph
+		-- the same as the width of a Notefield
+		width = GetNotefieldWidth(player)
+		-- if the song is longer than max_seconds, scale up the width of the graph
 		if TotalSeconds > max_seconds then
 			width = width * (TotalSeconds/max_seconds)
 		end
@@ -83,6 +87,11 @@ local InitializeNPSHistogram = function()
 		verts = {}
 		x, y, t = nil, nil, nil
 
+		-- magic numbers obtained from Photoshop's Eyedrop tool
+		local yellow = {0.968, 0.953, 0.2, 1}
+		local orange = {0.863, 0.553, 0.2, 1}
+		local upper
+
 		for i, nps in ipairs(NPSperMeasure) do
 			-- i will represent the current measure number but will be 1 larger than
 			-- it should be (measures in SM start at 0; indexed Lua tables start at 1)
@@ -101,13 +110,12 @@ local InitializeNPSHistogram = function()
 				verts[#verts][1][1] = x
 				verts[#verts-1][1][1] = x
 			else
-				-- magic numbers obtained from Photoshop's Eyedrop tool
-				local yellow = {0.968, 0.953, 0.2, 1}
-				local orange = {0.863, 0.553, 0.2, 1}
-				local upper = lerp_color(math.abs(y/height), yellow, orange )
+				-- lerp_color() take a float between [0,1], color1, and color2, and returns a color
+				-- that has been linearly interpolated by that percent between the colors provided
+				upper = lerp_color(math.abs(y/height), yellow, orange )
 
 				verts[#verts+1] = {{x, 0, 0}, yellow} -- bottom of graph (yellow)
-				verts[#verts+1] = {{x, y, 0}, upper} -- top of graph (red)
+				verts[#verts+1] = {{x, y, 0}, upper}  -- top of graph (somewhere between yellow and orange)
 			end
 		end
 	end
@@ -190,7 +198,7 @@ if HasData() then
 
 			local current_second = GAMESTATE:GetCurMusicSeconds()
 
-			-- if the end of the song is nigh, no need to keep scrolling
+			-- if the end of the song is close, no need to keep scrolling
 			if current_second > TotalSeconds - (max_seconds*WideScale(0.25,0.5)) then return end
 
 			-- use 1/4 of whatever max_seconds is as the cutoff to start scrolling the graph
@@ -284,6 +292,23 @@ if HasData() then
 				:x( WideScale(160, 214) + _screen.cx * (player==PLAYER_1  and -1 or 1) )
 				:y(-48)
 				:diffuse( Color.Black )
+
+
+			-- handle Center1Player begrudgingly with clumsy code
+			if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
+				self:zoomto(_screen.w, _screen.h * (1/0.9))
+
+				-- 16:9 aspect ratio (approximately 1.7778)
+				if GetScreenAspectRatio() > 1.7 then
+					self:x(player==PLAYER_1 and -382 or _screen.w-44)
+						:y(-55)
+
+				-- if 16:10 aspect ratio
+				else
+					self:x(player==PLAYER_1 and -348 or _screen.w-36)
+						:y(-104)
+				end
+			end
 		end
 	}
 
