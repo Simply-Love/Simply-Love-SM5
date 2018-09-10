@@ -8,6 +8,8 @@ local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 
 
 for player in ivalues(Players) do
+	-- StepStatistics takes up the full screenwidth and thus needs to draw under everything else
+	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
 	-- actual underlays
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/BackgroundFilter.lua", player)
@@ -27,7 +29,6 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/TargetScore/default.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/SubtractiveScoring.lua", player)
 end
 
