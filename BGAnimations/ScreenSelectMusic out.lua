@@ -15,7 +15,7 @@ return Def.ActorFrame{
 		NewTextCommand=cmd(hibernate,0.1; settext,THEME:GetString("ScreenSelectMusic", "Entering Options..."); linear,0.125; diffusealpha,1; hurrytweening,0.1; sleep,1)
 	},
 
-	-- my additions (time bar)
+	-- Time bar for pressing START for more player options
 	Def.ActorFrame{
 		InitCommand=function(self)
 			self:y(_screen.cy + 50)
@@ -41,7 +41,6 @@ return Def.ActorFrame{
 			end
 		},
 
-		--InitCommand=cmd(zoomx,100;zoomy,25; diffuse,Color.White; CenterX; y,_screen.cy + 40; diffusealpha, 0.5),
 		ShowEnteringOptionsCommand=cmd(linear,0.125; diffusealpha,0)
 	}
 }
