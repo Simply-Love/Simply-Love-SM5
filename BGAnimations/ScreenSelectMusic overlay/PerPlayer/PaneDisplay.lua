@@ -12,7 +12,7 @@ local labelX_col2 = WideScale(10,20)
 local dataX_col2  = WideScale(5,15)
 
 local highscoreX = WideScale(56, 80)
-local highscorenameX = WideScale(84, 120)
+local highscorenameX = WideScale(61, 97)
 
 local PaneItems = {}
 
@@ -155,13 +155,20 @@ local pd = Def.ActorFrame{
 	StepsHaveChangedCommand=cmd(queuecommand,"Set"),
 	SetCommand=function(self)
 		local machine_score, machine_name = GetNameAndScore( PROFILEMAN:GetMachineProfile() )
+
+		local c = {0,0,0,1}
+		if string.byte(machine_name) and string.byte(machine_name) >= 240 then c = {1,1,1,1} end
+
 		self:GetChild("MachineHighScore"):settext(machine_score)
-		self:GetChild("MachineHighScoreName"):settext(machine_name)
+		self:GetChild("MachineHighScoreName"):settext(machine_name):diffuse(c)
 
 		if PROFILEMAN:IsPersistentProfile(player) then
 			local player_score, player_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
+			c = {0,0,0,1}
+			if string.byte(player_name) and string.byte(player_name) >= 240 then c = {1,1,1,1} end
+
 			self:GetChild("PlayerHighScore"):settext(player_score)
-			self:GetChild("PlayerHighScoreName"):settext(player_name)
+			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse(c)
 		end
 	end
 }
@@ -241,7 +248,7 @@ pd[#pd+1] = Def.BitmapText{
 			self:settext("")
 		else
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-			local meter = StepsOrTrail and StepsOrTrail:GetMeter()			
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter()
 			self:settext( meter and meter or  "?" )
 		end
 	end
@@ -258,7 +265,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="MachineHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60)
+	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }
 
 
@@ -273,7 +280,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="PlayerHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1)
+	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }
 
 return pd
