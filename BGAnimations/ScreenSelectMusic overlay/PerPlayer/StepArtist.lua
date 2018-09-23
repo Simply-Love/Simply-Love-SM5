@@ -81,7 +81,10 @@ return Def.ActorFrame{
 				self:settext("")
 			elseif StepsOrCourse then
 				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
-				self:settext(stepartist or "")
+				local c = {0,0,0,1}
+				if string.byte(stepartist) and string.byte(stepartist) >= 240 then c = {1,1,1,1} end
+
+				self:settext(stepartist or ""):diffuse(c)
 			end
 		end
 	}
