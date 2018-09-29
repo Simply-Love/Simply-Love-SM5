@@ -193,6 +193,11 @@ local SL_CustomPrefs =
 		Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound"),  },
 		Values  = { 0, 1, 2 }
 	},
+	VerboseSongFolder = {
+		Default = false,
+		Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values 	= { true , false }
+	},
 }
 
 -- We need to InitAll() now so that ./Scripts/SL_Init.lua can use
