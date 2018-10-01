@@ -369,7 +369,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
-		Values = function() return { "Standard", "Surround" } end,
+		Values = function() return { "Standard", "Surround", "Vertical" } end,
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
