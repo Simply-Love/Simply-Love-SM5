@@ -16,6 +16,7 @@ local PlayerDefaults = {
 				HideCombo = false,
 				HideLifebar = false,
 				HideScore = false,
+				HideDanger = true,
 				ColumnFlashOnMiss = false,
 				SubtractiveScoring = false,
 				MeasureCounterPosition = "Left",

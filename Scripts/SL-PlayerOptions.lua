@@ -226,7 +226,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "Targets", "Background", "Combo", "Life", "Score" } end,
+		Values = function() return { "Targets", "Background", "Combo", "Life", "Score", "Danger" } end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets 	or false
@@ -234,6 +234,7 @@ local Overrides = {
 			list[3] = mods.HideCombo 	or false
 			list[4] = mods.HideLifebar 	or false
 			list[5] = mods.HideScore 	or false
+			list[6] = mods.HideDanger	or true
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
@@ -243,8 +244,8 @@ local Overrides = {
 			mods.HideCombo	= list[3]
 			mods.HideLifebar= list[4]
 			mods.HideScore	= list[5]
+			mods.HideDanger = list[6]
 
-			-- ApplyHide(pn)
 			playeroptions:Dark(mods.HideTargets and 1 or 0)
 			playeroptions:Cover(mods.HideSongBG and 1 or 0)
 		end,
