@@ -59,6 +59,12 @@ for player in ivalues(Players) do
 		-- stepartist
 		LoadActor("./PerPlayer/StepArtist.lua", player),
 
+		-- steps chart name
+		LoadActor("./PerPlayer/StepsChartName.lua", player),
+
+ 		-- steps description
+		LoadActor("./PerPlayer/StepsDescription.lua", player),
+
 		-- difficulty text and meter
 		LoadActor("./PerPlayer/Difficulty.lua", player),
 
