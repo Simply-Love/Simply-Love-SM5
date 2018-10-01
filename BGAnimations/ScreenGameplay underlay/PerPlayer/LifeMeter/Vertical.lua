@@ -3,7 +3,9 @@ local player = ...
 local width = 16
 local height = 250
 local _x = width * WideScale(1, 3.5)
+if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then _x = width * WideScale(10,16) end
 if player == PLAYER_2 then _x = _screen.w - _x end
+
 
 local swoosh, move
 
@@ -36,17 +38,6 @@ local meter = Def.ActorFrame{
 		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player)):align(0,1) end,
 		OnCommand=function(self) self:xy( _x - width/2, height/2) end,
 
-		-- check state of mind
-		HealthStateChangedMessageCommand=function(self,params)
-			if(params.PlayerNumber == player) then
-				if(params.HealthState == 'HealthState_Hot') then
-					self:diffuse(color("1,1,1,1"))
-				else
-					self:diffuse(PlayerColor(player))
-				end
-			end
-		end,
-
 		-- check life (LifeMeterBar)
 		LifeChangedMessageCommand=function(self,params)
 			if(params.Player == player) then
@@ -71,15 +62,6 @@ local meter = Def.ActorFrame{
 		OnCommand=function(self)
 			self:customtexturerect(0,0,1,1);
 			--texcoordvelocity is handled by the Update function below
-		end,
-		HealthStateChangedMessageCommand=function(self,params)
-			if(params.PlayerNumber == player) then
-				if(params.HealthState == 'HealthState_Hot') then
-					self:diffusealpha(1)
-				else
-					self:diffusealpha(0.2)
-				end
-			end
 		end,
 		LifeChangedMessageCommand=function(self,params)
 			if(params.Player == player) then
