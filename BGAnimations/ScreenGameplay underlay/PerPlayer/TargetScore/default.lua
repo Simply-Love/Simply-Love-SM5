@@ -3,6 +3,9 @@ local pn = ToEnumShortString(player)
 
 local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
 
+local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
+local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
+
 -- if nobody wants us, we won't appear
 if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
 or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"
@@ -165,6 +168,8 @@ end
 function getYFromGradeEnum(gradeEnum)
 	return percentToYCoordinate(THEME:GetMetric("PlayerStageStats", "GradePercent" .. ToEnumShortString(gradeEnum)))
 end
+
+-- Checks to see if the target score is achievable
 
 -- ActorFrame for the background of the graph
 local barsBgActor = Def.ActorFrame{
@@ -541,6 +546,16 @@ if SL[pn].ActiveModifiers.TargetScore then
 			-- that the current goal is not possible anymore?
 			if ((DPCurrMax - DPCurr) > (DPMax * (1 - targetGradeScore))) then
 				self:diffusealpha(0.65)
+				
+				-- check to see if the user wants to do something when they don't achieve their score.
+				if FailOnMissedTarget then
+					-- use SM_BeginFailed instead of SM_NotesEnded to *immediately* leave the screen instead of a nice fadeout.
+					-- we want to get back into the next round because we want that score boi.
+					SCREENMAN:GetTopScreen():PostScreenMessage("SM_BeginFailed", 0)
+				elseif RestartOnMissedTarget then
+					-- this setting assumes event mode, so no need for changing stage number.
+					SCREENMAN:GetTopScreen():SetPrevScreenName("ScreenGameplay"):SetNextScreenName("ScreenGameplay"):begin_backing_out()
+				end
 			end
 		end,
 

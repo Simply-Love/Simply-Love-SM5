@@ -286,6 +286,10 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	ActionOnMissedTarget = {
+		Values = function() return { "Nothing", "Fail", "Restart" } end,
+	},
+	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
 		Values = function() return { "ColumnFlashOnMiss", "SubtractiveScoring", "TargetScore" } end,
