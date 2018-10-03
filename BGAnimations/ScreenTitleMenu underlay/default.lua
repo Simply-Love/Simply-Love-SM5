@@ -29,6 +29,10 @@ end
 -- - - - - - - - - - - - - - - - - - - - -
 local image = ThemePrefs.Get("VisualTheme")
 
+if image == "Spooky" then  --SSHHHH dont tell anyone ;)
+	image = (math.random(1,100) > 11 and "Spooky" or "Spoopy")
+end
+
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		--see: ./Scripts/SL_Initialize.lua
