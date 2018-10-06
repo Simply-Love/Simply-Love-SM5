@@ -13,6 +13,7 @@ end
 
 -- - - - - - - - - - - - - - - - - - - - -
 local sm_version = ""
+local sl_version = GetThemeVersion()
 
 if ProductVersion():find("git") then
 	local date = VersionDate()
@@ -48,7 +49,7 @@ local af = Def.ActorFrame{
 
 		Def.BitmapText{
 			Font="_miso",
-			Text=sm_version,
+			Text=sm_version .. (sl_version and ("       Simply Love v"..sl_version) or ""),
 			InitCommand=function(self) self:y(-20):diffuse(TextColor) end,
 		},
 		Def.BitmapText{

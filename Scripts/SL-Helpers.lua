@@ -202,7 +202,7 @@ function GetPlayerOptions2LineNames()
 	if SL.Global.Gamestate.Style == "double" then
 		mods = mods:gsub("TargetStatus,TargetBar,ActionOnMissedTarget,", "")
 	end
-	
+
 	-- only show if the user is in event mode
 	-- no need to have this show up in arcades.
 	-- the pref is also checked against EventMode during runtime.
@@ -216,5 +216,15 @@ end
 BrighterOptionRows = function()
 	if ThemePrefs.Get("RainbowMode") then return true end
 	if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then return true end -- holiday cheer
+	return false
+end
+
+GetThemeVersion = function()
+	local file = IniFile.ReadFile( THEME:GetCurrentThemeDirectory() .. "ThemeInfo.ini" )
+	if file then
+		if file.ThemeInfo and file.ThemeInfo.Version then
+			return file.ThemeInfo.Version
+		end
+	end
 	return false
 end
