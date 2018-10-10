@@ -213,6 +213,28 @@ function GetPlayerOptions2LineNames()
 	return mods
 end
 
+GetStepsCredit = function(player)
+	local t = {}
+
+	if GAMESTATE:IsCourseMode() then
+		local course = GAMESTATE:GetCurrentCourse()
+		-- scripter
+		if course:GetScripter() ~= "" then t[#t+1] = course:GetScripter() end
+		-- description
+		if course:GetDescription() ~= "" then t[#t+1] = course:GetDescription() end
+	else
+		local steps = GAMESTATE:GetCurrentSteps(player)
+		-- credit
+		if steps:GetAuthorCredit() ~= "" then t[#t+1] = steps:GetAuthorCredit() end
+		-- description
+		if steps:GetDescription() ~= "" then t[#t+1] = steps:GetDescription() end
+		-- chart name
+		if steps:GetChartName() ~= "" then t[#t+1] = steps:GetChartName() end
+	end
+
+	return t
+end
+
 BrighterOptionRows = function()
 	if ThemePrefs.Get("RainbowMode") then return true end
 	if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then return true end -- holiday cheer
