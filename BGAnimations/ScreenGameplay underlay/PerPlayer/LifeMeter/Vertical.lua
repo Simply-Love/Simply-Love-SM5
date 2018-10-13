@@ -3,7 +3,13 @@ local player = ...
 local width = 16
 local height = 250
 local _x = width * WideScale(1, 3.5)
-if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then _x = width * WideScale(10,16) end
+
+if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+	_x = width * WideScale(2,8)
+elseif PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
+	_x = width * WideScale(10,16)
+end
+
 if player == PLAYER_2 then _x = _screen.w - _x end
 
 
