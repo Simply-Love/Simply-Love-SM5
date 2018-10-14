@@ -35,17 +35,24 @@ local EnableChoices = function()
 
 	-- double for 1 credit
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit" then
-		af:GetChild("")[1].Enabled = true
+		-- if both players are already joined, disable 1 Player as a choice
+		af:GetChild("")[1].Enabled = (#GAMESTATE:GetHumanPlayers() == 1)
+
 		af:GetChild("")[3].Enabled = true
-		if GAMESTATE:EnoughCreditsToJoin() then
+
+		if GAMESTATE:EnoughCreditsToJoin()
+		or #GAMESTATE:GetHumanPlayers() == 2 then
 			af:GetChild("")[2].Enabled = true
 		end
 	end
 
 	-- premium off
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_Off" then
-		af:GetChild("")[1].Enabled = true
-		if GAMESTATE:EnoughCreditsToJoin() then
+		-- if both players are already joined, disable 1 Player as a choice
+		af:GetChild("")[1].Enabled = (#GAMESTATE:GetHumanPlayers() == 1)
+
+		if GAMESTATE:EnoughCreditsToJoin()
+		or #GAMESTATE:GetHumanPlayers() == 2 then
 			af:GetChild("")[2].Enabled = true
 			af:GetChild("")[3].Enabled = true
 		end
@@ -109,7 +116,7 @@ local JoinOrUnjoinPlayersMaybe = function(style, player)
 	end
 end
 
-local DeductCreditsMaybe = function(style)
+local ManageCredits = function(style)
 
 	-- no need to deduct additional credits; just move on
 	if PREFSMAN:GetPreference("EventMode")
@@ -126,9 +133,19 @@ local DeductCreditsMaybe = function(style)
 		return
 	end
 
+	-- double for 1 credit; insert 1 credit if entering double and 2 players were joined from the title screen
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
+	and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit"
+	and #GAMESTATE:GetHumanPlayers() == 2
+	and style == "double" then
+		GAMESTATE:InsertCredit()
+		return
+	end
+
 	-- premium off; deduct 1 credit if entering versus or double
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
 	and GAMESTATE:GetPremium() == "Premium_Off"
+	and #GAMESTATE:GetHumanPlayers() == 1
 	and (style=="versus" or style=="double") then
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
@@ -147,7 +164,11 @@ local function input(event)
 	and GAMESTATE:GetPremium() ~= "Premium_2PlayersFor1Credit"
 	and not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
 		if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
+			-- join the player
 			GAMESTATE:JoinPlayer(event.PlayerNumber)
+			-- deduct a credit (it might be added back later if choosing double and DoubleFor1Credit is on)
+			GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
+			-- play a sound
 			af:GetChild("Start"):play()
 		end
 		return false
@@ -234,8 +255,8 @@ local t = Def.ActorFrame{
 	FinishCommand=function(self, params)
 		local style = choices[current_index].name
 
+		ManageCredits(style)
 		JoinOrUnjoinPlayersMaybe(style, (params and params.PlayerNumber or nil))
-		DeductCreditsMaybe(style)
 
 		-- ah, yes, techno mode
 		-- techo doesn't have styles like "single" and "double", it has "single8", "versus8", and "double8"
