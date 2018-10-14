@@ -34,9 +34,9 @@ function OptionRowLongAndMarathonTime( str )
 		Marathon={Choices=SecondsToMMSS_range(300, 600, 15), Values=range(300, 600, 15)}
 	}
 
-	choices.Long.Choices[#choices.Long.Choices+1] = "Off"
+	choices.Long.Choices[#choices.Long.Choices+1] = THEME:GetString("ThemePrefs", "Off")
 	choices.Long.Values[#choices.Long.Values+1] = 999999
-	choices.Marathon.Choices[#choices.Marathon.Choices+1] = "Off"
+	choices.Marathon.Choices[#choices.Marathon.Choices+1] = THEME:GetString("ThemePrefs", "Off")
 	choices.Marathon.Values[#choices.Marathon.Values+1] = 999999
 
 	return {
