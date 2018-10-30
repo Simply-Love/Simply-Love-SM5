@@ -84,7 +84,7 @@ return Def.ActorFrame{
 			-- clear the stepartist text, in case we're hovering over a group title
 			self:settext("")
 
-			if StepsOrCourse then
+			if SongOrCourse and StepsOrCourse then
 				text_table = GetStepsCredit(player)
 				marquee_index = 0
 

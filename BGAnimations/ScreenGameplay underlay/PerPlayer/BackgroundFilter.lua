@@ -10,7 +10,7 @@ local FilterAlpha = {
 	Darkest = 0.95
 }
 
-local filter = Def.ActorFrame{ 
+local filter = Def.ActorFrame{
 	InitCommand=function(self) self:xy(GetNotefieldX(player), _screen.cy ) end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 }
@@ -50,8 +50,9 @@ if ThemePrefs.Get("nice") > 0 then
 			local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 			local PercentDP = pss:GetPercentDancePoints()
 			local percent = FormatPercentScore(PercentDP):gsub("%%", "")
-			
-			if string.match(percent, "69") ~= nil then
+			local combo = pss:GetCurrentCombo()
+
+			if string.match(percent, "69") ~= nil or combo == 69 then
 				self:visible(true):linear(0.8):addy(-50):zoom(3):diffusealpha(0)
 			end
 		end
