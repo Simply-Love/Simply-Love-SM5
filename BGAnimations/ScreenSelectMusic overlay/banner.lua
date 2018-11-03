@@ -1,25 +1,6 @@
 local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
 local SongOrCourse, banner
 
-local function GetGroupBanner()
-	local path = '';
-	if ThemePrefs.Get('NoBannerUseToGroupBanner') then
-		SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
-		if SongOrCourse then
-			if GAMESTATE:IsCourseMode() then
-				path = SONGMAN:GetCourseGroupBannerPath(SongOrCourse:GetGroupName());
-			else
-				path = SONGMAN:GetSongGroupBannerPath(SongOrCourse:GetGroupName());
-			end
-		end
-	end
-	return path;
-end
-
-local function HasGroupBanner()
-	return GetGroupBanner() ~= '';
-end
-
 local t = Def.ActorFrame{
 	OnCommand=function(self)
 		if IsUsingWideScreen() then
@@ -32,8 +13,8 @@ local t = Def.ActorFrame{
 	end,
 
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
 		SetCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			if SongOrCourse and SongOrCourse:HasBanner() then
@@ -43,12 +24,12 @@ local t = Def.ActorFrame{
 			end
 		end,
 
-		LoadActor("colored_banners/".. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png" )..{
+		LoadActor("colored_banners/".. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .."/banner".. SL.Global.ActiveColorIndex .." (doubleres).png")..{
 			Name="FallbackBanner",
 			OnCommand=cmd(rotationy,180; setsize,418,164; diffuseshift; effectoffset,3; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1)
 		},
 
-		LoadActor("colored_banners/".. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png" )..{
+		LoadActor("colored_banners/".. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .."/banner".. SL.Global.ActiveColorIndex .." (doubleres).png")..{
 			Name="FallbackBanner",
 			OnCommand=cmd(diffuseshift; effectperiod, 6; effectcolor1, 1,1,1,0; effectcolor2, 1,1,1,1; setsize, 418,164)
 		},
@@ -57,8 +38,8 @@ local t = Def.ActorFrame{
 	Def.Sprite{
 		Name="GroupBanner",
 		OnCommand=cmd(setsize,418,164;visible,false;playcommand,"Set"),
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
 		SetCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
 			if SongOrCourse and not SongOrCourse:HasBanner() and HasGroupBanner() then

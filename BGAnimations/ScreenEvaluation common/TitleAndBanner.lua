@@ -22,25 +22,6 @@ local af = Def.ActorFrame{
 
 local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 
-local function GetGroupBanner()
-	local path = '';
-	if ThemePrefs.Get('NoBannerUseToGroupBanner') then
-		SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
-		if SongOrCourse then
-			if GAMESTATE:IsCourseMode() then
-				path = SONGMAN:GetCourseGroupBannerPath(SongOrCourse:GetGroupName());
-			else
-				path = SONGMAN:GetSongGroupBannerPath(SongOrCourse:GetGroupName());
-			end
-		end
-	end
-	return path;
-end
-
-local function HasGroupBanner()
-	return GetGroupBanner() ~= '';
-end
-
 if SongOrCourse and SongOrCourse:HasBanner() then
 	--song or course banner, if there is one
 	af[#af+1] = Def.Banner{

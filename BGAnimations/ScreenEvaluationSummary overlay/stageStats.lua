@@ -45,6 +45,8 @@ local t = Def.ActorFrame{
 			if song then
 				if GAMESTATE:IsCourseMode() then
 					self:LoadFromCourse(song)
+			elseif HasGroupBanner() then
+					self:LoadFromSongGroup(song:GetGroupName())
 				else
 					self:LoadFromSong(song)
 				end
