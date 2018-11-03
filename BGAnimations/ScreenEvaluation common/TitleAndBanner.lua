@@ -22,6 +22,25 @@ local af = Def.ActorFrame{
 
 local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 
+local function GetGroupBanner()
+	local path = '';
+	if ThemePrefs.Get('NoBannerUseToGroupBanner') then
+		SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
+		if SongOrCourse then
+			if GAMESTATE:IsCourseMode() then
+				path = SONGMAN:GetCourseGroupBannerPath(SongOrCourse:GetGroupName());
+			else
+				path = SONGMAN:GetSongGroupBannerPath(SongOrCourse:GetGroupName());
+			end
+		end
+	end
+	return path;
+end
+
+local function HasGroupBanner()
+	return GetGroupBanner() ~= '';
+end
+
 if SongOrCourse and SongOrCourse:HasBanner() then
 	--song or course banner, if there is one
 	af[#af+1] = Def.Banner{
@@ -36,10 +55,20 @@ if SongOrCourse and SongOrCourse:HasBanner() then
 		OnCommand=cmd(xy, _screen.cx, 121.5; setsize,418,164; zoom, 0.7 )
 	}
 else
-	--fallback banner
-	af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/" .. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .. "/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"))..{
-		InitCommand=function(self) self:xy( _screen.cx, 121.5):zoom(0.7) end
-	}
+	if HasGroupBanner() then
+		af[#af+1] = Def.Banner{
+			Name="GroupBanner",
+			InitCommand=function(self)
+				self:Load(GetGroupBanner());
+			end,
+			OnCommand=cmd(xy, _screen.cx, 121.5; setsize,418,164; zoom, 0.7 ),
+		};
+	else
+		--fallback banner
+		af[#af+1] = LoadActor(THEME:GetPathB("ScreenSelectMusic","overlay/colored_banners/".. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .."/banner".. SL.Global.ActiveColorIndex .." (doubleres).png"))..{
+			InitCommand=function(self) self:xy( _screen.cx, 121.5):zoom(0.7) end
+		};
+	end
 end
 
 return af

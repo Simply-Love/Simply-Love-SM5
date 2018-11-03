@@ -1,6 +1,25 @@
 local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
 local SongOrCourse, banner
 
+local function GetGroupBanner()
+	local path = '';
+	if ThemePrefs.Get('NoBannerUseToGroupBanner') then
+		SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
+		if SongOrCourse then
+			if GAMESTATE:IsCourseMode() then
+				path = SONGMAN:GetCourseGroupBannerPath(SongOrCourse:GetGroupName());
+			else
+				path = SONGMAN:GetSongGroupBannerPath(SongOrCourse:GetGroupName());
+			end
+		end
+	end
+	return path;
+end
+
+local function HasGroupBanner()
+	return GetGroupBanner() ~= '';
+end
+
 local t = Def.ActorFrame{
 	OnCommand=function(self)
 		if IsUsingWideScreen() then
@@ -35,8 +54,25 @@ local t = Def.ActorFrame{
 		},
 	},
 
+	Def.Sprite{
+		Name="GroupBanner",
+		OnCommand=cmd(setsize,418,164;visible,false;playcommand,"Set"),
+		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
+		SetCommand=function(self)
+			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
+			if SongOrCourse and not SongOrCourse:HasBanner() and HasGroupBanner() then
+				self:Load(GetGroupBanner());
+				self:visible(true);
+			else
+				self:visible(false);
+			end
+		end,
+	},
+
 	Def.ActorProxy{
 		Name="BannerProxy",
+		OnCommand=cmd(setsize,418,164),
 		BeginCommand=function(self)
 			banner = SCREENMAN:GetTopScreen():GetChild('Banner')
 			self:SetTarget(banner)

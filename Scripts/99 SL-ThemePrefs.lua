@@ -88,6 +88,14 @@ local SL_CustomPrefs =
 		},
 		Values 	= { true , false }
 	},
+	NoBannerUseToGroupBanner = {
+		Default = false,
+		Choices = {
+			THEME:GetString("ThemePrefs", "On"),
+			THEME:GetString("ThemePrefs", "Off")
+		},
+		Values 	= { true , false }
+	},
 	-- - - - - - - - - - - - - - - - - - - -
 	-- SimplyLoveColor saves the theme color for the next time
 	-- the StepMania application is started.
