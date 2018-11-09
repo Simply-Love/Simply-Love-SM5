@@ -162,6 +162,7 @@ local function input(event)
 	-- handle the case of joining an unjoined player in CoinMode_Pay
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
 	and GAMESTATE:GetPremium() ~= "Premium_2PlayersFor1Credit"
+	and GAMESTATE:EnoughCreditsToJoin()
 	and not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
 		if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
 			-- join the player
