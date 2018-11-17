@@ -44,6 +44,7 @@ local t = Def.ActorFrame{
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
 			if SongOrCourse and not SongOrCourse:HasBanner() and HasGroupBanner() then
 				self:Load(GetGroupBanner());
+				self:setsize(418,164);
 				self:visible(true);
 			else
 				self:visible(false);

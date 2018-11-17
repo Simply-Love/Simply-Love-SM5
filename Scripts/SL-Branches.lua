@@ -111,7 +111,7 @@ Branch.PlayerOptions = function()
 	if SCREENMAN:GetTopScreen():GetGoToOptions() then
 		return "ScreenPlayerOptions"
 	else
-		return "ScreenGameplay"
+		return getenv("Preview") == 1 and "ScreenGameplayPreview" or "ScreenGameplay"
 	end
 end
 

@@ -42,6 +42,12 @@ local af = Def.ActorFrame{
 		self:Center()
 	end,
 	OffCommand=cmd(linear,0.5; diffusealpha, 0),
+	CodeMessageCommand=function(self,params)
+		if params.Name == "Preview" then
+			setenv("Preview",1);
+			SCREENMAN:SystemMessage('Preview Mode');
+		end
+	end,
 
 	Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,

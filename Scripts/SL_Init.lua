@@ -65,7 +65,7 @@ local GlobalDefaults = {
 			self.ScreenAfter = {
 				PlayAgain = "ScreenEvaluationSummary",
 				PlayerOptions = "ScreenGameplay",
-				PlayerOptions2 = "ScreenGameplay"
+				PlayerOptions2 = getenv("Preview") == 1 and "ScreenGameplayPreview" or "ScreenGameplay"
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.Gamestate = {
