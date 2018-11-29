@@ -3,40 +3,19 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local kids, JudgmentSet
 
-if mods.JudgmentGraphic == "None" then return end
--- - - - - - - - - - - - - - - - - - - - - -
-
--- a Judgment might be saved to a profile from a previous GameMode
--- that doesn't exist in the current GameMode.  If so, attempt to set
--- it to the first available Judgment graphic.  If none are available,
--- set it to "None" as a last resort fallback.
-local mode = SL.Global.GameMode ~= "Casual" and SL.Global.GameMode or "Competitive"
-local path = THEME:GetPathG("", "_judgments/" .. mode )
-
-if SL.Global.GameMode == "Casual" then
-	path = THEME:GetPathG("", "_judgments/Competitive")
+------------------------------------------------------------
+-- A profile might ask for a judgment graphic that doesn't exist in the current GameMode
+-- If so, use the first available Judgment graphic
+-- If that fails too, fail gracefully and do nothing
+local mode = SL.Global.GameMode
+if mode == 'Casual' then mode = 'Competitive' end -- copied out of PlayerOptions ...
+local graphics = GetJudgmentGraphics(SL.Global.GameMode)
+local wanted_graphics = mods.JudgmentGraphic
+if not FindInTable(wanted_graphics, graphics) then
+	wanted_graphics = graphics[1] or "None"
 end
 
-
-local files = FILEMAN:GetDirListing(path .. "/")
-local judgment_exists = false
-
-for i,filename in ipairs(files) do
-	if string.match(filename, " %dx%d") then
-		local name = filename:gsub(" %dx%d", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
-		if mods.JudgmentGraphic == name then
-			judgment_exists = true
-			break
-		end
-	else
-		table.remove(files,i)
-	end
-end
-
-if not judgment_exists then
-	mods.JudgmentGraphic = files[1] or "None"
-end
-
+if wanted_graphics == "None" then return end
 
 -- - - - - - - - - - - - - - - - - - - - - -
 
@@ -88,27 +67,13 @@ local t = Def.ActorFrame {
 
 			self:pause():visible(false)
 
-			-- if we are on ScreenEdit, judgment font is always "Love"
+			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.
-			if string.match(tostring(SCREENMAN:GetTopScreen()),"ScreenEdit") then
+			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
 				self:Load( THEME:GetPathG("", "_judgments/Competitive/Love") )
 
 			else
-
-				if SL.Global.GameMode ~= "StomperZ" and SL.Global.GameMode ~= "ECFA" then
-					-- We are in Competitive or Casual GameMode.  Both will pull judgment
-					-- graphics from the same folder (_judgments/Competitive/)
-					if mods.JudgmentGraphic == "3.9" then
-						self:Load( THEME:GetPathG("", "_judgments/Competitive/3_9"))
-					else
-						self:Load( THEME:GetPathG("", "_judgments/Competitive/" .. mods.JudgmentGraphic) )
-					end
-				else
-					-- We are either in StomperZ or ECFA GameMode.
-					-- StomperZ will pull judgment graphics from "_judgments/StomperZ/"
-					-- while ECFA will pull from "_judgment/ECFA"
-					self:Load( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. mods.JudgmentGraphic) )
-				end
+				self:Load( THEME:GetPathG("", "_judgments/" .. mode .. "/" .. wanted_graphics) )
 			end
 
 		end,
