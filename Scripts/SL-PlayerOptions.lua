@@ -15,13 +15,17 @@ end
 -- Define what custom OptionRows there are, and override the
 -- generic OptionRow (defined later, below) for each as necessary.
 
--- Each OptionRow needs choices to present to the players.  Sometimes these choices can be hardcoded strings,
--- but many times, it will be nice if they can be translatable.
+-- Each OptionRow needs choices to present to the players.
+-- Sometimes using hardcoded strings is okay.
+-- Other times, we need to be able to translate the strings.
 --
--- For each of these subtables, you can specify a "Choices" function or a "Values" function
--- Both are defined here as a table of strings, but
--- a Values table will require corresponding language strings in en.ini (or es.ini, fr.ini, etc.)
--- whereas the strings in a Choices table will presented to the players as-is.
+-- For each of these subtables, you must specify a 'Choices' function and/or a 'Values' function
+-- that returns a table of strings of valid options.
+-- If you specify only 'Choices', the engine presents the strings exactly as-is.
+-- If you specify only 'Values', the engine will translate the raw strings
+-- using the corresponding display strings in en.ini (or es.ini, fr.ini, etc.)
+-- If you specify both, then the strings in 'Choices' are presented as is,
+-- but the strings in 'Values' are what the theme stores into the ActiveModifiers table.
 local Overrides = {
 
 	-------------------------------------------------------------------------
@@ -448,12 +452,17 @@ local OptionRowDefault = {
 			self.Name = name
 
 			if Overrides[name].Values then
-				self.Choices = {}
-				for i, v in ipairs( Overrides[name].Values() ) do
-					self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
+				if Overrides[name].Choices then
+					self.Choices = Overrides[name].Choices()
+					self.Values = Overrides[name].Values()
+				else
+					self.Choices = {}
+					for i, v in ipairs( Overrides[name].Values() ) do
+						self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
+					end
 				end
 			else
-				self.Choices = Overrides[name]:Choices()
+				self.Choices = Overrides[name].Choices()
 			end
 
 			-- define fallback values to use here if an override isn't specified
