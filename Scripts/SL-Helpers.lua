@@ -158,6 +158,12 @@ end
 function GetOperatorMenuLineNames()
 	local lines = "ClearCredits,System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,Reload"
 
+	-- hide the OptionRow for ClearCredits if we're not in CoinMode_Pay; it doesn't make sense to show for at-home players
+	-- note that (EventMode + CoinMode_Pay) will actually place you in CoinMode_Home
+	if GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then
+		lines = lines:gsub("ClearCredits,", "")
+	end
+
 	-- CustomSongs preferences don't exist in 5.0.x, which many players may still be using
 	-- thus, if the preference for CustomSongsEnable isn't found in this version of SM, don't let players
 	-- get into the CustomSongs submenu in the OperatorMenu by removing that OptionRow
