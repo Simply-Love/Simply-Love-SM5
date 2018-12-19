@@ -23,7 +23,7 @@ Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible
 If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/).  Additionally, you may find these links helpful for your given operating system:
 
   * **Windows** -  [This issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64) provides links to the needed DirectX and VS2013 redistributable packages.
-  * **macOS** - If you are unable to open the dmg installer with an error like "No mountable file systems", you'll need to [update your copy of macOS](https://github.com/stepmania/stepmania/issues/1726) for the time being. If you are encountering the "No NoteSkins found" error, [this GitHub comment](https://github.com/stepmania/stepmania/issues/1299#issuecomment-275114142) provides a means of resolving it on your computer until it is properly fixed upstream.
+  * **macOS** - If you are unable to open the dmg installer with an error like "No mountable file systems", you'll need to [update your copy of macOS](https://github.com/stepmania/stepmania/issues/1726) for the time being. If you are encountering the "No NoteSkins found" error, [this wiki page](https://github.com/dguzek/Simply-Love-SM5/wiki/Installing-StepMania-5.1-beta-on-macOS) provides a means of resolving it on your computer until it is properly fixed upstream.
   * **Linux** - It is more or less assumed that you will build your own executables if you are using Linux.  StepMania's GitHub wiki provides both a [list of dependencies](https://github.com/stepmania/stepmania/wiki/Linux-Dependencies) and some [instructions on compiling](https://github.com/stepmania/stepmania/wiki/Compiling-StepMania).
 
 
@@ -71,6 +71,7 @@ Simply Love has full support for:
   * English
   * Español
   * Français
+  * Português Brasileiro
 
 The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
 
