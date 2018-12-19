@@ -240,7 +240,7 @@ function GetNPSperMeasure(Song, StepsType, Difficulty)
 			end
 
 			-- measureCount in SM truly starts at 0, but indexed Lua tables start at 1
-			-- add 1 now to the table behaves and subtract 1 later when drawing the histogram
+			-- add 1 now so the table behaves and subtract 1 later when drawing the histogram
 			Density[measureCount+1] = NPSforThisMeasure
 
 			-- determine whether this measure contained the PeakNPS
