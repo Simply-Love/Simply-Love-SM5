@@ -52,7 +52,7 @@ local t = Def.ActorFrame {
 
 		-- Allow players to switch from single to double and from double to single
 		-- but only present these options if Joint Double or Joint Premium is enabled
-		if PREFSMAN:GetPreference("Premium") ~= "Premium_Off" then
+		if not (PREFSMAN:GetPreference("Premium") == "Premium_Off" and GAMESTATE:GetCoinMode() == "CoinMode_Pay") then
 			if SL.Global.Gamestate.Style == "single" then
 				table.insert(wheel_options, {"ChangeStyle", "Double"})
 			elseif SL.Global.Gamestate.Style == "double" then
