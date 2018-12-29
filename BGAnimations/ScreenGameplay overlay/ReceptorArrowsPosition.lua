@@ -1,9 +1,7 @@
 -- ReceptorArrow positions are hardcoded using Metrics.ini
 -- in both Casual, Competitive, and ECFA modes.  If we're in one
 -- of those modes, bail now.
-if SL.Global.GameMode ~= "StomperZ" then
-	return Def.Actor{}
-end
+if SL.Global.GameMode ~= "StomperZ" then return end
 
 local player = ...
 

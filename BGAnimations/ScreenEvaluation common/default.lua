@@ -3,10 +3,10 @@ local NumPanes = SL.Global.GameMode=="Casual" and 1 or 4
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
-	
+
 	-- add a lua-based InputCalllback to this screen so that we can navigate
 	-- through multiple panes of information; pass a reference to this ActorFrame
-	-- and the number of panes there are to InputHanlder.lua
+	-- and the number of panes there are to InputHandler.lua
 	OnCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {af=self, num_panes=NumPanes}) )
 	end,
@@ -28,7 +28,10 @@ local t = Def.ActorFrame{
 
 	-- store some attributes of this playthrough of this song in the global SL table
 	-- for later retrieval on ScreenEvaluationSummary
-	LoadActor("./GlobalStorage.lua")
+	LoadActor("./GlobalStorage.lua"),
+
+	-- help text that appears if we're in Casual gamemode
+	LoadActor("./CasualHelpText.lua")
 }
 
 
@@ -67,16 +70,11 @@ for player in ivalues(Players) do
 	local lower = Def.ActorFrame{
 		Name=ToEnumShortString(player).."_AF_Lower",
 		OnCommand=function(self)
-
 			-- if double style, center the gameplay stats
 			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
 				self:x(_screen.cx)
 			else
-				if player == PLAYER_1 then
-					self:x(_screen.cx - 155)
-				elseif player == PLAYER_2 then
-					self:x(_screen.cx + 155)
-				end
+				self:x(_screen.cx + (player==PLAYER_1 and -155 or 155))
 			end
 		end,
 
@@ -89,7 +87,7 @@ for player in ivalues(Players) do
 					self:diffusealpha(0.9)
 				end
 			end,
-			-- this background Quad may need to shrink and expand if we're playing double 
+			-- this background Quad may need to shrink and expand if we're playing double
 			-- and need more space to accommodate more columns of arrows;  these commands
 			-- are queued as needed from the InputHandler
 			ShrinkCommand=function(self)
@@ -109,7 +107,7 @@ for player in ivalues(Players) do
 		-- was this player disqualified from ranking?
 		LoadActor("./PerPlayer/Disqualified.lua", player),
 	}
-	
+
 	-- add available Panes to the lower ActorFrame via a loop
 	for i=1, NumPanes do
 		lower[#lower+1] = LoadActor("./PerPlayer/Pane"..i, player)

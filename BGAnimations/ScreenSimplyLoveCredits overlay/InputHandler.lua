@@ -1,8 +1,10 @@
 local args = ...
 local af = args[1]
-local pages = args[2]
+local num_pages = args[2]
 local page = 1
-local next_page
+
+local left_arrow = af:GetChild("LeftArrow")
+local right_arrow = af:GetChild("RightArrow")
 
 -- assume that the player has dedicated MenuButtons
 local buttons = {
@@ -34,12 +36,14 @@ local InputHandler = function(event)
 		end
 
 		if buttons[event.GameButton] ~= nil then
-			next_page = page + buttons[event.GameButton]
+			page = clamp(page + buttons[event.GameButton], 1, num_pages)
 
-			if next_page > 0 and next_page < pages+1 then
-				page = next_page
-				af:stoptweening():queuecommand("Hide"):queuecommand("ShowPage"..page)
-				af:playcommand("Update",{page=page})
+			af:finishtweening():queuecommand("Hide"):queuecommand("ShowPage"..page)
+			af:GetChild("PageNumber"):finishtweening():playcommand("Update",{page=page})
+
+			if left_arrow and right_arrow then
+				left_arrow:visible( page > 1 )
+				right_arrow:visible( page < num_pages )
 			end
 		end
 	end

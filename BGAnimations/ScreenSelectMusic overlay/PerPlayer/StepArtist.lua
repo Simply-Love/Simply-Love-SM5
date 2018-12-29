@@ -2,6 +2,8 @@ local player = ...
 local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
 
+local text_table, marquee_index
+
 return Def.ActorFrame{
 	Name="StepArtistAF_" .. pn,
 	InitCommand=cmd(draworder,1),
@@ -76,13 +78,39 @@ return Def.ActorFrame{
 			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
 
-			-- if we're hovering over a group title, clear the stepartist text
-			if not SongOrCourse then
-				self:settext("")
-			elseif StepsOrCourse then
-				local stepartist = GAMESTATE:IsCourseMode() and StepsOrCourse:GetScripter() or StepsOrCourse:GetAuthorCredit()
-				self:settext(stepartist or "")
+			-- always stop tweening when steps change in case a MarqueeCommand is queued
+			self:stoptweening()
+
+			-- clear the stepartist text, in case we're hovering over a group title
+			self:settext("")
+
+			if SongOrCourse and StepsOrCourse then
+				text_table = GetStepsCredit(player)
+				marquee_index = 0
+
+				-- only queue a marquee if there are things in the text_table to display
+				if #text_table > 0 then self:queuecommand("Marquee") end
 			end
-		end
+		end,
+		MarqueeCommand=function(self)
+			-- increment the marquee_index, and keep it in bounds
+			marquee_index = (marquee_index % #text_table) + 1
+			-- retrieve the text we want to display
+			local text = text_table[marquee_index]
+
+			-- set this BitmapText actor to display that text
+			self:settext( text )
+
+			-- account for the possibility that emojis shouldn't be diffused to Color.Black
+			for i=1, text:utf8len() do
+				if text:utf8sub(i,i):byte() >= 240 then
+					self:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
+				end
+			end
+
+			-- sleep 2 seconds before queueing the next Marquee command to do this again
+			self:sleep(2):queuecommand("Marquee")
+		end,
+		OffCommand=function(self) self:stoptweening() end
 	}
 }

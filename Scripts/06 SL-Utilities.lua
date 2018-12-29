@@ -98,10 +98,6 @@ function SM( arg )
 		local msg = TableToString_Recursive(arg)
 		-- and SystemMessage() that string
 		SCREENMAN:SystemMessage( msg )
-
-		-- tables as strings spill off SM's screen height quickly,
-		-- so we might as well also do a proper Trace() to ./Logs/log.txt
-		Trace( msg )
 	else
 		SCREENMAN:SystemMessage( tostring(arg) )
 	end

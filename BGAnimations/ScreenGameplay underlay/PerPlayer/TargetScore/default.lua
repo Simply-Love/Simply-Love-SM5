@@ -1,13 +1,19 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
+local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
+
+local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
+local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
+
 -- if nobody wants us, we won't appear
 if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
 or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"
+or SL.Global.GameMode == "Casual"
 or SL.Global.Gamestate.Style == "double")
 and (not SL[pn].ActiveModifiers.TargetScore)
 then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+	return
 end
 
 
@@ -162,6 +168,8 @@ end
 function getYFromGradeEnum(gradeEnum)
 	return percentToYCoordinate(THEME:GetMetric("PlayerStageStats", "GradePercent" .. ToEnumShortString(gradeEnum)))
 end
+
+-- Checks to see if the target score is achievable
 
 -- ActorFrame for the background of the graph
 local barsBgActor = Def.ActorFrame{
@@ -406,15 +414,15 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			-- pretty explody thingies for grade changes
 
-			LoadActor("./heartsplode")..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_splode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,0.5; diffusealpha,0),
 			},
-			LoadActor("./heartsplode")..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_splode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,0.7; diffusealpha,0),
 			},
-			LoadActor("./minisplode")..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_minisplode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.4; diffusealpha,0),
 			},
@@ -438,7 +446,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			Def.BitmapText{
 				Font="_miso",
-				Text="You",
+				Text=THEME:GetString("TargetScoreGraph", "You"),
 				InitCommand=function(self)
 					self:xy( barOffset + barSpacing + (barWidth/2), 20 )
 				end,
@@ -446,7 +454,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			Def.BitmapText{
 				Font="_miso",
-				Text="Personal",
+				Text=THEME:GetString("TargetScoreGraph", "Personal"),
 				InitCommand=function(self)
 					self:xy( barOffset + (barSpacing * 2) + (barWidth/2) + barWidth, 20 )
 				end,
@@ -454,7 +462,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 
 			Def.BitmapText{
 				Font="_miso",
-				Text="Target",
+				Text=THEME:GetString("TargetScoreGraph", "Target"),
 				InitCommand=function(self)
 					self:xy( barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, 20 )
 				end,
@@ -463,26 +471,96 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 	end
 end
 
--- pacemaker text (or subtractive scoring, if that's your thing)
+
+-- pacemaker text
 if SL[pn].ActiveModifiers.TargetScore then
 	finalFrame[#finalFrame+1] = Def.BitmapText{
 		Font="_wendy small",
-		Text="+0.00",
 		InitCommand=function(self)
+
 			local noteX
-			-- aligned to the score
-			if (player == PLAYER_1) then
-				noteX = GetNotefieldX(player) + (GetNotefieldWidth() / 4) - graphX
+			local noteY
+			local zoomF = 0.4
+			local origX = GetNotefieldX(player)
+
+			-- special casing: StomperZ with its receptor positions would appear over the normal pacemaker position
+			if SL.Global.GameMode == "StomperZ" and SL[pn].ActiveModifiers.ReceptorArrowsPosition == "StomperZ" then
+				-- put ourself just over the combo
+				noteY = _screen.cy - 60
+				zoomF = 0.35
+
+				-- copied from MeasureCounter.lua
+				local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+				local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+
+				noteX = (width/NumColumns)
+
+				self:shadowlength(1) -- match other playfield counters
 			else
-				noteX = GetNotefieldX(player) - (GetNotefieldWidth() / 4) - graphX - 15
+				noteY = 56
+				noteX = GetNotefieldWidth() / 4
+				-- this serendipitiously works for doubles, somehow
+
+				-- ugly, ugly, U G L Y antisymmetry kludge
+				if (player ~= PLAYER_1 and isTwoPlayers) then
+					noteX = noteX + 25 -- this gets reversed...
+				end
 			end
 
-			self:xy( noteX, 56 - graphY ):zoom(0.4)
+			-- flip x-coordinate based on player
+			if (player ~= PLAYER_1) then
+				noteX = -1 * noteX
+			end
+			noteX = noteX + origX
+
+			-- compensate so that we can use "normal" coordinate systems
+			self:horizalign(center):xy( noteX - graphX, noteY - graphY ):zoom(zoomF)
+
 		end,
 		UpdateCommand=function(self)
-			local percentDifference = pss:GetPercentDancePoints() - (targetGradeScore * GetCurMaxPercentDancePoints())
-			self:settext(string.format("%+2.2f", percentDifference * 100))
-		end
+			local DPCurr = pss:GetActualDancePoints()
+			local DPCurrMax = pss:GetCurrentPossibleDancePoints()
+			local DPMax = pss:GetPossibleDancePoints()
+
+			local percentDifference = (DPCurr - (targetGradeScore * DPCurrMax)) / DPMax
+
+			-- cap negative score displays
+			percentDifference = math.max(percentDifference, -targetGradeScore)
+
+			local places = 2
+			-- if there's enough dance points so that our current precision is ambiguous,
+			-- i.e. each dance point is less than half of a digit in the last place,
+			-- and we don't already display 2.5 digits,
+			-- i.e. 2 significant figures and (possibly) a leading 1,
+			-- add a decimal point.
+			-- .1995 prevents flickering between .01995, which is rounded and displayed as ".0200", and
+			-- and an actual .0200, which is displayed as ".020"
+			while (math.abs(percentDifference) < 0.1995 / math.pow(10, places))
+				and (DPMax >= 2 * math.pow(10, places + 2)) and (places < 4) do
+				places = places + 1
+			end
+
+			self:settext(string.format("%+."..places.."f", percentDifference * 100))
+
+			-- have we already missed so many dance points
+			-- that the current goal is not possible anymore?
+			if ((DPCurrMax - DPCurr) > (DPMax * (1 - targetGradeScore))) then
+				self:diffusealpha(0.65)
+				
+				-- check to see if the user wants to do something when they don't achieve their score.
+				if FailOnMissedTarget then
+					-- use SM_BeginFailed instead of SM_NotesEnded to *immediately* leave the screen instead of a nice fadeout.
+					-- we want to get back into the next round because we want that score boi.
+					SCREENMAN:GetTopScreen():PostScreenMessage("SM_BeginFailed", 0)
+				elseif RestartOnMissedTarget then
+					-- this setting assumes event mode, so no need for changing stage number.
+					SCREENMAN:GetTopScreen():SetPrevScreenName("ScreenGameplay"):SetNextScreenName("ScreenGameplay"):begin_backing_out()
+				end
+			end
+		end,
+
+
+
 	}
 end
 

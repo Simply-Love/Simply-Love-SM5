@@ -17,7 +17,7 @@ if SL.Global.GameMode ~= "Casual" then
 	local TimingWindowScale = round(PREFSMAN:GetPreference("TimingWindowScale") * 100)
 
 	--  ...and append options to that string as needed
-	for k,option in ipairs(PlayerOptions) do
+	for i,option in ipairs(PlayerOptions) do
 
 		-- these don't need to show up in the mods list
 		if option ~= "FailAtEnd" and option ~= "FailImmediateContinue" and option ~= "FailImmediate" then
@@ -26,7 +26,11 @@ if SL.Global.GameMode ~= "Casual" then
 				option = SL[pn].ActiveModifiers.Mini .. " Mini"
 			end
 
-			if k < #PlayerOptions then
+			if option:match("Cover") then
+				option = THEME:GetString("OptionNames", "Cover")
+			end
+
+			if i < #PlayerOptions then
 				optionslist = optionslist..option..", "
 			else
 				optionslist = optionslist..option
@@ -39,6 +43,8 @@ if SL.Global.GameMode ~= "Casual" then
 		optionslist = optionslist .. ", " .. tostring(TimingWindowScale) .. "% Timing Window"
 	end
 
+	local font_zoom = 0.7
+
 	return Def.ActorFrame{
 		OnCommand=cmd(y, _screen.cy+200.5),
 
@@ -48,7 +54,7 @@ if SL.Global.GameMode ~= "Casual" then
 
 		LoadFont("_miso")..{
 			Text=optionslist,
-			InitCommand=cmd(zoom,0.7; xy,-140,-5; horizalign,left; vertalign,top; vertspacing, -6; wrapwidthpixels, 290 / 0.7 )
+			InitCommand=cmd(zoom, font_zoom; xy,-140,-5; align, 0,0; vertspacing, -6; wrapwidthpixels, 290 / font_zoom )
 		}
 	}
 end

@@ -30,7 +30,7 @@ local af = Def.ActorFrame{}
 for i, label in ipairs(TNSNames) do
 	af[#af+1] = LoadFont("_miso")..{
 		Text=label:upper(),
-		InitCommand=cmd(zoom,0.833; horizalign,right ),
+		InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 72 ),
 		BeginCommand=function(self)
 			self:x(80):y((i-1)*28 - 226)
 				:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )

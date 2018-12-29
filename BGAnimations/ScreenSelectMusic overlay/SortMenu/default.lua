@@ -50,18 +50,22 @@ local t = Def.ActorFrame {
 			{"SortBy", "Recent"}
 		}
 
-		if SL.Global.Gamestate.Style == "single" then
-			table.insert(wheel_options, {"ChangeStyle", "Double"})
-		elseif SL.Global.Gamestate.Style == "double" then
-			table.insert(wheel_options, {"ChangeStyle", "Single"})
+		-- Allow players to switch from single to double and from double to single
+		-- but only present these options if Joint Double or Joint Premium is enabled
+		if not (PREFSMAN:GetPreference("Premium") == "Premium_Off" and GAMESTATE:GetCoinMode() == "CoinMode_Pay") then
+			if SL.Global.Gamestate.Style == "single" then
+				table.insert(wheel_options, {"ChangeStyle", "Double"})
+			elseif SL.Global.Gamestate.Style == "double" then
+				table.insert(wheel_options, {"ChangeStyle", "Single"})
+			end
 		end
 
 
 		-- Allow players to switch out to a different GameMode if no stages have been played yet.
 		if SL.Global.Stages.PlayedThisGame == 0 then
-			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
-			table.insert(wheel_options, {"ChangeMode", "Casual"})
 			table.insert(wheel_options, {"ChangeMode", "Competitive"})
+			table.insert(wheel_options, {"ChangeMode", "ECFA"})
+			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
 		end
 
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
@@ -132,26 +136,16 @@ local t = Def.ActorFrame {
 	},
 
 	-- "Press SELECT To Cancel" text
-	Def.ActorFrame{
+	Def.BitmapText{
+		Font="_wendy small",
+		Text=ScreenString("Cancel"),
 		InitCommand=function(self)
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
 				self:visible(false)
+			else
+				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffusealpha(0.6)
 			end
-		end,
-		Def.BitmapText{
-			Font="_wendy small",
-			Text=ScreenString("Cancel"),
-			InitCommand=function(self)
-				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffuse(0.4, 0.4, 0.4, 1)
-			end
-		},
-		Def.BitmapText{
-			Font="_wendy small",
-			Text=ScreenString("SelectButton"),
-			InitCommand=function(self)
-				self:xy(_screen.cx-13, _screen.cy+78):zoom(0.5)
-			end
-		}
+		end
 	},
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )

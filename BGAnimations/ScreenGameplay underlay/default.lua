@@ -6,34 +6,37 @@ end
 local Players = GAMESTATE:GetHumanPlayers()
 local t = Def.ActorFrame{ Name="GameplayUnderlay" }
 
--- underlay stuff like Danger and BackgroundFilter
+
 for player in ivalues(Players) do
+	-- StepStatistics takes up the full screenwidth and thus needs to draw under everything else
+	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
+	-- actual underlays
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/BackgroundFilter.lua", player)
 end
 
--- semi-transparent quad at the top of ScreenGameplay
+-- shared UI elements for both players
 t[#t+1] = LoadActor("./Shared/Header.lua")
+t[#t+1] = LoadActor("./Shared/SongInfoBar.lua") -- title and progress bar
 
--- Song title and progress bar for how much song remains
-t[#t+1] = LoadActor("./Shared/SongInfoBar.lua")
-
--- More per-player stuff
+-- per-player UI elements
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
+
 	t[#t+1] = LoadActor("./PerPlayer/LifeMeter/default.lua", player)
+
 	t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/TargetScore/default.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/SubtractiveScoring.lua", player)
 end
 
+-- gets overlapped by StepStatistics otherwise...?
+t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	t[#t+1] = LoadActor("./Shared/WhoIsCurrentlyWinning.lua")
 end
-
-t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
 return t

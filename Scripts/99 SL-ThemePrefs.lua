@@ -61,7 +61,10 @@ local SL_CustomPrefs =
 	ShowGradesInMusicWheel =
 	{
 		Default = false,
-		Choices = { "Show", "Hide "},
+		Choices = {
+			THEME:GetString("ThemePrefs", "Show"),
+			THEME:GetString("ThemePrefs", "Hide")
+		},
 		Values = { true, false }
 	},
 	VisualTheme =
@@ -71,13 +74,18 @@ local SL_CustomPrefs =
 			THEME:GetString("ThemePrefs", "Hearts"),
 			THEME:GetString("ThemePrefs", "Arrows"),
 			THEME:GetString("ThemePrefs", "Bears"),
+			THEME:GetString("ThemePrefs", "Ducks"),
+			THEME:GetString("ThemePrefs", "Spooky"),
 			THEME:GetString("ThemePrefs", "Gay"),
 		},
-		Values  = { "Hearts", "Arrows", "Bears", "Gay" },
+		Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Spooky", "Gay" },
 	},
 	RainbowMode = {
 		Default = false,
-		Choices = { "On", "Off" },
+		Choices = {
+			THEME:GetString("ThemePrefs", "On"),
+			THEME:GetString("ThemePrefs", "Off")
+		},
 		Values 	= { true , false }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
@@ -94,6 +102,12 @@ local SL_CustomPrefs =
 	-- - - - - - - - - - - - - - - - - - - -
 	-- MenuTimer values for various screens
 	ScreenSelectMusicMenuTimer =
+	{
+		Default = 300,
+		Choices = SecondsToMMSS_range(60, 450, 15),
+		Values = range(60, 450, 15),
+	},
+	ScreenSelectMusicCasualMenuTimer =
 	{
 		Default = 300,
 		Choices = SecondsToMMSS_range(60, 450, 15),
@@ -157,11 +171,28 @@ local SL_CustomPrefs =
 		Values 	= { true, false }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
-	-- memes
-	nice = {
+	-- Casual GameMode Settings
+	CasualMaxMeter = {
+		Default = 10,
+		Choices = range(5, 15, 1),
+		Values = range(5, 15, 1)
+	},
+
+	-- - - - - - - - - - - - - - - - - - - -
+	-- SM5.1's ImageCache System (used in CasualMode)
+	UseImageCache = {
 		Default = false,
-		Choices = { THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","Off") },
-		Values  = { true, false }
+		Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values	= { true, false }
+	},
+
+	-- - - - - - - - - - - - - - - - - - - -
+	-- nice meme
+	-- 0 is off, 1 is visuals only, 2 is visuals and sound.
+	nice = {
+		Default = 0,
+		Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound"),  },
+		Values  = { 0, 1, 2 }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
 	--- ???

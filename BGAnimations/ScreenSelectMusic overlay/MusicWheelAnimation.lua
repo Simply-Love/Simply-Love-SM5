@@ -15,12 +15,14 @@ for i=1,NumWheelItems-1 do
 	-- upper
 	t[#t+1] = Def.Quad{
 		InitCommand=cmd(xy, _screen.cx+_screen.w/4, 9 + (_screen.h/(NumWheelItems+1))*i; zoomto, _screen.w/2, (_screen.h/(NumWheelItems))/2; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
-		OnCommand=cmd(sleep, i*0.057; linear,0.125; cropbottom,1; diffusealpha,0.5)
+		OnCommand=cmd(sleep, i*0.057; linear,0.125; cropbottom,1; diffusealpha, 0.5; queuecommand, "Hide"),
+		HideCommand=function(self) self:visible(false) end
 	}
 	-- lower
 	t[#t+1] = Def.Quad{
 		InitCommand=cmd(xy, _screen.cx+_screen.w/4, 25 + (_screen.h/(NumWheelItems+1))*i; zoomto, _screen.w/2, (_screen.h/(NumWheelItems))/2; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
-		OnCommand=cmd(sleep, i*0.057; linear,0.125; croptop,1; diffusealpha,0.5)
+		OnCommand=cmd(sleep, i*0.057; linear,0.125; croptop,1; diffusealpha, 0.5; queuecommand, "Hide"),
+		HideCommand=function(self) self:visible(false) end
 	}
 end
 

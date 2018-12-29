@@ -12,7 +12,7 @@ local labelX_col2 = WideScale(10,20)
 local dataX_col2  = WideScale(5,15)
 
 local highscoreX = WideScale(56, 80)
-local highscorenameX = WideScale(84, 120)
+local highscorenameX = WideScale(61, 97)
 
 local PaneItems = {}
 
@@ -155,13 +155,29 @@ local pd = Def.ActorFrame{
 	StepsHaveChangedCommand=cmd(queuecommand,"Set"),
 	SetCommand=function(self)
 		local machine_score, machine_name = GetNameAndScore( PROFILEMAN:GetMachineProfile() )
+
 		self:GetChild("MachineHighScore"):settext(machine_score)
-		self:GetChild("MachineHighScoreName"):settext(machine_name)
+		self:GetChild("MachineHighScoreName"):settext(machine_name):diffuse({0,0,0,1})
+
+		-- loop through each char in the string, checking for emojis; if any are found
+		-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
+		for i=1, machine_name:utf8len() do
+			if machine_name:utf8sub(i,i):byte() >= 240 then
+				self:GetChild("MachineHighScoreName"):AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
+			end
+		end
 
 		if PROFILEMAN:IsPersistentProfile(player) then
 			local player_score, player_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
+
 			self:GetChild("PlayerHighScore"):settext(player_score)
-			self:GetChild("PlayerHighScoreName"):settext(player_name)
+			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse({0,0,0,1})
+
+			for i=1, player_name:utf8len() do
+				if player_name:utf8sub(i,i):byte() >= 240 then
+					self:GetChild("PlayerHighScoreName"):AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
+				end
+			end
 		end
 	end
 }
@@ -169,7 +185,7 @@ local pd = Def.ActorFrame{
 -- colored background for chart statistics
 pd[#pd+1] = Def.Quad{
 	Name="BackgroundQuad",
-	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/3 + 15.33 ),
+	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/2 - 67 ),
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
@@ -241,7 +257,7 @@ pd[#pd+1] = Def.BitmapText{
 			self:settext("")
 		else
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-			local meter = StepsOrTrail and StepsOrTrail:GetMeter()			
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter()
 			self:settext( meter and meter or  "?" )
 		end
 	end
@@ -258,7 +274,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="MachineHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1; maxwidth, 60)
+	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }
 
 
@@ -273,7 +289,7 @@ pd[#pd+1] = Def.BitmapText{
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
 	Name="PlayerHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, color("0,0,0,1"); halign, 1)
+	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }
 
 return pd

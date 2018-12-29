@@ -14,7 +14,8 @@ function getStringFromTheme( arg )
 	return THEME:GetString("TapNoteScore" .. mode, arg);
 end
 
-local nice = ThemePrefs.Get("nice")
+--Values above 0 means the user wants to be shown or told they are nice.
+local nice = ThemePrefs.Get("nice") > 0
 
 -- i'm learning haskell okay? map is nice
 function map(func, array)
@@ -41,6 +42,13 @@ local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Rolls')
 }
 
+local EnglishRadarCategories = {
+	[THEME:GetString("ScreenEvaluation", 'Holds')] = "Holds",
+	[THEME:GetString("ScreenEvaluation", 'Mines')] = "Mines",
+	[THEME:GetString("ScreenEvaluation", 'Hands')] = "Hands",
+	[THEME:GetString("ScreenEvaluation", 'Rolls')] = "Rolls",
+}
+
 local scores_table = {}
 for index, window in ipairs(TapNoteScores.Types) do
 	local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
@@ -64,7 +72,7 @@ for index, window in ipairs(TapNoteScores.Types) do
 
 	t[#t+1] = LoadFont("_miso")..{
 		Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper();
-		InitCommand=cmd(zoom,0.833; horizalign,right ),
+		InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 76),
 		BeginCommand=function(self)
 			self:x( (player == PLAYER_1 and 28) or -28 )
 			self:y((index-1)*28 -16)
@@ -95,8 +103,8 @@ end
 -- labels: holds, mines, hands, rolls
 for index, label in ipairs(RadarCategories) do
 
-	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(label) )
-	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(label) )
+	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
+	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
 	t[#t+1] = LoadFont("_miso")..{
 		-- lua ternary operators are adorable

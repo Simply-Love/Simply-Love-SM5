@@ -1,5 +1,17 @@
 if not Branch then Branch = {} end
 
+SelectMusicOrCourse = function()
+	if GAMESTATE:IsCourseMode() then
+		return "ScreenSelectCourse"
+	else
+		if SL.Global.GameMode == "Casual" then
+			return "ScreenSelectMusicCasual"
+		end
+
+		return "ScreenSelectMusic"
+	end
+end
+
 Branch.AllowScreenNameEntry = function()
 
 	-- If we're in Casual mode, don't allow NameEntry, and don't
@@ -41,12 +53,25 @@ end
 
 Branch.AfterScreenSelectColor = function()
 	local preferred_style = ThemePrefs.Get("AutoStyle")
-	if preferred_style ~= "none" then
+
+	if preferred_style ~= "none"
+	-- AutoStyle should not be possible in pay mode
+	-- it's too confusing for machine operators, novice players, and developers alike
+	and GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then
+
 		-- If "versus" ensure that both players are actually considered joined.
 		if preferred_style == "versus" then
 			GAMESTATE:JoinPlayer(PLAYER_1)
 			GAMESTATE:JoinPlayer(PLAYER_2)
+
+		-- if "single" but both players are already joined (for whatever reason),
+		-- we're in a bit of a pickle, as there is no way to read the player's mind
+		-- and know which side they really want to play on
+		-- Unjoin PLAYER_2 for lack of a better solution
+		elseif preferred_style == "single" then
+			GAMESTATE:UnjoinPlayer(PLAYER_2)
 		end
+
 		GAMESTATE:SetCurrentStyle( preferred_style )
 		-- set this here to be used later with the continue system
 		SL.Global.Gamestate.Style = preferred_style
@@ -67,11 +92,7 @@ Branch.AfterEvaluationStage = function()
 end
 
 Branch.AfterSelectPlayMode = function()
-	if GAMESTATE:GetPlayMode() == "PlayMode_Nonstop" then
-		return "ScreenSelectCourseNonstop"
-	else
-		return "ScreenSelectMusic"
-	end
+	return SelectMusicOrCourse()
 end
 
 

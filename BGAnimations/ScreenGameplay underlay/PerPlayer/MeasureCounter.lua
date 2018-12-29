@@ -1,3 +1,6 @@
+-- don't allow MeasureCounter to appear in Casual gamemode via profile settings
+if SL.Global.GameMode == "Casual" then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
@@ -72,7 +75,7 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 		InitCommand=function(self)
 			MeasureCounterBMT = self
 
-			self:zoom(0.35):shadowlength(1)
+			self:zoom(0.35):shadowlength(1):horizalign(center)
 
 			if mods.MeasureCounterPosition == "Center" then
 				self:xy( GetNotefieldX(player), _screen.cy )

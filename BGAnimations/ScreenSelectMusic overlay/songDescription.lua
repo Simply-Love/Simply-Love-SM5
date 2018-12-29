@@ -1,11 +1,7 @@
 local t = Def.ActorFrame{
 
 	OnCommand=function(self)
-		if IsUsingWideScreen() then
-			self:xy(_screen.cx - 170, _screen.cy - 28)
-		else
-			self:xy(_screen.cx - 165, _screen.cy - 28)
-		end
+		self:xy(_screen.cx - (IsUsingWideScreen() and 170 or 165), _screen.cy - 28)
 	end,
 
 	-- ----------------------------------------
@@ -40,8 +36,9 @@ local t = Def.ActorFrame{
 					local text = GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"
 					self:settext( THEME:GetString("SongDescription", text) )
 						:horizalign(right):y(-12)
+						:maxwidth(44)
 				end,
-				OnCommand=cmd(diffuse,color("0.5,0.5,0.5,1"))
+				OnCommand=function(self) self:diffuse(0.5,0.5,0.5,1) end
 			},
 
 			-- Song Artist
@@ -70,36 +67,30 @@ local t = Def.ActorFrame{
 
 			-- BPM Label
 			LoadFont("_miso")..{
-				InitCommand=cmd(horizalign, right; NoStroke; y, 8),
-				SetCommand=function(self)
-					self:diffuse(0.5,0.5,0.5,1)
-					self:settext( THEME:GetString("SongDescription", "BPM")  )
+				Text=THEME:GetString("SongDescription", "BPM"),
+				InitCommand=function(self)
+					self:horizalign(right):y(8)
+						:diffuse(0.5,0.5,0.5,1)
 				end
 			},
 
 			-- BPM value
 			LoadFont("_miso")..{
-				InitCommand=cmd(horizalign, left; NoStroke; y, 8; x, 5; diffuse, color("1,1,1,1")),
+				InitCommand=cmd(horizalign, left; y, 8; x, 5; diffuse, color("1,1,1,1")),
 				SetCommand=function(self)
-
 					--defined in ./Scipts/SL-CustomSpeedMods.lua
 					local text = GetDisplayBPMs()
-
-					if text then
-						self:settext(text)
-					else
-						self:settext("")
-					end
+					self:settext(text or "")
 				end
 			},
 
 			-- Song Length Label
 			LoadFont("_miso")..{
-				InitCommand=cmd(horizalign, right; y, 8; x, _screen.w/4.5),
-				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong()
-					self:diffuse(0.5,0.5,0.5,1)
-					self:settext( THEME:GetString("SongDescription", "Length") )
+				Text=THEME:GetString("SongDescription", "Length"),
+				InitCommand=function(self)
+					self:horizalign(right)
+						:x(_screen.w/4.5):y(8)
+						:diffuse(0.5,0.5,0.5,1)
 				end
 			},
 
@@ -154,48 +145,35 @@ local t = Def.ActorFrame{
 			}
 		},
 
+		-- long/marathon version bubble graphic and text
 		Def.ActorFrame{
 			OnCommand=function(self)
-				if IsUsingWideScreen() then
-					self:x(102)
-				else
-					self:x(97)
-				end
+				self:x( IsUsingWideScreen() and 102 or 97 )
+			end,
+			SetCommand=function(self)
+				local song = GAMESTATE:GetCurrentSong()
+				self:visible( song and (song:IsLong() or song:IsMarathon()) or false )
 			end,
 
-			LoadActor("bubble.png")..{
-				InitCommand=cmd(diffuse,GetCurrentColor(); visible, false; zoom, 0.9; y, 30),
-				SetCommand=function(self)
-					local song = GAMESTATE:GetCurrentSong()
-
-					if song then
-						if song:IsLong() or song:IsMarathon() then
-							self:visible(true)
-						else
-							self:visible(false)
-						end
-					else
-						self:visible(false)
-					end
-				end
+			LoadActor("bubble")..{
+				InitCommand=function(self) self:diffuse(GetCurrentColor()):zoom(0.455):y(29) end
 			},
 
 			LoadFont("_miso")..{
 				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
+					local text = ""
 
 					if song then
-						if song:IsLong() then
-							self:settext( THEME:GetString("SongDescription", "IsLong") )
-						elseif song:IsMarathon() then
-							self:settext( THEME:GetString("SongDescription", "IsMarathon")  )
-						else
-							self:settext("")
+						if song:IsMarathon() then
+							text = THEME:GetString("SongDescription", "IsMarathon")
+						elseif song:IsLong() then
+							text = THEME:GetString("SongDescription", "IsLong")
 						end
-					else
-						self:settext("")
 					end
+
+					self:settext(text)
 				end
 			}
 		}
