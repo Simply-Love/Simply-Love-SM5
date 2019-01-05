@@ -156,7 +156,7 @@ function SetGameModePreferences()
 end
 
 function GetOperatorMenuLineNames()
-	local lines = "ClearCredits,System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,Reload"
+	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,ClearCredits,Reload"
 
 	-- hide the OptionRow for ClearCredits if we're not in CoinMode_Pay; it doesn't make sense to show for at-home players
 	-- note that (EventMode + CoinMode_Pay) will actually place you in CoinMode_Home
