@@ -7,6 +7,7 @@ local kids
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 local NumberMinZoom = 0.75
 local NumberMaxZoom = 1.1
+assert( (NumberMinZoom < NumberMaxZoom), "NumberMinZoom must be smaller than NumberMaxZoom.")
 local NumberMaxZoomAt = tonumber(THEME:GetMetric("Combo", "NumberMaxZoomAt"))
 
 return Def.ActorFrame {
@@ -38,6 +39,8 @@ return Def.ActorFrame {
 
 		if CurrentCombo <= NumberMaxZoomAt then
 			kids.Number:zoom( scale( CurrentCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom ) )
+		else
+			kids.Number:zoom( NumberMaxZoom )
 		end
 		kids.Number:settext( CurrentCombo )
 
