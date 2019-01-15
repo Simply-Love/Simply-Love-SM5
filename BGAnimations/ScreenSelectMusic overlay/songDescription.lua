@@ -1,3 +1,27 @@
+-- before loading actors, pre-calculate each group's overall duration by
+-- looping through its songs and summing their duration
+-- store each group's overall duration in a lookup table, keyed by group_name
+-- to be retrieved + displayed when actively hovering on a group (not a song)
+--
+-- I haven't checked, but I assume that continually recalculating group durations could
+-- have performance ramifications when rapidly scrolling through the MusicWheel
+--
+-- a consequence of pre-calculating and storing the group_durations like this is that
+-- live-reloading a song on ScreenSelectMusic via Control R might cause the group duration
+-- to then be inaccurate, until the screen is reloaded.
+
+local group_durations = {}
+
+for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
+	group_durations[group_name] = 0
+
+	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
+		group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
+	end
+end
+
+-- ----------------------------------------
+
 local t = Def.ActorFrame{
 
 	OnCommand=function(self)
@@ -112,6 +136,11 @@ local t = Def.ActorFrame{
 						local song = GAMESTATE:GetCurrentSong()
 						if song then
 							duration = song:MusicLengthSeconds()
+						else
+							local group_name = SCREENMAN:GetTopScreen():GetMusicWheel():GetSelectedSection()
+							if (group_name and GAMESTATE:GetCurrentSong()==nil) then
+								duration = group_durations[group_name]
+							end
 						end
 					end
 
