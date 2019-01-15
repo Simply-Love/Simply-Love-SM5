@@ -11,10 +11,18 @@ for i,stats in pairs( SL[ToEnumShortString(player)].Stages.Stats ) do
 	totalTime = totalTime + (stats and stats.duration or 0)
 	songsPlayedThisGame = songsPlayedThisGame + (stats and 1 or 0)
 
-	-- tally up every note hit this game session (that is, every judgment that wasn't a Miss)
-	-- this will be inaccurate if any of the songs specified custom #COMBOS parameters
-	for judgmentType, count in pairs(stats.judgments) do
-		if judgmentType ~= "Miss" then notesHitThisGame = notesHitThisGame + count end
+	-- increment notesHitThisGame by the total number of tapnotes in this particular stepchart
+	-- this is more accurate than incrementing by non-Miss judgments because stepcharts can have non-1 #COMBOS parameters set
+	-- which would artbitraily inflate notesHitThisGame
+	-- also, use RadarCategory_Notes because we want jumps/hands to count as more than 1 here
+	-- (using RadarCategory_TapsAndHolds has jumps/hands count as 1)
+	notesHitThisGame = notesHitThisGame + stats.steps:GetRadarValues(player):GetValue("RadarCategory_Notes")
+
+	-- and then subtract the number of Miss judgments that occurred this set, per-column
+	-- this is more accurate than subtracting the number of Miss judgments because
+	-- we want jumps/hands to count as more than 1 here
+	for column, judgments in ipairs(stats.column_judgments) do
+		notesHitThisGame = notesHitThisGame - judgments.Miss
 	end
 end
 
