@@ -11,7 +11,7 @@ for i,stats in pairs( SL[ToEnumShortString(player)].Stages.Stats ) do
 	totalTime = totalTime + (stats and stats.duration or 0)
 	songsPlayedThisGame = songsPlayedThisGame + (stats and 1 or 0)
 
-	if stats then
+	if stats and stats.column_judgments then
 		-- increment notesHitThisGame by the total number of tapnotes hit in this particular stepchart by using the per-column data
 		-- don't rely on the engine's non-Miss judgment counts here for two reasons:
 		-- 1. we want jumps/hands to count as more than 1 here
