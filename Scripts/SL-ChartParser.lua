@@ -1,4 +1,4 @@
-local function GetSimfileString(path)
+function GetSimfileString(path)
 
 	local filename, filetype
 	local files = FILEMAN:GetDirListing(path)
