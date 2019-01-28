@@ -43,7 +43,7 @@ function ParseMsdFile(SongDir)
 	end
 
 	local function AddParam(t, p, plen)
-		-- table:concat(separator, start, end)
+		-- table.concat(table_name, separator, start, end)
 		local param = table.concat(p, '', 1, plen)
 
 		-- -- Normalize all line endings to \n and remove all leading and trailing whitespace.
@@ -88,7 +88,7 @@ function ParseMsdFile(SongDir)
 	local processedLen = -1
 
 	-- Lua doesn't have continue so use a bool to emulate it and skip the operations we don't want to perform.
-	local continue = true
+	local continue = false
 
 	while i < length do
 		if(i + 1 < length and at(SimfileString, i+1) == '/' and at(SimfileString, i+2) == '/') then
