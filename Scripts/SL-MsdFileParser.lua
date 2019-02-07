@@ -104,7 +104,7 @@ function ParseMsdFile(SongDir)
 		if(not continue and ReadingValue and at(SimfileString, i+1) == '#') then
 			-- Unfortunately, many of these files are missing ;'s.
 			-- If we get a # when we thought we were inside a value, assume we
-			-- missed the ;.  Back up and end the value. */
+			-- missed the ;.  Back up and end the value.
 			-- Make sure this # is the first non-whitespace character on the line.
 			local firstChar = true
 			local j = processedLen
