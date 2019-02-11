@@ -1,25 +1,34 @@
 local player = ...
 
+local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local PercentDP = stats:GetPercentDancePoints()
+
+local score = FormatPercentScore(PercentDP)
+score = tostring(tonumber((score:gsub("%%", ""))) * 100)
+local failed = stats:GetFailed() and "1" or "0"
+local rate = tostring(SL.Global.ActiveModifiers.MusicRate * 100)
+Trace("Score: " .. score .. " Failed: " .. failed .. " Rate: " .. rate)
+
+local currentSteps = GAMESTATE:GetCurrentSteps(player)
+local difficulty = ""
+if currentSteps then
+	difficulty = currentSteps:GetDifficulty();
+	-- GetDifficulty() returns a value from the Difficulty Enum
+	-- "Difficulty_Hard" for example.
+	-- Strip the characters up to and including the underscore.
+	difficulty = ToEnumShortString(difficulty)
+end
+local style = ""
+if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+	style = "dance-double"
+else
+	style = "dance-single"
+end
+local hash = GenerateHash(style, difficulty):sub(1, 12)
+
 local qrcode_size = 168
-local url = "https://www.youtube.com/watch?v=FMABVVk4Ge4"
-
--- local urls = {
--- 	"https://www.youtube.com/watch?v=M0U73NRSIkw",
--- 	"https://www.youtube.com/watch?v=b1FqZCtc_W8",
--- 	"https://www.youtube.com/watch?v=9ZX_XCYokQo",
--- 	"https://www.youtube.com/watch?v=Q6Qa93JQxg4",
--- 	"https://www.youtube.com/watch?v=YmQKsHJxE-o",
--- 	"https://www.youtube.com/watch?v=2fA54tY7hO8",
--- 	"https://www.youtube.com/watch?v=TrJYUJp3veo",
--- 	"https://www.youtube.com/watch?v=FB0ycTd2U-0",
--- 	"https://www.youtube.com/watch?v=F56so48ChtM",
--- 	"http://www.lettersofnote.com/2009/12/we-have-message-from-another-world.html",
--- 	"http://www.lettersofnote.com/2012/03/i-am-very-real.html",
--- 	"http://www.lettersofnote.com/2012/11/our-differences-unite-us.html",
--- 	"https://en.wikipedia.org/wiki/David_Hilbert#The_23_problems",
--- }
--- local url = urls[math.random(#urls)]
-
+local url = ("http://www.groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s"):format(hash, score, failed, rate)
+Trace(url)
 
 -- ------------------------------------------
 
@@ -32,7 +41,7 @@ local pane = Def.ActorFrame{
 
 pane[#pane+1] = qrcode_amv( url, qrcode_size )..{
 	OnCommand=function(self)
-		self:xy(-28,190)
+		self:xy(-23,190)
 	end
 }
 
