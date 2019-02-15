@@ -7,7 +7,6 @@ local score = FormatPercentScore(PercentDP)
 score = tostring(tonumber((score:gsub("%%", ""))) * 100)
 local failed = stats:GetFailed() and "1" or "0"
 local rate = tostring(SL.Global.ActiveModifiers.MusicRate * 100)
-Trace("Score: " .. score .. " Failed: " .. failed .. " Rate: " .. rate)
 
 local currentSteps = GAMESTATE:GetCurrentSteps(player)
 local difficulty = ""
@@ -28,12 +27,11 @@ local hash = GenerateHash(style, difficulty):sub(1, 12)
 
 local qrcode_size = 168
 local url = ("http://www.groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s"):format(hash, score, failed, rate)
-Trace(url)
 
 -- ------------------------------------------
 
 local pane = Def.ActorFrame{
-	Name="Pane5",
+	Name="QRPane",
 	InitCommand=function(self)
 		self:visible(false)
 	end
@@ -59,11 +57,6 @@ pane[#pane+1] = Def.Quad{
 pane[#pane+1] = LoadFont("_miso")..{
 	Text="Scan with your phone to upload this score to your GrooveStats account.",
 	InitCommand=function(self) self:zoom(0.8):xy(-140,255):wrapwidthpixels(96/0.8):align(0,0):vertspacing(-4) end
-}
-
-pane[#pane+1] = LoadFont("_miso")..{
-	Text="Coming Soon!",
-	InitCommand=function(self) self:zoom(0.85):xy(-140,344):wrapwidthpixels(145/0.85):align(0,0):vertspacing(-4) end
 }
 
 return pane

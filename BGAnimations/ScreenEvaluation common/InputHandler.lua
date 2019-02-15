@@ -16,6 +16,13 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	for i=1,num_panes do
 		table.insert(panes[pn], af:GetChild(pn.."_AF_Lower"):GetChild("Pane"..i))
 	end
+	-- Increment the num_panes if we intend to add the QR pane.
+	-- NOTE(teejusb): This condition should be should be the same as the one
+	-- defined in default.lua
+	if not GAMESTATE:IsCourseMode() then
+		table.insert(panes[pn], af:GetChild(pn.."_AF_Lower"):GetChild("QRPane"))
+		num_panes = num_panes + 1
+	end
 end
 
 return function(event)
