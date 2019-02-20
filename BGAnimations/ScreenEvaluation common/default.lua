@@ -1,5 +1,5 @@
 local Players = GAMESTATE:GetHumanPlayers()
-local NumPanes = SL.Global.GameMode=="Casual" and 1 or 4
+local NumPanes = SL.Global.GameMode=="Casual" and 1 or 5
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
@@ -109,14 +109,10 @@ for player in ivalues(Players) do
 	}
 
 	-- add available Panes to the lower ActorFrame via a loop
+	-- Note(teejusb): Some of these actors may be nil. This is not a bug, but
+	-- a feature for any panes we want to be conditional (e.g. the QR code).
 	for i=1, NumPanes do
 		lower[#lower+1] = LoadActor("./PerPlayer/Pane"..i, player)
-	end
-	-- Add the QR Pane after the other panes.
-	-- NOTE(teejusb): Since it's a conditional pane, we need to make sure
-	-- we have num_panes set correctly in ./InputHandler
-	if not GAMESTATE:IsCourseMode() then
-	  lower[#lower+1] = LoadActor("./PerPlayer/QRPane", player)
 	end
 
 	-- add lower ActorFrame to the primary ActorFrame
