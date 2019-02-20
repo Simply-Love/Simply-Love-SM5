@@ -37,11 +37,14 @@ for index, label in ipairs(TNSNames) do
 
 			-- if StomperZ, color the JudgmentLabel
 			if mode == "StomperZ" then
-				self:diffuse( SL.JudgmentColors.StomperZ[index] )
-
+				if SL.JudgmentColors.StomperZ[index] ~= nil then
+					self:diffuse( SL.JudgmentColors.StomperZ[index] )
+				end
 			-- if ECFA, color the JudgmentLabel
 			elseif mode == "ECFA" then
-				self:diffuse( SL.JudgmentColors.ECFA[index] )
+				if SL.JudgmentColors.ECFA[index] ~= nil then
+					self:diffuse( SL.JudgmentColors.ECFA[index] )
+				end
 			end
 
 
