@@ -171,7 +171,7 @@ local pd = Def.ActorFrame{
 			local player_score, player_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
 
 			self:GetChild("PlayerHighScore"):settext(player_score)
-			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse({0,0,0,0})
+			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse({0,0,0,1})
 
 			for i=1, player_name:utf8len() do
 				if player_name:utf8sub(i,i):byte() >= 240 then

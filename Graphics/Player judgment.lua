@@ -15,7 +15,9 @@ if not FindInTable(wanted_graphics, graphics) then
 	wanted_graphics = graphics[1] or "None"
 end
 
-if wanted_graphics == "None" then return end
+if wanted_graphics == "None" then
+	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+end
 
 -- - - - - - - - - - - - - - - - - - - - - -
 

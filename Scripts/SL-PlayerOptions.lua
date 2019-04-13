@@ -207,7 +207,7 @@ local Overrides = {
 			list[3] = mods.HideCombo 	or false
 			list[4] = mods.HideLifebar 	or false
 			list[5] = mods.HideScore 	or false
-			list[6] = mods.HideDanger	or true
+			list[6] = mods.HideDanger	or false
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
