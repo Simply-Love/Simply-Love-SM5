@@ -71,6 +71,7 @@ Simply Love has full support for:
   * English
   * Español
   * Français
+  * Português Brasileiro
 
 The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
 
