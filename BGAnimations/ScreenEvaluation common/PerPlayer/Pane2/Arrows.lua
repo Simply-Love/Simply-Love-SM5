@@ -16,7 +16,7 @@ local columns = {
 local box_width = 230
 local column_width = box_width/#columns[game]
 
-local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss", "MissBecauseHeld" }
 
 -- need to store the number of columns PRIOR to looping
 -- otherwise we enter an infinite loop because the upper bound keeps growing!
@@ -27,7 +27,6 @@ if style == "OnePlayerTwoSides" then
 		table.insert(columns[game], columns[game][i])
 	end
 end
-
 
 local af = Def.ActorFrame{}
 
@@ -48,7 +47,7 @@ for i,column in ipairs( columns[game] ) do
 			Font="_miso",
 			Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
 			OnCommand=function(self)
-				self:xy(i*column_width-104, _screen.cy-40 + j*24)
+				self:xy(i*column_width-104, _screen.cy-40 + j*22)
 					:zoom(0.9)
 
 				local gmods = SL.Global.ActiveModifiers

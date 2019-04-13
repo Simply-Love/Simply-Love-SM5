@@ -11,11 +11,16 @@ local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
 	panes[pn] = {}
-	active_pane[pn] = num_panes
 
+	-- Iterate through all potential panes, and only add the non-nil ones to the
+	-- list of panes we want to consider.
 	for i=1,num_panes do
-		table.insert(panes[pn], af:GetChild(pn.."_AF_Lower"):GetChild("Pane"..i))
+		if af:GetChild(pn.."_AF_Lower"):GetChild("Pane"..i) ~= nil then
+		 	table.insert(panes[pn], af:GetChild(pn.."_AF_Lower"):GetChild("Pane"..i))
+		end
 	end
+
+	active_pane[pn] = #panes[pn]
 end
 
 return function(event)
@@ -30,14 +35,14 @@ return function(event)
 
 		if event.GameButton == "MenuRight" or event.GameButton == "MenuLeft" then
 			if event.GameButton == "MenuRight" then
-				active_pane[pn] = ((active_pane[pn] + 1) % num_panes)
+				active_pane[pn] = ((active_pane[pn] + 1) % #panes[pn])
 			elseif event.GameButton == "MenuLeft" then
-				active_pane[pn] = ((active_pane[pn] - 1) % num_panes)
+				active_pane[pn] = ((active_pane[pn] - 1) % #panes[pn])
 			end
 
-			for i=1,num_panes do
+			for i=1,#panes[pn] do
 
-				if style == "OnePlayerTwoSides" and active_pane[pn]+1 == 2 then
+				if style == "OnePlayerTwoSides" and active_pane[pn] + 1 == 2 then
 					af:queuecommand("Expand")
 				else
 					af:queuecommand("Shrink")

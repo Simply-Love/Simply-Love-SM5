@@ -1,7 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
-local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss", "MissBecauseHeld" }
 local TNSNames = {}
 
 local mode = ""
@@ -33,15 +33,18 @@ for index, label in ipairs(TNSNames) do
 		InitCommand=cmd(zoom,0.775; horizalign,right ),
 		BeginCommand=function(self)
 			self:x( (player == PLAYER_1 and -130) or -28 )
-			self:y((index-1)*24 + 8)
+			self:y((index-1)*22 + 8)
 
 			-- if StomperZ, color the JudgmentLabel
 			if mode == "StomperZ" then
-				self:diffuse( SL.JudgmentColors.StomperZ[index] )
-
+				if SL.JudgmentColors.StomperZ[index] ~= nil then
+					self:diffuse( SL.JudgmentColors.StomperZ[index] )
+				end
 			-- if ECFA, color the JudgmentLabel
 			elseif mode == "ECFA" then
-				self:diffuse( SL.JudgmentColors.ECFA[index] )
+				if SL.JudgmentColors.ECFA[index] ~= nil then
+					self:diffuse( SL.JudgmentColors.ECFA[index] )
+				end
 			end
 
 
