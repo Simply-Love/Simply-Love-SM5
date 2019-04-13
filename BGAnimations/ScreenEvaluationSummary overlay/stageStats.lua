@@ -217,6 +217,8 @@ for player in ivalues(Players) do
 						self:visible(false)
 					elseif DecentsWayOffs == "Off" and (i == 4 or i == 5) then
 						self:visible(false)
+					else
+						self:visible(true)
 					end
 
 				else
