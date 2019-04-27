@@ -12,6 +12,8 @@ af[#af+1] = Def.Quad{
 for i=1,7 do
 	af[#af+1] = Def.ActorFrame {
 		InitCommand=function(self) self:Center() end,
+		OnCommand=function(self) self:sleep(3):queuecommand("Hide") end,
+		HideCommand=function(self) self:visible(false) end,
 
 		LoadActor("white_logo.png")..{
 			InitCommand=cmd(zoom, 0.1; diffuse, GetHexColor(slc-i-3); diffusealpha,0; x, (i-4)*50 ),
@@ -24,12 +26,14 @@ for i=1,7 do
 	}
 end
 
-af[#af+1] = Def.BitmapText{
-	Font="_miso",
+af[#af+1] = LoadFont("_miso")..{
 	Text=ScreenString("ThemeDesign"),
 	InitCommand=cmd(diffuse,GetHexColor(slc); diffusealpha,0; Center),
-	OnCommand=cmd(sleep,3;linear,0.25;diffusealpha,1),
-	OffCommand=cmd(linear, 0.25; diffusealpha,0),
+	OnCommand=cmd(sleep,3; linear,0.25; diffusealpha,1; sleep,1.25; linear,0.25; diffusealpha,0; sleep,0.25; queuecommand, "Refresh"),
+	RefreshCommand=function(self)
+		self:settext(THEME:GetString("ScreenInit", "Origins") .. " " .. Year() .. THEME:GetString("ScreenInit", "WhyIsThisStillAThing"))
+		self:linear(0.25):diffusealpha(1):sleep(2.75):linear(0.25):diffusealpha(0)
+	end,
 }
 
 return af

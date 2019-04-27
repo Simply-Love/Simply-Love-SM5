@@ -119,13 +119,4 @@ return {
 			About="HeySora kindly translated Simply Love's UI into French.\n\nHe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
 		}
 	},
-
-	-- page 8
-	{
-		{
-			Name="Dan / dbk2",
-			Img="dbk2.png",
-			About="Dan is a human being, perhaps not so unlike you. He enjoys eating mochi, explaining recursion, and finding new absurdist/ergodic literature to read.\n\nIn addition to leading development for this theme, he has composed music for the Tachyon series, published prose and poetry, and dabbled in photography, cinematography, and screenplay writing. He wishes to assure you that he sucks at it all, but has fun trying to improve.\n\nWhen he's not working on some sort of creative project, you can find him going on long walks to nowhere late at night, especially if it is snowing."
-		}
-	}
 }
