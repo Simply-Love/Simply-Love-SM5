@@ -111,7 +111,7 @@ function GenerateHash(stepsType, difficulty)
 	for notes in ivalues(allNotes) do
 		-- StepMania considers NOTES sections with greater than 7 sections valid.
 		-- https://github.com/stepmania/stepmania/blob/master/src/NotesLoaderSM.cpp#L1072-L1079
-		if #notes >= 7 and notes[2] == stepsType and difficulty = notes[4] then
+		if #notes >= 7 and notes[2] == stepsType and difficulty == notes[4] then
 			local minimizedChart = MinimizeChart(notes[7])
 			local chartDataAndBpm = minimizedChart .. bpms
 			local hash = sha256(chartDataAndBpm)

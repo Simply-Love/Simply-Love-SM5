@@ -138,7 +138,7 @@ local t = Def.ActorFrame{
 							duration = song:MusicLengthSeconds()
 						else
 							local group_name = SCREENMAN:GetTopScreen():GetMusicWheel():GetSelectedSection()
-							if (group_name and GAMESTATE:GetCurrentSong()==nil) then
+							if group_name then
 								duration = group_durations[group_name]
 							end
 						end
