@@ -11,12 +11,17 @@
 -- to then be inaccurate, until the screen is reloaded.
 
 local group_durations = {}
+local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
 
 for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	group_durations[group_name] = 0
 
 	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
-		group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
+		local song_cost = song:IsMarathon() and 3 or song:IsLong() and 2 or 1
+
+		if song_cost <= stages_remaining then
+			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
+		end
 	end
 end
 
