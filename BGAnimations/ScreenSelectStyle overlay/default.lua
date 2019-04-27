@@ -64,9 +64,13 @@ local EnableChoices = function()
 	end
 end
 
--- get next enabled choice index to the right
-local GetNextEnabledRight = function()
-	for i=current_index+1, #choices+current_index-1 do
+-- pass in a postive integer to get the next enabled choice to the right
+-- pass in a negative integer to get the next enabled choice to the left
+local GetNextEnabledChoice = function(dir)
+	local start = dir > 0 and current_index+1 or #choices+current_index-1
+	local stop = dir > 0 and #choices+current_index-1 or current_index+1
+
+	for i=start, stop, dir do
 		local index = ((i-1) % #choices) + 1
 
 		if af:GetChild("")[index].Enabled then
@@ -75,19 +79,6 @@ local GetNextEnabledRight = function()
 		end
 	end
 end
-
--- get next enabled choice index to the left
-local GetNextEnabledLeft = function()
-	for i=#choices+current_index-1,current_index+1,-1 do
-		local index = ((i-1) % #choices) + 1
-
-		if af:GetChild("")[index].Enabled then
-			current_index = index
-			return
-		end
-	end
-end
-
 
 local JoinOrUnjoinPlayersMaybe = function(style, player)
 	-- if going into versus, ensure that both players are joined
@@ -125,9 +116,10 @@ local ManageCredits = function(style)
 		return
 	end
 
-	-- double for 1 credit; deduct 1 credit if entering versus
+	-- double for 1 credit; deduct 1 credit if entering versus and only 1 player has been joined so far
 	if GAMESTATE:GetCoinMode() == "CoinMode_Pay"
 	and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit"
+	and #GAMESTATE:GetHumanPlayers() == 1
 	and style == "versus" then
 		GAMESTATE:InsertCoin( -GAMESTATE:GetCoinsNeededToJoin() )
 		return
@@ -179,19 +171,10 @@ local function input(event)
 	if event.type == "InputEventType_FirstPress" then
 		local topscreen = SCREENMAN:GetTopScreen()
 
-		if event.GameButton == "MenuRight" then
-			GetNextEnabledRight()
-			for i, child in ipairs( af:GetChild("") ) do
-				if i == current_index then
-					child:queuecommand("GainFocus")
-				else
-					child:queuecommand("LoseFocus")
-				end
-			end
-			af:GetChild("Change"):play()
+		if event.GameButton == "MenuRight" or event.GameButton == "MenuLeft" then
+			local prev_index = current_index
+			GetNextEnabledChoice(event.GameButton=="MenuRight" and 1 or -1)
 
-		elseif event.GameButton == "MenuLeft" then
-			GetNextEnabledLeft()
 			for i, child in ipairs( af:GetChild("") ) do
 				if i == current_index then
 					child:queuecommand("GainFocus")
@@ -199,7 +182,7 @@ local function input(event)
 					child:queuecommand("LoseFocus")
 				end
 			end
-			af:GetChild("Change"):play()
+			if prev_index ~= current_index then af:GetChild("Change"):play() end
 
 		elseif event.GameButton == "Start" then
 			StyleSelected = true
@@ -237,6 +220,15 @@ local t = Def.ActorFrame{
 	end,
 	CoinsChangedMessageCommand=function(self)
 		EnableChoices()
+		-- if the current choice is no longer valid after the coin change
+		if not self:GetChild("")[current_index].Enabled then
+			-- get the next valid choice to the right
+			GetNextEnabledChoice(1)
+			-- force all choices to LoseFocus
+			self:playcommand("LoseFocus")
+			-- and queue the new current choice to GainFocus
+			self:GetChild("")[current_index]:queuecommand("GainFocus")
+		end
 		self:playcommand("Enable")
 	end,
 	ListenCommand=function(self)
