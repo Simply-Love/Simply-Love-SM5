@@ -5,6 +5,9 @@ local marquee_index = 0
 return LoadFont("_miso")..{
 	InitCommand=cmd(zoom, 0.7; xy, 115,_screen.cy-80 ),
 	OnCommand=function(self)
+		-- darken the text for RainbowMode to make it more legible
+		if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
+
 		if player == PLAYER_1 then
 			self:x( self:GetX() * -1 )
 			self:horizalign(left)

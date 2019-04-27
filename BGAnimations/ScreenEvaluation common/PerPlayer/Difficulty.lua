@@ -5,17 +5,17 @@ return Def.ActorFrame{
 
 	-- difficulty text ("beginner" or "expert" or etc.)
 	LoadFont("_miso")..{
-		OnCommand=function(self)
-
+		InitCommand=function(self)
 			self:y(_screen.cy-64)
-			self:x( (player == PLAYER_1 and -115) or 115 )
-			self:halign(pn)
-			self:zoom(0.7)
+			self:x(115 * (player==PLAYER_1 and -1 or 1))
+			self:halign(pn):zoom(0.7)
+			-- darken the text for RainbowMode to make it more legible
+			if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
 
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
 
 			if currentSteps then
-				local difficulty = currentSteps:GetDifficulty();
+				local difficulty = currentSteps:GetDifficulty()
 				-- GetDifficulty() returns a value from the Difficulty Enum
 				-- "Difficulty_Hard" for example.
 				-- Strip the characters up to and including the underscore.
@@ -27,10 +27,10 @@ return Def.ActorFrame{
 
 	-- colored square as the background for the difficulty meter
 	Def.Quad{
-		InitCommand=cmd(zoomto,30,30),
-		OnCommand=function(self)
+		InitCommand=function(self)
+			self:zoomto(30,30)
 			self:y( _screen.cy-71 )
-			self:x( (player == PLAYER_1 and -134.5) or 134.5 )
+			self:x(134.5 * (player==PLAYER_1 and -1 or 1))
 
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
 			if currentSteps then
@@ -42,28 +42,21 @@ return Def.ActorFrame{
 
 	-- numerical difficulty meter
 	LoadFont("_wendy small")..{
-		InitCommand=cmd(diffuse, Color.Black ),
-		OnCommand=function(self)
-			self:zoom( 0.4 )
+		InitCommand=function(self)
+			self:diffuse(Color.Black):zoom( 0.4 )
 			self:y( _screen.cy-71 )
-			self:x( (player == PLAYER_1 and -134.5) or 134.5 )
+			self:x(134.5 * (player==PLAYER_1 and -1 or 1))
 
 			local meter
 			if GAMESTATE:IsCourseMode() then
 				local trail = GAMESTATE:GetCurrentTrail(player)
-				if trail then
-					meter = trail:GetMeter()
-				end
+				if trail then meter = trail:GetMeter() end
 			else
 				local steps = GAMESTATE:GetCurrentSteps(player)
-				if steps then
-					meter = steps:GetMeter()
-				end
+				if steps then meter = steps:GetMeter() end
 			end
 
-			if meter then
-				self:settext(meter)
-			end
+			if meter then self:settext(meter) end
 		end
 	}
 }
