@@ -157,30 +157,50 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 		end
 	end
 
-	return streamMeasures
+	return streamMeasures, measureCount
 end
 
--- Get the start/end of each stream sequence in our table of measures
-local function getStreamSequences(streamMeasures, measureSequenceThreshold)
+-- Get the start/end of each stream and break sequence in our table of measures
+local function getStreamSequences(streamMeasures, measureSequenceThreshold, totalMeasures)
 	local streamSequences = {}
 
 	local counter = 1
 	local streamEnd = nil
+	local prevStreamEnd = 0
 	-- Which sequences of measures are considered a stream?
 	for k,v in pairs(streamMeasures) do
-		-- Are we still in sequence?
-		if(streamMeasures[k-1] == (streamMeasures[k] - 1)) then
-			counter = counter + 1
-			streamEnd = streamMeasures[k]
-		end
+		local curVal = streamMeasures[k]
+		local nextVal = streamMeasures[k+1] and streamMeasures[k+1] or -1
 
-		-- Are we out of sequence OR at the end of the array?
-		if(streamMeasures[k+1] == nil or streamMeasures[k-1] ~= (streamMeasures[k] - 1)) then
+		-- Are we still in sequence?
+		if(curVal + 1 == nextVal) then
+			counter = counter + 1
+			streamEnd = curVal + 1
+		else
+			-- Found the first section that counts as a stream
 			if(counter >= measureSequenceThreshold) then
+				if(#streamSequences > 0) then
+					prevStreamEnd = streamSequences[#streamSequences].streamEnd
+				end
 				streamStart = (streamEnd - counter)
-				table.insert(streamSequences, {streamStart=streamStart,streamEnd=streamEnd})
+				-- First add the preceding break if it's smaller than measureSequenceThreshold
+				if (streamStart - prevStreamEnd >= measureSequenceThreshold) then
+					table.insert(streamSequences,
+						{streamStart=prevStreamEnd, streamEnd=streamStart, isBreak=true})
+				end
+				-- Then add the current stream.
+				table.insert(streamSequences,
+					{streamStart=streamStart, streamEnd=streamEnd, isBreak=false})
 			end
 			counter = 1
+		end
+
+		if nextVal == -1 then
+			-- Add a final trailing break if it's larger than measureSequenceThreshold
+			if(totalMeasures - streamEnd >= measureSequenceThreshold) then
+				table.insert(streamSequences,
+					{streamStart=streamEnd, streamEnd=totalMeasures, isBreak=true})
+			end
 		end
 	end
 
@@ -272,8 +292,8 @@ function GetStreams(SongDir, StepsType, Difficulty, NotesPerMeasure, MeasureSequ
 	if not ChartString then return end
 
 	-- Which measures have enough notes to be considered as part of a stream?
-	local StreamMeasures = getStreamMeasures(ChartString, NotesPerMeasure)
+	local StreamMeasures, totalMeasures = getStreamMeasures(ChartString, NotesPerMeasure)
 
 	-- Which sequences of measures are considered a stream?
-	return (getStreamSequences(StreamMeasures, MeasureSequenceThreshold))
+	return (getStreamSequences(StreamMeasures, MeasureSequenceThreshold, totalMeasures))
 end

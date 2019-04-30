@@ -18,6 +18,25 @@ local function InitializeMeasureCounter()
 	previous_measure = nil
 end
 
+local function GetTextForMeasure(current_measure, Measures, stream_index)
+	-- Validate indices
+	if Measures[stream_index] == nil then return "" end
+
+	local streamStart = Measures[stream_index].streamStart
+	local streamEnd = Measures[stream_index].streamEnd
+	if current_measure < streamStart then return "" end
+	if current_measure > streamEnd then return "" end
+
+	local current_stream_length = streamEnd - streamStart
+	local current_count = math.floor(current_measure - streamStart) + 1
+
+	text = tostring(current_count .. "/" .. current_stream_length)
+	if streams.Measures[stream_index].isBreak then
+		text = "(" .. text .. ")"
+	end
+	return text, current_count > current_stream_length
+end
+
 local function Update(self, delta)
 
 	if not streams.Measures then return end
@@ -32,24 +51,16 @@ local function Update(self, delta)
 	if new_measure_has_occurred then
 
 		previous_measure = current_measure
-
-		-- if the current measure is within the scope of the current stream
-		if streams.Measures[stream_index]
-		and current_measure >= streams.Measures[stream_index].streamStart
-		and current_measure <= streams.Measures[stream_index].streamEnd then
-
-			current_stream_length = streams.Measures[stream_index].streamEnd - streams.Measures[stream_index].streamStart
-			current_count = math.floor(current_measure - streams.Measures[stream_index].streamStart) + 1
-
-			text = tostring(current_count .. "/" .. current_stream_length)
-			MeasureCounterBMT:settext( text )
-
-			if current_count > current_stream_length then
-				stream_index = stream_index + 1
-				MeasureCounterBMT:settext( "" )
-			end
+		local text, is_end = GetTextForMeasure(current_measure, streams.Measures, stream_index)
+		
+		-- If we're still within the current section
+		if not is_end then
+			MeasureCounterBMT:settext(text)
+		-- In a new section, we should check if current_measure overlaps with it
 		else
-			MeasureCounterBMT:settext( "" )
+			stream_index = stream_index + 1
+			text, is_end = GetTextForMeasure(current_measure, streams.Measures, stream_index)
+			MeasureCounterBMT:settext(text)
 		end
 	end
 
@@ -76,7 +87,6 @@ if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 			MeasureCounterBMT = self
 
 			self:zoom(0.35):shadowlength(1):horizalign(center)
-
 			if mods.MeasureCounterPosition == "Center" then
 				self:xy( GetNotefieldX(player), _screen.cy )
 			else
