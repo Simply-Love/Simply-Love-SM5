@@ -116,6 +116,8 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	JudgmentGraphic = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
 		Choices = function()
 			graphics = GetJudgmentGraphics(SL.Global.GameMode)
 			for i,g in ipairs(graphics) do
@@ -123,7 +125,19 @@ local Overrides = {
 			end
 			return graphics
 		end,
-		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end
+		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end,
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i=1,#list do
+				if list[i] then
+					mods.JudgmentGraphic = self.Choices[i]
+					break
+				end
+			end
+
+			MESSAGEMAN:Broadcast("JudgmentGraphicChanged", {Player=pn, JudgmentGraphic=mods.JudgmentGraphic})
+		end
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {

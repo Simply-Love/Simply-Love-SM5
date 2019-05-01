@@ -29,11 +29,16 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local optrow = self:GetParent():GetParent():GetParent()
 
 			if optrow:GetName() == "NoteSkin" then
-				-- if this OptionRow is NoteSkin, set the necessary parameters and queuecommand("Update")
-				-- to actually SetTarget() to the appropriate NoteSkin actor
-				self:x(-_screen.cx/1.1775 + _screen.w*WideScale(0.18,0.15) - (player==PLAYER_1 and 45 or 15))
-					:zoom(0.4)
+				-- if this OptionRow is NoteSkin, set the necessary parameters
+				self:x(player==PLAYER_1 and WideScale(20,-10) or 220):zoom(0.4)
+					-- What was my reasoning for diffusing in after 0.01? It seems unncessary.
+					-- I don't remember but am afraid to remove it.
 					:diffusealpha(0):sleep(0.01):diffusealpha(1)
+
+			elseif optrow:GetName() == "JudgmentGraphic" then
+				self:x(player==PLAYER_1 and WideScale(20,-10) or 220):zoom(0.4)
+					:diffusealpha(0):sleep(0.01):diffusealpha(1)
+
 			else
 				-- if this OptionRow isn't NoteSkin, this ActorProxy isn't needed
 				-- and can be cut out of the render pipeline
@@ -43,7 +48,9 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		-- NoteSkinChanged is broadcast by the SaveSelections() function for the NoteSkin OptionRow definition
 		-- in ./Scripts/SL-PlayerOptions.lua
 		NoteSkinChangedMessageCommand=function(self, params)
-			if player == params.Player then
+			local optrow = self:GetParent():GetParent():GetParent()
+
+			if optrow and optrow:GetName() == "NoteSkin" and player == params.Player then
 				-- attempt to find the hidden NoteSkin actor added by ./BGAnimations/ScreenPlayerOptions overlay.lua
 				local noteskin_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin)
 
@@ -51,6 +58,15 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 				if noteskin_actor then
 					self:SetTarget( noteskin_actor )
 				end
+			end
+		end,
+		JudgmentGraphicChangedMessageCommand=function(self, params)
+			local optrow = self:GetParent():GetParent():GetParent()
+
+			if optrow and optrow:GetName() == "JudgmentGraphic" and player == params.Player then
+				local filename = params.JudgmentGraphic:gsub("%.", "`")
+				local judgment_sprite = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("JudgmentGraphic_"..filename)
+				if judgment_sprite then self:SetTarget( judgment_sprite ) end
 			end
 		end
 	}

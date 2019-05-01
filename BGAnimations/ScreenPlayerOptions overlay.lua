@@ -143,6 +143,18 @@ for noteskin in ivalues( CustomOptionRow("NoteSkin").Choices ) do
 	t[#t+1] = GetNoteSkinActor(noteskin)
 end
 
+for judgment in ivalues( GetJudgmentGraphics(SL.Global.GameMode) ) do
+	if judgment ~= "None" then
+		t[#t+1] = LoadActor( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. judgment) )..{
+			Name="JudgmentGraphic_"..judgment,
+			InitCommand=function(self) self:visible(false):animate(false) end
+		}
+	else
+		t[#t+1] = Def.Actor{ Name="JudgmentGraphic_None", InitCommand=function(self) self:visible(false) end }
+	end
+end
+
+
 
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
 
