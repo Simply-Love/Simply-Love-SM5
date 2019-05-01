@@ -1,3 +1,1 @@
-return Def.ActorFrame{
-	OffCommand=cmd(sleep, 0.64)
-}
+return Def.Actor{ OffCommand=function(self) self:sleep(0.64) end }
