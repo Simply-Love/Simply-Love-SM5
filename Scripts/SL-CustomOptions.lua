@@ -105,3 +105,33 @@ function OptionRowMusicWheelSpeed()
 		end
 	}
 end
+
+function OptionRowTheme()
+	local themes = THEME:GetSelectableThemeNames()
+	return {
+		Name = "Theme",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = themes,
+		LoadSelections = function(self, list, pn)
+			local theme = THEME:GetCurThemeName()
+			if not theme then return end
+
+			local i = FindInTable(theme, themes) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i = 1, #themes do
+				if list[i] then
+					if themes[i] ~= THEME:GetCurThemeName() then
+						SL.NextTheme = themes[i]
+						SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPromptToResetPreferencesToStock")
+					end
+					break
+				end
+			end
+		end,
+	}
+end
