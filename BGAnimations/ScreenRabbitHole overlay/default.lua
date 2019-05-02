@@ -8,11 +8,11 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self) af=self end,
-	OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback(InputHandler) end,
-	OffCommand=function(self) if current < 20 then ThemePrefs.Set( "RabbitHole", current+1 ) end end,
+	OnCommand=function(self) if current ~= 19 then SCREENMAN:GetTopScreen():AddInputCallback(InputHandler) end end,
+	OffCommand=function(self) if current < 21 then ThemePrefs.Set( "RabbitHole", current+1 ) end end,
 }
 
-if current > 20 then
+if current > 21 then
 	if SL.Global.RabbitHole then
 		t[#t+1] = LoadActor("./"..SL.Global.RabbitHole.."/default.lua")..{
 			OffCommand=function(self) SL.Global.RabbitHole = nil end

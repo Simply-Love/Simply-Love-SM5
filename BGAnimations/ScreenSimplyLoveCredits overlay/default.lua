@@ -8,7 +8,7 @@ local af = Def.ActorFrame{
 	end,
 	OffCommand=function(self)
 		local rh = ThemePrefs.Get("RabbitHole")
-		if rh==0 or rh==20 then
+		if rh==0 or rh==21 then
 			ThemePrefs.Set("RabbitHole", rh+1)
 			ThemePrefs.Save()
 		end

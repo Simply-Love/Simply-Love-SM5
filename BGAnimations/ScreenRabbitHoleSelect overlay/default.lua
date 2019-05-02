@@ -20,9 +20,10 @@ local wheel_options = {
 	{16, "Connection: Chapter 3"},
 	{17, "Connection: Chapter 4"},
 	{18, "A Beige Colored Bookmark"},
-	{19, "A Walk In the Snow"},
-	{20, "– Acknowledgments & Thanks –"},
-	{21, "Exit" }
+	{19, "Your Drifting Mind"},
+	{20, "A Walk In the Snow"},
+	{21, "– Acknowledgments & Thanks –"},
+	{22, "Exit" }
 }
 
 local Cancel = function()
@@ -47,7 +48,7 @@ local InputHandler = function(event)
 
 		elseif event.GameButton == "Start" then
 			local focus = rh_wheel:get_actor_item_at_focus_pos()
-			if focus.rh_index == 21 then
+			if focus.rh_index == #wheel_options then
 				Cancel()
 				return false
 			end

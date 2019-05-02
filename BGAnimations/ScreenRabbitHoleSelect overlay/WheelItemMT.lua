@@ -14,8 +14,8 @@ return {
 					subself:y((((self.rh_index-1)%10)+1)*30)
 					subself:addx(self.rh_index <= 10 and -180 or WideScale(60,100))
 
-					if self.rh_index > 19 then
-						subself:xy( 100, (self.rh_index-8)*30 )
+					if self.rh_index > 20 then
+						subself:xy( 100, (self.rh_index-9)*30 )
 					end
 				end
 			}
@@ -53,7 +53,7 @@ return {
 			self.info = info
 			self.rh_index = info[1]
 			self.text = info[2]
-			if self.rh_index < 20 then
+			if self.rh_index < 21 then
 				self.bmt:settext(self.rh_index .. ". " .. self.text)
 			else
 				self.bmt:settext(self.text):halign(0.5)
