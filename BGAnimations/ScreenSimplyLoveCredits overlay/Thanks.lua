@@ -9,7 +9,7 @@ return {
 		{
 			Name="Mad Matt",
 			Img="madmatt.png",
-			About="Matt helped Lara implement some of the more technical aspects of the original Simply Love theme. He was also responsible for the Final Fantasy Tactics and Super Meat Boy themes for ITG.\n\nMatt is probably best known for dance gaming inhumnanly fast (though he assures me that he is, in fact, quite human).\n\nMost recently, he has led development efforts for Rhythm Horizon."
+			About="Matt helped Lara implement some of the more technical aspects of the original Simply Love theme. He was also responsible for the Final Fantasy Tactics and Super Meat Boy themes for ITG.\n\nMatt is probably best known for dance gaming inhumanly fast (though he assures me that he is, in fact, quite human).\n\nMost recently, he has led development efforts for Rhythm Horizon."
 		}
 
 	},
@@ -19,7 +19,7 @@ return {
 		{
 			Name="djpohly",
 			Img="djpohly.png",
-			About="djpohly was a constant source of knowledge, help, and measured encouragement during the initial 18 months I spent porting Simply Love to SM5.\n\nHe also authored the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware feasible."
+			About="djpohly was a constant source of knowledge, help, and measured encouragement during the initial 18 months I spent porting Simply Love to SM5.\n\nHe also authored the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware initially feasible."
 		},
 		{
 			Name="AJ / freem",
@@ -39,7 +39,7 @@ return {
 		{
 			Name="SM5 Dev Team",
 			Img="stepmania.png",
-			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of StepMania, including Lirodon, jousway, tertu, Mr.ThatKid, etc."
+			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of StepMania, including Lirodon, jousway, tertu, Mr.ThatKid, RyTak, etc."
 		},
 		{
 			Name="David / mute",
@@ -49,20 +49,20 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to andrewipark and Kauhsa for repeatedly submitting fantastic pull requests that fixed bugs, improved performance, and made my life easier.\n\nAdditional thanks go to HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, dougshell, shockdude, and TheNick.  Every bit helps!"
+			About="Many thanks go to andrewipark and Kauhsa for repeatedly submitting fantastic pull requests that fixed bugs, improved performance, and made my life easier.\n\nAdditional thanks go to HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, dougshell, shockdude, Sereni, karamel59, and TheNick.  Every bit helps!"
 		}
 	},
 
 	-- page 4
 	{
 		{
-			Name="Caitlin",
+			Name="Caitlin / Evocait",
 			Img="caitlin.png",
 			About="Caitlin redrew many of Simply Love's visual assets to be high-res, always provided feedback and assurance, and generally loved and supported me while I juggled 18 months of grad school and the initial Simply Love port."
 		},
 		{
 			Name="Sujeet / teejusb",
-			Img="teejusb.png",
+			Img="teejusb.jpg",
 			About="Sujeet was a great fount of general CS knowledge, and patiently answered my questions about data structures and algorithms many times.\n\nHe also runs the U.P.S. tournament series, which showcases custom content for SM5 in a lighthearted and fun way."
 		},
 
@@ -77,8 +77,8 @@ return {
 	{
 		{
 			Name="Dance Dance Maniacs",
-			Img={ "ddm/2017.png", "ddm/2015.png", "ddm/2018.png", "ddm/2012.png" },
-			About="Thanks to the PSU Dance Dance Maniacs for dance gaming with me at my best and worst, including:\n\nAndyBeard, NBCrescendo, Silverheart97, Ali, Alex, Tyler, Catherine, Becca, PirateKing, Elena, Jonathan, Eileen, Anna, DJ OMiY, minomotu, LightningXCE, Zyroplex, Captain Swagonforce, Weston, Vale, Rime, and more."
+			Img={ "ddm/2019.jpg", "ddm/2017.jpg", "ddm/2015.jpg", "ddm/2018.jpg", "ddm/2012.jpg" },
+			About="The PSU Dance Dance Maniacs dance gamed with me at my best and worst.\n\nLightningXCE, Zyroplex, Captain Swagonforce, rawinput, milk, teejusb, NBCrescendo, freemansbackup, chronohat\n\nDJ OMiY, minomotu, Kristina, blakjakal, Vale, Silverheart97, AndyBeard, Alex, tfrederick, Catherine, Elena, Jonathan, Eileen, Ali, Anna\n\nRime, PirateKing, Fox, Lev, Cathy, Grant, Koopa, CCTV, MathMatt, TheNick, Nate(s), Crash Cringle, Daisy1218, Miaou Miaou Miaou, Silverwolfstar, and more."
 		},
 		{
 			Name="DDRIllini",
@@ -92,17 +92,22 @@ return {
 		{
 			Name="Ian / Archi",
 			Img="archi.png",
-			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that. When he's not busy streaming, he encourages others to through GrooveStats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
+			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that.\n\nWhen he's not busy streaming, he encourages others to through GrooveStats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
+		},
+		{
+			Name="Dyle / RiOdO",
+			Img="riodo.jpg",
+			About="By regularly organizing and hosting a variety of tech-oriented events such as East Coast FA, Everyone Can FA, and Technical Showcase, Dyle has contributed significantly to shape the post-ITG dance game scene."
+		},
+		{
+			Name="Brittney / Galaga",
+			Img="galaga.jpg",
+			About="Brittney has been a leading voice in the effort to create a community and organize events for girls and women who play dance games.\n\nShe has encouraged women of all skill levels from around the world to push themselves and each other to improve through innovative and compelling competition, and the overall community is better for it."
 		},
 		{
 			Name="Alan / TaroNuke",
 			Img="taronuke.png",
-			About="Alan's scripting work with the Mawaru and UKSRT series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
-		},
-		{
-			Name="Riakodoadm",
-			Img="Riakodoadm.jpg",
-			About="Riakodoadm wrote music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
+			About="Alan's programming work with the UKSRT and Mawaru series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
 		},
 	},
 
@@ -111,12 +116,36 @@ return {
 		{
 			Name="Jose_Varela",
 			Img="jose.png",
-			About="An up-and-coming StepMania themer, Jose graciously translated Simply Love's UI into Spanish.\n\nAs of this writing, he's working on three unique themes for SM5 and each is looking great.  By the time you read this, he will probably have undertaken at least a fourth."
+			About="An up-and-coming StepMania themer, Jose graciously translated Simply Love's UI into Spanish.\n\nAs of this writing, he's working on three unique themes for SM5 and each is looking great.  By the time you read this, he will probably have undertaken at least a fifth."
 		},
 		{
 			Name="HeySora",
 			Img="heysora.png",
 			About="HeySora kindly translated Simply Love's UI into French.\n\nHe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
+		},
+		{
+			Name="Moru Zerinho6",
+			Img="Moru_Zerinho6.jpg",
+			About="Moru Zerinho6 volunteered to translate Simply Love's UI into Brazilian Portuguese and the theme is richer for it.\n\nHe spoke with me extensively about his experience going down The Rabbit Hole in Simply Love and how he translated its words for other non-English-speaking people along the way.  His earnest sincerity helped me in ways I am unable to describe using any words of my own."
 		}
+	},
+
+	-- page 8
+	{
+		{
+			Name="Riakodoadm",
+			Img="Riakodoadm.jpg",
+			About="Riakodoadm wrote music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
+		},
+		{
+			Name="bblum",
+			Img="bblum.jpg",
+			About="bblum offered me a place to stay when my life was in chaos and my mental space was a hellscape.  Moreover, they afforded a sense of local friendship when the city felt impossibly large and isolating.\n\nWe connected over grad school experiences and they demonstrated that formal academic journal articles can be enjoyable if you find the right topic (see: SIGBOVIK 2016 proceedings).",
+		},
+		{
+			Name="pluto",
+			Img="pluto.png",
+			About="Pluto has supplied exceptional art for many dance game events such as ECS and Nordic Cup, and has infused each with her signature style.\n\nWhen she collaborated with me on my Distant Towers visual novel project, her artistic output brought life and vitality to my moribund mind, and her feedback as a friend kept my soul on life support and my heart beating while I was otherwise dead.",
+		},
 	},
 }
