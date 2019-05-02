@@ -20,8 +20,8 @@ local t = Def.ActorFrame{
 	-- the title of the song and its graphical banner, if there is one
 	LoadActor("./TitleAndBanner.lua"),
 
-	-- the ratemod text that appears at the bottom of the banner if music rate ~= 1.0
-	LoadActor("./RateMod.lua"),
+	-- text to display BPM range (and ratemod if ~= 1.0) immediately under the banner
+	LoadActor("./BPM_RateMod.lua"),
 
 	-- code for handling score vocalization
 	LoadActor("./ScoreVocalization.lua"),
