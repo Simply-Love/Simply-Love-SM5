@@ -119,13 +119,12 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,
 		Choices = function()
-			graphics = GetJudgmentGraphics(SL.Global.GameMode)
-			for i,g in ipairs(graphics) do
-				graphics[i] = CleanString(g)
+			local judgment_names = {}
+			for file in ivalues(GetJudgmentGraphics(SL.Global.GameMode)) do
+				judgment_names[#judgment_names+1] = file[1]
 			end
-			return graphics
+			return judgment_names
 		end,
-		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = SL[ToEnumShortString(pn)].ActiveModifiers
 

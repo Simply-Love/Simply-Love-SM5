@@ -64,8 +64,7 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local optrow = self:GetParent():GetParent():GetParent()
 
 			if optrow and optrow:GetName() == "JudgmentGraphic" and player == params.Player then
-				local filename = params.JudgmentGraphic:gsub("%.", "`")
-				local judgment_sprite = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("JudgmentGraphic_"..filename)
+				local judgment_sprite = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("JudgmentGraphic_"..params.JudgmentGraphic)
 				if judgment_sprite then self:SetTarget( judgment_sprite ) end
 			end
 		end

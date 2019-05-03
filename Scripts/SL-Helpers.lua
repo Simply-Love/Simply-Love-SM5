@@ -289,17 +289,6 @@ local function StripSpriteHints(filename)
 	return filename:gsub(" %d+x%d+", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
 end
 
-function CleanString(filename)
-	-- do a couple text conversions to allow spaces and periods in display strings
-	-- without causing so much grief with SM loading
-	-- Suppose two images named "A" and "A B" are in the same folder
-	-- Attempting to load "A" will throw a nonsensical but harmless error
-	local name = filename:gsub("_", " ")
-	name = name:gsub("`", ".")
-
-	return name
-end
-
 function GetJudgmentGraphics(mode)
 	if mode == 'Casual' then mode = 'Competitive' end
 	local path = THEME:GetPathG('', '_judgments/' .. mode)
@@ -317,15 +306,15 @@ function GetJudgmentGraphics(mode)
 
 			-- Fill the table, special-casing Love so that it comes first.
 			if name == "Love" then
-				table.insert(judgment_graphics, 1, name)
+				table.insert(judgment_graphics, 1, {name, filename})
 			else
-				judgment_graphics[#judgment_graphics+1] = name
+				judgment_graphics[#judgment_graphics+1] = {name, filename}
 			end
 		end
 	end
 
 	-- "None" -> no graphic in Player judgment lua
-	judgment_graphics[#judgment_graphics+1] = "None"
+	judgment_graphics[#judgment_graphics+1] = {"None", nil}
 
 	return judgment_graphics
 end
