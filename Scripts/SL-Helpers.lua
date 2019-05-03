@@ -20,6 +20,20 @@ end
 ------------------------------------------------------------------------------
 -- Misc Lua functions that didn't fit anywhere else...
 
+-- return true or nil
+CurrentGameIsSupported = function()
+	-- a hardcoded list of games that Simply Love supports
+	local support = {
+		dance	= true,
+		pump = true,
+		techno = true,
+		para = true,
+		kb7 = true
+	}
+	return support[GAMESTATE:GetCurrentGame():GetName()]
+end
+
+
 -- helper function used to detmerine which timing_window a given offset belongs to
 function DetermineTimingWindow(offset)
 	for i=1,5 do
@@ -194,14 +208,6 @@ function GetSimplyLoveOptionsLineNames()
 end
 
 
-function GetPlayerOptionsLineNames()
-	if SL.Global.GameMode == "Casual" then
-		return "SpeedMod,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
-	else
-		return "SpeedModType,SpeedMod,Mini,Perspective,NoteSkin2,Judgment,BackgroundFilter,MusicRate,Difficulty,ScreenAfterPlayerOptions"
-	end
-end
-
 function GetPlayerOptions2LineNames()
 	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
 
@@ -267,6 +273,9 @@ GetThemeVersion = function()
 	end
 	return false
 end
+
+-- -----------------------------------------------------------------------
+-- functions that attempt to handle the mess that is custom judgment graphic detection/loading
 
 local function FilenameIsMultiFrameSprite(filename)
 	-- look for the "[frames wide] x [frames tall]"
