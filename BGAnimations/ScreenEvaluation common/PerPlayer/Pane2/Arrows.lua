@@ -8,9 +8,15 @@ local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local game = GAMESTATE:GetCurrentGame():GetName()
 local columns = {
+	dance = { "Left", "Down", "Up", "Right" },
 	pump = { "DownLeft", "UpLeft", "Center", "UpRight", "DownRight" },
 	techno = { "DownLeft", "Left", "UpLeft", "Down", "Up", "UpRight", "Right", "DownRight" },
-	dance = { "Left", "Down", "Up", "Right" }
+	para = {"Left", "UpLeft", "Up", "UpRight", "Right" },
+	kb7 = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7" },
+
+	-- these games aren't supported by SL right now
+	beat = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Scratch up", "Scratch down" },
+	kickbox = { "Down Left Foot", "Up Left Foot", "Up Left Fist", "Down Left Fist", "Down Right Fist", "Up Right Fist", "Up Right Foot", "Down Right Foot" }
 }
 
 local box_width = 230

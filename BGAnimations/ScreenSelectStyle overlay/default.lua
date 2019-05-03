@@ -15,7 +15,15 @@ if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
 	choices[2].x = (_screen.w/4)*2-_screen.w/8
 	choices[3].x = (_screen.w/4)*3-_screen.w/8
 	choices[4] = { name="solo", pads={ {3, -xshift-14}}, x=_screen.w-_screen.w/8 }
+
+-- double is not a valid style in kb7 and para
+elseif current_game=="kb7" or current_game=="para" then
+	choices[1].x = _screen.cx-_screen.w/6
+	choices[2].x = _screen.cx+_screen.w/6
+	table.remove(choices, 3)
 end
+
+
 
 -- either 1 (single) or 2 (versus)
 local current_index = #GAMESTATE:GetHumanPlayers()

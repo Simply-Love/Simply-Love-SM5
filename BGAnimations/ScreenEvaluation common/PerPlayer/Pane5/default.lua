@@ -1,5 +1,8 @@
 local player = ...
 
+-- GrooveStats only supports dance for now.  Don't show the QR code if we're in pump, techno, etc.
+if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
+
 -- QR Code should only be active in normal gameplay for individual songs.
 -- Only allow Competitive and ECFA because Casual and Stomperz have different settings.
 if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
@@ -21,6 +24,8 @@ if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
 		-- Strip the characters up to and including the underscore.
 		difficulty = ToEnumShortString(difficulty)
 	end
+
+	-- will need to update this to not be hardcoded to dance if GrooveStats supports other games in the future
 	local style = ""
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
 		style = "dance-double"
@@ -59,7 +64,7 @@ if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
 	}
 
 	pane[#pane+1] = LoadFont("_miso")..{
-		Text="Scan with your phone to upload this score to your GrooveStats account.",
+		Text=ScreenString("QRInstructions"),
 		InitCommand=function(self) self:zoom(0.8):xy(-140,255):wrapwidthpixels(96/0.8):align(0,0):vertspacing(-4) end
 	}
 

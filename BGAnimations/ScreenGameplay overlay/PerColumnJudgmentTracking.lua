@@ -12,8 +12,10 @@ local buttons = {
 	pump = { "DownLeft", "UpLeft", "Center", "UpRight", "DownRight" },
 	techno = { "DownLeft", "Left", "UpLeft", "Down", "Up", "UpRight", "Right", "DownRight" },
 	para = { "Left", "UpLeft", "Up", "UpRight", "Right" },
-	beat = { "Key 1", "Key 2", "Key 3", "Key 4", "Key 5", "Key 6", "Key 7", "Scratch up", "Scratch down" },
-	kb7 = { "Key 1", "Key 2", "Key 3", "Key 4", "Key 5", "Key 6", "Key 7" },
+	kb7 = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7" },
+
+	-- these games aren't supported by SL right now
+	beat = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Scratch up", "Scratch down" },
 	kickbox = { "Down Left Foot", "Up Left Foot", "Up Left Fist", "Down Left Fist", "Down Right Fist", "Up Right Fist", "Up Right Foot", "Down Right Foot" }
 }
 

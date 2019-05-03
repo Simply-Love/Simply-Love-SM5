@@ -93,7 +93,7 @@ end
 --
 -- We reference this function in Metrics.ini under the [Gameplay] section.
 function GetComboThreshold( MaintainOrContinue )
-	local CurrentGame = string.lower( GAMESTATE:GetCurrentGame():GetName() )
+	local CurrentGame = GAMESTATE:GetCurrentGame():GetName()
 
 	local ComboThresholdTable = {
 		dance	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
@@ -105,11 +105,16 @@ function GetComboThreshold( MaintainOrContinue )
 
 		-- I don't know what these values are supposed to actually be...
 		popn	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-		beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+		beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+		kickbox	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+
+		-- lights is not a playable game mode, but it is, oddly, a selectable one within the operator menu
+		-- include dummy values here to prevent Lua errors in case players accidentally switch to lights
+		lights =	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
 	}
 
 
-	if CurrentGame == "dance" then
+	if CurrentGame ~= "para" then
 		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
 			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
 			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
@@ -158,6 +163,11 @@ end
 function GetOperatorMenuLineNames()
 	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,ClearCredits,Reload"
 
+	-- the TestInput screen only supports dance, pump, and techno; remove it when in other games
+	local CurrentGame = GAMESTATE:GetCurrentGame():GetName()
+	if not (CurrentGame=="dance" or CurrentGame=="pump" or CurrentGame=="techno") then
+		lines = lines:gsub("TestInput,", "")
+	end
 
 	-- hide the OptionRow for ClearCredits if we're not in CoinMode_Pay; it doesn't make sense to show for at-home players
 	-- note that (EventMode + CoinMode_Pay) will actually place you in CoinMode_Home

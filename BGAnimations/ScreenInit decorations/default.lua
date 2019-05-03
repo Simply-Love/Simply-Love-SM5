@@ -31,7 +31,7 @@ af[#af+1] = LoadFont("_miso")..{
 	InitCommand=cmd(diffuse,GetHexColor(slc); diffusealpha,0; Center),
 	OnCommand=cmd(sleep,3; linear,0.25; diffusealpha,1; sleep,1.25; linear,0.25; diffusealpha,0; sleep,0.25; queuecommand, "Refresh"),
 	RefreshCommand=function(self)
-		self:settext(THEME:GetString("ScreenInit", "Origins") .. " " .. Year() .. THEME:GetString("ScreenInit", "WhyIsThisStillAThing"))
+		self:settext(THEME:GetString("ScreenInit", "Origins") .. " " .. Year() .. ".")
 		self:linear(0.25):diffusealpha(1):sleep(2.75):linear(0.25):diffusealpha(0)
 	end,
 }
