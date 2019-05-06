@@ -284,7 +284,7 @@ local function FilenameIsMultiFrameSprite(filename)
 	return string.match(filename, " %d+x%d+") and string.match(filename, "%.[A-Za-z]+")
 end
 
-local function StripSpriteHints(filename)
+function StripSpriteHints(filename)
 	-- handle common cases here, gory details in /src/RageBitmapTexture.cpp
 	return filename:gsub(" %d+x%d+", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
 end
@@ -306,15 +306,15 @@ function GetJudgmentGraphics(mode)
 
 			-- Fill the table, special-casing Love so that it comes first.
 			if name == "Love" then
-				table.insert(judgment_graphics, 1, {name, filename})
+				table.insert(judgment_graphics, 1, filename)
 			else
-				judgment_graphics[#judgment_graphics+1] = {name, filename}
+				judgment_graphics[#judgment_graphics+1] = filename
 			end
 		end
 	end
 
-	-- "None" -> no graphic in Player judgment lua
-	judgment_graphics[#judgment_graphics+1] = {"None", nil}
+	-- "None" -> no graphic in Player judgment.lua
+	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
 end

@@ -143,19 +143,10 @@ for noteskin in ivalues( CustomOptionRow("NoteSkin").Choices ) do
 end
 
 
--- GetJudgmentGraphics() will return a table of judgment graphics available in this mode, formatted like
--- {
--- 	{ "Love", "Love 2x6.png" },
--- 	{ "Love Chroma", "Love Chroma 2x6.png" },
--- 	{ "3.9", "3.9 1x6.png" }
--- }
--- index 1 is the user-facing string
--- index 2 is the filename needed to load the Judgment preview so that LoadActor() doesn't
--- mistakenly believe that "Love" and "Love Chroma" are the same file
-for judgment in ivalues( GetJudgmentGraphics(SL.Global.GameMode) ) do
-	if judgment[1] ~= "None" then
-		t[#t+1] = LoadActor( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. judgment[2]) )..{
-			Name="JudgmentGraphic_"..judgment[1],
+for judgment_filename in ivalues( GetJudgmentGraphics(SL.Global.GameMode) ) do
+	if judgment_filename ~= "None" then
+		t[#t+1] = LoadActor( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. judgment_filename) )..{
+			Name="JudgmentGraphic_"..StripSpriteHints(judgment_filename),
 			InitCommand=function(self) self:visible(false):animate(false) end
 		}
 	else

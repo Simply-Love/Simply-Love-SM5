@@ -118,24 +118,19 @@ local Overrides = {
 	JudgmentGraphic = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,
-		Choices = function()
-			local judgment_names = {}
-			for file in ivalues(GetJudgmentGraphics(SL.Global.GameMode)) do
-				judgment_names[#judgment_names+1] = file[1]
-			end
-			return judgment_names
-		end,
+		Choices = function() return map(StripSpriteHints, GetJudgmentGraphics(SL.Global.GameMode)) end,
+		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = SL[ToEnumShortString(pn)].ActiveModifiers
 
 			for i=1,#list do
 				if list[i] then
-					mods.JudgmentGraphic = self.Choices[i]
+					mods.JudgmentGraphic = self.Values[i]
 					break
 				end
 			end
 
-			MESSAGEMAN:Broadcast("JudgmentGraphicChanged", {Player=pn, JudgmentGraphic=mods.JudgmentGraphic})
+			MESSAGEMAN:Broadcast("JudgmentGraphicChanged", {Player=pn, JudgmentGraphic=StripSpriteHints(mods.JudgmentGraphic)})
 		end
 	},
 	-------------------------------------------------------------------------

@@ -17,8 +17,6 @@ function LoadProfileCustom(profile, dir)
 
 	if pn and FILEMAN:DoesFileExist(fullFilename) then
 		SL[pn].ActiveModifiers = IniFile.ReadFile(fullFilename)["Simply Love"]
-		-- IniFile.ReadFile() will convert values like "3.9" to a number, but JudgmentGraphic should always be a string
-		SL[pn].ActiveModifiers.JudgmentGraphic = tostring(SL[pn].ActiveModifiers.JudgmentGraphic)
 	end
 
 	return true
