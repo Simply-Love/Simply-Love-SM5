@@ -47,13 +47,11 @@ local row = {
 -- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
 -- (there has got to be a better way to do this...)
 local game_name = GAMESTATE:GetCurrentGame():GetName()
-local style
+-- "single" and  "versus" both map to "Single" here
+local style = "Single"
 
 if GAMESTATE:GetCurrentStyle():GetName() == "double" then
 	style = "Double"
-else
-	-- "single" and  "versus" both map to "Single" here
-	style = "Single"
 end
 
 local steps_type = "StepsType_"..game_name:gsub("^%l", string.upper).."_"..style
@@ -69,25 +67,16 @@ if game_name == "techno" then steps_type = steps_type.."8" end
 -- or passively (MenuTimer running out)
 
 local InitOptionRowsForSingleSong = function()
-	local steps = {}
-	-- prune out charts whose meter exceeds the specified max
-	for chart in ivalues(SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )) do
-		if chart:GetMeter() <= ThemePrefs.Get("CasualMaxMeter") then
-			steps[#steps+1] = chart
-		end
-	end
-
-	OptionRows[1].choices = steps
-
 	for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
-		OptionsWheel[pn]:set_info_set( OptionRows, 1)
+		OptionsWheel[pn]:set_info_set(OptionRows, 1)
 
-		for i=1,#OptionRows do
-			OptionsWheel[pn][i]:set_info_set( OptionRows[i].choices, 1)
+		for i,row in ipairs(OptionRows) do
+			if row.OnLoad then
+				row.OnLoad(OptionsWheel[pn][i], pn, row:Choices(), row.Values())
+			end
 		end
 	end
 end
-
 
 ---------------------------------------------------------------------------
 -- helper function used by GetGroups() and GetDefaultSong()
@@ -125,6 +114,8 @@ end
 
 local PruneSongsFromGroup = function(group)
 	local songs = {}
+	local current_song = GAMESTATE:GetCurrentSong()
+	local index = 1
 
 	-- prune out songs that don't have valid steps
 	for i,song in ipairs(SONGMAN:GetSongsInGroup(group)) do
@@ -140,9 +131,11 @@ local PruneSongsFromGroup = function(group)
 				end
 			end
 		end
+		-- we need to retain the index of the current song so we can set the SongWheel to start on it
+		if current_song == song then index = #songs end
 	end
 
-	return songs
+	return songs, index
 end
 
 ---------------------------------------------------------------------------
@@ -353,4 +346,5 @@ return {
 	row=row,
 	col=col,
 	InitOptionRowsForSingleSong=InitOptionRowsForSingleSong,
+	PruneSongsFromGroup=PruneSongsFromGroup
 }

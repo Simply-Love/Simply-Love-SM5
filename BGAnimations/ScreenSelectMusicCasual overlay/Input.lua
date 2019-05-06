@@ -234,8 +234,8 @@ t.Handler = function(event)
 				-- we want to proceed linearly to the last optionrow and then stop there
 				if ActiveOptionRow[event.PlayerNumber] < #OptionRows then
 					local choice = t.WheelWithFocus[event.PlayerNumber][index]:get_info_at_focus_pos()
-					local choices= OptionRows[index].choices
-					local values = OptionRows[index].values
+					local choices= OptionRows[index]:Choices()
+					local values = OptionRows[index].Values()
 
 					OptionRows[index]:OnSave(event.PlayerNumber, choice, choices, values)
 

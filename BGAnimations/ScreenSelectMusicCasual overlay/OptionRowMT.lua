@@ -122,8 +122,8 @@ local optionrow_mt = {
 
 		set = function(self, optionrow)
 			if not optionrow then return end
-			self.helptext:settext( optionrow.helptext )
-			if optionrow.helptext == "" then
+			self.helptext:settext( optionrow.HelpText )
+			if optionrow.HelpText == "" then
 				self.bgQuad:visible(false)
 			end
 		end

@@ -62,10 +62,10 @@ local optionrow_item_mt = {
 
 			if not info then return end
 
-			if type(info) == "userdata" then
-				local difficulty = THEME:GetString( "CustomDifficulty", info:GetDifficulty():gsub("Difficulty_", "") )
-				self.bmt1:settext( difficulty )
-				self.bmt2:settext( info:GetMeter() )
+			if type(info) == "table" then
+				-- local difficulty = THEME:GetString( "CustomDifficulty", info:GetDifficulty():gsub("Difficulty_", "") )
+				self.bmt1:settext( info[1] )
+				self.bmt2:settext( info[2] )
 			else
 				self.bmt1:settext( info )
 				self.bmt2:settext( "" )

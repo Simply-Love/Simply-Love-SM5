@@ -6,31 +6,12 @@ local steps_type = args[4]
 local row = args[5]
 local col = args[6]
 local Input = args[7]
+local PruneSongsFromGroup = args[8]
 
 local max_chars = 64
 
 local switch_to_songs = function(group_name)
-	local songs = {}
-	local current_song = GAMESTATE:GetCurrentSong()
-	local index = 1
-
-	-- prune out songs that don't have valid steps
-	for i,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
-		-- this should be guaranteed by this point, but better safe than segfault
-		if song:HasStepsType(steps_type)
-		-- respect StepMania's cutoff for 1-round songs
-		and song:MusicLengthSeconds() < PREFSMAN:GetPreference("LongVerSongSeconds") then
-			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-				if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then
-					songs[#songs+1] = song
-					break
-				end
-			end
-		end
-		-- we need to retain the index of the currnt song so we can set the SongWheel to start on it
-		if current_song == song then index = #songs end
-	end
-
+	local songs, index = PruneSongsFromGroup(group_name)
 	songs[#songs+1] = "CloseThisFolder"
 
 	SongWheel:set_info_set(songs, index)
