@@ -138,8 +138,8 @@ function GetComboThreshold( MaintainOrContinue )
 	return ComboThresholdTable[CurrentGame][MaintainOrContinue]
 end
 
-
 function SetGameModePreferences()
+	-- apply the preferences associated with this GameMode
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
 		PREFSMAN:SetPreference(key, val)
 	end
@@ -155,11 +155,18 @@ function SetGameModePreferences()
  		SL.Global.ActiveModifiers.DecentsWayOffs = "On"
 	end
 
-	-- Now that we've set the SL table for DecentsWayOffs appropriately,
-	-- use it to apply DecentsWayOffs as a mod.
+	-- loop through human players and apply whatever mods need to be set now
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		-- Now that we've set the SL table for DecentsWayOffs appropriately,
+		-- use it to apply DecentsWayOffs as a mod.
 		local OptRow = CustomOptionRow( "DecentsWayOffs" )
 		OptRow:LoadSelections( OptRow.Choices, player )
+
+		-- using PREFSMAN to set the preference for MinTNSToHideNotes apparently isn't
+		-- enough when switching gamemodes because MinTNSToHideNotes is also a PlayerOption.
+		-- so, set the PlayerOption version of it now, too, to ensure that arrows disappear
+		-- at the appropriate judgments during gameplay for this gamemode.
+		GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):MinTNSToHideNotes(SL.Preferences[SL.Global.GameMode].MinTNSToHideNotes)
 	end
 
 	local prefix = {
