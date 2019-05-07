@@ -1,5 +1,5 @@
 -- The rest of the code to handle score vocalizations exists in
--- ./BGAnimations/ScreenEvaluation common/score_vocalizations.lua
+-- ./BGAnimations/ScreenEvaluation common/ScoreVocalization.lua
 -- which is, of course, loaded from
 -- ./BGAnimations/ScreenEvaluation common/default.lua
 

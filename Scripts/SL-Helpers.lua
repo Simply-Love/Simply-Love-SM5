@@ -226,9 +226,15 @@ function GetPlayerOptions2LineNames()
 		mods = mods:gsub("TargetStatus,TargetBar,ActionOnMissedTarget,", "")
 	end
 
-	-- only show if the user is in event mode
-	-- no need to have this show up in arcades.
-	-- the pref is also checked against EventMode during runtime.
+	-- remove Vocalization if no voice packs were found in the filesystem
+	if #FILEMAN:GetDirListing(GetVocalizeDir() , true, false) < 1 then
+		mods = mods:gsub("Vocalization," ,"")
+	end
+
+	-- ActionOnMissedTarget can automatically fail or restart Gameplay when a target score
+	-- becomes impossible to achieve; it really only makes sense in EventMode (i.e., not public arcades)
+	-- a second check is performed in ./ScreenGameplay underlay/PerPlayer/TargetScore/default.lua
+	-- to ensure it isn't accidentally brought into non-EventMode via player profile
 	if not PREFSMAN:GetPreference("EventMode") then
 		mods = mods:gsub("ActionOnMissedTarget,", "")
 	end
