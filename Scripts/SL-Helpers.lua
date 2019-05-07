@@ -209,7 +209,7 @@ end
 
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,Characters,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then
@@ -229,6 +229,11 @@ function GetPlayerOptions2LineNames()
 	-- remove Vocalization if no voice packs were found in the filesystem
 	if #FILEMAN:GetDirListing(GetVocalizeDir() , true, false) < 1 then
 		mods = mods:gsub("Vocalization," ,"")
+	end
+
+	-- remove Characters if no dancing character directories were found
+	if #CHARMAN:GetAllCharacters() < 1 then
+		mods = mods:gsub("Characters,", "")
 	end
 
 	-- ActionOnMissedTarget can automatically fail or restart Gameplay when a target score
