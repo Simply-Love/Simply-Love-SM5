@@ -57,6 +57,24 @@ for i=NumStages,1,-1 do
 			upper = index
 		end
 
+		-- calling GetMachineHighScoreIndex() on a PlayerStageStats object in EventMode always returns -1
+		-- so a wildly roundabout check is needed
+		-- This won't return any false positives, but will return false negatives in extreme circumstances,
+		-- resulting in no HighScore rows lighting up.  Oh well.
+		-- (if we're in EventMode and both players earn a HighScore and they are both tied in score and neither is using a profile)
+		local HighScoreIndexInEventMode = function(s)
+			if GAMESTATE:IsEventMode()
+			and highscores[s] ~= nil
+			and pss:GetHighScore():GetScore() == highscores[s]:GetScore()
+			and pss:GetHighScore():GetDate() == highscores[s]:GetDate()
+			and (name==PROFILEMAN:GetProfile(player):GetLastUsedHighScoreName()
+				or ((#GAMESTATE:GetHumanPlayers()==1 and name=="EVNT") or (highscores[s]:GetScore() ~= STATSMAN:GetCurStageStats():GetPlayerStageStats(OtherPlayer[player]):GetHighScore():GetScore()))
+			)
+			then return true end
+
+			return false
+		end
+
 		for s=lower,upper do
 
 			local score, name, date
@@ -85,8 +103,7 @@ for i=NumStages,1,-1 do
 						:x( (player == PLAYER_1 and _screen.cx-160) or (_screen.cx+160))
 						:y(_screen.cy+60)
 					--if this row represents the new highscore, highlight it
-					if (PREFSMAN:GetPreference("EventMode") and highscores[s] and pss:GetHighScore():GetPercentDP() == highscores[s]:GetPercentDP() )
-					or s == index then
+					if s == index or HighScoreIndexInEventMode(s) then
 						self:diffuseshift():effectperiod(durationPerSong/3)
 							:effectcolor1( PlayerColor(player) )
 							:effectcolor2( Color.White )

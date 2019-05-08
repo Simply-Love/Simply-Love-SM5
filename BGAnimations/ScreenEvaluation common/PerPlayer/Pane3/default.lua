@@ -11,9 +11,6 @@ local pane = Def.ActorFrame{
 -- machineProfile contains the overall high scores per song
 local machineProfile = PROFILEMAN:GetMachineProfile()
 
--- get the number of stages that were played
-local StageNumber = GAMESTATE:IsCourseMode() and 1 or SL.Global.Stages.PlayedThisGame+1
-
 local months = {}
 for i=1,12 do
 	months[#months+1] = THEME:GetString("ScreenNameEntryTraditional", "Month"..i)
@@ -27,8 +24,7 @@ local highscoreList, highscores
 local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
-
-local text = ""
+local row_height = 22
 
 highscoreList = (SongOrCourse and StepsOrTrail) and machineProfile:GetHighScoreList(SongOrCourse,StepsOrTrail)
 highscores = highscoreList and highscoreList:GetHighScores()
@@ -41,11 +37,27 @@ if highscores then
 	local lower = 1
 	local upper = 10
 
-	if MaxHighScores > upper then
-		if index > upper then
-			lower = lower + (index-upper)
-			upper = index
-		end
+	if MaxHighScores > upper and index > upper then
+		lower = lower + (index-upper)
+		upper = index
+	end
+
+	-- calling GetMachineHighScoreIndex() on a PlayerStageStats object in EventMode always returns -1
+	-- so a wildly roundabout check is needed
+	-- This won't return any false positives, but will return false negatives in extreme circumstances,
+	-- resulting in no HighScore rows lighting up.  Oh well.
+	-- (if we're in EventMode and both players earn a HighScore and they are both tied in score and neither is using a profile)
+	local HighScoreIndexInEventMode = function(s)
+		if GAMESTATE:IsEventMode()
+		and highscores[s] ~= nil
+		and pss:GetHighScore():GetScore() == highscores[s]:GetScore()
+		and pss:GetHighScore():GetDate() == highscores[s]:GetDate()
+		and (name==PROFILEMAN:GetProfile(player):GetLastUsedHighScoreName()
+			or ((#GAMESTATE:GetHumanPlayers()==1 and name=="EVNT") or (highscores[s]:GetScore() ~= STATSMAN:GetCurStageStats():GetPlayerStageStats(OtherPlayer[player]):GetHighScore():GetScore()))
+		)
+		then return true end
+
+		return false
 	end
 
 	for s=lower,upper do
@@ -78,7 +90,7 @@ if highscores then
 			end,
 			OnCommand=function(self)
 				--if this row represents the new highscore, highlight it
-				if s == index then
+				if (s == index) or HighScoreIndexInEventMode(s) then
 					self:diffuseshift()
 					self:effectperiod(4/3)
 					self:effectcolor1( PlayerColor(player) )
@@ -89,22 +101,22 @@ if highscores then
 
 		row[#row+1] = LoadFont("_miso")..{
 			Text=s..". ",
-			InitCommand=cmd(horizalign,right; xy, -120, (s-(lower-1))*22 )
+			InitCommand=cmd(horizalign,right; xy, -120, (s-(lower-1))*row_height )
 		}
 
 		row[#row+1] = LoadFont("_miso")..{
 			Text=name,
-			InitCommand=cmd(horizalign,left; xy, -110, (s-(lower-1))*22 )
+			InitCommand=cmd(horizalign,left; xy, -110, (s-(lower-1))*row_height )
 		}
 
 		row[#row+1] = LoadFont("_miso")..{
 			Text=score,
-			InitCommand=cmd(horizalign,right; xy, 24, (s-(lower-1))*22 )
+			InitCommand=cmd(horizalign,right; xy, 24, (s-(lower-1))*row_height )
 		}
 
 		row[#row+1] = LoadFont("_miso")..{
 			Text=date,
-			InitCommand=cmd(horizalign,left; xy, 50, (s-(lower-1))*22 )
+			InitCommand=cmd(horizalign,left; xy, 50, (s-(lower-1))*row_height )
 		}
 
 		pane[#pane+1] = row
