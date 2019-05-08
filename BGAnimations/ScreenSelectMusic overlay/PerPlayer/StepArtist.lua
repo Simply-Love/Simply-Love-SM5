@@ -102,14 +102,12 @@ return Def.ActorFrame{
 			self:settext( text )
 
 			-- account for the possibility that emojis shouldn't be diffused to Color.Black
-			for i=1, text:utf8len() do
-				if text:utf8sub(i,i):byte() >= 240 then
-					self:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
-				end
-			end
+			DiffuseEmojis(self, text)
 
 			-- sleep 2 seconds before queueing the next Marquee command to do this again
-			self:sleep(2):queuecommand("Marquee")
+			if #text_table > 1 then
+				self:sleep(2):queuecommand("Marquee")
+			end
 		end,
 		OffCommand=function(self) self:stoptweening() end
 	}

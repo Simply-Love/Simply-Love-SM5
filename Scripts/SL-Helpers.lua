@@ -138,6 +138,8 @@ function GetComboThreshold( MaintainOrContinue )
 	return ComboThresholdTable[CurrentGame][MaintainOrContinue]
 end
 
+-- -----------------------------------------------------------------------
+
 function SetGameModePreferences()
 	-- apply the preferences associated with this GameMode
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
@@ -180,6 +182,11 @@ function SetGameModePreferences()
 		PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])
 	end
 end
+
+-- -----------------------------------------------------------------------
+-- the available OptionRows for an options screen can change depending on certain conditions
+-- these functions start with all possible OptionRows and remove rows as needed
+-- whatever string is finally returned is passed off to the pertinent LineNames= in Metrics.ini
 
 function GetOperatorMenuLineNames()
 	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,ClearCredits,Reload"
@@ -254,6 +261,11 @@ function GetPlayerOptions2LineNames()
 	return mods
 end
 
+-- -----------------------------------------------------------------------
+-- given a player, return a table of stepartist text for the current song or course
+-- so that various screens (SSM, Eval) can cycle through these values and players
+-- can see each for brief duration
+
 GetStepsCredit = function(player)
 	local t = {}
 
@@ -276,11 +288,29 @@ GetStepsCredit = function(player)
 	return t
 end
 
+-- -----------------------------------------------------------------------
 BrighterOptionRows = function()
 	if ThemePrefs.Get("RainbowMode") then return true end
 	if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then return true end -- holiday cheer
 	return false
 end
+
+-- -----------------------------------------------------------------------
+-- account for the possibility that emojis shouldn't be diffused to Color.Black
+
+DiffuseEmojis = function(bmt, text)
+	-- loop through each char in the string, checking for emojis; if any are found
+	-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
+	for i=1, text:utf8len() do
+		if text:utf8sub(i,i):byte() >= 240 then
+			bmt:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
+		end
+	end
+end
+
+-- -----------------------------------------------------------------------
+-- read the theme version from ThemeInfo.ini to display on ScreenTitleMenu underlay
+-- this allows players to more easily identify what version of the theme they are currently using
 
 GetThemeVersion = function()
 	local file = IniFile.ReadFile( THEME:GetCurrentThemeDirectory() .. "ThemeInfo.ini" )

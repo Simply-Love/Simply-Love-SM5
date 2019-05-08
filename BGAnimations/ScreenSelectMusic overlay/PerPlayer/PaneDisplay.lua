@@ -159,13 +159,7 @@ local pd = Def.ActorFrame{
 		self:GetChild("MachineHighScore"):settext(machine_score)
 		self:GetChild("MachineHighScoreName"):settext(machine_name):diffuse({0,0,0,1})
 
-		-- loop through each char in the string, checking for emojis; if any are found
-		-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
-		for i=1, machine_name:utf8len() do
-			if machine_name:utf8sub(i,i):byte() >= 240 then
-				self:GetChild("MachineHighScoreName"):AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
-			end
-		end
+		DiffuseEmojis(self, machine_name)
 
 		if PROFILEMAN:IsPersistentProfile(player) then
 			local player_score, player_name = GetNameAndScore( PROFILEMAN:GetProfile(player) )
@@ -173,11 +167,7 @@ local pd = Def.ActorFrame{
 			self:GetChild("PlayerHighScore"):settext(player_score)
 			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse({0,0,0,1})
 
-			for i=1, player_name:utf8len() do
-				if player_name:utf8sub(i,i):byte() >= 240 then
-					self:GetChild("PlayerHighScoreName"):AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
-				end
-			end
+			DiffuseEmojis(self, player_name)
 		end
 	end
 }

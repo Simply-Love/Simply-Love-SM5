@@ -53,7 +53,6 @@ local t = Def.ActorFrame{
 			-- set the GameMode now; we'll use it throughout the theme
 			-- to set certain Gameplay settings and determine which screen comes next
 			SL.Global.GameMode = choices[cursor.index+1]
-
 			-- now that a GameMode has been selected, set related preferences
 			SetGameModePreferences()
 			-- and reload the theme's Metrics

@@ -25,9 +25,12 @@ return LoadFont("_miso")..{
 
 		-- set this BitmapText actor to display that text
 		self:settext( text )
+		DiffuseEmojis(self, text)
 
 		-- sleep 2 seconds before queueing the next Marquee command to do this again
-		self:sleep(2):queuecommand("Marquee")
+		if #text_table > 1 then
+			self:sleep(2):queuecommand("Marquee")
+		end
 	end,
 	OffCommand=function(self) self:stoptweening() end
 }
