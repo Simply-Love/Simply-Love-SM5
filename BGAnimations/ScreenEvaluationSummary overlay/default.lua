@@ -51,9 +51,8 @@ local t = Def.ActorFrame{
 
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
 
-	Def.BitmapText{
+	LoadFont("_wendy small")..{
 		Name="PageNumber",
-		Font="_wendy small",
 		Text=THEME:GetString("ScreenEvaluationSummary", "Page") .. " 1/" .. pages,
 		InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
 		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha, 1),

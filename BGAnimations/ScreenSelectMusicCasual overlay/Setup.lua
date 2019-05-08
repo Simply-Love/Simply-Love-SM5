@@ -14,6 +14,9 @@ local margin = {
 	h = 30
 }
 
+-- FIXME: making numCols and numRows configurable variables made sense when SSMCasual was more grid-like
+-- but groups are now a single row of coverflow, and songs follow a mostly-hardcoded U-shape transform
+-- figure out what else depends on these and refactor
 local numCols = 3
 local numRows = 5
 
