@@ -5,7 +5,7 @@ return Def.BitmapText{
 	Text=THEME:GetString("ScreenEvaluation", "PressStartToContinue"),
 	InitCommand=function(self)
 		self:xy(_screen.cx, _screen.cy + 170):zoom(0.55)
-			:diffusealpha(0)
+			:diffusealpha(0):shadowlength(0.5)
 	end,
 	OnCommand=function(self)
 		self:sleep(3):diffusealpha(1)

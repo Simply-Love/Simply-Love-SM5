@@ -4,8 +4,12 @@ local banner = {
 	zoom = 0.7,
 }
 
+-- the Quad containing the bpm and music rate doesn't appear in Casual mode
+-- so nudge the song title and banner down a bit when in Casual
+local y_offset = SL.Global.GameMode=="Casual" and 50 or 46
+
 local af = Def.ActorFrame{
-	InitCommand=function(self) self:xy(_screen.cx, 46) end,
+	InitCommand=function(self) self:xy(_screen.cx, y_offset) end,
 
 	-- quad behind the song/course title text
 	Def.Quad{
