@@ -55,7 +55,7 @@ local t = Def.ActorFrame{
 --  labels: W1 ---> Miss
 for index, window in ipairs(TapNoteScores.Types) do
 
-	local label = getStringFromTheme ( window )
+	local label = getStringFromTheme( window )
 
 	t[#t+1] = LoadFont("_miso")..{
 		Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper();
@@ -68,7 +68,6 @@ for index, window in ipairs(TapNoteScores.Types) do
 			if SL.Global.GameMode ~= "Competitive" then
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
 			end
-
 
 			local gmods = SL.Global.ActiveModifiers
 

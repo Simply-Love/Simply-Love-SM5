@@ -1,16 +1,18 @@
-local t = Def.ActorFrame{}
+if not ThemePrefs.Get("RainbowMode") then return Def.Actor{ InitCommand=function(self) self:visible(false) end } end
 
-if ThemePrefs.Get("RainbowMode") then
-	t[#t+1] = Def.Quad{
+return Def.ActorFrame{
+	Def.Quad{
 		InitCommand=function(self) self:FullScreen():Center():diffuse( Color.White ) end
-	}
-	t[#t+1] = LoadActor( THEME:GetPathB("", "_shared background normal"))
-	t[#t+1] = Def.Quad{
+	},
+
+	LoadActor( THEME:GetPathB("", "_shared background normal") ),
+
+	Def.Quad{
 		InitCommand=function(self)
 			self:diffuse(Color.White):Center():FullScreen()
 				:sleep(0.6):linear(0.5):diffusealpha(0)
-		end
+				:queuecommand("Hide")
+		end,
+		HideCommand=function(self) self:visible(false) end
 	}
-end
-
-return t
+}

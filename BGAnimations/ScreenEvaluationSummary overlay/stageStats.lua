@@ -205,13 +205,7 @@ for player in ivalues(Players) do
 					if val then self:settext(val) end
 					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs
 
-					if SL.Global.GameMode == "StomperZ" then
-						self:diffuse( SL.JudgmentColors.StomperZ[i] )
-					elseif SL.Global.GameMode == "ECFA" then
-						self:diffuse( SL.JudgmentColors.ECFA[i] )
-					else
-						self:diffuse( SL.JudgmentColors.Competitive[i] )
-					end
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 
 					if DecentsWayOffs == "Decents Only" and i == 5 then
 						self:visible(false)

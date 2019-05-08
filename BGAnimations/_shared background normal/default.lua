@@ -77,9 +77,7 @@ af[#af+1] = t
 
 af[#af+1] = Def.ActorFrame{
 	InitCommand=function(self)
-		if not ThemePrefs.Get("RainbowMode") then
-			self:visible(false)
-		end
+		self:visible( ThemePrefs.Get("RainbowMode") )
 	end,
 	OnCommand=cmd(Center; bob; effectmagnitude,0,50,0; effectperiod,8),
 	BackgroundImageChangedMessageCommand=function(self)
