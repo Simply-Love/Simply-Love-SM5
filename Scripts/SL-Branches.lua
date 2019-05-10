@@ -135,6 +135,32 @@ Branch.SSMCancel = function()
 	return Branch.TitleMenu()
 end
 
+local EnoughCreditsToContinue = function()
+	local credits = GetCredits().Credits
+	local premium = GAMESTATE:GetPremium()
+	local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
+
+	if premium == "Premium_2PlayersFor1Credit" and credits > 0 then return true end
+
+	if premium == "Premium_DoubleFor1Credit" then
+		if style == "versus" then
+			if credits > 1 then return true end
+		else
+			if credits > 0 then return true end
+		end
+	end
+
+	if premium == "Premium_Off" then
+		if style == "single" then
+			if credits > 0 then return true end
+		else
+			if credits > 1 then return true end
+		end
+	end
+
+	return false
+end
+
 Branch.AfterProfileSave = function()
 
 	if PREFSMAN:GetPreference("EventMode") then
@@ -198,8 +224,7 @@ Branch.AfterProfileSave = function()
 		if setOver then
 			-- continues are only allowed in Pay mode
 			if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
-				local credits = GetCredits()
-				if SL.Global.ContinuesRemaining > 0 and credits.Credits > 0 then
+				if SL.Global.ContinuesRemaining > 0 and EnoughCreditsToContinue() then
 					return "ScreenPlayAgain"
 				end
 			end
