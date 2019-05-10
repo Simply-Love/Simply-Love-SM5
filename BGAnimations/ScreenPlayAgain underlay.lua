@@ -40,14 +40,15 @@ local function input(event)
 
 				local coins = PREFSMAN:GetPreference("CoinsPerCredit")
 				local premium = PREFSMAN:GetPreference("Premium")
+				local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
 
 				if premium == "Premium_DoubleFor1Credit" then
-					if SL.Global.Gamestate.Style == "versus" then
+					if style == "versus" then
 						coins = coins * 2
 					end
 
 				elseif premium == "Premium_Off" then
-					if SL.Global.Gamestate.Style == "versus" or SL.Global.Gamestate.Style == "double" then
+					if style == "versus" or style == "double" then
 						coins = coins * 2
 					end
 				end

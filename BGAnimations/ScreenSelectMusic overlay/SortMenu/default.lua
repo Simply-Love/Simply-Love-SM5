@@ -50,12 +50,14 @@ local t = Def.ActorFrame {
 			{"SortBy", "Recent"}
 		}
 
+		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
+
 		-- Allow players to switch from single to double and from double to single
 		-- but only present these options if Joint Double or Joint Premium is enabled
 		if not (PREFSMAN:GetPreference("Premium") == "Premium_Off" and GAMESTATE:GetCoinMode() == "CoinMode_Pay") then
-			if SL.Global.Gamestate.Style == "single" then
+			if style == "single" then
 				table.insert(wheel_options, {"ChangeStyle", "Double"})
-			elseif SL.Global.Gamestate.Style == "double" then
+			elseif style == "double" then
 				table.insert(wheel_options, {"ChangeStyle", "Single"})
 			end
 		end

@@ -44,14 +44,16 @@ local function input(event)
 					overlay:playcommand("ShowPressStartForOptions")
 				end
 
-				-- Get the style we want to change to...
+				-- Get the style we want to change to
 				local new_style = focus.change:lower()
 
-				-- ...and set it in the SL table and in the engine.
-				SL.Global.Gamestate.Style = new_style
+				-- accommodate techno game
+				if GAMESTATE:GetCurrentGame():GetName()=="techno" then new_style = new_style.."8" end
+
+				-- set it in the engine
 				GAMESTATE:SetCurrentStyle(new_style)
 
-				-- finally, reload the screen.
+				-- finally, reload the screen
 				local topscreen = SCREENMAN:GetTopScreen()
 				topscreen:SetNextScreenName("ScreenReloadSSM")
 				topscreen:StartTransitioningScreen("SM_GoToNextScreen")

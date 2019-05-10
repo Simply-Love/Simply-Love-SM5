@@ -20,7 +20,7 @@ local af = Def.ActorFrame{
 }
 
 -- if double style, we want two quads flanking the left/right sides of the screen that move in unison
-if SL.Global.Gamestate.Style == "double" then
+if GAMESTATE:GetCurrentStyle():GetName():gsub("8","") == "double" then
 	af[#af+1] = Def.Quad{
 		Name="Left",
 		InitCommand=function(self)

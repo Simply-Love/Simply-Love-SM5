@@ -263,8 +263,9 @@ local t = Def.ActorFrame{
 		-- techo doesn't have styles like "single" and "double", it has "single8", "versus8", and "double8"
 		if current_game=="techno" then style = style.."8" end
 
+		-- set this now, but keep in mind that the style can change during a game session in a number
+		-- of ways, like latejoin (when available) and using SSM's SortMenu to change styles mid-game
 		GAMESTATE:SetCurrentStyle(style)
-		SL.Global.Gamestate.Style = GAMESTATE:GetCurrentStyle():GetName()
 
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,

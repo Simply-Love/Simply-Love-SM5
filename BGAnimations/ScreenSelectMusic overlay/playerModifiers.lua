@@ -25,10 +25,6 @@ return Def.Actor{
 		end
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
-		-- a player just joined via latejoin...
-		-- so ensure that the Theme's sense of CurrentStyle is correct...
-		SL.Global.Gamestate.Style = GAMESTATE:GetCurrentStyle():GetName()
-
 		-- ...and queue a command to set that player's modifiers
 		-- Queueing is necessary here to give LoadProfileCustom() time to read this player's mods from file
 		-- and set the SL[pn].ActiveModifiers table accordingly.  If we call ApplyMods(params.Player) here,

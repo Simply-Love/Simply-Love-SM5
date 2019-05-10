@@ -68,9 +68,6 @@ local GlobalDefaults = {
 				PlayerOptions2 = "ScreenGameplay"
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
-			self.Gamestate = {
-				Style = "single"
-			}
 			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "Competitive"
 			self.ScreenshotTexture = nil
 			self.MenuTimer = {

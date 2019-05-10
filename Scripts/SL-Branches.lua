@@ -73,8 +73,6 @@ Branch.AfterScreenSelectColor = function()
 		end
 
 		GAMESTATE:SetCurrentStyle( preferred_style )
-		-- set this here to be used later with the continue system
-		SL.Global.Gamestate.Style = preferred_style
 
 		return "ScreenSelectPlayMode"
 	end

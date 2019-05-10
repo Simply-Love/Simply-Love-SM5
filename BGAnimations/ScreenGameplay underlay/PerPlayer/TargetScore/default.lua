@@ -10,7 +10,7 @@ local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].Act
 if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
 or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"
 or SL.Global.GameMode == "Casual"
-or SL.Global.Gamestate.Style == "double")
+or GAMESTATE:GetCurrentStyle():GetName():gsub("8","") == "double")
 and (not SL[pn].ActiveModifiers.TargetScore)
 then
 	return

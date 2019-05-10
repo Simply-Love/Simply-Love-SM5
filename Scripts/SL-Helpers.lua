@@ -265,8 +265,12 @@ function GetPlayerOptions2LineNames()
 		mods = mods:gsub("DecentsWayOffs,", ""):gsub("LifeMeterType", "")
 	end
 
-	-- remove TargetStatus and TargetBar (IIDX pacemaker) if style is double
-	if SL.Global.Gamestate.Style == "double" then
+	local game = GAMESTATE:GetCurrentGame():GetName()
+
+	-- remove TargetStatus and TargetBar (IIDX pacemaker) if style is double (or double8)
+	-- or if the game is kb7 or techno, as those feature large, centered notefields
+	if GAMESTATE:GetCurrentStyle():GetName():gsub("8","") == "double"
+	or  game == "kb7" or game == "techno" then
 		mods = mods:gsub("TargetStatus,TargetBar,ActionOnMissedTarget,", "")
 	end
 
