@@ -30,9 +30,14 @@ local function GetTextForMeasure(current_measure, Measures, stream_index)
 	local current_stream_length = streamEnd - streamStart
 	local current_count = math.floor(current_measure - streamStart) + 1
 
-	text = tostring(current_count .. "/" .. current_stream_length)
+	local text = ""
 	if streams.Measures[stream_index].isBreak then
-		text = "(" .. text .. ")"
+		-- NOTE: We let the lowest value be 0. This means that e.g.,
+		-- for an 8 measure break, we will display the numbers 7 -> 0
+		local measures_left = current_stream_length - current_count
+		text = "(" .. measures_left .. ")"
+	else
+		text = tostring(current_count .. "/" .. current_stream_length)
 	end
 	return text, current_count > current_stream_length
 end

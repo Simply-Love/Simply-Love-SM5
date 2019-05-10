@@ -123,23 +123,7 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 		if(line:match("^[,;]%s*")) then
 			-- Does this measure contain a stream of notes based on our notesPerMeasure global?
 			if(#measureNotes >= notesPerMeasure) then
-				local isStream = true
-
-				-- What can the gap be between notes?
-				local noteGapThreshold = measureTiming / notesPerMeasure
-
-				-- Loop through our notes and see if they're placed correctly to be considered a stream (every 8th, every 16th, etc.)
-				for i=1,(#measureNotes - 1),1 do
-					-- Is the gap between this note and the next note greater than what's allowed?
-					if((measureNotes[i+1] - measureNotes[i]) > noteGapThreshold) then
-						isStream = false
-					end
-				end
-
-				-- This measure is a stream
-				if(isStream == true) then
-					table.insert(streamMeasures, measureCount)
-				end
+				table.insert(streamMeasures, measureCount)
 			end
 
 			-- Reset iterative variables
@@ -166,7 +150,18 @@ local function getStreamSequences(streamMeasures, measureSequenceThreshold, tota
 
 	local counter = 1
 	local streamEnd = nil
-	local prevStreamEnd = 0
+
+	-- First add an initial break if it's larger than measureSequenceThreshold
+	if(#streamMeasures > 0) then
+		local breakStart = 0
+		local k, v = next(streamMeasures) -- first element of a table
+		local breakEnd = streamMeasures[k] - 1
+		if (breakEnd - breakStart >= measureSequenceThreshold) then
+			table.insert(streamSequences,
+				{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
+		end
+	end
+
 	-- Which sequences of measures are considered a stream?
 	for k,v in pairs(streamMeasures) do
 		local curVal = streamMeasures[k]
@@ -179,28 +174,20 @@ local function getStreamSequences(streamMeasures, measureSequenceThreshold, tota
 		else
 			-- Found the first section that counts as a stream
 			if(counter >= measureSequenceThreshold) then
-				if(#streamSequences > 0) then
-					prevStreamEnd = streamSequences[#streamSequences].streamEnd
-				end
-				streamStart = (streamEnd - counter)
-				-- First add the preceding break if it's smaller than measureSequenceThreshold
-				if (streamStart - prevStreamEnd >= measureSequenceThreshold) then
-					table.insert(streamSequences,
-						{streamStart=prevStreamEnd, streamEnd=streamStart, isBreak=true})
-				end
-				-- Then add the current stream.
+				local streamStart = (streamEnd - counter)
+				-- Add the current stream.
 				table.insert(streamSequences,
 					{streamStart=streamStart, streamEnd=streamEnd, isBreak=false})
 			end
-			counter = 1
-		end
 
-		if nextVal == -1 then
-			-- Add a final trailing break if it's larger than measureSequenceThreshold
-			if(totalMeasures - streamEnd >= measureSequenceThreshold) then
+			-- Add any trailing breaks if they're larger than measureSequenceThreshold
+			local breakStart = curVal
+			local breakEnd = (nextVal ~= -1) and nextVal - 1 or totalMeasures
+			if (breakEnd - breakStart >= measureSequenceThreshold) then
 				table.insert(streamSequences,
-					{streamStart=streamEnd, streamEnd=totalMeasures, isBreak=true})
+					{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
 			end
+			counter = 1
 		end
 	end
 
