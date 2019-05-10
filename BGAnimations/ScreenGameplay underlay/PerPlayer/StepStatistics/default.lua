@@ -2,7 +2,7 @@ local player = ...
 local pn = ToEnumShortString(player)
 
 -- if the conditions aren't right, don't bother
-if SL[pn].ActiveModifiers.TargetStatus ~= "Step Statistics"
+if SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics"
 or GAMESTATE:GetCurrentStyle():GetName() ~= "single"
 or SL.Global.GameMode == "Casual"
 or GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo"

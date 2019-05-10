@@ -1,14 +1,12 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
-local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
-
 local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
 local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
 
 -- if nobody wants us, we won't appear
-if (SL[pn].ActiveModifiers.TargetStatus == "Disabled"
-or SL[pn].ActiveModifiers.TargetStatus == "Step Statistics"
+if (SL[pn].ActiveModifiers.DataVisualizations == "Disabled"
+or SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
 or SL.Global.GameMode == "Casual"
 or GAMESTATE:GetCurrentStyle():GetName():gsub("8","") == "double")
 and (not SL[pn].ActiveModifiers.TargetScore)
@@ -72,57 +70,59 @@ local function GetCurMaxPercentDancePoints()
 end
 
 local isTwoPlayers = (GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2))
-
-local bothWantBars = isTwoPlayers and (SL.P1.ActiveModifiers.TargetStatus == "Target Score Graph") and (SL.P2.ActiveModifiers.TargetStatus == "Target Score Graph")
+local bothWantBars = isTwoPlayers and (SL.P1.ActiveModifiers.DataVisualizations == "Target Score Graph") and (SL.P2.ActiveModifiers.DataVisualizations == "Target Score Graph")
+local notefield_is_centered = (GetNotefieldX(player) == _screen.cx)
+local use_smaller_graph = isTwoPlayers or notefield_is_centered
 
 local targetBarBorderWidth = 2
 
-local graphHeight = 350
-local graphWidth  = WideScale(250, 300)
-local graphX = 0
-local graphY = 430
+local graph = { h=350, x=0 }
 
-if isTwoPlayers then
-	graphY = 425
-	-- tinier graph
-	graphWidth = WideScale(25, 70)
-	-- tinier border for the target bar
+if use_smaller_graph then
+	-- this graph is horizontally condensed compared to the full-width alternative
+	graph.w = WideScale(25, 70)
+	graph.y = 425
+
+	-- smaller border for the target bar
 	targetBarBorderWidth = 1
 
-	local separator = 0
+	-- if widescreen, nudge each graph over 5px, potentially creating a 10px gap if bothWantBars
+	local separator = IsUsingWideScreen() and 5 or 0
 
-	if IsUsingWideScreen() then
-		separator = 5
+	-- put the graph directly beside the note field
+	if player == PLAYER_1 then
+		graph.x = _screen.cx - graph.w - separator
+	else
+		graph.x = _screen.cx + separator
 	end
 
-	-- put the graph right beside the note field
-	if (player == PLAYER_1) then
-		graphX = _screen.w / 2 - graphWidth - separator
-	else
-		graphX = _screen.w / 2 + separator
+	-- if Center1Player pref, or dance-solo, or techno single8, or kb7 single
+	if notefield_is_centered then
+		-- if 4:3 force the smaller graph to be 60px from the right edge of the screen
+		-- if widescreen, adapt to the width of the notefield
+		graph.x = WideScale( _screen.w-60, GetNotefieldX(player) + GetNotefieldWidth(player)/2 + 20)
 	end
 else
-	if PREFSMAN:GetPreference("Center1Player") then
-		-- tinier graph
-		graphWidth = WideScale(25, 70)
-		graphX = WideScale( get43size(_screen.cx+400), _screen.cx+300 )
+
+	-- full-width graph
+	graph.w = WideScale(250, 300)
+	graph.y = 430
+
+	-- put the graph on the other side of the screen
+	if (player == PLAYER_1) then
+		graph.x = WideScale( get43size(500), 500)
 	else
-		-- put the graph on the other side of the screen
-		if (player == PLAYER_1) then
-			graphX = WideScale( get43size(500), 500)
-		else
-			graphX = WideScale( get43size(40), 40)
-		end
+		graph.x = WideScale( get43size(40), 40)
 	end
 end
 
-local barWidth = graphWidth * 0.25
+local barWidth = graph.w * 0.25
 local barSpacing = barWidth / 4
 local barOffset = barSpacing / 3
 
 -- two player mode only shows current and target bar, so this needs to be adjusted
-if isTwoPlayers then
-	barWidth = graphWidth * 0.3
+if use_smaller_graph then
+	barWidth = graph.w * 0.3
 	barSpacing = barWidth / 3
 
 	if IsUsingWideScreen() then
@@ -142,30 +142,38 @@ local previousGrade = nil
 -- get personal best score
 local pbGradeScore = GetTopScore(player, "Personal")
 
--- get the index of the target chosen in the options menu
-local targetGradeIndex = tonumber(SL[pn].ActiveModifiers.TargetBar)
-local targetGradeScore = 0
+local target_grade = {
+	-- the index of the target score chosen in the PlayerOptions menu
+	index = tonumber(SL[pn].ActiveModifiers.TargetBar),
+	-- the score the player is trying to achieve
+	score = 0
+}
 
-if (targetGradeIndex == 17) then
-	targetGradeScore = GetTopScore(player, "Machine")
-elseif (targetGradeIndex == 18) then
-	targetGradeScore = pbGradeScore
+if (target_grade.index == 17) then
+	-- player set TargetGrade as Machine best
+	target_grade.score = GetTopScore(player, "Machine")
+
+elseif (target_grade.index == 18) then
+	-- player set TargetGrade as Personal best
+	target_grade.score = pbGradeScore
 else
-	targetGradeScore = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", 17 - targetGradeIndex))
+	-- player set TargetGrade as a particular letter grade
+	-- anything from C- to ☆☆☆☆
+	target_grade.score = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", 17 - target_grade.index))
 end
 
--- if there is no personal/machine score, automatically choose S as target
-if targetGradeScore == 0 then
-	targetGradeScore = THEME:GetMetric("PlayerStageStats", "GradePercentTier06")
+-- if there is no personal/machine score, default to S as target
+if target_grade.score == 0 then
+	target_grade.score = THEME:GetMetric("PlayerStageStats", "GradePercentTier06")
 end
 
 -- Converts a percentage to an exponential scale, returning the corresponding Y point in the graph
-function percentToYCoordinate(scorePercent)
-	return -(graphHeight*math.pow(100,scorePercent)/100)
+local percentToYCoordinate = function(scorePercent)
+	return -(graph.h*math.pow(100,scorePercent)/100)
 end
 
 -- Converts a grade enum to an exponential scale, returning the corresponding Y point in the graph
-function getYFromGradeEnum(gradeEnum)
+local getYFromGradeEnum = function(gradeEnum)
 	return percentToYCoordinate(THEME:GetMetric("PlayerStageStats", "GradePercent" .. ToEnumShortString(gradeEnum)))
 end
 
@@ -182,7 +190,7 @@ local barsBgActor = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:valign(1):halign(0)
-				:zoomto(graphWidth, graphHeight)
+				:zoomto(graph.w, graph.h)
 				:xy( 0, 0 )
 		end,
 		OnCommand=function(self)
@@ -202,7 +210,7 @@ for i=1,16 do
 	barsBgActor[#barsBgActor+1] = Def.Quad{
 		InitCommand=function(self)
 			self:valign(0):halign(0)
-				:zoomto(graphWidth, -yStart+yEnd)
+				:zoomto(graph.w, -yStart+yEnd)
 				:xy( 0, yStart )
 		end,
 		OnCommand=function(self)
@@ -227,7 +235,7 @@ for i = 1,#gradeBorders do
 	barsBgActor[#barsBgActor+1] = Def.Quad{
 		InitCommand=function(self)
 			self:valign(0):halign(0)
-				:zoomto(graphWidth, 0.9)
+				:zoomto(graph.w, 0.9)
 				:xy( 0, yStart )
 		end,
 		OnCommand=function(self)
@@ -269,7 +277,7 @@ local finalFrame = Def.ActorFrame{
 		self:valign(0):halign(0)
 	end,
 	OnCommand=function(self)
-		self:xy(graphX, graphY)
+		self:xy(graph.x, graph.y)
 
 		currentGrade = pss:GetGrade()
 		previousGrade = currentGrade
@@ -291,8 +299,8 @@ local finalFrame = Def.ActorFrame{
 }
 
 -- if the player wants the bar graph
-if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
-	if isTwoPlayers then
+if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
+	if use_smaller_graph then
 		-- only two bars in 2 players mode
 		finalFrame[#finalFrame+1] = Def.ActorFrame {
 			-- insert the background actor frame
@@ -328,15 +336,15 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 					self:diffuse(Color.Red)
 				end,
 				UpdateCommand=function(self)
-					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
+					local targetDP = target_grade.score * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
 
 			-- TARGET BORDER
-			Border(barWidth+targetBarBorderWidth*2, -percentToYCoordinate(targetGradeScore)+3, targetBarBorderWidth)..{
+			Border(barWidth+targetBarBorderWidth*2, -percentToYCoordinate(target_grade.score)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
-					self:xy(barOffset + barSpacing * 2 + barWidth + barWidth/2, percentToYCoordinate(targetGradeScore)/2)
+					self:xy(barOffset + barSpacing * 2 + barWidth + barWidth/2, percentToYCoordinate(target_grade.score)/2)
 				end,
 			},
 		}
@@ -393,7 +401,7 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 					self:diffuse(Color.Red)
 				end,
 				UpdateCommand=function(self)
-					local targetDP = targetGradeScore * GetCurMaxPercentDancePoints()
+					local targetDP = target_grade.score * GetCurMaxPercentDancePoints()
 					self:zoomy(-percentToYCoordinate(targetDP))
 				end
 			},
@@ -406,9 +414,9 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 			},
 
 			-- TARGET BORDER
-			Border(barWidth+4, -percentToYCoordinate(targetGradeScore)+3, targetBarBorderWidth)..{
+			Border(barWidth+4, -percentToYCoordinate(target_grade.score)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
-					self:xy(barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, percentToYCoordinate(targetGradeScore)/2)
+					self:xy(barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, percentToYCoordinate(target_grade.score)/2)
 				end,
 			},
 
@@ -428,10 +436,10 @@ if (SL[pn].ActiveModifiers.TargetStatus == "Target Score Graph") then
 			},
 
 			-- white graph border
-			Border(graphWidth+4, graphHeight+4, 2)..{
+			Border(graph.w+4, graph.h+4, 2)..{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
-					self:xy(graphWidth/2,-graphHeight/2)
+					self:xy(graph.w/2,-graph.h/2)
 				end,
 			},
 		}
@@ -501,9 +509,11 @@ if SL[pn].ActiveModifiers.TargetScore then
 				noteX = GetNotefieldWidth(player) / 4
 				-- this serendipitiously works for doubles, somehow
 
-				-- ugly, ugly, U G L Y antisymmetry kludge
+				-- antisymmetry kludge; nudge PLAYER_2's pacemaker text to the left so that it
+				-- doesn't possibly overlap with the percent score text.  this is necessary because
+				-- P1 and P2 percent scores are not strictly symmetrical around the horizontal middle
 				if (player ~= PLAYER_1 and isTwoPlayers) then
-					noteX = noteX + 25 -- this gets reversed...
+					noteX = noteX + 25
 				end
 			end
 
@@ -514,7 +524,7 @@ if SL[pn].ActiveModifiers.TargetScore then
 			noteX = noteX + origX
 
 			-- compensate so that we can use "normal" coordinate systems
-			self:horizalign(center):xy( noteX - graphX, noteY - graphY ):zoom(zoomF)
+			self:horizalign(center):xy( noteX - graph.x, noteY - graph.y ):zoom(zoomF)
 
 		end,
 		UpdateCommand=function(self)
@@ -522,10 +532,10 @@ if SL[pn].ActiveModifiers.TargetScore then
 			local DPCurrMax = pss:GetCurrentPossibleDancePoints()
 			local DPMax = pss:GetPossibleDancePoints()
 
-			local percentDifference = (DPCurr - (targetGradeScore * DPCurrMax)) / DPMax
+			local percentDifference = (DPCurr - (target_grade.score * DPCurrMax)) / DPMax
 
 			-- cap negative score displays
-			percentDifference = math.max(percentDifference, -targetGradeScore)
+			percentDifference = math.max(percentDifference, -target_grade.score)
 
 			local places = 2
 			-- if there's enough dance points so that our current precision is ambiguous,
@@ -544,7 +554,7 @@ if SL[pn].ActiveModifiers.TargetScore then
 
 			-- have we already missed so many dance points
 			-- that the current goal is not possible anymore?
-			if ((DPCurrMax - DPCurr) > (DPMax * (1 - targetGradeScore))) then
+			if ((DPCurrMax - DPCurr) > (DPMax * (1 - target_grade.score))) then
 				self:diffusealpha(0.65)
 
 				-- check to see if the user wants to do something when they don't achieve their score.

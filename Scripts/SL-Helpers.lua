@@ -96,6 +96,7 @@ local NoteFieldWidth = {
 		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
 		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
 		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		solo = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
 	},
 	-- the values returned by the engine for Pump are slightly too small(?), so... uh... pad it
 	pump = {
@@ -253,7 +254,7 @@ end
 
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,TargetStatus,TargetBar,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,Characters,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetBar,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,Characters,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then
@@ -266,13 +267,6 @@ function GetPlayerOptions2LineNames()
 	end
 
 	local game = GAMESTATE:GetCurrentGame():GetName()
-
-	-- remove TargetStatus and TargetBar (IIDX pacemaker) if style is double (or double8)
-	-- or if the game is kb7 or techno, as those feature large, centered notefields
-	if GAMESTATE:GetCurrentStyle():GetName():gsub("8","") == "double"
-	or  game == "kb7" or game == "techno" then
-		mods = mods:gsub("TargetStatus,TargetBar,ActionOnMissedTarget,", "")
-	end
 
 	-- remove Vocalization if no voice packs were found in the filesystem
 	if #FILEMAN:GetDirListing(GetVocalizeDir() , true, false) < 1 then

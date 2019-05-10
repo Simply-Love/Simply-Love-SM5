@@ -232,17 +232,20 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
-	TargetStatus = {
+	DataVisualizations = {
 		Values = function()
-			local choices = { "Disabled" }
+			local choices = { "Disabled", "Target Score Graph", "Step Statistics" }
 
-			if GAMESTATE:GetCurrentStyle():GetStepsType() ~= "StepsType_Dance_Solo" then
-				choices[#choices+1] = "Target Score Graph"
+			-- Disabled and Target Score Graph should always be available to players
+			-- but Step Statistics needs a lot of space and isn't always possible
+			-- remove it as an available option if we aren't in single or if the current
+			-- notefield width already uses more than half the screen width
+
+			if GAMESTATE:GetCurrentStyle():GetName() ~= "single"
+			or GetNotefieldWidth( GAMESTATE:GetMasterPlayerNumber() ) > _screen.w/2 then
+				table.remove(choices, 3)
 			end
 
-			if GAMESTATE:GetCurrentStyle():GetName() == "single" and not (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen()) then
-				choices[#choices+1] = "Step Statistics"
-			end
 			return choices
 		end,
 	},
