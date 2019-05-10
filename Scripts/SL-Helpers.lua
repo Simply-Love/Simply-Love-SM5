@@ -71,11 +71,12 @@ end
 
 function GetNotefieldX( player )
 	local p = ToEnumShortString(player)
+	local game = GAMESTATE:GetCurrentGame():GetName()
 
 	local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
-	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player') or IsPlayingDanceSolo
 	local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
 	local NumSidesJoined = GAMESTATE:GetNumSidesJoined()
+	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player') or IsPlayingDanceSolo or (NumSidesJoined==1 and (game=="techno" or game=="kb7"))
 
 	if IsUsingSoloSingles and NumPlayersEnabled == 1 and NumSidesJoined == 1 then return _screen.cx end
 	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
@@ -84,23 +85,52 @@ function GetNotefieldX( player )
 	return THEME:GetMetric("ScreenGameplay","Player".. p .. NumPlayersAndSides .."X")
 end
 
-function GetNotefieldWidth()
+-- -----------------------------------------------------------------------
 
-	-- double
-	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
-		return _screen.w*1.058/GetScreenAspectRatio()
+-- this is verbose, but it lets us manage what seem to be
+-- quirks/oversights in the engine on a per-game + per-style basis
 
-	-- dance solo
-	elseif GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo" then
-		return _screen.w*0.8/GetScreenAspectRatio()
+local NoteFieldWidth = {
+	-- dance Just Works™.  Wow!  It's almost like this game gets the most attention and fixes.
+	dance = {
+		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+	},
+	-- the values returned by the engine for Pump are slightly too small(?), so... uh... pad it
+	pump = {
+		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+	},
+	-- techno works for single8, needs to be smaller for versus8 and double8
+	techno = {
+		single8 = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		versus8 = function(p) return (GAMESTATE:GetCurrentStyle():GetWidth(p)/1.65) end,
+		double8 = function(p) return (GAMESTATE:GetCurrentStyle():GetWidth(p)/1.65) end,
+	},
+	-- the values returned for para are also slightly too small, so... pad those, too
+	para = {
+		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+	},
+	-- kb7 works for single, needs to be smaller for versus
+	-- there is no kb7 double (would that be kb14?)
+	kb7 = {
+		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p)/1.65 end,
+	},
+}
 
-	-- single
-	else
-		return _screen.w*0.529/GetScreenAspectRatio()
-	end
+function GetNotefieldWidth(player)
+	if not player then return false end
+
+	local game = GAMESTATE:GetCurrentGame():GetName()
+	local style = GAMESTATE:GetCurrentStyle():GetName()
+	return NoteFieldWidth[game][style](player)
 end
 
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- Define what is necessary to maintain and/or increment your combo, per Gametype.
 -- For example, in dance Gametype, TapNoteScore_W3 (window #3) is commonly "Great"
 -- so in dance, a "Great" will not only maintain a player's combo, it will also increment it.

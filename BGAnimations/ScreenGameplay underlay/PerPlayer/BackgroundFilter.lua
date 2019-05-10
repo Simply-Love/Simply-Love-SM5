@@ -11,17 +11,14 @@ local FilterAlpha = {
 	Darkest = 0.95
 }
 
-local filter = Def.ActorFrame{
-	InitCommand=function(self) self:xy(GetNotefieldX(player), _screen.cy ) end,
-	OffCommand=function(self) self:queuecommand("ComboFlash") end,
-}
-
-filter[#filter+1] = Def.Quad{
+return Def.Quad{
 	InitCommand=function(self)
-		self:diffuse(Color.Black)
+		self:xy(GetNotefieldX(player), _screen.cy )
+			:diffuse(Color.Black)
 			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
-			:zoomto( GetNotefieldWidth(), _screen.h )
+			:zoomto( GetNotefieldWidth(player), _screen.h )
 	end,
+	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local FlashColor = nil
@@ -41,5 +38,3 @@ filter[#filter+1] = Def.Quad{
 		end
 	end
 }
-
-return filter

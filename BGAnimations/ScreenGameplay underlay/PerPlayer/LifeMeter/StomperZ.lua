@@ -41,7 +41,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Left",
 			InitCommand=function(self)
-				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
+				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth(player)/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
 					:diffuseupperleft(color("#00c263")):diffuselowerleft(color("#00c263"))
 			end,
 			ChangeSizeCommand=function(self, params)
@@ -51,7 +51,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Right",
 			InitCommand=function(self)
-				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
+				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth(player)/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
 					:diffuseupperright(color("#00c263")):diffuselowerright(color("#00c263"))
 			end,
 			ChangeSizeCommand=function(self, params)
@@ -67,7 +67,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Left",
 			InitCommand=function(self)
-				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
+				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth(player)/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
 					:diffuseupperleft(color("#0073ff")):diffuselowerleft(color("#0073ff"))
 			end,
 			ChangeSizeCommand=function(self, params)
@@ -77,7 +77,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Right",
 			InitCommand=function(self)
-				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
+				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth(player)/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
 					:diffuseupperright(color("#0073ff")):diffuselowerright(color("#0073ff"))
 			end,
 			ChangeSizeCommand=function(self, params)
@@ -92,7 +92,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Left",
 			InitCommand=function(self)
-				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
+				self:horizalign(left):vertalign(top):xy( -GetNotefieldWidth(player)/2, 40):zoomto( 50, _screen.h-40 ):diffuserightedge(0,0,0,1)
 					:diffuseupperleft(color("#6517e0")):diffuselowerleft(color("#6517e0"))
 			end,
 			HotCommand=function(self, params)
@@ -109,7 +109,7 @@ local af = Def.ActorFrame{
 		Def.Quad{
 			Name="Right",
 			InitCommand=function(self)
-				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth()/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
+				self:horizalign(right):vertalign(top):xy( GetNotefieldWidth(player)/2, 40):zoomto( 50, _screen.h-40 ):diffuseleftedge(0,0,0,1)
 					:diffuseupperright(color("#6517e0")):diffuselowerright(color("#6517e0"))
 			end,
 			HotCommand=function(self, params)

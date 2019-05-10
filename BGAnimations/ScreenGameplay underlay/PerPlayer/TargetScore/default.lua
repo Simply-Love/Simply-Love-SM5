@@ -490,7 +490,7 @@ if SL[pn].ActiveModifiers.TargetScore then
 				zoomF = 0.35
 
 				-- copied from MeasureCounter.lua
-				local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+				local width = GetNotefieldWidth(player)
 				local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 
 				noteX = (width/NumColumns)
@@ -498,7 +498,7 @@ if SL[pn].ActiveModifiers.TargetScore then
 				self:shadowlength(1) -- match other playfield counters
 			else
 				noteY = 56
-				noteX = GetNotefieldWidth() / 4
+				noteX = GetNotefieldWidth(player) / 4
 				-- this serendipitiously works for doubles, somehow
 
 				-- ugly, ugly, U G L Y antisymmetry kludge
@@ -546,7 +546,7 @@ if SL[pn].ActiveModifiers.TargetScore then
 			-- that the current goal is not possible anymore?
 			if ((DPCurrMax - DPCurr) > (DPMax * (1 - targetGradeScore))) then
 				self:diffusealpha(0.65)
-				
+
 				-- check to see if the user wants to do something when they don't achieve their score.
 				if FailOnMissedTarget then
 					-- use SM_BeginFailed instead of SM_NotesEnded to *immediately* leave the screen instead of a nice fadeout.
@@ -558,9 +558,6 @@ if SL[pn].ActiveModifiers.TargetScore then
 				end
 			end
 		end,
-
-
-
 	}
 end
 
