@@ -22,8 +22,8 @@ local PlayerDefaults = {
 				MeasureCounterPosition = "Left",
 				MeasureCounter = "None",
 				DataVisualizations="Disabled",
-				TargetBar=11,
-				TargetScore=false,
+				TargetScore=11,
+				Pacemaker=false,
 				ReceptorArrowsPosition="StomperZ",
 				LifeMeterType="Standard",
 			}

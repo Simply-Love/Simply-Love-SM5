@@ -1,22 +1,19 @@
+-- TargetScore Graphs and Pacemaker contributed by JackG
+-- ActionOnMissedTarget contributed by DinsFire64
+-- cleanup + fixes by djpohly and andrewipark
+
+-- nothing handled by this file applies to or should appear in Casual mode
+if SL.Global.GameMode == "Casual" then return end
+
+-- ---------------------------------------------------------------
+-- first, the usual suspects
+
 local player = ...
 local pn = ToEnumShortString(player)
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
-local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
-
--- if nobody wants us, we won't appear
-if (SL[pn].ActiveModifiers.DataVisualizations == "Disabled"
-or SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
-or SL.Global.GameMode == "Casual"
-or GAMESTATE:GetCurrentStyle():GetName():gsub("8","") == "double")
-and (not SL[pn].ActiveModifiers.TargetScore)
-then
-	return
-end
-
-
--- Pacemaker contributed by JackG
--- minor cleanup by dguzek and djpohly
+-- ---------------------------------------------------------------
+-- some functions local to this file
 
 local function get43size(size4_3)
 	return 640*(size4_3/854)
@@ -24,9 +21,9 @@ end
 
  -- Finds the top score for the current song (or course) given a player.
 local function GetTopScore(pn, kind)
-	local SongOrCourse, StepsOrTrail
+	if not pn or not kind then return end
 
-	local scorelist, text
+	local SongOrCourse, StepsOrTrail, scorelist
 
 	if GAMESTATE:IsCourseMode() then
 		SongOrCourse = GAMESTATE:GetCurrentCourse()
@@ -36,25 +33,19 @@ local function GetTopScore(pn, kind)
 		StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
 	end
 
-	if SongOrCourse and StepsOrTrail and kind then
-		if kind == "Machine" then
-			scorelist = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail)
-		elseif kind == "Personal" then
-			scorelist = PROFILEMAN:GetProfile(pn):GetHighScoreList(SongOrCourse,StepsOrTrail)
-		end
+	if kind == "Machine" then
+		scorelist = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail)
+	elseif kind == "Personal" then
+		scorelist = PROFILEMAN:GetProfile(pn):GetHighScoreList(SongOrCourse,StepsOrTrail)
+	end
 
-		if scorelist then
-			local topscore = scorelist:GetHighScores()[1]
-			if topscore then
-				return topscore:GetPercentDP()
-			end
-		end
+	if scorelist then
+		local topscore = scorelist:GetHighScores()[1]
+		if topscore then return topscore:GetPercentDP() end
 	end
 
 	return 0
 end
-
-local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 -- Ported from PSS.cpp, can be removed if that gets exported to Lua
 local function GetCurMaxPercentDancePoints()
@@ -69,14 +60,26 @@ local function GetCurMaxPercentDancePoints()
 	return currentMax / possible
 end
 
+-- ---------------------------------------------------------------
+-- some flags that will help us determine what to draw and where to draw it
+
 local isTwoPlayers = (GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2))
 local bothWantBars = isTwoPlayers and (SL.P1.ActiveModifiers.DataVisualizations == "Target Score Graph") and (SL.P2.ActiveModifiers.DataVisualizations == "Target Score Graph")
 local notefield_is_centered = (GetNotefieldX(player) == _screen.cx)
 local use_smaller_graph = isTwoPlayers or notefield_is_centered
 
+local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
+local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
+
+-- ---------------------------------------------------------------
+-- calculate size and positioning of graph(s)
+
 local targetBarBorderWidth = 2
 
+-- overall graph sizing and positioning
 local graph = { h=350, x=0 }
+-- individual bar sizing and positioning
+local bar = {}
 
 if use_smaller_graph then
 	-- this graph is horizontally condensed compared to the full-width alternative
@@ -102,6 +105,10 @@ if use_smaller_graph then
 		-- if widescreen, adapt to the width of the notefield
 		graph.x = WideScale( _screen.w-60, GetNotefieldX(player) + GetNotefieldWidth(player)/2 + 20)
 	end
+
+	bar.w = graph.w * 0.25
+	bar.spacing = bar.w / 4
+	bar.offset = bar.spacing * (IsUsingWideScreen() and 1 or 1.5)
 else
 
 	-- full-width graph
@@ -114,29 +121,18 @@ else
 	else
 		graph.x = WideScale( get43size(40), 40)
 	end
+
+	bar.w = graph.w * 0.25
+	bar.spacing = bar.w / 4
+	bar.offset = bar.spacing / 3
 end
 
-local barWidth = graph.w * 0.25
-local barSpacing = barWidth / 4
-local barOffset = barSpacing / 3
-
--- two player mode only shows current and target bar, so this needs to be adjusted
-if use_smaller_graph then
-	barWidth = graph.w * 0.3
-	barSpacing = barWidth / 3
-
-	if IsUsingWideScreen() then
-		barOffset = barSpacing
-	else
-		barOffset = barSpacing * 1.5
-	end
-end
-
+-- ---------------------------------------------------------------
 -- used to determine when we change grade
 local currentGrade = nil
 local previousGrade = nil
 
--- possible targets
+-- possible targets, as defined in ./Scripts/SL-PlayerOptions.lua within TargetScore.Values()
 -- { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '*', '**', '***', '****', 'Machine best', 'Personal best' }
 
 -- get personal best score
@@ -144,7 +140,7 @@ local pbGradeScore = GetTopScore(player, "Personal")
 
 local target_grade = {
 	-- the index of the target score chosen in the PlayerOptions menu
-	index = tonumber(SL[pn].ActiveModifiers.TargetBar),
+	index = tonumber(SL[pn].ActiveModifiers.TargetScore),
 	-- the score the player is trying to achieve
 	score = 0
 }
@@ -167,6 +163,7 @@ if target_grade.score == 0 then
 	target_grade.score = THEME:GetMetric("PlayerStageStats", "GradePercentTier06")
 end
 
+-- ---------------------------------------------------------------
 -- Converts a percentage to an exponential scale, returning the corresponding Y point in the graph
 local percentToYCoordinate = function(scorePercent)
 	return -(graph.h*math.pow(100,scorePercent)/100)
@@ -177,13 +174,12 @@ local getYFromGradeEnum = function(gradeEnum)
 	return percentToYCoordinate(THEME:GetMetric("PlayerStageStats", "GradePercent" .. ToEnumShortString(gradeEnum)))
 end
 
--- Checks to see if the target score is achievable
-
--- ActorFrame for the background of the graph
-local barsBgActor = Def.ActorFrame{
+-- ---------------------------------------------------------------
+-- ActorFrame for the background of a graph
+local graph_bg = Def.ActorFrame{
 
 	InitCommand=function(self)
-		self:valign(0):halign(0)
+		self:align(0,0)
 	end,
 
 	-- black background
@@ -191,11 +187,8 @@ local barsBgActor = Def.ActorFrame{
 		InitCommand=function(self)
 			self:valign(1):halign(0)
 				:zoomto(graph.w, graph.h)
-				:xy( 0, 0 )
-		end,
-		OnCommand=function(self)
-			self:diffuse(Color.Black)
-		end,
+				:xy(0,0):diffuse(Color.Black)
+		end
 	}
 }
 
@@ -207,7 +200,7 @@ for i=1,16 do
 	local yStart = percentToYCoordinate(tierStart)
 	local yEnd = percentToYCoordinate(tierEnd)
 
-	barsBgActor[#barsBgActor+1] = Def.Quad{
+	graph_bg[#graph_bg+1] = Def.Quad{
 		InitCommand=function(self)
 			self:valign(0):halign(0)
 				:zoomto(graph.w, -yStart+yEnd)
@@ -232,7 +225,7 @@ for i = 1,#gradeBorders do
 	local tierStart = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", gradeBorders[i]))
 	local yStart = percentToYCoordinate(tierStart)
 
-	barsBgActor[#barsBgActor+1] = Def.Quad{
+	graph_bg[#graph_bg+1] = Def.Quad{
 		InitCommand=function(self)
 			self:valign(0):halign(0)
 				:zoomto(graph.w, 0.9)
@@ -245,7 +238,7 @@ for i = 1,#gradeBorders do
 
 	-- in 4:3 the graphs touch each other, so the labels for P2 are redundant
 	if not (isTwoPlayers and bothWantBars and player == PLAYER_2 and not IsUsingWideScreen()) then
-		barsBgActor[#barsBgActor+1] = Def.BitmapText{
+		graph_bg[#graph_bg+1] = Def.BitmapText{
 			Font="_miso",
 			Text=gradeNames[i],
 			InitCommand=function(self)
@@ -269,12 +262,14 @@ for i = 1,#gradeBorders do
 	end
 end
 
--- this is the final ActorFrame where everything will be shoved
-local finalFrame = Def.ActorFrame{
+-- ---------------------------------------------------------------
+-- the main ActorFrame for this player
+
+local player_af = Def.ActorFrame{
 
 	InitCommand=function(self)
 		-- this makes for a more convenient coordinate system
-		self:valign(0):halign(0)
+		self:align(0,0)
 	end,
 	OnCommand=function(self)
 		self:xy(graph.x, graph.y)
@@ -295,24 +290,26 @@ local finalFrame = Def.ActorFrame{
 		end
 		self:queuecommand("Update")
 	end,
-
 }
 
+-- ---------------------------------------------------------------
 -- if the player wants the bar graph
-if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
+
+if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 	if use_smaller_graph then
-		-- only two bars in 2 players mode
-		finalFrame[#finalFrame+1] = Def.ActorFrame {
+
+		-- condensed graph for versus and when the notefield is centered
+		player_af[#player_af+1] = Def.ActorFrame {
 			-- insert the background actor frame
-			barsBgActor,
+			graph_bg,
 
 			-- BAR 1
 			-- Current Score
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
-						:zoomto(barWidth, 1)
-						:xy( barSpacing + barOffset, 0 )
+						:zoomto(bar.w, 1)
+						:xy( bar.spacing + bar.offset, 0 )
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Blue)
@@ -329,8 +326,8 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
-						:zoomto(barWidth, 1)
-						:xy( barOffset + barSpacing * 2 + barWidth, 0 )
+						:zoomto(bar.w, 1)
+						:xy( bar.offset + bar.spacing * 2 + bar.w, 0 )
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Red)
@@ -342,25 +339,26 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 			},
 
 			-- TARGET BORDER
-			Border(barWidth+targetBarBorderWidth*2, -percentToYCoordinate(target_grade.score)+3, targetBarBorderWidth)..{
+			Border(bar.w+targetBarBorderWidth*2, -percentToYCoordinate(target_grade.score)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
-					self:xy(barOffset + barSpacing * 2 + barWidth + barWidth/2, percentToYCoordinate(target_grade.score)/2)
+					self:xy(bar.offset + bar.spacing * 2 + bar.w + bar.w/2, percentToYCoordinate(target_grade.score)/2)
 				end,
 			},
 		}
 	else
-		finalFrame[#finalFrame+1] = Def.ActorFrame {
+		-- full-width graph
+		player_af[#player_af+1] = Def.ActorFrame {
 
 			-- insert the background actor frame
-			barsBgActor,
+			graph_bg,
 
 			-- BAR 1
 			-- Current Score
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
-						:zoomto(barWidth, 1)
-						:xy( barSpacing + barOffset, 0 )
+						:zoomto(bar.w, 1)
+						:xy( bar.spacing + bar.offset, 0 )
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Blue)
@@ -377,8 +375,8 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
-						:zoomto(barWidth, 1)
-						:xy( barOffset + (barSpacing * 2) + barWidth, 0 )
+						:zoomto(bar.w, 1)
+						:xy( bar.offset + (bar.spacing * 2) + bar.w, 0 )
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Green)
@@ -394,8 +392,8 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 			Def.Quad{
 				InitCommand=function(self)
 					self:valign(1):halign(0)
-						:zoomto(barWidth, 1)
-						:xy( barOffset + barSpacing * 3 + barWidth * 2, 0 )
+						:zoomto(bar.w, 1)
+						:xy( bar.offset + bar.spacing * 3 + bar.w * 2, 0 )
 				end,
 				OnCommand=function(self)
 					self:diffuse(Color.Red)
@@ -407,16 +405,16 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 			},
 
 			-- PERSONAL BEST BORDER
-			Border(barWidth+4, -percentToYCoordinate(pbGradeScore)+3, targetBarBorderWidth)..{
+			Border(bar.w+4, -percentToYCoordinate(pbGradeScore)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
-					self:xy(barOffset + (barSpacing * 2) + (barWidth/2) + barWidth * 1, percentToYCoordinate(pbGradeScore)/2)
+					self:xy(bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w * 1, percentToYCoordinate(pbGradeScore)/2)
 				end,
 			},
 
 			-- TARGET BORDER
-			Border(barWidth+4, -percentToYCoordinate(target_grade.score)+3, targetBarBorderWidth)..{
+			Border(bar.w+4, -percentToYCoordinate(target_grade.score)+3, targetBarBorderWidth)..{
 				InitCommand=function(self)
-					self:xy(barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, percentToYCoordinate(target_grade.score)/2)
+					self:xy(bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, percentToYCoordinate(target_grade.score)/2)
 				end,
 			},
 
@@ -445,34 +443,25 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 		}
 
 		-- text labels for the bars
-		finalFrame[#finalFrame+1] = Def.ActorFrame {
-			InitCommand=function(self)
-				if PREFSMAN:GetPreference("Center1Player") then
-					self:visible(false)
-				end
-			end,
-
-			Def.BitmapText{
-				Font="_miso",
+		player_af[#player_af+1] = Def.ActorFrame{
+			LoadFont("_miso")..{
 				Text=THEME:GetString("TargetScoreGraph", "You"),
 				InitCommand=function(self)
-					self:xy( barOffset + barSpacing + (barWidth/2), 20 )
+					self:xy( bar.offset + bar.spacing + (bar.w/2), 20 )
 				end,
 			},
 
-			Def.BitmapText{
-				Font="_miso",
+			LoadFont("_miso")..{
 				Text=THEME:GetString("TargetScoreGraph", "Personal"),
 				InitCommand=function(self)
-					self:xy( barOffset + (barSpacing * 2) + (barWidth/2) + barWidth, 20 )
+					self:xy( bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w, 20 )
 				end,
 			},
 
-			Def.BitmapText{
-				Font="_miso",
+			LoadFont("_miso")..{
 				Text=THEME:GetString("TargetScoreGraph", "Target"),
 				InitCommand=function(self)
-					self:xy( barOffset + (barSpacing * 3) + (barWidth/2) + barWidth * 2, 20 )
+					self:xy( bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, 20 )
 				end,
 			},
 		}
@@ -480,11 +469,24 @@ if (SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph") then
 end
 
 
--- pacemaker text
-if SL[pn].ActiveModifiers.TargetScore then
-	finalFrame[#finalFrame+1] = Def.BitmapText{
+-- ---------------------------------------------------------------
+-- the ActionOnMissedTarget logic depends on the Pacemaker logic
+-- from a programmer's perspective, it makes sense to lump it all together in a single Actor
+-- but to the player, the Pacemaker and ActionOnMissedTarget are distinct features
+-- that do not and should not depend on one another being active
+
+-- I don't have the time to detangle these so they're staying this way until
+-- someone rewrites this file OR human civilization ends in fire paving the way for GNU/Hurd
+
+if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarget then
+
+	-- pacemaker text
+	player_af[#player_af+1] = Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
+
+			-- don't draw it if we don't need it
+			self:visible(SL[pn].ActiveModifiers.Pacemaker)
 
 			local noteX
 			local noteY
@@ -571,4 +573,4 @@ if SL[pn].ActiveModifiers.TargetScore then
 	}
 end
 
-return finalFrame
+return player_af

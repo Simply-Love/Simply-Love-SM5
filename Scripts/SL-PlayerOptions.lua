@@ -250,12 +250,12 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
-	TargetBar = {
+	TargetScore = {
 		Values = function()
 			return { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' }
 		end,
 		LoadSelections = function(self, list, pn)
-			local i = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetBar)
+			local i = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore) or 11
 			list[i] = true
 			return list
 		end,
@@ -264,7 +264,7 @@ local Overrides = {
 
 			for i=1,#self.Choices do
 				if list[i] then
-					mods.TargetBar = i
+					mods.TargetScore = i
 				end
 			end
 		end
@@ -276,19 +276,19 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "ColumnFlashOnMiss", "SubtractiveScoring", "TargetScore" } end,
+		Values = function() return { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker" } end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.ColumnFlashOnMiss or false
 			list[2] = mods.SubtractiveScoring or false
-			list[3] = mods.TargetScore or false
+			list[3] = mods.Pacemaker or false
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			mods.ColumnFlashOnMiss = list[1]
 			mods.SubtractiveScoring	= list[2]
-			mods.TargetScore = list[3]
+			mods.Pacemaker = list[3]
 		end
 	},
 	-------------------------------------------------------------------------
