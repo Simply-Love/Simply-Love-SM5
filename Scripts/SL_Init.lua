@@ -26,6 +26,7 @@ local PlayerDefaults = {
 				Pacemaker=false,
 				ReceptorArrowsPosition="StomperZ",
 				LifeMeterType="Standard",
+				MissBecauseHeld=false,
 			}
 			self.Streams = {
 				SongDir = nil,

@@ -70,6 +70,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	NoteSkin = {
 		ExportOnChange = true,
+		LayoutType = "ShowOneInRow",
 		Choices = function()
 
 			local all = NOTESKIN:GetNoteSkinNames()
@@ -298,6 +299,20 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
+	},
+	-------------------------------------------------------------------------
+	StaminaFeatures = {
+		SelectType = "SelectMultiple",
+		Values = function() return { "MissBecauseHeld" } end,
+		LoadSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			list[1] = mods.MissBecauseHeld or false
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			mods.MissBecauseHeld = list[1]
+		end
 	},
 	-------------------------------------------------------------------------
 	DecentsWayOffs = {
