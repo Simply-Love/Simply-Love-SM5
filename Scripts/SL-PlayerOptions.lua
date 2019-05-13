@@ -265,7 +265,11 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker" } end,
+		Values = function()
+			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop" }
+			if SL.Global.GameMode == "StomperZ" then table.remove(vals, 5) end
+			return vals
+		end,
 	},
 	-------------------------------------------------------------------------
 	MeasureCounterPosition = {
@@ -274,11 +278,6 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
-	},
-	-------------------------------------------------------------------------
-	StaminaFeatures = {
-		SelectType = "SelectMultiple",
-		Values = function() return { "MissBecauseHeld" } end,
 	},
 	-------------------------------------------------------------------------
 	DecentsWayOffs = {

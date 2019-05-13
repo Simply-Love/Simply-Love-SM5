@@ -28,6 +28,7 @@ local PlayerDefaults = {
 				ReceptorArrowsPosition = "StomperZ",
 				LifeMeterType = "Standard",
 				MissBecauseHeld = false,
+				NPSGraphAtTop = false,
 				Vocalization = "None",
 			}
 			self.Streams = {

@@ -32,6 +32,7 @@ local profile_whitelist = {
 	MeasureCounterPosition = "string",
 	MeasureCounter = "string",
 	MissBecauseHeld = "boolean",
+	NPSGraphAtTop = "boolean",
 
 	Vocalization = "string",
 	ReceptorArrowsPosition = "string",
