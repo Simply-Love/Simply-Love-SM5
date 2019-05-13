@@ -53,8 +53,7 @@ end
 for index, RCType in ipairs(RadarCategories) do
 
 	-- player performance value
-	t[#t+1] = Def.BitmapText{
-		Font="_ScreenEvaluation numbers",
+	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
 		Text="000",
 		InitCommand=cmd(zoom,0.5; horizalign, right),
 		BeginCommand=function(self)
@@ -99,8 +98,7 @@ for index, RCType in ipairs(RadarCategories) do
 	}
 
 	-- possible value
-	t[#t+1] = Def.BitmapText{
-		Font="_ScreenEvaluation numbers",
+	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
 		InitCommand=cmd(zoom,0.5; horizalign, right),
 		BeginCommand=function(self)
 

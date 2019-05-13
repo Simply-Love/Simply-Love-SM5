@@ -5,7 +5,6 @@ local pn = ToEnumShortString(player)
 if SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics"
 or GAMESTATE:GetCurrentStyle():GetName() ~= "single"
 or SL.Global.GameMode == "Casual"
-or GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo"
 or (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen())
 then
 	return
@@ -15,7 +14,6 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 
 		if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
-
 			-- 16:9 aspect ratio (approximately 1.7778)
 			if GetScreenAspectRatio() > 1.7 then
 				self:x( _screen.w/4 * (player==PLAYER_1 and 3 or 1) + (70 * (player==PLAYER_1 and 1 or -1) ))
@@ -36,5 +34,5 @@ return Def.ActorFrame{
 	LoadActor("./BackgroundAndBanner.lua", player),
 	LoadActor("./JudgmentLabels.lua", player),
 	LoadActor("./JudgmentNumbers.lua", player),
-	LoadActor("./DensityGraphs/default.lua", player),
+	LoadActor("./DensityGraph.lua", player),
 }
