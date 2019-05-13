@@ -1,10 +1,52 @@
-local path =  THEME:GetThemeDisplayName() .. " UserPrefs.ini"
+-- It's possible for players to edit their Simply Love UserPrefs.ini file
+-- in various ways that might break the theme.  Also, sometimes theme-specific mods
+-- are deprecated or change their internal name, leaving old values behind in player profiles
+-- that might break the theme as well. Use this table to validate settings read in
+-- from and written out to player profiles.
+--
+-- For now, this table is local to this file, but might be moved into the SL table (or something)
+-- in the future to facilitate type checking in ./Scripts/SL-PlayerOptions.lua and elsewhere.
+
+local profile_whitelist = {
+	SpeedModType = "string",
+	SpeedMod = "number",
+	Mini = "string",
+	NoteSkin = "string",
+	JudgmentGraphic = "string",
+	BackgroundFilter = "string",
+
+	HideTargets = "boolean",
+	HideSongBG = "boolean",
+	HideCombo = "boolean",
+	HideLifebar = "boolean",
+	HideScore = "boolean",
+	HideDanger = "boolean",
+
+	LifeMeterType = "string",
+	DataVisualizations = "string",
+	TargetScore = "number",
+	ActionOnMissedTarget = "string",
+	ColumnFlashOnMiss = "boolean",
+	SubtractiveScoring = "boolean",
+	Pacemaker = "boolean",
+	MeasureCounterPosition = "string",
+	MeasureCounter = "string",
+	MissBecauseHeld = "boolean",
+
+	Vocalization = "string",
+	ReceptorArrowsPosition = "string",
+}
+
+-- ------------------------------------------
+
+local theme_name = THEME:GetThemeDisplayName()
+local filename =  theme_name .. " UserPrefs.ini"
 
 -- Hook called during profile load
 function LoadProfileCustom(profile, dir)
 
-	local fullFilename =  dir .. path
-	local pn
+	local path =  dir .. filename
+	local pn, filecontents
 
 	-- we've been passed a profile object as the variable "profile"
 	-- see if it matches against anything returned by PROFILEMAN:GetProfile(player)
@@ -15,8 +57,15 @@ function LoadProfileCustom(profile, dir)
 		end
 	end
 
-	if pn and FILEMAN:DoesFileExist(fullFilename) then
-		SL[pn].ActiveModifiers = IniFile.ReadFile(fullFilename)["Simply Love"]
+	if pn and FILEMAN:DoesFileExist(path) then
+		filecontents = IniFile.ReadFile(path)[theme_name]
+
+		for k,v in pairs(filecontents) do
+			-- ensure that the setting read in from profile exists and type check if so
+			if profile_whitelist[k] and type(v)==profile_whitelist[k] then
+				SL[pn].ActiveModifiers[k] = v
+			end
+		end
 	end
 
 	return true
@@ -25,12 +74,18 @@ end
 -- Hook called during profile save
 function SaveProfileCustom(profile, dir)
 
-	local fullFilename =  dir .. path
+	local path =  dir .. filename
 
 	for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		if profile == PROFILEMAN:GetProfile(player) then
 			local pn = ToEnumShortString(player)
-			IniFile.WriteFile( fullFilename, {["Simply Love"]=SL[pn].ActiveModifiers  } )
+			local output = {}
+			for k,v in pairs(SL[pn].ActiveModifiers) do
+				if profile_whitelist[k] and type(v)==profile_whitelist[k] then
+					output[k] = v
+				end
+			end
+			IniFile.WriteFile( path, {[theme_name]=output} )
 			break
 		end
 	end
