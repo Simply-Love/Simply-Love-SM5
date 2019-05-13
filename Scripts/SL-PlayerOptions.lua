@@ -103,14 +103,10 @@ local Overrides = {
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#list do
-				if list[i] then
-					mods.NoteSkin = self.Choices[i]
-					break
-				end
+			for i, val in ipairs(self.Choices) do
+				if list[i] then mods.NoteSkin = val; break end
 			end
-
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
 			MESSAGEMAN:Broadcast('NoteSkinChanged', {Player=pn, NoteSkin=mods.NoteSkin})
 			playeroptions:NoteSkin( mods.NoteSkin )
 		end
@@ -122,15 +118,11 @@ local Overrides = {
 		Choices = function() return map(StripSpriteHints, GetJudgmentGraphics(SL.Global.GameMode)) end,
 		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end,
 		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = SL[ToEnumShortString(pn)].ActiveModifiers
-
-			for i=1,#list do
-				if list[i] then
-					mods.JudgmentGraphic = self.Values[i]
-					break
-				end
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			for i, val in ipairs(self.Values) do
+				if list[i] then mods.JudgmentGraphic = val; break end
 			end
-
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Judgment preview
 			MESSAGEMAN:Broadcast("JudgmentGraphicChanged", {Player=pn, JudgmentGraphic=StripSpriteHints(mods.JudgmentGraphic)})
 		end
 	},
@@ -261,12 +253,8 @@ local Overrides = {
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.TargetScore = i
-				end
+			for i,v in ipairs(self.Values) do
+				if list[i] then SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore = i; break end
 			end
 		end
 	},
@@ -278,19 +266,6 @@ local Overrides = {
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
 		Values = function() return { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker" } end,
-		LoadSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			list[1] = mods.ColumnFlashOnMiss or false
-			list[2] = mods.SubtractiveScoring or false
-			list[3] = mods.Pacemaker or false
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			mods.ColumnFlashOnMiss = list[1]
-			mods.SubtractiveScoring	= list[2]
-			mods.Pacemaker = list[3]
-		end
 	},
 	-------------------------------------------------------------------------
 	MeasureCounterPosition = {
@@ -304,33 +279,18 @@ local Overrides = {
 	StaminaFeatures = {
 		SelectType = "SelectMultiple",
 		Values = function() return { "MissBecauseHeld" } end,
-		LoadSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			list[1] = mods.MissBecauseHeld or false
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			mods.MissBecauseHeld = list[1]
-		end
 	},
 	-------------------------------------------------------------------------
 	DecentsWayOffs = {
 		Values = function() return { "On", "Decents Only", "Off" } end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			local choice = SL.Global.ActiveModifiers.DecentsWayOffs or "On"
-			local i = FindInTable(choice, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 
-			local mods = SL.Global.ActiveModifiers
+			local gmods = SL.Global.ActiveModifiers
 
 			for i=1,#self.Choices do
 				if list[i] then
-					mods.DecentsWayOffs = self.Choices[i]
+					gmods.DecentsWayOffs = self.Choices[i]
 				end
 			end
 
@@ -351,13 +311,8 @@ local Overrides = {
 		Choices = function()
 			-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 			-- and have those vocalizations be automatically detected
-			local files = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
-			local vocalizations = { "None" }
-
-			for k,dir in ipairs(files) do
-				-- Dynamically fill the table.
-				vocalizations[#vocalizations+1] = dir
-			end
+			local vocalizations = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
+			table.insert(vocalizations, 1, "None")
 
 			if #vocalizations > 1 then
 				vocalizations[#vocalizations+1] = "Random"
@@ -377,18 +332,10 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Values = function()
-			if SL.Global.GameMode == "Casual" then
-				if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
-					return { 'Gameplay', 'Select Music' }
-				else
-					return { 'Gameplay' }
-				end
+			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
+				return { 'Gameplay', 'Select Music', 'Extra Modifiers' }
 			else
-				if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
-					return { 'Gameplay', 'Select Music', 'Extra Modifiers' }
-				else
-					return { 'Gameplay', 'Extra Modifiers' }
-				end
+				return { 'Gameplay', 'Extra Modifiers' }
 			end
 		end,
 		OneChoiceForAllPlayers = true,
@@ -449,13 +396,13 @@ local OptionRowDefault = {
 			if Overrides[name].Values then
 				if Overrides[name].Choices then
 					self.Choices = Overrides[name].Choices()
-					self.Values = Overrides[name].Values()
 				else
 					self.Choices = {}
 					for i, v in ipairs( Overrides[name].Values() ) do
 						self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
 					end
 				end
+				self.Values = Overrides[name].Values()
 			else
 				self.Choices = Overrides[name].Choices()
 			end
@@ -465,22 +412,41 @@ local OptionRowDefault = {
 			self.SelectType = Overrides[name].SelectType or "SelectOne"
 			self.OneChoiceForAllPlayers = Overrides[name].OneChoiceForAllPlayers or false
 			self.ExportOnChange = Overrides[name].ExportOnChange or false
-			self.ReloadRowMessages = Overrides[name].ReloadRowMessages or {}
 
-			self.LoadSelections = Overrides[name].LoadSelections or function(subself, list, pn)
-				local mods, playeroptions = GetModsAndPlayerOptions(pn)
-				local choice = mods[name] or (playeroptions[name] ~= nil and playeroptions[name](playeroptions)) or self.Choices[1]
-				local i = FindInTable(choice, (Overrides[name].Values and Overrides[name].Values() or self.Choices)) or 1
-				list[i] = true
-				return list
-			end
 
-			self.SaveSelections = Overrides[name].SaveSelections or function(subself, list, pn)
-				local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			if self.SelectType == "SelectOne" then
 
-				for i=1,#list do
-					if list[i] then
-						mods[name] = Overrides[name].Values and Overrides[name].Values()[i] or Overrides[name]:Choices()[i]
+				self.LoadSelections = Overrides[name].LoadSelections or function(subself, list, pn)
+					local mods, playeroptions = GetModsAndPlayerOptions(pn)
+					local choice = mods[name] or (playeroptions[name] ~= nil and playeroptions[name](playeroptions)) or self.Choices[1]
+					local i = FindInTable(choice, (self.Values or self.Choices)) or 1
+					list[i] = true
+					return list
+				end
+				self.SaveSelections = Overrides[name].SaveSelections or function(subself, list, pn)
+					local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+					local vals = self.Values or self.Choices
+					for i, val in ipairs(vals) do
+						if list[i] then mods[name] = val; break end
+					end
+				end
+
+			else
+				-- "SelectMultiple" typically means a collection of theme-defined flags in a single OptionRow
+				-- most of these behave the same and can fall back on this generic definition; a notable exception is "Hide"
+				self.LoadSelections = Overrides[name].LoadSelections or function(subself, list, pn)
+					local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+					local vals = self.Values or self.Choices
+					for i, mod in ipairs(vals) do
+						list[i] = mods[mod] or false
+					end
+					return list
+				end
+				self.SaveSelections = Overrides[name].SaveSelections or function(subself, list, pn)
+					local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+					local vals = self.Values or self.Choices
+					for i, mod in ipairs(vals) do
+						mods[mod] = list[i]
 					end
 				end
 			end
