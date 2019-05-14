@@ -4,7 +4,8 @@ local songs = {
 	Hearts = "feel (loop).ogg",
 	Ducks = "Xuxa fami VRC6 (loop).ogg",
 	Gay = "Mystical Wheelbarrow Journey (loop).ogg",
-	Spooky = "Spooky Scary Chiptunes (loop).ogg"
+	Spooky = "Spooky Scary Chiptunes (loop).ogg",
+	Stars = "Shooting Star - faux VRC6 remix (loop)",
 }
 
 local audio_file =  songs[ ThemePrefs.Get("VisualTheme") ]
