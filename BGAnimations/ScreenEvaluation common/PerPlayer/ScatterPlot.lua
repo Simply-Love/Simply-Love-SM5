@@ -53,10 +53,11 @@ for t in ivalues(sequential_offsets) do
 		b = c[3]
 
 		-- insert four datapoints into the verts tables, effectively generating a single quadrilateral
-		table.insert( verts, {{x, y, 0}, {r,g,b,0.666} } )
-		table.insert( verts, {{x+1.5, y, 0}, {r,g,b,0.666} } )
-		table.insert( verts, {{x+1.5, y+1.5, 0}, {r,g,b,0.666} } )
-		table.insert( verts, {{x, y+1.5, 0}, {r,g,b,0.666} } )
+		-- top left,  top right,  bottom right,  bottom left
+		table.insert( verts, {{x,y,0}, {r,g,b,0.666}} )
+		table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.666}} )
+		table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.666}} )
+		table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.666}} )
 	else
 		-- else, a miss should be a quadrilateral that is the height of the entire graph and red
 		table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
@@ -72,7 +73,7 @@ end
 local amv = Def.ActorMultiVertex{
 	OnCommand=function(self)
 		self:x(-GraphWidth/2)
-			:y(_screen.cy + 151 - GraphHeight/2 - 1)
+			:y(_screen.cy + 151 - GraphHeight/2)
 			:SetDrawState{Mode="DrawMode_Quads"}
 			:SetVertices(verts)
 	end,

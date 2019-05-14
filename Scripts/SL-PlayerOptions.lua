@@ -200,7 +200,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "Targets", "Background", "Combo", "Life", "Score", "Danger", "ComboExplosions" } end,
+		Values = function() return { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" } end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets 	or false

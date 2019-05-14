@@ -9,7 +9,7 @@ if SL.Global.GameMode ~= "Casual" then
 		-- Draw a Quad behind the GraphDisplay (lifebar graph) and Judgment ScatterPlot
 		Def.Quad{
 			InitCommand=function(self)
-				self:y( _screen.cy + 151):zoomto(GraphWidth, GraphHeight+1)
+				self:y(_screen.cy + 151):zoomto(GraphWidth, GraphHeight)
 					:diffuse(color("#101519"))
 			end
 		},
@@ -53,7 +53,7 @@ if SL.Global.GameMode ~= "Casual" then
 		Def.ComboGraph{
 			InitCommand=function(self)
 				self:Load("ComboGraph" .. ToEnumShortString(player))
-				self:y( _screen.cy+182.5 )
+				self:y( _screen.cy+183 )
 			end,
 			OnCommand=function(self)
 				local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
