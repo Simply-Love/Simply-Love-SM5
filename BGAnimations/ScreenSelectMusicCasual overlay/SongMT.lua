@@ -10,23 +10,6 @@ local NoJacketTexture = nil
 -- max number of characters allowed in a song title before truncating to ellipsis
 local max_chars = 28
 
-local OnlyASCII = function(text)
-	return text:len() == text:utf8len()
-end
-
-BitmapText.Truncate = function(bmt, m)
-	local text = bmt:GetText()
-
-	-- With SL's Miso and JP fonts, ASCII characters (Miso) tend to render 2-3x less wide
-	-- than non-ASCII (JP, usually) characters. If the text includes non-ASCII, divide the
-	-- overall number of characters allowed to be rendered before truncating by 2.5.
-	-- This is, of course, a VERY broad over-generalization, but It Works For Now™.
-	m = OnlyASCII(text) and m or round(m/2.5)
-	if text:utf8len() <= m then return end
-
-	bmt:settext( text:utf8sub(1, m) .. "…" )
-end
-
 local song_mt = {
 	__index = {
 		create_actors = function(self, name)

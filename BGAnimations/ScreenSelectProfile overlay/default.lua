@@ -9,64 +9,17 @@ local AutoStyle = ThemePrefs.Get("AutoStyle")
 -- which PlayerNumber they're supposed to be...
 local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-local GetLocalProfiles = function()
-	local t = {}
-
-	function GetSongsPlayedString(numSongs)
-		return numSongs == 1 and Screen.String("SingularSongPlayed") or Screen.String("SeveralSongsPlayed")
-	end
-
-	for p = 0,PROFILEMAN:GetNumLocalProfiles()-1 do
-		local profile=PROFILEMAN:GetLocalProfileFromIndex(p)
-		local ProfileCard = Def.ActorFrame {
-			LoadFont("_miso") .. {
-				Text=profile:GetDisplayName(),
-				InitCommand=cmd(y,-10;zoom,1;ztest,true)
-			},
-			LoadFont("_miso") .. {
-				InitCommand=cmd(y,8;zoom,0.5;vertspacing,-8;ztest,true),
-				BeginCommand=function(self)
-					local numSongsPlayed = profile:GetNumTotalSongsPlayed()
-					self:settext( string.format( GetSongsPlayedString( numSongsPlayed ), numSongsPlayed ) )
-				end
-			},
-		}
-		t[#t+1]=ProfileCard
-	end
-
-	return t
-end
-
-local LoadCard = function(c, player)
-	return Def.ActorFrame {
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") )..{
-			InitCommand=function(self) self:diffuse(c):cropbottom(1) end,
-			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
-			OffCommand=function(self)
-				if not GAMESTATE:IsSideJoined(player) then
-					self:accelerate(0.25):cropbottom(1)
-				end
-			end
-		},
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") )..{
-			InitCommand=function(self) self:cropbottom(1) end,
-			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
-			OffCommand=function(self)
-				if not GAMESTATE:IsSideJoined(player) then
-					self:accelerate(0.25):cropbottom(1)
-				end
-			end
-		}
-	}
-end
+local invalid_count = 0
 
 local UpdateInternal3 = function(self, Player)
 	local frame = self:GetChild(ToEnumShortString(Player) .. 'Frame')
-	local scroller = frame:GetChild('Scroller')
-	local seltext = frame:GetChild('SelectedProfileText')
 	local joinframe = frame:GetChild('JoinFrame')
-	local smallframe = frame:GetChild('SmallFrame')
-	local bigframe = frame:GetChild('BigFrame')
+
+	local scrollerframe = frame:GetChild('ScrollerFrame')
+	local dataframe = scrollerframe:GetChild('DataFrame')
+	local scroller = scrollerframe:GetChild('Scroller')
+
+	local seltext = frame:GetChild('SelectedProfileText')
 	local usbsprite = frame:GetChild('USBIcon')
 
 	if GAMESTATE:IsHumanPlayer(Player) then
@@ -77,34 +30,29 @@ local UpdateInternal3 = function(self, Player)
 			--using local profile
 			joinframe:visible(false)
 			usbsprite:visible(false)
-			smallframe:visible(true)
-			bigframe:visible(true)
+			scrollerframe:visible(true)
 			seltext:visible(true)
-			scroller:visible(true)
 
-			local ind = SCREENMAN:GetTopScreen():GetProfileIndex(Player)
-			if ind > 0 then
-				scroller:SetDestinationItem(ind-1)
-				seltext:settext(PROFILEMAN:GetLocalProfileFromIndex(ind-1):GetDisplayName())
+			local index = SCREENMAN:GetTopScreen():GetProfileIndex(Player)
+
+			if index > 0 then
+				scroller:SetDestinationItem(index-1)
+				seltext:settext(PROFILEMAN:GetLocalProfileFromIndex(index-1):GetDisplayName())
+				dataframe:playcommand("Set", {PlayerNumber=Player, index=(index-1)})
 			else
 				if SCREENMAN:GetTopScreen():SetProfileIndex(Player, 1) then
 					scroller:SetDestinationItem(0)
 					self:queuecommand('UpdateInternal2')
 				else
 					joinframe:visible(true)
-					smallframe:visible(false)
-					bigframe:visible(false)
-					scroller:visible(false)
+					scrollerframe:visible(false)
 					seltext:settext(ScreenString("NoProfile"))
 				end
 			end
 		else
 			--using memorycard profile
-			bigframe:visible(false)
+			scrollerframe:visible(false)
 			joinframe:visible(false)
-			smallframe:visible(false)
-			scroller:visible(false)
-
 			usbsprite:visible(true)
 			seltext:visible(true):settext(MEMCARDMAN:GetName(Player))
 
@@ -113,17 +61,15 @@ local UpdateInternal3 = function(self, Player)
 	else
 		usbsprite:visible(false)
 		joinframe:visible(true)
-		scroller:visible(false)
 		seltext:visible(false)
-		smallframe:visible(false)
-		bigframe:visible(false)
+		scrollerframe:visible(false)
 	end
 end
 
 
 
 local t = Def.ActorFrame {
-	InitCommand=function(self) self:queuecommand("Capture"); main_af = self end,
+	InitCommand=function(self) self:queuecommand("Capture") end,
 	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", self) ) end,
 
 	-- the OffCommand will have been queued, when it is appropriate, from Input.lua
@@ -131,6 +77,8 @@ local t = Def.ActorFrame {
 	-- and queue a call to finish() so that the engine can wrap things up
 	OffCommand=function(self) self:sleep(0.5):queuecommand("Finish") end,
 	FinishCommand=function(self) SCREENMAN:GetTopScreen():Finish() end,
+	WhatMessageCommand=function(self) self:runcommandsonleaves(function(subself) if subself.distort then subself:distort(0.5) end end):sleep(4):queuecommand("Undistort") end,
+	UndistortCommand=function(self) self:runcommandsonleaves(function(subself) if subself.distort then subself:distort(0) end end) end,
 
 	StorageDevicesChangedMessageCommand=function(self, params)
 		self:queuecommand('UpdateInternal2')
@@ -147,8 +95,10 @@ local t = Def.ActorFrame {
 				-- only attempt to unjoin the player if that side is currently joined
 				if GAMESTATE:IsSideJoined(params.PlayerNumber) then
 					MESSAGEMAN:Broadcast("BackButton")
+					-- ScreenSelectProfile:SetProfileIndex() will interpret -2 as
+					-- "Unjoin this player and unmount their USB stick if there is one"
+					-- see ScreenSelectProfile.cpp for details
 					SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -2)
-					GAMESTATE:UnjoinPlayer(params.PlayerNumber)
 				end
 			end
 			return
@@ -176,111 +126,41 @@ local t = Def.ActorFrame {
 		end
 	end,
 
-	children = {
-		-- sounds
-		LoadActor( THEME:GetPathS("Common","start") )..{
-			StartButtonMessageCommand=cmd(play)
-		},
-		LoadActor( THEME:GetPathS("ScreenSelectMusic","select down") )..{
-			BackButtonMessageCommand=cmd(play)
-		},
-		LoadActor( THEME:GetPathS("ScreenSelectMaster","change") )..{
-			DirectionButtonMessageCommand=cmd(play)
-		},
-		LoadActor( THEME:GetPathS("Common", "invalid") )..{
-			InvalidChoiceMessageCommand=function(self) self:play() end
-		}
+	-- sounds
+	LoadActor( THEME:GetPathS("Common", "start") )..{
+		StartButtonMessageCommand=function(self) self:play() end
+	},
+	LoadActor( THEME:GetPathS("ScreenSelectMusic", "select down") )..{
+		BackButtonMessageCommand=function(self) self:play() end
+	},
+	LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{
+		DirectionButtonMessageCommand=function(self)
+			self:play()
+			if invalid_count then invalid_count = 0 end
+		end
+	},
+	LoadActor( THEME:GetPathS("Common", "invalid") )..{
+		InvalidChoiceMessageCommand=function(self)
+			self:play()
+			if invalid_count then
+				invalid_count = invalid_count + 1
+				if invalid_count >= 10 then MESSAGEMAN:Broadcast("What"); invalid_count = nil end
+			end
+		end
+	},
+	LoadActor( THEME:GetPathS("", "what.ogg") )..{
+		WhatMessageCommand=function(self) self:play() end
 	}
 }
 
-local PlayerFrame = function(player)
-	return Def.ActorFrame {
-		Name=ToEnumShortString(player) .. "Frame",
-		InitCommand=function(self) self:xy(_screen.cx+(160*(player==PLAYER_1 and -1 or 1)), _screen.cy) end,
-		OffCommand=function(self)
-			if GAMESTATE:IsSideJoined(player) then
-				self:bouncebegin(0.35):zoom(0)
-			end
-		end,
-		InvalidChoiceMessageCommand=function(self, params)
-			if params.PlayerNumber == player then
-				self:finishtweening():bounceend(0.1):addx(5):bounceend(0.1):addx(-10):bounceend(0.1):addx(5)
-			end
-		end,
-
-		PlayerJoinedMessageCommand=function(self,param)
-			if param.Player == player then
-				self:zoom(1.15):bounceend(0.175):zoom(1)
-			end
-		end,
-
-		children = {
-			Def.ActorFrame {
-				Name='JoinFrame',
-				LoadCard(Color.Black, player),
-
-				LoadFont("_miso") .. {
-					Text=THEME:GetString("ScreenSelectProfile", "PressStartToJoin"),
-					InitCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"); diffusealpha, 0),
-					OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
-					OffCommand=function(self) self:linear(0.1):diffusealpha(0) end
-				},
-			},
-
-			Def.ActorFrame {
-				Name='BigFrame',
-				LoadCard(PlayerColor(player), player)
-			},
-
-			Def.ActorFrame {
-				Name='SmallFrame',
-				InitCommand=cmd(y,-2),
-
-				Def.Quad {
-					InitCommand=cmd(zoomto,200-10,40+2; diffuse,Color('Black'); diffusealpha,0),
-					OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
-				},
-			},
-
-			Def.Sprite{
-				Name="USBIcon",
-				Texture=THEME:GetPathB("ScreenMemoryCard", "overlay/usbicon.png"),
-				InitCommand=function(self)
-					self:rotationz(90):zoom(0.75):visible(false):diffuseshift()
-						:effectperiod(1.5):effectcolor1(1,1,1,1):effectcolor2(1,1,1,0.5)
-				end
-			},
-
-			Def.ActorScroller{
-				Name='Scroller',
-				NumItemsToDraw=6,
-				InitCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15; diffusealpha,0),
-				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
-				TransformFunction=function(self, offset, itemIndex, numItems)
-					local focus = scale(math.abs(offset),0,2,1,0)
-					self:visible(false)
-					self:y(math.floor( offset*40 ))
-
-				end;
-				children = GetLocalProfiles()
-			},
-
-			LoadFont("_miso")..{
-				Name='SelectedProfileText',
-				InitCommand=cmd(y,160; zoom, 1.35; shadowlength, ThemePrefs.Get("RainbowMode") and 0.5 or 0)
-			}
-		}
-	}
-end
-
 -- load SelectProfileFrames for both
 if AutoStyle=="none" or AutoStyle=="versus" then
-	t.children[#t.children+1] = PlayerFrame(PLAYER_1)
-	t.children[#t.children+1] = PlayerFrame(PLAYER_2)
+	t[#t+1] = LoadActor("PlayerFrame.lua", PLAYER_1)
+	t[#t+1] = LoadActor("PlayerFrame.lua", PLAYER_2)
 
 -- load only for the MasterPlayerNumber
 else
-	t.children[#t.children+1] = PlayerFrame(mpn)
+	t[#t+1] = LoadActor("PlayerFrame.lua", mpn)
 end
 
 return t

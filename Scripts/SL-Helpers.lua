@@ -16,6 +16,45 @@ function Border(width, height, bw)
 	}
 end
 
+------------------------------------------------------------------------------
+-- Is this even how this works?  I need to research this more.
+local OnlyASCII = function(text)
+	return text:len() == text:utf8len()
+end
+
+BitmapText.Truncate = function(bmt, m)
+	local text = bmt:GetText()
+	local l = text:len()
+
+	-- With SL's Miso and JP fonts, ASCII characters (Miso) tend to render 2-3x less wide
+	-- than JP characters. If the text includes JP characters, it is (probably) desired to
+	-- truncate the string earlier to achieve the same effect.
+	-- Here, we are arbitrarily "weighting" JP characters to count 4x as much as one ASCII
+	-- character and then scaling the point at which we truncate accordingly.
+	-- This is, of course, a VERY broad over-generalization, but It Works For Now™.
+	if not OnlyASCII(text) then
+		l = 0
+
+		-- a range of bytes I'm considering to indicate JP characters,
+		-- mostly derived from empirical observation and guesswork
+		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
+		-- If you know more about how this actually works, please submit a pull request.
+		local lower = 200
+		local upper = 240
+
+		for i=1, text:utf8len() do
+			local b = text:utf8sub(i,i):byte()
+			l = l + ((b < upper and b > lower) and 4 or 1)
+		end
+		m = math.floor(m * (m/l))
+	end
+
+	-- if the length of the string is less than the specified truncate point, don't do anything
+	if l <= m then return end
+	-- otherwise, replace everything after the truncate point with an ellipsis
+	bmt:settext( text:utf8sub(1, m) .. "…" )
+end
+
 
 ------------------------------------------------------------------------------
 -- Misc Lua functions that didn't fit anywhere else...

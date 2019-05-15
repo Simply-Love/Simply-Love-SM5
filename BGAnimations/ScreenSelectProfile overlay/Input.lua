@@ -77,7 +77,7 @@ local InputHandler = function(event)
 	if not event or not event.button then return false end
 	if (AutoStyle=="single" or AutoStyle=="double") and event.PlayerNumber ~= mpn then return false	end
 
-	if event.type == "InputEventType_FirstPress" then
+	if event.type ~= "InputEventType_Release" then
 		if Handle[event.GameButton] then Handle[event.GameButton](event) end
 	end
 end
