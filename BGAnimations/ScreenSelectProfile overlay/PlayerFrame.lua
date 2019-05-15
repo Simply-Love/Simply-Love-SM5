@@ -192,7 +192,7 @@ return Def.ActorFrame{
 
 		LoadFont("_miso") .. {
 			Text=THEME:GetString("ScreenSelectProfile", "PressStartToJoin"),
-			InitCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5"); diffusealpha, 0),
+			InitCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5");diffusealpha,0;maxwidth,180),
 			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
 			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end
 		},

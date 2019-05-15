@@ -131,7 +131,7 @@ for i=1,NumStages do
 	local SongNameAndBanner = Def.ActorFrame{
 		InitCommand=function(self) self:visible(false) end,
 		OnCommand=function(self)
-			self:sleep(DurationPerStage * (i-1) );
+			self:sleep(DurationPerStage * (i-1) )
 			self:queuecommand("Display")
 		end,
 		DisplayCommand=function(self)
@@ -149,7 +149,7 @@ for i=1,NumStages do
 	-- song name
 	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
 		Name="SongName"..i,
-		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
+		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294; shadowlength, 0.333),
 		OnCommand=function(self)
 			if SongOrCourse then
 				self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
