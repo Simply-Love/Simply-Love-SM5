@@ -62,7 +62,7 @@ local GlobalDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
-				DecentsWayOffs = "On",
+				WorstTimingWindow = 5,
 			}
 			self.Stages = {
 				PlayedThisGame = 0,

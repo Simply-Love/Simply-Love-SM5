@@ -20,12 +20,12 @@ local columns = {
 	kickbox = { "Down Left Foot", "Up Left Foot", "Up Left Fist", "Down Left Fist", "Down Right Fist", "Up Right Fist", "Up Right Foot", "Down Right Foot" }
 }
 
-local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+local rows = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 
 local box_width = 230
 local box_height = 146
 local column_width = box_width/#columns[game]
-local row_height = box_height/#judgments
+local row_height = box_height/#rows
 
 -- need to store the number of columns PRIOR to looping
 -- otherwise we enter an infinite loop because the upper bound keeps growing!
@@ -41,6 +41,8 @@ local af = Def.ActorFrame{
 	InitCommand=function(self) self:xy(-104, _screen.cy-40) end
 }
 
+local gmods = SL.Global.ActiveModifiers
+
 for i,column in ipairs( columns[game] ) do
 
 	-- The arrow for this column
@@ -53,29 +55,19 @@ for i,column in ipairs( columns[game] ) do
 	local miss_bmt = nil
 
 	-- for each possible judgment
-	for j, judgment in ipairs(judgments) do
-
-		-- add a BitmapText actor to be the number for this column
-		af[#af+1] = LoadFont("_miso")..{
-			Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
-			InitCommand=function(self)
-				self:xy(i*column_width, j*row_height + 4)
-					:zoom(0.9)
-
-				local gmods = SL.Global.ActiveModifiers
-
-				-- if Way Offs were turned off
-				if gmods.DecentsWayOffs == "Decents Only" and judgment == "W5" then
-					self:visible(false)
-
-				-- if both Decents and WayOffs were turned off
-				elseif gmods.DecentsWayOffs == "Off" and (judgment == "W4" or judgment == "W5") then
-					self:visible(false)
+	for j, judgment in ipairs(rows) do
+		-- don't add rows for TimingWindows that were turned off, but always add Miss
+		if j <= gmods.WorstTimingWindow or j==#rows then
+			-- add a BitmapText actor to be the number for this column
+			af[#af+1] = LoadFont("_miso")..{
+				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
+				InitCommand=function(self)
+					self:xy(i*column_width, j*row_height + 4)
+						:zoom(0.9)
+					if j == #rows then miss_bmt = self end
 				end
-
-				if j == #judgments then miss_bmt = self end
-			end
-		}
+			}
+		end
 	end
 
 	if track_missbcheld then

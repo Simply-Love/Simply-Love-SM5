@@ -220,18 +220,18 @@ function SetGameModePreferences()
 	-- we want to reduce the number of judgments,
 	-- so turn Decents and WayOffs off now.
 	if SL.Global.GameMode == "Casual" then
-		SL.Global.ActiveModifiers.DecentsWayOffs = "Off"
+		SL.Global.ActiveModifiers.WorstTimingWindow = 3
 
-	-- Otherwise, we want Decents and WayOffs enabled by default.
+	-- Otherwise, we want all TimingWindows enabled by default.
 	else
- 		SL.Global.ActiveModifiers.DecentsWayOffs = "On"
+ 		SL.Global.ActiveModifiers.WorstTimingWindow = 5
 	end
 
 	-- loop through human players and apply whatever mods need to be set now
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-		-- Now that we've set the SL table for DecentsWayOffs appropriately,
-		-- use it to apply DecentsWayOffs as a mod.
-		local OptRow = CustomOptionRow( "DecentsWayOffs" )
+		-- Now that we've set the SL table for WorstTimingWindow appropriately,
+		-- use it to apply WorstTimingWindow as a mod.
+		local OptRow = CustomOptionRow( "WorstTimingWindow" )
 		OptRow:LoadSelections( OptRow.Choices, player )
 
 		-- using PREFSMAN to set the preference for MinTNSToHideNotes apparently isn't
@@ -293,16 +293,16 @@ end
 
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,DecentsWayOffs,Vocalization,Characters,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounterPosition,MeasureCounter,WorstTimingWindow,Vocalization,Characters,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then
 		mods = mods:gsub("ReceptorArrowsPosition", "")
 	end
 
-	-- remove DecentsWayOffs and LifeMeterType if GameMode is StomperZ
+	-- remove WorstTimingWindow and LifeMeterType if GameMode is StomperZ
 	if SL.Global.GameMode == "StomperZ" then
-		mods = mods:gsub("DecentsWayOffs,", ""):gsub("LifeMeterType", "")
+		mods = mods:gsub("WorstTimingWindow,", ""):gsub("LifeMeterType", "")
 	end
 
 	local game = GAMESTATE:GetCurrentGame():GetName()

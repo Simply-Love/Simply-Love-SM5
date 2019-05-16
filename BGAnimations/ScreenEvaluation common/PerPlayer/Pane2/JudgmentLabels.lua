@@ -2,20 +2,15 @@ local player = ...
 local pn = ToEnumShortString(player)
 local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 
-local judgments = { "W1", "W2", "W3", "W4", "W5", "Miss" }
-local TNSNames = {}
-
-local tns_string = "TapNoteScore"
-if SL.Global.GameMode ~= "Competitive" then tns_string = tns_string..SL.Global.GameMode end
-
--- tap note types
--- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...
-for i, judgment in ipairs(judgments) do
-	TNSNames[#TNSNames+1] = THEME:GetString(tns_string, judgment)
+local TapNoteScores = { Types={'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}, Names={} }
+local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="Competitive" and "" or SL.Global.GameMode)
+-- get TNS names appropriate for the current GameMode, localized to the current language
+for i, judgment in ipairs(TapNoteScores.Types) do
+	TapNoteScores.Names[#TapNoteScores.Names+1] = THEME:GetString(tns_string, judgment)
 end
 
 local box_height = 146
-local row_height = box_height/#judgments
+local row_height = box_height/#TapNoteScores.Types
 
 local t = Def.ActorFrame{
 	InitCommand=cmd(xy, 50, _screen.cy-36),
@@ -28,31 +23,28 @@ local t = Def.ActorFrame{
 
 local miss_bmt
 
+local worst = SL.Global.ActiveModifiers.WorstTimingWindow
+
 --  labels: W1 ---> Miss
-for index, label in ipairs(TNSNames) do
-	t[#t+1] = LoadFont("_miso")..{
-		Text=label:upper(),
-		InitCommand=function(self)
-			self:zoom(0.8):horizalign(right)
-				:x( (player == PLAYER_1 and -130) or -28 )
-				:y( index * row_height )
-				:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
+for i=1, #TapNoteScores.Types do
+	-- no need to add BitmapText actors for TimingWindows that were turned off
+	if i <= worst or i==#TapNoteScores.Types then
 
-			-- Check for Decents/Way Offs
-			local gmods = SL.Global.ActiveModifiers
+		local window = TapNoteScores.Types[i]
+		local label = TapNoteScores.Names[i]
 
-			-- if Way Offs were turned off
-			if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore", "W5") then
-				self:visible(false)
+		t[#t+1] = LoadFont("_miso")..{
+			Text=label:upper(),
+			InitCommand=function(self)
+				self:zoom(0.8):horizalign(right)
+					:x( (player == PLAYER_1 and -130) or -28 )
+					:y( i * row_height )
+					:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 
-			-- if both Decents and WayOffs were turned off
-			elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore", "W4") or label == THEME:GetString("TapNoteScore", "W5")) then
-				self:visible(false)
+				if i == #TapNoteScores.Types then miss_bmt = self end
 			end
-
-			if index == #judgments then miss_bmt = self end
-		end
-	}
+		}
+	end
 end
 
 if track_missbcheld then

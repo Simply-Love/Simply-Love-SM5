@@ -28,8 +28,8 @@ local t = Def.ActorFrame{
 }
 
 -- do "regular" TapNotes first
-for index, window in ipairs(TapNoteScores.Types) do
-
+for i=1,#TapNoteScores.Types do
+	local window = TapNoteScores.Types[i]
 	local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
 
 	-- actual numbers
@@ -38,27 +38,15 @@ for index, window in ipairs(TapNoteScores.Types) do
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
 
-			-- if StomperZ, color the JudgmentNumbers
-			if SL.Global.GameMode == "StomperZ" then
-				self:diffuse( SL.JudgmentColors.StomperZ[index] )
-
-			-- if ECFA, color the JudgmentNumbers
-			elseif SL.Global.GameMode == "ECFA" then
-				self:diffuse( SL.JudgmentColors.ECFA[index] )
+			if SL.Global.GameMode ~= "Competitive" then
+				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 			end
 
-			-- check for Decents/Way Offs
-			local gmods = SL.Global.ActiveModifiers
-
-			-- If Way Offs were turned off, the leading 0s should not
+			-- if some TimingWindows were turned off, the leading 0s should not
 			-- be colored any differently than the (lack of) JudgmentNumber,
 			-- so load a unique Metric group.
-			if gmods.DecentsWayOffs == "Decents Only" and window == "W5" then
-				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-				self:diffuse(color("#444444"))
-
-			-- If both Decents and WayOffs were turned off, the same logic applies.
-			elseif gmods.DecentsWayOffs == "Off" and (window == "W4" or window == "W5") then
+			local gmods = SL.Global.ActiveModifiers
+			if i > gmods.WorstTimingWindow and i ~= #TapNoteScores.Types then
 				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
 				self:diffuse(color("#444444"))
 
@@ -70,7 +58,7 @@ for index, window in ipairs(TapNoteScores.Types) do
 		end,
 		BeginCommand=function(self)
 			self:x( TapNoteScores.x[pn] )
-			self:y((index-1)*35 -20)
+			self:y((i-1)*35 -20)
 			self:targetnumber(number)
 		end
 	}

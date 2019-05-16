@@ -23,8 +23,9 @@ local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
-local num_judgments_available = (SL.Global.ActiveModifiers.DecentsWayOffs=="Decents Only" and 4) or (SL.Global.ActiveModifiers.DecentsWayOffs=="Off" and 3) or 5
-local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..num_judgments_available]
+local num_judgments_available = SL.Global.ActiveModifiers.WorstTimingWindow
+local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..(num_judgments_available > 0 and num_judgments_available or 5)]
+
 -- ---------------------------------------------
 
 for t in ivalues(sequential_offsets) do

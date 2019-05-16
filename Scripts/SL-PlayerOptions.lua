@@ -282,28 +282,46 @@ local Overrides = {
 		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
 	},
 	-------------------------------------------------------------------------
-	DecentsWayOffs = {
-		Values = function() return { "On", "Decents Only", "Off" } end,
+	WorstTimingWindow = {
+		Choices = function()
+			local tns = "TapNoteScore" .. (SL.Global.GameMode=="Competitive" and "" or SL.Global.GameMode)
+			local t = {THEME:GetString("SLPlayerOptions","None")}
+			-- assume pluralization via terminal s
+			t[2] = THEME:GetString(tns,"W5").."s"
+			t[3] = THEME:GetString(tns,"W4").."s + "..t[2]
+			t[4] = THEME:GetString("SLPlayerOptions","All")
+			return t
+		end,
 		OneChoiceForAllPlayers = true,
+		LoadSelections = function(self, list, pn)
+			local worst = SL.Global.ActiveModifiers.WorstTimingWindow
+			if 		worst==5 then list[1] = true
+			elseif 	worst==4 then list[2] = true
+			elseif 	worst==3 then list[3] = true
+			elseif 	worst==0 then list[4] = true
+			end
+			return list
+		end,
 		SaveSelections = function(self, list, pn)
-
 			local gmods = SL.Global.ActiveModifiers
 
-			for i=1,#self.Choices do
-				if list[i] then
-					gmods.DecentsWayOffs = self.Choices[i]
-				end
+			if 		list[1] then gmods.WorstTimingWindow=5
+			elseif 	list[2] then gmods.WorstTimingWindow=4
+			elseif 	list[3] then gmods.WorstTimingWindow=3
+			elseif 	list[4] then gmods.WorstTimingWindow=0
 			end
 
-			if list[2] then
-				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
-				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
-			elseif list[3] then
-				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW3)
-				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW3)
-			else
-				PREFSMAN:SetPreference("TimingWindowSecondsW4", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW4)
-				PREFSMAN:SetPreference("TimingWindowSecondsW5", SL.Preferences[SL.Global.GameMode].TimingWindowSecondsW5)
+			-- loop 5 times to set the 5 TimingWindows appropriately
+			for i=1,5 do
+				if i <= gmods.WorstTimingWindow then
+					PREFSMAN:SetPreference("TimingWindowSecondsW"..i, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i])
+				else
+					if PREFSMAN:PreferenceExists("TimingWindowSecondsW"..gmods.WorstTimingWindow) then
+						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..gmods.WorstTimingWindow])
+					else
+						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, 0)
+					end
+				end
 			end
 		end
 	},

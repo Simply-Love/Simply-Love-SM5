@@ -1,7 +1,7 @@
 local position_on_screen = ...
 
 local Players = GAMESTATE:GetHumanPlayers()
-local song, StageNum, DecentsWayOffs, LetterGradesAF
+local song, StageNum, LetterGradesAF
 
 local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
 
@@ -198,23 +198,17 @@ for player in ivalues(Players) do
 	for i=1,#TNSTypes do
 
 		PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_wendy small")..{
-			InitCommand=cmd(zoom,0.28; horizalign, align2; x,col2x; y,i*13 - 50),
+			InitCommand=function(self)
+				self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 50)
+					:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			end,
 			DrawStageCommand=function(self)
 				if playerStats and playerStats.judgments then
 					local val = playerStats.judgments[TNSTypes[i]]
 					if val then self:settext(val) end
-					local DecentsWayOffs = SL.Global.Stages.Stats[StageNum].DecentsWayOffs
 
-					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
-
-					if DecentsWayOffs == "Decents Only" and i == 5 then
-						self:visible(false)
-					elseif DecentsWayOffs == "Off" and (i == 4 or i == 5) then
-						self:visible(false)
-					else
-						self:visible(true)
-					end
-
+					local worst = SL.Global.Stages.Stats[StageNum].WorstTimingWindow
+					self:visible( i <= worst or i==#TNSTypes )
 				else
 					self:settext("")
 				end

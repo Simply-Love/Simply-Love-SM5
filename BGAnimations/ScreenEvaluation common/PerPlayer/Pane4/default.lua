@@ -17,8 +17,8 @@ local abbreviations = {
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
-local num_judgments_available = (SL.Global.ActiveModifiers.DecentsWayOffs=="Decents Only" and 4) or (SL.Global.ActiveModifiers.DecentsWayOffs=="Off" and 3) or 5
-local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..num_judgments_available]
+local num_judgments_available = SL.Global.ActiveModifiers.WorstTimingWindow
+local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..(num_judgments_available > 0 and num_judgments_available or 5)]
 
 -- ---------------------------------------------
 -- sequential_offsets is a table of all timing offsets in the order they were earned.
@@ -170,7 +170,7 @@ for offset=-worst_window, worst_window, 0.001 do
 	y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
 	c = SL.JudgmentColors[SL.Global.GameMode][DetermineTimingWindow(offset)]
 
-	-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads places next to one another
+	-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
 	-- each vertex is a table of two tables:
 	-- {x, y, z}, {r, g, b, a}
 	verts[#verts+1] = {{x, 0, 0}, c }

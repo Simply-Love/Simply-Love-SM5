@@ -51,36 +51,30 @@ local t = Def.ActorFrame{
 	end
 }
 
+local worst = SL.Global.ActiveModifiers.WorstTimingWindow
 
 --  labels: W1 ---> Miss
-for index, window in ipairs(TapNoteScores.Types) do
+for i=1, #TapNoteScores.Types do
+	-- no need to add BitmapText actors for TimingWindows that were turned off
+	if i <= worst or i==#TapNoteScores.Types then
 
-	local label = getStringFromTheme( window )
+		local window = TapNoteScores.Types[i]
+		local label = getStringFromTheme( window )
 
-	t[#t+1] = LoadFont("_miso")..{
-		Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper();
-		InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 76),
-		BeginCommand=function(self)
-			self:x( (player == PLAYER_1 and 28) or -28 )
-			self:y((index-1)*28 -16)
+		t[#t+1] = LoadFont("_miso")..{
+			Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper(),
+			InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 76),
+			BeginCommand=function(self)
+				self:x( (player == PLAYER_1 and 28) or -28 )
+				self:y((i-1)*28 -16)
 
-			-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
-			if SL.Global.GameMode ~= "Competitive" then
-				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
+				-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
+				if SL.Global.GameMode ~= "Competitive" then
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+				end
 			end
-
-			local gmods = SL.Global.ActiveModifiers
-
-			-- if Way Offs were turned off
-			if gmods.DecentsWayOffs == "Decents Only" and label == THEME:GetString("TapNoteScore" .. mode, "W5") then
-				self:visible(false)
-
-			-- if both Decents and WayOffs were turned off
-			elseif gmods.DecentsWayOffs == "Off" and (label == THEME:GetString("TapNoteScore" .. mode, "W4") or label == THEME:GetString("TapNoteScore" .. mode, "W5")) then
-				self:visible(false)
-			end
-		end
-	}
+		}
+	end
 end
 
 -- labels: holds, mines, hands, rolls
