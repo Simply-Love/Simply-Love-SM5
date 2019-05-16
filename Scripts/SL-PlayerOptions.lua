@@ -295,7 +295,7 @@ local Overrides = {
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
 			local worst = SL.Global.ActiveModifiers.WorstTimingWindow
-			if 		worst==5 then list[1] = true
+			if 	worst==5 then list[1] = true
 			elseif 	worst==4 then list[2] = true
 			elseif 	worst==3 then list[3] = true
 			elseif 	worst==0 then list[4] = true
@@ -305,7 +305,7 @@ local Overrides = {
 		SaveSelections = function(self, list, pn)
 			local gmods = SL.Global.ActiveModifiers
 
-			if 		list[1] then gmods.WorstTimingWindow=5
+			if 	list[1] then gmods.WorstTimingWindow=5
 			elseif 	list[2] then gmods.WorstTimingWindow=4
 			elseif 	list[3] then gmods.WorstTimingWindow=3
 			elseif 	list[4] then gmods.WorstTimingWindow=0
