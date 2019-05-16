@@ -40,7 +40,7 @@ Handle.MenuLeft = function(event)
 		if index > 1 then
 			if SCREENMAN:GetTopScreen():SetProfileIndex(event.PlayerNumber, index - 1 ) then
 				MESSAGEMAN:Broadcast("DirectionButton")
-				af:queuecommand('UpdateInternal2')
+				af:queuecommand('Update')
 			end
 		end
 	end
@@ -55,7 +55,7 @@ Handle.MenuRight = function(event)
 		if index > 0 then
 			if SCREENMAN:GetTopScreen():SetProfileIndex(event.PlayerNumber, index + 1 ) then
 				MESSAGEMAN:Broadcast("DirectionButton")
-				af:queuecommand('UpdateInternal2')
+				af:queuecommand('Update')
 			end
 		end
 	end
