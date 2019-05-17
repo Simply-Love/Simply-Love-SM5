@@ -4,7 +4,7 @@ local af = Def.ActorFrame{}
 
 af[#af+1] = Def.Quad{
 	InitCommand=cmd(zoomto,_screen.w,0; diffuse, Color.Black; Center),
-	OnCommand=cmd( accelerate,0.3; zoomtoheight,128; diffusealpha,0.9; sleep,2.5; linear,0.25),
+	OnCommand=cmd( accelerate,0.3; zoomtoheight,128; diffusealpha,0.9; sleep,2.5),
 	OffCommand=cmd(accelerate,0.3; zoomtoheight,0)
 }
 
@@ -29,11 +29,8 @@ end
 af[#af+1] = LoadFont("_miso")..{
 	Text=ScreenString("ThemeDesign"),
 	InitCommand=cmd(diffuse,GetHexColor(slc); diffusealpha,0; Center),
-	OnCommand=cmd(sleep,3; linear,0.25; diffusealpha,1; sleep,1.25; linear,0.25; diffusealpha,0; sleep,0.25; queuecommand, "Refresh"),
-	RefreshCommand=function(self)
-		self:settext(THEME:GetString("ScreenInit", "Origins") .. " " .. Year() .. ".")
-		self:linear(0.25):diffusealpha(1):sleep(2.75):linear(0.25):diffusealpha(0)
-	end,
+	OnCommand=cmd(sleep,3; linear,0.25; diffusealpha,1),
+	OffCommand=cmd(linear,0.25; diffusealpha,0),
 }
 
 return af

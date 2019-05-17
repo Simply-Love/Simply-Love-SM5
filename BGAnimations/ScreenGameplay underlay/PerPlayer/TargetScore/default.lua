@@ -419,16 +419,15 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 			},
 
 			-- pretty explody thingies for grade changes
-
-			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_splode"))..{
+			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,0.5; diffusealpha,0),
 			},
-			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_splode"))..{
+			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,0.7; diffusealpha,0),
 			},
-			LoadActor(THEME:GetPathB("ScreenGameplay","in/"..ThemePrefs.Get("VisualTheme").."_minisplode"))..{
+			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn minisplode"))..{
 				InitCommand=cmd(diffusealpha,0),
 				GradeChangedCommand=cmd(y, getYFromGradeEnum(currentGrade); diffuse, GetCurrentColor(); rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.4; diffusealpha,0),
 			},

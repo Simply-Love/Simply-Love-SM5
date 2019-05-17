@@ -6,9 +6,9 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		self:y( image == "Hearts" and _screen.cy or _screen.cy+10 )		
+		self:y( image == "Hearts" and _screen.cy or _screen.cy+10 )
 	end,
-		
+
 	LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
 		InitCommand=function(self)
 			self:xy(_screen.cx, -16):zoom( game=="pump" and 0.2 or 0.205 ):cropright(1)
@@ -18,7 +18,7 @@ local t = Def.ActorFrame{
 		end
 	},
 
-	LoadActor(THEME:GetPathB("ScreenTitleMenu","underlay/Simply".. image .." (doubleres).png"))..{
+	LoadActor(THEME:GetPathG("", "_VisualStyles/".. image .."/TitleMenu (doubleres).png"))..{
 		InitCommand=function(self)
 			self:x(_screen.cx+2):diffusealpha(0):zoom(0.7)
 				:shadowlength(1)

@@ -3,7 +3,7 @@ if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
 	return LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") )
 end
 
-local file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
+local file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
 
 -- this variable will be used within the scope of this file like (index+1) and (index-1)
 -- to continue to diffuse each sprite as we shift through the colors available in SL.Colors
@@ -63,7 +63,7 @@ for i=1,10 do
 			texcoordvelocity, file_info.texcoordvelocity[i][1], file_info.texcoordvelocity[i][2]; diffusealpha, file_info.diffusealpha[i] ),
 		BackgroundImageChangedMessageCommand=function(self)
 			if not ThemePrefs.Get("RainbowMode") then
-				local new_file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
+				local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
 				self:Load(new_file)
 			end
 		end
@@ -104,7 +104,7 @@ af[#af+1] = Def.ActorFrame{
 					local children = self:GetChild("")
 
 					for _, child in ipairs( children ) do
-						local new_file = THEME:GetPathB("", "_shared background normal/" .. ThemePrefs.Get("VisualTheme") .. ".png")
+						local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
 						child:Load(new_file)
 					end
 				end

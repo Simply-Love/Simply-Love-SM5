@@ -10,6 +10,8 @@ local songs = {
 
 local audio_file =  songs[ ThemePrefs.Get("VisualTheme") ]
 
+if not audio_file then audio_file = songs.Hearts end
+
 -- the best way to spread holiday cheer is singing loud for all to hear
 if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
 	audio_file = "HolidayCheer"

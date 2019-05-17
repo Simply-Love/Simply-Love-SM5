@@ -4,7 +4,7 @@ local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsL
 
 local text = ""
 local SongNumberInCourse = 0
-local image = ThemePrefs.Get("VisualTheme")
+local style = ThemePrefs.Get("VisualTheme")
 
 if GAMESTATE:IsCourseMode() then
 	text = THEME:GetString("Stage", "Stage") .. " 1"
@@ -29,15 +29,15 @@ local t = Def.ActorFrame{
 			InitCommand=cmd(diffuse,Color.Black; Center; FullScreen),
 			OnCommand=cmd(sleep,1.4; accelerate,0.6; diffusealpha,0)
 		},
-		LoadActor(image.."_splode")..{
+		LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"))..{
 			InitCommand=cmd(diffusealpha,0),
 			OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,0.9; linear,0.6; rotationz,0; zoom,1.1; diffusealpha,0)
 		},
-		LoadActor(image.."_splode")..{
+		LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"))..{
 			InitCommand=cmd(diffusealpha,0),
 			OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationy,180; rotationz,-10; diffusealpha,0; zoom,0.2; diffusealpha,0.8; decelerate,0.6; rotationz,0; zoom,1.3; diffusealpha,0)
 		},
-		LoadActor(image.."_minisplode")..{
+		LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn minisplode"))..{
 			InitCommand=cmd(diffusealpha,0),
 			OnCommand=cmd(sleep,0.4; diffuse, GetCurrentColor(); Center; rotationz,10; diffusealpha,0; zoom,0; diffusealpha,1; decelerate,0.8; rotationz,0; zoom,0.9; diffusealpha,0)
 		},

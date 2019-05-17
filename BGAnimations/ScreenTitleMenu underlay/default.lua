@@ -28,10 +28,11 @@ else
 	sm_version = ProductID() .. sm_version
 end
 -- - - - - - - - - - - - - - - - - - - - -
-local image = ThemePrefs.Get("VisualTheme")
-
-if image == "Spooky" then  --SSHHHH dont tell anyone ;)
-	image = (math.random(1,100) > 11 and "Spooky" or "Spoopy")
+local style = ThemePrefs.Get("VisualTheme")
+local image = "TitleMenu"
+--SSHHHH dont tell anyone ;)
+if style=="Spooky" and math.random(1,100) > 11 then
+	image="TitleMenuAlt"
 end
 
 local af = Def.ActorFrame{
@@ -47,13 +48,11 @@ local af = Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,
 		OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
 
-		Def.BitmapText{
-			Font="_miso",
+		LoadFont("_miso")..{
 			Text=sm_version .. (sl_version and ("       Simply Love v"..sl_version) or ""),
 			InitCommand=function(self) self:y(-20):diffuse(TextColor) end,
 		},
-		Def.BitmapText{
-			Font="_miso",
+		LoadFont("_miso")..{
 			Text=SongStats,
 			InitCommand=function(self) self:diffuse(TextColor) end,
 		}
@@ -65,7 +64,7 @@ local af = Def.ActorFrame{
 		end
 	},
 
-	LoadActor("Simply".. image .." (doubleres).png") .. {
+	LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/"..image.." (doubleres).png"))..{
 		InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(0.75) end,
 		OffCommand=function(self) self:linear(0.5):shadowlength(0) end
 	}
