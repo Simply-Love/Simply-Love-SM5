@@ -9,15 +9,15 @@ return function(SongNumberInCourse)
 		SL[pn].CurrentPlayerOptions.String = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 
 
-		-- Check if MeasureCounter is turned on;
-		-- we may (or may not) need to parse the chart.
+		-- Check if MeasureCounter is turned on.  We may need to parse the chart.
 		local mods = SL[pn].ActiveModifiers
 		if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
 
 			local song_dir, steps
 			if GAMESTATE:IsCourseMode() then
-				song_dir = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[SongNumberInCourse+1]:GetSong():GetSongDir()
-				steps = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[SongNumberInCourse+1]:GetSteps()
+				local trail = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[SongNumberInCourse+1]
+				song_dir = trail:GetSong():GetSongDir()
+				steps = trail:GetSteps()
 			else
 				song_dir = GAMESTATE:GetCurrentSong():GetSongDir()
 				steps = GAMESTATE:GetCurrentSteps(player)
