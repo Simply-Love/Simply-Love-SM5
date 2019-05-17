@@ -59,7 +59,7 @@ local choices_af = Def.ActorFrame{
 }
 
 choices_af[#choices_af+1] = LoadFont("_wendy small")..{
-	Text=THEME:GetString("ThemePrefs", "Yes"),
+	Text=ScreenString("Yes"),
 	InitCommand=function(self)
 		self:xy(_screen.cx-text_width/2, 250):zoom(1.1):diffuse( PlayerColor(PLAYER_2) )
 		choice_actors[0] = self
@@ -67,7 +67,7 @@ choices_af[#choices_af+1] = LoadFont("_wendy small")..{
 }
 
 choices_af[#choices_af+1] = LoadFont("_wendy small")..{
-	Text=THEME:GetString("ThemePrefs", "No"),
+	Text=ScreenString("No"),
 	InitCommand=function(self)
 		self:xy(_screen.cx, 250):zoom(0.5)
 		choice_actors[1] = self
