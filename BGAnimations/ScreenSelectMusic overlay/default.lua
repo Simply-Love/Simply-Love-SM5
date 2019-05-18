@@ -1,6 +1,6 @@
 local t = Def.ActorFrame{
 	ChangeStepsMessageCommand=function(self, params)
-		self:playcommand("StepsHaveChanged", {Direction=params.Direction, Player=params.Player})
+		self:playcommand("StepsHaveChanged", params)
 	end,
 
 	-- make the MusicWheel appear to cascade down

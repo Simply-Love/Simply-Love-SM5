@@ -96,10 +96,8 @@ return Def.Sprite{
 				end
 			end
 
-			-- keep within reasonable limits
-			if RowIndex > 5 then RowIndex = 5
-			elseif RowIndex < 1 then RowIndex = 1
-			end
+			-- keep within reasonable limits because Edit charts are a thing
+			RowIndex = clamp(RowIndex, 1, 5)
 
 			-- update cursor y position
 			local sdl = self:GetParent():GetParent():GetChild("StepsDisplayList")
