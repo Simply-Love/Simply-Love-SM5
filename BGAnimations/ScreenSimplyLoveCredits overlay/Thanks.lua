@@ -39,7 +39,7 @@ return {
 		{
 			Name="SM5 Dev Team",
 			Img="stepmania.png",
-			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of StepMania, including Lirodon, jousway, tertu, Mr.ThatKid, RyTak, etc."
+			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of open source dance games, including Lirodon, Jousway, MrThatKid, RyTak, and Squirrel."
 		},
 		{
 			Name="David / mute",
@@ -49,7 +49,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to andrewipark and Kauhsa for repeatedly submitting fantastic pull requests that fixed bugs, improved performance, and made my life easier.\n\nAdditional thanks go to HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, dougshell, shockdude, Sereni, karamel59, and TheNick.  Every bit helps!"
+			About="Many thanks go to the GitHub users who contributed pull requests and helped improve my code over the years.\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, dougshell, shockdude, Sereni, karamel59, TheNick, and CrashCringle12."
 		}
 	},
 
@@ -104,14 +104,29 @@ return {
 			Img="galaga.jpg",
 			About="Brittney has been a leading voice in the effort to create a community and organize events for girls and women who play dance games.\n\nShe has encouraged women of all skill levels from around the world to push themselves and each other to improve through innovative and compelling competition, and the overall community is better for it."
 		},
+	},
+
+	-- page 7
+	{
+
+		{
+			Name="andrewipark",
+			Img="andrew.png",
+			About="Andrew has consistently submitted fantastic pull requests to the Simply Love project that fixed bugs, improved performance, and made my life a little bit easier.  He is a good friend and a thoughtful human, one who is taken by\n\narranging his words\nin considerate patterns\nof five seven five.",
+		},
 		{
 			Name="Alan / TaroNuke",
 			Img="taronuke.png",
 			About="Alan's programming work with the UKSRT and Mawaru series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
 		},
+		{
+			Name="vyhd",
+			Img="",
+			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"  He was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
+		},
 	},
 
-	-- page 7
+	-- page 8
 	{
 		{
 			Name="Jose_Varela",
@@ -130,7 +145,7 @@ return {
 		}
 	},
 
-	-- page 8
+	-- page 9
 	{
 		{
 			Name="Riakodoadm",
