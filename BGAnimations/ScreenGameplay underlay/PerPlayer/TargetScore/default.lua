@@ -491,6 +491,7 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 			local noteY
 			local zoomF = 0.4
 			local origX = GetNotefieldX(player)
+			local width = GetNotefieldWidth(player)
 
 			-- special casing: StomperZ with its receptor positions would appear over the normal pacemaker position
 			if SL.Global.GameMode == "StomperZ" and SL[pn].ActiveModifiers.ReceptorArrowsPosition == "StomperZ" then
@@ -498,17 +499,13 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 				noteY = _screen.cy - 60
 				zoomF = 0.35
 
-				-- copied from MeasureCounter.lua
-				local width = GetNotefieldWidth(player)
 				local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
-
 				noteX = (width/NumColumns)
 
 				self:shadowlength(1) -- match other playfield counters
 			else
 				noteY = 56
-				noteX = GetNotefieldWidth(player) / 4
-				-- this serendipitiously works for doubles, somehow
+				noteX = width / 4 -- this serendipitiously works for doubles, somehow
 
 				-- antisymmetry kludge; nudge PLAYER_2's pacemaker text to the left so that it
 				-- doesn't possibly overlap with the percent score text.  this is necessary because
@@ -527,6 +524,10 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 			-- compensate so that we can use "normal" coordinate systems
 			self:horizalign(center):xy( noteX - graph.x, noteY - graph.y ):zoom(zoomF)
 
+			-- kludge because this needs to ship tomorrow and I am too burned out to figure out a better fix right now; forgive me, andrew
+			if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers()==1 then self:addx( width/2 * (player==PLAYER_1 and 1 or -1) )
+			elseif SL[pn].ActiveModifiers.NPSGraphAtTop then self:addx(player==PLAYER_1 and (width/2.75) or -(width/3.5) )
+			end
 		end,
 		UpdateCommand=function(self)
 			local DPCurr = pss:GetActualDancePoints()

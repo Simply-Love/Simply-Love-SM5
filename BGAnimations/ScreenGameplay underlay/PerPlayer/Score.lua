@@ -24,7 +24,7 @@ return LoadFont("_wendy monospace numbers")..{
 			self:zoom(0.5)
 
 			if mods.NPSGraphAtTop and mods.DataVisualizations=="Step Statistics" then
-				self:x( player==PLAYER_1 and _screen.w-WideScale(15,67) or WideScale(306, 358) )
+				self:x( player==PLAYER_1 and _screen.w-WideScale(15, PREFSMAN:GetPreference("Center1Player") and 9 or 67) or WideScale(306, PREFSMAN:GetPreference("Center1Player") and 280 or 358) )
 				self:y( _screen.cy + 40 )
 			else
 				self:x( _screen.cx - _screen.w/4.3 ):y(56)

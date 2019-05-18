@@ -83,11 +83,14 @@ local t = Def.ActorFrame{
 	InitCommand=function(self)
 		self:xy(_screen.cx, 52):valign(1)
 
-		if SL.Global.GameMode == "StomperZ" then
-			self:zoom(1)
-		else
-			self:zoom(1.33)
+		if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
+			local mpn = GAMESTATE:GetMasterPlayerNumber()
+			if SL[ToEnumShortString(mpn)].ActiveModifiers.NPSGraphAtTop then
+				self:x(_screen.cx + GetNotefieldWidth(mpn) * (mpn==PLAYER_1 and 1 or -1))
+			end
 		end
+
+		self:zoom(SL.Global.GameMode == "StomperZ" and 1 or 1.33)
 	end,
 
 	LoadFont("_miso")..{

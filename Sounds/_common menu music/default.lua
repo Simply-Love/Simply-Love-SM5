@@ -12,9 +12,10 @@ local audio_file =  songs[ ThemePrefs.Get("VisualTheme") ]
 
 if not audio_file then audio_file = songs.Hearts end
 
--- the best way to spread holiday cheer is singing loud for all to hear
-if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
-	audio_file = "HolidayCheer"
+if PREFSMAN:GetPreference("EasterEggs") then
+	-- the best way to spread holiday cheer is singing loud for all to hear
+	if MonthOfYear()==11 then audio_file = "HolidayCheer" end
+	if MonthOfYear()==10 and DayOfMonth()==20 then audio_file = "20" end
 end
 
 return THEME:GetPathS("", "_common menu music/" .. audio_file)
