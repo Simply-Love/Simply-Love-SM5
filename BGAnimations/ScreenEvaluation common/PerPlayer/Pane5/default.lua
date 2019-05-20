@@ -11,9 +11,9 @@ if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
 	local PercentDP = stats:GetPercentDancePoints()
 
 	local score = FormatPercentScore(PercentDP)
-	score = tostring(tonumber((score:gsub("%%", ""))) * 100)
+	score = tostring(tonumber(score:gsub("%%", "") * 100)):gsub("%.", "")
 	local failed = stats:GetFailed() and "1" or "0"
-	local rate = tostring(SL.Global.ActiveModifiers.MusicRate * 100)
+	local rate = tostring(SL.Global.ActiveModifiers.MusicRate * 100):gsub("%.", "")
 
 	local currentSteps = GAMESTATE:GetCurrentSteps(player)
 	local difficulty = ""
