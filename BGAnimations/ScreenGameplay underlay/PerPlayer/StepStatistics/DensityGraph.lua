@@ -17,8 +17,8 @@ local max_seconds = 4 * 60
 
 -- width is how wide, in pixels, the density graph will be
 local width = GetNotefieldWidth(player)
---
 local scaled_width = width
+
 -- height is how tall, in pixels, the density graph will be
 local height = width/2.25
 
@@ -75,7 +75,7 @@ end
 local histogram_amv = NPS_Histogram(player, width, height)..{
 	OnCommand=function(self)
 		-- offset the graph's x-position by half the thickness of the LifeLine
-		self:x( WideScale(0,60) + LifeLineThickness/2 )
+		self:x( LifeLineThickness/2 )
 			:y(height)
 	end
 }
@@ -100,9 +100,9 @@ local graph_and_lifeline = Def.ActorFrame{
 
 		-- if the song is longer than max_seconds, scale up the width of the graph
 		if last_second > max_seconds then
-			local _ratio = (last_second/max_seconds)
-			scaled_width = width * _ratio
-			self:zoomtowidth(_ratio)
+			local ratio = (last_second/max_seconds)
+			scaled_width = width * ratio
+			self:zoomtowidth(ratio)
 		end
 
 		UpdateRate = LifeBaseSampleRate + (last_second / histogram_amv.MaxVertices)
@@ -150,7 +150,6 @@ local graph_and_lifeline = Def.ActorFrame{
 			self:SetDrawState{Mode="DrawMode_LineStrip"}
 				:SetLineWidth( LifeLineThickness )
 				:align(0, 0)
-				:x( WideScale(0,60) )
 		end,
 		UpdateCommand=function(self)
 			if GAMESTATE:GetCurMusicSeconds() > 0 then
