@@ -37,7 +37,7 @@ NPS_Histogram = function(player, _w, _h)
 
 			if (PeakNPS and NPSperMeasure and #NPSperMeasure > 1) then
 
-				local TimingData = Song:GetTimingData()
+				local TimingData = Steps:GetTimingData()
 
 				-- Don't use Song:MusicLengthSeconds() because it includes time
 				-- at the beginning before beat 0 has occurred
