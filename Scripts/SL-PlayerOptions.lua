@@ -506,7 +506,7 @@ function ApplyMods(player)
 		-- first, a table of true/false values corresponding to the OptionRow's Choices table
 		-- second, the player that this applies to
 		--
-		-- for LoadSelections() use a table of all false values, one for each entry in this OptionRow's Choices table
+		-- LoadSelections() receives a table of all false values, one for each entry in this OptionRow's Choices table
 		-- LoadSelections() will process that table, and set the appropriate entries to true using the SL[pn].ActiveModifiers table
 		-- when done setting one or more entries to true, LoadSelections() will return that table of true/false values
 		--
