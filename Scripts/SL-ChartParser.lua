@@ -195,10 +195,10 @@ local function getStreamSequences(streamMeasures, measureSequenceThreshold, tota
 end
 
 
--- GetNPSperMeasure() accepts three arguments:
+-- GetNPSperMeasure() accepts two arguments:
 -- 		Song, a song object provided by something like GAMESTATE:GetCurrentSong()
--- 		StepsType, a string like "dance-single" or "pump-double"
--- 		Difficulty, a string like "Beginner" or "Challenge"
+-- 		Steps, a steps object provided by something like GAMESTATE:GetCurrentSteps(player)
+--
 -- GetNPSperMeasure() returns two values
 --		PeakNPS, a number representing the peak notes-per-second for the given stepchart
 --			This is an imperfect measurement, as we sample the note density per-second-per-measure, not per-second.
@@ -208,10 +208,17 @@ end
 --			So if you're looping through the Density table, subtract 1 from the current index to get the
 --			actual measure number.
 
-function GetNPSperMeasure(Song, StepsType, Difficulty)
+function GetNPSperMeasure(Song, Steps)
+	if Song==nil or Steps==nil then return end
+
 	local SongDir = Song:GetSongDir()
 	local SimfileString, Filetype = GetSimfileString( SongDir )
 	if not SimfileString then return end
+
+	-- StepsType, a string like "dance-single" or "pump-double"
+	local StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
+	-- Difficulty, a string like "Beginner" or "Challenge"
+	local Difficulty = ToEnumShortString( Steps:GetDifficulty() )
 
 	-- Discard header info; parse out only the notes
 	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
@@ -231,7 +238,7 @@ function GetNPSperMeasure(Song, StepsType, Difficulty)
 	local NotesInThisMeasure = 0
 
 	local NPSforThisMeasure, PeakNPS, BPM = 0, 0, 0
-	local TimingData = Song:GetTimingData()
+	local TimingData = Steps:GetTimingData()
 
 	-- Loop through each line in our string of measures
 	for line in ChartString:gmatch("[^\r\n]+") do

@@ -20,10 +20,7 @@ NPS_Histogram = function(player, _w, _h)
 				Song = GAMESTATE:GetCurrentSong()
 			end
 
-			local StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
-			local Difficulty = ToEnumShortString( Steps:GetDifficulty() )
-
-			local PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, StepsType, Difficulty)
+			local PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, Steps)
 			-- broadcast this for any other actors on the current screen that rely on knowing the peak nps
 			MESSAGEMAN:Broadcast("PeakNPSUpdated", {PeakNPS=PeakNPS})
 
