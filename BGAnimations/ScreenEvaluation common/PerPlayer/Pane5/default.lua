@@ -3,6 +3,14 @@ local player = ...
 -- GrooveStats only supports dance for now.  Don't show the QR code if we're in pump, techno, etc.
 if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
 
+-- TimingWindowScale and LifeDifficultyScale are a little confusing.
+-- Players can change these under Advanced Options in the operator menu on scales from 1 to Justice and 1 to 7, respectively.
+-- 4 is considered standard for ITG.  GrooveStats expects players to have these set to 4.
+-- These are both saved and handled internally on a 0 to 1 scale (which makes a lot more sense!).
+-- Don't show the QR code if either one isn't set appropriately.
+if PREFSMAN:GetPreference("TimingWindowScale") ~= 1 then return end
+if PREFSMAN:GetPreference("LifeDifficultyScale") ~= 1 then return end
+
 -- QR Code should only be active in normal gameplay for individual songs.
 -- Only allow Competitive and ECFA because Casual and Stomperz have different settings.
 if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
