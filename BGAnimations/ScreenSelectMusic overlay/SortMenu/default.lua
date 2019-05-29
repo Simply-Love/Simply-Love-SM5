@@ -9,8 +9,8 @@ local sortmenu = { w=210, h=160 }
 local t = Def.ActorFrame {
 	Name="SortMenu",
 	InitCommand=function(self)
-		-- ALWAYS ensure that the SortMenu is hidden and that players have
-		-- input directed back to them on screen initialization.  Always.
+		-- Always ensure that the SortMenu is hidden and that player input
+		-- is directed back to the engine on screen initialization.
 		self:queuecommand("HideSortMenu")
 			:draworder(1)
 	end,
@@ -30,6 +30,8 @@ local t = Def.ActorFrame {
 		end
 		self:visible(false)
 	end,
+	-- Always ensure that player input is directed back to the engine when leaving SelectMusic.
+	OffCommand=function(self) self:playcommand("HideSortMenu") end,
 
 	OnCommand=function(self)
 		self:visible(false)
