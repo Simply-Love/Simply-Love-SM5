@@ -39,17 +39,19 @@ local GetTextForMeasure = function(current_measure, Measures, stream_index)
 
 	local text = ""
 	if Measures[stream_index].isBreak then
-		-- NOTE: We let the lowest value be 0. This means that e.g.,
-		-- for an 8 measure break, we will display the numbers 7 -> 0
-		local measures_left = current_stream_length - current_count
+		if mods.HideRestCounts == false then
+			-- NOTE: We let the lowest value be 0. This means that e.g.,
+			-- for an 8 measure break, we will display the numbers 7 -> 0
+			local measures_left = current_stream_length - current_count
 
-		if measures_left >= (current_stream_length-1) or measures_left <= 0 then
-			text = ""
-		else
-			text = "(" .. measures_left .. ")"
+			if measures_left >= (current_stream_length-1) or measures_left <= 0 then
+				text = ""
+			else
+				text = "(" .. measures_left .. ")"
+			end
+			-- diffuse break counter to be Still Grey, just like Pendulum intended
+			MeasureCounterBMT:diffuse(0.5,0.5,0.5,1)
 		end
-		-- diffuse break counter to be Still Grey, just like Pendulum intended
-		MeasureCounterBMT:diffuse(0.5,0.5,0.5,1)
 	else
 		text = tostring(current_count .. "/" .. current_stream_length)
 		MeasureCounterBMT:diffuse(1,1,1,1)

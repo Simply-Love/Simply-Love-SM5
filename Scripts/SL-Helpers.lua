@@ -293,7 +293,7 @@ end
 
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterPosition,WorstTimingWindow,Vocalization,Characters,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterOptions,WorstTimingWindow,Vocalization,Characters,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then

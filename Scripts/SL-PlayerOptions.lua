@@ -278,9 +278,9 @@ local Overrides = {
 		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
 	},
 	-------------------------------------------------------------------------
-	MeasureCounterPosition = {
+	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "MeasureCounterLeft", "MeasureCounterUp" } end,
+		Values = function() return { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" } end,
 	},
 	-------------------------------------------------------------------------
 	WorstTimingWindow = {

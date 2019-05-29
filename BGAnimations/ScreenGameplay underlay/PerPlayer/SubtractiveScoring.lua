@@ -44,7 +44,7 @@ if mods.SubtractiveScoring then
 
 			-- Fix overlap issues for MeasureCounter in center
 			-- since in this case we don't need symmetry.
-			if (mods.MeasureCounterPosition == "Center") then
+			if (mods.MeasureCounterLeft == false) then
 				self:horizalign(left)
 			end
 
