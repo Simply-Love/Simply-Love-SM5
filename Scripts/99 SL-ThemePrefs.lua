@@ -17,8 +17,8 @@ local SL_CustomPrefs =
 	HideStockNoteSkins =
 	{
 		Default = false,
-		Choices = { THEME:GetString("ThemePrefs", "Hide"), THEME:GetString("ThemePrefs", "Show") },
-		Values 	= { true, false }
+		Choices = { THEME:GetString("ThemePrefs", "Show"), THEME:GetString("ThemePrefs", "Hide") },
+		Values 	= { false, true }
 	},
 	MusicWheelStyle =
 	{
