@@ -247,6 +247,18 @@ function GetNPSperMeasure(Song, Steps)
 		if(line:match("^[,;]%s*")) then
 
 			DurationOfMeasureInSeconds = TimingData:GetElapsedTimeFromBeat((measureCount+1)*4) - TimingData:GetElapsedTimeFromBeat(measureCount*4)
+
+			-- FIXME: We subtract the time at the current measure from the time at the next measure to determine
+			-- the duration of this measure in seconds, and use that to calculate notes per second.
+			--
+			-- Measures *normally* occur over some positive quantity of seconds.  Measures that use warps,
+			-- negative BPMs, and negative stops are normally reported by the SM5 engine as having a duration
+			-- of 0 seconds, and when that happens, we safely assume that there were 0 notes in that measure.
+			--
+			-- This doesn't always hold true.  Measures 48 and 49 of "Mudkyp Korea/Can't Nobody" use a properly
+			-- timed negative stop, but the engine reports them as having very small but positive durations
+			-- which erroneously inflates the notes per second calculation.
+
 			if (DurationOfMeasureInSeconds == 0) then
 				NPSforThisMeasure = 0
 			else

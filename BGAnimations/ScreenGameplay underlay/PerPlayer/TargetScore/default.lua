@@ -216,6 +216,11 @@ for i=1,16 do
 	}
 end
 
+-- FIXME: There is currently a bug where having 2 narrow-width-graphs directly next to one another
+-- when the display is 4:3 will result in the ☆☆☆ text being cut off.  It could be more easily
+-- fixed if a single set of background Quads were drawn, but that would probably involve restructuring
+-- this file to load once and handle [one, the other, both players] within.
+
 -- grades for which we should draw a border/label
 local gradeBorders = { 2, 3, 4, 7, 10, 13, 16 }
 local gradeNames = {"☆☆☆", "☆☆", "☆", "S", "A", "B", "C"}
@@ -269,6 +274,7 @@ local player_af = Def.ActorFrame{
 
 	InitCommand=function(self)
 		-- this makes for a more convenient coordinate system
+		-- (what does that^ mean? -dguzek)
 		self:align(0,0)
 	end,
 	OnCommand=function(self)
@@ -469,13 +475,16 @@ end
 
 
 -- ---------------------------------------------------------------
--- the ActionOnMissedTarget logic depends on the Pacemaker logic
--- from a programmer's perspective, it makes sense to lump it all together in a single Actor
+-- FIXME: The ActionOnMissedTarget logic depends on the Pacemaker logic.
+-- From a programmer's perspective, it makes sense to lump it all together in a single Actor,
 -- but to the player, the Pacemaker and ActionOnMissedTarget are distinct features
--- that do not and should not depend on one another being active
-
--- I don't have the time to detangle these so they're staying this way until
--- someone rewrites this file OR human civilization ends in fire paving the way for GNU/Hurd
+-- that do not and should not depend on one another being active.
+--
+-- I've modified this file enough that the features can be activated independently now,
+-- but there's still too much code involving disparate features in this one single file.
+--
+-- I don't have the time to fully detangle all this so it's staying this way until
+-- someone rewrites this file OR human civilization ends in fire paving the way for GNU/Hurd.
 
 if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarget then
 
