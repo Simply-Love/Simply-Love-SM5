@@ -174,7 +174,7 @@ end
 
 ---------------------------------------------------------------------------
 -- parse ./Other/CasualMode-DefaultSong.txt to find one or more songs to
--- default to when SSNCasual first loads
+-- default to when SSMCasual first loads
 -- returns a song object
 
 local GetDefaultSong = function(groups)
@@ -313,7 +313,7 @@ local groups = GetGroups()
 -- prune the list of potential groups down to valid groups
 groups = PruneGroups(groups)
 
--- it's possible the list that GetGroups() was too limited and we
+-- it's possible the list used in GetGroups() was too limited and we
 -- just pruned the table to be completely empty
 -- in that case, try again using ALL groups available to StepMania
 if #groups == 0 then
