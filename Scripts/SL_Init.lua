@@ -159,6 +159,10 @@ SL = {
 			MinTNSToHideNotes="TapNoteScore_W3",
 			HarshHotLifePenalty=1,
 
+			PercentageScoring=1,
+			AllowW1="AllowW1_Everywhere",
+			SubSortByNumSteps=1,
+
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
 			TimingWindowSecondsW3=0.102000,
@@ -174,6 +178,10 @@ SL = {
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",
 			HarshHotLifePenalty=1,
+
+			PercentageScoring=1,
+			AllowW1="AllowW1_Everywhere",
+			SubSortByNumSteps=1,
 
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
@@ -191,6 +199,10 @@ SL = {
 			MinTNSToHideNotes="TapNoteScore_W4",
 			HarshHotLifePenalty=1,
 
+			PercentageScoring=1,
+			AllowW1="AllowW1_Everywhere",
+			SubSortByNumSteps=1,
+
 			TimingWindowSecondsW1=0.011000,
 			TimingWindowSecondsW2=0.021500,
 			TimingWindowSecondsW3=0.043000,
@@ -206,6 +218,10 @@ SL = {
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W4",
 			HarshHotLifePenalty=0,
+
+			PercentageScoring=1,
+			AllowW1="AllowW1_Everywhere",
+			SubSortByNumSteps=1,
 
 			TimingWindowSecondsW1=0.012500,
 			TimingWindowSecondsW2=0.025000,
@@ -347,8 +363,8 @@ SL = {
 
 
 -- Initialize preferences by calling this method.
---  We typically do this from ./BGAnimations/ScreenTitleMenu underlay.lua
---  so that preferences reset between each game cycle.
+-- We typically do this from ./BGAnimations/ScreenTitleMenu underlay/default.lua
+-- so that preferences reset between each game cycle.
 
 function InitializeSimplyLove()
 	SL.P1:initialize()
