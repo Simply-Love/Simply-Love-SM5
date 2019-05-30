@@ -16,32 +16,6 @@
 -- we'll recover.
 
 function ParseMsdFile(SongDir)
-	-- 3.95 usually uses three digits after the decimal point while
-	-- SM5 uses 6. We normalize everything here to 6. If for some reason
-	-- there are more than 6, we just remove the trailing ones.
-	local function NormalizeFloatDigits(param)
-		local function NormalizeDecimal(decimal)
-			local int, frac = decimal:match('(.+)%.(.+)')
-			if frac ~= nil then
-				local zero = '0'
-				if frac:len() <= 6 then
-					frac = frac .. zero:rep(6 - frac:len())
-				else
-					frac = frac:sub(1, 6 - frac:len() - 1)
-				end
-				return int .. '.' .. frac
-			end
-			return decimal
-		end
-
-		local paramParts = {}
-		for beat_bpm in param:gmatch('[^,]+') do
-			beat, bpm = beat_bpm:match('(.+)=(.+)')
-			table.insert(paramParts, NormalizeDecimal(beat) .. '=' .. NormalizeDecimal(bpm))
-		end
-		return table.concat(paramParts, ',')
-	end
-
 	local function AddParam(t, p, plen)
 		-- table.concat(table_name, separator, start, end)
 		local param = table.concat(p, '', 1, plen)
@@ -59,7 +33,7 @@ function ParseMsdFile(SongDir)
 			param = param:gsub(' ', '')
 		elseif((#t[#t] == 1 and t[#t][1] == 'BPMS')) then
 			-- Line endings and spaces don't matter for BPMs, remove them all.
-			param = NormalizeFloatDigits(param:gsub('\n', ''):gsub(' ', ''))
+			param = param:gsub('\n', ''):gsub(' ', '')
 		end
 
 		table.insert(t[#t], param)
