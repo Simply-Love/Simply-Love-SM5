@@ -84,6 +84,37 @@ local function MinimizeChart(ChartString)
 	return table.concat(finalChartData, '\n')
 end
 
+-- 3.95 usually uses three digits after the decimal point while
+-- SM5 uses 6. We normalize everything here to 6. If for some reason
+-- there are more than 6, we just remove the trailing ones.
+local function NormalizeFloatDigits(param)
+	-- V1, Deprecated.
+	-- local function NormalizeDecimal(decimal)
+	-- 	local int, frac = decimal:match('(.+)%.(.+)')
+	-- 	if frac ~= nil then
+	-- 		local zero = '0'
+	-- 		if frac:len() <= 6 then
+	-- 			frac = frac .. zero:rep(6 - frac:len())
+	-- 		else
+	-- 			frac = frac:sub(1, 6 - frac:len() - 1)
+	-- 		end
+	-- 		return int .. '.' .. frac
+	-- 	end
+	-- 	return decimal
+	-- end
+
+	-- V2, uses string.format to round all the decimals to 3 decimal places.
+	local function NormalizeDecimal(decimal)
+		return string.format("%.3f", tonumber(decimal))
+	end
+	local paramParts = {}
+	for beat_bpm in param:gmatch('[^,]+') do
+		beat, bpm = beat_bpm:match('(.+)=(.+)')
+		table.insert(paramParts, NormalizeDecimal(beat) .. '=' .. NormalizeDecimal(bpm))
+	end
+	return table.concat(paramParts, ',')
+end
+
 -- We generate the hash for the CurrentSong by calculating the SHA256 of the
 -- chartData + BPM string. We add the BPM string to ensure that the chart played
 -- is actually accurate.
@@ -100,7 +131,7 @@ function GenerateHash(stepsType, difficulty)
 
 	for value in ivalues(msdFile) do
 		if value[1] == 'BPMS' then
-			bpms = value[2]
+			bpms = NormalizeFloatDigits(value[2])
 		elseif value[1] == 'NOTES' then
 			table.insert(allNotes, value)
 		end
@@ -115,7 +146,7 @@ function GenerateHash(stepsType, difficulty)
 			local minimizedChart = MinimizeChart(notes[7])
 			local chartDataAndBpm = minimizedChart .. bpms
 			local hash = sha256(chartDataAndBpm)
-			-- Trace('Style: ' .. notes[2] .. '\tDifficulty: ' .. notes[4] .. '\tHash: ' .. hash)
+			Trace('Style: ' .. notes[2] .. '\tDifficulty: ' .. notes[4] .. '\tHash: ' .. hash)
 			return hash
 		end
 	end
