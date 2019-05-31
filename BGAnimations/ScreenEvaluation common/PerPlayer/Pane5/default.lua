@@ -11,6 +11,25 @@ if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
 if PREFSMAN:GetPreference("TimingWindowScale") ~= 1 then return end
 if PREFSMAN:GetPreference("LifeDifficultyScale") ~= 1 then return end
 
+-- get playeroptions so we can check mods the player used
+local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
+
+-- don't show the QR code if player removed notes
+if po:Little() or po:NoStretch()
+or po:NoHands() or po:NoHolds() or po:NoJumps()
+or po:NoLifts() or po:NoQuads() or po:NoRolls()
+
+-- don't show the QR code if player added notes
+or po:Wide() or po:Big() or po:Quick() or po:Skippy()
+or po:Echo() or po:Stomp() or po:BMRize()
+
+-- only show the QR code for FailTypes "Immediate" and "ImmediateContinue"
+or (po:FailSetting() ~= "FailType_Immediate" and po:FailSetting() ~= "FailType_ImmediateContinue")
+then
+	return
+end
+
+
 -- QR Code should only be active in normal gameplay for individual songs.
 -- Only allow Competitive and ECFA because Casual and Stomperz have different settings.
 if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
