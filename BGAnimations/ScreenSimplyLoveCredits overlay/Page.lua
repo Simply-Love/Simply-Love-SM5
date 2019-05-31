@@ -102,7 +102,9 @@ for i=1, #people do
 				:wrapwidthpixels((space.w - padding*4 - img_width) * (1/0.85) )
 				:x(-space.w/2 + padding*4 + img_width)
 				:y(padding + quad_y )
-				:vertspacing(#people >= 3 and -1 or 0)
+			if #people >= 3 and people[i].Name ~= "Paul J Kim" then
+				self:vertspacing(-2)
+			end
 		end
 	}
 end

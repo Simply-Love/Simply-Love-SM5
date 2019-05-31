@@ -533,6 +533,12 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 			-- compensate so that we can use "normal" coordinate systems
 			self:horizalign(center):xy( noteX - graph.x, noteY - graph.y ):zoom(zoomF)
 
+			-- FIXME: Theme elements start to visually overlap in the following circumstance:
+			-- a 4:3 display is in use, and both have the NPSGraphAtTop enabled, and both have the
+			-- Pacemaker enabled, AND they are playing different charts in the same song that
+			-- feature "split BPMs" (i.e. steps timing).  It's unlikely, but possible.
+			-- Something (Pacemaker?) should be hidden from view.
+
 			-- kludge because this needs to ship tomorrow and I am too burned out to figure out a better fix right now; forgive me, andrew
 			if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers()==1 then self:addx( width/2 * (player==PLAYER_1 and 1 or -1) )
 			elseif SL[pn].ActiveModifiers.NPSGraphAtTop then self:addx(player==PLAYER_1 and (width/2.75) or -(width/3.5) )

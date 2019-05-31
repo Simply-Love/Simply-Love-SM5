@@ -78,7 +78,7 @@ return {
 		{
 			Name="Dance Dance Maniacs",
 			Img={ "ddm/2019.jpg", "ddm/2017.jpg", "ddm/2015.jpg", "ddm/2018.jpg", "ddm/2012.jpg" },
-			About="The PSU Dance Dance Maniacs dance gamed with me at my best and worst.\n\nLightningXCE, Zyroplex, Captain Swagonforce, rawinput, milk, teejusb, NBCrescendo, freemansbackup, chronohat\n\nDJ OMiY, minomotu, Kristina, blakjakal, Vale, Silverheart97, AndyBeard, Alex, tfrederick, Catherine, Elena, Jonathan, Eileen, Ali, Anna\n\nRime, PirateKing, Fox, Lev, Cathy, Grant, Koopa, CCTV, MathMatt, TheNick, Nate(s), Crash Cringle, Daisy1218, Miaou Miaou Miaou, Silverwolfstar, and more."
+			About="The PSU Dance Dance Maniacs dance gamed with me at my best and worst.\n\nLightningXCE, Zyroplex, Captain Swagonforce, rawinput, milk, teejusb, NBCrescendo, Vidur, freemansbackup, chronohat\n\nDJ OMiY, minomotu, Kristina, blakjakal, Vale, Silverheart97, AndyBeard, Alex, tfrederick, Catherine, Elena, Jonathan, Eileen, Ali, Anna\n\nRime, PirateKing, Fox, Lev, Cathy, Grant, Koopa, CCTV, MathMatt, TheNick, Nate(s), Crash Cringle, Daisy1218, Miaou Miaou Miaou, Silverwolfstar, and more."
 		},
 		{
 			Name="DDRIllini",
