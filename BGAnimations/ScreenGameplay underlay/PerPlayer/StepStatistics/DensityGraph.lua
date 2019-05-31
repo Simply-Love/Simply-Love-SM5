@@ -22,7 +22,7 @@ local scaled_width = width
 -- height is how tall, in pixels, the density graph will be
 local height = width/2.25
 
-local UpdateRate, song, last_second
+local UpdateRate, last_second
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
@@ -75,7 +75,7 @@ end
 local histogram_amv = NPS_Histogram(player, width, height)..{
 	OnCommand=function(self)
 		-- offset the graph's x-position by half the thickness of the LifeLine
-		self:x( LifeLineThickness/2 )
+		self:x( WideScale(0,60) + LifeLineThickness/2 )
 			:y(height)
 	end
 }
@@ -93,8 +93,9 @@ local text = LoadFont("_miso")..{
 local graph_and_lifeline = Def.ActorFrame{
 
 	CurrentSongChangedMessageCommand=function(self)
-		song = GAMESTATE:GetCurrentSong()
+		local song = GAMESTATE:GetCurrentSong()
 		last_second = song:GetLastSecond()
+		-- reset scaled_width now to be only as wide as the notefield
 		scaled_width = width
 		TimingData = song:GetTimingData()
 
@@ -102,7 +103,7 @@ local graph_and_lifeline = Def.ActorFrame{
 		if last_second > max_seconds then
 			local ratio = (last_second/max_seconds)
 			scaled_width = width * ratio
-			self:zoomtowidth(ratio)
+			self:GetChild("DensityGraph_AMV"):zoomtowidth(ratio)
 		end
 
 		UpdateRate = LifeBaseSampleRate + (last_second / histogram_amv.MaxVertices)
@@ -147,13 +148,14 @@ local graph_and_lifeline = Def.ActorFrame{
 	Def.ActorMultiVertex{
 		Name="LifeLine_AMV",
 		InitCommand=function(self)
-			self:SetDrawState{Mode="DrawMode_LineStrip"}
+			self:SetDrawState({Mode="DrawMode_LineStrip"})
 				:SetLineWidth( LifeLineThickness )
 				:align(0, 0)
+				:x( WideScale(0,60) )
 		end,
 		UpdateCommand=function(self)
 			if GAMESTATE:GetCurMusicSeconds() > 0 then
-				x = scale( GAMESTATE:GetCurMusicSeconds(), 0, last_second, 0, width )
+				x = scale( GAMESTATE:GetCurMusicSeconds(), 0, last_second, 0, scaled_width )
 				y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
 
 				-- if the slopes of the newest line segment is similar
