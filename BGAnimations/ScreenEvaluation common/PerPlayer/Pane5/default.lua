@@ -43,7 +43,15 @@ if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
 	local hash = GenerateHash(style, difficulty):sub(1, 12)
 
 	local qrcode_size = 168
-	local url = ("http://www.groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s"):format(hash, score, failed, rate)
+
+	-- ************* CURRENT QR VERSION *************
+	-- * Update whenever we change relevant QR code *
+	-- *  and when the backend GrooveStats is also  *
+	-- *   updated to properly consume this value.  *
+	-- **********************************************
+	local qr_version = 2
+
+	local url = ("http://www.groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s&v=%d"):format(hash, score, failed, rate, qr_version)
 
 	-- ------------------------------------------
 
