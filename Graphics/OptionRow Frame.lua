@@ -28,15 +28,11 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		OnCommand=function(self)
 			local optrow = self:GetParent():GetParent():GetParent()
 
-			if optrow:GetName() == "NoteSkin" then
+			if optrow:GetName()=="NoteSkin" or optrow:GetName()=="JudgmentGraphic"  then
 				-- if this OptionRow is NoteSkin, set the necessary parameters
-				self:x(player==PLAYER_1 and WideScale(20,-10) or 220):zoom(0.4)
+				self:x(player==PLAYER_1 and WideScale(20, 0) or WideScale(220, 240)):zoom(0.4)
 					-- What was my reasoning for diffusing in after 0.01? It seems unncessary.
 					-- I don't remember but am afraid to remove it.
-					:diffusealpha(0):sleep(0.01):diffusealpha(1)
-
-			elseif optrow:GetName() == "JudgmentGraphic" then
-				self:x(player==PLAYER_1 and WideScale(20,-10) or 220):zoom(0.4)
 					:diffusealpha(0):sleep(0.01):diffusealpha(1)
 
 			else
