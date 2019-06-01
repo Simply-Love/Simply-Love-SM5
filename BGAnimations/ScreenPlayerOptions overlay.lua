@@ -250,15 +250,10 @@ for player in ivalues(Players) do
 		Name=pn.."SpeedModHelper",
 		Text="",
 		InitCommand=function(self)
-			self:diffuse(PlayerColor(player))
-			self:zoom(0.5)
-			if player == PLAYER_1 then
-				self:x(-100)
-			elseif player == PLAYER_2 then
-				self:x(150)
-			end
-			self:y(48)
-			self:diffusealpha(0)
+			self:diffuse(PlayerColor(player)):diffusealpha(0)
+			self:zoom(0.5):y(48)
+			self:x(player==PLAYER_1 and -100 or 150)
+			self:shadowlength(0.55)
 		end,
 		OnCommand=cmd(linear,0.4;diffusealpha,1)
 	}
