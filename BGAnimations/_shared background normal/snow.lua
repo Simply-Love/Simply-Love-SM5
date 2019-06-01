@@ -1,3 +1,6 @@
+-- dbk2 wrote this code; it's not very efficient
+-- you probably shouldn't use it
+
 -- variables you might want to configure to your liking
 local num_particles = 1000
 -- particle size in pixels

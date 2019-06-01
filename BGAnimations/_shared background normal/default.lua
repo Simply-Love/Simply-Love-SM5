@@ -1,6 +1,6 @@
 -- the best way to spread holiday cheer is singing loud for all to hear
 if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
-	return LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") )
+	return LoadActor( THEME:GetPathB("", "_shared background normal/snow-simple.lua") )
 end
 
 local file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
