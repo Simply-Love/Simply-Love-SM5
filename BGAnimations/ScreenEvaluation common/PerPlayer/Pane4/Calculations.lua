@@ -1,17 +1,25 @@
 local args = ...
-local offsets, worst_window, pane_width, pane_height = args[1], args[2], args[3], args[4]
+local offsets, worst_window = args[1], args[2]
+local pane_width, pane_height = args[3], args[3]
+
+-- determine which offset was furthest from flawless prior to smoothing
+local worst_offset = 0
+for offset, count in pairs(offsets) do
+	if math.abs(offset) > worst_offset then worst_offset = math.abs(offset) end
+end
 
 -- ---------------------------------------------
 -- FIXME: Smoothing the histogram is good overall, but high-level tech players have noted that their
--- Quad Star histograms are wider than they should be, sometimes even "bleeding into gold territory!"
+-- Quad Star histograms are wider than they should be.
 --
 -- Although this feature was designed to help new players establish a sense of timing more quickly
--- (i.e., it was not for high-level players consistently earning Quad Stars), they have a valid complaint.
+-- (i.e., it was not for high-level players consistently earning Quad Stars), this is a valid observation.
 --
 -- For now, I'm keeping the smoothing procedure in place, because the graphs new players tend to generate
 -- are typically very jagged, causing the intent of the graph (to help) to become lost in the noise.
 --
--- For more, consult the dedication in House of Leaves.
+-- Maybe some heuristic can be used to perform the smoothing less naively?
+-- For now, consult the dedication in House of Leaves.
 
 -- ---------------------------------------------
 -- smooth the offset distribution and store values in a new table, smooth_offsets
@@ -135,15 +143,19 @@ for offset=-worst_window, worst_window, 0.001 do
 	x = i * w
 	y = smooth_offsets[offset] or 0
 
-	-- scale the highst point on the histogram to be 0.75 times as high as the pane
-	y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-	c = SL.JudgmentColors[SL.Global.GameMode][DetermineTimingWindow(offset)]
+	-- don't bother adding vert data for offsets that were smoothed
+	-- beyond whatever the worst_offset actually earned by the player was
+	if math.abs(offset) <= worst_offset then
+		-- scale the highest point on the histogram to be 0.75 times as high as the pane
+		y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
+		c = SL.JudgmentColors[SL.Global.GameMode][DetermineTimingWindow(offset)]
 
-	-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
-	-- each vertex is a table of two tables:
-	-- {x, y, z}, {r, g, b, a}
-	verts[#verts+1] = {{x, 0, 0}, c }
-	verts[#verts+1] = {{x, y, 0}, c }
+		-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
+		-- each vertex is a table of two tables:
+		-- {x, y, z}, {r, g, b, a}
+		verts[#verts+1] = {{x, 0, 0}, c }
+		verts[#verts+1] = {{x, y, 0}, c }
+	end
 
 	i = i+1
 end
