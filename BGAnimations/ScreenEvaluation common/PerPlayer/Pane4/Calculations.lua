@@ -1,6 +1,6 @@
 local args = ...
 local offsets, worst_window = args[1], args[2]
-local pane_width, pane_height = args[3], args[3]
+local pane_width, pane_height = args[3], args[4]
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0
