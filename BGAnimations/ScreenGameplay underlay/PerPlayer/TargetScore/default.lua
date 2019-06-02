@@ -216,6 +216,11 @@ for i=1,16 do
 	}
 end
 
+-- FIXME: There is currently a bug where having 2 narrow-width-graphs directly next to one another
+-- when the display is 4:3 will result in the ☆☆☆ text being cut off.  It could be more easily
+-- fixed if a single set of background Quads were drawn, but that would probably involve restructuring
+-- this file to load once and handle [one, the other, both players] within.
+
 -- grades for which we should draw a border/label
 local gradeBorders = { 2, 3, 4, 7, 10, 13, 16 }
 local gradeNames = {"☆☆☆", "☆☆", "☆", "S", "A", "B", "C"}
@@ -269,6 +274,7 @@ local player_af = Def.ActorFrame{
 
 	InitCommand=function(self)
 		-- this makes for a more convenient coordinate system
+		-- (what does that^ mean? -dguzek)
 		self:align(0,0)
 	end,
 	OnCommand=function(self)
@@ -469,13 +475,16 @@ end
 
 
 -- ---------------------------------------------------------------
--- the ActionOnMissedTarget logic depends on the Pacemaker logic
--- from a programmer's perspective, it makes sense to lump it all together in a single Actor
+-- FIXME: The ActionOnMissedTarget logic depends on the Pacemaker logic.
+-- From a programmer's perspective, it makes sense to lump it all together in a single Actor,
 -- but to the player, the Pacemaker and ActionOnMissedTarget are distinct features
--- that do not and should not depend on one another being active
-
--- I don't have the time to detangle these so they're staying this way until
--- someone rewrites this file OR human civilization ends in fire paving the way for GNU/Hurd
+-- that do not and should not depend on one another being active.
+--
+-- I've modified this file enough that the features can be activated independently now,
+-- but there's still too much code involving disparate features in this one single file.
+--
+-- I don't have the time to fully detangle all this so it's staying this way until
+-- someone rewrites this file OR human civilization ends in fire paving the way for GNU/Hurd.
 
 if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarget then
 
@@ -523,6 +532,12 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 
 			-- compensate so that we can use "normal" coordinate systems
 			self:horizalign(center):xy( noteX - graph.x, noteY - graph.y ):zoom(zoomF)
+
+			-- FIXME: Theme elements start to visually overlap in the following circumstance:
+			-- a 4:3 display is in use, and both have the NPSGraphAtTop enabled, and both have the
+			-- Pacemaker enabled, AND they are playing different charts in the same song that
+			-- feature "split BPMs" (i.e. steps timing).  It's unlikely, but possible.
+			-- Something (Pacemaker?) should be hidden from view.
 
 			-- kludge because this needs to ship tomorrow and I am too burned out to figure out a better fix right now; forgive me, andrew
 			if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers()==1 then self:addx( width/2 * (player==PLAYER_1 and 1 or -1) )

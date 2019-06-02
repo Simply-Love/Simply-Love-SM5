@@ -1,3 +1,15 @@
+-- FIXME: The SM5 engine does supply a StepsDisplayList class for Lua, but its scoller-esque behavior
+-- is mostly hardcoded, making it difficult to ALWAYS position easy charts at a specific y-value
+-- and challenge charts at a different (but equally predictable) y-value.
+--
+-- I wrote this code back in April 2014 as part of bda06a0eee03a22b81b35dd12968b9d386a0fea7
+-- to assist in organizing and displaying available stepcharts in ScreenSelectMusic in a
+-- visually predictable fashion.  I noted then that songs with multiple edit charts caused
+-- the custom steps list to "behave erratically" when both players were joined.  I imagine it
+-- is still a problem.  "Tachyon Alpha/Delta Max" is probably a good test case.
+--
+-- This code should probably be ripped out and completely replaced at this point.
+
 function GetStepsToDisplay(AllAvailableSteps)
 
 	--gather any edit charts into a table

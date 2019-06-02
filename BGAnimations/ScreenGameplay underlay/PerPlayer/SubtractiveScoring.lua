@@ -44,7 +44,7 @@ if mods.SubtractiveScoring then
 
 			-- Fix overlap issues for MeasureCounter in center
 			-- since in this case we don't need symmetry.
-			if (mods.MeasureCounterPosition == "Center") then
+			if (mods.MeasureCounterLeft == false) then
 				self:horizalign(left)
 			end
 
@@ -74,6 +74,12 @@ if mods.SubtractiveScoring then
 
 			-- used to determine if a player has failed yet
 			local topscreen = SCREENMAN:GetTopScreen()
+
+			-- if the player adjusts the sync of the stepchart during gameplay, they will eventually
+			-- reach ScreenPrompt, where they'll be prompted to accept or reject the sync changes.
+			-- Although the screen changes, this Lua sticks around, and the TopScreen will no longer
+			-- have a GetLifeMeter() method.
+			if topscreen.GetLifeMeter == nil then return end
 
 			-- if this is an undesirable judgment AND we can still count up AND it's not a dropped hold
 			if tns == undesirable_judgment

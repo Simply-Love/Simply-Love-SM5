@@ -1,21 +1,23 @@
 local songs = {
-	Arrows = "cloud break (loop).ogg",
-	Bears = "crystalis (loop).ogg",
-	Hearts = "feel (loop).ogg",
-	Ducks = "Xuxa fami VRC6 (loop).ogg",
-	Gay = "Mystical Wheelbarrow Journey (loop).ogg",
-	Spooky = "Spooky Scary Chiptunes (loop).ogg",
-	Stars = "Shooting Star - faux VRC6 remix (loop).ogg",
+	Arrows = "cloud break",
+	Bears = "crystalis",
+	Hearts = "feel",
+	Ducks = "Xuxa fami VRC6",
+	Gay = "Mystical Wheelbarrow Journey",
+	Spooky = "Spooky Scary Chiptunes",
+	Stars = "Shooting Star - faux VRC6 remix",
+	Thonk = "Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix",
 }
 
-local audio_file =  songs[ ThemePrefs.Get("VisualTheme") ]
+local style = ThemePrefs.Get("VisualTheme")
+local file = songs[ style ]
+if not file then file = songs.Hearts end
 
-if not audio_file then audio_file = songs.Hearts end
-
-if PREFSMAN:GetPreference("EasterEggs") then
+if PREFSMAN:GetPreference("EasterEggs") and style ~= "Thonk" then
+	--  41 days remain until the end of the year.
+	if MonthOfYear()==10 and DayOfMonth()==20 then file = "20" end
 	-- the best way to spread holiday cheer is singing loud for all to hear
-	if MonthOfYear()==11 then audio_file = "HolidayCheer" end
-	if MonthOfYear()==10 and DayOfMonth()==20 then audio_file = "20" end
+	if MonthOfYear()==11 then file = "HolidayCheer" end
 end
 
-return THEME:GetPathS("", "_common menu music/" .. audio_file)
+return THEME:GetPathS("", "_common menu music/" .. file)

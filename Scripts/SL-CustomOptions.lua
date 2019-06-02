@@ -107,29 +107,45 @@ function OptionRowMusicWheelSpeed()
 end
 
 function OptionRowTheme()
-	local themes = THEME:GetSelectableThemeNames()
 	return {
 		Name = "Theme",
+		Choices = THEME:GetSelectableThemeNames(),
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
 		ExportOnChange = false,
-		Choices = themes,
 		LoadSelections = function(self, list, pn)
 			local theme = THEME:GetCurThemeName()
 			if not theme then return end
 
-			local i = FindInTable(theme, themes) or 1
+			local i = FindInTable(theme, self.Choices) or 1
 			list[i] = true
 		end,
 		SaveSelections = function(self, list, pn)
-			for i = 1, #themes do
+			for i=1, #list do
 				if list[i] then
-					if themes[i] ~= THEME:GetCurThemeName() then
-						SL.NextTheme = themes[i]
+					if self.Choices[i] ~= THEME:GetCurThemeName() then
+						-- if the user is switching to some other version of SL they have installed
+						-- don't bother them with the ResetPreferences prompt; just switch to that theme
+						-- try a simple check first
+						if self.Choices[i]:match("Simply Love")	then
+							THEME:SetTheme( self.Choices[i] )
+							return
+						end
+
+						-- if not, attempt a more roundabout check by peeking into the new theme's ThemeInfo.ini
+						if FILEMAN:DoesFileExist("/Themes/"..self.Choices[i].."/ThemeInfo.ini") then
+							local info = IniFile.ReadFile("/Themes/"..self.Choices[i].."/ThemeInfo.ini")
+							if info and info.ThemeInfo and info.ThemeInfo.DisplayName and info.ThemeInfo.DisplayName:match("Simply Love") then
+								THEME:SetTheme( self.Choices[i] )
+								return
+							end
+						end
+
+						-- if not, we'll assume the new theme is different enough to warrant prompting the user
+						SL.NextTheme = self.Choices[i]
 						SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPromptToResetPreferencesToStock")
 					end
-					break
 				end
 			end
 		end,

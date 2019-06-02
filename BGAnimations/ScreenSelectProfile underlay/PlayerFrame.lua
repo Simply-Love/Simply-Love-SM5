@@ -117,7 +117,7 @@ return Def.ActorFrame{
 			Name="DataFrame",
 			InitCommand=function(self) self:xy(62,1) end,
 
-			-- semi-transparent Quad to the right of this colored frame to contain player mods
+			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
 				InitCommand=function(self) self:valign(0):diffuse({0,0,0,0}):zoomto(112,220):y(-111) end,
 				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,

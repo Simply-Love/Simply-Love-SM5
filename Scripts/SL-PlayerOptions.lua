@@ -12,20 +12,51 @@ local function GetModsAndPlayerOptions(player)
 end
 
 ------------------------------------------------------------
--- Define what custom OptionRows there are, and override the
--- generic OptionRow (defined later, below) for each as necessary.
-
--- Each OptionRow needs choices to present to the players.
--- Sometimes using hardcoded strings is okay.
--- Other times, we need to be able to translate the strings.
+-- when to use Choices() vs. Values()
 --
--- For each of these subtables, you must specify a 'Choices' function and/or a 'Values' function
--- that returns a table of strings of valid options.
--- If you specify only 'Choices', the engine presents the strings exactly as-is.
--- If you specify only 'Values', the engine will translate the raw strings
--- using the corresponding display strings in en.ini (or es.ini, fr.ini, etc.)
--- If you specify both, then the strings in 'Choices' are presented as is,
+-- Each OptionRow needs stringified choices to present to the player.  Sometimes using hardcoded strings
+-- is okay. For example, SpeedModType choices (x, C, M) are the same in English as in French.
+--
+-- Other times, we need to be able to localize the choices presented to the player but also
+-- maintain an internal value that code within the theme can rely on regardless of language.
+--
+-- For each of the subtables in Overrides, you must specify a 'Choices' function and/or a 'Values' function
+-- that returns a table of strings of valid choices.
+--
+-- If you specify only 'Choices', the engine presents the strings exactly as-is and also uses those
+-- same strings internally.
+--
+-- If you specify only 'Values', the engine will use those raw strings internally but localize them
+-- using the corresponding display strings in en.ini (or es.ini, fr.ini, etc.) for the user.
+--
+-- If you specify both, then the strings in 'Choices' are presented as-is,
 -- but the strings in 'Values' are what the theme stores into the ActiveModifiers table.
+
+------------------------------------------------------------
+
+-- Define SL's custom OptionRows that appear in ScreenPlayerOptions as subtables within Overrides.
+-- As an OptionRow, each subtable is expected to have specific key/value pairs:
+--
+-- ExportOnChange (boolean)
+-- 		false if unspecified; if true, calls SaveSelections() whenever the current choice changes
+-- LayoutType (string)
+--		"ShowAllInRow" if unspecified; you can set it to "ShowOneInRow" if needed
+-- OneChoiceForAllPlayers (boolean)
+-- 		false if unspecified
+-- SelectType (string)
+-- 		"SelectOne" if unspecified; you can set it to "SelectMultiple" if needed
+-- LoadSelections (function)
+-- 		normally (in other themes) called when the PlayerOption screen initializes
+--		read the notes surrounding ApplyMods() for further discussion of additional work SL does
+-- SaveSelections (function)
+-- 		this is where you should do whatever work is needed to ensure that the player's choice
+--		persists beyond the PlayerOptions screen; normally called around the time of ScreenPlayerOption's
+--		OffCommand; can also be called because ExportOnChange=true
+
+
+-- It's not necessary to define each possible key for each OptionRow.  Anything you don't specifiy
+-- will use fallback values in OptionRowDefault (defined later, below).
+
 local Overrides = {
 
 	-------------------------------------------------------------------------
@@ -36,6 +67,8 @@ local Overrides = {
 		SaveSelections = function(self, list, pn)
 			for i=1,#list do
 				if list[i] then
+					-- Broadcast a message that ./BGAnimations/ScreenPlayerOptions overlay.lua will be listening for
+					-- so it can hackishly modify the single BitmapText actor used in the SpeedMod optionrow
 					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i]})
 				end
 			end
@@ -278,9 +311,9 @@ local Overrides = {
 		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
 	},
 	-------------------------------------------------------------------------
-	MeasureCounterPosition = {
+	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "MeasureCounterLeft", "MeasureCounterUp" } end,
+		Values = function() return { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" } end,
 	},
 	-------------------------------------------------------------------------
 	WorstTimingWindow = {
@@ -506,7 +539,7 @@ function ApplyMods(player)
 		-- first, a table of true/false values corresponding to the OptionRow's Choices table
 		-- second, the player that this applies to
 		--
-		-- for LoadSelections() use a table of all false values, one for each entry in this OptionRow's Choices table
+		-- LoadSelections() receives a table of all false values, one for each entry in this OptionRow's Choices table
 		-- LoadSelections() will process that table, and set the appropriate entries to true using the SL[pn].ActiveModifiers table
 		-- when done setting one or more entries to true, LoadSelections() will return that table of true/false values
 		--

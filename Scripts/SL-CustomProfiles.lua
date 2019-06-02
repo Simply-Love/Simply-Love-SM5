@@ -27,12 +27,15 @@ local profile_whitelist = {
 	DataVisualizations = "string",
 	TargetScore = "number",
 	ActionOnMissedTarget = "string",
+
+	MeasureCounter = "string",
+	MeasureCounterLeft = "boolean",
+	MeasureCounterUp = "boolean",
+	HideRestCounts = "boolean",
+
 	ColumnFlashOnMiss = "boolean",
 	SubtractiveScoring = "boolean",
 	Pacemaker = "boolean",
-	MeasureCounterLeft = "boolean",
-	MeasureCounterUp = "boolean",
-	MeasureCounter = "string",
 	MissBecauseHeld = "boolean",
 	NPSGraphAtTop = "boolean",
 
