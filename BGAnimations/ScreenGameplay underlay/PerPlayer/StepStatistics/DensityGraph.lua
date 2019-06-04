@@ -22,7 +22,7 @@ local scaled_width = width
 -- height is how tall, in pixels, the density graph will be
 local height = width/2.25
 
-local UpdateRate, last_second
+local UpdateRate, first_second, last_second
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
@@ -94,6 +94,7 @@ local graph_and_lifeline = Def.ActorFrame{
 
 	CurrentSongChangedMessageCommand=function(self)
 		local song = GAMESTATE:GetCurrentSong()
+		first_second = song:GetTimingData():GetElapsedTimeFromBeat(0)
 		last_second = song:GetLastSecond()
 		-- reset scaled_width now to be only as wide as the notefield
 		scaled_width = width
@@ -136,7 +137,7 @@ local graph_and_lifeline = Def.ActorFrame{
 		local seconds_past_one_fourth = current_second-(max_seconds*0.25)
 
 		if seconds_past_one_fourth > 0 then
-			local offset = scale(seconds_past_one_fourth, 0, last_second-(max_seconds*0.25), 0, scaled_width-(width*0.75))
+			local offset = scale(seconds_past_one_fourth, first_second, last_second-(max_seconds*0.25), 0, scaled_width-(width*0.75))
 			self:x(-offset)
 		end
 	end,
@@ -155,7 +156,7 @@ local graph_and_lifeline = Def.ActorFrame{
 		end,
 		UpdateCommand=function(self)
 			if GAMESTATE:GetCurMusicSeconds() > 0 then
-				x = scale( GAMESTATE:GetCurMusicSeconds(), 0, last_second, 0, scaled_width )
+				x = scale( GAMESTATE:GetCurMusicSeconds(), first_second, last_second, 0, scaled_width )
 				y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
 
 				-- if the slopes of the newest line segment is similar
