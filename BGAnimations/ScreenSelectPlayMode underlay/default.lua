@@ -49,7 +49,7 @@ local t = Def.ActorFrame{
 		self:queuecommand("Update")
 	end,
 	OffCommand=function(self)
-		if ScreenName == "ScreenSelectPlayMode" then
+		if ScreenName=="ScreenSelectPlayMode" or ScreenName=="ScreenSelectPlayModeThonk" then
 			-- set the GameMode now; we'll use it throughout the theme
 			-- to set certain Gameplay settings and determine which screen comes next
 			SL.Global.GameMode = choices[cursor.index+1]
