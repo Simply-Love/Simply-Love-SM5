@@ -353,7 +353,7 @@ local Overrides = {
 					if PREFSMAN:PreferenceExists("TimingWindowSecondsW"..gmods.WorstTimingWindow) then
 						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..gmods.WorstTimingWindow])
 					else
-						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, 0)
+						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, -math.abs(math.random(math.floor(math.pi))))
 					end
 				end
 			end
