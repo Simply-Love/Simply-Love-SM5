@@ -5,14 +5,14 @@ local LifeLineThickness = 2
 local LifeMeter = nil
 local life_verts = {}
 
--- max_seconds is how seconds of a song is visualized before we don't display the entire
--- density graph on-screen at once. For very long songs (longer than, say, 10 minutes)
--- the density graph otherwise becomes too horizontally compressed (squeezed in, so to speak)
--- and it's dificult get any useful information out of it, visually.
+-- max_seconds is how many seconds of a stepchart we want visualized on-screen at once.
+-- For very long songs (longer than, say, 10 minutes) the density graph becomes too
+-- horizontally compressed (squeezed in, so to speak) and it's dificult get any useful
+-- information out of it, visually.  And there are a lot of Very Long Songs™.
 --
--- So, we hardcode it to 4 minutes here. If the song is longer than 4 minutes, the density graph will
--- scroll with the song.  If the song is shorter than 4 minutes, we'll scale the width of the graph
--- to take up the full width available in the StepStatistics sidebar.
+-- So, we hardcode it to 4 minutes here. If the song is longer than 4 minutes, the density
+-- graph will scroll with the song.  If the song is shorter than 4 minutes, wel'll scale
+-- the width of the graph to take up the full width available in the StepStatistics sidebar.
 local max_seconds = 4 * 60
 
 -- width is how wide, in pixels, the density graph will be
@@ -137,7 +137,7 @@ local graph_and_lifeline = Def.ActorFrame{
 		local seconds_past_one_fourth = current_second-(max_seconds*0.25)
 
 		if seconds_past_one_fourth > 0 then
-			local offset = scale(seconds_past_one_fourth, first_second, last_second-(max_seconds*0.25), 0, scaled_width-(width*0.75))
+			local offset = scale(seconds_past_one_fourth, first_second, last_second-(max_seconds*0.25), first_second, scaled_width-(width*0.75))
 			self:x(-offset)
 		end
 	end,
