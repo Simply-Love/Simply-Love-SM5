@@ -17,22 +17,53 @@ function Border(width, height, bw)
 end
 
 ------------------------------------------------------------------------------
--- Is this even how this works?  I need to research this more.
-local OnlyASCII = function(text)
+-- There's surely a better way to do this.  I need to research this more.
+local is8bit = function(text)
 	return text:len() == text:utf8len()
+end
+
+-- FIXME: overriding the engine's API like this is convenient but will likely cause things
+-- to go haywire if the user switches themes.  I need to think about this.
+BitmapText.wrapwidthpixels_orignal = BitmapText.wrapwidthpixels
+
+BitmapText.wrapwidthpixels = function(bmt, w)
+	local text = bmt:GetText()
+
+	if not is8bit(text) then
+		local s = ""
+
+		for i=1, text:utf8len() do
+			local c = text:utf8sub(i,i)
+
+			if bmt:settext( s..c ):GetWidth() < w then
+				-- concat new char to string
+				s = s..c
+			else
+				-- concat newline and then char
+				s = s.."\n"..c
+				-- update bmt
+				bmt:settext( s )
+			end
+		end
+	else
+		bmt:wrapwidthpixels_orignal(w)
+	end
+
+	-- return the BitmapText actor in case the theme is chaining actor commands
+	return bmt
 end
 
 BitmapText.Truncate = function(bmt, m)
 	local text = bmt:GetText()
 	local l = text:len()
 
-	-- With SL's Miso and JP fonts, ASCII characters (Miso) tend to render 2-3x less wide
+	-- With SL's Miso and JP fonts, english characters (Miso) tend to render 2-3x less wide
 	-- than JP characters. If the text includes JP characters, it is (probably) desired to
 	-- truncate the string earlier to achieve the same effect.
-	-- Here, we are arbitrarily "weighting" JP characters to count 4x as much as one ASCII
+	-- Here, we are arbitrarily "weighting" JP characters to count 4x as much as one Miso
 	-- character and then scaling the point at which we truncate accordingly.
 	-- This is, of course, a VERY broad over-generalization, but It Works For Now™.
-	if not OnlyASCII(text) then
+	if not is8bit(text) then
 		l = 0
 
 		-- a range of bytes I'm considering to indicate JP characters,
@@ -44,7 +75,7 @@ BitmapText.Truncate = function(bmt, m)
 
 		for i=1, text:utf8len() do
 			local b = text:utf8sub(i,i):byte()
-			l = l + ((b < upper and b > lower) and 4 or 1)
+			l = l + ((b < upper and b >= lower) and 4 or 1)
 		end
 		m = math.floor(m * (m/l))
 	end
@@ -53,7 +84,11 @@ BitmapText.Truncate = function(bmt, m)
 	if l <= m then return end
 	-- otherwise, replace everything after the truncate point with an ellipsis
 	bmt:settext( text:utf8sub(1, m) .. "…" )
+
+	-- return the BitmapText actor in case the theme is chaining actor commands
+	return bmt
 end
+
 
 
 ------------------------------------------------------------------------------
