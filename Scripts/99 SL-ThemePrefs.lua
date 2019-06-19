@@ -58,15 +58,6 @@ local SL_CustomPrefs =
 		},
 		Values 	= { "none", "single", "versus", "double" }
 	},
-	ShowGradesInMusicWheel =
-	{
-		Default = false,
-		Choices = {
-			THEME:GetString("ThemePrefs", "Show"),
-			THEME:GetString("ThemePrefs", "Hide")
-		},
-		Values = { true, false }
-	},
 	VisualTheme =
 	{
 		Default = "Hearts",

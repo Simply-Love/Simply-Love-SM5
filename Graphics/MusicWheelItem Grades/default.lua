@@ -1,5 +1,5 @@
--- if we're in CourseMode or MusicWheel grades are unwanted, return an empty Actor now
-if GAMESTATE:IsCourseMode() or not ThemePrefs.Get("ShowGradesInMusicWheel") then
+-- if we're in CourseMode, return an empty Actor now
+if GAMESTATE:IsCourseMode() then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
 
