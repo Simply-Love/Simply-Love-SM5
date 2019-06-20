@@ -30,19 +30,38 @@ BitmapText.wrapwidthpixels = function(bmt, w)
 	local text = bmt:GetText()
 
 	if not is8bit(text) then
-		local s = ""
+		local lower = 200
+		local upper = 240
+		bmt:settext("")
 
 		for i=1, text:utf8len() do
 			local c = text:utf8sub(i,i)
+			local b = c:byte()
 
-			if bmt:settext( s..c ):GetWidth() < w then
-				-- concat new char to string
-				s = s..c
-			else
-				-- concat newline and then char
-				s = s.."\n"..c
-				-- update bmt
-				bmt:settext( s )
+			-- if adding this character causes the displayed string to be wider than allowed
+			if bmt:settext( bmt:GetText()..c ):GetWidth() > w then
+				-- and if that character just added was in the jp range (...maybe)
+				if b < upper and b >= lower then
+					-- then insert a newline between the previous character and the current
+					-- character that caused us to go over
+					bmt:settext( bmt:GetText():utf8sub(1,-2).."\n"..c )
+				else
+					-- otherwise it's trickier, as romance languages only really allow newlines
+					-- to be inserted between words, not in the middle of single words
+					-- we'll have to "peel back" a character at a time until we hit whitespace
+					-- or something in the jp range
+					local _text = bmt:GetText()
+
+					for j=i,1,-1 do
+						local _c = _text:utf8sub(j,j)
+						local _b = _c:byte()
+
+						if _c:match("%s") or (_b < upper and _b >= lower) then
+							bmt:settext( _text:utf8sub(1,j) .. "\n" .. _text:utf8sub(j+1) )
+							break
+						end
+					end
+				end
 			end
 		end
 	else
@@ -69,7 +88,7 @@ BitmapText.Truncate = function(bmt, m)
 		-- a range of bytes I'm considering to indicate JP characters,
 		-- mostly derived from empirical observation and guesswork
 		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
-		-- If you know more about how this actually works, please submit a pull request.
+		-- FIXME: If you know more about how this actually works, please submit a pull request.
 		local lower = 200
 		local upper = 240
 
