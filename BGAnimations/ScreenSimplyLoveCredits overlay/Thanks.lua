@@ -138,14 +138,25 @@ return {
 			Img="heysora.png",
 			About="HeySora kindly translated Simply Love's UI into French.\n\nHe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
 		},
+
+	},
+
+	-- page 9
+	{
+
 		{
 			Name="Moru Zerinho6",
 			Img="Moru_Zerinho6.jpg",
 			About="Moru Zerinho6 volunteered to translate Simply Love's UI into Brazilian Portuguese and the theme is richer for it.\n\nHe spoke with me extensively about his experience going down The Rabbit Hole in Simply Love and how he translated its words for other non-English-speaking people along the way.  His earnest sincerity helped me in ways I am unable to describe using any words of my own."
-		}
+		},
+		{
+			Name="FMS_Cat",
+			Img="fms_cat 1x32.png",
+			About="FMS_Cat translated Simply Love's UI into Japanese, helping to realize a longtime dream of mine.\n\nHe is an incredibly talented WebGL programmer whose creative work with shaders leaves me smiling and curious about how such expansive beauty appears in the tiniest of footprints."
+		},
 	},
 
-	-- page 9
+	-- page 10
 	{
 		{
 			Name="Riakodoadm",
