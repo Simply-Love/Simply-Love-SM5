@@ -2,7 +2,10 @@
 if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
 	return LoadActor( THEME:GetPathB("", "_shared background normal/snow-simple.lua") )
 end
-
+-- the best way school spirit! We are..?
+if PREFSMAN:GetPreference("EasterEggs") and ThemePrefs.Get("VisualTheme") == "PSU" then
+	return LoadActor( THEME:GetPathB("", "_shared background normal/spirit.lua") )
+end
 local file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
 
 -- this variable will be used within the scope of this file like (index+1) and (index-1)
