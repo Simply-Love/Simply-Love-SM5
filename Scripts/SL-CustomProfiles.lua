@@ -79,6 +79,9 @@ end
 
 -- Hook called during profile save
 function SaveProfileCustom(profile, dir)
+	if GAMESTATE:IsEventMode() == false then
+		return
+	end
 
 	local path =  dir .. filename
 
@@ -106,4 +109,19 @@ function ReadProfileCustom(profile, dir)
 		return IniFile.ReadFile(path)[theme_name]
 	end
 	return false
+end
+
+function ReloadProfiles()
+	change = true
+	for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
+		state = MEMCARDMAN:GetCardState(pn)
+		if state == "MemoryCardState_late" or state == "MemoryCardState_error" or state == 'MemoryCardState_removed' then
+			change = true
+		end
+	end
+
+	if change == true then
+		SL.Global.BranchOverride = "ScreenSelectMusic"
+		SCREENMAN:SetNewScreen("ScreenProfileLoad")
+	end
 end

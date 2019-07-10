@@ -1,5 +1,15 @@
 local tweentime = 0.325
 
+if GAMESTATE:IsEventMode() == true then
+	for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
+		state = MEMCARDMAN:GetCardState(pn)
+		if state == "MemoryCardState_late" or state == "MemoryCardState_error" or state == 'MemoryCardState_removed' then
+			GAMESTATE:UnjoinPlayer(pn)
+			GAMESTATE:JoinPlayer(pn)
+		end
+	end
+end
+
 return Def.ActorFrame{
 	InitCommand=function(self)
 		self:Center():draworder(101)

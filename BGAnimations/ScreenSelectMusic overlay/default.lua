@@ -2,6 +2,7 @@ local t = Def.ActorFrame{
 	ChangeStepsMessageCommand=function(self, params)
 		self:playcommand("StepsHaveChanged", params)
 	end,
+	StorageDevicesChangedMessageCommand=ReloadProfiles,
 
 	-- make the MusicWheel appear to cascade down
 	LoadActor("./MusicWheelAnimation.lua"),
