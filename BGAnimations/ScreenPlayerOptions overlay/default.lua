@@ -3,14 +3,14 @@
 
 -- this prepares and returns a string to be used by the helper BitmapText
 -- at the top of the screen (one for each player)
-local function GetSpeedModHelperText(pn)
+local GetSpeedModHelperText = function(player)
 	local bpm
-	local display = ""
-	local mods = SL[pn].ActiveModifiers
+	local text = ""
+	local mods = SL[ToEnumShortString(player)].ActiveModifiers
 	local speed = mods.SpeedMod
 
 	if GAMESTATE:IsCourseMode() then
-		bpm = GetCourseModeBPMs() or GetTrailBPMs("PlayerNumber_"..pn)
+		bpm = GetCourseModeBPMs() or GetTrailBPMs(player)
 	else
 		bpm = GAMESTATE:GetCurrentSong():GetDisplayBpms()
 		-- handle DisplayBPMs that are <= 0
@@ -25,19 +25,19 @@ local function GetSpeedModHelperText(pn)
 
 		--if a single bpm suffices
 		if bpm[1] == bpm[2] then
-			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. ")"
+			text = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. ")"
 
 		-- if we have a range of bpms
 		else
-			display = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. " - " .. round(speed * bpm[2] * musicrate) .. ")"
+			text = string.format("%.2f", speed) .. "x (" .. round(speed * bpm[1] * musicrate) .. " - " .. round(speed * bpm[2] * musicrate) .. ")"
 		end
 
 	-- elseif using a CMod or an MMod
 	elseif mods.SpeedModType == "C" or mods.SpeedModType == "M" then
-		display = mods.SpeedModType .. tostring(speed)
+		text = mods.SpeedModType .. tostring(speed)
 	end
 
-	return display
+	return text
 end
 
 local increments = {
@@ -53,7 +53,7 @@ local bounds = {
 }
 
 --- this manipulates the SpeedMod numbers set in the global SL table
-local function ChangeSpeedMod(pn, direction)
+local ChangeSpeedMod = function(pn, direction)
 	local mods = SL[pn].ActiveModifiers
 
 	if mods.SpeedMod + (increments[mods.SpeedModType] * direction) > bounds[mods.SpeedModType].upper then
@@ -67,7 +67,9 @@ local function ChangeSpeedMod(pn, direction)
 	end
 end
 
-local function FindOptionRowIndex(ScreenOptions, Name)
+local FindOptionRowIndex = function(ScreenOptions, Name)
+	if not ScreenOptions then return end
+
 	local num_rows = ScreenOptions:GetNumRows()
 
 	-- OptionRows on ScreenOptions are 0-indexed, so start counting from 0
@@ -76,8 +78,6 @@ local function FindOptionRowIndex(ScreenOptions, Name)
 			return i
 		end
 	end
-
-	return false
 end
 
 ------------------------------------------------------------
@@ -106,62 +106,50 @@ local t = Def.ActorFrame{
 				self:playcommand("Set"..pn)
 			end
 		end
+	end,
+	MusicRateChangedMessageCommand=function(self)
+		-- variables to be used for setting the text in the "Speed Mod" OptionRow title
+		local ScreenOptions = SCREENMAN:GetTopScreen()
+		local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions, "SpeedMod")
+
+		-- the speedmod row doesn't exist for ScreenAttackMenu, and SpeedModRowIndex will be nil
+		if SpeedModRowIndex then
+
+			local musicrate = SL.Global.ActiveModifiers.MusicRate
+
+			-- update SpeedModHelper text to refelct the new music rate
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				self:GetChild(ToEnumShortString(player) .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
+			end
+
+			local SpeedModTitle = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Title")
+			local bpms = GetDisplayBPMs()
+			SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms .. ")" )
+		end
 	end
 }
 
-local game_name = GAMESTATE:GetCurrentGame():GetName()
-local column = {
-	dance = "Up",
-	pump = "UpRight",
-	techno = "Up",
-	kb7 = "Key1"
-}
+-- attach NoteSkin actors and Judgment graphic actors to this overlay ActorFrame
+-- they'll each be hidden immediately via visible(false) and referred to as needed
+-- via ActorProxy in ./Graphics/OptionRow Frame.lua
+LoadActor("./NoteSkinPreviews.lua", t)
+LoadActor("./JudgmentGraphicPreviews.lua", t)
 
-local GetNoteSkinActor = function(ns)
-
-	local status, noteskin_actor = pcall(NOTESKIN.LoadActorForNoteSkin, NOTESKIN, column[game_name] or "Up", "Tap Note", ns)
-
-	if noteskin_actor then
-		return noteskin_actor..{
-			Name="NoteSkin_"..ns,
-			InitCommand=function(self) self:visible(false) end
-		}
-	else
-		SM( Screen.String("NoteSkinErrors"):format(ns) )
-
-		return Def.Actor{
-			Name="NoteSkin_"..ns,
-			InitCommand=function(self) self:visible(false) end
-		}
-	end
-end
-
--- Add noteskin actors to the primary AF and hide them immediately.
--- We'll refer to these later via ActorProxy in ./Graphics/OptionRow Frame.lua
-for noteskin in ivalues( CustomOptionRow("NoteSkin").Choices ) do
-	t[#t+1] = GetNoteSkinActor(noteskin)
-end
-
-
-for judgment_filename in ivalues( GetJudgmentGraphics(SL.Global.GameMode) ) do
-	if judgment_filename ~= "None" then
-		t[#t+1] = LoadActor( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. judgment_filename) )..{
-			Name="JudgmentGraphic_"..StripSpriteHints(judgment_filename),
-			InitCommand=function(self) self:visible(false):animate(false) end
-		}
-	else
-		t[#t+1] = Def.Actor{ Name="JudgmentGraphic_None", InitCommand=function(self) self:visible(false) end }
-	end
-end
-
-
-
+-- some functionality needed in both PlayerOptions and PlayerOptions2
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
+
 
 for player in ivalues(Players) do
 	local pn = ToEnumShortString(player)
 
 	t[#t+1] = Def.Actor{
+
+		OptionRowChangedMessageCommand=function(self, params)
+			-- local dq_text = SCREENMAN:GetTopScreen():GetChild("Container"):GetChild("Disqualify"..pn)
+
+			-- SM(GAMESTATE:CurrentOptionsDisqualifyPlayer(player))
+			-- dq_text:visible(GAMESTATE:CurrentOptionsDisqualifyPlayer(player))
+		end,
 
 		-- Commands for player speedmod
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
@@ -186,8 +174,8 @@ for player in ivalues(Players) do
 
 				-- round to the nearest speed increment in the new mode
 
-				-- if we have an active rate mod, then we have to
-				-- undo/redo our automatic rate mod compensation
+				-- if we have an active rate mod, then we have to undo/redo
+				-- our automatic rate mod compensation
 
 				if oldtype == "x" and (newtype == "C" or newtype == "M") then
 					-- apply rate compensation now
@@ -204,7 +192,6 @@ for player in ivalues(Players) do
 				SL[pn].ActiveModifiers.SpeedModType = newtype
 
 				self:queuecommand("Set" .. pn)
-				self:GetParent():GetChild(pn.."MusicRateHelper"):playcommand("Set")
 			end
 		end,
 
@@ -222,7 +209,7 @@ for player in ivalues(Players) do
 			end
 
 			SpeedModItems[pn]:settext( text )
-			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
+			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
 		end,
 
 		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
@@ -245,7 +232,7 @@ for player in ivalues(Players) do
 		end
 	}
 
-	-- the display that does math for you up at the top
+	-- the large block text at the top that shows each player their current scroll speed
 	t[#t+1] = LoadFont("_wendy small")..{
 		Name=pn.."SpeedModHelper",
 		Text="",
@@ -256,59 +243,6 @@ for player in ivalues(Players) do
 			self:shadowlength(0.55)
 		end,
 		OnCommand=cmd(linear,0.4;diffusealpha,1)
-	}
-
-
-	t[#t+1] = LoadFont("_miso")..{
-		Name=pn.."MusicRateHelper",
-		Text="",
-		InitCommand=function(self)
-			self:visible( IsUsingWideScreen() )
-
-			self:shadowlength(0.4)
-			self:diffuse(PlayerColor(player))
-			self:zoom(0.9)
-
-
-			if player == PLAYER_1 then
-				self:x(-100)
-			elseif player == PLAYER_2 then
-				self:x(150)
-			end
-			self:y(26)
-			self:diffusealpha(0)
-		end,
-		OnCommand=function(self) self:linear(0.4):diffusealpha(1) end,
-		SetCommand=function(self)
-			-- variables to be used for setting the text in the "Speed Mod" OptionRow title
-			local ScreenOptions = SCREENMAN:GetTopScreen()
-			local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions, "SpeedMod")
-
-			-- the speedmod row doesn't exist for ScreenAttackMenu, and SpeedModRowIndex will be false
-			if SpeedModRowIndex then
-
-				local musicrate = SL.Global.ActiveModifiers.MusicRate
-
-				-- settext on the musicrate helper
-				if SL[pn].ActiveModifiers.SpeedModType == "x" then
-					if musicrate == 1 then
-						self:settext("")
-					else
-						self:settext(musicrate .. "x")
-					end
-				else
-					self:settext("")
-				end
-
-				-- settext on the speedmod helper
-				self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(pn) )
-
-				local SpeedModTitle = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Title")
-				local bpms = GetDisplayBPMs()
-				SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms .. ")" )
-			end
-		end,
-		MusicRateChangedMessageCommand=cmd(playcommand,"Set")
 	}
 end
 

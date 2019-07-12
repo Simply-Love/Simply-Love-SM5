@@ -128,7 +128,7 @@ local Overrides = {
 				end
 			end
 
-			-- It's possible a user might want to hide stock notesksins
+			-- It's possible a user might want to hide stock noteskins
 			-- but only have stock noteskins.  If so, just return all noteskins.
 			if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
 
