@@ -62,7 +62,7 @@ local SL_CustomPrefs =
 	{
 		Default = "Hearts",
 		 -- emojis are our lingua franca for the 21st century
-		Choices = { "♡", THEME:GetString("ThemePrefs", "Arrows"), "🐻", "🦆", "🎃", "🌈", "⭐", "🤔" },
+		Choices = { "♡", "↖", "🐻", "🦆", "🎃", "🌈", "⭐", "🤔" },
 		Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Spooky", "Gay", "Stars", "Thonk" },
 	},
 	RainbowMode = {
