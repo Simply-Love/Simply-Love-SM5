@@ -144,13 +144,6 @@ for player in ivalues(Players) do
 
 	t[#t+1] = Def.Actor{
 
-		OptionRowChangedMessageCommand=function(self, params)
-			-- local dq_text = SCREENMAN:GetTopScreen():GetChild("Container"):GetChild("Disqualify"..pn)
-
-			-- SM(GAMESTATE:CurrentOptionsDisqualifyPlayer(player))
-			-- dq_text:visible(GAMESTATE:CurrentOptionsDisqualifyPlayer(player))
-		end,
-
 		-- Commands for player speedmod
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
 

@@ -7,9 +7,9 @@ local lifemeter_actor
 if SL.Global.GameMode == "StomperZ" then
 	lifemeter_actor = LoadActor("StomperZ.lua", player)
 
--- in Competitive and ECFA, we have the choice a "Standard" LifeMeter (at the top of the screen)
+-- in ITG and FA+, we have the choice a "Standard" LifeMeter (at the top of the screen)
 -- or a "Surround" LifeMeter, which is like the StomperZ surround LifeMeter but more drab.
-elseif SL.Global.GameMode == "Competitive" or SL.Global.GameMode == "ECFA" then
+elseif SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+" then
 
 	local lifemeter_type = SL[ToEnumShortString(player)].ActiveModifiers.LifeMeterType or CustomOptionRow("LifeMeterType").Choices[1]
 	lifemeter_actor = LoadActor(lifemeter_type .. ".lua", player)
