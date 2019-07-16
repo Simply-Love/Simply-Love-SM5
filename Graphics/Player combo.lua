@@ -39,15 +39,15 @@ af[#af+1] = LoadFont("_wendy combo")..{
 		local CurrentCombo = params.Misses or params.Combo
 		self:settext( CurrentCombo or "" )
 
-		if (SL.Global.GameMode ~= "ECFA" and params.FullComboW1) or (SL.Global.GameMode == "ECFA" and (params.FullComboW1 or params.FullComboW2)) then
+		if (SL.Global.GameMode ~= "FA+" and params.FullComboW1) or (SL.Global.GameMode == "FA+" and (params.FullComboW1 or params.FullComboW2)) then
 			-- blue combo
 			self:playcommand("ChangeColor", {Color1="#C8FFFF", Color2="#6BF0FF"})
 
-		elseif (SL.Global.GameMode ~= "ECFA" and params.FullComboW2) or (SL.Global.GameMode == "ECFA" and params.FullComboW3) then
+		elseif (SL.Global.GameMode ~= "FA+" and params.FullComboW2) or (SL.Global.GameMode == "FA+" and params.FullComboW3) then
 			-- gold combo
 			self:playcommand("ChangeColor", {Color1="#FDFFC9", Color2="#FDDB85"})
 
-		elseif (SL.Global.GameMode ~= "ECFA" and params.FullComboW3) or (SL.Global.GameMode == "ECFA" and params.FullComboW4) then
+		elseif (SL.Global.GameMode ~= "FA+" and params.FullComboW3) or (SL.Global.GameMode == "FA+" and params.FullComboW4) then
 			-- green combo
 			self:playcommand("ChangeColor", {Color1="#C9FFC9", Color2="#94FEC1"})
 

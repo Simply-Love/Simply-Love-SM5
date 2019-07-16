@@ -77,7 +77,7 @@ local GlobalDefaults = {
 				PlayerOptions2 = "ScreenGameplay"
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
-			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "Competitive"
+			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "ITG"
 			self.ScreenshotTexture = nil
 			self.MenuTimer = {
 				ScreenSelectMusic = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),
@@ -126,7 +126,7 @@ SL = {
 			color("#c9855e"),	-- peach?
 			color("#ff0000")	-- red
 		},
-		Competitive = {
+		ITG = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
@@ -134,7 +134,7 @@ SL = {
 			color("#c9855e"),	-- peach?
 			color("#ff0000")	-- red
 		},
-		ECFA = {
+		["FA+"] = {
 			color("#21CCE8"),	-- blue
 			color("#ffffff"),	-- white
 			color("#e29c18"),	-- gold
@@ -172,7 +172,7 @@ SL = {
 			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},
-		Competitive = {
+		ITG = {
 			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
@@ -192,7 +192,7 @@ SL = {
 			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},
-		ECFA = {
+		["FA+"] = {
 			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
@@ -265,7 +265,7 @@ SL = {
 			LifePercentChangeHeld=0,
 			LifePercentChangeHitMine=0,
 		},
-		Competitive = {
+		ITG = {
 			PercentScoreWeightW1=5,
 			PercentScoreWeightW2=4,
 			PercentScoreWeightW3=2,
@@ -296,7 +296,7 @@ SL = {
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.050,
 		},
-		ECFA = {
+		["FA+"] = {
 			PercentScoreWeightW1=5,
 			PercentScoreWeightW2=5,
 			PercentScoreWeightW3=4,

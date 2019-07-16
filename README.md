@@ -44,8 +44,8 @@ Or, *things I've added that were not present in the original Simply Love for Ste
 #### New GameModes
 
 * [Casual](http://imgur.com/zLLhDWQh.png) – Intended for novice players; restricted song list, no failing, no LifeMeter, simplified UI, etc.  You can read more about customizing what content appears in Casual Mode [here](./CasualMode-README.md).
-* [Competitive](http://imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
-* [ECFA](http://imgur.com/teZtlbih.png) – Similar to Competitive, but features tighter TimingWindows; can be used to qualify for ECFA events
+* [ITG](http://imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
+* [FA+](http://imgur.com/teZtlbih.png) – Similar to ITG, but features tighter TimingWindows; can be used to qualify for ECFA events
 * [StomperZ](http://imgur.com/dOKTpVbh.png) – Emulates a very small set of features from Rhythm Horizon gameplay
 
 #### New Auxiliary Features

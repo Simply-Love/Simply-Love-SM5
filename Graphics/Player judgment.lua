@@ -8,7 +8,7 @@ local kids, JudgmentSet
 -- If so, use the first available Judgment graphic
 -- If that fails too, fail gracefully and do nothing
 local mode = SL.Global.GameMode
-if mode == 'Casual' then mode = 'Competitive' end -- copied out of PlayerOptions ...
+if mode == "Casual" then mode = "ITG" end
 local available_judgments = GetJudgmentGraphics(SL.Global.GameMode)
 
 local file_to_load = (FindInTable(mods.JudgmentGraphic, available_judgments) ~= nil and mods.JudgmentGraphic or available_judgments[1]) or "None"
@@ -70,7 +70,7 @@ local t = Def.ActorFrame {
 			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.
 			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
-				self:Load( THEME:GetPathG("", "_judgments/Competitive/Love") )
+				self:Load( THEME:GetPathG("", "_judgments/ITG/Love") )
 
 			else
 				self:Load( THEME:GetPathG("", "_judgments/" .. mode .. "/" .. file_to_load) )
