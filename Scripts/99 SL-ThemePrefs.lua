@@ -218,7 +218,7 @@ else
 			if type( v ) ~= type( SL_CustomPrefs[k].Default )
 			or not FindInTable(v, (SL_CustomPrefs[k].Values and SL_CustomPrefs[k].Values or SL_CustomPrefs[k].Choices))
 			then
-				-- in the event of a type mismatch, overwrite the user's erroneous setting with the default value
+				-- overwrite the user's erroneous setting with the default value
 				ThemePrefs.Set(k, SL_CustomPrefs[k].Default)
 			end
 		end
