@@ -153,7 +153,7 @@ SL = {
 	},
 	Preferences = {
 		Casual = {
-			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
+			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W3",
@@ -173,7 +173,7 @@ SL = {
 			TimingWindowSecondsRoll=0.350000,
 		},
 		ITG = {
-			TimingWindowAdd=ThemePrefs.Get("TimingWindowAdd"),
+			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",

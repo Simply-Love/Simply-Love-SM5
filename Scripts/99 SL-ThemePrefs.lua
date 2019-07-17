@@ -42,11 +42,6 @@ local SL_CustomPrefs =
 		},
 		Values 	= { "Casual", "ITG", "FA+", "StomperZ" }
 	},
-	TimingWindowAdd = {
-		Default = 0,
-		Choices = { 0, 0.0015 },
-		Values = { 0, 0.0015 }
-	},
 	AutoStyle =
 	{
 		Default = "none",
