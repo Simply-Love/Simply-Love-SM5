@@ -12,25 +12,19 @@ local anim_data = {
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
-		if ThemePrefs.Get("RainbowMode") then
-			self:visible(false)
-		else
-			self:diffusealpha(0)
-		end
+		self:visible(not ThemePrefs.Get("RainbowMode"))
 	end,
 	OnCommand=cmd(accelerate,0.8; diffusealpha,1),
+	HideCommand=function(self) self:visible(false) end,
+
 	BackgroundImageChangedMessageCommand=function(self)
 		if not ThemePrefs.Get("RainbowMode") then
 			self:visible(true):linear(0.6):diffusealpha(1)
-		else
-			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
-		end
-	end,
-	HideCommand=function(self) self:visible(false) end,
-	BackgroundImageChangedMessageCommand=function(self)
-		if not ThemePrefs.Get("RainbowMode") then
+
 			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
 			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
+		else
+			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
 		end
 	end
 }
