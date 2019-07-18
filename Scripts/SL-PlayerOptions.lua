@@ -20,8 +20,10 @@ end
 -- Other times, we need to be able to localize the choices presented to the player but also
 -- maintain an internal value that code within the theme can rely on regardless of language.
 --
--- For each of the subtables in Overrides, you must specify a 'Choices' function and/or a 'Values' function
--- that returns a table of strings of valid choices.
+-- For each of the subtables in Overrides, you must specify 'Choices' and/or 'Values' depending on your
+-- needs. Each can be either a table of strings or a function that returns a table of strings.
+-- Using a function can be helpful when the OptionRow needs to present different options depending
+-- on certain conditions.
 --
 -- If you specify only 'Choices', the engine presents the strings exactly as-is and also uses those
 -- same strings internally.
@@ -54,7 +56,7 @@ end
 --		OffCommand; can also be called because ExportOnChange=true
 
 
--- It's not necessary to define each possible key for each OptionRow.  Anything you don't specifiy
+-- It's not necessary to define each possible key for each OptionRow.  Anything you don't specify
 -- will use fallback values in OptionRowDefault (defined later, below).
 
 local Overrides = {
@@ -362,7 +364,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Vocalization = {
 		Choices = function()
-			-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
+			-- Allow users to arbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 			-- and have those vocalizations be automatically detected
 			local vocalizations = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 			table.insert(vocalizations, 1, "None")
@@ -448,16 +450,16 @@ local OptionRowDefault = {
 
 			if Overrides[name].Values then
 				if Overrides[name].Choices then
-					self.Choices = Overrides[name].Choices()
+					self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
 				else
 					self.Choices = {}
-					for i, v in ipairs( Overrides[name].Values() ) do
+					for i, v in ipairs( (type(Overrides[name].Values)=="function" and Overrides[name].Values() or Overrides[name].Values) ) do
 						self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
 					end
 				end
-				self.Values = Overrides[name].Values()
+				self.Values = type(Overrides[name].Values)=="function" and Overrides[name].Values() or Overrides[name].Values
 			else
-				self.Choices = Overrides[name].Choices()
+				self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
 			end
 
 			-- define fallback values to use here if an override isn't specified
@@ -535,7 +537,7 @@ function ApplyMods(player)
 	for name,value in pairs(Overrides) do
 		OptRow = CustomOptionRow( name )
 
-		-- LoadSelections() and SaveSelections() expect two arguments in addtion to self (the OptionRow)
+		-- LoadSelections() and SaveSelections() expect two arguments in addition to self (the OptionRow)
 		-- first, a table of true/false values corresponding to the OptionRow's Choices table
 		-- second, the player that this applies to
 		--
