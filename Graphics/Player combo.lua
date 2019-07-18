@@ -4,6 +4,22 @@ if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
 
+-- combo colors used in Casual, ITG, and StomperZ
+local colors = {}
+colors.FullComboW1 = {color("#C8FFFF"), color("#6BF0FF")} -- blue combo
+colors.FullComboW2 = {color("#FDFFC9"), color("#FDDB85")} -- gold combo
+colors.FullComboW3 = {color("#C9FFC9"), color("#94FEC1")} -- green combo
+colors.FullComboW4 = {color("#FFFFFF"), color("#FFFFFF")} -- white combo
+
+-- combo colors used in FA+
+if SL.Global.GameMode == "FA+" then
+	colors.FullComboW1 = {color("#C8FFFF"), color("#6BF0FF")} -- blue combo
+	colors.FullComboW2 = {color("#C8FFFF"), color("#6BF0FF")} -- blue combo
+	colors.FullComboW3 = {color("#FDFFC9"), color("#FDDB85")} -- gold combo
+	colors.FullComboW4 = {color("#C9FFC9"), color("#94FEC1")} -- green combo
+end
+
+
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 
 local af = Def.ActorFrame{
@@ -29,41 +45,54 @@ if not SL[ToEnumShortString(player)].ActiveModifiers.HideComboExplosions then
 	af[#af+1] = LoadActor( THEME:GetPathG("Combo","1000Milestone") )..{ Name="OneThousandMilestone" }
 end
 
-
+-- "_wendy combo" is monospaced so that each digit's alignment remains
+-- consistent (i.e., not visually distrating) as the combo continually grows
 af[#af+1] = LoadFont("_wendy combo")..{
 	Name="Number",
 	OnCommand=function(self)
 		self:shadowlength(1):vertalign(middle):zoom(0.75)
 	end,
 	ComboCommand=function(self, params)
-		local CurrentCombo = params.Misses or params.Combo
-		self:settext( CurrentCombo or "" )
+		self:settext( params.Combo or params.Misses or "" )
+		self:diffuseshift():effectperiod(0.8)
 
-		if (SL.Global.GameMode ~= "FA+" and params.FullComboW1) or (SL.Global.GameMode == "FA+" and (params.FullComboW1 or params.FullComboW2)) then
-			-- blue combo
-			self:playcommand("ChangeColor", {Color1="#C8FFFF", Color2="#6BF0FF"})
+		-- Though this if/else chain may seem strange (why not reduce it to a single table for quick lookup?)
+		-- the FullCombo params passed in from the engine are also strange, so this accommodates.
+		--
+		-- the params table will always contain a "Combo" value if the player is comboing notes successfully
+		-- or a "Misses" value if the player is not hitting any notes and earning consecutive misses.
+		--
+		-- Once we are 20% through the song (this value is specifed in Metrics.ini in the [Player] section
+		-- using PercentUntilColorCombo), the engine will start to include FullCombo parameters.
+		--
+		-- If the player has only earned W1 judgments so far, the params table will look like:
+		-- { Combo=1001, FullComboW1=true, FullComboW2=true, FullComboW3=true, FullComboW4=true }
+		--
+		-- if the player has earned some combination of W1 and W2 judmgents, the params table will look like:
+		-- { Combo=1005, FullComboW2=true, FullComboW3=true, FullComboW4=true }
+		--
+		-- And so on. While the information is technically true (a FullComboW2 does imply a FullComboW3), the
+		-- explicit presence of all those parameters makes checking truthiness here in the theme a little
+		-- awkward.  We need to explicitly check for W1 first, then W2, then W3, and so on...
 
-		elseif (SL.Global.GameMode ~= "FA+" and params.FullComboW2) or (SL.Global.GameMode == "FA+" and params.FullComboW3) then
-			-- gold combo
-			self:playcommand("ChangeColor", {Color1="#FDFFC9", Color2="#FDDB85"})
+		if params.FullComboW1 then
+			self:effectcolor1(colors.FullComboW1[1]):effectcolor2(colors.FullComboW1[2])
 
-		elseif (SL.Global.GameMode ~= "FA+" and params.FullComboW3) or (SL.Global.GameMode == "FA+" and params.FullComboW4) then
-			-- green combo
-			self:playcommand("ChangeColor", {Color1="#C9FFC9", Color2="#94FEC1"})
+		elseif params.FullComboW2 then
+			self:effectcolor1(colors.FullComboW2[1]):effectcolor2(colors.FullComboW2[2])
+
+		elseif params.FullComboW3 then
+			self:effectcolor1(colors.FullComboW3[1]):effectcolor2(colors.FullComboW3[2])
+
+		elseif params.FullComboW4 then
+			self:effectcolor1(colors.FullComboW4[1]):effectcolor2(colors.FullComboW4[2])
 
 		elseif params.Combo then
-			-- normal (white) combo
-			self:stopeffect():diffuse( Color.White )
+			self:stopeffect():diffuse( Color.White ) -- not a full combo; no effect, always just #ffffff
 
-		else
-			-- miss (red) combo
-			self:stopeffect():diffuse( Color.Red )
+		elseif params.Misses then
+			self:stopeffect():diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
 		end
-	end,
-	ChangeColorCommand=function(self, params)
-		self:diffuseshift():effectperiod(0.8)
-		self:effectcolor1( color(params.Color1) )
-		self:effectcolor2( color(params.Color2) )
 	end
 }
 
