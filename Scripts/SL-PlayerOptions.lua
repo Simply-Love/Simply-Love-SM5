@@ -63,7 +63,7 @@ local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Choices = function() return { "x", "C", "M" } end,
+		Choices = { "x", "C", "M" },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
@@ -78,7 +78,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	SpeedMod = {
-		Choices = function() return { "       " } end,
+		Choices = { "       " },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		LoadSelections = function(self, list, pn)
@@ -163,7 +163,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
-		Values = function() return { 'Off','Dark','Darker','Darkest' } end,
+		Values = { 'Off','Dark','Darker','Darkest' },
 	},
 	-------------------------------------------------------------------------
 	Mini = {
@@ -235,7 +235,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" } end,
+		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets 	or false
@@ -281,9 +281,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetScore = {
-		Values = function()
-			return { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' }
-		end,
+		Values = { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' },
 		LoadSelections = function(self, list, pn)
 			local i = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore) or 11
 			list[i] = true
@@ -297,7 +295,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ActionOnMissedTarget = {
-		Values = function() return { "Nothing", "Fail", "Restart" } end,
+		Values = { "Nothing", "Fail", "Restart" },
 	},
 	-------------------------------------------------------------------------
 	GameplayExtras = {
@@ -310,12 +308,12 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
-		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
+		Values = { "None", "8th", "12th", "16th", "24th", "32nd" },
 	},
 	-------------------------------------------------------------------------
 	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" } end,
+		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" },
 	},
 	-------------------------------------------------------------------------
 	WorstTimingWindow = {
@@ -378,11 +376,11 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ReceptorArrowsPosition = {
-		Choices = function() return { "StomperZ", "ITG" } end,
+		Choices = { "StomperZ", "ITG" },
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
-		Values = function() return { "Standard", "Surround", "Vertical" } end,
+		Values = { "Standard", "Surround", "Vertical" },
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
