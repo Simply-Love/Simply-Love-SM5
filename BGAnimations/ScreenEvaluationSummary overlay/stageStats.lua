@@ -69,7 +69,17 @@ local t = Def.ActorFrame{
 		DrawStageCommand=function(self)
 			if song then
 				local text = ""
-				local BPMs = GAMESTATE:IsCourseMode() and GetCourseModeBPMs(song) or song:GetDisplayBpms()
+				local BPMs
+
+				if GAMESTATE:IsCourseMode() then
+					-- I'm unable to find a way to figure out which songs were played in a randomly
+					-- generated course (for example, the "Most Played" courses that ship with SM5),
+					-- so GetCourseModeBPMs() will return nil in those cases.
+					BPMs = GetCourseModeBPMs(song)
+				else
+					song:GetDisplayBpms()
+				end
+
 				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
 
 				if BPMs then
