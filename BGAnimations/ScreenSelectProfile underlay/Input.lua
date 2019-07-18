@@ -9,6 +9,12 @@ Handle.Start = function(event)
 	local topscreen = SCREENMAN:GetTopScreen()
 
 	if not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+
+		if IsArcade() and not GAMESTATE:EnoughCreditsToJoin() then
+			MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
+			return
+		end
+
 		-- pass -1 to SetProfileIndex() to join that player
 		-- see ScreenSelectProfile.cpp for details
 		topscreen:SetProfileIndex(event.PlayerNumber, -1)
