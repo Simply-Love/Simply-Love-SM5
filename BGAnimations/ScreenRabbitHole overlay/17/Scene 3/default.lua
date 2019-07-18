@@ -82,7 +82,7 @@ af[#af+1] = LoadActor("./love-letters.ogg")..{
 }
 
 -- "heavy snowfall today"
-af[#af+1] = LoadActor( THEME:GetPathB("", "_shared background normal/snow.lua") )
+af[#af+1] = LoadActor("./snow.lua")
 
 -- "my ice-crusted window"
 af[#af+1] = LoadActor("./frost.png")..{
