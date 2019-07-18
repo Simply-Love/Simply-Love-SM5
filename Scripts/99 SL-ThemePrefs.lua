@@ -178,7 +178,8 @@ local SL_CustomPrefs =
 	--- ???
 	RabbitHole = {
 		Default = 0,
-		Choices = range(0, 20, 1),
+		Choices = range(0, 22, 1),
+		Values = range(0, 22, 1),
 	},
 }
 
@@ -200,7 +201,7 @@ if file["Simply Love"] then
 			-- if we reach here, the setting exists in both the master definition as well as the user's ThemePrefs.ini
 			-- so perform some rudimentary validation; check for both type mismatch and presence in SL_CustomPrefs
 			if type( v ) ~= type( SL_CustomPrefs[k].Default )
-			or not FindInTable(v, (SL_CustomPrefs[k].Values and SL_CustomPrefs[k].Values or SL_CustomPrefs[k].Choices))
+			or not FindInTable(v, (SL_CustomPrefs[k].Values or SL_CustomPrefs[k].Choices))
 			then
 				-- overwrite the user's erroneous setting with the default value
 				ThemePrefs.Set(k, SL_CustomPrefs[k].Default)
