@@ -62,6 +62,7 @@ return Def.ActorFrame{
 
 
 	-- dark frame prompting players to "Press START to join!"
+	-- (or "Enter credits to join!" depending on CoinMode and available credits)
 	Def.ActorFrame {
 		Name='JoinFrame',
 		FrameBackground(Color.Black, player),
