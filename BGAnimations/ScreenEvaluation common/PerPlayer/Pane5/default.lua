@@ -31,9 +31,10 @@ end
 
 
 -- QR Code should only be active in normal gameplay for individual songs.
--- Only allow Competitive and ECFA because Casual and Stomperz have different settings.
-if not GAMESTATE:IsCourseMode() and (SL.Global.GameMode == "Competitive" or
-									 SL.Global.GameMode == "ECFA") then
+-- Only allow ITG and FA+ because Casual and Stomperz have different settings.
+if not GAMESTATE:IsCourseMode()
+and (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+")
+then
 	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local PercentDP = stats:GetPercentDancePoints()
 

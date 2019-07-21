@@ -38,7 +38,7 @@ for i=1,#TapNoteScores.Types do
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
 
-			if SL.Global.GameMode ~= "Competitive" then
+			if SL.Global.GameMode ~= "ITG" then
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 			end
 

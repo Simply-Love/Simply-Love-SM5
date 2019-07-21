@@ -1,8 +1,6 @@
-local t = Def.ActorFrame{};
-
--- a row
-t[#t+1] = Def.Quad {
-	OnCommand=cmd(zoomto,_screen.w*0.85,_screen.h*0.0625;);
-};
-
-return t;
+return Def.Quad {
+	InitCommand=function(self)
+		self:setsize(WideScale(543,710), 30)
+		:x(_screen.cx - WideScale(30,40))
+	end
+}

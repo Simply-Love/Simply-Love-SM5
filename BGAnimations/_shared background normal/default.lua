@@ -5,10 +5,13 @@ end
 
 local af = Def.ActorFrame{}
 
--- read the appropriate SharedBackground texture from disk now
--- if the player chooses a different VisualTheme, MESSAGEMAN will broadcast "BackgroundImageChanged"
--- which we can use in Normal.lua and RainbowMode.lua to read the newly-appropriate texture from disk
--- see also: ./BGAnimations/ScreenOptionsService overlay.lua
+-- use the "VisualTheme" ThemePrefs value to generate a proper filepath to the appropriate
+-- SharedBackground texture and pass it to Normal.lua and RainbowMode.lua now as this file
+-- is being initialized.
+
+-- if the player chooses a different VisualTheme during runtime, MESSAGEMAN will broadcast
+-- "BackgroundImageChanged" which we can use in Normal.lua and RainbowMode.lua to Load() the
+-- newly-appropriate texture from disk into each Sprite; see also: ./BGAnimations/ScreenOptionsService overlay.lua
 local file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
 
 -- a simple Quad to serve as the backdrop

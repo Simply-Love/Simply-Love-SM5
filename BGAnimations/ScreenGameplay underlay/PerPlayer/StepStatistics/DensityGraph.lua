@@ -11,7 +11,7 @@ local life_verts = {}
 -- information out of it, visually.  And there are a lot of Very Long Songs™.
 --
 -- So, we hardcode it to 4 minutes here. If the song is longer than 4 minutes, the density
--- graph will scroll with the song.  If the song is shorter than 4 minutes, wel'll scale
+-- graph will scroll with the song.  If the song is shorter than 4 minutes, we'll scale
 -- the width of the graph to take up the full width available in the StepStatistics sidebar.
 local max_seconds = 4 * 60
 
@@ -186,39 +186,8 @@ local graph_and_lifeline = Def.ActorFrame{
 	},
 }
 
--- The "graph_mask" here is not a "mask" in the proper sense.  I did experiment with that briefly,
--- but abandoned it because it impacted the rendering of many ITG NoteSkins that also use masks...
--- So, the graph_mask is really just a black quad positioned in front of the graph_and_lifeline
--- but behind all other underlay elements (like danger and subtractive scoring and etc.)
-local graph_mask = Def.Quad{
-	InitCommand=function(self)
-		self:zoomto(_screen.w/2, _screen.h)
-			:x( WideScale(160, 214) + _screen.cx * (player==PLAYER_1  and -1 or 1) )
-			:y(-48)
-			:diffuse( Color.Black )
-
-
-		-- handle Center1Player begrudgingly with clumsy code
-		if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
-			self:zoomto(_screen.w, _screen.h * (1/0.9))
-
-			-- 16:9 aspect ratio (approximately 1.7778)
-			if GetScreenAspectRatio() > 1.7 then
-				self:x(player==PLAYER_1 and -382 or _screen.w-44)
-					:y(-55)
-
-			-- if 16:10 aspect ratio
-			else
-				self:x(player==PLAYER_1 and -348 or _screen.w-36)
-					:y(-104)
-			end
-		end
-	end
-}
-
 af[#af+1] = text
 af[#af+1] = bg
 af[#af+1] = graph_and_lifeline
-af[#af+1] = graph_mask
 
 return af

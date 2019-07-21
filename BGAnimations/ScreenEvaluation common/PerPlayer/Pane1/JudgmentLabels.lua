@@ -2,16 +2,14 @@ local player = ...
 local pn = ToEnumShortString(player)
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 
-local mode = ""
-if SL.Global.GameMode == "StomperZ" then mode = "StomperZ" end
-if SL.Global.GameMode == "ECFA" then mode = "ECFA" end
+local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 
 local firstToUpper = function(str)
     return (str:gsub("^%l", string.upper))
 end
 
 local getStringFromTheme = function( arg )
-	return THEME:GetString("TapNoteScore" .. mode, arg);
+	return THEME:GetString(tns_string, arg);
 end
 
 --Values above 0 means the user wants to be shown or told they are nice.
@@ -69,7 +67,7 @@ for i=1, #TapNoteScores.Types do
 				self:y((i-1)*28 -16)
 
 				-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
-				if SL.Global.GameMode ~= "Competitive" then
+				if SL.Global.GameMode ~= "ITG" then
 					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 				end
 			end

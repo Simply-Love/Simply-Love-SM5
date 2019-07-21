@@ -253,7 +253,7 @@ function GetComboThreshold( MaintainOrContinue )
 
 
 	if CurrentGame ~= "para" then
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
+		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="FA+" then
 			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
 			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
 		end
@@ -295,9 +295,14 @@ function SetGameModePreferences()
 		GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):MinTNSToHideNotes(SL.Preferences[SL.Global.GameMode].MinTNSToHideNotes)
 	end
 
+	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
+	-- Stats.xml, ECFA-Stats.xml, StomperZ-Stats.xml, Casual-Stats.xml
+	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"
+	-- and I don't want to deal with renaming relatively critical files from the theme.
+	-- Thus, scores from FA+ mode will continue to go into ECFA-Stats.xml.
 	local prefix = {
-		Competitive = "",
-		ECFA = "ECFA-",
+		ITG = "",
+		["FA+"] = "ECFA-",
 		StomperZ = "StomperZ-",
 		Casual = "Casual-"
 	}
@@ -338,7 +343,7 @@ end
 
 
 function GetSimplyLoveOptionsLineNames()
-	local lines = "CasualMaxMeter,AutoStyle,DefaultGameMode,TimingWindowAdd,CustomFailSet,CreditStacking,MusicWheelStyle,MusicWheelSpeed,SelectProfile,SelectColor,EvalSummary,NameEntry,GameOver,HideStockNoteSksins,DanceSolo,Nice,VisualTheme,RainbowMode"
+	local lines = "CasualMaxMeter,AutoStyle,DefaultGameMode,CustomFailSet,CreditStacking,MusicWheelStyle,MusicWheelSpeed,SelectProfile,SelectColor,EvalSummary,NameEntry,GameOver,HideStockNoteSksins,DanceSolo,Nice,VisualTheme,RainbowMode"
 	if Sprite.LoadFromCached ~= nil then
 		lines = lines .. ",UseImageCache"
 	end
@@ -459,7 +464,7 @@ function StripSpriteHints(filename)
 end
 
 function GetJudgmentGraphics(mode)
-	if mode == 'Casual' then mode = 'Competitive' end
+	if mode == 'Casual' then mode = 'ITG' end
 	local path = THEME:GetPathG('', '_judgments/' .. mode)
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}

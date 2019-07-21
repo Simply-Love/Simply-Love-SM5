@@ -2,7 +2,7 @@ local gc = Var("GameCommand")
 local index = gc:GetIndex()
 local text = gc:GetName()
 
--- text description of each mode ("Casual", "Competitive", "ECFA", "StomperZ")
+-- text description of each mode ("Casual", "ITG", "FA+", "StomperZ")
 return LoadFont("_wendy small")..{
 	Name="ModeName"..index,
 	InitCommand=function(self) self:halign(1):maxwidth(256) end,

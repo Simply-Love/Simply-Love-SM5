@@ -33,19 +33,14 @@ local SL_CustomPrefs =
 	},
 	DefaultGameMode =
 	{
-		Default = "Competitive",
+		Default = "ITG",
 		Choices = {
 			THEME:GetString("ScreenSelectPlayMode", "Casual"),
-			THEME:GetString("ScreenSelectPlayMode", "Competitive"),
-			THEME:GetString("ScreenSelectPlayMode", "ECFA"),
+			THEME:GetString("ScreenSelectPlayMode", "ITG"),
+			THEME:GetString("ScreenSelectPlayMode", "FA+"),
 			THEME:GetString("ScreenSelectPlayMode", "StomperZ"),
 		},
-		Values 	= { "Casual", "Competitive", "ECFA", "StomperZ" }
-	},
-	TimingWindowAdd = {
-		Default = 0,
-		Choices = { 0, 0.0015 },
-		Values = { 0, 0.0015 }
+		Values 	= { "Casual", "ITG", "FA+", "StomperZ" }
 	},
 	AutoStyle =
 	{
@@ -62,7 +57,7 @@ local SL_CustomPrefs =
 	{
 		Default = "Hearts",
 		 -- emojis are our lingua franca for the 21st century
-		Choices = { "♡", THEME:GetString("ThemePrefs", "Arrows"), "🐻", "🦆", "🎃", "🌈", "⭐", "🤔" },
+		Choices = { "♡", "↖", "🐻", "🦆", "🎃", "🌈", "⭐", "🤔" },
 		Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Spooky", "Gay", "Stars", "Thonk" },
 	},
 	RainbowMode = {
@@ -176,14 +171,15 @@ local SL_CustomPrefs =
 	-- 0 is off, 1 is visuals only, 2 is visuals and sound.
 	nice = {
 		Default = 0,
-		Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound"),  },
+		Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound") },
 		Values  = { 0, 1, 2 }
 	},
 	-- - - - - - - - - - - - - - - - - - - -
 	--- ???
 	RabbitHole = {
 		Default = 0,
-		Choices = range(0, 20, 1),
+		Choices = range(0, 22, 1),
+		Values = range(0, 22, 1),
 	},
 }
 
@@ -197,29 +193,31 @@ ThemePrefs.InitAll(SL_CustomPrefs)
 
 local file = IniFile.ReadFile("Save/ThemePrefs.ini")
 
--- If no [Simply Love] ThemePrefs section is found...
-if not file["Simply Love"] then
-
-	-- ...make one by calling Save()
-	ThemePrefs.Save()
-
-else
-
+-- If a [Simply Love] section is found in ./Save/ThemePrefs.ini
+if file["Simply Love"] then
+	-- loop through key/value pairs retrieved and do some basic validation
 	for k,v in pairs( file["Simply Love"] ) do
-
-		-- it's possible a setting exists in the ThemePrefs.ini file
-		-- but does not exist here, where we define the ThemePrefs for this theme!
-		-- Check to ensure that the master defintion returns something for
-		-- each key from ThemePrefs.ini
 		if SL_CustomPrefs[k] then
-
-			-- if we reach here, the setting exists in both the master definition
-			-- as well as the user's ThemePrefs.ini; check for type mismatch now
-			if type( v ) ~= type( SL_CustomPrefs[k].Default ) then
-
-				-- in the event of a type mismatch, overwrite the user's erroneous setting with the default value
+			-- if we reach here, the setting exists in both the master definition as well as the user's ThemePrefs.ini
+			-- so perform some rudimentary validation; check for both type mismatch and presence in SL_CustomPrefs
+			if type( v ) ~= type( SL_CustomPrefs[k].Default )
+			or not FindInTable(v, (SL_CustomPrefs[k].Values or SL_CustomPrefs[k].Choices))
+			then
+				-- overwrite the user's erroneous setting with the default value
 				ThemePrefs.Set(k, SL_CustomPrefs[k].Default)
 			end
+
+		-- It's possible a setting exists in the ThemePrefs.ini file, but does
+		-- not exist in SL_CustomPrefs, where we define the ThemePrefs for this theme.
+		-- If that happens, use the ThemePrefs utility to set that key to a value of nil.
+		-- keys with nil values won't be written to disk during Save(), so the problematic
+		-- setting will effectively be removed.
+		else
+			ThemePrefs.Set(k, nil)
 		end
 	end
 end
+
+-- call Save() now; this will create a [Simply Love] section
+-- in ./Save/ThemePrefs.ini if one was not found
+ThemePrefs.Save()

@@ -101,7 +101,7 @@ local t = Def.ActorFrame {
 				SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
 			else
 				if SL.Global.Stages.PlayedThisGame == 0 then
-					SL.Global.GameMode = "Competitive"
+					SL.Global.GameMode = "ITG"
 					SetGameModePreferences()
 					THEME:ReloadMetrics()
 					SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM"):StartTransitioningScreen("SM_GoToNextScreen")

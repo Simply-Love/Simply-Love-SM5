@@ -2,7 +2,7 @@ local GetCourseOrTrailBPMs = function(entries)
 	local lowest, highest
 
 	for i, entry in ipairs(entries) do
-		-- courseEntry:GetSong() will return nil randomly generated courses :(
+		-- courseEntry:GetSong() will return nil for randomly generated courses :(
 		local song = entry:GetSong()
 		if song==nil then return end
 
