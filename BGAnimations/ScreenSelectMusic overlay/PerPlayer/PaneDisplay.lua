@@ -3,16 +3,61 @@ local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
 
 local rv
-local zoom_factor = WideScale(0.8,0.9)
+local zoom_factor = WideScale(0.7,0.8)
+--local zoom_factor = WideScale(0.8,0.9)
 
-local labelX_col1 = WideScale(-70,-90)
-local dataX_col1  = WideScale(-75,-96)
+--This function rounds to a single decimal place.
+function roundOne(number)
+	return math.floor(number * 10) / 10
+end
 
-local labelX_col2 = WideScale(10,20)
-local dataX_col2  = WideScale(5,15)
 
-local highscoreX = WideScale(56, 80)
-local highscorenameX = WideScale(61, 97)
+local x2 = -40
+local y2 = x2 + 10
+local x3 = 30
+local y3 = x3 + 10
+local x4 = 64
+local y4 = x4 + 24
+--These refer to the Notes per Second.
+local npsL = 38
+local npsD = 38
+
+--16:9
+if (roundOne(GetScreenAspectRatio()) == 1.7) then
+	x2 = -38
+	y2 = x2 + 10
+	x3 = 50
+	y3 = x3 + 10
+	x4 = 83
+	y4 = x4 + 24
+	npsL = 43
+	npsD = 43
+	--4:3
+	else
+		if (roundOne(GetScreenAspectRatio()) == 1.3) then
+			 x2 = -30
+			 y2 = x2 + 10
+			 x3 = 30
+			 y3 = x3 + 10
+			 x4 = 64
+			 y4 = x4 + 24
+			 npsL = 32
+			 npsD = 32
+		end
+end
+
+
+local labelX_col1 = WideScale(-91,-111)
+local dataX_col1  = WideScale(-95,-116)
+
+local labelX_col2 = WideScale(x2,y2)
+local dataX_col2  = WideScale(x2-4,y2-4)
+
+local labelX_col3 = WideScale(x3,y3)
+local dataX_col3 = WideScale(x3-4,y3-4)
+
+local highscoreX = WideScale(x4,y4)
+local highscorenameX = WideScale(x4+4,y4+10)
 
 local PaneItems = {}
 
@@ -88,7 +133,28 @@ PaneItems[THEME:GetString("RadarCategory","Rolls")] = {
 		y = 186
 	}
 }
-
+PaneItems[THEME:GetString("RadarCategory","Fakes")] = {
+	rc = 'RadarCategory_Fakes',
+	label = {
+		x = labelX_col3,
+		y = 168,
+	},
+	data = {
+		x = dataX_col3,
+		y = 168
+	}
+}
+PaneItems[THEME:GetString("RadarCategory","Lifts")] = {
+	rc = 'RadarCategory_Lifts',
+	label = {
+		x = labelX_col3,
+		y = 186,
+	},
+	data = {
+		x = dataX_col3,
+		y = 186
+	}
+}
 
 local GetNameAndScore = function(profile)
 	local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
@@ -267,7 +333,68 @@ pd[#pd+1] = Def.BitmapText{
 	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }
 
+--Notes per second Label
+pd[#pd+1] = Def.BitmapText{
+	Font="_miso",
+	Name="npsLabel",
+	-- I'm unsure why labelX_col3 doesn't simply get the job done, but eh this does the trick as well
+	InitCommand=cmd(zoom, zoom_factor; x, labelX_col3-npsL; y, 156; diffuse, Color.Black; shadowlength, 0.2; halign, 0; queuecommand, "Set"),
+	SetCommand=function(self)
+		self:settext("N/s")
 
+	end
+}
+
+-- Notes per Second data
+pd[#pd+1] = Def.BitmapText{
+	Font="_miso",
+	Name="nps",
+	-- I'm unsure why dataX_col3 doesn't simply get the job done, but eh this does the trick as well
+	InitCommand=cmd(zoom, zoom_factor; x, dataX_col3-npsD; y, 156; diffuse, Color.Black; shadowlength, 0.2; halign, 1; queuecommand, "Set"),
+	SetCommand=function(self)
+		-- Getting the notes per second
+		local duration
+		local nps
+
+		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		if not song then
+			self:settext("?")
+			return
+		end
+		local steps1 = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+
+		if steps1 then
+			rr = steps1:GetRadarValues(player)
+			local va = rr:GetValue( 'RadarCategory_TapsAndHolds' )
+
+			if GAMESTATE:IsCourseMode() then
+				local Playahs = GAMESTATE:GetHumanPlayers()
+				local playah = Playahs[1]
+				local trail = GAMESTATE:GetCurrentTrail(playah)
+
+				if trail then
+					duration = TrailUtil.GetTotalSeconds(trail)
+				end
+			else
+				local song = GAMESTATE:GetCurrentSong()
+				if song then
+					duration = song:GetLastSecond() - song:GetFirstSecond()
+				end
+			end
+
+			duration = duration / SL.Global.ActiveModifiers.MusicRate
+
+			local minutes = 0
+			--Calculation of Notes for second here. Accurate to 2 decimal places
+			nps = (va / duration) - ((va / duration) % .01)
+			if (nps < 0) then
+				self:settext('?')
+			else
+				self:settext(nps)
+			end
+		end
+	end
+}
 --PLAYER PROFILE high score
 pd[#pd+1] = Def.BitmapText{
 	Font="_miso",
