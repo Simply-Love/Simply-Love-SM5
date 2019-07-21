@@ -1,11 +1,13 @@
--- dbk2 wrote this code; it's not very efficient
--- you probably shouldn't use it
+-- THE BEST WAY TO SPREAD HOLIDAY CHEER IS SINGING LOUD FOR ALL TO HEAR
 
+-- -----------------------------------
 -- variables you might want to configure to your liking
-local num_particles = 1000
+
+-- starting values (these can be manipulated later as needed)
+local num_particles = 200
 -- particle size in pixels
-local min_size = 2
-local max_size = 14
+local min_size = 12
+local max_size = 35
 -- particle velocity in pixels per second
 local min_vx = -7
 local max_vx = 7
@@ -14,82 +16,83 @@ local max_vy = 85
 -- try to keep it SFW
 local path_to_texture = THEME:GetPathB("","_shared background normal/snowflake.png")
 
--- -----------------------------------
-local verts = {}
-local velocities = {}
-local x, y, size, alpha, index
-local amv
-local delta_x, delta_y
+-----------------
+-- Taro wrote the original version of this code, dbk2 h*cked it up from there
+
+local wrap_buffer = 50 --how far offscreen should it be before it wraps
+
+--we will need these later
+local dbk_snow = {} --recycling is good for the environment
+local dbk_sptr = 0 --it's a ''''pointer'''' to a snow object
+
+local make_snow = function(obj)
+    table.insert( dbk_snow, {actor = obj, xspd = 0, yspd = 0, size = 0} ) --shovel snow
+end
 
 local Update = function(self, delta)
+	for i=1,table.getn(dbk_snow) do
+		local a = dbk_snow[i]
 
-	-- each particle is a quadrilateral comprised of four vertices (with a texture applied)
-	-- we want to update each of those four vertices for each of the quadrilaterals
-	for i=1, num_particles*4, 4 do
-		index = math.floor(i/4)+1
+		if a then
+			local b = a.actor
+			if b then
 
-		-- update the 4 x coordinates belonging to this particle
-		delta_x = velocities[index][1]*delta
-		verts[i+0][1][1] = verts[i+0][1][1] + delta_x
-		verts[i+1][1][1] = verts[i+1][1][1] + delta_x
-		verts[i+2][1][1] = verts[i+2][1][1] + delta_x
-		verts[i+3][1][1] = verts[i+3][1][1] + delta_x
+				b:visible(true)
+				if b:getaux() < 1 then
+					b:aux( b:getaux() + delta )
+					b:diffusealpha( b:getaux() )
+				end
 
-		-- update the 4 y coordinates belonging to this particle
-		delta_y = velocities[index][2]*delta
-		verts[i+0][1][2] = verts[i+0][1][2] + delta_y
-		verts[i+1][1][2] = verts[i+1][1][2] + delta_y
-		verts[i+2][1][2] = verts[i+2][1][2] + delta_y
-		verts[i+3][1][2] = verts[i+3][1][2] + delta_y
+				b:addx( a.xspd*delta )
+				b:addy( a.yspd*delta )
 
-		-- if the top of this particular quadrilateral within the AMV has gone off
-		-- the bottom of the screen, reset its properties to reuse it
-		if (verts[i+0][1][2] > _screen.h+(verts[i+2][1][2]-verts[i+0][1][2])) then
-			-- re-randomize velocities as {vx, vy}
-			velocities[index] = {math.random(min_vx,max_vx), math.random(min_vy,max_vy)}
-			-- re-randomize particle size
-			size = math.random(min_size, max_size)
-			-- re-randomize starting x position
-			x = math.random(_screen.w + size*2)
-			-- reset starting y position to be just above the top of the screen
-			verts[i+0][1] = {x-size, -size, 0}
-			verts[i+1][1] = {x, -size, 0}
-			verts[i+2][1] = {x, 0, 0}
-			verts[i+3][1] = {x-size, 0, 0}
+				if b:GetY() > (_screen.h + wrap_buffer) then
+					b:y( (-wrap_buffer*2) )
+				end
+				if b:GetX() < 0 then
+					b:x( math.random( -40, math.floor(_screen.w)+40 )  )
+				end
+			end
 		end
 	end
-
-	amv:SetVertices(verts)
 end
 
-local af = Def.ActorFrame{ InitCommand=function(self) self:SetUpdateFunction( Update ) end }
+local af = Def.ActorFrame{
+	InitCommand=function(self) self:SetUpdateFunction( Update ) end,
+	OnCommand=function(self) self:sleep(0.02):queuecommand("Make") end,
+	MakeCommand=function(self)
+		for i=1,table.getn(dbk_snow) do
+			local a = dbk_snow[i]
+			if a then
+				a.xspd = math.random( min_vx, max_vx )
+				a.yspd = math.random( min_vy, max_vy )
 
--- initialize the verts table
-for i=1, num_particles do
-	size = math.random(min_size, max_size)
-	x = math.random(_screen.w + size*2)
-	y = math.random(_screen.h + size*2)
-	velocities[i] = {math.random(min_vx,max_vx), math.random(min_vy,max_vy)}
-	alpha = math.random(6, 10)/10
+				a.size = math.random(min_size,max_size)+(i/table.getn(dbk_snow)) --configurable at top of file
 
-	table.insert( verts, {{x-size, y-size, 0}, {1,1,1,alpha}, {0,0} } )
-	table.insert( verts, {{x, y-size, 0}, {1,1,1,alpha}, {1,0} } )
-	table.insert( verts, {{x, y, 0}, {1,1,1,alpha}, {1,1} } )
-	table.insert( verts, {{x-size, y, 0}, {1,1,1,alpha}, {0,1} } )
-end
+				local b = a.actor
+				if b then
+					b:x( math.random( -40, math.floor(_screen.w)+40 ) )
+					b:y( math.random( -40, math.floor(_screen.h)+40 ) )
+					b:zoomto( a.size, a.size )
+
+					if ThemePrefs.Get("VisualTheme") == "Gay" then b:effectoffset( math.random() ):rainbow() end
+				end
+			end
+		end
+	end
+}
 
 -- background Quad with a black-to-blue gradient
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:FullScreen():Center():diffusetopedge(Color.Black):diffusebottomedge(color("#061f4f")) end
 }
 
-af[#af+1] = Def.ActorMultiVertex{
-	InitCommand=function(self)
-		self:SetDrawState( {Mode="DrawMode_Quads"} )
-			:LoadTexture( path_to_texture )
-			:SetVertices( verts )
-		amv = self
-	end
-}
+for i=1,num_particles do
+    af[#af+1] = LoadActor( path_to_texture )..{
+        OnCommand=cmd(visible,false; queuecommand,"Make"),
+        HideCommand=cmd(visible,false),
+        MakeCommand=function(self) make_snow(self) end --use our function from earlier!
+    }
+end
 
 return af

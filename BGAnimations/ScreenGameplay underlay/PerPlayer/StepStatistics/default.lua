@@ -10,7 +10,9 @@ then
 	return
 end
 
-return Def.ActorFrame{
+local af = Def.ActorFrame{}
+
+af[#af+1] = Def.ActorFrame{
 	InitCommand=function(self)
 
 		if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
@@ -36,3 +38,21 @@ return Def.ActorFrame{
 	LoadActor("./JudgmentNumbers.lua", player),
 	LoadActor("./DensityGraph.lua", player),
 }
+
+-- The density histogram will scroll horizontally for sufficiently long songs
+-- (see comments in DensityGraph.lua). We want to hide the scrolling histogram
+-- past a certain point so that it doesn't, for example, scroll underneath the
+-- player's notefield.
+--
+-- A previous strategy here was to use a half-width Quad that was drawn over the
+-- histogram, but under everything else in Gameplay so that the histogram could
+-- scroll under it as needed.  A side-effect was that the Quad then blocked the
+-- background art from view, and many players reported this as a bug.
+--
+-- The current solution to this problem is to load a copy of the CurrentSong's
+-- background into a Sprite, and crop and position that appropriately, similar
+-- to the Quad I was using before.
+
+af[#af+1] = LoadActor("./SongBackground.lua", player)
+
+return af

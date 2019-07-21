@@ -20,8 +20,10 @@ end
 -- Other times, we need to be able to localize the choices presented to the player but also
 -- maintain an internal value that code within the theme can rely on regardless of language.
 --
--- For each of the subtables in Overrides, you must specify a 'Choices' function and/or a 'Values' function
--- that returns a table of strings of valid choices.
+-- For each of the subtables in Overrides, you must specify 'Choices' and/or 'Values' depending on your
+-- needs. Each can be either a table of strings or a function that returns a table of strings.
+-- Using a function can be helpful when the OptionRow needs to present different options depending
+-- on certain conditions.
 --
 -- If you specify only 'Choices', the engine presents the strings exactly as-is and also uses those
 -- same strings internally.
@@ -54,14 +56,14 @@ end
 --		OffCommand; can also be called because ExportOnChange=true
 
 
--- It's not necessary to define each possible key for each OptionRow.  Anything you don't specifiy
+-- It's not necessary to define each possible key for each OptionRow.  Anything you don't specify
 -- will use fallback values in OptionRowDefault (defined later, below).
 
 local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Choices = function() return { "x", "C", "M" } end,
+		Choices = { "x", "C", "M" },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
@@ -76,7 +78,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	SpeedMod = {
-		Choices = function() return { "       " } end,
+		Choices = { "       " },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		LoadSelections = function(self, list, pn)
@@ -128,7 +130,7 @@ local Overrides = {
 				end
 			end
 
-			-- It's possible a user might want to hide stock notesksins
+			-- It's possible a user might want to hide stock noteskins
 			-- but only have stock noteskins.  If so, just return all noteskins.
 			if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
 
@@ -161,7 +163,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
-		Values = function() return { 'Off','Dark','Darker','Darkest' } end,
+		Values = { 'Off','Dark','Darker','Darkest' },
 	},
 	-------------------------------------------------------------------------
 	Mini = {
@@ -233,7 +235,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" } end,
+		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets 	or false
@@ -279,9 +281,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetScore = {
-		Values = function()
-			return { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' }
-		end,
+		Values = { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' },
 		LoadSelections = function(self, list, pn)
 			local i = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore) or 11
 			list[i] = true
@@ -295,7 +295,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ActionOnMissedTarget = {
-		Values = function() return { "Nothing", "Fail", "Restart" } end,
+		Values = { "Nothing", "Fail", "Restart" },
 	},
 	-------------------------------------------------------------------------
 	GameplayExtras = {
@@ -308,17 +308,17 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
-		Values = function() return { "None", "8th", "12th", "16th", "24th", "32nd" } end,
+		Values = { "None", "8th", "12th", "16th", "24th", "32nd" },
 	},
 	-------------------------------------------------------------------------
 	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = function() return { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" } end,
+		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" },
 	},
 	-------------------------------------------------------------------------
 	WorstTimingWindow = {
 		Choices = function()
-			local tns = "TapNoteScore" .. (SL.Global.GameMode=="Competitive" and "" or SL.Global.GameMode)
+			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 			local t = {THEME:GetString("SLPlayerOptions","None")}
 			-- assume pluralization via terminal s
 			t[2] = THEME:GetString(tns,"W5").."s"
@@ -353,7 +353,7 @@ local Overrides = {
 					if PREFSMAN:PreferenceExists("TimingWindowSecondsW"..gmods.WorstTimingWindow) then
 						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..gmods.WorstTimingWindow])
 					else
-						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, 0)
+						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, -math.abs(math.random(math.floor(math.pi))))
 					end
 				end
 			end
@@ -362,7 +362,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Vocalization = {
 		Choices = function()
-			-- Allow users to artbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
+			-- Allow users to arbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 			-- and have those vocalizations be automatically detected
 			local vocalizations = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
 			table.insert(vocalizations, 1, "None")
@@ -376,11 +376,11 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ReceptorArrowsPosition = {
-		Choices = function() return { "StomperZ", "ITG" } end,
+		Choices = { "StomperZ", "ITG" },
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
-		Values = function() return { "Standard", "Surround", "Vertical" } end,
+		Values = { "Standard", "Surround", "Vertical" },
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
@@ -448,16 +448,16 @@ local OptionRowDefault = {
 
 			if Overrides[name].Values then
 				if Overrides[name].Choices then
-					self.Choices = Overrides[name].Choices()
+					self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
 				else
 					self.Choices = {}
-					for i, v in ipairs( Overrides[name].Values() ) do
+					for i, v in ipairs( (type(Overrides[name].Values)=="function" and Overrides[name].Values() or Overrides[name].Values) ) do
 						self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
 					end
 				end
-				self.Values = Overrides[name].Values()
+				self.Values = type(Overrides[name].Values)=="function" and Overrides[name].Values() or Overrides[name].Values
 			else
-				self.Choices = Overrides[name].Choices()
+				self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
 			end
 
 			-- define fallback values to use here if an override isn't specified
@@ -535,7 +535,7 @@ function ApplyMods(player)
 	for name,value in pairs(Overrides) do
 		OptRow = CustomOptionRow( name )
 
-		-- LoadSelections() and SaveSelections() expect two arguments in addtion to self (the OptionRow)
+		-- LoadSelections() and SaveSelections() expect two arguments in addition to self (the OptionRow)
 		-- first, a table of true/false values corresponding to the OptionRow's Choices table
 		-- second, the player that this applies to
 		--

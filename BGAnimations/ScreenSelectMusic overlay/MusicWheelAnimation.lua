@@ -1,27 +1,42 @@
-local NumWheelItems = THEME:GetMetric("MusicWheel", "NumWheelItems")
 local t = Def.ActorFrame{}
+
+-- NumWheelItems under [MusicWheel] in Metrics.ini needs to be 17.
+-- Only 15 can be seen onscreen at once, but we use 1 extra on top and
+-- 1 extra at bottom so that MusicWheelItems don't visually
+-- appear/disappear too suddenly while quickly scrolling through the wheel.
+
+-- For this file just use a hardcoded 15, for the sake animating the
+-- "downward cascade" effect that occurs when SelectMusic first appears.
+local NumWheelItems = 15
 
 -- Each MusicWheelItem has two Quads drawn in front of it, blocking it from view.
 -- Each of these Quads is half the height of the MusicWheelItem, and their y-coordinates
 -- are such that there is an "upper" and a "lower" Quad.
+
 -- The upper Quad has cropbottom applied while the lower Quad has croptop applied
 -- resulting in a visual effect where the MusicWheelItems appear to "grow" out of the center to full-height.
 
--- Since the background of this screen is Black, we can get away with drawing Black Quads on top
--- of each MusicWheelItem and it looks fine.  If the background had been visually busy, these Quads
--- would need to be Masks.
-
-for i=1,NumWheelItems-1 do
+for i=1,NumWheelItems-2 do
 	-- upper
 	t[#t+1] = Def.Quad{
-		InitCommand=cmd(xy, _screen.cx+_screen.w/4, 9 + (_screen.h/(NumWheelItems+1))*i; zoomto, _screen.w/2, (_screen.h/(NumWheelItems))/2; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
-		OnCommand=cmd(sleep, i*0.057; linear,0.125; cropbottom,1; diffusealpha, 0.5; queuecommand, "Hide"),
+		InitCommand=function(self)
+			self:x( _screen.cx+_screen.w/4 )
+				:y( 9 + (_screen.h/NumWheelItems)*i )
+				:zoomto(_screen.w/2, (_screen.h/NumWheelItems)/2)
+				:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
+		end,
+		OnCommand=cmd(sleep, i*0.05; linear,0.1; cropbottom,1; diffusealpha, 0.25; queuecommand, "Hide"),
 		HideCommand=function(self) self:visible(false) end
 	}
 	-- lower
 	t[#t+1] = Def.Quad{
-		InitCommand=cmd(xy, _screen.cx+_screen.w/4, 25 + (_screen.h/(NumWheelItems+1))*i; zoomto, _screen.w/2, (_screen.h/(NumWheelItems))/2; diffuse, ThemePrefs.Get("RainbowMode") and Color.White or Color.Black),
-		OnCommand=cmd(sleep, i*0.057; linear,0.125; croptop,1; diffusealpha, 0.5; queuecommand, "Hide"),
+		InitCommand=function(self)
+			self:x( _screen.cx+_screen.w/4 )
+				:y( 25 + (_screen.h/NumWheelItems)*i )
+				:zoomto(_screen.w/2, (_screen.h/NumWheelItems)/2)
+				:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
+		end,
+		OnCommand=cmd(sleep, i*0.05; linear,0.1; croptop,1; diffusealpha, 0.25; queuecommand, "Hide"),
 		HideCommand=function(self) self:visible(false) end
 	}
 end

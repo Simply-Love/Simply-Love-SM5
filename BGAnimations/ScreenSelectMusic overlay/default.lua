@@ -3,6 +3,8 @@ local t = Def.ActorFrame{
 		self:playcommand("StepsHaveChanged", params)
 	end,
 
+	-- MenuButton code for backing out of SelectMusic when in EventMode
+	LoadActor("./EscapeFromEventMode.lua"),
 	-- make the MusicWheel appear to cascade down
 	LoadActor("./MusicWheelAnimation.lua"),
 	-- Apply player modifiers from profile

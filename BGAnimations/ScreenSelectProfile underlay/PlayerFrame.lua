@@ -62,15 +62,29 @@ return Def.ActorFrame{
 
 
 	-- dark frame prompting players to "Press START to join!"
+	-- (or "Enter credits to join!" depending on CoinMode and available credits)
 	Def.ActorFrame {
 		Name='JoinFrame',
 		FrameBackground(Color.Black, player),
 
-		LoadFont("_miso") .. {
-			Text=THEME:GetString("ScreenSelectProfile", "PressStartToJoin"),
-			InitCommand=cmd(diffuseshift;effectcolor1,Color('White');effectcolor2,color("0.5,0.5,0.5");diffusealpha,0;maxwidth,180),
+		LoadFont("_miso")..{
+			InitCommand=function(self)
+				if IsArcade() and not GAMESTATE:EnoughCreditsToJoin() then
+					self:settext( THEME:GetString("ScreenSelectProfile", "EnterCreditsToJoin") )
+				else
+					self:settext( THEME:GetString("ScreenSelectProfile", "PressStartToJoin") )
+				end
+
+				self:diffuseshift():effectcolor1(1,1,1,1):effectcolor2(0.5,0.5,0.5,1)
+				self:diffusealpha(0):maxwidth(180)
+			end,
 			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
-			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end
+			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+			CoinsChangedMessageCommand=function(self)
+				if IsArcade() and GAMESTATE:EnoughCreditsToJoin() then
+					self:settext(THEME:GetString("ScreenSelectProfile", "PressStartToJoin"))
+				end
+			end
 		},
 	},
 

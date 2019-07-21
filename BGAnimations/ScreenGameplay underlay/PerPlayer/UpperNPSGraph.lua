@@ -17,7 +17,7 @@ if styletype == "OnePlayerTwoSides" or styletype == "TwoPlayersSharedSides" then
 	width = width/2
 end
 
-local song_percent, last_second
+local song_percent, first_second, last_second
 
 return Def.ActorFrame{
 	InitCommand=function(self)
@@ -30,6 +30,7 @@ return Def.ActorFrame{
 	end,
 	-- called at the start of each new song in CourseMode, and once at the start of regular gameplay
 	CurrentSongChangedMessageCommand=function(self)
+		first_second = GAMESTATE:GetCurrentSong():GetTimingData():GetElapsedTimeFromBeat(0)
 		last_second = GAMESTATE:GetCurrentSong():GetLastSecond()
 		self:queuecommand("Size")
 	end,
@@ -60,9 +61,8 @@ return Def.ActorFrame{
 				:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
-			song_percent = scale( GAMESTATE:GetCurMusicSeconds(), 0, last_second, 0, width )
-			-- song_percent can be negative but we don't want to draw this Quad during that time, so use math.max()
-			self:zoomtowidth( math.max(song_percent, 0) ):sleep(0.25):queuecommand("Update")
+			song_percent = scale( GAMESTATE:GetCurMusicSeconds(), first_second, last_second, 0, width )
+			self:zoomtowidth(clamp(song_percent, 0, width)):sleep(0.25):queuecommand("Update")
 		end,
 		CurrentSongChangedMessageCommand=function(self) self:zoomto(0, height) end
 	}

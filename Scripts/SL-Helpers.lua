@@ -17,34 +17,84 @@ function Border(width, height, bw)
 end
 
 ------------------------------------------------------------------------------
--- Is this even how this works?  I need to research this more.
-local OnlyASCII = function(text)
+-- There's surely a better way to do this.  I need to research this more.
+local is8bit = function(text)
 	return text:len() == text:utf8len()
+end
+
+-- FIXME: overriding the engine's API like this is convenient but will likely cause things
+-- to go haywire if the user switches themes.  I need to think about this.
+BitmapText.wrapwidthpixels_orignal = BitmapText.wrapwidthpixels
+
+BitmapText.wrapwidthpixels = function(bmt, w)
+	local text = bmt:GetText()
+
+	if not is8bit(text) then
+		local lower = 200
+		local upper = 240
+		bmt:settext("")
+
+		for i=1, text:utf8len() do
+			local c = text:utf8sub(i,i)
+			local b = c:byte()
+
+			-- if adding this character causes the displayed string to be wider than allowed
+			if bmt:settext( bmt:GetText()..c ):GetWidth() > w then
+				-- and if that character just added was in the jp range (...maybe)
+				if b < upper and b >= lower then
+					-- then insert a newline between the previous character and the current
+					-- character that caused us to go over
+					bmt:settext( bmt:GetText():utf8sub(1,-2).."\n"..c )
+				else
+					-- otherwise it's trickier, as romance languages only really allow newlines
+					-- to be inserted between words, not in the middle of single words
+					-- we'll have to "peel back" a character at a time until we hit whitespace
+					-- or something in the jp range
+					local _text = bmt:GetText()
+
+					for j=i,1,-1 do
+						local _c = _text:utf8sub(j,j)
+						local _b = _c:byte()
+
+						if _c:match("%s") or (_b < upper and _b >= lower) then
+							bmt:settext( _text:utf8sub(1,j) .. "\n" .. _text:utf8sub(j+1) )
+							break
+						end
+					end
+				end
+			end
+		end
+	else
+		bmt:wrapwidthpixels_orignal(w)
+	end
+
+	-- return the BitmapText actor in case the theme is chaining actor commands
+	return bmt
 end
 
 BitmapText.Truncate = function(bmt, m)
 	local text = bmt:GetText()
 	local l = text:len()
 
-	-- With SL's Miso and JP fonts, ASCII characters (Miso) tend to render 2-3x less wide
+	-- With SL's Miso and JP fonts, english characters (Miso) tend to render 2-3x less wide
 	-- than JP characters. If the text includes JP characters, it is (probably) desired to
 	-- truncate the string earlier to achieve the same effect.
-	-- Here, we are arbitrarily "weighting" JP characters to count 4x as much as one ASCII
+	-- Here, we are arbitrarily "weighting" JP characters to count 4x as much as one Miso
 	-- character and then scaling the point at which we truncate accordingly.
 	-- This is, of course, a VERY broad over-generalization, but It Works For Now™.
-	if not OnlyASCII(text) then
+	if not is8bit(text) then
 		l = 0
 
 		-- a range of bytes I'm considering to indicate JP characters,
 		-- mostly derived from empirical observation and guesswork
 		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
-		-- If you know more about how this actually works, please submit a pull request.
+		-- FIXME: If you know more about how this actually works, please submit a pull request.
 		local lower = 200
 		local upper = 240
 
 		for i=1, text:utf8len() do
 			local b = text:utf8sub(i,i):byte()
-			l = l + ((b < upper and b > lower) and 4 or 1)
+			l = l + ((b < upper and b >= lower) and 4 or 1)
 		end
 		m = math.floor(m * (m/l))
 	end
@@ -53,7 +103,11 @@ BitmapText.Truncate = function(bmt, m)
 	if l <= m then return end
 	-- otherwise, replace everything after the truncate point with an ellipsis
 	bmt:settext( text:utf8sub(1, m) .. "…" )
+
+	-- return the BitmapText actor in case the theme is chaining actor commands
+	return bmt
 end
+
 
 
 ------------------------------------------------------------------------------
@@ -199,7 +253,7 @@ function GetComboThreshold( MaintainOrContinue )
 
 
 	if CurrentGame ~= "para" then
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="ECFA" then
+		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="FA+" then
 			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
 			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
 		end
@@ -241,9 +295,14 @@ function SetGameModePreferences()
 		GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):MinTNSToHideNotes(SL.Preferences[SL.Global.GameMode].MinTNSToHideNotes)
 	end
 
+	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
+	-- Stats.xml, ECFA-Stats.xml, StomperZ-Stats.xml, Casual-Stats.xml
+	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"
+	-- and I don't want to deal with renaming relatively critical files from the theme.
+	-- Thus, scores from FA+ mode will continue to go into ECFA-Stats.xml.
 	local prefix = {
-		Competitive = "",
-		ECFA = "ECFA-",
+		ITG = "",
+		["FA+"] = "ECFA-",
 		StomperZ = "StomperZ-",
 		Casual = "Casual-"
 	}
@@ -284,7 +343,7 @@ end
 
 
 function GetSimplyLoveOptionsLineNames()
-	local lines = "CasualMaxMeter,AutoStyle,DefaultGameMode,TimingWindowAdd,CustomFailSet,CreditStacking,MusicWheelStyle,MusicWheelSpeed,SelectProfile,SelectColor,EvalSummary,NameEntry,GameOver,HideStockNoteSksins,DanceSolo,GradesInMusicWheel,Nice,VisualTheme,RainbowMode"
+	local lines = "CasualMaxMeter,AutoStyle,DefaultGameMode,CustomFailSet,CreditStacking,MusicWheelStyle,MusicWheelSpeed,SelectProfile,SelectColor,EvalSummary,NameEntry,GameOver,HideStockNoteSksins,DanceSolo,Nice,VisualTheme,RainbowMode"
 	if Sprite.LoadFromCached ~= nil then
 		lines = lines .. ",UseImageCache"
 	end
@@ -405,7 +464,7 @@ function StripSpriteHints(filename)
 end
 
 function GetJudgmentGraphics(mode)
-	if mode == 'Casual' then mode = 'Competitive' end
+	if mode == 'Casual' then mode = 'ITG' end
 	local path = THEME:GetPathG('', '_judgments/' .. mode)
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}

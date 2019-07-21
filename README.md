@@ -43,9 +43,9 @@ Or, *things I've added that were not present in the original Simply Love for Ste
 
 #### New GameModes
 
-* [Casual](http://imgur.com/zLLhDWQh.png) – Intended for novice players; restricted song list, no failing, no LifeMeter, simplified UI, etc.  You can read more about customizing what content appears in Casual Mode [here](./CasualMode-README.md).
-* [Competitive](http://imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
-* [ECFA](http://imgur.com/teZtlbih.png) – Similar to Competitive, but features tighter TimingWindows; can be used to qualify for ECFA events
+* [Casual](http://imgur.com/zLLhDWQh.png) – Intended for novice players; restricted song list, no failing, no LifeMeter, simplified UI, etc.  You can read more about customizing what content appears in Casual Mode [here](./Other/CasualMode-README.md).
+* [ITG](http://imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
+* [FA+](http://imgur.com/teZtlbih.png) – Similar to ITG, but features tighter TimingWindows; can be used to qualify for ECFA events
 * [StomperZ](http://imgur.com/dOKTpVbh.png) – Emulates a very small set of features from Rhythm Horizon gameplay
 
 #### New Auxiliary Features
@@ -75,6 +75,7 @@ Simply Love has full support for:
   * Español
   * Français
   * Português Brasileiro
+  * 日本語
 
 The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
 
@@ -98,7 +99,7 @@ Your existing scores will remain ranked out of order, but all scores going forwa
 See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/wiki/Manually-Changing-Preferences) page on StepMania's GitHub Wiki.
 
 #### How can I get more songs to show up in Casual Mode?
-Please refer to the [Casual Mode README](./CasualMode-README.md).
+Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
 
 ---
 

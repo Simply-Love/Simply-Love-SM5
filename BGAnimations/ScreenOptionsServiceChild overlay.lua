@@ -38,7 +38,7 @@ af[#af+1] = Def.BitmapText{
 			:wrapwidthpixels(bg_width-padding*2)
 	end,
 	UpdateCommand=function(self, params)
-		self:settext( THEME:GetString("OptionExplanations", params.Name) )
+		self:settext( THEME:GetString("OptionExplanations", params.Name) ):wrapwidthpixels(bg_width-padding*2)
 	end
 }
 
@@ -61,6 +61,7 @@ af[#af+1] = Def.ActorFrame{
 		UpdateCommand=function(self, params)
 			if THEME:HasString("RecommendedOptionExplanations", params.Name) then
 				self:settext( recommended_string .. ": " .. THEME:GetString("RecommendedOptionExplanations", params.Name) )
+				self:wrapwidthpixels(bg_width-padding*2)
 			else
 				self:settext("")
 			end

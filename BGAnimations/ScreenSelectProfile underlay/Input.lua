@@ -8,8 +8,21 @@ local Handle = {}
 Handle.Start = function(event)
 	local topscreen = SCREENMAN:GetTopScreen()
 
+	-- if the input event came from a side that is not currently registered as a human player, we'll either
+	-- want to reject the input (we're in Pay mode and there aren't enough credits to join the player),
+	-- or we'll use ScreenSelectProfile's inscrutibly custom SetProfileIndex() method to join the player.
 	if not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-		-- pass -1 to SetProfileIndex() to join that player
+
+		-- IsArcade() is defined in _fallback/Scripts/02 Utilities.lua
+		-- in CoinMode_Free, EnoughCreditsToJoin() will always return true
+		-- thankfully, EnoughCreditsToJoin() factors in Premium settings
+		if IsArcade() and not GAMESTATE:EnoughCreditsToJoin() then
+			-- play the InvalidChoice sound and don't go any further
+			MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
+			return
+		end
+
+		-- otherwise, pass -1 to SetProfileIndex() to join that player
 		-- see ScreenSelectProfile.cpp for details
 		topscreen:SetProfileIndex(event.PlayerNumber, -1)
 	else

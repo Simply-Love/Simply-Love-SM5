@@ -869,7 +869,7 @@ local Update = function(self, delta)
 			end
 		end
 
-		local items = {"IconChoiceCasual","IconChoiceCompetitive","IconChoiceECFA","IconChoiceStomperZ"}
+		local items = {"IconChoiceCasual","IconChoiceITG","IconChoiceFA+","IconChoiceStomperZ"}
 		if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2Thonk" then
 			items = {"IconChoiceRegular","IconChoiceMarathon"}
 		end

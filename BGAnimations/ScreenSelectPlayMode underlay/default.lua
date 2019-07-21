@@ -49,7 +49,7 @@ local t = Def.ActorFrame{
 		self:queuecommand("Update")
 	end,
 	OffCommand=function(self)
-		if ScreenName == "ScreenSelectPlayMode" then
+		if ScreenName=="ScreenSelectPlayMode" or ScreenName=="ScreenSelectPlayModeThonk" then
 			-- set the GameMode now; we'll use it throughout the theme
 			-- to set certain Gameplay settings and determine which screen comes next
 			SL.Global.GameMode = choices[cursor.index+1]
@@ -158,7 +158,7 @@ local t = Def.ActorFrame{
 				if choices[cursor.index+1] == "Casual" then
 					self:stoptweening():linear(0.25):diffusealpha(0)
 				else
-					if choices[cursor.index+1] == "ECFA" then
+					if choices[cursor.index+1] == "FA+" then
 						self:settext("99.50")
 					else
 						self:settext("77.41")
@@ -167,7 +167,7 @@ local t = Def.ActorFrame{
 				end
 			else
 				self:diffusealpha(1)
-				if SL.Global.GameMode == "ECFA" then
+				if SL.Global.GameMode == "FA+" then
 					self:settext("99.50")
 				else
 					self:settext("77.41")
@@ -183,7 +183,7 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "Competitive" or choices[cursor.index+1] == "ECFA" then
+				if choices[cursor.index+1] == "ITG" or choices[cursor.index+1] == "FA+" then
 					self:stoptweening():linear(0.25):diffusealpha(1)
 				else
 					self:stoptweening():linear(0.25):diffusealpha(0)

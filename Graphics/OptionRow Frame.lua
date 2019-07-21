@@ -1,15 +1,26 @@
-local t = Def.ActorFrame{}
+local t = Def.ActorFrame{
+	InitCommand=function(self)
+		self:x(_screen.cx - WideScale(30,40))
+	end
+}
 
 -- a row
 t[#t+1] = Def.Quad {
 	Name="RowBackgroundQuad",
-	OnCommand=cmd(zoomto,_screen.w*0.85,_screen.h*0.0625;);
+	InitCommand=function(self)
+		self:setsize(WideScale(543,710), 30)
+	end
 }
 
 -- black quad behind the title
 t[#t+1] = Def.Quad {
 	Name="TitleBackgroundQuad",
-	OnCommand=cmd(halign, 0; x, -_screen.cx/1.1775; zoomto,_screen.w*WideScale(0.18,0.15),_screen.h*0.0625; diffuse, Color.Black; diffusealpha, BrighterOptionRows() and 0.8 or 0.25);
+	OnCommand=function(self)
+		self:horizalign(left):x(WideScale(-271.5, -355))
+		:setsize(115, 30)
+		:diffuse(Color.Black)
+		:diffusealpha(BrighterOptionRows() and 0.8 or 0.25)
+	end
 }
 
 -- This feels pretty hackish.
@@ -18,7 +29,7 @@ t[#t+1] = Def.Quad {
 -- Here, we're adding one ActorProxy per-player per-OptionRow.  That's a lot of ActorProxies that mostly aren't being used! :(
 --
 -- Once the OptionRows are ready (after the ScreenPlayerOptions is processed), we can check each OptionRow's name.
--- If GetName() returns "NoteSkin" then SetTarget() using the appropriate hidden NoteSkin actor.
+-- If GetName() returns "NoteSkin" or "JudgmentGraphic" then SetTarget() using the appropriate hidden actor.
 
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)
@@ -51,9 +62,7 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 				local noteskin_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin)
 
 				-- ensure that that NoteSkin actor exists before attempting to set it as the target of this ActorProxy
-				if noteskin_actor then
-					self:SetTarget( noteskin_actor )
-				end
+				if noteskin_actor then self:SetTarget( noteskin_actor ) end
 			end
 		end,
 		JudgmentGraphicChangedMessageCommand=function(self, params)
