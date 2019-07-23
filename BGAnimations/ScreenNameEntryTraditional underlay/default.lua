@@ -94,12 +94,14 @@ local t = Def.ActorFrame {
 	end
 }
 
-local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
+local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualTheme")
+local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")
+
 -- Things that are constantly on the screen (fallback banner + masks)
 t[#t+1] = Def.ActorFrame {
 
 	--fallback banner
-	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/colored_banners/".. (banner_directory[ThemePrefs.Get("VisualTheme")] or "Hearts") .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png"))..{
+	LoadActor(banner_directory .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png")..{
 		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 

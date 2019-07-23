@@ -40,7 +40,7 @@ end
 local style = ThemePrefs.Get("VisualTheme")
 local image = "TitleMenu"
 --SSHHHH dont tell anyone ;)
-if style=="Spooky" and math.random(1,100) > 11 then
+if style=="Spooky" and math.random(1,100) <= 10 then
 	image="TitleMenuAlt"
 end
 
