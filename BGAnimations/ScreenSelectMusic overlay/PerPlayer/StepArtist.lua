@@ -6,7 +6,6 @@ local text_table, marquee_index
 
 return Def.ActorFrame{
 	Name="StepArtistAF_" .. pn,
-	InitCommand=cmd(draworder,1),
 
 	-- song and course changes
 	OnCommand=cmd(queuecommand, "StepsHaveChanged"),
@@ -64,14 +63,12 @@ return Def.ActorFrame{
 	},
 
 	--STEPS label
-	Def.BitmapText{
-		Font="_miso",
+	LoadFont("_miso")..{
 		OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, Screen.String("STEPS"))
 	},
 
 	--stepartist text
-	Def.BitmapText{
-		Font="_miso",
+	LoadFont("_miso")..{
 		InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
 		StepsHaveChangedCommand=function(self)
 
