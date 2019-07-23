@@ -1,27 +1,32 @@
-local pn = ...
+local player = ...
 
-local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local PercentDP = stats:GetPercentDancePoints()
 local percent = FormatPercentScore(PercentDP)
 -- Format the Percentage string, removing the % symbol
 percent = percent:gsub("%%", "")
 
 return Def.ActorFrame{
-	Name="PercentageContainer"..ToEnumShortString(pn),
+	Name="PercentageContainer"..ToEnumShortString(player),
 	OnCommand=function(self)
 		self:y( _screen.cy-26 )
-		self:x( (pn == PLAYER_1 and -70) or 70 )
 	end,
 
 	-- dark background quad behind player percent score
 	Def.Quad{
-		InitCommand=cmd(diffuse, color("#101519"); zoomto, 160,60 )
+		InitCommand=function(self)
+			self:diffuse(color("#101519")):zoomto(158.5, 60)
+			self:horizalign(player==PLAYER_1 and left or right)
+			self:x(150 * (player == PLAYER_1 and -1 or 1))
+		end
 	},
 
 	LoadFont("_wendy white")..{
-		Text=percent,
 		Name="Percent",
-		InitCommand=cmd(vertalign, middle; horizalign, right; zoom,0.585 ),
-		OnCommand=cmd(x, 70)
+		Text=percent,
+		InitCommand=function(self)
+			self:horizalign(right):zoom(0.585)
+			self:x( (player == PLAYER_1 and 1.5 or 141))
+		end
 	}
 }
