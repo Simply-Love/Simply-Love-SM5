@@ -1,71 +1,39 @@
--- The rest of the code to handle score vocalizations exists in
--- ./BGAnimations/ScreenEvaluation common/ScoreVocalization.lua
--- which is, of course, loaded from
--- ./BGAnimations/ScreenEvaluation common/default.lua
+-- score vocalization assets can be downloaded at
+-- http://www.mediafire.com/file/mpsmto82d8diflr/Vocalize.zip
 
-function ParseScores(args)
-	local digits = {}
-
-	for k,arg in pairs(args) do
-		local score = arg[1]
-		local pn = arg[2]
-
-		score = score:gsub("%%","")
-		local int = math.floor(score)
-		local dec = tonumber(score:sub(-2))
-
-		if int == 100 then
-			digits[#digits+1] = {'quad', pn}
-
-		elseif score == 0 then
-			 digits[#digits+1] = {nil, pn}
-
-		else
-			if int < 20 or int % 10 == 0 then
-				digits[#digits+1] = {int, pn}
-				digits[#digits+1] = {'point', pn}
-			else
-				digits[#digits+1] = {int - int % 10, pn}
-				digits[#digits+1] = {int % 10, pn}
-				digits[#digits+1] = {'point', pn}
-			end
-
-			if dec < 20 == 0 then
-				digits[#digits+1] = {dec, pn}
-			else
-				digits[#digits+1] = {(dec - (dec % 10))/10, pn}
-
-				if dec % 10 ~= 0 then
-					digits[#digits+1] = {dec % 10, pn}
-				end
-			end
-		end
-	end
-
-	return digits
-end
-
-function GetVocalizeDir()
-	return THEME:GetCurrentThemeDirectory() .. "/Other/Vocalize/"
-end
-
--- global table for all available voices
--- we'll declare it here, and fill it with data below via dofile('path/to/voice/default.lua')
+-- -------------------------------------
+-- Vocalization is a global table that will contain timing data
+-- for each digit of each available voice
 Vocalization = {}
 
+-- voice directories should be installed in ./Simply Love/Other/Vocalize/
+-- but we can't assume that the theme directory will always be titled "Simply Love"
+-- maybe the path is ./Simply-Love-SM5-master/Other/Vocalize/
+-- maybe the path is ./Stamina-House-Tokyo/Other/Vocalize/
+-- maybe someone else has made a new theme and is using this code
+local vocalize_dir = THEME:GetCurrentThemeDirectory().."/Other/Vocalize/"
+
 -- what voice directories exist in ./Simply Love/Other/Vocalize/ ?
-local directories = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
+local directories = FILEMAN:GetDirListing(vocalize_dir, true, false)
 
 if #directories > 0 then
-	for k,directory in ipairs(directories) do
-		-- Dynamically fill the table.
-		local voice_path = THEME:GetPathO("","Vocalize/" .. directory .. "/default.lua", true)
+	for i, voice_dir in ipairs(directories) do
+		local path = vocalize_dir .. voice_dir .. "/default.lua"
 
-		-- load all available voices now
-		-- yes, it requires (a little) more memory, but this is safer
-		-- than attempting to load voices later, on-demand...
-		if voice_path ~= "" then
-			dofile(voice_path)
+		-- if a file exists at ./Simply Love/Other/Vocalize/[voice_dir]/default.lua
+		if FILEMAN:DoesFileExist(path) then
+			-- then we'll just hope that it contains nice, error-free code that will add
+			-- digit timing data for this voice directly to the Vocalization table
+			-- because that's the backwards-compatible corner we've backed ourselves into
+			dofile(path)
 		end
 	end
 end
+-- -------------------------------------
+
+-- a starry afternoon
+-- a sinking symphony
+-- and the polo champ
+-- who gave it all up
+-- for no reason
+-- whatsoever

@@ -364,10 +364,8 @@ function GetPlayerOptions2LineNames()
 		mods = mods:gsub("WorstTimingWindow,", ""):gsub("LifeMeterType", "")
 	end
 
-	local game = GAMESTATE:GetCurrentGame():GetName()
-
 	-- remove Vocalization if no voice packs were found in the filesystem
-	if #FILEMAN:GetDirListing(GetVocalizeDir() , true, false) < 1 then
+	if #FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/", true, false) < 1 then
 		mods = mods:gsub("Vocalization," ,"")
 	end
 
