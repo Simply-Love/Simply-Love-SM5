@@ -43,7 +43,7 @@ return Def.Sprite{
 		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
 
 		if SongOrCourse then
-			local StepsOrTrail = (GAMESTATE:IsCourseMode() and song:GetAllTrails()) or SongUtil.GetPlayableSteps( SongOrCourse )
+			local StepsOrTrail = (GAMESTATE:IsCourseMode() and SongOrCourse:GetAllTrails()) or SongUtil.GetPlayableSteps( SongOrCourse )
 
 			if StepsOrTrail then
 				self:playcommand("StepsHaveChanged", {Steps=GetStepsToDisplay(StepsOrTrail), Player=player})
