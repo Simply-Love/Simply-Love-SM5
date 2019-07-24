@@ -7,6 +7,9 @@ local songs = {
 	Spooky = "Spooky Scary Chiptunes",
 	Stars = "Shooting Star - faux VRC6 remix",
 	Thonk = "Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix",
+	PSU = "ZombieNation.ogg",
+	Cats = "NyanRemix.ogg",
+	
 }
 
 local style = ThemePrefs.Get("VisualTheme")
