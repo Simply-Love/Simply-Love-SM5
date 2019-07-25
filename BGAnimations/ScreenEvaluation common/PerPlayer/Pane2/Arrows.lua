@@ -45,8 +45,9 @@ local gmods = SL.Global.ActiveModifiers
 
 for i,column in ipairs( columns[game] ) do
 
-	-- The arrow for this column
-	af[#af+1] = NOTESKIN:LoadActorForNoteSkin( column, "Tap Note", noteskin)..{
+	-- GetNoteSkinActor() is defined in ./Scripts/SL-Helpers.lua, and performs some
+	-- rudimentary error handling because NoteSkins From The Internet™ may contain Lua errors
+	af[#af+1] = GetNoteSkinActor(noteskin, column)..{
 		InitCommand=function(self)
 			self:x( i*column_width ):zoom(0.4)
 		end
