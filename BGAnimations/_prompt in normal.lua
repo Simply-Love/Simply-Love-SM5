@@ -1,6 +1,4 @@
-return Def.ActorFrame {
-	LoadActor( THEME:GetPathS("", "_prompt") ) .. {
-		StartTransitioningCommand=cmd(play);
-	};
-	Def.Actor { OnCommand=cmd(sleep,0.3) };
-};
+return LoadActor(THEME:GetPathS("", "_prompt"))..{
+	OnCommand=function(self) self:sleep(0.3) end,
+	StartTransitioningCommand=function(self) self:play() end
+}
