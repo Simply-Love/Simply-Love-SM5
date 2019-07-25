@@ -90,7 +90,7 @@ then
 
 	pane[#pane+1] = LoadActor("../Pane2/Percentage.lua", player)
 
-	pane[#pane+1] = LoadFont("_miso")..{
+	pane[#pane+1] = LoadFont("Common Normal")..{
 		Text="GrooveStats QR",
 		InitCommand=function(self) self:xy(-140, 222):align(0,0) end
 	}
@@ -99,7 +99,7 @@ then
 		InitCommand=function(self) self:xy(-140, 245):zoomto(96,1):align(0,0):diffuse(1,1,1,0.33) end
 	}
 
-	pane[#pane+1] = LoadFont("_miso")..{
+	pane[#pane+1] = LoadFont("Common Normal")..{
 		Text=ScreenString("QRInstructions"),
 		InitCommand=function(self) self:zoom(0.8):xy(-140,255):wrapwidthpixels(96/0.8):align(0,0):vertspacing(-4) end
 	}

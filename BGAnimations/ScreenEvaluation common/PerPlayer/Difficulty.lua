@@ -4,7 +4,7 @@ local pn = PlayerNumber:Reverse()[player]
 return Def.ActorFrame{
 
 	-- difficulty text ("beginner" or "expert" or etc.)
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=function(self)
 			self:y(_screen.cy-64)
 			self:x(115 * (player==PLAYER_1 and -1 or 1))

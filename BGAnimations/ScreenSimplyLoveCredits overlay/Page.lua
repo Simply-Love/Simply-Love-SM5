@@ -90,7 +90,7 @@ for i=1, #people do
 
 	-- name / handle
 	af[#af+1] = Def.BitmapText{
-		Font="_miso",
+		Font="Common Normal",
 		Text=people[i].Name,
 		InitCommand=function(self)
 			local zoom_factor = scale(#people,2,5,1,0.75)
@@ -104,7 +104,7 @@ for i=1, #people do
 
 	-- about
 	af[#af+1] = Def.BitmapText{
-		Font="_miso",
+		Font="Common Normal",
 		Text=people[i].About,
 		InitCommand=function(self)
 			self:valign(0):halign(0):zoom(0.8)

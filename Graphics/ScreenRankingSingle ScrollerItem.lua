@@ -17,7 +17,7 @@ local HighScoreRow = Def.ActorFrame{
 	},
 
 	--the name of the song, on top of the graphical banner
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=cmd(x,WideScale(-220,-280); halign,0; shadowlength,1; wrapwidthpixels,264; maxheight,58; maxwidth,280),
 		SetCommand=function(self, params)
 			if params.Song then
@@ -76,7 +76,7 @@ for key, difficulty in ipairs(DifficultiesToShow) do
 
 	-- BitmapText actor for the name of the player and the high score itself
 	HighScore[#HighScore+1] = Def.BitmapText{
-		Font="_miso",
+		Font="Common Normal",
 		Name="HighScore_"..difficulty,
 		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; zoom,0.8; horizalign, center)
 	}

@@ -24,7 +24,7 @@ for i, label in ipairs(TapNoteScores.Names) do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
 	if i <= worst or i==#TapNoteScores.Names then
 
-		af[#af+1] = LoadFont("_miso")..{
+		af[#af+1] = LoadFont("Common Normal")..{
 			Text=label:upper(),
 			InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 72 ),
 			BeginCommand=function(self)
@@ -37,7 +37,7 @@ end
 
 -- labels: holds, mines, rolls
 for i, label in ipairs(RadarCategories) do
-	af[#af+1] = LoadFont("_miso")..{
+	af[#af+1] = LoadFont("Common Normal")..{
 		Text=label,
 		InitCommand=cmd(zoom,0.833; horizalign,right ),
 		BeginCommand=function(self)

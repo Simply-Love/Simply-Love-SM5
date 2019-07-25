@@ -55,7 +55,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the title of the song
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350),
 		DrawStageCommand=function(self)
 			if song then
@@ -65,7 +65,7 @@ local t = Def.ActorFrame{
 	},
 
 	-- the BPM(s) of the song
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350),
 		DrawStageCommand=function(self)
 			if song then
@@ -194,7 +194,7 @@ for player in ivalues(Players) do
 	}
 
 	-- stepartist
-	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_miso")..{
+	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
 		InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
 		DrawStageCommand=function(self)
 			if playerStats and stepartist then

@@ -2,7 +2,7 @@ local player = ...
 local text_table = GetStepsCredit(player)
 local marquee_index = 0
 
-return LoadFont("_miso")..{
+return LoadFont("Common Normal")..{
 	InitCommand=cmd(zoom, 0.7; xy, 115,_screen.cy-80 ),
 	OnCommand=function(self)
 		-- darken the text for RainbowMode to make it more legible

@@ -123,22 +123,22 @@ for i=NumStages,1,-1 do
 				end,
 			}
 
-			row[#row+1] = LoadFont("_miso")..{
+			row[#row+1] = LoadFont("Common Normal")..{
 				Text=s..". ",
 				InitCommand=cmd(horizalign,right; xy, -120, (s-(lower-1))*22 )
 			}
 
-			row[#row+1] = LoadFont("_miso")..{
+			row[#row+1] = LoadFont("Common Normal")..{
 				Text=name,
 				InitCommand=cmd(horizalign,left; xy, -110, (s-(lower-1))*22 )
 			}
 
-			row[#row+1] = LoadFont("_miso")..{
+			row[#row+1] = LoadFont("Common Normal")..{
 				Text=score,
 				InitCommand=cmd(horizalign,left; xy, -24, (s-(lower-1))*22 )
 			}
 
-			row[#row+1] = LoadFont("_miso")..{
+			row[#row+1] = LoadFont("Common Normal")..{
 				Text=date,
 				InitCommand=cmd(horizalign,left; xy, 50, (s-(lower-1))*22 )
 			}

@@ -67,7 +67,7 @@ return Def.ActorFrame{
 		Name='JoinFrame',
 		FrameBackground(Color.Black, player),
 
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			InitCommand=function(self)
 				if IsArcade() and not GAMESTATE:EnoughCreditsToJoin() then
 					self:settext( THEME:GetString("ScreenSelectProfile", "EnterCreditsToJoin") )
@@ -113,7 +113,7 @@ return Def.ActorFrame{
 
 				for i=0, PROFILEMAN:GetNumLocalProfiles()-1 do
 					local profile = PROFILEMAN:GetLocalProfileFromIndex(i)
-					items[#items+1] = LoadFont("_miso")..{
+					items[#items+1] = LoadFont("Common Normal")..{
 						Text=profile:GetDisplayName(),
 						InitCommand=function(self)
 							-- ztest(true) ensures that the text masks properly when scrolling above/below the frame
@@ -143,7 +143,7 @@ return Def.ActorFrame{
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(1) end,
 
 				-- the name the player most recently used for high score entry
-				LoadFont("_miso")..{
+				LoadFont("Common Normal")..{
 					Name="HighScoreName",
 					InitCommand=function(self) self:align(0,0):xy(-50,-104):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
 					SetCommand=function(self, params)
@@ -158,7 +158,7 @@ return Def.ActorFrame{
 
 				-- the song that was most recently played, presented as "group name/song name", eventually
 				-- truncated so it passes the "How to Cook Delicious Rice and the Effects of Eating Rice" test.
-				LoadFont("_miso")..{
+				LoadFont("Common Normal")..{
 					Name="MostRecentSong",
 					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):wrapwidthpixels(104/0.65):vertspacing(-3) end,
 					SetCommand=function(self, params)
@@ -173,7 +173,7 @@ return Def.ActorFrame{
 
 				-- how many songs this player has completed in gameplay
 				-- failing a song will increment this count, but backing out will not
-				LoadFont("_miso")..{
+				LoadFont("Common Normal")..{
 					Name="TotalSongs",
 					InitCommand=function(self) self:align(0,0):xy(-50,0):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
 					SetCommand=function(self, params)
@@ -188,7 +188,7 @@ return Def.ActorFrame{
 				-- (some of) the modifiers saved to this player's UserPrefs.ini file
 				-- if the list is long, it will line break and eventually be masked
 				-- to prevent it from visually spilling out of the FrameBackground
-				LoadFont("_miso")..{
+				LoadFont("Common Normal")..{
 					Name="RecentMods",
 					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
 					SetCommand=function(self, params)
@@ -218,7 +218,7 @@ return Def.ActorFrame{
 		end
 	},
 
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		Name='SelectedProfileText',
 		InitCommand=cmd(y,160; zoom, 1.35; shadowlength, ThemePrefs.Get("RainbowMode") and 0.5 or 0)
 	}

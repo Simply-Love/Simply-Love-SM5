@@ -57,7 +57,7 @@ local t = Def.ActorFrame{
 		},
 
 		--the music rate text
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			InitCommand=function(self) self:shadowlength(1):zoom(0.85) end,
 			OnCommand=function(self)
 				self:settext(("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate"))

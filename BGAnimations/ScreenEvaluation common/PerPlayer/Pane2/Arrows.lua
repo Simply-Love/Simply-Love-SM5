@@ -59,7 +59,7 @@ for i,column in ipairs( columns[game] ) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
 		if j <= gmods.WorstTimingWindow or j==#rows then
 			-- add a BitmapText actor to be the number for this column
-			af[#af+1] = LoadFont("_miso")..{
+			af[#af+1] = LoadFont("Common Normal")..{
 				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
 				InitCommand=function(self)
 					self:xy(i*column_width, j*row_height + 4)
@@ -72,7 +72,7 @@ for i,column in ipairs( columns[game] ) do
 
 	if track_missbcheld then
 		-- the number of MissBecauseHeld judgments for this column
-		af[#af+1] = LoadFont("_miso")..{
+		af[#af+1] = LoadFont("Common Normal")..{
 			Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i].MissBecauseHeld,
 			InitCommand=function(self)
 				self:xy(i*column_width - 1, 144):zoom(0.65):halign(1)

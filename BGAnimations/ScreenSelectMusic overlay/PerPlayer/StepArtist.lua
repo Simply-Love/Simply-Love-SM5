@@ -63,12 +63,12 @@ return Def.ActorFrame{
 	},
 
 	--STEPS label
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, Screen.String("STEPS"))
 	},
 
 	--stepartist text
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
 		StepsHaveChangedCommand=function(self)
 

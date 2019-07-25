@@ -19,7 +19,7 @@ local af = Def.ActorFrame{
 	},
 
 	-- song/course title text
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=function(self)
 			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 			if songtitle then self:settext(songtitle):maxwidth(banner.width*banner.zoom) end

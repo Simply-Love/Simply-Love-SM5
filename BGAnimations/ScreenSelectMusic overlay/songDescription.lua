@@ -60,7 +60,7 @@ local t = Def.ActorFrame{
 			InitCommand=cmd(x, -110),
 
 			-- Artist Label
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				InitCommand=function(self)
 					local text = GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"
 					self:settext( THEME:GetString("SongDescription", text) )
@@ -71,7 +71,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- Song Artist
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,260) ),
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
@@ -95,7 +95,7 @@ local t = Def.ActorFrame{
 
 
 			-- BPM Label
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "BPM"),
 				InitCommand=function(self)
 					self:horizalign(right):y(8)
@@ -104,7 +104,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- BPM value
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				InitCommand=cmd(horizalign, left; y, 8; x, 5; diffuse, color("1,1,1,1")),
 				SetCommand=function(self)
 					--defined in ./Scipts/SL-CustomSpeedMods.lua
@@ -114,7 +114,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- Song Length Label
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "Length"),
 				InitCommand=function(self)
 					self:horizalign(right)
@@ -124,7 +124,7 @@ local t = Def.ActorFrame{
 			},
 
 			-- Song Length Value
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				InitCommand=cmd(horizalign, left; y, 8; x, _screen.w/4.5 + 5),
 				SetCommand=function(self)
 					local duration
@@ -193,7 +193,7 @@ local t = Def.ActorFrame{
 				InitCommand=function(self) self:diffuse(GetCurrentColor()):zoom(0.455):y(29) end
 			},
 
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()

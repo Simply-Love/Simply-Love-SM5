@@ -149,7 +149,7 @@ for i=1,NumStages do
 	}
 
 	-- song name
-	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("_miso")..{
+	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("Common Normal")..{
 		Name="SongName"..i,
 		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294; shadowlength, 0.333),
 		OnCommand=function(self)

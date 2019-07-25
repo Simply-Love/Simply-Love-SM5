@@ -195,12 +195,12 @@ for key, item in pairs(PaneItems) do
 		OnCommand=cmd(x, -_screen.w/20; y,6 ),
 
 		-- label
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			Text=key,
 			InitCommand=cmd(zoom, zoom_factor; xy, item.label.x, item.label.y; diffuse, Color.Black; halign, 0)
 		},
 		--  numerical value
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			InitCommand=cmd(zoom, zoom_factor; xy, item.data.x, item.data.y; diffuse, Color.Black; halign, 1),
 			OnCommand=cmd(playcommand, "Set"),
 			SetCommand=function(self)
@@ -237,26 +237,26 @@ af[#af+1] = LoadFont("_wendy small")..{
 }
 
 --MACHINE high score
-af[#af+1] = LoadFont("_miso")..{
+af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScore",
 	InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
 }
 
 --MACHINE highscore name
-af[#af+1] = LoadFont("_miso")..{
+af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScoreName",
 	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }
 
 
 --PLAYER PROFILE high score
-af[#af+1] = LoadFont("_miso")..{
+af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScore",
 	InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
 }
 
 --PLAYER PROFILE highscore name
-af[#af+1] = LoadFont("_miso")..{
+af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScoreName",
 	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
 }

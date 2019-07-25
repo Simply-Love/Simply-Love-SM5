@@ -91,7 +91,7 @@ pane[#pane+1] = Def.Quad{
 
 -- centered text for W1
 pane[#pane+1] = Def.BitmapText{
-	Font="_miso",
+	Font="Common Normal",
 	Text=abbreviations[SL.Global.GameMode][1],
 	InitCommand=function(self)
 		local x = pane_width/2
@@ -108,7 +108,7 @@ for i=2,num_judgments_available do
 
 	-- early (left) judgment text
 	pane[#pane+1] = Def.BitmapText{
-		Font="_miso",
+		Font="Common Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
 			local window = -1 * SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i]
@@ -126,7 +126,7 @@ for i=2,num_judgments_available do
 
 	-- late (right) judgment text
 	pane[#pane+1] = Def.BitmapText{
-		Font="_miso",
+		Font="Common Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
 			local window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i]
@@ -183,7 +183,7 @@ end
 
 -- avg_timing_error label
 pane[#pane+1] = Def.BitmapText{
-	Font="_miso",
+	Font="Common Normal",
 	Text=ScreenString("MeanTimingError"),
 	InitCommand=function(self)
 		self:x(40):y(-pane_height+20)
@@ -193,7 +193,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- median_offset label
 pane[#pane+1] = Def.BitmapText{
-	Font="_miso",
+	Font="Common Normal",
 	Text=ScreenString("Median"),
 	InitCommand=function(self)
 		self:x(pane_width/2):y(-pane_height+20)
@@ -203,7 +203,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- mode_offset label
 pane[#pane+1] = Def.BitmapText{
-	Font="_miso",
+	Font="Common Normal",
 	Text=ScreenString("Mode"),
 	InitCommand=function(self)
 		self:x(pane_width-40):y(-pane_height+20)

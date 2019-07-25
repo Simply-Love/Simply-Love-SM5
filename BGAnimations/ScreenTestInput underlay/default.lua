@@ -23,7 +23,7 @@ local af = Def.ActorFrame {
 	OffCommand=cmd(sleep,0.4),
 
 	Def.DeviceList {
-		Font=THEME:GetPathF("","_miso"),
+		Font=THEME:GetPathF("","Common Normal"),
 		InitCommand=cmd(xy,_screen.cx,_screen.h-60; zoom,0.8)
 	}
 }

@@ -17,7 +17,7 @@ local optionrow_item_mt = {
 				HideCommand=cmd( linear, 0.2; diffusealpha, 0),
 
 				Def.BitmapText{
-					Font="_miso",
+					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt1 = subself
 						subself:horizalign(left)
@@ -30,7 +30,7 @@ local optionrow_item_mt = {
 					LoseFocusCommand=cmd(diffusealpha, 0 )
 				},
 				Def.BitmapText{
-					Font="_miso",
+					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt2 = subself
 						subself:horizalign(right)

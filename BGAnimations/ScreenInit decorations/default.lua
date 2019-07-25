@@ -26,7 +26,7 @@ for i=1,7 do
 	}
 end
 
-af[#af+1] = LoadFont("_miso")..{
+af[#af+1] = LoadFont("Common Normal")..{
 	Text=ScreenString("ThemeDesign"),
 	InitCommand=cmd(diffuse,GetHexColor(slc); diffusealpha,0; Center),
 	OnCommand=cmd(sleep,3; linear,0.25; diffusealpha,1),
