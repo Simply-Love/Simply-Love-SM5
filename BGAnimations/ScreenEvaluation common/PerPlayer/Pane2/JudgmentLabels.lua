@@ -33,7 +33,7 @@ for i=1, #TapNoteScores.Types do
 		local window = TapNoteScores.Types[i]
 		local label = TapNoteScores.Names[i]
 
-		t[#t+1] = LoadFont("_miso")..{
+		t[#t+1] = LoadFont("Common Normal")..{
 			Text=label:upper(),
 			InitCommand=function(self)
 				self:zoom(0.8):horizalign(right)
@@ -48,7 +48,7 @@ for i=1, #TapNoteScores.Types do
 end
 
 if track_missbcheld then
-	t[#t+1] = LoadFont("_miso")..{
+	t[#t+1] = LoadFont("Common Normal")..{
 		Text=ScreenString("Held"),
 		InitCommand=function(self)
 			self:y(140):zoom(0.6):halign(1)

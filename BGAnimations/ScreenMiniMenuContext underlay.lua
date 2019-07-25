@@ -19,7 +19,7 @@ return Def.ActorFrame {
 		SizeCommand=cmd(zoomto, 240, row_height*num_rows)
 	},
 
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=cmd(xy,-99, -118; halign,0; diffuse, Color.Black ),
 		BeginCommand=function(self)
 			local profile = GAMESTATE:GetEditLocalProfile()

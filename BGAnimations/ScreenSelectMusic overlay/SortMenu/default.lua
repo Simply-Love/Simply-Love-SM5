@@ -12,7 +12,6 @@ local t = Def.ActorFrame {
 		-- Always ensure that the SortMenu is hidden and that player input
 		-- is directed back to the engine on screen initialization.
 		self:queuecommand("HideSortMenu")
-			:draworder(1)
 	end,
 	ShowSortMenuCommand=function(self)
 		SOUND:StopMusic()

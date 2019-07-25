@@ -8,7 +8,6 @@ end
 
 return Def.ActorFrame{
 	InitCommand=function(self)
-		self:draworder(200)
 		-- if the MenuTimer is being used, save the current number of seconds remaining
 		-- before transitioning to the next screen.  In this manner, we can reinstate this
 		-- value if the player opts to return to ScreenSelectMusic from ScreenPlayerOptions.

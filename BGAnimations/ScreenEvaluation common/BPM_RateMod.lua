@@ -10,7 +10,7 @@ return Def.ActorFrame{
 	},
 
 	-- text for BPM (and maybe music rate if ~= 1.0)
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:zoom(0.6):maxwidth(418/0.875) end,
 		OnCommand=function(self)
 			if SL.Global.ActiveModifiers.MusicRate ~= 1 then

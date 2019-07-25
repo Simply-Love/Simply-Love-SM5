@@ -120,7 +120,7 @@ local song_mt = {
 
 				-- title
 				Def.BitmapText{
-					Font="_miso",
+					Font="Common Normal",
 					InitCommand=function(subself)
 						self.title_bmt = subself
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75)

@@ -109,7 +109,7 @@ local item_mt = {
 
 				-- group title bmt
 				Def.BitmapText{
-					Font="_miso",
+					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt = subself
 						subself:wrapwidthpixels(150):vertspacing(-4):shadowlength(0.5)

@@ -1,3 +1,3 @@
-return LoadActor( THEME:GetPathS("", "_prompt") ) .. {
-	StartTransitioningCommand=cmd(play);
-};
+return LoadActor(THEME:GetPathS("", "_prompt"))..{
+	StartTransitioningCommand=function(self) self:play() end
+}

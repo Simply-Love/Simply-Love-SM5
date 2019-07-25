@@ -59,7 +59,7 @@ for i=1, #TapNoteScores.Types do
 		local window = TapNoteScores.Types[i]
 		local label = getStringFromTheme( window )
 
-		t[#t+1] = LoadFont("_miso")..{
+		t[#t+1] = LoadFont("Common Normal")..{
 			Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper(),
 			InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 76),
 			BeginCommand=function(self)
@@ -81,7 +81,7 @@ for index, label in ipairs(RadarCategories) do
 	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
-	t[#t+1] = LoadFont("_miso")..{
+	t[#t+1] = LoadFont("Common Normal")..{
 		-- lua ternary operators are adorable
 		Text=(nice and (performance == 69 or possible == 69)) and 'nice' or label,
 		InitCommand=cmd(NoStroke;zoom,0.833; horizalign,right ),

@@ -52,7 +52,7 @@ if SL.Global.GameMode ~= "Casual" then
 			InitCommand=cmd(diffuse,color("#1E282F"); zoomto, 300, 26)
 		},
 
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			Text=optionslist,
 			InitCommand=cmd(zoom, font_zoom; xy,-140,-5; align, 0,0; vertspacing, -6; wrapwidthpixels, 290 / font_zoom )
 		}

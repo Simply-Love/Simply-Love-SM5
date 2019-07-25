@@ -78,7 +78,7 @@ local wheel_item_mt = {
 
 			if ThemePrefs.Get("VisualTheme") == "Gay" then
 				af[#af+1] = Def.BitmapText{
-					Font="_miso",
+					Font="Common Normal",
 					Text=name~="item7" and "i'm gay" or "i've gay",
 					InitCommand=function(subself) subself:y(-6):diffuse(Color.Black):zoom(1.2) end
 				}
