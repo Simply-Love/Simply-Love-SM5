@@ -2,17 +2,17 @@ local path = getenv("NewlyUnlockedSong")
 local t =  Def.ActorFrame{}
 
 if path then
-	
+
 	local song = SONGMAN:FindSong(path)
-	
+
 	if song then
-		
+
 		-- attempt to find the banner for the song
 		bannerpath = song:GetBannerPath()
-		
+
 		-- if a banner was found...
 		if bannerpath then
-			
+
 			-- ... then display it!
 			t[#t+1] = Def.Banner{
 				Name="RewardBanner",
@@ -25,9 +25,9 @@ if path then
 				end
 			}
 		end
-		
+
 		-- regardless of banner or not-banner, display some reward text
-		t[#t+1] = LoadFont("_miso")..{
+		t[#t+1] = LoadFont("Common Normal")..{
 			Name="RewardText",
 			InitCommand=cmd(xy, _screen.cx, 110; zoom,1.25),
 			OnCommand=function(self)
@@ -36,21 +36,21 @@ if path then
 		}
 
 		-- this is a sound to be played upon a successful unlock
-		t[#t+1] = LoadActor( THEME:GetPathS("", "_unlock.ogg")	)..{ Name="songUnlocked"; }	
-		
+		t[#t+1] = LoadActor( THEME:GetPathS("", "_unlock.ogg")	)..{ Name="songUnlocked"; }
+
 		-- play that sound
 		t.OnCommand=function(self)
 			if song then
 				self:GetChild("songUnlocked"):play()
 			end
 		end
-	end	
+	end
 
 
--- otherwise, nothing was unlocked, and the path variable is nil	
+-- otherwise, nothing was unlocked, and the path variable is nil
 else
-	
-	t[#t+1] = LoadFont("_miso")..{
+
+	t[#t+1] = LoadFont("Common Normal")..{
 		Name="FailureText",
 		Text="Not quite...",
 		InitCommand=cmd(xy, _screen.cx,_screen.cy-50; zoom,1.4)
@@ -58,7 +58,7 @@ else
 
 	-- this is a sound to be played upon a failure to unlock
 	t[#t+1] = LoadActor( THEME:GetPathS("", "_unlockFail.ogg") )..{ Name="songNotUnlocked" }
-	
+
 	-- play that sound
 	t.OnCommand=function(self)
 		self:GetChild("songNotUnlocked"):play()

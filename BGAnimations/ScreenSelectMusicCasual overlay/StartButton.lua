@@ -21,7 +21,7 @@ return Def.ActorFrame{
 		InitCommand=cmd( diffuseshift; effectcolor1,color("#33aa33"); effectcolor2,color("#55cc55"); zoomto, w, h),
 	},
 
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		Name="Text",
 		Text=THEME:GetString("ScreenSelectMusicCasual", "Press"),
 		InitCommand=cmd(diffuse, Color.Black; zoom, 0.9),

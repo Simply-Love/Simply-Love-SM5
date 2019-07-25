@@ -83,7 +83,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	}
 
 	--  slash
-	t[#t+1] = LoadFont("_miso")..{
+	t[#t+1] = LoadFont("Common Normal")..{
 		Text="/",
 		InitCommand=cmd(diffuse,color("#5A6166"); zoom, 1.25; horizalign, right),
 		BeginCommand=function(self)

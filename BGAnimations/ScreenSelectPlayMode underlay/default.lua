@@ -106,7 +106,7 @@ local t = Def.ActorFrame{
 
 	-- description
 	Def.BitmapText{
-		Font="_miso",
+		Font="Common Normal",
 		InitCommand=function(self)
 			self:zoom(0.825):halign(0):valign(0):xy(-130,-60)
 		end,

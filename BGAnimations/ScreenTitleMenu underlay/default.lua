@@ -40,7 +40,7 @@ end
 local style = ThemePrefs.Get("VisualTheme")
 local image = "TitleMenu"
 --SSHHHH dont tell anyone ;)
-if style=="Spooky" and math.random(1,100) > 11 then
+if style=="Spooky" and math.random(1,100) <= 10 then
 	image="TitleMenuAlt"
 end
 
@@ -57,11 +57,11 @@ local af = Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,
 		OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
 
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			Text=sm_version .. "       " .. sl_name .. (sl_version and (" v" .. sl_version) or ""),
 			InitCommand=function(self) self:y(-20):diffuse(TextColor) end,
 		},
-		LoadFont("_miso")..{
+		LoadFont("Common Normal")..{
 			Text=SongStats,
 			InitCommand=function(self) self:diffuse(TextColor) end,
 		}

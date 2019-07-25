@@ -81,7 +81,7 @@ local histogram_amv = NPS_Histogram(player, width, height)..{
 }
 
 -- PeakNPS text
-local text = LoadFont("_miso")..{
+local text = LoadFont("Common Normal")..{
 	PeakNPSUpdatedMessageCommand=function(self, params)
 		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(params.PeakNPS * SL.Global.ActiveModifiers.MusicRate,2) )
 		self:x( _screen.w/2 - self:GetWidth()/2 - 2 + WideScale(0,-60) )

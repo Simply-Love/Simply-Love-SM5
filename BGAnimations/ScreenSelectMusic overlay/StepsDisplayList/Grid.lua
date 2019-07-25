@@ -1,12 +1,12 @@
-local GridColumns = 20
-local GridRows = 5
+local num_rows    = 5
+local num_columns = 20
 local GridZoomX = IsUsingWideScreen() and 0.435 or 0.39
 local BlockZoomY = 0.275
 local StepsToDisplay, SongOrCourse, StepsOrTrails
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=cmd(vertalign, top; draworder, 1; xy, _screen.cx-170, _screen.cy + 70),
+	InitCommand=cmd(vertalign, top; xy, _screen.cx-170, _screen.cy + 70),
 	-- - - - - - - - - - - - - -
 
 	OnCommand=cmd(queuecommand, "RedrawStepsDisplay"),
@@ -27,7 +27,7 @@ local t = Def.ActorFrame{
 
 				StepsToDisplay = GetStepsToDisplay(StepsOrTrails)
 
-				for RowNumber=1,GridRows do
+				for RowNumber=1,num_rows do
 					if StepsToDisplay[RowNumber] then
 						-- if this particular song has a stepchart for this row, update the Meter
 						-- and BlockRow coloring appropriately
@@ -55,8 +55,7 @@ local t = Def.ActorFrame{
 	Def.Quad{
 		Name="Background",
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f"))
-			self:zoomto(320, 96)
+			self:diffuse(color("#1e282f")):zoomto(320, 96)
 			if ThemePrefs.Get("RainbowMode") then
 				self:diffusealpha(0.75)
 			end
@@ -81,13 +80,13 @@ Grid[#Grid+1] = Def.Sprite{
 	OnCommand=function(self)
 		local width = self:GetWidth()
 		local height= self:GetHeight()
-		self:zoomto(width * GridColumns * GridZoomX, height * GridRows * BlockZoomY)
+		self:zoomto(width * num_columns * GridZoomX, height * num_rows * BlockZoomY)
 		self:y( 3 * height * BlockZoomY )
-		self:customtexturerect(0, 0, GridColumns, GridRows)
+		self:customtexturerect(0, 0, num_columns, num_rows)
 	end
 }
 
-for RowNumber=1,GridRows do
+for RowNumber=1,num_rows do
 
 	Grid[#Grid+1] =	Def.Sprite{
 		Name="Blocks_"..RowNumber,
@@ -98,16 +97,16 @@ for RowNumber=1,GridRows do
 			local width = self:GetWidth()
 			local height= self:GetHeight()
 			self:y( RowNumber * height * BlockZoomY)
-			self:zoomto(width * GridColumns * GridZoomX, height * BlockZoomY)
+			self:zoomto(width * num_columns * GridZoomX, height * BlockZoomY)
 		end,
 		SetCommand=function(self, params)
 			-- our grid only supports charts with up to a 20-block difficulty meter
 			-- but charts can have higher difficulties
 			-- handle that here by clamping the value to be between 1 and, at most, 20
-			local meter = clamp( params.Meter, 1, GridColumns )
+			local meter = clamp( params.Meter, 1, num_columns )
 
-			self:customtexturerect(0, 0, GridColumns, 1)
-			self:cropright( 1 - (meter * (1/GridColumns)) )
+			self:customtexturerect(0, 0, num_columns, 1)
+			self:cropright( 1 - (meter * (1/num_columns)) )
 
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( DifficultyColor(params.Difficulty) )

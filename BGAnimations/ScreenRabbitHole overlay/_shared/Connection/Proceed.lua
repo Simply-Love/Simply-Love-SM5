@@ -1,5 +1,5 @@
 return Def.BitmapText{
-	Font="_miso",
+	Font="Common Normal",
 	Text="&START;",
 	Name="Proceed",
 	InitCommand=function(self)

@@ -244,7 +244,7 @@ for i = 1,#gradeBorders do
 	-- in 4:3 the graphs touch each other, so the labels for P2 are redundant
 	if not (isTwoPlayers and bothWantBars and player == PLAYER_2 and not IsUsingWideScreen()) then
 		graph_bg[#graph_bg+1] = Def.BitmapText{
-			Font="_miso",
+			Font="Common Normal",
 			Text=gradeNames[i],
 			InitCommand=function(self)
 				self:valign(1):halign(0)
@@ -449,21 +449,21 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 
 		-- text labels for the bars
 		player_af[#player_af+1] = Def.ActorFrame{
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "You"),
 				InitCommand=function(self)
 					self:xy( bar.offset + bar.spacing + (bar.w/2), 20 )
 				end,
 			},
 
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "Personal"),
 				InitCommand=function(self)
 					self:xy( bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w, 20 )
 				end,
 			},
 
-			LoadFont("_miso")..{
+			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "Target"),
 				InitCommand=function(self)
 					self:xy( bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, 20 )

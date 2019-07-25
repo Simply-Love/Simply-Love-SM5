@@ -23,7 +23,7 @@ local optionrow_mt = {
 
 				-- helptext
 				Def.BitmapText{
-					Font="_miso",
+					Font="Common Normal",
 					InitCommand=function(subself)
 						self.helptext = subself
 						subself:horizalign(left):zoom(0.9)

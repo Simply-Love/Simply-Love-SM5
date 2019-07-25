@@ -49,7 +49,7 @@ for player in ivalues(Players) do
 		-- loop through those stats, adding them to the ActorFrame for this player as BitmapText actors
 		for i,stat in ipairs(stats) do
 			PlayerStatsAF[#PlayerStatsAF+1] = Def.BitmapText{
-				Font="_miso",
+				Font="Common Normal",
 				Text=stat,
 				InitCommand=function(self)
 					self:diffuse(PlayerColor(player))
@@ -75,7 +75,7 @@ for player in ivalues(Players) do
 	-- loop through those stats, adding them to the ActorFrame for this player as BitmapText actors
 	for i,stat in ipairs(stats) do
 		PlayerStatsAF[#PlayerStatsAF+1] = Def.BitmapText{
-			Font="_miso",
+			Font="Common Normal",
 			Text=stat,
 			InitCommand=function(self)
 				self:diffuse(PlayerColor(player))

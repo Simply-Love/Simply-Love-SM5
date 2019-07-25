@@ -364,7 +364,7 @@ local Overrides = {
 		Choices = function()
 			-- Allow users to arbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
 			-- and have those vocalizations be automatically detected
-			local vocalizations = FILEMAN:GetDirListing(GetVocalizeDir() , true, false)
+			local vocalizations = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/" , true, false)
 			table.insert(vocalizations, 1, "None")
 
 			if #vocalizations > 1 then

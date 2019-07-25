@@ -33,7 +33,7 @@ local af = Def.ActorFrame{
 
 for player in ivalues( {PLAYER_1, PLAYER_2} ) do
 	if not GAMESTATE:IsSideJoined(player) and Input.AllowLateJoin() then
-		af[#af+1] = LoadFont("_miso")..{
+		af[#af+1] = LoadFont("Common Normal")..{
 			Text=THEME:GetString("ScreenSelectMusicCasual", "PressStartToLateJoin"),
 			InitCommand=function(self)
 				self:xy( _screen.cx + 150 * (player==PLAYER_1 and -1 or 1), _screen.cy + 80 )

@@ -42,7 +42,7 @@ end
 
 local t = Def.ActorFrame{ OnCommand=function(self) af=self; SCREENMAN:GetTopScreen():AddInputCallback(InputHandler) end }
 
-t[#t+1] = LoadFont("Common normal")..{
+t[#t+1] = LoadFont("Common Normal")..{
 	Text=ScreenString("Paragraph1"),
 	InitCommand=function(self)
 		self:xy(_screen.cx-text_width/2, 25):wrapwidthpixels(text_width):align(0,0):diffusealpha(0)
@@ -50,7 +50,7 @@ t[#t+1] = LoadFont("Common normal")..{
 	OnCommand=function(self) self:linear(0.15):diffusealpha(1) end
 }
 
-t[#t+1] = LoadFont("Common normal")..{
+t[#t+1] = LoadFont("Common Normal")..{
 	Text=ScreenString("Paragraph2"),
 	InitCommand=function(self)
 		self:xy(_screen.cx-text_width/2, 315):wrapwidthpixels(text_width):align(0,0):diffusealpha(0)
@@ -73,7 +73,7 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		Text=ScreenString("Yes"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		Text=ScreenString("YesInfo"),
 		InitCommand=function(self) self:addy(30):zoom(0.825) end,
 	}
@@ -90,7 +90,7 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		Text=ScreenString("No"),
 		InitCommand=function(self) end
 	},
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		Text=ScreenString("NoInfo"),
 		InitCommand=function(self) self:addy(30):zoom(0.825)  end,
 	}

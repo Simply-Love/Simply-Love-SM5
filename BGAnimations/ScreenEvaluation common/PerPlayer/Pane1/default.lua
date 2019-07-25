@@ -3,7 +3,7 @@ local player = ...
 return Def.ActorFrame{
 	Name="Pane1",
 
-	-- labels (like "FANTASTIC, MISS, holds, rolls, etc.")
+	-- labels like "FANTASTIC", "MISS", "holds", "rolls", etc.
 	LoadActor("./JudgmentLabels.lua", player),
 
 	-- DP score displayed as a percentage

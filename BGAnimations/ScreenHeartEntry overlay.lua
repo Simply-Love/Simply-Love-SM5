@@ -158,7 +158,7 @@ local args = {
 		Def.BitmapText{
 			Name="timer_text",
 			Font="Common Normal",
-			Text= "00.0",
+			Text="00.0",
 			InitCommand=cmd(xy, SCREEN_CENTER_X, SCREEN_CENTER_Y-80; diffuse, Color.White),
 			OnCommand=cmd(strokecolor,Color.Outline),
 		}

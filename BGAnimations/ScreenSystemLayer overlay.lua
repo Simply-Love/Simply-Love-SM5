@@ -2,7 +2,7 @@
 -- very minor modifications.
 
 local function CreditsText( pn )
-	return LoadFont("_miso") .. {
+	return LoadFont("Common Normal") .. {
 		InitCommand=function(self)
 			self:visible(false)
 			self:name("Credits" .. PlayerNumberToString(pn))
@@ -62,7 +62,7 @@ t[#t+1] = Def.ActorFrame {
 		OffCommand=function(self) self:sleep(3):linear(0.5):diffusealpha(0) end,
 	},
 
-	LoadFont("_miso")..{
+	LoadFont("Common Normal")..{
 		Name="Text",
 		InitCommand=function(self)
 			self:maxwidth(750):horizalign(left):vertalign(top)
