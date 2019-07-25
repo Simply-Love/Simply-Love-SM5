@@ -237,7 +237,7 @@ GetNoteSkinActor = function(noteskin_name, column)
 	-- prepare a dummy Actor using the name of NoteSkin in case errors are
 	-- encountered so that a valid (inert, not-drawing) actor still gets returned
 	local dummy = Def.Actor{
-		Name="NoteSkin_"..noteskin_name,
+		Name="NoteSkin_"..(noteskin_name or ""),
 		InitCommand=function(self) self:visible(false) end
 	}
 
