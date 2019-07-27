@@ -133,6 +133,7 @@ PaneItems[THEME:GetString("RadarCategory","Rolls")] = {
 		y = 186
 	}
 }
+
 PaneItems[THEME:GetString("RadarCategory","Fakes")] = {
 	rc = 'RadarCategory_Fakes',
 	label = {
@@ -315,7 +316,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 }
 
 --Notes per second Label
-pd[#pd+1] = Def.BitmapText{
+af[#af+1] = Def.BitmapText{
 	Font="_miso",
 	Name="npsLabel",
 	-- I'm unsure why labelX_col3 doesn't simply get the job done, but eh this does the trick as well
@@ -327,7 +328,7 @@ pd[#pd+1] = Def.BitmapText{
 }
 
 -- Notes per Second data
-pd[#pd+1] = Def.BitmapText{
+af[#af+1] = Def.BitmapText{
 	Font="_miso",
 	Name="nps",
 	-- I'm unsure why dataX_col3 doesn't simply get the job done, but eh this does the trick as well
@@ -376,6 +377,7 @@ pd[#pd+1] = Def.BitmapText{
 		end
 	end
 }
+
 --PLAYER PROFILE high score
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScore",
