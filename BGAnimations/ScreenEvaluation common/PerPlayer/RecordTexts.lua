@@ -19,8 +19,8 @@ local EarnedPersonalRecord = ( highScoreIndex.Personal ~= -1 ) and stats:GetPerc
 
 if EarnedMachineRecord or EarnedPersonalRecord then
 
-	-- else this player earned some record and the ability to enter a high score name
-	-- we'll check for this flag, later, in ./BGAnimations/ScreenNameEntryTradtional underlay/default.lua
+	-- this player earned some record and the ability to enter a high score name
+	-- we'll check for this flag later in ./BGAnimations/ScreenNameEntryTradtional underlay/default.lua
 	SL[pn].HighScores.EnteringName = true
 
 	-- record text
