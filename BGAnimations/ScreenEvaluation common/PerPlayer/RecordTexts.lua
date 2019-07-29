@@ -3,19 +3,32 @@ if SL.Global.GameMode == "Casual" then return end
 local player = ...
 local pn = ToEnumShortString(player)
 
-local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
--- FIXME (maybe)
--- both these methods will always return -1 in EventMode, which means
--- that SL[pn].HighScores.EnteringName will never be true in EventMode
--- and ScreenNameEntryTraditional will always display "OUT OF RANKING"
-local highScoreIndex = {
-	Machine = stats:GetMachineHighScoreIndex(),
-	Personal = stats:GetPersonalHighScoreIndex()
+-- ---------------------------------------------
+-- GetMachineHighScoreIndex() will always return -1 in EventMode, so...
+
+local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+
+local MaxMachineHighScores = PREFSMAN:GetPreference("MaxHighScoresPerListForMachine")
+local MachineHighScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail):GetHighScores()
+
+local EarnedMachineHighScoreInEventMode = function()
+	return pss:GetHighScore():GetScore() >= MachineHighScores[math.min(MaxMachineHighScores, #MachineHighScores)]:GetScore()
+end
+
+-- ---------------------------------------------
+
+local HighScoreIndex = {
+	Machine =  pss:GetMachineHighScoreIndex(),
+	Personal = pss:GetPersonalHighScoreIndex()
 }
 
-local EarnedMachineRecord  = (  highScoreIndex.Machine ~= -1 ) and stats:GetPercentDancePoints() >= 0.01
-local EarnedPersonalRecord = ( highScoreIndex.Personal ~= -1 ) and stats:GetPercentDancePoints() >= 0.01
+local EarnedMachineRecord  = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or ((HighScoreIndex.Machine ~= -1) and pss:GetPercentDancePoints() >= 0.01)
+local EarnedPersonalRecord = ( HighScoreIndex.Personal ~= -1 ) and pss:GetPercentDancePoints() >= 0.01
+
+-- ---------------------------------------------
 
 if EarnedMachineRecord or EarnedPersonalRecord then
 
@@ -23,7 +36,6 @@ if EarnedMachineRecord or EarnedPersonalRecord then
 	-- we'll check for this flag later in ./BGAnimations/ScreenNameEntryTradtional underlay/default.lua
 	SL[pn].HighScores.EnteringName = true
 
-	-- record text
 	local t = Def.ActorFrame{
 		InitCommand=cmd(zoom, 0.225),
 		OnCommand=function(self)
@@ -32,16 +44,16 @@ if EarnedMachineRecord or EarnedPersonalRecord then
 		end
 	}
 
-	if EarnedMachineRecord then
+	if HighScoreIndex.Machine+1 > 0 then
 		t[#t+1] = LoadFont("_wendy small")..{
-			Text=string.format("Machine Record %i", highScoreIndex.Machine+1),
+			Text=string.format("Machine Record %i", HighScoreIndex.Machine+1),
 			InitCommand=function(self) self:xy(-110,-18):diffuse(PlayerColor(player)) end,
 		}
 	end
 
-	if EarnedPersonalRecord then
+	if HighScoreIndex.Personal+1 > 0 then
 		t[#t+1] = LoadFont("_wendy small")..{
-			Text=string.format("Personal Record %i", highScoreIndex.Personal+1),
+			Text=string.format("Personal Record %i", HighScoreIndex.Personal+1),
 			InitCommand=function(self) self:xy(-110,24):diffuse(PlayerColor(player)) end,
 		}
 	end

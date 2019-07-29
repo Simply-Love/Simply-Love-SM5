@@ -4,7 +4,7 @@ local pane = Def.ActorFrame{
 	Name="Pane3",
 	InitCommand=function(self)
 		self:visible(false)
-		self:y(_screen.cy - 44):zoom(0.8)
+		self:y(_screen.cy - 62):zoom(0.8)
 	end
 }
 
