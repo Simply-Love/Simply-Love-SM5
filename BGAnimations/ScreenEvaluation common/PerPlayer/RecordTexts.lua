@@ -15,6 +15,11 @@ local MaxMachineHighScores = PREFSMAN:GetPreference("MaxHighScoresPerListForMach
 local MachineHighScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail):GetHighScores()
 
 local EarnedMachineHighScoreInEventMode = function()
+	-- if no DancePoints were earned, it's not a HighScore
+	if pss:GetPercentDancePoints() <= 0.01 then return false end
+	-- if DancePoints were earned, and no MachineHighScores exist, it's a HighScore
+	if #MachineHighScores < 1 then return true end
+	-- otherwise, check if this score is better than the worst current HighScore retrieved from MachineProfile
 	return pss:GetHighScore():GetScore() >= MachineHighScores[math.min(MaxMachineHighScores, #MachineHighScores)]:GetScore()
 end
 

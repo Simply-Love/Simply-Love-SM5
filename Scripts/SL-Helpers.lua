@@ -419,7 +419,7 @@ end
 
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterOptions,WorstTimingWindow,Vocalization,Characters,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterOptions,WorstTimingWindow,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then
@@ -429,16 +429,6 @@ function GetPlayerOptions2LineNames()
 	-- remove WorstTimingWindow and LifeMeterType if GameMode is StomperZ
 	if SL.Global.GameMode == "StomperZ" then
 		mods = mods:gsub("WorstTimingWindow,", ""):gsub("LifeMeterType", "")
-	end
-
-	-- remove Vocalization if no voice packs were found in the filesystem
-	if #FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/", true, false) < 1 then
-		mods = mods:gsub("Vocalization," ,"")
-	end
-
-	-- remove Characters if no dancing character directories were found
-	if #CHARMAN:GetAllCharacters() < 1 then
-		mods = mods:gsub("Characters,", "")
 	end
 
 	-- ActionOnMissedTarget can automatically fail or restart Gameplay when a target score
@@ -452,6 +442,21 @@ function GetPlayerOptions2LineNames()
 	return mods
 end
 
+function GetPlayerOptions3LineNames()
+	local mods = "7,8,9,10,11,12,13,Attacks,Vocalization,Characters,ScreenAfterPlayerOptions3"
+
+	-- remove Vocalization if no voice packs were found in the filesystem
+	if #FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/", true, false) < 1 then
+		mods = mods:gsub("Vocalization," ,"")
+	end
+
+	-- remove Characters if no dancing character directories were found
+	if #CHARMAN:GetAllCharacters() < 1 then
+		mods = mods:gsub("Characters,", "")
+	end
+
+	return mods
+end
 -- -----------------------------------------------------------------------
 -- given a player, return a table of stepartist text for the current song or course
 -- so that various screens (SSM, Eval) can cycle through these values and players
