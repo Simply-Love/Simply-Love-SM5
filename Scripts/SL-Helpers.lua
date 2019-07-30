@@ -539,7 +539,7 @@ function GetJudgmentGraphics(mode)
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}
 
-	for k,filename in ipairs(files) do
+	for i,filename in ipairs(files) do
 
 		-- Filter out files that aren't judgment graphics
 		-- e.g. hidden system files like .DS_Store
@@ -561,4 +561,34 @@ function GetJudgmentGraphics(mode)
 	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
+end
+-- -----------------------------------------------------------------------
+
+GetComboFonts = function()
+	local path = THEME:GetCurrentThemeDirectory().."Fonts/_Combo Fonts/"
+	local dirs = FILEMAN:GetDirListing(path, true, false)
+	local fonts = {}
+
+	for directory_name in ivalues(dirs) do
+		local files = FILEMAN:GetDirListing(path..directory_name.."/")
+		local has_png, has_ini = false, false
+
+		for filename in ivalues(files) do
+			if FilenameIsMultiFrameSprite(filename) and StripSpriteHints(filename)==directory_name then has_png = true end
+			if filename:match(".ini") and filename:gsub(".ini","")==directory_name then has_ini = true end
+		end
+
+		if has_png and has_ini then
+			-- special-case Wendy to always appear first in the list
+			if directory_name == "Wendy" then
+				table.insert(fonts, 1, directory_name)
+			else
+				table.insert(fonts, directory_name)
+			end
+		end
+	end
+
+	fonts[#fonts+1] = THEME:GetString("SLPlayerOptions", "None")
+
+	return fonts
 end

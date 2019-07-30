@@ -19,6 +19,7 @@ local RecentMods = function(mods)
 	-- Mini and JudgmentGraphic should definitely be strings
 	if type(mods.Mini)=="string" and mods.Mini ~= "" and mods.Mini ~= "0%" then text = text..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini")..", " end
 	if type(mods.JudgmentGraphic)=="string" and mods.JudgmentGraphic ~= "" then text = text..StripSpriteHints(mods.JudgmentGraphic) .. ", " end
+	if type(mods.ComboFont)=="string" and mods.ComboFont ~= "" then text = text..mods.ComboFont .. ", " end
 
 	-- loop for mods that save as booleans
 	local flags, hideflags = "", ""

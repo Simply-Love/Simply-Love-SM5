@@ -16,7 +16,7 @@ if ThemePrefs.Get("nice") > 0 then
 			-- pss:GetCurrentCombo() ignores potential "Miss combo"
 			-- so get the text from the Combo actor instead if it exists
 			local combo
-			if not mods.HideCombo then
+			if mods.ComboFont ~= "None" then
 				combo = SCREENMAN:GetTopScreen():GetChild("Player"..pn):GetChild("Combo"):GetChild("Number"):GetText()
 			end
 

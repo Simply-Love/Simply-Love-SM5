@@ -40,20 +40,20 @@ end
 -- As an OptionRow, each subtable is expected to have specific key/value pairs:
 --
 -- ExportOnChange (boolean)
--- 		false if unspecified; if true, calls SaveSelections() whenever the current choice changes
+-- 	false if unspecified; if true, calls SaveSelections() whenever the current choice changes
 -- LayoutType (string)
---		"ShowAllInRow" if unspecified; you can set it to "ShowOneInRow" if needed
+-- 	"ShowAllInRow" if unspecified; you can set it to "ShowOneInRow" if needed
 -- OneChoiceForAllPlayers (boolean)
--- 		false if unspecified
+-- 	false if unspecified
 -- SelectType (string)
--- 		"SelectOne" if unspecified; you can set it to "SelectMultiple" if needed
+-- 	"SelectOne" if unspecified; you can set it to "SelectMultiple" if needed
 -- LoadSelections (function)
--- 		normally (in other themes) called when the PlayerOption screen initializes
---		read the notes surrounding ApplyMods() for further discussion of additional work SL does
+-- 	normally (in other themes) called when the PlayerOption screen initializes
+-- 	read the notes surrounding ApplyMods() for further discussion of additional work SL does
 -- SaveSelections (function)
--- 		this is where you should do whatever work is needed to ensure that the player's choice
---		persists beyond the PlayerOptions screen; normally called around the time of ScreenPlayerOption's
---		OffCommand; can also be called because ExportOnChange=true
+-- 	this is where you should do whatever work is needed to ensure that the player's choice
+-- 	persists beyond the PlayerOptions screen; normally called around the time of ScreenPlayerOption's
+-- 	OffCommand; can also be called because ExportOnChange=true
 
 
 -- It's not necessary to define each possible key for each OptionRow.  Anything you don't specify
@@ -110,6 +110,7 @@ local Overrides = {
 
 			local all = NOTESKIN:GetNoteSkinNames()
 
+			-- FIXME: This currently only supports hiding stock NoteSkins in dance mode.
 			if ThemePrefs.Get("HideStockNoteSkins") then
 
 				-- Apologies, midiman. :(
@@ -159,6 +160,20 @@ local Overrides = {
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Judgment preview
 			MESSAGEMAN:Broadcast("JudgmentGraphicChanged", {Player=pn, JudgmentGraphic=StripSpriteHints(mods.JudgmentGraphic)})
+		end
+	},
+	-------------------------------------------------------------------------
+	ComboFont = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
+		Choices = function() return GetComboFonts() end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			for i, val in ipairs(self.Choices) do
+				if list[i] then mods.ComboFont = val; break end
+			end
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Judgment preview
+			MESSAGEMAN:Broadcast("ComboFontChanged", {Player=pn, ComboFont=mods.ComboFont})
 		end
 	},
 	-------------------------------------------------------------------------
@@ -235,27 +250,25 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
-		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },
+		Values = { "Targets", "SongBG", "Lifebar", "Score", "Danger", "ComboExplosions" },
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
-			list[1] = mods.HideTargets 	or false
-			list[2] = mods.HideSongBG 	or false
-			list[3] = mods.HideCombo 	or false
-			list[4] = mods.HideLifebar 	or false
-			list[5] = mods.HideScore 	or false
-			list[6] = mods.HideDanger	or false
-			list[7] = mods.HideComboExplosions or false
+			list[1] = mods.HideTargets or false
+			list[2] = mods.HideSongBG  or false
+			list[3] = mods.HideLifebar or false
+			list[4] = mods.HideScore 	or false
+			list[5] = mods.HideDanger	or false
+			list[6] = mods.HideComboExplosions or false
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			mods.HideTargets= list[1]
-			mods.HideSongBG = list[2]
-			mods.HideCombo	= list[3]
-			mods.HideLifebar= list[4]
-			mods.HideScore	= list[5]
-			mods.HideDanger = list[6]
-			mods.HideComboExplosions = list[7]
+			mods.HideTargets = list[1]
+			mods.HideSongBG  = list[2]
+			mods.HideLifebar = list[3]
+			mods.HideScore   = list[4]
+			mods.HideDanger  = list[5]
+			mods.HideComboExplosions = list[6]
 
 			playeroptions:Dark(mods.HideTargets and 1 or 0)
 			playeroptions:Cover(mods.HideSongBG and 1 or 0)

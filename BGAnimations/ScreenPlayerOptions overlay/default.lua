@@ -129,11 +129,12 @@ local t = Def.ActorFrame{
 	end
 }
 
--- attach NoteSkin actors and Judgment graphic actors to this overlay ActorFrame
--- they'll each be hidden immediately via visible(false) and referred to as needed
--- via ActorProxy in ./Graphics/OptionRow Frame.lua
+-- attach NoteSkin actors and Judgment graphic sprites and Combo bitmaptexts to
+-- this overlay ActorFrame; they'll each be hidden immediately via visible(false)
+-- and referred to as needed via ActorProxy in ./Graphics/OptionRow Frame.lua
 LoadActor("./NoteSkinPreviews.lua", t)
 LoadActor("./JudgmentGraphicPreviews.lua", t)
+LoadActor("./ComboFontPreviews.lua", t)
 
 -- some functionality needed in both PlayerOptions and PlayerOptions2
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
