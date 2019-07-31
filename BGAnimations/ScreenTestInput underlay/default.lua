@@ -1,18 +1,15 @@
-local function InputHandler(event)
-	if not event.PlayerNumber or not event.button then
-		return false
-	end
+local InputHandler = function(event)
+	if not (event and event.PlayerNumber and event.button) then return false end
 
-	local state = "Off"
-	if event.type ~= "InputEventType_Release" then
-		state = "On"
-	end
-
-	if event.DeviceInput.button == "DeviceButton_escape" then
+	-- allow players to back out of ScreenTestInput by pressing Escape on their keyboard
+	if event.GameButton == "Back" then
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
 
-	MESSAGEMAN:Broadcast(ToEnumShortString(event.PlayerNumber) .. event.button .. state)
+	if event.type ~= "InputEventType_Repeat" then
+		MESSAGEMAN:Broadcast("TestInputEvent", event)
+	end
+
 	return false
 end
 
@@ -31,7 +28,20 @@ local af = Def.ActorFrame {
 local game = GAMESTATE:GetCurrentGame():GetName()
 
 if (game=="dance" or game=="pump" or game=="techno") then
-	af[#af+1] = LoadActor("visuals")
+	for player in ivalues( {PLAYER_1, PLAYER_2} ) do
+		local pad = LoadActor("visuals", player)
+
+		pad.InitCommand=function(self) self:xy(_screen.cx + 150 * (player==PLAYER_1 and -1 or 1), _screen.cy):diffusealpha(0) end
+		pad.OnCommand=function(self) self:linear(0.3):diffusealpha(1) end
+		pad.OffCommand=function(self) self:linear(0.2):diffusealpha(0) end
+
+		af[#af+1] = pad
+	end
+else
+	af[#af+1] = Def.InputList{
+		Font="Common normal",
+		InitCommand=function(self) self:xy(_screen.cx-250, 50):horizalign(left):vertalign(0):vertspacing(0) end
+	}
 end
 
 return af

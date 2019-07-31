@@ -268,8 +268,8 @@ local Overrides = {
 			list[1] = mods.HideTargets or false
 			list[2] = mods.HideSongBG  or false
 			list[3] = mods.HideLifebar or false
-			list[4] = mods.HideScore 	or false
-			list[5] = mods.HideDanger	or false
+			list[4] = mods.HideScore   or false
+			list[5] = mods.HideDanger  or false
 			list[6] = mods.HideComboExplosions or false
 			return list
 		end,

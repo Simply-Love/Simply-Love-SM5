@@ -426,12 +426,6 @@ end
 function GetOperatorMenuLineNames()
 	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,ClearCredits,Reload"
 
-	-- the TestInput screen only supports dance, pump, and techno; remove it when in other games
-	local CurrentGame = GAMESTATE:GetCurrentGame():GetName()
-	if not (CurrentGame=="dance" or CurrentGame=="pump" or CurrentGame=="techno") then
-		lines = lines:gsub("TestInput,", "")
-	end
-
 	-- hide the OptionRow for ClearCredits if we're not in CoinMode_Pay; it doesn't make sense to show for at-home players
 	-- note that (EventMode + CoinMode_Pay) will actually place you in CoinMode_Home
 	if GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then
