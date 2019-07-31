@@ -31,8 +31,8 @@ local is8bit = function(text)
 	return text:len() == text:utf8len()
 end
 
--- FIXME: overriding the engine's API like this is convenient but will likely cause things
--- to go haywire if the user switches themes.  I need to think about this.
+-- FIXME: overriding the engine's API like this seems convenient until you try to reload scripts
+-- this cannot stay this way; I need to fix this sooner than later
 BitmapText.wrapwidthpixels_orignal = BitmapText.wrapwidthpixels
 
 BitmapText.wrapwidthpixels = function(bmt, w)

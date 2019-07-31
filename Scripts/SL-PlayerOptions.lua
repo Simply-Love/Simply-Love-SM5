@@ -110,22 +110,34 @@ local Overrides = {
 
 			local all = NOTESKIN:GetNoteSkinNames()
 
-			-- FIXME: This currently only supports hiding stock NoteSkins in dance mode.
 			if ThemePrefs.Get("HideStockNoteSkins") then
+				local game = GAMESTATE:GetCurrentGame():GetName()
 
 				-- Apologies, midiman. :(
 				local stock = {
-					"default", "delta", "easyv2", "exactv2", "lambda", "midi-note",
-					"midi-note-3d", "midi-rainbow", "midi-routine-p1", "midi-routine-p2",
-					"midi-solo", "midi-vivid", "midi-vivid-3d", "retro",
-					"retrobar", "retrobar-splithand_whiteblue"
+					dance = {
+						"default", "delta", "easyv2", "exactv2", "lambda", "midi-note",
+						"midi-note-3d", "midi-rainbow", "midi-routine-p1", "midi-routine-p2",
+						"midi-solo", "midi-vivid", "midi-vivid-3d", "retro", "retrobar",
+						"retrobar-splithand_whiteblue"
+					},
+					pump = {
+						"cmd", "cmd-routine-p1", "cmd-routine-p2", "complex", "default",
+						"delta", "delta-note", "delta-routine-p1", "delta-routine-p2",
+						"frame5p", "newextra", "pad", "rhythm", "simple"
+					},
+					kb7 = {
+						"default", "orbital", "retrobar", "retrobar-iidx",
+						"retrobar-o2jam", "retrobar-razor", "retrobar-razor_o2"
+					}
 				}
-
-				for stock_noteskin in ivalues(stock) do
-					for i=1,#all do
-						if stock_noteskin == all[i] then
-							table.remove(all, i)
-							break
+				if stock[game] then
+					for stock_noteskin in ivalues(stock[game]) do
+						for i=1,#all do
+							if stock_noteskin == all[i] then
+								table.remove(all, i)
+								break
+							end
 						end
 					end
 				end
@@ -463,10 +475,10 @@ local Overrides = {
 
 			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
 				if list[2] then SL.Global.ScreenAfter.PlayerOptions3 = SelectMusicOrCourse() end
-				if list[3] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions1" end
+				if list[3] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions" end
 				if list[4] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions2" end
 			else
-				if list[2] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions1" end
+				if list[2] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions" end
 				if list[3] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions2" end
 			end
 		end
