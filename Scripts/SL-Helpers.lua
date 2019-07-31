@@ -17,12 +17,42 @@ function Border(width, height, bw)
 end
 
 ------------------------------------------------------------------------------
-
 -- SM5's d3d implementation does not support render to texture. The DISPLAY
 -- singleton has a method to check this but it doesn't seem to be implemented
 -- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
+
 SupportsRenderToTexture = function()
 	return PREFSMAN:GetPreference("VideoRenderers"):sub(1,6):lower() == "opengl"
+end
+
+------------------------------------------------------------------------------
+-- support for closing open song groups by pressing MenuUp and MenuDown simultaneously
+-- was requested, but ScreenSelectMusic uses the engine's MusicWheel, which relies on
+-- a simple Metric to set a single input code for all possible scenarios.
+--
+-- Most arcade cabinets currently don't have dedicated MenuUp and MenuDown buttons, so
+-- we should support the standard "Up-Down" code first, and only support "MenuUp-MenuDown"
+-- if either of the active players has their buttons actually mapped for those.
+--
+-- Both MenuUp and MenuDown are unmapped (empty strings) in Keymaps.ini by default, so we'll
+-- assume that if the player has gone out of their way to map them, they want to use them.
+
+CloseCurrentFolder = function()
+	local code = "Up-Down"
+
+	local game = GAMESTATE:GetCurrentGame():GetName()
+	if game == pump then code = "UpLeft-UpRight" end
+
+	local players = GAMESTATE:GetHumanPlayers()
+	if #players > 0 and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
+		local file = IniFile.ReadFile("/Save/Keymaps.ini")
+		if file and file[game] then
+			if FindInTable("PlayerNumber_P1", players) and file[game]["1_MenuUp"] ~= "" and file[game]["1_MenuDown"] ~= "" then code = "MenuUp-MenuDown" end
+			if FindInTable("PlayerNumber_P2", players) and file[game]["2_MenuUp"] ~= "" and file[game]["2_MenuDown"] ~= "" then code = "MenuUp-MenuDown" end
+		end
+	end
+
+	return code
 end
 
 ------------------------------------------------------------------------------
