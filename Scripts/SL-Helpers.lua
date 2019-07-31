@@ -17,6 +17,15 @@ function Border(width, height, bw)
 end
 
 ------------------------------------------------------------------------------
+
+-- SM5's d3d implementation does not support render to texture. The DISPLAY
+-- singleton has a method to check this but it doesn't seem to be implemented
+-- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
+SupportsRenderToTexture = function()
+	return PREFSMAN:GetPreference("VideoRenderers"):sub(1,6):lower() == "opengl"
+end
+
+------------------------------------------------------------------------------
 -- There's surely a better way to do this.  I need to research this more.
 local is8bit = function(text)
 	return text:len() == text:utf8len()

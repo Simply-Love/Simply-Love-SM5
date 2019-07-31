@@ -172,7 +172,7 @@ local Overrides = {
 			for i, val in ipairs(self.Choices) do
 				if list[i] then mods.ComboFont = val; break end
 			end
-			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Judgment preview
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the ComboFont preview
 			MESSAGEMAN:Broadcast("ComboFontChanged", {Player=pn, ComboFont=mods.ComboFont})
 		end
 	},

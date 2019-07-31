@@ -63,7 +63,7 @@ return Def.Sprite{
 			local x_target = player==PLAYER_1 and 20 or _screen.w-20
 			self:smooth(0.75):xy(x_target, _screen.h+10):zoom(0)
 		else
-			SM("Screenshot saved to Machine Profile.")
+			SM(THEME:GetString("ScreenEvaluation", "MachineProfileScreenshot"))
 			-- tween directly down
 			self:sleep(0.25)
 			self:smooth(0.75):y(_screen.h+10):zoom(0)
