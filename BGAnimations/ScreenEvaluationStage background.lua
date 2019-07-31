@@ -1,4 +1,4 @@
-local bg = LoadActor(THEME:GetPathB("","_shared background normal"))
+local bg = LoadActor(THEME:GetPathB("","_shared background"))
 
 
 -- don't bother adding support for animated faux screenshot textures to ScreenEval

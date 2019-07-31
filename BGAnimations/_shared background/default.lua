@@ -1,6 +1,6 @@
 -- the best way to spread holiday cheer is singing loud for all to hear
 if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
-	return LoadActor( THEME:GetPathB("", "_shared background normal/Snow.lua") )
+	return LoadActor( THEME:GetPathB("", "_shared background/Snow.lua") )
 end
 
 local af = Def.ActorFrame{}

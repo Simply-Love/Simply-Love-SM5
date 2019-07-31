@@ -14,7 +14,7 @@ local max_vx = 7
 local min_vy = 55
 local max_vy = 85
 -- try to keep it SFW
-local path_to_texture = THEME:GetPathB("","_shared background normal/snowflake.png")
+local path_to_texture = THEME:GetPathB("","_shared background/snowflake.png")
 
 -----------------
 -- Taro wrote the original version of this code, dbk2 h*cked it up from there
