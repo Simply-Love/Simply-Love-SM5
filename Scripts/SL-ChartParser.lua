@@ -303,3 +303,28 @@ function GetStreams(SongDir, StepsType, Difficulty, NotesPerMeasure, MeasureSequ
 	-- Which sequences of measures are considered a stream?
 	return (getStreamSequences(StreamMeasures, MeasureSequenceThreshold, totalMeasures))
 end
+
+
+
+function GetStreamBreakdown(SongDir, StepsType, Difficulty)
+       local NotesPerMeasure = 16
+       local MeasureSequenceThreshold = 2
+       local streams = GetStreams(SongDir, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
+
+       if not streams then
+               return ""
+       end
+
+       local streamLengths = {}
+
+       for i, stream in ipairs(streams) do
+               local streamCount = tostring(stream.streamEnd - stream.streamStart)
+
+               if not stream.isBreak then
+                       streamLengths[#streamLengths + 1] = streamCount
+               end
+       end
+
+       return table.concat(streamLengths, "/")
+end
+

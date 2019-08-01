@@ -22,6 +22,9 @@ local t = Def.ActorFrame{
 	LoadActor("./StepsDisplayList/default.lua"),
 	-- elements we need two of that draw over the StepsDisplayList (just the bouncing cursors, really)
 	LoadActor("./PerPlayer/Over.lua"),
+        -- and the NPSgraph
+        LoadActor("./PerPlayer/npsgraph.lua"),
+
 
 	-- make the MusicWheel appear to cascade down
 	LoadActor("./MusicWheelAnimation.lua"),
