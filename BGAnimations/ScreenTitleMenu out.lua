@@ -1,10 +1,8 @@
-local dc1 = DifficultyIndexColor(1)
-local dc2 = DifficultyIndexColor(2)
+local dc1 = GetHexColor(SL.Global.ActiveColorIndex-1)
+local dc2 = GetHexColor(SL.Global.ActiveColorIndex)
 local style = ThemePrefs.Get("VisualTheme")
 
-local t = Def.ActorFrame{
-	OffCommand=cmd(linear,1)
-}
+local t = Def.ActorFrame{ OffCommand=function(self) self:linear(1) end }
 
 -- centers
 t[#t+1] = Def.ActorFrame {

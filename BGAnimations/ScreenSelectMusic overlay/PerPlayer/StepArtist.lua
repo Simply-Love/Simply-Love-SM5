@@ -8,9 +8,9 @@ return Def.ActorFrame{
 	Name="StepArtistAF_" .. pn,
 
 	-- song and course changes
-	OnCommand=cmd(queuecommand, "StepsHaveChanged"),
-	CurrentSongChangedMessageCommand=cmd(queuecommand, "StepsHaveChanged"),
-	CurrentCourseChangedMessageCommand=cmd(queuecommand, "StepsHaveChanged"),
+	OnCommand=function(self) self:queuecommand("StepsHaveChanged") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("StepsHaveChanged") end,
+	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("StepsHaveChanged") end,
 
 	PlayerJoinedMessageCommand=function(self, params)
 		if params.Player == player then
@@ -49,7 +49,7 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=cmd(zoomto, 175, _screen.h/28; x, 113; diffuse, DifficultyIndexColor(1) ),
+		InitCommand=function(self) self:zoomto(175, _screen.h/28):x(113) end,
 		StepsHaveChangedCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
@@ -64,12 +64,12 @@ return Def.ActorFrame{
 
 	--STEPS label
 	LoadFont("Common Normal")..{
-		OnCommand=cmd(diffuse, color("0,0,0,1"); horizalign, left; x, 30; settext, Screen.String("STEPS"))
+		OnCommand=function(self) self:diffuse(0,0,0,1):horizalign(left):x(30):settext(Screen.String("STEPS")) end
 	},
 
 	--stepartist text
 	LoadFont("Common Normal")..{
-		InitCommand=cmd(diffuse,color("#1e282f"); horizalign, left; x, 75; maxwidth, 115),
+		InitCommand=function(self) self:diffuse(color("#1e282f")):horizalign(left):x(75):maxwidth(115) end,
 		StepsHaveChangedCommand=function(self)
 
 			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()

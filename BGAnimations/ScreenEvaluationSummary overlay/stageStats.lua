@@ -34,15 +34,15 @@ local t = Def.ActorFrame{
 
 	--fallback banner
 	LoadActor(banner_directory.."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png")..{
-		InitCommand=cmd(y,-6; zoom, 0.333)
+		InitCommand=function(self) self:y(-6):zoom(0.333) end,
+		DrawStageCommand=function(self) self:visible(song ~= nil and not song:HasBanner()) end
 	},
 
 	-- the banner, if there is one
 	Def.Banner{
 		Name="Banner",
+		InitCommand=function(self) self:y(-6) end,
 		DrawStageCommand=function(self)
-			self:y(-6)
-
 			if song then
 				if GAMESTATE:IsCourseMode() then
 					self:LoadFromCourse(song)
@@ -56,17 +56,15 @@ local t = Def.ActorFrame{
 
 	-- the title of the song
 	LoadFont("Common Normal")..{
-		InitCommand=cmd(zoom,0.8; y,-40; maxwidth, 350),
+		InitCommand=function(self) self:zoom(0.8):y(-43):maxwidth(350) end,
 		DrawStageCommand=function(self)
-			if song then
-				self:settext(song:GetDisplayFullTitle())
-			end
+			if song then self:settext(song:GetDisplayFullTitle()) end
 		end
 	},
 
 	-- the BPM(s) of the song
 	LoadFont("Common Normal")..{
-		InitCommand=cmd(zoom,0.6; y,30; maxwidth, 350),
+		InitCommand=function(self) self:zoom(0.6):y(30):maxwidth(350) end,
 		DrawStageCommand=function(self)
 			if song then
 				local text = ""
@@ -139,7 +137,7 @@ for player in ivalues(Players) do
 
 	--percent score
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_wendy small")..{
-		InitCommand=cmd(zoom,0.5; horizalign, align1; x,col1x; y,-24),
+		InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-24) end,
 		DrawStageCommand=function(self)
 			if playerStats and score then
 
@@ -178,15 +176,10 @@ for player in ivalues(Players) do
 
 	-- difficulty meter
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("_wendy small")..{
-		InitCommand=cmd(zoom,0.4; horizalign, align1; x,col1x; y,4),
+		InitCommand=function(self) self:zoom(0.4):horizalign(align1):x(col1x):y(4) end,
 		DrawStageCommand=function(self)
 			if playerStats and difficultyMeter then
-				if difficulty then
-					local y_offset = GetYOffsetByDifficulty(difficulty)
-					self:diffuse(DifficultyIndexColor(y_offset))
-				end
-
-				self:settext(difficultyMeter)
+				self:diffuse(DifficultyColor(difficulty)):settext(difficultyMeter)
 			else
 				self:settext("")
 			end
@@ -195,7 +188,7 @@ for player in ivalues(Players) do
 
 	-- stepartist
 	PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
-		InitCommand=cmd(zoom,0.65; horizalign, align1; x,col1x; y,28),
+		InitCommand=function(self) self:zoom(0.65):horizalign(align1):x(col1x):y(28) end,
 		DrawStageCommand=function(self)
 			if playerStats and stepartist then
 				self:settext(stepartist)

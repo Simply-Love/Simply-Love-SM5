@@ -19,7 +19,7 @@ local profile = args.Profile or PROFILEMAN:GetMachineProfile()
 -- optionally provide Song/Course and Steps/Trail objects; if none are provided
 -- default to using whatever GAMESTATE currently thinks they are
 local SongOrCourse = args.SongOrCourse or (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong())
-local StepsOrTrail = args.StepsOrTrail or (args.RoundsAgo==nil and GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player))
+local StepsOrTrail = args.StepsOrTrail or ((args.RoundsAgo==nil or args.RoundsAgo==1) and (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)))
 if not (SongOrCourse and StepsOrTrail) then return af end
 
 local Font = args.Font or "Common Normal"

@@ -4,17 +4,37 @@ local af
 local current_game = GAMESTATE:GetCurrentGame():GetName()
 ------------------------------------------------------------------------------------
 
-local xshift = WideScale(42,52)
 local choices = {
-	{ name="single", pads={{3, -xshift-14}}, x=_screen.cx-_screen.w/4 },
-	{ name="versus", pads={{2, -xshift-WideScale(60,70)}, {5, xshift-WideScale(60,70)}}, x=_screen.cx },
-	{ name="double", pads={{4,-xshift-WideScale(60,70)}, {4, xshift-WideScale(60,70)}}, x=_screen.cx+_screen.w/4 },
+	{
+		name="single",
+		x=_screen.cx-_screen.w/4,
+		pads = {
+			{color=GetHexColor(SL.Global.ActiveColorIndex+1), offset=0}
+		}
+	},
+	{
+		name="versus",
+		x=_screen.cx,
+		pads = {
+			{color=GetHexColor(SL.Global.ActiveColorIndex), offset=-WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+3), offset= WideScale(42,51)}
+		}
+	},
+	{
+		name="double",
+		x=_screen.cx+_screen.w/4,
+		pads = {
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset=-WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset= WideScale(42,51)}
+		}
+	},
 }
+
 if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
 	choices[1].x = _screen.w/4-_screen.w/8
 	choices[2].x = (_screen.w/4)*2-_screen.w/8
 	choices[3].x = (_screen.w/4)*3-_screen.w/8
-	choices[4] = { name="solo", pads={ {3, -xshift-14}}, x=_screen.w-_screen.w/8 }
+	choices[4] = { name="solo", pads={ {color=GetHexColor(SL.Global.ActiveColorIndex+1), offset=0}}, x=_screen.w-_screen.w/8 }
 
 -- double is not a valid style in kb7 and para
 elseif current_game=="kb7" or current_game=="para" then
@@ -22,8 +42,6 @@ elseif current_game=="kb7" or current_game=="para" then
 	choices[2].x = _screen.cx+_screen.w/6
 	table.remove(choices, 3)
 end
-
-
 
 -- either 1 (single) or 2 (versus)
 local current_index = #GAMESTATE:GetHumanPlayers()
