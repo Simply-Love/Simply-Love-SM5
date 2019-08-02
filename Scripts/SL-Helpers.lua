@@ -621,7 +621,5 @@ GetComboFonts = function()
 		end
 	end
 
-	fonts[#fonts+1] = THEME:GetString("SLPlayerOptions", "None")
-
 	return fonts
 end

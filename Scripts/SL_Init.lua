@@ -14,6 +14,7 @@ local PlayerDefaults = {
 
 				HideTargets = false,
 				HideSongBG = false,
+				HideCombo = false,
 				HideLifebar = false,
 				HideScore = false,
 				HideDanger = false,

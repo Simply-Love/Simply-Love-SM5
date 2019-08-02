@@ -96,7 +96,19 @@ local af = Def.ActorFrame{
 	end
 }
 
-af[#af+1] = LoadFont("_wendy small")..{
+
+-- I'm not crazy about special-casing Wendy to use
+-- _wendy small for the Measure/Rest counter, but
+-- I'm hesitant to visually alter a feature that
+-- so many players have become so reliant on...
+local font = mods.ComboFont
+if font == "Wendy" then
+	font = "_wendy small"
+else
+	font = "_Combo Fonts/" .. font .. "/"
+end
+
+af[#af+1] = LoadFont(font)..{
 	InitCommand=function(self)
 		MeasureCounterBMT = self
 

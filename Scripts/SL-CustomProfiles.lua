@@ -18,6 +18,7 @@ local profile_whitelist = {
 
 	HideTargets = "boolean",
 	HideSongBG = "boolean",
+	HideCombo = "boolean",
 	HideLifebar = "boolean",
 	HideScore = "boolean",
 	HideDanger = "boolean",

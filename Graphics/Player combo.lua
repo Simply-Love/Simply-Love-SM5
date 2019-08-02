@@ -3,9 +3,9 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
 local available_fonts = GetComboFonts()
-local combo_font = (FindInTable(mods.ComboFont, available_fonts) ~= nil and mods.ComboFont) or available_fonts[1] or "None"
+local combo_font = (FindInTable(mods.ComboFont, available_fonts) ~= nil and mods.ComboFont) or available_fonts[1] or nil
 
-if combo_font == "None" then
+if mods.HideCombo or combo_font == nil then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
 
