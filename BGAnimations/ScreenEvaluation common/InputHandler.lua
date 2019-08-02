@@ -25,6 +25,7 @@ end
 
 return function(event)
 
+	if SL.Global.GameMode == "Casual" then return false end
 	if not (event and event.PlayerNumber and event.button) then return false end
 
 	local pn = ToEnumShortString(event.PlayerNumber)
@@ -52,7 +53,7 @@ return function(event)
 		end
 	end
 
-	if SL.Global.GameMode ~= "Casual" and GAMESTATE:IsEventMode() and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
+	if GAMESTATE:IsEventMode() and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") and event.type ~= "InputEventType_Repeat" then
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
 
