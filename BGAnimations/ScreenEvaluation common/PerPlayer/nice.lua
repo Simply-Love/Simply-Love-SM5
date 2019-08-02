@@ -86,7 +86,7 @@ end
 
 
 if IsNice() then
-	t = LoadActor(THEME:GetPathG("","_grades/graphics/nice.png"))..{
+	t = LoadActor(THEME:GetPathG("","_grades/assets/nice.png"))..{
 		InitCommand=function(self)
 			self:xy(70, _screen.cy-134)
 		end,
