@@ -16,11 +16,9 @@ local RadarCategories = { 'Holds', 'Mines', 'Hands', 'Rolls' }
 -- a little bit of code re-use from LetterGrade.lua
 local IsNice = function()
 
-	local isNice = false
+	if ThemePrefs.Get("nice") <= 0 then return false end
 
-	if string.match(percent, "69") ~= nil then
-		isNice = true
-	end
+	if string.match(percent, "69") ~= nil then return true end
 
 	-- check timing ratings (W1..W5, miss)
 	local scores_table = {}
@@ -30,9 +28,7 @@ local IsNice = function()
 	end
 
 	for label,item in pairs(scores_table) do
-		if string.match(tostring(item), "69") ~= nil then
-			isNice = true
-		end
+		if string.match(tostring(item), "69") ~= nil then return true end
 	end
 
 	-- check holds mines hands rolls, and their "total possible"
@@ -40,12 +36,8 @@ local IsNice = function()
 		local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
 
-		if string.match(tostring(performance), "69") ~= nil then
-			isNice = true
-		end
-		if string.match(tostring(possible), "69") ~= nil then
-			isNice = true
-		end
+		if string.match(tostring(performance), "69") ~= nil then return true end
+		if string.match(tostring(possible), "69") ~= nil then return true end
 	end
 
 	-- check difficulty
@@ -54,17 +46,13 @@ local IsNice = function()
 		local trail = GAMESTATE:GetCurrentTrail(player)
 		if trail then
 			meter = trail:GetMeter()
-			if string.match(tostring(meter), "69") ~= nil then
-				isNice = true
-			end
+			if string.match(tostring(meter), "69") ~= nil then return true end
 		end
 	else
 		local steps = GAMESTATE:GetCurrentSteps(player) -- regular mode
 		if steps then
 			meter = steps:GetMeter()
-			if string.match(tostring(meter), "69") ~= nil then
-				isNice = true
-			end
+			if string.match(tostring(meter), "69") ~= nil then return true end
 		end
 	end
 
@@ -74,16 +62,10 @@ local IsNice = function()
 						or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 
 	if songtitle then
-		if string.match(tostring(songtitle), "69") ~= nil then
-			isNice = true
-		end
+		if string.match(tostring(songtitle), "69") ~= nil then return true end
 	end
 
-	-- potential extensions that i don't wanna do
-	-- artist?
-	-- max combo from combo graph?
-
-	return isNice
+	return false
 end
 
 local IsCranked = function()

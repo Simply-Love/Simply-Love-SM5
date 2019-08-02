@@ -17,11 +17,11 @@ local af = Def.ActorFrame {
 	OnCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
 	end,
-	OffCommand=cmd(sleep,0.4),
+	OffCommand=function(self) self:sleep(0.4) end,
 
 	Def.DeviceList {
 		Font=THEME:GetPathF("","Common Normal"),
-		InitCommand=cmd(xy,_screen.cx,_screen.h-60; zoom,0.8)
+		InitCommand=function(self) self:xy(_screen.cx,_screen.h-60):zoom(0.8) end
 	}
 }
 

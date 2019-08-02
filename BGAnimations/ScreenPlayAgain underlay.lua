@@ -136,8 +136,8 @@ local wheel_item_mt = {
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		--reset this now, otherwise it might still be set to SSM from a previous continue
-		--and we don't want that if a timeout occurs
+		-- reset this now, otherwise it might still be set to SSM from a previous continue
+		-- and we don't want that if a timeout occurs
 		SL.Global.ScreenAfter.PlayAgain = "ScreenEvaluationSummary"
 
 		choice_wheel:set_info_set(choices, 1)
@@ -167,13 +167,11 @@ local t = Def.ActorFrame{
 	end,
 
 	-- slightly darken the entire screen
-	Def.Quad {
-		InitCommand=cmd(FullScreen; diffuse,Color.Black; diffusealpha,0.6)
-	},
+	Def.Quad { InitCommand=function(self) self:FullScreen():diffuse(0,0,0,0.6) end },
 
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenPlayAgain", "Continue"),
-		InitCommand=cmd(xy, _screen.cx, _screen.cy-30),
+		InitCommand=function(self) self:xy(_screen.cx, _screen.cy-30) end,
 	},
 
 	choice_wheel:create_actors( "sort_wheel", #choices, wheel_item_mt, _screen.cx, _screen.cy+50 ),

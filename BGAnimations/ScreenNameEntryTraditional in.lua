@@ -1,6 +1,4 @@
-return Def.ActorFrame{
-	Def.Quad {
-		InitCommand=cmd(diffuse, Color.Black; FullScreen),
-		StartTransitioningCommand=cmd(diffusealpha,1;linear,0.4;diffusealpha,0)
-	}
+return Def.Quad {
+	InitCommand=function(self) self:FullScreen():diffuse(0,0,0,1) end,
+	StartTransitioningCommand=function(self) self:linear(0.4):diffusealpha(0) end
 }

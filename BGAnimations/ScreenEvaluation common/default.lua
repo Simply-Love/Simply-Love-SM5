@@ -56,6 +56,9 @@ for player in ivalues(Players) do
 		-- letter grade
 		LoadActor("./PerPlayer/LetterGrade.lua", player),
 
+		-- nice
+		LoadActor("./PerPlayer/nice.lua", player),
+
 		-- stepartist
 		LoadActor("./PerPlayer/StepArtist.lua", player),
 

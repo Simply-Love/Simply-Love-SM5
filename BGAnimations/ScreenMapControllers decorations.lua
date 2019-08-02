@@ -67,14 +67,16 @@ for i,player in ipairs({PLAYER_1, PLAYER_2}) do
 				:x(_screen.cx + 110 * (player==PLAYER_1 and -1 or 1) )
 				:y(headerHeight/2):zoom(0.8):diffusealpha(0)
 		end,
-		OnCommand=cmd(linear,0.5;diffusealpha,1),
-		OffCommand=cmd(linear,0.5;diffusealpha,0),
+		OnCommand=function(self) self:linear(0.5):diffusealpha(1) end,
+		OffCommand=function(self) self:linear(0.5):diffusealpha(0) end,
 	}
 end
 
 af[#af+1] = Def.Quad{
-	Name="DevicesBG";
-	InitCommand=cmd(x,_screen.cx;y,headerHeight/2;zoomto,WideScale(150,200),headerHeight*0.65;diffuse,color("0.5,0.5,0.5,0.9"));
+	Name="DevicesBG",
+	InitCommand=function(self)
+		self:x(_screen.cx):y(headerHeight/2):zoomto(WideScale(150,200), headerHeight*0.65):diffuse(0.5,0.5,0.5,0.9)
+	end
 }
 
 return af

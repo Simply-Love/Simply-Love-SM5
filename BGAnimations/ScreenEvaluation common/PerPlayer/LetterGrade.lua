@@ -21,8 +21,4 @@ t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), playerStats).
 	end
 }
 
-if ThemePrefs.Get("nice") > 0 then
-	t[#t+1] = LoadActor("nice.lua", pn)
-end
-
 return t

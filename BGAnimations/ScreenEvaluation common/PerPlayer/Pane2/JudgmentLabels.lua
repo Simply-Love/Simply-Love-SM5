@@ -13,12 +13,7 @@ local box_height = 146
 local row_height = box_height/#TapNoteScores.Types
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy, 50, _screen.cy-36),
-	OnCommand=function(self)
-		if player == PLAYER_2 then
-			self:x( self:GetX() * -1)
-		end
-	end
+	InitCommand=function(self) self:xy(50 * (player==PLAYER_2 and -1 or 1), _screen.cy-36) end
 }
 
 local miss_bmt
