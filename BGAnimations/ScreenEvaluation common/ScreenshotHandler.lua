@@ -11,14 +11,14 @@ if SL.Global.GameMode == "Casual" then return end
 -- broadcast from this file, the ActorProxy there queues a command causing the AFT
 -- to become visible for a moment, render, and then go back to being not-drawn.
 --
--- Even though it is no longer drawing to the screen, the AFT still contains its rendered
--- texture in memory.  We store that texture in the global SL table, so that we can then
--- retrieve it here, assign it to this Sprite, and tween it to the bottom of the screen.
+-- Even though the AFT is no longer drawing to the screen, its rendered texture is still
+-- in memory.  We put a reference to that texture in the global SL table, so that we can
+-- then retrieve it here, assign it to this Sprite, and tween it to the bottom of the screen.
 
 local player = nil
 
 return Def.Sprite{
-	InitCommand=cmd(draworder, 200),
+	InitCommand=function(self) self:draworder(200) end,
 
 	-- This old-school code is defined in Metrics.ini under [ScreenEvaluation]
 	-- (Using a lua-based InputCallback would also have worked here.)

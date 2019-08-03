@@ -147,22 +147,22 @@ for i=lower,upper do
 
 	row[#row+1] = LoadFont(Font)..{
 		Text=i..". ",
-		InitCommand=cmd(horizalign,right; xy, -120, row_index*row_height )
+		InitCommand=function(self) self:horizalign(right):xy(-120, row_index*row_height) end
 	}
 
 	row[#row+1] = LoadFont(Font)..{
 		Text=name,
-		InitCommand=cmd(horizalign,left; xy, -110, row_index*row_height )
+		InitCommand=function(self) self:horizalign(left):xy(-110, row_index*row_height) end
 	}
 
 	row[#row+1] = LoadFont(Font)..{
 		Text=score,
-		InitCommand=cmd(horizalign,left; xy, -24, row_index*row_height )
+		InitCommand=function(self) self:horizalign(left):xy(-24, row_index*row_height) end
 	}
 
 	row[#row+1] = LoadFont(Font)..{
 		Text=date,
-		InitCommand=cmd(horizalign,left; xy, 50, row_index*row_height )
+		InitCommand=function(self) self:horizalign(left):xy(50, row_index*row_height) end
 	}
 
 	af[#af+1] = row

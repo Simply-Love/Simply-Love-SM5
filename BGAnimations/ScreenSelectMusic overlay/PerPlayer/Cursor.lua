@@ -30,14 +30,14 @@ return Def.Sprite{
 		self:effectperiod(1):effectoffset( -10 * GlobalOffsetSeconds)
 	end,
 
-	OnCommand=cmd(queuecommand,"Set"),
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set"),
-	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"),
+	OnCommand=function(self) self:queuecommand("Set") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
-	CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set"),
-	CurrentTrailP1ChangedMessageCommand=cmd(queuecommand,"Set"),
-	CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set"),
-	CurrentTrailP2ChangedMessageCommand=cmd(queuecommand,"Set"),
+	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentTrailP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentTrailP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
 	SetCommand=function(self)
 		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()

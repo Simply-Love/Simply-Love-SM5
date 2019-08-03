@@ -30,7 +30,7 @@ local GetCourseOrTrailBPMs = function(entries)
 	end
 end
 
-function GetCourseModeBPMs(course)
+GetCourseModeBPMs = function(course)
 	local course = course or GAMESTATE:GetCurrentCourse( GAMESTATE:GetMasterPlayerNumber() )
 	if not course then return false end
 
@@ -38,7 +38,7 @@ function GetCourseModeBPMs(course)
 	return GetCourseOrTrailBPMs( courseEntries )
 end
 
-function GetTrailBPMs(player)
+GetTrailBPMs = function(player)
 	if not player then return false end
 	local trail = GAMESTATE:GetCurrentTrail(player)
 	if not trail then return false end
@@ -48,7 +48,7 @@ function GetTrailBPMs(player)
 end
 
 
-function GetDisplayBPMs()
+GetDisplayBPMs = function()
 	local text = ""
 	local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
