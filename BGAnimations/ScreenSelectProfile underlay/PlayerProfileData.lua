@@ -1,18 +1,3 @@
-local args = ...
-local ns_af = args[1] -- ActorFrame for NoteSkin previews
-local j_af  = args[2] -- ActorFrame for Judgment previews
-
--- ----------------------------------------------------
--- some local variables that will help us load NoteSkin previews
-
-local game_name = GAMESTATE:GetCurrentGame():GetName()
-local column = {
-	dance = "Up",
-	pump = "UpRight",
-	techno = "Up",
-	kb7 = "Key1"
-}
-
 -- ----------------------------------------------------
 -- some local functions that will help process profile data into presentable strings
 
@@ -29,16 +14,7 @@ local RecentMods = function(mods)
 	end
 
 	-- a NoteSkin title might consist of only numbers and be read in by the IniFile utility as a number, so just ensure it isn't nil
-	if mods.NoteSkin ~= nil and mods.NoteSkin ~= "" then
-		if NOTESKIN:DoesNoteSkinExist(mods.NoteSkin) then
-			local status, noteskin_actor = pcall(NOTESKIN.LoadActorForNoteSkin, NOTESKIN, column[game_name] or "Up", "Tap Note", mods.NoteSkin)
-			if noteskin_actor then
-				ns_af[#ns_af+1] = noteskin_actor .. { SetCommand=function(self, params) self:visible(params.data.noteskin==mods.NoteSkin) end }
-			else
-				text = text..mods.NoteSkin..", "
-			end
-		end
-	end
+	if mods.NoteSkin ~= nil and mods.NoteSkin ~= "" then text = text..mods.NoteSkin..", " end
 
 	-- Mini and JudgmentGraphic should definitely be strings
 	if type(mods.Mini)=="string" and mods.Mini ~= "" and mods.Mini ~= "0%" then text = text..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini")..", " end
