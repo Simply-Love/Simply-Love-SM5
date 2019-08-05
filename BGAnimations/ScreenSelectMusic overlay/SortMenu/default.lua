@@ -42,11 +42,13 @@ local t = Def.ActorFrame {
 			{"SortBy", "Genre"},
 			{"SortBy", "BPM"},
 			{"SortBy", "Length"},
+
 			{"SortBy", "BeginnerMeter"},
 			{"SortBy", "EasyMeter"},
 			{"SortBy", "MediumMeter"},
 			{"SortBy", "HardMeter"},
 			{"SortBy", "ChallengeMeter"},
+
 			{"SortBy", "Popularity"},
 			{"SortBy", "Recent"}
 		}
@@ -84,12 +86,16 @@ local t = Def.ActorFrame {
 		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
 		local current_sort_order_index = 1
 
+		-- find the sick_wheel index of the item we want to display first when the player activates this SortMenu
 		for i=1, #wheel_options do
 			if wheel_options[i][1] == "SortBy" and wheel_options[i][2] == current_sort_order then
 				current_sort_order_index = i
 				break
 			end
 		end
+
+		-- remove the option that would allow us to switch to the already active SL GameMode
+		-- for example, if we're already in FA+, remove the choice to switch to FA+
 		for i=1, #wheel_options do
 			if wheel_options[i][1] == "ChangeMode" and wheel_options[i][2] == SL.Global.GameMode then
 				table.remove(wheel_options, i)
@@ -98,7 +104,7 @@ local t = Def.ActorFrame {
 		end
 
 		-- the second argument passed to set_info_set is the index of the item in wheel_options
-		-- that we want to have focus when the wheel is created
+		-- that we want to have focus when the wheel is displayed
 		sort_wheel:set_info_set(wheel_options, current_sort_order_index)
 	end,
 
@@ -109,7 +115,7 @@ local t = Def.ActorFrame {
 
 	-- OptionsList Header Quad
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w+2,22; xy, _screen.cx, _screen.cy-92)
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w+2,22):xy(_screen.cx, _screen.cy-92) end
 	},
 	-- "Options" text
 	Def.BitmapText{
@@ -123,19 +129,19 @@ local t = Def.ActorFrame {
 
 	-- white border
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w+2,sortmenu.h+2)
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w+2,sortmenu.h+2) end
 	},
 	-- BG of the sortmenu box
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w,sortmenu.h; diffuse,Color.Black)
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w,sortmenu.h):diffuse(Color.Black) end
 	},
 	-- top mask
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w,_screen.h/2; y,40; MaskSource )
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w,_screen.h/2):y(40):MaskSource() end
 	},
 	-- bottom mask
 	Def.Quad {
-		InitCommand=cmd(zoomto,sortmenu.w,_screen.h/2; xy,_screen.cx,_screen.cy+200; MaskSource)
+		InitCommand=function(self) self:zoomto(sortmenu.w,_screen.h/2):xy(_screen.cx,_screen.cy+200):MaskSource() end
 	},
 
 	-- "Press SELECT To Cancel" text
@@ -152,7 +158,7 @@ local t = Def.ActorFrame {
 	},
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
-	sort_wheel:create_actors( "sort_wheel", 7, wheel_item_mt, _screen.cx, _screen.cy )
+	sort_wheel:create_actors( "Sort Menu", 7, wheel_item_mt, _screen.cx, _screen.cy )
 }
 
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }

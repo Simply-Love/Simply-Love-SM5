@@ -9,16 +9,27 @@ if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
 -- QR Code should only be active in normal gameplay for individual songs.
 if GAMESTATE:IsCourseMode() then return end
 
--- Only allow ITG and FA+ because Casual and StomperS have different settings.
+-- Only allow ITG and FA+ because Casual and StomperZ have different settings.
 if not (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+") then return end
 
 -- ------------------------------------------
 -- Next, check global Preferences that would invalidate the score.
 
--- TimingWindowScale and LifeDifficultyScale are a little confusing.
--- Players can change these under Advanced Options in the operator menu on scales from 1 to Justice and 1 to 7, respectively.
--- 4 is considered standard for ITG.  GrooveStats expects players to have these set to 4.
--- These are both saved and handled internally on a 0 to 1 scale (which makes a lot more sense!).
+-- TimingWindowScale and LifeDifficultyScale are a little confusing. Players can change these under
+-- Advanced Options in the operator menu on scales from [1 to Justice] and [1 to 7], respectively.
+--
+-- The OptionRow for TimingWindowScale offers [1, 2, 3, 4, 5, 6, 7, 8, Justice] as options
+-- and these map to [1.5, 1.33, 1.16, 1, 0.84, 0.66, 0.5, 0.33, 0.2] in Preferences.ini for internal use.
+--
+-- The OptionRow for LifeDifficultyScale offers [1, 2, 3, 4, 5, 6, 7] as options
+-- and these map to [1.6, 1.4, 1.2, 1, 0.8, 0.6, 0.4] in Preferences.ini for internal use.
+--
+-- I don't know the history here, but I suspect these preferences are holdovers from SM3.9 when
+-- themes were just visual skins and core mechanics like TimingWindows and Life scaling could only
+-- be handled by the SM engine.  Whatever the case, they're still exposed as options in the
+-- operator menu and players still play around with them, so we need to handle that here.
+--
+-- 4 (1, internally) is considered standard for ITG.  GrooveStats expects players to have both these set to 4 (1, internally).
 -- Don't show the QR code if either one isn't set appropriately.
 if PREFSMAN:GetPreference("TimingWindowScale") ~= 1 then return end
 if PREFSMAN:GetPreference("LifeDifficultyScale") ~= 1 then return end
