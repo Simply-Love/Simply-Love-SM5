@@ -26,20 +26,19 @@ local wheel_item_mt = LoadActor("WheelItemMT.lua")
 
 local sortmenu = { w=210, h=160 }
 
--- a style like "single", "double", "versus", "solo", or "routine"
--- remove the possible presence of an "8" in case we're in Techno game
--- and the style is "single8", "double8", etc.
-local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
-
 ------------------------------------------------------------
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
 
 	-- Always ensure player input is directed back to the engine when initializing SelectMusic.
-	InitCommand=function(self) self:queuecommand("HideSortMenu") end,
+	InitCommand=function(self) self:visible(false):queuecommand("HideSortMenu") end,
 	-- Always ensure player input is directed back to the engine when leaving SelectMusic.
 	OffCommand=function(self) self:playcommand("HideSortMenu") end,
+
+	OnCommand=function(self) self:playcommand("AssessAvailableChoices") end,
+	-- We'll want to (re)assess available choices in the SortMenu if a player late-joins
+	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
 
 	ShowSortMenuCommand=function(self)
 		SOUND:StopMusic()
@@ -59,12 +58,18 @@ local t = Def.ActorFrame {
 	end,
 
 
-	OnCommand=function(self)
+	AssessAvailableChoicesCommand=function(self)
 		self:visible(false)
 
-		-- normally I would give a variable like this file scope, and not declare
+		-- normally I would give variables like these file scope, and not declare
 		-- within OnCommand(), but if the player uses the SortMenu to switch from
 		-- single to double, we'll need reassess which choices to present.
+
+		-- a style like "single", "double", "versus", "solo", or "routine"
+		-- remove the possible presence of an "8" in case we're in Techno game
+		-- and the style is "single8", "double8", etc.
+		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
+
 		local wheel_options = {
 			{"SortBy", "Group"},
 			{"SortBy", "Title"},
@@ -104,9 +109,13 @@ local t = Def.ActorFrame {
 				table.insert(wheel_options, {"ChangeStyle", "Double"})
 			elseif style == "double" then
 				table.insert(wheel_options, {"ChangeStyle", "Single"})
+
+			-- Routine is not ready for use yet, but it might be soon.
+			-- This can be uncommented at that time to allow switching from versus into routine.
+			-- elseif style == "versus" then
+			--	table.insert(wheel_options, {"ChangeStyle", "Routine"})
 			end
 		end
-
 
 		-- Allow players to switch out to a different SL GameMode if no stages have been played yet.
 		if SL.Global.Stages.PlayedThisGame == 0 then

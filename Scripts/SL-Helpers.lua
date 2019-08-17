@@ -156,11 +156,11 @@ end
 CurrentGameIsSupported = function()
 	-- a hardcoded list of games that Simply Love supports
 	local support = {
-		dance	= true,
-		pump = true,
+		dance  = true,
+		pump   = true,
 		techno = true,
-		para = true,
-		kb7 = true
+		para   = true,
+		kb7    = true
 	}
 	return support[GAMESTATE:GetCurrentGame():GetName()]
 end
@@ -218,23 +218,24 @@ function GetNotefieldX( player )
 end
 
 -- -----------------------------------------------------------------------
-
 -- this is verbose, but it lets us manage what seem to be
 -- quirks/oversights in the engine on a per-game + per-style basis
 
 local NoteFieldWidth = {
 	-- dance Just Works™.  Wow!  It's almost like this game gets the most attention and fixes.
 	dance = {
-		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		solo = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		single  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		versus  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		double  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		solo    = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		routine = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
 	},
 	-- the values returned by the engine for Pump are slightly too small(?), so... uh... pad it
 	pump = {
-		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		single  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		versus  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		double  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		routine = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
 	},
 	-- techno works for single8, needs to be smaller for versus8 and double8
 	techno = {
