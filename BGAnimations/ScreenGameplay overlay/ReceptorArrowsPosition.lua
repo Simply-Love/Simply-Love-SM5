@@ -17,8 +17,6 @@ local ReceptorPositions = {
 	}
 }
 
-
-
 return Def.Actor{
 	DoneLoadingNextSongMessageCommand=function(self) self:queuecommand("Position") end,
 	PositionCommand=function(self)

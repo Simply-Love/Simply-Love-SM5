@@ -1,4 +1,23 @@
--- don't bother for Casual gamemode
+-- Each time a judgment occurs during gameplay, the engine broadcasts some relevant data
+-- as a key/value table that themeside Lua can listen for via JudgmentMessageCommand()
+--
+-- The details of *what* gets broadcast is complicated and not documented anywhere I've found,
+-- but you can grep the src for "Judgment" (quotes included) to get a sense of what gets sent
+-- to Lua in different circumstances.
+--
+-- This file, PerColumnJudgmentTracking.lua exists so that ScreenEvaluation can have a pane
+-- that displays a per-column judgment breakdown.
+--
+-- We have a local table, judgments, that has as many sub-tables as the current game has panels
+-- per player (4 for dance-single, 8 for dance-double, 5 for pump-single, etc.)
+-- and each of those sub-tables stores the number of judgments that occur during gameplay on
+-- that particular panel.
+--
+-- This doesn't override or recreate the engine's judgment system in any way. It just allows
+-- transient judgment data to persist beyond ScreenGameplay.
+------------------------------------------------------------
+
+-- don't bother tracking per-column judgment data in Casual gamemode
 if SL.Global.GameMode == "Casual" then return end
 
 local player = ...

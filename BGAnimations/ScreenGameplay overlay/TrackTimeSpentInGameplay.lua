@@ -1,15 +1,16 @@
--- We want to be able to display the time spent in Gameplay across the entire set
+-- We want to be able to display the time spent in gameplay across the entire set
 -- for ScreenGameover.  We could call GAMESTATE:GetCurrentSong():MusicLengthSeconds(),
--- store that, and sum each value at ScreenGameover, but that wouldn't (easily) take
--- rate mods and quitting/backing out of songs into consideration.
+-- store that, and sum each value at ScreenGameover, but that wouldn't (easily) handle
+-- quitting/backing out of songs accurately.
 --
 -- So instead, calculate the duration of time actually spent in ScreenGameplay when its
 -- OffCommand is called.
+------------------------------------------------------------
 
 local player = ...
 local start_time
 
-local a = Def.Actor{
+local actor = Def.Actor{
 	OnCommand=function(self)
 		start_time = GetTimeSinceStart()
 	end,
@@ -18,4 +19,4 @@ local a = Def.Actor{
 	end
 }
 
-return a
+return actor

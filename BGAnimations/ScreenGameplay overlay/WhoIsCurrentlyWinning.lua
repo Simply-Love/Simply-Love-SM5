@@ -1,3 +1,7 @@
+-- If both players are joined, change the opacity of their score BitmapText actors to
+-- visually indicate who is winning at a given moment during gameplay.
+------------------------------------------------------------
+
 -- if there is only one player, don't bother
 if #GAMESTATE:GetHumanPlayers() < 2 then return end
 
@@ -13,8 +17,9 @@ end
 
 return Def.Actor{
 	OnCommand=function(self)
-		p1_score = self:GetParent():GetChild("P1Score")
-		p2_score = self:GetParent():GetChild("P2Score")
+		local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
+		p1_score = underlay:GetChild("P1Score")
+		p2_score = underlay:GetChild("P2Score")
 	end,
 	JudgmentMessageCommand=function(self) self:queuecommand("Winning") end,
 	WinningCommand=function(self)
