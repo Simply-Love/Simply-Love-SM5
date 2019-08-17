@@ -40,35 +40,56 @@ local GetSpeedModHelperText = function(player)
 	return text
 end
 
-local increments = {
-	x = 0.05,
-	C = 5,
-	M = 5
+-- The "dynamic" speedmod system is a horrible hack that works around the limitations of
+-- the engine's OptionRows which don't offer any means of presenting different sets of
+-- choices to each player within a single OptionRow.  We need this functionality when, for
+-- example, P1 wants an x-mod and P2 wants a C-mod; the choices presented in the SpeedMod
+-- OptionRow present and behave differently for each player.
+--
+-- So, we do a lot of hackish work locally (here in ScreenPlayerOptions overlay/default.lua)
+-- to manipulate the text being presented by the single BitmapText actor present in each
+-- SpeedMod OptionRow.  This is not how any other OptionRow operates, and it is neither
+-- flexible nor forward-thinking.
+
+local speedmod_def = {
+	x = { upper=20,   lower=0.05, increment=0.05 },
+	C = { upper=2000, lower=5,    increment=5 },
+	M = { upper=2000, lower=5,    increment=5 }
 }
 
-local bounds = {
-	x = { upper=20, lower=0.05 },
-	C = { upper=2000, lower=5 },
-	M = { upper=2000, lower=5 }
-}
-
---- this manipulates the SpeedMod numbers set in the global SL table
+-- use this to directly manipulate the SpeedMod numbers in the global SL table
+--    first argument is either "P1" or "P2"
+--    second arguemnt is either -1 (MenuLeft was pressed) or 1 (MenuRight was pressed)
 local ChangeSpeedMod = function(pn, direction)
 	local mods = SL[pn].ActiveModifiers
 
-	if mods.SpeedMod + (increments[mods.SpeedModType] * direction) > bounds[mods.SpeedModType].upper then
-		mods.SpeedMod = bounds[mods.SpeedModType].lower
+	local increment   = speedmod_def[mods.SpeedModType].increment
+	local upper_bound = speedmod_def[mods.SpeedModType].upper
+	local lower_bound = speedmod_def[mods.SpeedModType].lower
 
-	elseif mods.SpeedMod + (increments[mods.SpeedModType] * direction) < bounds[mods.SpeedModType].lower then
-		mods.SpeedMod = bounds[mods.SpeedModType].upper
+	-- we would be surpassing the upper bound for this type of speed mod, so wrap back to the lower bound
+	if mods.SpeedMod + (increment * direction) > upper_bound then
+		mods.SpeedMod = lower_bound
 
+	-- we would be less than the lower bound for this type of speed mod, so wrap to the upper bound
+	elseif mods.SpeedMod + (increment * direction) < lower_bound then
+		mods.SpeedMod = upper_bound
+
+	-- this is a normal speed mod change, no wrapping necessary
 	else
-		mods.SpeedMod = mods.SpeedMod + (increments[mods.SpeedModType] * direction)
+		mods.SpeedMod = mods.SpeedMod + (increment * direction)
 	end
 end
 
+
+-- Use this function to find an OptionRow by name so that you can manipulate its text directly as needed.
+--     first argument is a screen object provided by SCREENMAN:GetTopScreen()
+--     second argument is a string that might match the name of an OptionRow somewhere on this screen
+--
+-- 	   returns the 0-based index of that OptionRow within this screen
+
 local FindOptionRowIndex = function(ScreenOptions, Name)
-	if not ScreenOptions then return end
+	if not ScreenOptions or not ScreenOptions.GetNumRows then return end
 
 	local num_rows = ScreenOptions:GetNumRows()
 
@@ -81,7 +102,6 @@ local FindOptionRowIndex = function(ScreenOptions, Name)
 end
 
 ------------------------------------------------------------
-
 
 local Players = GAMESTATE:GetHumanPlayers()
 
@@ -109,22 +129,26 @@ local t = Def.ActorFrame{
 	end,
 	MusicRateChangedMessageCommand=function(self)
 		-- variables to be used for setting the text in the "Speed Mod" OptionRow title
-		local ScreenOptions = SCREENMAN:GetTopScreen()
-		local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions, "SpeedMod")
+		local screen = SCREENMAN:GetTopScreen()
 
-		-- the speedmod row doesn't exist for ScreenAttackMenu, and SpeedModRowIndex will be nil
-		if SpeedModRowIndex then
+		-- ScreenAttackMenu is both minimal (not many OptionRows) and buggy
+		-- so if we're there, bail now
+		if screen:GetName() == "ScreenAttackMenu" then return end
 
+		-- update SpeedModHelper text to refelct the new music rate
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			self:GetChild(ToEnumShortString(player) .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
+		end
+
+		-- find the index of the OptionRow for MusicRate so we can update
+		-- the text of its title BitmapText as the MusicRate changes
+		local MusicRateRowIndex = FindOptionRowIndex(screen, "MusicRate")
+
+		if MusicRateRowIndex then
 			local musicrate = SL.Global.ActiveModifiers.MusicRate
-
-			-- update SpeedModHelper text to refelct the new music rate
-			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-				self:GetChild(ToEnumShortString(player) .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
-			end
-
-			local SpeedModTitle = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Title")
+			local title_bmt = screen:GetOptionRow(MusicRateRowIndex):GetChild(""):GetChild("Title")
 			local bpms = GetDisplayBPMs()
-			SpeedModTitle:settext( THEME:GetString("OptionTitles", "SpeedMod") .. " (" .. bpms .. ")" )
+			title_bmt:settext( THEME:GetString("OptionTitles", "MusicRate") .. "\nbpm: " .. bpms )
 		end
 	end
 }
@@ -175,12 +199,12 @@ for player in ivalues(Players) do
 					-- apply rate compensation now
 					oldspeed = oldspeed * SL.Global.ActiveModifiers.MusicRate
 
-					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / increments[newtype])) * increments[newtype]
+					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / speedmod_def[newtype].increment)) * speedmod_def[newtype].increment
 				elseif newtype == "x" then
 					-- revert rate compensation since its handled for XMod
 					oldspeed = oldspeed / SL.Global.ActiveModifiers.MusicRate
 
-					SL[pn].ActiveModifiers.SpeedMod = (round(oldspeed / bpm[2] / increments[newtype])) * increments[newtype]
+					SL[pn].ActiveModifiers.SpeedMod = (round(oldspeed / bpm[2] / speedmod_def[newtype].increment)) * speedmod_def[newtype].increment
 				end
 
 				SL[pn].ActiveModifiers.SpeedModType = newtype
