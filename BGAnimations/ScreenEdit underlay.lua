@@ -1,25 +1,24 @@
 local t = Def.ActorFrame{
 	Name="Text",
+	OnCommand=function(self) self:queuecommand("Show") end,
+	EditCommand=function(self) self:playcommand("Show") end,
 
-	EditCommand=cmd(playcommand, "Show"),
-
-	PlayingCommand=cmd(playcommand, "Hide"),
-	RecordCommand=cmd(playcommand, "Hide"),
-	RecordPausedCommand=cmd(playcommand, "Hide"),
+	PlayingCommand=function(self) self:playcommand("Hide") end,
+	RecordCommand=function(self) self:playcommand("Hide") end,
+	RecordPausedCommand=function(self) self:playcommand("Hide") end,
 
 	-- Info
 	Def.ActorFrame{
-		InitCommand=cmd(xy, _screen.w-60, 16),
-		ShowCommand=cmd(decelerate, 0.1; x, _screen.w-60),
-		HideCommand=cmd(accelerate, 0.1; x, _screen.w+60),
+		InitCommand=function(self) self:xy(_screen.w, 10) end,
+		ShowCommand=function(self) self:visible(true) end,
+		HideCommand=function(self) self:visible(false) end,
 
-		LoadFont("Common Normal") .. {
+		Def.Quad{ InitCommand=function(self) self:zoomto(30,1):horizalign(right) end },
+
+		LoadFont("_wendy small") .. {
 			Name="InfoText",
-			Text=THEME:GetString("ScreenEdit","Info"),
-			InitCommand=cmd(zoom, 0.75)
-		},
-		Def.Quad{
-			InitCommand=cmd(y,12; zoomto,120,1)
+			Text=THEME:GetString("ScreenEdit", "Info"),
+			InitCommand=function(self) self:zoom(0.265):horizalign(right):x(-35):diffuse(PlayerColor(PLAYER_1)) end,
 		}
 	}
 }
@@ -36,21 +35,20 @@ local sections = {
 for section, offset in pairs(sections) do
 	t[#t+1] = Def.ActorFrame{
 		Name=section,
-		InitCommand=cmd(xy, 0, offset; diffusealpha, 0),
-		OnCommand=cmd(queuecommand, "Show"),
-		ShowCommand=cmd(visible, true; decelerate, 0.2; diffusealpha, 1),
-		HideCommand=cmd(diffusealpha, 0; visible, false),
+		InitCommand=function(self) self:xy(0, offset) end,
+		ShowCommand=function(self) self:visible(true) end,
+		HideCommand=function(self) self:visible(false) end,
 
 		LoadFont("_wendy small")..{
 			Text=THEME:GetString("ScreenEdit", section.."Label"),
-			InitCommand=cmd(zoom, 0.265; horizalign, left; xy, 35, 10; diffuse, PlayerColor(PLAYER_1))
+			InitCommand=function(self) self:zoom(0.265):horizalign(left):xy(35, 10):diffuse(PlayerColor(PLAYER_1)) end
 		},
 		Def.Quad{
-			InitCommand=cmd(y,10; zoomto,30,1; horizalign, left; diffusealpha,0.75 )
+			InitCommand=function(self) self:y(10):zoomto(30,1):horizalign(left):diffusealpha(0.75) end
 		},
 		LoadFont("Common Normal")..{
 			Text=THEME:GetString("ScreenEdit", section.."Text"),
-			InitCommand=cmd(y, 14; zoom, 0.6; horizalign, left; xy, 10, 20; vertalign, top; vertspacing, -1 ),
+			InitCommand=function(self) self:xy(10, 20):zoom(0.6):horizalign(left):vertalign(top):vertspacing(-1) end,
 		},
 	}
 end
