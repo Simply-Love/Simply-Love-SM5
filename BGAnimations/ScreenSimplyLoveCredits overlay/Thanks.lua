@@ -44,12 +44,12 @@ return {
 		{
 			Name="David / mute",
 			Img="mute.png",
-			About="David composed the menu music for Simply Love.  In addition to being a prolific simfile author, he is known in the community for figuring out how to properly sync simfiles and authoring the de facto standard guide to simfile syncing.\n\nDavid was an early adopter of SM5 on arcade hardware and has been a vocal proponent of getting people to switch from SM3.95."
+			About="David composed much of the menu music for Simply Love.  In addition to being a prolific simfile author, he is known in the community for figuring out how to properly sync simfiles and authoring the de facto standard guide to simfile syncing.\n\nDavid was an early adopter of SM5 on arcade hardware and has been a vocal proponent of getting people to switch from SM3.95."
 		},
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who contributed pull requests and helped improve my code over the years.\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, TheKamilia, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, dougshell, shockdude, Sereni, karamel59, TheNick, and CrashCringle12."
+			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, ListenerJubatus, TheNick, and CrashCringle12."
 		}
 	},
 

@@ -1,6 +1,11 @@
 local player = Var "Player"
+local pn = ToEnumShortString(player)
+local mods = SL[pn].ActiveModifiers
 
-if SL[ToEnumShortString(player)].ActiveModifiers.HideCombo then
+local available_fonts = GetComboFonts()
+local combo_font = (FindInTable(mods.ComboFont, available_fonts) ~= nil and mods.ComboFont) or available_fonts[1] or nil
+
+if mods.HideCombo or combo_font == nil then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
 
@@ -38,16 +43,17 @@ local af = Def.ActorFrame{
 	end,
 }
 
-if not SL[ToEnumShortString(player)].ActiveModifiers.HideComboExplosions then
+if not mods.HideComboExplosions then
 	-- load the combo milestones actors into the Player combo; they will
 	-- listen for the appropriate Milestone command from the engine
 	af[#af+1] = LoadActor( THEME:GetPathG("Combo","100Milestone") )..{ Name="OneHundredMilestone" }
 	af[#af+1] = LoadActor( THEME:GetPathG("Combo","1000Milestone") )..{ Name="OneThousandMilestone" }
 end
 
--- "_wendy combo" is monospaced so that each digit's alignment remains
+-- Combo fonts should be monospaced so that each digit's alignment remains
 -- consistent (i.e., not visually distrating) as the combo continually grows
-af[#af+1] = LoadFont("_wendy combo")..{
+
+af[#af+1] = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	Name="Number",
 	OnCommand=function(self)
 		self:shadowlength(1):vertalign(middle):zoom(0.75)

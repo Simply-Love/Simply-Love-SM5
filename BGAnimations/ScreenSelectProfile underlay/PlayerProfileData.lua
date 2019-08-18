@@ -1,5 +1,5 @@
--- some local functions that will help process profile data into presentable strings
 -- ----------------------------------------------------
+-- some local functions that will help process profile data into presentable strings
 
 local RecentMods = function(mods)
 	if type(mods) ~= "table" then return "" end
@@ -19,6 +19,7 @@ local RecentMods = function(mods)
 	-- Mini and JudgmentGraphic should definitely be strings
 	if type(mods.Mini)=="string" and mods.Mini ~= "" and mods.Mini ~= "0%" then text = text..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini")..", " end
 	if type(mods.JudgmentGraphic)=="string" and mods.JudgmentGraphic ~= "" then text = text..StripSpriteHints(mods.JudgmentGraphic) .. ", " end
+	if type(mods.ComboFont)=="string" and mods.ComboFont ~= "" then text = text..mods.ComboFont .. ", " end
 
 	-- loop for mods that save as booleans
 	local flags, hideflags = "", ""
@@ -84,12 +85,15 @@ for i=0, PROFILEMAN:GetNumLocalProfiles()-1 do
 	local id = PROFILEMAN:GetLocalProfileIDFromIndex(i)
 	local dir = PROFILEMAN:LocalProfileIDToDir(id)
 	local userprefs = ReadProfileCustom(profile, dir)
+	local mods, noteskin, judgment = RecentMods(userprefs)
 
 	profile_data[i] = {
 		highscorename = profile:GetLastUsedHighScoreName(),
 		recentsong = RecentSong(profile:GetLastPlayedSong()),
 		totalsongs = TotalSongs(profile:GetNumTotalSongsPlayed()),
-		mods = RecentMods(userprefs)
+		mods = mods,
+		noteskin = noteskin,
+		judgment = judgment,
 	}
 end
 

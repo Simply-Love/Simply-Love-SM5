@@ -1357,10 +1357,10 @@ qrcode_amv = function( url, size )
 		for m, module in ipairs(column) do
 			local clr = (module > 0) and Color.Black or Color.White
 
-			table.insert( verts, {{m-1,	c-1, 	0}, clr } )
-			table.insert( verts, {{m, 	c-1, 	0}, clr } )
-			table.insert( verts, {{m, 	c, 		0}, clr } )
-			table.insert( verts, {{m-1, c, 		0}, clr } )
+			table.insert( verts, {{m-1, c-1, 0}, clr } )
+			table.insert( verts, {{m,   c-1, 0}, clr } )
+			table.insert( verts, {{m,   c,   0}, clr } )
+			table.insert( verts, {{m-1, c,   0}, clr } )
 		end
 	end
 

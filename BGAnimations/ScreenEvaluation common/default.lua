@@ -1,5 +1,5 @@
 local Players = GAMESTATE:GetHumanPlayers()
-local NumPanes = SL.Global.GameMode=="Casual" and 1 or 5
+local NumPanes = SL.Global.GameMode=="Casual" and 1 or 6
 
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
@@ -55,6 +55,9 @@ for player in ivalues(Players) do
 
 		-- letter grade
 		LoadActor("./PerPlayer/LetterGrade.lua", player),
+
+		-- nice
+		LoadActor("./PerPlayer/nice.lua", player),
 
 		-- stepartist
 		LoadActor("./PerPlayer/StepArtist.lua", player),

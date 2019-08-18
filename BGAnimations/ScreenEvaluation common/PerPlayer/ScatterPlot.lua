@@ -72,10 +72,9 @@ end
 -- this is more efficient than drawing n Def.Quads (one for each judgment)
 -- because the entire AMV will be a single Actor rather than n Actors with n unique Draw() calls.
 local amv = Def.ActorMultiVertex{
+	InitCommand=function(self) self:x(-GraphWidth/2) end,
 	OnCommand=function(self)
-		self:x(-GraphWidth/2)
-			:y(_screen.cy + 151 - GraphHeight/2)
-			:SetDrawState{Mode="DrawMode_Quads"}
+		self:SetDrawState({Mode="DrawMode_Quads"})
 			:SetVertices(verts)
 	end,
 }

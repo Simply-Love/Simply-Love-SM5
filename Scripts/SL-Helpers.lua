@@ -17,13 +17,52 @@ function Border(width, height, bw)
 end
 
 ------------------------------------------------------------------------------
+-- SM5's d3d implementation does not support render to texture. The DISPLAY
+-- singleton has a method to check this but it doesn't seem to be implemented
+-- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
+
+SupportsRenderToTexture = function()
+	return PREFSMAN:GetPreference("VideoRenderers"):sub(1,6):lower() == "opengl"
+end
+
+------------------------------------------------------------------------------
+-- support for closing open song groups by pressing MenuUp and MenuDown simultaneously
+-- was requested, but ScreenSelectMusic uses the engine's MusicWheel, which relies on
+-- a simple Metric to set a single input code for all possible scenarios.
+--
+-- Most arcade cabinets currently don't have dedicated MenuUp and MenuDown buttons, so
+-- we should support the standard "Up-Down" code first, and only support "MenuUp-MenuDown"
+-- if either of the active players has their buttons actually mapped for those.
+--
+-- Both MenuUp and MenuDown are unmapped (empty strings) in Keymaps.ini by default, so we'll
+-- assume that if the player has gone out of their way to map them, they want to use them.
+
+CloseCurrentFolder = function()
+	local code = "Up-Down"
+
+	local game = GAMESTATE:GetCurrentGame():GetName()
+	if game == pump then code = "UpLeft-UpRight" end
+
+	local players = GAMESTATE:GetHumanPlayers()
+	if #players > 0 and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
+		local file = IniFile.ReadFile("/Save/Keymaps.ini")
+		if file and file[game] then
+			if FindInTable("PlayerNumber_P1", players) and file[game]["1_MenuUp"] ~= "" and file[game]["1_MenuDown"] ~= "" then code = "MenuUp-MenuDown" end
+			if FindInTable("PlayerNumber_P2", players) and file[game]["2_MenuUp"] ~= "" and file[game]["2_MenuDown"] ~= "" then code = "MenuUp-MenuDown" end
+		end
+	end
+
+	return code
+end
+
+------------------------------------------------------------------------------
 -- There's surely a better way to do this.  I need to research this more.
 local is8bit = function(text)
 	return text:len() == text:utf8len()
 end
 
--- FIXME: overriding the engine's API like this is convenient but will likely cause things
--- to go haywire if the user switches themes.  I need to think about this.
+-- FIXME: overriding the engine's API like this seems convenient until you try to reload scripts
+-- this cannot stay this way; I need to fix this sooner than later
 BitmapText.wrapwidthpixels_orignal = BitmapText.wrapwidthpixels
 
 BitmapText.wrapwidthpixels = function(bmt, w)
@@ -117,11 +156,11 @@ end
 CurrentGameIsSupported = function()
 	-- a hardcoded list of games that Simply Love supports
 	local support = {
-		dance	= true,
-		pump = true,
+		dance  = true,
+		pump   = true,
 		techno = true,
-		para = true,
-		kb7 = true
+		para   = true,
+		kb7    = true
 	}
 	return support[GAMESTATE:GetCurrentGame():GetName()]
 end
@@ -179,23 +218,24 @@ function GetNotefieldX( player )
 end
 
 -- -----------------------------------------------------------------------
-
 -- this is verbose, but it lets us manage what seem to be
 -- quirks/oversights in the engine on a per-game + per-style basis
 
 local NoteFieldWidth = {
 	-- dance Just Works™.  Wow!  It's almost like this game gets the most attention and fixes.
 	dance = {
-		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		solo = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		single  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		versus  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		double  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		solo    = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		routine = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
 	},
 	-- the values returned by the engine for Pump are slightly too small(?), so... uh... pad it
 	pump = {
-		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		double = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		single  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		versus  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		double  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		routine = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
 	},
 	-- techno works for single8, needs to be smaller for versus8 and double8
 	techno = {
@@ -237,7 +277,7 @@ GetNoteSkinActor = function(noteskin_name, column)
 	-- prepare a dummy Actor using the name of NoteSkin in case errors are
 	-- encountered so that a valid (inert, not-drawing) actor still gets returned
 	local dummy = Def.Actor{
-		Name="NoteSkin_"..noteskin_name,
+		Name="NoteSkin_"..(noteskin_name or ""),
 		InitCommand=function(self) self:visible(false) end
 	}
 
@@ -387,12 +427,6 @@ end
 function GetOperatorMenuLineNames()
 	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,ClearCredits,Reload"
 
-	-- the TestInput screen only supports dance, pump, and techno; remove it when in other games
-	local CurrentGame = GAMESTATE:GetCurrentGame():GetName()
-	if not (CurrentGame=="dance" or CurrentGame=="pump" or CurrentGame=="techno") then
-		lines = lines:gsub("TestInput,", "")
-	end
-
 	-- hide the OptionRow for ClearCredits if we're not in CoinMode_Pay; it doesn't make sense to show for at-home players
 	-- note that (EventMode + CoinMode_Pay) will actually place you in CoinMode_Home
 	if GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then
@@ -419,7 +453,7 @@ end
 
 
 function GetPlayerOptions2LineNames()
-	local mods = "Turn,Scroll,7,8,9,10,11,12,13,Attacks,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterOptions,WorstTimingWindow,Vocalization,Characters,ScreenAfterPlayerOptions2"
+	local mods = "Turn,Scroll,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterOptions,WorstTimingWindow,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
 	if SL.Global.GameMode ~= "StomperZ" then
@@ -429,16 +463,6 @@ function GetPlayerOptions2LineNames()
 	-- remove WorstTimingWindow and LifeMeterType if GameMode is StomperZ
 	if SL.Global.GameMode == "StomperZ" then
 		mods = mods:gsub("WorstTimingWindow,", ""):gsub("LifeMeterType", "")
-	end
-
-	-- remove Vocalization if no voice packs were found in the filesystem
-	if #FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/", true, false) < 1 then
-		mods = mods:gsub("Vocalization," ,"")
-	end
-
-	-- remove Characters if no dancing character directories were found
-	if #CHARMAN:GetAllCharacters() < 1 then
-		mods = mods:gsub("Characters,", "")
 	end
 
 	-- ActionOnMissedTarget can automatically fail or restart Gameplay when a target score
@@ -452,6 +476,21 @@ function GetPlayerOptions2LineNames()
 	return mods
 end
 
+function GetPlayerOptions3LineNames()
+	local mods = "7,8,9,10,11,12,13,Attacks,Vocalization,Characters,ScreenAfterPlayerOptions3"
+
+	-- remove Vocalization if no voice packs were found in the filesystem
+	if #FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/", true, false) < 1 then
+		mods = mods:gsub("Vocalization," ,"")
+	end
+
+	-- remove Characters if no dancing character directories were found
+	if #CHARMAN:GetAllCharacters() < 1 then
+		mods = mods:gsub("Characters,", "")
+	end
+
+	return mods
+end
 -- -----------------------------------------------------------------------
 -- given a player, return a table of stepartist text for the current song or course
 -- so that various screens (SSM, Eval) can cycle through these values and players
@@ -534,7 +573,7 @@ function GetJudgmentGraphics(mode)
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}
 
-	for k,filename in ipairs(files) do
+	for i,filename in ipairs(files) do
 
 		-- Filter out files that aren't judgment graphics
 		-- e.g. hidden system files like .DS_Store
@@ -556,4 +595,32 @@ function GetJudgmentGraphics(mode)
 	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
+end
+-- -----------------------------------------------------------------------
+
+GetComboFonts = function()
+	local path = THEME:GetCurrentThemeDirectory().."Fonts/_Combo Fonts/"
+	local dirs = FILEMAN:GetDirListing(path, true, false)
+	local fonts = {}
+
+	for directory_name in ivalues(dirs) do
+		local files = FILEMAN:GetDirListing(path..directory_name.."/")
+		local has_png, has_ini = false, false
+
+		for filename in ivalues(files) do
+			if FilenameIsMultiFrameSprite(filename) and StripSpriteHints(filename)==directory_name then has_png = true end
+			if filename:match(".ini") and filename:gsub(".ini","")==directory_name then has_ini = true end
+		end
+
+		if has_png and has_ini then
+			-- special-case Wendy to always appear first in the list
+			if directory_name == "Wendy" then
+				table.insert(fonts, 1, directory_name)
+			else
+				table.insert(fonts, directory_name)
+			end
+		end
+	end
+
+	return fonts
 end

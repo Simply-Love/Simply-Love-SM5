@@ -83,6 +83,9 @@ Handle.Back = function(event)
 		SCREENMAN:GetTopScreen():Cancel()
 	else
 		MESSAGEMAN:Broadcast("BackButton")
+		-- ScreenSelectProfile:SetProfileIndex() will interpret -2 as
+		-- "Unjoin this player and unmount their USB stick if there is one"
+		-- see ScreenSelectProfile.cpp for details
 		SCREENMAN:GetTopScreen():SetProfileIndex(event.PlayerNumber, -2)
 	end
 end

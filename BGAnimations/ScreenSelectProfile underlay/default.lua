@@ -92,6 +92,11 @@ local t = Def.ActorFrame {
 
 		if (AutoStyle=="single" or AutoStyle=="double") and params.PlayerNumber ~= mpn then return end
 
+		-- Don't allow players to unjoin from SelectProfile in CoinMode_Pay.
+		-- 1 credit has already been deducted from ScreenTitleJoin, so allowing players
+		-- to unjoin would mean we'd have to handle credit refunding (or something).
+		if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then return end
+
 		if params.Name == "Select" then
 			if GAMESTATE:GetNumPlayersEnabled()==0 then
 				SCREENMAN:GetTopScreen():Cancel()

@@ -2,7 +2,7 @@ local sort_wheel = ...
 
 -- this handles user input
 local function input(event)
-	if not event.PlayerNumber or not event.button then
+	if not (event and event.PlayerNumber and event.button) then
 		return false
 	end
 
@@ -25,6 +25,8 @@ local function input(event)
 				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
 				overlay:queuecommand("HideSortMenu")
 
+
+			-- the player wants to change modes, for example from ITG to FA+
 			elseif focus.kind == "ChangeMode" then
 				SL.Global.GameMode = focus.change
 				SetGameModePreferences()
@@ -37,6 +39,8 @@ local function input(event)
 				-- which also returns input back away from Lua back to the engine.
 				overlay:GetChild("SortMenu"):playcommand("On"):queuecommand("HideSortMenu")
 
+
+			-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
 				-- If the MenuTimer is in effect, make sure to grab its current
 				-- value before reloading the screen.

@@ -17,8 +17,6 @@ local ReceptorPositions = {
 	}
 }
 
-
-
 return Def.Actor{
 	DoneLoadingNextSongMessageCommand=function(self) self:queuecommand("Position") end,
 	PositionCommand=function(self)
@@ -30,8 +28,9 @@ return Def.Actor{
 		local scroll = playeroptions:UsingReverse() and "Reverse" or "Standard"
 		local position = SL[p].ActiveModifiers.ReceptorArrowsPosition
 
-		-- The "Player ActorFrame contains several things like NoteField, Judgment, HoldJudgment, etc.
-		-- Shift the entire ActorFrame up/down, rather than try to position its children individually.
+		-- The player's ActorFrame ("PlayerP1" or "PlayerP2") contains multiple important
+		-- things like NoteField, Judgment, HoldJudgment, etc.  Shift the entire
+		-- ActorFrame up/down, rather than trying to position its children individually.
 		topscreen:GetChild('Player'..p):addy( ReceptorPositions[scroll][position] )
 	end
 }

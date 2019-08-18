@@ -6,6 +6,6 @@ if ThemePrefs.Get("RainbowMode") then
 	}
 end
 
-t[#t+1] = LoadActor( THEME:GetPathB("", "_shared background normal"))
+t[#t+1] = LoadActor( THEME:GetPathB("", "_shared background"))
 
 return t

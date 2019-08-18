@@ -1,4 +1,1 @@
-return Def.ActorFrame{
-	OnCommand=cmd(zoom,0.85);
-	LoadActor("graphics/a.png");
-};
+return LoadActor("./assets/a.png")..{ OnCommand=function(self) self:zoom(0.85) end }

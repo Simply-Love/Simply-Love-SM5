@@ -3,7 +3,7 @@ local pn = ToEnumShortString(player)
 local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 
 local ps = GAMESTATE:GetPlayerState(player)
--- NOTESKIN:LoadActorForNoteSkin() expects the noteskin name to be all lowercase?
+-- NOTESKIN:LoadActorForNoteSkin() expects the noteskin name to be all lowercase
 local noteskin = ps:GetCurrentPlayerOptions():NoteSkin():lower()
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
@@ -48,8 +48,8 @@ for i,column in ipairs( columns[game] ) do
 	-- GetNoteSkinActor() is defined in ./Scripts/SL-Helpers.lua, and performs some
 	-- rudimentary error handling because NoteSkins From The Internet™ may contain Lua errors
 	af[#af+1] = GetNoteSkinActor(noteskin, column)..{
-		InitCommand=function(self)
-			self:x( i*column_width ):zoom(0.4)
+		OnCommand=function(self)
+			self:x( i*column_width ):zoom(0.4):visible(true)
 		end
 	}
 

@@ -151,3 +151,57 @@ function OptionRowTheme()
 		end,
 	}
 end
+
+
+-- the OptionRow for changing the VideoRenderer should only appear in Windows
+-- (see [ScreenOptionsGraphicsSound] in Metrics.ini), but we'll make an effort
+-- to present valid choices in macOS and Linux, Just In Case.
+function OptionRowVideoRendererWindows()
+
+	-- opengl is a valid VideoRenderer for all architectures, so start
+	-- by assuming it is the only choice.
+	local choices = { "opengl" }
+	local values  = { "opengl" }
+
+	-- Windows also has d3d as a VideoRenderer, and the convention(?)
+	-- there is to list both in Preferences.ini, but only use the first
+	local architecture = HOOKS:GetArchName():lower()
+	if architecture:match("windows") then
+		table.insert(choices, "d3d")
+		values = { "opengl,d3d", "d3d,opengl" }
+	end
+
+	return {
+		Name = "VideoRenderer",
+		Choices = choices,
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		LoadSelections = function(self, list, pn)
+			local pref = PREFSMAN:GetPreference("VideoRenderers")
+
+			-- Multiple comma-delimited VideoRenderers may be listed, but
+			-- we only want the first because that's the one actually in use.
+			-- Split the string on commas, get the first match found, and
+			-- immediately break from the loop.
+			for renderer in pref:gmatch("(%w+),?") do
+				pref = renderer
+				break
+			end
+
+			if not pref then return end
+
+			local i = FindInTable(pref, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #list do
+				if list[i] then
+					PREFSMAN:SetPreference("VideoRenderers", values[i])
+					break
+				end
+			end
+		end,
+	}
+end

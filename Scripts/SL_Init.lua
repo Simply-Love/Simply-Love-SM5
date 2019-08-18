@@ -4,13 +4,14 @@ local PlayerDefaults = {
 	__index = {
 		initialize = function(self)
 			self.ActiveModifiers = {
-				JudgmentGraphic = "Love 2x6.png",
-				Mini = "0%",
-				BackgroundFilter = "Off",
 				SpeedModType = "x",
 				SpeedMod = 1.00,
-				Vocalization = "None",
+				JudgmentGraphic = "Love 2x6.png",
+				ComboFont = "Wendy",
 				NoteSkin = nil,
+				Mini = "0%",
+				BackgroundFilter = "Off",
+
 				HideTargets = false,
 				HideSongBG = false,
 				HideCombo = false,
@@ -18,11 +19,12 @@ local PlayerDefaults = {
 				HideScore = false,
 				HideDanger = false,
 				HideComboExplosions = false,
+
 				ColumnFlashOnMiss = false,
 				SubtractiveScoring = false,
+				MeasureCounter = "None",
 				MeasureCounterLeft = true,
 				MeasureCounterUp = false,
-				MeasureCounter = "None",
 				DataVisualizations = "Disabled",
 				TargetScore = 11,
 				ActionOnMissedTarget = "Nothing",
@@ -73,8 +75,9 @@ local GlobalDefaults = {
 			}
 			self.ScreenAfter = {
 				PlayAgain = "ScreenEvaluationSummary",
-				PlayerOptions = "ScreenGameplay",
-				PlayerOptions2 = "ScreenGameplay"
+				PlayerOptions  = "ScreenGameplay",
+				PlayerOptions2 = "ScreenGameplay",
+				PlayerOptions3 = "ScreenGameplay",
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "ITG"

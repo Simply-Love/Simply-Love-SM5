@@ -110,7 +110,7 @@ return LoadFont("_wendy small")..{
 			local actual_dp = math.max(pss:GetActualDancePoints(), 0)
 
 			local score = current_possible_dp - actual_dp
-			score = ((possible_dp - score) / possible_dp) * 100
+			score = math.floor(((possible_dp - score) / possible_dp) * 10000) / 100
 
 			self:settext("-" .. string.format("%.2f", 100-score) .. "%" )
 		end

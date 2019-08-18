@@ -36,12 +36,12 @@ local t = Def.ActorFrame{
 	-- ----------------------------------------
 	-- Actorframe for Artist, BPM, and Song length
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set"),
-		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set"),
+		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentStepsP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentStepsP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
@@ -57,7 +57,7 @@ local t = Def.ActorFrame{
 
 		Def.ActorFrame{
 
-			InitCommand=cmd(x, -110),
+			InitCommand=function(self) self:x(-110) end,
 
 			-- Artist Label
 			LoadFont("Common Normal")..{
@@ -76,18 +76,10 @@ local t = Def.ActorFrame{
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						local course = GAMESTATE:GetCurrentCourse()
-						if course then
-							self:settext( #course:GetCourseEntries() )
-						else
-							self:settext("")
-						end
+						self:settext( course and #course:GetCourseEntries() or "" )
 					else
 						local song = GAMESTATE:GetCurrentSong()
-						if song and song:GetDisplayArtist() then
-							self:settext( song:GetDisplayArtist() )
-						else
-							self:settext("")
-						end
+						self:settext( song and song:GetDisplayArtist() or "" )
 					end
 				end
 			},
@@ -105,15 +97,15 @@ local t = Def.ActorFrame{
 
 			-- BPM value
 			LoadFont("Common Normal")..{
-				InitCommand=cmd(horizalign, left; y, 8; x, 5; diffuse, color("1,1,1,1")),
+				InitCommand=function(self) self:horizalign(left):xy(5,8):diffuse(1,1,1,1) end,
 				SetCommand=function(self)
-					--defined in ./Scipts/SL-CustomSpeedMods.lua
+					--defined in ./Scipts/SL-BPMDisplayHelpers.lua
 					local text = GetDisplayBPMs()
 					self:settext(text or "")
 				end
 			},
 
-			-- Song Length Label
+			-- Song Duration Label
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "Length"),
 				InitCommand=function(self)
@@ -123,9 +115,9 @@ local t = Def.ActorFrame{
 				end
 			},
 
-			-- Song Length Value
+			-- Song Duration Value
 			LoadFont("Common Normal")..{
-				InitCommand=cmd(horizalign, left; y, 8; x, _screen.w/4.5 + 5),
+				InitCommand=function(self) self:horizalign(left):xy(_screen.w/4.5 + 5, 8) end,
 				SetCommand=function(self)
 					local duration
 
@@ -194,20 +186,18 @@ local t = Def.ActorFrame{
 			},
 
 			LoadFont("Common Normal")..{
-				InitCommand=cmd(diffuse, Color.Black; zoom,0.8; y, 34),
+				InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8):y(34) end,
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
-					local text = ""
+					if not song then self:settext(""); return end
 
-					if song then
-						if song:IsMarathon() then
-							text = THEME:GetString("SongDescription", "IsMarathon")
-						elseif song:IsLong() then
-							text = THEME:GetString("SongDescription", "IsLong")
-						end
+					if song:IsMarathon() then
+						self:settext(THEME:GetString("SongDescription", "IsMarathon"))
+					elseif song:IsLong() then
+						self:settext(THEME:GetString("SongDescription", "IsLong"))
+					else
+						self:settext("")
 					end
-
-					self:settext(text)
 				end
 			}
 		}

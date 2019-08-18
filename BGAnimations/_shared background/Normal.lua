@@ -14,7 +14,7 @@ local t = Def.ActorFrame {
 	InitCommand=function(self)
 		self:visible(not ThemePrefs.Get("RainbowMode"))
 	end,
-	OnCommand=cmd(accelerate,0.8; diffusealpha,1),
+	OnCommand=function(self) self:accelerate(0.8):diffusealpha(1) end,
 	HideCommand=function(self) self:visible(false) end,
 
 	BackgroundImageChangedMessageCommand=function(self)

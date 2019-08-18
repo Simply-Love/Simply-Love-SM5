@@ -100,10 +100,17 @@ Branch.AfterHeartEntry = function()
 	if( pm == "Nonstop" ) then return "ScreenEvaluationNonstop" end
 end
 
-Branch.PlayerOptions = function()
+Branch.AfterSelectMusic = function()
 	if SCREENMAN:GetTopScreen():GetGoToOptions() then
 		return "ScreenPlayerOptions"
 	else
+		-- routine mode specifically uses ScreenGameplayShared
+		local style = GAMESTATE:GetCurrentStyle():GetName()
+		if style == "routine" then
+			return "ScreenGameplayShared"
+		end
+
+		-- while everything else (single, versus, double, etc.) uses ScreenGameplay
 		return "ScreenGameplay"
 	end
 end

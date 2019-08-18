@@ -37,8 +37,4 @@ end
 -- gets overlapped by StepStatistics otherwise...?
 t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
-if GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-	t[#t+1] = LoadActor("./Shared/WhoIsCurrentlyWinning.lua")
-end
-
 return t

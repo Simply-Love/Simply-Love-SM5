@@ -1,28 +1,28 @@
 local args = ...
 local choiceName = args[1].name
+local frame_x = args[1].x
 local pads = args[1].pads
 local index = args[2]
 
 
-local yshift = WideScale(54,78)
-local zoomFactor = WideScale(0.435,0.525)
-local gameName = GAMESTATE:GetCurrentGame():GetName()
+local _zoom = WideScale(0.435,0.525)
+local _game = GAMESTATE:GetCurrentGame():GetName()
 
 local drawNinePanelPad = function(color, xoffset)
 
 	return Def.ActorFrame {
 
-		InitCommand=cmd(x, xoffset; y, -yshift),
+		InitCommand=function(self) self:x(xoffset) end,
 
 		-- first row
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth())
-				self:y(zoomFactor * self:GetHeight())
+				self:zoom(_zoom)
+				self:x(_zoom * self:GetWidth() * -1)
+				self:y(_zoom * self:GetHeight() * -2)
 
-				if gameName == "pump" or gameName == "techno" or (gameName == "dance" and choiceName == "solo") then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "pump" or _game == "techno" or (_game == "dance" and choiceName == "solo") then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -31,12 +31,12 @@ local drawNinePanelPad = function(color, xoffset)
 
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth() * 2)
-				self:y(zoomFactor * self:GetHeight())
+				self:zoom(_zoom)
+				self:x(0)
+				self:y(_zoom * self:GetHeight() * -2)
 
-				if gameName == "dance" or gameName == "techno" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "dance" or _game == "techno" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -45,12 +45,12 @@ local drawNinePanelPad = function(color, xoffset)
 
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth() * 3)
-				self:y(zoomFactor * self:GetHeight())
+				self:zoom(_zoom)
+				self:x(_zoom * self:GetWidth())
+				self:y(_zoom * self:GetHeight() * -2)
 
-				if gameName == "pump" or gameName == "techno" or (gameName == "dance" and choiceName == "solo") then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "pump" or _game == "techno" or (_game == "dance" and choiceName == "solo") then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -61,12 +61,12 @@ local drawNinePanelPad = function(color, xoffset)
 		-- second row
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth())
-				self:y(zoomFactor * self:GetHeight() * 2)
+				self:zoom(_zoom)
+				self:x(_zoom * self:GetWidth() * -1)
+				self:y(_zoom * self:GetHeight() * -1)
 
-				if gameName == "dance" or gameName == "techno" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "dance" or _game == "techno" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -75,12 +75,12 @@ local drawNinePanelPad = function(color, xoffset)
 
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth() * 2)
-				self:y(zoomFactor * self:GetHeight() * 2)
+				self:zoom(_zoom)
+				self:x(0)
+				self:y(_zoom * self:GetHeight() * -1)
 
-				if gameName == "pump" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "pump" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -89,12 +89,12 @@ local drawNinePanelPad = function(color, xoffset)
 
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth() * 3)
-				self:y(zoomFactor * self:GetHeight() * 2)
+				self:zoom(_zoom)
+				self:x(_zoom * self:GetWidth())
+				self:y(_zoom * self:GetHeight() * -1)
 
-				if gameName == "dance" or gameName == "techno" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "dance" or _game == "techno" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -106,12 +106,12 @@ local drawNinePanelPad = function(color, xoffset)
 		-- third row
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth())
-				self:y(zoomFactor * self:GetHeight() * 3)
+				self:zoom(_zoom)
+				self:x(_zoom * self:GetWidth() * -1)
+				self:y(0)
 
-				if gameName == "pump" or gameName == "techno" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "pump" or _game == "techno" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -120,12 +120,12 @@ local drawNinePanelPad = function(color, xoffset)
 
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth() * 2)
-				self:y(zoomFactor * self:GetHeight() * 3)
+				self:zoom(_zoom)
+				self:x(0)
+				self:y(0)
 
-				if gameName == "dance" or gameName == "techno" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "dance" or _game == "techno" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -134,12 +134,12 @@ local drawNinePanelPad = function(color, xoffset)
 
 		LoadActor("rounded-square.png")..{
 			InitCommand=function(self)
-				self:zoom(zoomFactor)
-				self:x(zoomFactor * self:GetWidth() * 3)
-				self:y(zoomFactor * self:GetHeight() * 3)
+				self:zoom(_zoom)
+				self:x(_zoom * self:GetWidth())
+				self:y(0)
 
-				if gameName == "pump" or gameName == "techno" then
-					self:diffuse(DifficultyIndexColor(color))
+				if _game == "pump" or _game == "techno" then
+					self:diffuse(color)
 				else
 					self:diffuse(0.2,0.2,0.2,1)
 				end
@@ -153,7 +153,7 @@ end
 local af = Def.ActorFrame{
 	Enabled = false,
 	InitCommand=function(self)
-		self:zoom(0.5):xy( args[1].x, _screen.cy )
+		self:zoom(0.5):xy( frame_x, _screen.cy + WideScale(0,10) )
 
 		if ThemePrefs.Get("VisualTheme")=="Gay" then
 			self:bob():effectmagnitude(0,0,0):effectclock('bgm'):effectperiod(0.666)
@@ -184,15 +184,15 @@ local af = Def.ActorFrame{
 	LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenSelectStyle", choiceName:gsub("^%l", string.upper)),
 		InitCommand=function(self)
-			self:shadowlength(1):y(60):zoom(0.5)
+			self:shadowlength(1):y(37):zoom(0.5)
 		end,
 	}
 }
 
 -- draw as many pads as needed for this choice
 for pad in ivalues(pads) do
-	af[#af+1] = drawNinePanelPad(pad[1], pad[2])..{
-		OffCommand=cmd(linear,0.2; diffusealpha,0)
+	af[#af+1] = drawNinePanelPad(pad.color, pad.offset)..{
+		OffCommand=function(self) self:linear(0.2):diffusealpha(0) end
 	}
 end
 

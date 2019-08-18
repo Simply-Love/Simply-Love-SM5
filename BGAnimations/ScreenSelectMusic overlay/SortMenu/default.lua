@@ -1,18 +1,45 @@
+------------------------------------------------------------
+-- set up the SortMenu's choices first, prior to Actor initialization
+
+-- sick_wheel_mt is a metatable with global scope defined in ./Scripts/Consensual-sick_wheel.lua
 local sort_wheel = setmetatable({}, sick_wheel_mt)
 
+-- the logic that handles navigating the SortMenu
+-- (scrolling through choices, choosing one, canceling)
+-- is large enough that I moved it to its own file
 local input = LoadActor("InputHandler.lua", sort_wheel)
+
+-- WheelItemMT is a generic definition of an choice within the SortMenu
+-- "mt" is my personal means of denoting that it (the file, the variable, whatever)
+-- has something to do with a Lua metatable.
+--
+-- metatables in Lua are a useful construct when designing reusable components,
+-- but many online tutorials and guides are incredibly obtuse and unhelpful
+-- for non-computer-science people (like me). https://lua.org/pil/13.html is just frustratingly scant.
+--
+-- http://phrogz.net/lua/LearningLua_ValuesAndMetatables.html is less bad than most.
+-- I get immediately lost in the criss-crossing diagrams, and I'll continue to
+-- argue that naming things foo, bar, and baz abstract programming tutorials right
+-- out of practical reality, but I found its prose to be practical, applicable, and concise,
+-- so I guess I'll recommend that tutorial until I find a more helpful one.
 local wheel_item_mt = LoadActor("WheelItemMT.lua")
 
 local sortmenu = { w=210, h=160 }
--- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+------------------------------------------------------------
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
-	InitCommand=function(self)
-		-- Always ensure that the SortMenu is hidden and that player input
-		-- is directed back to the engine on screen initialization.
-		self:queuecommand("HideSortMenu")
-	end,
+
+	-- Always ensure player input is directed back to the engine when initializing SelectMusic.
+	InitCommand=function(self) self:visible(false):queuecommand("HideSortMenu") end,
+	-- Always ensure player input is directed back to the engine when leaving SelectMusic.
+	OffCommand=function(self) self:playcommand("HideSortMenu") end,
+
+	OnCommand=function(self) self:playcommand("AssessAvailableChoices") end,
+	-- We'll want to (re)assess available choices in the SortMenu if a player late-joins
+	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
+
 	ShowSortMenuCommand=function(self)
 		SOUND:StopMusic()
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
@@ -29,11 +56,19 @@ local t = Def.ActorFrame {
 		end
 		self:visible(false)
 	end,
-	-- Always ensure that player input is directed back to the engine when leaving SelectMusic.
-	OffCommand=function(self) self:playcommand("HideSortMenu") end,
 
-	OnCommand=function(self)
+
+	AssessAvailableChoicesCommand=function(self)
 		self:visible(false)
+
+		-- normally I would give variables like these file scope, and not declare
+		-- within OnCommand(), but if the player uses the SortMenu to switch from
+		-- single to double, we'll need reassess which choices to present.
+
+		-- a style like "single", "double", "versus", "solo", or "routine"
+		-- remove the possible presence of an "8" in case we're in Techno game
+		-- and the style is "single8", "double8", etc.
+		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
 
 		local wheel_options = {
 			{"SortBy", "Group"},
@@ -42,16 +77,30 @@ local t = Def.ActorFrame {
 			{"SortBy", "Genre"},
 			{"SortBy", "BPM"},
 			{"SortBy", "Length"},
-			{"SortBy", "BeginnerMeter"},
-			{"SortBy", "EasyMeter"},
-			{"SortBy", "MediumMeter"},
-			{"SortBy", "HardMeter"},
-			{"SortBy", "ChallengeMeter"},
-			{"SortBy", "Popularity"},
-			{"SortBy", "Recent"}
 		}
 
-		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
+		-- the engine's MusicWheel has distinct items in the SortOrder enum for double
+		if style == "double" then
+			table.insert(wheel_options, {"SortBy", "DoubleChallengeMeter"})
+			table.insert(wheel_options, {"SortBy", "DoubleHardMeter"})
+			table.insert(wheel_options, {"SortBy", "DoubleMediumMeter"})
+			table.insert(wheel_options, {"SortBy", "DoubleEasyMeter"})
+			table.insert(wheel_options, {"SortBy", "DoubleBeginnerMeter"})
+
+		-- Otherwise... use the SortOrders that don't specify double.
+		-- Does this imply that difficulty sorting in more uncommon styles
+		-- (solo, routine, etc.) probably doesn't work?
+		else
+			table.insert(wheel_options, {"SortBy", "ChallengeMeter"})
+			table.insert(wheel_options, {"SortBy", "HardMeter"})
+			table.insert(wheel_options, {"SortBy", "MediumMeter"})
+			table.insert(wheel_options, {"SortBy", "EasyMeter"})
+			table.insert(wheel_options, {"SortBy", "BeginnerMeter"})
+		end
+
+		table.insert(wheel_options, {"SortBy", "Popularity"})
+		table.insert(wheel_options, {"SortBy", "Recent"})
+
 
 		-- Allow players to switch from single to double and from double to single
 		-- but only present these options if Joint Double or Joint Premium is enabled
@@ -60,11 +109,15 @@ local t = Def.ActorFrame {
 				table.insert(wheel_options, {"ChangeStyle", "Double"})
 			elseif style == "double" then
 				table.insert(wheel_options, {"ChangeStyle", "Single"})
+
+			-- Routine is not ready for use yet, but it might be soon.
+			-- This can be uncommented at that time to allow switching from versus into routine.
+			-- elseif style == "versus" then
+			--	table.insert(wheel_options, {"ChangeStyle", "Routine"})
 			end
 		end
 
-
-		-- Allow players to switch out to a different GameMode if no stages have been played yet.
+		-- Allow players to switch out to a different SL GameMode if no stages have been played yet.
 		if SL.Global.Stages.PlayedThisGame == 0 then
 			table.insert(wheel_options, {"ChangeMode", "ITG"})
 			table.insert(wheel_options, {"ChangeMode", "FA+"})
@@ -84,12 +137,16 @@ local t = Def.ActorFrame {
 		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
 		local current_sort_order_index = 1
 
+		-- find the sick_wheel index of the item we want to display first when the player activates this SortMenu
 		for i=1, #wheel_options do
 			if wheel_options[i][1] == "SortBy" and wheel_options[i][2] == current_sort_order then
 				current_sort_order_index = i
 				break
 			end
 		end
+
+		-- remove the option that would allow us to switch to the already active SL GameMode
+		-- for example, if we're already in FA+, remove the choice to switch to FA+
 		for i=1, #wheel_options do
 			if wheel_options[i][1] == "ChangeMode" and wheel_options[i][2] == SL.Global.GameMode then
 				table.remove(wheel_options, i)
@@ -98,7 +155,7 @@ local t = Def.ActorFrame {
 		end
 
 		-- the second argument passed to set_info_set is the index of the item in wheel_options
-		-- that we want to have focus when the wheel is created
+		-- that we want to have focus when the wheel is displayed
 		sort_wheel:set_info_set(wheel_options, current_sort_order_index)
 	end,
 
@@ -109,7 +166,7 @@ local t = Def.ActorFrame {
 
 	-- OptionsList Header Quad
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w+2,22; xy, _screen.cx, _screen.cy-92)
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w+2,22):xy(_screen.cx, _screen.cy-92) end
 	},
 	-- "Options" text
 	Def.BitmapText{
@@ -123,19 +180,19 @@ local t = Def.ActorFrame {
 
 	-- white border
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w+2,sortmenu.h+2)
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w+2,sortmenu.h+2) end
 	},
 	-- BG of the sortmenu box
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w,sortmenu.h; diffuse,Color.Black)
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w,sortmenu.h):diffuse(Color.Black) end
 	},
 	-- top mask
 	Def.Quad {
-		InitCommand=cmd(Center; zoomto,sortmenu.w,_screen.h/2; y,40; MaskSource )
+		InitCommand=function(self) self:Center():zoomto(sortmenu.w,_screen.h/2):y(40):MaskSource() end
 	},
 	-- bottom mask
 	Def.Quad {
-		InitCommand=cmd(zoomto,sortmenu.w,_screen.h/2; xy,_screen.cx,_screen.cy+200; MaskSource)
+		InitCommand=function(self) self:zoomto(sortmenu.w,_screen.h/2):xy(_screen.cx,_screen.cy+200):MaskSource() end
 	},
 
 	-- "Press SELECT To Cancel" text
@@ -152,7 +209,7 @@ local t = Def.ActorFrame {
 	},
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
-	sort_wheel:create_actors( "sort_wheel", 7, wheel_item_mt, _screen.cx, _screen.cy )
+	sort_wheel:create_actors( "Sort Menu", 7, wheel_item_mt, _screen.cx, _screen.cy )
 }
 
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
