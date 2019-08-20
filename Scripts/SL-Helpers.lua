@@ -420,6 +420,27 @@ function SetGameModePreferences()
 end
 
 -- -----------------------------------------------------------------------
+-- Call ResetPreferencesToStockSM5() to reset all the Preferences that SL silently
+-- manages for you back to their stock SM5 values.  These "managed" Preferences are
+-- listed in ./Scripts/SL_Init.lua per-gamemode (Casual, ITG, FA+, StomperZ), and
+-- actively applied (and reapplied) for each new game using SetGameModePreferences()
+--
+-- SL normally calls ResetPreferencesToStockSM5() from
+-- ./BGAnimations/ScreenPromptToResetPreferencesToStock overlay.lua
+-- but people have requested that the functionality for resetting Preferences be
+-- generally accessible (for example, switching themes via a pad code).
+-- Thus, this global function.
+
+ResetPreferencesToStockSM5 = function()
+	-- loop through all the Preferences that SL forcibly manages and reset them
+	for key, value in pairs(SL.Preferences[SL.Global.GameMode]) do
+		PREFSMAN:SetPreferenceToDefault(key)
+	end
+	-- now that those Preferences are reset to default values, write Preferences.ini to disk now
+	PREFSMAN:SavePreferences()
+end
+
+-- -----------------------------------------------------------------------
 -- the available OptionRows for an options screen can change depending on certain conditions
 -- these functions start with all possible OptionRows and remove rows as needed
 -- whatever string is finally returned is passed off to the pertinent LineNames= in Metrics.ini

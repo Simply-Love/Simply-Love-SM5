@@ -1,6 +1,7 @@
 return Def.Quad {
 	InitCommand=function(self)
-		self:setsize(WideScale(543,710), 30)
-		:x(_screen.cx - WideScale(30,40))
+		self:horizalign(left)
+		:x(WideScale(18.5,27))
+		:setsize(WideScale(543,720), 30)
 	end
 }
