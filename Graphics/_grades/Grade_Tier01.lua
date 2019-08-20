@@ -45,7 +45,7 @@ local t = Def.ActorFrame{
 		SpinCommand=function(self) Spin(self) end;	
 	};
 		--Ponies in between
-	LoadActor("graphics/rhyme (stretch).png", pss)..{
+	LoadActor("assets/rhyme (stretch).png", pss)..{
 		OnCommand=cmd(x,0;y,0;zoom,0.9;effectoffset,0.6;pulse;effectmagnitude,2,0.9,0;sleep,48;queuecommand,"Spin";);
 		};
 };

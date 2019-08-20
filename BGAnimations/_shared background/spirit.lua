@@ -9,8 +9,8 @@ local max_vx = 7
 local min_vy = 55
 local max_vy = 85
 -- Images loaded in background, keep it PG
-local path_to_texture = THEME:GetPathB("","_shared background normal/paw1.png")
-local path_to_tex = THEME:GetPathB("","_shared background normal/oldmain.png")
+local path_to_texture = THEME:GetPathB("","_shared background/paw1.png")
+local path_to_tex = THEME:GetPathB("","_shared background/oldmain.png")
 
 --Getting the screen size
 
