@@ -1,4 +1,4 @@
-return Def.ActorFrame{
+return Def.Actor{
 	-- this is broadcast from [OptionRow] TitleGainFocusCommand in metrics.ini
 	-- we use it to color the active OptionRow's title appropriately by PlayerColor()
 	OptionRowChangedMessageCommand=function(self, params)
