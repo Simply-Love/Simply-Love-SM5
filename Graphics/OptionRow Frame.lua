@@ -8,7 +8,9 @@ local t = Def.ActorFrame{
 t[#t+1] = Def.Quad {
 	Name="RowBackgroundQuad",
 	InitCommand=function(self)
-		self:setsize(WideScale(543,710), 30)
+		self:horizalign(left)
+		:x(WideScale(-271.5, -360))
+		:setsize(WideScale(543,720), 30)
 	end
 }
 
@@ -16,7 +18,8 @@ t[#t+1] = Def.Quad {
 t[#t+1] = Def.Quad {
 	Name="TitleBackgroundQuad",
 	OnCommand=function(self)
-		self:horizalign(left):x(WideScale(-271.5, -355))
+		self:horizalign(left)
+		:x(WideScale(-271.5, -360))
 		:setsize(115, 30)
 		:diffuse(Color.Black)
 		:diffusealpha(BrighterOptionRows() and 0.8 or 0.25)
@@ -28,8 +31,8 @@ t[#t+1] = Def.Quad {
 --
 -- Here, we're adding one ActorProxy per-player per-OptionRow.  That's a lot of ActorProxies that mostly aren't being used! :(
 --
--- Once the OptionRows are ready (after the ScreenPlayerOptions is processed), we can check each OptionRow's name.
--- If GetName() returns "NoteSkin" or "JudgmentGraphic" or "ComboFont" then SetTarget() using the appropriate hidden actor.
+-- Once the OptionRows are ready (after ScreenPlayerOptions is initialized), we can check each OptionRow's name.
+-- If GetName() returns "NoteSkin" or "JudgmentGraphic" or "ComboFont", then SetTarget() using the appropriate hidden actor.
 
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)
@@ -47,7 +50,7 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 					:diffusealpha(0):sleep(0.01):diffusealpha(1)
 
 			else
-				-- if this OptionRow doesn't need an ActorProxy, don't draw it and save process cycles
+				-- if this OptionRow doesn't need an ActorProxy, don't draw it and save processor cycles
 				self:hibernate(math.huge)
 			end
 		end,
