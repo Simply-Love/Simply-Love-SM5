@@ -1,9 +1,15 @@
--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--- Utility Functions For Development
--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+------------------------------------------------------------
+-- 06 SL-Utilities.lua
+-- Utility Functions for Development
+--
+-- The filename starts with "06" so that it loads before other SL scripts that rely on
+-- global functions defined here.  For more information on this numbering system that
+-- pretty much on one uses, see: ./Themes/_fallback/Scripts/hierarchy.txt
+
+------------------------------------------------------------
 -- define helper functions local to this file first
 -- global utility functions (below) will depend on these
--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+------------------------------------------------------------
 
 -- TableToString_Recursive() function via:
 -- http://www.hpelbers.org/lua/print_r
@@ -79,10 +85,10 @@ function table.tostring( tbl )
 end
 
 
--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+------------------------------------------------------------
 -- GLOBAL UTILITY FUNCTIONS
 -- use these to assist in theming/scripting efforts
--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+------------------------------------------------------------
 
 -- SM()
 -- Shorthand for SCREENMAN:SystemMessage(), this is useful for
@@ -94,7 +100,7 @@ function SM( arg )
 	-- if a table has been passed in
 	if type( arg ) == "table" then
 
-		-- recurively print its contents to a string
+		-- recursively print its contents to a string
 		local msg = TableToString_Recursive(arg)
 		-- and SystemMessage() that string
 		SCREENMAN:SystemMessage( msg )
@@ -115,7 +121,7 @@ end
 -- range(-1,-3, 0.5)	--> {-1, -1.5, -2, -2.5, -3 }
 -- range(-1,-3, -0.5)	--> {-1, -1.5, -2, -2.5, -3 }
 
--- but this just doens't make sense and will return an empty table
+-- but this just doesn't make sense and will return an empty table
 -- range(1, 3, -0.5)	--> {}
 
 function range(start, stop, step)
@@ -128,7 +134,7 @@ function range(start, stop, step)
 
 	step = step or (start < stop and 1 or -1)
 
-	-- if step has been explicitly provided as a positve number
+	-- if step has been explicitly provided as a positive number
 	-- but the start and stop values tell us to decrement
 	-- multiply step by -1 to allow decrementing to occur
 	if step > 0 and start > stop then
@@ -143,6 +149,10 @@ function range(start, stop, step)
 	return t
 end
 
+-- pass in a range of time values in seconds and get back a table of stringified
+-- values formatted as minutes and seconds.
+--
+-- for example usage, see the MenuTimer OptionRows defined in ./Scripts/99 SL-ThemePrefs.lua
 function SecondsToMMSS_range(start, stop, step)
 	local ret = {}
 	local range = range(start, stop, step)
@@ -175,7 +185,9 @@ function stringify( tbl, form )
 	return t
 end
 
-
+-- iterates over a numerically-indexed table (haystack) until a desired value (needle) is found
+-- if found, return the index (number) of the desired value within the table
+-- if not found, return nil
 function FindInTable(needle, haystack)
 	for i = 1, #haystack do
 		if needle == haystack[i] then

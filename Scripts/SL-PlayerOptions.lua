@@ -562,6 +562,17 @@ local OptionRowDefault = {
 	}
 }
 
+------------------------------------------------------------
+-- Passed a string like "Mini", CustomOptionRow() will return table that represents
+-- the themeside attributes of the OptionRow for Mini.
+--
+-- CustomOptionRow() is mostly used in Metrics.ini under [ScreenPlayerOptions] and siblings
+-- to pass OptionRow data (Lua) to the engine (C++) via Metrics (ini).
+--
+-- Thre are a few other places in the theme where CustomOptionRow() is used to retrieve a list
+-- of possible choices for a given OptionRow and then do something based on that list.
+-- For example, ./ScreenPlayerOptions overlay/NoteSkinPreviews.lua uses it to get a list of NoteSkins
+-- so it can load preview NoteSkin actors into the overlay's ActorFrame ahead of time.
 
 function CustomOptionRow( name )
 	-- assign the properties of the generic OptionRowDefault to OptRow
@@ -572,13 +583,13 @@ function CustomOptionRow( name )
 end
 
 
+------------------------------------------------------------
 -- Mods are applied in their respective SaveSelections() functions when
 -- ScreenPlayerOptions receives its OffCommand(), but what happens
 -- if a player expects mods to have been set via a profile,
 -- and thus never visits ScreenPlayerOptions?
 --
--- Thus, we have this global function, ApplyMods()
--- which we can call from
+-- Thus, we have this global function, ApplyMods(), which we can call from
 -- ./BGAnimations/ScreenProfileLoad overlay.lua
 -- as well as the the PlayerJoinedMessageCommand of
 -- /BGAnimations/ScreenSelectMusic overlay/PlayerModifiers.lua
