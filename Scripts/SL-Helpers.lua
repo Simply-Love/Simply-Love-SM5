@@ -147,12 +147,14 @@ BitmapText.Truncate = function(bmt, m)
 	return bmt
 end
 
+-- -----------------------------------------------------------------------
+-- game types like "kickbox" and "lights" aren't supported in Simply Love, so we
+-- use this function to hardcode a list of game modes that are supported, and use it
+-- in ScreenInit overlay.lua to redirect players to ScreenSelectGame if necessary.
+--
+-- (Because so many people have accidentally gotten themselves into lights mode without
+-- having any idea they'd done so, and have then messaged me saying the theme was broken.)
 
-
-------------------------------------------------------------------------------
--- Misc Lua functions that didn't fit anywhere else...
-
--- return true or nil
 CurrentGameIsSupported = function()
 	-- a hardcoded list of games that Simply Love supports
 	local support = {
@@ -162,12 +164,15 @@ CurrentGameIsSupported = function()
 		para   = true,
 		kb7    = true
 	}
+	-- return true or nil
 	return support[GAMESTATE:GetCurrentGame():GetName()]
 end
 
+-- -----------------------------------------------------------------------
+-- determines which timing_window an offset value (number) belongs to
+-- used by the judgment scatter plot and offset histogram in ScreenEvaluation
 
--- helper function used to detmerine which timing_window a given offset belongs to
-function DetermineTimingWindow(offset)
+DetermineTimingWindow = function(offset)
 	for i=1,5 do
 		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] + SL.Preferences[SL.Global.GameMode]["TimingWindowAdd"] then
 			return i
@@ -176,23 +181,23 @@ function DetermineTimingWindow(offset)
 	return 5
 end
 
+-- -----------------------------------------------------------------------
+-- some common information needed by ScreenSystemOverlay's credit display,
+-- as well as ScreenTitleJoin overlay and ./Scripts/SL-Branches.lua regarding coin credits
 
-function GetCredits()
+GetCredits = function()
 	local coins = GAMESTATE:GetCoins()
 	local coinsPerCredit = PREFSMAN:GetPreference('CoinsPerCredit')
 	local credits = math.floor(coins/coinsPerCredit)
 	local remainder = coins % coinsPerCredit
 
-	local r = {
-		Credits=credits,
-		Remainder=remainder,
-		CoinsPerCredit=coinsPerCredit
-	}
-	return r
+	return { Credits=credits,Remainder=remainder, CoinsPerCredit=coinsPerCredit }
 end
 
--- Used in Metrics.ini for ScreenRankingSingle and ScreenRankingDouble
-function GetStepsTypeForThisGame(type)
+-- -----------------------------------------------------------------------
+-- used in Metrics.ini for ScreenRankingSingle and ScreenRankingDouble
+
+GetStepsTypeForThisGame = function(type)
 	local game = GAMESTATE:GetCurrentGame():GetName()
 	-- capitalize the first letter
 	game = game:gsub("^%l", string.upper)
@@ -200,8 +205,11 @@ function GetStepsTypeForThisGame(type)
 	return "StepsType_" .. game .. "_" .. type
 end
 
+-- -----------------------------------------------------------------------
+-- return the x value for the center of a player's notefield
+-- used to position various elements in ScreenGameplay
 
-function GetNotefieldX( player )
+GetNotefieldX = function( player )
 	local p = ToEnumShortString(player)
 	local game = GAMESTATE:GetCurrentGame():GetName()
 
@@ -256,7 +264,7 @@ local NoteFieldWidth = {
 	},
 }
 
-function GetNotefieldWidth(player)
+GetNotefieldWidth = function(player)
 	if not player then return false end
 
 	local game = GAMESTATE:GetCurrentGame():GetName()
@@ -337,7 +345,7 @@ end
 -- so in dance, a "Great" will not only maintain a player's combo, it will also increment it.
 --
 -- We reference this function in Metrics.ini under the [Gameplay] section.
-function GetComboThreshold( MaintainOrContinue )
+GetComboThreshold = function( MaintainOrContinue )
 	local CurrentGame = GAMESTATE:GetCurrentGame():GetName()
 
 	local ComboThresholdTable = {
@@ -371,7 +379,7 @@ end
 
 -- -----------------------------------------------------------------------
 
-function SetGameModePreferences()
+SetGameModePreferences = function()
 	-- apply the preferences associated with this GameMode
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
 		PREFSMAN:SetPreference(key, val)
@@ -445,7 +453,7 @@ end
 -- these functions start with all possible OptionRows and remove rows as needed
 -- whatever string is finally returned is passed off to the pertinent LineNames= in Metrics.ini
 
-function GetOperatorMenuLineNames()
+GetOperatorMenuLineNames = function()
 	local lines = "System,KeyConfig,TestInput,Visual,GraphicsSound,Arcade,Input,Theme,MenuTimer,CustomSongs,Advanced,Profiles,Acknowledgments,ClearCredits,Reload"
 
 	-- hide the OptionRow for ClearCredits if we're not in CoinMode_Pay; it doesn't make sense to show for at-home players
@@ -464,7 +472,7 @@ function GetOperatorMenuLineNames()
 end
 
 
-function GetSimplyLoveOptionsLineNames()
+GetSimplyLoveOptionsLineNames = function()
 	local lines = "CasualMaxMeter,AutoStyle,DefaultGameMode,CustomFailSet,CreditStacking,MusicWheelStyle,MusicWheelSpeed,SelectProfile,SelectColor,EvalSummary,NameEntry,GameOver,HideStockNoteSksins,DanceSolo,Nice,VisualTheme,RainbowMode"
 	if Sprite.LoadFromCached ~= nil then
 		lines = lines .. ",UseImageCache"
@@ -473,7 +481,7 @@ function GetSimplyLoveOptionsLineNames()
 end
 
 
-function GetPlayerOptions2LineNames()
+GetPlayerOptions2LineNames = function()
 	local mods = "Turn,Scroll,Hide,ReceptorArrowsPosition,LifeMeterType,DataVisualizations,TargetScore,ActionOnMissedTarget,GameplayExtras,MeasureCounter,MeasureCounterOptions,WorstTimingWindow,ScreenAfterPlayerOptions2"
 
 	-- remove ReceptorArrowsPosition if GameMode isn't StomperZ
@@ -497,7 +505,7 @@ function GetPlayerOptions2LineNames()
 	return mods
 end
 
-function GetPlayerOptions3LineNames()
+GetPlayerOptions3LineNames = function()
 	local mods = "7,8,9,10,11,12,13,Attacks,Vocalization,Characters,ScreenAfterPlayerOptions3"
 
 	-- remove Vocalization if no voice packs were found in the filesystem
@@ -512,6 +520,7 @@ function GetPlayerOptions3LineNames()
 
 	return mods
 end
+
 -- -----------------------------------------------------------------------
 -- given a player, return a table of stepartist text for the current song or course
 -- so that various screens (SSM, Eval) can cycle through these values and players
