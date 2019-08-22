@@ -7,7 +7,8 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 -- the logic that handles navigating the SortMenu
 -- (scrolling through choices, choosing one, canceling)
 -- is large enough that I moved it to its own file
-local input = LoadActor("InputHandler.lua", sort_wheel)
+local sortmenu_input = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
+local testinput_input = LoadActor("TestInput_InputHandler.lua")
 
 -- WheelItemMT is a generic definition of an choice within the SortMenu
 -- "mt" is my personal means of denoting that it (the file, the variable, whatever)
@@ -32,30 +33,60 @@ local t = Def.ActorFrame {
 	Name="SortMenu",
 
 	-- Always ensure player input is directed back to the engine when initializing SelectMusic.
-	InitCommand=function(self) self:visible(false):queuecommand("HideSortMenu") end,
+	InitCommand=function(self) self:visible(false):queuecommand("DirectInputToEngine") end,
 	-- Always ensure player input is directed back to the engine when leaving SelectMusic.
-	OffCommand=function(self) self:playcommand("HideSortMenu") end,
+	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 
+	-- Figure out which choices to put in the SortWheel based on various current conditions.
 	OnCommand=function(self) self:playcommand("AssessAvailableChoices") end,
 	-- We'll want to (re)assess available choices in the SortMenu if a player late-joins
 	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
 
-	ShowSortMenuCommand=function(self)
-		SOUND:StopMusic()
-		SCREENMAN:GetTopScreen():AddInputCallback(input)
+
+	ShowSortMenuCommand=function(self) self:visible(true) end,
+	HideSortMenuCommand=function(self) self:visible(false) end,
+
+	DirectInputToSortMenuCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+
+		screen:RemoveInputCallback(testinput_input)
+		screen:AddInputCallback(sortmenu_input)
 
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
-		self:visible(true)
+		self:playcommand("ShowSortMenu")
+		overlay:playcommand("HideTestInput")
 	end,
-	HideSortMenuCommand=function(self)
-		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
+	DirectInputToTestInputCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+
+		screen:RemoveInputCallback(sortmenu_input)
+		screen:AddInputCallback(testinput_input)
+
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			SCREENMAN:set_input_redirected(player, true)
+		end
+		self:playcommand("HideSortMenu")
+		overlay:playcommand("ShowTestInput")
+	end,
+	-- this returns input back to the engine and its ScreenSelectMusic
+	DirectInputToEngineCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+
+		screen:RemoveInputCallback(sortmenu_input)
+		screen:RemoveInputCallback(testinput_input)
+
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			SCREENMAN:set_input_redirected(player, false)
 		end
-		self:visible(false)
+		self:playcommand("HideSortMenu")
+		overlay:playcommand("HideTestInput")
 	end,
+
 
 
 	AssessAvailableChoicesCommand=function(self)
@@ -117,11 +148,17 @@ local t = Def.ActorFrame {
 			end
 		end
 
-		-- Allow players to switch out to a different SL GameMode if no stages have been played yet.
+		-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
+		-- but don't add the current SL GameMode as a choice. If a player is already in FA+, don't
+		-- present a choice that would allow them to switch to FA+.
 		if SL.Global.Stages.PlayedThisGame == 0 then
-			table.insert(wheel_options, {"ChangeMode", "ITG"})
-			table.insert(wheel_options, {"ChangeMode", "FA+"})
-			table.insert(wheel_options, {"ChangeMode", "StomperZ"})
+			if SL.Global.GameMode ~= "StomperZ" then table.insert(wheel_options, {"ChangeMode", "StomperZ"}) end
+			if SL.Global.GameMode ~= "ITG"      then table.insert(wheel_options, {"ChangeMode", "ITG"}) end
+			if SL.Global.GameMode ~= "FA+"      then table.insert(wheel_options, {"ChangeMode", "FA+"}) end
+		end
+
+		if GAMESTATE:IsEventMode() and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
+			table.insert(wheel_options, {"FeelingSalty", "TestInput"})
 		end
 
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
@@ -141,15 +178,6 @@ local t = Def.ActorFrame {
 		for i=1, #wheel_options do
 			if wheel_options[i][1] == "SortBy" and wheel_options[i][2] == current_sort_order then
 				current_sort_order_index = i
-				break
-			end
-		end
-
-		-- remove the option that would allow us to switch to the already active SL GameMode
-		-- for example, if we're already in FA+, remove the choice to switch to FA+
-		for i=1, #wheel_options do
-			if wheel_options[i][1] == "ChangeMode" and wheel_options[i][2] == SL.Global.GameMode then
-				table.remove(wheel_options, i)
 				break
 			end
 		end
@@ -203,7 +231,7 @@ local t = Def.ActorFrame {
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
 				self:visible(false)
 			else
-				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffusealpha(0.6)
+				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffuse(0.7,0.7,0.7,1)
 			end
 		end
 	},

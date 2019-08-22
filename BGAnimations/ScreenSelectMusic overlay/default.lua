@@ -32,7 +32,9 @@ local t = Def.ActorFrame{
 
 	-- ---------------------------------------------------
 	-- finally, load the overlay used for sorting the MusicWheel (and more), hidden by default
-	LoadActor("./SortMenu/default.lua")
+	LoadActor("./SortMenu/default.lua"),
+	-- a Test Input overlay can (possibly) be accessed from the SortMenu
+	LoadActor("./TestInput.lua"),
 }
 
 return t

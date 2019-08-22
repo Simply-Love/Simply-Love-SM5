@@ -25,7 +25,7 @@ local pane = Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.8):xy(-140,255):wrapwidthpixels(100/0.8):align(0,0):vertspacing(-4) end
 	},
 
-	LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), player)..{
+	LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=player, ShowMenuButtons=false})..{
 		InitCommand=function(self) self:xy(50, 338):zoom(0.8) end
 	}
 }
