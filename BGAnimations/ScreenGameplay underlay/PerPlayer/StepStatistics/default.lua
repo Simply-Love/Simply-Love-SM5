@@ -44,6 +44,11 @@ af[#af+1] = Def.ActorFrame{
 -- past a certain point so that it doesn't, for example, scroll underneath the
 -- player's notefield.
 --
+-- Masking the histogram to not display beyond the bounds of the StepStats pane
+-- won't work.  Too many ITG NoteSkins use masking internally to keep their
+-- scrolling textures kept inside the 3D model.  Using a mask here would interfere
+-- there and many NoteSkins would not render as desired.
+--
 -- A previous strategy here was to use a half-width Quad that was drawn over the
 -- histogram, but under everything else in Gameplay so that the histogram could
 -- scroll under it as needed.  A side-effect was that the Quad then blocked the
