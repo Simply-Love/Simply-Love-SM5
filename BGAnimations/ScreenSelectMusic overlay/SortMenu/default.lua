@@ -157,7 +157,10 @@ local t = Def.ActorFrame {
 			if SL.Global.GameMode ~= "FA+"      then table.insert(wheel_options, {"ChangeMode", "FA+"}) end
 		end
 
-		if GAMESTATE:IsEventMode() and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
+		-- allow players to switch to a TestInput overlay if the current game has visual assets to support it
+		-- and if we're in EventMode (public arcades probably don't want random players attempting to diagnose the pads...)
+		local game = GAMESTATE:GetCurrentGame():GetName()
+		if (game=="dance" or game=="pump" or game=="techno") and GAMESTATE:IsEventMode() then
 			table.insert(wheel_options, {"FeelingSalty", "TestInput"})
 		end
 

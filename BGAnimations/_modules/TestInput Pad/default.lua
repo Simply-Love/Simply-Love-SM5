@@ -1,6 +1,7 @@
 local args = ...
 local player = args.Player or GAMESTATE:GetMasterPlayerNumber()
 local show_menu_buttons = args.ShowMenuButtons
+local show_player_label = args.ShowPlayerLabel
 
 local af = Def.ActorFrame{}
 local game = GAMESTATE:GetCurrentGame():GetName()
@@ -27,8 +28,10 @@ if show_menu_buttons then
 end
 
 
-local pad = Def.ActorFrame{
-	LoadFont("_wendy small")..{
+local pad = Def.ActorFrame{}
+
+if show_player_label then
+	pad[#pad+1] = LoadFont("_wendy small")..{
 		Text=THEME:GetString("ScreenTestInput", "Player"):format( PlayerNumber:Reverse()[player]+1 ),
 		InitCommand=function(self) self:y(-210):zoom(0.7):visible(false) end,
 		OnCommand=function(self)
@@ -36,26 +39,36 @@ local pad = Def.ActorFrame{
 			local screenclass = THEME:GetMetric(screenname, "Class")
 			self:visible( screenclass == "ScreenTestInput" )
 		end
-	},
+	}
+end
 
-	LoadActor(game..".png")..{  InitCommand=function(self) self:y(-80):zoom(0.8) end },
+pad[#pad+1] = LoadActor(game..".png")..{  InitCommand=function(self) self:y(-80):zoom(0.8) end }
 
-	LoadActor("buttons.png")..{
-		InitCommand=function(self) self:y(80):zoom(0.5) end,
-		OnCommand=function(self)
-			local screenname =  SCREENMAN:GetTopScreen():GetName()
-			local screenclass = THEME:GetMetric(screenname, "Class")
-			self:visible( screenclass == "ScreenTestInput" )
-		end
-	},
-}
+if show_menu_buttons then
+	pad[#pad+1] = LoadActor("buttons.png")..{
+		InitCommand=function(self) self:y(80):zoom(0.5) end
+	}
+end
 
 for panel,values in pairs(Highlights) do
 	pad[#pad+1] = LoadActor( values.graphic )..{
 		InitCommand=function(self) self:xy(values.x, values.y):rotationz(values.rotationz):zoom(values.zoom):visible(false) end,
 		TestInputEventMessageCommand=function(self, event)
-			if event.PlayerNumber == player and event.button == panel then
-				self:visible(event.type == "InputEventType_FirstPress")
+			local style = GAMESTATE:GetCurrentStyle()
+			local styletype = style and style:GetStyleType() or nil
+
+			-- if double or routine
+			if styletype == "StyleType_OnePlayerTwoSides" or styletype == "StyleType_TwoPlayersSharedSides" then
+
+				if event.button == panel and tonumber(ToEnumShortString(event.controller))==PlayerNumber:Reverse()[player]+1 then
+					self:visible(event.type == "InputEventType_FirstPress")
+				end
+
+			-- else single or versus or no style because we're actually on ScreenTestInput
+			else
+				if event.PlayerNumber == player and event.button == panel then
+					self:visible(event.type == "InputEventType_FirstPress")
+				end
 			end
 		end
 	}
