@@ -11,7 +11,7 @@ local Highlights = {
 	Up={        x=0,   y=-148, rotationz=0, zoom=0.8, graphic="highlight.png" },
 	UpRight={   x=67,  y=-148, rotationz=0, zoom=0.8, graphic="highlight.png" },
 
-	Left={      x=-67,  y=-80,  rotationz=0, zoom=0.8, graphic="highlight.png" },
+	Left={      x=-67, y=-80,  rotationz=0, zoom=0.8, graphic="highlight.png" },
 	Center={    x=0,   y=-80,  rotationz=0, zoom=0.8, graphic="highlight.png" },
 	Right={     x=67,  y=-80,  rotationz=0, zoom=0.8, graphic="highlight.png" },
 
@@ -60,11 +60,16 @@ for panel,values in pairs(Highlights) do
 			-- if double or routine
 			if styletype == "StyleType_OnePlayerTwoSides" or styletype == "StyleType_TwoPlayersSharedSides" then
 
-				if event.button == panel and tonumber(ToEnumShortString(event.controller))==PlayerNumber:Reverse()[player]+1 then
+				-- in double, we can't rely on checking the input event's "PlayerNumber" key (only one human player is joined)
+				-- so instead, compared the input event's "controller" key from the engine's GameController enum
+				-- "GameController_1" is indexed at 0, and "GameController_2" is indexed at 1, conveniently just like how
+				--  "PlayerNumber_P1" is indexed at 0, and  "PlayerNumber_P2" is indexed at 1
+				if GameController:Reverse()[event.controller]==PlayerNumber:Reverse()[player]
+				and event.button == panel and then
 					self:visible(event.type == "InputEventType_FirstPress")
 				end
 
-			-- else single or versus or no style because we're actually on ScreenTestInput
+			-- else single or versus (or style is nil because we're actually on ScreenTestInput)
 			else
 				if event.PlayerNumber == player and event.button == panel then
 					self:visible(event.type == "InputEventType_FirstPress")
