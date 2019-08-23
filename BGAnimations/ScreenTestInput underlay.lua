@@ -29,7 +29,7 @@ local game = GAMESTATE:GetCurrentGame():GetName()
 
 if (game=="dance" or game=="pump" or game=="techno") then
 	for player in ivalues( {PLAYER_1, PLAYER_2} ) do
-		local pad = LoadActor(THEME:GetPathB("", "_modules/TestInput Pad"), player)
+		local pad = LoadActor(THEME:GetPathB("", "_modules/TestInput Pad"), {Player=player, ShowMenuButtons=true, ShowPlayerLabel=true})
 
 		pad.InitCommand=function(self) self:xy(_screen.cx + 150 * (player==PLAYER_1 and -1 or 1), _screen.cy):diffusealpha(0) end
 		pad.OnCommand=function(self) self:linear(0.3):diffusealpha(1) end

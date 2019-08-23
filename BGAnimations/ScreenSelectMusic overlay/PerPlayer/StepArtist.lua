@@ -78,15 +78,21 @@ return Def.ActorFrame{
 			-- always stop tweening when steps change in case a MarqueeCommand is queued
 			self:stoptweening()
 
-			-- clear the stepartist text, in case we're hovering over a group title
-			self:settext("")
-
 			if SongOrCourse and StepsOrCourse then
 				text_table = GetStepsCredit(player)
 				marquee_index = 0
 
 				-- only queue a marquee if there are things in the text_table to display
-				if #text_table > 0 then self:queuecommand("Marquee") end
+				if #text_table > 0 then
+					self:queuecommand("Marquee")
+				else
+					-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
+					self:settext("")
+				end
+			else
+				-- there wasn't a song/course or a steps object, so the MusicWheel is probably hovering
+				-- on a group title, which means we want to set the stepartist text to an empty string for now
+				self:settext("")
 			end
 		end,
 		MarqueeCommand=function(self)

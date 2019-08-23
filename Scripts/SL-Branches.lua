@@ -184,7 +184,7 @@ Branch.AfterProfileSave = function()
 
 	else
 
-		-- deduct the number of stages that stock Stepmania says the song is
+		-- deduct the number of stages that stock StepMania says the song is
 		local song = GAMESTATE:GetCurrentSong()
 		local SMSongCost = (song:IsMarathon() and 3) or (song:IsLong() and 2) or 1
 		SL.Global.Stages.Remaining = SL.Global.Stages.Remaining - SMSongCost

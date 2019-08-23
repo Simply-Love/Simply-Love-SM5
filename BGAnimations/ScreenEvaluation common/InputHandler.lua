@@ -40,8 +40,7 @@ return function(event)
 			end
 
 			for i=1,#panes[pn] do
-
-				if style == "OnePlayerTwoSides" and active_pane[pn] + 1 == 2 then
+				if style == "OnePlayerTwoSides" and panes[pn][active_pane[pn]+1]:GetCommand("ExpandForDouble") then
 					af:queuecommand("Expand")
 				else
 					af:queuecommand("Shrink")

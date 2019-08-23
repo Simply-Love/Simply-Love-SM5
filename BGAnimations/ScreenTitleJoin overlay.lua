@@ -20,8 +20,7 @@ return LoadFont("_wendy small")..{
 			return
 		end
 
-		local credits = GetCredits()
-		if credits.Credits <= 0 then
+		if GetCredits().Credits <= 0 then
 			self:settext( THEME:GetString("ScreenLogo", "EnterCreditsToPlay") )
 		else
 		 	self:settext( THEME:GetString("ScreenTitleJoin", "Press Start") )

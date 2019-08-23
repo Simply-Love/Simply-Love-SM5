@@ -9,6 +9,7 @@
 -- is still a problem.  "Tachyon Alpha/Delta Max" is probably a good test case.
 --
 -- This code should probably be ripped out and completely replaced at this point.
+------------------------------------------------------------
 
 function GetStepsToDisplay(AllAvailableSteps)
 
@@ -20,13 +21,13 @@ function GetStepsToDisplay(AllAvailableSteps)
 
 		local difficulty = chart:GetDifficulty()
 		if GAMESTATE:IsCourseMode() then
-			local index = GetYOffsetByDifficulty(difficulty)
+			local index = GetDifficultyIndex(difficulty)
 			StepsToShow[index] = chart
 		else
 			if chart:IsAnEdit() then
 				edits[#edits+1] = chart
 			else
-				local index = GetYOffsetByDifficulty(difficulty)
+				local index = GetDifficultyIndex(difficulty)
 				StepsToShow[index] = chart
 			end
 		end

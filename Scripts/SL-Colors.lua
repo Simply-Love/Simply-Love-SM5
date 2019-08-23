@@ -27,23 +27,9 @@ function PlayerColor( pn )
 end
 
 function DifficultyColor( difficulty )
-	--
 	if (difficulty == nil or difficulty == "Difficulty_Edit") then return color("#B4B7BA") end
 
-	local index = GetYOffsetByDifficulty(difficulty)
+	local index = GetDifficultyIndex(difficulty)
 	local clr = SL.Global.ActiveColorIndex + (index-2)
 	return GetHexColor(clr)
-end
-
--- FIXME: this should probably reside somewhere more sensible than SL-Colors.lua
-function GetYOffsetByDifficulty(difficulty)
-
-	-- FIXME: Why is this hardcoded to 5?  I need to look into this and either change
-	-- it or leave a note explaining why it's this way.
-	if difficulty == "Difficulty_Edit" then return 5 end
-
-	-- Use Enum's reverse lookup functionality to find difficulty by index
-	-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
-	-- for our purposes, increment by one here
-	return Difficulty:Reverse()[difficulty] + 1
 end

@@ -1,29 +1,33 @@
 local sort_wheel = ...
 
--- this handles user input
+-- this handles user input while in the SortMenu
 local function input(event)
 	if not (event and event.PlayerNumber and event.button) then
 		return false
 	end
+	SOUND:StopMusic()
+
+	local screen   = SCREENMAN:GetTopScreen()
+	local overlay  = screen:GetChild("Overlay")
+	local sortmenu = overlay:GetChild("SortMenu")
 
 	if event.type ~= "InputEventType_Release" then
-		local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
 
 		if event.GameButton == "MenuRight" then
 			sort_wheel:scroll_by_amount(1)
-			overlay:GetChild("SortMenu"):GetChild("change_sound"):play()
+			sortmenu:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "MenuLeft" then
 			sort_wheel:scroll_by_amount(-1)
-			overlay:GetChild("SortMenu"):GetChild("change_sound"):play()
+			sortmenu:GetChild("change_sound"):play()
 
 		elseif event.GameButton == "Start" then
-			overlay:GetChild("SortMenu"):GetChild("start_sound"):play()
+			sortmenu:GetChild("start_sound"):play()
 			local focus = sort_wheel:get_actor_item_at_focus_pos()
 
 			if focus.kind == "SortBy" then
 				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
-				overlay:queuecommand("HideSortMenu")
+				overlay:queuecommand("DirectInputToEngine")
 
 
 			-- the player wants to change modes, for example from ITG to FA+
@@ -35,9 +39,9 @@ local function input(event)
 				-- Change the header text to reflect the newly selected GameMode.
 				overlay:GetParent():GetChild("Header"):playcommand("UpdateHeaderText")
 
-				-- Reload the SortMenu's available options and queue "HideSortMenu"
-				-- which also returns input back away from Lua back to the engine.
-				overlay:GetChild("SortMenu"):playcommand("On"):queuecommand("HideSortMenu")
+				-- Reload the SortMenu's available options and queue "DirectInputToEngine"
+				-- to return input from Lua back to the engine and hide the SortMenu from view
+				sortmenu:playcommand("AssessAvailableChoices"):queuecommand("DirectInputToEngine")
 
 
 			-- the player wants to change styles, for example from single to double
@@ -58,13 +62,17 @@ local function input(event)
 				GAMESTATE:SetCurrentStyle(new_style)
 
 				-- finally, reload the screen
-				local topscreen = SCREENMAN:GetTopScreen()
-				topscreen:SetNextScreenName("ScreenReloadSSM")
-				topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+				screen:SetNextScreenName("ScreenReloadSSM")
+				screen:StartTransitioningScreen("SM_GoToNextScreen")
+
+			elseif focus.new_overlay then
+				if focus.new_overlay == "TestInput" then
+					sortmenu:queuecommand("DirectInputToTestInput")
+				end
 			end
 
 		elseif event.GameButton == "Back" or event.GameButton == "Select" then
-			overlay:queuecommand("HideSortMenu")
+			overlay:queuecommand("DirectInputToEngine")
 		end
 	end
 
