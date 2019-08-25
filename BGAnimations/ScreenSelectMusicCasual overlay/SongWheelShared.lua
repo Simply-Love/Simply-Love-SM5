@@ -12,31 +12,34 @@ local af = Def.ActorFrame{
 -- black background quad
 af[#af+1] = Def.Quad{
 	Name="SongWheelBackground",
-	InitCommand=cmd(zoomto, _screen.w, _screen.h/(row.how_many-2); diffuse, Color.Black; diffusealpha,1; cropbottom,1),
-	OnCommand=cmd(xy, _screen.cx, math.ceil((row.how_many-2)/2) * row.h + 10; finishtweening; accelerate, 0.2; cropbottom,0),
-	SwitchFocusToGroupsMessageCommand=cmd(smooth,0.3; cropright,1),
-	SwitchFocusToSongsMessageCommand=cmd(smooth,0.3; cropright,0),
-	SwitchFocusToSingleSongMessageCommand=cmd(smooth,0.3; cropright,1),
+	InitCommand=function(self) self:zoomto(_screen.w, _screen.h/(row.how_many-2)):diffuse(0,0,0,1):cropbottom(1) end,
+	OnCommand=function(self)
+		self:xy(_screen.cx, math.ceil((row.how_many-2)/2) * row.h + 10):finishtweening()
+		    :accelerate(0.2):cropbottom(0)
+	end,
+	SwitchFocusToGroupsMessageCommand=function(self) self:smooth(0.3):cropright(1) end,
+	SwitchFocusToSongsMessageCommand=function(self) self:smooth(0.3):cropright(0) end,
+	SwitchFocusToSingleSongMessageCommand=function(self) self:smooth(0.3):cropright(1) end
 }
 
 -- rainbow glowing border top
 af[#af+1] = Def.Quad{
-	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2)*-0.5; faderight, 10; rainbow),
-	OnCommand=cmd(sleep,0.3; diffusealpha, 0.75; queuecommand, "FadeMe"),
-	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,1.5; faderight, 10; diffusealpha,0.75; queuecommand, "FadeMe"),
-	SwitchFocusToGroupsMessageCommand=cmd(visible, false),
-	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
-	SwitchFocusToSongsMessageCommand=cmd(visible,true)
+	InitCommand=function(self) self:zoomto(_screen.w, 1):diffuse(1,1,1,0):xy(_screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2)*-0.5):faderight(10):rainbow() end,
+	OnCommand=function(self) self:sleep(0.3):diffusealpha(0.75):queuecommand("FadeMe") end,
+	FadeMeCommand=function(self) self:accelerate(1.5):faderight(0):accelerate(1.5):fadeleft(10):sleep(0):diffusealpha(0):fadeleft(0):sleep(1.5):faderight(10):diffusealpha(0.75):queuecommand("FadeMe") end,
+	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
+	SwitchFocusToSingleSongMessageCommand=function(self) self:visible(false) end,
+	SwitchFocusToSongsMessageCommand==function(self) self:visible(true) end
 }
 
 -- rainbow glowing border bottom
 af[#af+1] = Def.Quad{
-	InitCommand=cmd(zoomto, _screen.w, 1; diffuse, Color.White; diffusealpha,0; xy, _screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2) * 0.5; faderight, 10; rainbow),
-	OnCommand=cmd(sleep,0.3; diffusealpha, 0.75; queuecommand, "FadeMe"),
-	FadeMeCommand=cmd(accelerate,1.5; faderight, 0; accelerate, 1.5; fadeleft, 10; sleep,0; diffusealpha,0; fadeleft,0; sleep,1.5; faderight, 10; diffusealpha,0.75; queuecommand, "FadeMe"),
-	SwitchFocusToGroupsMessageCommand=cmd(visible, false),
-	SwitchFocusToSingleSongMessageCommand=cmd(visible, false),
-	SwitchFocusToSongsMessageCommand=cmd(visible,true)
+	InitCommand=function(self) self:zoomto(_screen.w, 1):diffuse(1,1,1,0):xy(_screen.cx, _screen.cy+30 + _screen.h/(row.how_many-2) * 0.5):faderight(10):rainbow() end,
+	OnCommand=function(self) self:sleep(0.3):diffusealpha(0.75):queuecommand("FadeMe") end,
+	FadeMeCommand=function(self) self:accelerate(1.5):faderight(0):accelerate(1.5):fadeleft(10):sleep(0):diffusealpha(0):fadeleft(0):sleep(1.5):faderight(10):diffusealpha(0.75):queuecommand("FadeMe") end,
+	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
+	SwitchFocusToSingleSongMessageCommand=function(self) self:visible(false) end,
+	SwitchFocusToSongsMessageCommand==function(self) self:visible(true) end
 }
 -----------------------------------------------------------------
 -- left/right UI arrows
@@ -45,41 +48,41 @@ af[#af+1] = Def.ActorFrame{
 	Name="Arrows",
 	InitCommand=function(self) self:diffusealpha(0):xy(_screen.cx, _screen.cy+30) end,
 	OnCommand=function(self) self:sleep(0.1):linear(0.2):diffusealpha(1) end,
-	SwitchFocusToGroupsMessageCommand=cmd(linear, 0.2; diffusealpha, 0),
-	SwitchFocusToSingleSongMessageCommand=cmd(linear, 0.1; diffusealpha, 0),
-	SwitchFocusToSongsMessageCommand=cmd(sleep, 0.2; linear, 0.2; diffusealpha, 1),
+	SwitchFocusToGroupsMessageCommand=function(self) self:linear(0.2):diffusealpha(0) end,
+	SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+	SwitchFocusToSongsMessageCommand=function(self) self:sleep(0.2):linear(0.2):diffusealpha(1) end,
 
 	-- right arrow
 	Def.ActorFrame{
 		Name="RightArrow",
-		OnCommand=cmd(x, _screen.cx-50),
-		PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00");),
+		OnCommand=function(self) self:x(_screen.cx-50) end,
+		PressCommand=function(self) self:decelerate(0.05):zoom(0.7):glow(color("#ffffff22")):accelerate(0.05):zoom(1):glow(color("#ffffff00")) end,
 
 		LoadActor("./img/arrow_glow.png")..{
 			Name="RightArrowGlow",
-			InitCommand=cmd(zoom,0.25),
+			InitCommand=function(self) self:zoom(0.25) end,
 			OnCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1) end
 		},
 		LoadActor("./img/arrow.png")..{
 			Name="RightArrow",
-			InitCommand=cmd(zoom,0.25; diffuse, Color.White ),
+			InitCommand=function(self) self:zoom(0.25):diffuse(Color.White) end,
 		}
 	},
 
 	-- left arrow
 	Def.ActorFrame{
 		Name="LeftArrow",
-		OnCommand=cmd(x, -_screen.cx+50),
-		PressCommand=cmd(decelerate,0.05; zoom,0.7; glow,color("#ffffff22"); accelerate,0.05; zoom,1; glow, color("#ffffff00")),
+		OnCommand=function(self) self:x(-_screen.cx+50) end,
+		PressCommand=function(self) self:decelerate(0.05):zoom(0.7):glow(color("#ffffff22")):accelerate(0.05):zoom(1):glow(color("#ffffff00")) end,
 
 		LoadActor("./img/arrow_glow.png")..{
 			Name="LeftArrowGlow",
-			InitCommand=cmd(zoom,0.25; rotationz, 180),
+			InitCommand=function(self) self:zoom(0.25):rotationz(180) end,
 			OnCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1) end
 		},
 		LoadActor("./img/arrow.png")..{
 			Name="LeftArrow",
-			InitCommand=cmd(zoom,0.25; diffuse, Color.White; rotationz, 180),
+			InitCommand=function(self) self:zoom(0.25):diffuse(Color.White):rotationz(180) end,
 
 		}
 	}
@@ -91,44 +94,44 @@ af[#af+1] = Def.ActorFrame{
 	Name="CurrentSongInfoAF",
 	InitCommand=function(self) self:y( row.h * 2 + 10 ):x( col.w + 80):diffusealpha(0) end,
 	OnCommand=function(self) self:sleep(0.15):linear(0.15):diffusealpha(1) end,
-	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
-	SwitchFocusToSongsMessageCommand=function(self) self:visible(true):linear(0.2):zoom(1):y(row.h*2+10):x(col.w+80) end,
-	SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.2):zoom(0.9):xy(col.w+WideScale(20,65), row.h+43) end,
+
+	SwitchFocusToGroupsMessageCommand=function(self)
+		self:visible(false):runcommandsonleaves(function(leaf) if leaf.settext then leaf:settext("") end end)
+	end,
+	CloseThisFolderHasFocusMessageCommand=function(self)
+		self:runcommandsonleaves(function(leaf) if leaf.settext then leaf:settext("") end end)
+	end,
+	SwitchFocusToSongsMessageCommand=function(self)
+		self:visible(true):linear(0.2):zoom(1):y(row.h*2+10):x(col.w+80)
+		self:runcommandsonleaves(function(leaf) leaf:diffuse(1,1,1,1) end)
+	end,
+	SwitchFocusToSingleSongMessageCommand=function(self)
+		self:linear(0.2):zoom(0.9):xy(col.w+WideScale(20,65), row.h+43)
+		self:runcommandsonleaves(function(leaf) leaf:diffuse(1,1,1,1) end)
+	end,
 
 	-- main title
 	Def.BitmapText{
 		Font="Common Normal",
 		Name="Title",
-		InitCommand=function(self)
-			self:zoom(1.3):diffuse(Color.White):horizalign(left):y(-45):maxwidth(300)
-		end,
+		InitCommand=function(self) self:zoom(1.3):diffuse(Color.White):horizalign(left):y(-45):maxwidth(300) end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
 				self:settext( params.song:GetDisplayMainTitle() )
 			end
 		end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 	},
 
 	-- artist
 	Def.BitmapText{
 		Font="Common Normal",
 		Name="Artist",
-		InitCommand=function(self)
-			self:zoom(0.85):diffuse(Color.White):y(-20):horizalign(left)
-		end,
+		InitCommand=function(self) self:zoom(0.85):diffuse(Color.White):y(-20):horizalign(left) end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
 				self:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. params.song:GetDisplayArtist() )
 			end
 		end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-		SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
-		SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 	},
 
 	Def.ActorFrame{
@@ -138,35 +141,23 @@ af[#af+1] = Def.ActorFrame{
 		Def.BitmapText{
 			Font="Common Normal",
 			Name="BPM",
-			InitCommand=function(self)
-				self:zoom(0.65):diffuse(Color.White):y(0):horizalign(left)
-			end,
+			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(0):horizalign(left) end,
 			CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
 					self:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs() )
 				end
 			end,
-			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-			CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
-			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 		},
 		-- length
 		Def.BitmapText{
 			Font="Common Normal",
 			Name="Length",
-			InitCommand=function(self)
-				self:zoom(0.65):diffuse(Color.White):y(14):horizalign(left)
-			end,
+			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(14):horizalign(left) end,
 	 		CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
 		 			self:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
 				end
 	 		end,
-			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-	 		CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
-			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 		},
 		-- genre
 		Def.BitmapText{
@@ -180,10 +171,6 @@ af[#af+1] = Def.ActorFrame{
 					self:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. params.song:GetGenre() )
 				end
 			end,
-			SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
-			CloseThisFolderHasFocusMessageCommand=function(self) self:settext("") end,
-			SwitchFocusToSingleSongMessageCommand=cmd(diffuse, Color.White),
-			SwitchFocusToSongsMessageCommand=cmd(diffuse, Color.White)
 		},
 	}
 }
