@@ -1,9 +1,24 @@
-local player = ...
+local args = ...
+local player = args.Player
+local profile_data = args.ProfileData
+local index_padding = args.IndexPadding
+local scroller = args.Scroller
+local scroller_item_mt = LoadActor("./ScrollerItemMT.lua")
+
 
 -- I tried really hard to use size + position variables instead of hardcoded numbers all over
 -- the place, but gave up after an hour of questioning my sanity due to sub-pixel overlap
 -- issues (rounding? texture sizing? I don't have time to figure it out right now.)
 local row_height = 35
+local scroller_x = -56
+local scroller_y = row_height * -5
+
+-- account for the possibility that there are no local profiles and
+-- we want "[Guest]" to start in the middle, with focus
+if PROFILEMAN:GetNumLocalProfiles() <= 0 then
+	scroller_y = row_height * -4
+end
+
 
 local FrameBackground = function(c, player, w)
 	w = w or 1
@@ -44,6 +59,7 @@ end
 return Def.ActorFrame{
 	Name=ToEnumShortString(player) .. "Frame",
 	InitCommand=function(self) self:xy(_screen.cx+(150*(player==PLAYER_1 and -1 or 1)), _screen.cy) end,
+
 	OffCommand=function(self)
 		if GAMESTATE:IsSideJoined(player) then
 			self:bouncebegin(0.35):zoom(0)
@@ -91,6 +107,31 @@ return Def.ActorFrame{
 	-- colored frame that contains the profile scroller and DataFrame
 	Def.ActorFrame {
 		Name='ScrollerFrame',
+		InitCommand=function(self)
+			-- Create the info needed for the "[Guest]" scroller item.
+			-- It won't map to any real local profile (as desired!), so we'll hardcode
+			-- an index of 0, and handle it later, on ScreenSelectProfile's OffCommand
+			-- in default.lua  if either/both players want to chose it.
+			local guest_profile = { index=0, displayname=THEME:GetString("ScreenSelectProfile", "GuestProfile") }
+
+			-- here, we are padding the scroller_data table with dummy scroller items to accommodate
+			-- the peculiar scroller behavior of starting low, starting on item#2, not wrapping, etc.
+			-- see also: https://youtu.be/bXZhTb0eUqA?t=116
+			local scroller_data = {{}, {}, {}, guest_profile}
+
+			-- add actual profile data into the scroller_data table
+			for profile in ivalues(profile_data) do
+				table.insert(scroller_data, profile)
+			end
+
+			-- if PROFILEMAN:GetNumLocalProfiles() > 0 then
+				scroller.focus_pos = 5
+			-- else
+			-- 	scroller.focus_pos = 4
+			-- end
+			scroller:set_info_set(scroller_data, 0)
+		end,
+
 		FrameBackground(PlayerColor(player), player, 1.25),
 
 		-- semi-transparent Quad used to indicate location in SelectProfile scroller
@@ -99,37 +140,14 @@ return Def.ActorFrame{
 			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
 		},
 
-		-- scroller containing local profiles as choices
-		Def.ActorScroller{
-			Name='Scroller',
-			NumItemsToDraw=7,
-			InitCommand=cmd(x,-56; SetFastCatchup,true; SetSecondsPerItem,0.15; diffusealpha,0; SetMask, 400,60),
-			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
-			TransformFunction=function(self, offset, itemIndex, numItems)
-				self:y(math.floor(offset*row_height))
-			end,
-			children=(function()
-				local items = {}
-
-				for i=0, PROFILEMAN:GetNumLocalProfiles()-1 do
-					local profile = PROFILEMAN:GetLocalProfileFromIndex(i)
-					items[#items+1] = LoadFont("Common Normal")..{
-						Text=profile:GetDisplayName(),
-						InitCommand=function(self)
-							-- ztest(true) ensures that the text masks properly when scrolling above/below the frame
-							self:ztest(true):maxwidth(115)
-						end
-					}
-				end
-
-				return items
-			end)()
-		},
+		-- sick_wheel scroller containing local profiles as choices
+		scroller:create_actors( "Scroller", 9, scroller_item_mt, scroller_x, scroller_y ),
 
 		-- player profile data
 		Def.ActorFrame{
 			Name="DataFrame",
 			InitCommand=function(self) self:xy(62,1) end,
+			OnCommand=function(self) self:playcommand("Set", {data=profile_data[1]}) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
@@ -149,7 +167,7 @@ return Def.ActorFrame{
 					SetCommand=function(self, params)
 						if params.data then
 							local desc = THEME:GetString("ScreenGameOver","LastUsedHighScoreName") .. ": "
-							self:visible(true):settext(desc .. params.data.highscorename)
+							self:visible(true):settext(desc .. (params.data.highscorename or ""))
 						else
 							self:visible(false):settext("")
 						end
@@ -164,7 +182,7 @@ return Def.ActorFrame{
 					SetCommand=function(self, params)
 						if params.data then
 							local desc = THEME:GetString("ScreenSelectProfile","MostRecentSong") .. ":\n"
-							self:settext(desc .. params.data.recentsong):Truncate(112)
+							self:settext(desc .. (params.data.recentsong or "")):Truncate(112)
 						else
 							self:settext("")
 						end
@@ -178,7 +196,7 @@ return Def.ActorFrame{
 					InitCommand=function(self) self:align(0,0):xy(-50,0):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
 					SetCommand=function(self, params)
 						if params.data then
-							self:visible(true):settext(params.data.totalsongs)
+							self:visible(true):settext(params.data.totalsongs or "")
 						else
 							self:visible(false):settext("")
 						end
@@ -193,7 +211,7 @@ return Def.ActorFrame{
 					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
 					SetCommand=function(self, params)
 						if params.data then
-							self:visible(true):settext(params.data.mods)
+							self:visible(true):settext(params.data.mods or "")
 						else
 							self:visible(false):settext("")
 						end
@@ -220,6 +238,10 @@ return Def.ActorFrame{
 
 	LoadFont("Common Normal")..{
 		Name='SelectedProfileText',
-		InitCommand=cmd(y,160; zoom, 1.35; shadowlength, ThemePrefs.Get("RainbowMode") and 0.5 or 0)
+		InitCommand=function(self)
+			self:settext(profile_data[1] and profile_data[1].displayname or "")
+			self:y(160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
+		end,
+		OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end
 	}
 }

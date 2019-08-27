@@ -13,6 +13,18 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- indexed by "ProfileIndex" (provided by engine)
 local profile_data = LoadActor("./PlayerProfileData.lua")
 
+local index_padding = 0
+for profile in ivalues(profile_data) do
+	if profile.index == nil or profile.index <= 0 then
+		index_padding = index_padding + 1
+	end
+end
+
+
+local scrollers = {}
+scrollers[PLAYER_1] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
+scrollers[PLAYER_2] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
+
 -- ----------------------------------------------------
 
 local HandleStateChange = function(self, Player)
@@ -34,27 +46,6 @@ local HandleStateChange = function(self, Player)
 			scrollerframe:visible(true)
 			seltext:visible(true)
 			usbsprite:visible(false)
-
-			local index = SCREENMAN:GetTopScreen():GetProfileIndex(Player)
-
-			if index > 0 then
-				scroller:SetDestinationItem(index-1)
-				seltext:settext(PROFILEMAN:GetLocalProfileFromIndex(index-1):GetDisplayName())
-				if profile_data[index-1] then
-					dataframe:playcommand("Set", {data=profile_data[index-1]})
-				end
-			else
-				if SCREENMAN:GetTopScreen():SetProfileIndex(Player, 1) then
-					scroller:SetDestinationItem(0)
-					self:queuecommand('Update')
-				else
-					-- if the profile fails to apply, we end up in here
-					-- I've never seen it happen, but I guess it's possible
-					joinframe:visible(true)
-					scrollerframe:visible(false)
-					seltext:settext(ScreenString("NoProfile"))
-				end
-			end
 		else
 			--using memorycard profile
 			joinframe:visible(false)
@@ -78,13 +69,62 @@ local invalid_count = 0
 
 local t = Def.ActorFrame {
 	InitCommand=function(self) self:queuecommand("Capture") end,
-	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", self) ) end,
+	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data, IndexPadding=index_padding}) ) end,
 
 	-- the OffCommand will have been queued, when it is appropriate, from ./Input.lua
 	-- sleep for 0.5 seconds to give the PlayerFrames time to tween out
 	-- and queue a call to Finish() so that the engine can wrap things up
-	OffCommand=function(self) self:sleep(0.5):queuecommand("Finish") end,
-	FinishCommand=function(self) SCREENMAN:GetTopScreen():Finish() end,
+	OffCommand=function(self)
+		self:sleep(0.5):queuecommand("Finish")
+	end,
+	FinishCommand=function(self)
+		-- If either/both human players want to not use a local profile
+		-- (that is, they've choose the first option, "[Guest]"), ScreenSelectProfile
+		-- will not let us leave.  The screen's Finish() method expects all human players
+		-- to have local profiles they want to use.  So, this gets tricky.
+		--
+		-- Loop through a hardcoded table of both possible players.
+		for player in ivalues({PLAYER_1, PLAYER_2}) do
+			-- check if this player is joined in
+			if GAMESTATE:IsHumanPlayer(player) then
+				-- this player was joined in, so get the index of their profile scroller as it is now
+				local info = scrollers[player]:get_info_at_focus_pos()
+				-- if there were no local profiles, there won't be any info
+				-- set index to 0 if so to indicate that "[Guest]" was chosen (because it was the only choice)
+				local index = type(info)=="table" and info.index or 0
+
+				-- if the index greater than 0, it indicates the player wants to use a local profile
+				if index > 0 then
+					-- so use the index to associate this ProfileIndex with this player
+					SCREENMAN:GetTopScreen():SetProfileIndex(player, index)
+
+				-- if the index is 0 (or, uh, negative, but that shouldn't happen given the way I set this up)
+				-- it indicates the player wanted to not use a profile; they selected the first "[Guest]" option.
+				else
+					-- Passing a -2 to SetProfileIndex() will unjoin the player.
+					-- Unjoining like this is (studid, but) necessary to get us past this screen onto the next
+					-- because ScreenSelectProfile needs all human players to have profiles assigned to them.
+					SCREENMAN:GetTopScreen():SetProfileIndex(player, -2)
+
+					-- The engine considers this player to be unjoined, but the human person playing StepMania
+					-- just wanted to not use a profile.  Save this player object in the SL table.  We'll rejoin
+					-- the player without a profile at the Init of the next screen (ScreenAfterSelectProfile).
+					if SL.Global.PlayersToRejoin == nil then SL.Global.PlayersToRejoin = {} end
+					table.insert(SL.Global.PlayersToRejoin, player)
+				end
+			end
+		end
+
+		-- if no available human players wanted to use a local profile, they will have been unjoined by now
+		-- and we won't be able to Finish() the screen without any joined players. If this happens, don't bother
+		-- trying to Finish(), just force StepMania to the next screen.
+		if type(SL.Global.PlayersToRejoin) == "table" then
+			if (#SL.Global.PlayersToRejoin == 1 and #GAMESTATE:GetHumanPlayers() == 0) or (#SL.Global.PlayersToRejoin == 2) then
+				SCREENMAN:SetNewScreen("ScreenAfterSelectProfile")
+			end
+		end
+		SCREENMAN:GetTopScreen():Finish()
+	end,
 	WhatMessageCommand=function(self) self:runcommandsonleaves(function(subself) if subself.distort then subself:distort(0.5) end end):sleep(4):queuecommand("Undistort") end,
 	UndistortCommand=function(self) self:runcommandsonleaves(function(subself) if subself.distort then subself:distort(0) end end) end,
 
@@ -163,14 +203,23 @@ local t = Def.ActorFrame {
 	}
 }
 
+-- top mask
+t[#t+1] = Def.Quad{
+	InitCommand=function(self) self:zoomto(540,50):xy(_screen.cx, _screen.cy-136):MaskSource() end
+}
+-- bottom mask
+t[#t+1] = Def.Quad{
+	InitCommand=function(self) self:vertalign(top):zoomto(540,80):xy(_screen.cx, _screen.cy+111):MaskSource() end
+}
+
 -- load PlayerFrames for both
 if AutoStyle=="none" or AutoStyle=="versus" then
-	t[#t+1] = LoadActor("PlayerFrame.lua", PLAYER_1)
-	t[#t+1] = LoadActor("PlayerFrame.lua", PLAYER_2)
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data, IndexPadding=index_padding})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data, IndexPadding=index_padding})
 
 -- load only for the MasterPlayerNumber
 else
-	t[#t+1] = LoadActor("PlayerFrame.lua", mpn)
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn]})
 end
 
 return t
