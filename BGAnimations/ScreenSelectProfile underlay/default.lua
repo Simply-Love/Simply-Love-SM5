@@ -13,14 +13,6 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- indexed by "ProfileIndex" (provided by engine)
 local profile_data = LoadActor("./PlayerProfileData.lua")
 
-local index_padding = 0
-for profile in ivalues(profile_data) do
-	if profile.index == nil or profile.index <= 0 then
-		index_padding = index_padding + 1
-	end
-end
-
-
 local scrollers = {}
 scrollers[PLAYER_1] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
 scrollers[PLAYER_2] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
@@ -69,7 +61,7 @@ local invalid_count = 0
 
 local t = Def.ActorFrame {
 	InitCommand=function(self) self:queuecommand("Capture") end,
-	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data, IndexPadding=index_padding}) ) end,
+	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data}) ) end,
 
 	-- the OffCommand will have been queued, when it is appropriate, from ./Input.lua
 	-- sleep for 0.5 seconds to give the PlayerFrames time to tween out
@@ -214,8 +206,8 @@ t[#t+1] = Def.Quad{
 
 -- load PlayerFrames for both
 if AutoStyle=="none" or AutoStyle=="versus" then
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data, IndexPadding=index_padding})
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data, IndexPadding=index_padding})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data})
 
 -- load only for the MasterPlayerNumber
 else

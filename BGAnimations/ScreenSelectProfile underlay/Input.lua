@@ -2,7 +2,17 @@ local args = ...
 local af = args.af
 local scrollers = args.Scrollers
 local profile_data = args.ProfileData
-local index_padding = args.IndexPadding
+
+-- we need to calculate how many dummy rows the scoller was "padded" with
+-- (to achieve the desired transform behavior since I am not mathematically
+-- perspicacious enough to have done so otherwise).
+-- we'll use index_padding to get the correct info out of profile_data.
+local index_padding = 0
+for profile in ivalues(profile_data) do
+	if profile.index == nil or profile.index <= 0 then
+		index_padding = index_padding + 1
+	end
+end
 
 local AutoStyle = ThemePrefs.Get("AutoStyle")
 local mpn = GAMESTATE:GetMasterPlayerNumber()

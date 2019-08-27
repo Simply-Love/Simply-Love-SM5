@@ -1,7 +1,6 @@
 local args = ...
 local player = args.Player
 local profile_data = args.ProfileData
-local index_padding = args.IndexPadding
 local scroller = args.Scroller
 local scroller_item_mt = LoadActor("./ScrollerItemMT.lua")
 
