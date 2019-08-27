@@ -46,15 +46,15 @@ if SL.Global.GameMode ~= "Casual" then
 	local font_zoom = 0.7
 
 	return Def.ActorFrame{
-		OnCommand=cmd(y, _screen.cy+200.5),
+		OnCommand=function(self) self:y(_screen.cy+200.5) end,
 
 		Def.Quad{
-			InitCommand=cmd(diffuse,color("#1E282F"); zoomto, 300, 26)
+			InitCommand=function(self) self:diffuse(color("#1E282F")):zoomto(300, 26) end
 		},
 
 		LoadFont("Common Normal")..{
 			Text=optionslist,
-			InitCommand=cmd(zoom, font_zoom; xy,-140,-5; align, 0,0; vertspacing, -6; wrapwidthpixels, 290 / font_zoom )
+			InitCommand=function(self) self:zoom(font_zoom):xy(-140,-5):align(0,0):vertspacing(-6):wrapwidthpixels(290 / font_zoom) end
 		}
 	}
 end

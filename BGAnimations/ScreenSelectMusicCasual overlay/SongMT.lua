@@ -56,10 +56,8 @@ local song_mt = {
 
 					subself:visible(true):sleep(0.3):linear(0.2):diffusealpha(1)
 				end,
-				SlideToTopCommand=cmd(linear,0.2; xy, WideScale(col.w*0.7, col.w), _screen.cy - 67 ),
-				SlideBackIntoGridCommand=function(subself)
-					subself:linear( 0.2 ):xy( col.w, row.h * 2 )
-				end,
+				SlideToTopCommand=function(subself) subself:linear(0.2):xy(WideScale(col.w*0.7, col.w), _screen.cy-67) end,
+				SlideBackIntoGridCommand=function(subself) subself:linear(0.2):xy( col.w, row.h * 2 ) end,
 
 				-- wrap the function that plays the preview music in its own Actor so that we can
 				-- call sleep() and queuecommand() and stoptweening() on it and not mess up other Actors
@@ -77,26 +75,25 @@ local song_mt = {
 
 					-- blinking quad behind banner
 					Def.Quad{
-						InitCommand=cmd( diffuse, Color.Black; zoomto, 0,0; diffusealpha, 0),
+						InitCommand=function(subself) subself:diffuse(0,0,0,0):zoomto(0,0) end,
 						GainFocusCommand=function(subself)
 							if self.song == "CloseThisFolder" then
 								subself:visible(false)
 							else
 								subself:visible(true):linear(0.2):diffusealpha(1):zoomto(128, 128)
-									:diffuseshift()
-									:effectcolor1(0.75,0.75,0.75,1):effectcolor2(0,0,0,1)
+									:diffuseshift():effectcolor1(0.75,0.75,0.75,1):effectcolor2(0,0,0,1)
 							end
 						end,
-						LoseFocusCommand=cmd(visible, false; diffusealpha, 0; stopeffect; zoomto, 0,0),
-						SlideToTopCommand=cmd(linear,0.12; zoomto, 112, 112),
-						SlideBackIntoGridCommand=cmd(linear,0.12; zoomto, 128,128)
+						LoseFocusCommand=function(subself) subself:visible( false):diffusealpha(0):stopeffect():zoomto(0,0) end,
+						SlideToTopCommand=function(subself) subself:linear(0.12):zoomto(112, 112) end,
+						SlideBackIntoGridCommand=function(subself) subself:linear(0.12):zoomto(128,128) end
 					},
 
 					-- banner / jacket
 					Def.Sprite{
 						Name="Banner",
 						InitCommand=function(subself) self.banner = subself; subself:diffusealpha(0) end,
-						OnCommand=cmd(queuecommand,"Refresh"),
+						OnCommand=function(subself) subself:queuecommand("Refresh") end,
 						RefreshCommand=function(subself)
 							subself:scaletoclipped(110,110)
 							if self.index ~= SongWheel:get_actor_item_at_focus_pos().index then
@@ -112,9 +109,9 @@ local song_mt = {
 								subself:diffuseshift():effectcolor1(1,0.65,0.65,1):effectcolor2(1,1,1,1)
 							end
 						end,
-						LoseFocusCommand=cmd(linear,0.2; zoomto,55,55; stopeffect),
-						SlideToTopCommand=cmd(linear,0.3; zoomto, 110,110; rotationy, 360; sleep, 0; rotationy, 0),
-						SlideBackIntoGridCommand=cmd(linear,0.12; zoomto,126,126),
+						LoseFocusCommand=function(subself) subself:linear(0.2):zoomto(55,55):stopeffect() end,
+						SlideToTopCommand=function(subself) subself:linear(0.3):zoomto(110,110):rotationy(360):sleep(0):rotationy(0) end,
+						SlideBackIntoGridCommand=function(subself) subself:linear(0.12):zoomto(126,126) end,
 					},
 				},
 

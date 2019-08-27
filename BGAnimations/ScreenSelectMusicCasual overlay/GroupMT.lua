@@ -72,12 +72,15 @@ local item_mt = {
 						subself:sleep(0.25):linear(0.2):diffusealpha(1)
 					end
 				end,
-				GainFocusCommand=cmd(linear,0.2; zoom,0.8),
-				LoseFocusCommand=cmd(linear,0.2; zoom,0.6),
-				SlideToTopCommand=cmd( linear, 0.12; y, 35; zoom, 0.35; linear, 0.2; x, 70; queuecommand, "Switch" ),
+				GainFocusCommand=function(subself) subself:linear(0.2):zoom(0.8) end,
+				LoseFocusCommand=function(subself) subself:linear(0.2):zoom(0.6) end,
+				SlideToTopCommand=function(subself)
+					subself:linear(0.12):y(35):zoom(0.35)
+					       :linear(0.2 ):x(70):queuecommand("Switch")
+				end,
 				SlideBackIntoGridCommand=function(subself)
 					subself:linear( 0.2 ):x( _screen.cx )
-						:linear( 0.12 ):zoom( 0.9 ):y( _screen.cy )
+					       :linear( 0.12 ):zoom( 0.9 ):y( _screen.cy )
 				end,
 				SwitchCommand=function(subself) switch_to_songs(self.groupName) end,
 
@@ -85,26 +88,26 @@ local item_mt = {
 				-- back of folder
 				LoadActor("./img/folderBack.png")..{
 					Name="back",
-					InitCommand=cmd(zoom,0.75),
-					OnCommand=cmd(y,-10),
-					GainFocusCommand=cmd(diffuse, color("#c47215")),
-					LoseFocusCommand=cmd(diffuse, color("#4e4f54"))
+					InitCommand=function(subself) subself:zoom(0.75) end,
+					OnCommand=function(subself) subself:y(-10) end,
+					GainFocusCommand=function(subself) subself:diffuse(color("#c47215")) end,
+					LoseFocusCommand=function(subself) subself:diffuse(color("#4e4f54")) end
 				},
 
 				-- group banner
 				Def.Banner{
 					Name="Banner",
 					InitCommand=function(subself) self.banner = subself end,
-					OnCommand=cmd(y,-30; setsize,418,164; zoom, 0.48),
+					OnCommand=function(subself) subself:y(-30):setsize(418,164):zoom(0.48) end,
 				},
 
 				-- front of folder
 				LoadActor("./img/folderFront.png")..{
 					Name="front",
-					InitCommand=cmd(zoom,0.75; valign,1),
-					OnCommand=cmd(y, 64),
-					GainFocusCommand=cmd( diffusetopedge, color("#eebc54"); diffusebottomedge, color("#7c5505"); decelerate,0.33; rotationx,50; ),
-					LoseFocusCommand=cmd( diffusebottomedge, color("#3d3e43"); diffusetopedge, color("#8d8e93"); decelerate,0.15; rotationx,0; ),
+					InitCommand=function(subself) subself:zoom(0.75):vertalign(bottom) end,
+					OnCommand=function(subself) subself:y(64) end,
+					GainFocusCommand=function(subself) subself:diffusetopedge(color("#eebc54")):diffusebottomedge(color("#7c5505")):decelerate(0.33):rotationx(50) end,
+					LoseFocusCommand=function(subself) subself:diffusebottomedge(color("#3d3e43")):diffusetopedge(color("#8d8e93")):decelerate(0.15):rotationx(0) end,
 				},
 
 				-- group title bmt
@@ -122,13 +125,12 @@ local item_mt = {
 					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
 					TruncateCommand=function(subself) subself:settext(self.groupName):Truncate(max_chars) end,
 
-					GainFocusCommand=cmd(x, 0 horizalign, center; linear, 0.15; y, 20; zoom,1.1),
-					LoseFocusCommand=cmd(xy, 0, 6; horizalign, center; linear, 0.15; zoom, 1; diffuse, Color.White),
-					SlideToTopCommand=function(subself)
-						subself:sleep(0.3):diffuse(Color.White):queuecommand("SlideToTop2")
-					end,
-					SlideToTop2Command=cmd(horizalign, left; linear, 0.2; xy, 150,-6; zoom, 3; wrapwidthpixels, 480; shadowlength, 0; playcommand, "Untruncate"),
-					SlideBackIntoGridCommand=cmd(horizalign, center; linear, 0.2; xy, 0,20; zoom, 1.1; diffuse, Color.White; wrapwidthpixels, 150; shadowlength, 0.5; playcommand, "Truncate"),
+					GainFocusCommand=function(subself) subself:x(0):horizalign(center):linear(0.15):y(20):zoom(1.1) end,
+					LoseFocusCommand=function(subself) subself:xy(0,6):horizalign(center):linear(0.15):zoom(1):diffuse(Color.White) end,
+
+					SlideToTopCommand=function(subself) subself:sleep(0.3):diffuse(Color.White):queuecommand("SlideToTop2") end,
+					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):xy(150,-6):zoom(3):wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate") end,
+					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):xy(0,20):zoom(1.1):diffuse(Color.White):wrapwidthpixels(150):shadowlength(0.5):playcommand("Truncate") end,
 				}
 			}
 

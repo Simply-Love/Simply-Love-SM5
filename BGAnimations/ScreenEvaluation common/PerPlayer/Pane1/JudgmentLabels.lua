@@ -41,7 +41,7 @@ for index, window in ipairs(TapNoteScores.Types) do
 end
 
 local t = Def.ActorFrame{
-	InitCommand=cmd(xy, 50, _screen.cy-24),
+	InitCommand=function(self) self:xy(50, _screen.cy-24) end,
 	OnCommand=function(self)
 		if player == PLAYER_2 then
 			self:x( self:GetX() * -1)
@@ -61,7 +61,7 @@ for i=1, #TapNoteScores.Types do
 
 		t[#t+1] = LoadFont("Common Normal")..{
 			Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper(),
-			InitCommand=cmd(zoom,0.833; horizalign,right; maxwidth, 76),
+			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(76) end,
 			BeginCommand=function(self)
 				self:x( (player == PLAYER_1 and 28) or -28 )
 				self:y((i-1)*28 -16)
@@ -82,9 +82,9 @@ for index, label in ipairs(RadarCategories) do
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
 	t[#t+1] = LoadFont("Common Normal")..{
-		-- lua ternary operators are adorable
+		-- lua ternary operators are adorable -ian5v
 		Text=(nice and (performance == 69 or possible == 69)) and 'nice' or label,
-		InitCommand=cmd(NoStroke;zoom,0.833; horizalign,right ),
+		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( (player == PLAYER_1 and -160) or 90 )
 			self:y((index-1)*28 + 41)

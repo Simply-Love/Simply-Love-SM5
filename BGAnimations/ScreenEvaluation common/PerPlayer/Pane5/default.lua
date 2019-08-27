@@ -24,8 +24,8 @@ local pane = Def.ActorFrame{
 			end
 		end
 	end,
-	-- ExpandForDoubleCommand() does do anything here, but we check for its presence in this
-	-- ActorFrame in ./InputHandler to determine which panes to expand the background for
+	-- ExpandForDoubleCommand() does not do anything here, but we check for its presence in
+	-- this ActorFrame in ./InputHandler to determine which panes to expand the background for
 	ExpandForDoubleCommand=function() end,
 }
 

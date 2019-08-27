@@ -71,23 +71,27 @@ local TotalSongs = function(numSongs)
 end
 
 -- ----------------------------------------------------
--- retrieve and process data (mods, most recently played song, high score name, etc.)
--- for each profile at Init and put it in the profile_data table indexed by "ProfileIndex" (provided by engine)
+-- Retrieve and process data (mods, most recently played song, high score name, etc.)
+-- for each available local profile and put it in the profile_data table.
 -- Since both players are using the same list of local profiles, this only needs to be performed once (not once for each player).
 -- I'm doing it here, in PlayerProfileData.lua, to keep default.lua from growing too large/unwieldy.  Once done, pass the
 -- table of data back default.lua where it can be sent via playcommand parameter to the appropriate PlayerFrames as needed.
 
 local profile_data = {}
 
-for i=0, PROFILEMAN:GetNumLocalProfiles()-1 do
+for i=1, PROFILEMAN:GetNumLocalProfiles() do
 
-	local profile = PROFILEMAN:GetLocalProfileFromIndex(i)
-	local id = PROFILEMAN:GetLocalProfileIDFromIndex(i)
+	-- GetLocalProfileFromIndex() expects indices to start at 0
+	local profile = PROFILEMAN:GetLocalProfileFromIndex(i-1)
+	-- GetLocalProfileIDFromIndex() also expects indices to start at 0
+	local id = PROFILEMAN:GetLocalProfileIDFromIndex(i-1)
 	local dir = PROFILEMAN:LocalProfileIDToDir(id)
 	local userprefs = ReadProfileCustom(profile, dir)
 	local mods, noteskin, judgment = RecentMods(userprefs)
 
-	profile_data[i] = {
+	local data = {
+		index = i,
+		displayname = profile:GetDisplayName(),
 		highscorename = profile:GetLastUsedHighScoreName(),
 		recentsong = RecentSong(profile:GetLastPlayedSong()),
 		totalsongs = TotalSongs(profile:GetNumTotalSongsPlayed()),
@@ -95,6 +99,8 @@ for i=0, PROFILEMAN:GetNumLocalProfiles()-1 do
 		noteskin = noteskin,
 		judgment = judgment,
 	}
+
+	table.insert(profile_data, data)
 end
 
 return profile_data

@@ -42,7 +42,7 @@ if EarnedMachineRecord or EarnedPersonalRecord then
 	SL[pn].HighScores.EnteringName = true
 
 	local t = Def.ActorFrame{
-		InitCommand=cmd(zoom, 0.225),
+		InitCommand=function(self) self:zoom(0.225) end,
 		OnCommand=function(self)
 			self:x( player == PLAYER_1 and -45 or 95 )
 			self:y( 54 )

@@ -13,34 +13,28 @@ local optionrow_item_mt = {
 					subself:diffusealpha(0)
 					self.container = subself
 				end,
-				UnhideCommand=cmd( sleep, 0.3; linear, 0.2; diffusealpha, 1),
-				HideCommand=cmd( linear, 0.2; diffusealpha, 0),
+				UnhideCommand=function(subself) subself:sleep(0.3):linear(0.2):diffusealpha(1) end,
+				HideCommand=function(subself) subself:linear(0.2):diffusealpha(0) end,
 
 				Def.BitmapText{
 					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt1 = subself
-						subself:horizalign(left)
-						subself:diffusealpha(1)
-						-- subself:zoom(0.5)
-						subself:diffuse(Color.Black)
+						subself:horizalign(left):diffusealpha(1):diffuse(Color.Black)
 					end,
-					OnCommand=cmd(sleep, 0.13; linear, 0.05; x, 200 ),
-					GainFocusCommand=cmd(diffusealpha, 1 ),
-					LoseFocusCommand=cmd(diffusealpha, 0 )
+					OnCommand=function(subself) subself:sleep(0.13):linear(0.05):x(200) end,
+					GainFocusCommand=function(subself) subself:diffusealpha(1) end,
+					LoseFocusCommand=function(subself) subself:diffusealpha(0) end
 				},
 				Def.BitmapText{
 					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt2 = subself
-						subself:horizalign(right)
-						subself:diffusealpha(0)
-						-- subself:zoom(0.5)
-						subself:diffuse(Color.Black)
+						subself:horizalign(right):diffusealpha(0):diffuse(Color.Black)
 					end,
-					OnCommand=cmd(sleep, 0.13; linear, 0.05; x, 340 ),
-					GainFocusCommand=cmd(diffusealpha, 1 ),
-					LoseFocusCommand=cmd(diffusealpha, 0 )
+					OnCommand=function(subself) subself:sleep(0.13):linear(0.05):x(340) end,
+					GainFocusCommand=function(subself) subself:diffusealpha(1) end,
+					LoseFocusCommand=function(subself) subself:diffusealpha(0) end
 				}
 			}
 
@@ -63,7 +57,6 @@ local optionrow_item_mt = {
 			if not info then return end
 
 			if type(info) == "table" then
-				-- local difficulty = THEME:GetString( "CustomDifficulty", info:GetDifficulty():gsub("Difficulty_", "") )
 				self.bmt1:settext( info[1] )
 				self.bmt2:settext( info[2] )
 			else

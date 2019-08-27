@@ -65,7 +65,7 @@ for panel,values in pairs(Highlights) do
 				-- "GameController_1" is indexed at 0, and "GameController_2" is indexed at 1, conveniently just like how
 				--  "PlayerNumber_P1" is indexed at 0, and  "PlayerNumber_P2" is indexed at 1
 				if GameController:Reverse()[event.controller]==PlayerNumber:Reverse()[player]
-				and event.button == panel and then
+				and event.button == panel then
 					self:visible(event.type == "InputEventType_FirstPress")
 				end
 
