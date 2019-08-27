@@ -81,7 +81,7 @@ Handle.MenuLeft = function(event)
 			local data = profile_data[index+index_padding-1]
 			local frame = af:GetChild(ToEnumShortString(event.PlayerNumber) .. 'Frame')
 			frame:GetChild("SelectedProfileText"):settext(data and data.displayname or "")
-			frame:playcommand("Set", {data=data})
+			frame:playcommand("Set", data)
 		end
 	end
 end
@@ -100,7 +100,7 @@ Handle.MenuRight = function(event)
 			local data = profile_data[index+index_padding+1]
 			local frame = af:GetChild(ToEnumShortString(event.PlayerNumber) .. 'Frame')
 			frame:GetChild("SelectedProfileText"):settext(data and data.displayname or "")
-			frame:playcommand("Set", {data=data})
+			frame:playcommand("Set", data)
 		end
 	end
 end
