@@ -1,5 +1,7 @@
 -- ----------------------------------------------------
--- some local functions that will help process profile data into presentable strings
+-- local tables containing NoteSkins and JudgmentGraphics available to SL
+-- wW'll compare values from profiles against these "master" tables as it
+-- seems to be disconcertingly possible for user data to contain errata, typos, etc.
 
 local noteskins = NOTESKIN:GetNoteSkinNames()
 local judgment_graphics = {
@@ -7,6 +9,9 @@ local judgment_graphics = {
 	["FA+"]=GetJudgmentGraphics("FA+"),
 	StomperZ=GetJudgmentGraphics("StomperZ"),
 }
+
+-- ----------------------------------------------------
+-- some local functions that will help process profile data into presentable strings
 
 local RecentMods = function(mods)
 	if type(mods) ~= "table" then return "" end
