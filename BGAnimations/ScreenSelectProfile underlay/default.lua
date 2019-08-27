@@ -211,7 +211,7 @@ if AutoStyle=="none" or AutoStyle=="versus" then
 
 -- load only for the MasterPlayerNumber
 else
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn]})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn], ProfileData=profile_data})
 end
 
 return t
