@@ -12,8 +12,8 @@ return Def.Actor{
 	TransitionCommand=function(self)
 		-- if any players were temporarily unjoined during ScreenSelectProfile's OffCommand
 		-- in order to allow us to proceed past the screen's Finish() method, those players
-		-- will have been stuff into a table at SL.Global.PlayersToRejoin with the expectation
-		-- that SL would silently/transparently rejoin them on the next screen without the player
+		-- will have been stuffed into a table at SL.Global.PlayersToRejoin with the expectation
+		-- that SL would silently/transparently rejoin them on the next screen without anyone
 		-- needing to care about the smoke-and-mirrors nature of SM5 theming.
 		--
 		-- We're here on the next screen, so rejoin any players that were previously unjoined.
@@ -23,7 +23,9 @@ return Def.Actor{
 				GAMESTATE:JoinPlayer(player)
 			end
 		end
+		-- reset this to nil now so values don't accidentally persist into the next game cycle
 		SL.Global.PlayersToRejoin = nil
+		-- and proceed to whatever the next screen should be
 		SCREENMAN:SetNewScreen( Branch.AllowScreenSelectColor() )
 	end
 }

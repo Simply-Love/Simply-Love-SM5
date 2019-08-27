@@ -124,11 +124,7 @@ return Def.ActorFrame{
 				table.insert(scroller_data, profile)
 			end
 
-			-- if PROFILEMAN:GetNumLocalProfiles() > 0 then
-				scroller.focus_pos = 5
-			-- else
-			-- 	scroller.focus_pos = 4
-			-- end
+			scroller.focus_pos = 5
 			scroller:set_info_set(scroller_data, 0)
 		end,
 
