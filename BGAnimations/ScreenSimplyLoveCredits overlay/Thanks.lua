@@ -49,7 +49,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, ListenerJubatus, TheNick, and CrashCringle12."
+			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, and CrashCringle12."
 		}
 	},
 
@@ -82,7 +82,7 @@ return {
 		},
 		{
 			Name="DDRIllini",
-			Img={ "uiuc/uiuc.jpg", "uiuc/uiuc2.jpg", "uiuc/uiuc3.jpg", "uiuc/uiuc4.jpg", "uiuc/uiuc5.jpg" },
+			Img={ "uiuc/uiuc.jpg", "uiuc/uiuc2.jpg", "uiuc/uiuc3.jpg", "uiuc/uiuc4.jpg", "uiuc/uiuc5.jpg", "uiuc/wendy.jpg" },
 			About="Thanks to the DDRIllini crew for being DDM's loving counterpart a time zone away.  I have fond memories of driving with DDM friends to DDRIllini's annual Rumble in the Prairie events each spring.\n\nThank you, Kyt-Xune, Z0rk, feedbacker, Sudzi, ian5v, Benpai, pez, mtgmackid, Krysel, Kasemei, Juni, rikame, Mary, andrewipark, et al!"
 		}
 	},
@@ -138,22 +138,22 @@ return {
 			Img="heysora.png",
 			About="HeySora kindly translated Simply Love's UI into French.\n\nHe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
 		},
-
-	},
-
-	-- page 9
-	{
-
 		{
 			Name="Moru Zerinho6",
 			Img="Moru_Zerinho6.jpg",
 			About="Moru Zerinho6 volunteered to translate Simply Love's UI into Brazilian Portuguese and the theme is richer for it.\n\nHe spoke with me extensively about his experience going down The Rabbit Hole in Simply Love and how he translated its words for other non-English-speaking people along the way.  His earnest sincerity helped me in ways I am unable to describe using any words of my own."
 		},
+	},
+
+	-- page 9
+	{
 		{
 			Name="FMS_Cat",
 			Img="fms_cat 1x32.png",
 			About="FMS_Cat translated Simply Love's UI into Japanese, helping to realize a longtime dream of mine.\n\nHe is an incredibly talented WebGL programmer whose creative work with shaders leaves me smiling and curious about how such expansive beauty appears in the tiniest of footprints."
 		},
+		{},
+		{},
 	},
 
 	-- page 10
