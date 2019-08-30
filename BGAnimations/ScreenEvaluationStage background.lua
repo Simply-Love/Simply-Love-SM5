@@ -4,16 +4,16 @@ local bg = LoadActor(THEME:GetPathB("","_shared background"))
 -- don't bother adding support for animated faux screenshot textures to ScreenEval
 -- in Casual mode because Casual mode doesn't allow screenshots at all.
 if SL.Global.GameMode ~= "Casual"
--- SupportsRenderToTexture() is defined in ./Scripts/SL-Helpers.lua; read more details there
+-- SupportsRenderToTexture() is defined in ./Scripts/SL-Helpers.lua; read more details there.
 and SupportsRenderToTexture()
 then
 
 	-- ActorFrameTextures are neat because they can take their dynamic contents
-	-- (like Sprites, BitmapTexts, NoteSkins, etc., anthing really) and create a
+	-- (like Sprites, BitmapTexts, NoteSkins, etc., anything really) and create a
 	-- visual "snapshot" of those contents as they exist at a particular moment in time.
 	--
-	-- It's kind of like a photograph of real life or a screenshot of a game.
-	-- In computer graphics programming, a photograph/snapshot like this a "texture".
+	-- It's kind of like a photograph of real life, or a screenshot of a game.
+	-- In computer graphics programming, a photograph/snapshot like this is a "texture".
 	--
 	-- In SM5, we can put various actors (like Sprites, BitmapTexts, NoteSkins, etc.) into
 	-- an ActorFrameTexture like we would an ActorFrame, and we can use its special methods like

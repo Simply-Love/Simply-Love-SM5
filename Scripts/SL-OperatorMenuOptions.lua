@@ -208,6 +208,9 @@ OperatorMenuOptionRows.VideoRendererWindows = function()
 	}
 end
 
+------------------------------------------------------------
+-- CustomSongs from USB profiles
+
 OperatorMenuOptionRows.CustomSongsMaxSeconds = function()
 	-- first, define a reasonable range of 1:45 to 15:00
 	local choices = SecondsToMMSS_range(105,900,15)

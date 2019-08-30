@@ -23,5 +23,14 @@ return Def.Actor{
 			-- don't politely transition from ScreenInit to ScreenSelectGame with fades; just get the player there now
 			SCREENMAN:SetNewScreen("ScreenSelectGame")
 		end
+
+		-- Simply Thonk relies heavily on ActorFrameTextures, and SM5's D3D VideoRenderer does not support
+		-- render-to-texture.  Thonk mode in D3D is currently broken (read: blinding) enough that it merits
+		-- a photosensitive epilepsy warning, so if SM5 starts up in this configuration, redirect to
+		-- Simply Love Options, and tell the player to pick a different VisualTheme or change their VideoRenderer.
+		if ThemePrefs.Get("VisualTheme") == "Thonk" and not SupportsRenderToTexture() then
+			SM( THEME:GetString("ScreenThemeOptions", "ThonkRequiresRenderToTexture") )
+			SCREENMAN:SetNewScreen("ScreenThemeOptions")
+		end
 	end
 }
