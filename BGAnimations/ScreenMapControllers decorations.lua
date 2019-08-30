@@ -41,7 +41,7 @@ local af = Def.ActorFrame{
 			self:SetTarget(scroller)
 			num_buttons = #scroller:GetChild("Line")
 			-- need to queue so that the Scroller itself has time to apply its OnCommand as defined in Metrics.ini
-			-- then we can get the y value that... doesn't seem to be accessible it any other way
+			-- then we can get the y value that... doesn't seem to be accessible in any other way
 			self:queuecommand("GetScrollerY")
 		end,
 		GetScrollerYCommand=function(self)
@@ -61,7 +61,7 @@ for i,player in ipairs({PLAYER_1, PLAYER_2}) do
 	}
 
 	af[#af+1] = LoadFont("_wendy small")..{
-		Text=THEME:GetString("ScreenTestInput", "Player").." "..PlayerNumber:Reverse()[player]+1,
+		Text=("%s %i"):format(THEME:GetString("ScreenTestInput", "Player"), PlayerNumber:Reverse()[player]+1),
 		InitCommand=function(self)
 			self:halign(PlayerNumber:Reverse()[OtherPlayer[player]])
 				:x(_screen.cx + 110 * (player==PLAYER_1 and -1 or 1) )
