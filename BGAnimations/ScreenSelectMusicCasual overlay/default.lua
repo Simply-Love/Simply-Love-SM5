@@ -136,8 +136,8 @@ local t = Def.ActorFrame {
 	LoadActor("./PlayerOptionsShared.lua", {row, col, Input}),
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}),
 
-	-- commented out for now
-	-- LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
+	-- included, but unused for now
+	LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
 
 	SongWheel:create_actors( "SongWheel", 12, song_mt, 0, songwheel_y_offset),
 
