@@ -337,13 +337,11 @@ end
 
 group_index = FindInTable(current_song:GetGroupName(), groups) or 1
 
--- local group_info = GetGroupInfo(groups)
-
 return {
 	steps_type=steps_type,
 	Groups=groups,
 	group_index=group_index,
-	group_info=group_info,
+	-- group_info=GetGroupInfo(groups),
 	OptionsWheel=OptionsWheel,
 	OptionRows=OptionRows,
 	row=row,

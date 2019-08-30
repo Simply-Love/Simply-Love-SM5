@@ -1,15 +1,29 @@
-return Def.Sprite{
-	InitCommand=function(self) self:Center() end,
-	BeforeLoadingNextCourseSongMessageCommand=function(self)
-		self:LoadFromSongBackground( SCREENMAN:GetTopScreen():GetNextCourseSong() )
+return Def.ActorFrame{
+	StartCommand=function(self)
+		self:diffusealpha(0):visible(true):sleep(0.75):decelerate(0.5):diffusealpha(1)
 	end,
-	StartCommand=cmd(scale_or_crop_background; visible, true; diffusealpha,0; sleep,0.75; decelerate,0.5; diffusealpha,1),
 	FinishCommand=function(self)
-		self:sleep(0.5):accelerate(0.5):diffusealpha(0)
+		-- tween for 1 second by default
+		local duration = 1
+		-- but decrease the overall tween time if musicrate is > 1 to ensure that this doesn't accidentally block arrows
 		if SL.Global.ActiveModifiers.MusicRate > 1 then
-			self:hurrytweening( 1/SL.Global.ActiveModifiers.MusicRate )
+			duration = duration * (1/SL.Global.ActiveModifiers.MusicRate)
 		end
-		self:queuecommand("Hide")
+
+		self:sleep(duration/2):accelerate(duration/2):diffusealpha(0):queuecommand("Hide")
 	end,
-	HideCommand=function(self) self:visible(false) end
+	HideCommand=function(self)
+		self:visible(false)
+	end,
+
+	Def.Quad{
+		InitCommand=function(self) self:diffuse(Color.Black):FullScreen() end
+	},
+
+	Def.Sprite{
+		BeforeLoadingNextCourseSongMessageCommand=function(self)
+			self:LoadFromSongBackground( SCREENMAN:GetTopScreen():GetNextCourseSong() )
+		end,
+		StartCommand=function(self) self:scale_or_crop_background() end
+  }
 }

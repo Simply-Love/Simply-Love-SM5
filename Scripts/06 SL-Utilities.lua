@@ -4,7 +4,7 @@
 --
 -- The filename starts with "06" so that it loads before other SL scripts that rely on
 -- global functions defined here.  For more information on this numbering system that
--- pretty much on one uses, see: ./Themes/_fallback/Scripts/hierarchy.txt
+-- pretty much no one uses, see: ./Themes/_fallback/Scripts/hierarchy.txt
 
 ------------------------------------------------------------
 -- define helper functions local to this file first

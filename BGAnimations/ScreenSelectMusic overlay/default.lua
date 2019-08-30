@@ -1,4 +1,5 @@
 local t = Def.ActorFrame{
+	InitCommand=function(self) SL.Global.GameplayReloadCheck = false end,
 	ChangeStepsMessageCommand=function(self, params)
 		self:playcommand("StepsHaveChanged", params)
 	end,
@@ -33,7 +34,7 @@ local t = Def.ActorFrame{
 	-- ---------------------------------------------------
 	-- finally, load the overlay used for sorting the MusicWheel (and more), hidden by default
 	LoadActor("./SortMenu/default.lua"),
-	-- a Test Input overlay can (possibly) be accessed from the SortMenu
+	-- a Test Input overlay can (maybe) be accessed from the SortMenu
 	LoadActor("./TestInput.lua"),
 }
 

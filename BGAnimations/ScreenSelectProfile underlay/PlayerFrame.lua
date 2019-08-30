@@ -142,7 +142,7 @@ return Def.ActorFrame{
 		Def.ActorFrame{
 			Name="DataFrame",
 			InitCommand=function(self) self:xy(62,1) end,
-			OnCommand=function(self) self:playcommand("Set", {data=profile_data[1]}) end,
+			OnCommand=function(self) self:playcommand("Set", profile_data[1]) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
@@ -160,9 +160,9 @@ return Def.ActorFrame{
 					Name="HighScoreName",
 					InitCommand=function(self) self:align(0,0):xy(-50,-104):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
 					SetCommand=function(self, params)
-						if params.data then
+						if params then
 							local desc = THEME:GetString("ScreenGameOver","LastUsedHighScoreName") .. ": "
-							self:visible(true):settext(desc .. (params.data.highscorename or ""))
+							self:visible(true):settext(desc .. (params.highscorename or ""))
 						else
 							self:visible(false):settext("")
 						end
@@ -175,9 +175,9 @@ return Def.ActorFrame{
 					Name="MostRecentSong",
 					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):wrapwidthpixels(104/0.65):vertspacing(-3) end,
 					SetCommand=function(self, params)
-						if params.data then
+						if params then
 							local desc = THEME:GetString("ScreenSelectProfile","MostRecentSong") .. ":\n"
-							self:settext(desc .. (params.data.recentsong or "")):Truncate(112)
+							self:settext(desc .. (params.recentsong or "")):Truncate(112)
 						else
 							self:settext("")
 						end
@@ -190,8 +190,8 @@ return Def.ActorFrame{
 					Name="TotalSongs",
 					InitCommand=function(self) self:align(0,0):xy(-50,0):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
 					SetCommand=function(self, params)
-						if params.data then
-							self:visible(true):settext(params.data.totalsongs or "")
+						if params then
+							self:visible(true):settext(params.totalsongs or "")
 						else
 							self:visible(false):settext("")
 						end
@@ -205,10 +205,48 @@ return Def.ActorFrame{
 					Name="RecentMods",
 					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
 					SetCommand=function(self, params)
-						if params.data then
-							self:visible(true):settext(params.data.mods or "")
+						if params then
+							self:visible(true):settext(params.mods or "")
 						else
 							self:visible(false):settext("")
+						end
+					end
+				},
+
+				-- NoteSkin preview
+				Def.ActorProxy{
+					Name="NoteSkinPreview",
+					InitCommand=function(self) self:zoom(0.25):xy(-42,50) end,
+					SetCommand=function(self, params)
+						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
+						if params and params.noteskin then
+							local noteskin = underlay:GetChild("NoteSkin_"..params.noteskin)
+							if noteskin then
+								self:visible(true):SetTarget(noteskin)
+							else
+								self:visible(false)
+							end
+						else
+							self:visible(false)
+						end
+					end
+				},
+
+				-- JudgmentGraphic preview
+				Def.ActorProxy{
+					Name="JudgmentGraphicPreview",
+					InitCommand=function(self) self:zoom(0.35):xy(12,68) end,
+					SetCommand=function(self, params)
+						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
+						if params and params.judgment then
+							local judgment = underlay:GetChild("JudgmentGraphic_"..StripSpriteHints(params.judgment))
+							if judgment then
+								self:SetTarget(judgment)
+							else
+								self:SetTarget(underlay:GetChild("JudgmentGraphic_None"))
+							end
+						else
+							self:SetTarget(underlay:GetChild("JudgmentGraphic_None"))
 						end
 					end
 				}

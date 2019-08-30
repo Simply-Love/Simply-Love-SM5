@@ -1,4 +1,16 @@
 -- ----------------------------------------------------
+-- local tables containing NoteSkins and JudgmentGraphics available to SL
+-- wW'll compare values from profiles against these "master" tables as it
+-- seems to be disconcertingly possible for user data to contain errata, typos, etc.
+
+local noteskins = NOTESKIN:GetNoteSkinNames()
+local judgment_graphics = {
+	ITG=GetJudgmentGraphics("ITG"),
+	["FA+"]=GetJudgmentGraphics("FA+"),
+	StomperZ=GetJudgmentGraphics("StomperZ"),
+}
+
+-- ----------------------------------------------------
 -- some local functions that will help process profile data into presentable strings
 
 local RecentMods = function(mods)
@@ -8,18 +20,33 @@ local RecentMods = function(mods)
 
 	-- SpeedModType should be a string and SpeedMod should be a number
 	if type(mods.SpeedModType)=="string" and type(mods.SpeedMod)=="number" then
-		if mods.SpeedModType=="x" and mods.SpeedMod > 0 then text = text..tostring(mods.SpeedMod).."x, "
-		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then text = text..mods.SpeedModType..tostring(mods.SpeedMod)..", "
+		if mods.SpeedModType=="x" and mods.SpeedMod > 0 then text = text..tostring(mods.SpeedMod).."x"
+		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then text = text..mods.SpeedModType..tostring(mods.SpeedMod)
 		end
 	end
 
-	-- a NoteSkin title might consist of only numbers and be read in by the IniFile utility as a number, so just ensure it isn't nil
-	if mods.NoteSkin ~= nil and mods.NoteSkin ~= "" then text = text..mods.NoteSkin..", " end
+	-- Mini should definitely be a string
+	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = text..", "..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini") end
+	-- time for a linebreak
+	text = text.."\n"
 
-	-- Mini and JudgmentGraphic should definitely be strings
-	if type(mods.Mini)=="string" and mods.Mini ~= "" and mods.Mini ~= "0%" then text = text..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini")..", " end
-	if type(mods.JudgmentGraphic)=="string" and mods.JudgmentGraphic ~= "" then text = text..StripSpriteHints(mods.JudgmentGraphic) .. ", " end
-	if type(mods.ComboFont)=="string" and mods.ComboFont ~= "" then text = text..mods.ComboFont .. ", " end
+	-- a NoteSkin title might consist of only numbers and be read in by the IniFile utility as a number, so just ensure it isn't nil
+	if mods.NoteSkin ~= nil and mods.NoteSkin ~= "" then
+		if not FindInTable(mods.NoteSkin, noteskins) then
+			-- the NoteSkin is not available, so just append the NoteSkin name to the string
+			text = text..mods.NoteSkin
+		end
+		text = text.."\n"
+	end
+
+	-- JudgmentGraphic and ComboFont should definitely be strings
+	if type(mods.JudgmentGraphic)=="string" and mods.JudgmentGraphic ~= "" then
+		if not (FindInTable(mods.JudgmentGraphic, judgment_graphics.ITG) or FindInTable(mods.JudgmentGraphic, judgment_graphics["FA+"]) or FindInTable(mods.JudgmentGraphic, judgment_graphics.StomperZ)) then
+			-- the judgment graphic is not available, so just append the JudgmentGraphic to the string
+			text = text..StripSpriteHints(mods.JudgmentGraphic)
+		end
+		text = text.."\n"
+	end
 
 	-- loop for mods that save as booleans
 	local flags, hideflags = "", ""

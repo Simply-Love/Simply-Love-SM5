@@ -1,4 +1,6 @@
-function OptionRowEditorNoteskin()
+OperatorMenuOptionRows = {}
+
+OperatorMenuOptionRows.EditorNoteskin = function()
 	local skins = NOTESKIN:GetNoteSkinNames()
 	return {
 		Name = "Editor Noteskin",
@@ -28,7 +30,7 @@ function OptionRowEditorNoteskin()
 	}
 end
 
-function OptionRowLongAndMarathonTime( str )
+OperatorMenuOptionRows.LongAndMarathonTime = function( str )
 	local choices = {
 		Long={Choices=SecondsToMMSS_range(150, 300, 15), Values=range(150, 300, 15)},
 		Marathon={Choices=SecondsToMMSS_range(300, 600, 15), Values=range(300, 600, 15)}
@@ -66,7 +68,7 @@ function OptionRowLongAndMarathonTime( str )
 	}
 end
 
-function OptionRowMusicWheelSpeed()
+OperatorMenuOptionRows.MusicWheelSpeed = function()
 
 	local choices = { "Slow", "Normal", "Fast", "Faster", "Ridiculous", "Ludicrous", "Plaid" }
 	local values = { 5, 10, 15, 25, 30, 45, 100 }
@@ -106,7 +108,7 @@ function OptionRowMusicWheelSpeed()
 	}
 end
 
-function OptionRowTheme()
+OperatorMenuOptionRows.Theme = function()
 	return {
 		Name = "Theme",
 		Choices = THEME:GetSelectableThemeNames(),
@@ -156,7 +158,7 @@ end
 -- the OptionRow for changing the VideoRenderer should only appear in Windows
 -- (see [ScreenOptionsGraphicsSound] in Metrics.ini), but we'll make an effort
 -- to present valid choices in macOS and Linux, Just In Case.
-function OptionRowVideoRendererWindows()
+OperatorMenuOptionRows.VideoRendererWindows = function()
 
 	-- opengl is a valid VideoRenderer for all architectures, so start
 	-- by assuming it is the only choice.
@@ -199,6 +201,114 @@ function OptionRowVideoRendererWindows()
 			for i=1, #list do
 				if list[i] then
 					PREFSMAN:SetPreference("VideoRenderers", values[i])
+					break
+				end
+			end
+		end,
+	}
+end
+
+------------------------------------------------------------
+-- CustomSongs from USB profiles
+
+OperatorMenuOptionRows.CustomSongsMaxSeconds = function()
+	-- first, define a reasonable range of 1:45 to 15:00
+	local choices = SecondsToMMSS_range(105,900,15)
+	local values  = range(105,900,15)
+	-- top it off by including 2 hours as a choice
+	table.insert(choices, "2:00:00")
+	table.insert(values, 7200)
+
+	return {
+		Name="CustomSongsMaxSeconds",
+		Choices=choices,
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		LoadSelections = function(self, list, pn)
+			local time = SecondsToMMSS(PREFSMAN:GetPreference("CustomSongsMaxSeconds")):gsub("^0*", "")
+			local i = FindInTable(time, choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #choices do
+				if list[i] then
+					PREFSMAN:SetPreference("CustomSongsMaxSeconds", values[i])
+					break
+				end
+			end
+		end,
+	}
+end
+
+OperatorMenuOptionRows.CustomSongsMaxMegabytes = function()
+	-- first, define a reasonable range of integers from [3,9]
+	local values = range(3,9)
+	local choices = stringify(values, "%d MB")
+
+	-- then, a second range of slightly larger values, more spaced out
+	for i, x in ipairs(range(10,30,2.5)) do
+		table.insert(values, x)
+
+		if i % 2 == 0 then
+			table.insert(choices, ("%.1f MB"):format(x))
+		else
+			table.insert(choices, ("%d MB"):format(x))
+		end
+	end
+
+	-- lmao
+	table.insert(values, 1000)
+	table.insert(choices, "1 GB 😮")
+
+	return {
+		Name="CustomSongsMaxMegabytes",
+		Choices=choices,
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		LoadSelections = function(self, list, pn)
+			local pref = PREFSMAN:GetPreference("CustomSongsMaxMegabytes")
+			local i = FindInTable(pref, values) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #choices do
+				if list[i] then
+					PREFSMAN:SetPreference("CustomSongsMaxMegabytes", values[i])
+					break
+				end
+			end
+		end,
+	}
+end
+
+OperatorMenuOptionRows.CustomSongsLoadTimeout = function()
+	-- first, define a reasonable range of integers from [3,10]
+	local choices = range(3,10)
+	table.insert(choices, 60)
+
+	-- accommodate custom values rather than steamrolling over them
+	local pref = PREFSMAN:GetPreference("CustomSongsLoadTimeout")
+	if not FindInTable(pref, choices) then table.insert(choices, pref) end
+
+	return {
+		Name="CustomSongsLoadTimeout",
+		Choices=choices,
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		LoadSelections = function(self, list, pn)
+			local i = FindInTable(pref, choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #choices do
+				if list[i] then
+					PREFSMAN:SetPreference("CustomSongsLoadTimeout", choices[i])
 					break
 				end
 			end

@@ -209,9 +209,8 @@ Branch.AfterProfileSave = function()
 			SL.Global.Stages.Remaining = SL.Global.Stages.Remaining + StagesToAddBack
 		end
 
-		-- Now, check if StepMania and SL disagree on the stage count
-		-- If necessary, add stages back
-		-- This might be necessary because
+		-- Now, check if StepMania and SL disagree on the stage count. If necessary, add stages back.
+		-- This might be necessary because:
 		-- a) a Lua chart reloaded ScreenGameplay, or
 		-- b) everyone failed, and StepmMania zeroed out the stage numbers
 		if GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber()) < SL.Global.Stages.Remaining then

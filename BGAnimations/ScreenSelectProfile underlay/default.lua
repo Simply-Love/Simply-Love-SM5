@@ -197,11 +197,11 @@ local t = Def.ActorFrame {
 
 -- top mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:zoomto(540,50):xy(_screen.cx, _screen.cy-136):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-110):MaskSource() end
 }
 -- bottom mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:vertalign(top):zoomto(540,80):xy(_screen.cx, _screen.cy+111):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+111):MaskSource() end
 }
 
 -- load PlayerFrames for both
@@ -213,5 +213,8 @@ if AutoStyle=="none" or AutoStyle=="versus" then
 else
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn], ProfileData=profile_data})
 end
+
+LoadActor("./JudgmentGraphicPreviews.lua", {af=t, profile_data=profile_data})
+LoadActor("./NoteSkinPreviews.lua", {af=t, profile_data=profile_data})
 
 return t
