@@ -1,12 +1,13 @@
 local songs = {
-	Arrows = "cloud break",
-	Bears = "crystalis",
 	Hearts = "feel",
-	Ducks = "Xuxa fami VRC6",
-	Gay = "Mystical Wheelbarrow Journey",
+	Arrows = "cloud break",
+	Bears  = "crystalis",
+	Ducks  = "Xuxa fami VRC6",
+	Cats   = "Beanmania IIDX",
 	Spooky = "Spooky Scary Chiptunes",
-	Stars = "Shooting Star - faux VRC6 remix",
-	Thonk = "Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix",
+	Gay    = "Mystical Wheelbarrow Journey",
+	Stars  = "Shooting Star - faux VRC6 remix",
+	Thonk  = "Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix",
 }
 
 local style = ThemePrefs.Get("VisualTheme")
