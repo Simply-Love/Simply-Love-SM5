@@ -91,6 +91,8 @@ local GlobalDefaults = {
 				ScreenNameEntry = ThemePrefs.Get("ScreenNameEntryMenuTimer"),
 			}
 			self.TimeAtSessionStart = nil
+
+			self.GameplayReloadCheck = false
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,

@@ -301,7 +301,7 @@ GetNoteSkinActor = function(noteskin_name, column)
 	-- most NoteSkins are free of errors, but we cannot assume they all are
 	-- one error in one NoteSkin is enough to halt ScreenPlayerOptions overlay
 	-- so, use pcall() to catch errors.  The first argument is the function we
-	-- want to check for runtime errors, and the remaining arguments would we what
+	-- want to check for runtime errors, and the remaining arguments are what
 	-- we would have passed to that function.
 	--
 	-- Using pcall() like this returns [multiple] values.  A boolean indicating that the
