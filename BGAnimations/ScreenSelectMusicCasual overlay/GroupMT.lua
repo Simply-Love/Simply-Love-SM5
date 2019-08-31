@@ -115,11 +115,11 @@ local item_mt = {
 					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt = subself
-						subself:wrapwidthpixels(150):vertspacing(-4):shadowlength(0.5)
+						subself:_wrapwidthpixels(150):vertspacing(-4):shadowlength(0.5)
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.White):wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate")
+							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.White):_wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate")
 						end
 					end,
 					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
@@ -129,8 +129,8 @@ local item_mt = {
 					LoseFocusCommand=function(subself) subself:xy(0,6):horizalign(center):linear(0.15):zoom(1):diffuse(Color.White) end,
 
 					SlideToTopCommand=function(subself) subself:sleep(0.3):diffuse(Color.White):queuecommand("SlideToTop2") end,
-					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):xy(150,-6):zoom(3):wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate") end,
-					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):xy(0,20):zoom(1.1):diffuse(Color.White):wrapwidthpixels(150):shadowlength(0.5):playcommand("Truncate") end,
+					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):xy(150,-6):zoom(3):_wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate") end,
+					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):xy(0,20):zoom(1.1):diffuse(Color.White):_wrapwidthpixels(150):shadowlength(0.5):playcommand("Truncate") end,
 				}
 			}
 

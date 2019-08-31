@@ -54,7 +54,7 @@ if SL.Global.GameMode ~= "Casual" then
 
 		LoadFont("Common Normal")..{
 			Text=optionslist,
-			InitCommand=function(self) self:zoom(font_zoom):xy(-140,-5):align(0,0):vertspacing(-6):wrapwidthpixels(290 / font_zoom) end
+			InitCommand=function(self) self:zoom(font_zoom):xy(-140,-5):align(0,0):vertspacing(-6):_wrapwidthpixels(290 / font_zoom) end
 		}
 	}
 end

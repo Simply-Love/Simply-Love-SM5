@@ -123,7 +123,7 @@ pane[#pane+1] = Def.Quad{
 
 pane[#pane+1] = LoadFont("Common Normal")..{
 	Text=ScreenString("QRInstructions"),
-	InitCommand=function(self) self:zoom(0.8):xy(-140,255):wrapwidthpixels(96/0.8):align(0,0):vertspacing(-4) end
+	InitCommand=function(self) self:zoom(0.8):xy(-140,255):_wrapwidthpixels(96/0.8):align(0,0):vertspacing(-4) end
 }
 
 return pane

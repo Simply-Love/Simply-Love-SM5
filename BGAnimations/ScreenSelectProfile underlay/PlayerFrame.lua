@@ -173,7 +173,7 @@ return Def.ActorFrame{
 				-- truncated so it passes the "How to Cook Delicious Rice and the Effects of Eating Rice" test.
 				LoadFont("Common Normal")..{
 					Name="MostRecentSong",
-					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):wrapwidthpixels(104/0.65):vertspacing(-3) end,
+					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):_wrapwidthpixels(104/0.65):vertspacing(-3) end,
 					SetCommand=function(self, params)
 						if params then
 							local desc = THEME:GetString("ScreenSelectProfile","MostRecentSong") .. ":\n"
@@ -203,7 +203,7 @@ return Def.ActorFrame{
 				-- to prevent it from visually spilling out of the FrameBackground
 				LoadFont("Common Normal")..{
 					Name="RecentMods",
-					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
+					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):_wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
 					SetCommand=function(self, params)
 						if params then
 							self:visible(true):settext(params.mods or "")

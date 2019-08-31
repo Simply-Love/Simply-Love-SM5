@@ -108,7 +108,7 @@ for i=1, #people do
 		Text=people[i].About,
 		InitCommand=function(self)
 			self:valign(0):halign(0):zoom(0.8)
-				:wrapwidthpixels((space.w - padding*4 - img_width) * (1/0.85) )
+				:_wrapwidthpixels((space.w - padding*4 - img_width) * (1/0.85) )
 				:x(-space.w/2 + padding*4 + img_width)
 				:y(padding + quad_y )
 
