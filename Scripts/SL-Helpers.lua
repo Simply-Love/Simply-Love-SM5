@@ -1,4 +1,4 @@
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- call this to draw a Quad with a border
 -- width of quad, height of quad, and border width, in pixels
 
@@ -16,7 +16,7 @@ function Border(width, height, bw)
 	}
 end
 
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- SM5's d3d implementation does not support render to texture. The DISPLAY
 -- singleton has a method to check this but it doesn't seem to be implemented
 -- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
@@ -25,7 +25,7 @@ SupportsRenderToTexture = function()
 	return PREFSMAN:GetPreference("VideoRenderers"):sub(1,6):lower() == "opengl"
 end
 
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- support for closing open song groups by pressing MenuUp and MenuDown simultaneously
 -- was requested, but ScreenSelectMusic uses the engine's MusicWheel, which relies on
 -- a simple Metric to set a single input code for all possible scenarios.
@@ -55,20 +55,60 @@ CloseCurrentFolder = function()
 	return code
 end
 
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- There's surely a better way to do this.  I need to research this more.
 local is8bit = function(text)
 	return text:len() == text:utf8len()
 end
 
--- FIXME: overriding the engine's API like this seems convenient until you try to reload scripts
--- this cannot stay this way; I need to fix this sooner than later
-BitmapText.wrapwidthpixels_orignal = BitmapText.wrapwidthpixels
 
-BitmapText.wrapwidthpixels = function(bmt, w)
+-- Here's what inline comments in BitmapText.cpp currently have to say about wrapwidthpixels
+------
+-- // Break sText into lines that don't exceed iWrapWidthPixels. (if only
+-- // one word fits on the line, it may be larger than iWrapWidthPixels).
+--
+-- // This does not work in all languages:
+-- /* "...I can add Japanese wrapping, at least. We could handle hyphens
+-- * and soft hyphens and pretty easily, too." -glenn */
+------
+--
+-- So, wrapwidthpixels does not have great support for East Asian Languages.
+-- Without whitespace characters to break on, the text just... never wraps.  Neat.
+--
+-- Here are glenn's thoughts on the topic as of June 2019:
+------
+-- For Japanese specifically I'd convert the string to WString (so each character is one character),
+-- then make it split "words" (potential word wrap points) based on each character type.  If you
+-- were splitting "text あああ", it would split into "text " (including the space), "あ", "あ", "あ",
+-- using a mapping to know which language each character is.  Then just follow the same line fitting
+-- and recombine without reinserting spaces (since they're included in the array).
+--
+-- It wouldn't be great, you could end up with things like periods being wrapped onto a line by
+-- themselves, ugly single-character lines, etc.  There are more involved language-specific word
+-- wrapping algorithms that'll do a better job:
+-- ( https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages ),
+-- or a line balancing algorithm that tries to generate lines of roughly even width instead of just
+-- filling line by line, but those are more involved.
+--
+-- A simpler thing to do is implement zero-width spaces (&zwsp), which is a character that just
+-- explicitly marks a place where word wrap is allowed, and then you can insert them strategically
+-- to manually word-wrap text.  Takes more work to insert them, but if there isn't a ton of text
+-- being wrapped, it might be simpler.
+------
+--
+-- I have neither the native intellignce nor the brute-force-self-taught-CS-experience to achieve
+-- any of the above, so here is some laughably bad code that is just barely good enough to meet the
+-- needs of JP text in Simply Love.  Feel free to copy+paste this method to /r/shittyprogramming,
+-- private Discord servers, etc., for didactic and comedic purposes alike.
+
+BitmapText._wrapwidthpixels = function(bmt, w)
 	local text = bmt:GetText()
 
 	if not is8bit(text) then
+		-- a range of bytes I'm considering to indicate JP characters,
+		-- mostly derived from empirical observation and guesswork
+		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
+		-- FIXME: If you know more about how this actually works, please submit a pull request.
 		local lower = 200
 		local upper = 240
 		bmt:settext("")
@@ -104,7 +144,7 @@ BitmapText.wrapwidthpixels = function(bmt, w)
 			end
 		end
 	else
-		bmt:wrapwidthpixels_orignal(w)
+		bmt:wrapwidthpixels(w)
 	end
 
 	-- return the BitmapText actor in case the theme is chaining actor commands
@@ -124,10 +164,6 @@ BitmapText.Truncate = function(bmt, m)
 	if not is8bit(text) then
 		l = 0
 
-		-- a range of bytes I'm considering to indicate JP characters,
-		-- mostly derived from empirical observation and guesswork
-		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
-		-- FIXME: If you know more about how this actually works, please submit a pull request.
 		local lower = 200
 		local upper = 240
 
