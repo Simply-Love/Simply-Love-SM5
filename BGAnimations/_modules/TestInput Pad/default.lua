@@ -32,7 +32,7 @@ local pad = Def.ActorFrame{}
 
 if show_player_label then
 	pad[#pad+1] = LoadFont("_wendy small")..{
-		Text=THEME:GetString("ScreenTestInput", "Player"):format( PlayerNumber:Reverse()[player]+1 ),
+		Text=("%s %i"):format(THEME:GetString("ScreenTestInput", "Player"), PlayerNumber:Reverse()[player]+1),
 		InitCommand=function(self) self:y(-210):zoom(0.7):visible(false) end,
 		OnCommand=function(self)
 			local screenname =  SCREENMAN:GetTopScreen():GetName()

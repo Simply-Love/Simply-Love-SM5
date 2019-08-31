@@ -45,7 +45,7 @@ af[#af+1] = Def.BitmapText{
 af[#af+1] = Def.ActorFrame{
 	Name="Recommended",
 	UpdateCommand=function(self, params)
-		self:visible( THEME:HasString("RecommendedOptionExplanations", params.Name) )
+		self:visible( THEME:HasString("RecommendedOptionExplanations", params.Name) and THEME:GetString("RecommendedOptionExplanations", params.Name) ~= "" )
 	end,
 
 	Def.BitmapText{
