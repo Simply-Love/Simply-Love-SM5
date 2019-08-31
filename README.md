@@ -69,13 +69,14 @@ Or, *things I've added that were not present in the original Simply Love for Ste
 
 #### Language Support
 
-Simply Love has full support for:
+Simply Love has support for:
 
   * English
   * Español
   * Français
   * Português Brasileiro
   * 日本語
+  * Deutsch
 
 The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
 

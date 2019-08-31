@@ -31,7 +31,7 @@ return {
 				Font="_wendy small",
 				InitCommand=function(subself)
 					self.bottom_text = subself
-					subself:zoom(0.85):y(10):diffusealpha(0)
+					subself:zoom(0.85):y(10):diffusealpha(0):maxwidth(405)
 				end,
 				OnCommand=function(subself)
 					subself:sleep(0.1):linear(0.15):diffusealpha(1)

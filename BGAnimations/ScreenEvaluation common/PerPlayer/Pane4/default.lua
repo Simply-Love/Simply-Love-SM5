@@ -181,13 +181,23 @@ if next(offsets) ~= nil then
 	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height})
 end
 
+local label = {}
+label.y = -pane_height+20
+label.zoom = 0.575
+label.padding = 3
+label.max_width = ((pane_width/3)/label.zoom) - ((label.padding/label.zoom)*3)
+
 -- avg_timing_error label
 pane[#pane+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=ScreenString("MeanTimingError"),
 	InitCommand=function(self)
-		self:x(40):y(-pane_height+20)
-			:zoom(0.575)
+		self:x(40):y(label.y)
+			:zoom(label.zoom):maxwidth(label.max_width)
+
+		if self:GetWidth() > label.max_width then
+			self:horizalign(left):x(label.padding)
+		end
 	end,
 }
 
@@ -196,8 +206,8 @@ pane[#pane+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=ScreenString("Median"),
 	InitCommand=function(self)
-		self:x(pane_width/2):y(-pane_height+20)
-			:zoom(0.575)
+		self:x(pane_width/2):y(label.y)
+			:zoom(label.zoom):maxwidth(label.max_width)
 	end,
 }
 
@@ -206,8 +216,12 @@ pane[#pane+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=ScreenString("Mode"),
 	InitCommand=function(self)
-		self:x(pane_width-40):y(-pane_height+20)
-			:zoom(0.575)
+		self:x(pane_width-40):y(label.y)
+			:zoom(label.zoom):maxwidth(label.max_width)
+
+		if self:GetWidth() > label.max_width then
+			self:horizalign(right):x(pane_width - label.padding)
+		end
 	end,
 }
 
