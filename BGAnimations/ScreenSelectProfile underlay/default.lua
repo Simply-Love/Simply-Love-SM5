@@ -60,7 +60,12 @@ end
 local invalid_count = 0
 
 local t = Def.ActorFrame {
-	InitCommand=function(self) self:queuecommand("Capture") end,
+
+	-- FIXME: stall for 0.5 seconds so that the Lua InputCallback doesn't get immediately added to the screen.
+	-- It's otherwise possible to enter the screen with MenuLeft/MenuRight already held and firing off events,
+	-- which causes the sick_wheel of profile names to not display.  I don't have time to debug it right now.
+	InitCommand=function(self) self:queuecommand("Stall") end,
+	StallCommand=function(self) self:sleep(0.5):queuecommand("Capture") end,
 	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data}) ) end,
 
 	-- the OffCommand will have been queued, when it is appropriate, from ./Input.lua
