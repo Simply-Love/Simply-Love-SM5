@@ -77,7 +77,7 @@ return {
 	{
 		{
 			Name="Dance Dance Maniacs",
-			Img={ "ddm/2019.jpg", "ddm/2017.jpg", "ddm/2015.jpg", "ddm/2018.jpg", "ddm/2012.jpg" },
+			Img={ "ddm/2019.jpg", "ddm/2017.jpg", "ddm/2015.jpg", "ddm/2018.jpg", "ddm/2012.jpg", "ddm/2010.jpg" },
 			About="The PSU Dance Dance Maniacs dance gamed with me at my best and worst.\n\nLightningXCE, Zyroplex, Captain Swagonforce, rawinput, milk, teejusb, NBCrescendo, Vidur, freemansbackup, chronohat\n\nDJ OMiY, minomotu, Kristina, blakjakal, Vale, Silverheart97, AndyBeard, Alex, tfrederick, Catherine, Elena, Jonathan, Eileen, Ali, Anna\n\nRime, PirateKing, Fox, Lev, Cathy, Grant, Koopa, CCTV, MathMatt, TheNick, Nate(s), Crash Cringle, Daisy1218, Miaou Miaou Miaou, Silverwolfstar, and more."
 		},
 		{
@@ -152,8 +152,11 @@ return {
 			Img="fms_cat 1x32.png",
 			About="FMS_Cat translated Simply Love's UI into Japanese, helping to realize a longtime dream of mine.\n\nHe is an incredibly talented WebGL programmer whose creative work with shaders leaves me smiling and curious about how such expansive beauty appears in the tiniest of footprints."
 		},
-		{},
-		{},
+		{
+			Name="TheNick",
+			Img="TheNick.jpg",
+			About="Nick enthusiastically translated Simply Love's UI into German.  He's also something of a memer and has been responsible for such magical experiences as What a Wonderful World (UPS4). 👌\n\nWhen I left Penn State, I initially wondered what would become of the arcade machine there.  Would it fall into disrepair?\n\nDuring my first visit back, I saw a then-freshman Nick already quoting Shady Business like he and Mr. Nagasaki went way back.  I understood immediately that the future of dance games would be just fine."
+		},
 	},
 
 	-- page 10
