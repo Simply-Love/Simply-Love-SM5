@@ -3,7 +3,7 @@
 
 -- used by SSMCasual to play preview music of the current song
 -- this is invoked each time the custom MusicWheel changes focus
-function play_sample_music()
+play_sample_music = function()
 	if GAMESTATE:IsCourseMode() then return end
 	local song = GAMESTATE:GetCurrentSong()
 
@@ -27,7 +27,7 @@ end
 -- this is invoked every time the custom MusicWheel changes focus
 -- if the new focus is on song item, play_sample_music() will be invoked immediately afterwards
 -- ths is also invoked when the player closes the current group to choose some other group
-function stop_music()
+stop_music = function()
 	SOUND:PlayMusicPart("", 0, 0)
 end
 
@@ -42,7 +42,7 @@ end
 -- Simply Love is only concerned with "AfterSetCommand"
 -- because the song Artist does not appear in each MusicWheelItem
 
-function TextBannerAfterSet(self)
+TextBannerAfterSet = function(self)
 	-- acquire handles to two of the BitmapText children of this TextBanner ActorFrame
 	-- we'll use them to position each song's Title and Subtitle as they appear in the MusicWheel
 	local Title = self:GetChild("Title")
@@ -64,7 +64,7 @@ end
 ----------------------------------------------------------------------------------------
 -- functions used by both SSM and SSMCasual
 
-function SSM_Header_StageText()
+SSM_Header_StageText = function()
 
 	-- if the continue system is enabled, don't worry about determining "Final Stage"
 	if ThemePrefs.Get("NumberOfContinuesAllowed") > 0 then

@@ -555,6 +555,17 @@ function GetJudgmentGraphics(mode)
 	return judgment_graphics
 end
 -- -----------------------------------------------------------------------
+-- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay
+--
+-- a valid ComboFont must:
+--   • have its assets in a unique directory at ./Fonts/_Combo Fonts/
+--   • include the usual files needed for a StepMania BitmapText actor (a png and an ini)
+--   • have its png and ini file both be named to match the directory they are in
+--
+-- a valid ComboFont should:
+--   • include glyphs for 1234567890()/
+--   • be open source or "100% free" on dafont.com
+
 
 GetComboFonts = function()
 	local path = THEME:GetCurrentThemeDirectory().."Fonts/_Combo Fonts/"
