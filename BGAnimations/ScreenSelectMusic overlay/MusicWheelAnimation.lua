@@ -5,7 +5,7 @@ local t = Def.ActorFrame{}
 -- 1 extra at bottom so that MusicWheelItems don't visually
 -- appear/disappear too suddenly while quickly scrolling through the wheel.
 
--- For this file just use a hardcoded 15, for the sake animating the
+-- For this file just use a hardcoded 15, for the sake of animating the
 -- "downward cascade" effect that occurs when SelectMusic first appears.
 local NumWheelItems = 15
 
