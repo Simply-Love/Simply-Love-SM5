@@ -51,7 +51,7 @@ end
 
 -- Parse the measures section out of our simfile
 local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
-	local measuresString = nil
+	local NoteDataString = nil
 
 	if Filetype == "ssc" then
 		-- SSC File
@@ -59,8 +59,13 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filet
 		for chart in SimfileString:gmatch("#NOTEDATA.-#NOTES:[^;]*") do
 			-- Find the chart that matches our difficulty and game type
 			if(chart:match("#STEPSTYPE:"..regexEncode(StepsType)) and chart:match("#DIFFICULTY:"..regexEncode(Difficulty))) then
-				--Find just the notes and remove comments
-				measuresString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$"):gsub("\\[^\r\n]*","") .. ";"
+				-- Find just the notes
+				NoteDataString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$")
+				-- remove possible comments
+				NoteDataString = NoteDataString:gsub("\\[^\r\n]*", "")
+				NoteDataString = NoteDataString:gsub("//[^\r\n]*", "")
+				-- put the semicolon back so that the line-by-line loop knows when to stop
+				NoteDataString = NoteDataString .. ";"
 			end
 		end
 	elseif Filetype == "sm" then
@@ -88,13 +93,13 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filet
 				-- then index 7 contains the notedata that we're looking for
 				-- use gsub to remove comments, store the resulting string,
 				-- and break out of the chart loop now
-				measuresString = pieces[7]:gsub("//[^\r\n]*","") .. ";"
+				NoteDataString = pieces[7]:gsub("//[^\r\n]*","") .. ";"
 				break
 			end
 		end
 	end
 
-	return measuresString
+	return NoteDataString
 end
 
 -- Figure out which measures are considered a stream of notes
@@ -229,6 +234,7 @@ function GetNPSperMeasure(Song, Steps)
 	for i, v in ipairs(TapNotes) do
 		TapNotesString = TapNotesString .. v
 	end
+	TapNotesString = "["..TapNotesString.."]"
 
 	-- the main density table, indexed by measure number
 	local Density = {}
@@ -244,7 +250,7 @@ function GetNPSperMeasure(Song, Steps)
 	for line in ChartString:gmatch("[^%s*\r\n]+") do
 
 		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
-		if(line:match("^[,;]%s*")) then
+		if (line:match("^[,;]%s*")) then
 
 			DurationOfMeasureInSeconds = TimingData:GetElapsedTimeFromBeat((measureCount+1)*4) - TimingData:GetElapsedTimeFromBeat(measureCount*4)
 
@@ -265,8 +271,8 @@ function GetNPSperMeasure(Song, Steps)
 				NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds
 			end
 
-			-- measureCount in SM truly starts at 0, but indexed Lua tables start at 1
-			-- add 1 now so the table behaves and subtract 1 later when drawing the histogram
+			-- measureCount in SM truly starts at 0, but Lua's native ipairs() iterator needs indexed tables
+			-- that start at 1.   Add 1 now so the table behaves and subtract 1 later when drawing the histogram.
 			Density[measureCount+1] = NPSforThisMeasure
 
 			-- determine whether this measure contained the PeakNPS
@@ -277,7 +283,7 @@ function GetNPSperMeasure(Song, Steps)
 			NotesInThisMeasure = 0
 		else
 			-- does this line contain a note?
-			if(line:match("["..TapNotesString.."]")) then
+			if (line:match(TapNotesString)) then
 				NotesInThisMeasure = NotesInThisMeasure + 1
 			end
 		end
