@@ -102,7 +102,7 @@ local af = Def.ActorFrame{
 -- I'm hesitant to visually alter a feature that
 -- so many players have become so reliant on...
 local font = mods.ComboFont
-if font == "Wendy" then
+if font == "Wendy" or font == "Wendy (Cursed)" then
 	font = "_wendy small"
 else
 	font = "_Combo Fonts/" .. font .. "/"

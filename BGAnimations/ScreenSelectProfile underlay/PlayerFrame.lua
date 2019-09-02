@@ -13,7 +13,7 @@ local scroller_x = -56
 local scroller_y = row_height * -5
 
 -- account for the possibility that there are no local profiles and
--- we want "[Guest]" to start in the middle, with focus
+-- we want "[ Guest ]" to start in the middle, with focus
 if PROFILEMAN:GetNumLocalProfiles() <= 0 then
 	scroller_y = row_height * -4
 end
@@ -110,7 +110,7 @@ return Def.ActorFrame{
 			-- Create the info needed for the "[Guest]" scroller item.
 			-- It won't map to any real local profile (as desired!), so we'll hardcode
 			-- an index of 0, and handle it later, on ScreenSelectProfile's OffCommand
-			-- in default.lua  if either/both players want to chose it.
+			-- in default.lua if either/both players want to chose it.
 			local guest_profile = { index=0, displayname=THEME:GetString("ScreenSelectProfile", "GuestProfile") }
 
 			-- here, we are padding the scroller_data table with dummy scroller items to accommodate
@@ -146,7 +146,7 @@ return Def.ActorFrame{
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
-				InitCommand=function(self) self:valign(0):diffuse({0,0,0,0}):zoomto(112,220):y(-111) end,
+				InitCommand=function(self) self:vertalign(top):diffuse(0,0,0,0):zoomto(112,221):y(-111) end,
 				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
 			},
 
@@ -173,7 +173,7 @@ return Def.ActorFrame{
 				-- truncated so it passes the "How to Cook Delicious Rice and the Effects of Eating Rice" test.
 				LoadFont("Common Normal")..{
 					Name="MostRecentSong",
-					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):wrapwidthpixels(104/0.65):vertspacing(-3) end,
+					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):_wrapwidthpixels(104/0.65):vertspacing(-3) end,
 					SetCommand=function(self, params)
 						if params then
 							local desc = THEME:GetString("ScreenSelectProfile","MostRecentSong") .. ":\n"
@@ -203,7 +203,7 @@ return Def.ActorFrame{
 				-- to prevent it from visually spilling out of the FrameBackground
 				LoadFont("Common Normal")..{
 					Name="RecentMods",
-					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
+					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):_wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
 					SetCommand=function(self, params)
 						if params then
 							self:visible(true):settext(params.mods or "")

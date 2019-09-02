@@ -1,22 +1,16 @@
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- call this to draw a Quad with a border
 -- width of quad, height of quad, and border width, in pixels
 
 function Border(width, height, bw)
 	return Def.ActorFrame {
-		Def.Quad {
-			InitCommand=cmd(zoomto, width-2*bw, height-2*bw;  MaskSource,true)
-		},
-		Def.Quad {
-			InitCommand=cmd(zoomto,width,height; MaskDest)
-		},
-		Def.Quad {
-			InitCommand=cmd(diffusealpha,0; clearzbuffer,true)
-		},
+		Def.Quad { InitCommand=function(self) self:zoomto(width-2*bw, height-2*bw):MaskSource(true) end },
+		Def.Quad { InitCommand=function(self) self:zoomto(width,height):MaskDest() end },
+		Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
 	}
 end
 
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- SM5's d3d implementation does not support render to texture. The DISPLAY
 -- singleton has a method to check this but it doesn't seem to be implemented
 -- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
@@ -25,50 +19,61 @@ SupportsRenderToTexture = function()
 	return PREFSMAN:GetPreference("VideoRenderers"):sub(1,6):lower() == "opengl"
 end
 
-------------------------------------------------------------------------------
--- support for closing open song groups by pressing MenuUp and MenuDown simultaneously
--- was requested, but ScreenSelectMusic uses the engine's MusicWheel, which relies on
--- a simple Metric to set a single input code for all possible scenarios.
---
--- Most arcade cabinets currently don't have dedicated MenuUp and MenuDown buttons, so
--- we should support the standard "Up-Down" code first, and only support "MenuUp-MenuDown"
--- if either of the active players has their buttons actually mapped for those.
---
--- Both MenuUp and MenuDown are unmapped (empty strings) in Keymaps.ini by default, so we'll
--- assume that if the player has gone out of their way to map them, they want to use them.
-
-CloseCurrentFolder = function()
-	local code = "Up-Down"
-
-	local game = GAMESTATE:GetCurrentGame():GetName()
-	if game == pump then code = "UpLeft-UpRight" end
-
-	local players = GAMESTATE:GetHumanPlayers()
-	if #players > 0 and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
-		local file = IniFile.ReadFile("/Save/Keymaps.ini")
-		if file and file[game] then
-			if FindInTable("PlayerNumber_P1", players) and file[game]["1_MenuUp"] ~= "" and file[game]["1_MenuDown"] ~= "" then code = "MenuUp-MenuDown" end
-			if FindInTable("PlayerNumber_P2", players) and file[game]["2_MenuUp"] ~= "" and file[game]["2_MenuDown"] ~= "" then code = "MenuUp-MenuDown" end
-		end
-	end
-
-	return code
-end
-
-------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- There's surely a better way to do this.  I need to research this more.
+
 local is8bit = function(text)
 	return text:len() == text:utf8len()
 end
 
--- FIXME: overriding the engine's API like this seems convenient until you try to reload scripts
--- this cannot stay this way; I need to fix this sooner than later
-BitmapText.wrapwidthpixels_orignal = BitmapText.wrapwidthpixels
 
-BitmapText.wrapwidthpixels = function(bmt, w)
+-- Here's what inline comments in BitmapText.cpp currently have to say about wrapwidthpixels
+------
+-- // Break sText into lines that don't exceed iWrapWidthPixels. (if only
+-- // one word fits on the line, it may be larger than iWrapWidthPixels).
+--
+-- // This does not work in all languages:
+-- /* "...I can add Japanese wrapping, at least. We could handle hyphens
+-- * and soft hyphens and pretty easily, too." -glenn */
+------
+--
+-- So, wrapwidthpixels does not have great support for East Asian Languages.
+-- Without whitespace characters to break on, the text just... never wraps.  Neat.
+--
+-- Here are glenn's thoughts on the topic as of June 2019:
+------
+-- For Japanese specifically I'd convert the string to WString (so each character is one character),
+-- then make it split "words" (potential word wrap points) based on each character type.  If you
+-- were splitting "text あああ", it would split into "text " (including the space), "あ", "あ", "あ",
+-- using a mapping to know which language each character is.  Then just follow the same line fitting
+-- and recombine without reinserting spaces (since they're included in the array).
+--
+-- It wouldn't be great, you could end up with things like periods being wrapped onto a line by
+-- themselves, ugly single-character lines, etc.  There are more involved language-specific word
+-- wrapping algorithms that'll do a better job:
+-- ( https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages ),
+-- or a line balancing algorithm that tries to generate lines of roughly even width instead of just
+-- filling line by line, but those are more involved.
+--
+-- A simpler thing to do is implement zero-width spaces (&zwsp), which is a character that just
+-- explicitly marks a place where word wrap is allowed, and then you can insert them strategically
+-- to manually word-wrap text.  Takes more work to insert them, but if there isn't a ton of text
+-- being wrapped, it might be simpler.
+------
+--
+-- I have neither the native intellignce nor the brute-force-self-taught-CS-experience to achieve
+-- any of the above, so here is some laughably bad code that is just barely good enough to meet the
+-- needs of JP text in Simply Love.  Feel free to copy+paste this method to /r/shittyprogramming,
+-- private Discord servers, etc., for didactic and comedic purposes alike.
+
+BitmapText._wrapwidthpixels = function(bmt, w)
 	local text = bmt:GetText()
 
 	if not is8bit(text) then
+		-- a range of bytes I'm considering to indicate JP characters,
+		-- mostly derived from empirical observation and guesswork
+		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
+		-- FIXME: If you know more about how this actually works, please submit a pull request.
 		local lower = 200
 		local upper = 240
 		bmt:settext("")
@@ -104,7 +109,7 @@ BitmapText.wrapwidthpixels = function(bmt, w)
 			end
 		end
 	else
-		bmt:wrapwidthpixels_orignal(w)
+		bmt:wrapwidthpixels(w)
 	end
 
 	-- return the BitmapText actor in case the theme is chaining actor commands
@@ -124,10 +129,6 @@ BitmapText.Truncate = function(bmt, m)
 	if not is8bit(text) then
 		l = 0
 
-		-- a range of bytes I'm considering to indicate JP characters,
-		-- mostly derived from empirical observation and guesswork
-		-- >= 240 seems to be emojis, the glyphs for which are as wide as Miso in SL, so don't include those
-		-- FIXME: If you know more about how this actually works, please submit a pull request.
 		local lower = 200
 		local upper = 240
 
@@ -554,11 +555,23 @@ function GetJudgmentGraphics(mode)
 	return judgment_graphics
 end
 -- -----------------------------------------------------------------------
+-- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay
+--
+-- a valid ComboFont must:
+--   • have its assets in a unique directory at ./Fonts/_Combo Fonts/
+--   • include the usual files needed for a StepMania BitmapText actor (a png and an ini)
+--   • have its png and ini file both be named to match the directory they are in
+--
+-- a valid ComboFont should:
+--   • include glyphs for 1234567890()/
+--   • be open source or "100% free" on dafont.com
+
 
 GetComboFonts = function()
 	local path = THEME:GetCurrentThemeDirectory().."Fonts/_Combo Fonts/"
 	local dirs = FILEMAN:GetDirListing(path, true, false)
 	local fonts = {}
+	local has_wendy_cursed = false
 
 	for directory_name in ivalues(dirs) do
 		local files = FILEMAN:GetDirListing(path..directory_name.."/")
@@ -573,11 +586,17 @@ GetComboFonts = function()
 			-- special-case Wendy to always appear first in the list
 			if directory_name == "Wendy" then
 				table.insert(fonts, 1, directory_name)
+
+			-- special-cased Wendy (Cursed) to always appear last in the last
+			elseif directory_name == "Wendy (Cursed)" then
+				has_wendy_cursed = true
 			else
 				table.insert(fonts, directory_name)
 			end
 		end
 	end
+
+	if has_wendy_cursed then table.insert(fonts, "Wendy (Cursed)") end
 
 	return fonts
 end

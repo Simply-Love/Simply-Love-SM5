@@ -1,13 +1,15 @@
 # Simply Love (StepMania 5)
 
-![Arrow Logo](http://i.imgur.com/FyeguCQ.png)
+![Arrow Logo](https://i.imgur.com/oZmxyGo.png)
 ======================
 
-This is a recreation of hurtpiggypig's Simply Love SM3.95 theme made to now run in StepMania 5.
+## About
 
-I use the word "recreation" (as opposed to "port") because virtually no code was brought over from the SM3.95 counterpart.  My general process was to visually inspect the original SM3.95 theme, and recreate it screen by screen in SM5.
+Simply Love is a StepMania 5 theme for the post-ITG community.
 
-For information on the original StepMania 3.95 version of Simply Love, check here:
+It features a clean and simple design, offers numerous data-driven features not implemented by the StepMania 5 engine, and allows the current generation of ITG fans to breathe new life into the game they've known for over a decade.
+
+Simply Love was originally designed and implemented for a previous version of StepMania (SM3.95) by hurtpiggypig.  For more information on that version of Simply Love, check here:
 https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 
@@ -69,21 +71,16 @@ Or, *things I've added that were not present in the original Simply Love for Ste
 
 #### Language Support
 
-Simply Love has full support for:
+Simply Love has support for:
 
   * English
   * Español
   * Français
   * Português Brasileiro
   * 日本語
+  * Deutsch
 
 The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
-
-## Missing Features
-Or, *things that were in the original Simply Love for StepMania 3.95 that are not present here.*
-
-  * ghost data
-  * timed sets
 
 
 ---
@@ -101,13 +98,3 @@ See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/w
 #### How can I get more songs to show up in Casual Mode?
 Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
 
----
-
-## Acknowledgements
-
-* [hurtpiggypig](http://www.shirtpiggypig.com/) -- Lara designed the original Simply Love theme for StepMania 3.95.
-* [djpohly](https://github.com/djpohly) -- djpohly was a constant source of knowledge and help during the months I spent porting this.
-* [sigatrev](https://github.com/sigatrev) -- Matt helped Lara implement some of the more technical aspects of the original theme and was always available to respond to my questions.
-* [freem](https://github.com/freem) -- I used AJ's StepMania 5 theme, [Moonlight](http://ssc.ajworld.net/?p=moonlight), as the foundation/starting point for this port.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.
-* [kyzentun](https://github.com/kyzentun) -- kyzentun answered many of my theming questions on IRC and even went out of his way to fix source-related issues that helped me out along my way.
-* the SM5 dev-team and IRC-frequenters -- Theming in SM5 is significantly easier than it is in 3.95.  Thank you, for that.  Thank you, shakesoda, Midiman, wolfman2000, et al!

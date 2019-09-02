@@ -53,15 +53,16 @@ end
 -- Combo fonts should be monospaced so that each digit's alignment remains
 -- consistent (i.e., not visually distrating) as the combo continually grows
 
-af[#af+1] = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
+local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	Name="Number",
 	OnCommand=function(self)
 		self:shadowlength(1):vertalign(middle):zoom(0.75)
 	end,
 	ComboCommand=function(self, params)
 		self:settext( params.Combo or params.Misses or "" )
-		self:diffuseshift():effectperiod(0.8)
-
+		self:diffuseshift():effectperiod(0.8):playcommand("Color", params)
+	end,
+	ColorCommand=function(self, params)
 		-- Though this if/else chain may seem strange (why not reduce it to a single table for quick lookup?)
 		-- the FullCombo params passed in from the engine are also strange, so this accommodates.
 		--
@@ -101,5 +102,41 @@ af[#af+1] = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 		end
 	end
 }
+
+-- -----------------------------------------------------------------------
+-- EasterEggs
+
+if combo_font == "Source Code" then
+	combo_bmt.ComboCommand=function(self, params)
+		-- "Hexadecimal is a virus of incredible power and unpredictable insanity from Lost Angles."
+		-- https://reboot.fandom.com/wiki/Hexadecimal
+		self:settext( string.format("%X", tostring(params.Combo or params.Misses or 0)):lower() )
+		self:diffuseshift():effectperiod(0.8):playcommand("Color", params)
+	end
+end
+
+if combo_font == "Wendy (Cursed)" then
+	combo_bmt.ColorCommand=function(self, params)
+		if params.FullComboW3 then
+			self:rainbowscroll(true)
+
+		elseif params.Combo then
+			-- combo broke at least once; stop the rainbow effect and diffuse white
+			self:zoom(0.75):horizalign(center):rainbowscroll(false):stopeffect():diffuse( Color.White )
+
+		elseif params.Misses then
+			self:stopeffect():rainbowscroll(false):diffuse( Color.Red ) -- Miss Combo
+			self:zoom(self:GetZoom() * 1.001)
+			-- horizalign of center until the miss combo is wider than this player's notefield
+			-- then, align so that it doesn't encroach into the other player's half of the screen
+			if (#GAMESTATE:GetHumanPlayers() > 1) and ((self:GetWidth()*self:GetZoom()) > GetNotefieldWidth(player)) then
+				self:horizalign(player == PLAYER_1 and right or left):x( (self:GetWidth()) * (player == PLAYER_1 and 1 or -1)  )
+			end
+		end
+	end
+end
+-- -----------------------------------------------------------------------
+
+af[#af+1] = combo_bmt
 
 return af

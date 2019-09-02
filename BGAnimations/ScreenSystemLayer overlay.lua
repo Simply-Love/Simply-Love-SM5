@@ -65,7 +65,7 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("Common Normal")..{
 		Name="Text",
 		InitCommand=function(self)
-			self:maxwidth(750):horizalign(left):vertalign(top)
+			self:maxwidth(_screen.w-20):horizalign(left):vertalign(top)
 				:xy(SCREEN_LEFT+10, 10):diffusealpha(0):zoom(0.8)
 			SystemMessageText = self
 		end,

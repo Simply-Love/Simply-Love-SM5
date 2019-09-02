@@ -21,7 +21,7 @@ local af = Def.ActorFrame{
 	Def.BitmapText{
 		Font="Common Normal",
 		Text=ScreenString("NoValidSongs"),
-		InitCommand=function(self) self:Center():zoom(1.1):wrapwidthpixels(320) end
+		InitCommand=function(self) self:Center():zoom(1.1):_wrapwidthpixels(320) end
 	},
 }
 

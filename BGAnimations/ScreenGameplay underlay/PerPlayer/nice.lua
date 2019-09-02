@@ -15,9 +15,16 @@ if ThemePrefs.Get("nice") > 0 then
 			local percent = FormatPercentScore(PercentDP):gsub("%%", "")
 			-- pss:GetCurrentCombo() ignores potential "Miss combo"
 			-- so get the text from the Combo actor instead if it exists
-			local combo
+			local combo = nil
+
 			if not mods.HideCombo then
-				combo = SCREENMAN:GetTopScreen():GetChild("Player"..pn):GetChild("Combo"):GetChild("Number"):GetText()
+				local player_actor = SCREENMAN:GetTopScreen():GetChild("Player"..pn)
+				if player_actor then
+					local combo_actor = player_actor:GetChild("Combo")
+					if combo_actor then
+						combo = combo_actor:GetChild("Number"):GetText()
+					end
+				end
 			end
 
 			if combo == "69" or string.match(tostring(percent), "69") ~= nil then

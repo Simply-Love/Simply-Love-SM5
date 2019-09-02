@@ -27,26 +27,21 @@ local RecentMods = function(mods)
 
 	-- Mini should definitely be a string
 	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = text..", "..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini") end
-	-- time for a linebreak
-	text = text.."\n"
 
-	-- a NoteSkin title might consist of only numbers and be read in by the IniFile utility as a number, so just ensure it isn't nil
-	if mods.NoteSkin ~= nil and mods.NoteSkin ~= "" then
-		if not FindInTable(mods.NoteSkin, noteskins) then
-			-- the NoteSkin is not available, so just append the NoteSkin name to the string
-			text = text..mods.NoteSkin
-		end
-		text = text.."\n"
-	end
+	-- some linebreaks to make space for NoteSkin and JudgmentGraphic previews
+	text = text.."\n\n\n"
 
-	-- JudgmentGraphic and ComboFont should definitely be strings
-	if type(mods.JudgmentGraphic)=="string" and mods.JudgmentGraphic ~= "" then
-		if not (FindInTable(mods.JudgmentGraphic, judgment_graphics.ITG) or FindInTable(mods.JudgmentGraphic, judgment_graphics["FA+"]) or FindInTable(mods.JudgmentGraphic, judgment_graphics.StomperZ)) then
-			-- the judgment graphic is not available, so just append the JudgmentGraphic to the string
-			text = text..StripSpriteHints(mods.JudgmentGraphic)
-		end
-		text = text.."\n"
-	end
+	-- the NoteSkin and JudgmentGraphic previews are not text and thus handled elsewhere
+
+	-- ASIDE: My informal testing of reading ~80 unique JudgmentGraphic files from disk and
+	-- loading them into memory caused Stepmania to hang for a few seconds, so
+	-- JudgmentGraphicPreviews.lua and NoteSkinPreviews.lua only load assets that are
+	-- needed by current player profiles (not every possible asset).
+
+	-- FIXME: If a profile's values for NoteSkin and/or JudgmentGraphic don't match with anything
+	-- available to StepMania (players commonly modify their profiles by hand and introduce typos),
+	-- we currently don't show anything.  Maybe a generic graphic of a question mark (or similar)
+	-- would be nice but that can wait for a future release.
 
 	-- loop for mods that save as booleans
 	local flags, hideflags = "", ""
