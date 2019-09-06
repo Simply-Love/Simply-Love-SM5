@@ -24,25 +24,36 @@ local crop_amount = {
 	}
 }
 
+-- round the DisplayAspectRatio value from the user's Preferences.ini file to not exceed
+-- 5 decimal places of precision to match the AspectRatios table from the _fallback theme
+local ar = round(PREFSMAN:GetPreference("DisplayAspectRatio"), 5)
+local centered = PREFSMAN:GetPreference("Center1Player")
 
+local bg
 
-return Def.Sprite{
-	InitCommand=function(self)
-		-- round the DisplayAspectRatio value from the user's Preferences.ini file to not exceed
-		-- 5 decimal places of precision to match the AspectRatios table from the _fallback theme
-		local ar = round(PREFSMAN:GetPreference("DisplayAspectRatio"), 5)
-		local centered = PREFSMAN:GetPreference("Center1Player")
+-- if the player has Hide Background enabled, use a black Quad to hide the scrolling graph
+if SL[ToEnumShortString(player)].ActiveModifiers.HideSongBG then
+	bg = Def.Quad{ OnCommand=function(self) self:diffuse(0,0,0,1):FullScreen() end }
 
-		if player == PLAYER_1 then
-			self:cropright( crop_amount[centered][ar] )
-
-		elseif player == PLAYER_2 then
-			self:cropleft( crop_amount[centered][ar] )
+-- otherwise, load the Song's background into a Sprite and use that to hide the scrolling graph
+else
+	bg = Def.Sprite{
+		CurrentSongChangedMessageCommand=function(self)
+			-- Background scaling and cropping is handled by the _fallback theme via
+			-- scale_or_crop_background(), which is defined in _fallback/Scripts/02 Actor.lua
+			self:LoadFromCurrentSongBackground():scale_or_crop_background()
 		end
-	end,
-	CurrentSongChangedMessageCommand=function(self)
-		-- Background scaling and cropping is handled by the _fallback theme via
-		-- scale_or_crop_background(), which is defined in _fallback/Scripts/02 Actor.lua
-		self:LoadFromCurrentSongBackground():scale_or_crop_background()
+	}
+end
+
+-- the cropping behavior will be the same regardless of whether it is a Quad or a Sprite
+bg.InitCommand=function(self)
+	if player == PLAYER_1 then
+		self:cropright( crop_amount[centered][ar] )
+
+	elseif player == PLAYER_2 then
+		self:cropleft( crop_amount[centered][ar] )
 	end
-}
+end
+
+return bg
