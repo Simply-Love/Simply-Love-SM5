@@ -58,7 +58,7 @@ local af = Def.ActorFrame{
 
 		self:Center()
 	end,
-	OffCommand=cmd(linear,0.5; diffusealpha, 0),
+	OffCommand=function(self) self:linear(0.5):diffusealpha(0) end,
 
 	Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,

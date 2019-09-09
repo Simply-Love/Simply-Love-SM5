@@ -125,8 +125,8 @@ local af = Def.ActorFrame{
 
 for i=1,num_particles do
     af[#af+1] = LoadActor( path_to_texture )..{
-        OnCommand=cmd(visible,false; queuecommand,"Make"),
-        HideCommand=cmd(visible,false),
+        OnCommand=function(self) self:visible(false):queuecommand("Make") end,
+        HideCommand=function(self) self:visible(false) end,
         MakeCommand=function(self) make_snow(self) end --use our function from earlier!
     }
 end

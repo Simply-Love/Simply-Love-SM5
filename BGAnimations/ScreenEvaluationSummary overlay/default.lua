@@ -26,6 +26,7 @@ if not PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then
 	buttons.DownRight=1
 end
 
+local page_text = THEME:GetString("ScreenEvaluationSummary", "Page")
 
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
@@ -53,11 +54,11 @@ local t = Def.ActorFrame{
 
 	LoadFont("_wendy small")..{
 		Name="PageNumber",
-		Text=THEME:GetString("ScreenEvaluationSummary", "Page") .. " 1/" .. pages,
-		InitCommand=cmd(diffusealpha,0; zoom, WideScale(0.5,0.6); xy, _screen.cx, 15 ),
-		OnCommand=cmd(sleep, 0.1; decelerate,0.33; diffusealpha, 1),
-		OffCommand=cmd(accelerate,0.33; diffusealpha,0),
-		HideCommand=function(self) self:sleep(0.5):settext( THEME:GetString("ScreenEvaluationSummary", "Page").." "..page.."/"..pages ) end
+		Text=("%s %i/%i"):format(page_text, page, pages),
+		InitCommand=function(self) self:diffusealpha(0):zoom(WideScale(0.5,0.6)):xy(_screen.cx, 15) end,
+		OnCommand=function(self) self:sleep(0.1):decelerate(0.33):diffusealpha(1) end,
+		OffCommand=function(self) self:accelerate(0.33):diffusealpha(0) end,
+		HideCommand=function(self) self:sleep(0.5):settext( ("%s %i/%i"):format(page_text, page, pages) ) end
 	}
 }
 
@@ -71,7 +72,7 @@ for i=1,4 do
 
 	t[#t+1] = LoadActor("StageStats.lua", i)..{
 		Name="StageStats_"..i,
-		InitCommand=cmd(diffusealpha,0),
+		InitCommand=function(self) self:diffusealpha(0) end,
 		OnCommand=function(self)
 			self:xy(_screen.cx, ((_screen.h/4.75) * i))
 				:queuecommand("Hide")

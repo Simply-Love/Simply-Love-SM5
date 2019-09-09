@@ -144,10 +144,11 @@ local af = Def.ActorFrame{
 
 	-- These playcommand("Set") need to apply to the ENTIRE panedisplay
 	-- (all its children) so declare each here
-	OnCommand=cmd(queuecommand,"Set"),
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set"),
-	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"),
-	StepsHaveChangedCommand=cmd(queuecommand,"Set"),
+	OnCommand=function(self) self:queuecommand("Set") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	StepsHaveChangedCommand=function(self) self:queuecommand("Set") end,
+
 	SetCommand=function(self)
 		local machine_score, machine_name = GetNameAndScore( PROFILEMAN:GetMachineProfile() )
 
@@ -170,7 +171,7 @@ local af = Def.ActorFrame{
 -- colored background for chart statistics
 af[#af+1] = Def.Quad{
 	Name="BackgroundQuad",
-	InitCommand=cmd(zoomto, _screen.w/2-10, _screen.h/8; y, _screen.h/2 - 67 ),
+	InitCommand=function(self) self:zoomto(_screen.w/2-10, _screen.h/8):y(_screen.h/2 - 67) end,
 	SetCommand=function(self, params)
 		if GAMESTATE:IsHumanPlayer(player) then
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
@@ -192,17 +193,17 @@ for key, item in pairs(PaneItems) do
 	af[#af+1] = Def.ActorFrame{
 
 		Name=key,
-		OnCommand=cmd(x, -_screen.w/20; y,6 ),
+		OnCommand=function(self) self:xy(-_screen.w/20, 6) end,
 
 		-- label
 		LoadFont("Common Normal")..{
 			Text=key,
-			InitCommand=cmd(zoom, zoom_factor; xy, item.label.x, item.label.y; diffuse, Color.Black; halign, 0)
+			InitCommand=function(self) self:zoom(zoom_factor):xy(item.label.x, item.label.y):diffuse(Color.Black):horizalign(left) end
 		},
 		--  numerical value
 		LoadFont("Common Normal")..{
-			InitCommand=cmd(zoom, zoom_factor; xy, item.data.x, item.data.y; diffuse, Color.Black; halign, 1),
-			OnCommand=cmd(playcommand, "Set"),
+			InitCommand=function(self) self:zoom(zoom_factor):xy(item.data.x, item.data.y):diffuse(Color.Black):horizalign(right) end,
+			OnCommand=function(self) self:playcommand("Set") end,
 			SetCommand=function(self)
 				local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
 				if not SongOrCourse then self:settext("?"); return end
@@ -225,7 +226,7 @@ end
 -- chart difficulty meter
 af[#af+1] = LoadFont("_wendy small")..{
 	Name="DifficultyMeter",
-	InitCommand=cmd(horizalign, right; diffuse, Color.Black; xy, _screen.w/4 - 10, _screen.h/2 - 65; queuecommand, "Set"),
+	InitCommand=function(self) self:horizalign(right):diffuse(Color.Black):xy(_screen.w/4 - 10, _screen.h/2 - 65):queuecommand("Set") end,
 	SetCommand=function(self)
 		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
 		if not SongOrCourse then self:settext(""); return end
@@ -239,26 +240,26 @@ af[#af+1] = LoadFont("_wendy small")..{
 --MACHINE high score
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScore",
-	InitCommand=cmd(x, highscoreX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
+	InitCommand=function(self) self:x(highscoreX):y(156):zoom(zoom_factor):diffuse(Color.Black):horizalign(right) end
 }
 
 --MACHINE highscore name
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 156; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
+	InitCommand=function(self) self:x(highscorenameX):y(156):zoom(zoom_factor):diffuse(Color.Black):horizalign(left):maxwidth(80) end
 }
 
 
 --PLAYER PROFILE high score
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScore",
-	InitCommand=cmd(x, highscoreX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 1 )
+	InitCommand=function(self) self:x(highscoreX):y(176):zoom(zoom_factor):diffuse(Color.Black):horizalign(right) end
 }
 
 --PLAYER PROFILE highscore name
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScoreName",
-	InitCommand=cmd(x, highscorenameX; y, 176; zoom, zoom_factor; diffuse, Color.Black; halign, 0; maxwidth, 80)
+	InitCommand=function(self) self:x(highscorenameX):y(176):zoom(zoom_factor):diffuse(Color.Black):horizalign(left):maxwidth(80) end
 }
 
 return af

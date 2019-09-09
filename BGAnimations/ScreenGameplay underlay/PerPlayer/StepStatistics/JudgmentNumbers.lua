@@ -8,6 +8,7 @@ local RadarCategories = { 'Holds', 'Mines', 'Rolls' }
 local RadarCategoryJudgments = { Holds=0, Mines=0, Rolls=0 }
 
 local leadingZeroAttr
+local row_height = 35
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
@@ -34,7 +35,7 @@ for index, window in ipairs(TapNoteScores) do
 		end,
 		BeginCommand=function(self)
 			self:x( 180 )
-			self:y((index-1)*35 - 282)
+			self:y((index-1)*row_height - 282)
 		end,
 		JudgmentMessageCommand=function(self, params)
 			if params.Player ~= player then return end
@@ -58,9 +59,9 @@ for index, RCType in ipairs(RadarCategories) do
 	-- player performance value
 	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
 		Text="000",
-		InitCommand=cmd(zoom,0.5; horizalign, right),
+		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
-			self:y((index-1)*35 - 178)
+			self:y((index-1)*row_height - 178)
 			self:x( -54 )
 
 			leadingZeroAttr = { Length=2, Diffuse=color("#5A6166") }
@@ -73,14 +74,12 @@ for index, RCType in ipairs(RadarCategories) do
 			if RCType=="Mines" and params.TapNoteScore == "TapNoteScore_AvoidMine" then
 				RadarCategoryJudgments.Mines = RadarCategoryJudgments.Mines + 1
 				self:settext( string.format("%03d", RadarCategoryJudgments.Mines) )
-			end
 
-			if RCType=="Holds" and params.TapNote and params.TapNote:GetTapNoteSubType() == "TapNoteSubType_Hold" then
+			elseif RCType=="Holds" and params.TapNote and params.TapNote:GetTapNoteSubType() == "TapNoteSubType_Hold" then
 				RadarCategoryJudgments.Holds = RadarCategoryJudgments.Holds + 1
 				self:settext( string.format("%03d", RadarCategoryJudgments.Holds) )
-			end
 
-			if RCType=="Rolls" and params.TapNote and params.TapNote:GetTapNoteSubType() == "TapNoteSubType_Roll" then
+			elseif RCType=="Rolls" and params.TapNote and params.TapNote:GetTapNoteSubType() == "TapNoteSubType_Roll" then
 				RadarCategoryJudgments.Rolls = RadarCategoryJudgments.Rolls + 1
 				self:settext( string.format("%03d", RadarCategoryJudgments.Rolls) )
 			end
@@ -93,16 +92,16 @@ for index, RCType in ipairs(RadarCategories) do
 	--  slash
 	t[#t+1] = LoadFont("Common Normal")..{
 		Text="/",
-		InitCommand=cmd(diffuse,color("#5A6166"); zoom, 1.25; horizalign, right),
+		InitCommand=function(self) self:diffuse(color("#5A6166")):zoom(1.25):horizalign(right) end,
 		BeginCommand=function(self)
-			self:y((index-1)*35 - 178)
+			self:y((index-1)*row_height - 178)
 			self:x(-40)
 		end
 	}
 
 	-- possible value
 	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
-		InitCommand=cmd(zoom,0.5; horizalign, right),
+		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 
 			StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
@@ -113,7 +112,7 @@ for index, RCType in ipairs(RadarCategories) do
 				possible = 0
 			end
 
-			self:y((index-1)*35 - 178)
+			self:y((index-1)*row_height - 178)
 			self:x( 16 )
 			self:settext( string.format("%03d", possible) )
 			local leadingZeroAttr = { Length=3-tonumber(tostring(possible):len()); Diffuse=color("#5A6166") }
