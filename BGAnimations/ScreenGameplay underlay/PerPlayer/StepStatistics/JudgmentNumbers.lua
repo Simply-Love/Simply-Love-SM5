@@ -1,6 +1,20 @@
 local player = ...
-local StepsOrTrail
+
 local possible, rv, pss
+local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
+
+-- minimum 4 digits for aesthetic reasons
+local digits = 4
+-- if total note count is greater than 9999, however, increase digits displayed as needed
+if total_tapnotes > 9999 then
+	while ((total_tapnotes / math.pow(10, digits)) >= 1) do
+		digits = digits + 1
+	end
+end
+-- generate a Lua string pattern that will be used to leftpad with 0s
+local pattern = ("%%0%dd"):format(digits)
+
 
 local TapNoteScores = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 local TapNoteJudgments = { W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0 }
@@ -20,22 +34,27 @@ local t = Def.ActorFrame{
 for index, window in ipairs(TapNoteScores) do
 
 	-- player performance value
-	t[#t+1] = Def.BitmapText{
-		Font="_ScreenEvaluation numbers",
-		Text="0000",
+	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+		Text=(pattern):format(0),
 		InitCommand=function(self)
-			self:zoom(0.5):horizalign(right)
+			self:zoom(0.5):horizalign(left)
 			if index <= SL.Global.ActiveModifiers.WorstTimingWindow or index==#TapNoteScores then
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
-				leadingZeroAttr = { Length=3, Diffuse=Brightness(self:GetDiffuse(), 0.35) }
+				leadingZeroAttr = { Length=(digits-1), Diffuse=Brightness(self:GetDiffuse(), 0.35) }
 				self:AddAttribute(0, leadingZeroAttr )
 			else
 				self:diffuse(Brightness({1,1,1,1},0.25))
 			end
 		end,
 		BeginCommand=function(self)
-			self:x( 180 )
+			self:x( 108 )
 			self:y((index-1)*row_height - 282)
+
+			-- horizontally squishing the numbers isn't pretty, but I'm not sure what else to do
+			-- when people want to play "24 hours of 100 bpm stream" on a 4:3 monitor
+			if not IsUsingWideScreen() and digits > 5 then
+				self:x(104):maxwidth(185)
+			end
 		end,
 		JudgmentMessageCommand=function(self, params)
 			if params.Player ~= player then return end
@@ -43,9 +62,9 @@ for index, window in ipairs(TapNoteScores) do
 
 			if params.TapNoteScore and ToEnumShortString(params.TapNoteScore) == window then
 				TapNoteJudgments[window] = TapNoteJudgments[window] + 1
-				self:settext( string.format("%04d", TapNoteJudgments[window]) )
+				self:settext( (pattern):format(TapNoteJudgments[window]) )
 
-				leadingZeroAttr = { Length=(4-tonumber(tostring(TapNoteJudgments[window]):len())), Diffuse=Brightness(SL.JudgmentColors[SL.Global.GameMode][index], 0.5) }
+				leadingZeroAttr = { Length=(digits-tonumber(tostring(TapNoteJudgments[window]):len())), Diffuse=Brightness(SL.JudgmentColors[SL.Global.GameMode][index], 0.35) }
 				self:AddAttribute(0, leadingZeroAttr )
 			end
 		end
@@ -104,12 +123,14 @@ for index, RCType in ipairs(RadarCategories) do
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 
+			possible = 0
 			StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+
 			if StepsOrTrail then
 				rv = StepsOrTrail:GetRadarValues(player)
 				possible = rv:GetValue( RCType )
-			else
-				possible = 0
+				-- non-static courses (for example, "Most Played 1-4") will return -1 here
+				if possible < 0 then possible = 0 end
 			end
 
 			self:y((index-1)*row_height - 178)
