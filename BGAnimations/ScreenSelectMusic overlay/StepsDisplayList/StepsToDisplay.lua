@@ -11,7 +11,7 @@
 -- This code should probably be ripped out and completely replaced at this point.
 ------------------------------------------------------------
 
-function GetStepsToDisplay(AllAvailableSteps)
+return function(AllAvailableSteps)
 
 	--gather any edit charts into a table
 	local edits = {}
