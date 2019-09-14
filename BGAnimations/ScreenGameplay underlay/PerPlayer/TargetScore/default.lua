@@ -427,7 +427,7 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 			-- pretty explody things for grade changes
 			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor()):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(0.9):linear(0.6):rotationz(0):zoom(0.5):diffusealph(0):queucommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor()):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(0.9):linear(0.6):rotationz(0):zoom(0.5):diffusealpha(0):queucommand("Init") end,
 			},
 			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
