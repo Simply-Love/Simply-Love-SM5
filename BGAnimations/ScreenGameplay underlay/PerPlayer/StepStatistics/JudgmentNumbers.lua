@@ -4,14 +4,11 @@ local possible, rv, pss
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
 
--- minimum 4 digits for aesthetic reasons
-local digits = 4
--- if total note count is greater than 9999, however, increase digits displayed as needed
-if total_tapnotes > 9999 then
-	while ((total_tapnotes / math.pow(10, digits)) >= 1) do
-		digits = digits + 1
-	end
-end
+-- determine how many digits are needed to express the number of notes in base-10
+local digits = (math.floor(math.log10(total_tapnotes)) + 1)
+-- display a minimum 4 digits for aesthetic reasons
+digits = math.max(4, digits)
+
 -- generate a Lua string pattern that will be used to leftpad with 0s
 local pattern = ("%%0%dd"):format(digits)
 
@@ -64,7 +61,10 @@ for index, window in ipairs(TapNoteScores) do
 				TapNoteJudgments[window] = TapNoteJudgments[window] + 1
 				self:settext( (pattern):format(TapNoteJudgments[window]) )
 
-				leadingZeroAttr = { Length=(digits-tonumber(tostring(TapNoteJudgments[window]):len())), Diffuse=Brightness(SL.JudgmentColors[SL.Global.GameMode][index], 0.35) }
+				leadingZeroAttr = {
+					Length=(digits - (math.floor(math.log10(TapNoteJudgments[window]))+1)),
+					Diffuse=Brightness(SL.JudgmentColors[SL.Global.GameMode][index], 0.35)
+				}
 				self:AddAttribute(0, leadingZeroAttr )
 			end
 		end
