@@ -5,9 +5,6 @@ NPS_Histogram = function(player, _w, _h)
 	local amv = Def.ActorMultiVertex{
 		Name="DensityGraph_AMV",
 
-		-- based on noticeable lag at ~3.5k
-		MaxVertices = 2000,
-
 		Initialize=function(self, actor)
 			local Song, Steps
 			local first_step_has_occurred = false

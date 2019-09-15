@@ -107,8 +107,6 @@ local graph_and_lifeline = Def.ActorFrame{
 			self:GetChild("DensityGraph_AMV"):zoomtowidth(ratio)
 		end
 
-		UpdateRate = LifeBaseSampleRate + (last_second / histogram_amv.MaxVertices)
-
 		-- if the song has a 'simple' BPM, then quantize the timing
 		-- to the nearest multiple of 8ths to avoid jaggies
 		if not TimingData:HasBPMChanges() then
@@ -116,7 +114,7 @@ local graph_and_lifeline = Def.ActorFrame{
 			if bpm >= 60 and bpm <= 300 then
 				-- make sure that the BPM makes sense
 				local Interval8th = (60 / bpm) / 2
-				UpdateRate = Interval8th * math.ceil(UpdateRate / Interval8th)
+				UpdateRate = Interval8th * (LifeBaseSampleRate / Interval8th)
 			end
 		end
 
