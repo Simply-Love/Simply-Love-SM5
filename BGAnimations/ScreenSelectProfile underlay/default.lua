@@ -90,16 +90,26 @@ local t = Def.ActorFrame {
 				-- set index to 0 if so to indicate that "[Guest]" was chosen (because it was the only choice)
 				local index = type(info)=="table" and info.index or 0
 
-				-- if the index greater than 0, it indicates the player wants to use a local profile
-				if index > 0 then
-					-- so use the index to associate this ProfileIndex with this player
+				-- this screen's SetProfileIndex() method expects local profiles to use index values that are > 0
+				-- it also uses the following hardcoded values:
+				--  0: use the USB memory card associated with this player
+				-- -1: join the player and play the theme's start sound effect
+				-- -2: unjoin the player, unlock their memorycard, and unmount their memorycard
+
+				-- check for and handle USB memorycards first
+				if MEMCARDMAN:GetCardState(player) ~= 'MemoryCardState_none' then
+					SCREENMAN:GetTopScreen():SetProfileIndex(player, 0)
+
+				-- local profile
+				elseif index > 0 then
 					SCREENMAN:GetTopScreen():SetProfileIndex(player, index)
 
-				-- if the index is 0 (or, uh, negative, but that shouldn't happen given the way I set this up)
-				-- it indicates the player wanted to not use a profile; they selected the first "[Guest]" option.
-				else
+				-- 0 here is my own stupid hardcoded number, defined over in PlayerFrame.lua for use with the "[Guest]" choice
+				-- In this case, 0 is the index of the choice in the scroller.  It should not be confused the 0 passed to
+				-- SetProfileIndex() to use a USB memorycard.
+				elseif index == 0 then
 					-- Passing a -2 to SetProfileIndex() will unjoin the player.
-					-- Unjoining like this is (studid, but) necessary to get us past this screen onto the next
+					-- Unjoining like this is (stupid, but) necessary to get us past this screen onto the next
 					-- because ScreenSelectProfile needs all human players to have profiles assigned to them.
 					SCREENMAN:GetTopScreen():SetProfileIndex(player, -2)
 

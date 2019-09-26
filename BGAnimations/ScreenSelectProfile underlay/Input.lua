@@ -44,15 +44,12 @@ Handle.Start = function(event)
 		-- we only bother checking scrollers to see if both players are
 		-- trying to choose the same profile if there are scrollers because
 		-- there are local profiles.  If there are no local profiles, there are
-		-- no scrollers to compared.
+		-- no scrollers to compare.
 		if PROFILEMAN:GetNumLocalProfiles() > 0
-		-- and if both players have joined
-		and #GAMESTATE:GetHumanPlayers() > 1 then
+		-- and if both players have joined and neither is using a memorycard
+		and #GAMESTATE:GetHumanPlayers() > 1 and not GAMESTATE:IsAnyHumanPlayerUsingMemoryCard() then
 			-- and both players are trying to choose the same profile
-			if scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index
-			and not (scrollers[PLAYER_1]:get_info_at_focus_pos().index == 0)
-			and not (MEMCARDMAN:GetCardState(PLAYER_1)~='MemoryCardState_none' and MEMCARDMAN:GetCardState(PLAYER_2)~='MemoryCardState_none')
-			then
+			if scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index then
 				-- broadcast an InvalidChoice message to play the "Common invalid" sound
 				-- and "shake" the playerframe for the player that just pressed start
 				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
