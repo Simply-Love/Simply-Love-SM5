@@ -76,7 +76,7 @@ local t = Def.ActorFrame{
 					-- so GetCourseModeBPMs() will return nil in those cases.
 					BPMs = GetCourseModeBPMs(song)
 				else
-					song:GetDisplayBpms()
+					BPMs = song:GetDisplayBpms()
 				end
 
 				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
