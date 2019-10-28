@@ -38,6 +38,10 @@ if SL[ToEnumShortString(player)].ActiveModifiers.HideSongBG then
 -- otherwise, load the Song's background into a Sprite and use that to hide the scrolling graph
 else
 	bg = Def.Sprite{
+		OnCommand=function(self)
+			local brightness = PREFSMAN:GetPreference("BGBrightness")
+			self:diffuse(brightness, brightness, brightness, brightness)
+		end,
 		CurrentSongChangedMessageCommand=function(self)
 			-- Background scaling and cropping is handled by the _fallback theme via
 			-- scale_or_crop_background(), which is defined in _fallback/Scripts/02 Actor.lua
