@@ -30,8 +30,10 @@ return Def.ActorFrame{
 	end,
 	-- called at the start of each new song in CourseMode, and once at the start of regular gameplay
 	CurrentSongChangedMessageCommand=function(self)
-		first_second = GAMESTATE:GetCurrentSong():GetTimingData():GetElapsedTimeFromBeat(0)
-		last_second = GAMESTATE:GetCurrentSong():GetLastSecond()
+		local song = GAMESTATE:GetCurrentSong()
+		first_second = math.min(song:GetTimingData():GetElapsedTimeFromBeat(0), 0)
+		last_second = song:GetLastSecond()
+
 		self:queuecommand("Size")
 	end,
 
