@@ -7,7 +7,7 @@ Simply Love 4.8.5 and a version of Stepmania that works with Simply Love
 
 Installation:
 
-Copy all the files here into your Simply Love directory.
+Copy all the files here besides license/readme into your Simply Love directory.
 NOTE-This overwrites some normal Simply Love files so I highly recommend backing up your version first (or using a fresh install)
 
 Features:
