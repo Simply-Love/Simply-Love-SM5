@@ -27,6 +27,7 @@ Sorting by Grade/Difficulty - When sorting by grade, if a song has any chart wit
 [Options Pane before starting a song](https://i.imgur.com/GU6vXBR.jpg) - before starting a song there's a selectable display with various bits of info. One is a graph of all the songs played today and what score you got on them. It's cool to visualize trends in difficulty/grade for me at least but for people who get 99+ all the time it's probably useless.
 
 Known Issues:
+
 There are a couple blank places that will eventually be filled in when I decide what to put there.
 
 When starting a song, the normal "Press Start to enter options" appears even though you can't press anything.
