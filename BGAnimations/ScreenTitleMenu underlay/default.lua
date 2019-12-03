@@ -1,4 +1,4 @@
-local TextColor = ThemePrefs.Get("RainbowMode") and Color.Black or Color.White
+local TextColor = (ThemePrefs.Get("RainbowMode") and (not HolidayCheer()) and Color.Black) or Color.White
 
 local SongStats = SONGMAN:GetNumSongs() .. " songs in "
 SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, "
@@ -59,35 +59,38 @@ local af = Def.ActorFrame{
 		self:Center()
 	end,
 	OffCommand=function(self) self:linear(0.5):diffusealpha(0) end,
+}
 
-	Def.ActorFrame{
-		InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,
-		OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
+-- decorative arrows
+af[#af+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
+	InitCommand=function(self)
+		self:y(-16):zoom( game=="pump" and 0.2 or 0.205 )
+	end
+}
 
-		LoadFont("Common Normal")..{
-			Text=sm_version .. "       " .. sl_name .. (sl_version and (" v" .. sl_version) or ""),
-			InitCommand=function(self) self:y(-20):diffuse(TextColor) end,
-		},
-		LoadFont("Common Normal")..{
-			Text=SongStats,
-			InitCommand=function(self) self:diffuse(TextColor) end,
-		}
+-- SIMPLY [something]
+af[#af+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/"..image.." (doubleres).png"))..{
+	InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(0.75) end,
+	OffCommand=function(self) self:linear(0.5):shadowlength(0) end
+}
+
+-- SM version, SL version, song stats
+af[#af+1] = Def.ActorFrame{
+	InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,
+	OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
+
+	LoadFont("Common Normal")..{
+		Text=sm_version .. "       " .. sl_name .. (sl_version and (" v" .. sl_version) or ""),
+		InitCommand=function(self) self:y(-20):diffuse(TextColor) end,
 	},
-
-	LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
-		InitCommand=function(self)
-			self:y(-16):zoom( game=="pump" and 0.2 or 0.205 )
-		end
-	},
-
-	LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/"..image.." (doubleres).png"))..{
-		InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(0.75) end,
-		OffCommand=function(self) self:linear(0.5):shadowlength(0) end
+	LoadFont("Common Normal")..{
+		Text=SongStats,
+		InitCommand=function(self) self:diffuse(TextColor) end,
 	}
 }
 
 -- the best way to spread holiday cheer is singing loud for all to hear
-if PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11 then
+if HolidayCheer() then
 	af[#af+1] = Def.Sprite{
 		Texture=THEME:GetPathB("ScreenTitleMenu", "underlay/hat.png"),
 		InitCommand=function(self) self:zoom(0.225):xy( 130, -self:GetHeight()/2 ):rotationz(15):queuecommand("Drop") end,
