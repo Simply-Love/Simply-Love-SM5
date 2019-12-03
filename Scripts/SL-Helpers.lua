@@ -480,12 +480,12 @@ end
 
 -- the best way to spread holiday cheer is singing loud for all to hear
 HolidayCheer = function()
-   return (PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11)
+	return (PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11)
 end
 
 BrighterOptionRows = function()
 	if ThemePrefs.Get("RainbowMode") then return true end
-   if HolidayCheer() then return true end
+	if HolidayCheer() then return true end
 	return false
 end
 

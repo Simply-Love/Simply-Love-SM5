@@ -33,7 +33,6 @@ local Update = function(self, delta)
 			local b = a.actor
 			if b then
 
-				-- b:visible(true)
 				if b:getaux() < 1 then
 					b:aux( b:getaux() + delta )
 					b:diffusealpha( b:getaux() )
@@ -64,7 +63,7 @@ af[#af+1] = Def.Quad{
 
 local snow_af = Def.ActorFrame{
 	InitCommand=function(self) self:diffusealpha(0) end,
-	OnCommand=function(self) self:sleep(0.25):smooth(0.25):diffusealpha(1) end
+	OnCommand=function(self) self:smooth(0.333):diffusealpha(1) end
 }
 
 for i=1,num_particles do
