@@ -67,7 +67,7 @@ Handle.Center = Handle.Start
 
 
 Handle.MenuLeft = function(event)
-	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) and MEMCARDMAN:GetCardState(event.PlayerNumber) == 'MemoryCardState_none' then
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		local index = type(info)=="table" and info.index or 0
 
@@ -86,7 +86,7 @@ Handle.MenuUp = Handle.MenuLeft
 Handle.DownLeft = Handle.MenuLeft
 
 Handle.MenuRight = function(event)
-	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) and MEMCARDMAN:GetCardState(event.PlayerNumber) == 'MemoryCardState_none' then
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		local index = type(info)=="table" and info.index or 0
 
