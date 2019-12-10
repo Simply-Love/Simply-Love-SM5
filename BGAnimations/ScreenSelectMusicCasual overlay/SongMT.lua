@@ -101,15 +101,15 @@ local song_mt = {
 							else
 								subself:zoomto(126,126)
 							end
-							subself:diffusealpha(1)
+							subself:diffusealpha(1):setstate(0):position(0)
 						end,
 						GainFocusCommand=function(subself)
-							subself:linear(0.2):zoomto(126,126):stopeffect()
+							subself:setstate(0):position(0):play():linear(0.2):zoomto(126,126):stopeffect()
 							if self.song == "CloseThisFolder" then
 								subself:diffuseshift():effectcolor1(1,0.65,0.65,1):effectcolor2(1,1,1,1)
 							end
 						end,
-						LoseFocusCommand=function(subself) subself:linear(0.2):zoomto(55,55):stopeffect() end,
+						LoseFocusCommand=function(subself) subself:pause():setstate(0):position(0):linear(0.2):zoomto(55,55):stopeffect() end,
 						SlideToTopCommand=function(subself) subself:linear(0.3):zoomto(110,110):rotationy(360):sleep(0):rotationy(0) end,
 						SlideBackIntoGridCommand=function(subself) subself:linear(0.12):zoomto(126,126) end,
 					},
