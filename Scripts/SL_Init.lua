@@ -162,11 +162,11 @@ SL = {
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W3",
-			HarshHotLifePenalty=1,
+			HarshHotLifePenalty=true,
 
-			PercentageScoring=1,
+			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=1,
+			SubSortByNumSteps=true,
 
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
@@ -182,11 +182,11 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",
-			HarshHotLifePenalty=1,
+			HarshHotLifePenalty=true,
 
-			PercentageScoring=1,
+			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=1,
+			SubSortByNumSteps=true,
 
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
@@ -202,11 +202,11 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
-			HarshHotLifePenalty=1,
+			HarshHotLifePenalty=true,
 
-			PercentageScoring=1,
+			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=1,
+			SubSortByNumSteps=true,
 
 			TimingWindowSecondsW1=0.011000,
 			TimingWindowSecondsW2=0.021500,
@@ -222,11 +222,11 @@ SL = {
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W4",
-			HarshHotLifePenalty=0,
+			HarshHotLifePenalty=false,
 
-			PercentageScoring=1,
+			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=1,
+			SubSortByNumSteps=true,
 
 			TimingWindowSecondsW1=0.012500,
 			TimingWindowSecondsW2=0.025000,
