@@ -80,7 +80,7 @@ Simply Love has support for:
   * 日本語
   * Deutsch
 
-The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
+The current language can be changed in Simply Love under *System Options*.
 
 
 ---

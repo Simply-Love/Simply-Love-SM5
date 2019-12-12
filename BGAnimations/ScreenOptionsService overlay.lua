@@ -18,7 +18,18 @@ end
 return Def.Actor{
 	OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( InputHandler ) end,
 	BeginCommand=function(self)
+		-- we might have just backed out of ScreenThemeOptions ("Simply Love Options")
+		-- in which case we'll want to call ThemePrefs.Save() now
 		ThemePrefs.Save()
+
+		-- but, we might have also just backed out of ScreenSelectGame ("System Options")
+		-- where we might have just changed the language, in which case the ThemePrefsRows table
+		-- needs to update its text to use that language.
+		SL_CustomPrefs.Init()
+
+		-- Aside: the engine does not broadcast anything when SM5's language is changed via ConfOption
+		--        and the engine does not expose any methods for setting the language directly using Lua.
+
 		-- Broadcast a message for "./BGAnimations/_shared background/" to listen for in case VisualTheme has changed.
 		-- This compensates for ThemePrefsRows' current lack of support for ExportOnChange() and SaveSelections().
 		MESSAGEMAN:Broadcast("BackgroundImageChanged")
