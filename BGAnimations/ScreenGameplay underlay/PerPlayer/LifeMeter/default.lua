@@ -8,7 +8,8 @@ if SL.Global.GameMode == "StomperZ" then
 	lifemeter_actor = LoadActor("StomperZ.lua", player)
 
 -- in ITG and FA+, we have the choice a "Standard" LifeMeter (at the top of the screen)
--- or a "Surround" LifeMeter, which is like the StomperZ surround LifeMeter but more drab.
+-- a "Surround" LifeMeter, which is like the StomperZ surround LifeMeter but more drab,
+-- or a "Vertical" LifeMeter, wihch mimics the sizing and positioning used in ITG2.
 elseif SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+" then
 
 	local lifemeter_type = SL[ToEnumShortString(player)].ActiveModifiers.LifeMeterType or CustomOptionRow("LifeMeterType").Choices[1]

@@ -1,14 +1,19 @@
+local w = _screen.w/2 - 10
+local h = 22
+
 -- Song Completion Meter
 return Def.ActorFrame{
 	Name="SongMeter",
 	InitCommand=function(self) self:xy(_screen.cx, 20) end,
 
-	Def.SongMeterDisplay{
-		StreamWidth=(_screen.w/2-10),
-		Stream=Def.Quad{ InitCommand=function(self) self:zoomy(18):diffuse(GetCurrentColor()) end }
-	},
+	-- border
+	Def.Quad{ InitCommand=function(self) self:zoomto(w, h) end },
+	Def.Quad{ InitCommand=function(self) self:zoomto(w-4, h-4):diffuse(0,0,0,1) end },
 
-	Border( _screen.w/2-10, 22, 2 ),
+	Def.SongMeterDisplay{
+		StreamWidth=(w-4),
+		Stream=Def.Quad({ InitCommand=function(self) self:zoomy(18):diffuse(GetCurrentColor()) end })
+	},
 
 	-- Song Title
 	LoadFont("Common Normal")..{

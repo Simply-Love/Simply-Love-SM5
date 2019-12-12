@@ -1,21 +1,15 @@
 local player = ...
 
-local meterFillLength = 136
-local meterFillHeight = 18
-local meterXOffset = _screen.cx + (player==PLAYER_1 and -1 or 1) * WideScale(238, 288)
+local w = 136
+local h = 18
+local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * WideScale(238, 288)
 
-local newBPS, oldBPS
-local swoosh, move
+local swoosh, velocity
 
 local Update = function(self)
-
-	newBPS = GAMESTATE:GetSongBPS()
-	move = (newBPS*-1)/2
-
-	if GAMESTATE:GetSongFreeze() then move = 0 end
-	if swoosh then swoosh:texcoordvelocity(move,0) end
-
-	oldBPS = newBPS
+	velocity = -GAMESTATE:GetSongBPS()/2
+	if GAMESTATE:GetSongFreeze() then velocity = 0 end
+	if swoosh then swoosh:texcoordvelocity(velocity,0) end
 end
 
 local meter = Def.ActorFrame{
@@ -24,49 +18,54 @@ local meter = Def.ActorFrame{
 	OnCommand=function(self) self:visible(true) end,
 
 	-- frame
-	Border(meterFillLength+4, meterFillHeight+4, 2)..{
-		InitCommand=function(self) self:x(meterXOffset) end
-	},
+	Def.Quad{ InitCommand=function(self) self:x(_x):zoomto(w+4, h+4) end },
+	Def.Quad{ InitCommand=function(self) self:x(_x):zoomto(w, h):diffuse(0,0,0,1) end },
 
-	-- // start meter proper //
+	-- the Quad that changes width/color depending on current Life
 	Def.Quad{
-		Name="MeterFill";
-		InitCommand=function(self) self:zoomto(0,meterFillHeight):diffuse(PlayerColor(player)):horizalign(left) end,
-		OnCommand=function(self) self:x( meterXOffset - meterFillLength/2 ) end,
+		Name="MeterFill",
+		InitCommand=function(self) self:zoomto(0,h):diffuse(PlayerColor(player)):horizalign(left) end,
+		OnCommand=function(self) self:x( _x - w/2 ) end,
 
-		-- check state of mind
+		-- check whether the player's LifeMeter is "Hot"
+		-- in LifeMeterBar.cpp, the engine says a LifeMeter is Hot if the current
+		-- LifePercentage is greater than or equal to the HOT_VALUE, which is
+		-- defined in Metrics.ini under [LifeMeterBar] like HotValue=1.0
 		HealthStateChangedMessageCommand=function(self,params)
-			if(params.PlayerNumber == player) then
-				if(params.HealthState == 'HealthState_Hot') then
-					self:diffuse(color("1,1,1,1"))
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:diffuse(1,1,1,1)
 				else
-					self:diffuse(PlayerColor(player))
+					-- ~~man's~~ lifebar's not hot
+					self:diffuse( PlayerColor(player) )
 				end
 			end
 		end,
 
-		-- check life (LifeMeterBar)
+		-- when the engine broadcasts that the player's LifeMeter value has changed
+		-- change the width of this MeterFill Quad to accommodate
 		LifeChangedMessageCommand=function(self,params)
-			if(params.Player == player) then
-				local life = params.LifeMeter:GetLife() * (meterFillLength)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * w
 				self:finishtweening()
 				self:bouncebegin(0.1):zoomx( life )
 			end
 		end,
 	},
 
+	-- a simple scrolling gradient texture applied on top of MeterFill
 	LoadActor("swoosh.png")..{
 		Name="MeterSwoosh",
 		InitCommand=function(self)
 			swoosh = self
 
-			self:zoomto(meterFillLength,meterFillHeight)
+			self:zoomto(w,h)
 				 :diffusealpha(0.2)
 				 :horizalign( left )
 		end,
 		OnCommand=function(self)
-			self:x(meterXOffset - meterFillLength/2);
-			self:customtexturerect(0,0,1,1);
+			self:x(_x - w/2)
+			self:customtexturerect(0,0,1,1)
 			--texcoordvelocity is handled by the Update function below
 		end,
 		HealthStateChangedMessageCommand=function(self,params)
@@ -78,12 +77,17 @@ local meter = Def.ActorFrame{
 				end
 			end
 		end,
+
+		-- life-changing
+		-- adjective
+		--  /ˈlaɪfˌtʃeɪn.dʒɪŋ/
+		-- having an effect that is strong enough to change someone's life
+		-- synonyms: compelling, life-altering, puissant, blazing
 		LifeChangedMessageCommand=function(self,params)
-			if(params.Player == player) then
-				local life = params.LifeMeter:GetLife() * (meterFillLength)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * w
 				self:finishtweening()
-				self:bouncebegin(0.1)
-				self:zoomto( life, meterFillHeight )
+				self:bouncebegin(0.1):zoomto( life, h )
 			end
 		end
 	}
