@@ -5,6 +5,8 @@ local pn = ToEnumShortString(player)
 -- obtained via ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local pane_width, pane_height = 300, 180
+local topbar_height = 26
+local bottombar_height = 13
 
 -- ---------------------------------------------
 
@@ -15,7 +17,7 @@ local abbreviations = {
 }
 
 -- ---------------------------------------------
--- if players have disabled W4 or W4+W5, there will be a smaller pool
+-- if players have disabled W5 or W4+W5, there will be a smaller range
 -- of judgments that could have possibly been earned
 local num_judgments_available = SL.Global.ActiveModifiers.WorstTimingWindow
 local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..(num_judgments_available > 0 and num_judgments_available or 5)]
@@ -55,6 +57,22 @@ local pane = Def.ActorFrame{
 	end
 }
 
+-- the line in the middle indicating where truly flawless timing (0ms offset) is
+pane[#pane+1] = Def.Quad{
+	InitCommand=function(self)
+		local x = pane_width/2
+
+		self:vertalign(top)
+			:zoomto(1, pane_height - (topbar_height+bottombar_height) )
+			:vertalign(bottom):xy(x, 0)
+			:diffuse(1,1,1,0.666)
+
+		if SL.Global.GameMode == "StomperZ" then
+			self:diffuse(0,0,0,0.666)
+		end
+	end,
+}
+
 -- "Early" text
 pane[#pane+1] = Def.BitmapText{
 	Font="_wendy small",
@@ -77,17 +95,17 @@ pane[#pane+1] = Def.BitmapText{
 	end,
 }
 
+-- --------------------------------------------------------
 
 -- darkened quad behind bottom judment labels
 pane[#pane+1] = Def.Quad{
 	InitCommand=function(self)
 		self:vertalign(top)
-			:zoomto(pane_width, 13 )
+			:zoomto(pane_width, bottombar_height )
 			:xy(pane_width/2, 0)
 			:diffuse(color("#101519"))
 	end,
 }
-
 
 -- centered text for W1
 pane[#pane+1] = Def.BitmapText{
@@ -145,32 +163,14 @@ for i=2,num_judgments_available do
 end
 
 -- --------------------------------------------------------
-
--- the line in the middle indicating where truly flawless timing (0ms offset) is
-pane[#pane+1] = Def.Quad{
-	InitCommand=function(self)
-		local x = pane_width/2
-
-		self:vertalign(top)
-			:zoomto(1, pane_height - 40 )
-			:xy(x, -140)
-			:diffuse(1,1,1,0.666)
-
-		if SL.Global.GameMode == "StomperZ" then
-			self:diffuse(0,0,0,0.666)
-		end
-	end,
-}
-
--- --------------------------------------------------------
--- TOPBAR WITH STATISTICS
+-- TOPBAR feat. mean timing error, median, mode, and Ryu☆
 
 -- topbar background quad
 pane[#pane+1] = Def.Quad{
 	InitCommand=function(self)
 		self:vertalign(top)
-			:zoomto(pane_width, 26 )
-			:xy(pane_width/2, -pane_height+13)
+			:zoomto(pane_width, topbar_height )
+			:xy(pane_width/2, -pane_height + topbar_height/2)
 			:diffuse(color("#101519"))
 	end,
 }
@@ -185,6 +185,10 @@ local label = {}
 label.y = -pane_height+20
 label.zoom = 0.575
 label.padding = 3
+
+-- Cleanly positioning the labels for "mean timing error", "median", and "mode"
+-- can be tricky because some languages use very few characters to express these ideas
+-- while other languages use many.  This max_width calculation works for now.
 label.max_width = ((pane_width/3)/label.zoom) - ((label.padding/label.zoom)*3)
 
 -- avg_timing_error label
