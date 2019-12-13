@@ -1,3 +1,6 @@
+-- Pane4 displays an aggregate histogram of judgment offsets
+-- as well as the mean timing error, median, and mode of those offsets.
+
 local player = ...
 local pn = ToEnumShortString(player)
 

@@ -1,3 +1,5 @@
+-- Pane5 displays TestInput.
+
 if SL.Global.GameMode == "Casual" then return end
 
 -- only show TestInput pane in EventMode; public arcades probably don't want random

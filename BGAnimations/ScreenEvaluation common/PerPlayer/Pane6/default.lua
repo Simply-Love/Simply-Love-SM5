@@ -1,3 +1,5 @@
+-- Pane6 displays QR codes for uploading scores to groovestats.com
+
 local player = ...
 
 -- ------------------------------------------

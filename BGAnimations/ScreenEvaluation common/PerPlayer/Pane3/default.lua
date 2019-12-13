@@ -1,3 +1,6 @@
+-- Pane3 displays a list of HighScores for the stepchart that was played
+-- using the machine profile.
+
 local player = ...
 
 local pane = Def.ActorFrame{
