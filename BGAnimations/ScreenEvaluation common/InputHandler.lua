@@ -52,7 +52,7 @@ return function(event)
 		end
 	end
 
-	if GAMESTATE:IsEventMode() and PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") and event.type ~= "InputEventType_Repeat" then
+	if PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") and event.type ~= "InputEventType_Repeat" then
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
 
