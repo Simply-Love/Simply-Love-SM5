@@ -95,7 +95,7 @@ local qrcode_size = 168
 -- **********************************************
 local qr_version = 2
 
-local url = ("http://www.groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s&v=%d"):format(hash, score, failed, rate, qr_version)
+local url = ("https://groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s&v=%d"):format(hash, score, failed, rate, qr_version)
 
 -- ------------------------------------------
 
