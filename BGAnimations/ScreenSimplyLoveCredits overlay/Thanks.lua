@@ -27,11 +27,10 @@ return {
 			About="I used freem's SM5 theme, Moonlight, as the foundation/starting point for this port.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.\n\nfreem's sardonic wit, typically left via inline comments throughout Moonlight and SM5's source, helped keep me going."
 		},
 		{
-			Name="kyzentun",
-			Img="kyzentun.png",
-			About="kyzentun answered many of my theming questions on IRC and went out of his way to fix source-related issues that helped me along my way."
+			Name="Jason / Lightning",
+			Img="Lightning.png",
+			About="Jason is a prolific UI and GFX designer in the rhythm game community and has led the design of major projects like ITG3, PIU Pro 2, ReRave Arcade, and StepManiaX.\n\nI first met Jason in 2011 when I was learning to theme by making indisputably bad recolors of ITG3. Every time I proudly showed off these early efforts to Jason, he would smile, tell me I was making great progress, and encourage me to keep experimenting.  I reflect on this every time I get bent out of shape because someone is modding Simply Love."
 		},
-
 	},
 
 	-- page 3
@@ -42,15 +41,15 @@ return {
 			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of open source dance games, including Lirodon, Jousway, MrThatKid, RyTak, and Squirrel."
 		},
 		{
-			Name="David / mute",
-			Img="mute.png",
-			About="David composed much of the menu music for Simply Love.  In addition to being a prolific simfile author, he is known in the community for figuring out how to properly sync simfiles and authoring the de facto standard guide to simfile syncing.\n\nDavid was an early adopter of SM5 on arcade hardware and has been a vocal proponent of getting people to switch from SM3.95."
-		},
-		{
 			Name="GitHub Community",
 			Img="GitHub.png",
 			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, and natano."
-		}
+		},
+		{
+			Name="kyzentun",
+			Img="kyzentun.png",
+			About="kyzentun answered many of my theming questions on IRC and went out of his way to fix source-related issues that helped me along my way."
+		},
 	},
 
 	-- page 4
@@ -108,7 +107,11 @@ return {
 
 	-- page 7
 	{
-
+		{
+			Name="David / mute",
+			Img="mute.png",
+			About="David composed much of the menu music for Simply Love.  In addition to being a prolific simfile author, he is known in the community for figuring out how to properly sync simfiles and authoring the de facto standard guide to simfile syncing.\n\nDavid was an early adopter of SM5 on arcade hardware and has been a vocal proponent of getting people to switch from SM3.95."
+		},
 		{
 			Name="andrewipark",
 			Img="andrew.png",
@@ -118,11 +121,6 @@ return {
 			Name="Alan / TaroNuke",
 			Img="taronuke.png",
 			About="Alan's programming work with the UKSRT and Mawaru series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
-		},
-		{
-			Name="vyhd",
-			Img="",
-			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"  He was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
 		},
 	},
 
@@ -160,6 +158,16 @@ return {
 	},
 
 	-- page 10
+	{
+		{
+			Name="vyhd",
+			Img="",
+			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"\n\nHe was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
+		},
+		{}
+	},
+
+	-- page 11
 	{
 		{
 			Name="Riakodoadm",
