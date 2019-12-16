@@ -52,9 +52,9 @@ end
 -- flexible nor forward-thinking.
 
 local speedmod_def = {
-	x = { upper=20,   lower=0.05, increment=0.05 },
-	C = { upper=2000, lower=5,    increment=5 },
-	M = { upper=2000, lower=5,    increment=5 }
+	x = { upper=20,   increment=0.05 },
+	C = { upper=2000, increment=5 },
+	M = { upper=2000, increment=5 }
 }
 
 -- use this to directly manipulate the SpeedMod numbers in the global SL table
@@ -65,20 +65,11 @@ local ChangeSpeedMod = function(pn, direction)
 
 	local increment   = speedmod_def[mods.SpeedModType].increment
 	local upper_bound = speedmod_def[mods.SpeedModType].upper
-	local lower_bound = speedmod_def[mods.SpeedModType].lower
 
-	-- we would be surpassing the upper bound for this type of speed mod, so wrap back to the lower bound
-	if mods.SpeedMod + (increment * direction) > upper_bound then
-		mods.SpeedMod = lower_bound
-
-	-- we would be less than the lower bound for this type of speed mod, so wrap to the upper bound
-	elseif mods.SpeedMod + (increment * direction) < lower_bound then
-		mods.SpeedMod = upper_bound
-
-	-- this is a normal speed mod change, no wrapping necessary
-	else
-		mods.SpeedMod = mods.SpeedMod + (increment * direction)
-	end
+	-- increment/decrement and apply modulo to wrap around if we exceed the upper_bound or hit 0
+	mods.SpeedMod = ((mods.SpeedMod+(increment*direction))-increment) % upper_bound + increment
+	-- round the newly changed SpeedMod to the nearest appropriate increment
+	mods.SpeedMod = increment * math.floor(mods.SpeedMod/increment	+ 0.5)
 end
 
 
@@ -86,7 +77,7 @@ end
 --     first argument is a screen object provided by SCREENMAN:GetTopScreen()
 --     second argument is a string that might match the name of an OptionRow somewhere on this screen
 --
--- 	   returns the 0-based index of that OptionRow within this screen
+--     returns the 0-based index of that OptionRow within this screen
 
 local FindOptionRowIndex = function(ScreenOptions, Name)
 	if not ScreenOptions or not ScreenOptions.GetNumRows then return end
@@ -102,8 +93,6 @@ local FindOptionRowIndex = function(ScreenOptions, Name)
 end
 
 ------------------------------------------------------------
-
-local Players = GAMESTATE:GetHumanPlayers()
 
 -- SpeedModItems is a table that will contain the BitmapText actors for the SpeedMod OptionRow for both P1 and P2
 local SpeedModItems = {}
@@ -163,46 +152,47 @@ LoadActor("./ComboFontPreviews.lua", t)
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
 
 
-for player in ivalues(Players) do
+for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
+	local song = GAMESTATE:GetCurrentSong()
+
+	-- bpm will be a table of {lower_display_bpm, high_display_bpm}
+	-- if the simile does not explicitly specify DISPLAYBPM value(s), the low and high values from BPMS will be used
+	local bpm
+	if GAMESTATE:IsCourseMode() then
+		bpm = GetCourseModeBPMs() or GetTrailBPMs(player)
+
+	else
+		bpm = song:GetDisplayBpms()
+		if bpm[1] <= 0 or bpm[2] <= 0 then
+			bpm = song:GetTimingData():GetActualBPM()
+		end
+	end
 
 	t[#t+1] = Def.Actor{
 
-		-- Commands for player speedmod
+		-- the player wants to change their SpeedModType (x, M, C)
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
 
 			local oldtype = SL[pn].ActiveModifiers.SpeedModType
 			local newtype = params.SpeedModType
-			local song = GAMESTATE:GetCurrentSong()
 
 			if oldtype ~= newtype then
-				local bpm
+
 				local oldspeed = SL[pn].ActiveModifiers.SpeedMod
 
-				if GAMESTATE:IsCourseMode() then
-					bpm = GetCourseModeBPMs() or GetTrailBPMs(player)
-
-				else
-					bpm = song:GetDisplayBpms()
-					if bpm[1] <= 0 or bpm[2] <= 0 then
-						bpm = song:GetTimingData():GetActualBPM()
-					end
-				end
-
 				-- round to the nearest speed increment in the new mode
-
 				-- if we have an active rate mod, then we have to undo/redo
 				-- our automatic rate mod compensation
 
-				if oldtype == "x" and (newtype == "C" or newtype == "M") then
+				if oldtype == "x" then
 					-- apply rate compensation now
 					oldspeed = oldspeed * SL.Global.ActiveModifiers.MusicRate
-
 					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / speedmod_def[newtype].increment)) * speedmod_def[newtype].increment
-				elseif newtype == "x" then
-					-- revert rate compensation since its handled for XMod
-					oldspeed = oldspeed / SL.Global.ActiveModifiers.MusicRate
 
+				elseif newtype == "x" then
+					-- revert rate compensation since it's handled for XMod
+					oldspeed = oldspeed / SL.Global.ActiveModifiers.MusicRate
 					SL[pn].ActiveModifiers.SpeedMod = (round(oldspeed / bpm[2] / speedmod_def[newtype].increment)) * speedmod_def[newtype].increment
 				end
 
