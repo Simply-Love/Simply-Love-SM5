@@ -173,7 +173,7 @@ local t = Def.ActorFrame {
 		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
 		sort_wheel.focus_pos = 4
 
-		-- get the currenly active SortOrder and truncate the "SortOrder_" from the beginning
+		-- get the currently active SortOrder and truncate the "SortOrder_" from the beginning
 		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
 		local current_sort_order_index = 1
 

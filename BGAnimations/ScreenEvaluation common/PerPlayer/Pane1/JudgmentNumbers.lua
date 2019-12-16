@@ -70,7 +70,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 	local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
 
-	-- player performace value
+	-- player performance value
 	t[#t+1] = Def.RollingNumbers{
 		Font="_ScreenEvaluation numbers",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,

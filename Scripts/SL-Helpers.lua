@@ -61,7 +61,7 @@ end
 -- being wrapped, it might be simpler.
 ------
 --
--- I have neither the native intellignce nor the brute-force-self-taught-CS-experience to achieve
+-- I have neither the native intelligence nor the brute-force-self-taught-CS-experience to achieve
 -- any of the above, so here is some laughably bad code that is just barely good enough to meet the
 -- needs of JP text in Simply Love.  Feel free to copy+paste this method to /r/shittyprogramming,
 -- private Discord servers, etc., for didactic and comedic purposes alike.

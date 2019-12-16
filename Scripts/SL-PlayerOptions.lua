@@ -569,7 +569,7 @@ local OptionRowDefault = {
 -- CustomOptionRow() is mostly used in Metrics.ini under [ScreenPlayerOptions] and siblings
 -- to pass OptionRow data (Lua) to the engine (C++) via Metrics (ini).
 --
--- Thre are a few other places in the theme where CustomOptionRow() is used to retrieve a list
+-- There are a few other places in the theme where CustomOptionRow() is used to retrieve a list
 -- of possible choices for a given OptionRow and then do something based on that list.
 -- For example, ./ScreenPlayerOptions overlay/NoteSkinPreviews.lua uses it to get a list of NoteSkins
 -- so it can load preview NoteSkin actors into the overlay's ActorFrame ahead of time.

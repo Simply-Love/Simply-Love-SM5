@@ -45,7 +45,7 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			if optrow:GetName()=="NoteSkin" or optrow:GetName()=="JudgmentGraphic" or optrow:GetName()=="ComboFont" then
 				-- if this OptionRow needs an ActorProxy for preview purposes, set the necessary parameters
 				self:x(player==PLAYER_1 and WideScale(20, 0) or WideScale(220, 240)):zoom(0.4)
-					-- What was my reasoning for diffusing in after 0.01? It seems unncessary.
+					-- What was my reasoning for diffusing in after 0.01? It seems unnecessary.
 					-- I don't remember but am afraid to remove it.
 					:diffusealpha(0):sleep(0.01):diffusealpha(1)
 

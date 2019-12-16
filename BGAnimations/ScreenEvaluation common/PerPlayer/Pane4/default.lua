@@ -4,7 +4,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
--- table of offet values obtained during this song's playthrough
+-- table of offset values obtained during this song's playthrough
 -- obtained via ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local pane_width, pane_height = 300, 180
@@ -100,7 +100,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- --------------------------------------------------------
 
--- darkened quad behind bottom judment labels
+-- darkened quad behind bottom judgment labels
 pane[#pane+1] = Def.Quad{
 	InitCommand=function(self)
 		self:vertalign(top)

@@ -33,13 +33,13 @@ local HandleStateChange = function(self, Player)
 	if GAMESTATE:IsHumanPlayer(Player) then
 
 		if MEMCARDMAN:GetCardState(Player) == 'MemoryCardState_none' then
-			--using local profile
+			-- using local profile
 			joinframe:visible(false)
 			scrollerframe:visible(true)
 			seltext:visible(true)
 			usbsprite:visible(false)
 		else
-			--using memorycard profile
+			-- using memorycard profile
 			joinframe:visible(false)
 			scrollerframe:visible(false)
 			seltext:visible(true):settext(MEMCARDMAN:GetName(Player))

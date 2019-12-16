@@ -514,7 +514,7 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 				self:shadowlength(1) -- match other playfield counters
 			else
 				noteY = 56
-				noteX = width / 4 -- this serendipitiously works for doubles, somehow
+				noteX = width / 4 -- this serendipitously works for doubles, somehow
 
 				-- antisymmetry kludge; nudge PLAYER_2's pacemaker text to the left so that it
 				-- doesn't possibly overlap with the percent score text.  this is necessary because

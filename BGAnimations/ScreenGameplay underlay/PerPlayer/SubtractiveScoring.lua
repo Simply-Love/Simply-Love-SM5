@@ -88,7 +88,7 @@ return LoadFont("_wendy small")..{
 			if not hns then
 				-- increment for the first ten
 				undesirable_judgment_count = undesirable_judgment_count + 1
-				-- and specificy literal W2 count
+				-- and specify literal W2 count
 				self:settext("-" .. undesirable_judgment_count)
 			end
 

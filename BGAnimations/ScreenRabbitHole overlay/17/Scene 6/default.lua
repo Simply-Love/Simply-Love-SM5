@@ -114,7 +114,7 @@ af[#af+1] = Def.ActorFrame{
 		Text="4:14 AM",
 		InitCommand=function(self) self:y(-_phone.Ben.h/2*_phone.Ben.zoom + 68):zoom(0.55):diffuse(0,0,0,1) end
 	},
-	-- Ben is chattig with Zoe
+	-- Ben is chatting with Zoe
 	Def.BitmapText{
 		File=THEME:GetPathB("ScreenRabbitHole", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 		Text="Zoe",

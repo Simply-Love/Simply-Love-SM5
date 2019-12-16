@@ -51,7 +51,7 @@ if not mods.HideComboExplosions then
 end
 
 -- Combo fonts should be monospaced so that each digit's alignment remains
--- consistent (i.e., not visually distrating) as the combo continually grows
+-- consistent (i.e., not visually distracting) as the combo continually grows
 
 local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	Name="Number",
@@ -75,7 +75,7 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 		-- If the player has only earned W1 judgments so far, the params table will look like:
 		-- { Combo=1001, FullComboW1=true, FullComboW2=true, FullComboW3=true, FullComboW4=true }
 		--
-		-- if the player has earned some combination of W1 and W2 judmgents, the params table will look like:
+		-- if the player has earned some combination of W1 and W2 judgments, the params table will look like:
 		-- { Combo=1005, FullComboW2=true, FullComboW3=true, FullComboW4=true }
 		--
 		-- And so on. While the information is technically true (a FullComboW2 does imply a FullComboW3), the

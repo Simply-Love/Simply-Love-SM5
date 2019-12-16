@@ -16,7 +16,7 @@ local af = Def.ActorFrame{
 }
 
 -- add TestInput pads for both players to the AF by default
--- if the stlye is single, just hide the unused pad, and start drawing it if latejoin occurs
+-- if the style is single, just hide the unused pad, and start drawing it if latejoin occurs
 
 for player in ivalues({PLAYER_1, PLAYER_2}) do
 	af[#af+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=player, ShowMenuButtons=false, ShowPlayerLabel=false})..{

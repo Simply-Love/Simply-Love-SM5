@@ -83,7 +83,7 @@ end
 -- start internal functions
 
 t.Init = function()
-	-- flag used to determind whether input is permitted
+	-- flag used to determine whether input is permitted
 	-- false at initialization
 	t.Enabled = false
 

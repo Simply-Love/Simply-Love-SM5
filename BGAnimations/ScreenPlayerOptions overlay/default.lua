@@ -59,7 +59,7 @@ local speedmod_def = {
 
 -- use this to directly manipulate the SpeedMod numbers in the global SL table
 --    first argument is either "P1" or "P2"
---    second arguemnt is either -1 (MenuLeft was pressed) or 1 (MenuRight was pressed)
+--    second argument is either -1 (MenuLeft was pressed) or 1 (MenuRight was pressed)
 local ChangeSpeedMod = function(pn, direction)
 	local mods = SL[pn].ActiveModifiers
 
@@ -134,7 +134,7 @@ local t = Def.ActorFrame{
 		-- so if we're there, bail now
 		if screen:GetName() == "ScreenAttackMenu" then return end
 
-		-- update SpeedModHelper text to refelct the new music rate
+		-- update SpeedModHelper text to reflect the new music rate
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			self:GetChild(ToEnumShortString(player) .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
 		end

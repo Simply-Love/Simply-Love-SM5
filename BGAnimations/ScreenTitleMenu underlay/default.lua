@@ -59,7 +59,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		--see: ./Scripts/SL_Initialize.lua
+		--see: ./Scripts/SL_Init.lua
 		InitializeSimplyLove()
 
 		self:Center()

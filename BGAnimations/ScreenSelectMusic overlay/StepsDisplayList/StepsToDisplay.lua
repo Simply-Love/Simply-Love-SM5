@@ -1,4 +1,4 @@
--- FIXME: The SM5 engine does supply a StepsDisplayList class for Lua, but its scoller-esque behavior
+-- FIXME: The SM5 engine does supply a StepsDisplayList class for Lua, but its scroller-esque behavior
 -- is mostly hardcoded, making it difficult to ALWAYS position easy charts at a specific y-value
 -- and challenge charts at a different (but equally predictable) y-value.
 --

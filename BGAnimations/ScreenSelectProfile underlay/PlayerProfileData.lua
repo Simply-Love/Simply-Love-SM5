@@ -34,7 +34,7 @@ local RecentMods = function(mods)
 	-- the NoteSkin and JudgmentGraphic previews are not text and thus handled elsewhere
 
 	-- ASIDE: My informal testing of reading ~80 unique JudgmentGraphic files from disk and
-	-- loading them into memory caused Stepmania to hang for a few seconds, so
+	-- loading them into memory caused StepMania to hang for a few seconds, so
 	-- JudgmentGraphicPreviews.lua and NoteSkinPreviews.lua only load assets that are
 	-- needed by current player profiles (not every possible asset).
 

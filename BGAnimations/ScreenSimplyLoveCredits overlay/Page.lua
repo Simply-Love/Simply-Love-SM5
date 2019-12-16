@@ -12,7 +12,7 @@ local display_time = 3
 
 -- sometimes we just want a single static image to be the avatar
 -- sometimes we have a set of images we want to cycle through that
--- collectively reprsent a single avatar
+-- collectively represent a single avatar
 -- abstract out what is common between both those scenarios into this function
 -- and append extra functionality (fading, etc.) later, if needed
 local PictureActor = function( path, _y )

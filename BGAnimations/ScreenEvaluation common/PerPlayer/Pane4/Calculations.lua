@@ -49,7 +49,7 @@ end
 -- MEDIAN, MODE, and AVG TIMING ERROR VARIABLES
 -- initialize all to zero
 
--- mode_offset is the offset that occured the most commonly
+-- mode_offset is the offset that occurred the most commonly
 -- for example, if a player hit notes with an offset of -0.010
 -- more commonly than any other offset, that would be the mode
 local mode_offset = 0
@@ -59,7 +59,7 @@ local mode_offset = 0
 local median_offset = 0
 
 -- highest_offset_count is how many times the mode_offset occurred
--- we'll use it to scale the histrogram to be an appropriate height
+-- we'll use it to scale the histogram to be an appropriate height
 local highest_offset_count = 0
 
 local sum_timing_error = 0
@@ -103,7 +103,7 @@ if #list > 0 then
 		median_offset = (list[#list/2] + list[#list/2+1])/2
 	end
 
-	-- loop throguh all offsets collected
+	-- loop through all offsets collected
 	-- take the absolute value (because this offset could be negative)
 	-- and add it to the running measure of total timing error
 	for i=1,#list do

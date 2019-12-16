@@ -101,7 +101,7 @@ if IsNice() then
 
 			--If the value is 2, then this indicates they want sound.
 			if ThemePrefs.Get("nice") == 2 then
-				--For some reason Stepmania could play
+				--For some reason StepMania could play
 				--this sound lounder than the
 				--system preference, so let's ensure
 				--we are turned down for the meme.
