@@ -43,7 +43,7 @@ end
 -- The "dynamic" speedmod system is a horrible hack that works around the limitations of
 -- the engine's OptionRows which don't offer any means of presenting different sets of
 -- choices to each player within a single OptionRow.  We need this functionality when, for
--- example, P1 wants an x-mod and P2 wants a C-mod; the choices presented in the SpeedMod
+-- example, P1 wants an xmod and P2 wants a Cmod; the choices presented in the SpeedMod
 -- OptionRow present and behave differently for each player.
 --
 -- So, we do a lot of hackish work locally (here in ScreenPlayerOptions overlay/default.lua)
@@ -179,7 +179,8 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 			if oldtype ~= newtype then
 
-				local oldspeed = SL[pn].ActiveModifiers.SpeedMod
+				local speedmod = SL[pn].ActiveModifiers.SpeedMod
+				local increment = speedmod_def[newtype].increment
 
 				-- round to the nearest speed increment in the new mode
 				-- if we have an active rate mod, then we have to undo/redo
@@ -187,15 +188,20 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 				if oldtype == "x" then
 					-- apply rate compensation now
-					oldspeed = oldspeed * SL.Global.ActiveModifiers.MusicRate
-					SL[pn].ActiveModifiers.SpeedMod = (round((oldspeed * bpm[2]) / speedmod_def[newtype].increment)) * speedmod_def[newtype].increment
+					speedmod = speedmod * SL.Global.ActiveModifiers.MusicRate
+					speedmod = (round((speedmod * bpm[2]) / increment)) * increment
 
 				elseif newtype == "x" then
 					-- revert rate compensation since it's handled for XMod
-					oldspeed = oldspeed / SL.Global.ActiveModifiers.MusicRate
-					SL[pn].ActiveModifiers.SpeedMod = (round(oldspeed / bpm[2] / speedmod_def[newtype].increment)) * speedmod_def[newtype].increment
+					speedmod = speedmod / SL.Global.ActiveModifiers.MusicRate
+					speedmod = (round(speedmod / bpm[2] / increment)) * increment
 				end
 
+				-- it's possible for the procedure above to cause the player's speedmod to exceed
+				-- the upper bound of the new Mmod or Cmod; clamp to prevent that
+				speedmod = clamp(speedmod, increment, speedmod_def[newtype].upper)
+
+				SL[pn].ActiveModifiers.SpeedMod     = speedmod
 				SL[pn].ActiveModifiers.SpeedModType = newtype
 
 				self:queuecommand("Set" .. pn)
