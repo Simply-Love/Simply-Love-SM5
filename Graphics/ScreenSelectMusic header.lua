@@ -44,11 +44,13 @@ local t = Def.ActorFrame{
 		InitCommand=function(self)
 			bmt_actor = self
 			if PREFSMAN:GetPreference("EventMode") then
-				self:zoom( WideScale(0.3,0.36) )
+				self:zoom( WideScale(0.3,0.36) ):y( WideScale(3.15,3.5)/self:GetZoom() )
 			else
-				self:zoom( WideScale(0.5,0.6) )
+				self:zoom( WideScale(0.5,0.6) ):y( WideScale(7.5,9)/self:GetZoom() )
 			end
-			self:diffusealpha(0):xy(_screen.cx, WideScale(3.15,3.5)/self:GetZoom())
+
+			self:diffusealpha(0):x(_screen.cx)
+
 		end,
 		OnCommand=function(self)
 			if not PREFSMAN:GetPreference("EventMode") then
