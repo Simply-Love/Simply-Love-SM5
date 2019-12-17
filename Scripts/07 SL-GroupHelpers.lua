@@ -559,6 +559,28 @@ local CreateGroup = Def.ActorFrame{
 	end,
 }
 
+----------------------------------------------------------------------------------------------
+--Controls the order songs should be displayed from within a group
+--Default is alphabetical
+----------------------------------------------------------------------------------------------
+
+GetSortFunction = function()
+	if SL.Global.Order == "Alphabetical" then
+		return function(k1,k2)
+			return string.lower(k1:GetMainTitle()) < string.lower(k2:GetMainTitle())
+		end
+	elseif SL.Global.Order == "BPM" then
+		return function(k1,k2)
+			if k1:GetDisplayBpms()[2] == k2:GetDisplayBpms()[2] then
+				return string.lower(k1:GetMainTitle()) < string.lower(k2:GetMainTitle())
+			else
+				return k1:GetDisplayBpms()[2] < k2:GetDisplayBpms()[2]
+			end
+		end
+	else
+		return k1:GetDisplayBpms()[2] < k2:GetDisplayBpms()[2] --default to alphabetical if order doesn't match something here
+	end
+end
 -------------------------------------------------------------------------------------
 --depending on the group name supplied
 --returns an indexed table of song objects and the index of the current song
@@ -567,7 +589,6 @@ local CreateGroup = Def.ActorFrame{
 CreateSongList = function(group_name, groupType)
 	local groupType = groupType or SL.Global.GroupType
 	local songList = CreateGroup[groupType](group_name)
-	table.sort(songList, function(k1,k2) return string.lower(k1:GetMainTitle()) < string.lower(k2:GetMainTitle()) end)
 	return songList
 end
 
@@ -575,7 +596,9 @@ end
 -- that were created when screenselectmusicExperiment first runs
 GetSongList = function(group_name, group_type)
 	local group_type = group_type or SL.Global.GroupType
-	return PreloadedGroups[group_type][tostring(group_name)]
+	local songList = PreloadedGroups[group_type][tostring(group_name)]
+	table.sort(songList, GetSortFunction())
+	return songList
 end
 
 ----------------------------------------------------------------------------------------

@@ -105,10 +105,11 @@ local GlobalDefaults = {
 			self.TimeAtSessionStart = nil
 
 			self.GameplayReloadCheck = false
-			self.GoToOptions = false
+			self.GoToOptions = false --when two tap to enter options is turned on this is used
 			self.ActivePlayerOptionsPane = 0
-			self.GroupType = "Group"
-			self.GroupToSong = false
+			self.GroupType = "Group" --keep track of what group sort we're currently using
+			self.GroupToSong = false --keep track of when we're going from group view to song view for music preview purposes
+			self.Order = "Alphabetical"
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,
