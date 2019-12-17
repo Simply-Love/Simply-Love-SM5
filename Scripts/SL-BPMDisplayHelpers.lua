@@ -30,7 +30,7 @@ local GetCourseOrTrailBPMs = function(entries)
 	end
 end
 
-GetCourseModeBPMs = function(course)
+GetCourseBPMs = function(course)
 	course = course or GAMESTATE:GetCurrentCourse( GAMESTATE:GetMasterPlayerNumber() )
 	if not course then return false end
 
@@ -58,22 +58,22 @@ end
 -- manually specify DISPLAYBPM values <= 0; if such a DISPLAYBPM value is found,
 -- this function will use actual bpm values instead to preserve sanity
 
-GetDisplayBPMs = function(player)
+GetDisplayBPMs = function(player, StepsOrSong, MusicRate)
 	player = player or GAMESTATE:GetMasterPlayerNumber()
+	MusicRate = MusicRate or SL.Global.ActiveModifiers.MusicRate
 
-	local MusicRate = SL.Global.ActiveModifiers.MusicRate
 	local bpms
 
 	-- if in CourseMode
 	if GAMESTATE:IsCourseMode() then
-		bpms = GetCourseModeBPMs() or GetTrailBPMs(GAMESTATE:GetMasterPlayerNumber())
+		bpms = GetTrailBPMs(player) or GetCourseBPMs()
 		if not bpms then return end
 
 	-- otherwise, we are not in CourseMode, i.e. in "normal" mode
 	else
 		-- prefer the simfile's provided DISPLAYBPM values for this stepchart (possible with .ssc files)
 		-- if steps aren't available, try getting DISPLAYBPM values at the song level (normal for .sm files)
-		local StepsOrSong = player and GAMESTATE:GetCurrentSteps(player) or GAMESTATE:GetCurrentSong()
+		StepsOrSong = StepsOrSong or (player and GAMESTATE:GetCurrentSteps(player)) or GAMESTATE:GetCurrentSong()
 		if not StepsOrSong then return end
 
 		bpms = StepsOrSong:GetDisplayBpms()
@@ -98,16 +98,17 @@ GetDisplayBPMs = function(player)
 	}
 end
 
-StringifyDisplayBPMs = function(player)
+StringifyDisplayBPMs = function(player, StepsOrSong, MusicRate)
 	player = player or GAMESTATE:GetMasterPlayerNumber()
-	local MusicRate = SL.Global.ActiveModifiers.MusicRate
+	StepsOrSong = StepsOrSong or GAMESTATE:GetCurrentSteps(player) or GAMESTATE:GetCurrentSong()
+	MusicRate = MusicRate or SL.Global.ActiveModifiers.MusicRate
 
-	local bpms = GetDisplayBPMs(player)
-	if not (bpms and bpms[1] and bpms[2]) then return end
+	local bpms = GetDisplayBPMs(player, StepsOrSong, MusicRate)
+	if not (bpms and bpms[1] and bpms[2]) then return "" end
 
 	-- format DisplayBPMs to not show decimals unless a musicrate
 	-- modifier is in effect, in which case show 1 decimal of precision
-	local fmt = MusicRate==1 and "%.0f" or "%.1f"
+	local fmt = MusicRate==1 and "%.0f" or "%g"
 
 	if bpms[1] == bpms[2] then
 		return fmt:format(bpms[1])
