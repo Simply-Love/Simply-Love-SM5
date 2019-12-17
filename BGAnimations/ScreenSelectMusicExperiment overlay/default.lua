@@ -215,7 +215,8 @@ local t = Def.ActorFrame {
 	LoadActor("./TestInput.lua"),
 	-- The menu for adding/removing tags
 	LoadActor("./TagMenu/default.lua"),
-
+	-- The menu for changing the order songs display in
+	LoadActor("./OrderMenu/default.lua"),
 	
 	-- Sort Menu Stuff
 	
