@@ -17,7 +17,7 @@ return Def.ActorFrame{
 				self:settext( ("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate") )
 			end
 
-			local bpm = GetDisplayBPMs()
+			local bpm = StringifyDisplayBPMs()
 			if bpm then
 				self:settext(self:GetText() .. " (" .. bpm .. " BPM)" )
 			end

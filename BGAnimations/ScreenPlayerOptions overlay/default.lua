@@ -22,18 +22,7 @@ local song = GAMESTATE:GetCurrentSong()
 -- the low and high values from #BPMS will be used
 local player_bpms = {}
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-	if GAMESTATE:IsCourseMode() then
-		player_bpms[player] = GetCourseModeBPMs() or GetTrailBPMs(player)
-
-	else
-		local range = song:GetDisplayBpms()
-		-- handle DisplayBPMs that are <= 0
-		if range[1] <= 0 or range[2] <= 0 then
-			player_bpms[player] = song:GetTimingData():GetActualBPM()
-		else
-			player_bpms[player] = range
-		end
-	end
+	player_bpms[player] = GetDisplayBPMs(player)
 end
 
 ------------------------------------------------------------
@@ -148,9 +137,9 @@ local t = Def.ActorFrame{
 		if MusicRateRowIndex then
 			local musicrate = SL.Global.ActiveModifiers.MusicRate
 			local title_bmt = screen:GetOptionRow(MusicRateRowIndex):GetChild(""):GetChild("Title")
-			-- FIXME: GetDisplayBPMs() is awful and needs to be rewritten
-			local bpms = GetDisplayBPMs()
-			title_bmt:settext( THEME:GetString("OptionTitles", "MusicRate") .. "\nbpm: " .. bpms )
+
+			local bpms = StringifyDisplayBPMs()
+			title_bmt:settext( ("%s\nbpm: %s"):format(THEME:GetString("OptionTitles", "MusicRate"), bpms) )
 		end
 	end
 }

@@ -144,7 +144,7 @@ af[#af+1] = Def.ActorFrame{
 			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(0):horizalign(left) end,
 			CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
-					self:settext( THEME:GetString("ScreenSelectMusic", "BPM") .. ": " .. GetDisplayBPMs() )
+					self:settext( ("%s: %s"):format(THEME:GetString("ScreenSelectMusic", "BPM"), StringifyDisplayBPMs() or "") )
 				end
 			end,
 		},
