@@ -4,6 +4,8 @@ local GridZoomX = IsUsingWideScreen() and 0.435 or 0.39
 local BlockZoomY = 0.275
 local StepsToDisplay, SongOrCourse, StepsOrTrails
 
+local GetStepsToDisplay = LoadActor("./StepsToDisplay.lua")
+
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
 	InitCommand=cmd(vertalign, top; xy, _screen.cx-170, _screen.cy + 70),
