@@ -38,11 +38,16 @@ local function input(event)
 				--go to filters screen
 				screen:SetNextScreenName("ScreenFilterOptions")
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
+			elseif focus.kind == "Text" then
+				SM("Add search function")
+				overlay:queuecommand("DirectInputToEngine")
 			elseif focus.new_overlay then
 				if focus.new_overlay == "TestInput" then
 					sortmenu:queuecommand("DirectInputToTestInput")
 				elseif focus.new_overlay == "Song Tags" then
 					overlay:queuecommand("DirectInputToTagMenu")
+				elseif focus.new_overlay == "Order" then
+					overlay:queuecommand("DirectInputToOrderMenu")
 				end
 			end
 

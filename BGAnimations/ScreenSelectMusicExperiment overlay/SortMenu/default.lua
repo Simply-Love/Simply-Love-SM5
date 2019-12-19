@@ -10,6 +10,7 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 local sortmenu_input = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
 local testinput_input = LoadActor("TestInput_InputHandler.lua")
 
+
 -- WheelItemMT is a generic definition of an choice within the SortMenu
 -- "mt" is my personal means of denoting that it (the file, the variable, whatever)
 -- has something to do with a Lua metatable.
@@ -67,7 +68,6 @@ local t = Def.ActorFrame {
 		local overlay = self:GetParent()
 		screen:RemoveInputCallback(sortmenu_input)
 		screen:RemoveInputCallback(testinput_input)
-
 		self:playcommand("HideSortMenu")
 		overlay:playcommand("HideTestInput")
 	end,
@@ -78,7 +78,13 @@ local t = Def.ActorFrame {
 		screen:RemoveInputCallback(sortmenu_input)
 		self:playcommand("HideSortMenu")
 	end,
-
+	DirectInputToOrderMenuMessageCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+		overlay:playcommand("ShowOrderMenu")
+		screen:RemoveInputCallback(sortmenu_input)
+		self:playcommand("HideSortMenu")
+	end,
 	AssessAvailableChoicesCommand=function(self)
 		self:visible(false)
 
@@ -103,6 +109,8 @@ local t = Def.ActorFrame {
 
 		table.insert(wheel_options, {"Adjust", "Filters"})
 		table.insert(wheel_options, {"Modify", "Song Tags"})
+		table.insert(wheel_options, {"Change", "Order"})
+		table.insert(wheel_options, {"Text", "Search"})
 
 		--table.insert(wheel_options, {"SortBy", "Popularity"})
 		--table.insert(wheel_options, {"SortBy", "Recent"})
