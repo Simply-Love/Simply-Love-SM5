@@ -150,13 +150,14 @@ local song_mt = {
 					--don't need to restart the preview music because only difficulty changed
 					--so check here that transform was called because we're moving to a new song
 					--or because we're initializing ScreenSelectMusicExperiment
-					if self.song ~= GAMESTATE:GetCurrentSong() or SL.Global.GroupToSong then
+					if self.song ~= GAMESTATE:GetCurrentSong() or SL.Global.GroupToSong or self.index ~= SL.Global.LastSeenIndex then
 						GAMESTATE:SetCurrentSong(self.song)
 						MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
 						stop_music()
 						-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 						SL.Global.GroupToSong = false
+						SL.Global.LastSeenIndex = self.index
 					else MESSAGEMAN:Broadcast("StepsHaveChanged") end
 				else
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
@@ -215,15 +216,24 @@ local song_mt = {
 			end
 		end,
 
-		set = function(self, song)
+		set = function(self, item)
 			-- we are passed in a Song object as info
-			if not song then return end
-			if type(song) == "string" then
-				self.song = song
+			-- Set in "switch_to_songs" function in GroupMT.Lua
+			if not item.song then return end
+			if type(item.song) == "string" then
+				self.song = item.song
 				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
+				self.index = 0
 			else
-				self.song = song
-				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars)
+				self.song = item.song
+				self.index = item.index
+				if SL.Global.Order == "Difficulty/BPM" then
+					local block = GetDifficultyBPM(item.index)
+					self.title_bmt:settext( "["..block.difficulty.."]["..math.floor(block.bpm).."] "..self.song:GetDisplayMainTitle() ):Truncate(max_chars)
+				else
+					self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars)
+				end
+
 			end
 		end
 	}

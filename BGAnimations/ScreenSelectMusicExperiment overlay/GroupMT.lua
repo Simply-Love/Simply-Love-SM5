@@ -14,9 +14,15 @@ local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG(
 
 local switch_to_songs = function(group_name)
 	local songs = PruneSongList(GetSongList(group_name))
-	-- Songs come out in the order they're listed in SONGMAN which I believe is by the folder name or something
-	-- I prefer sorting by song title instead.
+	if SL.Global.Order == "Difficulty/BPM" then
+		local newList = CreateSpecialSongList(songs)
+		songs = newList
+	end
 	songs[#songs+1] = "CloseThisFolder"
+	local toAdd = {}
+	for k,song in pairs(songs) do
+		toAdd[#toAdd+1] = {song = song, index = k}
+	end
 	local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
 	local index
 	for k,song in pairs(songs) do
@@ -27,8 +33,7 @@ local switch_to_songs = function(group_name)
 	if index == nil then index = 1 end --TODO if songs are no longer in a folder then go to groupwheel not songwheel
 	SL.Global.DifficultyGroup = group_name
 	SL.Global.GradeGroup = group_name
-
-	SongWheel:set_info_set(songs, index)
+	SongWheel:set_info_set(toAdd, index)
 end
 
 local item_mt = {
