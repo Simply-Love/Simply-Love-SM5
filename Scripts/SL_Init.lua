@@ -118,6 +118,7 @@ local GlobalDefaults = {
 		DifficultyGroup = 1, --used when we're in difficulty sort to keep the correct difficulty defaulted
 		GradeGroup = "No_Grade", --used when we're in grade sort to keep the correct grade defaulted
 		LastSeenSong = nil, --set in SongMT transform. used to keep track of the last song when we're on "Close This Folder"
+		LastSeenIndex = 0, --set in SongMT transform. used in place of LastSeenSong if the same song appears twice in a row (due to difficulty/bpm order)
 		LastSongPlayedName = nil, --set by SL-CustomProfiles.lua every time profile is saved
 		LastSongPlayedGroup = nil,--set by SL-CustomProfiles.lua every time profile is saved
 	}

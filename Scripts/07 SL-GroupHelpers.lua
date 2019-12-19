@@ -47,6 +47,9 @@ local SortGroups = {
 -- For example: PreloadedGroups["Title"]["A"] contains an indexed table of all songs starting with A
 local PreloadedGroups = {}
 
+-- When songs should be ordered by difficulty and then BPM keep track of them in this table since we need to split
+-- songs depending on the number of charts
+ DifficultyBPM = {}
 
 -- A table of tagged songs loaded from Other/TaggedSongs.txt
 -- Each item in the table is a table with the following items: customGroup, title, actualGroup
@@ -577,13 +580,28 @@ GetSortFunction = function()
 				return k1:GetDisplayBpms()[2] < k2:GetDisplayBpms()[2]
 			end
 		end
+	elseif SL.Global.Order == "Difficulty/BPM" then
+		return function(k1,k2)
+			--Difficulty/BPM takes a normal songlist before adding additional params and sorting again
+			--So if there are no additional params set then just return a normal alphabetical sorted list
+			if not k1.song then return string.lower(k1:GetMainTitle()) < string.lower(k2:GetMainTitle()) end 
+			if k1.difficulty == k2.difficulty then
+				if k1.bpm == k2.bpm then
+					return string.lower(k1.song:GetMainTitle()) < string.lower(k2.song:GetMainTitle())
+				else 
+					return k1.bpm < k2.bpm
+				end
+			else
+				return k1.difficulty < k2.difficulty
+			end
+		end
 	else
-		return k1:GetDisplayBpms()[2] < k2:GetDisplayBpms()[2] --default to alphabetical if order doesn't match something here
+		return string.lower(k1:GetMainTitle()) < string.lower(k2:GetMainTitle()) --default to alphabetical if order doesn't match something here
 	end
 end
 -------------------------------------------------------------------------------------
 --depending on the group name supplied
---returns an indexed table of song objects and the index of the current song
+--returns an indexed table of song objects
 --if groupType isn't given it will use whatever the current sort is
 --cycles through every song loaded so can take a while if you have too many songs
 CreateSongList = function(group_name, groupType)
@@ -601,6 +619,25 @@ GetSongList = function(group_name, group_type)
 	return songList
 end
 
+CreateSpecialSongList = function(songList)
+	local songList = songList
+	DifficultyBPM = {}
+	for song in ivalues(songList) do
+		for i = 1,#song:GetStepsByStepsType(GetStepsType()) do
+			table.insert(DifficultyBPM,{song=song,difficulty=song:GetStepsByStepsType(GetStepsType())[i]:GetMeter(),bpm=song:GetDisplayBpms()[2]})
+		end
+	end
+	table.sort(DifficultyBPM, GetSortFunction())
+	local specialList = {}
+	for item in ivalues(DifficultyBPM) do
+		specialList[#specialList+1] = item.song
+	end
+	return specialList
+end
+
+GetDifficultyBPM = function(index)
+	return DifficultyBPM[index]
+end
 ----------------------------------------------------------------------------------------
 -- Create groups for every item in the SortGroups table
 InitPreloadedGroups = function()
