@@ -43,7 +43,7 @@ end
 
 local SingleBPMDisplay = function()
 	return Def.ActorFrame{
-		InitCommand=cmd(SetUpdateFunction,UpdateSingleBPM),
+		InitCommand=function(self) self:SetUpdateFunction(UpdateSingleBPM) end,
 
 		LoadFont("Common Normal")..{
 			Name="BPMDisplay",

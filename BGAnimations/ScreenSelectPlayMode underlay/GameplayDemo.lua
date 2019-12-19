@@ -151,7 +151,7 @@ local function YieldStepPattern(i, dir)
 
 	for index,file in ipairs(files) do
 		step[#step+1] = LoadActor( file )..{
-			InitCommand=cmd( diffuse,color("1,1,1,1"); zoom, ColumnZoom(dir) ),
+			InitCommand=function(self) self:diffuse(1,1,1,1):zoom(ColumnZoom(dir)) end,
 			OnCommand=function(self)
 				if file == "center-feet.png" or file == "arrow-stripes.png" then
 					self:blend(Blend.Multiply)

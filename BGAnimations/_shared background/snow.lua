@@ -23,21 +23,16 @@ local wrap_buffer = 50 --how far offscreen should it be before it wraps
 
 --we will need these later
 local dbk_snow = {} --recycling is good for the environment
-local dbk_sptr = 0 --it's a ''''pointer'''' to a snow object
-
-local make_snow = function(obj)
-    table.insert( dbk_snow, {actor = obj, xspd = 0, yspd = 0, size = 0} ) --shovel snow
-end
 
 local Update = function(self, delta)
-	for i=1,table.getn(dbk_snow) do
+
+	for i=1,#dbk_snow do
 		local a = dbk_snow[i]
 
 		if a then
 			local b = a.actor
 			if b then
 
-				b:visible(true)
 				if b:getaux() < 1 then
 					b:aux( b:getaux() + delta )
 					b:diffusealpha( b:getaux() )
@@ -58,28 +53,7 @@ local Update = function(self, delta)
 end
 
 local af = Def.ActorFrame{
-	InitCommand=function(self) self:SetUpdateFunction( Update ) end,
-	OnCommand=function(self) self:sleep(0.02):queuecommand("Make") end,
-	MakeCommand=function(self)
-		for i=1,table.getn(dbk_snow) do
-			local a = dbk_snow[i]
-			if a then
-				a.xspd = math.random( min_vx, max_vx )
-				a.yspd = math.random( min_vy, max_vy )
-
-				a.size = math.random(min_size,max_size)+(i/table.getn(dbk_snow)) --configurable at top of file
-
-				local b = a.actor
-				if b then
-					b:x( math.random( -40, math.floor(_screen.w)+40 ) )
-					b:y( math.random( -40, math.floor(_screen.h)+40 ) )
-					b:zoomto( a.size, a.size )
-
-					if ThemePrefs.Get("VisualTheme") == "Gay" then b:effectoffset( math.random() ):rainbow() end
-				end
-			end
-		end
-	end
+	InitCommand=function(self) self:SetUpdateFunction( Update ) end
 }
 
 -- background Quad with a black-to-blue gradient
@@ -87,12 +61,33 @@ af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:FullScreen():Center():diffusetopedge(Color.Black):diffusebottomedge(color("#061f4f")) end
 }
 
+local snow_af = Def.ActorFrame{
+	InitCommand=function(self) self:diffusealpha(0) end,
+	OnCommand=function(self) self:smooth(0.333):diffusealpha(1) end
+}
+
 for i=1,num_particles do
-    af[#af+1] = LoadActor( path_to_texture )..{
-        OnCommand=function(self) self:visible(false):queuecommand("Make") end,
-        HideCommand=function(self) self:visible(false) end,
-        MakeCommand=function(self) make_snow(self) end --use our function from earlier!
-    }
+	snow_af[#snow_af+1] = LoadActor( path_to_texture )..{
+		OnCommand=function(self) self:queuecommand("Make") end,
+		MakeCommand=function(self)
+			local _t = {
+				actor = self,
+				xspd = math.random( min_vx, max_vx ),
+				yspd = math.random( min_vy, max_vy ),
+				size = math.random( min_size,max_size)+(i/#dbk_snow),
+			}
+
+			table.insert( dbk_snow, _t )
+
+			self:x( math.random( -40, math.floor(_screen.w)+40 ) )
+			self:y( math.random( -40, math.floor(_screen.h)+40 ) )
+			self:zoomto( _t.size, _t.size )
+
+			if ThemePrefs.Get("VisualTheme") == "Gay" then self:effectoffset( math.random() ):rainbow() end
+		end
+	}
 end
+
+af[#af+1] = snow_af
 
 return af

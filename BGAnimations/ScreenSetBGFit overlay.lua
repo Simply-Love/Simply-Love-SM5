@@ -24,9 +24,9 @@ local mini_screen_h= _screen.h * .1
 -- w and h are the width and height of the aspect ratio, passed in so they
 -- can be displayed to be read.
 function BGFitNormalExampleText(w, h)
-	return Def.BitmapText{
+	return LoadFont("Common Normal")..{
 		-- To use a different font for the text, change the Font field.
-		Name= "example_label", Font= "Common Normal",
+		Name= "example_label",
 		-- The "BG" part of the text is fetched with THEME:GetString so that it
 		-- can be translated.
 		Text=ScreenString("Native") .. " " .. w .. ":" .. h .. " " .. ScreenString("BG"),
@@ -35,7 +35,7 @@ function BGFitNormalExampleText(w, h)
 			self:y(mini_screen_h * .5 + 9)
 			self:zoom(.5)
 		end,
-		OnCommand=cmd(shadowlength,1)
+		OnCommand=function(self) self:shadowlength(1) end
 	}
 end
 
@@ -52,17 +52,17 @@ for i, mode in ipairs(BackgroundFitMode) do
 			-- row across the center of the screen, evenly spaced.
 			self:xy(xstart + ((i-1) * width_per_choice), _screen.cy)
 		end,
-		Def.BitmapText{
+		LoadFont("Common Normal")..{
 			-- This actor is a label for the choice, so the player knows the name
 			-- of their choice.
-			Name= "mode_label", Font= "Common Normal",
+			Name= "mode_label",
 			Text= THEME:GetString("ScreenSetBGFit", ToEnumShortString(mode)),
 			InitCommand= function(self)
 				-- Position the label above the topmost example.
 				self:y(mini_screen_h * -2.5)
 				self:zoom(.75)
 			end,
-			OnCommand=cmd(diffusebottomedge,color("0.875,0.875,0.875");shadowlength,1)
+			OnCommand=function(self) self:diffusebottomedge(0.875,0.875,0.875,1):shadowlength(1) end
 		},
 		-- BGFitChoiceExample is a function that creates an example to show how
 		-- a bg with a given aspect ratio is affected by the fitting mode for

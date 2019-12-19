@@ -4,15 +4,17 @@ local GridZoomX = IsUsingWideScreen() and 0.435 or 0.39
 local BlockZoomY = 0.275
 local StepsToDisplay, SongOrCourse, StepsOrTrails
 
+local GetStepsToDisplay = LoadActor("./StepsToDisplay.lua")
+
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=cmd(vertalign, top; xy, _screen.cx-170, _screen.cy + 70),
+	InitCommand=function(self) self:vertalign(top):xy(_screen.cx-170, _screen.cy + 70) end,
 	-- - - - - - - - - - - - - -
 
-	OnCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-	CurrentSongChangedMessageCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-	CurrentCourseChangedMessageCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-	StepsHaveChangedCommand=cmd(queuecommand, "RedrawStepsDisplay"),
+	OnCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
+	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
+	StepsHaveChangedCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
 
 	-- - - - - - - - - - - - - -
 
@@ -66,7 +68,7 @@ local t = Def.ActorFrame{
 
 local Grid = Def.ActorFrame{
 	Name="Grid",
-	InitCommand=cmd(horizalign, left; vertalign, top; xy, 8, -52 ),
+	InitCommand=function(self) self:horizalign(left):vertalign(top):xy(8, -52 ) end,
 }
 
 
@@ -76,7 +78,7 @@ Grid[#Grid+1] = Def.Sprite{
 	Name="BackgroundBlocks",
 	Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
-	InitCommand=cmd(diffuse, color("#182025") ),
+	InitCommand=function(self) self:diffuse(color("#182025")) end,
 	OnCommand=function(self)
 		local width = self:GetWidth()
 		local height= self:GetHeight()
@@ -92,7 +94,7 @@ for RowNumber=1,num_rows do
 		Name="Blocks_"..RowNumber,
 		Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
-		InitCommand=cmd(diffusealpha,0),
+		InitCommand=function(self) self:diffusealpha(0) end,
 		OnCommand=function(self)
 			local width = self:GetWidth()
 			local height= self:GetHeight()
@@ -100,15 +102,10 @@ for RowNumber=1,num_rows do
 			self:zoomto(width * num_columns * GridZoomX, height * BlockZoomY)
 		end,
 		SetCommand=function(self, params)
-			-- our grid only supports charts with up to a 20-block difficulty meter
-			-- but charts can have higher difficulties
-			-- handle that here by clamping the value to be between 1 and, at most, 20
-			local meter = clamp( params.Meter, 1, num_columns )
-
+			-- the engine's Steps::TidyUpData() method ensures that difficulty meters are positive
+			-- (and does not seem to enforce any upper bound that I can see)
 			self:customtexturerect(0, 0, num_columns, 1)
-			self:cropright( 1 - (meter * (1/num_columns)) )
-
-			-- diffuse and set each chart's difficulty meter
+			self:cropright( 1 - (params.Meter * (1/num_columns)) )
 			self:diffuse( DifficultyColor(params.Difficulty) )
 		end,
 		UnsetCommand=function(self)
@@ -116,10 +113,8 @@ for RowNumber=1,num_rows do
 		end
 	}
 
-	Grid[#Grid+1] = Def.BitmapText{
+	Grid[#Grid+1] = LoadFont("_wendy small")..{
 		Name="Meter_"..RowNumber,
-		Font="_wendy small",
-
 		InitCommand=function(self)
 			local height = self:GetParent():GetChild("Blocks_"..RowNumber):GetHeight()
 			self:horizalign(right)
@@ -132,7 +127,7 @@ for RowNumber=1,num_rows do
 			self:diffuse( DifficultyColor(params.Difficulty) )
 			self:settext(params.Meter)
 		end,
-		UnsetCommand=cmd(settext, ""; diffuse,color("#182025")),
+		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 	}
 end
 

@@ -72,7 +72,7 @@ local t = Def.ActorFrame{
 
 			-- Song Artist
 			LoadFont("Common Normal")..{
-				InitCommand=cmd(horizalign,left; xy, 5,-12; maxwidth,WideScale(225,260) ),
+				InitCommand=function(self) self:horizalign(left):xy(5,-12):maxwidth(WideScale(225,260)) end,
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						local course = GAMESTATE:GetCurrentCourse()

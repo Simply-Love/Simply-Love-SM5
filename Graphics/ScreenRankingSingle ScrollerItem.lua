@@ -1,14 +1,14 @@
 local HighScoreRow = Def.ActorFrame{
 	-- setting ztest to true allows masking
-	InitCommand=cmd(ztest, true),
+	InitCommand=function(self) self:ztest(true) end,
 
 	Def.Quad{
-		InitCommand=cmd(zoomto, _screen.w,60 ),
-		OnCommand=cmd(diffuse,Color.Black; diffusealpha,0.7)
+		InitCommand=function(self) self:zoomto(_screen.w, 60) end,
+		OnCommand=function(self) self:diffuse(Color.Black):diffusealpha(0.7) end
 	},
 
 	Def.Banner{
-		InitCommand=cmd(x,WideScale(-280,-320); halign,0; scaletoclipped,102,40; diffusealpha,0.2 ),
+		InitCommand=function(self) self:x(WideScale(-280,-320)):horizalign(left):scaletoclipped(102,40):diffusealpha(0.2) end,
 		SetCommand=function(self, params)
 			if params.Song and params.Song:GetBannerPath() then
 				self:LoadFromCachedBanner( params.Song:GetBannerPath() )
@@ -18,7 +18,7 @@ local HighScoreRow = Def.ActorFrame{
 
 	--the name of the song, on top of the graphical banner
 	LoadFont("Common Normal")..{
-		InitCommand=cmd(x,WideScale(-220,-280); halign,0; shadowlength,1; _wrapwidthpixels,264; maxheight,58; maxwidth,280),
+		InitCommand=function(self) self:x(WideScale(-220,-280)):horizalign(left):shadowlength(1):_wrapwidthpixels(264):maxheight(58):maxwidth(280) end,
 		SetCommand=function(self, params)
 			if params.Song then
 				self:settext( params.Song:GetDisplayFullTitle() )
@@ -78,7 +78,7 @@ for key, difficulty in ipairs(DifficultiesToShow) do
 	HighScore[#HighScore+1] = Def.BitmapText{
 		Font="Common Normal",
 		Name="HighScore_"..difficulty,
-		InitCommand=cmd(x,WideScale(140,40) + (key-1)*100; zoom,0.8; horizalign, center)
+		InitCommand=function(self) self:x(WideScale(140,40) + (key-1)*100):zoom(0.8):horizalign(center) end
 	}
 
 end

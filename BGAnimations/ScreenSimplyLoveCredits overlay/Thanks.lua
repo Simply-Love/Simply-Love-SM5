@@ -49,7 +49,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, and CrashCringle12."
+			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, and natano."
 		}
 	},
 

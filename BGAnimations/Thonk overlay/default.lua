@@ -1008,7 +1008,7 @@ end
 local af = Def.ActorFrame{
 	InitCommand=function(self) self:effectclock('music'):SetUpdateFunction( Update ) end,
 
-	OnCommand=cmd(sleep,.05;queuecommand,"Thonk"),
+	OnCommand=function(self) self:sleep(0.05):queuecommand("Thonk") end,
 	ThonkCommand=function(self)
 
 		--SM( SCREENMAN:GetTopScreen():GetName() )
@@ -1019,10 +1019,10 @@ local af = Def.ActorFrame{
 
 	LoadActor("thonk.png")..{
 		InitCommand=function(self) taronuke_thonk_giant1 = self end,
-		OnCommand=cmd(visible,false;scaletofit,0,0,sw/2,sh/2;Center),
-		HideThonkMessageCommand=cmd(stoptweening;visible,false;stopeffect;),
-		--ThonkFadeInMessageCommand=cmd(stoptweening;visible,true;stopeffect;scaletofit,0,0,sw*.4,sh*.4;Center;diffusealpha,0;linear,spb*32;diffusealpha,.1;scaletofit,0,0,sw*.5,sh*.5;Center;),
-		GiantThonkMessageCommand=cmd(stoptweening;vibrate;effectmagnitude,6,6,0;diffusealpha,.2;linear,spb*2;scaletofit,0,0,sw*1,sh*1;Center;diffusealpha,.6;linear,spb*2;scaletofit,0,0,sw*1.5,sh*1.5;Center;diffusealpha,0;),
+		OnCommand=function(self) self:visible(false):scaletofit(0,0,sw/2,sh/2):Center() end,
+		HideThonkMessageCommand=function(self) self:stoptweening():visible(false):stopeffect() end,
+		-- ThonkFadeInMessageCommand=function(self) self:stoptweening():visible(true):stopeffect():scaletofit(0,0,sw*0.4,sh*0.4):Center():diffusealpha(0):linear(spb*32):diffusealpha(0.1):scaletofit(0,0,sw*0.5,sh*0.5):Center() end,
+		GiantThonkMessageCommand=function(self) self:stoptweening():vibrate():effectmagnitude(6,6,0):diffusealpha(0.2):linear(spb*2):scaletofit(0,0,sw*1,sh*1):Center():diffusealpha(0.6):linear(spb*2):scaletofit(0,0,sw*1.5,sh*1.5):Center():diffusealpha(0) end,
 	},
 
 	Def.ActorFrameTexture {
@@ -1036,32 +1036,32 @@ local af = Def.ActorFrame{
 		end,
 
 		Def.ActorProxy{
-			OnCommand=cmd(queuecommand,"GetProxy"),
+			OnCommand=function(self) self:queuecommand("GetProxy") end,
 			GetProxyCommand=function(self) if SCREENMAN:GetTopScreen():GetChild("Underlay") then self:SetTarget( SCREENMAN:GetTopScreen():GetChild("Underlay") ) end end,
 		},
 		Def.ActorProxy{
-			OnCommand=cmd(queuecommand,"GetProxy"),
+			OnCommand=function(self) self:queuecommand("GetProxy") end,
 			GetProxyCommand=function(self) if SCREENMAN:GetTopScreen():GetChild("MemoryCardDisplayP1") then self:SetTarget( SCREENMAN:GetTopScreen():GetChild("MemoryCardDisplayP1") ) end end,
 		},
 		Def.ActorProxy{
-			OnCommand=cmd(queuecommand,"GetProxy"),
+			OnCommand=function(self) self:queuecommand("GetProxy") end,
 			GetProxyCommand=function(self) if SCREENMAN:GetTopScreen():GetChild("MemoryCardDisplayP2") then self:SetTarget( SCREENMAN:GetTopScreen():GetChild("MemoryCardDisplayP2") ) end end,
 		},
 
 		LoadActor("thonk.png")..{
 			InitCommand=function(self) taronuke_thonk_giant2 = self end,
-			OnCommand=cmd(visible,false;scaletofit,0,0,sw/2,sh/2;Center),
-			HideThonkMessageCommand=cmd(stoptweening;visible,false;stopeffect;),
-			--ThonkFadeInMessageCommand=cmd(stoptweening;visible,true;stopeffect;scaletofit,0,0,sw*.4,sh*.4;Center;diffusealpha,0;linear,spb*32;diffusealpha,.2;scaletofit,0,0,sw*.5,sh*.5;Center;),
-			GiantThonkMessageCommand=cmd(stoptweening;vibrate;effectmagnitude,6,6,0;diffusealpha,.2;linear,spb*2;scaletofit,0,0,sw*1,sh*1;Center;diffusealpha,.6;linear,spb*2;scaletofit,0,0,sw*1.5,sh*1.5;Center;diffusealpha,0;),
+			OnCommand=function(self) self:visible(false):scaletofit(0,0,sw/2,sh/2):Center() end,
+			HideThonkMessageCommand=function(self) self:stoptweening():visible(false):stopeffect() end,
+			-- ThonkFadeInMessageCommand=function(self) self:stoptweening():visible(true):stopeffect():scaletofit(0,0,sw*.4,sh*.4):Center():diffusealpha(0):linear(spb*32):diffusealpha(0.2):scaletofit(0,0,sw*0.5,sh*0.5):Center() end,
+			GiantThonkMessageCommand=function(self) self:stoptweening():vibrate():effectmagnitude(6,6,0):diffusealpha(0.2):linear(spb*2):scaletofit(0,0,sw*1,sh*1):Center():diffusealpha(0.6):linear(spb*2):scaletofit(0,0,sw*1.5,sh*1.5):Center():diffusealpha(0) end,
 		},
 
 		Def.Sprite{
 			OnCommand=function(self)
 				self:SetTexture( taronuke_thonk_aft:GetTexture() ):Center():zoom(1.05):diffusealpha(0):blend(1)
 			end,
-			PulseMessageCommand=cmd(stoptweening;zoom,1.05;diffusealpha,pulse_strength;linear,spb;zoom,1;diffusealpha,0),
-			GiantThonkMessageCommand=cmd(stoptweening;zoom,1;diffusealpha,0;linear,spb*2;zoom,1.1;diffusealpha,1;linear,spb*2;zoom,1;diffusealpha,0),
+			PulseMessageCommand=function(self) self:stoptweening():zoom(1.05):diffusealpha(pulse_strength):linear(spb):zoom(1):diffusealpha(0) end,
+			GiantThonkMessageCommand=function(self) self:stoptweening():zoom(1):diffusealpha(0):linear(spb*2):zoom(1.1):diffusealpha(1):linear(spb*2):zoom(1):diffusealpha(0) end,
 
 		},
 
@@ -1069,8 +1069,8 @@ local af = Def.ActorFrame{
 			OnCommand=function(self)
 				self:SetTexture( taronuke_thonk_aft:GetTexture() ):Center():zoom(1.05):diffusealpha(0):blend(1)
 			end,
-			PulseMessageCommand=cmd(stoptweening;zoom,1.05;diffusealpha,pulse_strength;linear,spb;zoom,1;diffusealpha,0),
-			GiantThonkMessageCommand=cmd(stoptweening;zoom,1;diffusealpha,0;linear,spb*2;zoom,1.1;diffusealpha,1;linear,spb*2;zoom,1;diffusealpha,0),
+			PulseMessageCommand=function(self) self:stoptweening():zoom(1.05):diffusealpha(pulse_strength):linear(spb):zoom(1):diffusealpha(0) end,
+			GiantThonkMessageCommand=function(self) self:stoptweening():zoom(1):diffusealpha(0):linear(spb*2):zoom(1.1):diffusealpha(1):linear(spb*2):zoom(1):diffusealpha(0) end,
 		},
 
 	},
@@ -1079,8 +1079,8 @@ local af = Def.ActorFrame{
 		OnCommand=function(self)
 			self:SetTexture( taronuke_thonk_aft:GetTexture() ):Center():zoom(1.05):diffusealpha(0):blend(1)
 		end,
-		PulseMessageCommand=cmd(stoptweening;zoom,1.05;diffusealpha,pulse_strength;linear,spb;zoom,1;diffusealpha,0),
-		GiantThonkMessageCommand=cmd(stoptweening;zoom,1;diffusealpha,0;linear,spb*2;zoom,1.1;diffusealpha,1;linear,spb*2;zoom,1;diffusealpha,0),
+		PulseMessageCommand=function(self) self:stoptweening():zoom(1.05):diffusealpha(pulse_strength):linear(spb):zoom(1):diffusealpha(0) end,
+		GiantThonkMessageCommand=function(self) self:stoptweening():zoom(1):diffusealpha(0):linear(spb*2):zoom(1.1):diffusealpha(1):linear(spb*2):zoom(1):diffusealpha(0) end,
 	},
 
 }
@@ -1092,7 +1092,7 @@ for i=1,20 do
 			self:visible(false)
 			table.insert(splash_table,self)
 		end,
-		HideCommand=cmd(visible,false),
+		HideCommand=function(self) self:visible(false) end,
 		LoadActor("splash 4x3.png")..{
 			InitCommand=function(self)
 				self:animate(false)

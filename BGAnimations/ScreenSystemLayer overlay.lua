@@ -48,7 +48,7 @@ t[#t+1] = Def.ActorFrame {
 		end
 		self:playcommand( "Off" )
 	end,
-	HideSystemMessageMessageCommand=cmd(finishtweening),
+	HideSystemMessageMessageCommand=function(self) self:finishtweening() end,
 
 	Def.Quad {
 		InitCommand=function(self)
@@ -76,7 +76,7 @@ t[#t+1] = Def.ActorFrame {
 
 -- Wendy CreditText at lower-center of screen
 t[#t+1] = LoadFont("_wendy small")..{
-	InitCommand=cmd(xy, _screen.cx, _screen.h-16; zoom,0.5; horizalign,center ),
+	InitCommand=function(self) self:xy(_screen.cx, _screen.h-16):zoom(0.5):horizalign(center) end,
 
 	OnCommand=function(self) self:playcommand("Refresh") end,
 	ScreenChangedMessageCommand=function(self) self:playcommand("Refresh") end,

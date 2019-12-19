@@ -22,7 +22,7 @@ If *all* stepcharts belonging to a given song are above that threshold, that son
 
 Casual Mode makes use of a simple txt file to explicitly specify what song groups should be available in Casual Mode.  The file is titled **CasualMode-Groups.txt** and is located at *./Simply Love/Other/CasualMode-Groups.txt*
 
-Simply Love ships with 28 unique groups specified, chosen because they feature charts with full difficulties.  You can view the list [here](./Other/CasualMode-Groups.txt).  These are reasonable, trusted defaults, and if you are a machine operator looking for more novice content for your machine, you can start by adding these packs!
+Simply Love ships with 28 unique groups specified, chosen because they feature charts with full difficulties.  You can view the list [here](./CasualMode-Groups.txt).  These are reasonable, trusted defaults, and if you are a machine operator looking for more novice content for your machine, you can start by adding these packs!
 
 Machine operators can customize this list as needed by adding (or removing) Groups by name, one per line.
 
@@ -34,7 +34,7 @@ If no groups are specified in this file (i.e., the file is empty), all packs wit
 
 Casual Mode makes use of a second simple txt file to specify a default song that Casual Mode will always start on.  The file is titled **CasualMode-DefaultSong.txt** and is located at *./Simply Love/Other/CasualMode-DefaultSong.txt*
 
-You can view the file as it ships with Simply Love [here](./Other/CasualMode-DefaultSong.txt).  The file follows the format of:
+You can view the file as it ships with Simply Love [here](./CasualMode-DefaultSong.txt).  The file follows the format of:
 
 ```
 group name/song name
