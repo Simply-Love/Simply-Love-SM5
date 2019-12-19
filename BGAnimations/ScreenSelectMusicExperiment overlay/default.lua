@@ -116,10 +116,17 @@ local t = Def.ActorFrame {
 		if params.song then
 			-- Here we determine which set of steps we should be on when the song changes. params_for_input.DifficultyIndex is used by the cursor
 			-- to figure out where to display.
-			
+			if SL.Global.Order == "Difficulty/BPM" and params.index then
+				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
+					if steps:GetMeter() == DifficultyBPM[params.index].difficulty then
+						GAMESTATE:SetCurrentSteps(0,steps) --TODO this only works for player 1
+						params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
+						break
+					end
+				end
 			--if we're grouping by grade then we want to keep the chosen grade set for the next song. (only if at least one set of steps has a grade)
 			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
-			if SL.Global.GroupType == "Grade" and SL.Global.GradeGroup ~= "No_Grade" then
+			elseif SL.Global.GroupType == "Grade" and SL.Global.GradeGroup ~= "No_Grade" then
 				local currentGrade = SL.Global.GradeGroup
 				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
 					local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(params.song,steps):GetHighScores()[1] --TODO this only works for player 1
