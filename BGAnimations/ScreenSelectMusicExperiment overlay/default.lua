@@ -52,7 +52,6 @@ local t = Def.ActorFrame {
 		params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
 		MESSAGEMAN:Broadcast("CurrentSongChanged",{song=GAMESTATE:GetCurrentSong()})
 	end,
-	
 	OnCommand=function(self)
 		if PREFSMAN:GetPreference("MenuTimer") then self:queuecommand("Listen") end
 	end,
@@ -116,6 +115,8 @@ local t = Def.ActorFrame {
 		if params.song then
 			-- Here we determine which set of steps we should be on when the song changes. params_for_input.DifficultyIndex is used by the cursor
 			-- to figure out where to display.
+			
+			--if order of songs is difficulty/bpm then we want to have the correct difficulty automatically selected
 			if SL.Global.Order == "Difficulty/BPM" and params.index then
 				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
 					if steps:GetMeter() == DifficultyBPM[params.index].difficulty then
@@ -224,6 +225,8 @@ local t = Def.ActorFrame {
 	LoadActor("./TagMenu/default.lua"),
 	-- The menu for changing the order songs display in
 	LoadActor("./OrderMenu/default.lua"),
+	--Stuff related to searching
+	LoadActor("./Search/default.lua"),
 	
 	-- Sort Menu Stuff
 	

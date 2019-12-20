@@ -39,8 +39,7 @@ local function input(event)
 				screen:SetNextScreenName("ScreenFilterOptions")
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
 			elseif focus.kind == "Text" then
-				SM("Add search function")
-				overlay:queuecommand("DirectInputToEngine")
+				sortmenu:queuecommand("DirectInputToSearchMenu")
 			elseif focus.new_overlay then
 				if focus.new_overlay == "TestInput" then
 					sortmenu:queuecommand("DirectInputToTestInput")

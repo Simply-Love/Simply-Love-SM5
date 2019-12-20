@@ -85,6 +85,15 @@ local t = Def.ActorFrame {
 		screen:RemoveInputCallback(sortmenu_input)
 		self:playcommand("HideSortMenu")
 	end,
+	DirectInputToSearchMenuMessageCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+		--overlay:playcommand("ShowSearchMenu")
+		screen:RemoveInputCallback(sortmenu_input)
+		SM("Beginning search")
+		MESSAGEMAN:Broadcast("BeginSearch")
+		self:playcommand("HideSortMenu")
+	end,
 	AssessAvailableChoicesCommand=function(self)
 		self:visible(false)
 

@@ -12,7 +12,7 @@ local max_chars = 64
 local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualTheme")
 local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")
 
-local switch_to_songs = function(group_name)
+switch_to_songs = function(group_name)
 	local songs = PruneSongList(GetSongList(group_name))
 	if SL.Global.Order == "Difficulty/BPM" then
 		local newList = CreateSpecialSongList(songs)
@@ -100,7 +100,6 @@ local item_mt = {
 					       :linear( 0.12 ):zoom( 0.9 ):y( _screen.cy-100 )
 				end,
 				SwitchCommand=function(subself) switch_to_songs(self.groupName) end,
-			
 
 				-- back of folder
 				LoadActor("./img/folderBack.png")..{
