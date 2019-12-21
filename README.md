@@ -31,7 +31,7 @@ If you are having trouble installing StepMania or getting it to run on your comp
 
 ## Installation
 
-Head to the [Releases Page](https://github.com/dguzek/Simply-Love-SM5/releases) to download the most recent formal release of Simply Love.  If you opt to download directly from the *master* branch instead, you may get new features but also newer bugs.
+Head to the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) to download the most recent formal release of Simply Love.  If you opt to download directly from the *master* branch instead, you may get new features but also newer bugs.
 
 To install this theme, unzip it and move the resulting directory inside the *Themes* folder in your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).
 

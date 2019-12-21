@@ -274,7 +274,7 @@ local player_af = Def.ActorFrame{
 
 	InitCommand=function(self)
 		-- this makes for a more convenient coordinate system
-		-- (what does that^ mean? -dguzek)
+		-- (what does that^ mean? --quietly-turning)
 		self:align(0,0)
 	end,
 	OnCommand=function(self)

@@ -21,7 +21,7 @@ return Def.Actor{
 		local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
 		-- a PLayerStageStats object from the engine
-		-- see: http://dguzek.github.io/Lua-For-SM5/LuaAPI#Actors-PlayerStageStats
+		-- see: http://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Actors-PlayerStageStats
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 		storage.grade = pss:GetGrade()
