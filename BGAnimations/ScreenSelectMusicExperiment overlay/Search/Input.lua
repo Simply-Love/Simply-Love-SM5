@@ -14,6 +14,7 @@ Handle.Start = function(event)
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		if info.type == "song" and GAMESTATE:GetCurrentSong() ~= info.song then
 			GAMESTATE:SetCurrentSong(info.song)
+			MESSAGEMAN:Broadcast("SetSongViaSearch")
 		end
 		if info.group ~= "nothing" then
 			switch_to_songs(info.group)

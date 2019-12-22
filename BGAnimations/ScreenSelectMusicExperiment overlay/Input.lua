@@ -275,16 +275,14 @@ t.Handler = function(event)
 				end
 			-- proceed to the next wheel
 			elseif event.GameButton == "Start" then
-				if t.WheelWithFocus:get_info_at_focus_pos().song == "CloseThisFolder" then
+				if t.WheelWithFocus == SongWheel and t.WheelWithFocus:get_info_at_focus_pos().song == "CloseThisFolder" then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 					CloseCurrentFolder()
 					return false
 				end
-
 				t.Enabled = false
 				t.WheelWithFocus.container:queuecommand("Start")
 				SwitchInputFocus(event.GameButton,{PlayerNumber=event.PlayerNumber})
-
 				if t.WheelWithFocus.container then --going from group to song
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 					t.WheelWithFocus.container:queuecommand("Unhide")

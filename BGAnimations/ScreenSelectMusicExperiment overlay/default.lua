@@ -169,8 +169,16 @@ local t = Def.ActorFrame {
 			end
 		end
 	end,
-	
-				
+	--if we choose a song in Search then we want to jump straight to it even if we're on the group wheel
+	SetSongViaSearchMessageCommand=function(self)
+		if Input.WheelWithFocus == GroupWheel then --going from group to song
+			Input.WheelWithFocus.container:playcommand("Start")
+			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+			Input.WheelWithFocus = SongWheel
+			Input.WheelWithFocus.container:playcommand("Unhide")
+			SL.Global.GroupToSong = true
+		end
+	end,		
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),
 	LoadActor("./PlayerOptionsShared.lua", {row, col, Input}),
