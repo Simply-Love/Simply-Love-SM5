@@ -125,6 +125,16 @@ return Def.ActorFrame{
 						self:settext(descriptions[params.index])
 					end
 				},
+				LoadFont("Common Normal")..{
+					Name='Current Order',
+					InitCommand=function(self)
+						self:y(160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
+					end,
+					OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+					SetCommand=function(self, params)
+						self:settext("Current Order: "..SL.Global.Order)
+					end
+				},
 
 			},
 

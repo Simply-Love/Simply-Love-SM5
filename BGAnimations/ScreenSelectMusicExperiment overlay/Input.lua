@@ -83,35 +83,57 @@ t.AllowLateJoin = function()
 	return false
 end
 
-t.DifficultyExists = function(difficulty)
+-- See if the current song has a chart for a given difficulty
+-- If no difficulty is given it uses the last seen difficulty
+t.DifficultyExists = function(validate, difficulty)
+	local validate = validate or false
 	local song = GAMESTATE:GetCurrentSong()
 	local diff = difficulty or args.DifficultyIndex --use DifficultyIndex from params_for_input if no difficulty is supplied
 	if song then 
-		if song:GetOneSteps(GetStepsType(),diff) then return true
+		if validate then if song:GetOneSteps(GetStepsType(),diff) and ValidateChart(song,song:GetOneSteps(GetStepsType(),diff)) then 
+			return true end
+		elseif song:GetOneSteps(GetStepsType(),diff) then 
+			return true
 		else return false end
 	end
 end
 
-t.NextEasiest = function(difficulty)
+-- Looks for the next easiest difficulty. Returns nil if none can be found
+-- If validate is true then it checks that the chart also passes all filters 
+-- (used to automatically select a valid chart when switching songs if filters are enabled)
+t.NextEasiest = function(validate, difficulty)
+	local validate = validate or false
 	local song = GAMESTATE:GetCurrentSong()
 	local diff = difficulty or args.DifficultyIndex --use DifficultyIndex from params_for_input if no difficulty is supplied
 	diff = diff - 1 --the current difficulty will always be there so we want to start from the next lowest
 	if song then
 	local t = {}
 		for i=diff,0,-1 do
-			if song:GetOneSteps(GetStepsType(),i) then return song:GetOneSteps(GetStepsType(),i) end
+			if validate then if song:GetOneSteps(GetStepsType(),i) and ValidateChart(song,song:GetOneSteps(GetStepsType(),i)) then 
+				return song:GetOneSteps(GetStepsType(),i) end
+			elseif song:GetOneSteps(GetStepsType(),i) then 
+				return song:GetOneSteps(GetStepsType(),i) 
+			end
 		end
 		return nil
 	end
 end
 
-t.NextHardest = function(difficulty)
+-- Looks for the next hardest difficulty. Returns nil if none can be found
+-- If validate is true then it checks that the chart also passes all filters 
+-- (used to automatically select a valid chart when switching songs if filters are enabled)
+t.NextHardest = function(validate, difficulty)
+	local validate = validate or false
 	local song = GAMESTATE:GetCurrentSong()
 	local diff = difficulty or args.DifficultyIndex --use DifficultyIndex from params_for_input if no difficulty is supplied
 	diff = diff + 1 --the current difficulty will always be there so we want to start from the next highest
 	if song then
 		for i=diff,5 do
-			if song:GetOneSteps(GetStepsType(),i) then return song:GetOneSteps(GetStepsType(),i) end
+			if validate then if song:GetOneSteps(GetStepsType(),i) and ValidateChart(song,song:GetOneSteps(GetStepsType(),i)) then 
+				return song:GetOneSteps(GetStepsType(),i) end
+			elseif song:GetOneSteps(GetStepsType(),i) then 
+				return song:GetOneSteps(GetStepsType(),i) 
+			end
 		end
 		return nil
 	end
@@ -253,7 +275,7 @@ t.Handler = function(event)
 				end
 			-- proceed to the next wheel
 			elseif event.GameButton == "Start" then
-				if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
+				if t.WheelWithFocus:get_info_at_focus_pos().song == "CloseThisFolder" then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 					CloseCurrentFolder()
 					return false
@@ -292,6 +314,7 @@ t.Handler = function(event)
 			local index = ActiveOptionRow[event.PlayerNumber]
 			if event.GameButton == "MenuRight" then
 				if index ~= #OptionRows then
+					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 					-- The OptionRowItem for changing display doesn't do anything. So we broadcast a message with which pane to display.
 					-- Then we increment the wheel normally so the option displays what pane we're looking at. Can't use the save/load
 					-- thing because that only saves when you go to start instead of with every change. Maybe look in to this. 
@@ -308,6 +331,7 @@ t.Handler = function(event)
 				end
 			elseif event.GameButton == "MenuLeft" then
 				if index ~= #OptionRows then
+					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 					if ActiveOptionRow[event.PlayerNumber] == 2 then
 						MESSAGEMAN:Broadcast("HidePlayerOptionsPane"..SL.Global.ActivePlayerOptionsPane+1)
 						SL.Global.ActivePlayerOptionsPane = (SL.Global.ActivePlayerOptionsPane - 1) % 3

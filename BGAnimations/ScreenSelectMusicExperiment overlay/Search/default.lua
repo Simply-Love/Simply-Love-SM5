@@ -58,7 +58,6 @@ local t = Def.ActorFrame {
 		self:visible(false)
 		searchMenu_input = LoadActor("./Input.lua", {af=self, Scrollers=scrollers})
 	end,
-	DirectInputToSearchMenuMessageCommand=function(self) self:queuecommand("Stall") end,
 	ChooseResultsMessageCommand=function(self) 
 		self:visible(true):sleep(0.5):queuecommand("CaptureTest")
 	end,
@@ -72,7 +71,7 @@ local t = Def.ActorFrame {
 	-- the OffCommand will have been queued, when it is appropriate, from ./Input.lua
 	-- sleep for 0.5 seconds to give the PlayerFrames time to tween out
 	-- and queue a call to Finish() so that the engine can wrap things up
-	OffCommand=function(self)
+	OffCommand=function(self)			
 		self:sleep(0.5):queuecommand("Finish")
 	end,
 	FinishTextMessageCommand=function(self)
@@ -117,11 +116,11 @@ local t = Def.ActorFrame {
 
 -- top mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-110):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(580,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-110):MaskSource() end
 }
 -- bottom mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+111):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(580,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+111):MaskSource() end
 }
 
 --TODO we don't have two players for now

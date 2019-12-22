@@ -2,10 +2,10 @@ local sort_wheel = ...
 
 -- this handles user input while in the SortMenu
 local function input(event)
+	SOUND:StopMusic()
 	if not (event and event.PlayerNumber and event.button) then
 		return false
 	end
-	SOUND:StopMusic()
 
 	local screen   = SCREENMAN:GetTopScreen()
 	local overlay  = screen:GetChild("Overlay")

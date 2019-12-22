@@ -66,7 +66,6 @@ local t = Def.ActorFrame{
 			local song = GAMESTATE:GetCurrentSong()
 			if song then --no song if we're on "Close This Folder"
 				if GetActiveFilters() then table.insert(currentTags, {displayname = "Filters Active"}) end
-				if song:HasSignificantBPMChangesOrStops() then table.insert(currentTags,{displayname = "BPM Changes"}) end
 				for k, v in pairs(GetGroups("Tag")) do
 					if FindInTable(song,GetSongList(v,"Tag")) then
 						table.insert(currentTags,{displayname = v})

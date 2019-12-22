@@ -235,11 +235,11 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self)
 			self:zoom(0.75):diffuse(Color.White):xy(275, -35):horizalign(left):vertalign(top)
 		end,
-		SetSongWheelCommand=function(self)
-			self:settext(GetActiveFiltersString())
+		CurrentGroupChangedMessageCommand=function(self)
+			self:visible(true):settext(GetActiveFiltersString())
 		end,
 		SetGroupWheelCommand=function(self)
-			self:settext(GetActiveFiltersString())
+			self:visible(true):settext(GetActiveFiltersString())
 		end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end
 	},

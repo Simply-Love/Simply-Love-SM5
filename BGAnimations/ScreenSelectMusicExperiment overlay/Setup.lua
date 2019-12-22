@@ -87,23 +87,6 @@ local GetDefaultSong = function()
 end
 
 ---------------------------------------------------------------------------
--- prune out groups that have no valid steps
--- passed an indexed table of strings representing potential group names
--- returns an indexed table of group names as strings
-
-local PruneGroups = function(_groups)
-	local groups = {}
-	local songs
-	for group in ivalues( _groups ) do
-		songs = PruneSongList(GetSongList(group))
-		if #songs > 0 then
-			groups[#groups+1] = group
-		end
-	end
-	return groups
-end
-
----------------------------------------------------------------------------
 -- initializes sick_wheel groups
 -- this function is called as a result of GroupTypeChangedMessageCommand broadcast by SortMenu_InputHandler.lua and
 -- heard by default.lua (for ScreenSelectMusicExperiment overlay)

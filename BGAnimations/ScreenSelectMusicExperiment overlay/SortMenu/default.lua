@@ -48,11 +48,19 @@ local t = Def.ActorFrame {
 	HideSortMenuCommand=function(self) self:visible(false) end,
 
 	DirectInputToSortMenuMessageCommand=function(self)
+		self:queuecommand("Stall")
+	end,
+	StallCommand=function(self) 
+		self:playcommand("ShowSortMenu")
+		self:visible(true):sleep(0.35):queuecommand("CaptureTest")
+	end,
+	CaptureTestCommand=function(self)
+		SOUND:StopMusic()
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
-		screen:AddInputCallback(sortmenu_input)
-		self:playcommand("ShowSortMenu")
+
 		overlay:playcommand("HideTestInput")
+		screen:AddInputCallback(sortmenu_input)
 	end,
 	DirectInputToTestInputCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
@@ -88,9 +96,7 @@ local t = Def.ActorFrame {
 	DirectInputToSearchMenuMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
-		--overlay:playcommand("ShowSearchMenu")
 		screen:RemoveInputCallback(sortmenu_input)
-		SM("Beginning search")
 		MESSAGEMAN:Broadcast("BeginSearch")
 		self:playcommand("HideSortMenu")
 	end,

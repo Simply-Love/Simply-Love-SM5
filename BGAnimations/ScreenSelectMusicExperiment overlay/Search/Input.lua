@@ -18,9 +18,9 @@ Handle.Start = function(event)
 		if info.group ~= "nothing" then
 			switch_to_songs(info.group)
 			SL.Global.CurrentGroup = info.group
-			MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=info.group})
 			MESSAGEMAN:Broadcast("GroupTypeChanged")
 		end
+		MESSAGEMAN:Broadcast("StartButton")
 		topscreen:queuecommand("Finish"):sleep(0.4)
 	end
 end
@@ -67,6 +67,7 @@ end
 Handle.MenuDown = Handle.MenuRight
 Handle.DownRight = Handle.MenuRight
 
+
 Handle.Back = function(event)
 	local topscreen = SCREENMAN:GetTopScreen()
 
@@ -76,7 +77,7 @@ Handle.Back = function(event)
 		topscreen:queuecommand("Finish"):sleep(0.4)
 	end
 end
-
+Handle.Select = Handle.Back
 
 local InputHandler = function(event)
 	if not event or not event.button then return false end

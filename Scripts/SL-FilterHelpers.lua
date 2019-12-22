@@ -291,7 +291,8 @@ ValidateChart = function(song, chart, inputFilters)
 		for k,v in pairs(GetGroups("Tag")) do
 			if SL.Global.ActiveFilters["HideTags"][v] == true then
 				if IsTaggedSong(song, v) then return false end
-				if v == "No Tags Set" then if not IsTaggedSong(song) then return false end end
+				if v == "BPM Changes" then if song:HasSignificantBPMChangesOrStops() then return false end end
+				if v == "No Tags Set" then if not IsTaggedSong(song) and not song:HasSignificantBPMChangesOrStops() then return false end end
 			end
 		end
 	end
@@ -372,7 +373,7 @@ PruneSongList= function(song_list)
 	for song in ivalues(song_list) do
 		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(GetStepsType()) then
-			for chart in ivalues(song:GetAllSteps()) do
+			for chart in ivalues(song:GetStepsByStepsType(GetStepsType())) do
 				if ValidateChart(song, chart, filters) then songs[#songs+1] = song break end
 			end
 		end

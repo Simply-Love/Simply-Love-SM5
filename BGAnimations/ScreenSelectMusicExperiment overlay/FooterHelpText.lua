@@ -31,6 +31,14 @@ if hours > 0 then
 end
 
 return Def.ActorFrame {
+
+	Def.Quad{
+		Name="Footer",
+		InitCommand=function(self)
+			self:zoomto(_screen.w, 32):vertalign(bottom):halign(0):y(_screen.h)
+			self:diffuse({0.65,0.65,0.65,1})
+		end,
+	},
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) 
 			self:xy(_screen.w - (_screen.w/10), _screen.h - 16):zoom(1):diffusealpha(1)
@@ -84,8 +92,5 @@ return Def.ActorFrame {
 		Name="Game Time",
 		Text=THEME:GetString("ScreenSelectMusicExperiment", "Gametime").." "..gametime,
 		
-	},
-
-
-
+	}
 }

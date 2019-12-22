@@ -16,7 +16,6 @@ CreateBarGraph = function(_w, _h)
 				if i < 10 then toPrint = toPrint.."  " end --double digits are 60 or 62 (1+space+other digit) so add an extra space if single digit
 				if i == 11 then toPrint = toPrint.." " end --11 has two ones so add another space
 				toPrint = toPrint.. " " .. tostring(minDif + i) .. " "
-				if num_dif == 1 then break end --for some reason runs one extra time if there's only one difficulty
 			end
 			text = {}
 			_, count = string.gsub(toPrint, " ", " ")
@@ -92,7 +91,6 @@ CreateBarGraph = function(_w, _h)
 			minDif = group_info[group]['Level'][1]['difficulty']
 			maxDif = group_info[group]['Level'][#group_info[group]['Level']]['difficulty']
 			num_dif = maxDif - minDif
-			if num_dif == 0 then num_dif = 1 end
 			x = _w / (num_dif)
 			if x < 10 then x = 10 --this will produce a minimum bar size of 15. smaller than that and number are very hard to read (consequence is that we can overflow)
 			elseif x > 20 then x = 20 end --don't want our graph to get too fat, this maxes out at 35

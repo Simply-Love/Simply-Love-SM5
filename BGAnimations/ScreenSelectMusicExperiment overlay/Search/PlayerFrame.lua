@@ -77,7 +77,7 @@ return Def.ActorFrame{
 			end
 			-- search for groups and songs that fit the searchTerm
 			local tempGroups = GetGroups()
-			for group in ivalues(tempGroups) do
+			for group in ivalues(PruneGroups(tempGroups)) do
 				if string.find(string.lower(group),string.lower(params.searchTerm),1,true) then
 					table.insert(scroller_data,{index=#scroller_data,displayname=GetGroupDisplayName(group),type="group",group=group})
 					local toWrite = "Song Group\n---------------\n"
@@ -94,7 +94,7 @@ return Def.ActorFrame{
 				end
 			end
 			for group in ivalues(tempGroups) do
-				for song in ivalues(GetSongList(group)) do
+				for song in ivalues(PruneSongList(GetSongList(group))) do
 					if string.find(string.lower(song:GetDisplayMainTitle()),string.lower(params.searchTerm),1,true) then
 						table.insert(scroller_data,{index=#scroller_data,displayname=song:GetDisplayMainTitle(),type="song",group=group,song=song})
 						descriptions[#descriptions+1] = "Group: "..GetGroupDisplayName(group).."\nLoaded from: "..song:GetGroupName()
@@ -125,7 +125,7 @@ return Def.ActorFrame{
 			InitCommand=function(self) self:xy(62,1) end,
 			OnCommand=function(self) end,
 
-			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
+			-- semi-transparent Quad to the right of this colored frame to present song or group info
 			Def.Quad {
 				InitCommand=function(self) self:vertalign(top):diffuse(0,0,0,0):zoomto(235,221):xy(-57,-111):halign(0) end,
 				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
@@ -139,7 +139,7 @@ return Def.ActorFrame{
 					local index = scroller:get_info_at_focus_pos().index
 					self:playcommand("Set",{index=index})
 				end,
-				-- description of each order
+				-- description of each item
 				LoadFont("Common Normal")..{
 					Name="Explanation",
 					InitCommand=function(self) self:align(0,0):xy(-50,-104):zoom(0.65):maxwidth(330):vertspacing(-2) end,
@@ -155,7 +155,8 @@ return Def.ActorFrame{
 					OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
 					SetCommand=function(self, params)
 						if #descriptions > 5 then 
-							self:settext(#descriptions-5 .." results found") 
+							local plural = #descriptions > 6 and "s" or ""
+							self:settext(#descriptions-5 .. " result"..plural.. " found") 
 						else
 							self:settext("No results found")
 						end
@@ -168,7 +169,11 @@ return Def.ActorFrame{
 					end,
 					OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
 					SetCommand=function(self, params)
-						self:settext("Search results for: "..params.searchTerm)
+						if params and params.searchTerm then
+							self:settext("Search results for: "..params.searchTerm)
+						else
+							self:settext("")
+						end
 					end
 				}
 			},

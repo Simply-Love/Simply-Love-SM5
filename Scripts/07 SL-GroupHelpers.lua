@@ -150,6 +150,7 @@ local function LoadTags()
 		table.insert(SortGroups.Tag, name)
 	end
 	table.insert(SortGroups.Tag, "No Tags Set")
+	table.insert(SortGroups.Tag, "BPM Changes")
 end
 
 -- Write whatever is in SortGroups.Tag to Tags.txt
@@ -276,6 +277,23 @@ GetStepsType = function()
 	-- techno is a special case with steps_type like "StepsType_Techno_Single8"
 	if game_name == "techno" then steps_type = steps_type.."8" end
 	return steps_type
+end
+
+---------------------------------------------------------------------------
+-- prune out groups that have no valid steps
+-- passed an indexed table of strings representing potential group names
+-- returns an indexed table of group names as strings
+
+PruneGroups = function(_groups)
+	local groups = {}
+	local songs
+	for group in ivalues( _groups ) do
+		songs = PruneSongList(GetSongList(group))
+		if #songs > 0 then
+			groups[#groups+1] = group
+		end
+	end
+	return groups
 end
 
 -- for the groups that are just numbers (Length, BPM) or ugly enums (Grade) we want to make it more descriptive
@@ -415,7 +433,10 @@ local CreateGroup = Def.ActorFrame{
 		for song in ivalues(SONGMAN:GetAllSongs()) do
 			-- this should be guaranteed by this point, but better safe than segfault
 			if song:HasStepsType(GetStepsType()) then
-				if not IsTaggedSong(song) then if group == "No Tags Set" then songs[#songs+1] = song end
+				if group == "BPM Changes" then
+					if song:HasSignificantBPMChangesOrStops() then songs[#songs+1] = song end
+				elseif group == "No Tags Set" then 
+					if not IsTaggedSong(song) and not song:HasSignificantBPMChangesOrStops() then songs[#songs+1] = song end
 				else
 					if IsTaggedSong(song, group) then
 						songs[#songs+1] = song
@@ -624,7 +645,9 @@ CreateSpecialSongList = function(songList)
 	DifficultyBPM = {}
 	for song in ivalues(songList) do
 		for i = 1,#song:GetStepsByStepsType(GetStepsType()) do
-			table.insert(DifficultyBPM,{song=song,difficulty=song:GetStepsByStepsType(GetStepsType())[i]:GetMeter(),bpm=song:GetDisplayBpms()[2]})
+			if ValidateChart(song,song:GetStepsByStepsType(GetStepsType())[i]) then
+				table.insert(DifficultyBPM,{song=song,difficulty=song:GetStepsByStepsType(GetStepsType())[i]:GetMeter(),bpm=song:GetDisplayBpms()[2]})
+			end
 		end
 	end
 	table.sort(DifficultyBPM, GetSortFunction())

@@ -18,7 +18,7 @@ local t = Def.ActorFrame {
 	end,
 	DirectInputToOrderMenuMessageCommand=function(self) self:queuecommand("Stall") end,
 	StallCommand=function(self) 
-		self:visible(true):sleep(0.5):queuecommand("CaptureTest")
+		self:visible(true):sleep(0.25):queuecommand("CaptureTest")
 	end,
 	CaptureTestCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( orderMenu_input ) end,
 

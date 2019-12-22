@@ -14,7 +14,6 @@ local OptionRows = setup.OptionRows
 local OptionsWheel = setup.OptionsWheel
 local GroupWheel = setup.GroupWheel
 local SongWheel = setup.SongWheel
-
 local row = setup.row
 local col = setup.col
 
@@ -40,7 +39,6 @@ local optionrow_item_mt = LoadActor("./OptionRowItemMT.lua")
 ---------------------------------------------------------------------------
 
 local t = Def.ActorFrame {
-	
 	InitCommand=function(self)
 		SL.Global.GoToOptions = false
 		SL.Global.GameplayReloadCheck = false
@@ -108,7 +106,6 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
-	
 	-- broadcast by SongMT as part of a wheel transition. Also broadcast from somewhere not in the theme. SongMT adds a song to params
 	-- while the other source doesn't so we can use that to check and only act on the one we want to (the SongMT one)
 	CurrentSongChangedMessageCommand=function(self, params)
@@ -151,22 +148,22 @@ local t = Def.ActorFrame {
 					end
 				end
 			--otherwise try to choose the same difficulty if it exists(challenge, expert, basic, etc)
-			elseif Input.DifficultyExists() then
+			elseif Input.DifficultyExists(true) then
 				GAMESTATE:SetCurrentSteps(0,params.song:GetOneSteps('StepsType_Dance_Single',params_for_input.DifficultyIndex))
 			--otherwise default to next closest
 			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
 			else
 				--check if there's an easier chart
-				local easier = Input.NextEasiest() and Difficulty:Reverse()[Input.NextEasiest():GetDifficulty()] or nil
+				local easier = Input.NextEasiest(true) and Difficulty:Reverse()[Input.NextEasiest(true):GetDifficulty()] or nil
 				--check if there's a harder chart
-				local harder = Input.NextHardest() and Difficulty:Reverse()[Input.NextHardest():GetDifficulty()] or nil
+				local harder = Input.NextHardest(true) and Difficulty:Reverse()[Input.NextHardest(true):GetDifficulty()] or nil
 				--if the difference between harder and current difficulty is greater than the difference between easier and current
 				--then we can throw away the harder steps as we know the easier is closer
 				if harder and easier then 
 					if harder - params_for_input.DifficultyIndex > params_for_input.DifficultyIndex - easier then harder = nil end
 				end
 				--if they're equally close then default to harder steps, otherwise, set to the closest difficulty
-				GAMESTATE:SetCurrentSteps(0,harder and Input.NextHardest() or easier and Input.NextEasiest())
+				GAMESTATE:SetCurrentSteps(0,harder and Input.NextHardest(true) or easier and Input.NextEasiest(true))
 				params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
 				
 			end
@@ -180,19 +177,20 @@ local t = Def.ActorFrame {
 	-- right now this just has the black rectangle going across the screen.
 	-- there are also left/right arrows and a different style of text that are disabled
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}), 
-	-- this has information about the groups - number of songs/charts/filters/# of passed charts
-	LoadActor("./GroupWheelShared.lua", {row, col, group_info}), 
 	-- create a sickwheel metatable for songs
-	SongWheel:create_actors( "SongWheel", 12, song_mt, 0, songwheel_y_offset - 13), 
+	SongWheel:create_actors( "SongWheel", 13, song_mt, 0, songwheel_y_offset - 40), 
 	-- the grey bar at the top as well as total time since start																				
 	LoadActor("./Header.lua", row),
+	-- profile information and time spent in game
+	--note that this covers the footer in graphics
+	LoadActor("FooterHelpText.lua"),
+	-- this has information about the groups - number of songs/charts/filters/# of passed charts
+	LoadActor("./GroupWheelShared.lua", {row, col, group_info}), 
 	-- create a sickwheel metatable for groups
 	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0, true), 
-	LoadActor("FooterHelpText.lua"), -- profile information and time spent in game
-	
+
 	-- Graphical Banner
 	LoadActor("./Banner.lua"), -- the big banner above song information
-	
 	--All of this stuff is put in an AF because we hide and show it together
 	--Information about the song - including the grid/stream info, nps histogram, and step information
 	Def.ActorFrame{
@@ -216,6 +214,20 @@ local t = Def.ActorFrame {
 		LoadActor("./PerPlayer/Over.lua"),
 		-- Song Artist, BPM, Duration (Referred to in other themes as "PaneDisplay")
 		LoadActor("./songDescription.lua"),
+		-- Scroll bar
+		Def.Quad{
+			InitCommand=function(self) 
+				self:x(_screen.w-10):valign(0):visible(false)
+			end,
+			CurrentSongChangedMessageCommand=function(self,params)
+				local num_songs = #PruneSongList(GetSongList(SL.Global.CurrentGroup))
+				if SL.Global.Order == "Difficulty/BPM" then num_songs = #DifficultyBPM end
+				local size = (_screen.h-64) / num_songs --header and footer are each 32
+				local position = params.index and params.index or FindInTable(GAMESTATE:GetCurrentSong(),PruneSongList(GetSongList(SL.Global.CurrentGroup))) or 0
+				if position == 0 then self:visible(false) --if we're on the close folder option
+				else self:visible(true):zoomto(20,size):y(position*size-size+32) end
+			end
+		}
 	},
 	-- finally, load the overlay used for sorting the MusicWheel (and more), hidden by default
 	LoadActor("./SortMenu/default.lua"),
@@ -227,7 +239,6 @@ local t = Def.ActorFrame {
 	LoadActor("./OrderMenu/default.lua"),
 	--Stuff related to searching
 	LoadActor("./Search/default.lua"),
-	
 	-- Sort Menu Stuff
 	
 	-- Broadcast when we enter the Sort Menu. Don't want to let input touch the normal screen
@@ -237,6 +248,9 @@ local t = Def.ActorFrame {
 	-- Broadcast when coming out of the Sort Menu.
 	DirectInputToEngineMessageCommand=function(self)
 		self:playcommand("EnableInput")
+		if Input.WheelWithFocus == SongWheel then
+			play_sample_music()
+		end
 	end,
 	-- Broadcast by SortMenu_InputHandler when someone chooses a sort type
 	GroupTypeChangedMessageCommand=function(self)

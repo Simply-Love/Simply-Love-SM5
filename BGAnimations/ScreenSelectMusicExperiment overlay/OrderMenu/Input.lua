@@ -10,6 +10,7 @@ local Handle = {}
 Handle.Start = function(event)
 	local topscreen = SCREENMAN:GetTopScreen()
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+		MESSAGEMAN:Broadcast("StartButton")
 		-- first figure out which group we're dealing with
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		local index = type(info)=="table" and info.index or 0
@@ -71,7 +72,7 @@ Handle.Back = function(event)
 		topscreen:queuecommand("Finish"):sleep(0.4)
 	end
 end
-
+Handle.Select = Handle.Back
 
 local InputHandler = function(event)
 	if not event or not event.button then return false end

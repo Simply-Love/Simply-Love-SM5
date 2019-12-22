@@ -57,7 +57,7 @@ local song_mt = {
 					subself:visible(true):sleep(0.3):linear(0.2):diffusealpha(1)
 				end,
 				SlideToTopCommand=function(subself) subself:linear(0.2):xy(_screen.cx + 150, row.h+43) end,
-				SlideBackIntoGridCommand=function(subself) subself:linear(0.2):y( 300 ):x( _screen.w/1.5+25 )end,
+				SlideBackIntoGridCommand=function(subself) subself:linear(0.2):y( math.floor(13/2)*47 ):x( _screen.w/1.5+25 )end, --y = num_items/2 * 47
 
 				-- wrap the function that plays the preview music in its own Actor so that we can
 				-- call sleep() and queuecommand() and stoptweening() on it and not mess up other Actors
@@ -65,7 +65,6 @@ local song_mt = {
 					InitCommand=function(subself) self.preview_music = subself end,
 					PlayMusicPreviewCommand=function(subself) play_sample_music() end,
 				},
-
 				-- AF for MusicWheel item
 				Def.ActorFrame{
 					GainFocusCommand=function(subself) subself:y(0) end,
@@ -87,7 +86,7 @@ local song_mt = {
 					Def.ActorFrame {
 						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0):visible(false)  end,
 						SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1):visible( true) end,
-						Def.Quad { InitCommand=function(subself) subself:zoomto(250,40):diffuse(.25,.25,.25,.25):diffusealpha(.5) end },
+						Def.Quad { InitCommand=function(subself) subself:zoomto(250,40):diffuse(.5,.5,.5,.5):diffusealpha(.5) end },
 						Def.Quad { InitCommand=function(self) self:zoomto(250-2, 40-2*2):MaskSource(true) end },
 						Def.Quad { InitCommand=function(self) self:zoomto(250,40):MaskDest() end },
 						Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
@@ -160,6 +159,7 @@ local song_mt = {
 						SL.Global.LastSeenIndex = self.index
 					else MESSAGEMAN:Broadcast("StepsHaveChanged") end
 				else
+					stop_music()
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 				end
 				self.container:playcommand("GainFocus")
@@ -191,7 +191,7 @@ local song_mt = {
 			end
 			
 			--handle row hiding
-			if item_index == 1 or item_index > num_items-1 then
+			if item_index == 1 or item_index > 11 then
 				self.container:visible(false)
 			else
 				self.container:visible(true)
@@ -205,13 +205,13 @@ local song_mt = {
 
 			-- top row
 			if item_index < middle_index  then
-					self.container:y( 50*item_index ):x(_screen.w/1.5+25*(middle_index-item_index) )
+					self.container:y( 47*item_index ):x(_screen.w/1.5+25*(middle_index-item_index) )
 			-- bottom row
 			elseif item_index > middle_index then
-					self.container:y( 50*item_index ):x(_screen.w/1.5+25*(item_index-middle_index))
+					self.container:y( 47*item_index ):x(_screen.w/1.5+25*(item_index-middle_index))
 			-- center row
 			elseif item_index == middle_index then
-				self.container:y( 50*item_index ):x( _screen.w/1.5+25 )
+				self.container:y( 47*item_index ):x( _screen.w/1.5+25 )
 
 			end
 		end,
