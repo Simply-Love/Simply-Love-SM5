@@ -3,7 +3,7 @@ A new game mode that's basically Simply Love ITG but with a couple added feature
 
 Requirements:
 
-Simply Love 4.8.5 and a version of Stepmania that works with Simply Love
+Simply Love 4.8.6 and a version of Stepmania that works with Simply Love
 
 Installation:
 
