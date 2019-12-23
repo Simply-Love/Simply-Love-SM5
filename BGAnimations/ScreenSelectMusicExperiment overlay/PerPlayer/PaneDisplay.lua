@@ -145,11 +145,15 @@ local af = Def.ActorFrame{
 	Name="PaneDisplay"..ToEnumShortString(player),
 	InitCommand=function(self)
 		self:visible(GAMESTATE:IsHumanPlayer(player))
-
-		if player == PLAYER_1 then
+		--TODO for now if there's only one player their pane display is on the left. We only put things on the right if two people are joined
+		if GAMESTATE:GetNumSidesJoined() ~= 2 then
 			self:x(_screen.w * 0.25 - 5)
-		elseif player == PLAYER_2 then
-			self:x( _screen.w * 0.75 + 5)
+		else
+			if player == PLAYER_1 then
+				self:x(_screen.w * 0.25 - 5)
+			elseif player == PLAYER_2 then
+				self:x( _screen.w * 0.75 + 5)
+			end
 		end
 
 		self:y(_screen.cy + 5)
@@ -158,6 +162,11 @@ local af = Def.ActorFrame{
 	--TODO change this if we can get both players to see stream info
 	PlayerJoinedMessageCommand=function(self, params)
 		--if player==params.Player then
+		if player == PLAYER_1 then
+			self:x(_screen.w * 0.25 - 5)
+		elseif player == PLAYER_2 then
+			self:x( _screen.w * 0.75 + 5)
+		end
 		self:visible(true)
 			:zoom(0):croptop(0):bounceend(0.3):zoom(1)
 			:playcommand("Set")

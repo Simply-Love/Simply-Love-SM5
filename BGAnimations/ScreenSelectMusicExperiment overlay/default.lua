@@ -133,7 +133,7 @@ local t = Def.ActorFrame {
 	LoadActor("./Header.lua", row),
 	-- profile information and time spent in game
 	--note that this covers the footer in graphics
-	LoadActor("FooterHelpText.lua"),
+	LoadActor("Footer.lua"),
 	-- this has information about the groups - number of songs/charts/filters/# of passed charts
 	LoadActor("./GroupWheelShared.lua", {row, col, group_info}), 
 	-- create a sickwheel metatable for groups
