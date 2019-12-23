@@ -14,7 +14,7 @@ Handle.Start = function(event)
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		if info.type == "song" and GAMESTATE:GetCurrentSong() ~= info.song then
 			GAMESTATE:SetCurrentSong(info.song)
-			MESSAGEMAN:Broadcast("SetSongViaSearch")
+			MESSAGEMAN:Broadcast("SetSongViaSearch") --heard by ScreenSelectMusicExperiment default.lua. Closes the group folder if we're on it
 		end
 		if info.group ~= "nothing" then
 			switch_to_songs(info.group)

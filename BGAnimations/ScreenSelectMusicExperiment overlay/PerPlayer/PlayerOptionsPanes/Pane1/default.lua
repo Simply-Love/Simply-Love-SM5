@@ -3,8 +3,12 @@ local player = ...
 local pane = Def.ActorFrame{
 	Name="Pane1",
 	InitCommand = function(self) self:visible(false) end,
-	ShowPlayerOptionsPane1MessageCommand = function(self) self:visible(true) end,
-	HidePlayerOptionsPane1MessageCommand = function(self) self:visible(false) end,
+	ShowPlayerOptionsPane1MessageCommand = function(self, params)
+		if params.PlayerNumber == player then self:visible(true) end
+	end,
+	HidePlayerOptionsPane1MessageCommand = function(self, params) 
+		if params.PlayerNumber == player then self:visible(false) end
+	end,
 	SetOptionPanesMessageCommand=function(self)
 		if GAMESTATE:GetCurrentSong():HasBackground() then
 			self:GetChild("Background"):visible(true):LoadFromCurrentSongBackground()

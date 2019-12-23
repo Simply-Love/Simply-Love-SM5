@@ -3,8 +3,12 @@ local player = ...
 local pane = Def.ActorFrame{
 	Name="Pane2",
 	InitCommand = function(self) self:visible(false) end,
-	ShowPlayerOptionsPane2MessageCommand = function(self) self:visible(true) end,
-	HidePlayerOptionsPane2MessageCommand = function(self) self:visible(false) end
+	ShowPlayerOptionsPane2MessageCommand = function(self, params)
+		if params.PlayerNumber == player then self:visible(true) end
+	end,
+	HidePlayerOptionsPane2MessageCommand = function(self, params) 
+		if params.PlayerNumber == player then self:visible(false) end
+	end,
 }
 
 labelX_col1 = -130

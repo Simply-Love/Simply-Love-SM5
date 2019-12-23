@@ -106,7 +106,8 @@ local GlobalDefaults = {
 
 			self.GameplayReloadCheck = false
 			self.GoToOptions = false --when two tap to enter options is turned on this is used
-			self.ActivePlayerOptionsPane = 0
+			self.ActivePlayerOptionsPane0 = 0 --for use with the OptionWheel panes
+			self.ActivePlayerOptionsPane1 = 0 --for use with the OptionWheel panes
 			self.GroupType = "Group" --keep track of what group sort we're currently using
 			self.GroupToSong = false --keep track of when we're going from group view to song view for music preview purposes
 			self.Order = "Alphabetical"

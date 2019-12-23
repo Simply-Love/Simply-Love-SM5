@@ -270,11 +270,12 @@ local ConvertFilters = function()
 end
 
 -- requires a song and chart as input parameters. returns true if the chart passes all filters and false otherwise
-ValidateChart = function(song, chart, inputFilters)
+ValidateChart = function(song, chart, player, inputFilters)
+	local mpn = GAMESTATE:GetMasterPlayerNumber()
 	local filters = inputFilters or ConvertFilters()
 	local chartMeter = chart:GetMeter()
-	local chartSteps = chart:GetRadarValues(0):GetValue('RadarCategory_TapsAndHolds') --TODO this only works for player 1!
-	local chartJumps = chart:GetRadarValues(0):GetValue('RadarCategory_Jumps') --TODO this only works for player 1!
+	local chartSteps = chart:GetRadarValues(mpn):GetValue('RadarCategory_TapsAndHolds') --TODO this only works for the master player.
+	local chartJumps = chart:GetRadarValues(mpn):GetValue('RadarCategory_Jumps') --TODO this only works for the master player.
 	local highScore = GetGrade(song, chart)
 	--Check pass/fail stuff
 	if highScore then
@@ -374,7 +375,7 @@ PruneSongList= function(song_list)
 		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(GetStepsType()) then
 			for chart in ivalues(song:GetStepsByStepsType(GetStepsType())) do
-				if ValidateChart(song, chart, filters) then songs[#songs+1] = song break end
+				if ValidateChart(song, chart) then songs[#songs+1] = song break end
 			end
 		end
 	end

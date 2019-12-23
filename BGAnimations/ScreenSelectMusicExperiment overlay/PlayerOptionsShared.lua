@@ -31,29 +31,4 @@ local af = Def.ActorFrame{
 	},
 }
 
-for player in ivalues( {PLAYER_1, PLAYER_2} ) do
-	--TODO: normally this would just be Press Start to Late Join but we're not allowing two players so put a bunch of panes here instead.
-	if not GAMESTATE:IsSideJoined(player) and Input.AllowLateJoin() then
-		af[#af+1] = LoadFont("Common Normal")..{
-			Text=THEME:GetString("ScreenSelectMusicCasual", "PressStartToLateJoin"),
-			InitCommand=function(self)
-				self:xy( _screen.cx + 150 * (player==PLAYER_1 and -1 or 1), _screen.cy + 80 )
-					:diffuseshift():effectcolor1(1,1,1,1):effectcolor1(1,1,1,0.5)
-			end,
-			PlayerJoinedMessageCommand=function(self, params)
-				if params.Player == player then
-					self:smooth(0.15):zoom(1.4):smooth(0.15):zoom(0)
-				end
-			end
-		}
-	end
-end
-
---panes to look at when player is on options wheel.
-for i=1, 3 do
-	af[#af+1] = LoadActor("./PlayerOptionsPanes/Pane"..i, player)..{
-		InitCommand=function(self) self:xy( _screen.cx + 150 * (player==PLAYER_1 and -1 or 1), _screen.cy + 80 ) end
-	}
-end
-
 return af

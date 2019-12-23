@@ -55,7 +55,7 @@ local t = Def.ActorFrame {
 		self:visible(true):sleep(0.35):queuecommand("CaptureTest")
 	end,
 	CaptureTestCommand=function(self)
-		SOUND:StopMusic()
+		SOUND:StopMusic() --TODO stops music in the sort menu but that .35 second gap means a tiny bit plays
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
 

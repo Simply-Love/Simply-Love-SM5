@@ -24,7 +24,7 @@ local EnteringSong=false
 ---------------------------------------------------------------------------
 -- a table of params from this file that we pass into the InputHandler file
 -- so that the code there can work with them easily
-local params_for_input = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows, EnteringSong=EnteringSong,DifficultyIndex=4}
+local params_for_input = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWheel=OptionsWheel, OptionRows=OptionRows, EnteringSong=EnteringSong,DifficultyIndex0=4,DifficultyIndex1=4}
 
 ---------------------------------------------------------------------------
 -- load the InputHandler and pass it the table of params
@@ -45,9 +45,10 @@ local t = Def.ActorFrame {
 		setup.InitGroups()
 		self:GetChild("GroupWheel"):SetDrawByZPosition(true)
 		self:queuecommand("Capture")
+		local mpn = GAMESTATE:GetMasterPlayerNumber()
 		--SongMT only broadcasts this message when the song is different from the previous one (ie ignores changing steps)
 		--But this won't work when we first enter ScreenSelectMusicExperiment so we broadcast here once.
-		params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
+		params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[mpn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(mpn):GetDifficulty()]
 		MESSAGEMAN:Broadcast("CurrentSongChanged",{song=GAMESTATE:GetCurrentSong()})
 	end,
 	OnCommand=function(self)
@@ -106,69 +107,7 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
-	-- broadcast by SongMT as part of a wheel transition. Also broadcast from somewhere not in the theme. SongMT adds a song to params
-	-- while the other source doesn't so we can use that to check and only act on the one we want to (the SongMT one)
-	CurrentSongChangedMessageCommand=function(self, params)
-		if params.song then
-			-- Here we determine which set of steps we should be on when the song changes. params_for_input.DifficultyIndex is used by the cursor
-			-- to figure out where to display.
-			
-			--if order of songs is difficulty/bpm then we want to have the correct difficulty automatically selected
-			if SL.Global.Order == "Difficulty/BPM" and params.index then
-				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
-					if steps:GetMeter() == DifficultyBPM[params.index].difficulty then
-						GAMESTATE:SetCurrentSteps(0,steps) --TODO this only works for player 1
-						params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
-						break
-					end
-				end
-			--if we're grouping by grade then we want to keep the chosen grade set for the next song. (only if at least one set of steps has a grade)
-			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
-			elseif SL.Global.GroupType == "Grade" and SL.Global.GradeGroup ~= "No_Grade" then
-				local currentGrade = SL.Global.GradeGroup
-				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
-					local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(params.song,steps):GetHighScores()[1] --TODO this only works for player 1
-					if highScore then 
-						if highScore:GetGrade() == currentGrade then 
-							GAMESTATE:SetCurrentSteps(0,steps) --TODO this only works for player 1
-							params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
-							break
-						end
-					end
-				end
-			--if we're grouping by difficulty then we want to keep the chosen difficulty when changing songs
-			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
-			elseif SL.Global.GroupType == "Difficulty" then
-				local currentDifficulty = SL.Global.DifficultyGroup
-				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
-					if steps:GetMeter() == tonumber(currentDifficulty) then
-						GAMESTATE:SetCurrentSteps(0,steps) --TODO this only works for player 1
-						params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
-						break
-					end
-				end
-			--otherwise try to choose the same difficulty if it exists(challenge, expert, basic, etc)
-			elseif Input.DifficultyExists(true) then
-				GAMESTATE:SetCurrentSteps(0,params.song:GetOneSteps('StepsType_Dance_Single',params_for_input.DifficultyIndex))
-			--otherwise default to next closest
-			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
-			else
-				--check if there's an easier chart
-				local easier = Input.NextEasiest(true) and Difficulty:Reverse()[Input.NextEasiest(true):GetDifficulty()] or nil
-				--check if there's a harder chart
-				local harder = Input.NextHardest(true) and Difficulty:Reverse()[Input.NextHardest(true):GetDifficulty()] or nil
-				--if the difference between harder and current difficulty is greater than the difference between easier and current
-				--then we can throw away the harder steps as we know the easier is closer
-				if harder and easier then 
-					if harder - params_for_input.DifficultyIndex > params_for_input.DifficultyIndex - easier then harder = nil end
-				end
-				--if they're equally close then default to harder steps, otherwise, set to the closest difficulty
-				GAMESTATE:SetCurrentSteps(0,harder and Input.NextHardest(true) or easier and Input.NextEasiest(true))
-				params_for_input.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
-				
-			end
-		end
-	end,
+
 	--if we choose a song in Search then we want to jump straight to it even if we're on the group wheel
 	SetSongViaSearchMessageCommand=function(self)
 		if Input.WheelWithFocus == GroupWheel then --going from group to song
@@ -181,7 +120,10 @@ local t = Def.ActorFrame {
 	end,		
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),
+	-- Shared items on the OptionWheel GUI
 	LoadActor("./PlayerOptionsShared.lua", {row, col, Input}),
+	-- elements we need two of - panes for the OptionWheel GUI
+	LoadActor("./PerPlayer/PlayerOptionsPanes/default.lua"),
 	-- right now this just has the black rectangle going across the screen.
 	-- there are also left/right arrows and a different style of text that are disabled
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}), 
@@ -218,8 +160,8 @@ local t = Def.ActorFrame {
 		LoadActor("./PerPlayer/Under.lua"),
 		-- grid of Difficulty Blocks (normal) or CourseContentsList (CourseMode)
 		LoadActor("./StepsDisplayList/default.lua"),
-		-- elements we need two of that draw over the StepsDisplayList (just the bouncing cursors, really)
-		LoadActor("./PerPlayer/Over.lua"),
+		-- elements we need two of that draw over the StepsDisplayList (cursor and function to automatically jump to a valid chart when changing songs)
+		LoadActor("./PerPlayer/Over.lua", params_for_input),
 		-- Song Artist, BPM, Duration (Referred to in other themes as "PaneDisplay")
 		LoadActor("./songDescription.lua"),
 		-- Scroll bar
@@ -317,9 +259,8 @@ for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
 		-- we only display 1 at a time.
 		t[#t+1] = OptionsWheel[pn][i]:create_actors(ToEnumShortString(pn).."OptionWheel"..i, 3, optionrow_item_mt, WideScale(30, 130) + 140 * x_offset, _screen.cy - 5 + i * 62)
 	end
+	OptionsWheel[pn].focus_pos = #OptionRows --start with the bottom (Start) selected
 end
-OptionsWheel['PlayerNumber_P1'].focus_pos = #OptionRows --start with the bottom (Start) selected
-
 
 -- FIXME: This is dumb.  Add the player option StartButton visual last so it
 --  draws over everything else and we can hide cusors behind it when needed...

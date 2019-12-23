@@ -3,8 +3,12 @@ local player = ...
 local pane = Def.ActorFrame{
 	Name="Pane3",
 	InitCommand = function(self) self:visible(false) end,
-	ShowPlayerOptionsPane3MessageCommand = function(self) self:visible(true) end,
-	HidePlayerOptionsPane3MessageCommand = function(self) self:visible(false) end,
+	ShowPlayerOptionsPane3MessageCommand = function(self, params)
+		if params.PlayerNumber == player then self:visible(true) end
+	end,
+	HidePlayerOptionsPane3MessageCommand = function(self, params) 
+		if params.PlayerNumber == player then self:visible(false) end
+	end,
 	SetOptionPanesMessageCommand=function(self)
 		if #SL.Global.Stages.Stats == 0 then
 			self:GetChild("NoSongs"):visible(true)

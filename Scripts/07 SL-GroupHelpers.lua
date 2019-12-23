@@ -53,12 +53,11 @@ local PreloadedGroups = {}
 
 -- A table of tagged songs loaded from Other/TaggedSongs.txt
 -- Each item in the table is a table with the following items: customGroup, title, actualGroup
--- TODO change customGroup to tagName or something like that
 local TaggedSongs = {} 
 
 -- Returns nil if the song has no tags or the name of the first tag it finds
 -- If given a group parameter it will only return something if the song has that specific tag
--- TODO if a song is in multiple groups it will just return the first one it finds. Probably go through everything and put all results in a table instead
+-- TODO if a song is in multiple groups it will just return the first one it finds. Should probably go through everything and put all results in a table instead
 -- TODO take out custom song stuff and switch to tagName or something
 function IsTaggedSong(song, group)
 	local current_song = song
@@ -246,16 +245,15 @@ function UpdateGradeGroups(song)
 	-- next add it to all relevant groups
 	local isPlayed = false
 	for steps in ivalues(current_song:GetStepsByStepsType(GetStepsType())) do
-		local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(current_song,steps):GetHighScores()[1]
-		if highScore then
-			if highScore:GetGrade() then --TODO this won't work for player 2!
+		local highScore = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetHighScoreList(current_song,steps):GetHighScores()[1]
+		if highScore then --TODO this only checks for the master player. Maybe it should set both groups?
+			if highScore:GetGrade() then 
 				table.insert(PreloadedGroups["Grade"][tostring(highScore:GetGrade())],current_song)
 				isPlayed = true
 			end
 		end
 	end
-	-- TODO this is dumb because we just tried to take it out of No_Grade so really we should check there
-	-- but i'm lazy and it's easier to just add it back in down here...
+	--if we didn't find any charts with high scores than isPlayed will stay false and we can add it to No_Grade
 	if not isPlayed then table.insert(PreloadedGroups["Grade"]["No_Grade"],current_song) end
 end
 
@@ -318,6 +316,7 @@ end
 -- Called by __index InitCommand in GroupMT.lua (ScreenSelectMusicExperiment overlay)
 -- Returns a string containing the group the current song is part of
 GetCurrentGroup = function()
+	local mpn = GAMESTATE:GetMasterPlayerNumber()
 	--no song if we're on Close This Folder so use the last seen song
 	local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
 	local starting_group = current_song:GetMainTitle()
@@ -344,9 +343,9 @@ GetCurrentGroup = function()
 		elseif starting_group > 10 then starting_group = 10
 		end
 	elseif SL.Global.GroupType == "Difficulty" then
-		starting_group = GAMESTATE:GetCurrentSteps('PlayerNumber_P1'):GetMeter() --TODO this won't work for player 2!
+		starting_group = GAMESTATE:GetCurrentSteps(mpn):GetMeter() --TODO this only works for the master player.
 	elseif SL.Global.GroupType == "Grade" then
-		local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(0)):GetHighScores()[1]
+		local highScore = PROFILEMAN:GetProfile(mpn):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(mpn)):GetHighScores()[1]
 		if highScore then starting_group = highScore:GetGrade()
 		else starting_group = "No_Grade" end
 	else starting_group = current_song:GetGroupName() end
@@ -359,6 +358,7 @@ end
 GetGroupIndex = function(groups)
 	local group_index = 1
 	local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
+	local mpn = GAMESTATE:GetMasterPlayerNumber()
 	for k,group in ipairs(groups) do
 		if SL.Global.GroupType == "Tag" then
 			if IsTaggedSong(current_song) == group then group_index = k
@@ -395,15 +395,15 @@ GetGroupIndex = function(groups)
 				group_index = k
 			end
 		elseif SL.Global.GroupType == "Difficulty" then
-			if tonumber(group) == GAMESTATE:GetCurrentSteps('PlayerNumber_P1'):GetMeter() then --TODO this won't work for player 2!
+			if tonumber(group) == GAMESTATE:GetCurrentSteps(mpn):GetMeter() then --TODO this only works for the master player.
 				group_index = k
-			elseif tonumber(group) > 25 and GAMESTATE:GetCurrentSteps('PlayerNumber_P1'):GetMeter() > 25 then
+			elseif tonumber(group) > 25 and GAMESTATE:GetCurrentSteps(mpn):GetMeter() > 25 then
 				group_index = k
 			end
 		elseif SL.Global.GroupType == "Grade" then
-			local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(0)):GetHighScores()[1]
+			local highScore = PROFILEMAN:GetProfile(mpn):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(mpn)):GetHighScores()[1]
 			if highScore then 
-				if group == highScore:GetGrade() then --TODO this won't work for player 2!
+				if group == highScore:GetGrade() then --TODO this only works for the master player.
 					group_index = k
 				end
 			else
@@ -451,16 +451,17 @@ local CreateGroup = Def.ActorFrame{
 	-- provided a group title as a string, make a list of songs that fit that group
 	-- returns an indexed table of song objects
 	Grade = function(group)
+		local mpn = GAMESTATE:GetMasterPlayerNumber()
 		local songs = {}
 		for song in ivalues(SONGMAN:GetAllSongs()) do
 			local played = false
 			-- this should be guaranteed by this point, but better safe than segfault
 			if song:HasStepsType(GetStepsType()) then
 				for steps in ivalues(song:GetStepsByStepsType(GetStepsType())) do
-					local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(song,steps):GetHighScores()[1]
+					local highScore = PROFILEMAN:GetProfile(mpn):GetHighScoreList(song,steps):GetHighScores()[1]
 					if highScore then
 						played = true
-						if highScore:GetGrade() == group then --TODO this won't work for player 2!
+						if highScore:GetGrade() == group then --TODO this only works for the master player.
 							songs[#songs+1] = song
 							break
 						end

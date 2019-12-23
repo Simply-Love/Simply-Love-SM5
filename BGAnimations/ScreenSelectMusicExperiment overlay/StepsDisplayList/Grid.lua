@@ -15,7 +15,7 @@ local t = Def.ActorFrame{
 	CurrentSongChangedMessageCommand=cmd(queuecommand, "RedrawStepsDisplay"),
 	CurrentCourseChangedMessageCommand=cmd(queuecommand, "RedrawStepsDisplay"),
 	StepsHaveChangedCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-
+	PlayerJoinedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
 	-- - - - - - - - - - - - - -
 
 	RedrawStepsDisplayCommand=function(self)
@@ -37,7 +37,7 @@ local t = Def.ActorFrame{
 						local meter = chart:GetMeter()
 						local difficulty = chart:GetDifficulty()
 						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty, Chart=chart})
-						if not ThemePrefs.Get("ShowExtraSongInfo") then
+						if not ThemePrefs.Get("ShowExtraSongInfo") or GAMESTATE:GetNumSidesJoined() == 2 then
 							self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty, Chart=chart})
 						end
 					else
@@ -95,7 +95,12 @@ Grid[#Grid+1] = Def.Sprite{
 		if ThemePrefs.Get("ShowExtraSongInfo") then
 			self:diffusealpha(0)
 		end
-	end
+	end,
+	RedrawStepsDisplayCommand=function(self)
+		if not  ThemePrefs.Get("ShowExtraSongInfo") or GAMESTATE:GetNumSidesJoined() == 2 then
+			self:diffusealpha(1)
+		end
+	end,
 }
 
 for RowNumber=1,num_rows do

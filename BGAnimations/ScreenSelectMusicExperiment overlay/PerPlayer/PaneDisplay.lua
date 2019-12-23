@@ -18,6 +18,7 @@ local PaneItems = {}
 
 local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsLevel.lua")
 
+--TODO figure out how to change this if a second player joins
 local histogramHeight = 40
 if not ThemePrefs.Get("ShowExtraSongInfo") then histogramHeight = 30 end --the grid takes a little more space so shrink the histogram a bit
 
@@ -153,12 +154,14 @@ local af = Def.ActorFrame{
 
 		self:y(_screen.cy + 5)
 	end,
+	--we want to set both players when someone joins because we might need to bring the grid back and hide the stream info
+	--TODO change this if we can get both players to see stream info
 	PlayerJoinedMessageCommand=function(self, params)
-		if player==params.Player then
-			self:visible(true)
-				:zoom(0):croptop(0):bounceend(0.3):zoom(1)
-				:playcommand("Set")
-		end
+		--if player==params.Player then
+		self:visible(true)
+			:zoom(0):croptop(0):bounceend(0.3):zoom(1)
+			:playcommand("Set")
+		--end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if player==params.Player then
@@ -189,7 +192,8 @@ local af = Def.ActorFrame{
 			DiffuseEmojis(self, player_name)
 		end
 		-- ---------------------Extra Song Information------------------------------------------
-		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSteps(player) and song and ThemePrefs.Get("ShowExtraSongInfo")then
+		--TODO right now we don't show any of this if two players are joined. I'd like to find a way for both to see it
+		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSteps(player) and song and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
 			InitializeMeasureCounterAndModsLevel(player)
 			if SL[pn].Streams.Measures then --used to be working without this... not sure what changed but don't run any of this stuff if measures is not filled in
 				local lastSequence = #SL[pn].Streams.Measures
@@ -246,7 +250,6 @@ local af = Def.ActorFrame{
 				finalText = math.floor(finalText*100)/100 --truncate to two decimals
 				self:GetChild("AvgNps"):settext(finalText)
 				self:GetChild("AvgNpsLabel"):settext("AVG NPS")
-		
 			else
 				self:GetChild("Measures"):settext("")
 				self:GetChild("TotalStream"):settext("")
@@ -254,8 +257,23 @@ local af = Def.ActorFrame{
 				self:GetChild("AvgNpsLabel"):settext("")
 				self:GetChild("AvgNps"):settext("")
 			end
+		else
+			self:GetChild("Measures"):settext("")
+			self:GetChild("TotalStream"):settext("")
+			self:GetChild("PeakNPS"):settext("")
+			self:GetChild("AvgNpsLabel"):settext("")
+			self:GetChild("AvgNps"):settext("")
 		end
-	end
+	end,
+	
+	--TODO part of the pane that gets hidden if two players are joined. i'd like to display this somewhere though
+	PeakNPSUpdatedMessageCommand=function(self, params)
+		if GAMESTATE:GetCurrentSong() and SL['P1'].NoteDensity.Peak and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
+			self:GetChild("PeakNPS"):settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(SL['P1'].NoteDensity.Peak * SL.Global.ActiveModifiers.MusicRate,2))
+		else
+			self:GetChild("PeakNPS"):settext( "" )
+		end
+	end,
 }
 
 -- colored background for chart statistics
@@ -359,12 +377,6 @@ af[#af+1] = LoadFont("Common Normal")..{
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PeakNPS",
 	InitCommand=cmd(xy, _screen.w/2 - 500, _screen.h/8 - 30; zoom, zoom_factor; diffuse, Color.White; halign, 0),
-	PeakNPSUpdatedMessageCommand=function(self, params) --TODO: this only works for P1
-		if GAMESTATE:GetCurrentSong() and SL['P1'].NoteDensity.Peak and ThemePrefs.Get("ShowExtraSongInfo") then
-			self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(SL['P1'].NoteDensity.Peak * SL.Global.ActiveModifiers.MusicRate,2) )
-
-		end
-	end 
 }
 
 --AVG NPS label
@@ -391,9 +403,6 @@ af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=cmd(xy, _screen.w/2 - 500, _screen.h/8 - 10; zoom, zoom_factor; diffuse, Color.White; halign, 0; maxwidth, 315)
 }
 
-		
--- colored background for pass statistics
--- TODO figure out what to put here
 --------------------Actor Frame to put all the tags------------------------------
 local tagAF = Def.ActorFrame{
 	InitCommand=function(self)

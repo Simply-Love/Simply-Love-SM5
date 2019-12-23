@@ -24,8 +24,10 @@ local SwitchInputFocus = function(button, params)
 		elseif t.WheelWithFocus == SongWheel then
 			t.WheelWithFocus = OptionsWheel
 			MESSAGEMAN:Broadcast("SetOptionPanes")
-			MESSAGEMAN:Broadcast("ShowPlayerOptionsPane"..SL.Global.ActivePlayerOptionsPane+1)
-			t.WheelWithFocus[params.PlayerNumber].container:GetChild("item"..#OptionRows):GetChild("Cursor"):playcommand("ExitRow", {PlayerNumber=params.PlayerNumber})
+			for pn in ivalues(Players) do
+				t.WheelWithFocus[pn].container:GetChild("item"..#OptionRows):GetChild("Cursor"):playcommand("ExitRow", {PlayerNumber=pn})
+				MESSAGEMAN:Broadcast("ShowPlayerOptionsPane"..SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[pn]]+1, {PlayerNumber=pn})
+			end
 		end
 
 	elseif button == "Select" or button == "Back" then
@@ -73,9 +75,7 @@ local UnhideOptionRows = function(pn)
 	end
 end
 
---TODO for now no late joining. single player only.
 t.AllowLateJoin = function()
-	if true then return false end
 	if GAMESTATE:GetCurrentStyle():GetName() ~= "single" then return false end
 	if PREFSMAN:GetPreference("EventMode") then return true end
 	if GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then return true end
@@ -85,10 +85,11 @@ end
 
 -- See if the current song has a chart for a given difficulty
 -- If no difficulty is given it uses the last seen difficulty
-t.DifficultyExists = function(validate, difficulty)
+DifficultyExists = function(player, validate, difficulty)
+	local pn = player or GAMESTATE:GetMasterPlayerNumber()
 	local validate = validate or false
 	local song = GAMESTATE:GetCurrentSong()
-	local diff = difficulty or args.DifficultyIndex --use DifficultyIndex from params_for_input if no difficulty is supplied
+	local diff = difficulty or args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] --use DifficultyIndex from params_for_input if no difficulty is supplied
 	if song then 
 		if validate then if song:GetOneSteps(GetStepsType(),diff) and ValidateChart(song,song:GetOneSteps(GetStepsType(),diff)) then 
 			return true end
@@ -101,10 +102,11 @@ end
 -- Looks for the next easiest difficulty. Returns nil if none can be found
 -- If validate is true then it checks that the chart also passes all filters 
 -- (used to automatically select a valid chart when switching songs if filters are enabled)
-t.NextEasiest = function(validate, difficulty)
+NextEasiest = function(player, validate, difficulty)
+	local pn = player
 	local validate = validate or false
 	local song = GAMESTATE:GetCurrentSong()
-	local diff = difficulty or args.DifficultyIndex --use DifficultyIndex from params_for_input if no difficulty is supplied
+	local diff = difficulty or args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] --use DifficultyIndex from params_for_input if no difficulty is supplied
 	diff = diff - 1 --the current difficulty will always be there so we want to start from the next lowest
 	if song then
 	local t = {}
@@ -122,10 +124,11 @@ end
 -- Looks for the next hardest difficulty. Returns nil if none can be found
 -- If validate is true then it checks that the chart also passes all filters 
 -- (used to automatically select a valid chart when switching songs if filters are enabled)
-t.NextHardest = function(validate, difficulty)
+NextHardest = function(player, validate, difficulty)
+	local pn = player
 	local validate = validate or false
 	local song = GAMESTATE:GetCurrentSong()
-	local diff = difficulty or args.DifficultyIndex --use DifficultyIndex from params_for_input if no difficulty is supplied
+	local diff = difficulty or args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] --use DifficultyIndex from params_for_input if no difficulty is supplied
 	diff = diff + 1 --the current difficulty will always be there so we want to start from the next highest
 	if song then
 		for i=diff,5 do
@@ -201,10 +204,14 @@ t.Handler = function(event)
 		if not t.AllowLateJoin() then return false end
 
 		-- latejoin
-		if t.WheelWithFocus == OptionsWheel and event.GameButton == "Start" then
+		if event.GameButton == "Start" then
 			GAMESTATE:JoinPlayer( event.PlayerNumber )
 			Players = GAMESTATE:GetHumanPlayers()
-			UnhideOptionRows(event.PlayerNumber)
+			if t.WheelWithFocus == OptionsWheel then
+				UnhideOptionRows(event.PlayerNumber)
+				MESSAGEMAN:Broadcast("SwitchFocusToSingleSong")
+			end
+			MESSAGEMAN:Broadcast("PlayerJoined",{player=event.PlayerNumber})
 		end
 		return false
 	end
@@ -249,10 +256,10 @@ t.Handler = function(event)
 			elseif event.GameButton == "MenuUp" then
 				local song = GAMESTATE:GetCurrentSong() -- don't do anything if we're on Close This Folder
 				-- don't do anything if there's no easier difficulty or we're not on the songwheel or we're on Close This Folder
-				if t.WheelWithFocus==SongWheel and song and t.NextEasiest() then
+				if t.WheelWithFocus==SongWheel and song and NextEasiest(event.PlayerNumber) then
 					SOUND:PlayOnce( THEME:GetPathS("ScreenSelectMusic", "difficulty easier.redir") )
-					GAMESTATE:SetCurrentSteps( 0, t.NextEasiest() )
-					args.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
+					GAMESTATE:SetCurrentSteps( event.PlayerNumber, NextEasiest(event.PlayerNumber) )
+					args['DifficultyIndex'..PlayerNumber:Reverse()[event.PlayerNumber]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(event.PlayerNumber):GetDifficulty()]
 					-- if we change the difficulty we want to update things like grades we show on the music wheel and
 					-- the song information in \PerPlayer\PaneDisplay. These are controlled by StepsHaveChangedMessageCommand which
 					-- SongMT broadcasts. We can indirectly call it by using scroll_by_amount(0) which will go nowhere 
@@ -260,13 +267,14 @@ t.Handler = function(event)
 					t.WheelWithFocus:scroll_by_amount(0)
 				end
 			--change difficulty with down	
+			--TODO doesn't work well with edits
 			elseif event.GameButton == "MenuDown" then
-				local song = GAMESTATE:GetCurrentSong() --TODO doesn't work well with edits
+				local song = GAMESTATE:GetCurrentSong() 
 				-- do nothing if there's no harder difficulty or we're not on the songwheel or we're on Close This Folder
-				if t.WheelWithFocus==SongWheel and song and t.NextHardest() then
+				if t.WheelWithFocus==SongWheel and song and NextHardest(event.PlayerNumber) then
 					SOUND:PlayOnce( THEME:GetPathS("ScreenSelectMusic", "difficulty harder.redir") )
-					GAMESTATE:SetCurrentSteps( 0, t.NextHardest() )
-					args.DifficultyIndex = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(0):GetDifficulty()]
+					GAMESTATE:SetCurrentSteps( event.PlayerNumber, NextHardest(event.PlayerNumber) )
+					args['DifficultyIndex'..PlayerNumber:Reverse()[event.PlayerNumber]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(event.PlayerNumber):GetDifficulty()]
 					-- if we change the difficulty we want to update things like grades we show on the music wheel and
 					-- the song information in \PerPlayer\PaneDisplay. These are controlled by StepsHaveChangedMessageCommand which
 					-- SongMT broadcasts. We can indirectly call it by using scroll_by_amount(0) which will go nowhere 
@@ -318,9 +326,9 @@ t.Handler = function(event)
 					-- thing because that only saves when you go to start instead of with every change. Maybe look in to this. 
 					-- Probably not a good idea to assume this will be in row 2 all the time. TODO
 					if ActiveOptionRow[event.PlayerNumber] == 2 then
-						MESSAGEMAN:Broadcast("HidePlayerOptionsPane"..SL.Global.ActivePlayerOptionsPane+1)
-						SL.Global.ActivePlayerOptionsPane = (SL.Global.ActivePlayerOptionsPane + 1) % 3
-						MESSAGEMAN:Broadcast("ShowPlayerOptionsPane"..SL.Global.ActivePlayerOptionsPane+1)
+						MESSAGEMAN:Broadcast("HidePlayerOptionsPane"..SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]]+1,{PlayerNumber=event.PlayerNumber})
+						SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]] = (SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]] + 1) % 3
+						MESSAGEMAN:Broadcast("ShowPlayerOptionsPane"..SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]]+1,{PlayerNumber=event.PlayerNumber})
 					end
 					-- scroll to the next optionrow_item in this optionrow
 					t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(1)
@@ -331,9 +339,9 @@ t.Handler = function(event)
 				if index ~= #OptionRows then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 					if ActiveOptionRow[event.PlayerNumber] == 2 then
-						MESSAGEMAN:Broadcast("HidePlayerOptionsPane"..SL.Global.ActivePlayerOptionsPane+1)
-						SL.Global.ActivePlayerOptionsPane = (SL.Global.ActivePlayerOptionsPane - 1) % 3
-						MESSAGEMAN:Broadcast("ShowPlayerOptionsPane"..SL.Global.ActivePlayerOptionsPane+1)
+						MESSAGEMAN:Broadcast("HidePlayerOptionsPane"..SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]]+1,{PlayerNumber=event.PlayerNumber})
+						SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]] = (SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]] - 1) % 3
+						MESSAGEMAN:Broadcast("ShowPlayerOptionsPane"..SL.Global['ActivePlayerOptionsPane'..PlayerNumber:Reverse()[event.PlayerNumber]]+1,{PlayerNumber=event.PlayerNumber})
 					end
 					-- scroll to the previous optionrow_item in this optionrow
 					t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(-1)
@@ -385,11 +393,6 @@ t.Handler = function(event)
 
 				-- set the currently active option row to the updated index
 				ActiveOptionRow[event.PlayerNumber] = index
-
-				-- handle cursor position shifting for exit row as needed
-				if index == #OptionRows then
-					t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):playcommand("ExitRow", {PlayerNumber=event.PlayerNumber})
-				end
 
 				-- if all available players are now at the final row (start icon), animate cursors spinning
 				if t.AllPlayersAreAtLastRow() then

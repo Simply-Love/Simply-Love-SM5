@@ -140,7 +140,6 @@ local song_mt = {
 		end,
 
 		transform = function(self, item_index, num_items, has_focus)
-		--TODO maybe make music not play in the sort menu?
 			self.container:finishtweening()
 			if has_focus then
 				if self.song ~= "CloseThisFolder" then
@@ -166,15 +165,17 @@ local song_mt = {
 			else
 				self.container:playcommand("LoseFocus")
 			end
-			--change the Grade sprite 
+			--change the Grade sprite
+			--TODO this only shows grades for the master player. Maybe it should show for both players?
 			if self.song ~= "CloseThisFolder" then
+				local mpn = GAMESTATE:GetMasterPlayerNumber()
 				local current_difficulty
 				local grade
-				if GAMESTATE:GetCurrentSteps(0) then
-					current_difficulty = GAMESTATE:GetCurrentSteps(0):GetDifficulty() --are we looking at steps?
+				if GAMESTATE:GetCurrentSteps(mpn) then
+					current_difficulty = GAMESTATE:GetCurrentSteps(mpn):GetDifficulty() --are we looking at steps?
 				end
 				if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
-					grade = PROFILEMAN:GetProfile(0):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1] --TODO this only grabs scores for player one
+					grade = PROFILEMAN:GetProfile(mpn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1] --TODO this only grabs scores for player one
 				end
 				if grade then
 					local converted_grade = Grade:Reverse()[grade:GetGrade()]

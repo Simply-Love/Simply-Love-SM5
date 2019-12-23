@@ -87,17 +87,19 @@ NPS_Histogram = function(player, _w, _h)
 	amv.InitCommand=function(self)
 		self:SetDrawState({Mode="DrawMode_QuadStrip"})
 	end
-	amv.CurrentSongChangedMessageCommand=function(self)
-		SongNumberInCourse = SongNumberInCourse + 1
-		-- we've reached a new song, so reset the vertices for the density graph
-		-- this will occur at the start of each new song in CourseMode
-		-- and at the start of "normal" gameplay
-		if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[SongNumberInCourse]:GetSong() or GAMESTATE:GetCurrentSong() then
-			self:diffusealpha(1)
-			self:queuecommand("StepsHaveChanged") --not sure why but steps weren't changing properly in this command so we just run StepsHaveChanged command instead
-		else
-			--hide the histogram when we're not looking at a song
-			self:diffusealpha(0)
+	amv.CurrentSongChangedMessageCommand=function(self,params)
+		if params.song then
+			SongNumberInCourse = SongNumberInCourse + 1
+			-- we've reached a new song, so reset the vertices for the density graph
+			-- this will occur at the start of each new song in CourseMode
+			-- and at the start of "normal" gameplay
+			if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[SongNumberInCourse]:GetSong() or GAMESTATE:GetCurrentSong() then
+				self:diffusealpha(1)
+				self:sleep(.1):queuecommand("StepsHaveChanged") --not sure why but steps weren't changing properly in this command so we just run StepsHaveChanged command instead
+			else
+				--hide the histogram when we're not looking at a song
+				self:diffusealpha(0)
+			end
 		end
 	end
 	amv.StepsHaveChangedMessageCommand=function(self) amv:Initialize(self) end
