@@ -12,7 +12,7 @@ local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 local width = GetNotefieldWidth(player) - 30
 local height = 30
 
--- support double, double8, and routine by making as wide as single
+-- support double, double8, and routine by constraining the UpperNPSGraph to have the same width as in single
 if styletype == "OnePlayerTwoSides" or styletype == "TwoPlayersSharedSides" then
 	width = width/2
 end
@@ -37,7 +37,7 @@ return Def.ActorFrame{
 		self:queuecommand("Size")
 	end,
 
-	Def.Quad{ InitCommand=function(self) self:setsize(width, height):diffuse(0.3,0.3,0.3,1):align(0,1) end },
+	Def.Quad{ InitCommand=function(self) self:setsize(width, height):diffuse(color("#1E282F")):align(0,1) end },
 
 	NPS_Histogram(player, width, height)..{
 		SizeCommand=function(self)
@@ -59,7 +59,7 @@ return Def.ActorFrame{
 		InitCommand=function(self)
 			self:setsize(width, height)
 				:align(0,1)
-				:diffuse(0,0,0,0.80)
+				:diffuse(0,0,0,0.85)
 				:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)
