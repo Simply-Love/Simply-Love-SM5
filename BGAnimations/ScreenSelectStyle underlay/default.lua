@@ -126,11 +126,8 @@ local JoinOrUnjoinPlayersMaybe = function(style, player)
 	-- ensure that player is actually joined now to avoid having no one joined in ScreenSelectPlayMode
 	if not GAMESTATE:IsHumanPlayer(player) then GAMESTATE:JoinPlayer(player) end
 
-	if player == PLAYER_1 then
-		GAMESTATE:UnjoinPlayer(PLAYER_2)
-	else
-		GAMESTATE:UnjoinPlayer(PLAYER_1)
-	end
+	-- OtherPlayer convenience table defined in _fallback/Scripts/00 init.lua
+	GAMESTATE:UnjoinPlayer(OtherPlayer[player])
 end
 
 local ManageCredits = function(style)
