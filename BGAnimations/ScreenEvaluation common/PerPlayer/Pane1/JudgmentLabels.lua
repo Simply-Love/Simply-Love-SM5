@@ -41,12 +41,9 @@ for index, window in ipairs(TapNoteScores.Types) do
 end
 
 local t = Def.ActorFrame{
-	InitCommand=function(self) self:xy(50, _screen.cy-24) end,
-	OnCommand=function(self)
-		if player == PLAYER_2 then
-			self:x( self:GetX() * -1)
-		end
-	end
+	InitCommand=function(self)
+		self:xy(50 * (player==PLAYER_1 and 1 or -1), _screen.cy-24)
+	end,
 }
 
 local worst = SL.Global.ActiveModifiers.WorstTimingWindow
@@ -65,11 +62,8 @@ for i=1, #TapNoteScores.Types do
 			BeginCommand=function(self)
 				self:x( (player == PLAYER_1 and 28) or -28 )
 				self:y((i-1)*28 -16)
-
 				-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
-				if SL.Global.GameMode ~= "ITG" then
-					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
-				end
+				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 			end
 		}
 	end
