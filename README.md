@@ -14,26 +14,52 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 
 
-## Requirements
+## Setup
 
 You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) or [StepMania 5.1 beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) to use this theme.
 
 Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible.
 
-#### Troubleshooting StepMania
+### Troubleshooting StepMania
 
-If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/).  Additionally, you may find these links helpful for your given operating system:
+StepMania can be tricky to install and the process has different stumbling points unique to each OS.
 
-  * **Windows** -  [This issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64) provides links to the needed DirectX and VS2013 redistributable packages.
-  * **macOS** - If you are unable to open the dmg installer with an error like "No mountable file systems", you'll need to [update your copy of macOS](https://github.com/stepmania/stepmania/issues/1726) for the time being. If you are encountering the "No NoteSkins found" error, [this wiki page](https://github.com/stepmania/stepmania/wiki/Installing-on-macOS) provides a means of resolving it on your computer until it is properly fixed upstream.
-  * **Linux** - It is more or less assumed that you will build your own executables if you are using Linux.  StepMania's GitHub wiki provides both a [list of dependencies](https://github.com/stepmania/stepmania/wiki/Linux-Dependencies) and some [instructions on compiling](https://github.com/stepmania/stepmania/wiki/Compiling-StepMania).
+#### Windows
 
+You'll need to install Microsoft's [Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145) first.
 
-## Installation
+With that done, follow along with the StepMania installer, ensuring that you **do not install to Program Files** to avoid conflicts with Windows UAC.  By default, the installer will install to `C:\Games\` and this is fine for most players.
 
-Head to the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) to download the most recent formal release of Simply Love.  If you opt to download directly from the *master* branch instead, you may get new features but also newer bugs.
+If StepMania crashes with **d3dx9_43.dll was not found** you'll need to install the DirectX 9 runtime. [This GitHub issue](https://github.com/stepmania/stepmania-site/issues/64) provides a link to how you can download it from Microsoft.  It [should be okay](https://github.com/stepmania/stepmania/issues/1936#issuecomment-557917810) to have multiple DirectX runtimes installed.
 
-To install this theme, unzip it and move the resulting directory inside the *Themes* folder in your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).
+#### macOS
+
+If you are unable to open the dmg installer with an error like "No mountable file systems", you'll need to [update your copy of macOS](https://github.com/stepmania/stepmania/issues/1726) for the time being.
+
+If StepMania crashes immediately with **No NoteSkins found** or **Metric "Common::ScreenWidth" is missing**, [this wiki page](https://github.com/stepmania/stepmania/wiki/Installing-on-macOS) provides a way of fixing it on your computer until it the problem is properly fixed in StepMania.
+
+#### Linux
+
+If the precompiled executable is not compatible with your architecture/distro/etc., you'll likely have better luck compiling from source.
+
+* [Linux Dependencies](Linux-dependencies)
+* [Instructions on Compiling](Compiling-StepMania)
+
+### Other Setup/Troubleshooting Resources
+
+The StepMania project has wiki pages for configuring USB profiles for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) and [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).  USB profiles are handy for public arcade machines so that players can enjoy their own custom content from USB drives.
+
+GitHub user geefr has a [wiki page](https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues) on identifying and troubleshooting USB polling rate issues.
+
+## Installing Simply Love
+
+Head to the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) to download the most recent formal release of Simply Love.
+
+To install this theme, unzip it and move the resulting *Simply Love* folder inside your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).  The paths will look like this:
+
+* **Windows**: `%APPDATA%\StepMania 5.1\Themes\Simply Love\`
+* **macOS**: `~/Library/Application Support/StepMania 5.1/Themes/Simply Love/`
+* **Linux**: `~/.stepmania-5.1/Themes/Simply Love/`
 
 ## Screenshots
 
