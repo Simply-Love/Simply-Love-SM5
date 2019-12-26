@@ -28,6 +28,7 @@ local InitializeDensity = NPS_Histogram(player, 275, histogramHeight)..{
 			:y( _screen.h/3.5+6)
 	end
 }
+
 PaneItems[THEME:GetString("RadarCategory","Taps")] = {
 	-- "rc" is RadarCategory
 	rc = 'RadarCategory_TapsAndHolds',

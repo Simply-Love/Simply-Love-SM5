@@ -82,7 +82,7 @@ return Def.ActorFrame{
 			end
 			table.insert(scroller_data,{index = 0, displayname = "Create New Tag"})
 			for k,v in pairs(GetGroups("Tag")) do
-				if v ~= "No Tags Set" then table.insert(scroller_data,{index = k, displayname = v}) end
+				if v ~= "No Tags Set" and v ~= "BPM Changes" then table.insert(scroller_data,{index = k, displayname = v}) end
 			end
 			scroller.focus_pos = 5
 			scroller:set_info_set(scroller_data, 0)

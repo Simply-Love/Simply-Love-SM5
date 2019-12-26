@@ -1,3 +1,5 @@
+local player = ...
+
 --variables needed for both the legend and the bargraph
 local w, h, num_lines, num_lines_y, max_dif, min_dif
 
@@ -101,7 +103,7 @@ CreateLineGraph = function(_w, _h)
 		Name="GraphPoints_AMV",
 		Initialize=function(self, actor)
 			local verts = {}
-			for i,song in pairs(SL['P1'].Stages.Stats) do --TODO this only works for one player
+			for i,song in pairs(SL[ToEnumShortString(player)].Stages.Stats) do
 				if song.difficultyMeter then --if player backs out of a song then Stages.Stats will have an empty table. Ignore that.
 					local diff = max_dif - song.difficultyMeter
 					if diff < 0 then diff = 0 end --max difficulty to show is 25.
@@ -132,7 +134,7 @@ CreateLineGraph = function(_w, _h)
 			local verts = {}
 			table.insert(verts,{{0,h,0}, Color.Red})
 			table.insert(verts,{{0,h,0}, Color.Purple})
-			for i,song in pairs(SL['P1'].Stages.Stats) do --TODO this only works for one player
+			for i,song in pairs(SL[ToEnumShortString(player)].Stages.Stats) do
 				if song.score then --if player backs out of a song then Stages.Stats will have an empty table. Ignore that.
 					local scorePoint = h-h*song.score
 					table.insert(verts,{{i*(w/num_lines),scorePoint,0},Color.Purple})
@@ -157,7 +159,7 @@ CreateLineGraph = function(_w, _h)
 		if #SL.Global.Stages.Stats ~= 0 then 
 			if #SL.Global.Stages.Stats < 5 then num_lines = 5 
 			else num_lines = #SL.Global.Stages.Stats end
-			for song in ivalues(SL['P1'].Stages.Stats) do --TODO this only works for P1
+			for _,song in pairs(SL[ToEnumShortString(player)].Stages.Stats) do
 				if song.difficultyMeter then --if player backs out of a song then Stages.Stats will have an empty table. Ignore that.
 					if max_dif == nil or song.difficultyMeter > max_dif then max_dif = song.difficultyMeter end
 					if min_dif == nil or song.difficultyMeter < min_dif then min_dif = song.difficultyMeter end

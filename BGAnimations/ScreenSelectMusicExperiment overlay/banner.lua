@@ -31,14 +31,15 @@ local t = Def.ActorFrame{
 	SwitchFocusToGroupsMessageCommand=function(self) self:linear(0.3):diffusealpha(0) end,
 	
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentSongChangedMessageCommand=function(self,params) if params.song then self:playcommand("SetBanner") end end,
+		--LessLagMessageCommand=function(self) self:playcommand("SetBanner") end,
+		CurrentCourseChangedMessageCommand=function(self) self:playcommand("SetBanner") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) 
 			self:GetChild("Banner"):LoadFromSongGroup(SL.Global.CurrentGroup)
 			:stoptweening():zoom(.5):linear(.125):zoomto(418,164)
 			GAMESTATE:SetCurrentSong(nil) -- This is a bad place to put this. But we want to clear out the current song and need to set the banner first
 		end,
-		SetCommand=function(self)
+		SetBannerCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			if SongOrCourse and SongOrCourse:HasBanner() then
 				self:GetChild("Banner"):visible(true)

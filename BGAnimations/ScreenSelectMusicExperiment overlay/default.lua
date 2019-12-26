@@ -6,6 +6,7 @@ if setup == nil then
 	return LoadActor(THEME:GetPathB("ScreenSelectMusicCasual", "overlay/NoValidSongs.lua"))
 end
 
+local timeToGo = 0
 
 local steps_type = setup.steps_type
 local group_info = setup.group_info
@@ -57,7 +58,6 @@ local t = Def.ActorFrame {
 	ListenCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
 		local seconds = topscreen:GetChild("Timer"):GetSeconds()
-
 		-- if necessary, force the players into Gameplay because the MenuTimer has run out
 		if not Input.AllPlayersAreAtLastRow() and seconds <= 0 then
 
@@ -107,7 +107,16 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
-
+	BeginSongTransitionMessageCommand=function(self)
+		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
+		self:sleep(.1):queuecommand("FinishSongTransition")
+	end,
+	FinishSongTransitionMessageCommand=function(self)
+		if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
+			SL.Global.SongTransition=false
+			MESSAGEMAN:Broadcast("LessLag")
+		end
+	end,
 	--if we choose a song in Search then we want to jump straight to it even if we're on the group wheel
 	SetSongViaSearchMessageCommand=function(self)
 		if Input.WheelWithFocus == GroupWheel then --going from group to song
@@ -138,7 +147,6 @@ local t = Def.ActorFrame {
 	LoadActor("./GroupWheelShared.lua", {row, col, group_info}), 
 	-- create a sickwheel metatable for groups
 	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0, true), 
-
 	-- Graphical Banner
 	LoadActor("./Banner.lua"), -- the big banner above song information
 	--All of this stuff is put in an AF because we hide and show it together
@@ -150,7 +158,7 @@ local t = Def.ActorFrame {
 		SwitchFocusToSongsMessageCommand = function(self) self:queuecommand("Show") end,
 		CloseThisFolderHasFocusMessageCommand = function(self) self:queuecommand("Hide") end, --don't display any of this when we're on the close folder item
 		CurrentSongChangedMessageCommand = function(self) --brings things back after CloseThisFolderHasFocusMessageCommand runs
-			if self:GetDiffuseAlpha() == 0 then self:queuecommand("Show") end end,
+			if self:GetDiffuseAlpha() == 0 and Input.WheelWithFocus == SongWheel then self:queuecommand("Show") end end,
 		CurrentCourseChangedMessageCommand = function(self)  end,
 		HideCommand = function(self) self:linear(.3):diffusealpha(0):visible(false) end,
 		ShowCommand = function(self) self:visible(true):linear(.3):diffusealpha(1) end,

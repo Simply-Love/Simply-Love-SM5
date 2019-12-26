@@ -17,8 +17,7 @@ local pane = Def.ActorFrame{
 		end
 	end
 }
-
-local LineGraph = LoadActor("./LineGraph.lua")
+local LineGraph = LoadActor("./LineGraph.lua", player)
 local initializeLineGraph = CreateLineGraph(200,150)..{
 	OnCommand=function(self)
 

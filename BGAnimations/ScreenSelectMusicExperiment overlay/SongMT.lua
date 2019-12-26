@@ -150,7 +150,9 @@ local song_mt = {
 					--or because we're initializing ScreenSelectMusicExperiment
 					if self.song ~= GAMESTATE:GetCurrentSong() or SL.Global.GroupToSong or self.index ~= SL.Global.LastSeenIndex then
 						GAMESTATE:SetCurrentSong(self.song)
+						SL.Global.SongTransition = true
 						MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song, index=self.index})
+						MESSAGEMAN:Broadcast("BeginSongTransition")
 						stop_music()
 						-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
