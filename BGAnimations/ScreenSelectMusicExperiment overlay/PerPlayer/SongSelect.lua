@@ -1,9 +1,6 @@
 local args = ...
 local pn = args.player
 
-local song = nil
-local index = nil
-
 -- Makes sure that when you're changing songs that the cursor automatically lands on a valid chart (in case of filters/difficulty sort/etc
 -- For Difficulty/BPM order it just picks the next highest as determined by the sort/etc
 -- Otherwise, first it tries to pick the same difficulty (expert, challenge, etc) and if that's non-existent or invalid then

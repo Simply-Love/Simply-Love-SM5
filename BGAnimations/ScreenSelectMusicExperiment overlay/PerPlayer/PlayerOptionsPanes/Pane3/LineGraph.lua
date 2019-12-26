@@ -34,7 +34,7 @@ CreateLineGraph = function(_w, _h)
 		Name="PointsLine_AMV",
 		Initialize=function(self, actor)
 			local verts = {}
-			for i,song in pairs(SL['P1'].Stages.Stats) do --TODO this only works for one player
+			for i,song in pairs(SL[ToEnumShortString(player)].Stages.Stats) do
 				if song.difficultyMeter then --if player backs out of a song then Stages.Stats will have an empty table. Ignore that.
 					local diff = max_dif - song.difficultyMeter
 					if diff < 0 then diff = 0 end --max difficulty to show is 25.

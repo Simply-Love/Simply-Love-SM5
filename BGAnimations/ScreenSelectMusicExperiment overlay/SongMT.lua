@@ -158,7 +158,7 @@ local song_mt = {
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 						SL.Global.GroupToSong = false
 						SL.Global.LastSeenIndex = self.index
-					else MESSAGEMAN:Broadcast("StepsHaveChanged") end
+					else MESSAGEMAN:Broadcast("StepsHaveChanged") MESSAGEMAN:Broadcast("LessLag") end
 				else
 					stop_music()
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")

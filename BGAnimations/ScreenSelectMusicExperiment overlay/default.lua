@@ -107,12 +107,16 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
+	-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right 
+	-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .05 seconds to have
+	-- passed before broadcasting "LessLag" which PaneDisplay receives. 
 	BeginSongTransitionMessageCommand=function(self)
-		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
+		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .05
 		self:sleep(.1):queuecommand("FinishSongTransition")
 	end,
 	FinishSongTransitionMessageCommand=function(self)
 		if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
+
 			SL.Global.SongTransition=false
 			MESSAGEMAN:Broadcast("LessLag")
 		end
@@ -216,10 +220,10 @@ local t = Def.ActorFrame {
 		-- if they entered the sort menu while on "Close This Folder" then GetCurrentSong() will return nil
 		-- in that case grab the last seen song (set by SongMT)
 		local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
-
+		local mpn = GAMESTATE:GetMasterPlayerNumber()
 		--set global variables for the difficulty group and grade group so we can keep the scroll on the correct one when CurrentSongChangedMessageCommand is called
-		SL.Global.DifficultyGroup = GAMESTATE:GetCurrentSteps(0):GetMeter()
-		local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(0)):GetHighScores()[1] --TODO this only works for player one
+		SL.Global.DifficultyGroup = GAMESTATE:GetCurrentSteps(mpn):GetMeter()
+		local highScore = PROFILEMAN:GetProfile(mpn):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(mpn)):GetHighScores()[1] --TODO this only works for master player
 		if highScore then SL.Global.GradeGroup = highScore:GetGrade()
 		else SL.Global.GradeGroup = "No_Grade" end
 		setup.InitGroups() --this prunes out groups with no songs in them (or resets filters if we have 0 songs) and resets GroupWheel

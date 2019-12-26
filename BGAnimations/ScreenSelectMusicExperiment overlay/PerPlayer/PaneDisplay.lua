@@ -182,7 +182,6 @@ local af = Def.ActorFrame{
 	-- These playcommand("Set") need to apply to the ENTIRE panedisplay
 	-- (all its children) so declare each here
 	OnCommand=cmd(queuecommand,"Set"),
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set"),
 	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"),
 	StepsHaveChangedMessageCommand=cmd(queuecommand,"Set"),
 	SetCommand=function(self)
@@ -201,8 +200,14 @@ local af = Def.ActorFrame{
 
 			DiffuseEmojis(self, player_name)
 		end
-		-- ---------------------Extra Song Information------------------------------------------
+	end,
+	-- This is set separately because it lags SM if players hold down left or right (to scroll quickly). LessLag will trigger after .1 seconds
+	-- with no new song changes.
+	LessLagMessageCommand=function(self)
+			-- ---------------------Extra Song Information------------------------------------------
 		--TODO right now we don't show any of this if two players are joined. I'd like to find a way for both to see it
+		SM("GOGO")
+		local song = GAMESTATE:GetCurrentSong()
 		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSteps(player) and song and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
 			InitializeMeasureCounterAndModsLevel(player)
 			if SL[pn].Streams.Measures then --used to be working without this... not sure what changed but don't run any of this stuff if measures is not filled in
@@ -275,7 +280,6 @@ local af = Def.ActorFrame{
 			self:GetChild("AvgNps"):settext("")
 		end
 	end,
-	
 	--TODO part of the pane that gets hidden if two players are joined. i'd like to display this somewhere though
 	PeakNPSUpdatedMessageCommand=function(self, params)
 		if GAMESTATE:GetCurrentSong() and SL['P1'].NoteDensity.Peak and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
