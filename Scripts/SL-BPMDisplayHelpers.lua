@@ -30,17 +30,18 @@ local GetCourseOrTrailBPMs = function(entries)
 	end
 end
 
-GetCourseBPMs = function(course)
-	course = course or GAMESTATE:GetCurrentCourse( GAMESTATE:GetMasterPlayerNumber() )
+-- GetCourseBPMs() is unused for now
+local GetCourseBPMs = function(_course)
+	local course = _course or GAMESTATE:GetCurrentCourse( GAMESTATE:GetMasterPlayerNumber() )
 	if not course then return false end
 
 	local courseEntries = course:GetCourseEntries()
 	return GetCourseOrTrailBPMs( courseEntries )
 end
 
-GetTrailBPMs = function(player)
+local GetTrailBPMs = function(player, trail)
 	if not player then return false end
-	local trail = GAMESTATE:GetCurrentTrail(player)
+	local trail = trail or GAMESTATE:GetCurrentTrail(player)
 	if not trail then return false end
 
 	local trailEntries = trail:GetTrailEntries()
@@ -48,39 +49,37 @@ GetTrailBPMs = function(player)
 end
 
 
--- GetDisplayBPMs() will attempt to return a table of {lower, upper} DISPLAYBPM values
+-- GetDisplayBPMs() will attempt to return a table of numeric {lower, upper} DISPLAYBPM values
 -- it handles CourseMode and normal gameplay and factors in the current MusicRate
 --
--- if a player is provided, it will prefer steps timing in case the ssc file has "split BPMs"
--- if a player is not provided, song timing will be used
+-- if StepsOrTrail is provided, that will be used (useful for EvalSummary)
+-- if a player is provided without a StepsOrTrail, it will use the CurrentSteps() of that player (useful for SelectMusic, Eval, etc.)
+-- if a player is not provided, it will use the CurrentSteps() of the MasterPlayer
 --
 -- the SM engine does not allow bpm values <= 0, but it does allow stepartists to
 -- manually specify DISPLAYBPM values <= 0; if such a DISPLAYBPM value is found,
 -- this function will use actual bpm values instead to preserve sanity
 
-GetDisplayBPMs = function(player, StepsOrSong, MusicRate)
-	player = player or GAMESTATE:GetMasterPlayerNumber()
-	MusicRate = MusicRate or SL.Global.ActiveModifiers.MusicRate
+GetDisplayBPMs = function(player, StepsOrTrail, MusicRate)
+	player       = player       or GAMESTATE:GetMasterPlayerNumber()
+	StepsOrTrail = StepsOrTrail or (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+	MusicRate    = MusicRate    or SL.Global.ActiveModifiers.MusicRate
+
+	if not StepsOrTrail then return end
 
 	local bpms
 
 	-- if in CourseMode
 	if GAMESTATE:IsCourseMode() then
-		bpms = GetTrailBPMs(player) or GetCourseBPMs()
-		if not bpms then return end
+		bpms = GetTrailBPMs(player, StepsOrTrail)
 
 	-- otherwise, we are not in CourseMode, i.e. in "normal" mode
 	else
-		-- prefer the simfile's provided DISPLAYBPM values for this stepchart (possible with .ssc files)
-		-- if steps aren't available, try getting DISPLAYBPM values at the song level (normal for .sm files)
-		StepsOrSong = StepsOrSong or (player and GAMESTATE:GetCurrentSteps(player)) or GAMESTATE:GetCurrentSong()
-		if not StepsOrSong then return end
-
-		bpms = StepsOrSong:GetDisplayBpms()
+		bpms = StepsOrTrail:GetDisplayBpms()
 	end
 
 	-- ensure there are 2 values before attempting to index them
-	if not bpms[1] or not bpms[2] then return end
+	if not (bpms and bpms[1] and bpms[2]) then return end
 
 	-- if the stepartist has specified a DISPLAYBPM <= 0, that's cute but
 	-- 1. the engine doens't actually permit that and will ignore it
@@ -93,26 +92,38 @@ GetDisplayBPMs = function(player, StepsOrSong, MusicRate)
 	end
 
 	return {
-		math.round( bpms[1] * MusicRate, 1 ),
-		math.round( bpms[2] * MusicRate, 1 )
+		bpms[1] * MusicRate,
+		bpms[2] * MusicRate
 	}
 end
 
-StringifyDisplayBPMs = function(player, StepsOrSong, MusicRate)
-	player = player or GAMESTATE:GetMasterPlayerNumber()
-	StepsOrSong = StepsOrSong or GAMESTATE:GetCurrentSteps(player) or GAMESTATE:GetCurrentSong()
-	MusicRate = MusicRate or SL.Global.ActiveModifiers.MusicRate
+-- StringifyDisplayBPMs() uses the values provided by GetDisplayBPMs() and returns
+-- a formatted string that can be displayed on-screen and shown to players.
+-- This is used in SelectMusic, Eval, EvalSummary, PlayerOptions, etc.
+-- really anywhere the player should see a BPM or BPM range.
+--
+-- All three arguments are optional.  Provide them if you need a printable
+-- BPM for a specific song/stepchart (like on EvalSummary).
+--
+-- If arguments are not provided, the current song/stepchart will be used
+-- (like on SelectMusic and PlayerOptions).
 
-	local bpms = GetDisplayBPMs(player, StepsOrSong, MusicRate)
+StringifyDisplayBPMs = function(player, StepsOrTrail, MusicRate)
+	player       = player       or GAMESTATE:GetMasterPlayerNumber()
+	StepsOrTrail = StepsOrTrail or (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+	MusicRate    = MusicRate    or SL.Global.ActiveModifiers.MusicRate
+
+	local bpms = GetDisplayBPMs(player, StepsOrTrail, MusicRate)
+
 	if not (bpms and bpms[1] and bpms[2]) then return "" end
 
 	-- format DisplayBPMs to not show decimals unless a musicrate
 	-- modifier is in effect, in which case show 1 decimal of precision
-	local fmt = MusicRate==1 and "%.0f" or "%g"
+	local fmt = MusicRate==1 and "%.0f" or "%.1f"
 
 	if bpms[1] == bpms[2] then
-		return fmt:format(bpms[1])
+		return ("%g"):format( fmt:format(bpms[1]) )
 	end
 
-	return ( ("%s - %s"):format(fmt, fmt) ):format(bpms[1], bpms[2])
+	return ( ("%g - %g"):format(fmt:format(bpms[1]), fmt:format(bpms[2])) )
 end

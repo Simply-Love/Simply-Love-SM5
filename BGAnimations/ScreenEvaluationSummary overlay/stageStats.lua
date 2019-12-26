@@ -1,7 +1,7 @@
 local position_on_screen = ...
 
 local Players = GAMESTATE:GetHumanPlayers()
-local song, StageNum, LetterGradesAF
+local SongOrCourse, StageNum, LetterGradesAF
 
 local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualTheme")
 local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")
@@ -15,12 +15,12 @@ local t = Def.ActorFrame{
 
 		StageNum = ((params.Page-1)*4) + position_on_screen
 		local stage = SL.Global.Stages.Stats[StageNum]
-		song = stage ~= nil and stage.song or nil
+		SongOrCourse = stage ~= nil and stage.song or nil
 
 		self:queuecommand("DrawStage")
 	end,
 	DrawStageCommand=function(self)
-		if song == nil then
+		if SongOrCourse == nil then
 			self:visible(false)
 		else
 			self:queuecommand("Show"):visible(true)
@@ -35,7 +35,7 @@ local t = Def.ActorFrame{
 	--fallback banner
 	LoadActor(banner_directory.."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png")..{
 		InitCommand=function(self) self:y(-6):zoom(0.333) end,
-		DrawStageCommand=function(self) self:visible(song ~= nil and not song:HasBanner()) end
+		DrawStageCommand=function(self) self:visible(SongOrCourse ~= nil and not SongOrCourse:HasBanner()) end
 	},
 
 	-- the banner, if there is one
@@ -43,11 +43,11 @@ local t = Def.ActorFrame{
 		Name="Banner",
 		InitCommand=function(self) self:y(-6) end,
 		DrawStageCommand=function(self)
-			if song then
+			if SongOrCourse then
 				if GAMESTATE:IsCourseMode() then
-					self:LoadFromCourse(song)
+					self:LoadFromCourse(SongOrCourse)
 				else
-					self:LoadFromSong(song)
+					self:LoadFromSong(SongOrCourse)
 				end
 				self:setsize(418,164):zoom(0.333)
 			end
@@ -58,18 +58,21 @@ local t = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:zoom(0.8):y(-43):maxwidth(350) end,
 		DrawStageCommand=function(self)
-			if song then self:settext(song:GetDisplayFullTitle()) end
+			if SongOrCourse then self:settext(SongOrCourse:GetDisplayFullTitle()) end
 		end
 	},
 
 	-- the BPM(s) of the song
+	-- FIXME: the current layout of ScreenEvaluationSummary doesn't accommodate split BPMs
+	--        so this is currently hardcoded to use the MasterPlayer's BPM values
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:zoom(0.6):y(30):maxwidth(350) end,
 		DrawStageCommand=function(self)
-			if song then
+			if SongOrCourse then
 				local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
-				local bpms = StringifyDisplayBPMs(GAMESTATE:GetMasterPlayerNumber(), song, MusicRate)
-
+				local mpn = GAMESTATE:GetMasterPlayerNumber()
+				local StepsOrTrail = SL[ToEnumShortString(mpn)].Stages.Stats[StageNum].steps
+				local bpms = StringifyDisplayBPMs(mpn, StepsOrTrail, MusicRate)
 				if MusicRate ~= 1 then
 					-- format a string like "150 - 300 bpm (1.5x Music Rate)"
 					self:settext( ("%s bpm (%gx %s)"):format(bpms, MusicRate, THEME:GetString("OptionTitles", "MusicRate")) )

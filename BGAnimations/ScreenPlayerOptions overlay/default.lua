@@ -32,6 +32,8 @@ end
 -- at the top of the screen (one for each player)
 local GetSpeedModHelperText = function(player)
 	local bpms = player_bpms[player]
+	if not bpms then return "" end
+
 	local text = ""
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
 	local speed = mods.SpeedMod

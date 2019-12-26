@@ -107,6 +107,7 @@ SL = {
 	P1 = setmetatable( {}, PlayerDefaults),
 	P2 = setmetatable( {}, PlayerDefaults),
 	Global = setmetatable( {}, GlobalDefaults),
+
 	-- Colors that Simply Love's background can be
 	Colors = {
 		"#FF3C23",
@@ -367,8 +368,8 @@ SL = {
 }
 
 
--- Initialize preferences by calling this method.
--- We typically do this from ./BGAnimations/ScreenTitleMenu underlay/default.lua
+-- Initialize preferences by calling this method.  We typically do
+-- this from ./BGAnimations/ScreenTitleMenu underlay/default.lua
 -- so that preferences reset between each game cycle.
 
 function InitializeSimplyLove()
@@ -377,5 +378,4 @@ function InitializeSimplyLove()
 	SL.Global:initialize()
 end
 
--- TODO: remove this; it's for debugging purposes (Control+F2 to reload scripts) only
 InitializeSimplyLove()

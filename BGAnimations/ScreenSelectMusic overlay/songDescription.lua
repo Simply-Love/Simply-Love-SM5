@@ -36,8 +36,8 @@ local t = Def.ActorFrame{
 	-- ----------------------------------------
 	-- ActorFrame for Artist, BPM, and Song length
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CurrentSongChangedMessageCommand=function(self)    self:playcommand("Set") end,
+		CurrentCourseChangedMessageCommand=function(self)  self:playcommand("Set") end,
 		CurrentStepsP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentStepsP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
