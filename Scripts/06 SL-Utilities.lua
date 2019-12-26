@@ -30,7 +30,7 @@ local function TableToString_Recursive(t, name, indent)
 				if next(t) then -- Table not empty
 					table.insert(out, tag .. '{')
 					for key,value in pairs(t) do
-						table.insert(out,table_r(value,key,indent .. '|  ',tableList[t]))
+						table.insert(out,table_r(value,key,indent .. '|    ',tableList[t]))
 					end
 					table.insert(out,indent .. '}')
 				else
@@ -49,52 +49,19 @@ local function TableToString_Recursive(t, name, indent)
 end
 
 
-function table.val_to_str ( v )
-	if "string" == type( v ) then
-		v = string.gsub( v, "\n", "\\n" )
-
-		if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
-			return "'" .. v .. "'"
-		end
-		return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
-	else
-		return "table" == type( v ) and table.tostring( v ) or tostring( v )
-	end
-end
-
-function table.key_to_str ( k )
-	if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
-		return k
-	else
-		return "[" .. table.val_to_str( k ) .. "]"
-	end
-end
-
-function table.tostring( tbl )
-	local result, done = {}, {}
-	for k, v in ipairs( tbl ) do
-		table.insert( result, table.val_to_str( v ) )
-    	done[ k ] = true
-	end
-	for k, v in pairs( tbl ) do
-		if not done[ k ] then
-			table.insert( result, "\t" .. table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
-		end
-	end
-	return "{\n" .. table.concat( result, ",\n" ) .. "\n}"
-end
-
-
 ------------------------------------------------------------
 -- GLOBAL UTILITY FUNCTIONS
 -- use these to assist in theming/scripting efforts
 ------------------------------------------------------------
 
 -- SM()
--- Shorthand for SCREENMAN:SystemMessage(), this is useful for
--- rapid iterative testing by allowing us to print variables to the screen.
--- If passed a table, SM() will use the TableToString_Recursive (from above)
--- to display children recursively until the SystemMessage spills off the screen.
+-- Shorthand for SCREENMAN:SystemMessage(), this is useful for rapid iterative
+-- testing by allowing us to pretty-print tables and variables to the screen.
+-- If passed a table, SM() will use TableToString_Recursive (from above)
+-- to display children recursively.  Larger tables will spill offscreen, so
+-- rec_print_table() from the _fallback theme is good to know about and use when
+-- debugging.  It will recursively pretty-print table structures to ./Logs/Log.txt
+
 function SM( arg )
 
 	-- if a table has been passed in
@@ -155,8 +122,8 @@ end
 -- for example usage, see the MenuTimer OptionRows defined in ./Scripts/99 SL-ThemePrefs.lua
 function SecondsToMMSS_range(start, stop, step)
 	local ret = {}
-	local range = range(start, stop, step)
-	for v in ivalues(range) do
+	local r = range(start, stop, step)
+	for v in ivalues(r) do
 		ret[#ret+1] = SecondsToMMSS(v):gsub("^0*", "")
 	end
 	return ret
