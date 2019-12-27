@@ -6,7 +6,9 @@ if setup == nil then
 	return LoadActor(THEME:GetPathB("ScreenSelectMusicCasual", "overlay/NoValidSongs.lua"))
 end
 
+--Used to keep track of when we're changing songs
 local timeToGo = 0
+local scroll = 0
 
 local steps_type = setup.steps_type
 local group_info = setup.group_info
@@ -41,6 +43,7 @@ local optionrow_item_mt = LoadActor("./OptionRowItemMT.lua")
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
+		SL.Global.ExperimentScreen = true
 		SL.Global.GoToOptions = false
 		SL.Global.GameplayReloadCheck = false
 		setup.InitGroups()
@@ -111,12 +114,15 @@ local t = Def.ActorFrame {
 	-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .05 seconds to have
 	-- passed before broadcasting "LessLag" which PaneDisplay receives. 
 	BeginSongTransitionMessageCommand=function(self)
-		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .05
-		self:sleep(.1):queuecommand("FinishSongTransition")
+		scroll = scroll + 1
+		if scroll > 3 and not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
+		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
+		self:sleep(.15):queuecommand("FinishSongTransition")
 	end,
 	FinishSongTransitionMessageCommand=function(self)
 		if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
-
+			scroll = 0
+			SL.Global.Scrolling = false
 			SL.Global.SongTransition=false
 			MESSAGEMAN:Broadcast("LessLag")
 		end
@@ -246,6 +252,7 @@ local t = Def.ActorFrame {
 	
 	-- ScreenTransitionMessageCommand waits two seconds for the user to hit start again - then goes to either options or gameplay
 	GoToNextScreenCommand=function(self)
+		SL.Global.ExperimentScreen = false
 		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")

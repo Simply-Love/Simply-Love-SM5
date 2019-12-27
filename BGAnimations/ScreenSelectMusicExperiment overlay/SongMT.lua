@@ -96,12 +96,20 @@ local song_mt = {
 						Font="Common Normal",
 						InitCommand=function(subself)
 							self.title_bmt = subself
-							subself:zoom(1):diffuse(Color.White):shadowlength(0.75)
+							subself:zoom(1):diffuse(Color.White):shadowlength(0.75):maxwidth(200)
 						end,
 						SlideToTopCommand=function(subself)
 							if self.song ~= "CloseThisFolder" then subself:zoom(1.5):maxwidth(125):settext( self.song:GetDisplayMainTitle()) end end,
 						SlideBackIntoGridCommand=function(subself) 
-							if self.song  ~= "CloseThisFolder" then subself:zoom(1):settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars) end end,
+							if self.song  ~= "CloseThisFolder" then 
+								if SL.Global.Order == "Difficulty/BPM" then
+									local block = GetDifficultyBPM(self.index)
+									subself:settext( "["..block.difficulty.."]["..math.floor(block.bpm).."] "..self.song:GetDisplayMainTitle() ):maxwidth(200):zoom(1.2)
+								else
+									subself:settext( self.song:GetDisplayMainTitle() ):maxwidth(200):zoom(1.2)
+								end
+							end
+						end,
 						GainFocusCommand=function(subself) --make the words a little bigger to make it seem like they're popping out
 							if self.song == "CloseThisFolder" then
 								subself:zoom(1)
@@ -152,7 +160,7 @@ local song_mt = {
 						GAMESTATE:SetCurrentSong(self.song)
 						SL.Global.SongTransition = true
 						MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song, index=self.index})
-						MESSAGEMAN:Broadcast("BeginSongTransition")
+						MESSAGEMAN:Broadcast("BeginSongTransition") --caught in ScreenSelectMusicExperiment/default.lua
 						stop_music()
 						-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
@@ -177,7 +185,7 @@ local song_mt = {
 					current_difficulty = GAMESTATE:GetCurrentSteps(mpn):GetDifficulty() --are we looking at steps?
 				end
 				if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
-					grade = PROFILEMAN:GetProfile(mpn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1] --TODO this only grabs scores for player one
+					grade = PROFILEMAN:GetProfile(mpn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1] --TODO this only grabs scores for master player
 				end
 				if grade then
 					local converted_grade = Grade:Reverse()[grade:GetGrade()]
@@ -232,9 +240,9 @@ local song_mt = {
 				self.index = item.index
 				if SL.Global.Order == "Difficulty/BPM" then
 					local block = GetDifficultyBPM(item.index)
-					self.title_bmt:settext( "["..block.difficulty.."]["..math.floor(block.bpm).."] "..self.song:GetDisplayMainTitle() ):Truncate(max_chars)
+					self.title_bmt:settext( "["..block.difficulty.."]["..math.floor(block.bpm).."] "..self.song:GetDisplayMainTitle() )
 				else
-					self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars)
+					self.title_bmt:settext( self.song:GetDisplayMainTitle() )
 				end
 
 			end
