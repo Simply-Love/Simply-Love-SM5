@@ -6,7 +6,9 @@ if setup == nil then
 	return LoadActor(THEME:GetPathB("ScreenSelectMusicCasual", "overlay/NoValidSongs.lua"))
 end
 
+--Used to keep track of when we're changing songs
 local timeToGo = 0
+local scroll = 0
 
 local steps_type = setup.steps_type
 local group_info = setup.group_info
@@ -41,6 +43,7 @@ local optionrow_item_mt = LoadActor("./OptionRowItemMT.lua")
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
+		SL.Global.ExperimentScreen = true
 		SL.Global.GoToOptions = false
 		SL.Global.GameplayReloadCheck = false
 		setup.InitGroups()
@@ -107,12 +110,19 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
+	-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right 
+	-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .05 seconds to have
+	-- passed before broadcasting "LessLag" which PaneDisplay receives. 
 	BeginSongTransitionMessageCommand=function(self)
+		scroll = scroll + 1
+		if scroll > 3 and not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
 		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
-		self:sleep(.1):queuecommand("FinishSongTransition")
+		self:sleep(.15):queuecommand("FinishSongTransition")
 	end,
 	FinishSongTransitionMessageCommand=function(self)
 		if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
+			scroll = 0
+			SL.Global.Scrolling = false
 			SL.Global.SongTransition=false
 			MESSAGEMAN:Broadcast("LessLag")
 		end
@@ -216,10 +226,10 @@ local t = Def.ActorFrame {
 		-- if they entered the sort menu while on "Close This Folder" then GetCurrentSong() will return nil
 		-- in that case grab the last seen song (set by SongMT)
 		local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
-
+		local mpn = GAMESTATE:GetMasterPlayerNumber()
 		--set global variables for the difficulty group and grade group so we can keep the scroll on the correct one when CurrentSongChangedMessageCommand is called
-		SL.Global.DifficultyGroup = GAMESTATE:GetCurrentSteps(0):GetMeter()
-		local highScore = PROFILEMAN:GetProfile(0):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(0)):GetHighScores()[1] --TODO this only works for player one
+		SL.Global.DifficultyGroup = GAMESTATE:GetCurrentSteps(mpn):GetMeter()
+		local highScore = PROFILEMAN:GetProfile(mpn):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(mpn)):GetHighScores()[1] --TODO this only works for master player
 		if highScore then SL.Global.GradeGroup = highScore:GetGrade()
 		else SL.Global.GradeGroup = "No_Grade" end
 		setup.InitGroups() --this prunes out groups with no songs in them (or resets filters if we have 0 songs) and resets GroupWheel
@@ -242,6 +252,7 @@ local t = Def.ActorFrame {
 	
 	-- ScreenTransitionMessageCommand waits two seconds for the user to hit start again - then goes to either options or gameplay
 	GoToNextScreenCommand=function(self)
+		SL.Global.ExperimentScreen = false
 		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")

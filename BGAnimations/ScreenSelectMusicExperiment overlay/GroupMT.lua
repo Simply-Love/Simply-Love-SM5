@@ -74,6 +74,7 @@ local item_mt = {
 						-- slide the chosen Actor into place
 						subself:queuecommand("SlideToTop")
 						MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+						MESSAGEMAN:Broadcast("LessLag")
 					else
 						-- hide everything else
 						subself:linear(0.2):diffusealpha(0)

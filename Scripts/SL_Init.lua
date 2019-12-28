@@ -111,6 +111,7 @@ local GlobalDefaults = {
 			self.GroupType = "Group" --keep track of what group sort we're currently using
 			self.GroupToSong = false --keep track of when we're going from group view to song view for music preview purposes
 			self.Order = "Alphabetical"
+			self.SongTransition = false --keep track of if we're scrolling or not to deal with lag issues (set by SongMT)
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,
@@ -122,6 +123,8 @@ local GlobalDefaults = {
 		LastSeenIndex = 0, --set in SongMT transform. used in place of LastSeenSong if the same song appears twice in a row (due to difficulty/bpm order)
 		LastSongPlayedName = nil, --set by SL-CustomProfiles.lua every time profile is saved
 		LastSongPlayedGroup = nil,--set by SL-CustomProfiles.lua every time profile is saved
+		ExperimentScreen = false, --keep track of when we're on ScreenSelectMusicExperiment TODO figure out why SCREENMAN:GetTopScreen() returns nil sometimes
+		Scrolling = false, --keep track of when left or right is held down, set by ScreenSelectMusicExperiment/default.lua
 	}
 }
 
