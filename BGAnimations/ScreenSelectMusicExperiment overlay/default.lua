@@ -104,7 +104,6 @@ local t = Def.ActorFrame {
 	end,
 	SwitchFocusToSingleSongMessageCommand=function(self)
 		setup.InitOptionRowsForSingleSong()
-
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,													  
 	EnableInputCommand=function(self)
