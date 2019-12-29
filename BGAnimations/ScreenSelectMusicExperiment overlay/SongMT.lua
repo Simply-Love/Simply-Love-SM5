@@ -7,9 +7,6 @@ local col = args[4]
 local CloseFolderTexture = nil
 local NoJacketTexture = nil
 
--- max number of characters allowed in a song title before truncating to ellipsis
-local max_chars = 28
-
 local song_mt = {
 	__index = {
 		create_actors = function(self, name)
@@ -160,7 +157,7 @@ local song_mt = {
 						GAMESTATE:SetCurrentSong(self.song)
 						SL.Global.SongTransition = true
 						MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song, index=self.index})
-						MESSAGEMAN:Broadcast("BeginSongTransition") --caught in ScreenSelectMusicExperiment/default.lua
+						MESSAGEMAN:Broadcast("BeginSongTransition") --See the MessageCommand in ScreenSelectMusicExperiment/default.lua for details
 						stop_music()
 						-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")

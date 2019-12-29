@@ -55,9 +55,6 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentStepsP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentStepsP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 		UpdateTagsMessageCommand=function(self) self:playcommand("Set") end, --Called by ./TagMenu/Input when changing the tags.
 		-- Update the tags for the current song
@@ -65,12 +62,15 @@ local t = Def.ActorFrame{
 			local currentTags = {}
 			local song = GAMESTATE:GetCurrentSong()
 			if song then --no song if we're on "Close This Folder"
-				if GetActiveFilters() then table.insert(currentTags, {displayname = "Filters Active"}) end
-				for k, v in pairs(GetGroups("Tag")) do
-					if FindInTable(song,GetSongList(v,"Tag")) then
-						table.insert(currentTags,{displayname = v})
+				if GetActiveFilters() then table.insert(currentTags, {displayName = "Filters Active"}) end
+				if song:HasSignificantBPMChangesOrStops() then table.insert(currentTags,{displayName = "BPM Changes"}) end
+				local tagList = GetTags(song)
+				if tagList then
+					for tag in ivalues(tagList) do
+						table.insert(currentTags,{displayName = tag})
 					end
 				end
+				if #currentTags == 0 then table.insert(currentTags,{displayName = "No Tags Set"}) end
 				tagItems:set_info_set(currentTags,0)
 			end
 		end,

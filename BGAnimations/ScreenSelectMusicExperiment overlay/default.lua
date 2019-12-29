@@ -111,12 +111,12 @@ local t = Def.ActorFrame {
 		Input.Enabled = true
 	end,
 	-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right 
-	-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .05 seconds to have
-	-- passed before broadcasting "LessLag" which PaneDisplay receives. 
+	-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .08 seconds to have
+	-- passed without changing songs before broadcasting "LessLag" which PaneDisplay receives. 
 	BeginSongTransitionMessageCommand=function(self)
 		scroll = scroll + 1
 		if scroll > 3 and not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
-		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
+		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08 --TODO on especially laggy computers these numbers don't work
 		self:sleep(.15):queuecommand("FinishSongTransition")
 	end,
 	FinishSongTransitionMessageCommand=function(self)
@@ -144,14 +144,14 @@ local t = Def.ActorFrame {
 	-- elements we need two of - panes for the OptionWheel GUI
 	LoadActor("./PerPlayer/PlayerOptionsPanes/default.lua"),
 	-- right now this just has the black rectangle going across the screen.
-	-- there are also left/right arrows and a different style of text that are disabled
+	-- there's also a different style of text that are disabled
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}), 
 	-- create a sickwheel metatable for songs
 	SongWheel:create_actors( "SongWheel", 13, song_mt, 0, songwheel_y_offset - 40), 
 	-- the grey bar at the top as well as total time since start																				
 	LoadActor("./Header.lua", row),
 	-- profile information and time spent in game
-	--note that this covers the footer in graphics
+	-- note that this covers the footer in graphics
 	LoadActor("Footer.lua"),
 	-- this has information about the groups - number of songs/charts/filters/# of passed charts
 	LoadActor("./GroupWheelShared.lua", {row, col, group_info}), 
@@ -207,7 +207,6 @@ local t = Def.ActorFrame {
 	LoadActor("./OrderMenu/default.lua"),
 	--Stuff related to searching
 	LoadActor("./Search/default.lua"),
-	-- Sort Menu Stuff
 	
 	-- Broadcast when we enter the Sort Menu. Don't want to let input touch the normal screen
 	DirectInputToSortMenuMessageCommand=function(self)
@@ -242,12 +241,19 @@ local t = Def.ActorFrame {
 
 	-- This command is broadcast by input.handler when it tries to start a song.
 	-- Emulates the "Press START for options that native screenselectmusic has
+	-- if we're allowing it (set in prefs)
 	ScreenTransitionMessageCommand=function(self) 
-		Input.Enabled = false --TODO double tap start to enter options won't work with this
-		self:playcommand("TransitionQuadOff")
-		self:queuecommand("ShowPressStartForOptions")
-		params_for_input.EnteringSong = true
-		self:sleep(2):queuecommand("GoToNextScreen")
+		if ThemePrefs.Get("AllowTwoTap") then
+			self:playcommand("TransitionQuadOff")
+			self:queuecommand("ShowPressStartForOptions")
+			params_for_input.EnteringSong = true
+			self:sleep(2):queuecommand("GoToNextScreen")
+
+		else
+			Input.Enabled = false
+			self:playcommand("TransitionQuadOff")
+			self:sleep(.3):queuecommand("GoToNextScreen")
+		end
 	end,
 	
 	-- ScreenTransitionMessageCommand waits two seconds for the user to hit start again - then goes to either options or gameplay
@@ -262,6 +268,13 @@ local t = Def.ActorFrame {
 	GoToOptionsMessageCommand=function(self)
 		SL.Global.GoToOptions = true
 		self:playcommand("ShowEnteringOptions")
+	end,
+	-- Exit Code from normal Simply Love
+	-- TODO if you don't know about this it's hard to find, bad if you accidentally hit it. find a better way
+	CodeMessageCommand=function(self, params)
+		if params.Name == "Exit" then
+			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen") 
+		end
 	end,
 }
 
@@ -290,9 +303,9 @@ t[#t+1] = LoadActor("./StartButton.lua")
 -- This is added last so the black quad covers everything up
 
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:diffuse(0,0,0,0):FullScreen():cropbottom(1):fadebottom(0.5) end,
+	InitCommand=function(self) self:diffuse(0,0,0,0):FullScreen():cropbottom(1) end,
 	TransitionQuadOffCommand=function(self) 
-		self:linear(0.3):cropbottom(-0.5):diffusealpha(1)
+		self:linear(0.3):cropbottom(0):diffusealpha(1)
 	end
 }
 

@@ -57,20 +57,21 @@ local TaggedSongs = {}
 
 -- Returns nil if the song has no tags or the name of the first tag it finds
 -- If given a group parameter it will only return something if the song has that specific tag
--- TODO if a song is in multiple groups it will just return the first one it finds. Should probably go through everything and put all results in a table instead
 -- TODO take out custom song stuff and switch to tagName or something
-function IsTaggedSong(song, group)
+function GetTags(song, group)
 	local current_song = song
+	local tags = {}
 	for customSong in ivalues(TaggedSongs) do
 		if current_song:GetMainTitle() ==  customSong['title'] and current_song:GetGroupName() == customSong['actualGroup'] then
 			if group then
-				if group == customSong['customGroup'] then return customSong['customGroup'] end
+				if group == customSong['customGroup'] then tags[#tags+1] = customSong['customGroup'] end
 			else
-				return customSong['customGroup']
+				tags[#tags+1] = customSong['customGroup']
 			end
 		end
 	end
-	return nil
+	if #tags > 0 then return tags
+	else return nil end
 end
 	
 ---------------------------------------------------------------------------
@@ -219,7 +220,7 @@ function RemoveTaggedSong(toRemove, song)
 	SaveTaggedSongs()
 	PreloadedGroups["Tag"][tostring(toRemove[1])] = CreateSongList(tostring(toRemove[1]),"Tag")
 	--if this song no longer has any tags then add it to "No Tags Set"
-	if not IsTaggedSong(song) then table.insert(PreloadedGroups["Tag"]["No Tags Set"],song) end
+	if not GetTags(song) then table.insert(PreloadedGroups["Tag"]["No Tags Set"],song) end
 end
 
 -- To keep load times down we only want to create groups once. However, tag groups and grade groups are not static.
@@ -328,7 +329,7 @@ GetCurrentGroup = function()
 		else
 			starting_group = string.sub(starting_group, 1, 1)
 		end
-	elseif SL.Global.GroupType == "Tag" then starting_group = IsTaggedSong(current_song) or "No Tags Set"
+	elseif SL.Global.GroupType == "Tag" then starting_group = GetTags(current_song) and GetTags(current_song)[1] or "No Tags Set" --TODO if song is in multiple tags this just grabs the first
 	elseif SL.Global.GroupType == "Group" then starting_group = current_song:GetGroupName()
 	elseif SL.Global.GroupType == "BPM" then 
 		local speed = current_song:GetDisplayBpms()[2]
@@ -361,8 +362,8 @@ GetGroupIndex = function(groups)
 	local mpn = GAMESTATE:GetMasterPlayerNumber()
 	for k,group in ipairs(groups) do
 		if SL.Global.GroupType == "Tag" then
-			if IsTaggedSong(current_song) == group then group_index = k
-			elseif group == "No Tags Set" and not IsTaggedSong(current_song) then group_index = k end
+			if GetTags(current_song, group) then group_index = k
+			elseif group == "No Tags Set" and not GetTags(current_song) then group_index = k end
 		elseif SL.Global.GroupType == "Group" then
 			if current_song:GetGroupName() == group then
 				group_index = k
@@ -436,9 +437,9 @@ local CreateGroup = Def.ActorFrame{
 				if group == "BPM Changes" then
 					if song:HasSignificantBPMChangesOrStops() then songs[#songs+1] = song end
 				elseif group == "No Tags Set" then 
-					if not IsTaggedSong(song) and not song:HasSignificantBPMChangesOrStops() then songs[#songs+1] = song end
+					if not GetTags(song) and not song:HasSignificantBPMChangesOrStops() then songs[#songs+1] = song end
 				else
-					if IsTaggedSong(song, group) then
+					if GetTags(song, group) then
 						songs[#songs+1] = song
 					end
 				end

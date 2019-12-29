@@ -6,6 +6,12 @@ local SL_CustomPrefs =
 		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
+	AllowTwoTap = 
+		{
+		Default = false,
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values = { true, false }
+	},
 	AllowFailingOutOfSet =
 	{
 		Default = true,

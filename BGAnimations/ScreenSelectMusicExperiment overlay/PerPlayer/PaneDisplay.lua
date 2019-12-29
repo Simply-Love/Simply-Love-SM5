@@ -420,31 +420,6 @@ af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=cmd(xy, _screen.w/2 - 500, _screen.h/8 - 10; zoom, zoom_factor; diffuse, Color.White; halign, 0; maxwidth, 315)
 }
 
---------------------Actor Frame to put all the tags------------------------------
-local tagAF = Def.ActorFrame{
-	InitCommand=function(self)
-		self:xy(_screen.w/3 - 450, _screen.h/14 - 10)
-	end,
-	Def.Quad{
-		Name="BackgroundQuad",
-		InitCommand=function(self)
-			self:zoomto(_screen.w/8, _screen.h/3 + 20)
-		end,
-		SetCommand=function(self, params)
-			if GAMESTATE:IsHumanPlayer(player) then
-				local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-
-				if StepsOrTrail then
-					local difficulty = StepsOrTrail:GetDifficulty()
-					self:diffuse( DifficultyColor(difficulty) )
-				else
-					self:diffuse( PlayerColor(player) )
-				end
-			end
-		end
-	},
-}
-
 if not GAMESTATE:IsCourseMode() then af[#af+1] =  InitializeDensity end
 
 return af

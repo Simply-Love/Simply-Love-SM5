@@ -66,7 +66,7 @@ Handle.Start = function(event)
 			local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
 			local group = GetGroups("Tag")[index]
 			-- figure out if the song is already in this group so we know whether to remove or add
-			local inGroup = IsTaggedSong(current_song, group)
+			local inGroup = GetTags(current_song, group)
 			local toAdd = GetGroups("Tag")[index].."\t"..current_song:GetMainTitle().."\t"..current_song:GetGroupName()
 			if not inGroup then AddTaggedSong(toAdd, current_song) SM("Added ["..current_song:GetMainTitle().."] to "..group)
 			else RemoveTaggedSong(toAdd, current_song) SM("Removed ["..current_song:GetMainTitle().."] from "..group)  end

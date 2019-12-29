@@ -291,9 +291,9 @@ ValidateChart = function(song, chart, player, inputFilters)
 	if SL.Global.ActiveFilters["HideTags"] then
 		for k,v in pairs(GetGroups("Tag")) do
 			if SL.Global.ActiveFilters["HideTags"][v] == true then
-				if IsTaggedSong(song, v) then return false end
+				if GetTags(song, v) then return false end
 				if v == "BPM Changes" then if song:HasSignificantBPMChangesOrStops() then return false end end
-				if v == "No Tags Set" then if not IsTaggedSong(song) and not song:HasSignificantBPMChangesOrStops() then return false end end
+				if v == "No Tags Set" then if not GetTags(song) and not song:HasSignificantBPMChangesOrStops() then return false end end
 			end
 		end
 	end

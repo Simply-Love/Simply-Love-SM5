@@ -47,6 +47,8 @@ local function input(event)
 					overlay:queuecommand("DirectInputToTagMenu")
 				elseif focus.new_overlay == "Order" then
 					overlay:queuecommand("DirectInputToOrderMenu")
+				elseif focus.new_overlay == "Sort" then
+					sortmenu:playcommand("SwitchToSort")
 				end
 			end
 

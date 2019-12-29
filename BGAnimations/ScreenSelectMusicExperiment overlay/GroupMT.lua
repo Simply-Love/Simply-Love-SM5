@@ -203,11 +203,9 @@ local item_mt = {
 		set = function(self, groupName)
 
 			self.groupName = groupName
-
 			-- handle text
 			-- group name to display is not necessarily the same so check in SL-GroupHelpers
 			self.bmt:settext(GetGroupDisplayName(self.groupName)):Truncate(max_chars)
-			
 
 			-- handle banner
 			self.banner:LoadFromSongGroup(self.groupName):playcommand("On")

@@ -52,13 +52,13 @@ local t = Def.ActorFrame {
 	end,
 	StallCommand=function(self) 
 		self:playcommand("ShowSortMenu")
+		self:playcommand("AssessAvailableChoices")
 		self:visible(true):sleep(0.35):queuecommand("CaptureTest")
 	end,
 	CaptureTestCommand=function(self)
 		SOUND:StopMusic() --TODO stops music in the sort menu but that .35 second gap means a tiny bit plays
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
-
 		overlay:playcommand("HideTestInput")
 		screen:AddInputCallback(sortmenu_input)
 	end,
@@ -100,6 +100,32 @@ local t = Def.ActorFrame {
 		MESSAGEMAN:Broadcast("BeginSearch")
 		self:playcommand("HideSortMenu")
 	end,
+	SwitchToSortCommand=function(self)
+		local wheel_options = {
+			{"SortBy", "Group"},
+			{"SortBy", "Title"},
+			{"SortBy", "BPM"},
+			{"SortBy", "Length"},
+			{"SortBy", "Difficulty"},
+			{"SortBy", "Grade"},
+			{"SortBy", "Tag"},
+		}
+		-- get the currently active SortOrder and truncate the "SortOrder_" from the beginning
+		local current_sort_order = SL.Global.GroupType
+		local current_sort_order_index = 1
+
+		-- find the sick_wheel index of the item we want to display first when the player activates this SortMenu
+		for i=1, #wheel_options do
+			if wheel_options[i][1] == "SortBy" and wheel_options[i][2] == current_sort_order then
+				current_sort_order_index = i
+				break
+			end
+		end
+
+		-- the second argument passed to set_info_set is the index of the item in wheel_options
+		-- that we want to have focus when the wheel is displayed
+		sort_wheel:set_info_set(wheel_options, current_sort_order_index)
+	end,
 	AssessAvailableChoicesCommand=function(self)
 		self:visible(false)
 
@@ -111,21 +137,12 @@ local t = Def.ActorFrame {
 		-- remove the possible presence of an "8" in case we're in Techno game
 		-- and the style is "single8", "double8", etc.
 		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
-
-		local wheel_options = {
-			{"SortBy", "Group"},
-			{"SortBy", "Title"},
-			{"SortBy", "BPM"},
-			{"SortBy", "Length"},
-			{"SortBy", "Difficulty"},
-			{"SortBy", "Grade"},
-			{"SortBy", "Tag"},
-		}
-
+		local wheel_options = {}
+		table.insert(wheel_options, {"Text", "Search"})
+		table.insert(wheel_options, {"Change", "Sort"})
+		table.insert(wheel_options, {"Change", "Order"})
 		table.insert(wheel_options, {"Adjust", "Filters"})
 		table.insert(wheel_options, {"Modify", "Song Tags"})
-		table.insert(wheel_options, {"Change", "Order"})
-		table.insert(wheel_options, {"Text", "Search"})
 
 		--table.insert(wheel_options, {"SortBy", "Popularity"})
 		--table.insert(wheel_options, {"SortBy", "Recent"})
@@ -146,21 +163,9 @@ local t = Def.ActorFrame {
 		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
 		sort_wheel.focus_pos = 4
 
-		-- get the currently active SortOrder and truncate the "SortOrder_" from the beginning
-		local current_sort_order = SL.Global.GroupType
-		local current_sort_order_index = 1
-
-		-- find the sick_wheel index of the item we want to display first when the player activates this SortMenu
-		for i=1, #wheel_options do
-			if wheel_options[i][1] == "SortBy" and wheel_options[i][2] == current_sort_order then
-				current_sort_order_index = i
-				break
-			end
-		end
-
 		-- the second argument passed to set_info_set is the index of the item in wheel_options
 		-- that we want to have focus when the wheel is displayed
-		sort_wheel:set_info_set(wheel_options, current_sort_order_index)
+		sort_wheel:set_info_set(wheel_options,1)
 	end,
 
 	-- slightly darken the entire screen

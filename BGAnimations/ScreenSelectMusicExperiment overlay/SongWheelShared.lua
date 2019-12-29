@@ -42,52 +42,7 @@ af[#af+1] = Def.Quad{
 	SwitchFocusToSingleSongMessageCommand=function(self) self:visible(false) end,
 	SwitchFocusToSongsMessageCommand==function(self) self:visible(true) end
 }
------------------------------------------------------------------
--- left/right UI arrows - turned off for now
 
-af[#af+1] = Def.ActorFrame{
-	Name="Arrows",
-	--InitCommand=function(self) self:diffusealpha(0):xy(_screen.cx, _screen.cy+30) end,
-	--OnCommand=function(self) self:sleep(0.1):linear(0.2):diffusealpha(1) end,
-	--SwitchFocusToGroupsMessageCommand=function(self) self:linear(0.2):diffusealpha(0) end,
-	--SwitchFocusToSingleSongMessageCommand=function(self) self:linear(0.1):diffusealpha(0) end,
-	--SwitchFocusToSongsMessageCommand=function(self) self:sleep(0.2):linear(0.2):diffusealpha(1) end,
-
-	-- right arrow
-	Def.ActorFrame{
-		Name="RightArrow",
-		OnCommand=function(self) self:x(_screen.cx-50) end,
-		PressCommand=function(self) self:decelerate(0.05):zoom(0.7):glow(color("#ffffff22")):accelerate(0.05):zoom(1):glow(color("#ffffff00")) end,
-
-		LoadActor("./img/arrow_glow.png")..{
-			Name="RightArrowGlow",
-			InitCommand=function(self) self:zoom(0.25) end,
-			OnCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1) end
-		},
-		LoadActor("./img/arrow.png")..{
-			Name="RightArrow",
-			InitCommand=function(self) self:zoom(0.25):diffuse(Color.White) end,
-		}
-	},
-
-	-- left arrow
-	Def.ActorFrame{
-		Name="LeftArrow",
-		OnCommand=function(self) self:x(-_screen.cx+50) end,
-		PressCommand=function(self) self:decelerate(0.05):zoom(0.7):glow(color("#ffffff22")):accelerate(0.05):zoom(1):glow(color("#ffffff00")) end,
-
-		LoadActor("./img/arrow_glow.png")..{
-			Name="LeftArrowGlow",
-			InitCommand=function(self) self:zoom(0.25):rotationz(180) end,
-			OnCommand=function(self) self:diffuseshift():effectcolor1(1,1,1,0):effectcolor2(1,1,1,1) end
-		},
-		LoadActor("./img/arrow.png")..{
-			Name="LeftArrow",
-			InitCommand=function(self) self:zoom(0.25):diffuse(Color.White):rotationz(180) end,
-
-		}
-	}
-}
 -----------------------------------------------------------------
 --[[ text - turned off for now
 

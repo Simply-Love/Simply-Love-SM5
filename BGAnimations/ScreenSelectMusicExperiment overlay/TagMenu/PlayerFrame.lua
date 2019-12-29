@@ -151,7 +151,7 @@ return Def.ActorFrame{
 						else
 							local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
 							local group = GetGroups("Tag")[params.index]
-							local inGroup = IsTaggedSong(current_song, group)
+							local inGroup = GetTags(current_song, group)
 							self:settext((inGroup and "Remove [" or "Add [")..current_song:GetMainTitle()..(inGroup and "] from " or "] to ")..group)
 						end
 					end

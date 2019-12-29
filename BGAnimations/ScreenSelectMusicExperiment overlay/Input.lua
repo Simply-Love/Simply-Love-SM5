@@ -232,10 +232,6 @@ t.Handler = function(event)
 					return false
 				else --navigate the wheel right
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-					-- This currently does nothing because the arrows in SongWheelShared are disabled
-					--if t.WheelWithFocus==SongWheel then
-					--	SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("SongWheelShared"):GetChild("Arrows"):GetChild("RightArrow"):finishtweening():playcommand("Press")
-					--end
 				end
 			-- Scroll left with MenuLeft
 			elseif event.GameButton == "MenuLeft" then
@@ -245,12 +241,7 @@ t.Handler = function(event)
 					t.ResetHeldButtons()
 					return false
 				else -- navigate the wheel left
-	
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-					-- This currently does nothing because the arrows in SongWheelShared are disabled
-					--if t.WheelWithFocus==SongWheel then
-					--	SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("SongWheelShared"):GetChild("Arrows"):GetChild("LeftArrow"):finishtweening():playcommand("Press")
-					--end
 				end
 			-- change difficulty with MenuUp
 			elseif event.GameButton == "MenuUp" then
@@ -318,7 +309,7 @@ t.Handler = function(event)
 		else
 			-- get the index of the active optionrow for this player
 			local index = ActiveOptionRow[event.PlayerNumber]
-			if event.GameButton == "MenuRight" then
+			if event.GameButton == "MenuRight" and args.EnteringSong == false then
 				if index ~= #OptionRows then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 					-- The OptionRowItem for changing display doesn't do anything. So we broadcast a message with which pane to display.
@@ -335,7 +326,7 @@ t.Handler = function(event)
 					-- animate the right cursor
 					t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("RightArrow"):finishtweening():playcommand("Press")
 				end
-			elseif event.GameButton == "MenuLeft" then
+			elseif event.GameButton == "MenuLeft" and args.EnteringSong == false then
 				if index ~= #OptionRows then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 					if ActiveOptionRow[event.PlayerNumber] == 2 then
@@ -399,7 +390,7 @@ t.Handler = function(event)
 					MESSAGEMAN:Broadcast("BothPlayersAreReady")
 				end
 
-			elseif event.GameButton == "Select" or event.GameButton == "Back" then
+			elseif event.GameButton == "Select" or event.GameButton == "Back"  and args.EnteringSong == false then
 				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
 				t.CancelSongChoice()
 			end

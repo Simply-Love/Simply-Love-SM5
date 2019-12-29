@@ -51,11 +51,11 @@ return {
 				self.box:visible(false) 
 				return 
 			end
-			self.bmt:settext(tag.displayname or "")
+			self.bmt:settext(tag.displayName or "")
 			self.glowBorder:visible(true) 
 			self.box:visible(true)
-			if tag.displayname == "BPM Changes" or tag.displayname == "Filters Active" then self.box:diffuse(Color.Red)
-			elseif tag.displayname == "No Tags Set" then self.box:diffuse(Color.Black)
+			if tag.displayName == "BPM Changes" or tag.displayName == "Filters Active" then self.box:diffuse(Color.Red)
+			elseif tag.displayName == "No Tags Set" then self.box:diffuse(Color.Black)
 			else self.box:diffuse(Color.Green) end --TODO allow player to choose color for each tag
 		end
 	}
