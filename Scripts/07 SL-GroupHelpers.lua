@@ -157,7 +157,7 @@ end
 local function SaveTags()
 	local toWrite = ""
 	for k,v in pairs(SortGroups.Tag) do
-		if v ~= "No Tags Set" then
+		if v ~= "No Tags Set" and v~= "BPM Changes" then
 			toWrite = toWrite..v.."\n"
 		end
 	end
@@ -187,7 +187,7 @@ local function SaveTaggedSongs()
 end
 
 function AddTag(toAdd)
-	table.insert(SortGroups.Tag, #SortGroups.Tag, toAdd)
+	table.insert(SortGroups.Tag, #SortGroups.Tag-1, toAdd)
 	SaveTags()
 	PreloadedGroups["Tag"][tostring(toAdd)] = CreateSongList(tostring(toAdd), "Tag")
 end
