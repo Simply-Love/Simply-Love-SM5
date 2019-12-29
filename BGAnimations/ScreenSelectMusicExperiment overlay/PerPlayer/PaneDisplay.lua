@@ -241,9 +241,9 @@ local af = Def.ActorFrame{
 				end	
 				if totalStreams == 0 then
 					if measureType == "None" then
-						self:GetChild("Measures"):settext("Stream Counter turned off")
+						self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "StreamCounterOff"))
 					else
-						self:GetChild("Measures"):settext("No stream")
+						self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "NoStream"))
 					end
 					self:GetChild("TotalStream"):settext("")
 				else
@@ -258,7 +258,10 @@ local af = Def.ActorFrame{
 					end
 					local percent = totalStreams / streamsTable.Measures[lastSequence].streamEnd
 					percent = math.floor(percent*100)
-					self:GetChild("Measures"):settext("Total: "..totalStreams.." ("..percent.."%) (>="..measureType.." Note Stream)")
+					local toWrite = THEME:GetString("ScreenSelectMusicExperiment", "Total").." :"
+					toWrite = toWrite..totalStreams.." ("..percent.."%) (>="..measureType
+					toWrite = toWrite.." "..THEME:GetString("ScreenSelectMusicExperiment", "NoteStream")..")"
+					self:GetChild("Measures"):settext(toWrite)
 					if streamAmount > 15 then self:GetChild("TotalStream"):settext(string.sub(breakdown3,2))
 					else self:GetChild("TotalStream"):settext(string.sub(breakdown2,2)) end
 				end
@@ -267,7 +270,7 @@ local af = Def.ActorFrame{
 				local finalText = totalSteps / duration
 				finalText = math.floor(finalText*100)/100 --truncate to two decimals
 				self:GetChild("AvgNps"):settext(finalText)
-				self:GetChild("AvgNpsLabel"):settext("AVG NPS")
+				self:GetChild("AvgNpsLabel"):settext(THEME:GetString("ScreenSelectMusicExperiment", "AvgNps"))
 			else
 				self:GetChild("Measures"):settext("")
 				self:GetChild("TotalStream"):settext("")

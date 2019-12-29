@@ -64,7 +64,7 @@ local t = Def.ActorFrame {
 	CaptureTestCommand=function(self) 
 		SCREENMAN:GetTopScreen():AddInputCallback( searchMenu_input ) 
 	end,
-	BeginSearchMessageCommand=function(self)
+	DirectInputToSearchMenuCommand=function(self)
 		SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
 		SCREENMAN:GetTopScreen():Load(TextEntrySettings)
 	end,

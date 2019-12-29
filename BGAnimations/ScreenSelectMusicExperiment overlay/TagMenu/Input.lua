@@ -34,8 +34,8 @@ local TextEntrySettings = {
 			AddTag(answer)
 			local frame = af:GetChild(ToEnumShortString('PlayerNumber_P1') .. 'Frame')
 			frame:GetChild('ScrollerFrame'):playcommand("SetTagWheel")
-			scrollers[GAMESTATE:GetMasterPlayerNumber()]:scroll_by_amount(#GetGroups("Tag")-2)
-			frame:playcommand("Set", {index=#GetGroups("Tag")-1})
+			scrollers[GAMESTATE:GetMasterPlayerNumber()]:scroll_by_amount(#GetGroups("Tag")-3)
+			frame:playcommand("Set", {index=#GetGroups("Tag")-2})
 		end
 	end,
 	
@@ -115,7 +115,8 @@ Handle.MenuRight = function(event)
 		-- To get around that, each actual group has an index parameter that we set to be non zero
 		-- and then just don't scroll to 0 or lower
 		local index = type(info)=="table" and info.index or 0
-		if index + 1 < #GetGroups("Tag") then
+		SM(GetGroups("Tag"))
+		if index < #GetGroups("Tag") - 2 then --No Tags Set and BPM Changes are both in the tags group but aren't user modifiable
 			MESSAGEMAN:Broadcast("DirectionButton")
 			scrollers[event.PlayerNumber]:scroll_by_amount(1)
 			local frame = af:GetChild(ToEnumShortString(event.PlayerNumber) .. 'Frame')

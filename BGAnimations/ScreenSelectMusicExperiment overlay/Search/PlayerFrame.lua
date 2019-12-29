@@ -135,10 +135,6 @@ return Def.ActorFrame{
 			Def.ActorFrame{
 				InitCommand=function(self) self:diffusealpha(0) end,
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(1) end,
-				ShowSearchMenuCommand=function(self)
-					local index = scroller:get_info_at_focus_pos().index
-					self:playcommand("Set",{index=index})
-				end,
 				-- description of each item
 				LoadFont("Common Normal")..{
 					Name="Explanation",

@@ -6,9 +6,6 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- ----------------------------------------------------
 local invalid_count = 0
 local t = Def.ActorFrame {
-
-	ShowCustomSongMenuCommand=function(self) self:visible(true) end,
-	HideCustomSongMenuCommand=function(self) self:visible(false) end,	
 	-- FIXME: stall for 0.5 seconds so that the Lua InputCallback doesn't get immediately added to the screen.
 	-- It's otherwise possible to enter the screen with MenuLeft/MenuRight already held and firing off events,
 	-- which causes the sick_wheel of profile names to not display.  I don't have time to debug it right now.
@@ -16,7 +13,7 @@ local t = Def.ActorFrame {
 		self:visible(false)
 		orderMenu_input = LoadActor("./Input.lua", {af=self, Scrollers=scrollers})
 	end,
-	DirectInputToOrderMenuMessageCommand=function(self) self:queuecommand("Stall") end,
+	DirectInputToOrderMenuCommand=function(self) self:queuecommand("ShowOrderMenu"):queuecommand("Stall") end,
 	StallCommand=function(self) 
 		self:visible(true):sleep(0.25):queuecommand("CaptureTest")
 	end,

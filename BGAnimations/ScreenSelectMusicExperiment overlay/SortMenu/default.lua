@@ -44,7 +44,7 @@ local t = Def.ActorFrame {
 	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
 	-- Load the custom song menu
 
-	ShowSortMenuCommand=function(self) self:visible(true) end,
+	ShowSortMenuCommand=function(self) self:diffusealpha(0):visible(true):linear(.15):diffusealpha(1) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
 
 	DirectInputToSortMenuMessageCommand=function(self)
@@ -53,7 +53,7 @@ local t = Def.ActorFrame {
 	StallCommand=function(self) 
 		self:playcommand("ShowSortMenu")
 		self:playcommand("AssessAvailableChoices")
-		self:visible(true):sleep(0.35):queuecommand("CaptureTest")
+		self:visible(true):sleep(0.5):queuecommand("CaptureTest")
 	end,
 	CaptureTestCommand=function(self)
 		SOUND:StopMusic() --TODO stops music in the sort menu but that .35 second gap means a tiny bit plays
@@ -62,42 +62,27 @@ local t = Def.ActorFrame {
 		overlay:playcommand("HideTestInput")
 		screen:AddInputCallback(sortmenu_input)
 	end,
-	DirectInputToTestInputCommand=function(self)
-		local screen = SCREENMAN:GetTopScreen()
-		local overlay = self:GetParent()
-		screen:RemoveInputCallback(sortmenu_input)
-		screen:AddInputCallback(testinput_input)
-		self:playcommand("HideSortMenu")
-		overlay:playcommand("ShowTestInput")
-	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
 	DirectInputToEngineCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
-		screen:RemoveInputCallback(sortmenu_input)
+		self:playcommand("FinishSort")
 		screen:RemoveInputCallback(testinput_input)
-		self:playcommand("HideSortMenu")
 		overlay:playcommand("HideTestInput")
 	end,
-	DirectInputToTagMenuMessageCommand=function(self)
+	DirectInputToTagMenuCommand=function(self) self:playcommand("FinishSort") end,
+	DirectInputToOrderMenuCommand=function(self) self:playcommand("FinishSort") end,
+	DirectInputToSearchMenuCommand=function(self) self:playcommand("FinishSort") end,
+	DirectInputToTestInputCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
-		overlay:playcommand("ShowTagMenu")
-		screen:RemoveInputCallback(sortmenu_input)
-		self:playcommand("HideSortMenu")
+		self:playcommand("FinishSort")
+		screen:AddInputCallback(testinput_input)
+		overlay:playcommand("ShowTestInput")
 	end,
-	DirectInputToOrderMenuMessageCommand=function(self)
+	FinishSortCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
-		local overlay = self:GetParent()
-		overlay:playcommand("ShowOrderMenu")
 		screen:RemoveInputCallback(sortmenu_input)
-		self:playcommand("HideSortMenu")
-	end,
-	DirectInputToSearchMenuMessageCommand=function(self)
-		local screen = SCREENMAN:GetTopScreen()
-		local overlay = self:GetParent()
-		screen:RemoveInputCallback(sortmenu_input)
-		MESSAGEMAN:Broadcast("BeginSearch")
 		self:playcommand("HideSortMenu")
 	end,
 	SwitchToSortCommand=function(self)
@@ -128,15 +113,6 @@ local t = Def.ActorFrame {
 	end,
 	AssessAvailableChoicesCommand=function(self)
 		self:visible(false)
-
-		-- normally I would give variables like these file scope, and not declare
-		-- within OnCommand(), but if the player uses the SortMenu to switch from
-		-- single to double, we'll need reassess which choices to present.
-
-		-- a style like "single", "double", "versus", "solo", or "routine"
-		-- remove the possible presence of an "8" in case we're in Techno game
-		-- and the style is "single8", "double8", etc.
-		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
 		local wheel_options = {}
 		table.insert(wheel_options, {"Text", "Search"})
 		table.insert(wheel_options, {"Change", "Sort"})

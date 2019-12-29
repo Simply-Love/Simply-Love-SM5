@@ -39,7 +39,7 @@ local function input(event)
 				screen:SetNextScreenName("ScreenFilterOptions")
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
 			elseif focus.kind == "Text" then
-				sortmenu:queuecommand("DirectInputToSearchMenu")
+				overlay:queuecommand("DirectInputToSearchMenu")
 			elseif focus.new_overlay then
 				if focus.new_overlay == "TestInput" then
 					sortmenu:queuecommand("DirectInputToTestInput")

@@ -108,18 +108,10 @@ local song_mt = {
 							end
 						end,
 						GainFocusCommand=function(subself) --make the words a little bigger to make it seem like they're popping out
-							if self.song == "CloseThisFolder" then
-								subself:zoom(1)
-							else
-								subself:visible(true):zoom(1.2)
-							end
+							subself:visible(true):zoom(1.2)
 						end,
 						LoseFocusCommand=function(subself)
-							if self.song == "CloseThisFolder" then
-								subself:zoom(0.9)
-							else
-								subself:zoom(1)
-							end
+							subself:zoom(1)
 							subself:y(0):visible(true)
 						end,
 					},
@@ -230,7 +222,7 @@ local song_mt = {
 			if not item.song then return end
 			if type(item.song) == "string" then
 				self.song = item.song
-				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
+				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicExperiment", "CloseThisFolder") )
 				self.index = 0
 			else
 				self.song = item.song

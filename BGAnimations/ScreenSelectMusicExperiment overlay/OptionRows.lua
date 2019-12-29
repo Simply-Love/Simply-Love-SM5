@@ -7,7 +7,7 @@ end
 local OptionRows = {
 	{
 		Name = "GoToOptions",
-		HelpText = "GO TO OPTIONS?",
+		HelpText = THEME:GetString("ScreenSelectMusicExperiment", "GoToOptions"),
 		Choices = function(self) return { "No", "Yes" } end,
 		Values = function(self) return { false, true } end,
 		OnLoad = function(actor, pn, choices, values)
@@ -24,7 +24,7 @@ local OptionRows = {
 -- Option Panes
 OptionRows[#OptionRows + 1] = {
 	Name = "ChangeDisplay",
-	HelpText = "CHANGE DISPLAY",
+		HelpText = THEME:GetString("ScreenSelectMusicExperiment", "ChangeDisplay"),
 		Choices = function()
 			return {
 				"Song Background",
