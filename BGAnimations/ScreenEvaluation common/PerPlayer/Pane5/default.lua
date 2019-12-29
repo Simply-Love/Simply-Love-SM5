@@ -29,7 +29,7 @@ local pane = Def.ActorFrame{
 }
 
 -- for single style, show one pad and some help text
-if style == "OnePlayerOneSide" then
+if style == "OnePlayerOneSide" or style == "TwoPlayersTwoSides" then
 	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=player, ShowMenuButtons=false, ShowPlayerLabel=false})..{
 		InitCommand=function(self) self:xy(50, 338):zoom(0.8) end
 	}
