@@ -24,22 +24,20 @@ Features:
 
 Sorting by Grade/Difficulty - When sorting by grade, if a song has any chart with the selected grade it will show up on the list. When sorting by difficulty, any chart with the correct difficulty will show up on the list. In both cases you can still choose to play any of the other charts. As you play, songs will move around in to different grade groups.
 
+Order options - Change the way songs are ordered within a group. For example, if you're looking at all songs that start with 'A' you can then sort them by BPM.
+
 [Options Pane before starting a song](https://i.imgur.com/GU6vXBR.jpg) - before starting a song there's a selectable display with various bits of info. One is a graph of all the songs played today and what score you got on them. It's cool to visualize trends in difficulty/grade for me at least but for people who get 99+ all the time it's probably useless.
 
 Known Issues:
 
 There are a couple blank places that will eventually be filled in when I decide what to put there.
 
-When starting a song, the normal "Press Start to enter options" appears even though you can't press anything.
-
-If you don't have a select button once you enter the options pane you have to either go to normal player options or start a song. Similarly, if there's no back button you can't quit out of the game. Working on this.
+If you don't have a select button once you enter the options pane you have to either go to normal player options or start a song. 
 
 There's some sort of race condition or something where sometimes entering sort menu doesn't disable input on normal music wheel.
 
 I haven't tested different resolutions so probably doesn't work super well on widescreen.
 
 I haven't tested with large libraries. Initial load is long because all songs need to be put in to groups but after that it should be fine.
-
-A lot of text is written straight in so language files won't work.
 
 If you have tagged songs and then delete the tag, the tagged songs won't show up in the untagged group. Once you add the tag back in they'll all reappear.
