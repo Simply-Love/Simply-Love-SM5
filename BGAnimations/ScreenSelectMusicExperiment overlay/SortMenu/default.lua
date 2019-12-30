@@ -53,7 +53,7 @@ local t = Def.ActorFrame {
 	StallCommand=function(self) 
 		self:playcommand("ShowSortMenu")
 		self:playcommand("AssessAvailableChoices")
-		self:visible(true):sleep(0.5):queuecommand("CaptureTest")
+		self:visible(true):sleep(0.4):queuecommand("CaptureTest")
 	end,
 	CaptureTestCommand=function(self)
 		SOUND:StopMusic() --TODO stops music in the sort menu but that .35 second gap means a tiny bit plays

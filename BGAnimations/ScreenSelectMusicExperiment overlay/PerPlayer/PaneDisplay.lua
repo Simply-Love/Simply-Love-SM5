@@ -171,7 +171,11 @@ local af = Def.ActorFrame{
 		self:visible(true)
 			:zoom(0):croptop(0):bounceend(0.3):zoom(1)
 			:playcommand("Set")
-		--end
+		self:GetChild("Measures"):settext("")
+		self:GetChild("TotalStream"):settext("")
+		self:GetChild("PeakNPS"):settext("")
+		self:GetChild("AvgNpsLabel"):settext("")
+		self:GetChild("AvgNps"):settext("")
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if player==params.Player then
@@ -240,11 +244,7 @@ local af = Def.ActorFrame{
 					end
 				end	
 				if totalStreams == 0 then
-					if measureType == "None" then
-						self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "StreamCounterOff"))
-					else
-						self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "NoStream"))
-					end
+					self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "NoStream"))
 					self:GetChild("TotalStream"):settext("")
 				else
 					for stream in ivalues(split(breakdown2,"/")) do
@@ -272,7 +272,7 @@ local af = Def.ActorFrame{
 				self:GetChild("AvgNps"):settext(finalText)
 				self:GetChild("AvgNpsLabel"):settext(THEME:GetString("ScreenSelectMusicExperiment", "AvgNps"))
 			else
-				self:GetChild("Measures"):settext("")
+				self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "StreamCounterOff"))
 				self:GetChild("TotalStream"):settext("")
 				self:GetChild("PeakNPS"):settext("")
 				self:GetChild("AvgNpsLabel"):settext("")
@@ -288,8 +288,8 @@ local af = Def.ActorFrame{
 	end,
 	--TODO part of the pane that gets hidden if two players are joined. i'd like to display this somewhere though
 	PeakNPSUpdatedMessageCommand=function(self, params)
-		if GAMESTATE:GetCurrentSong() and SL['P1'].NoteDensity.Peak and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
-			self:GetChild("PeakNPS"):settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(SL['P1'].NoteDensity.Peak * SL.Global.ActiveModifiers.MusicRate,2))
+		if GAMESTATE:GetCurrentSong() and SL[pn].NoteDensity.Peak and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
+			self:GetChild("PeakNPS"):settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(SL[pn].NoteDensity.Peak * SL.Global.ActiveModifiers.MusicRate,2))
 		else
 			self:GetChild("PeakNPS"):settext( "" )
 		end

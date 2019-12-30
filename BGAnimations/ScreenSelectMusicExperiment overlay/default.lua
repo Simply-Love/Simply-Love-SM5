@@ -120,6 +120,7 @@ local t = Def.ActorFrame {
 	end,
 	FinishSongTransitionMessageCommand=function(self)
 		if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
+			self:stoptweening()
 			scroll = 0
 			SL.Global.Scrolling = false
 			SL.Global.SongTransition=false
@@ -213,7 +214,7 @@ local t = Def.ActorFrame {
 	end,
 	-- Broadcast when coming out of the Sort Menu.
 	DirectInputToEngineMessageCommand=function(self)
-		self:playcommand("EnableInput")
+		self:queuecommand("EnableInput")
 		if Input.WheelWithFocus == SongWheel then
 			play_sample_music()
 		end

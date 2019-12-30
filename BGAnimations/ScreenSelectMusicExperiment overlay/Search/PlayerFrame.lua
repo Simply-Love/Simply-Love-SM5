@@ -25,11 +25,9 @@ local FrameBackground = function(c, player, w)
 			InitCommand=function(self)
 				self:diffuse(c):cropbottom(1)
 			end,
-			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
+			SetSearchWheelMessageCommand=function(self) self:smooth(0.3):cropbottom(0) end,
 			OffCommand=function(self)
-				if not GAMESTATE:IsSideJoined(player) then
-					self:accelerate(0.25):cropbottom(1)
-				end
+				self:sleep(.4):cropbottom(1)
 			end
 		},
 
@@ -37,11 +35,9 @@ local FrameBackground = function(c, player, w)
 		-- currently inherited from _fallback
 		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") )..{
 			InitCommand=function(self) self:cropbottom(1) end,
-			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
+			SetSearchWheelMessageCommand=function(self) self:smooth(0.3):cropbottom(0) end,
 			OffCommand=function(self)
-				if not GAMESTATE:IsSideJoined(player) then
-					self:accelerate(0.25):cropbottom(1)
-				end
+				self:sleep(.4):cropbottom(1)
 			end
 		}
 	}
@@ -52,7 +48,7 @@ end
 return Def.ActorFrame{
 	Name=ToEnumShortString(player) .. "Frame",
 	InitCommand=function(self) self:xy(_screen.cx+(150*(player==PLAYER_1 and -1 or 1)), _screen.cy) end,
-
+	SetSearchWheelMessageCommand=function(self) self:zoom(1) end,
 	OffCommand=function(self)
 		if GAMESTATE:IsSideJoined(player) then
 			self:bouncebegin(0.35):zoom(0)
@@ -113,7 +109,8 @@ return Def.ActorFrame{
 		-- semi-transparent Quad used to indicate location in SelectProfile scroller
 		Def.Quad {
 			InitCommand=function(self) self:diffuse({0,0,0,0}):zoomto(145,row_height):x(-67) end,
-			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
+			SetSearchWheelMessageCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
+			OffCommand=function(self) self:sleep(.4):diffusealpha(0) end,
 		},
 
 		-- sick_wheel scroller containing search results as choices
@@ -123,18 +120,19 @@ return Def.ActorFrame{
 		Def.ActorFrame{
 			Name="DataFrame",
 			InitCommand=function(self) self:xy(62,1) end,
-			OnCommand=function(self) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present song or group info
 			Def.Quad {
 				InitCommand=function(self) self:vertalign(top):diffuse(0,0,0,0):zoomto(235,221):xy(-57,-111):halign(0) end,
-				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
+				SetSearchWheelMessageCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
+				OffCommand=function(self) self:sleep(.4):diffusealpha(0) end,
 			},
 
 			-- put all BitmapText actors in an ActorFrame so they can diffusealpha() simultaneously more easily
 			Def.ActorFrame{
 				InitCommand=function(self) self:diffusealpha(0) end,
-				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(1) end,
+				OffCommand=function(self) self:sleep(.4):diffusealpha(0) end,
+				SetSearchWheelMessageCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(1) end,
 				-- description of each item
 				LoadFont("Common Normal")..{
 					Name="Explanation",
@@ -148,7 +146,8 @@ return Def.ActorFrame{
 					InitCommand=function(self)
 						self:y(160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
 					end,
-					OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+					SetSearchWheelMessageCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+					OffCommand=function(self) self:sleep(.35):cropright(1) end,
 					SetCommand=function(self, params)
 						if #descriptions > 5 then 
 							local plural = #descriptions > 6 and "s" or ""
@@ -163,7 +162,8 @@ return Def.ActorFrame{
 					InitCommand=function(self)
 						self:y(-160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
 					end,
-					OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+					SetSearchWheelMessageCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+					OffCommand=function(self) self:sleep(.35):cropright(1) end,
 					SetCommand=function(self, params)
 						if params and params.searchTerm then
 							self:settext("Search results for: "..params.searchTerm)

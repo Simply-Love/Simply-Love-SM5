@@ -11,9 +11,11 @@ return {
 					self.container = subself
 					subself:diffusealpha(0):visible(false)
 				end,
-				OnCommand=function(subself) subself:sleep(0.2):queuecommand("Appear") end,
+				OffCommand=function(subself) subself:sleep(.2):queuecommand("Disappear") end,
+				ShowOrderMenuCommand=function(subself) subself:sleep(.2):queuecommand("Appear") end,
 				AppearCommand=function(subself) subself:visible(true):linear(0.15):diffusealpha(1) end,
-
+				DisappearCommand=function(subself) subself:linear(.2):diffusealpha(0):visible(false) end,
+				
 				LoadFont("Common Normal")..{
 					InitCommand=function(subself)
 						self.bmt = subself

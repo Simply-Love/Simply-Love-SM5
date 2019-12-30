@@ -13,7 +13,7 @@ local t = Def.ActorFrame {
 		self:visible(false)
 		orderMenu_input = LoadActor("./Input.lua", {af=self, Scrollers=scrollers})
 	end,
-	DirectInputToOrderMenuCommand=function(self) self:queuecommand("ShowOrderMenu"):queuecommand("Stall") end,
+	DirectInputToOrderMenuCommand=function(self) self:playcommand("ShowOrderMenu"):queuecommand("Stall") end,
 	StallCommand=function(self) 
 		self:visible(true):sleep(0.25):queuecommand("CaptureTest")
 	end,

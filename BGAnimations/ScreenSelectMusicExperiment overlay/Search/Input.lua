@@ -22,7 +22,7 @@ Handle.Start = function(event)
 			MESSAGEMAN:Broadcast("GroupTypeChanged")
 		end
 		MESSAGEMAN:Broadcast("StartButton")
-		topscreen:queuecommand("Finish"):sleep(0.4)
+		topscreen:queuecommand("Off"):sleep(0.4)
 	end
 end
 
@@ -75,7 +75,7 @@ Handle.Back = function(event)
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
 		MESSAGEMAN:Broadcast("BackButton")
 		-- queue the Finish for the entire screen
-		topscreen:queuecommand("Finish"):sleep(0.4)
+		topscreen:queuecommand("Off"):sleep(0.4)
 	end
 end
 Handle.Select = Handle.Back

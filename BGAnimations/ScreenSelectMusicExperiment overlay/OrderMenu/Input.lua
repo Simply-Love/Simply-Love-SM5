@@ -17,7 +17,7 @@ Handle.Start = function(event)
 		SL.Global.Order = info.displayname
 		MESSAGEMAN:Broadcast("GroupTypeChanged") --the order of songs in a group may have changed so reset it
 		-- and queue the Finish for the menu
-		topscreen:queuecommand("Finish"):sleep(0.4)
+		topscreen:queuecommand("Off")
 	end
 end
 
@@ -69,7 +69,7 @@ Handle.Back = function(event)
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
 		MESSAGEMAN:Broadcast("BackButton")
 		-- queue the Finish for the entire screen
-		topscreen:queuecommand("Finish"):sleep(0.4)
+		topscreen:queuecommand("Off")
 	end
 end
 Handle.Select = Handle.Back

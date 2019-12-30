@@ -29,7 +29,6 @@ local TextEntrySettings = {
 		if answer == "" then MESSAGEMAN:Broadcast("FinishText") --if players who don't have a keyboard get here they can just hit enter to cancel out
 		else
 			MESSAGEMAN:Broadcast("SetSearchWheel",{searchTerm=answer})
-			MESSAGEMAN:Broadcast("ChooseResults")
 		end
 	end,
 	
@@ -58,7 +57,7 @@ local t = Def.ActorFrame {
 		self:visible(false)
 		searchMenu_input = LoadActor("./Input.lua", {af=self, Scrollers=scrollers})
 	end,
-	ChooseResultsMessageCommand=function(self) 
+	SetSearchWheelMessageCommand=function(self) 
 		self:visible(true):sleep(0.5):queuecommand("CaptureTest")
 	end,
 	CaptureTestCommand=function(self) 
