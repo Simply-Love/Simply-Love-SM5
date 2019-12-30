@@ -149,11 +149,11 @@ return Def.ActorFrame{
 					SetSearchWheelMessageCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
 					OffCommand=function(self) self:sleep(.35):cropright(1) end,
 					SetCommand=function(self, params)
-						if #descriptions > 5 then 
-							local plural = #descriptions > 6 and "s" or ""
-							self:settext(#descriptions-5 .. " result"..plural.. " found") 
-						else
-							self:settext("No results found")
+						local plural
+						if params and params.searchTerm then
+							if #descriptions > 5 then plural = #descriptions > 6 and "s" or "" end
+							if #descriptions > 0 then self:settext(#descriptions-5 .. " result"..plural.. " found") 
+							else self:settext("No results found") end
 						end
 					end
 				},
@@ -162,13 +162,14 @@ return Def.ActorFrame{
 					InitCommand=function(self)
 						self:y(-160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
 					end,
-					SetSearchWheelMessageCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+					SetSearchWheelMessageCommand=function(self, params)
+						self:settext("Search results for: "..params.searchTerm)
+						self:sleep(0.2):smooth(0.2):cropright(0) 
+					end,
 					OffCommand=function(self) self:sleep(.35):cropright(1) end,
 					SetCommand=function(self, params)
 						if params and params.searchTerm then
 							self:settext("Search results for: "..params.searchTerm)
-						else
-							self:settext("")
 						end
 					end
 				}

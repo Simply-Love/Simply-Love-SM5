@@ -44,14 +44,14 @@ local t = Def.ActorFrame {
 	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
 	-- Load the custom song menu
 
-	ShowSortMenuCommand=function(self) self:diffusealpha(0):visible(true):linear(.15):diffusealpha(1) end,
+	ShowSortMenuCommand=function(self) self:diffusealpha(0):visible(true):linear(.2):diffusealpha(1) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
 
 	DirectInputToSortMenuMessageCommand=function(self)
+		self:playcommand("ShowSortMenu")
 		self:queuecommand("Stall")
 	end,
 	StallCommand=function(self) 
-		self:playcommand("ShowSortMenu")
 		self:playcommand("AssessAvailableChoices")
 		self:visible(true):sleep(0.4):queuecommand("CaptureTest")
 	end,
