@@ -247,10 +247,10 @@ local af = Def.ActorFrame{
 					self:GetChild("Measures"):settext(THEME:GetString("ScreenSelectMusicExperiment", "NoStream"))
 					self:GetChild("TotalStream"):settext("")
 				else
-					for stream in ivalues(split(breakdown2,"/")) do
+					for stream in ivalues(Split(breakdown2,"/")) do
 						local combine = 0
 						local multiple = false
-						for part in ivalues(split(stream,"-")) do
+						for part in ivalues(Split(stream,"-")) do
 							if combine ~= 0 then multiple = true end
 							combine = combine + tonumber(part)
 						end

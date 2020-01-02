@@ -84,65 +84,8 @@ GetGroups = function(group)
 	else return SortGroups[group] end
 end
 
----------------------------------------------------------------------------
--- helper function used to load tags and tagged songs
--- returns the contents of a txt file as an indexed table, split on newline
-local GetFileContents = function(path)
-	local contents = ""
-
-	if FILEMAN:DoesFileExist(path) then
-		-- create a generic RageFile that we'll use to read the contents
-		local file = RageFileUtil.CreateRageFile()
-		-- the second argument here (the 1) signifies
-		-- that we are opening the file in read-only mode
-		if file:Open(path, 1) then
-			contents = file:Read()
-		end
-
-		-- destroy the generic RageFile now that we have the contents
-		file:destroy()
-	end
-
-	-- split the contents of the file on newline
-	-- to create a table of lines as strings
-	local lines = {}
-	for line in contents:gmatch("[^\r\n]+") do
-		lines[#lines+1] = line
-	end
-
-	return lines
-end
-
-local WriteFileContents = function(path, contents)
-	local contents = contents
-
-	if FILEMAN:DoesFileExist(path) then
-		-- create a generic RageFile that we'll use to read the contents
-		local file = RageFileUtil.CreateRageFile()
-		-- the second argument here (the 1) signifies
-		-- that we are opening the file in read-only mode
-		if file:Open(path, 2) then
-			file:Write(contents)
-		end
-
-		-- destroy the generic RageFile now that we have the contents
-		file:destroy()
-	end
-end
-
--- Splits a string by sep and returns a table 
-function split (inputstr, sep)
-        if sep == nil then
-                sep = "%s"
-        end
-        local t={}
-        for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-                table.insert(t, str)
-        end
-        return t
-end
-
 -- Add whatever tags we find in Tags.txt to the sort groups aka groups we can sort by
+-- 'No Tags Set' and 'BPM Changes' are automatically generated
 local function LoadTags()
 	SortGroups.Tag = {}
 	local path = THEME:GetCurrentThemeDirectory() .. "Other/Tags.txt"
@@ -154,6 +97,7 @@ local function LoadTags()
 end
 
 -- Write whatever is in SortGroups.Tag to Tags.txt
+-- Don't add 'No Tags Set' or 'BPM Changes'
 local function SaveTags()
 	local toWrite = ""
 	for k,v in pairs(SortGroups.Tag) do
@@ -170,7 +114,7 @@ local function LoadTaggedSongs()
 	TaggedSongs = {}
 	local path = THEME:GetCurrentThemeDirectory() .. "Other/TaggedSongs.txt"
 	for line in ivalues(GetFileContents(path)) do
-		local toAdd = split(line, '\t')
+		local toAdd = Split(line, '\t')
 		table.insert(TaggedSongs, {customGroup=toAdd[1], title=toAdd[2], actualGroup=toAdd[3]})
 	end
 end
@@ -196,7 +140,7 @@ end
 -- Adds a line to TaggedSongs, saves it, and then recreates the group so we can sort properly.
 function AddTaggedSong(toAdd, song)
 	-- Add the song to the CustomSong table
-	local toAdd = split(toAdd, '\t')
+	local toAdd = Split(toAdd, '\t')
 	table.insert(TaggedSongs, {customGroup=toAdd[1], title=toAdd[2], actualGroup=toAdd[3]})
 	SaveTaggedSongs()
 	PreloadedGroups["Tag"][tostring(toAdd[1])] = CreateSongList(tostring(toAdd[1]),"Tag")
@@ -209,7 +153,7 @@ end
 -- Adds a line to TaggedSongs, saves it, and then recreates the group so we can sort properly.
 function RemoveTaggedSong(toRemove, song)
 	local index = 1
-	local toRemove = split(toRemove, '\t')
+	local toRemove = Split(toRemove, '\t')
 	for k,v in pairs(TaggedSongs) do
 		if v['customGroup'] == toRemove[1] and v['title'] == toRemove[2] and v['actualGroup'] == toRemove[3] then
 			index = k
@@ -256,26 +200,6 @@ function UpdateGradeGroups(song)
 	end
 	--if we didn't find any charts with high scores than isPlayed will stay false and we can add it to No_Grade
 	if not isPlayed then table.insert(PreloadedGroups["Grade"]["No_Grade"],current_song) end
-end
-
----------------------------------------------------------------------------
--- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
--- (there has got to be a better way to do this...)
--- returns a String containing the steps type for the current game mode
-GetStepsType = function()
-	local game_name = GAMESTATE:GetCurrentGame():GetName()
-	-- "single" and  "versus" both map to "Single" here
-	local style = "Single"
-
-	if GAMESTATE:GetCurrentStyle():GetName() == "double" then
-		style = "Double"
-	end
-
-	local steps_type = "StepsType_"..game_name:gsub("^%l", string.upper).."_"..style
-
-	-- techno is a special case with steps_type like "StepsType_Techno_Single8"
-	if game_name == "techno" then steps_type = steps_type.."8" end
-	return steps_type
 end
 
 ---------------------------------------------------------------------------
@@ -642,6 +566,8 @@ GetSongList = function(group_name, group_type)
 	return songList
 end
 
+-- currently only used when we want to order by Difficulty/BPM. This requires splitting songs so each chart gets its own song.
+-- after splitting, GetSongList won't match up so we have to do something else. There's also a special table we put this in.
 CreateSpecialSongList = function(songList)
 	local songList = songList
 	DifficultyBPM = {}

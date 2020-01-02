@@ -414,6 +414,7 @@ end
 Handler['OptionsWheel'].Back = Handler['OptionsWheel'].Select
 
 Handler.Handler = function(event)
+	SM(SL['P1']['RateScores'])
 	if Handler.Enabled == false or not event or not event.PlayerNumber or not event.button then return false end
 	if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		if not Handler.AllowLateJoin() then return false end
