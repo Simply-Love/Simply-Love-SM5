@@ -76,3 +76,42 @@ GetStepsType = function()
 	if game_name == "techno" then steps_type = steps_type.."8" end
 	return steps_type
 end
+
+-- Read the profiles Stats.xml and put the general data stuff into a table
+-- Song and Course aren't filled in here
+-- TODO this won't account for Stats prefixes
+ParseStats = function(player)
+	local pn = ToEnumShortString(player)
+	local profileDir
+	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
+	local path = PROFILEMAN:GetProfileDir(profileDir)..'Stats.xml'
+	local contents = ""
+	if FILEMAN:DoesFileExist(path) then
+		contents = GetFileContents(path)
+		-- split the contents of the file on newline
+		-- to create a table of lines as strings
+		local lines = {NumSongsPlayedByMeter={},NumStagesPassedByGrade={},NumSongsPlayedByStyle={},DefaultModifiers={},NumSongsPlayedByDifficulty={}}
+		for line in ivalues(contents) do
+			if string.find("</GeneralData>",line) then break end --stop when we get to the end of the general data. reading in all the song data crashed SM for me
+			local key = string.gsub(line,"<([%w%p ]*)>[%w%p ]*</[%w%p ]*>?","%1") --look for lines with <XXX>YYY</XXX> and return XXX
+			local value = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")--look for lines with <XXX>YYY</XXX> and return YYY
+			--if fields are not opened and closed on the same line we need to add them in manually here TODO manually doing this seems wrong
+			--NumSongsPlayedByPlayMode should get its own group but i don't care about it so... same with Song and Course 
+			if string.find(key,"Meter%d+") then
+				lines["NumSongsPlayedByMeter"][key] = value
+			elseif string.find(key,"Tier%d+") then
+				lines["NumStagesPassedByGrade"][key] = value
+			elseif string.find(key,"^Style*") then
+				lines["NumSongsPlayedByStyle"][key] = value
+			elseif string.find(key,"^dance") then --TODO default modifiers for games besides dance won't show up here!
+				lines["DefaultModifiers"][key] = value
+			elseif string.find(key,"Beginner") or string.find(key,"Easy") or string.find(key,"Medium") or string.find(key,"Hard") or string.find(key,"Challenge") then
+				lines["NumSongsPlayedByDifficulty"][key] = value
+			elseif key ~= value then
+				lines[key] = value
+			end
+		end
+		return lines
+	end
+	return nil
+end
