@@ -9,6 +9,7 @@ local stageStats = STATSMAN:GetCurStageStats()
 
 local totalTime = 0
 local songsPlayedThisGame = 0
+local notesHitThisGame = 0
 
 -- Use pairs here (instead of ipairs) because this player might have late-joined
 -- which will result in nil entries in the the Stats table, which halts ipairs.
@@ -16,6 +17,20 @@ local songsPlayedThisGame = 0
 for _,stats in pairs( SL[ToEnumShortString(player)].Stages.Stats ) do
 	totalTime = totalTime + (stats and stats.duration or 0)
 	songsPlayedThisGame = songsPlayedThisGame + (stats and 1 or 0)
+	if stats and stats.column_judgments then
+		-- increment notesHitThisGame by the total number of tapnotes hit in this particular stepchart by using the per-column data
+		-- don't rely on the engine's non-Miss judgment counts here for two reasons:
+		-- 1. we want jumps/hands to count as more than 1 here
+		-- 2. stepcharts can have non-1 #COMBOS parameters set which would artbitraily inflate notesHitThisGame
+
+		for column, judgments in ipairs(stats.column_judgments) do
+			for judgment, judgment_count in pairs(judgments) do
+				if judgment ~= "Miss" then
+					notesHitThisGame = notesHitThisGame + judgment_count
+				end
+			end
+		end
+	end
 end
 
 local hours = math.floor(totalTime/3600)
@@ -36,6 +51,7 @@ return Def.ActorFrame {
 	PlayerJoinedMessageCommand=function(self)
 		self:playcommand("Set")
 	end,
+	-- Profile name
 	LoadFont("Common Normal")..{
 		Text=PROFILEMAN:GetPlayerName(player),
 		InitCommand=function(self) 
@@ -51,7 +67,7 @@ return Def.ActorFrame {
 		end,
 	},
 
-		--Songs Played Label
+	-- Songs Played Label
 	LoadFont("Common Normal")..{
 		Name="Songs Played",
 		Text=THEME:GetString("ScreenSelectMusicExperiment", "SongsPlayed"),
@@ -102,10 +118,38 @@ return Def.ActorFrame {
 			if not GAMESTATE:IsHumanPlayer(player) then self:visible(false) end
 		end,
 		SetCommand=function(self)
-			round(profile:GetCaloriesBurnedToday())
+			self:settext(round(profile:GetCaloriesBurnedToday()))
+			if GAMESTATE:IsHumanPlayer(player) then self:visible(true) end
 		end
 	},
-
+	-- Total Taps Label
+	LoadFont("Common Normal")..{
+		Name="Calories",
+		Text="Notes Hit:",
+		InitCommand=function(self) 
+			if player == PLAYER_1 then self:xy(_screen.w/5+75,  _screen.h - 24):zoom(0.6):halign(1)
+			elseif player == PLAYER_2 then self:xy(_screen.w - (_screen.w/3),  _screen.h - 24):zoom(0.6):halign(1) end
+			if not GAMESTATE:IsHumanPlayer(player) then self:visible(false) end
+		end,
+		SetCommand=function(self)
+			if GAMESTATE:IsHumanPlayer(player) then self:visible(true) end
+		end,
+	},
+	--Total Taps
+	LoadFont("Common Normal")..{
+		Name="Calories",
+		Text=profile:GetTotalTapsAndHolds(),
+		InitCommand=function(self) 
+			if player == PLAYER_1 then self:xy(_screen.w/5+80,  _screen.h - 24):zoom(0.6):halign(0)
+			elseif player == PLAYER_2 then self:xy(_screen.w - (_screen.w/3) + 5,  _screen.h - 24):zoom(0.6):halign(0) end
+			if not GAMESTATE:IsHumanPlayer(player) then self:visible(false) end
+			self:settext(notesHitThisGame)
+		end,
+		SetCommand=function(self)
+			self:settext(notesHitThisGame)
+			if GAMESTATE:IsHumanPlayer(player) then self:visible(true) end
+		end
+	},
 	--Game Time
 	LoadFont("Common Normal")..{
 		Name="Game Time",
