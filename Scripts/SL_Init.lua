@@ -54,6 +54,7 @@ local PlayerDefaults = {
 			self.CurrentPlayerOptions = {
 				String = nil
 			}
+			self.RateScores = {}
 		end
 	}
 }

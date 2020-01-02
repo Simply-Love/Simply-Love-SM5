@@ -79,7 +79,9 @@ function LoadProfileCustom(profile, dir)
 			if k == "LastSongPlayedGroup" then SL.Global.LastSongPlayedGroup = v end
 		end
 	end
-
+	-- Load score for songs with different rates if any exist. See /scripts/Experiment-RateHelpers.lua
+	LoadRateScores(pn)
+	
 	return true
 end
 
@@ -97,12 +99,15 @@ function SaveProfileCustom(profile, dir)
 					output[k] = v
 				end
 			end
+			
 			-- TODO maybe find a better place for this or get normal profile saving working
 			-- I can't figure out how to get ScreenSelectMusicExperiment to change profile:GetLastPlayedSong() so
 			-- instead I just write to Simply Love UserPrefs.ini so we can figure out where to come back in to.
 			output["LastSongPlayedName"] = GAMESTATE:GetCurrentSong():GetMainTitle()
 			output["LastSongPlayedGroup"] = GAMESTATE:GetCurrentSong():GetGroupName()
 			IniFile.WriteFile( path, {[theme_name]=output} )
+			--Save scores for different rates
+			SaveRateScores(pn)
 			break
 		end
 	end
