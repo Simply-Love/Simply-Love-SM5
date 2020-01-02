@@ -151,8 +151,8 @@ return Def.ActorFrame{
 					SetCommand=function(self, params)
 						local plural
 						if params and params.searchTerm then
-							if #descriptions > 5 then plural = #descriptions > 6 and "s" or "" end
-							if #descriptions > 0 then self:settext(#descriptions-5 .. " result"..plural.. " found") 
+							plural = #descriptions > 6 and "s" or ""
+							if #descriptions > 5 then self:settext(#descriptions-5 .. " result"..plural.. " found") 
 							else self:settext("No results found") end
 						end
 					end

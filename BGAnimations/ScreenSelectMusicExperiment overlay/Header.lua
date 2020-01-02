@@ -32,9 +32,6 @@ local af = Def.ActorFrame{
 		if topscreen then
 			if topscreen:GetName() == "ScreenEvaluationStage" or topscreen:GetName() == "ScreenEvaluationNonstop" then
 				SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + 1
-			else
-				self:linear(0.1)
-				self:diffusealpha(0)
 			end
 		end
 	end,
