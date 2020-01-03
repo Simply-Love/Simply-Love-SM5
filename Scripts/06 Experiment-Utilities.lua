@@ -62,18 +62,7 @@ end
 -- (there has got to be a better way to do this...)
 -- returns a String containing the steps type for the current game mode
 GetStepsType = function()
-	local game_name = GAMESTATE:GetCurrentGame():GetName()
-	-- "single" and  "versus" both map to "Single" here
-	local style = "Single"
-
-	if GAMESTATE:GetCurrentStyle():GetName() == "double" then
-		style = "Double"
-	end
-
-	local steps_type = "StepsType_"..game_name:gsub("^%l", string.upper).."_"..style
-
-	-- techno is a special case with steps_type like "StepsType_Techno_Single8"
-	if game_name == "techno" then steps_type = steps_type.."8" end
+	local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 	return steps_type
 end
 
