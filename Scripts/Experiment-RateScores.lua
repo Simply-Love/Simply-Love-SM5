@@ -91,6 +91,7 @@ AddRateScore = function(player)
 	table.insert(SL[pn]['RateScores'],stats)
 end
 
+--[[
 GetRateScores = function(player, song, steps)
 	local pn = ToEnumShortString(player)
 	local name = song:GetMainTitle()
@@ -109,4 +110,17 @@ GetRateScores = function(player, song, steps)
 		return RateScores
 	else return nil end
 end
-	
+--]]
+
+GetRateScores = function(player, song, steps)
+	local pn = ToEnumShortString(player)
+	local allScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn)):GetHighScores()
+	local rateScores = {}
+	for highScore in ivalues(allScores) do
+		if string.gsub(highScore:GetModifiers(),".*(%d.%d+)xMusic.?","%1") == tostring(SL.Global.ActiveModifiers.MusicRate) then
+			rateScores[#rateScores+1] = highScore
+		end
+	end
+	if #rateScores > 0 then return rateScores
+	else return nil end
+end

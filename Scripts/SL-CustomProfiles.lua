@@ -79,8 +79,6 @@ function LoadProfileCustom(profile, dir)
 			if k == "LastSongPlayedGroup" then SL.Global.LastSongPlayedGroup = v end
 		end
 	end
-	-- Load score for songs with different rates if any exist. See /scripts/Experiment-RateHelpers.lua
-	LoadRateScores(pn)
 	
 	return true
 end
@@ -106,8 +104,6 @@ function SaveProfileCustom(profile, dir)
 			output["LastSongPlayedName"] = GAMESTATE:GetCurrentSong():GetMainTitle()
 			output["LastSongPlayedGroup"] = GAMESTATE:GetCurrentSong():GetGroupName()
 			IniFile.WriteFile( path, {[theme_name]=output} )
-			--Save scores for different rates
-			SaveRateScores(pn)
 			break
 		end
 	end
