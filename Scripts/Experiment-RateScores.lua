@@ -91,7 +91,6 @@ AddRateScore = function(player)
 	table.insert(SL[pn]['RateScores'],stats)
 end
 
---[[
 GetRateScores = function(player, song, steps)
 	local pn = ToEnumShortString(player)
 	local name = song:GetMainTitle()
@@ -110,8 +109,9 @@ GetRateScores = function(player, song, steps)
 		return RateScores
 	else return nil end
 end
---]]
 
+
+--[[ This finds the rate based on the highscore list from Stats.xml
 GetRateScores = function(player, song, steps)
 	local pn = ToEnumShortString(player)
 	local allScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn)):GetHighScores()
@@ -124,3 +124,4 @@ GetRateScores = function(player, song, steps)
 	if #rateScores > 0 then return rateScores
 	else return nil end
 end
+--]]
