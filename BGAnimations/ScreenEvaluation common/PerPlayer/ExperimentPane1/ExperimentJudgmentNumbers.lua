@@ -4,14 +4,15 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local whichHighScore = 1
 local highScore
 local rateMode = SL.Global.ActiveModifiers.MusicRate ~= 1 and true or false
-if rateMode ~= 1 then
+
+if rateMode then
 	local RateScores = GetRateScores(player, GAMESTATE:GetCurrentSong(), GAMESTATE:GetCurrentSteps(pn))
 	if RateScores then
 		if RateScores[1].score == pss:GetPercentDancePoints() then whichHighScore = 2 end --TODO this doesn't account for getting a duplicate highscore
 		highScore = RateScores[whichHighScore]
 	end
-elseif STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetPersonalHighScoreIndex() == 0 then 
-	whichHighScore = 2 
+else
+	if STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetPersonalHighScoreIndex() == 0 then whichHighScore = 2 end
 	highScore = PROFILEMAN:GetProfile(pn):GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn)):GetHighScores()[whichHighScore]
 end
 local TapNoteScores = {

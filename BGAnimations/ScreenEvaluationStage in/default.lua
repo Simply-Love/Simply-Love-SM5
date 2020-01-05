@@ -7,7 +7,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	if not STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetFailed() then
 		img = "cleared text.png"
 	end
-	AddRateScore(player)
+	AddScore(player)
 end
 
 return Def.ActorFrame {
