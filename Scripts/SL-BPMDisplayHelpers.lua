@@ -86,7 +86,7 @@ GetDisplayBPMs = function(player, StepsOrTrail, MusicRate)
 	-- 2. trying to accommodate it themeside is complicated and error-prone
 	-- so get the honest BPM data from the step's TimingData
 	if bpms[1] <= 0 or bpms[2] <= 0 then
-		bpms = song:GetTimingData():GetActualBPM()
+		bpms = StepsOrTrail:GetTimingData():GetActualBPM()
 		-- again, ensure there are 2 values
 		if not bpms[1] or not bpms[2] then return end
 	end
