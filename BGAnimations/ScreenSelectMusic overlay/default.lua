@@ -7,8 +7,6 @@ local t = Def.ActorFrame{
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
-	-- MenuButton code for backing out of SelectMusic when in EventMode
-	LoadActor("./EscapeFromEventMode.lua"),
 	-- MenuTimer code for preserving SSM's timer value
 	LoadActor("./MenuTimer.lua"),
 	-- Apply player modifiers from profile
@@ -38,6 +36,9 @@ local t = Def.ActorFrame{
 	LoadActor("./SortMenu/default.lua"),
 	-- a Test Input overlay can (maybe) be accessed from the SortMenu
 	LoadActor("./TestInput.lua"),
+	-- a yes/no prompt overlay for backing out of SelectMusic when in EventMode can be
+	-- activated via "CodeEscapeFromEventMode" under [ScreenSelectMusic] in Metrics.ini
+	LoadActor("./EscapeFromEventMode.lua"),
 }
 
 return t
