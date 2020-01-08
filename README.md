@@ -1,5 +1,5 @@
 # Simply-Love-Tweaks
-A new game mode that's basically Simply Love ITG but with a couple added features. Right now this mode ONLY works for player 1 playing alone in event single normal mode. So no marathons, probably no doubles, no FA+/Casual/Stomper, no two players at once, no coin modes (they may work but haven't tested). This mode uses a profile's stats.xml to save/load scores (which is what Simply Love ITG mode uses)
+A new game mode that's basically Simply Love ITG but with a couple added features. Right now this mode works best for single player event mode. So no marathons, maybe no doubles, no FA+/Casual/Stomper, no coin modes (they may work but haven't tested). This mode uses a profile's stats.xml to save/load scores (which is what Simply Love ITG mode uses)
 
 Requirements:
 
@@ -33,8 +33,6 @@ Known Issues:
 There are a couple blank places that will eventually be filled in when I decide what to put there.
 
 If you don't have a select button once you enter the options pane you have to either go to normal player options or start a song. 
-
-There's some sort of race condition or something where sometimes entering sort menu doesn't disable input on normal music wheel.
 
 I haven't tested different resolutions so probably doesn't work super well on widescreen.
 
