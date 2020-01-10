@@ -66,7 +66,7 @@ GetStepsType = function()
 	return steps_type
 end
 
--- Read the profiles Stats.xml and put the general data stuff into a table
+-- Read the profile's Stats.xml and put the general data stuff into a table
 -- Song and Course aren't filled in here
 -- TODO this won't account for Stats prefixes
 ParseStats = function(player)

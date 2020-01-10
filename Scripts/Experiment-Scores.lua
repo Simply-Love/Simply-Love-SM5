@@ -166,7 +166,7 @@ AddScore = function(player)
 	table.insert(SL[pn]['Scores'],stats)
 end
 
-GetRateScores = function(player, song, steps)
+GetScores = function(player, song, steps, rateCheck)
 	local pn = ToEnumShortString(player)
 	local currentSong = song:GetMainTitle()
 	local group = song:GetGroupName()
@@ -174,9 +174,10 @@ GetRateScores = function(player, song, steps)
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	local RateScores = {}
 	for score in ivalues(SL[pn]['Scores']) do
-		if score.song == currentSong and score.group == group and score.Difficulty == difficulty
-		and tonumber(score.rate) == rate then
-			RateScores[#RateScores+1] = score
+		if score.song == currentSong and score.group == group and score.Difficulty == difficulty and score.StepsType == ToEnumShortString(GetStepsType()) then
+			if rateCheck then
+				if tonumber(score.rate) == rate then RateScores[#RateScores+1] = score end
+			else RateScores[#RateScores+1] = score end
 		end
 	end
 	if #RateScores > 0 then
@@ -185,18 +186,49 @@ GetRateScores = function(player, song, steps)
 	else return nil end
 end
 
-
---[[ This finds the rate based on the highscore list from Stats.xml
-GetRateScores = function(player, song, steps)
+GetLastPlayedDates = function(player)
 	local pn = ToEnumShortString(player)
-	local allScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn)):GetHighScores()
-	local rateScores = {}
-	for highScore in ivalues(allScores) do
-		if string.gsub(highScore:GetModifiers(),".*(%d.%d+)xMusic.?","%1") == tostring(SL.Global.ActiveModifiers.MusicRate) then
-			rateScores[#rateScores+1] = highScore
+	local profileDir
+	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
+	local path = PROFILEMAN:GetProfileDir(profileDir)..'Stats.xml'
+	local contents = ""
+	local lastPlayedDates = {}
+	local item = {}
+	if FILEMAN:DoesFileExist(path) then
+		contents = GetFileContents(path)
+		local group
+		local song
+		local groupSong
+		local Difficulty
+		local StepsType
+		local songDir = GetSongDirs()
+		for line in ivalues(contents) do
+			if string.find(line,"<Song Dir=") then
+				groupSong = "/"..string.gsub(line,"<Song Dir='(Songs/[%w%p ]*/)'>","%1"):gsub("&apos;","'"):gsub("&amp;","&")
+				group = Split(groupSong,"/")[2]
+				if songDir[groupSong] then song = songDir[groupSong]
+				else song = Split(groupSong,"/")[3] end
+			elseif string.find(line,"<Steps Difficulty='") then
+				local iterator = string.gmatch(line,"[%w%p]*='([%w%p]*)'")
+				Difficulty = iterator()
+				StepsType = iterator()
+				--for some reason in Stats.xml Dance_Single is listed as dance-single. Change it back to Dance_Single for consistency
+				--TODO other step types will probably also come out wrong
+				if StepsType == "dance-single" then StepsType = "Dance_Single" end
+			elseif string.find(line,"<NumTimesPlayed>") then
+				item.NumTimesPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
+			elseif string.find(line, "<LastPlayed>") then
+				item.LastPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
+			elseif string.find(line,"</HighScoreList>") then
+				item.group = group
+				item.song = song
+				item.Difficulty = Difficulty
+				item.StepsType = StepsType
+				table.insert(lastPlayedDates,item)
+				item = {}
+			end
 		end
+		return lastPlayedDates
 	end
-	if #rateScores > 0 then return rateScores
-	else return nil end
+	return nil
 end
---]]
