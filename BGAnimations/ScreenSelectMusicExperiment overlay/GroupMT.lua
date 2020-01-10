@@ -15,8 +15,7 @@ local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG(
 switch_to_songs = function(group_name)
 	local songs = PruneSongList(GetSongList(group_name))
 	if SL.Global.Order == "Difficulty/BPM" then
-		local newList = CreateSpecialSongList(songs)
-		songs = newList
+		songs = CreateSpecialSongList(songs) --TODO this should be pruned for filters
 	end
 	songs[#songs+1] = "CloseThisFolder"
 	local toAdd = {}
@@ -24,10 +23,16 @@ switch_to_songs = function(group_name)
 		toAdd[#toAdd+1] = {song = song, index = k}
 	end
 	local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
-	local index
-	for k,song in pairs(songs) do
-		if song == current_song then
-			index = k
+	local index = SL.Global.LastSeenIndex
+	if SL.Global.Order == "Difficulty/BPM" then
+		--since each song can show up multiple times in Difficulty/BPM we can't rely just on songs being the same
+		index = SL.Global.LastSeenIndex
+	else
+		for k,song in pairs(songs) do
+			if song == current_song then
+				index = k
+				break
+			end
 		end
 	end
 	if index == nil then index = 1 end --TODO if songs are no longer in a folder then go to groupwheel not songwheel

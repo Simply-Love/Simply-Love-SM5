@@ -139,13 +139,14 @@ local song_mt = {
 		transform = function(self, item_index, num_items, has_focus)
 			self.container:finishtweening()
 			if has_focus then
+				--TODO find out why this is called twice every time we go to ScreenSelectMusicExperiment
 				if self.song ~= "CloseThisFolder" then
 					SL.Global.LastSeenSong = self.song
 					--Input.lua will transform the wheel when changing difficulty (to change the grade sprite) but we
 					--don't need to restart the preview music because only difficulty changed
 					--so check here that transform was called because we're moving to a new song
 					--or because we're initializing ScreenSelectMusicExperiment
-					if self.song ~= GAMESTATE:GetCurrentSong() or SL.Global.GroupToSong or self.index ~= SL.Global.LastSeenIndex then
+					if self.song ~= GAMESTATE:GetCurrentSong() or SL.Global.GroupToSong or SL.Global.LastSeenIndex ~= self.index then
 						GAMESTATE:SetCurrentSong(self.song)
 						SL.Global.SongTransition = true
 						MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song, index=self.index})
@@ -155,7 +156,10 @@ local song_mt = {
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 						SL.Global.GroupToSong = false
 						SL.Global.LastSeenIndex = self.index
-					else MESSAGEMAN:Broadcast("StepsHaveChanged") MESSAGEMAN:Broadcast("LessLag") end
+					else
+						MESSAGEMAN:Broadcast("StepsHaveChanged")
+						MESSAGEMAN:Broadcast("LessLag")
+					end
 				else
 					stop_music()
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
