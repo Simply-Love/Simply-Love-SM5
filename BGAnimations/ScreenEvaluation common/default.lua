@@ -10,7 +10,11 @@ local t = Def.ActorFrame{
 	OnCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {af=self, num_panes=NumPanes}) )
 	end,
-
+	OffCommand=function(self)
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			if SL.Global.GameMode == "Experiment" then AddScore(player) end
+		end
+	end,
 	-- ./Graphics/Triangles.lua, shows up if we're in StomperZ mode
 	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
 

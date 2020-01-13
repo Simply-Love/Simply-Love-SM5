@@ -197,7 +197,6 @@ local af = Def.ActorFrame{
 		local song = GAMESTATE:GetCurrentSong()
 		if PROFILEMAN:IsPersistentProfile(player) then
 			local player_score, player_name = GetNameAndScoreAndDate( PROFILEMAN:GetProfile(player) )
-
 			self:GetChild("PlayerHighScore"):settext(player_score)
 			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse({0,0,0,1})
 

@@ -1,8 +1,8 @@
 local GetSongDirs = function()
 	local songs = SONGMAN:GetAllSongs()
 	local list = {}
-	for song in ivalues(songs) do
-		list[song:GetSongDir()]=song:GetMainTitle()
+	for item in ivalues(songs) do
+		list[item:GetSongDir()]={title = item:GetMainTitle(), song = item}
 	end
 	return list
 end
@@ -18,25 +18,33 @@ local LoadFromStats = function(pn)
 	local highScore = {}
 	if FILEMAN:DoesFileExist(path) then
 		contents = GetFileContents(path)
-		local group
-		local song
-		local groupSong
-		local Difficulty
-		local StepsType
+		local group, song, title, groupSong, Difficulty, StepsType, numTimesPlayed, lastPlayed, firstPass, tempFirstPass, hash
 		local songDir = GetSongDirs()
 		for line in ivalues(contents) do
 			if string.find(line,"<Song Dir=") then
 				groupSong = "/"..string.gsub(line,"<Song Dir='(Songs/[%w%p ]*/)'>","%1"):gsub("&apos;","'"):gsub("&amp;","&")
 				group = Split(groupSong,"/")[2]
-				if songDir[groupSong] then song = songDir[groupSong]
-				else song = Split(groupSong,"/")[3] end
+				if songDir[groupSong] then 
+					song = songDir[groupSong].song
+					title = songDir[groupSong].title
+				else 
+					title = Split(groupSong,"/")[3]
+					song = nil
+				end
 			elseif string.find(line,"<Steps Difficulty='") then
-				local iterator = string.gmatch("<Steps Difficulty='Challenge' StepsType='dance-single'>","[%w%p]*='([%w%p]*)'")
+				local iterator = string.gmatch(line,"[%w%p]*='([%w%p]*)'")
 				Difficulty = iterator()
 				StepsType = iterator()
-				--for some reason in Stats.xml Dance_Single is listed as dance-single. Change it back to Dance_Single for consistency
-				--TODO other step types will probably also come out wrong
-				if StepsType == "dance-single" then StepsType = "Dance_Single" end
+				if song then
+					hash = GenerateHash(StepsType,Difficulty,song)
+					if not statsTable[hash] then statsTable[hash] = {} end
+				end
+				firstPass = "Never"
+				tempFirstPass = DateToMinutes(GetCurrentDateTime())
+			elseif string.find(line,"<NumTimesPlayed>") then
+				numTimesPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
+			elseif string.find(line, "<LastPlayed>") then
+				lastPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
 			elseif string.find(line,"<Grade>") then
 				highScore.grade = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
 			elseif string.find(line,"<PercentDP>") then
@@ -65,18 +73,33 @@ local LoadFromStats = function(pn)
 				highScore.Hands = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
 			elseif string.find(line,"<Rolls>") then
 				highScore.Rolls = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
-			elseif string.find(line,"</HighScore>") then
-				highScore.group = group
-				highScore.song = song
-				highScore.Difficulty = Difficulty
-				highScore.StepsType = StepsType
-				table.insert(statsTable,highScore)
+			elseif string.find(line,"</HighScore>") and song then
+				table.insert(statsTable[hash],highScore)
+				if highScore.grade ~= "Failed" and DateToMinutes(highScore.dateTime) < tempFirstPass then
+					tempFirstPass = DateToMinutes(highScore.dateTime)
+					firstPass = highScore.dateTime
+				end
 				highScore = {}
+			elseif string.find(line,"</HighScoreList>") and song then
+				local temp
+				if StepsType == 'dance-single' then temp = "Dance_Single"
+				elseif StepsType == 'dance-double' then temp = "Dance_Double" end
+				local profileScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,song:GetOneSteps(temp,Difficulty)):GetHighScores() 
+				if tonumber(numTimesPlayed) > #profileScores then firstPass = "Unknown" end --if we've played it more times then there are scores we can't tell when it was passed first
+				local machineScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(song,song:GetOneSteps(temp,Difficulty)):GetHighScores()
+				if #machineScores == 0 then firstPass = "Never" end --if there are no machine scores then no one has passed
+				statsTable[hash].group = group
+				statsTable[hash].title = title
+				statsTable[hash].Difficulty = Difficulty
+				statsTable[hash].StepsType = StepsType
+				statsTable[hash].LastPlayed = lastPlayed
+				statsTable[hash].NumTimesPlayed = numTimesPlayed
+				statsTable[hash].FirstPass = firstPass
+				statsTable[hash].hash = hash
 			end
 		end
 	end
-	--local scoreTime = PROFILEMAN:GetProfile('P1'):GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps('P1')):GetHighScores()[1]:GetDate()
-	--local testTable = Split(string.gsub(scoreTime,'^(%d%d%d%d)-(%d%d)-(%d%d) (%d%d):(%d%d):(%d%d)','%1 %2 %3 %4 %5 %6')," ")
+
 	return statsTable
 end
 
@@ -90,11 +113,10 @@ LoadScores = function(pn)
 		contents = GetFileContents(PROFILEMAN:GetProfileDir(profileDir).."/Scores.txt")
 		for line in ivalues(contents) do
 			local score = Split(line,"\t")
-			if #score == 18 then
-				table.insert(Scores,{
-					song = score[1],
-					group = score[2],
-					Difficulty = score[3],
+			if #score == 22 then
+				local hash = score[22]
+				if not Scores[hash] then Scores[hash] = {} end
+				table.insert(Scores[hash],{
 					rate = score[4],
 					score = score[5],
 					W1 = score[6],
@@ -109,12 +131,19 @@ LoadScores = function(pn)
 					Rolls = score[15],
 					grade = score[16],
 					dateTime = score[17],
-					StepsType = score[18]})
+					})
+				Scores[hash].title = score[1]
+				Scores[hash].group = score[2]
+				Scores[hash].Difficulty = score[3]
+				Scores[hash].StepsType = score[18]
+				Scores[hash].LastPlayed = score[19]
+				Scores[hash].NumTimesPlayed = score[20]
+				Scores[hash].FirstPass = score[21]
+				Scores[hash].hash = hash
 			end
 		end
 	--if there's no Scores.txt then import all the scores in Stats.xml to get started
-	else Scores = LoadFromStats(pn)
-	end
+	else Scores = LoadFromStats(pn) end
 	if SL[pn] then SL[pn]['Scores'] = Scores end
 end
 
@@ -122,11 +151,14 @@ end
 SaveScores = function(pn)
 	if SL[pn]['Scores'] then
 		toWrite = ""
-		for score in ivalues(SL[pn]['Scores']) do --TODO don't type this out manually
-			toWrite = toWrite..score.song.."\t"..score.group.."\t"..score.Difficulty.."\t"..score.rate.."\t"..score.score.."\t"
-			..score.W1.."\t"..score.W2.."\t"..score.W3.."\t"..score.W4.."\t"..score.W5.."\t"..score.Miss.."\t"
-			..score.Holds.."\t"..score.Mines.."\t"..score.Hands.."\t"..score.Rolls.."\t"
-			..score.grade.."\t"..score.dateTime.."\t"..score.StepsType.."\r\n"
+		for _,hash in pairs(SL[pn]['Scores']) do --TODO don't type this out manually
+			for score in ivalues(hash) do
+				toWrite = toWrite..hash.title.."\t"..hash.group.."\t"..hash.Difficulty.."\t"..score.rate.."\t"..score.score.."\t"
+				..score.W1.."\t"..score.W2.."\t"..score.W3.."\t"..score.W4.."\t"..score.W5.."\t"..score.Miss.."\t"
+				..score.Holds.."\t"..score.Mines.."\t"..score.Hands.."\t"..score.Rolls.."\t"
+				..score.grade.."\t"..score.dateTime.."\t"..hash.StepsType.."\t"..hash.LastPlayed.."\t"..hash.NumTimesPlayed.."\t"
+				..hash.FirstPass.."\t"..hash.hash.."\r\n"
+			end
 		end
 		local profileDir
 		if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
@@ -145,15 +177,13 @@ AddScore = function(player)
 		Types = { 'Holds', 'Mines', 'Hands', 'Rolls' },
 	}
 	local stats = {}
-	stats.song = GAMESTATE:GetCurrentSong():GetMainTitle()
-	stats.group = GAMESTATE:GetCurrentSong():GetGroupName()
-	stats.Difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
+	local stepsType = ToEnumShortString(GetStepsType())
+	if stepsType == 'Dance_Single' then stepsType = 'dance-single' end
+	if stepsType == 'Dance_Double' then stepsType = 'dance-double' end
 	stats.rate = SL.Global.ActiveModifiers.MusicRate
 	stats.score = pss:GetPercentDancePoints()
 	stats.grade = ToEnumShortString(pss:GetGrade())
-	stats.dateTime = string.format("%04d",Year()).."-"..string.format("%02d", MonthOfYear()+1).."-"..string.format("%02d", DayOfMonth())
-					 .." "..string.format("%02d", Hour())..":"..string.format("%02d", Minute())
-	stats.StepsType = ToEnumShortString(GetStepsType())
+	stats.dateTime = GetCurrentDateTime()
 	for i=1,#TapNoteScores.Types do
 		local window = TapNoteScores.Types[i]
 		local number = pss:GetTapNoteScores( "TapNoteScore_"..window )
@@ -163,7 +193,17 @@ AddScore = function(player)
 		local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 		stats[RCType] = performance
 	end
-	table.insert(SL[pn]['Scores'],stats)
+	local hash = GenerateHash(stepsType,ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty()))
+	if not SL[pn]['Scores'][hash] then SL[pn]['Scores'][hash] = {FirstPass='Never',NumTimesPlayed = 0} end
+	table.insert(SL[pn]['Scores'][hash],stats)
+	SL[pn]['Scores'][hash].LastPlayed = stats.dateTime
+	SL[pn]['Scores'][hash].NumTimesPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
+	SL[pn]['Scores'][hash].title = GAMESTATE:GetCurrentSong():GetMainTitle()
+	SL[pn]['Scores'][hash].Difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
+	SL[pn]['Scores'][hash].group = GAMESTATE:GetCurrentSong():GetGroupName()
+	SL[pn]['Scores'][hash].StepsType = stepsType
+	SL[pn]['Scores'][hash].hash = hash
+	if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Grade_Failed' then SL[pn]['Scores'][hash].FirstPass = stats.dateTime end
 end
 
 GetScores = function(player, song, steps, rateCheck)
@@ -171,64 +211,23 @@ GetScores = function(player, song, steps, rateCheck)
 	local currentSong = song:GetMainTitle()
 	local group = song:GetGroupName()
 	local difficulty = ToEnumShortString(steps:GetDifficulty())
+	local stepsType = ToEnumShortString(steps:GetStepsType())
+	if stepsType == 'Dance_Single' then stepsType = 'dance-single' end
+	if stepsType == 'Dance_Double' then stepsType = 'dance-double' end
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	local RateScores = {}
-	for score in ivalues(SL[pn]['Scores']) do
-		if score.song == currentSong and score.group == group and score.Difficulty == difficulty and score.StepsType == ToEnumShortString(GetStepsType()) then
+	local hash = GenerateHash(stepsType,difficulty,song)
+	if SL[pn]['Scores'][hash] then
+		for score in ivalues(SL[pn]['Scores'][hash]) do
 			if rateCheck then
-				if tonumber(score.rate) == rate then RateScores[#RateScores+1] = score end
-			else RateScores[#RateScores+1] = score end
+				if tonumber(score.rate) == rate and score.grade ~= "Failed" then RateScores[#RateScores+1] = score end
+			else 
+				RateScores[#RateScores+1] = score
+			end
 		end
 	end
 	if #RateScores > 0 then
 		table.sort(RateScores,function(k1,k2) return tonumber(k1.score) > tonumber(k2.score) end)
 		return RateScores
 	else return nil end
-end
-
-GetLastPlayedDates = function(player)
-	local pn = ToEnumShortString(player)
-	local profileDir
-	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
-	local path = PROFILEMAN:GetProfileDir(profileDir)..'Stats.xml'
-	local contents = ""
-	local lastPlayedDates = {}
-	local item = {}
-	if FILEMAN:DoesFileExist(path) then
-		contents = GetFileContents(path)
-		local group
-		local song
-		local groupSong
-		local Difficulty
-		local StepsType
-		local songDir = GetSongDirs()
-		for line in ivalues(contents) do
-			if string.find(line,"<Song Dir=") then
-				groupSong = "/"..string.gsub(line,"<Song Dir='(Songs/[%w%p ]*/)'>","%1"):gsub("&apos;","'"):gsub("&amp;","&")
-				group = Split(groupSong,"/")[2]
-				if songDir[groupSong] then song = songDir[groupSong]
-				else song = Split(groupSong,"/")[3] end
-			elseif string.find(line,"<Steps Difficulty='") then
-				local iterator = string.gmatch(line,"[%w%p]*='([%w%p]*)'")
-				Difficulty = iterator()
-				StepsType = iterator()
-				--for some reason in Stats.xml Dance_Single is listed as dance-single. Change it back to Dance_Single for consistency
-				--TODO other step types will probably also come out wrong
-				if StepsType == "dance-single" then StepsType = "Dance_Single" end
-			elseif string.find(line,"<NumTimesPlayed>") then
-				item.NumTimesPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
-			elseif string.find(line, "<LastPlayed>") then
-				item.LastPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
-			elseif string.find(line,"</HighScoreList>") then
-				item.group = group
-				item.song = song
-				item.Difficulty = Difficulty
-				item.StepsType = StepsType
-				table.insert(lastPlayedDates,item)
-				item = {}
-			end
-		end
-		return lastPlayedDates
-	end
-	return nil
 end

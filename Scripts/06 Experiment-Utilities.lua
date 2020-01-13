@@ -104,3 +104,32 @@ ParseStats = function(player)
 	end
 	return nil
 end
+
+DateToMinutes = function(scoreDate)--scoreDate must be form YYYY-MM-DD HH:MM:SS
+	local monthTable = {} --day of year at start of each month
+	monthTable[#monthTable+1]=0
+	monthTable[#monthTable+1]=31
+	monthTable[#monthTable+1]=59
+	monthTable[#monthTable+1]=90
+	monthTable[#monthTable+1]=120
+	monthTable[#monthTable+1]=151
+	monthTable[#monthTable+1]=181
+	monthTable[#monthTable+1]=212
+	monthTable[#monthTable+1]=243
+	monthTable[#monthTable+1]=273
+	monthTable[#monthTable+1]=304
+	monthTable[#monthTable+1]=334
+	local timeTable = Split(string.gsub(scoreDate,'^(%d%d%d%d)-(%d%d)-(%d%d) (%d%d):(%d%d):(%d%d)','%1 %2 %3 %4 %5 %6')," ")
+	if #timeTable ~= 6 then return nil end
+	local years = timeTable[1]
+	local days = (years * 365) + monthTable[tonumber(timeTable[2])] + timeTable[3]
+	local hours = (days * 24) + timeTable[4]
+	local minutes = (hours * 60) + timeTable[5]
+	return minutes
+end
+
+--returns a string of the current date in the form YYYY-MM-DD HH:MM:00 (seconds are always set to 00)
+GetCurrentDateTime = function()
+	return string.format("%04d",Year()).."-"..string.format("%02d", MonthOfYear()+1).."-"..string.format("%02d", DayOfMonth())
+			.." "..string.format("%02d", Hour())..":"..string.format("%02d", Minute())..":00"
+end
