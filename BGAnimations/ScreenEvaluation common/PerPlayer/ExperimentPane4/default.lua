@@ -1,5 +1,9 @@
 local player = ...
 
+local CurrentDate = function()
+	return Year().."-"..(MonthOfYear()+1).."-"..DayOfMonth().." "..Hour()..":"..Minute()..":00"
+end
+
 local pane = Def.ActorFrame{
 	Name="Pane4",
 	InitCommand=function(self)
@@ -9,29 +13,45 @@ local pane = Def.ActorFrame{
 		self:playcommand("Set")
 	end,
 	SetCommand=function(self)
-		local lastPlayedDates = GetLastPlayedDates(player)
 		local pn = ToEnumShortString(player)
-		local lastPlayed
-		local numPlayed
-		self:GetChild("LastPlayedNumber"):settext("LAST PLAYED: NEVER") 
-		self:GetChild("NumPlayedNumber"):settext("NUMBER OF PLAYS: 1")
-		if lastPlayedDates then
-			for item in ivalues(lastPlayedDates) do
-				if item.group == GAMESTATE:GetCurrentSong():GetGroupName() and
-				   item.song == GAMESTATE:GetCurrentSong():GetMainTitle() and
-				   item.Difficulty == ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty()) and
-				   item.StepsType == ToEnumShortString(GetStepsType()) then
-					if item.LastPlayed then self:GetChild("LastPlayedNumber"):settext("LAST PLAYED: "..item.LastPlayed) end
-					if item.NumTimesPlayed then self:GetChild("NumPlayedNumber"):settext("NUMBER OF PLAYS: "..item.NumTimesPlayed+1) end
+		local lastPlayed, numPlayed, firstPass
+		local stepsType = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetStepsType())
+		local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
+		if stepsType == 'Dance_Single' then stepsType = 'dance-single' end
+		if stepsType == 'Dance_Double' then stepsType = 'dance-double' end
+		local hash = GenerateHash(stepsType, difficulty)
+		if not SL[pn]['Scores'][hash] then
+			lastPlayed = "NEVER"
+			numPlayed = 1
+			firstPass = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetFailed() and "TODAY" or "NEVER"
+		else
+			lastPlayed = SL[pn]['Scores'][hash].LastPlayed
+			numPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
+			firstPass = SL[pn]['Scores'][hash].FirstPass
+		end
+		self:GetChild("LastPlayedNumber"):settext("LAST PLAYED: "..lastPlayed)
+		self:GetChild("NumPlayedNumber"):settext("NUMBER OF PLAYS: "..numPlayed)
+		self:GetChild("FirstPass"):settext("FIRST PASS: "..firstPass)
+		local rateScores = GetScores(player,GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn))
+		local highestRate, highestScore
+		if rateScores then 
+			table.sort(rateScores,function(k1,k2) if k1.rate == k2.rate then return k1.score > k2.score else return tonumber(k1.rate) > tonumber(k2.rate) end end)
+			for score in ivalues(rateScores) do
+				if score.grade ~= "Failed" then
+					highestRate = score.rate
+					highestScore = score.score
 					break
 				end
 			end
 		end
-		local rateScores = GetScores(player,GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn))
-		if rateScores then 
-			table.sort(rateScores,function(k1,k2) return k1.rate > k2.rate end)
-			self:GetChild("MaxRate"):settext("MAX RATE: "..rateScores[1].rate.." ("..FormatPercentScore(rateScores[1].score)..")")
+		if not STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetFailed() and
+		SL.Global.ActiveModifiers.MusicRate >= tonumber(highestRate) and 
+		STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints() >= tonumber(highestScore) then
+			highestRate = SL.Global.ActiveModifiers.MusicRate
+			highestScore = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
 		end
+		if highestScore then self:GetChild("MaxRate"):settext("MAX RATE CLEAR: "..highestRate.." ("..FormatPercentScore(tonumber(highestScore))..")")
+		else self:GetChild("MaxRate"):settext("MAX RATE CLEAR: NONE") end
 	end,
 }
 
@@ -60,6 +80,14 @@ pane[#pane+1] = LoadFont("_wendy small")..{
 	Name="MaxRate",
 	InitCommand=function(self)
 		self:zoom(.4):xy(_screen.cx - 250, 260):halign(0)
+	end,
+}
+
+--FirstPass
+pane[#pane+1] = LoadFont("_wendy small")..{
+	Name="FirstPass",
+	InitCommand=function(self)
+		self:zoom(.4):xy(_screen.cx - 250, 290):halign(0)
 	end,
 }
 
