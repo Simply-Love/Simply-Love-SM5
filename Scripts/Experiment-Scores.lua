@@ -111,35 +111,40 @@ LoadScores = function(pn)
 	local Scores = {}
 	if FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir(profileDir).."/Scores.txt") then
 		contents = GetFileContents(PROFILEMAN:GetProfileDir(profileDir).."/Scores.txt")
+		local hash
 		for line in ivalues(contents) do
 			local score = Split(line,"\t")
-			if #score == 22 then
-				local hash = score[22]
-				if not Scores[hash] then Scores[hash] = {} end
+			if #score == 8 then
+				hash = nil
+				hash = score[8]
+				if hash then
+					if not Scores[hash] then Scores[hash] = {} end
+					Scores[hash].title = score[1]
+					Scores[hash].group = score[2]
+					Scores[hash].Difficulty = score[3]
+					Scores[hash].StepsType = score[4]
+					Scores[hash].LastPlayed = score[5]
+					Scores[hash].NumTimesPlayed = score[6]
+					Scores[hash].FirstPass = score[7]
+					Scores[hash].hash = hash
+				end
+			elseif #score == 14 and hash then
 				table.insert(Scores[hash],{
-					rate = score[4],
-					score = score[5],
-					W1 = score[6],
-					W2 = score[7],
-					W3 = score[8],
-					W4 = score[9],
-					W5 = score[10],
-					Miss = score[11],
-					Holds = score[12],
-					Mines = score[13],
-					Hands = score[14],
-					Rolls = score[15],
-					grade = score[16],
-					dateTime = score[17],
+					rate = score[1],
+					score = score[2],
+					W1 = score[3],
+					W2 = score[4],
+					W3 = score[5],
+					W4 = score[6],
+					W5 = score[7],
+					Miss = score[8],
+					Holds = score[9],
+					Mines = score[10],
+					Hands = score[11],
+					Rolls = score[12],
+					grade = score[13],
+					dateTime = score[14]
 					})
-				Scores[hash].title = score[1]
-				Scores[hash].group = score[2]
-				Scores[hash].Difficulty = score[3]
-				Scores[hash].StepsType = score[18]
-				Scores[hash].LastPlayed = score[19]
-				Scores[hash].NumTimesPlayed = score[20]
-				Scores[hash].FirstPass = score[21]
-				Scores[hash].hash = hash
 			end
 		end
 	--if there's no Scores.txt then import all the scores in Stats.xml to get started
@@ -152,12 +157,15 @@ SaveScores = function(pn)
 	if SL[pn]['Scores'] then
 		toWrite = ""
 		for _,hash in pairs(SL[pn]['Scores']) do --TODO don't type this out manually
-			for score in ivalues(hash) do
-				toWrite = toWrite..hash.title.."\t"..hash.group.."\t"..hash.Difficulty.."\t"..score.rate.."\t"..score.score.."\t"
-				..score.W1.."\t"..score.W2.."\t"..score.W3.."\t"..score.W4.."\t"..score.W5.."\t"..score.Miss.."\t"
-				..score.Holds.."\t"..score.Mines.."\t"..score.Hands.."\t"..score.Rolls.."\t"
-				..score.grade.."\t"..score.dateTime.."\t"..hash.StepsType.."\t"..hash.LastPlayed.."\t"..hash.NumTimesPlayed.."\t"
-				..hash.FirstPass.."\t"..hash.hash.."\r\n"
+			if hash.hash then
+				toWrite = toWrite..hash.title.."\t"..hash.group.."\t"..hash.Difficulty.."\t"..hash.StepsType.."\t"..hash.LastPlayed.."\t"..hash.NumTimesPlayed.."\t"
+					..hash.FirstPass.."\t"..hash.hash.."\r\n"
+				for score in ivalues(hash) do
+					toWrite = toWrite..score.rate.."\t"..score.score.."\t"
+					..score.W1.."\t"..score.W2.."\t"..score.W3.."\t"..score.W4.."\t"..score.W5.."\t"..score.Miss.."\t"
+					..score.Holds.."\t"..score.Mines.."\t"..score.Hands.."\t"..score.Rolls.."\t"
+					..score.grade.."\t"..score.dateTime.."\r\n"
+				end
 			end
 		end
 		local profileDir
@@ -194,16 +202,18 @@ AddScore = function(player)
 		stats[RCType] = performance
 	end
 	local hash = GenerateHash(stepsType,ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty()))
-	if not SL[pn]['Scores'][hash] then SL[pn]['Scores'][hash] = {FirstPass='Never',NumTimesPlayed = 0} end
-	table.insert(SL[pn]['Scores'][hash],stats)
-	SL[pn]['Scores'][hash].LastPlayed = stats.dateTime
-	SL[pn]['Scores'][hash].NumTimesPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
-	SL[pn]['Scores'][hash].title = GAMESTATE:GetCurrentSong():GetMainTitle()
-	SL[pn]['Scores'][hash].Difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
-	SL[pn]['Scores'][hash].group = GAMESTATE:GetCurrentSong():GetGroupName()
-	SL[pn]['Scores'][hash].StepsType = stepsType
-	SL[pn]['Scores'][hash].hash = hash
-	if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Grade_Failed' then SL[pn]['Scores'][hash].FirstPass = stats.dateTime end
+	if #hash > 0 then
+		if not SL[pn]['Scores'][hash] then SL[pn]['Scores'][hash] = {FirstPass='Never',NumTimesPlayed = 0} end
+		table.insert(SL[pn]['Scores'][hash],stats)
+		SL[pn]['Scores'][hash].LastPlayed = stats.dateTime
+		SL[pn]['Scores'][hash].NumTimesPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
+		SL[pn]['Scores'][hash].title = GAMESTATE:GetCurrentSong():GetMainTitle()
+		SL[pn]['Scores'][hash].Difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
+		SL[pn]['Scores'][hash].group = GAMESTATE:GetCurrentSong():GetGroupName()
+		SL[pn]['Scores'][hash].StepsType = stepsType
+		SL[pn]['Scores'][hash].hash = hash
+		if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Grade_Failed' then SL[pn]['Scores'][hash].FirstPass = stats.dateTime end
+	else SM("WARNING: Could not generate hash for: "..GAMESTATE:GetCurrentSong():GetMainTitle()) end
 end
 
 GetScores = function(player, song, steps, rateCheck)
