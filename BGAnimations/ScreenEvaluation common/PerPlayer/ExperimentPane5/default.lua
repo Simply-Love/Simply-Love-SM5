@@ -1,4 +1,6 @@
-local player = ...
+local args = ...
+local player = args.player
+local hash = args.hash
 
 local pane = Def.ActorFrame{
 	Name="Pane5",
@@ -7,7 +9,7 @@ local pane = Def.ActorFrame{
 	end
 }
 
-pane[#pane+1] = LoadActor(THEME:GetPathB("ScreenEvaluation", "common/PerPlayer/Pane4"), player)..{InitCommand=function(self) self:visible(true) end}
+pane[#pane+1] = LoadActor("./Pane4.lua", player)..{InitCommand=function(self) self:visible(true) end}
 	
 pane[#pane+1] = LoadFont("_wendy small")..{
 	InitCommand=function(self)

@@ -1,20 +1,18 @@
-local player = ...
+local args = ...
+local player = args.player
+local hash = args.hash
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local whichHighScore = 1
 local highScore
-local rateMode = SL.Global.ActiveModifiers.MusicRate ~= 1 and true or false
 
-if rateMode then
-	local RateScores = GetRateScores(player, GAMESTATE:GetCurrentSong(), GAMESTATE:GetCurrentSteps(pn))
-	if RateScores then
-		if RateScores[1].score == pss:GetPercentDancePoints() then whichHighScore = 2 end --TODO this doesn't account for getting a duplicate highscore
-		highScore = RateScores[whichHighScore]
-	end
-else
-	if STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetPersonalHighScoreIndex() == 0 then whichHighScore = 2 end
-	highScore = PROFILEMAN:GetProfile(pn):GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn)):GetHighScores()[whichHighScore]
+local RateScores = GetScores(player, hash, true) --See /scripts/Experiment-Scores.lua
+if RateScores then
+	if tonumber(RateScores[1].score) <= pss:GetPercentDancePoints() then whichHighScore = 2 end
+	if #RateScores < 2 and whichHighScore == 2 then highScore = RateScores[1]
+	else highScore = RateScores[whichHighScore] end
 end
+	
 local TapNoteScores = {
 	Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
 	-- x values for P1 and P2
@@ -41,14 +39,13 @@ if highScore then
 	-- do "regular" TapNotes first
 	for i=1,#TapNoteScores.Types do
 		local window = TapNoteScores.Types[i]
-		local number = rateMode and highScore[window] or highScore:GetTapNoteScore( "TapNoteScore_"..window )
+		local number = highScore[window]
 
 		--delta between current stats and highscore stats
 		deltaT[#deltaT+1] = LoadFont("_wendy small")..{
 			InitCommand=function(self)
 				local toPrint
-				if rateMode then toPrint = pss:GetTapNoteScores( "TapNoteScore_"..window ) - highScore[window]
-				else toPrint = pss:GetTapNoteScores( "TapNoteScore_"..window ) - highScore:GetTapNoteScore( "TapNoteScore_"..window ) end
+				toPrint = pss:GetTapNoteScores( "TapNoteScore_"..window ) - highScore[window]
 				if toPrint >= 0 then self:settext("+"..toPrint)
 				else self:settext(toPrint) end
 				self:zoom(.5):horizalign(left)
@@ -110,8 +107,7 @@ if highScore then
 	-- then handle holds, mines, hands, rolls
 	for index, RCType in ipairs(RadarCategories.Types) do
 		local performance
-		if rateMode then performance = highScore[RCType]
-		else performance = highScore:GetRadarValues():GetValue( "RadarCategory_"..RCType ) end
+		performance = highScore[RCType]
 		-- player performace value
 		highScoreT[#highScoreT+1] = Def.RollingNumbers{
 			Font="_ScreenEvaluation numbers",
@@ -140,7 +136,7 @@ if highScore then
 			self:xy(308,-10)
 		end
 	}
-	local PercentDP = rateMode and highScore.score or highScore:GetPercentDP()
+	local PercentDP = highScore.score
 	local percent = FormatPercentScore(PercentDP)
 	-- Format the Percentage string, removing the % symbol
 	percent = percent:gsub("%%", "")
@@ -158,10 +154,9 @@ if highScore then
 	
 else
 	highScoreT[#highScoreT+1] = LoadFont("_wendy small")..{
-		Text="No previous score",
 		InitCommand=function(self)
 			self:zoom(.8):xy(55,-45)
-			if rateMode then self:settext("No previous score\nat Rate "..SL.Global.ActiveModifiers.MusicRate) end
+			self:settext("No previous score\nat Rate "..SL.Global.ActiveModifiers.MusicRate)
 		end,
 	}
 end

@@ -125,12 +125,23 @@ for player in ivalues(Players) do
 			end,
 		}
 	end
+	-- Generate a hash once here if we're in Experiment mode and use it for any pane that needs it.
+	-- If it doesn't match with what we think it should be then the steps have changed and old scores
+	-- are invalid.
+	local hash
+	if SL.Global.GameMode == "Experiment" then 
+		local pn = ToEnumShortString(player)
+		local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
+		local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
+		hash = GenerateHash(stepsType, difficulty)
+		if hash ~= GetCurrentHash(player) then AddCurrentHash() end
+	end
 	-- add available Panes to the lower ActorFrame via a loop
 	-- Note(teejusb): Some of these actors may be nil. This is not a bug, but
 	-- a feature for any panes we want to be conditional (e.g. the QR code).
 	for i=1, NumPanes do
 		if SL.Global.GameMode == "Experiment" and GAMESTATE:GetNumSidesJoined() == 1 then
-			lower[#lower+1] = LoadActor("./PerPlayer/ExperimentPane"..i, player)
+			lower[#lower+1] = LoadActor("./PerPlayer/ExperimentPane"..i, {player = player, hash = hash})
 		else
 			lower[#lower+1] = LoadActor("./PerPlayer/Pane"..i, player)
 		end

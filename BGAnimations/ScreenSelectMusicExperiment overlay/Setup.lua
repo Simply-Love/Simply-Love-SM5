@@ -164,6 +164,8 @@ local GetGroupInfo = function()
 	end
 	return info
 end
+
+
 ---------------------------------------------------------------------------
 -- If there's no song set that means we're entering the screen for the first time, grab the default song and set up the groups
 if not GAMESTATE:GetCurrentSong() then
@@ -171,6 +173,11 @@ if not GAMESTATE:GetCurrentSong() then
 	GAMESTATE:SetCurrentSong(current_song)
 	GAMESTATE:SetCurrentSteps(0,GAMESTATE:GetCurrentSong():GetAllSteps()[1])
 	InitPreloadedGroups()
+	LoadHashLookup()
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do 
+		LoadNewFromStats(player)
+	end
+
 else
 -- Otherwise if the player got a new high grade then we need to remake the relevant grade groups
 -- TODO right now this doesn't check if they got a highscore, it just makes new groups.

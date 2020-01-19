@@ -109,24 +109,31 @@ local t = Def.ActorFrame {
 	EnableInputCommand=function(self)
 		Input.Enabled = true
 	end,
-	-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right 
-	-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .08 seconds to have
-	-- passed without changing songs before broadcasting "LessLag" which PaneDisplay receives. 
-	BeginSongTransitionMessageCommand=function(self)
-		scroll = scroll + 1
-		if scroll > 3 and not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
-		timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08 --TODO on especially laggy computers these numbers don't work
-		self:sleep(.15):queuecommand("FinishSongTransition")
-	end,
-	FinishSongTransitionMessageCommand=function(self)
-		if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
-			self:stoptweening()
-			scroll = 0
-			SL.Global.Scrolling = false
-			SL.Global.SongTransition=false
-			MESSAGEMAN:Broadcast("LessLag")
+	
+	--Wrap this in an actor so stoptweening doesn't affect everything else
+	Def.Actor{
+		-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right 
+		-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .08 seconds to have
+		-- passed without changing songs before broadcasting "LessLag" which PaneDisplay receives. 
+		BeginSongTransitionMessageCommand=function(self)
+			self:stoptweening()	--TODO if you press enter while holding left or right you can break input
+			scroll = scroll + 1
+			if scroll > 3 then
+				if not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
+			end
+			timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08 --TODO on especially laggy computers these numbers don't work
+			self:sleep(.15):queuecommand("FinishSongTransition")
+		end,
+		FinishSongTransitionMessageCommand=function(self)
+			if (GetTimeSinceStart() - SL.Global.TimeAtSessionStart) > timeToGo and SL.Global.SongTransition then
+				self:stoptweening()
+				scroll = 0
+				SL.Global.Scrolling = false
+				SL.Global.SongTransition=false
+				MESSAGEMAN:Broadcast("LessLag")
+			end
 		end
-	end,
+	},
 	--if we choose a song in Search then we want to jump straight to it even if we're on the group wheel
 	SetSongViaSearchMessageCommand=function(self)
 		if Input.WheelWithFocus == GroupWheel then --going from group to song

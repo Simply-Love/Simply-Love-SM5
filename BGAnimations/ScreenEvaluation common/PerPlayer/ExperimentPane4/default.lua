@@ -1,4 +1,6 @@
-local player = ...
+local args = ...
+local player = args.player
+local hash = args.hash
 
 local pane = Def.ActorFrame{
 	Name="Pane4",
@@ -11,11 +13,6 @@ local pane = Def.ActorFrame{
 	SetCommand=function(self)
 		local pn = ToEnumShortString(player)
 		local lastPlayed, numPlayed, firstPass
-		local stepsType = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetStepsType())
-		local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
-		if stepsType == 'Dance_Single' then stepsType = 'dance-single' end
-		if stepsType == 'Dance_Double' then stepsType = 'dance-double' end
-		local hash = GenerateHash(stepsType, difficulty)
 		if not SL[pn]['Scores'][hash] then
 			lastPlayed = "NEVER"
 			numPlayed = 1
@@ -60,8 +57,6 @@ local pane = Def.ActorFrame{
 }
 
 pane[#pane+1] = LoadActor(THEME:GetPathB("ScreenEvaluation", "common/PerPlayer/Pane3"), player)..{InitCommand=function(self) self:visible(true) end}
-
-
 
 --LastPlayed
 pane[#pane+1] = LoadFont("_wendy small")..{

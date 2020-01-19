@@ -194,9 +194,15 @@ local af = Def.ActorFrame{
 		self:GetChild("MachineHighScoreName"):settext(machine_name):diffuse({0,0,0,1})
 		self:GetChild("MachineHighScoreDate"):settext(FormatDate(machine_date))
 		DiffuseEmojis(self, machine_name)
-		local song = GAMESTATE:GetCurrentSong()
+		local player_score, player_name = "0.00%", "????"
 		if PROFILEMAN:IsPersistentProfile(player) then
-			local player_score, player_name = GetNameAndScoreAndDate( PROFILEMAN:GetProfile(player) )
+			local hash = GetCurrentHash(player)
+			if hash and GetScores(player,hash) then
+				player_name = PROFILEMAN:GetProfile(player):GetDisplayName():upper()
+				player_score = FormatPercentScore(GetScores(player,hash)[1].score)
+			else --if we can't generate hashes (malformed SM/DWI/etc) we can't save scores so fallback on profile here
+				player_score, player_name = GetNameAndScoreAndDate( PROFILEMAN:GetProfile(player) )
+			end
 			self:GetChild("PlayerHighScore"):settext(player_score)
 			self:GetChild("PlayerHighScoreName"):settext(player_name):diffuse({0,0,0,1})
 

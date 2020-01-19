@@ -1,4 +1,6 @@
-local player = ...
+local args = ...
+local player = args.player
+local hash = args.hash
 
 -- ------------------------------------------
 -- First, check for modes not supported by GrooveStats.

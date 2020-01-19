@@ -1,5 +1,5 @@
 local player = ...
-local pn = 'P2'
+local pn = ToEnumShortString(player)
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 
 local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
