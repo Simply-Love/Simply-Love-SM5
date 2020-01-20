@@ -12,7 +12,7 @@ Handle.Start = function(event)
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
 		MESSAGEMAN:Broadcast("StartButton")
 		-- first figure out which group we're dealing with
-		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
+		local info = scrollers[mpn]:get_info_at_focus_pos()
 		local index = type(info)=="table" and info.index or 0
 		SL.Global.Order = info.displayname
 		MESSAGEMAN:Broadcast("GroupTypeChanged") --the order of songs in a group may have changed so reset it
@@ -26,7 +26,7 @@ Handle.Center = Handle.Start
 
 Handle.MenuLeft = function(event)
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
+		local info = scrollers[mpn]:get_info_at_focus_pos()
 		-- We add a bunch of empty rows to the table so that the first custom group is the default
 		-- and it's centered on the screen. We don't want to be able to scroll to them however.
 		-- To get around that, each actual group has an index parameter that we set to be non zero
@@ -34,8 +34,8 @@ Handle.MenuLeft = function(event)
 		local index = type(info)=="table" and info.index or 0
 		if index - 1 > 0 then
 			MESSAGEMAN:Broadcast("DirectionButton")
-			scrollers[event.PlayerNumber]:scroll_by_amount(-1)
-			local frame = af:GetChild(ToEnumShortString(event.PlayerNumber) .. 'Frame')
+			scrollers[mpn]:scroll_by_amount(-1)
+			local frame = af:GetChild(ToEnumShortString(mpn) .. 'Frame')
 			frame:playcommand("Set", {index=index-1})
 		end
 	end
@@ -46,7 +46,7 @@ Handle.DownLeft = Handle.MenuLeft
 
 Handle.MenuRight = function(event)
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
+		local info = scrollers[mpn]:get_info_at_focus_pos()
 		-- We add a bunch of empty rows to the table so that the first custom group is the default
 		-- and it's centered on the screen. We don't want to be able to scroll to them however.
 		-- To get around that, each actual group has an index parameter that we set to be non zero
@@ -54,8 +54,8 @@ Handle.MenuRight = function(event)
 		local index = type(info)=="table" and info.index or 0
 		if index + 1 <= 3 then
 			MESSAGEMAN:Broadcast("DirectionButton")
-			scrollers[event.PlayerNumber]:scroll_by_amount(1)
-			local frame = af:GetChild(ToEnumShortString(event.PlayerNumber) .. 'Frame')
+			scrollers[mpn]:scroll_by_amount(1)
+			local frame = af:GetChild(ToEnumShortString(mpn) .. 'Frame')
 			frame:playcommand("Set", {index=index+1})
 		end
 	end

@@ -78,16 +78,7 @@ t[#t+1] = Def.Quad{
 	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+111):MaskSource() end
 }
 
---TODO we don't have two players for now
---[[ load PlayerFrames for both
-if AutoStyle=="none" or AutoStyle=="versus" then
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1]})
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2]})
-
--- load only for the MasterPlayerNumber
-else
---]]
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn]})
---end
+-- Tags are stored for everyone. Maybe consider linking it to profiles? Right now we only need one of these
+t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn]})
 
 return t

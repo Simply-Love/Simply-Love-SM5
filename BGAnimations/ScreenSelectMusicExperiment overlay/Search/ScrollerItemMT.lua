@@ -22,7 +22,7 @@ return {
 		end,
 		transform = function(self, item_index, num_items, has_focus)
 			self.container:finishtweening()
-			if has_focus then self.container:diffuse(1,0,0,1) SM(self.info)
+			if has_focus then self.container:diffuse(1,0,0,1)
 			else self.container:diffuse(1,1,1,1) end
 			if item_index <= 1 or item_index >= num_items then
 				self.container:diffusealpha(0)
