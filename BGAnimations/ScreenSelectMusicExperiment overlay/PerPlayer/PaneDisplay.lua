@@ -185,9 +185,9 @@ local af = Def.ActorFrame{
 
 	-- These playcommand("Set") need to apply to the ENTIRE panedisplay
 	-- (all its children) so declare each here
-	OnCommand=cmd(queuecommand,"Set"),
-	CurrentCourseChangedMessageCommand=cmd(queuecommand,"Set"),
-	StepsHaveChangedMessageCommand=cmd(queuecommand,"Set"),
+	OnCommand=function(self) self:queuecommand("Set") end,
+	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	StepsHaveChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	SetCommand=function(self)
 		local machine_score, machine_name, machine_date = GetNameAndScoreAndDate( PROFILEMAN:GetMachineProfile() )
 		self:GetChild("MachineHighScore"):settext(machine_score)
@@ -195,7 +195,7 @@ local af = Def.ActorFrame{
 		self:GetChild("MachineHighScoreDate"):settext(FormatDate(machine_date))
 		DiffuseEmojis(self, machine_name)
 		local player_score, player_name = "0.00%", "????"
-		if PROFILEMAN:IsPersistentProfile(player) then
+		if PROFILEMAN:IsPersistentProfile(player) and GAMESTATE:GetCurrentSong() then --if there's no song there won't be a hash
 			local hash = GetCurrentHash(player)
 			if hash and GetScores(player,hash) then
 				player_name = PROFILEMAN:GetProfile(player):GetDisplayName():upper()

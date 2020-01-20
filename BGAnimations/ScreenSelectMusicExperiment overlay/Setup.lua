@@ -177,7 +177,6 @@ if not GAMESTATE:GetCurrentSong() then
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do 
 		LoadNewFromStats(player)
 	end
-
 else
 -- Otherwise if the player got a new high grade then we need to remake the relevant grade groups
 -- TODO right now this doesn't check if they got a highscore, it just makes new groups.

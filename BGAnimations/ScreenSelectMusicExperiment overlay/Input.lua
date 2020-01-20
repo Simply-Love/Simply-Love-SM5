@@ -207,6 +207,7 @@ Handler.MenuRight=function(event)
 	Handler.WheelWithFocus:scroll_by_amount(1)
 	if HeldButtons["MenuLeft"] == true then --left and right are held at the same time so open the sort menu
 		MESSAGEMAN:Broadcast("DirectInputToSortMenu")
+		Handler.Enabled = false
 		Handler.ResetHeldButtons()
 	else --navigate the wheel right
 		SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
@@ -218,6 +219,7 @@ Handler.MenuLeft=function(event)
 	Handler.WheelWithFocus:scroll_by_amount(-1)
 	if HeldButtons["MenuRight"] == true then --left and right are held at the same time so open the sort menu
 		MESSAGEMAN:Broadcast("DirectInputToSortMenu")
+		Handler.Enabled = false
 		Handler.ResetHeldButtons()
 	else -- navigate the wheel left
 		SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )

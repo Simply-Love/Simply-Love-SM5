@@ -14,17 +14,17 @@ local t = Def.ActorFrame{
 		end
 	end,
 	SwitchFocusToSingleSongMessageCommand=function(self)
-		self:linear(0.3):xy(_screen.cx - 122, _screen.cy - 130/1.6):rotationy(360):sleep(0):rotationy(0)
+		self:finishtweening():linear(0.3):xy(_screen.cx - 122, _screen.cy - 130/1.6):rotationy(360):sleep(.1):rotationy(0)
 	end,
 	SwitchFocusToSongsMessageCommand=function(self)
 		if self:GetDiffuseAlpha() == 0 then self:linear(.3):diffusealpha(1)
 		else
 			if IsUsingWideScreen() then
 				--self:zoom(0.7655)
-				self:linear(.3):xy(_screen.cx - 170, 112):rotationy(360):sleep(0):rotationy(0)
+				self:finishtweening():linear(.3):xy(_screen.cx - 170, 112):rotationy(360):sleep(.1):rotationy(0)
 			else
 				--self:zoom(0.75)
-				self:linear(.3):xy(_screen.cx - 166, 112):rotationy(360):sleep(0):rotationy(0)
+				self:finishtweening():linear(.3):xy(_screen.cx - 166, 112):rotationy(360):sleep(.1):rotationy(0)
 			end
 		end
 	end,
@@ -37,7 +37,7 @@ local t = Def.ActorFrame{
 		CloseThisFolderHasFocusMessageCommand=function(self) 
 			self:GetChild("Banner"):LoadFromSongGroup(SL.Global.CurrentGroup)
 			:stoptweening():zoom(.5):linear(.125):zoomto(418,164)
-			GAMESTATE:SetCurrentSong(nil) -- This is a bad place to put this. But we want to clear out the current song and need to set the banner first
+			GAMESTATE:SetCurrentSong(nil) -- TODO This is a bad place to put this. But we want to clear out the current song and need to set the banner first
 		end,
 		SetBannerCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()

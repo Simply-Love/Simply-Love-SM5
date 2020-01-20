@@ -66,7 +66,7 @@ return Def.ActorFrame {
 				GAMESTATE:SetCurrentSteps(pn,harder and NextHardest(pn,true) or easier and NextEasiest(pn,true))
 				args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
 			end
+			MESSAGEMAN:Broadcast("StepsHaveChanged")
 		end
-		MESSAGEMAN:Broadcast("StepsHaveChanged")
 	end,
 }

@@ -91,22 +91,21 @@ local t = Def.ActorFrame {
 		SCREENMAN:GetTopScreen():AddInputCallback( Input.Handler )
 		-- set up initial variable states and the players' OptionRows
 		Input:Init()
-
 		-- It should be safe to enable input for players now
-		self:queuecommand("EnableInput")
+		self:queuecommand("EnableMainInput")
 	end,
 	-- a hackish solution to prevent users from button-spamming and breaking input :O
 	SwitchFocusToSongsMessageCommand=function(self)
-		self:sleep(TransitionTime):queuecommand("EnableInput")
+		self:stoptweening():sleep(TransitionTime):queuecommand("EnableMainInput")
 	end,
 	SwitchFocusToGroupsMessageCommand=function(self)
-		self:sleep(TransitionTime):queuecommand("EnableInput")
+		self:stoptweening():sleep(TransitionTime):queuecommand("EnableMainInput")
 	end,
 	SwitchFocusToSingleSongMessageCommand=function(self)
 		setup.InitOptionRowsForSingleSong()
-		self:sleep(TransitionTime):queuecommand("EnableInput")
+		self:stoptweening():sleep(TransitionTime):queuecommand("EnableMainInput")
 	end,													  
-	EnableInputCommand=function(self)
+	EnableMainInputCommand=function(self)
 		Input.Enabled = true
 	end,
 	
@@ -169,13 +168,12 @@ local t = Def.ActorFrame {
 	--All of this stuff is put in an AF because we hide and show it together
 	--Information about the song - including the grid/stream info, nps histogram, and step information
 	Def.ActorFrame{
-		OnCommand = function(self) self:queuecommand("Show") end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:queuecommand("Hide") end,
-		SwitchFocusToSingleSongMessageCommand=function(self) self:queuecommand("Hide") end,
-		SwitchFocusToSongsMessageCommand = function(self) self:queuecommand("Show") end,
-		CloseThisFolderHasFocusMessageCommand = function(self) self:queuecommand("Hide") end, --don't display any of this when we're on the close folder item
-		CurrentSongChangedMessageCommand = function(self) --brings things back after CloseThisFolderHasFocusMessageCommand runs
-			if self:GetDiffuseAlpha() == 0 and Input.WheelWithFocus == SongWheel then self:queuecommand("Show") end end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:stoptweening():queuecommand("Hide") end,
+		SwitchFocusToSingleSongMessageCommand=function(self) self:stoptweening():queuecommand("Hide") end,
+		SwitchFocusToSongsMessageCommand = function(self) self:stoptweening():queuecommand("Show") end,
+		CloseThisFolderHasFocusMessageCommand = function(self) self:stoptweening():queuecommand("Hide") end, --don't display any of this when we're on the close folder item
+		CurrentSongChangedMessageCommand = function(self, params) --brings things back after CloseThisFolderHasFocusMessageCommand runs
+			if params.song and self:GetDiffuseAlpha() == 0 and Input.WheelWithFocus == SongWheel then self:stoptweening():queuecommand("Show") end end,
 		CurrentCourseChangedMessageCommand = function(self)  end,
 		HideCommand = function(self) self:linear(.3):diffusealpha(0):visible(false) end,
 		ShowCommand = function(self) self:visible(true):linear(.3):diffusealpha(1) end,
@@ -221,7 +219,7 @@ local t = Def.ActorFrame {
 	end,
 	-- Broadcast when coming out of the Sort Menu.
 	DirectInputToEngineMessageCommand=function(self)
-		self:queuecommand("EnableInput")
+		self:queuecommand("EnableMainInput")
 		if Input.WheelWithFocus == SongWheel then
 			play_sample_music()
 		end

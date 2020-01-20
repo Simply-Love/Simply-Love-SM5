@@ -9,13 +9,9 @@ return {
 				Name=name,
 				InitCommand=function(subself)
 					self.container = subself
-					subself:diffusealpha(0):visible(false)
+					subself:diffusealpha(1):visible(true)
 				end,
-				OffCommand=function(subself) subself:sleep(.2):queuecommand("Disappear") end,
-				SetSearchWheelMessageCommand=function(subself) subself:sleep(.2):queuecommand("Appear") end,
-				AppearCommand=function(subself) subself:visible(true):linear(0.15):diffusealpha(1) end,
-				DisappearCommand=function(subself) subself:linear(.2):diffusealpha(0):visible(false) end,
-				
+
 				LoadFont("Common Normal")..{
 					InitCommand=function(subself)
 						self.bmt = subself
@@ -26,7 +22,7 @@ return {
 		end,
 		transform = function(self, item_index, num_items, has_focus)
 			self.container:finishtweening()
-			if has_focus then self.container:diffuse(1,0,0,1)
+			if has_focus then self.container:diffuse(1,0,0,1) SM(self.info)
 			else self.container:diffuse(1,1,1,1) end
 			if item_index <= 1 or item_index >= num_items then
 				self.container:diffusealpha(0)

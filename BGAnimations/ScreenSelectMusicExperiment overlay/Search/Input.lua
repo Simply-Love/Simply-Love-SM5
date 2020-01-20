@@ -7,17 +7,15 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 local Handle = {}
 
 -- When the player hits start on the searchResults menu they want to jump to the song/group or exit
+-- TODO Right now this will always jump to the song wheel. If we're on the group wheel I'd prefer it stays there
 Handle.Start = function(event)
 	local topscreen = SCREENMAN:GetTopScreen()
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-		-- first figure out which group we're dealing with
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
-		if info.type == "song" and GAMESTATE:GetCurrentSong() ~= info.song then
-			GAMESTATE:SetCurrentSong(info.song)
-			MESSAGEMAN:Broadcast("SetSongViaSearch") --heard by ScreenSelectMusicExperiment default.lua. Closes the group folder if we're on it
-		end
-		if info.group ~= "nothing" then
-			switch_to_songs(info.group)
+		if info.type == "group" then GAMESTATE:SetCurrentSong(PruneSongList(GetSongList(info.group))[1])
+		elseif info.type == "song" and GAMESTATE:GetCurrentSong() ~= info.song then GAMESTATE:SetCurrentSong(info.song) end
+		if info.type ~= "exit" then
+			MESSAGEMAN:Broadcast("SetSongViaSearch") --heard by ScreenSelectMusicExperiment default.lua. Jumps straight into the song folder
 			SL.Global.CurrentGroup = info.group
 			MESSAGEMAN:Broadcast("GroupTypeChanged")
 		end

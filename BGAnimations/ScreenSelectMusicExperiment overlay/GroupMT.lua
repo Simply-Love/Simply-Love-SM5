@@ -14,31 +14,39 @@ local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG(
 
 switch_to_songs = function(group_name)
 	local songs = PruneSongList(GetSongList(group_name))
-	if SL.Global.Order == "Difficulty/BPM" then
-		songs = CreateSpecialSongList(songs) --TODO this should be pruned for filters
-	end
-	songs[#songs+1] = "CloseThisFolder"
-	local toAdd = {}
-	for k,song in pairs(songs) do
-		toAdd[#toAdd+1] = {song = song, index = k}
-	end
-	local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
-	local index = SL.Global.LastSeenIndex
-	if SL.Global.Order == "Difficulty/BPM" then
-		--since each song can show up multiple times in Difficulty/BPM we can't rely just on songs being the same
-		index = SL.Global.LastSeenIndex
-	else
+	if #songs > 0 then --it's possible that filters can cause us to try and enter a group with no songs
+		if SL.Global.Order == "Difficulty/BPM" then
+			songs = CreateSpecialSongList(songs) --TODO this should be pruned for filters
+		end
+		songs[#songs+1] = "CloseThisFolder"
+		local toAdd = {}
 		for k,song in pairs(songs) do
-			if song == current_song then
-				index = k
-				break
+			toAdd[#toAdd+1] = {song = song, index = k}
+		end
+		local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
+		local index = SL.Global.LastSeenIndex
+		if SL.Global.Order == "Difficulty/BPM" then
+			--since each song can show up multiple times in Difficulty/BPM we can't rely just on songs being the same
+			index = SL.Global.LastSeenIndex
+		else
+			for k,song in pairs(songs) do
+				if song == current_song then
+					index = k
+					break
+				end
 			end
 		end
+		if index == nil then index = 1 end --TODO if songs are no longer in a folder then go to groupwheel not songwheel
+		SL.Global.DifficultyGroup = group_name
+		SL.Global.GradeGroup = group_name
+		SongWheel:set_info_set(toAdd, index)
+		MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+	else
+		-- if there are no songs in the current group then switch to the first available group/first song
+		-- TODO it should put you on the groupwheel instead 
+		local groups = PruneGroups(GetGroups())
+		switch_to_songs(groups[1])
 	end
-	if index == nil then index = 1 end --TODO if songs are no longer in a folder then go to groupwheel not songwheel
-	SL.Global.DifficultyGroup = group_name
-	SL.Global.GradeGroup = group_name
-	SongWheel:set_info_set(toAdd, index)
 end
 
 local item_mt = {
@@ -68,7 +76,6 @@ local item_mt = {
 							subself:playcommand("GainFocus"):xy(70,35):zoom(0.35)
 							local starting_group = GetCurrentGroup()
 							switch_to_songs(starting_group)
-							MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 							MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
 						end
 					end
