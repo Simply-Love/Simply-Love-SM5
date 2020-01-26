@@ -1,5 +1,11 @@
 local SL_CustomPrefs =
 {
+	OriginalPaneDisplay =
+	{
+		Default = true,
+		Choices = { THEME:GetString("ThemePrefs","Original"), THEME:GetString("ThemePrefs", "Alternate") },
+		Values 	= { true, false }
+	},
 	ShowExtraSongInfo =
 		{
 		Default = false,
