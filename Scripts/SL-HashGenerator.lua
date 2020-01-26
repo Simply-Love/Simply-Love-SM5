@@ -111,7 +111,7 @@ local function NormalizeFloatDigits(param)
 	end
 	local paramParts = {}
 	for beat_bpm in param:gmatch('[^,]+') do
-		beat, bpm = beat_bpm:match('(.+)=(.+)')
+		local beat, bpm = beat_bpm:match('(.+)=(.+)')
 		table.insert(paramParts, NormalizeDecimal(beat) .. '=' .. NormalizeDecimal(bpm))
 	end
 	return table.concat(paramParts, ',')

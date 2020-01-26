@@ -74,7 +74,7 @@ local function gen_vertices(player, width, height)
 end
 
 
-function interpolate_vert(v1, v2, offset)
+local function interpolate_vert(v1, v2, offset)
 	local ratio = (offset - v1[1][1]) / (v2[1][1] - v1[1][1])
 	local y = v1[1][2] * (1 - ratio) + v2[1][2] * ratio
 	local color = lerp_color(ratio, v1[2], v2[2])

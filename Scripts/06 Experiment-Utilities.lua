@@ -1,8 +1,7 @@
 ---------------------------------------------------------------------------
 -- returns the contents of a txt file as an indexed table, split on newline
-GetFileContents = function(path)
+function GetFileContents(path)
 	local contents = ""
-
 	if FILEMAN:DoesFileExist(path) then
 		-- create a generic RageFile that we'll use to read the contents
 		local file = RageFileUtil.CreateRageFile()
@@ -26,7 +25,7 @@ GetFileContents = function(path)
 	return lines
 end
 
-WriteFileContents = function(path, contents, createNew)
+function WriteFileContents(path, contents, createNew)
 	local contents = contents
 	local createNew = createNew or false
 	if FILEMAN:DoesFileExist(path) or createNew then
@@ -44,7 +43,7 @@ WriteFileContents = function(path, contents, createNew)
 end
 
 -- Splits a string by sep and returns a table
-Split = function(inputstr, sep)
+function Split(inputstr, sep)
         if sep == nil then
                 sep = "%s"
         end
@@ -59,14 +58,14 @@ local function tchelper(first, rest)
    return first:upper()..rest:lower()
 end
 
-CapitalizeWords = function(str)
+function CapitalizeWords(str)
 	return str:gsub("(%a)([%w_']*)", tchelper)
 end
 ---------------------------------------------------------------------------
 -- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
 -- (there has got to be a better way to do this...)
 -- returns a String containing the steps type for the current game mode
-GetStepsType = function()
+function GetStepsType()
 	local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 	return steps_type
 end
@@ -74,7 +73,7 @@ end
 -- Read the profile's Stats.xml and put the general data stuff into a table
 -- Song and Course aren't filled in here
 -- TODO this won't account for Stats prefixes
-ParseStats = function(player)
+function ParseStats(player)
 	local pn = ToEnumShortString(player)
 	local profileDir
 	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
@@ -111,7 +110,7 @@ ParseStats = function(player)
 end
 
 -- Returns the number of minutes since the start of year 0000
-DateToMinutes = function(scoreDate) --scoreDate must be form YYYY-MM-DD HH:MM:SS
+function DateToMinutes(scoreDate) --scoreDate must be form YYYY-MM-DD HH:MM:SS
 	local monthTable = {} --day of year at start of each month
 	monthTable[#monthTable+1]=0
 	monthTable[#monthTable+1]=31
@@ -135,7 +134,7 @@ DateToMinutes = function(scoreDate) --scoreDate must be form YYYY-MM-DD HH:MM:SS
 end
 
 --returns a string of the current date in the form YYYY-MM-DD HH:MM:00 (seconds are always set to 00)
-GetCurrentDateTime = function()
+function GetCurrentDateTime()
 	return string.format("%04d",Year()).."-"..string.format("%02d", MonthOfYear()+1).."-"..string.format("%02d", DayOfMonth())
 			.." "..string.format("%02d", Hour())..":"..string.format("%02d", Minute())..":00"
 end

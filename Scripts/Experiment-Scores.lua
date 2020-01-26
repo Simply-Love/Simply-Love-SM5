@@ -1,4 +1,4 @@
-local GetSongDirs = function()
+local function GetSongDirs()
 	local songs = SONGMAN:GetAllSongs()
 	local list = {}
 	for item in ivalues(songs) do
@@ -7,7 +7,7 @@ local GetSongDirs = function()
 	return list
 end
 
-local AddToHashLookup = function()
+local function AddToHashLookup()
 	local songs = GetSongDirs()
 	local newChartsFound = false
 	for dir,song in pairs(songs) do
@@ -30,7 +30,7 @@ local AddToHashLookup = function()
 	if newChartsFound then SaveHashLookup() end
 end
 
-LoadHashLookup = function()
+function LoadHashLookup()
 	local contents
 	local hashLookup = {}
 	local path = THEME:GetCurrentThemeDirectory() .. "Other/HashLookup.txt"
@@ -52,9 +52,9 @@ LoadHashLookup = function()
 	AddToHashLookup()
 end
 
-SaveHashLookup = function()
+function SaveHashLookup()
 	if SL.Global.HashLookup then
-		toWrite = ""
+		local toWrite = ""
 		for dir,charts in pairs(SL.Global.HashLookup) do
 			toWrite = toWrite..dir.."\r\n"
 			for diff,stepTypes in pairs(charts) do
@@ -70,7 +70,7 @@ end
 
 -- Checks to see if any songs that have scores in stats but weren't loaded when we first ran LoadFromStats
 -- are now on the machine.
-LoadNewFromStats = function(player)
+function LoadNewFromStats(player)
 	local songs = SONGMAN:GetAllSongs()
 	local pn = ToEnumShortString(player)
 	for song in ivalues(songs) do
@@ -78,7 +78,7 @@ LoadNewFromStats = function(player)
 			local difficulty = ToEnumShortString(chart:GetDifficulty())
 			local stepsType = ToEnumShortString(chart:GetStepsType()):gsub("_","-"):lower()
 			local hash 
-			if next(SL.Global.HashLookup[song:GetSongDir()]) then
+			if next(SL.Global.HashLookup[song:GetSongDir()]) and SL.Global.HashLookup[song:GetSongDir()][difficulty] and SL.Global.HashLookup[song:GetSongDir()][difficulty][stepsType] then
 				hash = SL.Global.HashLookup[song:GetSongDir()][difficulty][stepsType]
 			end
 			if hash and not GetScores(player,hash) and #PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores() > 0 then
@@ -125,7 +125,7 @@ end
 
 -- If this is the first time loading a profile in Experiment mode then we won't have a list of song scores.
 -- Read in from Stats.xml to start us off. 
-local LoadFromStats = function(pn)
+local function LoadFromStats(pn)
 	local profileDir
 	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
 	local path = PROFILEMAN:GetProfileDir(profileDir)..'Stats.xml'
@@ -223,7 +223,7 @@ local LoadFromStats = function(pn)
 end
 
 -- Read scores from disk if they exist. If they don't, then load our initial values with LoadFromStats
-LoadScores = function(pn)
+function LoadScores(pn)
 	local profileDir
 	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
 	local contents
@@ -280,9 +280,9 @@ LoadScores = function(pn)
 end
 
 -- Write rate scores to disk
-SaveScores = function(pn)
+function SaveScores(pn)
 	if SL[pn]['Scores'] then
-		toWrite = ""
+		local toWrite = ""
 		for _,hash in pairs(SL[pn]['Scores']) do --TODO don't type this out manually
 			if hash.hash then
 				toWrite = toWrite..hash.title.."\t"..hash.group.."\t"..hash.Difficulty.."\t"..hash.StepsType.."\t"..hash.LastPlayed.."\t"..hash.NumTimesPlayed.."\t"
@@ -304,7 +304,7 @@ SaveScores = function(pn)
 end
 
 -- Add a new score to SL[pn][Scores]
-AddScore = function(player)
+function AddScore(player)
 	local pn = ToEnumShortString(player)
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local TapNoteScores = {
@@ -344,7 +344,7 @@ AddScore = function(player)
 	else SM("WARNING: Could not generate hash for: "..GAMESTATE:GetCurrentSong():GetMainTitle()) end
 end
 
-GetScores = function(player, hash, checkRate, checkFailed)
+function GetScores(player, hash, checkRate, checkFailed)
 	local pn = ToEnumShortString(player)
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	local checkRate = checkRate or false
@@ -371,7 +371,7 @@ GetScores = function(player, hash, checkRate, checkFailed)
 end
 
 -- returns the hash stored in SL.Global.HashLookup
-GetCurrentHash = function(player)
+function GetCurrentHash(player)
 	local pn = ToEnumShortString(player)
 	local song = GAMESTATE:GetCurrentSong()
 	local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
@@ -385,8 +385,9 @@ end
 
 -- Overwrite the HashLookup table for the current song.
 -- This is called in ScreenEvaluation Common when GenerateHash doesn't match the HashLookup
-AddCurrentHash = function()
+function AddCurrentHash()
 	local song = GAMESTATE:GetCurrentSong()
+	local dir = song:GetSongDir()
 	SL.Global.HashLookup[dir] = {}
 	local allSteps = song:GetAllSteps()
 	for _,steps in pairs(allSteps) do
