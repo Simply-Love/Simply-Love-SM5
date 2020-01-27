@@ -76,7 +76,7 @@ if args.RoundsAgo then
 
 	if highscoreindex <= 0 then
 		for i, highscore in ipairs(HighScores) do
-
+			local name
 		 	if  pss:GetHighScore():GetScore() == highscore:GetScore()
 			and pss:GetHighScore():GetDate()  == highscore:GetDate()
 			and

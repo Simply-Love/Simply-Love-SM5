@@ -163,8 +163,8 @@ local graph_and_lifeline = Def.ActorFrame{
 				local seconds = GAMESTATE:GetCurMusicSeconds()
 				if seconds > last_second then return end
 
-				x = scale( seconds, first_second, last_second, 0, scaled_width )
-				y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
+				local x = scale( seconds, first_second, last_second, 0, scaled_width )
+				local y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
 
 				-- if the slopes of the newest line segment is similar
 				-- to the previous segment, just extend the old one.

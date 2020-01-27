@@ -58,7 +58,8 @@ return function(AllAvailableSteps)
 
 	-- if only one player is joined
 	if (currentStepsP1 and not currentStepsP2) or (currentStepsP2 and not currentStepsP1) then
-
+		
+		local currentSteps
 		if (currentStepsP1 and not currentStepsP2) then
 			currentSteps = currentStepsP1
 		elseif (currentStepsP2 and not currentStepsP1) then
