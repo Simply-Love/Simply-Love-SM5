@@ -19,7 +19,7 @@ for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
 		local song_cost = song:IsMarathon() and 3 or song:IsLong() and 2 or 1
 
-		if song_cost <= stages_remaining then
+		if GAMESTATE:IsEventMode() or song_cost <= stages_remaining then
 			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
 		end
 	end
