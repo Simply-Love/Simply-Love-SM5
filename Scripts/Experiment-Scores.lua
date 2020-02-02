@@ -351,16 +351,15 @@ function GetScores(player, hash, checkRate, checkFailed)
 	local checkFailed = checkFailed or false
 	local HighScores = {}
 	if SL[pn]['Scores'][hash] and SL[pn]['Scores'][hash]['HighScores'] then
-		if not checkRate and not checkFailed then HighScores = SL[pn]['Scores'][hash]['HighScores']
-		else
-			for score in ivalues(SL[pn]['Scores'][hash]['HighScores']) do
-				if checkRate and not checkFailed then
-					if tonumber(score.rate) == rate then HighScores[#HighScores+1] = score end
-				elseif not checkRate and checkFailed then
-					if score.grade ~= "Failed" then HighScores[#HighScores+1] = score end
-				elseif checkRate and checkFailed then
-					if tonumber(score.rate) == rate and score.grade ~= "Failed" then HighScores[#HighScores+1] = score end
-				end
+		for score in ivalues(SL[pn]['Scores'][hash]['HighScores']) do
+			if checkRate and not checkFailed then
+				if tonumber(score.rate) == rate then HighScores[#HighScores+1] = score end
+			elseif not checkRate and checkFailed then
+				if score.grade ~= "Failed" then HighScores[#HighScores+1] = score end
+			elseif checkRate and checkFailed then
+				if tonumber(score.rate) == rate and score.grade ~= "Failed" then HighScores[#HighScores+1] = score end
+			else
+				HighScores[#HighScores+1] = score
 			end
 		end
 	end

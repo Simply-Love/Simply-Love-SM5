@@ -30,7 +30,7 @@ af[#af+1] = Def.Quad{
 	FadeMeCommand=function(self) self:accelerate(1.5):faderight(0):accelerate(1.5):fadeleft(10):sleep(0):diffusealpha(0):fadeleft(0):sleep(1.5):faderight(10):diffusealpha(0.75):queuecommand("FadeMe") end,
 	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
 	SwitchFocusToSingleSongMessageCommand=function(self) self:visible(false) end,
-	SwitchFocusToSongsMessageCommand==function(self) self:visible(true) end
+	SwitchFocusToSongsMessageCommand=function(self) self:visible(true) end
 }
 
 -- rainbow glowing border bottom
@@ -40,7 +40,7 @@ af[#af+1] = Def.Quad{
 	FadeMeCommand=function(self) self:accelerate(1.5):faderight(0):accelerate(1.5):fadeleft(10):sleep(0):diffusealpha(0):fadeleft(0):sleep(1.5):faderight(10):diffusealpha(0.75):queuecommand("FadeMe") end,
 	SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
 	SwitchFocusToSingleSongMessageCommand=function(self) self:visible(false) end,
-	SwitchFocusToSongsMessageCommand==function(self) self:visible(true) end
+	SwitchFocusToSongsMessageCommand=function(self) self:visible(true) end
 }
 
 return af

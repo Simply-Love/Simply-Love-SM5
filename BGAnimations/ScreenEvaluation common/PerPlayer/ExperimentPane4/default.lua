@@ -56,7 +56,14 @@ local pane = Def.ActorFrame{
 	end,
 }
 
-pane[#pane+1] = LoadActor(THEME:GetPathB("ScreenEvaluation", "common/PerPlayer/Pane3"), player)..{InitCommand=function(self) self:visible(true) end}
+pane[#pane+1] = Def.ActorFrame{
+	Name="HighScorePane",
+	InitCommand=function(self)
+		self:visible(true)
+		self:y(_screen.cy - 62):zoom(0.8)
+	end,
+	LoadActor("ExperimentHighScoreList.lua", { Player=player, NumHighScores=10, RoundsAgo=1 }),
+}
 
 --LastPlayed
 pane[#pane+1] = LoadFont("_wendy small")..{

@@ -5,7 +5,6 @@ local setup = LoadActor("./Setup.lua")
 if setup == nil then
 	return LoadActor(THEME:GetPathB("ScreenSelectMusicCasual", "overlay/NoValidSongs.lua"))
 end
-
 --Used to keep track of when we're changing songs
 local timeToGo = 0
 local scroll = 0
@@ -104,14 +103,14 @@ local t = Def.ActorFrame {
 	SwitchFocusToSingleSongMessageCommand=function(self)
 		setup.InitOptionRowsForSingleSong()
 		self:stoptweening():sleep(TransitionTime):queuecommand("EnableMainInput")
-	end,													  
+	end,
 	EnableMainInputCommand=function(self)
 		Input.Enabled = true
 	end,
-	
+
 	--Wrap this in an actor so stoptweening doesn't affect everything else
 	Def.Actor{
-		-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right 
+		-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right
 		-- and the wheel scrolls too quickly. To alleviate this, instead of using CurrentSongChanged, we wait for .08 seconds to have
 		-- passed without changing songs before broadcasting "LessLag" which PaneDisplay receives. 
 		BeginSongTransitionMessageCommand=function(self)
@@ -142,7 +141,7 @@ local t = Def.ActorFrame {
 			Input.WheelWithFocus.container:playcommand("Unhide")
 			SL.Global.GroupToSong = true
 		end
-	end,		
+	end,
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),
 	-- Shared items on the OptionWheel GUI
@@ -154,7 +153,7 @@ local t = Def.ActorFrame {
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}), 
 	-- create a sickwheel metatable for songs
 	SongWheel:create_actors( "SongWheel", 13, song_mt, 0, songwheel_y_offset - 40), 
-	-- the grey bar at the top as well as total time since start																				
+	-- the grey bar at the top as well as total time since start
 	LoadActor("./Header.lua", row),
 	-- profile information and time spent in game
 	-- note that this covers the footer in graphics
@@ -278,7 +277,7 @@ local t = Def.ActorFrame {
 	-- TODO if you don't know about this it's hard to find, bad if you accidentally hit it. find a better way
 	CodeMessageCommand=function(self, params)
 		if params.Name == "Exit" then
-			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen") 
+			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
 		end
 	end,
 }

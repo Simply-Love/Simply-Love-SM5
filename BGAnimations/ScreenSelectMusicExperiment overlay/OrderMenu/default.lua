@@ -3,6 +3,8 @@ scrollers[PLAYER_1] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
 scrollers[PLAYER_2] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
 
 local mpn = GAMESTATE:GetMasterPlayerNumber()
+
+local orderMenu_input
 -- ----------------------------------------------------
 local invalid_count = 0
 local t = Def.ActorFrame {

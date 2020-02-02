@@ -17,8 +17,6 @@ CreateBarGraph = function(_w, _h)
 				if i == 11 then toPrint = toPrint.." " end --11 has two ones so add another space
 				toPrint = toPrint.. " " .. tostring(minDif + i) .. " "
 			end
-			text = {}
-			_, count = string.gsub(toPrint, " ", " ")
 			actor:settext(toPrint)
 			actor:zoom((x*num_dif+(x-5))/actor:GetWidth())
 			actor:Draw()
@@ -26,7 +24,7 @@ CreateBarGraph = function(_w, _h)
 	}
 	legend.InitCommand=function(self)
 		self:zoom(1):halign(0):y(10)
-	end																															  
+	end
 
 	local amv = Def.ActorMultiVertex{
 		Name="BarGraph_AMV",
@@ -38,7 +36,7 @@ CreateBarGraph = function(_w, _h)
 			for i = 0, num_dif do
 				local num_songs = group_info[group]['UnsortedLevel'][tostring(minDif + i)]
 				--we clump all the 25+ charts together so don't add a bar yet. just record how many we have
-				if num_songs and minDif + i >= 25 then 
+				if num_songs and minDif + i >= 25 then
 					over25 = over25 + 1
 					local num_passed = group_info[group]['UnsortedPassedLevel'][tostring(minDif + i)]
 					if num_passed then over25Passed = over25Passed + 1 end
@@ -73,9 +71,9 @@ CreateBarGraph = function(_w, _h)
 	}
 	amv.InitCommand=function(self)
 		self:SetDrawState({Mode="DrawMode_Quads"})
-	end																																  
-	
-	af=Def.ActorFrame{}
+	end
+
+	local af=Def.ActorFrame{}
 	af[#af+1]=amv
 	af[#af+1]=legend
 	af.UpdateGroupInfoMessageCommand=function(self, params) group_info = params[1] end

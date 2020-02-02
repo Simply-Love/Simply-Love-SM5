@@ -11,8 +11,8 @@ local pane = Def.ActorFrame{
 	end,
 }
 
-labelX_col1 = -130
-dataX_col1 = -10
+local labelX_col1 = -130
+local dataX_col1 = -10
 PaneItems = {}
 
 PaneItems["12TH"] = {
@@ -40,12 +40,12 @@ for key, item in pairs(PaneItems) do
 		-- label
 		LoadFont("Common Normal")..{
 			Text=key.." NOTES:",
-			InitCommand=cmd(xy, item.label.x, item.label.y; diffuse, Color.White; halign, 0)
+			InitCommand=function(self) self:xy(item.label.x, item.label.y):diffuse(Color.White):halign(0) end,
 		},
 		--  numerical value
 		LoadFont("Common Normal")..{
-			InitCommand=cmd(xy, item.data.x, item.data.y; diffuse, Color.White; halign, 0),
-			OnCommand=cmd(playcommand, "Set"),
+			InitCommand=function(self) self:xy(item.data.x,item.data.y):diffuse(Color.White):halign(0) end,
+			OnCommand=function(self) self:playcommand("Set") end,
 			SetOptionPanesMessageCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local bpm = song:IsDisplayBpmConstant() and GetDisplayBPMs() or song:GetDisplayBpms()[2]

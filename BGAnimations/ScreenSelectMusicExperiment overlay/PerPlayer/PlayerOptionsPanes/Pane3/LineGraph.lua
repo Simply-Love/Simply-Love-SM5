@@ -15,11 +15,10 @@ CreateLineGraph = function(_w, _h)
 			for i = max_dif, min_dif,-1 do
 				if i ~= 25 then
 					toPrint = toPrint..i .. "\n"
-				else 
+				else
 					toPrint = toPrint..i.."+\n"
 				end
 			end
-			_, count = string.gsub(toPrint, " ", " ")
 			actor:settext(toPrint)
 			actor:zoom(h/num_lines_y/100) --each line is 100 pixels
 		end,
@@ -149,7 +148,7 @@ CreateLineGraph = function(_w, _h)
 			:xy(-75,-75)
 	end					
 	
-	af=Def.ActorFrame{}
+	local af=Def.ActorFrame{}
 	af[#af+1]=gradeUnderlay
 	af[#af+1]=graphLines
 	af[#af+1]=pointsLine

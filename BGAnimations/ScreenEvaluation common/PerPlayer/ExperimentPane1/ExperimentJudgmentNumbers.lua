@@ -3,14 +3,11 @@ local player = args.player
 local hash = args.hash
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-local whichHighScore = 1
 local highScore
 
 local RateScores = GetScores(player, hash, true) --See /scripts/Experiment-Scores.lua
 if RateScores then
-	if tonumber(RateScores[1].score) <= pss:GetPercentDancePoints() then whichHighScore = 2 end
-	if #RateScores < 2 and whichHighScore == 2 then highScore = RateScores[1]
-	else highScore = RateScores[whichHighScore] end
+	highScore = RateScores[1]
 end
 	
 local TapNoteScores = {
@@ -122,9 +119,9 @@ if highScore then
 	end
 	--Label for previous record or current record depending on if you got a new high score
 	highScoreT[#highScoreT+1] = LoadFont("_wendy small")..{
-		InitCommand=function(self) --TODO setting text should go in a set command so we have time to determine whichhighscore
+		InitCommand=function(self)
 			self:zoom(.8):xy(150,-75)
-			if whichHighScore == 2 then self:settext("Previous Record")
+			if tonumber(RateScores[1].score) <= pss:GetPercentDancePoints() then self:settext("Previous Record")
 			else self:settext("Current Record") end
 		end,
 	}

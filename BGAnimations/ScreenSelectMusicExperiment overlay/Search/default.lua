@@ -4,6 +4,8 @@ scrollers[PLAYER_2] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
 
 local mpn = GAMESTATE:GetMasterPlayerNumber()
 
+local searchMenu_input
+
 local TextEntrySettings = {
 	-- ScreenMessage to send on pop (optional, "SM_None" if omitted)
 	--SendOnPop = "",

@@ -1,5 +1,5 @@
 ------------------------------------------------------------
--- Helper Functions for PlayerOptions
+-- Helper Functions for FilterOptions
 ------------------------------------------------------------
 
 local function GetModsAndPlayerOptions(player)
@@ -368,9 +368,8 @@ end
 --prunes a list of songs using SL.Global.ActiveFilters
 PruneSongList= function(song_list)
 
-	local filters = ConvertFilters()
 	local songs = {}
-	
+
 	for song in ivalues(song_list) do
 		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(GetStepsType()) then

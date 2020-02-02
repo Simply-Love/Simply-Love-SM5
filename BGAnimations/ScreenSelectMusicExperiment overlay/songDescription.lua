@@ -104,7 +104,7 @@ local t = Def.ActorFrame{
 
 			-- Song Artist
 			LoadFont("Common Normal")..{
-				InitCommand=cmd(horizalign,left; xy, 5,-24 + courseOffset; maxwidth,WideScale(225,260) ),
+				InitCommand=function(self) self:horizalign(left):xy(5,-24 + courseOffset):maxwidth(WideScale(225,260)) end,
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						local course = GAMESTATE:GetCurrentCourse()
@@ -131,7 +131,7 @@ local t = Def.ActorFrame{
 
 			-- Song Group only matters if you're not in course mode
 			LoadFont("Common Normal")..{
-				InitCommand=cmd(horizalign,left; xy, 5,-3; maxwidth,WideScale(225,260) ),
+				InitCommand=function(self) self:horizalign(left):xy(5,-3):maxwidth(WideScale(225,260)) end,
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						self:settext("")
@@ -193,10 +193,6 @@ local t = Def.ActorFrame{
 						local song = GAMESTATE:GetCurrentSong()
 						if song then
 							duration = song:MusicLengthSeconds()
-						else
-							if group_name then
-								duration = group_durations[group_name]
-							end
 						end
 					end
 

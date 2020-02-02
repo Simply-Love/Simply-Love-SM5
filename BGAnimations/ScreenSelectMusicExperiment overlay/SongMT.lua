@@ -81,6 +81,7 @@ local song_mt = {
 					},
 					--box behind song name
 					Def.ActorFrame {
+						InitCommand = function(subself) self.song_box = subself end,
 						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0):visible(false)  end,
 						SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1):visible( true) end,
 						Def.Quad { InitCommand=function(subself) subself:zoomto(250,40):diffuse(.5,.5,.5,.5):diffusealpha(.5) end },
@@ -174,14 +175,31 @@ local song_mt = {
 				local mpn = GAMESTATE:GetMasterPlayerNumber()
 				local current_difficulty
 				local grade
+				local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
 				if GAMESTATE:GetCurrentSteps(mpn) then
 					current_difficulty = GAMESTATE:GetCurrentSteps(mpn):GetDifficulty() --are we looking at steps?
 				end
-				if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
-					grade = PROFILEMAN:GetProfile(mpn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1] --TODO this only grabs scores for master player
+				if SL.Global.HashLookup[self.song:GetSongDir()] and SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)] then
+					local hash = SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)][stepsType]
+					local scores = GetScores(mpn, hash)
+					if scores then
+						grade = GetGradeFromPercent(scores[1].score)
+					end
+					--color the song box green if we've passed the song before
+					if SL[ToEnumShortString(mpn)]['Scores'][hash] and SL[ToEnumShortString(mpn)]['Scores'][hash].FirstPass ~= 'Never' then
+						self.song_box:diffuse(Color.Green)
+					else
+						self.song_box:diffuse(Color.White)
+					end
+				end
+				if not grade then
+					if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
+						local score = PROFILEMAN:GetProfile(mpn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1]
+						if score then grade = score:GetGrade() end --TODO this only grabs scores for master player
+					end
 				end
 				if grade then
-					local converted_grade = Grade:Reverse()[grade:GetGrade()]
+					local converted_grade = Grade:Reverse()[grade]
 					if converted_grade > 17 then converted_grade = 17 end
 					self.grade_sprite:visible(true):setstate(converted_grade)
 					--self.grade_box:visible(true):diffuseshift():effectcolor1(color("#33aa33")):effectcolor2(color("#55cc55"))
@@ -192,8 +210,8 @@ local song_mt = {
 			else
 				self.grade_sprite:visible(false)
 				self.grade_box:visible(false)
+				self.song_box:diffuse(Color.White)
 			end
-			
 			--handle row hiding
 			if item_index == 1 or item_index > 11 then
 				self.container:visible(false)

@@ -79,7 +79,7 @@ return Def.ActorFrame{
 			descriptions[#descriptions+1] = "Order songs\nby BPM"
 			table.insert(scroller_data,{index = 3, displayname = "Difficulty/BPM"})
 			local toWrite = "Order songs\nby difficulty\nand then BPM\n\nNote: Songs will\nbe duplicated for\neach chart."
-			toWrite = toWrite.."\n\n\***EXAMPLE***\n[12][136] Song A\n[13][120] Song B\n[13][140] Song A\n[15][200] Song C"
+			toWrite = toWrite.."\n\n***EXAMPLE***\n[12][136] Song A\n[13][120] Song B\n[13][140] Song A\n[15][200] Song C"
 			descriptions[#descriptions+1] = toWrite
 			scroller.focus_pos = 5
 			scroller:set_info_set(scroller_data, 0)

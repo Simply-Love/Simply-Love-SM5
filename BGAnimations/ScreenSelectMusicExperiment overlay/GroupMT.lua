@@ -12,7 +12,7 @@ local max_chars = 64
 local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualTheme")
 local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")
 
-switch_to_songs = function(group_name)
+function switch_to_songs(group_name)
 	local songs = PruneSongList(GetSongList(group_name))
 	if #songs > 0 then --it's possible that filters can cause us to try and enter a group with no songs
 		if SL.Global.Order == "Difficulty/BPM" then
