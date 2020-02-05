@@ -63,7 +63,7 @@ for i=lower,upper do
 	local numbers = {}
     if experimentHighScores[i] then
         score = FormatPercentScore(experimentHighScores[i].score)
-        if experimentHighScores[i].grade ~= 'Grade_Failed' then score = score.." (F)" end
+        if experimentHighScores[i].grade == 'Grade_Failed' then score = score.." (F)" end
 		rate = experimentHighScores[i].rate
 		date = experimentHighScores[i].dateTime
 

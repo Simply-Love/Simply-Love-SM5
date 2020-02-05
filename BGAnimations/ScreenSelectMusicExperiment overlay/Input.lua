@@ -13,7 +13,6 @@ local ActiveOptionRow = 1
 -----------------------------------------------------
 -- input handler
 local Handler = {}
-
 Handler['OptionsWheel'] = {}
 -----------------------------------------------------
 
@@ -151,6 +150,7 @@ Handler.ResetHeldButtons = function()
 	HeldButtons["MenuUp"] = false
 	HeldButtons["MenuDown"] = false
 end
+
 -----------------------------------------------------
 -- start internal functions
 
@@ -237,9 +237,10 @@ Handler.MenuUp=function(event)
 		args['DifficultyIndex'..PlayerNumber:Reverse()[event.PlayerNumber]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(event.PlayerNumber):GetDifficulty()]
 		-- if we change the difficulty we want to update things like grades we show on the music wheel and
 		-- the song information in \PerPlayer\PaneDisplay. These are controlled by StepsHaveChangedMessageCommand which
-		-- SongMT broadcasts. We can indirectly call it by using scroll_by_amount(0) which will go nowhere 
+		-- SongMT broadcasts. We can indirectly call it by using scroll_by_amount(0) which will go nowhere
 		-- but still call transform and therefore StepsHaveChangedMessageCommand
 		Handler.WheelWithFocus:scroll_by_amount(0)
+		MESSAGEMAN:Broadcast("LessLag")
 	end
 	return false
 end
@@ -258,6 +259,7 @@ Handler.MenuDown=function(event)
 		-- SongMT broadcasts. We can indirectly call it by using scroll_by_amount(0) which will go nowhere 
 		-- but still call transform and therefore StepsHaveChangedMessageCommand
 		Handler.WheelWithFocus:scroll_by_amount(0)
+		MESSAGEMAN:Broadcast("LessLag")
 	end
 	return false
 end

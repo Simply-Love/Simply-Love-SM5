@@ -7,6 +7,12 @@ local col = args[4]
 local CloseFolderTexture = nil
 local NoJacketTexture = nil
 
+local awards = {}
+table.insert(awards,Color.White)
+table.insert(awards,Color.Green)
+table.insert(awards,Color.Yellow)
+table.insert(awards,Color.Blue)
+
 local song_mt = {
 	__index = {
 		create_actors = function(self, name)
@@ -116,23 +122,38 @@ local song_mt = {
 							subself:y(0):visible(true)
 						end,
 					},
-					--A box for the grade
-					Def.ActorFrame {
-						InitCommand=function(subself) subself:visible(false) self.grade_box = subself  end,
+				},
+			}
+			for pn in ivalues({'P1','P2'}) do
+				local side
+				if pn == 'P1' then side = -1
+				else side = 1 end
+				local grade_position = 150
+				local pass_position = 120
+				--A box for the pass type
+				--TODO this might be better as an AMV
+				af[#af+1] = Def.ActorFrame {
+					InitCommand=function(subself) subself:visible(true) self.pass_box_outline = subself  end,
+					SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0) end,
+					SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1) end,
+					Def.Quad { InitCommand=function(self) self:zoomto(10,40):x(side*pass_position):diffuse(.25,.25,.25,.25):diffusealpha(.5) end, },
+					Def.Quad { InitCommand=function(self) self:zoomto(10-2, 40-2*2):x(side*pass_position):MaskSource(true) end },
+					Def.Quad { InitCommand=function(self) self:zoomto(10,40):x(side*pass_position):MaskDest() end },
+					Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
+					--Colors to fill in the box
+					Def.ActorFrame{
+						InitCommand=function(subself) subself:visible(false) self[pn..'pass_box'] = subself end,
 						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0) end,
 						SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1) end,
-						Def.Quad { InitCommand=function(self) self:zoomto(40,40):x(150):diffuse(.25,.25,.25,.25):diffusealpha(.5) end, },
-						Def.Quad { InitCommand=function(self) self:zoomto(40-2, 40-2*2):x(150):MaskSource(true) end },
-						Def.Quad { InitCommand=function(self) self:zoomto(40,40):x(150):MaskDest() end },
-						Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
+						Def.Quad {InitCommand=function(self) self:zoomto(10-2, 40-2*2):x(side*pass_position) end},
 					},
 					-- The grade shown to the right of the song box
 					Def.Sprite{
 						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
-						InitCommand=function(subself) subself:zoom( WideScale(0.18, 0.3) ):x(150):animate(0) self.grade_sprite = subself end,
-					},
-				},
-			}
+						InitCommand=function(subself) subself:visible(false):zoom( WideScale(0.18, 0.3) ):x(side*grade_position):animate(0) self[pn..'grade_sprite'] = subself end,
+					}
+				}
+			end
 
 			return af
 		end,
@@ -149,17 +170,17 @@ local song_mt = {
 					--or because we're initializing ScreenSelectMusicExperiment
 					if self.song ~= GAMESTATE:GetCurrentSong() or SL.Global.GroupToSong or SL.Global.LastSeenIndex ~= self.index then
 						GAMESTATE:SetCurrentSong(self.song)
+						SL.Global.GroupToSong = false
+						SL.Global.LastSeenIndex = self.index
 						SL.Global.SongTransition = true
 						MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song, index=self.index})
 						MESSAGEMAN:Broadcast("BeginSongTransition") --See the MessageCommand in ScreenSelectMusicExperiment/default.lua for details
 						stop_music()
 						-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 						self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
-						SL.Global.GroupToSong = false
-						SL.Global.LastSeenIndex = self.index
+
 					else
 						MESSAGEMAN:Broadcast("StepsHaveChanged")
-						MESSAGEMAN:Broadcast("LessLag")
 					end
 				else
 					stop_music()
@@ -169,72 +190,87 @@ local song_mt = {
 			else
 				self.container:playcommand("LoseFocus")
 			end
-			--change the Grade sprite
+			--change the Grade sprite and pass box
 			--TODO this only shows grades for the master player. Maybe it should show for both players?
-			if self.song ~= "CloseThisFolder" then
-				local mpn = GAMESTATE:GetMasterPlayerNumber()
-				local current_difficulty
-				local grade
-				local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
-				if GAMESTATE:GetCurrentSteps(mpn) then
-					current_difficulty = GAMESTATE:GetCurrentSteps(mpn):GetDifficulty() --are we looking at steps?
-				end
-				if SL.Global.HashLookup[self.song:GetSongDir()] and SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)] then
-					local hash = SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)][stepsType]
-					local scores = GetScores(mpn, hash)
-					if scores then
-						grade = GetGradeFromPercent(scores[1].score)
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local multiplayer = #GAMESTATE:GetHumanPlayers() == 2 and true or false
+				local pn = ToEnumShortString(player)
+				if self.song ~= "CloseThisFolder" then
+					local current_difficulty
+					local grade
+					local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
+					if GAMESTATE:GetCurrentSteps(pn) then
+						current_difficulty = GAMESTATE:GetCurrentSteps(pn):GetDifficulty() --are we looking at steps?
 					end
-					--color the song box green if we've passed the song before
-					if SL[ToEnumShortString(mpn)]['Scores'][hash] and SL[ToEnumShortString(mpn)]['Scores'][hash].FirstPass ~= 'Never' then
-						self.song_box:diffuse(Color.Green)
+					--if we have a custom score
+					if SL.Global.HashLookup[self.song:GetSongDir()] and SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)] then
+						local hash = SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)][stepsType]
+						local scores = GetScores(player, hash)
+						if scores then
+							grade = GetGradeFromPercent(scores[1].score)
+						end
+						--color the pass_box
+						if SL[pn]['Scores'][hash] and tonumber(SL[pn]['Scores'][hash].BestPass) > 0 then
+							self[pn..'pass_box']:visible(true):diffuse(awards[tonumber(SL[pn]['Scores'][hash].BestPass)])
+							if not multiplayer then
+								if pn == 'P1' then self['P2pass_box']:visible(true):diffuse(awards[tonumber(SL[pn]['Scores'][hash].BestPass)])
+								else self['P1pass_box']:visible(true):diffuse(awards[tonumber(SL[pn]['Scores'][hash].BestPass)]) end
+							end
+						else
+							self[pn..'pass_box']:visible(false)
+							if not multiplayer then 
+								if pn == 'P1' then self['P2pass_box']:visible(false)
+								else self['P1pass_box']:visible(false) end
+							end
+						end
+					end
+					--fall back on profile stats otherwise
+					if not grade then
+						if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
+							local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1]
+							if score then grade = score:GetGrade() end --TODO this only grabs scores for master player
+						end
+					end
+					if grade then
+						local converted_grade = Grade:Reverse()[grade]
+						if converted_grade > 17 then converted_grade = 17 end
+						self[pn..'grade_sprite']:visible(true):setstate(converted_grade)
 					else
-						self.song_box:diffuse(Color.White)
+						self[pn..'grade_sprite']:visible(false)
+						self[pn..'pass_box']:visible(false)
+						if not multiplayer then 
+							if pn == 'P1' then self['P2pass_box']:visible(false)
+							else self['P1pass_box']:visible(false) end
+						end
 					end
-				end
-				if not grade then
-					if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
-						local score = PROFILEMAN:GetProfile(mpn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1]
-						if score then grade = score:GetGrade() end --TODO this only grabs scores for master player
-					end
-				end
-				if grade then
-					local converted_grade = Grade:Reverse()[grade]
-					if converted_grade > 17 then converted_grade = 17 end
-					self.grade_sprite:visible(true):setstate(converted_grade)
-					--self.grade_box:visible(true):diffuseshift():effectcolor1(color("#33aa33")):effectcolor2(color("#55cc55"))
 				else
-					self.grade_sprite:visible(false)
-					self.grade_box:visible(false)
+					self[pn..'grade_sprite']:visible(false)
+					self[pn..'pass_box']:visible(false)
 				end
-			else
-				self.grade_sprite:visible(false)
-				self.grade_box:visible(false)
-				self.song_box:diffuse(Color.White)
-			end
-			--handle row hiding
-			if item_index == 1 or item_index > 11 then
-				self.container:visible(false)
-			else
-				self.container:visible(true)
-			end
-			
+				--handle row hiding
+				if item_index == 1 or item_index > 11 then
+					self.container:visible(false)
+				else
+					self.container:visible(true)
+				end
+				
 
-			-- handle row shifting speed
-			self.container:linear(0.2)
+				-- handle row shifting speed
+				self.container:linear(0.2)
 
-			local middle_index = math.floor(num_items/2)
+				local middle_index = math.floor(num_items/2)
 
-			-- top row
-			if item_index < middle_index  then
-					self.container:y( 47*item_index ):x(_screen.w/1.5+25*(middle_index-item_index) )
-			-- bottom row
-			elseif item_index > middle_index then
-					self.container:y( 47*item_index ):x(_screen.w/1.5+25*(item_index-middle_index))
-			-- center row
-			elseif item_index == middle_index then
-				self.container:y( 47*item_index ):x( _screen.w/1.5+25 )
+				-- top row
+				if item_index < middle_index  then
+						self.container:y( 47*item_index ):x(_screen.w/1.5+25*(middle_index-item_index) )
+				-- bottom row
+				elseif item_index > middle_index then
+						self.container:y( 47*item_index ):x(_screen.w/1.5+25*(item_index-middle_index))
+				-- center row
+				elseif item_index == middle_index then
+					self.container:y( 47*item_index ):x( _screen.w/1.5+25 )
 
+				end
 			end
 		end,
 

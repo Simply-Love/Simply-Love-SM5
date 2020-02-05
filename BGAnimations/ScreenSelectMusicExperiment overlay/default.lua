@@ -53,6 +53,7 @@ local t = Def.ActorFrame {
 		--But this won't work when we first enter ScreenSelectMusicExperiment so we broadcast here once.
 		params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[mpn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(mpn):GetDifficulty()]
 		MESSAGEMAN:Broadcast("CurrentSongChanged",{song=GAMESTATE:GetCurrentSong()})
+		MESSAGEMAN:Broadcast("LessLag")
 	end,
 	OnCommand=function(self)
 		if PREFSMAN:GetPreference("MenuTimer") then self:queuecommand("Listen") end
@@ -107,7 +108,11 @@ local t = Def.ActorFrame {
 	EnableMainInputCommand=function(self)
 		Input.Enabled = true
 	end,
-
+	--tells the songwheel to transform itself thereby updating the pass type and grades.
+	--Broadcasted from ./PerPlayer/SongSelect.lua
+	Transform0MessageCommand = function(self)
+		if Input.WheelWithFocus then Input.WheelWithFocus:scroll_by_amount(0) end
+	end,
 	--Wrap this in an actor so stoptweening doesn't affect everything else
 	Def.Actor{
 		-- Called by SongMT when changing songs. Updating the histogram and the stream breakdown lags SM if players hold down left or right
@@ -119,7 +124,7 @@ local t = Def.ActorFrame {
 			if scroll > 3 then
 				if not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
 			end
-			timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08 --TODO on especially laggy computers these numbers don't work
+			timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
 			self:sleep(.15):queuecommand("FinishSongTransition")
 		end,
 		FinishSongTransitionMessageCommand=function(self)
@@ -188,7 +193,7 @@ local t = Def.ActorFrame {
 		LoadActor("./songDescription.lua"),
 		-- Scroll bar
 		Def.Quad{
-			InitCommand=function(self) 
+			InitCommand=function(self)
 				self:x(_screen.w-10):valign(0):visible(false)
 			end,
 			CurrentSongChangedMessageCommand=function(self,params)

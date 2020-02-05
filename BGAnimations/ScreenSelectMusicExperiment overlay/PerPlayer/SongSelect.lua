@@ -1,6 +1,6 @@
 local args = ...
+local params_for_input = args.args
 local pn = args.player
-
 -- Makes sure that when you're changing songs that the cursor automatically lands on a valid chart (in case of filters/difficulty sort/etc
 -- For Difficulty/BPM order it just picks the next highest as determined by the sort/etc
 -- Otherwise, first it tries to pick the same difficulty (expert, challenge, etc) and if that's non-existent or invalid then
@@ -17,8 +17,8 @@ return Def.ActorFrame {
 			if SL.Global.Order == "Difficulty/BPM" and params.index then
 				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
 					if steps:GetMeter() == DifficultyBPM[params.index].difficulty then
-						GAMESTATE:SetCurrentSteps(pn,steps) --CHECK probably works for 2 players
-						args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
+						GAMESTATE:SetCurrentSteps(pn,steps)
+						params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
 						break
 					end
 				end
@@ -27,11 +27,11 @@ return Def.ActorFrame {
 			elseif SL.Global.GroupType == "Grade" and SL.Global.GradeGroup ~= "No_Grade" then
 				local currentGrade = SL.Global.GradeGroup
 				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
-					local highScore = PROFILEMAN:GetProfile(pn):GetHighScoreList(params.song,steps):GetHighScores()[1] --CHECK probably works for 2 players
+					local highScore = PROFILEMAN:GetProfile(pn):GetHighScoreList(params.song,steps):GetHighScores()[1]
 					if highScore then 
 						if highScore:GetGrade() == currentGrade then 
-							GAMESTATE:SetCurrentSteps(pn,steps) --CHECK probably works for 2 players
-							args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
+							GAMESTATE:SetCurrentSteps(pn,steps)
+							params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
 							break
 						end
 					end
@@ -43,13 +43,13 @@ return Def.ActorFrame {
 				for steps in ivalues(params.song:GetStepsByStepsType(GetStepsType())) do
 					if steps:GetMeter() == tonumber(currentDifficulty) then
 						GAMESTATE:SetCurrentSteps(pn,steps) --CHECK probably works for 2 players
-						args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
+						params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
 						break
 					end
 				end
 			--otherwise try to choose the same difficulty if it exists(challenge, expert, basic, etc)
 			elseif DifficultyExists(pn,true) then
-				GAMESTATE:SetCurrentSteps(pn,params.song:GetOneSteps('StepsType_Dance_Single',args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]]))
+				GAMESTATE:SetCurrentSteps(pn,params.song:GetOneSteps('StepsType_Dance_Single',params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]]))
 			--otherwise default to next closest
 			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
 			else
@@ -60,13 +60,18 @@ return Def.ActorFrame {
 				--if the difference between harder and current difficulty is greater than the difference between easier and current
 				--then we can throw away the harder steps as we know the easier is closer
 				if harder and easier then 
-					if harder - args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] > args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] - easier then harder = nil end
+					if harder - params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]] > params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]] - easier then harder = nil end
 				end
 				--if they're equally close then default to harder steps, otherwise, set to the closest difficulty
 				GAMESTATE:SetCurrentSteps(pn,harder and NextHardest(pn,true) or easier and NextEasiest(pn,true))
-				args.args['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
+				params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]] = Difficulty:Reverse()[GAMESTATE:GetCurrentSteps(pn):GetDifficulty()]
 			end
-			MESSAGEMAN:Broadcast("StepsHaveChanged")
+			--Normally once we're done we'd call CurrentStepsHaveChanged to set the pane to whatever we've switched to
+			--but the pass type and grade are controlled by our songwheel and only updated when the wheel transforms.
+			--therefore we broadcast a message to default.lua telling it to transform 0 (same as when difficulty changes)
+			--since we can't easily access the input actor from here. if transform is called but it's not a new song it'll
+			--just broadcast CurrentStepsHaveChanged
+			MESSAGEMAN:Broadcast("Transform0")
 		end
 	end,
 }

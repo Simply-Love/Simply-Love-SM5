@@ -1,3 +1,5 @@
+local awards = {FullComboW3 = 2, FullComboW4 = 3, FullComboW5 = 4, SingleDigitW3 = 2, SingleDigitW4 = 3}
+
 local function GetSongDirs()
 	local songs = SONGMAN:GetAllSongs()
 	local list = {}
@@ -14,7 +16,7 @@ local function AddToHashLookup()
 		if not SL.Global.HashLookup[dir] then SL.Global.HashLookup[dir] = {} end
 		local allSteps = song.song:GetAllSteps()
 		for _,steps in pairs(allSteps) do
-			local stepsType = ToEnumShortString(steps:GetStepsType()) --TODO this only works with dance-single and dance-double
+			local stepsType = ToEnumShortString(steps:GetStepsType())
 			stepsType = string.lower(stepsType):gsub("_","-")
 			local difficulty = ToEnumShortString(steps:GetDifficulty())
 			if not SL.Global.HashLookup[dir] or not SL.Global.HashLookup[dir][difficulty] or not SL.Global.HashLookup[dir][difficulty][stepsType] then
@@ -102,7 +104,7 @@ function LoadNewFromStats(player)
 							local number = highScore:GetTapNoteScore( "TapNoteScore_"..window )
 							stats[window] = number
 						end
-						for index, RCType in ipairs(RadarCategories.Types) do
+						for _,RCType in ipairs(RadarCategories.Types) do
 							local performance = highScore:GetRadarValues():GetValue( "RadarCategory_"..RCType )
 							stats[RCType] = performance
 						end
@@ -111,7 +113,7 @@ function LoadNewFromStats(player)
 						table.insert(SL[pn]['Scores'][hash]['HighScores'],stats)
 					end
 					SL[pn]['Scores'][hash].LastPlayed = lastPlayed
-					SL[pn]['Scores'][hash].NumTimesPlayed = #PROFILEMAN:GetProfile('P1'):GetHighScoreList(song,chart):GetHighScores() --TODO need to parse stats for real num
+					SL[pn]['Scores'][hash].NumTimesPlayed = #PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores() --TODO need to parse stats for real num
 					SL[pn]['Scores'][hash].title = song:GetMainTitle()
 					SL[pn]['Scores'][hash].Difficulty = difficulty
 					SL[pn]['Scores'][hash].group = song:GetGroupName()
@@ -124,7 +126,7 @@ function LoadNewFromStats(player)
 end
 
 -- If this is the first time loading a profile in Experiment mode then we won't have a list of song scores.
--- Read in from Stats.xml to start us off. 
+-- Read in from Stats.xml to start us off.
 local function LoadFromStats(pn)
 	local profileDir
 	if pn == 'P1' then profileDir = 'ProfileSlot_Player1' else profileDir = 'ProfileSlot_Player2' end
@@ -135,7 +137,7 @@ local function LoadFromStats(pn)
 	local hashLookup = {}
 	if FILEMAN:DoesFileExist(path) then
 		contents = GetFileContents(path)
-		local group, song, title, groupSong, Difficulty, StepsType, numTimesPlayed, lastPlayed, firstPass, tempFirstPass, hash
+		local group, song, title, groupSong, Difficulty, StepsType, numTimesPlayed, lastPlayed, firstPass, tempFirstPass, hash, stageAward
 		local songDir = GetSongDirs()
 		for line in ivalues(contents) do
 			if string.find(line,"<Song Dir=") then
@@ -161,6 +163,7 @@ local function LoadFromStats(pn)
 				end
 				firstPass = "Never"
 				tempFirstPass = DateToMinutes(GetCurrentDateTime())
+				stageAward = 0
 			elseif string.find(line,"<NumTimesPlayed>") then
 				numTimesPlayed = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
 			elseif string.find(line, "<LastPlayed>") then
@@ -169,6 +172,11 @@ local function LoadFromStats(pn)
 				highScore.grade = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
 			elseif string.find(line,"<PercentDP>") then
 				highScore.score = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
+			elseif string.find(line,"<StageAward>") then
+				local tempStageAward = string.gsub(line,"<[%w%p ]*>([%w%p ]*)</[%w%p ]*>","%1")
+				if awards[tempStageAward] and stageAward <= tonumber(awards[tempStageAward]) then
+					stageAward = tempStageAward
+				end
 			elseif string.find(line,"<Modifiers>") then
 				highScore.rate = string.find(line, "xMusic") and string.gsub(line,".*(%d.%d+)xMusic.*","%1") or 1
 			elseif string.find(line,"<DateTime>") then
@@ -199,14 +207,20 @@ local function LoadFromStats(pn)
 				if highScore.grade ~= "Failed" and DateToMinutes(highScore.dateTime) < tempFirstPass then
 					tempFirstPass = DateToMinutes(highScore.dateTime)
 					firstPass = highScore.dateTime
+					if stageAward == 0 then stageAward = 1 end
 				end
 				highScore = {}
 			elseif string.find(line,"</HighScoreList>") and song then
 				local tempStepsType = CapitalizeWords(StepsType):gsub("-","_")
-				local profileScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,song:GetOneSteps(tempStepsType,Difficulty)):GetHighScores() 
-				if tonumber(numTimesPlayed) > #profileScores then firstPass = "Unknown" end --if we've played it more times then there are scores we can't tell when it was passed first
-				local machineScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(song,song:GetOneSteps(tempStepsType,Difficulty)):GetHighScores()
-				if #machineScores == 0 then firstPass = "Never" end --if there are no machine scores then no one has passed
+				local profileScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,song:GetOneSteps(tempStepsType,Difficulty)):GetHighScores()
+				 --if we've played it more times then there are scores and we've passed it at least once then we can't tell when the first time was
+				 --but we know that it was passed at least once so we put "Unknown" as the firstPass date rather than "Never"
+				if tonumber(numTimesPlayed) > #profileScores and firstPass ~= "Never" then firstPass = "Unknown" end
+				--if we've played it more times than there are scores and all our scores are failures we can't tell if the song was
+				--ever passed. we could try looking at the machine scores which save more by default to see if a player has a pass there.
+				--but that involves more parsing, checking guid, and making sure the stats aren't duplicated from profile so i don't
+				--want to right now. TODO
+				--local machineScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(song,song:GetOneSteps(tempStepsType,Difficulty)):GetHighScores()
 				statsTable[hash].group = group
 				statsTable[hash].title = title
 				statsTable[hash].Difficulty = Difficulty
@@ -215,6 +229,7 @@ local function LoadFromStats(pn)
 				statsTable[hash].NumTimesPlayed = numTimesPlayed
 				statsTable[hash].FirstPass = firstPass
 				statsTable[hash].hash = hash
+				statsTable[hash].BestPass = stageAward
 			end
 		end
 	end
@@ -234,9 +249,9 @@ function LoadScores(pn)
 		local hash
 		for line in ivalues(contents) do
 			local score = Split(line,"\t")
-			if #score == 8 then
+			if #score == 9 then
 				hash = nil
-				hash = score[8]
+				hash = score[#score]
 				if hash then
 					if not Scores[hash] then Scores[hash] = {} end
 					Scores[hash].title = score[1]
@@ -246,6 +261,7 @@ function LoadScores(pn)
 					Scores[hash].LastPlayed = score[5]
 					Scores[hash].NumTimesPlayed = score[6]
 					Scores[hash].FirstPass = score[7]
+					Scores[hash].BestPass = score[8]
 					Scores[hash].hash = hash
 				end
 			elseif #score == 14 and hash then
@@ -286,7 +302,7 @@ function SaveScores(pn)
 		for _,hash in pairs(SL[pn]['Scores']) do --TODO don't type this out manually
 			if hash.hash then
 				toWrite = toWrite..hash.title.."\t"..hash.group.."\t"..hash.Difficulty.."\t"..hash.StepsType.."\t"..hash.LastPlayed.."\t"..hash.NumTimesPlayed.."\t"
-					..hash.FirstPass.."\t"..hash.hash.."\r\n"
+					..hash.FirstPass.."\t"..hash.BestPass.."\t"..hash.hash.."\r\n"
 				if hash["HighScores"] then
 					for score in ivalues(hash["HighScores"]) do
 						toWrite = toWrite..score.rate.."\t"..score.score.."\t"
@@ -330,7 +346,7 @@ function AddScore(player)
 	end
 	local hash = GenerateHash(stepsType,ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty()))
 	if #hash > 0 then
-		if not SL[pn]['Scores'][hash] then SL[pn]['Scores'][hash] = {FirstPass='Never',NumTimesPlayed = 0} end
+		if not SL[pn]['Scores'][hash] then SL[pn]['Scores'][hash] = {FirstPass='Never',NumTimesPlayed = 0, BestPass=0} end
 		if not SL[pn]['Scores'][hash]['HighScores'] then SL[pn]['Scores'][hash]['HighScores'] = {} end
 		table.insert(SL[pn]['Scores'][hash]['HighScores'],stats)
 		SL[pn]['Scores'][hash].LastPlayed = stats.dateTime
@@ -340,7 +356,13 @@ function AddScore(player)
 		SL[pn]['Scores'][hash].group = GAMESTATE:GetCurrentSong():GetGroupName()
 		SL[pn]['Scores'][hash].StepsType = stepsType
 		SL[pn]['Scores'][hash].hash = hash
-		if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Grade_Failed' then SL[pn]['Scores'][hash].FirstPass = stats.dateTime end
+		if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Grade_Failed' then 
+			SL[pn]['Scores'][hash].FirstPass = stats.dateTime 
+			SL[pn]['Scores'][hash].BestPass = 1
+		end
+		if pss:GetStageAward() and awards[ToEnumShortString(pss:GetStageAward())] and tonumber(awards[ToEnumShortString(pss:GetStageAward())]) > tonumber(SL[pn]['Scores'][hash].BestPass) then
+			SL[pn]['Scores'][hash].BestPass = awards[ToEnumShortString(pss:GetStageAward())]
+		end
 	else SM("WARNING: Could not generate hash for: "..GAMESTATE:GetCurrentSong():GetMainTitle()) end
 end
 

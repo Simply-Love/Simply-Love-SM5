@@ -95,9 +95,9 @@ function NPS_Histogram(player, width, height)
 		-- need this so just do nothing (not sure why SCREENMAN:GetTopScreen() returns nil
 		-- but it often does so here we are.
 		CurrentSongChangedMessageCommand=function(self)
-				if not SL.Global.ExperimentScreen then
-					self:playcommand("SetDensity")
-				end
+			if not SL.Global.ExperimentScreen then
+				self:playcommand("SetDensity")
+			end
 		end,
 		LessLagMessageCommand=function(self) self:playcommand("SetDensity") end,
 		SetDensityCommand=function(self)

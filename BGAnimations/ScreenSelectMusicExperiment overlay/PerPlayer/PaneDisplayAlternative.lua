@@ -66,7 +66,7 @@ local af =
 	StepsHaveChangedMessageCommand = function(self) self:queuecommand("Set") end,
 	SetCommand = function(self)
 		local player_score, player_date, first_pass, last_played, times_played
-		if PROFILEMAN:IsPersistentProfile(player) and GAMESTATE:GetCurrentSong() then --if there's no song there won't be a hash
+		if GAMESTATE:GetCurrentSong() then --if there's no song there won't be a hash
 			local hash = GetCurrentHash(player)
 			if hash and SL[pn].Scores[GetCurrentHash(player)] then
 				if GetScores(player, hash) then
@@ -190,7 +190,6 @@ af[#af + 1] =
 	LoadFont("Common Normal") ..
 	{
 		Name = "LastPlayedDate",
-		Text = "Last Played:",
 		InitCommand = function(self)
 			self:xy(-_screen.w / 10 + dataX_col1, 176):zoom(zoom_factor):diffuse(Color.Black):halign(0)
 		end
@@ -201,7 +200,6 @@ af[#af + 1] =
 	LoadFont("Common Normal") ..
 	{
 		Name = "TimesPlayed",
-		Text = "Times Played:",
 		InitCommand = function(self)
 			self:xy(-_screen.w / 10 + dataX_col1, 196):zoom(zoom_factor):diffuse(Color.Black):halign(0)
 		end

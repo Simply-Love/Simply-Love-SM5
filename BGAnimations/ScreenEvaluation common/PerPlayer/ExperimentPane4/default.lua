@@ -1,6 +1,7 @@
 local args = ...
 local player = args.player
 local hash = args.hash
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 local pane = Def.ActorFrame{
 	Name="Pane4",
@@ -16,11 +17,11 @@ local pane = Def.ActorFrame{
 		if not SL[pn]['Scores'][hash] then
 			lastPlayed = "NEVER"
 			numPlayed = 1
-			firstPass = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetFailed() and "NEVER" or "TODAY"
+			firstPass = pss:GetFailed() and "NEVER" or "TODAY"
 		else
 			lastPlayed = SL[pn]['Scores'][hash].LastPlayed
 			numPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
-			if not STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetFailed() and SL[pn]['Scores'][hash].FirstPass == "Never" then
+			if not pss:GetFailed() and SL[pn]['Scores'][hash].FirstPass == "Never" then
 				firstPass = GetCurrentDateTime()
 			else firstPass = SL[pn]['Scores'][hash].FirstPass end
 		end
@@ -36,19 +37,19 @@ local pane = Def.ActorFrame{
 			highestScore = rateScores[1].score
 		end
 		--if we passed the song we still need to compare the current song as scores don't save until profile does (after screeneval)
-		if not STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetFailed() then
+		if not pss:GetFailed() then
 			--if there were no scores saved then current song is highest
 			if not highestRate then
 				highestRate = SL.Global.ActiveModifiers.MusicRate
-				highestScore = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+				highestScore = pss:GetPercentDancePoints()
 			--if there is a score saved but our current rate is higher
 			elseif highestRate and SL.Global.ActiveModifiers.MusicRate > tonumber(highestRate) then
 				highestRate = SL.Global.ActiveModifiers.MusicRate
-				highestScore = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+				highestScore = pss:GetPercentDancePoints()
 			--if there is a score saved and the rate is the same
 			elseif highestRate and SL.Global.ActiveModifiers.MusicRate == tonumber(highestRate) and
-			STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints() >= tonumber(highestScore) then
-				highestScore = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+			pss:GetPercentDancePoints() >= tonumber(highestScore) then
+				highestScore = pss:GetPercentDancePoints()
 			end
 		end
 		if highestScore then self:GetChild("MaxRate"):settext("MAX RATE CLEAR: "..highestRate.." ("..FormatPercentScore(tonumber(highestScore))..")")

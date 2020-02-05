@@ -63,14 +63,14 @@ local af = Def.ActorFrame{
 	end,
 	--hide everything when left or right is held down for more than a couple songs
 	BeginScrollingMessageCommand=function(self)
-		self:linear(.3):diffusealpha(0)
+		self:stoptweening():linear(.3):diffusealpha(0)
 	end,
 	-- This is set separately because it lags SM if players hold down left or right (to scroll quickly). LessLag will trigger after .15 seconds
 	-- with no new song changes.
 	LessLagMessageCommand=function(self)
 			-- ---------------------Extra Song Information------------------------------------------
 		--TODO right now we don't show any of this if two players are joined. I'd like to find a way for both to see it
-		self:linear(.3):diffusealpha(1)
+		self:stoptweening():linear(.3):diffusealpha(1)
 		local song = GAMESTATE:GetCurrentSong()
 		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSteps(player) and song and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
 			InitializeMeasureCounterAndModsLevel(player)
