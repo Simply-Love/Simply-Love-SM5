@@ -105,7 +105,7 @@ for player in ivalues(Players) do
 		},
 
 		-- "Look at this graph."  –Some sort of meme on The Internet
-		LoadActor("./PerPlayer/Graphs.lua", player),
+		LoadActor("./PerPlayer/Graphs.lua", {player = player}),
 
 		-- list of modifiers used by this player for this song
 		LoadActor("./PerPlayer/PlayerModifiers.lua", player),
@@ -124,6 +124,7 @@ for player in ivalues(Players) do
 				end
 			end,
 		}
+		lower[#lower+1] = LoadActor("./PerPlayer/Graphs.lua", {player = player, graph = 'density'})..{InitCommand = function(self) self:x(_screen.cx + -120) end}
 	end
 	-- Generate a hash once here if we're in Experiment mode and use it for any pane that needs it.
 	-- If it doesn't match with what we think it should be then the steps have changed and old scores
