@@ -231,46 +231,49 @@ end
 -- quirks/oversights in the engine on a per-game + per-style basis
 
 local NoteFieldWidth = {
-	-- dance Just Works™.  Wow!  It's almost like this game gets the most attention and fixes.
+	-- dance uses such nice, clean multiples of 64.  It's almost like this game gets the most attention and fixes.
 	dance = {
-		single  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		versus  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		double  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		solo    = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		routine = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
+		single  = 256,
+		versus  = 256,
+		double  = 512,
+		solo    = 384,
+		routine = 512,
+		-- couple and threepanel not supported in Simply Love at this time D:
+		-- couple = 256,
+		-- threepanel = 192
 	},
-	-- the values returned by the engine for Pump are slightly too small(?), so... uh... pad it
+	-- pump's values are very similar to those used in dance, but curiously smaller
 	pump = {
-		single  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		versus  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		double  = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		routine = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		single  = 250,
+		versus  = 250,
+		double  = 500,
+		routine = 500,
 	},
-	-- techno works for single8, needs to be smaller for versus8 and double8
+	-- These values for techno, para, and kb7 are the result of empirical observation
+	-- of the SM5 engine and should not be interpreted as any kind of Truth.
 	techno = {
-		single8 = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		versus8 = function(p) return (GAMESTATE:GetCurrentStyle():GetWidth(p)/1.65) end,
-		double8 = function(p) return (GAMESTATE:GetCurrentStyle():GetWidth(p)/1.65) end,
+		single8 = 448,
+		versus8 = 272,
+		double8 = 543,
 	},
-	-- the values returned for para are also slightly too small, so... pad those, too
 	para = {
-		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
-		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) + 10 end,
+		single = 280,
+		versus = 280,
 	},
-	-- kb7 works for single, needs to be smaller for versus
-	-- there is no kb7 double (would that be kb14?)
 	kb7 = {
-		single = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p) end,
-		versus = function(p) return GAMESTATE:GetCurrentStyle():GetWidth(p)/1.65 end,
+		single = 480,
+		versus = 270,
 	},
 }
 
-GetNotefieldWidth = function(player)
-	if not player then return false end
-
+GetNotefieldWidth = function()
 	local game = GAMESTATE:GetCurrentGame():GetName()
 	local style = GAMESTATE:GetCurrentStyle():GetName()
-	return NoteFieldWidth[game][style](player)
+	if NoteFieldWidth[game] and NoteFieldWidth[game][style] then
+		return NoteFieldWidth[game][style]
+	end
+
+	return false
 end
 
 -- -----------------------------------------------------------------------
