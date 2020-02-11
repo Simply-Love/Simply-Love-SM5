@@ -108,7 +108,7 @@ if use_smaller_graph then
 	if notefield_is_centered then
 		-- if 4:3 force the smaller graph to be 60px from the right edge of the screen
 		-- if widescreen, adapt to the width of the notefield
-		graph.x = WideScale( _screen.w-60, GetNotefieldX(player) + GetNotefieldWidth(player)/2 + 20)
+		graph.x = WideScale( _screen.w-60, GetNotefieldX(player) + GetNotefieldWidth()/2 + 20)
 	end
 
 	bar.w = graph.w * 0.25
@@ -505,7 +505,7 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 			local noteY
 			local zoomF = 0.4
 			local origX = GetNotefieldX(player)
-			local width = GetNotefieldWidth(player)
+			local width = GetNotefieldWidth()
 
 			-- special casing: StomperZ with its receptor positions would appear over the normal pacemaker position
 			if SL.Global.GameMode == "StomperZ" and SL[pn].ActiveModifiers.ReceptorArrowsPosition == "StomperZ" then

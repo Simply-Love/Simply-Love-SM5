@@ -86,7 +86,7 @@ local t = Def.ActorFrame{
 		if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
 			local mpn = GAMESTATE:GetMasterPlayerNumber()
 			if SL[ToEnumShortString(mpn)].ActiveModifiers.NPSGraphAtTop then
-				self:x(_screen.cx + GetNotefieldWidth(mpn) * (mpn==PLAYER_1 and 1 or -1))
+				self:x(_screen.cx + GetNotefieldWidth() * (mpn==PLAYER_1 and 1 or -1))
 			end
 		end
 

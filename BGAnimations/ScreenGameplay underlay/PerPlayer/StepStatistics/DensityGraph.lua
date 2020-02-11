@@ -39,7 +39,7 @@ end
 local scaled_width = width
 
 -- height is how tall, in pixels, the density graph will be
-local height = GetNotefieldWidth(player) / 2.25
+local height = GetNotefieldWidth() / 2.25
 
 local UpdateRate, first_second, last_second
 

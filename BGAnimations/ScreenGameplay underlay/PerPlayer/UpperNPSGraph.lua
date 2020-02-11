@@ -9,7 +9,7 @@ then
 end
 
 local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-local width = GetNotefieldWidth(player) - 30
+local width = GetNotefieldWidth() - 30
 local height = 30
 
 -- support double, double8, and routine by constraining the UpperNPSGraph to have the same width as in single

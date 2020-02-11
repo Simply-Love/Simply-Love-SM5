@@ -299,7 +299,7 @@ local Overrides = {
 			-- notefield width already uses more than half the screen width
 
 			if GAMESTATE:GetCurrentStyle():GetName() ~= "single"
-			or GetNotefieldWidth( GAMESTATE:GetMasterPlayerNumber() ) > _screen.w/2 then
+			or GetNotefieldWidth() > _screen.w/2 then
 				table.remove(choices, 3)
 			end
 
