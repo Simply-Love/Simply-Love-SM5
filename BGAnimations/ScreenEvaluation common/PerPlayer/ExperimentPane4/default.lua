@@ -29,7 +29,7 @@ local pane = Def.ActorFrame{
 		self:GetChild("NumPlayedNumber"):settext("NUMBER OF PLAYS: "..numPlayed)
 		self:GetChild("FirstPass"):settext("FIRST PASS: "..firstPass)
 		--determining the highest rate we've passed the song at
-		local rateScores = GetScores(player,GetCurrentHash(player),false,true) --ignore rate, check for fail
+		local rateScores = GetScores(player,GetHash(player),false,true) --ignore rate, check for fail
 		local highestRate, highestScore
 		if rateScores then --if we have scores saved for this song
 			table.sort(rateScores,function(k1,k2) if k1.rate == k2.rate then return k1.score > k2.score else return tonumber(k1.rate) > tonumber(k2.rate) end end)

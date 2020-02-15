@@ -3,14 +3,8 @@ local pn = ToEnumShortString(player)
 local rv
 local zoom_factor = WideScale(0.8, 0.9)
 
-local labelX_col1 = WideScale(-70, -90)
 local dataX_col1 = WideScale(-75, -96)
-
-local labelX_col2 = WideScale(10, 20)
-local dataX_col2 = WideScale(5, 15)
-
 local highscoreX = WideScale(56, 80)
-local highscorenameX = WideScale(61, 97)
 
 local FormatDate = function(scoredate)
 	if scoredate == "" then
@@ -67,18 +61,19 @@ local af =
 	SetCommand = function(self)
 		local player_score, player_date, first_pass, last_played, times_played
 		if GAMESTATE:GetCurrentSong() then --if there's no song there won't be a hash
-			local hash = GetCurrentHash(player)
-			if hash and SL[pn].Scores[GetCurrentHash(player)] then
-				if GetScores(player, hash) then
-					player_score = FormatPercentScore(GetScores(player, hash)[1].score)
-					player_date = FormatDate(Split(GetScores(player, hash)[1].dateTime)[1])
+			local hash = GetHash(player)
+			if hash and SL[pn].Scores[GetHash(player)] then
+				local scores = GetScores(player, hash, true)
+				if scores then
+					player_score = FormatPercentScore(scores[1].score)
+					player_date = FormatDate(Split(scores[1].dateTime)[1])
 				else
 					player_score = string.format("%.2f%%", 0)
 					player_date = "Never"
 				end
-				first_pass = FormatDate(Split(SL[pn].Scores[GetCurrentHash(player)].FirstPass)[1])
-				last_played = FormatDate(Split(SL[pn].Scores[GetCurrentHash(player)].LastPlayed)[1])
-				times_played = SL[pn].Scores[GetCurrentHash(player)].NumTimesPlayed
+				first_pass = FormatDate(Split(SL[pn].Scores[GetHash(player)].FirstPass)[1])
+				last_played = FormatDate(Split(SL[pn].Scores[GetHash(player)].LastPlayed)[1])
+				times_played = SL[pn].Scores[GetHash(player)].NumTimesPlayed
 			else
 				player_score, _ , player_date = GetNameAndScoreAndDate(PROFILEMAN:GetProfile(player))
 				--if there's a player_score/date then the song is in stats.xml but we can't make a hash for whatever reason

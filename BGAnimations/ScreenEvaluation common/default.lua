@@ -135,7 +135,7 @@ for player in ivalues(Players) do
 		local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
 		local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
 		hash = GenerateHash(stepsType, difficulty)
-		if hash ~= GetCurrentHash(player) then AddCurrentHash() end
+		if hash ~= GetHash(player) then AddCurrentHash() end
 	end
 	-- add available Panes to the lower ActorFrame via a loop
 	-- Note(teejusb): Some of these actors may be nil. This is not a bug, but

@@ -95,7 +95,7 @@ local t = Def.ActorFrame {
 			{"SortBy", "Grade"},
 			{"SortBy", "Tag"},
 		}
-		-- get the currently active SortOrder and truncate the "SortOrder_" from the beginning
+		-- get the currently active SortOrder
 		local current_sort_order = SL.Global.GroupType
 		local current_sort_order_index = 1
 

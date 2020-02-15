@@ -88,7 +88,7 @@ local song_mt = {
 					--box behind song name
 					Def.ActorFrame {
 						InitCommand = function(subself) self.song_box = subself end,
-						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0):visible(false)  end,
+						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0):visible(false) end,
 						SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1):visible( true) end,
 						Def.Quad { InitCommand=function(subself) subself:zoomto(250,40):diffuse(.5,.5,.5,.5):diffusealpha(.5) end },
 						Def.Quad { InitCommand=function(self) self:zoomto(250-2, 40-2*2):MaskSource(true) end },
@@ -204,7 +204,7 @@ local song_mt = {
 					end
 					--if we have a custom score
 					if SL.Global.HashLookup[self.song:GetSongDir()] and SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)] then
-						local hash = SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)][stepsType]
+						local hash = GetHash(player, self.song, GAMESTATE:GetCurrentSteps(pn))
 						local scores = GetScores(player, hash)
 						if scores then
 							grade = GetGradeFromPercent(scores[1].score)
@@ -228,7 +228,7 @@ local song_mt = {
 					if not grade then
 						if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
 							local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1]
-							if score then grade = score:GetGrade() end --TODO this only grabs scores for master player
+							if score then grade = score:GetGrade() end
 						end
 					end
 					if grade then
@@ -243,9 +243,11 @@ local song_mt = {
 							else self['P1pass_box']:visible(false) end
 						end
 					end
+					self.title_bmt:diffuse(Color.White)
 				else
 					self[pn..'grade_sprite']:visible(false)
 					self[pn..'pass_box']:visible(false)
+					self.title_bmt:diffuse(Color.Red)
 				end
 				--handle row hiding
 				if item_index == 1 or item_index > 11 then
@@ -253,7 +255,6 @@ local song_mt = {
 				else
 					self.container:visible(true)
 				end
-				
 
 				-- handle row shifting speed
 				self.container:linear(0.2)

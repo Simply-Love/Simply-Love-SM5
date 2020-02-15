@@ -414,12 +414,15 @@ function GetScores(player, hash, checkRate, checkFailed)
 	else return nil end
 end
 
--- returns the hash stored in SL.Global.HashLookup for the current song and steps
--- or nil if the song is not in the hashlookup (can happen if we are unable to generate a hash for a chart)
-function GetCurrentHash(player)
-	local pn = ToEnumShortString(player)
-	local song = GAMESTATE:GetCurrentSong()
-	local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
+--- returns a hash from the lookup table
+---@param player string
+---@param inputSong Song
+---@param inputSteps Steps
+function GetHash(player, inputSong, inputSteps)
+	local pn = assert(player,"GetHash requires a player") and ToEnumShortString(player)
+	local song = inputSong or GAMESTATE:GetCurrentSong()
+	local steps = inputSteps or GAMESTATE:GetCurrentSteps(pn)
+	local difficulty = ToEnumShortString(steps:GetDifficulty())
 	local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
 	if next(SL.Global.HashLookup[song:GetSongDir()]) then --all songs should be listed in HashLookup but if we can't generate hashes it'll be an empty table
 		return SL.Global.HashLookup[song:GetSongDir()][difficulty][stepsType]
