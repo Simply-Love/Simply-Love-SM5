@@ -64,7 +64,7 @@ end
 --Second item is the minimum number in the range of possible choices
 --Third item is the maximum number in the range of possible choices
 --Fourth item is the amount to increment by
-local filters = { 
+local filters = {
 	{"MaxJumps",5,1000,5},
 	{"MinJumps",5,1000,5},
 	{"MinSteps",100,100000,100},
@@ -72,7 +72,7 @@ local filters = {
 	{"MinDifficulty",1,30,1},
 	{"MaxDifficulty",1,30,1},
 }
-	
+
 local Overrides = {}
 
 Overrides["TagsFilter"] = {
@@ -271,12 +271,12 @@ end
 
 -- requires a song and chart as input parameters. returns true if the chart passes all filters and false otherwise
 ValidateChart = function(song, chart, player, inputFilters)
-	local mpn = GAMESTATE:GetMasterPlayerNumber()
+	local mpn = player or GAMESTATE:GetMasterPlayerNumber()
 	local filters = inputFilters or ConvertFilters()
 	local chartMeter = chart:GetMeter()
 	local chartSteps = chart:GetRadarValues(mpn):GetValue('RadarCategory_TapsAndHolds') --TODO this only works for the master player.
 	local chartJumps = chart:GetRadarValues(mpn):GetValue('RadarCategory_Jumps') --TODO this only works for the master player.
-	local highScore = GetGrade(song, chart)
+	local highScore = GetGrade(mpn, song, chart)
 	--Check pass/fail stuff
 	if highScore then
 		if SL.Global.ActiveFilters["HidePassed"] and highScore < 17 then return false end
@@ -302,10 +302,25 @@ ValidateChart = function(song, chart, player, inputFilters)
 end
 
 --Returns the grade for a given song and chart or nil if there isn't a high score.
-GetGrade = function(song, chart)
-	local grade = PROFILEMAN:GetProfile(0):GetHighScoreList(song,chart):GetHighScores()[1] --TODO this only grabs scores for player one
+GetGrade = function(player, song, chart)
+	local grade
+	local pn = ToEnumShortString(player)
+	local hash = GetHash(player,song, chart)
+	local scores = GetScores(player, hash, true, true)
+	if scores then
+		grade = GetGradeFromPercent(scores[1].score)
+	end
+	if not grade then
+		local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()[1]
+		local rate
+		if score then
+			rate = score:GetModifiers()
+			rate = string.find(rate, "xMusic") and string.gsub(rate,".*(%d.%d+)xMusic.*","%1") or 1
+			if rate == SL.Global.ActiveModifiers.MusicRate then grade = score:GetGrade() end
+		end
+	end
 	if grade then
-		local converted_grade = Grade:Reverse()[grade:GetGrade()]
+		local converted_grade = Grade:Reverse()[grade]
 		if converted_grade > 17 then converted_grade = 17 end
 		return converted_grade
 	end

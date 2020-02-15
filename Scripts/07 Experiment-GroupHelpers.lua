@@ -46,7 +46,32 @@ local SortGroups = {
 	Tag = {"No Tags Set"}
 }
 
-
+local GroupNames = {
+	Grade = {
+		Grade_Tier01="100%",
+		Grade_Tier02="99%",
+		Grade_Tier03="98%",
+		Grade_Tier04="96%",
+		Grade_Tier05="Grade: S+",
+		Grade_Tier06="Grade: S",
+		Grade_Tier07="Grade: S-",
+		Grade_Tier08="Grade: A+",
+		Grade_Tier09="Grade: A",
+		Grade_Tier10="Grade: A-",
+		Grade_Tier11="Grade: B+",
+		Grade_Tier12="Grade: B",
+		Grade_Tier13="Grade: B-",
+		Grade_Tier14="Grade: C+",
+		Grade_Tier15="Grade: C",
+		Grade_Tier16="Grade: C-",
+		Grade_Tier17="Grade: D",
+		Grade_Tier18="Grade: F",
+		Grade_Tier19="Grade: F",
+		Grade_Tier20="Grade: F",
+		Grade_Failed="Grade: F",
+		No_Grade="No Grade",
+	},
+}
 
 -- To keep load times down we only want to create groups once. The structure is PreloadedGroups[SortType][GroupName] -> {table of songs}
 -- For example: PreloadedGroups["Title"]["A"] contains an indexed table of all songs starting with A
@@ -58,7 +83,7 @@ local PreloadedGroups = {}
 
 -- A table of tagged songs loaded from Other/TaggedSongs.txt
 -- Each item in the table is a table with the following items: customGroup, title, actualGroup
-local TaggedSongs = {} 
+local TaggedSongs = {}
 
 --------------------------------------------------------------------------------------------------------------------------
 -- Tagging
@@ -139,10 +164,10 @@ end
 -- Adds a line to TaggedSongs, saves it, and then recreates the group so we can sort properly.
 function AddTaggedSong(toAdd, song)
 	-- Add the song to the CustomSong table
-	local toAdd = Split(toAdd, '\t')
-	table.insert(TaggedSongs, {customGroup=toAdd[1], title=toAdd[2], actualGroup=toAdd[3]})
+	local add = Split(toAdd, '\t')
+	table.insert(TaggedSongs, {customGroup=add[1], title=add[2], actualGroup=add[3]})
 	SaveTaggedSongs()
-	PreloadedGroups["Tag"][tostring(toAdd[1])] = CreateSongList(tostring(toAdd[1]),"Tag")
+	PreloadedGroups["Tag"][tostring(add[1])] = CreateSongList(tostring(add[1]),"Tag")
 	-- If this song used to be in No Tags Set then remove it. TODO find out if it's faster to remove the song from the group or just recreate the group
 	local index = FindInTable(song,PreloadedGroups["Tag"]["No Tags Set"])
 	if index then table.remove(PreloadedGroups["Tag"]["No Tags Set"],index) end
@@ -152,16 +177,16 @@ end
 -- Adds a line to TaggedSongs, saves it, and then recreates the group so we can sort properly.
 function RemoveTaggedSong(toRemove, song)
 	local index = 1
-	local toRemove = Split(toRemove, '\t')
+	local remove = Split(toRemove, '\t')
 	for k,v in pairs(TaggedSongs) do
-		if v['customGroup'] == toRemove[1] and v['title'] == toRemove[2] and v['actualGroup'] == toRemove[3] then
+		if v['customGroup'] == remove[1] and v['title'] == remove[2] and v['actualGroup'] == remove[3] then
 			index = k
 			break
 		end
 	end
 	table.remove(TaggedSongs,index)
 	SaveTaggedSongs()
-	PreloadedGroups["Tag"][tostring(toRemove[1])] = CreateSongList(tostring(toRemove[1]),"Tag")
+	PreloadedGroups["Tag"][tostring(remove[1])] = CreateSongList(tostring(remove[1]),"Tag")
 	--if this song no longer has any tags then add it to "No Tags Set"
 	if not GetTags(song) then table.insert(PreloadedGroups["Tag"]["No Tags Set"],song) end
 end
@@ -235,9 +260,9 @@ function GetGroupDisplayName(groupName)
 		name = "Level "..groupName
 		if tonumber(groupName) == 25 then name = name.."+" end
 	elseif SL.Global.GroupType == "Grade" then
-		name = SL.GroupNames["Grade"][groupName]
-	else name = groupName end
-	return name
+		name = GroupNames["Grade"][groupName]
+	end
+	return name and name or groupName
 end
 
 ---------------------------------------------------------------------------

@@ -118,27 +118,38 @@ local GetGroupInfo = function()
 	local groups = PruneGroups(GetGroups())
 	local info = {}
 	local songs
+	local mpn = GAMESTATE:GetMasterPlayerNumber()
 	for group in ivalues(groups) do
-		songs = PruneSongList(GetSongList(group))
+		songs = GetSongList(group)
 		info[group] = {}
 		info[group].num_songs = #songs
 		info[group]['UnsortedLevel'] = {}
 		info[group]['UnsortedPassedLevel'] = {}
 		info[group]['PassedLevel'] = {}
 		info[group].filtered_charts = 0
+		info[group].all_charts = 0
 		for song in ivalues(songs) do
 			if song:HasStepsType(GetStepsType()) then
 				for steps in ivalues(song:GetStepsByStepsType(GetStepsType())) do
+					info[group].all_charts = info[group].all_charts + 1
 					--if the chart passes filters, add to our list of charts
-					if ValidateChart(song, steps) then 
+					if ValidateChart(song, steps, mpn) then
 						--add chart to info[group][difficultyBlock]
 						info[group]['UnsortedLevel'][tostring(steps:GetMeter())] = 1 + (tonumber(info[group]['UnsortedLevel'][tostring(steps:GetMeter())]) or 0)
-						local highScore = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetHighScoreList(song,steps):GetHighScores()[1]
+						local hash = GetHash(mpn,song,steps)
+						if hash then
+							local highScore = GetScores(mpn,hash,true,true)
+							if highScore and highScore[1].grade ~= "Failed" then
+								info[group]['UnsortedPassedLevel'][tostring(steps:GetMeter())] = 1 + (tonumber(info[group]['UnsortedPassedLevel'][tostring(steps:GetMeter())]) or 0)
+							end
+						else
+							local highScore = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetHighScoreList(song,steps):GetHighScores()[1]
 							if highScore then --TODO this only shows stats for the master player. Maybe it should show for both players?
-								if highScore:GetGrade() and Grade:Reverse()[highScore:GetGrade()] < 17 then 
+								if highScore:GetGrade() and Grade:Reverse()[highScore:GetGrade()] < 17 then
 									info[group]['UnsortedPassedLevel'][tostring(steps:GetMeter())] = 1 + (tonumber(info[group]['UnsortedPassedLevel'][tostring(steps:GetMeter())]) or 0)
 								end
 							end
+						end
 					else info[group].filtered_charts = info[group].filtered_charts + 1 end
 				end
 			end
@@ -171,10 +182,10 @@ end
 if not GAMESTATE:GetCurrentSong() then
 	local current_song = GetDefaultSong()
 	GAMESTATE:SetCurrentSong(current_song)
-	GAMESTATE:SetCurrentSteps(0,GAMESTATE:GetCurrentSong():GetAllSteps()[1])
 	InitPreloadedGroups()
 	LoadHashLookup()
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do 
+		GAMESTATE:SetCurrentSteps(player,GAMESTATE:GetCurrentSong():GetStepsByStepsType(GetStepsType())[1])
 		LoadNewFromStats(player)
 	end
 else

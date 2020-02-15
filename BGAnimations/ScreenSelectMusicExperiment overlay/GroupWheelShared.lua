@@ -143,7 +143,6 @@ af[#af+1] = Def.ActorFrame{
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
-				local plural = "songs"
 				local filteredSongs = #GetSongList(params.group) - group_info[params.group].num_songs
 				self:settext( filteredSongs )
 			end
@@ -165,9 +164,7 @@ af[#af+1] = Def.ActorFrame{
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
-				local plural = "songs"
-				local filteredSongs = #GetSongList(params.group) - group_info[params.group].num_songs
-				self:settext( filteredSongs )
+				self:settext( group_info[params.group].filtered_charts )
 			end
 		end,
 	},
