@@ -8,7 +8,7 @@ percent = percent:gsub("%%", "")
 
 return Def.ActorFrame{
 	Name="PercentageContainer"..ToEnumShortString(pn),
-	OnCommand=function(self)
+	InitCommand=function(self)
 		self:x( -115 )
 		self:y( _screen.cy-40 )
 	end,

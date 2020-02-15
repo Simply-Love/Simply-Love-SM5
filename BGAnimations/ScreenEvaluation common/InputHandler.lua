@@ -25,7 +25,6 @@ end
 
 return function(event)
 
-	if SL.Global.GameMode == "Casual" then return false end
 	if not (event and event.PlayerNumber and event.button) then return false end
 
 	local pn = ToEnumShortString(event.PlayerNumber)

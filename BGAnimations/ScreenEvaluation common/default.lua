@@ -8,7 +8,9 @@ local t = Def.ActorFrame{
 	-- through multiple panes of information; pass a reference to this ActorFrame
 	-- and the number of panes there are to InputHandler.lua
 	OnCommand=function(self)
-		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {af=self, num_panes=NumPanes}) )
+		if SL.Global.GameMode ~= "Casual" then
+			SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {af=self, num_panes=NumPanes}) )
+		end
 	end,
 
 	-- ./Graphics/Triangles.lua, shows up if we're in StomperZ mode

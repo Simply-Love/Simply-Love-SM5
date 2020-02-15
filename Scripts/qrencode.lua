@@ -1364,13 +1364,9 @@ qrcode_amv = function( url, size )
 		end
 	end
 
-	local qr = Def.ActorFrame{
-		InitCommand=function(self)
-		  self:visible(true)
-		end
-	}
-
 	local pixel_size = size/#tab_or_message
+
+	local qr = Def.ActorFrame{}
 
 	qr[#qr+1] = Def.Quad{
 		InitCommand=function(self)
@@ -1389,5 +1385,4 @@ qrcode_amv = function( url, size )
 	}
 
 	return qr
-
 end
