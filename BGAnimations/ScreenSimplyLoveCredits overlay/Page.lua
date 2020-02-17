@@ -16,7 +16,7 @@ local display_time = 3
 -- abstract out what is common between both those scenarios into this function
 -- and append extra functionality (fading, etc.) later, if needed
 local PictureActor = function( path, _y )
-	return Def.Sprite{
+	local spr = Def.Sprite{
 		Texture=THEME:GetPathB("ScreenSimplyLoveCredits", "overlay/img/"..path),
 		InitCommand=function(self)
 			src_width  = self:GetTexture():GetSourceWidth()
@@ -36,8 +36,22 @@ local PictureActor = function( path, _y )
 				:halign(0):valign(0)
 				:x(-space.w/2 + padding*2)
 				:y(padding + _y)
+
+			if path:match(".mp4") then
+				self:animate(false):loop(false)
+			end
 		end
 	}
+
+	if path:match(".mp4") then
+		spr.PlayCommand=function(self)
+			if self:getaux() == 0 then
+				self:animate(true):aux(1)
+			end
+		end
+	end
+
+	return spr
 end
 
 
@@ -46,6 +60,20 @@ local af = Def.ActorFrame{ InitCommand=function(self) self:y(header_height) end 
 
 for i=1, #people do
 	local quad_y = padding*i + box_height*(i-1)
+
+	if type(people[i].Img)=="table" and type(people[i].About)=="table" then
+		local _i = 1
+		if #people[i].Img == #people[i].About then
+			if SL.Global.acknowledgments == nil then
+				SL.Global.acknowledgments = -1
+			end
+
+			SL.Global.acknowledgments = SL.Global.acknowledgments + 1
+			_i = (SL.Global.acknowledgments%#people[i].Img)+1
+		end
+		people[i].Img = people[i].Img[_i]
+		people[i].About = people[i].About[_i]
+	end
 
 	-- background quad
 	af[#af+1] = Def.Quad{

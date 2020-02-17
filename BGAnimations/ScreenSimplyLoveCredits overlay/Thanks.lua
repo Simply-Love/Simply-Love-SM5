@@ -94,14 +94,14 @@ return {
 			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that.\n\nWhen he's not busy streaming, he encourages others to through GrooveStats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
 		},
 		{
-			Name="Dyle / RiOdO",
-			Img="riodo.jpg",
-			About="By regularly organizing and hosting a variety of tech-oriented events such as East Coast FA, Everyone Can FA, and Technical Showcase, Dyle has contributed significantly to shape the post-ITG dance game scene."
-		},
-		{
 			Name="Brittney / Galaga",
 			Img="galaga.jpg",
 			About="Brittney has been a leading voice in the effort to create a community and organize events for girls and women who play dance games.\n\nShe has encouraged women of all skill levels from around the world to push themselves and each other to improve through innovative and compelling competition, and the overall community is better for it."
+		},
+		{
+			Name="Dyle / RiOdO",
+			Img="riodo.jpg",
+			About="By regularly organizing and hosting a variety of tech-oriented events such as East Coast FA, Everyone Can FA, and Technical Showcase, Dyle has contributed significantly to shape the post-ITG dance game scene."
 		},
 	},
 
@@ -160,29 +160,38 @@ return {
 	-- page 10
 	{
 		{
-			Name="vyhd",
-			Img="",
-			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"\n\nHe was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
-		},
-		{}
-	},
-
-	-- page 11
-	{
-		{
 			Name="Riakodoadm",
 			Img="Riakodoadm.jpg",
 			About="Riakodoadm wrote music for Simply Love and provided social support when I needed it. We spent many late nights commiserating with one another over Lua, programming, and music games.\n\nShe's working on an awesome new SM5 theme that you should check out when it is ready."
 		},
-		{
-			Name="bblum",
-			Img="bblum.jpg",
-			About="bblum offered me a place to stay when my life was in chaos and my mental space was a hellscape.  Moreover, they afforded a sense of local friendship when the city felt impossibly large and isolating.\n\nWe connected over grad school experiences and they demonstrated that formal academic journal articles can be enjoyable if you find the right topic (see: SIGBOVIK 2016 proceedings).",
-		},
+
 		{
 			Name="pluto",
 			Img="pluto.png",
 			About="Pluto has supplied exceptional art for many dance game events such as ECS and Nordic Cup, and has infused each with her signature style.\n\nWhen she collaborated with me on my Distant Towers visual novel project, her artistic output brought life and vitality to my moribund mind, and her feedback as a friend kept my soul on life support and my heart beating while I was otherwise dead.",
 		},
 	},
+
+	-- page 11
+	{
+		{
+			Name="vyhd",
+			Img="",
+			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"\n\nHe was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
+		},
+		{
+			Name="bblum",
+			Img="bblum.jpg",
+			About="bblum offered me a place to stay when my life was in chaos and my mental space was a hellscape.  Moreover, they afforded a sense of local friendship when the city felt impossibly large and isolating.\n\nWe connected over grad school experiences and they demonstrated that formal academic journal articles can be enjoyable if you find the right topic (see: SIGBOVIK 2016 proceedings).",
+		},
+	},
+
+	-- page 12
+	{
+		{
+			Name="quietly-turning",
+			Img={ "quietly/Summer.jpg", "quietly/infinitely-blue.mp4", "quietly/not-yet-withered.png", "quietly/Winter.mp4", "quietly/little-walks.mp4"},
+			About={ "I am so ugly\nbut remember feeling small\nalive like Summer", "infinitely blue\nunknown to bright city lights\nabsent in sidewalks", "not yet withered we\nquietly turn towards the sun\nto live a day more", "I can close my eyes\nand see yours, radiant, calm\nthrough blinding Winter", "little walks we share\nwhimsy, warmth, regret, time, love\nlet's keep going, yeah?"}
+		}
+	}
 }

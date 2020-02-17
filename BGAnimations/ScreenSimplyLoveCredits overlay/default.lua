@@ -54,7 +54,7 @@ for i=1,#pages do
 		Name="Page"..i,
 		InitCommand=function(self) self:visible(false):Center() end,
 		HideCommand=function(self) self:visible(false) end,
-		["ShowPage"..i.."Command"]=function(self) self:visible(true) end
+		["ShowPage"..i.."Command"]=function(self) self:visible(true):queuecommand("Play") end
 
 	}..LoadActor("Page.lua", pages[i])
 
