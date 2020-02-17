@@ -31,7 +31,7 @@ local conversation = {
 
 	{ author="Ben", delay=81.832, words="But I wouldn't trade my time with you for technical prowess and Mozartian arpeggios." },
 	{ author="Zoe", delay=85.923, words="No sensible human would make that trade with you anyway." },
-	{ author="Ben", delay=90.014, words="Was sense ever on our side to begin with? :P" },
+	{ author="Ben", delay=90.014, words="Was sense ever on our side to begin with? 😅" },
 	{ author="Zoe", delay=94.105, words="One of these days I'm gonna clobber you." },
 	{ author="Zoe", delay=96.150, words="With a hug." },
 	{ author="Ben", delay=98.268, words="I wouldn't miss it for the world." },
