@@ -1,4 +1,6 @@
-local people = ...
+local args = ...
+local page_num = args[1]
+local people   = args[2]
 
 local padding = 10
 local header_height = 32
@@ -23,7 +25,7 @@ local PictureActor = function( path, _y )
 			src_height = self:GetTexture():GetSourceHeight()
 
 			-- check for animated sprite textures
-			local w, h = path:match("(%d+)x(%d+)")
+			local w, h = path:match(" (%d+)x(%d+)")
 			if w and h then
 				src_width = src_width/w
 				src_height = src_height/h
@@ -43,40 +45,18 @@ local PictureActor = function( path, _y )
 		end
 	}
 
-	if path:match(".mp4") then
-		spr.PlayCommand=function(self)
-			if self:getaux() == 0 then
-				self:animate(true):aux(1)
-			end
-		end
-	end
-
 	return spr
 end
 
-
-
-local af = Def.ActorFrame{ InitCommand=function(self) self:y(header_height) end }
+local viewcount = 0
+local page_af = Def.ActorFrame{ InitCommand=function(self) self:y(header_height) end }
 
 for i=1, #people do
 	local quad_y = padding*i + box_height*(i-1)
 
-	if type(people[i].Img)=="table" and type(people[i].About)=="table" then
-		local _i = 1
-		if #people[i].Img == #people[i].About then
-			if SL.Global.acknowledgments == nil then
-				SL.Global.acknowledgments = -1
-			end
-
-			SL.Global.acknowledgments = SL.Global.acknowledgments + 1
-			_i = (SL.Global.acknowledgments%#people[i].Img)+1
-		end
-		people[i].Img = people[i].Img[_i]
-		people[i].About = people[i].About[_i]
-	end
 
 	-- background quad
-	af[#af+1] = Def.Quad{
+	page_af[#page_af+1] = Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(space.w-padding*2, box_height)
 				:valign(0)
@@ -87,18 +67,40 @@ for i=1, #people do
 
 	-- picture
 	if people[i].Img then
+
+		-- single image; add it directly to the page ActorFrame
 		if type(people[i].Img)=="string" and people[i].Img ~= "" then
-			af[#af+1] = PictureActor( people[i].Img, quad_y )
+			page_af[#page_af+1] = PictureActor( people[i].Img, quad_y )
+
+		-- multiple images
 		elseif type(people[i].Img)=="table" then
 
-			af[#af+1] = Def.ActorFrame{}
+			-- create a sub-ActorFrame, so we can add the multiple images
+			-- to this sub-AF and later add this sub-AF to the page AF
+			local _af = Def.ActorFrame{}
+
 
 			for j=1, #people[i].Img do
-				af[#af][j] = PictureActor( people[i].Img[j], quad_y )..{
-					OnCommand=function(self)
+				local spr = PictureActor(people[i].Img[j], quad_y)
+
+				-- multiple images and multiple About texts
+				if people[i].About and type(people[i].About)=="table" and #people[i].About==#people[i].Img then
+
+
+					spr["ShowPage"..page_num.."Command"]=function(self)
+						self:visible( ((viewcount % #people[i].Img)+1) == j )
+						if people[i].Img[j]:match(".mp4") then
+							self:animate(self:GetVisible())
+						end
+					end
+
+				-- multiple images, but only one About text
+				-- add functions for a "slideshow" effect that automatically cycles through images
+				else
+					spr.OnCommand=function(self)
 						self:diffusealpha( j==1 and 1 or 0 ):sleep( (j-1)*display_time ):queuecommand("Loop")
-					end,
-					LoopCommand=function(self)
+					end
+					spr.LoopCommand=function(self)
 						if self:GetDiffuseAlpha() == 0 then
 							self:linear(fade_time):diffusealpha(1)
 						end
@@ -107,17 +109,21 @@ for i=1, #people do
 							:linear(fade_time):diffusealpha(0)
 							:sleep( (#people[i].Img-1) * display_time )
 							:queuecommand("Loop")
-					end,
-					HideCommand=function(self)
+					end
+					spr.HideCommand=function(self)
 						self:stoptweening():queuecommand("On")
 					end
-				}
+				end
+
+				_af[#_af+1] = spr
 			end
+
+			page_af[#page_af+1] = _af
 		end
 	end
 
 	-- name / handle
-	af[#af+1] = Def.BitmapText{
+	page_af[#page_af+1] = Def.BitmapText{
 		Font="Common Normal",
 		Text=people[i].Name,
 		InitCommand=function(self)
@@ -131,14 +137,20 @@ for i=1, #people do
 	}
 
 	-- about
-	af[#af+1] = Def.BitmapText{
+	local about = Def.BitmapText{
 		Font="Common Normal",
-		Text=people[i].About,
 		InitCommand=function(self)
 			self:valign(0):halign(0):zoom(0.8)
 				:_wrapwidthpixels((space.w - padding*4 - img_width) * (1/0.85) )
 				:x(-space.w/2 + padding*4 + img_width)
 				:y(padding + quad_y )
+
+
+			if type(people[i].About) == "string" then
+				self:settext(people[i].About)
+			elseif type(people[i].About) == "table" then
+				self:settext(people[i].About[1])
+			end
 
 			if #people >= 3
 			and people[i].Name ~= "Paul J Kim" -- forever my favorite special case
@@ -147,6 +159,16 @@ for i=1, #people do
 			end
 		end
 	}
+
+	if type(people[i].About) == "table" then
+		about["ShowPage"..page_num.."Command"]=function(self)
+			self:settext( people[i].About[(viewcount % #people[i].About)+1] )
+			-- increment
+			viewcount = viewcount + 1
+		end
+	end
+
+	page_af[#page_af+1] = about
 end
 
-return af
+return page_af
