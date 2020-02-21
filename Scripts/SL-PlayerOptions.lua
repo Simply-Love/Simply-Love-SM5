@@ -387,21 +387,6 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
-	Vocalization = {
-		Choices = function()
-			-- Allow users to arbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
-			-- and have those vocalizations be automatically detected
-			local vocalizations = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/" , true, false)
-			table.insert(vocalizations, 1, "None")
-
-			if #vocalizations > 1 then
-				vocalizations[#vocalizations+1] = "Random"
-				vocalizations[#vocalizations+1] = "Blender"
-			end
-			return vocalizations
-		end
-	},
-	-------------------------------------------------------------------------
 	ReceptorArrowsPosition = {
 		Choices = { "StomperZ", "ITG" },
 	},

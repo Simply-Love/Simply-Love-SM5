@@ -25,9 +25,6 @@ local t = Def.ActorFrame{
 	-- text to display BPM range (and ratemod if ~= 1.0) immediately under the banner
 	LoadActor("./BPM_RateMod.lua"),
 
-	-- code for handling score vocalization
-	LoadActor("./ScoreVocalization.lua"),
-
 	-- store some attributes of this playthrough of this song in the global SL table
 	-- for later retrieval on ScreenEvaluationSummary
 	LoadActor("./GlobalStorage.lua"),
