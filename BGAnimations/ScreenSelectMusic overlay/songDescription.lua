@@ -26,6 +26,7 @@ for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 end
 
 -- ----------------------------------------
+local MusicWheel
 
 local t = Def.ActorFrame{
 
@@ -46,12 +47,10 @@ local t = Def.ActorFrame{
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
 			InitCommand=function(self)
-				self:diffuse(color("#1e282f"))
-					:zoomto( IsUsingWideScreen() and 320 or 310, 48 )
+				self:setsize( IsUsingWideScreen() and 320 or 310, 53 )
+				self:diffuse(color("#1e282f")):y(-3)
 
-				if ThemePrefs.Get("RainbowMode") then
-					self:diffusealpha(0.75)
-				end
+				if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
 			end
 		},
 
@@ -61,18 +60,14 @@ local t = Def.ActorFrame{
 
 			-- Artist Label
 			LoadFont("Common Normal")..{
-				InitCommand=function(self)
-					local text = GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"
-					self:settext( THEME:GetString("SongDescription", text) )
-						:horizalign(right):y(-12)
-						:maxwidth(44)
-				end,
+				Text=THEME:GetString("SongDescription", GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"),
+				InitCommand=function(self) self:horizalign(right):y(-12.5):maxwidth(44) end,
 				OnCommand=function(self) self:diffuse(0.5,0.5,0.5,1) end
 			},
 
-			-- Song Artist
+			-- Song Artist (or number of Songs in this Course, if CourseMode)
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:horizalign(left):xy(5,-12):maxwidth(WideScale(225,260)) end,
+				InitCommand=function(self) self:horizalign(left):xy(5,-12.5):maxwidth(WideScale(225,260)) end,
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						local course = GAMESTATE:GetCurrentCourse()
@@ -90,14 +85,14 @@ local t = Def.ActorFrame{
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "BPM"),
 				InitCommand=function(self)
-					self:horizalign(right):y(8)
+					self:horizalign(right):y(9)
 						:diffuse(0.5,0.5,0.5,1)
 				end
 			},
 
 			-- BPM value
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:horizalign(left):xy(5,8):diffuse(1,1,1,1) end,
+				InitCommand=function(self) self:horizalign(left):xy(5,9):diffuse(1,1,1,1):vertspacing(-7) end,
 				SetCommand=function(self)
 					-- if the active MusicWheel item is a group, GAMESTATE:GetCurrentSong() will return nil, but
 					-- GAMESTATE:GetCurrentSteps(player) will return the last-seen steps before wheel focus changed to the group
@@ -108,9 +103,38 @@ local t = Def.ActorFrame{
 						return
 					end
 
-					--defined in ./Scipts/SL-BPMDisplayHelpers.lua
-					local text = StringifyDisplayBPMs()
-					self:settext(text or "")
+					-- if both players are joined, it's possible the current song uses split timing with differing BPM values per stepchart
+					if #GAMESTATE:GetHumanPlayers() > 1 then
+						local p1steps = GAMESTATE:GetCurrentSteps(PLAYER_1)
+						local p2steps = GAMESTATE:GetCurrentSteps(PLAYER_2)
+
+						-- if both players have stepcharts selected (they won't, at screen init)
+						-- and those stepcharts have different TimingData
+						if p1steps and p2steps and p1steps:GetTimingData() ~= p2steps:GetTimingData() then
+							local p1bpm = StringifyDisplayBPMs(PLAYER_1, p1steps)
+							local p2bpm = StringifyDisplayBPMs(PLAYER_2, p2steps)
+
+							-- even with different TimingData, it's possible that BPM range is the same for both charts
+							-- no need to show BPM ranges for both players if so
+							if p1bpm == p2bpm then
+								self:settext(p1bpm):zoom(1)
+
+							-- when TimingData is different, it's more likely that there are different BPM ranges available
+							else
+								-- so show the range for both P1 and P2 split by a newline characters, shrunk slightly to fit the space
+								-- and color the string using the difficulty colors
+								self:settext( "P1 ".. p1bpm .. "\n" .. "P2 " .. p2bpm ):zoom(0.8)
+								self:AddAttribute(0,             {Length=3,           Diffuse={0.60,0.60,0.60,1}})
+								self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse=DifficultyColor(p1steps:GetDifficulty())})
+								self:AddAttribute(3+p1bpm:len(), {Length=3,           Diffuse={0.60,0.60,0.60,1}})
+								self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse=DifficultyColor(p2steps:GetDifficulty())})
+							end
+							return
+						end
+					end
+
+					-- StringifyDisplayBPMs() is defined in ./Scipts/SL-BPMDisplayHelpers.lua
+					self:settext(StringifyDisplayBPMs() or ""):zoom(1)
 				end
 			},
 
@@ -118,9 +142,8 @@ local t = Def.ActorFrame{
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "Length"),
 				InitCommand=function(self)
-					self:horizalign(right)
+					self:horizalign(right):diffuse(0.5,0.5,0.5,1)
 						:x(_screen.w/4.5):y(8)
-						:diffuse(0.5,0.5,0.5,1)
 				end
 			},
 
@@ -128,50 +151,42 @@ local t = Def.ActorFrame{
 			LoadFont("Common Normal")..{
 				InitCommand=function(self) self:horizalign(left):xy(_screen.w/4.5 + 5, 8) end,
 				SetCommand=function(self)
-					local duration
+					if MusicWheel == nil then MusicWheel = SCREENMAN:GetTopScreen():GetMusicWheel() end
 
-					if GAMESTATE:IsCourseMode() then
-						local Players = GAMESTATE:GetHumanPlayers()
-						local player = Players[1]
-						local trail = GAMESTATE:GetCurrentTrail(player)
+					local selected_type = MusicWheel:GetSelectedType()
+					local seconds
 
+					if selected_type == "WheelItemDataType_Song" then
+						seconds = GAMESTATE:GetCurrentSong():MusicLengthSeconds()
+
+					elseif selected_type == "WheelItemDataType_Section" then
+						-- MusicWheel:GetSelectedSection() will return a string for the text of the currently active WheelItem
+						-- use it here to look up the overall duration of this group from our precalculated table of group durations
+						seconds = group_durations[MusicWheel:GetSelectedSection()]
+
+					elseif selected_type == "WheelItemDataType_Course" then
+						-- is it possible for 2 Trails within the same Course to have differing durations?
+						-- I can't think of a scenario where that would happen, but hey, this is StepMania.
+						-- In any case, I'm opting to display the duration of the MPN's current trail.
+						local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber())
 						if trail then
-							duration = TrailUtil.GetTotalSeconds(trail)
-						end
-					else
-						local song = GAMESTATE:GetCurrentSong()
-						if song then
-							duration = song:MusicLengthSeconds()
-						else
-							local group_name = SCREENMAN:GetTopScreen():GetMusicWheel():GetSelectedSection()
-							if group_name then
-								duration = group_durations[group_name]
-							end
+							seconds = TrailUtil.GetTotalSeconds(trail)
 						end
 					end
 
+					-- r21 lol
+					if seconds == 105.0 then self:settext(THEME:GetString("SongDescription", "r21")); return end
 
-					if duration then
-						duration = duration / SL.Global.ActiveModifiers.MusicRate
-						if duration == 105.0 then
-							-- r21 lol
-							self:settext( THEME:GetString("SongDescription", "r21") )
+					if seconds then
+						seconds = seconds / SL.Global.ActiveModifiers.MusicRate
+
+						-- longer than 1 hour in length
+						if seconds > 3600 then
+							-- format to display as H:MM:SS
+							self:settext(math.floor(seconds/3600) .. ":" .. SecondsToMMSS(seconds%3600))
 						else
-							local hours = 0
-							if duration > 3600 then
-								hours = math.floor(duration / 3600)
-								duration = duration % 3600
-							end
-
-							local finalText
-							if hours > 0 then
-								-- where's HMMSS when you need it?
-								finalText = hours .. ":" .. SecondsToMMSS(duration)
-							else
-								finalText = SecondsToMSS(duration)
-							end
-
-							self:settext( finalText )
+							-- format to display as M:SS
+							self:settext(SecondsToMSS(seconds))
 						end
 					else
 						self:settext("")
@@ -182,7 +197,7 @@ local t = Def.ActorFrame{
 
 		-- long/marathon version bubble graphic and text
 		Def.ActorFrame{
-			OnCommand=function(self)
+			InitCommand=function(self)
 				self:x( IsUsingWideScreen() and 102 or 97 )
 			end,
 			SetCommand=function(self)
