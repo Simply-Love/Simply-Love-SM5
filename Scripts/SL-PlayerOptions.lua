@@ -291,9 +291,9 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	DataVisualizations = {
 		Values = function()
-			local choices = { "Disabled", "Target Score Graph", "Step Statistics" }
+			local choices = { "None", "Target Score Graph", "Step Statistics" }
 
-			-- Disabled and Target Score Graph should always be available to players
+			-- None and Target Score Graph should always be available to players
 			-- but Step Statistics needs a lot of space and isn't always possible
 			-- remove it as an available option if we aren't in single or if the current
 			-- notefield width already uses more than half the screen width
