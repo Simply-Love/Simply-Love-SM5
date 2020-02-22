@@ -11,7 +11,7 @@ local t = Def.ActorFrame{
 		LetterGradesAF = self:GetParent():GetChild("LetterGradesAF")
 	end,
 	DrawPageCommand=function(self, params)
-		self:sleep(position_on_screen*0.05):linear(0.15):diffusealpha(0)
+		self:finishtweening():sleep(position_on_screen*0.05):linear(0.15):diffusealpha(0)
 
 		StageNum = ((params.Page-1)*4) + position_on_screen
 		local stage = SL.Global.Stages.Stats[StageNum]
@@ -23,7 +23,7 @@ local t = Def.ActorFrame{
 		if SongOrCourse == nil then
 			self:visible(false)
 		else
-			self:queuecommand("Show"):visible(true)
+			self:finishtweening():queuecommand("Show"):visible(true)
 		end
 	end,
 

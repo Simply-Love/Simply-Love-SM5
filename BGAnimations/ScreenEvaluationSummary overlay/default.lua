@@ -45,7 +45,7 @@ local t = Def.ActorFrame{
 
 			if next_page > 0 and next_page < pages+1 then
 				page = next_page
-				self:stoptweening():queuecommand("Hide")
+				self:finishtweening():queuecommand("Hide")
 			end
 		end
 	end,
@@ -78,7 +78,7 @@ for i=1,4 do
 				:queuecommand("Hide")
 		end,
 		ShowCommand=function(self)
-			self:sleep(i*0.05):linear(0.15):diffusealpha(1)
+			self:finishtweening():sleep(i*0.05):linear(0.15):diffusealpha(1)
 		end,
 		HideCommand=function(self)
 			self:playcommand("DrawPage", {Page=page})
