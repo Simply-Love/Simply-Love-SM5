@@ -402,10 +402,6 @@ local Overrides = {
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions = Branch.GameplayScreen() end
 
@@ -427,10 +423,6 @@ local Overrides = {
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions2 = Branch.GameplayScreen() end
 
@@ -453,10 +445,6 @@ local Overrides = {
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions3 = Branch.GameplayScreen() end
 
