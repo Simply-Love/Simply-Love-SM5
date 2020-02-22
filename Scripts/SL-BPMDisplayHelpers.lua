@@ -1,26 +1,30 @@
-local GetCourseOrTrailBPMs = function(entries)
+local GetTrailBPMs = function(player, trail)
+	if not player then return false end
+	trail = trail or GAMESTATE:GetCurrentTrail(player)
+	if not trail then return false end
+
 	local lowest, highest
 
-	for i, entry in ipairs(entries) do
-		-- courseEntry:GetSong() will return nil for randomly generated courses :(
-		local song = entry:GetSong()
-		if song==nil then return end
+	for i, entry in ipairs(trail:GetTrailEntries()) do
+		-- TrailEntry:GetSteps() will return nil for randomly generated courses :(
+		local steps = entry:GetSteps()
+		if steps==nil then return end
 
-		local bpms = song:GetDisplayBpms()
+		local bpms = steps:GetDisplayBpms()
 
 		-- if either display BPM is negative or 0, use the actual BPMs instead...
 		if bpms[1] <= 0 or bpms[2] <= 0 then
-			bpms = song:GetTimingData():GetActualBPM()
+			bpms = steps:GetTimingData():GetActualBPM()
 		end
 
 		-- on the first iteration, lowest and highest will both be nil
 		-- so set lowest to this song's lower bpm
 		-- and highest to this song's higher bpm
-		if not lowest then lowest = bpms[1] end
+		if not lowest  then lowest  = bpms[1] end
 		if not highest then highest = bpms[2] end
 
 		-- on each subsequent iteration, compare
-		lowest = math.min(lowest, bpms[1])
+		lowest = math.min(lowest,  bpms[1])
 		highest= math.max(highest, bpms[2])
 	end
 
@@ -28,24 +32,6 @@ local GetCourseOrTrailBPMs = function(entries)
 		-- return a table containing the range of bpms
 		return {lowest, highest}
 	end
-end
-
--- GetCourseBPMs() is unused for now
-local GetCourseBPMs = function(_course)
-	local course = _course or GAMESTATE:GetCurrentCourse( GAMESTATE:GetMasterPlayerNumber() )
-	if not course then return false end
-
-	local courseEntries = course:GetCourseEntries()
-	return GetCourseOrTrailBPMs( courseEntries )
-end
-
-local GetTrailBPMs = function(player, trail)
-	if not player then return false end
-	local trail = trail or GAMESTATE:GetCurrentTrail(player)
-	if not trail then return false end
-
-	local trailEntries = trail:GetTrailEntries()
-	return GetCourseOrTrailBPMs( trailEntries )
 end
 
 

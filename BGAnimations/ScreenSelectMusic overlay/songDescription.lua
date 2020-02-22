@@ -26,7 +26,7 @@ for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 end
 
 -- ----------------------------------------
-local MusicWheel
+local MusicWheel, SelectedType
 
 local t = Def.ActorFrame{
 
@@ -94,47 +94,52 @@ local t = Def.ActorFrame{
 			LoadFont("Common Normal")..{
 				InitCommand=function(self) self:horizalign(left):xy(5,9):diffuse(1,1,1,1):vertspacing(-7) end,
 				SetCommand=function(self)
-					-- if the active MusicWheel item is a group, GAMESTATE:GetCurrentSong() will return nil, but
-					-- GAMESTATE:GetCurrentSteps(player) will return the last-seen steps before wheel focus changed to the group
-					-- SL's StringifyDisplayBPMs() cannot reliably be used because of this, so if GetCurrentSong() returns nil
-					-- set this BPM value to an empty string and return out of this function early
-					if GAMESTATE:GetCurrentSong() == nil then
+
+					if MusicWheel then SelectedType = MusicWheel:GetSelectedType() end
+
+					-- we only want to try to show BPM values for Songs and Courses
+					-- not Section, Roulette, Random, Portal, Sort, or Custom
+					-- (aside: what is "WheelItemDataType_Custom"?  I need to look into that.)
+					if not (SelectedType=="WheelItemDataType_Song" or SelectedType=="WheelItemDataType_Course") then
 						self:settext("")
 						return
 					end
 
-					-- if both players are joined, it's possible the current song uses split timing with differing BPM values per stepchart
-					if #GAMESTATE:GetHumanPlayers() > 1 then
-						local p1steps = GAMESTATE:GetCurrentSteps(PLAYER_1)
-						local p2steps = GAMESTATE:GetCurrentSteps(PLAYER_2)
-
-						-- if both players have stepcharts selected (they won't, at screen init)
-						-- and those stepcharts have different TimingData
-						if p1steps and p2steps and p1steps:GetTimingData() ~= p2steps:GetTimingData() then
-							local p1bpm = StringifyDisplayBPMs(PLAYER_1, p1steps)
-							local p2bpm = StringifyDisplayBPMs(PLAYER_2, p2steps)
-
-							-- even with different TimingData, it's possible that BPM range is the same for both charts
-							-- no need to show BPM ranges for both players if so
-							if p1bpm == p2bpm then
-								self:settext(p1bpm):zoom(1)
-
-							-- when TimingData is different, it's more likely that there are different BPM ranges available
-							else
-								-- so show the range for both P1 and P2 split by a newline characters, shrunk slightly to fit the space
-								-- and color the string using the difficulty colors
-								self:settext( "P1 ".. p1bpm .. "\n" .. "P2 " .. p2bpm ):zoom(0.8)
-								self:AddAttribute(0,             {Length=3,           Diffuse={0.60,0.60,0.60,1}})
-								self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse=DifficultyColor(p1steps:GetDifficulty())})
-								self:AddAttribute(3+p1bpm:len(), {Length=3,           Diffuse={0.60,0.60,0.60,1}})
-								self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse=DifficultyColor(p2steps:GetDifficulty())})
-							end
-							return
-						end
+					-- if only one player is joined, stringify the DisplayBPMs and return early
+					if #GAMESTATE:GetHumanPlayers() == 1 then
+						-- StringifyDisplayBPMs() is defined in ./Scipts/SL-BPMDisplayHelpers.lua
+						self:settext(StringifyDisplayBPMs() or ""):zoom(1)
+						return
 					end
 
-					-- StringifyDisplayBPMs() is defined in ./Scipts/SL-BPMDisplayHelpers.lua
-					self:settext(StringifyDisplayBPMs() or ""):zoom(1)
+					-- otherwise there is more than one player joined and the possibility of split BPMs
+					local p1bpm = StringifyDisplayBPMs(PLAYER_1)
+					local p2bpm = StringifyDisplayBPMs(PLAYER_2)
+
+					-- it's likely that BPM range is the same for both charts
+					-- no need to show BPM ranges for both players if so
+					if p1bpm == p2bpm then
+						self:settext(p1bpm):zoom(1)
+
+					-- different BPM ranges for the two players
+					else
+						-- show the range for both P1 and P2 split by a newline characters, shrunk slightly to fit the space
+						self:settext( "P1 ".. p1bpm .. "\n" .. "P2 " .. p2bpm ):zoom(0.8)
+						-- the "P1 " and "P2 " segments of the string should be grey
+						self:AddAttribute(0,             {Length=3, Diffuse={0.60,0.60,0.60,1}})
+						self:AddAttribute(3+p1bpm:len(), {Length=3, Diffuse={0.60,0.60,0.60,1}})
+
+						if GAMESTATE:IsCourseMode() then
+							-- P1 and P2's BPM text in CourseMode is white until I have time to figure CourseMode out
+							self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse={1,1,1,1}})
+							self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse={1,1,1,1}})
+
+						elseif GAMESTATE:GetCurrentSteps(PLAYER_1) and GAMESTATE:GetCurrentSteps(PLAYER_2) then
+							-- P1 and P2's BPM text is the color of their difficulty
+							self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse=GAMESTATE:IsCourseMode() and {1,1,1,1} or DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty())})
+							self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse=GAMESTATE:IsCourseMode() and {1,1,1,1} or DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty())})
+						end
+					end
 				end
 			},
 
@@ -153,7 +158,7 @@ local t = Def.ActorFrame{
 				SetCommand=function(self)
 					if MusicWheel == nil then MusicWheel = SCREENMAN:GetTopScreen():GetMusicWheel() end
 
-					local selected_type = MusicWheel:GetSelectedType()
+					SelectedType = MusicWheel:GetSelectedType()
 					local seconds
 
 					if selected_type == "WheelItemDataType_Song" then
