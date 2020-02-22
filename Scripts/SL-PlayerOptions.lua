@@ -63,7 +63,7 @@ local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Choices = { "x", "C", "M" },
+		Choices = { "X", "C", "M" },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
@@ -81,25 +81,12 @@ local Overrides = {
 		Choices = { "       " },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local type 	= mods.SpeedModType or "x"
+			local type 	= mods.SpeedModType or "X"
 			local speed = mods.SpeedMod or 1.00
 
-			-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack?
-			playeroptions:XMod(1.00)
-
-			if type == "x" then
-				playeroptions:XMod(speed)
-			elseif type == "C" then
-				playeroptions:CMod(speed)
-			elseif type == "M" then
-				playeroptions:MMod(speed)
-			end
-
+			playeroptions[type.."Mod"](playeroptions, speed)
 		end
 	},
 	-------------------------------------------------------------------------
@@ -356,20 +343,20 @@ local Overrides = {
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
 			local worst = SL.Global.ActiveModifiers.WorstTimingWindow
-			if 	worst==5 then list[1] = true
-			elseif 	worst==4 then list[2] = true
-			elseif 	worst==3 then list[3] = true
-			elseif 	worst==0 then list[4] = true
+			if     worst==5 then list[1] = true
+			elseif worst==4 then list[2] = true
+			elseif worst==3 then list[3] = true
+			elseif worst==0 then list[4] = true
 			end
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
 			local gmods = SL.Global.ActiveModifiers
 
-			if 	list[1] then gmods.WorstTimingWindow=5
-			elseif 	list[2] then gmods.WorstTimingWindow=4
-			elseif 	list[3] then gmods.WorstTimingWindow=3
-			elseif 	list[4] then gmods.WorstTimingWindow=0
+			if     list[1] then gmods.WorstTimingWindow=5
+			elseif list[2] then gmods.WorstTimingWindow=4
+			elseif list[3] then gmods.WorstTimingWindow=3
+			elseif list[4] then gmods.WorstTimingWindow=0
 			end
 
 			-- loop 5 times to set the 5 TimingWindows appropriately

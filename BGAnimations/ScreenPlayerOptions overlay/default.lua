@@ -10,7 +10,7 @@
 -- flexible nor forward-thinking.
 
 local speedmod_def = {
-	x = { upper=20,   increment=0.05 },
+	X = { upper=20,   increment=0.05 },
 	C = { upper=2000, increment=5 },
 	M = { upper=2000, increment=5 }
 }
@@ -39,7 +39,7 @@ local GetSpeedModHelperText = function(player)
 	local speed = mods.SpeedMod
 
 	-- if using an xmod
-	if mods.SpeedModType == "x" then
+	if mods.SpeedModType == "X" then
 		local musicrate = SL.Global.ActiveModifiers.MusicRate
 
 		--if a single bpm suffices
@@ -179,12 +179,12 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 				-- if we have an active rate mod, then we have to undo/redo
 				-- our automatic rate mod compensation
 
-				if oldtype == "x" then
+				if oldtype == "X" then
 					-- apply rate compensation now
 					speedmod = speedmod * SL.Global.ActiveModifiers.MusicRate
 					speedmod = (round((speedmod * bpms[2]) / increment)) * increment
 
-				elseif newtype == "x" then
+				elseif newtype == "X" then
 					-- revert rate compensation since it's handled for XMod
 					speedmod = speedmod / SL.Global.ActiveModifiers.MusicRate
 					speedmod = (round(speedmod / bpms[2] / increment)) * increment
@@ -204,7 +204,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		["Set" .. pn .. "Command"]=function(self)
 			local text = ""
 
-			if  SL[pn].ActiveModifiers.SpeedModType == "x" then
+			if  SL[pn].ActiveModifiers.SpeedModType == "X" then
 				text = string.format("%.2f" , SL[pn].ActiveModifiers.SpeedMod ) .. "x"
 
 			elseif  SL[pn].ActiveModifiers.SpeedModType == "C" then
