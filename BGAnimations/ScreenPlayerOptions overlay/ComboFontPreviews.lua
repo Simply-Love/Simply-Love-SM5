@@ -39,13 +39,13 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 				-- OptionRowChanged is broadcast from Metrics.ini under [OptionRow] via TitleGainFocusCommand
 				OptionRowChangedMessageCommand=function(self, params)
 					-- if the player is currently on the ComboFont OptionRow and their current choice isn't "None"
-					if PlayerOnComboFontOptRow(player) and mods.ComboFont ~= "None" then
+					if PlayerOnComboFontOptRow(player) then
 						-- then enter into a "Loop" queue to increment the combo numbers
 						self:queuecommand("Loop")
 					end
 				end,
 				LoopCommand=function(self)
-					if PlayerOnComboFontOptRow(player) and mods.ComboFont ~= "None" then
+					if PlayerOnComboFontOptRow(player) then
 						local beat = math.floor(GAMESTATE:GetSongBeat())
 
 						if prev_beat ~= beat then
