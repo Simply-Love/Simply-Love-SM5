@@ -147,9 +147,9 @@ local t = Def.ActorFrame{
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
 
-	-- I'm not sure why the built-in MenuTimer doesn't force a transition to the nextscreen
-	-- when it runs out of time, but... it isn't.  So recursively listen for time remaining here
-	-- and force a screen transition when time runs out.
+	-- I'm not sure why the built-in MenuTimer doesn't force a transition to the next
+	-- screen when it runs out of time, but... it doesn't.  So listen for time remaining
+	-- here and force a screen transition when time runs out.
 	OnCommand=function(self)
 		if PREFSMAN:GetPreference("MenuTimer") then
 			self:queuecommand("Listen")

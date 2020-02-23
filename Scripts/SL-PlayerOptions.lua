@@ -83,7 +83,7 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local type 	= mods.SpeedModType or "X"
+			local type  = mods.SpeedModType or "X"
 			local speed = mods.SpeedMod or 1.00
 
 			playeroptions[type.."Mod"](playeroptions, speed)
