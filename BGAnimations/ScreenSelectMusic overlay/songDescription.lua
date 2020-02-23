@@ -161,15 +161,15 @@ local t = Def.ActorFrame{
 					SelectedType = MusicWheel:GetSelectedType()
 					local seconds
 
-					if selected_type == "WheelItemDataType_Song" then
+					if SelectedType == "WheelItemDataType_Song" then
 						seconds = GAMESTATE:GetCurrentSong():MusicLengthSeconds()
 
-					elseif selected_type == "WheelItemDataType_Section" then
+					elseif SelectedType == "WheelItemDataType_Section" then
 						-- MusicWheel:GetSelectedSection() will return a string for the text of the currently active WheelItem
 						-- use it here to look up the overall duration of this group from our precalculated table of group durations
 						seconds = group_durations[MusicWheel:GetSelectedSection()]
 
-					elseif selected_type == "WheelItemDataType_Course" then
+					elseif SelectedType == "WheelItemDataType_Course" then
 						-- is it possible for 2 Trails within the same Course to have differing durations?
 						-- I can't think of a scenario where that would happen, but hey, this is StepMania.
 						-- In any case, I'm opting to display the duration of the MPN's current trail.
