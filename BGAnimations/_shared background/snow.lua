@@ -16,7 +16,7 @@ local max_vy = 85
 local path_to_texture = THEME:GetPathB("","_shared background/snowflake.png")
 
 -----------------
--- Taro wrote the original version of this code, dbk2 h*cked it up from there
+-- Taro wrote the original version of this code, quietly-turning h*cked it up from there
 
 -- how far offscreen should it be before it wraps
 local wrap_buffer = 50
