@@ -151,8 +151,14 @@ end
 
 
 local af = Def.ActorFrame{
-	Enabled = false,
 	InitCommand=function(self)
+		-- I needed a way to keep track of whether each choice (single, versus, double, solo)
+		-- was enabled or disabled depending on Premium settings and current coin standings.
+		-- We can use aux() to associate arbitrary data with actors in a way that can be
+		-- accessed externally without leaking memory. aux() accepts floating point values,
+		-- so here I'm using 0 as a stand-in for false and 1 for true.
+		self:aux(0)
+
 		self:zoom(0.5):xy( frame_x, _screen.cy + WideScale(0,10) )
 
 		if ThemePrefs.Get("VisualTheme")=="Gay" and not HolidayCheer() then
@@ -174,7 +180,7 @@ local af = Def.ActorFrame{
 		self:linear(0.125):zoom(0.5):effectmagnitude(0,0,0)
 	end,
 	EnableCommand=function(self)
-		if self.Enabled then
+		if self:getaux() == 1 then
 			self:diffusealpha(1)
 		else
 			self:diffusealpha(0.25)

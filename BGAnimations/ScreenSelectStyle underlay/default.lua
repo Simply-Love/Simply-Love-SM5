@@ -55,38 +55,52 @@ local EnableChoices = function()
 	or GAMESTATE:GetCoinMode() ~= "CoinMode_Pay"
 	or GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit" then
 		for i, child in ipairs( af:GetChild("") ) do
-			child.Enabled = true
+			child:aux(1)
+		end
+		return
+	end
+
+
+	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then
+
+		-- if both players are already joined, disable "1 Player" as a choice
+		af:GetChild("")[1]:aux( (#GAMESTATE:GetHumanPlayers() == 1) and 1 or 0)
+
+		-- double for 1 credit
+		if GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit" then
+
+			-- maybe enable "2 Players"
+			if GAMESTATE:EnoughCreditsToJoin()
+			or #GAMESTATE:GetHumanPlayers() == 2 then
+				af:GetChild("")[2]:aux(1)
+			else
+				af:GetChild("")[2]:aux(0)
+			end
+
+			-- enable "Double"
+			af:GetChild("")[3]:aux(1)
+
+		-- premium off
+		elseif GAMESTATE:GetPremium() == "Premium_Off" then
+
+			if GAMESTATE:EnoughCreditsToJoin()
+			or #GAMESTATE:GetHumanPlayers() == 2 then
+				-- enable "2 Players" and "Double"
+				af:GetChild("")[2]:aux(1)
+				af:GetChild("")[3]:aux(1)
+			else
+				-- disable "2 Players" and "Double"
+				af:GetChild("")[2]:aux(0)
+				af:GetChild("")[3]:aux(0)
+			end
 		end
 	end
 
-	-- double for 1 credit
-	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_DoubleFor1Credit" then
-		-- if both players are already joined, disable 1 Player as a choice
-		af:GetChild("")[1].Enabled = (#GAMESTATE:GetHumanPlayers() == 1)
 
-		af:GetChild("")[3].Enabled = true
-
-		if GAMESTATE:EnoughCreditsToJoin()
-		or #GAMESTATE:GetHumanPlayers() == 2 then
-			af:GetChild("")[2].Enabled = true
-		end
-	end
-
-	-- premium off
-	if GAMESTATE:GetCoinMode() == "CoinMode_Pay" and GAMESTATE:GetPremium() == "Premium_Off" then
-		-- if both players are already joined, disable 1 Player as a choice
-		af:GetChild("")[1].Enabled = (#GAMESTATE:GetHumanPlayers() == 1)
-
-		if GAMESTATE:EnoughCreditsToJoin()
-		or #GAMESTATE:GetHumanPlayers() == 2 then
-			af:GetChild("")[2].Enabled = true
-			af:GetChild("")[3].Enabled = true
-		end
-	end
 
 	-- dance solo
 	if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
-		af:GetChild("")[4].Enabled = true
+		af:GetChild("")[4]:aux(1)
 	end
 end
 
@@ -99,7 +113,7 @@ local GetNextEnabledChoice = function(dir)
 	for i=start, stop, dir do
 		local index = ((i-1) % #choices) + 1
 
-		if af:GetChild("")[index].Enabled then
+		if af:GetChild("")[index]:getaux()==1 then
 			current_index = index
 			return
 		end
@@ -241,10 +255,11 @@ local t = Def.ActorFrame{
 			self:queuecommand("Listen")
 		end
 	end,
+	CoinModeChangedMessageCommand=function(self) self:playcommand("CoinsChanged") end,
 	CoinsChangedMessageCommand=function(self)
 		EnableChoices()
 		-- if the current choice is no longer valid after the coin change
-		if not self:GetChild("")[current_index].Enabled then
+		if self:GetChild("")[current_index]:getaux()==0 then
 			-- get the next valid choice to the right
 			GetNextEnabledChoice(1)
 			-- force all choices to LoseFocus
