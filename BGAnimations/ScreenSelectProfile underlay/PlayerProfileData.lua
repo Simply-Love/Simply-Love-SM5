@@ -1,6 +1,6 @@
 -- ----------------------------------------------------
 -- local tables containing NoteSkins and JudgmentGraphics available to SL
--- wW'll compare values from profiles against these "master" tables as it
+-- We'll compare values from profiles against these "master" tables as it
 -- seems to be disconcertingly possible for user data to contain errata, typos, etc.
 
 local noteskins = NOTESKIN:GetNoteSkinNames()
@@ -20,7 +20,8 @@ local RecentMods = function(mods)
 
 	-- SpeedModType should be a string and SpeedMod should be a number
 	if type(mods.SpeedModType)=="string" and type(mods.SpeedMod)=="number" then
-		if mods.SpeedModType=="x" and mods.SpeedMod > 0 then text = text..tostring(mods.SpeedMod).."x"
+		-- for ScreenSelectProfile, allow either "x" or "X" to be in the player's profile for SpeedModType
+		if (mods.SpeedModType):upper()=="X" and mods.SpeedMod > 0 then text = text..tostring(mods.SpeedMod).."x"
 		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then text = text..mods.SpeedModType..tostring(mods.SpeedMod)
 		end
 	end
@@ -93,6 +94,18 @@ local TotalSongs = function(numSongs)
 end
 
 -- ----------------------------------------------------
+-- for when you just want to retrieve profile data from disk without applying it to the SL table
+
+local RetrieveProfileData = function(profile, dir)
+	local theme_name = THEME:GetThemeDisplayName()
+	local path = dir .. theme_name .. " UserPrefs.ini"
+	if FILEMAN:DoesFileExist(path) then
+		return IniFile.ReadFile(path)[theme_name]
+	end
+	return false
+end
+
+-- ----------------------------------------------------
 -- Retrieve and process data (mods, most recently played song, high score name, etc.)
 -- for each available local profile and put it in the profile_data table.
 -- Since both players are using the same list of local profiles, this only needs to be performed once (not once for each player).
@@ -108,7 +121,7 @@ for i=1, PROFILEMAN:GetNumLocalProfiles() do
 	-- GetLocalProfileIDFromIndex() also expects indices to start at 0
 	local id = PROFILEMAN:GetLocalProfileIDFromIndex(i-1)
 	local dir = PROFILEMAN:LocalProfileIDToDir(id)
-	local userprefs = ReadProfileCustom(profile, dir)
+	local userprefs = RetrieveProfileData(profile, dir)
 	local mods, noteskin, judgment = RecentMods(userprefs)
 
 	local data = {

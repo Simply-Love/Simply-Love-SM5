@@ -106,12 +106,3 @@ SaveProfileCustom = function(profile, dir)
 
 	return true
 end
-
--- for when you just want to retrieve profile data from disk without applying it to the SL table
-ReadProfileCustom = function(profile, dir)
-	local path = dir .. filename
-	if FILEMAN:DoesFileExist(path) then
-		return IniFile.ReadFile(path)[theme_name]
-	end
-	return false
-end
