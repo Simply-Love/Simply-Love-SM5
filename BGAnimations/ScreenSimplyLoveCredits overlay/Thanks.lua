@@ -17,14 +17,14 @@ return {
 	-- page 2
 	{
 		{
-			Name="djpohly",
-			Img="djpohly.png",
-			About="djpohly was a constant source of knowledge, help, and measured encouragement during the initial 18 months I spent porting Simply Love to SM5.\n\nHe also authored the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware initially feasible."
-		},
-		{
 			Name="AJ / freem",
 			Img="freem.png",
-			About="I used freem's SM5 theme, Moonlight, as the foundation/starting point for this port.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.\n\nfreem's sardonic wit, typically left via inline comments throughout Moonlight and SM5's source, helped keep me going."
+			About="I used freem's SM5 theme, Moonlight, as the foundation/starting point when first working on this theme.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.\n\nfreem's sardonic wit, typically left via inline comments throughout Moonlight and SM5's source, helped keep me going."
+		},
+		{
+			Name="djpohly",
+			Img="djpohly.png",
+			About="djpohly authored the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware initially feasible.\n\nKnowledgable about every programming question I threw his way, djpohly always crafted his explanations so that I could both understand and still be curious to learn just a little more.\n\nI have fond memories of late nights shared hacking on kernels and cookie dough Pop Tarts alike."
 		},
 		{
 			Name="Jason / Lightning",
@@ -36,19 +36,19 @@ return {
 	-- page 3
 	{
 		{
-			Name="SM5 Dev Team",
-			Img="stepmania.png",
-			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of open source dance games, including Lirodon, Jousway, MrThatKid, RyTak, and Squirrel."
+			Name="kyzentun",
+			Img="kyzentun.png",
+			About="kyzentun answered many of my theming questions on IRC and went out of his way to fix source-related issues that helped me along my way."
 		},
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who have contributed over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, and natano."
+			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, and natano."
 		},
 		{
-			Name="kyzentun",
-			Img="kyzentun.png",
-			About="kyzentun answered many of my theming questions on IRC and went out of his way to fix source-related issues that helped me along my way."
+			Name="SM5 Dev Team",
+			Img="stepmania.png",
+			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of open source dance games, including Lirodon, Jousway, MrThatKid, RyTak, and Squirrel."
 		},
 	},
 
