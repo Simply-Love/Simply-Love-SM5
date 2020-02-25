@@ -134,10 +134,14 @@ local t = Def.ActorFrame{
 							self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse={1,1,1,1}})
 							self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse={1,1,1,1}})
 
-						elseif GAMESTATE:GetCurrentSteps(PLAYER_1) and GAMESTATE:GetCurrentSteps(PLAYER_2) then
+						else
 							-- P1 and P2's BPM text is the color of their difficulty
-							self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse=GAMESTATE:IsCourseMode() and {1,1,1,1} or DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty())})
-							self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse=GAMESTATE:IsCourseMode() and {1,1,1,1} or DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty())})
+							if GAMESTATE:GetCurrentSteps(PLAYER_1) then
+								self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse=DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty())})
+							end
+							if GAMESTATE:GetCurrentSteps(PLAYER_2) then
+								self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse=DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty())})
+							end
 						end
 					end
 				end
