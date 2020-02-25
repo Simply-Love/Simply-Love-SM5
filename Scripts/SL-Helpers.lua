@@ -267,10 +267,14 @@ local NoteFieldWidth = {
 }
 
 GetNotefieldWidth = function()
-	local game = GAMESTATE:GetCurrentGame():GetName()
-	local style = GAMESTATE:GetCurrentStyle():GetName()
-	if NoteFieldWidth[game] and NoteFieldWidth[game][style] then
-		return NoteFieldWidth[game][style]
+	local game = GAMESTATE:GetCurrentGame()
+
+	if game then
+		local game_widths = NoteFieldWidth[game:GetName()]
+		local style = GAMESTATE:GetCurrentStyle()
+		if style then
+			return game_widths[style:GetName()]
+		end
 	end
 
 	return false

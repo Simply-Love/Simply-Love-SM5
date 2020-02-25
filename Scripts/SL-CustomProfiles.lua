@@ -40,7 +40,6 @@ local profile_whitelist = {
 	MissBecauseHeld = "boolean",
 	NPSGraphAtTop = "boolean",
 
-	Vocalization = "string",
 	ReceptorArrowsPosition = "string",
 }
 
@@ -49,8 +48,8 @@ local profile_whitelist = {
 local theme_name = THEME:GetThemeDisplayName()
 local filename =  theme_name .. " UserPrefs.ini"
 
--- Hook called during profile load
-function LoadProfileCustom(profile, dir)
+-- function assigned to "CustomLoadFunction" under [Profile] in metrics.ini
+LoadProfileCustom = function(profile, dir)
 
 	local path =  dir .. filename
 	local pn, filecontents
@@ -67,10 +66,18 @@ function LoadProfileCustom(profile, dir)
 	if pn and FILEMAN:DoesFileExist(path) then
 		filecontents = IniFile.ReadFile(path)[theme_name]
 
+		-- for each key/value pair read in from the player's profile
 		for k,v in pairs(filecontents) do
-			-- ensure that the setting read in from profile exists and type check if so
-			if profile_whitelist[k] and type(v)==profile_whitelist[k] then
-				SL[pn].ActiveModifiers[k] = v
+			-- ensure that the key has a corresponding key in profile_whitelist
+			if profile_whitelist[k]
+			--  ensure that the datatype of the value matches the datatype specified in profile_whitelist
+			and type(v)==profile_whitelist[k] then
+				-- if the datatype is string, ensure that the string read in from the player's profile
+				-- is a valid value (or choice) for the corresponding OptionRow
+				if type(v) == "string" and FindInTable(v, CustomOptionRow(k).Values or CustomOptionRow(k).Choices)
+				or type(v) ~= "string" then
+					SL[pn].ActiveModifiers[k] = v
+				end
 			end
 		end
 	end
@@ -78,8 +85,8 @@ function LoadProfileCustom(profile, dir)
 	return true
 end
 
--- Hook called during profile save
-function SaveProfileCustom(profile, dir)
+-- function assigned to "CustomSaveFunction" under [Profile] in metrics.ini
+SaveProfileCustom = function(profile, dir)
 
 	local path =  dir .. filename
 
@@ -101,7 +108,7 @@ function SaveProfileCustom(profile, dir)
 end
 
 -- for when you just want to retrieve profile data from disk without applying it to the SL table
-function ReadProfileCustom(profile, dir)
+ReadProfileCustom = function(profile, dir)
 	local path = dir .. filename
 	if FILEMAN:DoesFileExist(path) then
 		return IniFile.ReadFile(path)[theme_name]

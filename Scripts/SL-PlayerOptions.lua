@@ -284,9 +284,11 @@ local Overrides = {
 			-- but Step Statistics needs a lot of space and isn't always possible
 			-- remove it as an available option if we aren't in single or if the current
 			-- notefield width already uses more than half the screen width
+			local style = GAMESTATE:GetCurrentStyle()
+			local notefieldwidth = GetNotefieldWidth()
 
-			if GAMESTATE:GetCurrentStyle():GetName() ~= "single"
-			or GetNotefieldWidth() > _screen.w/2 then
+			if style and style:GetName() ~= "single"
+			or notefieldwidth and notefieldwidth > _screen.w/2 then
 				table.remove(choices, 3)
 			end
 
