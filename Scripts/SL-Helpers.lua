@@ -196,17 +196,6 @@ GetCredits = function()
 end
 
 -- -----------------------------------------------------------------------
--- used in Metrics.ini for ScreenRankingSingle and ScreenRankingDouble
-
-GetStepsTypeForThisGame = function(type)
-	local game = GAMESTATE:GetCurrentGame():GetName()
-	-- capitalize the first letter
-	game = game:gsub("^%l", string.upper)
-
-	return "StepsType_" .. game .. "_" .. type
-end
-
--- -----------------------------------------------------------------------
 -- return the x value for the center of a player's notefield
 -- used to position various elements in ScreenGameplay
 
@@ -250,7 +239,7 @@ local NoteFieldWidth = {
 		routine = 500,
 	},
 	-- These values for techno, para, and kb7 are the result of empirical observation
-	-- of the SM5 engine and should not be interpreted as any kind of Truth.
+	-- of the SM5 engine and should not be regarded as any kind of Truth.
 	techno = {
 		single8 = 448,
 		versus8 = 272,
@@ -417,8 +406,8 @@ GetStepsCredit = function(player)
 end
 
 -- -----------------------------------------------------------------------
-
 -- the best way to spread holiday cheer is singing loud for all to hear
+
 HolidayCheer = function()
 	return (PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==11)
 end
@@ -511,7 +500,6 @@ end
 -- a valid ComboFont should:
 --   • include glyphs for 1234567890()/
 --   • be open source or "100% free" on dafont.com
-
 
 GetComboFonts = function()
 	local path = THEME:GetCurrentThemeDirectory().."Fonts/_Combo Fonts/"
