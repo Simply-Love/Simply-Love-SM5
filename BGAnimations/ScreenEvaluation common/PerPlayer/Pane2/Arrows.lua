@@ -47,7 +47,7 @@ for i,column in ipairs( columns[game] ) do
 
 	-- GetNoteSkinActor() is defined in ./Scripts/SL-Helpers.lua, and performs some
 	-- rudimentary error handling because NoteSkins From The Internet™ may contain Lua errors
-	af[#af+1] = GetNoteSkinActor(noteskin, column)..{
+	af[#af+1] = LoadActor(THEME:GetPathB("","_modules/NoteSkinPreview.lua"), {noteskin_name=noteskin, column=column})..{
 		OnCommand=function(self)
 			self:x( i*column_width ):zoom(0.4):visible(true)
 		end
