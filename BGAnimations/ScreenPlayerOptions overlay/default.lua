@@ -17,46 +17,43 @@ local speedmod_def = {
 
 local song = GAMESTATE:GetCurrentSong()
 
--- player_bpms will be a table of {lower_display_bpm, high_display_bpm}
--- if the simile does not explicitly specify DISPLAYBPM value(s),
--- the low and high values from #BPMS will be used
-local player_bpms = {}
-for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-	player_bpms[player] = GetDisplayBPMs(player)
-end
-
 ------------------------------------------------------------
 -- functions local to this file
 
 -- this prepares and returns a string to be used by the helper BitmapText
--- at the top of the screen (one for each player)
-local GetSpeedModHelperText = function(player)
-	local bpms = player_bpms[player]
-	if not bpms then return "" end
+-- that shows players their effective scrollspeed
 
-	local text = ""
-	local mods = SL[ToEnumShortString(player)].ActiveModifiers
-	local speed = mods.SpeedMod
+local CalculateScrollSpeed = function(player)
+	player   = player or GAMESTATE:GetMasterPlayerNumber()
+	local pn = ToEnumShortString(player)
 
-	-- if using an xmod
-	if mods.SpeedModType == "X" then
-		local musicrate = SL.Global.ActiveModifiers.MusicRate
+	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+	local MusicRate    = SL.Global.ActiveModifiers.MusicRate or 1
 
-		--if a single bpm suffices
-		if bpms[1] == bpms[2] then
-			text = string.format("%.2f", speed) .. "x (" .. round(speed * bpms[1] * musicrate) .. ")"
+	local SpeedModType = SL[pn].ActiveModifiers.SpeedModType
+	local SpeedMod     = SL[pn].ActiveModifiers.SpeedMod
 
-		-- if we have a range of bpms
-		else
-			text = string.format("%.2f", speed) .. "x (" .. round(speed * bpms[1] * musicrate) .. " - " .. round(speed * bpms[2] * musicrate) .. ")"
-		end
+	local bpms = GetDisplayBPMs(player, StepsOrTrail, MusicRate)
+	if not (bpms and bpms[1] and bpms[2]) then return "" end
 
-	-- otherwise, the player is using a Cmod or an Mmod
-	else
-		text = mods.SpeedModType .. tostring(speed)
+	if SpeedModType=="X" then
+		bpms[1] = ("%.0f"):format(bpms[1] * SpeedMod)
+		bpms[2] = ("%.0f"):format(bpms[2] * SpeedMod)
+
+	elseif SpeedModType=="M" then
+		bpms[1] = ("%.0f"):format(bpms[1] * (SpeedMod/bpms[2]))
+		bpms[2] = ("%.0f"):format(SpeedMod)
+
+	elseif SpeedModType=="C" then
+		bpms[1] = ("%.0f"):format(SpeedMod)
+		bpms[2] = ("%.0f"):format(SpeedMod)
 	end
 
-	return text
+	if bpms[1] == bpms[2] then
+		return bpms[1]
+	end
+
+	return ("%s-%s"):format(bpms[1], bpms[2])
 end
 
 -- use this to directly manipulate the SpeedMod numbers in the global SL table
@@ -120,18 +117,17 @@ local t = Def.ActorFrame{
 		end
 	end,
 	MusicRateChangedMessageCommand=function(self)
-		-- variables to be used for setting the text in the "Speed Mod" OptionRow title
-		local screen = SCREENMAN:GetTopScreen()
-
 		-- ScreenAttackMenu is both minimal (not many OptionRows) and buggy
 		-- so if we're there, bail now
-		if screen:GetName() == "ScreenAttackMenu" then return end
+		if SCREENMAN:GetTopScreen():GetName() == "ScreenAttackMenu" then return end
 
 		-- update SpeedModHelper text to reflect the new music rate
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			self:GetChild(ToEnumShortString(player) .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
+			self:queuecommand("Refresh")
 		end
-
+	end,
+	RefreshCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
 		-- find the index of the OptionRow for MusicRate so we can update
 		-- the text of its title BitmapText as the MusicRate changes
 		local MusicRateRowIndex = FindOptionRowIndex(screen, "MusicRate")
@@ -160,13 +156,13 @@ t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
 	local song = GAMESTATE:GetCurrentSong()
-	local bpms = player_bpms[player]
 
 	t[#t+1] = Def.Actor{
 
-		-- the player wants to change their SpeedModType (x, M, C)
+		-- this is called from ./Scripts/SL-PlayerOptions.lua when the player changes their SpeedModType (X, M, C)
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
 
+			local bpms = GetDisplayBPMs(player)
 			local oldtype = SL[pn].ActiveModifiers.SpeedModType
 			local newtype = params.SpeedModType
 
@@ -215,8 +211,11 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			end
 
 			SpeedModBMTs[pn]:settext( text )
-			self:GetParent():GetChild(pn .. "SpeedModHelper"):settext( GetSpeedModHelperText(player) )
+			self:GetParent():queuecommand("Refresh")
 		end,
+
+		["CurrentSteps" .. pn .. "ChangedMessageCommand"]=function(self) self:queuecommand("Set"..pn) end,
+		["CurrentTrail" .. pn .. "ChangedMessageCommand"]=function(self) self:queuecommand("Set"..pn) end,
 
 		["MenuLeft" .. pn .. "MessageCommand"]=function(self)
 			local topscreen = SCREENMAN:GetTopScreen()
@@ -248,7 +247,10 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			self:x(player==PLAYER_1 and -100 or 150)
 			self:shadowlength(0.55)
 		end,
-		OnCommand=function(self) self:linear(0.4):diffusealpha(1) end
+		OnCommand=function(self) self:linear(0.4):diffusealpha(1) end,
+		RefreshCommand=function(self)
+			self:settext( ("%s%s"):format(SL[pn].ActiveModifiers.SpeedModType, CalculateScrollSpeed(player)) )
+		end
 	}
 end
 

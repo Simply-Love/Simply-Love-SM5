@@ -247,6 +247,76 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	Difficulty = {
+		ExportOnChange = true,
+		Choices = function()
+			local choices = {}
+
+			if not GAMESTATE:IsCourseMode() then
+				local song = GAMESTATE:GetCurrentSong()
+				if song then
+					for steps in ivalues( SongUtil.GetPlayableSteps(song) ) do
+						if steps:IsAnEdit() then
+							choices[#choices+1] = ("%s %i"):format(steps:GetDescription(), steps:GetMeter())
+						else
+							choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())), steps:GetMeter())
+						end
+					end
+				end
+			else
+				local course = GAMESTATE:GetCurrentCourse()
+				if course then
+					for _,trail in ipairs(course:GetAllTrails()) do
+						local playable = true
+						for _,entry in ipairs(trail:GetTrailEntries()) do
+							if not SongUtil.IsStepsTypePlayable(entry:GetSong(), entry:GetSteps():GetStepsType()) then
+								playable = false
+								break
+							end
+						end
+						if playable then
+							choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(trail:GetDifficulty())), trail:GetMeter())
+						end
+					end
+				end
+			end
+
+			return choices
+		end,
+		Values = function()
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			if SongOrCourse then
+				if GAMESTATE:IsCourseMode() then
+					return SongOrCourse:GetAllTrails()
+				else
+					return SongUtil.GetPlayableSteps(SongOrCourse)
+				end
+			end
+			return {}
+		end,
+		LoadSelections = function(self, list, pn)
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn) or GAMESTATE:GetCurrentSteps(pn)
+			local i = FindInTable(StepsOrTrail, self.Values) or 1
+			list[i] = true
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			for i,v in ipairs(self.Values) do
+				if list[i] then
+					if GAMESTATE:IsCourseMode() then
+						GAMESTATE:SetCurrentTrail(pn, v)
+						MESSAGEMAN:Broadcast("CurrentTrail"..ToEnumShortString(pn).."Changed")
+						break
+					else
+						GAMESTATE:SetCurrentSteps(pn, v)
+						MESSAGEMAN:Broadcast("CurrentSteps"..ToEnumShortString(pn).."Changed")
+						break
+					end
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
 		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },
