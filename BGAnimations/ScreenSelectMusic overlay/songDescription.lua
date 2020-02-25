@@ -166,7 +166,13 @@ local t = Def.ActorFrame{
 					local seconds
 
 					if SelectedType == "WheelItemDataType_Song" then
-						seconds = GAMESTATE:GetCurrentSong():MusicLengthSeconds()
+						-- GAMESTATE:GetCurrentSong() can return nil here if we're in pay mode on round 2 (or later)
+						-- and we're returning to SSM to find that the song we'd just played is no longer available
+						-- because it exceeds the 2-round or 3-round time limit cutoff.
+						local song = GAMESTATE:GetCurrentSong()
+						if song then
+							seconds = song:MusicLengthSeconds()
+						end
 
 					elseif SelectedType == "WheelItemDataType_Section" then
 						-- MusicWheel:GetSelectedSection() will return a string for the text of the currently active WheelItem
