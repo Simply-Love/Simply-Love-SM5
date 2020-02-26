@@ -112,7 +112,7 @@ for player in ivalues(Players) do
 			playerStats = SL[ToEnumShortString(player)].Stages.Stats[StageNum]
 
 			if playerStats then
-		 		difficultyMeter = playerStats.difficultyMeter
+		 		difficultyMeter = playerStats.meter
 		 		difficulty = playerStats.difficulty
 		 		stepartist = playerStats.stepartist
 		 		grade = playerStats.grade
