@@ -2,13 +2,31 @@
 -- Helper Functions for PlayerOptions
 ------------------------------------------------------------
 
-local function GetModsAndPlayerOptions(player)
+local GetModsAndPlayerOptions = function(player)
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
 	local topscreen = SCREENMAN:GetTopScreen():GetName()
 	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
 	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
 
 	return mods, playeroptions
+end
+
+local GetPlayableTrails = function(course)
+	if not (course and course.GetAllTrails) then return nil end
+
+	local trails = {}
+	for _,trail in ipairs(course:GetAllTrails()) do
+		local playable = true
+		for _,entry in ipairs(trail:GetTrailEntries()) do
+			if not SongUtil.IsStepsTypePlayable(entry:GetSong(), entry:GetSteps():GetStepsType()) then
+				playable = false
+				break
+			end
+		end
+		if playable then table.insert(trails, trail) end
+	end
+
+	return trails
 end
 
 ------------------------------------------------------------
@@ -266,17 +284,8 @@ local Overrides = {
 			else
 				local course = GAMESTATE:GetCurrentCourse()
 				if course then
-					for _,trail in ipairs(course:GetAllTrails()) do
-						local playable = true
-						for _,entry in ipairs(trail:GetTrailEntries()) do
-							if not SongUtil.IsStepsTypePlayable(entry:GetSong(), entry:GetSteps():GetStepsType()) then
-								playable = false
-								break
-							end
-						end
-						if playable then
-							choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(trail:GetDifficulty())), trail:GetMeter())
-						end
+					for _,trail in ipairs(GetPlayableTrails(course)) do
+						choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(trail:GetDifficulty())), trail:GetMeter())
 					end
 				end
 			end
@@ -287,7 +296,7 @@ local Overrides = {
 			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			if SongOrCourse then
 				if GAMESTATE:IsCourseMode() then
-					return SongOrCourse:GetAllTrails()
+					return GetPlayableTrails(SongOrCourse)
 				else
 					return SongUtil.GetPlayableSteps(SongOrCourse)
 				end
