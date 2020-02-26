@@ -37,17 +37,21 @@ local CalculateScrollSpeed = function(player)
 	if not (bpms and bpms[1] and bpms[2]) then return "" end
 
 	if SpeedModType=="X" then
-		bpms[1] = ("%.0f"):format(bpms[1] * SpeedMod)
-		bpms[2] = ("%.0f"):format(bpms[2] * SpeedMod)
+		bpms[1] = bpms[1] * SpeedMod
+		bpms[2] = bpms[2] * SpeedMod
 
 	elseif SpeedModType=="M" then
-		bpms[1] = ("%.0f"):format(bpms[1] * (SpeedMod/bpms[2]))
-		bpms[2] = ("%.0f"):format(SpeedMod)
+		bpms[1] = bpms[1] * (SpeedMod/bpms[2])
+		bpms[2] = SpeedMod
 
 	elseif SpeedModType=="C" then
-		bpms[1] = ("%.0f"):format(SpeedMod)
-		bpms[2] = ("%.0f"):format(SpeedMod)
+		bpms[1] = SpeedMod
+		bpms[2] = SpeedMod
 	end
+
+	-- format as strings
+	bpms[1] = ("%.0f"):format(bpms[1])
+	bpms[2] = ("%.0f"):format(bpms[2])
 
 	if bpms[1] == bpms[2] then
 		return bpms[1]
