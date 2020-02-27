@@ -39,6 +39,10 @@ end
 
 if not Branch then Branch = {} end
 
+Branch.AfterScreenRankingDouble = function()
+	return PREFSMAN:GetPreference("MemoryCards") and "ScreenMemoryCard" or "ScreenRainbow"
+end
+
 SelectMusicOrCourse = function()
 	if GAMESTATE:IsCourseMode() then
 		return "ScreenSelectCourse"
