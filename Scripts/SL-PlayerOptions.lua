@@ -317,15 +317,20 @@ local Overrides = {
 		SaveSelections = function(self, list, pn)
 			for i,v in ipairs(self.Values) do
 				if list[i] then
+					-- GAMESTATE keeps track of what the "preferred difficulty" is and this is used by
+					-- the engine's SelectMusic class.  SL is using the engine's SelectMusic for now.
+					-- Set the PreferredDifficulty now so that the player's newly chosen difficulty
+					-- doesn't reset when they return to SelectMusic/SelectCourse.
+					GAMESTATE:SetPreferredDifficulty(pn, v:GetDifficulty())
+
 					if GAMESTATE:IsCourseMode() then
 						GAMESTATE:SetCurrentTrail(pn, v)
 						MESSAGEMAN:Broadcast("CurrentTrail"..ToEnumShortString(pn).."Changed")
-						break
 					else
 						GAMESTATE:SetCurrentSteps(pn, v)
 						MESSAGEMAN:Broadcast("CurrentSteps"..ToEnumShortString(pn).."Changed")
-						break
 					end
+					break
 				end
 			end
 		end
