@@ -11,6 +11,11 @@ local GetModsAndPlayerOptions = function(player)
 	return mods, playeroptions
 end
 
+-- -----------------------------------------------------------------------
+-- For normal gameplay, the engine offers SongUtil.GetPlayableSteps()
+-- but there is not currently any analogous helper function for CourseMode.
+-- Let's use this for now.
+
 local GetPlayableTrails = function(course)
 	if not (course and course.GetAllTrails) then return nil end
 

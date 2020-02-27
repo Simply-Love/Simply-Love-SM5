@@ -1,3 +1,8 @@
+-- the difficulty grid and per-player bouncing cursors don't support CourseMode
+-- CourseContentsList.lua should be used instead
+if GAMESTATE:IsCourseMode() then return end
+-- ----------------------------------------------
+
 local player = ...
 local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
@@ -40,24 +45,18 @@ return Def.Sprite{
 
 	OnCommand=function(self) self:queuecommand("Set") end,
 	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentTrailP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentTrailP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
 	SetCommand=function(self)
-		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		local song = GAMESTATE:GetCurrentSong()
 
-		if SongOrCourse then
-			local AllStepsOrTrails = (GAMESTATE:IsCourseMode() and SongOrCourse:GetAllTrails()) or SongUtil.GetPlayableSteps( SongOrCourse )
-			local StepsToDisplay = GetStepsToDisplay(AllStepsOrTrails)
-			local CurrentStepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+		if song then
+			local playable_steps = SongUtil.GetPlayableSteps( song )
+			local current_steps = GAMESTATE:GetCurrentSteps(player)
 
-
-
-			for i,chart in pairs(StepsToDisplay) do
-				if chart == CurrentStepsOrTrail then
+			for i,chart in pairs( GetStepsToDisplay(playable_steps) ) do
+				if chart == current_steps then
 					RowIndex = i
 					break
 				end

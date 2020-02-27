@@ -2,7 +2,7 @@
 -- call this to draw a Quad with a border
 -- width of quad, height of quad, and border width, in pixels
 
-function Border(width, height, bw)
+Border = function(width, height, bw)
 	return Def.ActorFrame {
 		Def.Quad { InitCommand=function(self) self:zoomto(width-2*bw, height-2*bw):MaskSource(true) end },
 		Def.Quad { InitCommand=function(self) self:zoomto(width,height):MaskDest() end },

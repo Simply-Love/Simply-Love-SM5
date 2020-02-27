@@ -8,15 +8,19 @@ return Def.ActorFrame{
 	Name="StepArtistAF_" .. pn,
 
 	-- song and course changes
-	OnCommand=function(self) self:queuecommand("StepsHaveChanged") end,
-	CurrentSongChangedMessageCommand=function(self) self:queuecommand("StepsHaveChanged") end,
-	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("StepsHaveChanged") end,
+	OnCommand=function(self) self:queuecommand("Reset") end,
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("Reset") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Reset") end,
+	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Reset") end,
 
 	PlayerJoinedMessageCommand=function(self, params)
 		if params.Player == player then
 			self:queuecommand("Appear" .. pn)
 		end
 	end,
+
+	-- Simply Love doesn't support player unjoining (that I'm aware of!) but this
+	-- animation is left here as a reminder to a future me to maybe look into it.
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if params.Player == player then
 			self:ease(0.5, 275):addy(scale(p,0,1,1,-1) * 30):diffusealpha(0)
@@ -50,7 +54,7 @@ return Def.ActorFrame{
 	Def.Quad{
 		Name="BackgroundQuad",
 		InitCommand=function(self) self:zoomto(175, _screen.h/28):x(113) end,
-		StepsHaveChangedCommand=function(self)
+		ResetCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
 			if StepsOrTrail then
@@ -70,7 +74,7 @@ return Def.ActorFrame{
 	--stepartist text
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:diffuse(color("#1e282f")):horizalign(left):x(75):maxwidth(115) end,
-		StepsHaveChangedCommand=function(self)
+		ResetCommand=function(self)
 
 			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
