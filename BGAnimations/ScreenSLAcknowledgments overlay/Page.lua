@@ -19,7 +19,7 @@ local display_time = 3
 -- and append extra functionality (fading, etc.) later, if needed
 local PictureActor = function( path, _y )
 	local spr = Def.Sprite{
-		Texture=THEME:GetPathB("ScreenSimplyLoveCredits", "overlay/img/"..path),
+		Texture=THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..path),
 		InitCommand=function(self)
 			src_width  = self:GetTexture():GetSourceWidth()
 			src_height = self:GetTexture():GetSourceHeight()
