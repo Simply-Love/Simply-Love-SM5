@@ -17,11 +17,6 @@ return {
 	-- page 2
 	{
 		{
-			Name="AJ / freem",
-			Img="freem.png",
-			About="I used freem's SM5 theme, Moonlight, as the foundation/starting point when first working on this theme.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.\n\nfreem's sardonic wit, typically left via inline comments throughout Moonlight and SM5's source, helped keep me going."
-		},
-		{
 			Name="djpohly",
 			Img="djpohly.png",
 			About="djpohly authored the PIUIO Linux Kernel driver, which made running SM5 on arcade hardware initially feasible.\n\nKnowledgable about every programming question I threw his way, djpohly always crafted his explanations so that I could both understand and still be curious to learn just a little more.\n\nI have fond memories of late nights shared hacking on kernels and cookie dough Pop Tarts alike."
@@ -29,11 +24,30 @@ return {
 		{
 			Name="Jason / Lightning",
 			Img="Lightning.png",
-			About="Jason is a prolific UI and GFX designer in the rhythm game community and has led the design of major projects like ITG3, PIU Pro 2, ReRave Arcade, and StepManiaX.\n\nI first met Jason in 2011 when I was learning to theme by making indisputably bad recolors of ITG3. Every time I proudly showed off these early efforts to Jason, he would smile, tell me I was making great progress, and encourage me to keep experimenting.  I reflect on this every time I get bent out of shape because someone is modding Simply Love."
+			About="Jason is a prolific UI and GFX designer in the rhythm game community and has led the design of major projects like ITG3, PIU Pro 2, ReRave Arcade, and StepManiaX.\n\nI first met Jason in 2011 when I was learning to theme by making indisputably bad recolors of ITG3. Every time I proudly showed off these early efforts to Jason, he would smile, tell me I was making great progress, and encourage me to keep experimenting."
+		},
+		{
+			Name="vyhd",
+			Img="",
+			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"  He was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
 		},
 	},
 
 	-- page 3
+	{
+		{
+			Name="David / mute",
+			Img="mute.png",
+			About="David composed much of the menu music for Simply Love.  In addition to being a prolific simfile author, he is known in the community for figuring out how to properly sync simfiles and authoring the de facto standard guide to simfile syncing.\n\nDavid was an early adopter of SM5 on arcade hardware and has been a vocal proponent of getting people to switch from SM3.95."
+		},
+		{
+			Name="AJ / freem",
+			Img={"freem.png", "mr.choices.jpg"},
+			About="I used freem's SM5 theme, Moonlight, as the foundation/starting point when first working on this theme.  While virtually none of Moonlight is left in Simply Love at this point, it helped immensely in providing the examples I needed when getting started.\n\nfreem's sardonic wit, typically left via inline comments throughout Moonlight and SM5's source, helped keep me going."
+		},
+	},
+
+	-- page 4
 	{
 		{
 			Name="kyzentun",
@@ -52,7 +66,7 @@ return {
 		},
 	},
 
-	-- page 4
+	-- page 5
 	{
 		{
 			Name="Caitlin / Evocait",
@@ -72,7 +86,7 @@ return {
 		}
 	},
 
-	-- page 5
+	-- page 6
 	{
 		{
 			Name="Dance Dance Maniacs",
@@ -86,7 +100,27 @@ return {
 		}
 	},
 
-	-- page 6
+	-- page 7
+	{
+
+		{
+			Name="andrewipark",
+			Img="andrew.png",
+			About="Andrew has consistently submitted fantastic pull requests to the Simply Love project that fixed bugs, improved performance, and made my life a little bit easier.  He is a good friend and a thoughtful human, one who is taken by\n\narranging his words\nin considerate patterns\nof five seven five.",
+		},
+		{
+			Name="Alan / TaroNuke",
+			Img="taronuke.png",
+			About="Alan's programming work with the UKSRT and Mawaru series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
+		},
+		{
+			Name="bblum",
+			Img="bblum.jpg",
+			About="bblum offered me a place to stay when my life was in chaos and my mental space was a hellscape.  Moreover, they afforded a sense of local friendship when the city felt impossibly large and isolating.\n\nWe connected over grad school experiences and they demonstrated that formal academic journal articles can be enjoyable if you find the right topic (see: SIGBOVIK 2016 proceedings).",
+		},
+	},
+
+	-- page 8
 	{
 		{
 			Name="Ian / Archi",
@@ -105,26 +139,7 @@ return {
 		},
 	},
 
-	-- page 7
-	{
-		{
-			Name="David / mute",
-			Img="mute.png",
-			About="David composed much of the menu music for Simply Love.  In addition to being a prolific simfile author, he is known in the community for figuring out how to properly sync simfiles and authoring the de facto standard guide to simfile syncing.\n\nDavid was an early adopter of SM5 on arcade hardware and has been a vocal proponent of getting people to switch from SM3.95."
-		},
-		{
-			Name="andrewipark",
-			Img="andrew.png",
-			About="Andrew has consistently submitted fantastic pull requests to the Simply Love project that fixed bugs, improved performance, and made my life a little bit easier.  He is a good friend and a thoughtful human, one who is taken by\n\narranging his words\nin considerate patterns\nof five seven five.",
-		},
-		{
-			Name="Alan / TaroNuke",
-			Img="taronuke.png",
-			About="Alan's programming work with the UKSRT and Mawaru series blows away every preconceived notion you've ever had of what dance games can be. The results are amusing, startling, incredible, and always fun.\n\nHe's a good friend, and has helped me be a kinder human being."
-		},
-	},
-
-	-- page 8
+	-- page 9
 	{
 		{
 			Name="Jose_Varela",
@@ -143,7 +158,7 @@ return {
 		},
 	},
 
-	-- page 9
+	-- page 10
 	{
 		{
 			Name="FMS_Cat",
@@ -157,7 +172,7 @@ return {
 		},
 	},
 
-	-- page 10
+	-- page 11
 	{
 		{
 			Name="Riakodoadm",
@@ -169,20 +184,6 @@ return {
 			Name="pluto",
 			Img="pluto.png",
 			About="Pluto has supplied exceptional art for many dance game events such as ECS and Nordic Cup, and has infused each with her signature style.\n\nWhen she collaborated with me on my Distant Towers visual novel project, her artistic output brought life and vitality to my moribund mind, and her feedback as a friend kept my soul on life support and my heart beating while I was otherwise dead.",
-		},
-	},
-
-	-- page 11
-	{
-		{
-			Name="vyhd",
-			Img="",
-			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"\n\nHe was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
-		},
-		{
-			Name="bblum",
-			Img="bblum.jpg",
-			About="bblum offered me a place to stay when my life was in chaos and my mental space was a hellscape.  Moreover, they afforded a sense of local friendship when the city felt impossibly large and isolating.\n\nWe connected over grad school experiences and they demonstrated that formal academic journal articles can be enjoyable if you find the right topic (see: SIGBOVIK 2016 proceedings).",
 		},
 	},
 
