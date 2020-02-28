@@ -94,7 +94,7 @@ local Overrides = {
 				if list[i] then
 					-- Broadcast a message that ./BGAnimations/ScreenPlayerOptions overlay.lua will be listening for
 					-- so it can hackishly modify the single BitmapText actor used in the SpeedMod optionrow
-					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i]})
+					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i], Player=pn})
 				end
 			end
 		end

@@ -126,9 +126,7 @@ local t = Def.ActorFrame{
 		if SCREENMAN:GetTopScreen():GetName() == "ScreenAttackMenu" then return end
 
 		-- update SpeedModHelper text to reflect the new music rate
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			self:queuecommand("Refresh")
-		end
+		self:queuecommand("Refresh")
 	end,
 	RefreshCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
@@ -165,40 +163,41 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 		-- this is called from ./Scripts/SL-PlayerOptions.lua when the player changes their SpeedModType (X, M, C)
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
+			if params.Player ~= player then return end
 
-			local bpms = GetDisplayBPMs(player)
 			local oldtype = SL[pn].ActiveModifiers.SpeedModType
 			local newtype = params.SpeedModType
 
-			if oldtype ~= newtype then
+			-- this should never happen, but hey, might as well check
+			if oldtype == newtype then return end
 
-				local speedmod = SL[pn].ActiveModifiers.SpeedMod
-				local increment = speedmod_def[newtype].increment
+			local bpms = GetDisplayBPMs(player)
+			local speedmod = SL[pn].ActiveModifiers.SpeedMod
+			local increment = speedmod_def[newtype].increment
 
-				-- round to the nearest speed increment in the new mode
-				-- if we have an active rate mod, then we have to undo/redo
-				-- our automatic rate mod compensation
+			-- round to the nearest speed increment in the new mode
+			-- if we have an active rate mod, then we have to undo/redo
+			-- our automatic rate mod compensation
 
-				if oldtype == "X" then
-					-- apply rate compensation now
-					speedmod = speedmod * SL.Global.ActiveModifiers.MusicRate
-					speedmod = (round((speedmod * bpms[2]) / increment)) * increment
+			if oldtype == "X" then
+				-- apply rate compensation now
+				speedmod = speedmod * SL.Global.ActiveModifiers.MusicRate
+				speedmod = (round((speedmod * bpms[2]) / increment)) * increment
 
-				elseif newtype == "X" then
-					-- revert rate compensation since it's handled for XMod
-					speedmod = speedmod / SL.Global.ActiveModifiers.MusicRate
-					speedmod = (round(speedmod / bpms[2] / increment)) * increment
-				end
-
-				-- it's possible for the procedure above to cause the player's speedmod to exceed
-				-- the upper bound of the new Mmod or Cmod; clamp to prevent that
-				speedmod = clamp(speedmod, increment, speedmod_def[newtype].upper)
-
-				SL[pn].ActiveModifiers.SpeedMod     = speedmod
-				SL[pn].ActiveModifiers.SpeedModType = newtype
-
-				self:queuecommand("Set" .. pn)
+			elseif newtype == "X" then
+				-- revert rate compensation since it's handled for XMod
+				speedmod = speedmod / SL.Global.ActiveModifiers.MusicRate
+				speedmod = (round(speedmod / bpms[2] / increment)) * increment
 			end
+
+			-- it's possible for the procedure above to cause the player's speedmod to exceed
+			-- the upper bound of the new Mmod or Cmod; clamp to prevent that
+			speedmod = clamp(speedmod, increment, speedmod_def[newtype].upper)
+
+			SL[pn].ActiveModifiers.SpeedMod     = speedmod
+			SL[pn].ActiveModifiers.SpeedModType = newtype
+
+			self:queuecommand("Set" .. pn)
 		end,
 
 		["Set" .. pn .. "Command"]=function(self)
