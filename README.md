@@ -1,5 +1,7 @@
 # Simply-Love-Tweaks
-A new game mode that's basically Simply Love ITG but with a couple added features. Right now this mode works best for single player event mode. So no marathons, maybe no doubles, no FA+/Casual/Stomper, no coin modes (they may work but haven't tested). This mode uses a profile's stats.xml to save/load scores (which is what Simply Love ITG mode uses)
+A new game mode that's basically Simply Love ITG but with a couple added features. Right now this mode works best for single player event mode. So no marathons, no FA+/Casual/Stomper, coin modes and doubles may work but i haven't tested them. This mode uses a profile's stats.xml to save/load scores (which is what Simply Love ITG mode uses)
+
+NOTE-The first load will be VERY slow (the more songs you have the slower it'll go). Please be patient and let it sit - might take many minutes.
 
 Requirements:
 
@@ -28,6 +30,8 @@ Order options - Change the way songs are ordered within a group. For example, if
 
 [Options Pane before starting a song](https://i.imgur.com/GU6vXBR.jpg) - before starting a song there's a selectable display with various bits of info. One is a graph of all the songs played today and what score you got on them. It's cool to visualize trends in difficulty/grade for me at least but for people who get 99+ all the time it's probably useless.
 
+Charts are tracked by hash - if you have duplicates of a song you'll see your scores on both files. If you change the steps in a song it'll count as a new song and won't show all your old scores.
+
 Known Issues:
 
 There are a couple blank places that will eventually be filled in when I decide what to put there.
@@ -36,6 +40,6 @@ If you don't have a select button once you enter the options pane you have to ei
 
 I haven't tested different resolutions so probably doesn't work super well on widescreen.
 
-I haven't tested with large libraries. Initial load is long because all songs need to be put in to groups but after that it should be fine.
+Initial load is extremely slow
 
 If you have tagged songs and then delete the tag, the tagged songs won't show up in the untagged group. Once you add the tag back in they'll all reappear.
