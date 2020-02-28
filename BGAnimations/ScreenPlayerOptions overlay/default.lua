@@ -180,13 +180,9 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			-- our automatic rate mod compensation
 
 			if oldtype == "X" then
-				-- apply rate compensation now
-				speedmod = speedmod * SL.Global.ActiveModifiers.MusicRate
 				speedmod = (round((speedmod * bpms[2]) / increment)) * increment
 
 			elseif newtype == "X" then
-				-- revert rate compensation since it's handled for XMod
-				speedmod = speedmod / SL.Global.ActiveModifiers.MusicRate
 				speedmod = (round(speedmod / bpms[2] / increment)) * increment
 			end
 
