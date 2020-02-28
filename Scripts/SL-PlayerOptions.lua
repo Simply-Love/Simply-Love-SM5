@@ -270,7 +270,7 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
-	Difficulty = {
+	Stepchart = {
 		ExportOnChange = true,
 		Choices = function()
 			local choices = {}
