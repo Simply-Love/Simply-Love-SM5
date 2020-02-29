@@ -16,7 +16,8 @@ end
 -- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
 
 SupportsRenderToTexture = function()
-	return PREFSMAN:GetPreference("VideoRenderers"):sub(1,6):lower() == "opengl"
+	-- ensure the method exists and, if so, ensure that it returns true
+	return DISPLAY.SupportsRenderToTexture and DISPLAY:SupportsRenderToTexture()
 end
 
 -- -----------------------------------------------------------------------
