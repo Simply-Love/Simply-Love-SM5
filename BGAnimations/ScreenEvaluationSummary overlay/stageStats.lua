@@ -197,8 +197,7 @@ for player in ivalues(Players) do
 					local val = playerStats.judgments[TNSTypes[i]]
 					if val then self:settext(val) end
 
-					local worst = SL.Global.Stages.Stats[StageNum].WorstTimingWindow
-					self:visible( i <= worst or i==#TNSTypes )
+					self:visible( SL.Global.Stages.Stats[StageNum].TimingWindows[i] or i==#TNSTypes )
 				else
 					self:settext("")
 				end

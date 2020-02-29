@@ -58,7 +58,7 @@ for i,column in ipairs( columns[game] ) do
 	-- for each possible judgment
 	for j, judgment in ipairs(rows) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
-		if j <= gmods.WorstTimingWindow or j==#rows then
+		if gmods.TimingWindows[j] or j==#rows then
 			-- add a BitmapText actor to be the number for this column
 			af[#af+1] = LoadFont("Common Normal")..{
 				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],

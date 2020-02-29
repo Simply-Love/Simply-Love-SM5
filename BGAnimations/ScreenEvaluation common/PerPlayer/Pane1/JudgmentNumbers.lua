@@ -44,7 +44,7 @@ for i=1,#TapNoteScores.Types do
 			-- be colored any differently than the (lack of) JudgmentNumber,
 			-- so load a unique Metric group.
 			local gmods = SL.Global.ActiveModifiers
-			if i > gmods.WorstTimingWindow and i ~= #TapNoteScores.Types then
+			if gmods.TimingWindows[i]==false and i ~= #TapNoteScores.Types then
 				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
 				self:diffuse(color("#444444"))
 

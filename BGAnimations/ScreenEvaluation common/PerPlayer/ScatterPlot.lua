@@ -23,8 +23,25 @@ local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
-local num_judgments_available = SL.Global.ActiveModifiers.WorstTimingWindow
-local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..(num_judgments_available > 0 and num_judgments_available or 5)]
+local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
+local windows = SL.Global.ActiveModifiers.TimingWindows
+for i=5,1 do
+	if windows[i] then
+		worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW"..i)
+		break
+	end
+end
+
+-- ---------------------------------------------
+
+local colors = {}
+for w=5,1,-1 do
+	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
+		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
+	else
+		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
+	end
+end
 
 -- ---------------------------------------------
 
@@ -47,7 +64,7 @@ for t in ivalues(sequential_offsets) do
 		y = scale(Offset, worst_window, -worst_window, 0, GraphHeight)
 
 		-- get the appropriate color from the global SL table
-		c = SL.JudgmentColors[SL.Global.GameMode][TimingWindow]
+		c = colors[TimingWindow]
 		-- get the red, green, and blue values from that color
 		r = c[1]
 		g = c[2]

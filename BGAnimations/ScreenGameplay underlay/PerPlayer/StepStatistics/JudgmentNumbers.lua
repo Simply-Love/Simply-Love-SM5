@@ -35,7 +35,8 @@ for index, window in ipairs(TapNoteScores) do
 		Text=(pattern):format(0),
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(left)
-			if index <= SL.Global.ActiveModifiers.WorstTimingWindow or index==#TapNoteScores then
+
+			if SL.Global.ActiveModifiers.TimingWindows[index] or index==#TapNoteScores then
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
 				leadingZeroAttr = { Length=(digits-1), Diffuse=Brightness(self:GetDiffuse(), 0.35) }
 				self:AddAttribute(0, leadingZeroAttr )

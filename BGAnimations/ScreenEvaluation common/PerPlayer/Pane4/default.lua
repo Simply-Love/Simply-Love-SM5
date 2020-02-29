@@ -19,11 +19,33 @@ local abbreviations = {
 	StomperZ = { "Perf", "Gr", "Good", "Hit", "" }
 }
 
+local colors = {}
+for w=5,1,-1 do
+	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
+		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
+	else
+		abbreviations[SL.Global.GameMode][w] = abbreviations[SL.Global.GameMode][w+1]
+		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
+	end
+end
+
 -- ---------------------------------------------
 -- if players have disabled W5 or W4+W5, there will be a smaller range
 -- of judgments that could have possibly been earned
-local num_judgments_available = SL.Global.ActiveModifiers.WorstTimingWindow
-local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..(num_judgments_available > 0 and num_judgments_available or 5)]
+local num_judgments_available = 5
+local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
+local windows = SL.Global.ActiveModifiers.TimingWindows
+
+-- SM(windows)
+
+for i=5,1,-1 do
+	if windows[i]==true then
+		num_judgments_available = i
+		worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW"..i)
+		break
+	end
+end
+
 
 -- ---------------------------------------------
 -- sequential_offsets is a table of all timing offsets in the order they were earned.
@@ -117,7 +139,7 @@ pane[#pane+1] = Def.BitmapText{
 	InitCommand=function(self)
 		local x = pane_width/2
 
-		self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+		self:diffuse( colors[1] )
 			:addx(x):addy(7)
 			:zoom(0.65)
 	end,
@@ -139,7 +161,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			self:diffuse( colors[i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,
@@ -157,7 +179,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			self:diffuse( colors[i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,
@@ -181,7 +203,7 @@ pane[#pane+1] = Def.Quad{
 -- only bother crunching the numbers and adding extra BitmapText actors if there are
 -- valid offset values to analyze; (MISS has no numerical offset and can't be analyzed)
 if next(offsets) ~= nil then
-	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height})
+	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
 end
 
 local label = {}
