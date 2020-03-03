@@ -6,18 +6,7 @@ local zoom_factor = WideScale(0.8, 0.9)
 local dataX_col1 = WideScale(-75, -96)
 local highscoreX = WideScale(56, 80)
 
-local FormatDate = function(scoredate)
-	if scoredate == "" then
-		return ""
-	else
-		local numbers = {}
-		for number in string.gmatch(scoredate, "%d+") do
-			numbers[#numbers + 1] = number
-		end
-		if #numbers ~= 3 then return scoredate end --if we don't have three numbers it's a malformed date so send it back
-		return numbers[2] .. "-" .. numbers[3] .. "-" .. numbers[1]
-	end
-end
+
 
 local GetNameAndScoreAndDate = function(profile)
 	local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
@@ -62,8 +51,8 @@ local af =
 		local player_score, player_date, first_pass, last_played, times_played
 		if GAMESTATE:GetCurrentSong() then --if there's no song there won't be a hash
 			local hash = GetHash(player)
-			if hash and SL[pn].Scores[GetHash(player)] then
-				local scores = GetScores(player, hash, true)
+			if hash and SL[pn].Scores[hash] then
+				local scores = GetScores(player, hash)
 				if scores then
 					player_score = FormatPercentScore(scores[1].score)
 					player_date = FormatDate(Split(scores[1].dateTime)[1])

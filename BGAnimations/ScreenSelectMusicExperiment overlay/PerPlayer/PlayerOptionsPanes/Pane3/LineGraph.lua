@@ -25,7 +25,7 @@ CreateLineGraph = function(_w, _h)
 	}
 	legend.InitCommand=function(self)
 		self:zoom(1):halign(0):xy(-100,10)
-	end						
+	end
 ----------------------------------------------------------------------------------------------------
 --Line connecting the points on the graph
 ----------------------------------------------------------------------------------------------------	
@@ -50,7 +50,7 @@ CreateLineGraph = function(_w, _h)
 	pointsLine.InitCommand=function(self)
 		self:SetDrawState({Mode="DrawMode_LineStrip"})
 			:xy(-75,-75)
-	end	
+	end
 	
 ----------------------------------------------------------------------------------------------------
 --Gridlines
@@ -94,7 +94,7 @@ CreateLineGraph = function(_w, _h)
 	graphLines.InitCommand=function(self)
 		self:SetDrawState({Mode="DrawMode_Quads"})
 			:xy(-75,-75)
-	end																																  
+	end															  
 ----------------------------------------------------------------------------------------------------
 --Points on the graph
 ----------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ CreateLineGraph = function(_w, _h)
 	graphPoints.InitCommand=function(self)
 		self:SetDrawState({Mode="DrawMode_Quads"})
 			:xy(-75,-75)
-	end	
+	end
 ----------------------------------------------------------------------------------------------------
 --Grade Underlay
 ----------------------------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ CreateLineGraph = function(_w, _h)
 			legend:Initialize(self:GetChild("VertLegend_BMT"))
 		end
 	end
-	
+
 	return af
-	
+
 end

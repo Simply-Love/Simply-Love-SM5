@@ -26,13 +26,9 @@ local function input(event)
 			local focus = sort_wheel:get_actor_item_at_focus_pos()
 
 			if focus.kind == "SortBy" then
-				if focus.sort_by == "Tag" and #GetGroups("Tag") <= 1 then
-					SM("Create tags to use this sort type")
-				else
-					SL.Global.GroupType = focus.sort_by
-					MESSAGEMAN:Broadcast("GroupTypeChanged")
-					overlay:queuecommand("DirectInputToEngine")
-				end
+				SL.Global.GroupType = focus.sort_by
+				MESSAGEMAN:Broadcast("GroupTypeChanged")
+				overlay:queuecommand("DirectInputToEngine")
 			-- the player wants to adjust filters
 			elseif focus.kind == "Adjust" then
 				--go to filters screen
@@ -49,6 +45,8 @@ local function input(event)
 					overlay:queuecommand("DirectInputToOrderMenu")
 				elseif focus.new_overlay == "Sort" then
 					sortmenu:playcommand("SwitchToSort")
+				elseif focus.new_overlay == "Player Stats" then
+					overlay:queuecommand("DirectInputToPlayerStats")
 				end
 			end
 

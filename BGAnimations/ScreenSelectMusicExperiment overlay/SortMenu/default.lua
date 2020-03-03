@@ -73,6 +73,7 @@ local t = Def.ActorFrame {
 	DirectInputToTagMenuCommand=function(self) self:playcommand("FinishSort") end,
 	DirectInputToOrderMenuCommand=function(self) self:playcommand("FinishSort") end,
 	DirectInputToSearchMenuCommand=function(self) self:playcommand("FinishSort") end,
+	DirectInputToPlayerStatsCommand=function(self) self:playcommand("FinishSort") end,
 	DirectInputToTestInputCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
@@ -120,6 +121,9 @@ local t = Def.ActorFrame {
 		table.insert(wheel_options, {"Adjust", "Filters"})
 		table.insert(wheel_options, {"Modify", "Song Tags"})
 
+		if #GAMESTATE:GetHumanPlayers() == 1 then
+			table.insert(wheel_options, {"View", "Player Stats"})
+		end
 		--table.insert(wheel_options, {"SortBy", "Popularity"})
 		--table.insert(wheel_options, {"SortBy", "Recent"})
 

@@ -358,7 +358,7 @@ function AddScore(player)
 		local number = pss:GetTapNoteScores( "TapNoteScore_"..window )
 		stats[window] = number
 	end
-	for index, RCType in ipairs(RadarCategories.Types) do
+	for _, RCType in ipairs(RadarCategories.Types) do
 		local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 		stats[RCType] = performance
 	end
@@ -374,7 +374,7 @@ function AddScore(player)
 		SL[pn]['Scores'][hash].group = GAMESTATE:GetCurrentSong():GetGroupName()
 		SL[pn]['Scores'][hash].StepsType = stepsType
 		SL[pn]['Scores'][hash].hash = hash
-		if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Grade_Failed' then
+		if SL[pn]['Scores'][hash].FirstPass == "Never" and stats.grade ~= 'Failed' then
 			SL[pn]['Scores'][hash].FirstPass = stats.dateTime
 			SL[pn]['Scores'][hash].BestPass = 1
 		end

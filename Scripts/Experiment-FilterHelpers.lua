@@ -176,7 +176,7 @@ local OptionRowDefault = {
 			-- define fallback values to use here if an override isn't specified
 			self.LayoutType = Overrides[name].LayoutType or "ShowAllInRow"
 			self.SelectType = Overrides[name].SelectType or "SelectOne"
-			self.OneChoiceForAllPlayers = Overrides[name].OneChoiceForAllPlayers or false
+			self.OneChoiceForAllPlayers = Overrides[name].OneChoiceForAllPlayers or true
 			self.ExportOnChange = Overrides[name].ExportOnChange or false
 
 

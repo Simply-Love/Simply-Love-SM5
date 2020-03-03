@@ -60,11 +60,7 @@ local t = Def.ActorFrame{
 	Def.Quad{
 		Name="Background",
 		InitCommand=function(self)
-			if ThemePrefs.Get("ShowExtraSongInfo") then
-				self:diffuse(color("#1e282f")):zoomto(36, 96):x(-142)
-			else
-				self:diffuse(color("#1e282f")):zoomto(320, 96)
-			end 
+			self:diffuse(color("#1e282f")):zoomto(31, 96):halign(0):x(-160)
 			if ThemePrefs.Get("RainbowMode") then
 				self:diffusealpha(0.75)
 			end
@@ -77,7 +73,6 @@ local Grid = Def.ActorFrame{
 	Name="Grid",
 	InitCommand=function(self) self:horizalign(left):vertalign(top):xy(8, -52 ) end,
 }
-
 
 -- A grid of decorative faux-blocks that will exist
 -- behind the changing difficulty blocks.

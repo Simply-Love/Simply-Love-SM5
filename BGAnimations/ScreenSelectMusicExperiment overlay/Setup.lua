@@ -138,7 +138,7 @@ local GetGroupInfo = function()
 						info[group]['UnsortedLevel'][tostring(steps:GetMeter())] = 1 + (tonumber(info[group]['UnsortedLevel'][tostring(steps:GetMeter())]) or 0)
 						local hash = GetHash(mpn,song,steps)
 						if hash then
-							local highScore = GetScores(mpn,hash,true,true)
+							local highScore = GetScores(mpn,hash,false,true)
 							if highScore and highScore[1].grade ~= "Failed" then
 								info[group]['UnsortedPassedLevel'][tostring(steps:GetMeter())] = 1 + (tonumber(info[group]['UnsortedPassedLevel'][tostring(steps:GetMeter())]) or 0)
 							end

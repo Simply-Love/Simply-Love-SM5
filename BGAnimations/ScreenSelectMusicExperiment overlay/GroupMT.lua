@@ -1,11 +1,8 @@
 local args = ...
 local GroupWheel = args[1]
 local SongWheel = args[2]
-local TransitionTime = args[3]
-local steps_type = args[4]
-local row = args[5]
-local col = args[6]
-local Input = args[7]
+local col = args[3]
+local Input = args[4]
 
 local max_chars = 64
 
@@ -43,7 +40,7 @@ function switch_to_songs(group_name)
 		MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 	else
 		-- if there are no songs in the current group then switch to the first available group/first song
-		-- TODO it should put you on the groupwheel instead 
+		-- TODO it should put you on the groupwheel instead
 		local groups = PruneGroups(GetGroups())
 		switch_to_songs(groups[1])
 	end
@@ -65,10 +62,9 @@ local item_mt = {
 					self.container = subself
 
 					subself:xy(_screen.cx, _screen.cy-100)
-					
+
 					local current_song = GAMESTATE:GetCurrentSong() or SL.Global.LastSeenSong
 					if current_song then
-
 						if self.index ~= GroupWheel:get_actor_item_at_focus_pos().index then
 							subself:playcommand("LoseFocus"):diffusealpha(0)
 						else

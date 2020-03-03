@@ -1,11 +1,6 @@
 local player = ...
 
-local cancel = THEME:GetString("ScreenSelectMusicCasual", "FooterTextSingleSong")
-if PREFSMAN:GetPreference("ThreeKeyNavigation") then cancel = THEME:GetString("ScreenSelectMusicCasual", "FooterTextSingleSong3Key") end
-local profile = PROFILEMAN:GetProfile(player) 
-local zoom_factor = WideScale(0.8,0.9)
-
-local stageStats = STATSMAN:GetCurStageStats()
+local profile = PROFILEMAN:GetProfile(player)
 
 local totalTime = 0
 local songsPlayedThisGame = 0
@@ -23,7 +18,7 @@ for _,stats in pairs( SL[ToEnumShortString(player)].Stages.Stats ) do
 		-- 1. we want jumps/hands to count as more than 1 here
 		-- 2. stepcharts can have non-1 #COMBOS parameters set which would artbitraily inflate notesHitThisGame
 
-		for column, judgments in ipairs(stats.column_judgments) do
+		for _, judgments in ipairs(stats.column_judgments) do
 			for judgment, judgment_count in pairs(judgments) do
 				if judgment ~= "Miss" then
 					notesHitThisGame = notesHitThisGame + judgment_count
@@ -154,6 +149,6 @@ return Def.ActorFrame {
 	LoadFont("Common Normal")..{
 		Name="Game Time",
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h - 16):zoom(0.7):diffusealpha(1) end,
-		Text = gametime,	
+		Text = gametime
 	}
 }

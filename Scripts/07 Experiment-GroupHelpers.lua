@@ -268,8 +268,8 @@ end
 ---------------------------------------------------------------------------
 -- returns an indexed table of group names as strings
 -- uses the input sort type or the current sort type if none is entered
-function GetGroups(group)
-	local group = group or SL.Global.GroupType
+function GetGroups(inputGroup)
+	local group = inputGroup or SL.Global.GroupType
 	if group == "Group" then
 		return SONGMAN:GetSongGroupNames()
 	else return SortGroups[group] end
@@ -365,7 +365,7 @@ function GetGroupIndex(groups)
 			end
 		elseif SL.Global.GroupType == "Grade" then
 			local highScore = PROFILEMAN:GetProfile(mpn):GetHighScoreList(current_song,GAMESTATE:GetCurrentSteps(mpn)):GetHighScores()[1]
-			if highScore then 
+			if highScore then
 				if group == highScore:GetGrade() then --TODO this only works for the master player.
 					group_index = k
 				end

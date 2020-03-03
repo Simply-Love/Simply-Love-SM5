@@ -133,6 +133,19 @@ function DateToMinutes(scoreDate) --scoreDate must be form YYYY-MM-DD HH:MM:SS
 	return minutes
 end
 
+FormatDate = function(scoredate)
+	if scoredate == "" then
+		return ""
+	else
+		local numbers = {}
+		for number in string.gmatch(scoredate, "%d+") do
+			numbers[#numbers + 1] = number
+		end
+		if #numbers ~= 3 then return scoredate end --if we don't have three numbers it's a malformed date so send it back
+		return numbers[2] .. "-" .. numbers[3] .. "-" .. numbers[1]
+	end
+end
+
 --returns a string of the current date in the form YYYY-MM-DD HH:MM:00 (seconds are always set to 00)
 function GetCurrentDateTime()
 	return string.format("%04d",Year()).."-"..string.format("%02d", MonthOfYear()+1).."-"..string.format("%02d", DayOfMonth())

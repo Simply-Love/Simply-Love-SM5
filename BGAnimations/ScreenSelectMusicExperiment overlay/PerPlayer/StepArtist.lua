@@ -1,7 +1,6 @@
 local player = ...
 local pn = ToEnumShortString(player)
-local p = PlayerNumber:Reverse()[player]
-
+local p = #GAMESTATE:GetHumanPlayers() == 1 and 0 or PlayerNumber:Reverse()[player]
 local text_table, marquee_index
 
 return Def.ActorFrame{
@@ -13,9 +12,8 @@ return Def.ActorFrame{
 	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("StepsHaveChanged") end,
 
 	PlayerJoinedMessageCommand=function(self, params)
-		if params.Player == player then
-			self:queuecommand("Appear" .. pn)
-		end
+		p = PlayerNumber:Reverse()[player]
+		self:queuecommand("Appear" .. pn)
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if params.Player == player then
@@ -25,22 +23,23 @@ return Def.ActorFrame{
 
 	-- depending on the value of pn, this will either become
 	-- an AppearP1Command or an AppearP2Command when the screen initializes
-	["Appear"..pn.."Command"]=function(self) self:visible(true):ease(0.5, 275):addy(scale(p,0,1,-1,1) * 30) end,
-
-	InitCommand=function(self)
-		self:visible( false ):halign( p )
-
-		if player == PLAYER_1 then
-
-			self:y(_screen.cy + 44)
+	["Appear"..pn.."Command"]=function(self)
+		self:visible(true):halign( p ):ease(0.5, 275)
+		if #GAMESTATE:GetHumanPlayers() ~= 2 then
+			self:y(_screen.cy + 14)
+			self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
+		elseif player == PLAYER_1 then
+			self:y(_screen.cy + 14)
 			self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
 
 		elseif player == PLAYER_2 then
-
-			self:y(_screen.cy + 97)
+			self:y(_screen.cy + 127)
 			self:x( _screen.cx - 210)
 		end
+	end,
 
+	InitCommand=function(self)
+		self:visible(false)
 		if GAMESTATE:IsHumanPlayer(player) then
 			self:queuecommand("Appear" .. pn)
 		end

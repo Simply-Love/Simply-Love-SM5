@@ -40,8 +40,7 @@ local af = Def.ActorFrame{
 	end,
 	--we want to set both players when someone joins because we might need to bring the grid back and hide the stream info
 	--TODO change this if we can get both players to see stream info
-	PlayerJoinedMessageCommand=function(self, params)
-		--if player==params.Player then
+	PlayerJoinedMessageCommand=function(self)
 		if player == PLAYER_1 then
 			self:x(_screen.w * 0.25 - 5)
 		elseif player == PLAYER_2 then

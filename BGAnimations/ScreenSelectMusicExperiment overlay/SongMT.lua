@@ -1,11 +1,6 @@
 local args = ...
 local SongWheel = args[1]
-local TransitionTime = args[2]
-local row = args[3]
-local col = args[4]
-
-local CloseFolderTexture = nil
-local NoJacketTexture = nil
+local row = args[2]
 
 local awards = {}
 table.insert(awards,Color.White)
@@ -37,7 +32,7 @@ local song_mt = {
 					-- slide the chosen Actor into place
 					if self.index == SongWheel:get_actor_item_at_focus_pos().index then
 						subself:queuecommand("SlideToTop")
-						MESSAGEMAN:Broadcast("SwitchFocusToSingleSong")													 
+						MESSAGEMAN:Broadcast("SwitchFocusToSingleSong")
 
 					-- hide everything else
 					else
@@ -49,7 +44,6 @@ local song_mt = {
 					subself:visible(false):diffusealpha(0)
 				end,
 				UnhideCommand=function(subself)
-
 					-- we're going back to song selection
 					-- slide the chosen song ActorFrame back into grid position
 					if self.index == SongWheel:get_actor_item_at_focus_pos().index then
@@ -100,7 +94,7 @@ local song_mt = {
 						Font="Common Normal",
 						InitCommand=function(subself)
 							self.title_bmt = subself
-							subself:zoom(1):diffuse(Color.White):shadowlength(0.75):maxwidth(200)
+							subself:zoom(1):diffuse(Color.White):shadowlength(0.75):maxwidth(190)
 						end,
 						SlideToTopCommand=function(subself)
 							if self.song ~= "CloseThisFolder" then subself:zoom(1.5):maxwidth(125):settext( self.song:GetDisplayMainTitle()) end end,
@@ -110,7 +104,7 @@ local song_mt = {
 									local block = GetDifficultyBPM(self.index)
 									subself:settext( "["..block.difficulty.."]["..math.floor(block.bpm).."] "..self.song:GetDisplayMainTitle() ):maxwidth(200):zoom(1.2)
 								else
-									subself:settext( self.song:GetDisplayMainTitle() ):maxwidth(200):zoom(1.2)
+									subself:settext( self.song:GetDisplayMainTitle() ):maxwidth(190):zoom(1.2)
 								end
 							end
 						end,
@@ -124,6 +118,7 @@ local song_mt = {
 					},
 				},
 			}
+			--Things we need two of
 			for pn in ivalues({'P1','P2'}) do
 				local side
 				if pn == 'P1' then side = -1
@@ -134,12 +129,15 @@ local song_mt = {
 				--TODO this might be better as an AMV
 				af[#af+1] = Def.ActorFrame {
 					InitCommand=function(subself) subself:visible(true) self.pass_box_outline = subself  end,
-					SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0) end,
-					SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1) end,
-					Def.Quad { InitCommand=function(self) self:zoomto(10,40):x(side*pass_position):diffuse(.25,.25,.25,.25):diffusealpha(.5) end, },
-					Def.Quad { InitCommand=function(self) self:zoomto(10-2, 40-2*2):x(side*pass_position):MaskSource(true) end },
-					Def.Quad { InitCommand=function(self) self:zoomto(10,40):x(side*pass_position):MaskDest() end },
-					Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
+					--Box on the side of the musicwheel item
+					Def.ActorFrame{
+						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0) end,
+						SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1) end,
+						Def.Quad { InitCommand=function(self) self:zoomto(10,40):x(side*pass_position):diffuse(.25,.25,.25,.25):diffusealpha(.5) end, },
+						Def.Quad { InitCommand=function(self) self:zoomto(10-2, 40-2*2):x(side*pass_position):MaskSource(true) end },
+						Def.Quad { InitCommand=function(self) self:zoomto(10,40):x(side*pass_position):MaskDest() end },
+						Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
+					},
 					--Colors to fill in the box
 					Def.ActorFrame{
 						InitCommand=function(subself) subself:visible(false) self[pn..'pass_box'] = subself end,
@@ -151,6 +149,12 @@ local song_mt = {
 					Def.Sprite{
 						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
 						InitCommand=function(subself) subself:visible(false):zoom( WideScale(0.18, 0.3) ):x(side*grade_position):animate(0) self[pn..'grade_sprite'] = subself end,
+						SlideToTopCommand=function(subself)
+							subself:linear(.12):diffusealpha(0):xy(side*-1*-55,50):zoom(1):linear(.12):diffusealpha(1)
+						end,
+						SlideBackIntoGridCommand=function(subself)
+							subself:linear(.12):diffusealpha(0):zoom( WideScale(0.18, 0.3)):xy(side*grade_position,0):linear(.12):diffusealpha(1)
+						end,
 					}
 				}
 			end
@@ -198,7 +202,6 @@ local song_mt = {
 				if self.song ~= "CloseThisFolder" then
 					local current_difficulty
 					local grade
-					local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
 					if GAMESTATE:GetCurrentSteps(pn) then
 						current_difficulty = GAMESTATE:GetCurrentSteps(pn):GetDifficulty() --are we looking at steps?
 					end

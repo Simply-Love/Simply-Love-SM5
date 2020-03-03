@@ -33,8 +33,8 @@ local params_for_input = { GroupWheel=GroupWheel, SongWheel=SongWheel, OptionsWh
 local Input = LoadActor( "./Input.lua", params_for_input )
 
 -- metatables
-local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col,Input})
-local song_mt = LoadActor("./SongMT.lua", {SongWheel,TransitionTime,row,col})
+local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,col,Input})
+local song_mt = LoadActor("./SongMT.lua", {SongWheel,row})
 local optionrow_mt = LoadActor("./OptionRowMT.lua")
 local optionrow_item_mt = LoadActor("./OptionRowItemMT.lua")
 
@@ -216,7 +216,8 @@ local t = Def.ActorFrame {
 	LoadActor("./OrderMenu/default.lua"),
 	--Stuff related to searching
 	LoadActor("./Search/default.lua"),
-	
+	--Panel showing player stats
+	LoadActor("./PlayerStats/default.lua"),
 	-- Broadcast when we enter the Sort Menu. Don't want to let input touch the normal screen
 	DirectInputToSortMenuMessageCommand=function(self)
 		Input.Enabled = false

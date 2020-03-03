@@ -19,10 +19,18 @@ local pane = Def.ActorFrame{
 			numPlayed = 1
 			firstPass = pss:GetFailed() and "NEVER" or "TODAY"
 		else
+			--if we played the song today then lastplayed is "TODAY" otherwise it's the date
 			lastPlayed = SL[pn]['Scores'][hash].LastPlayed
+			local lastPlayedDay = Split(lastPlayed)[1]
+			local dateTable = Split(lastPlayedDay,"-")
+			if Year() == tonumber(dateTable[1]) and MonthOfYear()+1 == tonumber(dateTable[2]) and DayOfMonth() == tonumber(dateTable[3]) then
+				lastPlayed = "Today"
+			else
+				lastPlayed = lastPlayedDay
+			end
 			numPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
 			if not pss:GetFailed() and SL[pn]['Scores'][hash].FirstPass == "Never" then
-				firstPass = GetCurrentDateTime()
+				firstPass = "Just now"
 			else firstPass = SL[pn]['Scores'][hash].FirstPass end
 		end
 		self:GetChild("LastPlayedNumber"):settext("LAST PLAYED: "..lastPlayed)

@@ -1,0 +1,26 @@
+-- this handles user input while in SelectMusic's Player Stats overlay
+local input = function(event)
+	if not (event and event.PlayerNumber and event.button) then
+		return false
+	end
+	-- don't handle input for a non-joined player (latejoin still overrides this somehow...)
+	if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
+		return false
+	end
+
+	SOUND:StopMusic()
+	local topscreen = SCREENMAN:GetTopScreen()
+
+	-- pressing Start or Back (typically Esc on a keyboard) will queue "DirectInputToEngine"
+	-- but only if the event.type is not a Release
+	-- as soon as TestInput is activated via the SortMenu, the player is likely still holding Start
+	-- and will soon release it to start testing their input, which would inadvertently close TestInput
+	if (event.GameButton == "Start" or event.GameButton == "Back" or event.GameButton == "Select")
+	and event.type ~= "InputEventType_Release" then
+		topscreen:queuecommand("Off"):sleep(0.4)
+	end
+
+	return false
+end
+
+return input
