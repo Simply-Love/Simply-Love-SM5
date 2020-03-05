@@ -36,8 +36,6 @@ local num_judgments_available = 5
 local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
 local windows = SL.Global.ActiveModifiers.TimingWindows
 
--- SM(windows)
-
 for i=5,1,-1 do
 	if windows[i]==true then
 		num_judgments_available = i
