@@ -66,7 +66,7 @@ local song_mt = {
 					PlayMusicPreviewCommand=function(subself) play_sample_music() end,
 				},
 
-				-- AF for Banner and blinking Quad
+				-- AF for jacket/banner and blinking Quad
 				Def.ActorFrame{
 					GainFocusCommand=function(subself) subself:y(10) end,
 					LoseFocusCommand=function(subself) subself:y(0) end,
@@ -89,7 +89,7 @@ local song_mt = {
 						SlideBackIntoGridCommand=function(subself) subself:linear(0.12):zoomto(128,128) end
 					},
 
-					-- banner / jacket
+					-- jacket/banner
 					Def.Sprite{
 						Name="Banner",
 						InitCommand=function(subself) self.banner = subself; subself:diffusealpha(0) end,
