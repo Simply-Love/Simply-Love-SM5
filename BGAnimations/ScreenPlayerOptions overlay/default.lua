@@ -104,7 +104,12 @@ local SpeedModBMTs = {}
 
 local t = Def.ActorFrame{
 	InitCommand=function(self) self:xy(_screen.cx,0) end,
-	OnCommand=function(self) self:queuecommand("Capture") end,
+	OnCommand=function(self)
+		-- players can repeatedly visit the options screen while in Edit Mode
+		-- so ensure that this ActorFrame can be seen each time OnCommand() is called
+		self:diffusealpha(1)
+		self:queuecommand("Capture")
+	end,
 	OffCommand=function(self) self:linear(0.2):diffusealpha(0) end,
 	CaptureCommand=function(self)
 		local ScreenOptions = SCREENMAN:GetTopScreen()
