@@ -47,8 +47,8 @@ local t = Def.ActorFrame{
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
 			InitCommand=function(self)
-				self:setsize( IsUsingWideScreen() and 320 or 310, 53 )
-				self:diffuse(color("#1e282f")):y(-3)
+				self:setsize( IsUsingWideScreen() and 320 or 310, 50 )
+				self:diffuse(color("#1e282f"))
 
 				if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
 			end
@@ -56,18 +56,17 @@ local t = Def.ActorFrame{
 
 		Def.ActorFrame{
 
-			InitCommand=function(self) self:x(-110) end,
+			InitCommand=function(self) self:xy(-110,-6) end,
 
 			-- Artist Label
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"),
-				InitCommand=function(self) self:horizalign(right):y(-12.5):maxwidth(44) end,
-				OnCommand=function(self) self:diffuse(0.5,0.5,0.5,1) end
+				InitCommand=function(self) self:align(1,0):y(-11):maxwidth(44):diffuse(0.5,0.5,0.5,1) end,
 			},
 
 			-- Song Artist (or number of Songs in this Course, if CourseMode)
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:horizalign(left):xy(5,-12.5):maxwidth(WideScale(225,260)) end,
+				InitCommand=function(self) self:align(0,0):xy(5,-11):maxwidth(WideScale(225,260)) end,
 				SetCommand=function(self)
 					if GAMESTATE:IsCourseMode() then
 						local course = GAMESTATE:GetCurrentCourse()
@@ -85,14 +84,17 @@ local t = Def.ActorFrame{
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "BPM"),
 				InitCommand=function(self)
-					self:horizalign(right):y(9)
-						:diffuse(0.5,0.5,0.5,1)
+					self:align(1,0):y(10):diffuse(0.5,0.5,0.5,1)
 				end
 			},
 
 			-- BPM value
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:horizalign(left):xy(5,9):diffuse(1,1,1,1):vertspacing(-7) end,
+				InitCommand=function(self)
+					-- vertical align has to be middle for BPM value in case of split BPMs having a line break
+					self:align(0, 0.5)
+					self:xy(5,17):diffuse(1,1,1,1):vertspacing(-8)
+				end,
 				SetCommand=function(self)
 
 					if MusicWheel then SelectedType = MusicWheel:GetSelectedType() end
@@ -151,14 +153,14 @@ local t = Def.ActorFrame{
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("SongDescription", "Length"),
 				InitCommand=function(self)
-					self:horizalign(right):diffuse(0.5,0.5,0.5,1)
-						:x(_screen.w/4.5):y(8)
+					self:align(1,0):diffuse(0.5,0.5,0.5,1)
+						:x(_screen.w/4.5):y(10)
 				end
 			},
 
 			-- Song Duration Value
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:horizalign(left):xy(_screen.w/4.5 + 5, 8) end,
+				InitCommand=function(self) self:align(0,0):xy(_screen.w/4.5 + 5, 10) end,
 				SetCommand=function(self)
 					if MusicWheel == nil then MusicWheel = SCREENMAN:GetTopScreen():GetMusicWheel() end
 
@@ -213,15 +215,35 @@ local t = Def.ActorFrame{
 		-- long/marathon version bubble graphic and text
 		Def.ActorFrame{
 			InitCommand=function(self)
-				self:x( IsUsingWideScreen() and 102 or 97 )
+				self:x( IsUsingWideScreen() and 103.4 or 98.5 )
 			end,
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				self:visible( song and (song:IsLong() or song:IsMarathon()) or false )
 			end,
 
-			LoadActor("bubble")..{
-				InitCommand=function(self) self:diffuse(GetCurrentColor()):zoom(0.46):y(30) end
+			Def.ActorMultiVertex{
+				InitCommand=function(self)
+					-- these coordinates aren't neat and tidy, but they do create three triangles
+					-- that fit together to approximate hurtpiggypig's original png asset
+					local verts = {
+					 	--  x  y   z    r,g,b,a
+					 	{{-113, 81, 0}, {1,1,1,1}},
+					 	{{ 113, 81, 0}, {1,1,1,1}},
+					 	{{ 113, 50, 0}, {1,1,1,1}},
+
+					 	{{ 113, 50, 0}, {1,1,1,1}},
+					 	{{-113, 50, 0}, {1,1,1,1}},
+					 	{{-113, 81, 0}, {1,1,1,1}},
+
+					 	{{ -98, 50, 0}, {1,1,1,1}},
+					 	{{ -78, 50, 0}, {1,1,1,1}},
+					 	{{ -88, 37, 0}, {1,1,1,1}},
+					}
+					self:SetDrawState({Mode="DrawMode_Triangles"}):SetVertices(verts)
+					self:diffuse(GetCurrentColor())
+					self:xy(0,0):zoom(0.5)
+				end
 			},
 
 			LoadFont("Common Normal")..{
