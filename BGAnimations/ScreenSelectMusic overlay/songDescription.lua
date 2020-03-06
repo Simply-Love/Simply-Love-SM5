@@ -221,11 +221,11 @@ local t = Def.ActorFrame{
 			end,
 
 			LoadActor("bubble")..{
-				InitCommand=function(self) self:diffuse(GetCurrentColor()):zoom(0.455):y(29) end
+				InitCommand=function(self) self:diffuse(GetCurrentColor()):zoom(0.46):y(30) end
 			},
 
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8):y(34) end,
+				InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8):y(33) end,
 				SetCommand=function(self)
 					local song = GAMESTATE:GetCurrentSong()
 					if not song then self:settext(""); return end
