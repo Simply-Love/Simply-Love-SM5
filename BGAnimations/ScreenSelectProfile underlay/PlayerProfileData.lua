@@ -21,13 +21,19 @@ local RecentMods = function(mods)
 	-- SpeedModType should be a string and SpeedMod should be a number
 	if type(mods.SpeedModType)=="string" and type(mods.SpeedMod)=="number" then
 		-- for ScreenSelectProfile, allow either "x" or "X" to be in the player's profile for SpeedModType
-		if (mods.SpeedModType):upper()=="X" and mods.SpeedMod > 0 then text = text..tostring(mods.SpeedMod).."x"
-		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then text = text..mods.SpeedModType..tostring(mods.SpeedMod)
+		if (mods.SpeedModType):upper()=="X" and mods.SpeedMod > 0 then
+			-- take whatever number is in the player's profile, string format it to 2 decimal places
+			-- convert back to a number to remove potential trailing 0s (we want "1.5x" not "1.50x")
+			-- and finally convert that back to a string
+			text = ("%gx"):format(tonumber(("%.2f"):format(mods.SpeedMod)))
+
+		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then
+			text = ("%s%.0f"):format(mods.SpeedModType, mods.SpeedMod)
 		end
 	end
 
 	-- Mini should definitely be a string
-	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = text..", "..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini") end
+	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = ("%s %s"):format(mods.Mini, THEME:GetString("OptionTitles", "Mini")) end
 
 	-- some linebreaks to make space for NoteSkin and JudgmentGraphic previews
 	text = text.."\n\n\n"
