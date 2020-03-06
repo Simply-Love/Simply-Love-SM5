@@ -46,9 +46,8 @@ To install this theme, unzip it and move the resulting *Simply Love* folder insi
 
 Visit my imgur album for screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
-## New Features
+## Features
 
-Or, *things I've added that were not present in the original Simply Love for StepMania 3.95.*
 
 #### New GameModes
 
@@ -93,14 +92,6 @@ The current language can be changed in Simply Love under *System Options*.
 ---
 
 ## FAQ
-
-#### Why are my high scores ranking out of order?
-You need to set `PercentageScoring=1` in your Preferences.ini file.  Please note that you must quit StepMania before opening and editing Preferences.ini.
-
-Your existing scores will remain ranked out of order, but all scores going forward after making this change will be ranked correctly.
-
-#### Where is my Preferences.ini file?
-See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/wiki/Manually-Changing-Preferences) page on StepMania's GitHub Wiki.
 
 #### How can I get more songs to show up in Casual Mode?
 Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
