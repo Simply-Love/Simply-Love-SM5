@@ -11,12 +11,14 @@ if SL.Global.GameMode == "Casual" then return end
 local player = ...
 local pn = ToEnumShortString(player)
 
--- there are three possible reasons the rest of this file should proceed to execute
+-- Make sure that someone requested something from this file.
+-- (There's a lot. See the long note near the end, just above the pacemaker implementation.)
+local Pacemaker = SL[pn].ActiveModifiers.Pacemaker
 local WantsTargetGraph = SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph"
 local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
 local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
 -- if none of them apply, bail now
-if (not WantsTargetGraph) and (not FailOnMissedTarget) and (not RestartOnMissedTarget) then return end
+if not (Pacemaker or WantsTargetGraph or FailOnMissedTarget or RestartOnMissedTarget) then return end
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
