@@ -1,6 +1,5 @@
 local args = ...
 local player = args.player
-local hash = args.hash
 
 -- ------------------------------------------
 -- First, check for modes not supported by GrooveStats.
@@ -12,7 +11,7 @@ if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
 if GAMESTATE:IsCourseMode() then return end
 
 -- Only allow ITG and FA+ because Casual and StomperZ have different settings.
-if not (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+") then return end
+if not (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+" or SL.Global.GameMode == "Experiment") then return end
 
 -- ------------------------------------------
 -- Next, check global Preferences that would invalidate the score.

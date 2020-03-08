@@ -50,7 +50,8 @@ local af =
 	SetCommand = function(self)
 		local player_score, player_date, first_pass, last_played, times_played
 		if GAMESTATE:GetCurrentSong() then --if there's no song there won't be a hash
-			local hash = GetHash(player)
+			local hash
+			if ThemePrefs.Get("UseCustomScores") then hash = GetHash(player) end
 			if hash and SL[pn].Scores[hash] then
 				local scores = GetScores(player, hash)
 				if scores then

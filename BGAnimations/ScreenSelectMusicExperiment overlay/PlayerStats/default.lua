@@ -213,47 +213,52 @@ if playerStats then
 	local firstPasses = {}
 	local songs = SONGMAN:GetAllSongs()
 	local pn = ToEnumShortString(player)
-	for song in ivalues(songs) do
-		if song:HasStepsType(GetStepsType()) then
-			for steps in ivalues(song:GetStepsByStepsType(GetStepsType())) do
-				local hash = GetHash(player,song,steps)
-				if hash then
-					local customScore = SL[pn]['Scores'][hash]
-					if customScore and customScore.FirstPass ~= "Never" and customScore.FirstPass ~= "Unknown" then
-						if not firstPasses[steps:GetMeter()] then 
-							firstPasses[steps:GetMeter()] = {date = customScore.FirstPass, song = song:GetMainTitle()}
-						else
-							if DateToMinutes(firstPasses[steps:GetMeter()].date) > DateToMinutes(customScore.FirstPass) then
+	local maxDiff = 0
+	if ThemePrefs.Get("UseCustomScores") then
+		for song in ivalues(songs) do
+			if song:HasStepsType(GetStepsType()) then
+				for steps in ivalues(song:GetStepsByStepsType(GetStepsType())) do
+					local hash = GetHash(player,song,steps)
+					if hash then
+						local customScore = SL[pn]['Scores'][hash]
+						if customScore and customScore.FirstPass ~= "Never" and customScore.FirstPass ~= "Unknown" then
+							if not firstPasses[steps:GetMeter()] then
+								if steps:GetMeter() > maxDiff then maxDiff = steps:GetMeter() end
 								firstPasses[steps:GetMeter()] = {date = customScore.FirstPass, song = song:GetMainTitle()}
+							else
+								if DateToMinutes(firstPasses[steps:GetMeter()].date) > DateToMinutes(customScore.FirstPass) then
+									firstPasses[steps:GetMeter()] = {date = customScore.FirstPass, song = song:GetMainTitle()}
+								end
 							end
 						end
 					end
 				end
 			end
 		end
-	end
-	table.sort(firstPasses)
-	local sortedFirstPasses = {}
-	for level,pass in pairs(firstPasses) do
-		table.insert(sortedFirstPasses,{level = level, date = pass.date, song = pass.song})
-	end
-
-	local begin = #sortedFirstPasses > 10 and #sortedFirstPasses - 10 or 1
-	for i = begin,#sortedFirstPasses do
-		local row = (i - begin)*20
-		allTime[#allTime+1] =
-		LoadFont("Common Normal") ..
-		{
-			InitCommand = function(self)
-				self:zoom(1):diffuse(Color.White):zoom(.75):xy(-120,10+row):halign(0)
-				local toWrite = sortedFirstPasses[i].level..": "
-				toWrite = toWrite..FormatDate(Split(sortedFirstPasses[i].date)[1])
-				toWrite = toWrite.." ("..sortedFirstPasses[i].song..")"
-				self:settext(toWrite)
+		local sortedFirstPasses = {}
+		for i = 1,maxDiff do
+			if firstPasses[i] then
+				local pass = firstPasses[i]
+				table.insert(sortedFirstPasses,{level = i, date = pass.date, song = pass.song})
 			end
-		}
-	end
+		end
 
+		local begin = #sortedFirstPasses > 10 and #sortedFirstPasses - 10 or 1
+		for i = begin,#sortedFirstPasses do
+			local row = (i - begin)*20
+			allTime[#allTime+1] =
+			LoadFont("Common Normal") ..
+			{
+				InitCommand = function(self)
+					self:zoom(1):diffuse(Color.White):zoom(.75):xy(-120,10+row):halign(0)
+					local toWrite = sortedFirstPasses[i].level..": "
+					toWrite = toWrite..FormatDate(Split(sortedFirstPasses[i].date)[1])
+					toWrite = toWrite.." ("..sortedFirstPasses[i].song..")"
+					self:settext(toWrite)
+				end
+			}
+		end
+	end
 	af[#af+1] = allTime
 end
 

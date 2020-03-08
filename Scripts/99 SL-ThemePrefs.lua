@@ -1,23 +1,26 @@
 local SL_CustomPrefs =
 {
-	OriginalPaneDisplay =
-	{
+	OriginalPaneDisplay = {
 		Default = true,
 		Choices = { THEME:GetString("ThemePrefs","Original"), THEME:GetString("ThemePrefs", "Alternate") },
 		Values 	= { true, false }
 	},
-	ShowExtraSongInfo =
-		{
+	ShowExtraSongInfo = {
 		Default = false,
 		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values 	= { true, false }
 	},
-	AllowTwoTap = 
-		{
+	AllowTwoTap = {
 		Default = false,
 		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values = { true, false }
 	},
+	UseCustomScores = {
+		Default = false,
+		Choices = {  THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values = { true, false}
+	},
+
 	AllowFailingOutOfSet =
 	{
 		Default = true,
@@ -140,7 +143,7 @@ local SL_CustomPrefs =
 
 	-- - - - - - - - - - - - - - - - - - - -
 	-- Enable/Disable Certain Screens
-	GoStraightToGameplay = 
+	GoStraightToGameplay =
 	{
 		Default = false,
 		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },

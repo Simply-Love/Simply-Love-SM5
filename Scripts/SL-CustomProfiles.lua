@@ -80,7 +80,7 @@ function LoadProfileCustom(profile, dir)
 		end
 	end
 	--Load scores from separate txt file (See /scripts/Experiment-Scores.lua)
-	if SL.Global.GameMode == "Experiment" then LoadScores(pn) end
+	if SL.Global.GameMode == "Experiment" and ThemePrefs.Get("UseCustomScores") then LoadScores(pn) end
 	
 	return true
 end
@@ -107,7 +107,7 @@ function SaveProfileCustom(profile, dir)
 			output["LastSongPlayedGroup"] = GAMESTATE:GetCurrentSong():GetGroupName()
 			IniFile.WriteFile( path, {[theme_name]=output} )
 			--Save scores in separate txt file (See /scripts/Experiment-Scores.lua)
-			if SL.Global.GameMode == "Experiment" then SaveScores(pn) end
+			if SL.Global.GameMode == "Experiment" and ThemePrefs.Get("UseCustomScores") then SaveScores(pn) end
 			break
 		end
 	end

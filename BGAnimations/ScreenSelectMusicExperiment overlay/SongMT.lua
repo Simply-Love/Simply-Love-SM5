@@ -202,50 +202,43 @@ local song_mt = {
 				if self.song ~= "CloseThisFolder" then
 					local current_difficulty
 					local grade
+					local steps
 					if GAMESTATE:GetCurrentSteps(pn) then
 						current_difficulty = GAMESTATE:GetCurrentSteps(pn):GetDifficulty() --are we looking at steps?
 					end
-					--if we have a custom score
-					if SL.Global.HashLookup[self.song:GetSongDir()] and SL.Global.HashLookup[self.song:GetSongDir()][ToEnumShortString(current_difficulty)] then
-						local hash = GetHash(player, self.song, GAMESTATE:GetCurrentSteps(pn))
-						local scores = GetScores(player, hash)
-						if scores then
-							grade = GetGradeFromPercent(scores[1].score)
-						end
+					if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then
+						steps = self.song:GetOneSteps(GetStepsType(),current_difficulty)
+					end
+					if steps then
 						--color the pass_box
-						if SL[pn]['Scores'][hash] and tonumber(SL[pn]['Scores'][hash].BestPass) > 0 then
-							self[pn..'pass_box']:visible(true):diffuse(awards[tonumber(SL[pn]['Scores'][hash].BestPass)])
+						local award = GetBestPass(player,self.song,steps)
+						if award > 0 then
+							self[pn..'pass_box']:visible(true):diffuse(awards[award])
 							if not multiplayer then
-								if pn == 'P1' then self['P2pass_box']:visible(true):diffuse(awards[tonumber(SL[pn]['Scores'][hash].BestPass)])
-								else self['P1pass_box']:visible(true):diffuse(awards[tonumber(SL[pn]['Scores'][hash].BestPass)]) end
+								if pn == 'P1' then self['P2pass_box']:visible(true):diffuse(awards[award])
+								else self['P1pass_box']:visible(true):diffuse(awards[award]) end
 							end
 						else
 							self[pn..'pass_box']:visible(false)
-							if not multiplayer then 
+							if not multiplayer then
 								if pn == 'P1' then self['P2pass_box']:visible(false)
 								else self['P1pass_box']:visible(false) end
 							end
 						end
+						grade = GetTopGrade(player, self.song, steps)
 					end
-					--fall back on profile stats otherwise
-					if not grade then
-						if current_difficulty and self.song:GetOneSteps(GetStepsType(),current_difficulty) then --does this song have steps in the correct difficulty?
-							local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(self.song,self.song:GetOneSteps(GetStepsType(),current_difficulty)):GetHighScores()[1]
-							if score then grade = score:GetGrade() end
-						end
-					end
+					--if we have a grade then set the grade sprite
 					if grade then
-						local converted_grade = Grade:Reverse()[grade]
-						if converted_grade > 17 then converted_grade = 17 end
-						self[pn..'grade_sprite']:visible(true):setstate(converted_grade)
+						self[pn..'grade_sprite']:visible(true):setstate(grade)
 					else
 						self[pn..'grade_sprite']:visible(false)
 						self[pn..'pass_box']:visible(false)
-						if not multiplayer then 
+						if not multiplayer then
 							if pn == 'P1' then self['P2pass_box']:visible(false)
 							else self['P1pass_box']:visible(false) end
 						end
 					end
+					--set the song title color to white (Close This Folder is red)
 					self.title_bmt:diffuse(Color.White)
 				else
 					self[pn..'grade_sprite']:visible(false)

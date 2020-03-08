@@ -5,11 +5,18 @@ local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local highScore
 
-local RateScores = GetScores(player, hash, true) --See /scripts/Experiment-Scores.lua
+local RateScores
+if ThemePrefs.Get("UseCustomScores") then RateScores = GetScores(player, hash, true) end --See /scripts/Experiment-Scores.lua
 if RateScores then
 	highScore = RateScores[1]
+else
+	local song = GAMESTATE:GetCurrentSong()
+	local steps = GAMESTATE:GetCurrentSteps(player)
+	local highScores = PROFILEMAN:GetProfile(player):GetHighScoreList(song, steps):GetHighScores()
+	if highScores[1]:GetPercentDP() > pss:GetPercentDancePoints() then highScore = highScores[1]
+	elseif highScores[2] then highScore = highScores[2] end
 end
-	
+
 local TapNoteScores = {
 	Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
 	-- x values for P1 and P2
@@ -33,16 +40,22 @@ local deltaT = Def.ActorFrame{
 	InitCommand=function(self)self:zoom(0.8):xy(_screen.cx - 155,_screen.cy-24) end,
 }
 if highScore then
+	local PercentDP
+	if ThemePrefs.Get("UseCustomScores") then PercentDP = highScore.score
+	else PercentDP = highScore:GetPercentDP() end
+
 	-- do "regular" TapNotes first
 	for i=1,#TapNoteScores.Types do
 		local window = TapNoteScores.Types[i]
-		local number = highScore[window]
+		local number
+		if ThemePrefs.Get("UseCustomScores") then number = highScore[window]
+		else number = highScore:GetTapNoteScore(window) end
 
 		--delta between current stats and highscore stats
 		deltaT[#deltaT+1] = LoadFont("_wendy small")..{
 			InitCommand=function(self)
 				local toPrint
-				toPrint = pss:GetTapNoteScores( "TapNoteScore_"..window ) - highScore[window]
+				toPrint = pss:GetTapNoteScores( "TapNoteScore_"..window ) - number
 				if toPrint >= 0 then self:settext("+"..toPrint)
 				else self:settext(toPrint) end
 				self:zoom(.5):horizalign(left)
@@ -104,7 +117,8 @@ if highScore then
 	-- then handle holds, mines, hands, rolls
 	for index, RCType in ipairs(RadarCategories.Types) do
 		local performance
-		performance = highScore[RCType]
+		if ThemePrefs.Get("UseCustomScores") then performance = highScore[RCType]
+		else performance = highScore:GetRadarValues():GetValue(RCType) end
 		-- player performace value
 		highScoreT[#highScoreT+1] = Def.RollingNumbers{
 			Font="_ScreenEvaluation numbers",
@@ -121,7 +135,7 @@ if highScore then
 	highScoreT[#highScoreT+1] = LoadFont("_wendy small")..{
 		InitCommand=function(self)
 			self:zoom(.8):xy(150,-75)
-			if tonumber(RateScores[1].score) <= pss:GetPercentDancePoints() then self:settext("Previous Record")
+			if PercentDP <= pss:GetPercentDancePoints() then self:settext("Previous Record")
 			else self:settext("Current Record") end
 		end,
 	}
@@ -133,7 +147,6 @@ if highScore then
 			self:xy(308,-10)
 		end
 	}
-	local PercentDP = highScore.score
 	local percent = FormatPercentScore(PercentDP)
 	-- Format the Percentage string, removing the % symbol
 	percent = percent:gsub("%%", "")

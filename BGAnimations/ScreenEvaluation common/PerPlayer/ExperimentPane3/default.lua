@@ -1,7 +1,5 @@
 local args = ...
 local player = args.player
-local hash = args.hash
-local game = GAMESTATE:GetCurrentGame():GetName()
 
 local af = Def.ActorFrame{
 	Name="Pane3",

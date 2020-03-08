@@ -1,6 +1,5 @@
 local args = ...
 local player = args.player
-local hash = args.hash
 
 local pane = Def.ActorFrame{
 	Name="Pane5",

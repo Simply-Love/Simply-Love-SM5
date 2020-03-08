@@ -130,12 +130,14 @@ for player in ivalues(Players) do
 	-- If it doesn't match with what we think it should be then the steps have changed and old scores
 	-- are invalid.
 	local hash
-	if SL.Global.GameMode == "Experiment" then 
+	if SL.Global.GameMode == "Experiment" then
 		local pn = ToEnumShortString(player)
 		local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
 		local difficulty = ToEnumShortString(GAMESTATE:GetCurrentSteps(pn):GetDifficulty())
-		hash = GenerateHash(stepsType, difficulty)
-		if hash ~= GetHash(player) then AddCurrentHash() end
+		if ThemePrefs.Get("UseCustomScores") then 
+			hash = GenerateHash(stepsType, difficulty)
+			if hash ~= GetHash(player) then AddCurrentHash() end
+		end
 	end
 	-- add available Panes to the lower ActorFrame via a loop
 	-- Note(teejusb): Some of these actors may be nil. This is not a bug, but

@@ -384,12 +384,13 @@ function AddScore(player)
 	else SM("WARNING: Could not generate hash for: "..GAMESTATE:GetCurrentSong():GetMainTitle()) end
 end
 
---Returns a table of scores for a player or nil if there are no high scores
---checkRate -only returns scores with the same rate as the current song
---checkFailed -only returns passing scores
+---Returns a table of scores for a player or nil if there are no high scores
+---@param checkRate boolean only returns scores with the same rate as the current song
+---@param checkFailed boolean only returns passing scores
 --both of these default to false if not explicitly set which will return all scores regardless
 --of rate or fail status.
 function GetScores(player, hash, checkRate, checkFailed)
+	assert(hash, "GetScores requires a hash")
 	local pn = ToEnumShortString(player)
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	local checkRate = checkRate or false
@@ -414,6 +415,68 @@ function GetScores(player, hash, checkRate, checkFailed)
 	else return nil end
 end
 
+--- Returns the best pass type for a chart (fail, pass, GFC, EFC, FFC)
+function GetBestPass(player, songParam, chartParam)
+	local pn = ToEnumShortString(player)
+	local song = songParam or GAMESTATE:GetCurrentSong()
+	local steps = chartParam or GAMESTATE:GetCurrentSteps(pn)
+	local hash
+	if ThemePrefs.Get("UseCustomScores") then hash = GetHash(player, song, steps) end
+	if hash and SL[pn]['Scores'][hash] and tonumber(SL[pn]['Scores'][hash].BestPass) then
+		return tonumber(SL[pn]['Scores'][hash].BestPass)
+	else
+		local highScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,steps):GetHighScores()
+		local award = 0
+		if highScores then
+			for score in ivalues(highScores) do
+				if award == 0 and score:GetGrade() ~= "Grade_Failed" then award = 1 end
+				if score:GetStageAward() then
+					local tempAward = tonumber(awards[ToEnumShortString(score:GetStageAward())])
+					if tempAward > award then award = tempAward end
+				end
+			end
+		end
+		return award
+	end
+end
+--- Returns the grade for a given song and chart or nil if there isn't a high score.
+--- @param player Enum
+--- @param songParam Song
+--- @param chartParam Steps
+--- @param rateParam boolean
+function GetTopGrade(player, songParam, chartParam, rateParam)
+	local song = songParam or GAMESTATE:GetCurrentSong()
+	local chart = chartParam or GAMESTATE:GetCurrentSteps(player)
+	local grade
+	local pn = ToEnumShortString(player)
+	if ThemePrefs.Get("UseCustomScores") then
+		local hash = GetHash(player,song, chart)
+		if hash then
+			local scores = GetScores(player, hash, true, true)
+			if scores then
+				grade = GetGradeFromPercent(scores[1].score)
+			end
+		end
+	end
+	if not grade then
+		local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()[1]
+		local rate
+		if score then
+			if rateParam then
+				rate = score:GetModifiers()
+				rate = string.find(rate, "xMusic") and string.gsub(rate,".*(%d.%d+)xMusic.*","%1") or 1
+				if rate == SL.Global.ActiveModifiers.MusicRate then grade = score:GetGrade() end
+			else grade = score:GetGrade() end
+		end
+	end
+	if grade then
+		local converted_grade = Grade:Reverse()[grade]
+		if converted_grade > 17 then converted_grade = 17 end
+		return converted_grade
+	end
+	return nil
+end
+
 --- returns a hash from the lookup table
 ---@param player string
 ---@param inputSong Song
@@ -424,7 +487,8 @@ function GetHash(player, inputSong, inputSteps)
 	local steps = inputSteps or GAMESTATE:GetCurrentSteps(pn)
 	local difficulty = ToEnumShortString(steps:GetDifficulty())
 	local stepsType = ToEnumShortString(GetStepsType()):gsub("_","-"):lower()
-	if next(SL.Global.HashLookup[song:GetSongDir()]) then --all songs should be listed in HashLookup but if we can't generate hashes it'll be an empty table
+	--all songs should be listed in HashLookup but if we can't generate hashes it'll be an empty table
+	if next(SL.Global.HashLookup[song:GetSongDir()]) and SL.Global.HashLookup[song:GetSongDir()][difficulty] then
 		return SL.Global.HashLookup[song:GetSongDir()][difficulty][stepsType]
 	else
 		return nil

@@ -276,7 +276,7 @@ ValidateChart = function(song, chart, player, inputFilters)
 	local chartMeter = chart:GetMeter()
 	local chartSteps = chart:GetRadarValues(mpn):GetValue('RadarCategory_TapsAndHolds') --TODO this only works for the master player.
 	local chartJumps = chart:GetRadarValues(mpn):GetValue('RadarCategory_Jumps') --TODO this only works for the master player.
-	local highScore = GetGrade(mpn, song, chart)
+	local highScore = GetTopGrade(mpn, song, chart)
 	--Check pass/fail stuff
 	if highScore then
 		if SL.Global.ActiveFilters["HidePassed"] and highScore < 17 then return false end
@@ -299,32 +299,6 @@ ValidateChart = function(song, chart, player, inputFilters)
 	end
 	--if we make it to the bottom then the song is good to go.
 	return true
-end
-
---Returns the grade for a given song and chart or nil if there isn't a high score.
-GetGrade = function(player, song, chart)
-	local grade
-	local pn = ToEnumShortString(player)
-	local hash = GetHash(player,song, chart)
-	local scores = GetScores(player, hash, true, true)
-	if scores then
-		grade = GetGradeFromPercent(scores[1].score)
-	end
-	if not grade then
-		local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()[1]
-		local rate
-		if score then
-			rate = score:GetModifiers()
-			rate = string.find(rate, "xMusic") and string.gsub(rate,".*(%d.%d+)xMusic.*","%1") or 1
-			if rate == SL.Global.ActiveModifiers.MusicRate then grade = score:GetGrade() end
-		end
-	end
-	if grade then
-		local converted_grade = Grade:Reverse()[grade]
-		if converted_grade > 17 then converted_grade = 17 end
-		return converted_grade
-	end
-	return nil
 end
 
 -- returns a table of just the active filters
