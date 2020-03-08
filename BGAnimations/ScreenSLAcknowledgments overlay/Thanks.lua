@@ -28,7 +28,7 @@ return {
 		},
 		{
 			Name="vyhd",
-			Img="",
+			Img="vyhd.jpg",
 			About='vyhd led development for the OpenITG project and served as an approachable guru when the technical details of StepMania were understood by few.\n\nvyhd was always patient and helpful when responding to my questions, which grew from "Can you help me set up OpenITG on a Pump cab?" to "what\'s fstab?" to "how do pointers even work?"  He was generous with his time and kind with his words, and his didactic style helped me grow as a programmer and a human.',
 		},
 	},
