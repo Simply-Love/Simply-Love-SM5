@@ -41,9 +41,6 @@ local PlayerDefaults = {
 				Difficulty = nil,
 				Measures = nil,
 			}
-			self.NoteDensity = {
-				Peak = nil
-			}
 			self.HighScores = {
 				EnteringName = false,
 				Name = ""
