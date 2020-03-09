@@ -45,7 +45,7 @@ if okay and noteskin_actor then
 	-- that attempts to use a nil constant "FIXUP" in its InitCommand that exhibits this.
 	-- So, pcall() again, now specifically on the noteskin_actor's InitCommand if it has one.
 	if noteskin_actor.InitCommand then
-		okay = pcall(noteskin_actor.InitCommand)
+		okay = pcall(noteskin_actor.InitCommand, noteskin_actor)
 	end
 
 	if okay then
@@ -57,8 +57,6 @@ if okay and noteskin_actor then
 end
 
 -- if the user has ShowThemeErrors enabled, let them know about the Lua errors.
-if PREFSMAN:GetPreference("ShowThemeErrors") then
-	Warn( THEME:GetString("ScreenPlayerOptions", "NoteSkinErrors"):format(noteskin_name) )
-end
+lua.ReportScriptError( THEME:GetString("ScreenPlayerOptions", "NoteSkinErrors"):format(noteskin_name) )
 
 return dummy
