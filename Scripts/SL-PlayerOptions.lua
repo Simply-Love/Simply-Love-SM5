@@ -630,6 +630,8 @@ local OptionRowDefault = {
 -- so it can load preview NoteSkin actors into the overlay's ActorFrame ahead of time.
 
 function CustomOptionRow( name )
+	if not (type(name)=="string" and Overrides[name]) then return false end
+
 	-- assign the properties of the generic OptionRowDefault to OptRow
 	local OptRow = setmetatable( {}, OptionRowDefault )
 
