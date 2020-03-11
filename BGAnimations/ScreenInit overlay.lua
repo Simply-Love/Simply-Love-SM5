@@ -6,7 +6,7 @@
 --
 -- If the player is in the operator menu and tries to switch to, say, kickbox
 -- the engine will change the game, the theme will reload, this screen will load,
--- and we'll detect that kickbox isn't supported and bounce them right back to choosing a different game.
+-- we'll detect that kickbox isn't supported, and bounce them right back to choosing a different game.
 --
 -- The same thing basically happens if StepMania starts up in an unsupported game
 -- or if the player switches into Simply Love from another theme in an unsupported game.
@@ -21,6 +21,13 @@ return Def.Actor{
 			SM( THEME:GetString("ScreenInit", "UnsupportedGame"):format(GAMESTATE:GetCurrentGame():GetName()) )
 
 			-- don't politely transition from ScreenInit to ScreenSelectGame with fades; just get the player there now
+			SCREENMAN:SetNewScreen("ScreenSelectGame")
+		end
+
+		if not StepManiaVersionIsSupported() then
+			SM( THEME:GetString("ScreenInit", "UnsupportedSMVersion"):format(ProductVersion()) )
+			-- ScreenSelectGame is "System Options" in the operator menu
+			-- players can set their game, theme, default NoteSkin, etc. from it
 			SCREENMAN:SetNewScreen("ScreenSelectGame")
 		end
 

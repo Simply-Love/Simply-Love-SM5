@@ -50,6 +50,11 @@ return Def.Actor{
 				SM( THEME:GetString("ScreenInit", "UnsupportedGame"):format(GAMESTATE:GetCurrentGame():GetName()) )
 				SCREENMAN:SetNewScreen("ScreenSelectGame")
 			end
+
+			if not StepManiaVersionIsSupported() then
+				SM( THEME:GetString("ScreenInit", "UnsupportedSMVersion"):format(ProductVersion()) )
+				SCREENMAN:SetNewScreen("ScreenSelectGame")
+			end
 		end
 	end
 }

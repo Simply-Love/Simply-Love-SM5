@@ -1,8 +1,20 @@
--- For more information on how this works, read:
+-- For more information on how ThemePrefs works, read:
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefs.txt
 -- ./StepMania 5/Docs/ThemerDocs/ThemePrefsRows.txt
 
 SL_CustomPrefs = {}
+
+-- the ThemePrefs system was removed wholesale from SM5.2
+-- If the ThemePrefs system isn't found, provide a simple shim that will keep SL from completely
+-- falling apart just long enough for the player to be notified that SM5.2 isn't supported.
+if type(ThemePrefs) ~= "table" or type(ThemePrefs.Get) ~= "function" then
+	ThemePrefs = {
+		Get=function(arg) return SL_CustomPrefs.Get()[arg].Default end,
+		Set=function() return end
+	}
+end
+
+
 
 SL_CustomPrefs.Get = function()
 	return {
