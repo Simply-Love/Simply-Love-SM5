@@ -1,22 +1,10 @@
 -- -----------------------------------------------------------------------
--- call this to draw a Quad with a border
--- width of quad, height of quad, and border width, in pixels
-
-Border = function(width, height, bw)
-	return Def.ActorFrame {
-		Def.Quad { InitCommand=function(self) self:zoomto(width-2*bw, height-2*bw):MaskSource(true) end },
-		Def.Quad { InitCommand=function(self) self:zoomto(width,height):MaskDest() end },
-		Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
-	}
-end
-
--- -----------------------------------------------------------------------
 -- NOTE: This is the preferred way to check for RTT support, but we cannot rely on it to
 --   accurately tell us whether the current system atually supports RTT!
 --   Some players on Linux and [some version of] SM5.1-beta reported that DISPLAY:SupportsRenderToTexture()
 --   returned false, when render to texture was definitely working for them.
 --   I'm leaving this check here, but commented out, both as "inline instruction" for current SM5 themers
---   and so that it can be easily uncommented and used at a future date ~~when we are trees again~~.
+--   and so that it can be easily uncommented and used ~~when we are trees again~~ at a future date.
 
 -- SupportsRenderToTexture = function()
 -- 	-- ensure the method exists and, if so, ensure that it returns true
@@ -37,6 +25,27 @@ SupportsRenderToTexture = function()
 	end
 
 	return true
+end
+
+-- -----------------------------------------------------------------------
+-- game types like "kickbox" and "lights" aren't supported in Simply Love, so we
+-- use this function to hardcode a list of game modes that are supported, and use it
+-- in ScreenInit overlay.lua to redirect players to ScreenSelectGame if necessary.
+--
+-- (Because so many people have accidentally gotten themselves into lights mode without
+-- having any idea they'd done so, and have then messaged me saying the theme was broken.)
+
+CurrentGameIsSupported = function()
+	-- a hardcoded list of games that Simply Love supports
+	local support = {
+		dance  = true,
+		pump   = true,
+		techno = true,
+		para   = true,
+		kb7    = true
+	}
+	-- return true or nil
+	return support[GAMESTATE:GetCurrentGame():GetName()]
 end
 
 -- -----------------------------------------------------------------------
@@ -169,24 +178,19 @@ BitmapText.Truncate = function(bmt, m)
 end
 
 -- -----------------------------------------------------------------------
--- game types like "kickbox" and "lights" aren't supported in Simply Love, so we
--- use this function to hardcode a list of game modes that are supported, and use it
--- in ScreenInit overlay.lua to redirect players to ScreenSelectGame if necessary.
---
--- (Because so many people have accidentally gotten themselves into lights mode without
--- having any idea they'd done so, and have then messaged me saying the theme was broken.)
+-- call this to draw a Quad with a border
+-- arguments are: width of quad, height of quad, and border width, in pixels
 
-CurrentGameIsSupported = function()
-	-- a hardcoded list of games that Simply Love supports
-	local support = {
-		dance  = true,
-		pump   = true,
-		techno = true,
-		para   = true,
-		kb7    = true
+Border = function(width, height, bw)
+	width  = width  or 2
+	height = height or 2
+	bw     = bw     or 1
+
+	return Def.ActorFrame {
+		Def.Quad { InitCommand=function(self) self:zoomto(width-2*bw, height-2*bw):MaskSource(true) end },
+		Def.Quad { InitCommand=function(self) self:zoomto(width,height):MaskDest() end },
+		Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
 	}
-	-- return true or nil
-	return support[GAMESTATE:GetCurrentGame():GetName()]
 end
 
 -- -----------------------------------------------------------------------
