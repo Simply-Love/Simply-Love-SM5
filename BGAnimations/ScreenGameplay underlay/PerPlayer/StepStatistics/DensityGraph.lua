@@ -64,7 +64,7 @@ local bg = Def.Quad{
 	end
 }
 
--- helper function
+-- FIXME: add inline comments explainig the intent/purpose of this code
 local SlopeAngle = function(p1, p2)
 	return math.atan2(p2[1] - p1[1], p2[2] - p1[2])
 end
@@ -111,6 +111,9 @@ local graph_and_lifeline = Def.ActorFrame{
 		histogram_amv:LoadCurrentSong(scaled_width)
 
 		UpdateRate = LifeBaseSampleRate
+
+		-- FIXME: add inline comments explaining what a 'simple' BPM is -quietly
+		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means -quietly
 
 		-- if the song has a 'simple' BPM, then quantize the timing
 		-- to the nearest multiple of 8ths to avoid jaggies
