@@ -1,4 +1,4 @@
--- A troubled sea.
+-- 🌊
 
 local max_width = 450
 local quote_bmts = {}

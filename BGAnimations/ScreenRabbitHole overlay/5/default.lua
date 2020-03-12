@@ -1,4 +1,8 @@
--- hallways
+-- D  Bm  D  Bm
+-- D  E   D  E
+-- D  C   D  Em
+-- D
+
 local intro = "Walking on the balls of my feet\nI led her down a dark hallway."
 local footsteps = { "our","feet","gently","tip","tap","tapping","on","the","cold","dark","floor","as we","walked","hand in hand","together" }
 local outro = "Where were we going?\nHow would we know when we got there?\nI gripped her hand more tightly."

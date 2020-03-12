@@ -1,4 +1,5 @@
--- recalling
+-- " I long for the day on which I can hear your voice again."
+
 local haiku = "as my cursor blinks\nidle, my mind is active\nrecalling your voice"
 
 -- init mouse starting coordinates
@@ -20,15 +21,13 @@ local Update = function(af, delta)
 		mask:x( clamp(INPUTFILTER:GetMouseX(), _screen.cx-175, _screen.cx+175) )
 		mask:y( clamp(INPUTFILTER:GetMouseY(), _screen.cy-150, _screen.cy+150) )
 	end
+	-- note that INPUTFILTER:GetMouseX() and INPUTFILTER:GetMouseY() are not implemented in
+	-- macOS at this time; both methods always just return 0 in SM5.0.12 and SM5.1
 end
 
+
 local af = Def.ActorFrame{
-	InitCommand=function(self)
-		--- INPUTFILTER:GetMouseX() and INPUTFILTER:GetMouseY() are not implemented in macOS at this time
-		if not HOOKS:GetArchName():lower():match("mac") then
-			self:SetUpdateFunction(Update)
-		end
-	end,
+	InitCommand=function(self) self:SetUpdateFunction(Update) end,
 	InputEventCommand=function(self, event)
 		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
 			self:smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")

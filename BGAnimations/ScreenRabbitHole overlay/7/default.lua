@@ -1,4 +1,11 @@
--- dragons
+-- Listening to the chord transitions in River by Alexandre Desplat, I can sense that
+-- they are simple and un-extraordinary, yet I remain completely unable to articulate
+-- what are they, how they work, and why they move me. How can I possibly ever yield
+-- similar results?
+--
+-- This must be what the illiterate feel when they are told of a certain book's beauty,
+-- able to believe but lacking the capacity to experience it firsthand.
+
 local max_width = 350
 local quote_bmt
 

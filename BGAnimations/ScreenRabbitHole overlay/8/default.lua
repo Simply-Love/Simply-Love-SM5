@@ -1,4 +1,25 @@
--- i like our castle
+-- The line "I like our castle." is from the xkcd comic, Time. Megan and
+-- Cueball are standing atop the castle they spent 800+ frames building.
+-- "I like our castle," Megan says.
+--
+-- "I think it's going to go away," Cueball admits one frame later.
+--
+-- That served as the initial inspiration for this.
+--
+-- Initially, I had the bricks full of only negative thoughts and worries.
+-- But, that didn't feel quite right. It felt artificially heavy; it felt
+-- untrue. So I tried to strike a balance.
+--
+-- I was initially intrigued by the idea of "is it better to leave the castle
+-- standing, unexplored? Or is it better to disassemble it, brick by brick,
+-- and learn what it's actually made of?" But that idea eventually gave way
+-- to just having feelings—a great spectrum of feelings—trapped in bricks in
+-- a breakaway clone. And that's okay, too.
+--
+-- I think as a piece, it is still able to be interpreted uniquely by each
+-- person who plays it.
+--
+-- I hope, at least.
 
 local bricks = {
 	{ x=0, y=5, c="#aaaaaa", text="What if she's allergic to flowers?" },
