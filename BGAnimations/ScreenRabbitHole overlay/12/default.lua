@@ -4,7 +4,7 @@ local quote_bmts = {}
 local count = 1
 local quotes = {
 	{
-		text="What happens when we get there, the place where the hallway ends?",
+		text="What happens when we get there,\nthe place where the hallway ends?",
 		color={0.8, 0.666, 0.666, 0},
 		y=140,
 	},
