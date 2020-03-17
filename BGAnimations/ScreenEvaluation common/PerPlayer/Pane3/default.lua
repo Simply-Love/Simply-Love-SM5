@@ -1,5 +1,4 @@
--- Pane3 displays a list of HighScores for the stepchart that was played
--- using the machine profile.
+-- Pane3 displays a list of HighScores for the stepchart that was played.
 
 local player = ...
 
