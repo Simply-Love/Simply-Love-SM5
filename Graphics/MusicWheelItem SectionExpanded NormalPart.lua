@@ -3,7 +3,7 @@ local num_items = THEME:GetMetric("MusicWheel", "NumWheelItems")
 -- one MusicWheelItem will be offsceen above, one will be offscreen below
 local num_visible_items = num_items - 2
 
-local item_width = _screen.w/WideScale(2.125, 2.125)
+local item_width = _screen.w / 2.125
 
 return Def.ActorFrame{
 	-- the MusicWheel is centered via metrics under [ScreenSelectMusic]; offset by a slight amount to the right here
