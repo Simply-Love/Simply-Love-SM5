@@ -130,7 +130,7 @@ return {
 		{
 			Name="Brittney / Galaga",
 			Img="galaga.jpg",
-			About="Brittney has been a leading voice in the effort to create a community and organize events for girls and women who play dance games.\n\nShe has encouraged women of all skill levels from around the world to push themselves and each other to improve through innovative and compelling competition, and the overall community is better for it."
+			About="Brittney leads Valkyrie Dimension, a major community focused on events for women and femme-leaning/identifying people who play dance games.\n\nShe has encouraged valkyries of all skill levels from around the world to push themselves and each other to improve through innovative and compelling competition, and the overall community is better for it."
 		},
 		{
 			Name="Dyle / RiOdO",
