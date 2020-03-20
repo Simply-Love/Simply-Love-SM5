@@ -16,21 +16,28 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self) self:diffusealpha(0) end,
-	OnCommand=function(self) self:linear(0.15):diffusealpha(1):queuecommand("Hax") end,
-	EditMenuChangeMessageCommand=function(self) self:playcommand("Hax") end,
+	OnCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen()
+		if topscreen then
+			topscreen:GetChild("EditMenu"):GetChild("SongTextBanner"):addx(WideScale(-150,-204))
+		end
 
-	HaxCommand=function(self)
+		self:linear(0.15):diffusealpha(1):queuecommand("ApplyColor")
+	end,
+	EditMenuChangeMessageCommand=function(self) self:playcommand("ApplyColor") end,
 
-		local topscreen = SCREENMAN:GetTopScreen();
+	ApplyColorCommand=function(self)
+
+		local topscreen = SCREENMAN:GetTopScreen()
 
 		if topscreen then
-			local editMenu = topscreen:GetChild("EditMenu");
+			local editMenu = topscreen:GetChild("EditMenu")
 
-			local cursor = editMenu:GetChild("");
-			local cursorY = cursor:GetY();
+			local cursor = editMenu:GetChild("")
+			local cursorY = cursor:GetY()
 
-			local songTextBanner = editMenu:GetChild("SongTextBanner");
-			local rowHighlight = self:GetChild("RowHighlight");
+			local songTextBanner = editMenu:GetChild("SongTextBanner")
+			local rowHighlight = self:GetChild("RowHighlight")
 
 
 			for i=1,#rowYvalues do
