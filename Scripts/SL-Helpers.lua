@@ -492,6 +492,8 @@ end
 -- account for the possibility that emojis shouldn't be diffused to Color.Black
 
 DiffuseEmojis = function(bmt, text)
+	text = text or bmt:GetText()
+
 	-- loop through each char in the string, checking for emojis; if any are found
 	-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
 	for i=1, text:utf8len() do
