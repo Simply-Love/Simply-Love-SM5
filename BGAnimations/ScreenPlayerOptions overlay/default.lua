@@ -140,11 +140,23 @@ local t = Def.ActorFrame{
 		local MusicRateRowIndex = FindOptionRowIndex(screen, "MusicRate")
 
 		if MusicRateRowIndex then
-			local musicrate = SL.Global.ActiveModifiers.MusicRate
 			local title_bmt = screen:GetOptionRow(MusicRateRowIndex):GetChild(""):GetChild("Title")
+			local bpms = {}
 
-			local bpms = StringifyDisplayBPMs()
-			title_bmt:settext( ("%s\nbpm: %s"):format(THEME:GetString("OptionTitles", "MusicRate"), bpms) )
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				table.insert(bpms, StringifyDisplayBPMs(player))
+			end
+
+			local text = ""
+			if #bpms == 2 then
+				if bpms[1] == bpms[2] then
+					text = bpms[1]
+				else
+					text = THEME:GetString("ScreenPlayerOptions", "SplitBPMs")
+				end
+			end
+
+			title_bmt:settext( ("%s\nbpm: %s"):format(THEME:GetString("OptionTitles", "MusicRate"), text) )
 		end
 	end
 }
