@@ -32,6 +32,9 @@ end
 
 StepManiaVersionIsSupported = function()
 
+	-- ensure that we're using StepMania
+	if type(ProductFamily) ~= "function" or ProductFamily():lower() ~= "stepmania" then return false end
+
 	-- ensure that a global ProductVersion() function exists before attempting to call it
 	if type(ProductVersion) ~= "function" then return false end
 
