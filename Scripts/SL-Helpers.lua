@@ -573,7 +573,7 @@ end
 --   • have its png and ini file both be named to match the directory they are in
 --
 -- a valid ComboFont should:
---   • include glyphs for 1234567890()/
+--   • include glyphs for 1234567890()/.-%
 --   • be open source or "100% free" on dafont.com
 
 GetComboFonts = function()
@@ -596,7 +596,7 @@ GetComboFonts = function()
 			if directory_name == "Wendy" then
 				table.insert(fonts, 1, directory_name)
 
-			-- special-cased Wendy (Cursed) to always appear last in the last
+			-- special-case Wendy (Cursed) to always appear last in the last
 			elseif directory_name == "Wendy (Cursed)" then
 				has_wendy_cursed = true
 			else

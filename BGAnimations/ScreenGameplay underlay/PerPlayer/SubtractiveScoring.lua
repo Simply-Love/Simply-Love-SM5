@@ -27,10 +27,21 @@ local tns, hns
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
+-- which font should we use for the BitmapText actor?
+local font = mods.ComboFont
+
+-- most ComboFonts have their own dedicated sprite sheets in ./Simply Love/Fonts/_Combo Fonts/
+-- "Wendy" and "Wendy (Cursed)" are exceptions for the time being; reroute both to use "_wendy small"
+if font == "Wendy" or font == "Wendy (Cursed)" then
+	font = "_wendy small"
+else
+	font = "_Combo Fonts/" .. font .. "/"
+end
+
 -- -----------------------------------------------------------------------
 
 -- the BitmapText actor
-local bmt = LoadFont("_wendy small")
+local bmt = LoadFont(font)
 
 bmt.InitCommand=function(self)
 	self:diffuse(color("#ff55cc"))
