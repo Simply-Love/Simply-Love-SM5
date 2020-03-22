@@ -40,8 +40,9 @@ local GetTextForMeasure = function(current_measure, Measures, stream_index)
 	local text = ""
 	if Measures[stream_index].isBreak then
 		if mods.HideRestCounts == false then
-			-- NOTE: We let the lowest value be 0. This means that e.g.,
-			-- for an 8 measure break, we will display the numbers 7 -> 0
+			-- For the RestCount, let the lowest value be an implied 0.
+			-- e.g. for an 8 measure break, start at 7, decrement to 1, and don't show
+			--      anything for the last measure immediately before the streams begins
 			local measures_left = current_stream_length - current_count
 
 			if measures_left >= (current_stream_length-1) or measures_left <= 0 then
