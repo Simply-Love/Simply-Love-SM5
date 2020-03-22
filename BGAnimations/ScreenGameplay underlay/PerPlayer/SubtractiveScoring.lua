@@ -47,16 +47,18 @@ bmt.InitCommand=function(self)
 	self:diffuse(color("#ff55cc"))
 	self:zoom(0.35):shadowlength(1):horizalign(center)
 
-	-- mirror image of MeasureCounter.lua
 	local width = GetNotefieldWidth()
 	local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
-
+	-- mirror image of MeasureCounter.lua
 	self:xy( GetNotefieldX(player) + (width/NumColumns), _screen.cy )
 
 	-- Fix overlap issues when MeasureCounter is centered
 	-- since in this case we don't need symmetry.
 	if (mods.MeasureCounterLeft == false) then
 		self:horizalign(left)
+		-- nudge slightly left (15% of the width of the bitmaptext when set to "100.00%")
+		self:settext("100.00%"):addx( -self:GetWidth()*self:GetZoom() * 0.15 )
+		self:settext("")
 	end
 end
 
