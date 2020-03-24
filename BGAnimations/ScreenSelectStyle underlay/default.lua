@@ -16,7 +16,7 @@ local choices = {
 		name="versus",
 		x=_screen.cx,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex), offset=-WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex),   offset=-WideScale(42,51)},
 			{color=GetHexColor(SL.Global.ActiveColorIndex+3), offset= WideScale(42,51)}
 		}
 	},
@@ -296,6 +296,14 @@ local t = Def.ActorFrame{
 		-- set this now, but keep in mind that the style can change during a game session in a number
 		-- of ways, like latejoin (when available) and using SSM's SortMenu to change styles mid-game
 		GAMESTATE:SetCurrentStyle(style)
+
+		for i=1, #choices do
+			if i ~= current_index then
+				af:GetChild("")[i]:playcommand("NotChosen")
+			else
+				af:GetChild("")[i]:playcommand("Chosen")
+			end
+		end
 
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
