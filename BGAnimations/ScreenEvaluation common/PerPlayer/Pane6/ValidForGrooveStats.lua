@@ -8,15 +8,19 @@ local valid = {}
 -- GrooveStats only supports dance for now (not pump, techno, etc.)
 valid[1] = GAMESTATE:GetCurrentGame():GetName() == "dance"
 
+-- GrooveStats does not support dance-solo (i.e. 6-panel dance like DDR Solo 4th Mix)
+-- https://en.wikipedia.org/wiki/Dance_Dance_Revolution_Solo
+valid[2] = GAMESTATE:GetCurrentStyle():GetName() ~= "solo"
+
 -- GrooveStats does rank Marathons from ITG1, ITG2, and ITG Home
 -- but there isn't QR support at this time.
-valid[2] = not GAMESTATE:IsCourseMode()
+valid[3] = not GAMESTATE:IsCourseMode()
 
 -- GrooveStats was made with ITG settings in mind.
 -- FA+ is okay because it just halves ITG's TimingWindowW1 but keeps everything else the same.
 -- StomperZ and Casual (and Experimental, Demonic, etc.) use different settings
 -- that are incompatible with GrooveStats ranking.
-valid[3] = (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+")
+valid[4] = (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+")
 
 -- ------------------------------------------
 -- Next, check global Preferences that would invalidate the score.
@@ -37,8 +41,8 @@ valid[3] = (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+")
 --
 -- 4 (1, internally) is considered standard for ITG.
 -- GrooveStats expects players to have both these set to 4 (1, internally).
-valid[4] = PREFSMAN:GetPreference("TimingWindowScale") == 1
-valid[5] = PREFSMAN:GetPreference("LifeDifficultyScale") == 1
+valid[5] = PREFSMAN:GetPreference("TimingWindowScale") == 1
+valid[6] = PREFSMAN:GetPreference("LifeDifficultyScale") == 1
 
 -- ------------------------------------------
 -- Finally, check player-specific modifiers used during this song that would invalidate the score.
@@ -48,21 +52,21 @@ local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferre
 
 
 -- score is invalid if notes were removed
-valid[6] = not (
+valid[7] = not (
 	   po:Little()  or po:NoHolds() or po:NoStretch()
 	or po:NoHands() or po:NoJumps() or po:NoFakes()
 	or po:NoLifts() or po:NoQuads() or po:NoRolls()
 )
 
 -- score is invalid if notes were added
-valid[7] = not (
+valid[8] = not (
 	   po:Wide() or po:Skippy() or po:Quick()
 	or po:Echo() or po:BMRize() or po:Stomp()
 	or po:Big()
 )
 
 -- only FailTypes "Immediate" and "ImmediateContinue" are valid for GrooveStats
-valid[8] = (po:FailSetting() == "FailType_Immediate" or po:FailSetting() == "FailType_ImmediateContinue")
+valid[9] = (po:FailSetting() == "FailType_Immediate" or po:FailSetting() == "FailType_ImmediateContinue")
 
 -- ------------------------------------------
 -- return the entire table so that we can let the player know which settings,
