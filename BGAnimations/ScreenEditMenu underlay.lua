@@ -17,11 +17,6 @@ end
 local t = Def.ActorFrame{
 	InitCommand=function(self) self:diffusealpha(0) end,
 	OnCommand=function(self)
-		local topscreen = SCREENMAN:GetTopScreen()
-		if topscreen then
-			topscreen:GetChild("EditMenu"):GetChild("SongTextBanner"):addx(WideScale(-150,-204))
-		end
-
 		self:linear(0.15):diffusealpha(1):queuecommand("ApplyColor")
 	end,
 	EditMenuChangeMessageCommand=function(self) self:playcommand("ApplyColor") end,
