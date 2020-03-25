@@ -25,21 +25,13 @@ local t = Def.ActorFrame{
 		end
 	end,
 	OffCommand=function(self)
-		local topscreen = SCREENMAN:GetTopScreen()
-		if topscreen then
-			if topscreen:GetName() == "ScreenEvaluationStage" or topscreen:GetName() == "ScreenEvaluationNonstop" then
-				SL.Global.Stages.PlayedThisGame = SL.Global.Stages.PlayedThisGame + 1
-			else
-				self:linear(0.1)
-				self:diffusealpha(0)
-			end
-		end
+		self:linear(0.1):diffusealpha(0)
 	end,
 
+	-- generic header elements (background Def.Quad, left-aligned screen name)
 	LoadActor( THEME:GetPathG("", "_header.lua") ),
 
-	Def.BitmapText{
-		Font=PREFSMAN:GetPreference("EventMode") and "_wendy monospace numbers" or "_wendy small",
+	LoadFont(PREFSMAN:GetPreference("EventMode") and "_wendy monospace numbers" or "_wendy small")..{
 		Name="Stage Number",
 		InitCommand=function(self)
 			bmt_actor = self
@@ -50,7 +42,6 @@ local t = Def.ActorFrame{
 			end
 
 			self:diffusealpha(0):x(_screen.cx)
-
 		end,
 		OnCommand=function(self)
 			if not PREFSMAN:GetPreference("EventMode") then
