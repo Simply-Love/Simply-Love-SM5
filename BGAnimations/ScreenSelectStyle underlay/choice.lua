@@ -40,13 +40,13 @@ local af = Def.ActorFrame{
 		end
 	end,
 	ChosenCommand=function(self)
-		-- if this choice was chosen...
-		-- ...don't do anything differently for now
-		-- (maybe I'll revisit this later)
+		-- if this choice was chosen, fluidly zoom in a tiny amount then zoom to 0
+		-- similar to animation from SelectProfile
+		self:finishtweening():bouncebegin(0.415):zoom(0)
 	end,
 	NotChosenCommand=function(self)
-		-- if this choice wasn't chosen, zoom the entire ActorFrame to 0
-		self:finishtweening():smooth(0.333):zoom(0)
+		-- if this choice wasn't chosen, fade out
+		self:finishtweening():sleep(0.1):smooth(0.2):diffusealpha(0)
 	end,
 
 	LoadFont("_wendy small")..{
@@ -56,9 +56,6 @@ local af = Def.ActorFrame{
 		end,
 		GainFocusCommand=function(self) if ThemePrefs.Get("VisualTheme")=="Gay" then self:rainbowscroll(true) end end,
 		LoseFocusCommand=function(self) if ThemePrefs.Get("VisualTheme")=="Gay" then self:rainbowscroll(false) end end,
-		NotChosenCommand=function(self)
-			self:finishtweening():sleep(0.1):smooth(0.25):cropleft(1)
-		end
 	}
 }
 
