@@ -4,40 +4,7 @@ local frame_x = args[1].x
 local pads = args[1].pads
 local choice_index = args[2]
 
-local _zoom = WideScale(0.435,0.525)
-local _game = GAMESTATE:GetCurrentGame():GetName()
-
-local layouts = {
-	dance  = { false, true,  false, true,  false, true,  false, true,  false },
-	pump   = { true,  false, true,  false, true,  false, true,  false, true  },
-	techno = { true,  true,  true,  true,  false, true,  true,  true,  true  },
-	solo   = { true,  true,  true,  true,  false, true,  false, true,  false }
-}
-
-local layout = (_game=="dance" and choiceName=="solo" and layouts.solo) or layouts[_game] or layouts.dance
-
--- -----------------------------------------------------------------------
-
-local DrawNinePanelPad = function(color, xoffset)
-	local pad = Def.ActorFrame{ InitCommand=function(self) self:x(xoffset) end }
-
-	for row=0,2 do
-		for col=0,2 do
-			pad[#pad+1] = LoadActor("rounded-square.png")..{
-				InitCommand=function(self)
-					self:zoom(_zoom)
-
-					self:x(_zoom * self:GetWidth()  * (col-1))
-					self:y(_zoom * self:GetHeight() * (row-2))
-
-					self:diffuse(layout[row*3+col+1] and color or {0.2, 0.2, 0.2, 1})
-				end
-			}
-		end
-	end
-
-	return pad
-end
+local DrawNinePanelPad = LoadActor("./pad.lua")
 
 -- -----------------------------------------------------------------------
 
@@ -97,7 +64,7 @@ local af = Def.ActorFrame{
 
 -- draw as many pads as needed for this choice
 for pad in ivalues(pads) do
-	af[#af+1] = DrawNinePanelPad(pad.color, pad.offset)
+	af[#af+1] = DrawNinePanelPad(choiceName, pad.color, {0.2,0.2,0.2,1}, pad.offset)
 end
 
 return af
