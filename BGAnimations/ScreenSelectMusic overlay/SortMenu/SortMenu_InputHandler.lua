@@ -36,8 +36,9 @@ local function input(event)
 				SetGameModePreferences()
 				THEME:ReloadMetrics()
 
-				-- Change the header text to reflect the newly selected GameMode.
-				overlay:GetParent():GetChild("Header"):playcommand("UpdateHeaderText")
+				-- Broadcast that the SL GameMode has changed
+				-- SSM's header will update its text and highscore names in the PaneDisplays will refresh
+				MESSAGEMAN:Broadcast("SLGameModeChanged")
 
 				-- Reload the SortMenu's available options and queue "DirectInputToEngine"
 				-- to return input from Lua back to the engine and hide the SortMenu from view

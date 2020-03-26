@@ -77,7 +77,7 @@ af[#af+1] = LoadFont("_wendy small")..{
 	OnCommand=function(self)
 		self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 	end,
-	UpdateHeaderTextCommand=function(self)
+	SLGameModeChangedMessageCommand=function(self)
 		self:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
 	end
 }

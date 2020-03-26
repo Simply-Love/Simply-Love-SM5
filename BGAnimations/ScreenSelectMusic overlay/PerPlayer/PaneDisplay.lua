@@ -148,6 +148,7 @@ local af = Def.ActorFrame{
 	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("Set") end,
+	SLGameModeChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
 	SetCommand=function(self)
 		local machine_score, machine_name = GetNameAndScore( PROFILEMAN:GetMachineProfile() )
