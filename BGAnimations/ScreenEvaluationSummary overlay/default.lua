@@ -4,7 +4,7 @@ local page = 1
 local pages = math.ceil(numStages/4)
 local next_page
 
--- assume that the player has dedicated MenuButtons
+-- start by assuming that the player has dedicated MenuButtons
 local buttons = {
 	-- previous page
 	MenuLeft = -1,
@@ -28,6 +28,8 @@ end
 
 local page_text = THEME:GetString("ScreenEvaluationSummary", "Page")
 
+-- -----------------------------------------------------------------------
+
 local t = Def.ActorFrame{
 	CodeMessageCommand=function(self, param)
 		if param.Name == "Screenshot" then
@@ -48,29 +50,36 @@ local t = Def.ActorFrame{
 				self:finishtweening():queuecommand("Hide")
 			end
 		end
-	end,
-
-	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
-
-	LoadFont("_wendy small")..{
-		Name="PageNumber",
-		Text=("%s %i/%i"):format(page_text, page, pages),
-		InitCommand=function(self) self:diffusealpha(0):zoom(WideScale(0.5,0.6)):xy(_screen.cx, 15) end,
-		OnCommand=function(self) self:sleep(0.1):decelerate(0.33):diffusealpha(1) end,
-		OffCommand=function(self) self:accelerate(0.33):diffusealpha(0) end,
-		HideCommand=function(self) self:sleep(0.5):settext( ("%s %i/%i"):format(page_text, page, pages) ) end
-	}
+	end
 }
+
+-- decorative triangles shown in StomperZ mode
+t[#t+1] = LoadActor( THEME:GetPathB("", "Triangles.lua") )
+
+-- centered text like "Page 2/5" where 2 is the current page
+-- the player is viewing and 5 is the total number of pages
+t[#t+1] = LoadFont("_wendy small")..{
+	Name="PageNumber",
+	Text=("%s %i/%i"):format(page_text, page, pages),
+	InitCommand=function(self) self:diffusealpha(0):zoom(WideScale(0.5,0.6)):xy(_screen.cx, 15) end,
+	OnCommand=function(self) self:sleep(0.1):decelerate(0.33):diffusealpha(1) end,
+	OffCommand=function(self) self:accelerate(0.33):diffusealpha(0) end,
+	HideCommand=function(self) self:sleep(0.5):settext( ("%s %i/%i"):format(page_text, page, pages) ) end
+}
+
 
 if SL.Global.GameMode ~= "StomperZ" then
 	t[#t+1] = LoadActor("./LetterGrades.lua")
 end
 
+-- -----------------------------------------------------------------------
+-- 4 rows
 -- i will increment so that we progress down the screen from top to bottom
 -- first song of the round at the top, more recently played song at the bottom
+
 for i=1,4 do
 
-	t[#t+1] = LoadActor("StageStats.lua", i)..{
+	t[#t+1] = LoadActor("Row.lua", i)..{
 		Name="StageStats_"..i,
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OnCommand=function(self)
@@ -86,5 +95,7 @@ for i=1,4 do
 	}
 
 end
+
+-- -----------------------------------------------------------------------
 
 return t
