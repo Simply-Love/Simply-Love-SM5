@@ -1,7 +1,8 @@
 local player = ...
 
 local LetterGradesAF
-local playerStats, difficultyMeter, difficulty, stepartist, grade, score
+local playerStats
+local steps, meter, difficulty, stepartist, grade, score
 local TNSTypes = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 
 -- variables for positioning and horizalign, dependent on playernumber
@@ -29,7 +30,8 @@ local af = Def.ActorFrame{
 		playerStats = SL[ToEnumShortString(player)].Stages.Stats[params.StageNum]
 
 		if playerStats then
-	 		difficultyMeter = playerStats.meter
+			steps = playerStats.steps
+	 		meter = playerStats.meter
 	 		difficulty = playerStats.difficulty
 	 		stepartist = playerStats.stepartist
 	 		grade = playerStats.grade
@@ -61,6 +63,61 @@ af[#af+1] = LoadFont("_wendy small")..{
 	end
 }
 
+-- stepchart style ("single" or "double" or etc.)
+-- difficulty text ("beginner" or "expert" or etc.)
+af[#af+1] = LoadFont("Common Normal")..{
+	InitCommand=function(self)
+		self:y(17)
+		self:x(col1x + (player==PLAYER_1 and -1 or 1))
+		self:horizalign(align1):zoom(0.65)
+	end,
+	DrawStageCommand=function(self)
+		if playerStats==nil then self:settext(""); return end
+
+		local stepstype = ""
+		if steps then
+			-- get the StepsType for the stepchart that was played
+			-- this will be a string from the StepsType enum like "StepsType_Dance_Single"
+			stepstype = steps:GetStepsType()
+			-- remove the first two sections, transforming something like "StepsType_Dance_Single" into "Single"
+			stepstype = stepstype:gsub("%w+_%w+_", "")
+			-- localize
+			stepstype = THEME:GetString("ScreenSelectMusic", stepstype)
+		end
+
+		local diff_text = ""
+		if difficulty then
+			diff_text = THEME:GetString("Difficulty", ToEnumShortString(difficulty))
+		end
+
+		self:settext( ("%s / %s"):format(stepstype, diff_text))
+	end
+}
+
+-- difficulty meter
+af[#af+1] = LoadFont("_wendy small")..{
+	InitCommand=function(self) self:zoom(0.4):horizalign(align1):x(col1x):y(-1) end,
+	DrawStageCommand=function(self)
+		if playerStats and meter then
+			self:diffuse(DifficultyColor(difficulty)):settext(meter)
+		else
+			self:settext("")
+		end
+	end
+}
+
+-- stepartist
+af[#af+1] = LoadFont("Common Normal")..{
+	InitCommand=function(self) self:zoom(0.65):horizalign(align1):x(col1x):y(32) end,
+	DrawStageCommand=function(self)
+		if playerStats and stepartist then
+			self:settext(stepartist)
+		else
+			self:settext("")
+		end
+	end
+}
+
 -- letter grade
 if SL.Global.GameMode ~= "StomperZ" then
 	af[#af+1] = Def.ActorProxy{
@@ -76,30 +133,6 @@ if SL.Global.GameMode ~= "StomperZ" then
 		end
 	}
 end
-
--- difficulty meter
-af[#af+1] = LoadFont("_wendy small")..{
-	InitCommand=function(self) self:zoom(0.4):horizalign(align1):x(col1x):y(4) end,
-	DrawStageCommand=function(self)
-		if playerStats and difficultyMeter then
-			self:diffuse(DifficultyColor(difficulty)):settext(difficultyMeter)
-		else
-			self:settext("")
-		end
-	end
-}
-
--- stepartist
-af[#af+1] = LoadFont("Common Normal")..{
-	InitCommand=function(self) self:zoom(0.65):horizalign(align1):x(col1x):y(28) end,
-	DrawStageCommand=function(self)
-		if playerStats and stepartist then
-			self:settext(stepartist)
-		else
-			self:settext("")
-		end
-	end
-}
 
 -- numbers
 for i=1,#TNSTypes do

@@ -71,7 +71,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 --        so this is currently hardcoded to use the MasterPlayer's BPM values
 t[#t+1] = LoadFont("Common Normal")..{
 	Name="SongBPM",
-	InitCommand=function(self) self:zoom(0.6):y(30):maxwidth(350) end,
+	InitCommand=function(self) self:zoom(0.65):y(32):maxwidth(350) end,
 	DrawStageCommand=function(self)
 		if SongOrCourse then
 			local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
