@@ -61,7 +61,11 @@ local af = Def.ActorFrame{
 
 -- draw as many pads as needed for this choice
 for pad in ivalues(pads) do
-	af[#af+1] = DrawNinePanelPad(choiceName, pad.color, {0.2,0.2,0.2,1}, pad.offset)
+	af[#af+1] = DrawNinePanelPad(pad.color, {0.2,0.2,0.2,1})..{
+		InitCommand=function(self)
+			self:x(pad.offset):playcommand("Set", {style=choiceName})
+		end,
+	}
 end
 
 return af
