@@ -61,7 +61,7 @@ local CloseCurrentFolder = function()
 	if Handler.WheelWithFocus == GroupWheel then return end
 
 	-- otherwise...
-	t.Enabled = false
+	Handler.Enabled = false
 	Handler.WheelWithFocus.container:queuecommand("Hide")
 	Handler.WheelWithFocus = GroupWheel
 	Handler.WheelWithFocus.container:queuecommand("Unhide")

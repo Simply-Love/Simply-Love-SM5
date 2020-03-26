@@ -13,8 +13,10 @@ else
 	local song = GAMESTATE:GetCurrentSong()
 	local steps = GAMESTATE:GetCurrentSteps(player)
 	local highScores = PROFILEMAN:GetProfile(player):GetHighScoreList(song, steps):GetHighScores()
-	if highScores[1]:GetPercentDP() > pss:GetPercentDancePoints() then highScore = highScores[1]
-	elseif highScores[2] then highScore = highScores[2] end
+	if #highScores > 0 then
+		if highScores[1]:GetPercentDP() > pss:GetPercentDancePoints() then highScore = highScores[1]
+		elseif highScores[2] then highScore = highScores[2] end
+	end
 end
 
 local TapNoteScores = {

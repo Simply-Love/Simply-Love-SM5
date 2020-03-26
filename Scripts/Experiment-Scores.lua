@@ -61,7 +61,7 @@ function LoadHashLookup()
 			end
 		end
 		SL.Global.HashLookup = hashLookup
-	end 
+	end
 	AddToHashLookup()
 end
 
@@ -91,10 +91,7 @@ function LoadNewFromStats(player)
 		for chart in ivalues(song:GetAllSteps()) do
 			local difficulty = ToEnumShortString(chart:GetDifficulty())
 			local stepsType = ToEnumShortString(chart:GetStepsType()):gsub("_","-"):lower()
-			local hash 
-			if next(SL.Global.HashLookup[song:GetSongDir()]) and SL.Global.HashLookup[song:GetSongDir()][difficulty] and SL.Global.HashLookup[song:GetSongDir()][difficulty][stepsType] then
-				hash = SL.Global.HashLookup[song:GetSongDir()][difficulty][stepsType]
-			end
+			local hash = GetHash(player,song,chart)
 			if hash and not GetScores(player,hash) and #PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores() > 0 then
 				local lastPlayed = "1980-01-01 12:12:00"
 				local bestPass = 0
@@ -305,9 +302,9 @@ function LoadScores(pn)
 	--if there's no Scores.txt then import all the scores in Stats.xml to get started
 	else 
 		Scores, hashLookup = LoadFromStats(pn)
-		SL.Global.HashLookup = hashLookup 
+		SL.Global.HashLookup = hashLookup
 	end
-	if SL[pn] then 
+	if SL[pn] then
 		SL[pn]['Scores'] = Scores
 		SaveScores(pn)
 	end
@@ -384,6 +381,15 @@ function AddScore(player)
 	else SM("WARNING: Could not generate hash for: "..GAMESTATE:GetCurrentSong():GetMainTitle()) end
 end
 
+---Returns an entry from the Custom Scores table if it exists
+---@param player any
+---@param hash any
+function GetChartStats(player,hash)
+	local pn = ToEnumShortString(player)
+	if SL[pn]['Scores'][hash] then return SL[pn]['Scores'][hash] end
+	return nil
+end
+
 ---Returns a table of scores for a player or nil if there are no high scores
 ---@param checkRate boolean only returns scores with the same rate as the current song
 ---@param checkFailed boolean only returns passing scores
@@ -391,13 +397,13 @@ end
 --of rate or fail status.
 function GetScores(player, hash, checkRate, checkFailed)
 	assert(hash, "GetScores requires a hash")
-	local pn = ToEnumShortString(player)
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	local checkRate = checkRate or false
 	local checkFailed = checkFailed or false
 	local HighScores = {}
-	if SL[pn]['Scores'][hash] and SL[pn]['Scores'][hash]['HighScores'] then
-		for score in ivalues(SL[pn]['Scores'][hash]['HighScores']) do
+	local chartStats = GetChartStats(player,hash)
+	if chartStats and chartStats['HighScores'] then
+		for score in ivalues(chartStats['HighScores']) do
 			if checkRate and not checkFailed then
 				if tonumber(score.rate) == rate then HighScores[#HighScores+1] = score end
 			elseif not checkRate and checkFailed then
@@ -420,10 +426,13 @@ function GetBestPass(player, songParam, chartParam)
 	local pn = ToEnumShortString(player)
 	local song = songParam or GAMESTATE:GetCurrentSong()
 	local steps = chartParam or GAMESTATE:GetCurrentSteps(pn)
-	local hash
-	if ThemePrefs.Get("UseCustomScores") then hash = GetHash(player, song, steps) end
-	if hash and SL[pn]['Scores'][hash] and tonumber(SL[pn]['Scores'][hash].BestPass) then
-		return tonumber(SL[pn]['Scores'][hash].BestPass)
+	local hash, chartStats
+	if ThemePrefs.Get("UseCustomScores") then
+		hash = GetHash(player, song, steps)
+		chartStats = GetChartStats(player,hash)
+	end
+	if hash and chartStats and tonumber(chartStats.BestPass) then
+		return tonumber(chartStats.BestPass)
 	else
 		local highScores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,steps):GetHighScores()
 		local award = 0

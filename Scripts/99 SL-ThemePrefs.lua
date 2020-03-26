@@ -1,5 +1,6 @@
 local SL_CustomPrefs =
 {
+	--Experiment Options
 	OriginalPaneDisplay = {
 		Default = true,
 		Choices = { THEME:GetString("ThemePrefs","Original"), THEME:GetString("ThemePrefs", "Alternate") },
@@ -19,6 +20,18 @@ local SL_CustomPrefs =
 		Default = false,
 		Choices = {  THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 		Values = { true, false}
+	},
+	GoStraightToGameplay =
+	{
+		Default = false,
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values 	= { true, false }
+	},
+	BlackBackground = 
+	{
+		Default = false,
+		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+		Values 	= { true, false }
 	},
 
 	AllowFailingOutOfSet =
@@ -143,12 +156,6 @@ local SL_CustomPrefs =
 
 	-- - - - - - - - - - - - - - - - - - - -
 	-- Enable/Disable Certain Screens
-	GoStraightToGameplay =
-	{
-		Default = false,
-		Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-		Values 	= { true, false }
-	},
 	AllowScreenSelectProfile =
 	{
 		Default = false,

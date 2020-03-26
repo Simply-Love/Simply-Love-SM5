@@ -46,7 +46,6 @@ local row = {
 	h = ((_screen.h - (margin.h*(numRows-2))) / (numRows-2)),
 }
 
-local steps_type = GetStepsType()
 
 
 ---------------------------------------------------------------------------
@@ -196,7 +195,6 @@ else
 end
 
 return {
-	steps_type=steps_type,
 	group_info=GetGroupInfo(),
 	OptionsWheel=OptionsWheel,
 	GroupWheel=GroupWheel,

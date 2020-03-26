@@ -9,7 +9,6 @@ end
 local timeToGo = 0
 local scroll = 0
 
-local steps_type = setup.steps_type
 local group_info = setup.group_info
 
 local OptionRows = setup.OptionRows
@@ -124,7 +123,7 @@ local t = Def.ActorFrame {
 			if scroll > 3 then
 				if not SL.Global.Scrolling then SL.Global.Scrolling = true MESSAGEMAN:Broadcast("BeginScrolling") end
 			end
-			timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .08
+			timeToGo = GetTimeSinceStart() - SL.Global.TimeAtSessionStart + .06
 			self:sleep(.15):queuecommand("FinishSongTransition")
 		end,
 		FinishSongTransitionMessageCommand=function(self)
@@ -157,14 +156,14 @@ local t = Def.ActorFrame {
 	-- there's also a different style of text that are disabled
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}), 
 	-- create a sickwheel metatable for songs
-	SongWheel:create_actors( "SongWheel", 13, song_mt, 0, songwheel_y_offset - 40), 
+	SongWheel:create_actors( "SongWheel", 13, song_mt, 0, songwheel_y_offset - 40),
 	-- the grey bar at the top as well as total time since start
 	LoadActor("./Header.lua", row),
 	-- profile information and time spent in game
 	-- note that this covers the footer in graphics
 	LoadActor("Footer.lua"),
 	-- this has information about the groups - number of songs/charts/filters/# of passed charts
-	LoadActor("./GroupWheelShared.lua", {row, col, group_info}), 
+	LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
 	-- create a sickwheel metatable for groups
 	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0, true), 
 	-- Graphical Banner
@@ -288,6 +287,9 @@ local t = Def.ActorFrame {
 	end,
 }
 
+if ThemePrefs.Get("BlackBackground") then
+	table.insert(t,1,LoadActor( THEME:GetPathB("", "_black")))
+end
 -- Add player options ActorFrames to our primary ActorFrame
 for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
 	local x_offset = (pn==PLAYER_1 and -1) or 1

@@ -15,13 +15,14 @@ local pane = Def.ActorFrame{
 		if ThemePrefs.Get("UseCustomScores") then
 			local pn = ToEnumShortString(player)
 			local lastPlayed, numPlayed, firstPass
-			if not SL[pn]['Scores'][hash] then
+			local chartStats = GetChartStats(player, hash)
+			if not chartStats then
 				lastPlayed = "NEVER"
 				numPlayed = 1
 				firstPass = pss:GetFailed() and "NEVER" or "TODAY"
 			else
 				--if we played the song today then lastplayed is "TODAY" otherwise it's the date
-				lastPlayed = SL[pn]['Scores'][hash].LastPlayed
+				lastPlayed = chartStats.LastPlayed
 				local lastPlayedDay = Split(lastPlayed)[1]
 				local dateTable = Split(lastPlayedDay,"-")
 				if Year() == tonumber(dateTable[1]) and MonthOfYear()+1 == tonumber(dateTable[2]) and DayOfMonth() == tonumber(dateTable[3]) then
@@ -29,10 +30,10 @@ local pane = Def.ActorFrame{
 				else
 					lastPlayed = lastPlayedDay
 				end
-				numPlayed = tonumber(SL[pn]['Scores'][hash].NumTimesPlayed) + 1
-				if not pss:GetFailed() and SL[pn]['Scores'][hash].FirstPass == "Never" then
+				numPlayed = tonumber(chartStats.NumTimesPlayed) + 1
+				if not pss:GetFailed() and chartStats.FirstPass == "Never" then
 					firstPass = "Just now"
-				else firstPass = SL[pn]['Scores'][hash].FirstPass end
+				else firstPass = chartStats.FirstPass end
 			end
 			self:GetChild("LastPlayedNumber"):settext("LAST PLAYED: "..lastPlayed)
 			self:GetChild("NumPlayedNumber"):settext("NUMBER OF PLAYS: "..numPlayed)

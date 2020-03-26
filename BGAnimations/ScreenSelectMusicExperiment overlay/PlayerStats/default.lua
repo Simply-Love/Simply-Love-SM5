@@ -212,7 +212,6 @@ if playerStats then
 	--Get first passes
 	local firstPasses = {}
 	local songs = SONGMAN:GetAllSongs()
-	local pn = ToEnumShortString(player)
 	local maxDiff = 0
 	if ThemePrefs.Get("UseCustomScores") then
 		for song in ivalues(songs) do
@@ -220,7 +219,7 @@ if playerStats then
 				for steps in ivalues(song:GetStepsByStepsType(GetStepsType())) do
 					local hash = GetHash(player,song,steps)
 					if hash then
-						local customScore = SL[pn]['Scores'][hash]
+						local customScore = GetChartStats(player,hash)
 						if customScore and customScore.FirstPass ~= "Never" and customScore.FirstPass ~= "Unknown" then
 							if not firstPasses[steps:GetMeter()] then
 								if steps:GetMeter() > maxDiff then maxDiff = steps:GetMeter() end
