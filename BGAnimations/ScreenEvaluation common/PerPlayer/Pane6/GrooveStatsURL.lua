@@ -8,10 +8,11 @@ score = tostring(tonumber(score:gsub("%%", "") * 100)):gsub("%.", "")
 local failed = stats:GetFailed() and "1" or "0"
 local rate = tostring(SL.Global.ActiveModifiers.MusicRate * 100):gsub("%.", "")
 
-local currentSteps = GAMESTATE:GetCurrentSteps(player)
+local steps = GAMESTATE:GetCurrentSteps(player)
 local difficulty = ""
-if currentSteps then
-	difficulty = currentSteps:GetDifficulty()
+
+if steps then
+	difficulty = steps:GetDifficulty()
 	-- GetDifficulty() returns a value from the Difficulty Enum
 	-- "Difficulty_Hard" for example.
 	-- Strip the characters up to and including the underscore.
@@ -25,7 +26,8 @@ if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" t
 else
 	style = "dance-single"
 end
-local hash = GenerateHash(style, difficulty):sub(1, 12)
+
+local hash = GenerateHash(steps, style, difficulty):sub(1, 12)
 
 -- ************* CURRENT QR VERSION *************
 -- * Update whenever we change relevant QR code *

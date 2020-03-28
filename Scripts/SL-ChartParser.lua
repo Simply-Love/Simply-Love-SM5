@@ -1,25 +1,12 @@
-function GetSimfileString(path)
+GetSimfileString = function(steps)
 
-	local filename, filetype
-	local files = FILEMAN:GetDirListing(path)
+	-- steps:GetFilename() returns the filename of the sm or ssc file, including path, as it is stored in SM's cache
+	local filename = steps:GetFilename()
+	if not filename then return end
 
-	for file in ivalues(files) do
-		if file:find(".+%.[sS][sS][cC]$") then
-			-- Finding a .ssc file is preferable.
-			-- If we find one, stop looking.
-			filename = file
-			filetype = "ssc"
-			break
-		elseif file:find(".+%.[sS][mM]$") then
-			-- Don't break if we find a .sm file first;
-			-- there might still be a .ssc file waiting.
-			filename = file
-			filetype = "sm"
-		end
-	end
-
+	local filetype = filename:match("[^.]+$")
 	-- if neither a .ssc nor a .sm file were found, bail now
-	if not (filename and filetype) then return end
+	if not (filetype=="ssc" or filetype=="sm") then return end
 
 	-- create a generic RageFile that we'll use to read the contents
 	-- of the desired .ssc or .sm file
@@ -28,7 +15,7 @@ function GetSimfileString(path)
 
 	-- the second argument here (the 1) signifies
 	-- that we are opening the file in read-only mode
-	if f:Open(path .. filename, 1) then
+	if f:Open(filename, 1) then
 		contents = f:Read()
 	end
 
@@ -217,7 +204,7 @@ function GetNPSperMeasure(Song, Steps)
 	if Song==nil or Steps==nil then return end
 
 	local SongDir = Song:GetSongDir()
-	local SimfileString, Filetype = GetSimfileString( SongDir )
+	local SimfileString, Filetype = GetSimfileString( Steps )
 	if not SimfileString then return end
 
 	-- StepsType, a string like "dance-single" or "pump-double"
@@ -294,9 +281,9 @@ end
 
 
 
-function GetStreams(SongDir, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
+function GetStreams(Steps, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
 
-	local SimfileString, Filetype = GetSimfileString( SongDir )
+	local SimfileString, Filetype = GetSimfileString( Steps )
 	if not SimfileString then return end
 
 	-- Parse out just the contents of the notes

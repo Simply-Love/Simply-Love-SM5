@@ -123,8 +123,8 @@ end
 --
 -- stepsType is usually either 'dance-single' or 'dance-double'
 -- difficulty is usually one of {'Beginner', 'Easy', 'Medium', 'Hard', 'Challenge'}
-function GenerateHash(stepsType, difficulty)
-	local msdFile = ParseMsdFile(GAMESTATE:GetCurrentSong():GetSongDir())
+function GenerateHash(steps, stepsType, difficulty)
+	local msdFile = ParseMsdFile(steps)
 
 	if #msdFile == 0 then return ''	end
 
