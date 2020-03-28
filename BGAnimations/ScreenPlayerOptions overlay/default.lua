@@ -147,7 +147,7 @@ local t = Def.ActorFrame{
 				table.insert(bpms, StringifyDisplayBPMs(player))
 			end
 
-			local text = ""
+			local text = StringifyDisplayBPMs()
 			if #bpms == 2 then
 				if bpms[1] == bpms[2] then
 					text = bpms[1]
