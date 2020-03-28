@@ -36,7 +36,26 @@ local function regexEncode(var)
 	return (var:gsub('%%', '%%%'):gsub('%^', '%%^'):gsub('%$', '%%$'):gsub('%(', '%%('):gsub('%)', '%%)'):gsub('%.', '%%.'):gsub('%[', '%%['):gsub('%]', '%%]'):gsub('%*', '%%*'):gsub('%+', '%%+'):gsub('%-', '%%-'):gsub('%?', '%%?'))
 end
 
--- Parse the measures section out of our simfile
+-- ----------------------------------------------------------------
+-- FIXME: GetSimfileChartString() is very likely to return the incorrect note data string
+--   when the requested Difficulty is "Edit" and there are multiple edit difficulties available.
+--
+--   It looks like StepsUtil.cpp uses Steps::GetHash() which calls RageUtil's GetHashForString()
+--   which returns the unsigned int resulting from a CRC32 checksum on m_sNoteDataCompressed
+--
+--   I *guess* it's possible to recreate ALL that^ in-theme using Lua, but this is a niche enough problem
+--   that I don't want to pursue it and am content waiting for https://xkcd.com/1508/ to take care of it.
+-- ----------------------------------------------------------------
+
+-- GetSimfileChartString() accepts four arguments:
+--    SimfileString - the contents of the ssc or sm file as a string
+--    StepsType     - a string like "dance-single" or "pump-double"
+--    Difficulty    - a string like "Beginner" or "Challenge" or "Edit"
+--    Filetype      - either "sm" or "ssc"
+--
+-- GetSimfileChartString() returns one value:
+--    NoteDataString, a substring from SimfileString that contains the just the requested note data
+
 local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
 	local NoteDataString = nil
 
@@ -105,8 +124,6 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 	local measureTiming = 0
 	-- Keep track of the notes in a measure
 	local measureNotes = {}
-
-	-- How many
 
 	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
 	for line in measuresString:gmatch("[^%s*\r\n]+")
@@ -191,7 +208,7 @@ end
 -- 		Song, a song object provided by something like GAMESTATE:GetCurrentSong()
 -- 		Steps, a steps object provided by something like GAMESTATE:GetCurrentSteps(player)
 --
--- GetNPSperMeasure() returns two values
+-- GetNPSperMeasure() returns two values:
 --		PeakNPS, a number representing the peak notes-per-second for the given stepchart
 --			This is an imperfect measurement, as we sample the note density per-second-per-measure, not per-second.
 --			It is (unlikely but) possible for the true PeakNPS to be spread across the boundary of two measures.
