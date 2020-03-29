@@ -159,7 +159,7 @@ function AddTag(toAdd)
 	SaveTags()
 	PreloadedGroups["Tag"][tostring(toAdd)] = CreateSongList(tostring(toAdd), "Tag")
 end
-	
+
 -- Called by ScreenSelectMusicExperiment overlay/TagMenu/Input.lua when the player wants to add a tag to a song
 -- Adds a line to TaggedSongs, saves it, and then recreates the group so we can sort properly.
 function AddTaggedSong(toAdd, song)
@@ -254,6 +254,7 @@ function GetGroupDisplayName(groupName)
 	if SL.Global.GroupType == "Length" then
 		if groupName == 1 then name = groupName.." Minute"
 		else name = groupName.." Minutes" end
+		if groupName == 10 then name = groupName.."+" end
 	elseif SL.Global.GroupType == "BPM" then
 		name = groupName.." BPM"
 	elseif SL.Global.GroupType == "Difficulty" then
@@ -608,8 +609,8 @@ end
 
 -- currently only used when we want to order by Difficulty/BPM. This requires splitting songs so each chart gets its own song.
 -- after splitting, GetSongList won't match up so we have to do something else. There's also a special table we put this in.
-function CreateSpecialSongList(songList)
-	local songList = songList
+function CreateSpecialSongList(inputSongList)
+	local songList = inputSongList
 	DifficultyBPM = {}
 	for song in ivalues(songList) do
 		for i = 1,#song:GetStepsByStepsType(GetStepsType()) do
