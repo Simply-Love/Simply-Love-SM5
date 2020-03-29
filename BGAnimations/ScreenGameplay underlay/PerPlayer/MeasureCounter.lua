@@ -42,7 +42,8 @@ local GetTextForMeasure = function(current_measure, Measures, stream_index)
 
 	local text = ""
 
-	if Measures[stream_index].isBreak and mods.HideRestCounts==false then
+	if Measures[stream_index].isBreak then
+		if mods.HideRestCounts == false then
 
 			-- For the RestCount, let the lowest value be an implied 0.
 			-- e.g. for an 8 measure break, start at 7, decrement to 1, and don't show
@@ -61,7 +62,7 @@ local GetTextForMeasure = function(current_measure, Measures, stream_index)
 
 			-- diffuse Rest counter to be Still Grey, just like Pendulum intended
 			bmt:diffuse(0.5,0.5,0.5,1)
-
+		end
 	else
 		text = tostring(current_count .. "/" .. current_stream_length)
 		bmt:diffuse(1,1,1,1)
