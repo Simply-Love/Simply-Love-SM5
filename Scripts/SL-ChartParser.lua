@@ -36,17 +36,6 @@ local function regexEncode(var)
 	return (var:gsub('%%', '%%%'):gsub('%^', '%%^'):gsub('%$', '%%$'):gsub('%(', '%%('):gsub('%)', '%%)'):gsub('%.', '%%.'):gsub('%[', '%%['):gsub('%]', '%%]'):gsub('%*', '%%*'):gsub('%+', '%%+'):gsub('%-', '%%-'):gsub('%?', '%%?'))
 end
 
--- ----------------------------------------------------------------
--- FIXME: GetSimfileChartString() is very likely to return the incorrect note data string
---   when the requested Difficulty is "Edit" and there are multiple edit difficulties available.
---
---   It looks like StepsUtil.cpp uses Steps::GetHash() which calls RageUtil's GetHashForString()
---   which returns the unsigned int resulting from a CRC32 checksum on m_sNoteDataCompressed
---
---   I *guess* it's possible to recreate ALL that^ in-theme using Lua, but this is a niche enough problem
---   that I don't want to pursue it and am content waiting for https://xkcd.com/1508/ to take care of it.
--- ----------------------------------------------------------------
-
 -- GetSimfileChartString() accepts four arguments:
 --    SimfileString - the contents of the ssc or sm file as a string
 --    StepsType     - a string like "dance-single" or "pump-double"
@@ -56,7 +45,7 @@ end
 -- GetSimfileChartString() returns one value:
 --    NoteDataString, a substring from SimfileString that contains the just the requested note data
 
-local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+local function GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	local NoteDataString = nil
 
 	if Filetype == "ssc" then
@@ -65,15 +54,37 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filet
 		for chart in SimfileString:gmatch("#NOTEDATA.-#NOTES:[^;]*") do
 			-- Find the chart that matches our difficulty and game type
 			if(chart:match("#STEPSTYPE:"..regexEncode(StepsType)) and chart:match("#DIFFICULTY:"..regexEncode(Difficulty))) then
-				-- Find just the notes
-				NoteDataString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$")
-				-- remove possible comments
-				NoteDataString = NoteDataString:gsub("\\[^\r\n]*", "")
-				NoteDataString = NoteDataString:gsub("//[^\r\n]*", "")
-				-- put the semicolon back so that the line-by-line loop knows when to stop
-				NoteDataString = NoteDataString .. ";"
+				-- ensure that we've located the correct edit stepchart within the ssc file
+				-- there can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
+				if (Difficulty ~= "Edit") or (Difficulty=="Edit" and chart:match("#DESCRIPTION:"..regexEncode(StepsDescription))) then
+					-- Find just the notes
+					NoteDataString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$")
+					-- remove possible comments
+					NoteDataString = NoteDataString:gsub("\\[^\r\n]*", "")
+					NoteDataString = NoteDataString:gsub("//[^\r\n]*", "")
+					-- put the semicolon back so that the line-by-line loop knows when to stop
+					NoteDataString = NoteDataString .. ";"
+					break
+				end
 			end
 		end
+
+
+
+	-- ----------------------------------------------------------------
+	-- FIXME: this is likely to return the incorrect note data string from an sm file when
+	--   the requested Difficulty is "Edit" and there are multiple edit difficulties available.
+	--   StepMania uses each steps' "Description" attribute to unique identify Edit charts.
+	--
+	--   ssc files use a dedicated #DESCRIPTION for this purpose
+	--   but sm files have the description as part of an inline comment like
+	--
+	--   //---------------dance-single - test----------------
+	--
+	--   that^ edit stepchart would have a description of "test"
+	--
+	--   For now, SL-ChartParser.lua supports ssc files with multiple edits but not sm files.
+	-- ----------------------------------------------------------------
 	elseif Filetype == "sm" then
 		-- SM FILE
 		-- Loop through each chart in the SM file
@@ -228,9 +239,11 @@ function GetNPSperMeasure(Song, Steps)
 	local StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
 	-- Difficulty, a string like "Beginner" or "Challenge"
 	local Difficulty = ToEnumShortString( Steps:GetDifficulty() )
+	-- an arbitary but unique string provded by the stepartist, needed here to identify Edit charts
+	local StepsDescription = Steps:GetDescription()
 
 	-- Discard header info; parse out only the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	if not ChartString then return end
 
 	-- Make our stream notes array into a string for regex
@@ -303,8 +316,11 @@ function GetStreams(Steps, StepsType, Difficulty, NotesPerMeasure, MeasureSequen
 	local SimfileString, Filetype = GetSimfileString( Steps )
 	if not SimfileString then return end
 
+	-- an arbitary but unique string provded by the stepartist, needed here to identify Edit charts
+	local StepsDescription = Steps:GetDescription()
+
 	-- Parse out just the contents of the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	if not ChartString then return end
 
 	-- Which measures have enough notes to be considered as part of a stream?
