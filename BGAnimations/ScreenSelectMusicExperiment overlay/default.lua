@@ -196,10 +196,15 @@ local t = Def.ActorFrame {
 				self:x(_screen.w-10):valign(0):visible(false)
 			end,
 			CurrentSongChangedMessageCommand=function(self,params)
-				local num_songs = group_info[GetCurrentGroup()].num_songs
+				local num_songs
+				if not group_info[GetCurrentGroup()] then
+					num_songs = #PruneSongList(GetSongList(SL.Global.CurrentGroup))
+				else
+					num_songs = group_info[GetCurrentGroup()].num_songs
+				end
 				if SL.Global.Order == "Difficulty/BPM" then num_songs = #DifficultyBPM end
 				local size = (_screen.h-64) / num_songs --header and footer are each 32
-				local position = params.index and params.index or FindInTable(GAMESTATE:GetCurrentSong(),PruneSongList(GetSongList(SL.Global.CurrentGroup))) or 0
+				local position = params.index and params.index or 0
 				if position == 0 then self:visible(false) --if we're on the close folder option
 				else self:visible(true):zoomto(20,size):y(position*size-size+32) end
 			end
