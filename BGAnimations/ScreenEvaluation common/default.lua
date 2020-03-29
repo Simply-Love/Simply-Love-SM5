@@ -1,6 +1,10 @@
 local Players = GAMESTATE:GetHumanPlayers()
 local NumPanes = SL.Global.GameMode=="Casual" and 1 or 6
 
+if ThemePrefs.Get("WriteCustomScores") then
+	WriteScores()
+end
+
 local t = Def.ActorFrame{}
 
 if SL.Global.GameMode ~= "Casual" then
