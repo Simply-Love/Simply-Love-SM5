@@ -89,7 +89,7 @@ Branch.AfterScreenSelectColor = function()
 		-- (for whatever reason), we're in a bit of a pickle, as there is
 		-- no way to read the player's mind and know which side they really
 		-- want to play on. Unjoin PLAYER_2 for lack of a better solution.
-		elseif preferred_style == "single" then
+		elseif preferred_style == "single" and GAMESTATE:GetNumSidesJoined() == 2 then
 			GAMESTATE:UnjoinPlayer(PLAYER_2)
 		end
 
