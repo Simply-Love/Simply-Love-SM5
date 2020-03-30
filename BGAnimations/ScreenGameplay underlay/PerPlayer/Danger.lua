@@ -1,5 +1,6 @@
--- Casual and StomperZ don't have the red flash for danger or fail
-if SL.Global.GameMode == "Casual" or SL.Global.GameMode == "StomperZ" then return end
+-- there aren't meaningful life delta values in Casual
+-- so these danger/fail flashes should never be possible there
+if SL.Global.GameMode == "Casual" then return end
 
 -- FailType is not directly a Preference, not a GamePref, not ThemePref, etc.
 -- FailType is stored as one of the DefaultModifiers in Preferences.ini

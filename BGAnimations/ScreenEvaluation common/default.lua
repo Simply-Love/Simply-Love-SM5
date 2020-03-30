@@ -13,9 +13,6 @@ local t = Def.ActorFrame{
 		end
 	end,
 
-	-- ./Graphics/Triangles.lua, shows up if we're in StomperZ mode
-	LoadActor( THEME:GetPathB("", "Triangles.lua") ),
-
 	-- code for triggering a screenshot and animating a "screenshot" texture
 	LoadActor("./ScreenshotHandler.lua"),
 

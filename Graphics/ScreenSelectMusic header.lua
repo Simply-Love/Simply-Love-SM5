@@ -65,7 +65,7 @@ else
 
 end
 
--- "ITG" or "FA+" or "StomperZ"; aligned to right of screen
+-- "ITG" or "FA+"; aligned to right of screen
 af[#af+1] = LoadFont("_wendy small")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),

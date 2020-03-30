@@ -407,7 +407,6 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop" }
-			if SL.Global.GameMode == "StomperZ" then table.remove(vals, 5) end
 			return vals
 		end,
 	},
@@ -467,10 +466,6 @@ local Overrides = {
 				end
 			end
 		end
-	},
-	-------------------------------------------------------------------------
-	ReceptorArrowsPosition = {
-		Choices = { "StomperZ", "ITG" },
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {

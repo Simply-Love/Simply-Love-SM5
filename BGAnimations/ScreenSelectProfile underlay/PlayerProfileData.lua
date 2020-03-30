@@ -7,7 +7,6 @@ local noteskins = NOTESKIN:GetNoteSkinNames()
 local judgment_graphics = {
 	ITG=GetJudgmentGraphics("ITG"),
 	["FA+"]=GetJudgmentGraphics("FA+"),
-	StomperZ=GetJudgmentGraphics("StomperZ"),
 }
 
 -- ----------------------------------------------------

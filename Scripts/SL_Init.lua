@@ -29,7 +29,6 @@ local PlayerDefaults = {
 				TargetScore = 11,
 				ActionOnMissedTarget = "Nothing",
 				Pacemaker = false,
-				ReceptorArrowsPosition = "StomperZ",
 				LifeMeterType = "Standard",
 				MissBecauseHeld = false,
 				NPSGraphAtTop = false,
@@ -142,14 +141,6 @@ SL = {
 			color("#5b2b8e"),	-- purple
 			color("#ff0000")	-- red
 		},
-		StomperZ = {
-			color("#5b2b8e"),	-- purple
-			color("#0073ff"),	-- dark blue
-			color("#66c955"),	-- green
-			color("#e29c18"),	-- gold
-			color("#dddddd"),	-- grey
-			color("#ff0000")	-- red
-		}
 	},
 	Preferences = {
 		Casual = {
@@ -210,26 +201,6 @@ SL = {
 			TimingWindowSecondsW5=0.135000,
 			TimingWindowSecondsHold=0.320000,
 			TimingWindowSecondsMine=0.065000,
-			TimingWindowSecondsRoll=0.350000,
-		},
-		StomperZ = {
-			TimingWindowAdd=0,
-			RegenComboAfterMiss=0,
-			MaxRegenComboAfterMiss=0,
-			MinTNSToHideNotes="TapNoteScore_W4",
-			HarshHotLifePenalty=false,
-
-			PercentageScoring=true,
-			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=true,
-
-			TimingWindowSecondsW1=0.012500,
-			TimingWindowSecondsW2=0.025000,
-			TimingWindowSecondsW3=0.050000,
-			TimingWindowSecondsW4=0.100000,
-			TimingWindowSecondsW5=0.10000,
-			TimingWindowSecondsHold=0.20000,
-			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},
 	},
@@ -326,37 +297,6 @@ SL = {
 			LifePercentChangeLetGo=-0.08,
 			LifePercentChangeHeld=0.008,
 			LifePercentChangeHitMine=-0.05,
-		},
-		StomperZ = {
-			PercentScoreWeightW1=10,
-			PercentScoreWeightW2=9,
-			PercentScoreWeightW3=8,
-			PercentScoreWeightW4=5,
-			PercentScoreWeightW5=0,
-			PercentScoreWeightMiss=0,
-			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=10,
-			PercentScoreWeightHitMine=-5,
-
-			GradeWeightW1=10,
-			GradeWeightW2=9,
-			GradeWeightW3=8,
-			GradeWeightW4=5,
-			GradeWeightW5=0,
-			GradeWeightMiss=0,
-			GradeWeightLetGo=0,
-			GradeWeightHeld=10,
-			GradeWeightHitMine=-5,
-
-			LifePercentChangeW1=0.004,
-			LifePercentChangeW2=0.004,
-			LifePercentChangeW3=0.004,
-			LifePercentChangeW4=0.004,
-			LifePercentChangeW5=0,
-			LifePercentChangeMiss=-0.04,
-			LifePercentChangeLetGo=-0.04,
-			LifePercentChangeHeld=0,
-			LifePercentChangeHitMine=-0.04,
 		},
 	}
 }

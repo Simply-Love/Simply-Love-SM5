@@ -365,7 +365,7 @@ GetComboThreshold = function( MaintainOrContinue )
 
 
 	if CurrentGame ~= "para" then
-		if SL.Global.GameMode == "StomperZ" or SL.Global.GameMode=="FA+" then
+		if SL.Global.GameMode=="FA+" then
 			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
 			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
 		end
@@ -408,14 +408,13 @@ SetGameModePreferences = function()
 	end
 
 	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
-	-- Stats.xml, ECFA-Stats.xml, StomperZ-Stats.xml, Casual-Stats.xml
+	-- Stats.xml, ECFA-Stats.xml, Casual-Stats.xml
 	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"
 	-- and I don't want to deal with renaming relatively critical files from the theme.
 	-- Thus, scores from FA+ mode will continue to go into ECFA-Stats.xml.
 	local prefix = {
 		ITG = "",
 		["FA+"] = "ECFA-",
-		StomperZ = "StomperZ-",
 		Casual = "Casual-"
 	}
 
@@ -427,7 +426,7 @@ end
 -- -----------------------------------------------------------------------
 -- Call ResetPreferencesToStockSM5() to reset all the Preferences that SL silently
 -- manages for you back to their stock SM5 values.  These "managed" Preferences are
--- listed in ./Scripts/SL_Init.lua per-gamemode (Casual, ITG, FA+, StomperZ), and
+-- listed in ./Scripts/SL_Init.lua per-gamemode (Casual, ITG, FA+), and
 -- actively applied (and reapplied) for each new game using SetGameModePreferences()
 --
 -- SL normally calls ResetPreferencesToStockSM5() from

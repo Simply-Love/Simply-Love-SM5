@@ -2,7 +2,7 @@ local gc = Var("GameCommand")
 local index = gc:GetIndex()
 local text = gc:GetName()
 
--- text description of each mode ("Casual", "ITG", "FA+", "StomperZ")
+-- text description of each mode ("Casual", "ITG", "FA+")
 return LoadFont("_wendy small")..{
 	Name="ModeName"..index,
 	Text=ScreenString(text),

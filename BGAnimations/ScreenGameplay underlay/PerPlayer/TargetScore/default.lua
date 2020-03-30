@@ -503,33 +503,22 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 			-- don't draw it if we don't need it
 			self:visible(SL[pn].ActiveModifiers.Pacemaker)
 
-			local noteX
-			local noteY
-			local zoomF = 0.4
+
 			local origX = GetNotefieldX(player)
 			local width = GetNotefieldWidth()
 
-			-- special casing: StomperZ with its receptor positions would appear over the normal pacemaker position
-			if SL.Global.GameMode == "StomperZ" and SL[pn].ActiveModifiers.ReceptorArrowsPosition == "StomperZ" then
-				-- put ourself just over the combo
-				noteY = _screen.cy - 60
-				zoomF = 0.35
+			local noteX = width / 4 -- this serendipitously works for doubles, somehow
+			local noteY = 56
+			local zoomF = 0.4
 
-				local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
-				noteX = (width/NumColumns)
 
-				self:shadowlength(1) -- match other playfield counters
-			else
-				noteY = 56
-				noteX = width / 4 -- this serendipitously works for doubles, somehow
-
-				-- antisymmetry kludge; nudge PLAYER_2's pacemaker text to the left so that it
-				-- doesn't possibly overlap with the percent score text.  this is necessary because
-				-- P1 and P2 percent scores are not strictly symmetrical around the horizontal middle
-				if (player ~= PLAYER_1 and isTwoPlayers) then
-					noteX = noteX + 25
-				end
+			-- non-symmetry kludge; nudge PLAYER_2's pacemaker text to the left so that it
+			-- doesn't possibly overlap with the percent score text.  this is necessary because
+			-- P1 and P2 percent scores are not strictly symmetrical around the horizontal middle
+			if (player ~= PLAYER_1 and isTwoPlayers) then
+				noteX = noteX + 25
 			end
+
 
 			-- flip x-coordinate based on player
 			if (player ~= PLAYER_1) then

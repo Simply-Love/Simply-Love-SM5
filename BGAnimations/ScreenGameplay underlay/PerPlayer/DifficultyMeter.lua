@@ -6,10 +6,6 @@ return Def.ActorFrame{
 		if player == PLAYER_2 then
 			self:x( _screen.w-WideScale(27,84) )
 		end
-
-		if SL.Global.GameMode == "StomperZ" then
-			self:y( 20 )
-		end
 	end,
 
 

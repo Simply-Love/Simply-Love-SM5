@@ -18,7 +18,7 @@ valid[3] = not GAMESTATE:IsCourseMode()
 
 -- GrooveStats was made with ITG settings in mind.
 -- FA+ is okay because it just halves ITG's TimingWindowW1 but keeps everything else the same.
--- StomperZ and Casual (and Experimental, Demonic, etc.) use different settings
+-- Casual (and Experimental, Demonic, etc.) uses different settings
 -- that are incompatible with GrooveStats ranking.
 valid[4] = (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+")
 

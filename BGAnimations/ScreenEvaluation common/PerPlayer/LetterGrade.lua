@@ -1,5 +1,3 @@
-if SL.Global.GameMode == "StomperZ" then return end
-
 local player = ...
 
 local playerStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)

@@ -9,7 +9,7 @@ if mods.HideCombo or combo_font == nil then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
 
--- combo colors used in Casual, ITG, and StomperZ
+-- combo colors used in Casual and ITG
 local colors = {}
 colors.FullComboW1 = {color("#C8FFFF"), color("#6BF0FF")} -- blue combo
 colors.FullComboW2 = {color("#FDFFC9"), color("#FDDB85")} -- gold combo
@@ -30,9 +30,6 @@ local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:draworder(101)
-	end,
-	OnCommand=function(self)
-		if SL.Global.GameMode == "StomperZ" then self:y(-20) end
 	end,
 
 	ComboCommand=function(self, params)
