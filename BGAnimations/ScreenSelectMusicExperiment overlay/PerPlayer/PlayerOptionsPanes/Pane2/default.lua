@@ -11,8 +11,9 @@ local pane = Def.ActorFrame{
 	end,
 }
 
-local labelX_col1 = -130
-local dataX_col1 = -10
+local labelX_col1 = WideScale(-120,-130)
+local dataX_col1 = WideScale(0,-10)
+
 PaneItems = {}
 
 PaneItems["12TH"] = {

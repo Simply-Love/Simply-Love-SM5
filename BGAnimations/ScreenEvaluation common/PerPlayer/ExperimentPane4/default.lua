@@ -6,7 +6,7 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local pane = Def.ActorFrame{
 	Name="Pane4",
 	InitCommand=function(self)
-		self:visible(false)
+		self:visible(false):x(WideScale(115,0))
 	end,
 	OnCommand=function(self)
 		self:playcommand("Set")
@@ -74,11 +74,11 @@ local pane = Def.ActorFrame{
 local params = { Player=player, NumHighScores=10, RoundsAgo=1 }
 if ThemePrefs.Get("UseCustomScores") then
 	pane[#pane+1] = LoadActor("ExperimentHighScoreList.lua", params)..{
-		InitCommand=function(self) self:y(_screen.cy - 62):zoom(.8) end
+		InitCommand=function(self) self:xy(WideScale(-115,0),_screen.cy - 62):zoom(.8) end
 	}
 else
 	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), params)..{
-		InitCommand=function(self) self:y(_screen.cy - 62):zoom(.8) end
+		InitCommand=function(self) self:xy(WideScale(-115,0),_screen.cy - 62):zoom(.8) end
 	}
 end
 

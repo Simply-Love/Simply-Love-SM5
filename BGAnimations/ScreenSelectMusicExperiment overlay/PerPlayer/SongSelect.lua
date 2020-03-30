@@ -49,7 +49,7 @@ return Def.ActorFrame {
 				end
 			--otherwise try to choose the same difficulty if it exists(challenge, expert, basic, etc)
 			elseif DifficultyExists(pn,true) then
-				GAMESTATE:SetCurrentSteps(pn,params.song:GetOneSteps('StepsType_Dance_Single',params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]]))
+				GAMESTATE:SetCurrentSteps(pn,params.song:GetOneSteps(GetStepsType(),params_for_input['DifficultyIndex'..PlayerNumber:Reverse()[pn]]))
 			--otherwise default to next closest
 			--note that we set params_for_input.DifficultyIndex manually here because we might be forcing the cursor to a different difficulty
 			else

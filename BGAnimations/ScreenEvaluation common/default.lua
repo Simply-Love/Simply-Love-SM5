@@ -1,6 +1,8 @@
 local Players = GAMESTATE:GetHumanPlayers()
 local NumPanes = SL.Global.GameMode=="Casual" and 1 or 6
-
+if GAMESTATE:GetCurrentStyle():GetStyleType() ~= "StyleType_OnePlayerTwoSides" and SL.Global.GameMode == "Experiment" then
+	NumPanes = 5
+end
 -- Start by loading actors that would be the same whether 1 or 2 players are joined.
 local t = Def.ActorFrame{
 
@@ -42,16 +44,12 @@ local t = Def.ActorFrame{
 
 -- Then, load the player-specific actors.
 for player in ivalues(Players) do
-
+	local side = player == PLAYER_1 and -1 or 1
 	-- the upper half of ScreenEvaluation
 	t[#t+1] = Def.ActorFrame{
 		Name=ToEnumShortString(player).."_AF_Upper",
 		OnCommand=function(self)
-			if player == PLAYER_1 then
-				self:x(_screen.cx - 155)
-			elseif player == PLAYER_2 then
-				self:x(_screen.cx + 155)
-			end
+			self:x(_screen.cx + 155 * side)
 		end,
 
 		-- store player stats for later retrieval on EvaluationSummary and NameEntryTraditional
@@ -77,7 +75,7 @@ for player in ivalues(Players) do
 		Name=ToEnumShortString(player).."_AF_Lower",
 		OnCommand=function(self)
 			-- if double style, center the gameplay stats
-			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" and SL.Global.GameMode ~= "Experiment" then
 				self:x(_screen.cx)
 			else
 				self:x(_screen.cx + (player==PLAYER_1 and -155 or GAMESTATE:GetNumSidesJoined()==2 and 155 or -155))
@@ -117,14 +115,16 @@ for player in ivalues(Players) do
 	if SL.Global.GameMode == "Experiment" then
 		lower[#lower+1] = Def.Quad{
 			InitCommand = function(self)
-				self:x(_screen.cx - 120):diffuse(color("#1E282F")):y(_screen.cy+34):zoomto( 300,180 )
+				self:x(_screen.cx + WideScale(-10,-120)):diffuse(color("#1E282F")):y(_screen.cy+34):zoomto( 300,180 )
 				if GAMESTATE:GetNumSidesJoined() == 2 then self:diffusealpha(0)
 				elseif ThemePrefs.Get("RainbowMode") then
 					self:diffusealpha(0.9)
 				end
 			end,
 		}
-		lower[#lower+1] = LoadActor("./PerPlayer/Graphs.lua", {player = player, graph = 'density'})..{InitCommand = function(self) self:x(_screen.cx + -120) end}
+		if GAMESTATE:GetNumSidesJoined() == 1 then
+			lower[#lower+1] = LoadActor("./PerPlayer/Graphs.lua", {player = player, graph = 'density'})..{InitCommand = function(self) self:x(_screen.cx + WideScale(-10,-120)) end}
+		end
 	end
 	-- Generate a hash once here if we're in Experiment mode and use it for any pane that needs it.
 	-- If it doesn't match with what we think it should be then the steps have changed and old scores

@@ -82,7 +82,7 @@ return Def.ActorFrame {
 		Text=songsPlayedThisGame,
 		InitCommand=function(self) 
 			if player == PLAYER_1 then self:xy(_screen.w/10+80, _screen.h - 24):zoom(0.6):halign(0)
-			elseif player == PLAYER_2 then self:xy(_screen.w - (_screen.w/10+80), _screen.h - 24):zoom(0.6):halign(0) end
+			elseif player == PLAYER_2 then self:xy(_screen.w - (_screen.w/10+80) + WideScale(20,0), _screen.h - 24):zoom(0.6):halign(0) end
 			if not GAMESTATE:IsHumanPlayer(player) then self:visible(false) end
 		end,
 		SetCommand=function(self)
@@ -109,7 +109,7 @@ return Def.ActorFrame {
 		Text=round(profile:GetCaloriesBurnedToday()),
 		InitCommand=function(self) 
 			if player == PLAYER_1 then self:xy(_screen.w/10+80, _screen.h - 8):zoom(0.6):halign(0)
-			elseif player == PLAYER_2 then self:xy(_screen.w - (_screen.w/10+80), _screen.h - 8):zoom(0.6):halign(0) end
+			elseif player == PLAYER_2 then self:xy(_screen.w - (_screen.w/10+80) + WideScale(20,0), _screen.h - 8):zoom(0.6):halign(0) end
 			if not GAMESTATE:IsHumanPlayer(player) then self:visible(false) end
 		end,
 		SetCommand=function(self)

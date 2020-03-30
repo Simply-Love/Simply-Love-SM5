@@ -2,8 +2,6 @@
 -- Info on the current group
 
 local args = ...
-local row = args[1]
-local col = args[2]
 local group_info = args[3]
 
 if group_info == nil then
@@ -13,7 +11,7 @@ end
 local BarGraph = LoadActor("./BarGraph.lua", group_info)
 local initializeBarGraph = CreateBarGraph(250,100)..{
 	OnCommand=function(self)
-		self:xy(400,400)
+		self:xy(WideScale(350,400),400):zoom(WideScale(.95,1))
 	end
 }
 ----------------------------------------------------------------------
@@ -53,7 +51,7 @@ af[#af+1] = Def.ActorFrame{
 	-- Group Label
 	LoadFont("_wendy small")..{
 		InitCommand=function(self)
-			self:settext( "GROUP " ):zoom(.5):horizalign(right):xy(-315,-60)
+			self:settext( "GROUP " ):zoom(.5):horizalign(right):xy(WideScale(-240,-315),-60)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -61,7 +59,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="Common Normal",
 		Name="Title",
-		InitCommand=function(self) self:zoom(1.4):diffuse(Color.White):horizalign(left):xy(-315,-60):maxwidth(300) end,
+		InitCommand=function(self) self:zoom(1.4):diffuse(Color.White):horizalign(left):xy(WideScale(-240,-315),-60):maxwidth(300) end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			self:settext( GetGroupDisplayName(SL.Global.CurrentGroup))
 		end,
@@ -69,7 +67,7 @@ af[#af+1] = Def.ActorFrame{
 	-- Sort Label
 	LoadFont("_wendy small")..{
 		InitCommand=function(self)
-			self:settext( "Sort " ):zoom(.35):horizalign(right):xy(-350,-30)
+			self:settext( "Sort " ):zoom(.35):horizalign(right):xy(WideScale(-270,-350),-30)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -77,7 +75,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="Common Normal",
 		Name="Title",
-		InitCommand=function(self) self:zoom(1):diffuse(Color.White):horizalign(left):xy(-350,-30):maxwidth(300) end,
+		InitCommand=function(self) self:zoom(1):diffuse(Color.White):horizalign(left):xy(WideScale(-270,-350),-30):maxwidth(300) end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			self:settext( SL.Global.GroupType )
 		end,
@@ -86,7 +84,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:settext("Songs "):zoom(.35):horizalign(right):xy(-340,-5):maxwidth(300)
+			self:settext("Songs "):zoom(.35):horizalign(right):xy(WideScale(-260,-350),-5):maxwidth(300)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -94,7 +92,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:zoom(1):diffuse(Color.White):xy(-395,45):vertalign(bottom):horizalign(left):maxwidth(300)
+			self:zoom(1):diffuse(Color.White):xy(WideScale(-315,-395),45):vertalign(bottom):horizalign(left):maxwidth(300)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
@@ -106,7 +104,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:settext("Charts "):zoom(.35):horizalign(left):xy(-275,-5):maxwidth(300)
+			self:settext("Charts "):zoom(.35):horizalign(left):xy(WideScale(-200,-275),-5):maxwidth(300)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -114,7 +112,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:zoom(1):diffuse(Color.White):xy(-275,45):vertalign(bottom):horizalign(left):maxwidth(300)
+			self:zoom(1):diffuse(Color.White):xy(WideScale(-200,-275),45):vertalign(bottom):horizalign(left):maxwidth(300)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
@@ -131,7 +129,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:settext("Filtered"):zoom(.25):horizalign(right):xy(-395,60):maxwidth(300):horizalign(left)
+			self:settext("Filtered"):zoom(.25):horizalign(right):xy(WideScale(-315,-395),60):maxwidth(300):horizalign(left)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -139,7 +137,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:zoom(0.75):diffuse(Color.White):xy(-395, 70):vertalign(top):horizalign(left)
+			self:zoom(0.75):diffuse(Color.White):xy(WideScale(-315,-395), 70):vertalign(top):horizalign(left)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
@@ -152,7 +150,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:settext("Filtered"):zoom(.25):horizalign(right):xy(-275,60):maxwidth(300):horizalign(left)
+			self:settext("Filtered"):zoom(.25):horizalign(right):xy(WideScale(-200,-275),60):maxwidth(300):horizalign(left)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -160,7 +158,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:zoom(0.75):diffuse(Color.White):xy(-275, 70):vertalign(top):horizalign(left)
+			self:zoom(0.75):diffuse(Color.White):xy(WideScale(-200,-275), 70):vertalign(top):horizalign(left)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
@@ -172,7 +170,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:settext("Complete"):zoom(.25):horizalign(right):xy(-170,60):maxwidth(300):horizalign(left)
+			self:settext("Complete"):zoom(.25):horizalign(right):xy(WideScale(-95,-170),60):maxwidth(300):horizalign(left)
 		end,
 		OnCommand=function(self) self:diffuse(0.75,0.75,0.75,1) end
 	},
@@ -180,7 +178,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="_wendy small",
 		InitCommand=function(self)
-			self:zoom(0.75):diffuse(Color.White):xy(-170, 70):vertalign(top):horizalign(left)
+			self:zoom(0.75):diffuse(Color.White):xy(WideScale(-95,-170), 70):vertalign(top):horizalign(left)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
@@ -196,7 +194,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="Common Normal",
 		InitCommand=function(self)
-			self:zoom(0.75):diffuse(Color.White):xy(-170, -35):horizalign(left):vertalign(top)
+			self:zoom(0.75):diffuse(Color.White):xy(WideScale(-95,-170), -35):horizalign(left):vertalign(top)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if group_info[params.group] then
@@ -229,7 +227,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{ --TODO make this pretty
 		Font="Common Normal",
 		InitCommand=function(self)
-			self:zoom(0.75):diffuse(Color.White):xy(275, -35):horizalign(left):vertalign(top)
+			self:zoom(0.75):diffuse(Color.White):xy(WideScale(200,275), WideScale(-70,-35)):horizalign(left):vertalign(top)
 		end,
 		CurrentGroupChangedMessageCommand=function(self)
 			self:visible(true):settext(GetActiveFiltersString())

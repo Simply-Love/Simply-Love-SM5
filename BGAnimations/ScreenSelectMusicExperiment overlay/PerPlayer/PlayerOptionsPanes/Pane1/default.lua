@@ -28,7 +28,7 @@ pane[#pane+1] = LoadFont("_wendy small")..{
 pane[#pane+1] = Def.Sprite{
 	Name="Background",
 	InitCommand=function(self)
-		self:xy(-7,5):scaletoclipped(250,175)
+		self:xy(WideScale(7,-7),5):scaletoclipped(250,175)
 	end
 }
 	

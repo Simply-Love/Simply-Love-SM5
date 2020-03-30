@@ -8,13 +8,7 @@ local pane = Def.ActorFrame{
 	end
 }
 
-pane[#pane+1] = LoadActor("./Pane4.lua", player)..{InitCommand=function(self) self:visible(true) end}
-	
-pane[#pane+1] = LoadFont("_wendy small")..{
-	InitCommand=function(self)
-		self:zoom(.5):xy(_screen.cx - 115, 250)
-		self:settext("Put something here")
-	end,
-}
+pane[#pane+1] = LoadActor(THEME:GetPathB("ScreenEvaluation", "common/PerPlayer/Pane4"), player)..{InitCommand=function(self) self:visible(true) end}
+pane[#pane+1] = LoadActor("QR.lua", args)..{InitCommand=function(self) self:visible(true):x(_screen.cx - WideScale(10,120)) end}
 
 return pane

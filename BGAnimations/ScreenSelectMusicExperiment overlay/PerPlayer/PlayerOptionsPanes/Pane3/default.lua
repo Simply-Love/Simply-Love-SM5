@@ -27,10 +27,10 @@ local initializeLineGraph = CreateLineGraph(200,150)..{
 pane[#pane+1] = LoadFont("_wendy small")..{
 	Name="NoSongs",
 	InitCommand=function(self)
-		self:zoom(.5)
+		self:zoom(.5):x(WideScale(15,0))
 		self:settext("NO SONGS PLAYED")
 	end,
-}	
+}
 
 
 pane[#pane+1] = initializeLineGraph

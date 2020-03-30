@@ -73,7 +73,7 @@ local af =  Def.ActorFrame{
 	end,
 	Def.ActorFrame{
 		InitCommand=function(self)
-			self:y(40)
+			self:xy(WideScale(-40,0),40)
 		end,
 		Def.Quad {
 			Name = "Border",
@@ -145,7 +145,7 @@ if playerStats then
 
 	local allTime = Def.ActorFrame{
 		InitCommand = function(self)
-			self:xy(400,40)
+			self:xy(WideScale(280,400),40)
 		end,
 		Def.Quad {
 			Name = "Border",

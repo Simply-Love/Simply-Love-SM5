@@ -3,7 +3,7 @@ local pn = ToEnumShortString(player)
 
 local zoom_factor = WideScale(0.8,0.9)
 
-local labelX_col1 = WideScale(-70,-90)
+local labelX_col1 = WideScale(-130,-70)
 
 local highscoreX = WideScale(56, 80)
 local highscorenameX = WideScale(61, 97)
@@ -16,7 +16,7 @@ if not ThemePrefs.Get("ShowExtraSongInfo") then histogramHeight = 30 end --the g
 
 local InitializeDensity = NPS_Histogram(player, 275, histogramHeight)..{
 	OnCommand=function(self)
-		self:x(labelX_col1 + 20)
+		self:x(labelX_col1)
 			:y( _screen.h/3.5+6)
 	end
 }
@@ -25,7 +25,7 @@ local af = Def.ActorFrame{
 	Name="PaneDisplay"..ToEnumShortString(player),
 	InitCommand=function(self)
 		self:visible(GAMESTATE:IsHumanPlayer(player))
-		--TODO for now if there's only one player their pane display is on the left. We only put things on the right if two people are joined
+		--TODO for now if there's only one player the pane display is on the left. We only put things on the right if two people are joined
 		if GAMESTATE:GetNumSidesJoined() ~= 2 then
 			self:x(_screen.w * 0.25 - 5)
 		else
@@ -83,7 +83,7 @@ local af = Def.ActorFrame{
 				local breakdown = "" --breakdown tries to display the full streams including rest measures
 				local breakdown2 = "" --breakdown2 tries to display the streams without rest measures
 				local breakdown3 = "" --breakdown3 combines streams that would normally be separated with a -
-				for i, sequence in ipairs(streamsTable.Measures) do
+				for _, sequence in ipairs(streamsTable.Measures) do
 					if not sequence.isBreak then
 						totalStreams = totalStreams + sequence.streamEnd - sequence.streamStart
 						breakdown = breakdown..sequence.streamEnd - sequence.streamStart.." "
@@ -143,7 +143,7 @@ local af = Def.ActorFrame{
 		end
 	end,
 	--TODO part of the pane that gets hidden if two players are joined. i'd like to display this somewhere though
-	PeakNPSUpdatedMessageCommand=function(self, params)
+	PeakNPSUpdatedMessageCommand=function(self)
 		if GAMESTATE:GetCurrentSong() and SL[pn].NoteDensity.Peak and ThemePrefs.Get("ShowExtraSongInfo") and GAMESTATE:GetNumSidesJoined() < 2 then
 			self:GetChild("PeakNPS"):settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(SL[pn].NoteDensity.Peak * SL.Global.ActiveModifiers.MusicRate,2))
 		else
@@ -155,7 +155,7 @@ local af = Def.ActorFrame{
 --PeakNPS
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PeakNPS",
-	InitCommand=function(self) self:xy(_screen.w/2 - 500, _screen.h/8 - 30):zoom(zoom_factor):diffuse(Color.White):halign(0) end,
+	InitCommand=function(self) self:xy(labelX_col1+20, _screen.h/8 - 30):zoom(zoom_factor):diffuse(Color.White):halign(0) end,
 }
 
 --AVG NPS label
@@ -173,13 +173,13 @@ af[#af+1] = LoadFont("Common Normal")..{
 --Total Stream
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="TotalStream",
-	InitCommand=function(self) self:xy(_screen.w/2 - 500, _screen.h/8 + 10):zoom(zoom_factor):diffuse(Color.White):halign(0) end,
+	InitCommand=function(self) self:xy(labelX_col1+20, _screen.h/8 + 10):zoom(zoom_factor):diffuse(Color.White):halign(0) end,
 }
 
 --Measures
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="Measures",
-	InitCommand=function(self) self:xy(_screen.w/2 - 500, _screen.h/8 - 10):zoom(zoom_factor):diffuse(Color.White):halign(0):maxwidth(315) end,
+	InitCommand=function(self) self:xy(labelX_col1+20, _screen.h/8 - 10):zoom(zoom_factor):diffuse(Color.White):halign(0):maxwidth(315) end,
 }
 
 if ThemePrefs.Get("OriginalPaneDisplay") then af[#af+1] = LoadActor("./PaneDisplayOriginal.lua", player)

@@ -156,7 +156,7 @@ local t = Def.ActorFrame {
 	-- there's also a different style of text that are disabled
 	LoadActor("./SongWheelShared.lua", {row, col, songwheel_y_offset}), 
 	-- create a sickwheel metatable for songs
-	SongWheel:create_actors( "SongWheel", 13, song_mt, 0, songwheel_y_offset - 40),
+	SongWheel:create_actors( "SongWheel", 13, song_mt, WideScale(25,0), songwheel_y_offset - 40),
 	-- the grey bar at the top as well as total time since start
 	LoadActor("./Header.lua", row),
 	-- profile information and time spent in game
@@ -196,6 +196,8 @@ local t = Def.ActorFrame {
 				self:x(_screen.w-10):valign(0):visible(false)
 			end,
 			CurrentSongChangedMessageCommand=function(self,params)
+				-- if we're coming here because the sort changed then we need to pull the current group
+				-- otherwise we can use group_info to figure out how many songs there are
 				local num_songs
 				if not group_info[GetCurrentGroup()] then
 					num_songs = #PruneSongList(GetSongList(SL.Global.CurrentGroup))

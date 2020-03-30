@@ -8,6 +8,8 @@ table.insert(awards,Color.Green)
 table.insert(awards,Color.Yellow)
 table.insert(awards,Color.Blue)
 
+local songWidth = WideScale(250,250)
+
 local song_mt = {
 	__index = {
 		create_actors = function(self, name)
@@ -72,7 +74,7 @@ local song_mt = {
 					Def.Quad{
 						InitCommand=function(subself) subself:diffuse(0,0,0,0):zoomto(0,0) end,
 						GainFocusCommand=function(subself)
-							subself:visible(true):linear(0.2):diffusealpha(1):zoomto(250, 40)
+							subself:visible(true):linear(0.2):diffusealpha(1):zoomto(songWidth, 40)
 							:diffuseshift():effectcolor1(0.75,0.75,0.75,1):effectcolor2(0,0,0,1)
 						end,
 						LoseFocusCommand=function(subself) subself:visible( false) end,
@@ -84,9 +86,9 @@ local song_mt = {
 						InitCommand = function(subself) self.song_box = subself end,
 						SlideToTopCommand=function(subself) subself:linear(.12):diffusealpha(0):visible(false) end,
 						SlideBackIntoGridCommand=function(subself) subself:linear(.12):diffusealpha(1):visible( true) end,
-						Def.Quad { InitCommand=function(subself) subself:zoomto(250,40):diffuse(.5,.5,.5,.5):diffusealpha(.5) end },
-						Def.Quad { InitCommand=function(self) self:zoomto(250-2, 40-2*2):MaskSource(true) end },
-						Def.Quad { InitCommand=function(self) self:zoomto(250,40):MaskDest() end },
+						Def.Quad { InitCommand=function(subself) subself:zoomto(songWidth,40):diffuse(.5,.5,.5,.5):diffusealpha(.5) end },
+						Def.Quad { InitCommand=function(self) self:zoomto(songWidth-2, 40-2*2):MaskSource(true) end },
+						Def.Quad { InitCommand=function(self) self:zoomto(songWidth,40):MaskDest() end },
 						Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
 					},
 					-- title
@@ -123,7 +125,7 @@ local song_mt = {
 				local side
 				if pn == 'P1' then side = -1
 				else side = 1 end
-				local grade_position = 150
+				local grade_position = WideScale(140,150)
 				local pass_position = 120
 				--A box for the pass type
 				--TODO this might be better as an AMV
@@ -148,12 +150,12 @@ local song_mt = {
 					-- The grade shown to the right of the song box
 					Def.Sprite{
 						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
-						InitCommand=function(subself) subself:visible(false):zoom( WideScale(0.18, 0.3) ):x(side*grade_position):animate(0) self[pn..'grade_sprite'] = subself end,
+						InitCommand=function(subself) subself:visible(false):zoom(WideScale(.25,.3)):x(side*grade_position):animate(0) self[pn..'grade_sprite'] = subself end,
 						SlideToTopCommand=function(subself)
 							subself:linear(.12):diffusealpha(0):xy(side*-1*-55,50):zoom(1):linear(.12):diffusealpha(1)
 						end,
 						SlideBackIntoGridCommand=function(subself)
-							subself:linear(.12):diffusealpha(0):zoom( WideScale(0.18, 0.3)):xy(side*grade_position,0):linear(.12):diffusealpha(1)
+							subself:linear(.12):diffusealpha(0):zoom( WideScale(.25, 0.3)):xy(side*grade_position,0):linear(.12):diffusealpha(1)
 						end,
 					}
 				}
@@ -259,14 +261,13 @@ local song_mt = {
 
 				-- top row
 				if item_index < middle_index  then
-						self.container:y( 47*item_index ):x(_screen.w/1.5+25*(middle_index-item_index) )
+						self.container:y( 47*item_index ):x(_screen.w/1.5+25*WideScale(1,(middle_index-item_index)) )
 				-- bottom row
 				elseif item_index > middle_index then
-						self.container:y( 47*item_index ):x(_screen.w/1.5+25*(item_index-middle_index))
+						self.container:y( 47*item_index ):x(_screen.w/1.5+25*WideScale(1,(item_index-middle_index)) )
 				-- center row
 				elseif item_index == middle_index then
 					self.container:y( 47*item_index ):x( _screen.w/1.5+25 )
-
 				end
 			end
 		end,

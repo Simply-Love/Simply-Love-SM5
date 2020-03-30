@@ -60,7 +60,7 @@ local t = Def.ActorFrame{
 	Def.Quad{
 		Name="Background",
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f")):zoomto(31, 96):halign(0):x(-160)
+			self:diffuse(color("#1e282f")):zoomto(31, 96):halign(0):x(WideScale(-148,-160))
 			if ThemePrefs.Get("RainbowMode") then
 				self:diffusealpha(0.75)
 			end

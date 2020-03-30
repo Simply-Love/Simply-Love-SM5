@@ -6,9 +6,11 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local highScore
 
 local RateScores
-if ThemePrefs.Get("UseCustomScores") then RateScores = GetScores(player, hash, true) end --See /scripts/Experiment-Scores.lua
-if RateScores then
-	highScore = RateScores[1]
+if ThemePrefs.Get("UseCustomScores") then 
+	RateScores = GetScores(player, hash, true) --See /scripts/Experiment-Scores.lua
+	if RateScores then
+		highScore = RateScores[1]
+	end
 else
 	local song = GAMESTATE:GetCurrentSong()
 	local steps = GAMESTATE:GetCurrentSteps(player)
@@ -22,7 +24,7 @@ end
 local TapNoteScores = {
 	Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
 	-- x values for P1 and P2
-	x = { P1=64, P2=94 }
+	x = { P1=64, P2=64 }
 }
 
 local RadarCategories = {
@@ -35,11 +37,11 @@ local RadarCategories = {
 --AF for the stats to compare to
 
 local highScoreT = Def.ActorFrame{
-	InitCommand=function(self)self:zoom(0.6):xy(_screen.cx - 155,_screen.cy+10) end,
+	InitCommand=function(self)self:zoom(0.6):xy(_screen.cx - 155 - WideScale(5,0),_screen.cy+10) end,
 }
 
 local deltaT = Def.ActorFrame{
-	InitCommand=function(self)self:zoom(0.8):xy(_screen.cx - 155,_screen.cy-24) end,
+	InitCommand=function(self)self:zoom(0.8):xy(_screen.cx - 155 - WideScale(25,0),_screen.cy-24) end,
 }
 if highScore then
 	local PercentDP
@@ -61,7 +63,7 @@ if highScore then
 				if toPrint >= 0 then self:settext("+"..toPrint)
 				else self:settext(toPrint) end
 				self:zoom(.5):horizalign(left)
-				self:x( TapNoteScores.x[pn] -200)
+				self:x( TapNoteScores.x[pn] - WideScale(175,200))
 				self:y((i-1)*35 -20)
 				if SL.Global.GameMode ~= "ITG" then
 					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
@@ -108,7 +110,7 @@ if highScore then
 				end
 			end,
 			BeginCommand=function(self)
-				self:x( TapNoteScores.x[pn] )
+				self:x( TapNoteScores.x[pn] - WideScale(30,0) )
 				self:y((i-1)*35 -20)
 				self:targetnumber(number)
 			end
@@ -137,7 +139,7 @@ if highScore then
 	highScoreT[#highScoreT+1] = LoadFont("_wendy small")..{
 		InitCommand=function(self)
 			self:zoom(.8):xy(150,-75)
-			if PercentDP <= pss:GetPercentDancePoints() then self:settext("Previous Record")
+			if tonumber(PercentDP) <= tonumber(pss:GetPercentDancePoints()) then self:settext("Previous Record")
 			else self:settext("Current Record") end
 		end,
 	}
