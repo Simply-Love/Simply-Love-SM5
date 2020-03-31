@@ -91,7 +91,7 @@ local bar = {}
 if use_smaller_graph then
 	-- this graph is horizontally condensed compared to the full-width alternative
 	graph.w = WideScale(25, 70)
-	graph.y = 425
+	graph.y = 429
 
 	-- smaller border for the target bar
 	targetBarBorderWidth = 1
@@ -120,7 +120,7 @@ else
 
 	-- full-width graph
 	graph.w = WideScale(250, 300)
-	graph.y = 430
+	graph.y = 432
 
 	-- put the graph on the other side of the screen
 	if (player == PLAYER_1) then
