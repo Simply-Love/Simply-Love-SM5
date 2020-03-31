@@ -91,7 +91,7 @@ af[#af+1] = LoadFont("_wendy small")..{
 af[#af+1] = DrawNinePanelPad()..{
 	InitCommand=function(self)
 		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and WideScale(90,105) or WideScale(35, 41)))
-		self:y( WideScale(21.5, 23.5) ):zoom(0.23)
+		self:y( WideScale(22, 23.5) ):zoom(0.24)
 		self:playcommand("Set", {Player=PLAYER_1})
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
@@ -105,7 +105,7 @@ af[#af+1] = DrawNinePanelPad()..{
 af[#af+1] = DrawNinePanelPad()..{
 	InitCommand=function(self)
 		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and WideScale(70,81) or WideScale(15, 17)))
-		self:y( WideScale(21.5, 23.5) ):zoom(0.23)
+		self:y( WideScale(22, 23.5) ):zoom(0.24)
 		self:playcommand("Set", {Player=PLAYER_2})
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
