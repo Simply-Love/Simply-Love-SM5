@@ -1,6 +1,11 @@
-local slc = SL.Global.ActiveColorIndex
-
 local af = Def.ActorFrame{}
+
+-- check SM5 version, current game (dance, pump, etc.), and RTT support
+af[#af+1] = LoadActor("./CompatibilityChecks.lua")
+
+-- -----------------------------------------------------------------------
+
+local slc = SL.Global.ActiveColorIndex
 
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:zoomto(_screen.w,0):diffuse(Color.Black):Center() end,
