@@ -2,8 +2,6 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 	local pn = ToEnumShortString(player)
 
-	-- On first load of ScreenSelectMusic, PlayerOptionsString will be nil
-	-- So don't bother trying to use it to reset PlayerOptions
 	if SL[pn].PlayerOptionsString then
 		-- SL[pn].PlayerOptionsString is set in ScreenGameplay in.lua
 		-- Each ScreenGameplay in, we store the current PlayerOptions (from the engine) there as a string.
@@ -16,6 +14,9 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		-- doesn't mach theme's notion of PlayerOptions, reset the engine to match the theme.
 		if SL[pn].PlayerOptionsString ~= GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred") then
 			GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", SL[pn].PlayerOptionsString)
+
+			-- ensure that FailSetting is maintained according whatever the machine operator set in Advanced Options
+			GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
 		end
 	end
 end

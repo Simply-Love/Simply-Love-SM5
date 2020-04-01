@@ -376,6 +376,67 @@ end
 
 -- -----------------------------------------------------------------------
 
+-- FailType is a PlayerOption that can be set using SM5's PlayerOptions interface.
+-- If you wanted, you could set FailTyper per-player, prior to Gameplay like
+--
+-- GAMESTATE:GetPlayerState(PLAYER_1):GetPlayerOptions("ModsLevel_Preferred"):FailSetting("FailType_ImmediateContinue")
+-- GAMESTATE:GetPlayerState(PLAYER_2):GetPlayerOptions("ModsLevel_Preferred"):FailSetting("FailType_Off")
+--
+-- and then P1 and P2 would have different Fail settings during gameplay.
+--
+-- That sounds kind of chaotic, particularly with saving Machine HighScores, so Simply Love
+-- enforces the same FailType for both players and allows machine operators to set a
+-- "default FailType" within Advanced Options in the Operator Menu.
+--
+-- This "default FailType" is sort of handled by the engine, but not in a way that is
+-- necessarily clear to me.  Whatever the history there was, it is lost to me now.
+--
+-- The engine's FailType enum has the following four values:
+-- 'FailType_Immediate', 'FailType_ImmediateContinue', 'FailType_EndOfSong', and 'FailType_Off'
+--
+-- The conf-based OptionRow for "DefaultFailType" presents these^ as the following hardcoded English strings:
+-- 'Immediate', 'ImmediateContinue', 'EndOfSong', and 'Off'
+--
+-- and whichever the machine operator chooses gets saved as a different hardcoded English string in
+-- the DefaultModifiers Preference for the current game:
+-- '', 'FailContinue', 'FailEndOfSong', or 'FailOff'
+
+-- It is worth pointing out that a default FailType of "FailType_Immediate" is saved to the DefaultModifiers
+-- Preference as an empty string!
+--
+-- so this:
+-- DefaultModifiers=FailOff, Overhead, Cel
+-- would result in the engine applying FailType_Off to players when they join the game
+--
+-- while this:
+-- DefaultModifiers=Overhead, Cel
+-- would result in the engine applying FailType_Immediate to players when they join the game
+--
+-- Anyway, this is all convoluted enough that I wrote this global helper function find the default
+-- FailType setting in the current game's DefaultModifiers Preference and return it as an enum value
+-- the PlayerOptions interface can accept.
+--
+-- I'm pretty sute ZP Theart was wailing about such project bitrot in Lost Souls in Endless Time.
+
+GetDefaultFailType = function()
+	local default_mods = PREFSMAN:GetPreference("DefaultModifiers")
+	local default_fail = ""
+
+	for mod in string.gmatch(default_mods, "%w+") do
+		-- we might find a string like "FailOff", "FailImmediateContinue", or "FailEndOfSong"
+		-- if we find a string with "Fail" in it, strip out the "Fail" substring and keep the rest
+		if mod:find("Fail") then
+			default_fail = mod:gsub("Fail", "")
+		end
+	end
+
+	if default_fail == "" then default_fail = "Immediate" end
+
+	return ("FailType_"..default_fail)
+end
+
+-- -----------------------------------------------------------------------
+
 SetGameModePreferences = function()
 	-- apply the preferences associated with this GameMode
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
@@ -397,14 +458,22 @@ SetGameModePreferences = function()
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		-- Now that we've set the SL table for TimingWindows appropriately,
 		-- use it to apply TimingWindows.
-		local OptRow = CustomOptionRow( "TimingWindows" )
-		OptRow:LoadSelections( OptRow.Choices, player )
+		local TW_OptRow = CustomOptionRow( "TimingWindows" )
+		TW_OptRow:LoadSelections( TW_OptRow.Choices, player )
+
+
+		local player_modslevel = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
 
 		-- using PREFSMAN to set the preference for MinTNSToHideNotes apparently isn't
 		-- enough when switching gamemodes because MinTNSToHideNotes is also a PlayerOption.
 		-- so, set the PlayerOption version of it now, too, to ensure that arrows disappear
 		-- at the appropriate judgments during gameplay for this gamemode.
-		GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):MinTNSToHideNotes(SL.Preferences[SL.Global.GameMode].MinTNSToHideNotes)
+		player_modslevel:MinTNSToHideNotes(SL.Preferences[SL.Global.GameMode].MinTNSToHideNotes)
+
+		-- FailSetting is also a modifier that can be set per-player per-stage in SM5, but I'm
+		-- opting to enforce it in Simply Love using what the machine operator sets
+		-- as the default FailType in Advanced Options in the operator menu
+		player_modslevel:FailSetting( GetDefaultFailType() )
 	end
 
 	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
@@ -520,7 +589,7 @@ GetThemeVersion = function()
 end
 
 -- -----------------------------------------------------------------------
--- functions that attempt to handle the mess that is custom judgment graphic detection/loading
+-- functions handle custom judgment graphic detection/loading
 
 local function FilenameIsMultiFrameSprite(filename)
 	-- look for the "[frames wide] x [frames tall]"
@@ -563,6 +632,7 @@ function GetJudgmentGraphics(mode)
 
 	return judgment_graphics
 end
+
 -- -----------------------------------------------------------------------
 -- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay
 --

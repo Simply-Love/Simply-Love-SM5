@@ -88,8 +88,20 @@ LoadProfileCustom = function(profile, dir)
 				-- OptionRow in ScreenPlayerOptions, so it will fail validation above
 				-- we want engine-defined mods (e.g. dizzy) to be applied as well, not just SL-defined mods
 				if k=="PlayerOptionsString" and type(v)=="string" then
+					-- v here is the comma-delimited set of modifiers the engine's PlayerOptions interface understands
+
+					-- update the SL table so that this PlayerOptionsString value is easily accessible throughout the theme
 					SL[pn].PlayerOptionsString = v
+
+					-- use the engine's SetPlayerOptions() method to set a whole bunch of mods in the engine all at once
 					GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", v)
+
+					-- However! It's quite likely that a FailType mod could be in that^ string, meaning a player could
+					-- have their own setting for FailType saved to their profile.  I think it makes more sense to allow
+					-- machine operators specify a default FailType at a global/machine level, so use this opportunity to
+					-- use the PlayerOptions interface to set FailSetting() using the default FailType setting from
+					-- the operator menu's Advanced Options
+					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
 				end
 			end
 		end
