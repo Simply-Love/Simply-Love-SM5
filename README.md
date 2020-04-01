@@ -20,31 +20,31 @@ You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania
 
 Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible.
 
-### Troubleshooting StepMania
-
-StepMania can be tricky to install and the process has different stumbling points unique to each OS.
-
-If you're having trouble installing StepMania, refer to the [Troubleshooting StepMania README](./other/TroubleshootingStepMania-README.md) included with Simply Love.
-
-### Other Setup/Troubleshooting Resources
-
-The StepMania project has wiki pages for configuring USB profiles for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) and [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).  USB profiles are handy for public arcade machines so that players can enjoy their own custom content from USB drives.
-
-GitHub user geefr has a [wiki page](https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues) on identifying and troubleshooting USB polling rate issues.
 
 ## Installing Simply Love
 
-Head to the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) to download the most recent formal release of Simply Love.
+You can download a zip of the latest formal release from the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest).
 
-To install this theme, unzip it and move the resulting *Simply Love* folder inside your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).  The paths will look like this:
+To install Simply Love, unzip it and move the resulting *Simply Love* folder into your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).
+
+The install paths will look like:
 
 * **Windows**: `%APPDATA%\StepMania 5.1\Themes\Simply Love\`
 * **macOS**: `~/Library/Application Support/StepMania 5.1/Themes/Simply Love/`
 * **Linux**: `~/.stepmania-5.1/Themes/Simply Love/`
 
+The next time you use StepMania, you can switch to Simply Love from the main options menu found on the Title Screen.  The exact process can vary depending on the theme you are currently using, but this is usually done within **Options → Display Options → Appearance Options → Theme**
+
 ## Screenshots
 
-Visit my imgur album for screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
+![Title Screen](https://i.imgur.com/tlKZad8l.png)
+![Gameplay](https://i.imgur.com/6PRBIHil.png)
+![Player Options](https://i.imgur.com/Jk5A4LTl.png)
+![Evaluation with QR Code](https://i.imgur.com/TaApeGBl.png)
+![Select Profile](https://i.imgur.com/bZc5xpll.png)
+![Visual Themes](https://i.imgur.com/hGB1T4nl.png)
+
+Visit my imgur album for more screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
 ## Features
 
@@ -67,12 +67,13 @@ Visit my imgur album for screenshots of this theme in action: [http://imgur.com/
 
 #### New Aesthetic Features
  * [RainbowMode](http://i.imgur.com/aKsvrcch.png) – add some color to Simply Love!
- * [NoteSkin and Judgment previews](https://imgur.com/QUSqxr8.png) in the modifier menu
+ * [NoteSkin and Judgment previews](https://i.imgur.com/Jk5A4LT.png) in the modifier menu
  * improved widescreen support
 
 #### New Conveniences for Public Machine Operators
-  * [MenuTimer Options](http://imgur.com/DPffsdQh.png) – Set the MenuTimers for various screens.
+  * [MenuTimer Options](https://i.imgur.com/SqbsMiw.png) – Set the MenuTimers for various screens.
   * [Long/Marathon Song Cutoffs](http://i.imgur.com/fzNJDVDh.png) – The cutoffs for songs that cost 2 and 3 rounds can be set in *Arcade Options*.
+  * [USB Profile Options](https://i.imgur.com/ZgU9HGw.png) – Manage settings for player USB sticks, including custom songs.  Only available in SM5.1-beta and newer.
 
 #### Language Support
 
@@ -95,3 +96,26 @@ The current language can be changed in Simply Love under *System Options*.
 #### How can I get more songs to show up in Casual Mode?
 Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
 
+
+#### I'm getting an error when I try to install StepMania.
+
+StepMania can be tricky to install and the process has different stumbling points unique to each OS.
+
+Refer to the [Troubleshooting StepMania README](./Other/TroubleshootingStepMania-README.md) included with Simply Love.
+
+#### How can I let players load custom songs from USB sticks?
+
+The StepMania project has wiki pages for configuring USB profiles for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) and [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).
+
+StepMania 5.1-beta and newer supports loading custom songs from USB profiles.  If you are using SM5.1-beta and have configured your computer using the Wikis linked to above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
+
+
+#### Why does my timing graph look weird?
+
+If your timing graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, you have USB polling issues.
+
+![spikey boi](https://i.imgur.com/oMAQKoM.jpg)
+
+Fixing this is outside the scope of Simply Love as a StepMania theme.
+
+GitHub user geefr has a [wiki page](https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues) on identifying and troubleshooting USB polling issues that may help.
