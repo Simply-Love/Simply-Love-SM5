@@ -1,4 +1,4 @@
--- " I long for the day on which I can hear your voice again."
+-- "I long for the day on which I can hear your voice again."
 
 local haiku = "as my cursor blinks\nidle, my mind is active\nrecalling your voice"
 

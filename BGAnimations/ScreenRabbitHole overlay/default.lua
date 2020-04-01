@@ -1,3 +1,7 @@
+-- burying feelings
+-- between these lines of Lua
+-- until overflow
+
 local af
 local current = ThemePrefs.Get("RabbitHole")
 

@@ -1,4 +1,6 @@
--- a beige colored bookmark
+-- 31 March 2018
+-- A Beige Colored Bookmark
+
 local padding = 22
 local max_width = 260
 local max_height = 390
