@@ -54,7 +54,7 @@ af[#af+1] = LoadActor("./im-window.lua", scene2 )..{
 	end,
 }
 
--- scene 4: monarach butterflies
+-- scene 4: monarch butterflies
 af[#af+1] = LoadActor("./email.lua", scene3)..{
 	InitCommand=function(self)
 		scenes[4] = self

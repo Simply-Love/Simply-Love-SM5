@@ -158,7 +158,7 @@ local args = {
 		LoadFont("Common Normal")..{
 			Name="timer_text",
 			Text="00.0",
-			InitCommand=function(self) self:xy(_screen.cx, screen.cy-80):diffuse(Color.White) end,
+			InitCommand=function(self) self:xy(_screen.cx, _screen.cy-80):diffuse(Color.White) end,
 		}
 	},
 }

@@ -1,4 +1,5 @@
-local dark = {0,0,0,0.9}
+-- tables of rgba values
+local dark  = {0,0,0,0.9}
 local light = {0.65,0.65,0.65,1}
 
 return Def.ActorFrame{
@@ -7,7 +8,7 @@ return Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(_screen.w, 32):vertalign(top):x(_screen.cx)
-			if ThemePrefs.Get("RainbowMode") then
+			if DarkUI() then
 				self:diffuse(dark)
 			else
 				self:diffuse(light)

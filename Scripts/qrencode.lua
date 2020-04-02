@@ -724,8 +724,8 @@ local function arrange_codewords_and_calculate_ec( version,ec_level,data )
 			size_ecblock_bytes   = blocks[2*i][1] - blocks[2*i][2]
 			cpty_ec_bits = cpty_ec_bits + size_ecblock_bytes * 8
 			datablocks[#datablocks + 1] = string.sub(data, pos * 8 + 1,( pos + size_datablock_bytes)*8)
-			tmp_tab = calculate_error_correction(datablocks[#datablocks],size_ecblock_bytes)
-			tmp_str = ""
+			local tmp_tab = calculate_error_correction(datablocks[#datablocks],size_ecblock_bytes)
+			local tmp_str = ""
 			for x=1,#tmp_tab do
 				tmp_str = tmp_str .. binary(tmp_tab[x],8)
 			end
@@ -1117,7 +1117,7 @@ end
 
 -- Add the data string (0's and 1's) to the matrix for the given mask.
 local function add_data_to_matrix(matrix,data,mask)
-	size = #matrix
+	local size = #matrix
 	local x,y,positions
 	local _x,_y,m
 	local dir = "up"
@@ -1364,13 +1364,9 @@ qrcode_amv = function( url, size )
 		end
 	end
 
-	local qr = Def.ActorFrame{
-		InitCommand=function(self)
-		  self:visible(true)
-		end
-	}
-
 	local pixel_size = size/#tab_or_message
+
+	local qr = Def.ActorFrame{}
 
 	qr[#qr+1] = Def.Quad{
 		InitCommand=function(self)
@@ -1389,5 +1385,4 @@ qrcode_amv = function( url, size )
 	}
 
 	return qr
-
 end

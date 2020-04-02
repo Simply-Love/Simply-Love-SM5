@@ -15,13 +15,10 @@ local function gen_vertices(player, width, height)
 	-- broadcast this for any other actors on the current screen that rely on knowing the peak nps
 	MESSAGEMAN:Broadcast("PeakNPSUpdated", {PeakNPS=PeakNPS})
 
-	-- also, store the PeakNPS in SL[pn] in case both players are joined
+	-- also, store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
 	-- their charts may have different peak densities, and if they both want histograms,
 	-- we'll need to be able to compare densities and scale one of the graphs vertically
-	SL[ToEnumShortString(player)].NoteDensity.Peak = PeakNPS
-
-	-- FIXME: come up with a way to do this^ that doesn't rely on the SL table so other
-	-- themes can use this NPS_Histogram function more easily
+	GAMESTATE:Env()[ToEnumShortString(player).."PeakNPS"] = PeakNPS
 
 	local verts = {}
 	local x, y, t
@@ -32,9 +29,9 @@ local function gen_vertices(player, width, height)
 		local FirstSecond = math.min(TimingData:GetElapsedTimeFromBeat(0), 0)
 		local LastSecond = Song:GetLastSecond()
 
-		-- magic numbers obtained from Photoshop's Eyedrop tool
-		local yellow = {0.968, 0.953, 0.2, 1}
-		local orange = {0.863, 0.553, 0.2, 1}
+		-- magic numbers obtained from Photoshop's Eyedrop tool in rgba percentage form (0 to 1)
+		local blue   = {0,    0.678, 0.753, 1}
+		local purple = {0.51, 0,     0.631, 1}
 		local upper
 
 		for i, nps in ipairs(NPSperMeasure) do
@@ -59,12 +56,16 @@ local function gen_vertices(player, width, height)
 					verts[#verts][1][1] = x
 					verts[#verts-1][1][1] = x
 				else
-					-- lerp_color() take a float between [0,1], color1, and color2, and returns a color
-					-- that has been linearly interpolated by that percent between the colors provided
-					upper = lerp_color(math.abs(y/height), yellow, orange )
+					-- lerp_color() is a global function defined by the SM engine that takes three arguments:
+					--    a float between [0,1]
+					--    color1
+					--    color2
+					-- and returns a color that has been linearly interpolated by that percent between the two colors provided
+					-- for example, lerp_color(0.5, yellow, orange) will return the color that is halfway between yellow and orange
+					upper = lerp_color(math.abs(y/height), blue, purple )
 
-					verts[#verts+1] = {{x, 0, 0}, yellow} -- bottom of graph (yellow)
-					verts[#verts+1] = {{x, y, 0}, upper}  -- top of graph (somewhere between yellow and orange)
+					verts[#verts+1] = {{x, 0, 0}, blue} -- bottom of graph (blue)
+					verts[#verts+1] = {{x, y, 0}, upper}  -- top of graph (somewhere between blue and purple)
 				end
 			end
 		end
@@ -73,7 +74,7 @@ local function gen_vertices(player, width, height)
 	return verts
 end
 
-
+-- FIXME: add inline comments explaining the intent/purpose of this code
 function interpolate_vert(v1, v2, offset)
 	local ratio = (offset - v1[1][1]) / (v2[1][1] - v1[1][1])
 	local y = v1[1][2] * (1 - ratio) + v2[1][2] * ratio

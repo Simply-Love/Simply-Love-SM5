@@ -1,8 +1,14 @@
 local TextColor = (ThemePrefs.Get("RainbowMode") and (not HolidayCheer()) and Color.Black) or Color.White
 
-local SongStats = SONGMAN:GetNumSongs() .. " songs in "
-SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, "
-SongStats = SongStats .. #SONGMAN:GetAllCourses(PREFSMAN:GetPreference("AutogenGroupCourses")) .. " courses"
+-- generate a string like "7741 songs in 69 groups, 10 courses"
+local SongStats = ("%i %s %i %s, %i %s"):format(
+	SONGMAN:GetNumSongs(),
+	THEME:GetString("ScreenTitleMenu", "songs in"),
+	SONGMAN:GetNumSongGroups(),
+	THEME:GetString("ScreenTitleMenu", "groups"),
+	#SONGMAN:GetAllCourses(PREFSMAN:GetPreference("AutogenGroupCourses")),
+	THEME:GetString("ScreenTitleMenu", "courses")
+)
 
 -- - - - - - - - - - - - - - - - - - - - -
 local game = GAMESTATE:GetCurrentGame():GetName();
@@ -53,7 +59,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		--see: ./Scripts/SL_Initialize.lua
+		--see: ./Scripts/SL_Init.lua
 		InitializeSimplyLove()
 
 		self:Center()

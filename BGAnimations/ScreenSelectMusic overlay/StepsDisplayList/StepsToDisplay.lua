@@ -1,4 +1,4 @@
--- FIXME: The SM5 engine does supply a StepsDisplayList class for Lua, but its scoller-esque behavior
+-- FIXME: The SM5 engine does supply a StepsDisplayList class for Lua, but its scroller-esque behavior
 -- is mostly hardcoded, making it difficult to ALWAYS position easy charts at a specific y-value
 -- and challenge charts at a different (but equally predictable) y-value.
 --
@@ -58,7 +58,8 @@ return function(AllAvailableSteps)
 
 	-- if only one player is joined
 	if (currentStepsP1 and not currentStepsP2) or (currentStepsP2 and not currentStepsP1) then
-
+		
+		local currentSteps
 		if (currentStepsP1 and not currentStepsP2) then
 			currentSteps = currentStepsP1
 		elseif (currentStepsP2 and not currentStepsP1) then

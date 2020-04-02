@@ -16,7 +16,7 @@ local Update = function(af, delta)
 	if index ~= cursor.index then
 		cursor.index = index
 
-		-- queue the appropiate command to the faux playfield, if needed
+		-- queue the appropriate command to the faux playfield, if needed
 		if choices[cursor.index+1] == "Marathon" or choices[cursor.index+1] == "Regular" then
 			af:queuecommand("FirstLoop"..choices[cursor.index+1])
 		end
@@ -189,11 +189,7 @@ local t = Def.ActorFrame{
 					self:stoptweening():linear(0.25):diffusealpha(0)
 				end
 			else
-				if SL.Global.GameMode == "StomperZ" then
-					self:diffusealpha(0)
-				else
-					self:diffusealpha(1)
-				end
+				self:diffusealpha(1)
 			end
 		end,
 		-- lifemeter white border
@@ -216,41 +212,6 @@ local t = Def.ActorFrame{
 			end,
 		},
 	},
-	--StomperZLifeMeter
-	Def.ActorFrame{
-		Name="StomperZLifeMeter",
-		InitCommand=function(self) self:diffusealpha(0) end,
-		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
-		UpdateCommand=function(self)
-			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "StomperZ" then
-					self:stoptweening():linear(0.25):diffusealpha(1)
-				else
-					self:stoptweening():linear(0.25):diffusealpha(0)
-				end
-			else
-				if SL.Global.GameMode == "StomperZ" then
-					self:diffusealpha(1)
-				end
-			end
-		end,
-		LoadActor(THEME:GetPathG("", "Triangles.png"))..{
-			InitCommand=function(self) self:zoom(0.25):xy(200,10) end,
-			OnCommand=function(self)
-				self:MaskDest()
-			end,
-		},
-		-- StomperZLifeMeter left
-		Def.Quad{
-			InitCommand=function(self) self:zoomto(24,160):xy(50,28):diffuse(1,0,1,0.75):MaskDest():faderight(1) end,
-			OnCommand=function(self) self:diffuseshift():effectcolor1(1,0,1,0.75):effectcolor2(1,0,1,0.45) end
-		},
-		-- StomperZLifeMeter right
-		Def.Quad{
-			InitCommand=function(self) self:zoomto(24,160):xy(140,28):diffuse(1,0,1,0.75):MaskDest():fadeleft(1) end,
-			OnCommand=function(self) self:diffuseshift():effectcolor1(1,0,1,0.75):effectcolor2(1,0,1,0.45) end
-		},
-	}
 }
 
 t[#t+1] = LoadActor("./GameplayDemo.lua" )

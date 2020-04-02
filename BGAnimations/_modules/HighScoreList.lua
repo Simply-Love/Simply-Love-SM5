@@ -23,7 +23,7 @@ local StepsOrTrail = args.StepsOrTrail or ((args.RoundsAgo==nil or args.RoundsAg
 if not (SongOrCourse and StepsOrTrail) then return af end
 
 local Font = args.Font or "Common Normal"
-local row_height = 22 -- sigh
+local row_height = args.RowHeight or 22
 
 -- ---------------------------------------------
 -- setup that can occur now that the arguments have been handled
@@ -76,7 +76,7 @@ if args.RoundsAgo then
 
 	if highscoreindex <= 0 then
 		for i, highscore in ipairs(HighScores) do
-
+			local name
 		 	if  pss:GetHighScore():GetScore() == highscore:GetScore()
 			and pss:GetHighScore():GetDate()  == highscore:GetDate()
 			and

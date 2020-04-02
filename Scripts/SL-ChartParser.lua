@@ -1,25 +1,12 @@
-function GetSimfileString(path)
+GetSimfileString = function(steps)
 
-	local filename, filetype
-	local files = FILEMAN:GetDirListing(path)
+	-- steps:GetFilename() returns the filename of the sm or ssc file, including path, as it is stored in SM's cache
+	local filename = steps:GetFilename()
+	if not filename then return end
 
-	for file in ivalues(files) do
-		if file:find(".+%.[sS][sS][cC]$") then
-			-- Finding a .ssc file is preferable.
-			-- If we find one, stop looking.
-			filename = file
-			filetype = "ssc"
-			break
-		elseif file:find(".+%.[sS][mM]$") then
-			-- Don't break if we find a .sm file first;
-			-- there might still be a .ssc file waiting.
-			filename = file
-			filetype = "sm"
-		end
-	end
-
+	local filetype = filename:match("[^.]+$")
 	-- if neither a .ssc nor a .sm file were found, bail now
-	if not (filename and filetype) then return end
+	if not (filetype=="ssc" or filetype=="sm") then return end
 
 	-- create a generic RageFile that we'll use to read the contents
 	-- of the desired .ssc or .sm file
@@ -28,7 +15,7 @@ function GetSimfileString(path)
 
 	-- the second argument here (the 1) signifies
 	-- that we are opening the file in read-only mode
-	if f:Open(path .. filename, 1) then
+	if f:Open(filename, 1) then
 		contents = f:Read()
 	end
 
@@ -49,8 +36,16 @@ local function regexEncode(var)
 	return (var:gsub('%%', '%%%'):gsub('%^', '%%^'):gsub('%$', '%%$'):gsub('%(', '%%('):gsub('%)', '%%)'):gsub('%.', '%%.'):gsub('%[', '%%['):gsub('%]', '%%]'):gsub('%*', '%%*'):gsub('%+', '%%+'):gsub('%-', '%%-'):gsub('%?', '%%?'))
 end
 
--- Parse the measures section out of our simfile
-local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+-- GetSimfileChartString() accepts four arguments:
+--    SimfileString - the contents of the ssc or sm file as a string
+--    StepsType     - a string like "dance-single" or "pump-double"
+--    Difficulty    - a string like "Beginner" or "Challenge" or "Edit"
+--    Filetype      - either "sm" or "ssc"
+--
+-- GetSimfileChartString() returns one value:
+--    NoteDataString, a substring from SimfileString that contains the just the requested note data
+
+local function GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	local NoteDataString = nil
 
 	if Filetype == "ssc" then
@@ -59,15 +54,37 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Filet
 		for chart in SimfileString:gmatch("#NOTEDATA.-#NOTES:[^;]*") do
 			-- Find the chart that matches our difficulty and game type
 			if(chart:match("#STEPSTYPE:"..regexEncode(StepsType)) and chart:match("#DIFFICULTY:"..regexEncode(Difficulty))) then
-				-- Find just the notes
-				NoteDataString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$")
-				-- remove possible comments
-				NoteDataString = NoteDataString:gsub("\\[^\r\n]*", "")
-				NoteDataString = NoteDataString:gsub("//[^\r\n]*", "")
-				-- put the semicolon back so that the line-by-line loop knows when to stop
-				NoteDataString = NoteDataString .. ";"
+				-- ensure that we've located the correct edit stepchart within the ssc file
+				-- there can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
+				if (Difficulty ~= "Edit") or (Difficulty=="Edit" and chart:match("#DESCRIPTION:"..regexEncode(StepsDescription))) then
+					-- Find just the notes
+					NoteDataString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$")
+					-- remove possible comments
+					NoteDataString = NoteDataString:gsub("\\[^\r\n]*", "")
+					NoteDataString = NoteDataString:gsub("//[^\r\n]*", "")
+					-- put the semicolon back so that the line-by-line loop knows when to stop
+					NoteDataString = NoteDataString .. ";"
+					break
+				end
 			end
 		end
+
+
+
+	-- ----------------------------------------------------------------
+	-- FIXME: this is likely to return the incorrect note data string from an sm file when
+	--   the requested Difficulty is "Edit" and there are multiple edit difficulties available.
+	--   StepMania uses each steps' "Description" attribute to unique identify Edit charts.
+	--
+	--   ssc files use a dedicated #DESCRIPTION for this purpose
+	--   but sm files have the description as part of an inline comment like
+	--
+	--   //---------------dance-single - test----------------
+	--
+	--   that^ edit stepchart would have a description of "test"
+	--
+	--   For now, SL-ChartParser.lua supports ssc files with multiple edits but not sm files.
+	-- ----------------------------------------------------------------
 	elseif Filetype == "sm" then
 		-- SM FILE
 		-- Loop through each chart in the SM file
@@ -118,8 +135,6 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 	local measureTiming = 0
 	-- Keep track of the notes in a measure
 	local measureNotes = {}
-
-	-- How many
 
 	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
 	for line in measuresString:gmatch("[^%s*\r\n]+")
@@ -204,7 +219,7 @@ end
 -- 		Song, a song object provided by something like GAMESTATE:GetCurrentSong()
 -- 		Steps, a steps object provided by something like GAMESTATE:GetCurrentSteps(player)
 --
--- GetNPSperMeasure() returns two values
+-- GetNPSperMeasure() returns two values:
 --		PeakNPS, a number representing the peak notes-per-second for the given stepchart
 --			This is an imperfect measurement, as we sample the note density per-second-per-measure, not per-second.
 --			It is (unlikely but) possible for the true PeakNPS to be spread across the boundary of two measures.
@@ -217,16 +232,18 @@ function GetNPSperMeasure(Song, Steps)
 	if Song==nil or Steps==nil then return end
 
 	local SongDir = Song:GetSongDir()
-	local SimfileString, Filetype = GetSimfileString( SongDir )
+	local SimfileString, Filetype = GetSimfileString( Steps )
 	if not SimfileString then return end
 
 	-- StepsType, a string like "dance-single" or "pump-double"
 	local StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
 	-- Difficulty, a string like "Beginner" or "Challenge"
 	local Difficulty = ToEnumShortString( Steps:GetDifficulty() )
+	-- an arbitary but unique string provded by the stepartist, needed here to identify Edit charts
+	local StepsDescription = Steps:GetDescription()
 
 	-- Discard header info; parse out only the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	if not ChartString then return end
 
 	-- Make our stream notes array into a string for regex
@@ -294,13 +311,16 @@ end
 
 
 
-function GetStreams(SongDir, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
+function GetStreams(Steps, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
 
-	local SimfileString, Filetype = GetSimfileString( SongDir )
+	local SimfileString, Filetype = GetSimfileString( Steps )
 	if not SimfileString then return end
 
+	-- an arbitary but unique string provded by the stepartist, needed here to identify Edit charts
+	local StepsDescription = Steps:GetDescription()
+
 	-- Parse out just the contents of the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, Filetype)
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	if not ChartString then return end
 
 	-- Which measures have enough notes to be considered as part of a stream?

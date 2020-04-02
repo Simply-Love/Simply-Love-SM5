@@ -15,7 +15,7 @@
 -- #VALUE2:PARAM2
 -- we'll recover.
 
-function ParseMsdFile(SongDir)
+function ParseMsdFile(steps)
 	local function AddParam(t, p, plen)
 		-- table.concat(table_name, separator, start, end)
 		local param = table.concat(p, '', 1, plen)
@@ -47,7 +47,7 @@ function ParseMsdFile(SongDir)
 		return s:sub(i, i)
 	end
 
-	local SimfileString, FileType = GetSimfileString(SongDir)
+	local SimfileString, FileType = GetSimfileString(steps)
 	if not SimfileString then return {} end
 	if FileType ~= 'sm' then return {} end
 
@@ -152,7 +152,7 @@ function ParseMsdFile(SongDir)
 			continue = true
 		end
 
-		-- We've gone through all the control characters.  All that is left is either an escaped character, 
+		-- We've gone through all the control characters.  All that is left is either an escaped character,
 		-- ie \#, \\, \:, etc., or a regular character.
 		-- NOTE: There is usually an 'unescape' bool passed to this top level function,
 		-- but when reading SM/SSC files it's always set to true so we assume that.

@@ -1,3 +1,8 @@
+-- the difficulty grid and per-player bouncing cursors don't support CourseMode
+-- CourseContentsList.lua should be used instead
+if GAMESTATE:IsCourseMode() then return end
+-- ----------------------------------------------
+
 local player = ...
 local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
@@ -13,9 +18,26 @@ return Def.Sprite{
 	Name="Cursor"..pn,
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:halign( p )
+		self:halign( p ):zoom(0.575)
 
-		self:zoom(0.575)
+		-- FIXME: SM5.1-beta's EffectClock enum includes constants for
+		--   CLOCK_BGM_BEAT_PLAYER1 and CLOCK_BGM_BEAT_PLAYER2 but
+		--   but effectclock(), the only method currently available via
+		--   the Lua API, doesn't appear to have any way to use them.
+		--
+		--   effectclock in Lua maps to Actor::SetEffectClockString() in C++
+		--   which handles a limited set of hardcoded english strings:
+		--   "timer", "timerglobal", "beat", "music", "musicnooffset", and "beatnooffset"
+		--   as well as some limited cabinet light handling.
+		--
+		--   Notably, there is not anything like "beatp1" or "beatp2" or "stepsbeat" or etc.
+		--   The takeaway here is that these bouncing cursors will sync with song timing.
+	 	--   If the current song uses steps timing, it will not be used in the bounce() effect.
+		--
+		--   One example of this is ACE FOR ACES, where some step timing is a steady 200bpm,
+		--   while others are 50-400bpm, but the song timing is 200.  This song timing is what
+		--   will be used to animate both players' bouncing cursors here, regardless of whether
+		--   one or both are joined.  This would need to be fixed in the engine.
 		self:bounce():effectclock("beatnooffset")
 
 		if player == PLAYER_1 then
@@ -40,24 +62,18 @@ return Def.Sprite{
 
 	OnCommand=function(self) self:queuecommand("Set") end,
 	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentTrailP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentTrailP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
 	SetCommand=function(self)
-		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		local song = GAMESTATE:GetCurrentSong()
 
-		if SongOrCourse then
-			local AllStepsOrTrails = (GAMESTATE:IsCourseMode() and SongOrCourse:GetAllTrails()) or SongUtil.GetPlayableSteps( SongOrCourse )
-			local StepsToDisplay = GetStepsToDisplay(AllStepsOrTrails)
-			local CurrentStepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+		if song then
+			local playable_steps = SongUtil.GetPlayableSteps( song )
+			local current_steps = GAMESTATE:GetCurrentSteps(player)
 
-
-
-			for i,chart in pairs(StepsToDisplay) do
-				if chart == CurrentStepsOrTrail then
+			for i,chart in pairs( GetStepsToDisplay(playable_steps) ) do
+				if chart == current_steps then
 					RowIndex = i
 					break
 				end

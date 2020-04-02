@@ -18,12 +18,12 @@ local t = Def.ActorFrame{
 
 local miss_bmt
 
-local worst = SL.Global.ActiveModifiers.WorstTimingWindow
+local windows = SL.Global.ActiveModifiers.TimingWindows
 
 --  labels: W1 ---> Miss
 for i=1, #TapNoteScores.Types do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
-	if i <= worst or i==#TapNoteScores.Types then
+	if windows[i] or i==#TapNoteScores.Types then
 
 		local window = TapNoteScores.Types[i]
 		local label = TapNoteScores.Names[i]

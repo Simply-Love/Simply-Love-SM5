@@ -12,16 +12,18 @@ return Def.ActorFrame{
 			-- darken the text for RainbowMode to make it more legible
 			if (ThemePrefs.Get("RainbowMode") and not HolidayCheer()) then self:diffuse(Color.Black) end
 
-			local currentSteps = GAMESTATE:GetCurrentSteps(player)
+			local style = GAMESTATE:GetCurrentStyle():GetName()
+			if style == "versus" then style = "single" end
+			style =  THEME:GetString("ScreenSelectMusic", style:gsub("^%l", string.upper))
 
-			if currentSteps then
-				local difficulty = currentSteps:GetDifficulty()
-				-- GetDifficulty() returns a value from the Difficulty Enum
-				-- "Difficulty_Hard" for example.
-				-- Strip the characters up to and including the underscore.
-				difficulty = ToEnumShortString(difficulty)
-				self:settext( THEME:GetString("Difficulty", difficulty) )
-			end
+			local steps = GAMESTATE:GetCurrentSteps(player)
+			-- GetDifficulty() returns a value from the Difficulty Enum such as "Difficulty_Hard"
+			-- ToEnumShortString() removes the characters up to and including the
+			-- underscore, transforming a string like "Difficulty_Hard" into "Hard"
+			local difficulty = ToEnumShortString( steps:GetDifficulty() )
+			difficulty = THEME:GetString("Difficulty", difficulty)
+
+			self:settext( style .. " / " .. difficulty )
 		end
 	},
 

@@ -57,7 +57,7 @@ t[#t+1] = Def.ActorFrame {
 		end,
 		OnCommand=function(self)
 			self:finishtweening():diffusealpha(0.85)
-				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * 0.8 )
+				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * WideScale(1, 0.8) )
 		end,
 		OffCommand=function(self) self:sleep(3.33):linear(0.5):diffusealpha(0) end,
 	},
@@ -66,7 +66,7 @@ t[#t+1] = Def.ActorFrame {
 		Name="Text",
 		InitCommand=function(self)
 			self:maxwidth(_screen.w-20):horizalign(left):vertalign(top)
-				:xy(SCREEN_LEFT+10, 10):diffusealpha(0):zoom(0.8)
+				:xy(10, 10):diffusealpha(0):zoom(WideScale(1, 0.8))
 			SystemMessageText = self
 		end,
 		OnCommand=function(self) self:finishtweening():diffusealpha(1) end,

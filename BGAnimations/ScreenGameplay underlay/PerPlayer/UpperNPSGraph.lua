@@ -3,16 +3,15 @@ local pn = ToEnumShortString(player)
 
 if not SL[pn].ActiveModifiers.NPSGraphAtTop
 or SL.Global.GameMode == "Casual"
-or SL.Global.GameMode == "StomperZ"
 then
 	return
 end
 
 local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-local width = GetNotefieldWidth(player) - 30
+local width = GetNotefieldWidth() - 30
 local height = 30
 
--- support double, double8, and routine by making as wide as single
+-- support double, double8, and routine by constraining the UpperNPSGraph to have the same width as in single
 if styletype == "OnePlayerTwoSides" or styletype == "TwoPlayersSharedSides" then
 	width = width/2
 end
@@ -37,15 +36,15 @@ return Def.ActorFrame{
 		self:queuecommand("Size")
 	end,
 
-	Def.Quad{ InitCommand=function(self) self:setsize(width, height):diffuse(0.3,0.3,0.3,1):align(0,1) end },
+	Def.Quad{ InitCommand=function(self) self:setsize(width, height):diffuse(color("#1E282F")):align(0,1) end },
 
 	NPS_Histogram(player, width, height)..{
 		SizeCommand=function(self)
 			self:zoomtoheight(1)
 
 			if #GAMESTATE:GetHumanPlayers()==2 and SL.P1.ActiveModifiers.NPSGraphAtTop and SL.P2.ActiveModifiers.NPSGraphAtTop then
-				local my_peak = SL[pn].NoteDensity.Peak
-				local their_peak = SL[ToEnumShortString(OtherPlayer[player])].NoteDensity.Peak
+				local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
+				local their_peak = GAMESTATE:Env()[ToEnumShortString(OtherPlayer[player]).."PeakNPS"]
 
 				if my_peak < their_peak then
 					self:zoomtoheight(my_peak/their_peak)
@@ -59,7 +58,7 @@ return Def.ActorFrame{
 		InitCommand=function(self)
 			self:setsize(width, height)
 				:align(0,1)
-				:diffuse(0,0,0,0.80)
+				:diffuse(0,0,0,0.85)
 				:queuecommand("Update")
 		end,
 		UpdateCommand=function(self)

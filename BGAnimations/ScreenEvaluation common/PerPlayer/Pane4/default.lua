@@ -1,24 +1,48 @@
+-- Pane4 displays an aggregate histogram of judgment offsets
+-- as well as the mean timing error, median, and mode of those offsets.
+
 local player = ...
 local pn = ToEnumShortString(player)
 
--- table of offet values obtained during this song's playthrough
+-- table of offset values obtained during this song's playthrough
 -- obtained via ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local pane_width, pane_height = 300, 180
+local topbar_height = 26
+local bottombar_height = 13
 
 -- ---------------------------------------------
 
 local abbreviations = {
 	ITG = { "Fan", "Ex", "Gr", "Dec", "WO" },
 	["FA+"] = { "Fan", "Fan", "Ex", "Gr", "Dec" },
-	StomperZ = { "Perf", "Gr", "Good", "Hit", "" }
 }
 
+local colors = {}
+for w=5,1,-1 do
+	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
+		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
+	else
+		abbreviations[SL.Global.GameMode][w] = abbreviations[SL.Global.GameMode][w+1]
+		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
+	end
+end
+
 -- ---------------------------------------------
--- if players have disabled W4 or W4+W5, there will be a smaller pool
+-- if players have disabled W5 or W4+W5, there will be a smaller range
 -- of judgments that could have possibly been earned
-local num_judgments_available = SL.Global.ActiveModifiers.WorstTimingWindow
-local worst_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..(num_judgments_available > 0 and num_judgments_available or 5)]
+local num_judgments_available = 5
+local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
+local windows = SL.Global.ActiveModifiers.TimingWindows
+
+for i=5,1,-1 do
+	if windows[i]==true then
+		num_judgments_available = i
+		worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW"..i)
+		break
+	end
+end
+
 
 -- ---------------------------------------------
 -- sequential_offsets is a table of all timing offsets in the order they were earned.
@@ -55,6 +79,18 @@ local pane = Def.ActorFrame{
 	end
 }
 
+-- the line in the middle indicating where truly flawless timing (0ms offset) is
+pane[#pane+1] = Def.Quad{
+	InitCommand=function(self)
+		local x = pane_width/2
+
+		self:vertalign(top)
+			:zoomto(1, pane_height - (topbar_height+bottombar_height) )
+			:vertalign(bottom):xy(x, 0)
+			:diffuse(1,1,1,0.666)
+	end,
+}
+
 -- "Early" text
 pane[#pane+1] = Def.BitmapText{
 	Font="_wendy small",
@@ -77,17 +113,17 @@ pane[#pane+1] = Def.BitmapText{
 	end,
 }
 
+-- --------------------------------------------------------
 
--- darkened quad behind bottom judment labels
+-- darkened quad behind bottom judgment labels
 pane[#pane+1] = Def.Quad{
 	InitCommand=function(self)
 		self:vertalign(top)
-			:zoomto(pane_width, 13 )
+			:zoomto(pane_width, bottombar_height )
 			:xy(pane_width/2, 0)
 			:diffuse(color("#101519"))
 	end,
 }
-
 
 -- centered text for W1
 pane[#pane+1] = Def.BitmapText{
@@ -96,7 +132,7 @@ pane[#pane+1] = Def.BitmapText{
 	InitCommand=function(self)
 		local x = pane_width/2
 
-		self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+		self:diffuse( colors[1] )
 			:addx(x):addy(7)
 			:zoom(0.65)
 	end,
@@ -118,7 +154,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			self:diffuse( colors[i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,
@@ -136,7 +172,7 @@ for i=2,num_judgments_available do
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
 			local x_avg = (x+x_better)/2
 
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+			self:diffuse( colors[i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
 		end,
@@ -145,32 +181,14 @@ for i=2,num_judgments_available do
 end
 
 -- --------------------------------------------------------
-
--- the line in the middle indicating where truly flawless timing (0ms offset) is
-pane[#pane+1] = Def.Quad{
-	InitCommand=function(self)
-		local x = pane_width/2
-
-		self:vertalign(top)
-			:zoomto(1, pane_height - 40 )
-			:xy(x, -140)
-			:diffuse(1,1,1,0.666)
-
-		if SL.Global.GameMode == "StomperZ" then
-			self:diffuse(0,0,0,0.666)
-		end
-	end,
-}
-
--- --------------------------------------------------------
--- TOPBAR WITH STATISTICS
+-- TOPBAR feat. mean timing error, median, mode, and Ryu☆
 
 -- topbar background quad
 pane[#pane+1] = Def.Quad{
 	InitCommand=function(self)
 		self:vertalign(top)
-			:zoomto(pane_width, 26 )
-			:xy(pane_width/2, -pane_height+13)
+			:zoomto(pane_width, topbar_height )
+			:xy(pane_width/2, -pane_height + topbar_height/2)
 			:diffuse(color("#101519"))
 	end,
 }
@@ -178,13 +196,17 @@ pane[#pane+1] = Def.Quad{
 -- only bother crunching the numbers and adding extra BitmapText actors if there are
 -- valid offset values to analyze; (MISS has no numerical offset and can't be analyzed)
 if next(offsets) ~= nil then
-	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height})
+	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
 end
 
 local label = {}
 label.y = -pane_height+20
 label.zoom = 0.575
 label.padding = 3
+
+-- Cleanly positioning the labels for "mean timing error", "median", and "mode"
+-- can be tricky because some languages use very few characters to express these ideas
+-- while other languages use many.  This max_width calculation works for now.
 label.max_width = ((pane_width/3)/label.zoom) - ((label.padding/label.zoom)*3)
 
 -- avg_timing_error label

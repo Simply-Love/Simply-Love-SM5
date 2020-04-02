@@ -1,5 +1,9 @@
+-- Pane2 displays per-columnm judgment counts.
+-- In "dance" the columns are left, down, up, right.
+-- In "pump" the columns are downleft, upleft, center, upright, downright
+-- etc.
+
 local player = ...
-local game = GAMESTATE:GetCurrentGame():GetName()
 
 return Def.ActorFrame{
 	Name="Pane2",

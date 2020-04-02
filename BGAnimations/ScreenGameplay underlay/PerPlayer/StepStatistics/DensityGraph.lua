@@ -39,7 +39,7 @@ end
 local scaled_width = width
 
 -- height is how tall, in pixels, the density graph will be
-local height = GetNotefieldWidth(player) / 2.25
+local height = GetNotefieldWidth() / 2.25
 
 local UpdateRate, first_second, last_second
 
@@ -64,7 +64,7 @@ local bg = Def.Quad{
 	end
 }
 
--- helper function
+-- FIXME: add inline comments explainig the intent/purpose of this code
 local SlopeAngle = function(p1, p2)
 	return math.atan2(p2[1] - p1[1], p2[2] - p1[2])
 end
@@ -111,6 +111,9 @@ local graph_and_lifeline = Def.ActorFrame{
 		histogram_amv:LoadCurrentSong(scaled_width)
 
 		UpdateRate = LifeBaseSampleRate
+
+		-- FIXME: add inline comments explaining what a 'simple' BPM is -quietly
+		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means -quietly
 
 		-- if the song has a 'simple' BPM, then quantize the timing
 		-- to the nearest multiple of 8ths to avoid jaggies
@@ -163,8 +166,8 @@ local graph_and_lifeline = Def.ActorFrame{
 				local seconds = GAMESTATE:GetCurMusicSeconds()
 				if seconds > last_second then return end
 
-				x = scale( seconds, first_second, last_second, 0, scaled_width )
-				y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
+				local x = scale( seconds, first_second, last_second, 0, scaled_width )
+				local y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
 
 				-- if the slopes of the newest line segment is similar
 				-- to the previous segment, just extend the old one.

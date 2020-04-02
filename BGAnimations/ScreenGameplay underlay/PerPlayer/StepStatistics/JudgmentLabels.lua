@@ -15,7 +15,7 @@ local RadarCategories = {
 }
 
 local row_height = 28
-local worst = SL.Global.ActiveModifiers.WorstTimingWindow
+local windows = SL.Global.ActiveModifiers.TimingWindows
 
 local af = Def.ActorFrame{}
 
@@ -23,7 +23,7 @@ local af = Def.ActorFrame{}
 for i, label in ipairs(TapNoteScores.Names) do
 
 	-- no need to add BitmapText actors for TimingWindows that were turned off
-	if i <= worst or i==#TapNoteScores.Names then
+	if windows[i] or i==#TapNoteScores.Names then
 
 		af[#af+1] = LoadFont("Common Normal")..{
 			Text=label:upper(),

@@ -31,7 +31,6 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame+1] = {}
 
 	af[#af+1] = LoadActor("./TrackTimeSpentInGameplay.lua", player)
-	af[#af+1] = LoadActor("./ReceptorArrowsPosition.lua", player)
 	af[#af+1] = LoadActor("./JudgmentOffsetTracking.lua", player)
 
 	-- FIXME: refactor PerColumnJudgmentTracking to not be inside this loop

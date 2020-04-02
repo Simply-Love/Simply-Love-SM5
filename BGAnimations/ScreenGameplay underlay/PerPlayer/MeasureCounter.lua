@@ -9,9 +9,10 @@ or mods.MeasureCounter == "None" then
 	return
 end
 
+-- -----------------------------------------------------------------------
 
 local PlayerState = GAMESTATE:GetPlayerState(player)
-local streams, prev_measure, MeasureCounterBMT
+local streams, prev_measure, bmt
 local current_count, stream_index, current_stream_length
 
 -- We'll want to reset each of these values for each new song in the case of CourseMode
@@ -26,43 +27,58 @@ local InitializeMeasureCounter = function()
 end
 
 local GetTextForMeasure = function(current_measure, Measures, stream_index)
-	-- Validate indices
+	-- validate indices
 	if Measures[stream_index] == nil then return "" end
 
-	local streamStart = Measures[stream_index].streamStart
-	local streamEnd = Measures[stream_index].streamEnd
-	if current_measure < streamStart then return "" end
-	if current_measure > streamEnd then return "" end
+	-- a "segment" can be either stream or rest
+	local segmentStart = Measures[stream_index].streamStart
+	local segmentEnd   = Measures[stream_index].streamEnd
 
-	local current_stream_length = streamEnd - streamStart
-	local current_count = math.floor(current_measure - streamStart) + 1
+	if current_measure < segmentStart then return "" end
+	if current_measure > segmentEnd   then return "" end
+
+	local current_stream_length = segmentEnd - segmentStart
+	local current_count = math.floor(current_measure - segmentStart) + 1
 
 	local text = ""
+
 	if Measures[stream_index].isBreak then
 		if mods.HideRestCounts == false then
-			-- NOTE: We let the lowest value be 0. This means that e.g.,
-			-- for an 8 measure break, we will display the numbers 7 -> 0
-			local measures_left = current_stream_length - current_count
 
-			if measures_left >= (current_stream_length-1) or measures_left <= 0 then
+			-- For the RestCount, let the lowest value be an implied 0.
+			-- e.g. for an 8 measure break, start at 7, decrement to 1, and don't show
+			--      anything for the last measure immediately before the streams begins
+			local remaining_rest = current_stream_length - current_count
+
+			-- if we are at RestCount 0 (or we're somehow negative), use an empty string
+			-- if the RestCount is somehow greater than the duration of this rest, use an empty string
+			if remaining_rest <= 0
+			or remaining_rest >= (current_stream_length-1)
+			then
 				text = ""
 			else
-				text = "(" .. measures_left .. ")"
+				text = "(" .. remaining_rest .. ")"
 			end
-			-- diffuse break counter to be Still Grey, just like Pendulum intended
-			MeasureCounterBMT:diffuse(0.5,0.5,0.5,1)
+
+			-- diffuse Rest counter to be Still Grey, just like Pendulum intended
+			bmt:diffuse(0.5,0.5,0.5,1)
 		end
 	else
 		text = tostring(current_count .. "/" .. current_stream_length)
-		MeasureCounterBMT:diffuse(1,1,1,1)
+		bmt:diffuse(1,1,1,1)
 	end
+
 	return text, current_count > current_stream_length
 end
+
 
 local Update = function(self, delta)
 
 	if not streams.Measures then return end
 
+	-- Things to look into:
+	-- Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
+	-- This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
 	local curr_measure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
 
 	-- if a new measure has occurred
@@ -71,31 +87,19 @@ local Update = function(self, delta)
 		prev_measure = curr_measure
 		local text, is_end = GetTextForMeasure(curr_measure, streams.Measures, stream_index)
 
-		-- If we're still within the current section
+		-- if we're still within the current segment
 		if not is_end then
-			MeasureCounterBMT:settext(text)
-		-- In a new section, we should check if curr_measure overlaps with it
+			bmt:settext(text)
+
+		-- we're in a new segment, we should check if curr_measure overlaps with it
+		--                                         (what does this^ means? -quietly)
 		else
 			stream_index = stream_index + 1
 			text, is_end = GetTextForMeasure(curr_measure, streams.Measures, stream_index)
-			MeasureCounterBMT:settext(text)
+			bmt:settext(text)
 		end
 	end
 end
-
-
-local af = Def.ActorFrame{
-	InitCommand=function(self)
-		self:queuecommand("SetUpdate")
-	end,
-	CurrentSongChangedMessageCommand=function(self)
-		InitializeMeasureCounter()
-	end,
-	SetUpdateCommand=function(self)
-		self:SetUpdateFunction( Update )
-	end
-}
-
 
 -- I'm not crazy about special-casing Wendy to use
 -- _wendy small for the Measure/Rest counter, but
@@ -108,15 +112,27 @@ else
 	font = "_Combo Fonts/" .. font .. "/"
 end
 
+-- -----------------------------------------------------------------------
+
+local af = Def.ActorFrame{
+	InitCommand=function(self) self:queuecommand("SetUpdate") end,
+	SetUpdateCommand=function(self) self:SetUpdateFunction( Update ) end,
+
+	CurrentSongChangedMessageCommand=function(self)
+		InitializeMeasureCounter()
+	end,
+}
+
 af[#af+1] = LoadFont(font)..{
 	InitCommand=function(self)
-		MeasureCounterBMT = self
+		-- a reference to this BitmapText actor with file scope
+		bmt = self
 
 		self:zoom(0.35):shadowlength(1):horizalign(center)
 		self:xy( GetNotefieldX(player), _screen.cy )
 
 		if mods.MeasureCounterLeft then
-			local width = GAMESTATE:GetCurrentStyle(player):GetWidth(player)
+			local width = GetNotefieldWidth()
 			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 			self:x( GetNotefieldX(player) - (width/NumColumns) )
 		end

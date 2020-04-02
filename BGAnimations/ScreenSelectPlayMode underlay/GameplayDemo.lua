@@ -141,8 +141,7 @@ local function YieldStepPattern(i, dir)
 				:queuecommand('LoopMarathon')
 		end
 	}
-
-
+	local files
 	if dir == "center" then
 		files = { "center-body.png", "center-border.png", "center-feet.png" }
 	else

@@ -33,13 +33,13 @@ local HandleStateChange = function(self, Player)
 	if GAMESTATE:IsHumanPlayer(Player) then
 
 		if MEMCARDMAN:GetCardState(Player) == 'MemoryCardState_none' then
-			--using local profile
+			-- using local profile
 			joinframe:visible(false)
 			scrollerframe:visible(true)
 			seltext:visible(true)
 			usbsprite:visible(false)
 		else
-			--using memorycard profile
+			-- using memorycard profile
 			joinframe:visible(false)
 			scrollerframe:visible(false)
 			seltext:visible(true):settext(MEMCARDMAN:GetName(Player))
@@ -61,12 +61,49 @@ local invalid_count = 0
 
 local t = Def.ActorFrame {
 
-	-- FIXME: stall for 0.5 seconds so that the Lua InputCallback doesn't get immediately added to the screen.
-	-- It's otherwise possible to enter the screen with MenuLeft/MenuRight already held and firing off events,
-	-- which causes the sick_wheel of profile names to not display.  I don't have time to debug it right now.
 	InitCommand=function(self) self:queuecommand("Stall") end,
-	StallCommand=function(self) self:sleep(0.5):queuecommand("Capture") end,
-	CaptureCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data}) ) end,
+	StallCommand=function(self)
+		-- FIXME: Stall for 0.5 seconds so that the Lua InputCallback doesn't get immediately added to the screen.
+		-- It's otherwise possible to enter the screen with MenuLeft/MenuRight already held and firing off events,
+		-- which causes the sick_wheel of profile names to not display.  I don't have time to debug it right now.
+		self:sleep(0.5):queuecommand("InitInput")
+
+		-- FIXME: I need to find time to look at how the engine actually handles MenuTimers because
+		-- including an Actor command that queues itself every 0.5 seconds to check the MenuTimer on custom
+		-- screens like this (and ScreenPlayAgain, etc.) seems like it should be unnecessary.)
+		if PREFSMAN:GetPreference("MenuTimer") then
+			self:queuecommand("CheckMenuTimer")
+		end
+	end,
+	InitInputCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data}) ) end,
+
+	CheckMenuTimerCommand=function(self)
+		-- if the MenuTimer has reached 0, it's time to queue the OffCommand and force a transition to the next screen
+		if SCREENMAN:GetTopScreen():GetChild("Timer"):GetSeconds() <= 0 then
+
+			-- It's possible that both players had the same local profile selected when the MenuTimer
+			-- reached 0.  Queueing the OffCommand like this would assign the same local profile to
+			-- both players.  Though engine permits this, it is unclear whether that is intentional
+			-- or oversight, and I've yet to meet anyone who has requested such a feature.
+			-- So, if the MenuTimer reaches 0 and both players are on the same non-GUEST profile
+			-- we'll set them both to GUEST before transitioning.
+
+			-- if both players have joined
+			if  #GAMESTATE:GetHumanPlayers() > 1
+			-- and both players are trying to choose the same profile
+			and scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index
+			-- and that profile they are both trying to choose isn't [GUEST]
+			and scrollers[PLAYER_1]:get_info_at_focus_pos().index ~= 0 then
+				scrollers[PLAYER_1]:scroll_by_amount( -scrollers[PLAYER_1]:get_info_at_focus_pos().index )
+				scrollers[PLAYER_2]:scroll_by_amount( -scrollers[PLAYER_2]:get_info_at_focus_pos().index )
+				self:sleep(0.3)
+			end
+
+			self:queuecommand("Off")
+		else
+			self:sleep(0.5):queuecommand("CheckMenuTimer")
+		end
+	end,
 
 	-- the OffCommand will have been queued, when it is appropriate, from ./Input.lua
 	-- sleep for 0.5 seconds to give the PlayerFrames time to tween out
@@ -75,13 +112,13 @@ local t = Def.ActorFrame {
 		self:sleep(0.5):queuecommand("Finish")
 	end,
 	FinishCommand=function(self)
-		-- If either/both human players want to not use a local profile
-		-- (that is, they've choose the first option, "[Guest]"), ScreenSelectProfile
+		-- If either/both human players want to *not* use a local profile
+		-- (that is, they've chosen the first option, "[Guest]"), ScreenSelectProfile
 		-- will not let us leave.  The screen's Finish() method expects all human players
 		-- to have local profiles they want to use.  So, this gets tricky.
 		--
-		-- Loop through a hardcoded table of both possible players.
-		for player in ivalues({PLAYER_1, PLAYER_2}) do
+		-- Loop through the enum for PlayerNumber that the engine has exposed to Lua.
+		for player in ivalues(PlayerNumber) do
 			-- check if this player is joined in
 			if GAMESTATE:IsHumanPlayer(player) then
 				-- this player was joined in, so get the index of their profile scroller as it is now
@@ -90,11 +127,11 @@ local t = Def.ActorFrame {
 				-- set index to 0 if so to indicate that "[Guest]" was chosen (because it was the only choice)
 				local index = type(info)=="table" and info.index or 0
 
-				-- this screen's SetProfileIndex() method expects local profiles to use index values that are > 0
+				-- the engine's SetProfileIndex() method expects local profiles to use index values that are > 0
 				-- it also uses the following hardcoded values:
-				--  0: use the USB memory card associated with this player
-				-- -1: join the player and play the theme's start sound effect
-				-- -2: unjoin the player, unlock their memorycard, and unmount their memorycard
+				--   0: use the USB memory card associated with this player
+				--  -1: join the player and play the theme's start sound effect
+				--  -2: unjoin the player, unlock their memorycard, and unmount their memorycard
 
 				-- check for and handle USB memorycards first
 				if MEMCARDMAN:GetCardState(player) ~= 'MemoryCardState_none' then
@@ -106,10 +143,10 @@ local t = Def.ActorFrame {
 
 				-- 0 here is my own stupid hardcoded number, defined over in PlayerFrame.lua for use with the "[Guest]" choice
 				-- In this case, 0 is the index of the choice in the scroller.  It should not be confused the 0 passed to
-				-- SetProfileIndex() to use a USB memorycard.
+				-- SetProfileIndex() to use a USB memorycard which is a different stupid hardcoded number defined by the engine. D:
 				elseif index == 0 then
 					-- Passing a -2 to SetProfileIndex() will unjoin the player.
-					-- Unjoining like this is (stupid, but) necessary to get us past this screen onto the next
+					-- Temporarily unjoining this player is necessary to get us past this screen onto the next
 					-- because ScreenSelectProfile needs all human players to have profiles assigned to them.
 					SCREENMAN:GetTopScreen():SetProfileIndex(player, -2)
 

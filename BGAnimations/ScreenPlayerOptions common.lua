@@ -2,7 +2,7 @@ return Def.Actor{
 	-- this is broadcast from [OptionRow] TitleGainFocusCommand in metrics.ini
 	-- we use it to color the active OptionRow's title appropriately by PlayerColor()
 	OptionRowChangedMessageCommand=function(self, params)
-		local CurrentRowIndex = {P1, P2}
+		local CurrentRowIndex = {"P1", "P2"}
 
 		-- There is always the possibility that a diffuseshift is still active;
 		-- cancel it now (and re-apply below, if applicable).
@@ -18,7 +18,7 @@ return Def.Actor{
 			CurrentRowIndex.P2 = SCREENMAN:GetTopScreen():GetCurrentRowIndex(PLAYER_2)
 		end
 
-		local optionRow = params.Title:GetParent():GetParent();
+		local optionRow = params.Title:GetParent():GetParent()
 
 		-- color the active optionrow's title appropriately
 		if optionRow:HasFocus(PLAYER_1) then

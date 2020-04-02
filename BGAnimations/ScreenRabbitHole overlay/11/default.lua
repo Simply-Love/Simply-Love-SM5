@@ -1,4 +1,28 @@
--- A troubled sea.
+-- I wish my mind could keep track of all my parts all the time.
+--
+-- Maybe I'd interact with other people less destructively. Maybe
+-- I'd ruminate and obsess less. Maybe I'd finally find the words
+-- to describe the recurring moment in which I find my mind back
+-- in my body.
+--
+-- Maybe it's this disconnect that helps others find rest in sleep.
+-- It seems like most people can laugh and forget, or at least let
+-- go.
+--
+-- My body rests but my mind is on high alert. Actual nightmares
+-- are infrequent, but there's always the worry that I'll find
+-- myself back there and spend my dream hours fighting.
+--
+-- There is no way to describe the hours that follow a nightmare.
+-- The specific details wither upon waking, but the residue of
+-- unconscious panic lingers invisibly on my body during those
+-- hours I am expected to be in control.
+--
+-- There is a heaviness to this that cannot be conveyed with words,
+-- like how math can only model gravity but never feel it.
+-- ---------------------------------------------------------------
+
+-- a troubled sea 🌊
 
 local max_width = 450
 local quote_bmts = {}

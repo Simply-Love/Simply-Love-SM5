@@ -1,4 +1,23 @@
--- quietly turning
+-- the season was spring
+-- and that day it was raining
+-- the day I met Her
+--
+-- Her hair, and mine, too
+-- were dense with humidity
+-- and the scent of rain
+--
+-- the earth continued
+-- quietly turning with us
+-- aboard, unknowing
+--
+-- our bodies losing
+-- heat peacefully to other
+-- spaces, darknesses
+--
+-- on that day I was
+-- picked up by Her; that is why
+-- I am now Her cat
+
 local haiku = {
 	"here in the darkness\nthat knows no end, the earth turns,\nquiet like our hearts",
 	"forever pressing\nforward through vast, barren space\nwith us aboard it",

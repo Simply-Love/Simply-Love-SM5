@@ -3,7 +3,7 @@ local af = args.af
 local scrollers = args.Scrollers
 local profile_data = args.ProfileData
 
--- we need to calculate how many dummy rows the scoller was "padded" with
+-- we need to calculate how many dummy rows the scroller was "padded" with
 -- (to achieve the desired transform behavior since I am not mathematically
 -- perspicacious enough to have done so otherwise).
 -- we'll use index_padding to get the correct info out of profile_data.
@@ -24,7 +24,7 @@ Handle.Start = function(event)
 
 	-- if the input event came from a side that is not currently registered as a human player, we'll either
 	-- want to reject the input (we're in Pay mode and there aren't enough credits to join the player),
-	-- or we'll use ScreenSelectProfile's inscrutibly custom SetProfileIndex() method to join the player.
+	-- or we'll use ScreenSelectProfile's inscrutably custom SetProfileIndex() method to join the player.
 	if not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
 
 		-- IsArcade() is defined in _fallback/Scripts/02 Utilities.lua
@@ -49,7 +49,9 @@ Handle.Start = function(event)
 		-- and if both players have joined and neither is using a memorycard
 		and #GAMESTATE:GetHumanPlayers() > 1 and not GAMESTATE:IsAnyHumanPlayerUsingMemoryCard() then
 			-- and both players are trying to choose the same profile
-			if scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index then
+			if scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index
+			-- and that profile they are both trying to choose isn't [GUEST]
+			and scrollers[PLAYER_1]:get_info_at_focus_pos().index ~= 0 then
 				-- broadcast an InvalidChoice message to play the "Common invalid" sound
 				-- and "shake" the playerframe for the player that just pressed start
 				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})

@@ -1,6 +1,7 @@
 local args = ...
 local offsets, worst_window = args[1], args[2]
 local pane_width, pane_height = args[3], args[4]
+local colors = args[5]
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0
@@ -49,7 +50,7 @@ end
 -- MEDIAN, MODE, and AVG TIMING ERROR VARIABLES
 -- initialize all to zero
 
--- mode_offset is the offset that occured the most commonly
+-- mode_offset is the offset that occurred the most commonly
 -- for example, if a player hit notes with an offset of -0.010
 -- more commonly than any other offset, that would be the mode
 local mode_offset = 0
@@ -59,7 +60,7 @@ local mode_offset = 0
 local median_offset = 0
 
 -- highest_offset_count is how many times the mode_offset occurred
--- we'll use it to scale the histrogram to be an appropriate height
+-- we'll use it to scale the histogram to be an appropriate height
 local highest_offset_count = 0
 
 local sum_timing_error = 0
@@ -103,7 +104,7 @@ if #list > 0 then
 		median_offset = (list[#list/2] + list[#list/2+1])/2
 	end
 
-	-- loop throguh all offsets collected
+	-- loop through all offsets collected
 	-- take the absolute value (because this offset could be negative)
 	-- and add it to the running measure of total timing error
 	for i=1,#list do
@@ -148,7 +149,7 @@ for offset=-worst_window, worst_window, 0.001 do
 	if math.abs(offset) <= worst_offset then
 		-- scale the highest point on the histogram to be 0.75 times as high as the pane
 		y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-		c = SL.JudgmentColors[SL.Global.GameMode][DetermineTimingWindow(offset)]
+		c = colors[DetermineTimingWindow(offset)]
 
 		-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
 		-- each vertex is a table of two tables:
