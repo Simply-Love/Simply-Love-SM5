@@ -399,7 +399,7 @@ end
 --
 -- and whichever the machine operator chooses gets saved as a different hardcoded English string in
 -- the DefaultModifiers Preference for the current game:
--- '', 'FailContinue', 'FailEndOfSong', or 'FailOff'
+-- '', 'FailImmediateContinue', 'FailAtEnd', or 'FailOff'
 
 -- It is worth pointing out that a default FailType of "FailType_Immediate" is saved to the DefaultModifiers
 -- Preference as an empty string!
@@ -416,23 +416,63 @@ end
 -- FailType setting in the current game's DefaultModifiers Preference and return it as an enum value
 -- the PlayerOptions interface can accept.
 --
--- I'm pretty sute ZP Theart was wailing about such project bitrot in Lost Souls in Endless Time.
+-- Keeping track of the logical flow of which preference overrides which metrics
+-- and attempting to extrapolate how that will play out over time in a community
+-- where players expect to be able to modify the code that drives gameplay is so
+-- convoluted at this point that it seems unreasonable to expect any player to
+-- follow along.
+--
+-- I can barely follow along.
+--
+-- I'm pretty sure ZP Theart was wailing about such project bitrot in Lost Souls in Endless Time.
 
 GetDefaultFailType = function()
 	local default_mods = PREFSMAN:GetPreference("DefaultModifiers")
+
 	local default_fail = ""
+	local fail_strings = {}
+
+	-- -------------------------------------------------------------------
+	-- these mappings just recreate the if/else chain in PlayerOptions.cpp
+	fail_strings.failarcade            = "FailType_Immediate"
+	fail_strings.failimmediate         = "FailType_Immediate"
+	fail_strings.failendofsong         = "FailType_ImmediateContinue"
+	fail_strings.failimmediatecontinue = "FailType_ImmediateContinue"
+	fail_strings.failatend             = "FailType_EndOfSong"
+	fail_strings.failoff               = "FailType_Off"
+
+	-- handle the "faildefault" string differently than the SM5 engine
+	-- PlayerOptions.cpp will lookup GAMESTATE's DefaultPlayerOptions
+	-- which applies, in sequence:
+	--    DefaultModifiers from Preferences.ini
+	--    DefaultModifers from [Common] in metrics.ini
+	--    DefaultNoteSkinName from [Common] in metrics.ini
+	--
+	-- SM5.1's _fallback theme does not currently specify any FailType
+	-- in DefaultModifiers under [Common] in its metrics.ini
+	--
+	-- This suggests that if a non-standard failstring (like "FailASDF")
+	-- is found, the _fallback theme won't enforce anything, but the engine
+	-- will enforce FailType_Immediate.  Brief testing seems to align with this
+	-- theory, but I haven't dug through enough of the src to *know*.
+	--
+	-- So, anyway, if Simply Love finds "faildefault" as a DefaultModifier in
+	-- Simply Love UserPrefs.ini, I'll go with "FailType_ImmediateContinue.
+	-- ImmediateContinue will be Simply Love's default.
+	fail_strings.faildefault           = "FailType_ImmediateContinue"
+	-- -------------------------------------------------------------------
 
 	for mod in string.gmatch(default_mods, "%w+") do
-		-- we might find a string like "FailOff", "FailImmediateContinue", or "FailEndOfSong"
-		-- if we find a string with "Fail" in it, strip out the "Fail" substring and keep the rest
-		if mod:find("Fail") then
-			default_fail = mod:gsub("Fail", "")
+		if mod:lower():find("fail") then
+			-- we found something matches "fail", so set our default_fail variable
+			-- and keep looking; don't break from the loop immediately.
+			-- I don't know if it's possible to have multiple FailType
+			-- strings saved in a single DefaultModifiers string...
+			default_fail = mod:lower()
 		end
 	end
 
-	if default_fail == "" then default_fail = "Immediate" end
-
-	return ("FailType_"..default_fail)
+	return fail_strings[default_fail] or "FailType_ImmediateContinue"
 end
 
 -- -----------------------------------------------------------------------
