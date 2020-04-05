@@ -6,10 +6,6 @@ return Def.ActorFrame{
 		if player == PLAYER_2 then
 			self:x( _screen.w-WideScale(27,84) )
 		end
-
-		if SL.Global.GameMode == "StomperZ" then
-			self:y( 20 )
-		end
 	end,
 
 
@@ -33,7 +29,7 @@ return Def.ActorFrame{
 			self:diffuse( Color.Black )
 			self:zoom( 0.4 )
 		end,
-		CurrentSongChangedMessageCommand=cmd(queuecommand,"Begin"),
+		CurrentSongChangedMessageCommand=function(self) self:queuecommand("Begin") end,
 		BeginCommand=function(self)
 			local steps = GAMESTATE:GetCurrentSteps(player)
 			local meter = steps:GetMeter()

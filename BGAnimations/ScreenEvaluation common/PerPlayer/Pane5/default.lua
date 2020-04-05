@@ -1,8 +1,7 @@
+-- Pane5 displays TestInput.
+
 if SL.Global.GameMode == "Casual" then return end
 
--- only show TestInput pane in EventMode; public arcades probably don't want random
--- players attempting to diagnose the pads...
-if not GAMESTATE:IsEventMode() then return end
 -- DedicatedMenu buttons are necessary here to prevent players from getting stuck in this pane
 if not PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then return end
 
@@ -29,14 +28,8 @@ local pane = Def.ActorFrame{
 	ExpandForDoubleCommand=function() end,
 }
 
-if style == "OnePlayerTwoSides" then
-	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_1, ShowMenuButtons=false, ShowPlayerLabel=false})..{
-		InitCommand=function(self) self:xy(22, 338):zoom(0.8) end
-	}
-	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_2, ShowMenuButtons=false, ShowPlayerLabel=false})..{
-		InitCommand=function(self) self:xy(188, 338):zoom(0.8) end
-	}
-else
+-- for single style, show one pad and some help text
+if style == "OnePlayerOneSide" or style == "TwoPlayersTwoSides" then
 	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=player, ShowMenuButtons=false, ShowPlayerLabel=false})..{
 		InitCommand=function(self) self:xy(50, 338):zoom(0.8) end
 	}
@@ -52,5 +45,14 @@ else
 		InitCommand=function(self) self:zoom(0.8):xy(-140,255):_wrapwidthpixels(100/0.8):align(0,0):vertspacing(-4) end
 	}
 
+-- for everything else (double, routine, couple), show two pads
+else
+	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_1, ShowMenuButtons=false, ShowPlayerLabel=false})..{
+		InitCommand=function(self) self:xy(22, 338):zoom(0.8) end
+	}
+	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_2, ShowMenuButtons=false, ShowPlayerLabel=false})..{
+		InitCommand=function(self) self:xy(188, 338):zoom(0.8) end
+	}
 end
+
 return pane

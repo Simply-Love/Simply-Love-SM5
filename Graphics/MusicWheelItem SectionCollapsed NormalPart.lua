@@ -1,6 +1,14 @@
-return Def.ActorFrame{
-	InitCommand=function(self) self:x(26) end,
+local num_items = THEME:GetMetric("MusicWheel", "NumWheelItems")
+-- subtract 2 from the total number of MusicWheelItems
+-- one MusicWheelItem will be offsceen above, one will be offscreen below
+local num_visible_items = num_items - 2
 
-	Def.Quad{ InitCommand=function(self) self:diffuse(color("#000000")):zoomto(_screen.w/2.1675, _screen.h/15) end },
-	Def.Quad{ InitCommand=function(self) self:diffuse(color("#283239")):zoomto(_screen.w/2.1675, _screen.h/15 - 1) end }
+local item_width = _screen.w / 2.125
+
+return Def.ActorFrame{
+	-- the MusicWheel is centered via metrics under [ScreenSelectMusic]; offset by a slight amount to the right here
+	InitCommand=function(self) self:x(WideScale(28,33)) end,
+
+	Def.Quad{ InitCommand=function(self) self:horizalign(left):diffuse(color("#000000")):zoomto(item_width, _screen.h/num_visible_items) end },
+	Def.Quad{ InitCommand=function(self) self:horizalign(left):diffuse(color("#283239")):zoomto(item_width, _screen.h/num_visible_items - 1) end }
 }

@@ -1,7 +1,13 @@
+-- the difficulty grid and per-player bouncing cursors don't support CourseMode
+-- CourseContentsList.lua should be used instead
+if GAMESTATE:IsCourseMode() then return end
+-- ----------------------------------------------
+
 local player = ...
 local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
 
+local GetStepsToDisplay = LoadActor("../StepsDisplayList/StepsToDisplay.lua")
 -- I feel like this surely must be the wrong way to do this...
 local GlobalOffsetSeconds = PREFSMAN:GetPreference("GlobalOffsetSeconds")
 
@@ -12,9 +18,26 @@ return Def.Sprite{
 	Name="Cursor"..pn,
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:halign( p )
+		self:halign( p ):zoom(0.575)
 
-		self:zoom(0.575)
+		-- FIXME: SM5.1-beta's EffectClock enum includes constants for
+		--   CLOCK_BGM_BEAT_PLAYER1 and CLOCK_BGM_BEAT_PLAYER2 but
+		--   but effectclock(), the only method currently available via
+		--   the Lua API, doesn't appear to have any way to use them.
+		--
+		--   effectclock in Lua maps to Actor::SetEffectClockString() in C++
+		--   which handles a limited set of hardcoded english strings:
+		--   "timer", "timerglobal", "beat", "music", "musicnooffset", and "beatnooffset"
+		--   as well as some limited cabinet light handling.
+		--
+		--   Notably, there is not anything like "beatp1" or "beatp2" or "stepsbeat" or etc.
+		--   The takeaway here is that these bouncing cursors will sync with song timing.
+	 	--   If the current song uses steps timing, it will not be used in the bounce() effect.
+		--
+		--   One example of this is ACE FOR ACES, where some step timing is a steady 200bpm,
+		--   while others are 50-400bpm, but the song timing is 200.  This song timing is what
+		--   will be used to animate both players' bouncing cursors here, regardless of whether
+		--   one or both are joined.  This would need to be fixed in the engine.
 		self:bounce():effectclock("beatnooffset")
 
 		if player == PLAYER_1 then
@@ -30,27 +53,6 @@ return Def.Sprite{
 		self:effectperiod(1):effectoffset( -10 * GlobalOffsetSeconds)
 	end,
 
-	OnCommand=function(self) self:queuecommand("Set") end,
-	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("Set") end,
-
-	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentTrailP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentTrailP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-
-	SetCommand=function(self)
-		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-
-		if SongOrCourse then
-			local StepsOrTrail = (GAMESTATE:IsCourseMode() and SongOrCourse:GetAllTrails()) or SongUtil.GetPlayableSteps( SongOrCourse )
-
-			if StepsOrTrail then
-				self:playcommand("StepsHaveChanged", {Steps=GetStepsToDisplay(StepsOrTrail), Player=player})
-			end
-		end
-	end,
-
 	PlayerJoinedMessageCommand=function(self, params)
 		if params.Player == player then self:visible(true) end
 	end,
@@ -58,37 +60,34 @@ return Def.Sprite{
 		if params.Player == player then self:visible(false) end
 	end,
 
-	StepsHaveChangedCommand=function(self, params)
+	OnCommand=function(self) self:queuecommand("Set") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
-		if params and params.Player == player then
-			-- if we have params, but no steps
-			-- it means we're on hovering on a group
-			if not params.Steps then
-				-- so, since we're on a group, no charts should be specifically available
-				-- making any row on the grid temporarily able-to-be-moved-to
-				RowIndex = RowIndex + params.Direction
+	SetCommand=function(self)
+		local song = GAMESTATE:GetCurrentSong()
 
-			else
-				local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+		if song then
+			local playable_steps = SongUtil.GetPlayableSteps( song )
+			local current_steps = GAMESTATE:GetCurrentSteps(player)
 
-				-- otherwise, we have been passed steps
-				for i,chart in pairs(params.Steps) do
-					if chart == StepsOrTrail then
-						RowIndex = i
-						break
-					end
+			for i,chart in pairs( GetStepsToDisplay(playable_steps) ) do
+				if chart == current_steps then
+					RowIndex = i
+					break
 				end
 			end
+		end
 
-			-- keep within reasonable limits because Edit charts are a thing
-			RowIndex = clamp(RowIndex, 1, 5)
+		-- keep within reasonable limits because Edit charts are a thing
+		RowIndex = clamp(RowIndex, 1, 5)
 
-			-- update cursor y position
-			local sdl = self:GetParent():GetParent():GetChild("StepsDisplayList")
-			if sdl then
-				local grid = sdl:GetChild("Grid")
-				self:y(sdl:GetY() + grid:GetY() + grid:GetChild("Blocks_"..RowIndex):GetY() + 1 )
-			end
+		-- update cursor y position
+		local sdl = self:GetParent():GetParent():GetChild("StepsDisplayList")
+		if sdl then
+			local grid = sdl:GetChild("Grid")
+			self:y(sdl:GetY() + grid:GetY() + grid:GetChild("Blocks_"..RowIndex):GetY() + 1 )
 		end
 	end
 }

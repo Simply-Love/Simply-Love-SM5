@@ -18,10 +18,6 @@ af[#af+1] = Def.Quad{
 				self:xy(36 * (player==PLAYER_1 and 1 or -1), -50)
 			end
 		end
-
-		if SL.Global.GameMode == "StomperZ" then
-			self:y(-40)
-		end
 	end
 }
 

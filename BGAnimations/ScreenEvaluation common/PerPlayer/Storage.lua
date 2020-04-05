@@ -21,7 +21,7 @@ return Def.Actor{
 		local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
 		-- a PLayerStageStats object from the engine
-		-- see: http://dguzek.github.io/Lua-For-SM5/LuaAPI#Actors-PlayerStageStats
+		-- see: http://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Actors-PlayerStageStats
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 		storage.grade = pss:GetGrade()
@@ -34,9 +34,19 @@ return Def.Actor{
 			W5 = pss:GetTapNoteScores(TNSTypes[5]),
 			Miss = pss:GetTapNoteScores(TNSTypes[6])
 		}
-		storage.difficulty = pss:GetPlayedSteps()[1]:GetDifficulty()
-		storage.difficultyMeter = pss:GetPlayedSteps()[1]:GetMeter()
-		storage.stepartist = pss:GetPlayedSteps()[1]:GetAuthorCredit()
-		storage.steps = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+
+		if GAMESTATE:IsCourseMode() then
+			storage.steps      = GAMESTATE:GetCurrentTrail(player)
+			storage.difficulty = storage.steps:GetDifficulty()
+			storage.meter      = storage.steps:GetMeter()
+			storage.stepartist = GAMESTATE:GetCurrentCourse(player):GetScripter()
+
+		else
+			storage.steps      = GAMESTATE:GetCurrentSteps(player)
+			storage.difficulty = pss:GetPlayedSteps()[1]:GetDifficulty()
+			storage.meter      = pss:GetPlayedSteps()[1]:GetMeter()
+			storage.stepartist = pss:GetPlayedSteps()[1]:GetAuthorCredit()
+
+		end
 	end
 }

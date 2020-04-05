@@ -1,3 +1,4 @@
+-- Quad at the bottom of the screen behind the explanation of the current OptionRow.
 return Def.Quad{
 	Name="ExplanationBackground",
 	InitCommand=function(self)

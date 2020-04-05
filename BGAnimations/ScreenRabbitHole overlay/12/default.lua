@@ -1,10 +1,19 @@
--- where the hallway ends
+-- There was one night, in particular, when it must have seemed unbearable.
+-- She had asked me to hold her, and we spent an hour cuddling in her room,
+-- two lonely children lost in sadness.
+--
+-- In the dream from this morning, when I apologized, she only smiled and
+-- reassured me that everything was okay now.
+--
+-- I awoke with a start, and felt quite certain, quite suddenly, that if
+-- there were a heaven, that would have been it.
+
 local max_width = 350
 local quote_bmts = {}
 local count = 1
 local quotes = {
 	{
-		text="What happens when we get there, the place where the hallway ends?",
+		text="What happens when we get there,\nthe place where the hallway ends?",
 		color={0.8, 0.666, 0.666, 0},
 		y=140,
 	},

@@ -47,7 +47,7 @@ for i,column in ipairs( columns[game] ) do
 
 	-- GetNoteSkinActor() is defined in ./Scripts/SL-Helpers.lua, and performs some
 	-- rudimentary error handling because NoteSkins From The Internet™ may contain Lua errors
-	af[#af+1] = GetNoteSkinActor(noteskin, column)..{
+	af[#af+1] = LoadActor(THEME:GetPathB("","_modules/NoteSkinPreview.lua"), {noteskin_name=noteskin, column=column})..{
 		OnCommand=function(self)
 			self:x( i*column_width ):zoom(0.4):visible(true)
 		end
@@ -58,7 +58,7 @@ for i,column in ipairs( columns[game] ) do
 	-- for each possible judgment
 	for j, judgment in ipairs(rows) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
-		if j <= gmods.WorstTimingWindow or j==#rows then
+		if gmods.TimingWindows[j] or j==#rows then
 			-- add a BitmapText actor to be the number for this column
 			af[#af+1] = LoadFont("Common Normal")..{
 				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],

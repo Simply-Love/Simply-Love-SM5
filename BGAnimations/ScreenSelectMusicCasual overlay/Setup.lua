@@ -48,21 +48,8 @@ local row = {
 
 ---------------------------------------------------------------------------
 -- a steps_type like "StepsType_Dance_Single" is needed so we can filter out steps that aren't suitable
--- (there has got to be a better way to do this...)
-local game_name = GAMESTATE:GetCurrentGame():GetName()
--- "single" and  "versus" both map to "Single" here
-local style = "Single"
 
-if GAMESTATE:GetCurrentStyle():GetName() == "double" then
-	style = "Double"
-end
-
-local steps_type = "StepsType_"..game_name:gsub("^%l", string.upper).."_"..style
-
--- techno is a special case with steps_type like "StepsType_Techno_Single8"
-if game_name == "techno" then steps_type = steps_type.."8" end
-
-
+local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 
 ---------------------------------------------------------------------------
 -- initializes sick_wheel OptionRows for the CurrentSong with needed information

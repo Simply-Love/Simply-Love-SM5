@@ -23,7 +23,7 @@ local StepsOrTrail = args.StepsOrTrail or ((args.RoundsAgo==nil or args.RoundsAg
 if not (SongOrCourse and StepsOrTrail) then return af end
 
 local Font = args.Font or "Common Normal"
-local row_height = 22 -- sigh
+local row_height = args.RowHeight or 22
 
 -- ---------------------------------------------
 -- setup that can occur now that the arguments have been handled
@@ -49,7 +49,7 @@ end
 local lower = 1
 local upper = NumHighScores
 
--- If the we're on Evaluation or EvaluationSummary, we might want to see compare the player's recent
+-- If the we're on Evaluation or EvaluationSummary, we might want to compare the player's recent
 -- performance to the overall list of highscores.  if so, highscoreindex will (might) contain the index
 -- of the recent performance in the overall list. (This gets complicated in EventMode, but we'll Try Our Best™.)
 local highscoreindex
@@ -76,7 +76,7 @@ if args.RoundsAgo then
 
 	if highscoreindex <= 0 then
 		for i, highscore in ipairs(HighScores) do
-
+			local name
 		 	if  pss:GetHighScore():GetScore() == highscore:GetScore()
 			and pss:GetHighScore():GetDate()  == highscore:GetDate()
 			and
@@ -95,7 +95,7 @@ if args.RoundsAgo then
 		end
 	end
 
-	-- if a RoundsAgo argument is not provided, we'll can just return the best highscores
+	-- if a RoundsAgo argument is not provided, we'll just return the best highscores
 	-- available starting at 1. For example, highscores [1,2,3,4,5]
 	-- if a RoundsAgo argument *is* provided, we may need to shift the start and end points
 	-- to retrieve, for example, highscores [3,4,5,6,7]

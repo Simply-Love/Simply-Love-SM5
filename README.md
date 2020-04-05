@@ -14,41 +14,46 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 
 
-## Requirements
+## Setup
 
 You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) or [StepMania 5.1 beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) to use this theme.
 
 Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible.
 
-#### Troubleshooting StepMania
 
-If you are having trouble installing StepMania or getting it to run on your computer, please refer to StepMania's [FAQ](http://www.stepmania.com/faq/).  Additionally, you may find these links helpful for your given operating system:
+## Installing Simply Love
 
-  * **Windows** -  [This issue on GitHub](https://github.com/stepmania/stepmania-site/issues/64) provides links to the needed DirectX and VS2013 redistributable packages.
-  * **macOS** - If you are unable to open the dmg installer with an error like "No mountable file systems", you'll need to [update your copy of macOS](https://github.com/stepmania/stepmania/issues/1726) for the time being. If you are encountering the "No NoteSkins found" error, [this wiki page](https://github.com/stepmania/stepmania/wiki/Installing-on-macOS) provides a means of resolving it on your computer until it is properly fixed upstream.
-  * **Linux** - It is more or less assumed that you will build your own executables if you are using Linux.  StepMania's GitHub wiki provides both a [list of dependencies](https://github.com/stepmania/stepmania/wiki/Linux-Dependencies) and some [instructions on compiling](https://github.com/stepmania/stepmania/wiki/Compiling-StepMania).
+You can download a zip of the latest formal release from the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest).
 
+To install Simply Love, unzip it and move the resulting *Simply Love* folder into your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).
 
-## Installation
+The install paths will look like:
 
-Head to the [Releases Page](https://github.com/dguzek/Simply-Love-SM5/releases) to download the most recent formal release of Simply Love.  If you opt to download directly from the *master* branch instead, you may get new features but also newer bugs.
+* **Windows**: `%APPDATA%\StepMania 5.1\Themes\Simply Love\`
+* **macOS**: `~/Library/Application Support/StepMania 5.1/Themes/Simply Love/`
+* **Linux**: `~/.stepmania-5.1/Themes/Simply Love/`
 
-To install this theme, unzip it and move the resulting directory inside the *Themes* folder in your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).
+The next time you use StepMania, you can switch to Simply Love from the main options menu found on the Title Screen.  The exact process can vary depending on the theme you are currently using, but this is usually done within **Options → Display Options → Appearance Options → Theme**
 
 ## Screenshots
 
-Visit my imgur album for screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
+![Title Screen](https://i.imgur.com/tlKZad8l.png)
+![Gameplay](https://i.imgur.com/6PRBIHil.png)
+![Player Options](https://i.imgur.com/Jk5A4LTl.png)
+![Evaluation with QR Code](https://i.imgur.com/TaApeGBl.png)
+![Select Profile](https://i.imgur.com/bZc5xpll.png)
+![Visual Themes](https://i.imgur.com/hGB1T4nl.png)
 
-## New Features
+Visit my imgur album for more screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
-Or, *things I've added that were not present in the original Simply Love for StepMania 3.95.*
+## Features
+
 
 #### New GameModes
 
 * [Casual](http://imgur.com/zLLhDWQh.png) – Intended for novice players; restricted song list, no failing, no LifeMeter, simplified UI, etc.  You can read more about customizing what content appears in Casual Mode [here](./Other/CasualMode-README.md).
 * [ITG](http://imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
 * [FA+](http://imgur.com/teZtlbih.png) – Similar to ITG, but features tighter TimingWindows; can be used to qualify for ECFA events
-* [StomperZ](http://imgur.com/dOKTpVbh.png) – Emulates a very small set of features from Rhythm Horizon gameplay
 
 #### New Auxiliary Features
 
@@ -62,12 +67,13 @@ Or, *things I've added that were not present in the original Simply Love for Ste
 
 #### New Aesthetic Features
  * [RainbowMode](http://i.imgur.com/aKsvrcch.png) – add some color to Simply Love!
- * [NoteSkin and Judgment previews](https://imgur.com/QUSqxr8.png) in the modifier menu
+ * [NoteSkin and Judgment previews](https://i.imgur.com/Jk5A4LT.png) in the modifier menu
  * improved widescreen support
 
 #### New Conveniences for Public Machine Operators
-  * [MenuTimer Options](http://imgur.com/DPffsdQh.png) – Set the MenuTimers for various screens.
+  * [MenuTimer Options](https://i.imgur.com/SqbsMiw.png) – Set the MenuTimers for various screens.
   * [Long/Marathon Song Cutoffs](http://i.imgur.com/fzNJDVDh.png) – The cutoffs for songs that cost 2 and 3 rounds can be set in *Arcade Options*.
+  * [USB Profile Options](https://i.imgur.com/ZgU9HGw.png) – Manage settings for player USB sticks, including custom songs.  Only available in SM5.1-beta and newer.
 
 #### Language Support
 
@@ -80,21 +86,36 @@ Simply Love has support for:
   * 日本語
   * Deutsch
 
-The current language can be changed in Simply Love under *System Options*.  You may need to restart StepMania immediately after changing the language for all in-game text to be properly translated.
+The current language can be changed in Simply Love under *System Options*.
 
 
 ---
 
 ## FAQ
 
-#### Why are my high scores ranking out of order?
-You need to set `PercentageScoring=1` in your Preferences.ini file.  Please note that you must quit StepMania before opening and editing Preferences.ini.
-
-Your existing scores will remain ranked out of order, but all scores going forward after making this change will be ranked correctly.
-
-#### Where is my Preferences.ini file?
-See the [Manually Changing Preferences](https://github.com/stepmania/stepmania/wiki/Manually-Changing-Preferences) page on StepMania's GitHub Wiki.
-
 #### How can I get more songs to show up in Casual Mode?
 Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
 
+
+#### I'm getting an error when I try to install StepMania.
+
+StepMania can be tricky to install and the process has different stumbling points unique to each OS.
+
+Refer to the [Troubleshooting StepMania README](./Other/TroubleshootingStepMania-README.md) included with Simply Love.
+
+#### How can I let players load custom songs from USB sticks?
+
+The StepMania project has wiki pages for configuring USB profiles for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) and [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).
+
+StepMania 5.1-beta and newer supports loading custom songs from USB profiles.  If you are using SM5.1-beta and have configured your computer using the Wikis linked to above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
+
+
+#### Why does my timing graph look weird?
+
+If your timing graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, you have USB polling issues.
+
+![spikey boi](https://i.imgur.com/oMAQKoM.jpg)
+
+Fixing this is outside the scope of Simply Love as a StepMania theme.
+
+GitHub user geefr has a [wiki page](https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues) on identifying and troubleshooting USB polling issues that may help.

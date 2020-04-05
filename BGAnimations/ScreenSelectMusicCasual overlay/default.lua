@@ -59,7 +59,7 @@ local t = Def.ActorFrame {
 		if not Input.AllPlayersAreAtLastRow() and seconds <= 0 then
 
 			-- if we we're not currently in the optionrows,
-			-- we'll need to iniitialize them for the current song, first
+			-- we'll need to initialize them for the current song, first
 			if Input.WheelWithFocus ~= OptionsWheel then
 				setup.InitOptionRowsForSingleSong()
 			end
@@ -94,7 +94,7 @@ local t = Def.ActorFrame {
 		-- I'm using Metrics-based code detection because the engine is already good at handling
 		-- simultaneous button presses (CancelSingleSong when ThreeKeyNavigation=1),
 		-- as well as long input patterns (Exit from EventMode) and I see no need to
-		-- reinvent that funtionality for the Lua InputCallback that I'm using otherwise.
+		-- reinvent that functionality for the Lua InputCallback that I'm using otherwise.
 
 		if params.Name == "Exit" then
 			if PREFSMAN:GetPreference("EventMode") then
@@ -164,7 +164,7 @@ for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
 end
 
 -- FIXME: This is dumb.  Add the player option StartButton visual last so it
---  draws over everything else and we can hide cusors behind it when needed...
+--  draws over everything else and we can hide cursors behind it when needed...
 t[#t+1] = LoadActor("./StartButton.lua")
 
 return t

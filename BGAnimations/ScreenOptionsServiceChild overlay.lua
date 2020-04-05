@@ -25,7 +25,7 @@ af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto(bg_width, bg_height)
 			:diffuse(color("#666666"))
-			:diffusealpha( BrighterOptionRows() and 0.95 or 0.75)
+			:diffusealpha( DarkUI() and 0.95 or 0.75)
 	end,
 }
 

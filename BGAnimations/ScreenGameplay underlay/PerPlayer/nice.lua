@@ -4,7 +4,7 @@ local mods = SL[pn].ActiveModifiers
 
 --Let's see if we need to let  the player know that they are nice.
 if ThemePrefs.Get("nice") > 0 then
-	return LoadActor(THEME:GetPathG("","_grades/assets/nice.png"))..{
+	return LoadActor(THEME:GetPathG("","nice.png"))..{
 		InitCommand=function(self)
 			self:xy(GetNotefieldX(player), _screen.cy )
 			self:visible(false):zoom(0.5):diffusealpha(1)

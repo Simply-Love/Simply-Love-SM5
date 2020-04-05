@@ -25,12 +25,6 @@ for profile in ivalues(args.profile_data) do
 			}
 			table.insert(already_loaded, profile.judgment)
 
-		elseif FILEMAN:DoesFileExist(THEME:GetCurrentThemeDirectory().."/Graphics/_judgments/StomperZ/"..profile.judgment) then
-			af[#af+1] = LoadActor(THEME:GetPathG("","_judgments/StomperZ/"..profile.judgment))..{
-				Name="JudgmentGraphic_"..StripSpriteHints(profile.judgment),
-				InitCommand=function(self) self:y(-50):animate(false) end
-			}
-			table.insert(already_loaded, profile.judgment)
 		end
 	end
 end

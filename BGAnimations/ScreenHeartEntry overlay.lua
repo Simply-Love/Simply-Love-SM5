@@ -2,8 +2,8 @@
 
 -- The positions the numpads for entering the heart rate will be placed at.
 local heart_xs = {
-	[PLAYER_1] = SCREEN_CENTER_X * 0.625,
-	[PLAYER_2] = SCREEN_CENTER_X * 1.375,
+	[PLAYER_1] = _screen.cx * 0.625,
+	[PLAYER_2] = _screen.cx * 1.375,
 }
 
 -- heart_entries is a table that will be used to store the numpads that the
@@ -20,7 +20,7 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 		-- numpad in detail.
 		heart_entries[pn] = new_numpad_entry{
 			Name = pn .. "_heart_entry",
-			InitCommand = cmd(xy, heart_xs[pn], SCREEN_CENTER_Y+48),
+			InitCommand=function(self) self:xy(heart_xs[pn], _screen.cy+48) end,
 			-- Settings for value are optional, but you will probably want to
 			-- change them, so they are provided in this example.
 			-- If a simple colored BitmapText isn't what you want for displaying
@@ -155,12 +155,10 @@ local args = {
 			SCREENMAN:GetTopScreen():AddInputCallback(input)
 		end,
 		-- The BitmapText used to display the elapsed time.
-		Def.BitmapText{
+		LoadFont("Common Normal")..{
 			Name="timer_text",
-			Font="Common Normal",
 			Text="00.0",
-			InitCommand=cmd(xy, SCREEN_CENTER_X, SCREEN_CENTER_Y-80; diffuse, Color.White),
-			OnCommand=cmd(strokecolor,Color.Outline),
+			InitCommand=function(self) self:xy(_screen.cx, _screen.cy-80):diffuse(Color.White) end,
 		}
 	},
 }

@@ -13,13 +13,16 @@ return Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:zoom(0.6):maxwidth(418/0.875) end,
 		OnCommand=function(self)
-			if SL.Global.ActiveModifiers.MusicRate ~= 1 then
-				self:settext( ("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate") )
-			end
-
-			local bpm = GetDisplayBPMs()
-			if bpm then
-				self:settext(self:GetText() .. " (" .. bpm .. " BPM)" )
+			-- FIXME: the current layout of ScreenEvaluation doesn't accommodate split BPMs
+			--        so this currently uses the MasterPlayer's BPM values
+			local bpms = StringifyDisplayBPMs()
+			local MusicRate = SL.Global.ActiveModifiers.MusicRate
+			if  MusicRate ~= 1 then
+				-- format a string like "150 - 300 bpm (1.5x Music Rate)"
+				self:settext( ("%s bpm (%gx %s)"):format(bpms, MusicRate, THEME:GetString("OptionTitles", "MusicRate")) )
+			else
+				-- format a string like "100 - 200 bpm"
+				self:settext( ("%s bpm"):format(bpms))
 			end
 		end
 	}

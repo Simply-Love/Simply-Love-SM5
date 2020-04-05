@@ -1,50 +1,51 @@
+-- this difficulty grid doesn't support CourseMode
+-- CourseContentsList.lua should be used instead
+if GAMESTATE:IsCourseMode() then return end
+-- ----------------------------------------------
+
 local num_rows    = 5
 local num_columns = 20
+
 local GridZoomX = IsUsingWideScreen() and 0.435 or 0.39
 local BlockZoomY = 0.275
-local StepsToDisplay, SongOrCourse, StepsOrTrails
+
+local GetStepsToDisplay = LoadActor("./StepsToDisplay.lua")
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=cmd(vertalign, top; xy, _screen.cx-170, _screen.cy + 70),
-	-- - - - - - - - - - - - - -
+	InitCommand=function(self) self:vertalign(top):xy(_screen.cx-170, _screen.cy + 70) end,
 
-	OnCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-	CurrentSongChangedMessageCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-	CurrentCourseChangedMessageCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-	StepsHaveChangedCommand=cmd(queuecommand, "RedrawStepsDisplay"),
-
-	-- - - - - - - - - - - - - -
+	OnCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
+	CurrentSongChangedMessageCommand=function(self)    self:queuecommand("RedrawStepsDisplay") end,
+	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
+	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
 
 	RedrawStepsDisplayCommand=function(self)
 
-		SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
+		local song = GAMESTATE:GetCurrentSong()
 
-		if SongOrCourse then
-			StepsOrTrails = (GAMESTATE:IsCourseMode() and SongOrCourse:GetAllTrails()) or SongUtil.GetPlayableSteps( SongOrCourse )
+		if song then
+			local steps = SongUtil.GetPlayableSteps( song )
 
-			if StepsOrTrails then
+			if steps then
+				local StepsToDisplay = GetStepsToDisplay(steps)
 
-				StepsToDisplay = GetStepsToDisplay(StepsOrTrails)
-
-				for RowNumber=1,num_rows do
-					if StepsToDisplay[RowNumber] then
+				for i=1,num_rows do
+					if StepsToDisplay[i] then
 						-- if this particular song has a stepchart for this row, update the Meter
 						-- and BlockRow coloring appropriately
-						local meter = StepsToDisplay[RowNumber]:GetMeter()
-						local difficulty = StepsToDisplay[RowNumber]:GetDifficulty()
-						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
-						self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Set", {Meter=meter, Difficulty=difficulty})
+						local meter = StepsToDisplay[i]:GetMeter()
+						local difficulty = StepsToDisplay[i]:GetDifficulty()
+						self:GetChild("Grid"):GetChild("Meter_"..i):playcommand("Set",  {Meter=meter, Difficulty=difficulty})
+						self:GetChild("Grid"):GetChild("Blocks_"..i):playcommand("Set", {Meter=meter, Difficulty=difficulty})
 					else
 						-- otherwise, set the meter to an empty string and hide this particular colored BlockRow
-						self:GetChild("Grid"):GetChild("Meter_"..RowNumber):playcommand("Unset")
-						self:GetChild("Grid"):GetChild("Blocks_"..RowNumber):playcommand("Unset")
-
+						self:GetChild("Grid"):GetChild("Meter_"..i):playcommand("Unset")
+						self:GetChild("Grid"):GetChild("Blocks_"..i):playcommand("Unset")
 					end
 				end
 			end
 		else
-			StepsOrTrails, StepsToDisplay = nil, nil
 			self:playcommand("Unset")
 		end
 	end,
@@ -57,7 +58,7 @@ local t = Def.ActorFrame{
 		InitCommand=function(self)
 			self:diffuse(color("#1e282f")):zoomto(320, 96)
 			if ThemePrefs.Get("RainbowMode") then
-				self:diffusealpha(0.75)
+				self:diffusealpha(0.9)
 			end
 		end
 	},
@@ -66,7 +67,7 @@ local t = Def.ActorFrame{
 
 local Grid = Def.ActorFrame{
 	Name="Grid",
-	InitCommand=cmd(horizalign, left; vertalign, top; xy, 8, -52 ),
+	InitCommand=function(self) self:horizalign(left):vertalign(top):xy(8, -52 ) end,
 }
 
 
@@ -76,7 +77,7 @@ Grid[#Grid+1] = Def.Sprite{
 	Name="BackgroundBlocks",
 	Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
-	InitCommand=cmd(diffuse, color("#182025") ),
+	InitCommand=function(self) self:diffuse(color("#182025")) end,
 	OnCommand=function(self)
 		local width = self:GetWidth()
 		local height= self:GetHeight()
@@ -92,7 +93,7 @@ for RowNumber=1,num_rows do
 		Name="Blocks_"..RowNumber,
 		Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
 
-		InitCommand=cmd(diffusealpha,0),
+		InitCommand=function(self) self:diffusealpha(0) end,
 		OnCommand=function(self)
 			local width = self:GetWidth()
 			local height= self:GetHeight()
@@ -100,15 +101,10 @@ for RowNumber=1,num_rows do
 			self:zoomto(width * num_columns * GridZoomX, height * BlockZoomY)
 		end,
 		SetCommand=function(self, params)
-			-- our grid only supports charts with up to a 20-block difficulty meter
-			-- but charts can have higher difficulties
-			-- handle that here by clamping the value to be between 1 and, at most, 20
-			local meter = clamp( params.Meter, 1, num_columns )
-
+			-- the engine's Steps::TidyUpData() method ensures that difficulty meters are positive
+			-- (and does not seem to enforce any upper bound that I can see)
 			self:customtexturerect(0, 0, num_columns, 1)
-			self:cropright( 1 - (meter * (1/num_columns)) )
-
-			-- diffuse and set each chart's difficulty meter
+			self:cropright( 1 - (params.Meter * (1/num_columns)) )
 			self:diffuse( DifficultyColor(params.Difficulty) )
 		end,
 		UnsetCommand=function(self)
@@ -116,10 +112,8 @@ for RowNumber=1,num_rows do
 		end
 	}
 
-	Grid[#Grid+1] = Def.BitmapText{
+	Grid[#Grid+1] = LoadFont("_wendy small")..{
 		Name="Meter_"..RowNumber,
-		Font="_wendy small",
-
 		InitCommand=function(self)
 			local height = self:GetParent():GetChild("Blocks_"..RowNumber):GetHeight()
 			self:horizalign(right)
@@ -132,7 +126,7 @@ for RowNumber=1,num_rows do
 			self:diffuse( DifficultyColor(params.Difficulty) )
 			self:settext(params.Meter)
 		end,
-		UnsetCommand=cmd(settext, ""; diffuse,color("#182025")),
+		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 	}
 end
 

@@ -1,13 +1,12 @@
 -- ----------------------------------------------------
 -- local tables containing NoteSkins and JudgmentGraphics available to SL
--- wW'll compare values from profiles against these "master" tables as it
+-- We'll compare values from profiles against these "master" tables as it
 -- seems to be disconcertingly possible for user data to contain errata, typos, etc.
 
 local noteskins = NOTESKIN:GetNoteSkinNames()
 local judgment_graphics = {
 	ITG=GetJudgmentGraphics("ITG"),
 	["FA+"]=GetJudgmentGraphics("FA+"),
-	StomperZ=GetJudgmentGraphics("StomperZ"),
 }
 
 -- ----------------------------------------------------
@@ -20,13 +19,20 @@ local RecentMods = function(mods)
 
 	-- SpeedModType should be a string and SpeedMod should be a number
 	if type(mods.SpeedModType)=="string" and type(mods.SpeedMod)=="number" then
-		if mods.SpeedModType=="x" and mods.SpeedMod > 0 then text = text..tostring(mods.SpeedMod).."x"
-		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then text = text..mods.SpeedModType..tostring(mods.SpeedMod)
+		-- for ScreenSelectProfile, allow either "x" or "X" to be in the player's profile for SpeedModType
+		if (mods.SpeedModType):upper()=="X" and mods.SpeedMod > 0 then
+			-- take whatever number is in the player's profile, string format it to 2 decimal places
+			-- convert back to a number to remove potential trailing 0s (we want "1.5x" not "1.50x")
+			-- and finally convert that back to a string
+			text = ("%gx"):format(tonumber(("%.2f"):format(mods.SpeedMod)))
+
+		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then
+			text = ("%s%.0f"):format(mods.SpeedModType, mods.SpeedMod)
 		end
 	end
 
 	-- Mini should definitely be a string
-	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = text..", "..mods.Mini.." "..THEME:GetString("OptionTitles", "Mini") end
+	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = ("%s %s"):format(mods.Mini, THEME:GetString("OptionTitles", "Mini")) end
 
 	-- some linebreaks to make space for NoteSkin and JudgmentGraphic previews
 	text = text.."\n\n\n"
@@ -34,7 +40,7 @@ local RecentMods = function(mods)
 	-- the NoteSkin and JudgmentGraphic previews are not text and thus handled elsewhere
 
 	-- ASIDE: My informal testing of reading ~80 unique JudgmentGraphic files from disk and
-	-- loading them into memory caused Stepmania to hang for a few seconds, so
+	-- loading them into memory caused StepMania to hang for a few seconds, so
 	-- JudgmentGraphicPreviews.lua and NoteSkinPreviews.lua only load assets that are
 	-- needed by current player profiles (not every possible asset).
 
@@ -93,6 +99,18 @@ local TotalSongs = function(numSongs)
 end
 
 -- ----------------------------------------------------
+-- for when you just want to retrieve profile data from disk without applying it to the SL table
+
+local RetrieveProfileData = function(profile, dir)
+	local theme_name = THEME:GetThemeDisplayName()
+	local path = dir .. theme_name .. " UserPrefs.ini"
+	if FILEMAN:DoesFileExist(path) then
+		return IniFile.ReadFile(path)[theme_name]
+	end
+	return false
+end
+
+-- ----------------------------------------------------
 -- Retrieve and process data (mods, most recently played song, high score name, etc.)
 -- for each available local profile and put it in the profile_data table.
 -- Since both players are using the same list of local profiles, this only needs to be performed once (not once for each player).
@@ -108,7 +126,7 @@ for i=1, PROFILEMAN:GetNumLocalProfiles() do
 	-- GetLocalProfileIDFromIndex() also expects indices to start at 0
 	local id = PROFILEMAN:GetLocalProfileIDFromIndex(i-1)
 	local dir = PROFILEMAN:LocalProfileIDToDir(id)
-	local userprefs = ReadProfileCustom(profile, dir)
+	local userprefs = RetrieveProfileData(profile, dir)
 	local mods, noteskin, judgment = RecentMods(userprefs)
 
 	local data = {

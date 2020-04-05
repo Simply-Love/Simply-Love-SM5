@@ -1,8 +1,8 @@
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- Helper Functions for PlayerOptions
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 
-local function GetModsAndPlayerOptions(player)
+local GetModsAndPlayerOptions = function(player)
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
 	local topscreen = SCREENMAN:GetTopScreen():GetName()
 	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
@@ -11,7 +11,30 @@ local function GetModsAndPlayerOptions(player)
 	return mods, playeroptions
 end
 
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
+-- For normal gameplay, the engine offers SongUtil.GetPlayableSteps()
+-- but there is not currently any analogous helper function for CourseMode.
+-- Let's use this for now.
+
+local GetPlayableTrails = function(course)
+	if not (course and course.GetAllTrails) then return nil end
+
+	local trails = {}
+	for _,trail in ipairs(course:GetAllTrails()) do
+		local playable = true
+		for _,entry in ipairs(trail:GetTrailEntries()) do
+			if not SongUtil.IsStepsTypePlayable(entry:GetSong(), entry:GetSteps():GetStepsType()) then
+				playable = false
+				break
+			end
+		end
+		if playable then table.insert(trails, trail) end
+	end
+
+	return trails
+end
+
+-- -----------------------------------------------------------------------
 -- when to use Choices() vs. Values()
 --
 -- Each OptionRow needs stringified choices to present to the player.  Sometimes using hardcoded strings
@@ -63,7 +86,7 @@ local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Choices = { "x", "C", "M" },
+		Choices = { "X", "C", "M" },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
@@ -71,7 +94,7 @@ local Overrides = {
 				if list[i] then
 					-- Broadcast a message that ./BGAnimations/ScreenPlayerOptions overlay.lua will be listening for
 					-- so it can hackishly modify the single BitmapText actor used in the SpeedMod optionrow
-					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i]})
+					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i], Player=pn})
 				end
 			end
 		end
@@ -81,25 +104,12 @@ local Overrides = {
 		Choices = { "       " },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local type 	= mods.SpeedModType or "x"
+			local type  = mods.SpeedModType or "X"
 			local speed = mods.SpeedMod or 1.00
 
-			-- it's necessary to manually apply a speedmod of 1x first, otherwise speedmods stack?
-			playeroptions:XMod(1.00)
-
-			if type == "x" then
-				playeroptions:XMod(speed)
-			elseif type == "C" then
-				playeroptions:CMod(speed)
-			elseif type == "M" then
-				playeroptions:MMod(speed)
-			end
-
+			playeroptions[type.."Mod"](playeroptions, speed)
 		end
 	},
 	-------------------------------------------------------------------------
@@ -197,7 +207,7 @@ local Overrides = {
 		Choices = function()
 			local first	= -100
 			local last 	= 150
-			local step 	= 5
+			local step 	= 1
 
 			return stringify( range(first, last, step), "%g%%")
 		end,
@@ -260,6 +270,72 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	Stepchart = {
+		ExportOnChange = true,
+		Choices = function()
+			local choices = {}
+
+			if not GAMESTATE:IsCourseMode() then
+				local song = GAMESTATE:GetCurrentSong()
+				if song then
+					for steps in ivalues( SongUtil.GetPlayableSteps(song) ) do
+						if steps:IsAnEdit() then
+							choices[#choices+1] = ("%s %i"):format(steps:GetDescription(), steps:GetMeter())
+						else
+							choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())), steps:GetMeter())
+						end
+					end
+				end
+			else
+				local course = GAMESTATE:GetCurrentCourse()
+				if course then
+					for _,trail in ipairs(GetPlayableTrails(course)) do
+						choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(trail:GetDifficulty())), trail:GetMeter())
+					end
+				end
+			end
+
+			return choices
+		end,
+		Values = function()
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			if SongOrCourse then
+				if GAMESTATE:IsCourseMode() then
+					return GetPlayableTrails(SongOrCourse)
+				else
+					return SongUtil.GetPlayableSteps(SongOrCourse)
+				end
+			end
+			return {}
+		end,
+		LoadSelections = function(self, list, pn)
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(pn) or GAMESTATE:GetCurrentSteps(pn)
+			local i = FindInTable(StepsOrTrail, self.Values) or 1
+			list[i] = true
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			for i,v in ipairs(self.Values) do
+				if list[i] then
+					-- GAMESTATE keeps track of what the "preferred difficulty" is and this is used by
+					-- the engine's SelectMusic class.  SL is using the engine's SelectMusic for now.
+					-- Set the PreferredDifficulty now so that the player's newly chosen difficulty
+					-- doesn't reset when they return to SelectMusic/SelectCourse.
+					GAMESTATE:SetPreferredDifficulty(pn, v:GetDifficulty())
+
+					if GAMESTATE:IsCourseMode() then
+						GAMESTATE:SetCurrentTrail(pn, v)
+						MESSAGEMAN:Broadcast("CurrentTrail"..ToEnumShortString(pn).."Changed")
+					else
+						GAMESTATE:SetCurrentSteps(pn, v)
+						MESSAGEMAN:Broadcast("CurrentSteps"..ToEnumShortString(pn).."Changed")
+					end
+					break
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
 		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },
@@ -291,15 +367,17 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	DataVisualizations = {
 		Values = function()
-			local choices = { "Disabled", "Target Score Graph", "Step Statistics" }
+			local choices = { "None", "Target Score Graph", "Step Statistics" }
 
-			-- Disabled and Target Score Graph should always be available to players
+			-- None and Target Score Graph should always be available to players
 			-- but Step Statistics needs a lot of space and isn't always possible
 			-- remove it as an available option if we aren't in single or if the current
 			-- notefield width already uses more than half the screen width
+			local style = GAMESTATE:GetCurrentStyle()
+			local notefieldwidth = GetNotefieldWidth()
 
-			if GAMESTATE:GetCurrentStyle():GetName() ~= "single"
-			or GetNotefieldWidth( GAMESTATE:GetMasterPlayerNumber() ) > _screen.w/2 then
+			if style and style:GetName() ~= "single"
+			or notefieldwidth and notefieldwidth > _screen.w/2 then
 				table.remove(choices, 3)
 			end
 
@@ -328,10 +406,23 @@ local Overrides = {
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
 		Values = function()
+			-- GameplayExtras will be presented as a single OptionRow when WideScreen
 			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop" }
-			if SL.Global.GameMode == "StomperZ" then table.remove(vals, 5) end
+
+			-- if not WideScreen (traditional DDR cabinets running at 640x480)
+			-- remove the last two choices and show an additional OptionRow with just those two
+			if not IsUsingWideScreen() then
+				table.remove(vals, 5)
+				table.remove(vals, 4)
+			end
 			return vals
 		end,
+	},
+
+	-- this is defined in metrics.ini to only appear when not IsUsingWideScreen()
+	GameplayExtrasB = {
+		SelectType = "SelectMultiple",
+		Values = { "MissBecauseHeld", "NPSGraphAtTop" }
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
@@ -343,67 +434,52 @@ local Overrides = {
 		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideRestCounts" },
 	},
 	-------------------------------------------------------------------------
-	WorstTimingWindow = {
+	TimingWindows = {
+		Values = function()
+			return {
+				{true,true,true,true,true},
+				{true,true,true,true,false},
+				{true,true,true,false,false},
+				{false,false,true,true,true},
+			}
+		end,
 		Choices = function()
 			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 			local t = {THEME:GetString("SLPlayerOptions","None")}
 			-- assume pluralization via terminal s
 			t[2] = THEME:GetString(tns,"W5").."s"
 			t[3] = THEME:GetString(tns,"W4").."s + "..t[2]
-			t[4] = THEME:GetString("SLPlayerOptions","All")
+			t[4] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
 			return t
 		end,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
-			local worst = SL.Global.ActiveModifiers.WorstTimingWindow
-			if 	worst==5 then list[1] = true
-			elseif 	worst==4 then list[2] = true
-			elseif 	worst==3 then list[3] = true
-			elseif 	worst==0 then list[4] = true
+			local windows = SL.Global.ActiveModifiers.TimingWindows
+			for i=1,#list do
+				local all_match = true
+				for w,window in ipairs(windows) do
+					if window ~= self.Values[i][w] then all_match = false; break end
+				end
+				if all_match then list[i] = true; break end
 			end
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
 			local gmods = SL.Global.ActiveModifiers
-
-			if 	list[1] then gmods.WorstTimingWindow=5
-			elseif 	list[2] then gmods.WorstTimingWindow=4
-			elseif 	list[3] then gmods.WorstTimingWindow=3
-			elseif 	list[4] then gmods.WorstTimingWindow=0
-			end
-
-			-- loop 5 times to set the 5 TimingWindows appropriately
-			for i=1,5 do
-				if i <= gmods.WorstTimingWindow then
-					PREFSMAN:SetPreference("TimingWindowSecondsW"..i, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i])
-				else
-					if PREFSMAN:PreferenceExists("TimingWindowSecondsW"..gmods.WorstTimingWindow) then
-						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..gmods.WorstTimingWindow])
-					else
-						PREFSMAN:SetPreference("TimingWindowSecondsW"..i, -math.abs(math.random(math.floor(math.pi))))
+			for i=1,#list do
+				if list[i] then
+					gmods.TimingWindows = self.Values[i]
+					for w=1,5 do
+						if self.Values[i][w] then
+							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..w])
+						else
+							local prev = (w > 1 and PREFSMAN:GetPreference("TimingWindowSecondsW"..(w-1)) or -math.abs(SL.Preferences[SL.Global.GameMode].TimingWindowAdd))
+							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, prev)
+						end
 					end
 				end
 			end
 		end
-	},
-	-------------------------------------------------------------------------
-	Vocalization = {
-		Choices = function()
-			-- Allow users to arbitrarily add new vocalizations to ./Simply Love/Other/Vocalize/
-			-- and have those vocalizations be automatically detected
-			local vocalizations = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Other/Vocalize/" , true, false)
-			table.insert(vocalizations, 1, "None")
-
-			if #vocalizations > 1 then
-				vocalizations[#vocalizations+1] = "Random"
-				vocalizations[#vocalizations+1] = "Blender"
-			end
-			return vocalizations
-		end
-	},
-	-------------------------------------------------------------------------
-	ReceptorArrowsPosition = {
-		Choices = { "StomperZ", "ITG" },
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
@@ -417,10 +493,6 @@ local Overrides = {
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions = Branch.GameplayScreen() end
 
@@ -442,10 +514,6 @@ local Overrides = {
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions2 = Branch.GameplayScreen() end
 
@@ -468,10 +536,6 @@ local Overrides = {
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			list[1] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions3 = Branch.GameplayScreen() end
 
@@ -489,9 +553,9 @@ local Overrides = {
 }
 
 
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- Generic OptionRow Definition
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 local OptionRowDefault = {
 	-- the __index metatable will serve to define a completely generic OptionRow
 	__index = {
@@ -499,6 +563,7 @@ local OptionRowDefault = {
 
 			self.Name = name
 
+			-- FIXME: add inline comments explaining the intent/purpose of All This Code
 			if Overrides[name].Values then
 				if Overrides[name].Choices then
 					self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
@@ -562,19 +627,21 @@ local OptionRowDefault = {
 	}
 }
 
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- Passed a string like "Mini", CustomOptionRow() will return table that represents
 -- the themeside attributes of the OptionRow for Mini.
 --
 -- CustomOptionRow() is mostly used in Metrics.ini under [ScreenPlayerOptions] and siblings
 -- to pass OptionRow data (Lua) to the engine (C++) via Metrics (ini).
 --
--- Thre are a few other places in the theme where CustomOptionRow() is used to retrieve a list
+-- There are a few other places in the theme where CustomOptionRow() is used to retrieve a list
 -- of possible choices for a given OptionRow and then do something based on that list.
 -- For example, ./ScreenPlayerOptions overlay/NoteSkinPreviews.lua uses it to get a list of NoteSkins
 -- so it can load preview NoteSkin actors into the overlay's ActorFrame ahead of time.
 
 function CustomOptionRow( name )
+	if not (type(name)=="string" and Overrides[name]) then return false end
+
 	-- assign the properties of the generic OptionRowDefault to OptRow
 	local OptRow = setmetatable( {}, OptionRowDefault )
 
@@ -583,7 +650,7 @@ function CustomOptionRow( name )
 end
 
 
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- Mods are applied in their respective SaveSelections() functions when
 -- ScreenPlayerOptions receives its OffCommand(), but what happens
 -- if a player expects mods to have been set via a profile,

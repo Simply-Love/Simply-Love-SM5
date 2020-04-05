@@ -1,5 +1,5 @@
 -- the metatable for an item in ScreenSelectProfile's sick_wheel scroller
--- this is just a given profile's DisplayName
+-- for the scrollers in ScreenSelectProfile, this is just each profile's DisplayName
 return {
 	__index = {
 		create_actors = function(self, name)

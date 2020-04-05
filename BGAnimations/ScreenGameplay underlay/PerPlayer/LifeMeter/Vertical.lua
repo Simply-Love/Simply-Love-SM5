@@ -13,12 +13,12 @@ end
 if player == PLAYER_2 then _x = _screen.w - _x end
 
 
-local swoosh, move
+local swoosh, velocity
 
 local Update = function(self)
-	move = -GAMESTATE:GetSongBPS()/2
-	if GAMESTATE:GetSongFreeze() then move = 0 end
-	if swoosh then swoosh:texcoordvelocity(move, 0) end
+	velocity = -GAMESTATE:GetSongBPS()/2
+	if GAMESTATE:GetSongFreeze() then velocity = 0 end
+	if swoosh then swoosh:texcoordvelocity(velocity, 0) end
 end
 
 local meter = Def.ActorFrame{
@@ -30,31 +30,25 @@ local meter = Def.ActorFrame{
 	end,
 
 	-- frame
-	Def.Quad{
-		InitCommand=function(self) self:zoomto(width+2, height+2):x(_x) end
-	},
+	Def.Quad{ InitCommand=function(self) self:zoomto(width+2, height+2):x(_x) end },
+	Def.Quad{ InitCommand=function(self) self:zoomto(width, height):x(_x):diffuse(0,0,0,1) end },
 
 	Def.Quad{
-		InitCommand=function(self) self:zoomto(width, height):x(_x):diffuse(0,0,0,1) end
-	},
-
-	-- // start meter proper //
-	Def.Quad{
-		Name="MeterFill";
+		Name="MeterFill",
 		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player)):align(0,1) end,
 		OnCommand=function(self) self:xy( _x - width/2, height/2) end,
 
 		-- check life (LifeMeterBar)
 		LifeChangedMessageCommand=function(self,params)
-			if(params.Player == player) then
+			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * height
 				self:finishtweening()
-				self:bouncebegin(0.1)
-				self:zoomy( life )
+				self:bouncebegin(0.1):zoomy( life )
 			end
 		end,
 	},
 
+	-- a simple scrolling gradient texture applied on top of MeterFill
 	LoadActor("swoosh.png")..{
 		Name="MeterSwoosh",
 		InitCommand=function(self)
@@ -66,15 +60,14 @@ local meter = Def.ActorFrame{
 				 :xy(_x, height/2)
 		end,
 		OnCommand=function(self)
-			self:customtexturerect(0,0,1,1);
+			self:customtexturerect(0,0,1,1)
 			--texcoordvelocity is handled by the Update function below
 		end,
 		LifeChangedMessageCommand=function(self,params)
 			if(params.Player == player) then
 				local life = params.LifeMeter:GetLife() * height
 				self:finishtweening()
-				self:bouncebegin(0.1)
-				self:zoomto( life, width )
+				self:bouncebegin(0.1):zoomto( life, width )
 			end
 		end
 	}

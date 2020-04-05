@@ -1,7 +1,8 @@
 -- draws a "nice" underneath if a 69 appears somewhere on ScreenEvaluation
 -- with love, ian klatzco and din
+
 local player = ...
-local t = nil
+local af = Def.ActorFrame{}
 
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local failed = stats:GetFailed()
@@ -72,7 +73,7 @@ local IsCranked = function()
 	if not PREFSMAN:GetPreference("EasterEggs") then return false end
 	if failed then return false end
 	if not (tonumber(percent) <= 77.41) then return false end
-	if SL[ToEnumShortString(player)].ActiveModifiers.Vocalization ~= "None" then return false end
+	if tonumber(percent) <= 0 then return false end
 
 	local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 	local title = SongOrCourse:GetDisplayFullTitle():lower()
@@ -86,7 +87,7 @@ end
 
 
 if IsNice() then
-	t = LoadActor(THEME:GetPathG("","_grades/assets/nice.png"))..{
+	af[#af+1] = LoadActor(THEME:GetPathG("","nice.png"))..{
 		InitCommand=function(self)
 			self:xy(70, _screen.cy-134)
 		end,
@@ -99,24 +100,25 @@ if IsNice() then
 				self:x( self:GetX() * -1 )
 			end
 
-			--If the value is 2, then this indicates they want sound.
+			-- if the value is 2, then this indicates they want sound.
 			if ThemePrefs.Get("nice") == 2 then
-				--For some reason Stepmania could play
-				--this sound lounder than the
-				--system preference, so let's ensure
-				--we are turned down for the meme.
+				-- SOUND:PlayOnce() doesn't take the global SoundVolume Preference into consideration
+				-- it just plays the file you pass it at 100%; this can be jarring
+				-- use SOUND:DimMusic() as a way to set the volume to match SoundVolume preference
+				-- for 1.3 seconds, the duration of nice.ogg
 				SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
 				SOUND:PlayOnce(THEME:GetPathS("", "nice.ogg"))
 			end
 		end
 	}
+end
 
-elseif IsCranked() then
-	t = LoadActor(THEME:GetPathS("", "wrenches.ogg"))..{
+if IsCranked() then
+	af[#af+1] = LoadActor(THEME:GetPathS("", "wrenches.ogg"))..{
 		OnCommand=function(self) self:sleep(0.5):queuecommand("Play") end,
 		PlayCommand=function(self) self:play() end
 	}
 end
 
 
-return t
+return af

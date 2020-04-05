@@ -16,6 +16,7 @@ for i=1,num_grade_tiers do
 	af[#af+1] = LoadActor( THEME:GetPathG("", "_grades/"..tier_string..".lua"))..{ Name=tier_string }
 end
 
+-- "Failed" is not a grade tier, but players don't need to worry about such details. :)
 af[#af+1] = LoadActor( THEME:GetPathG("", "_grades/Grade_Failed.lua"))..{ Name="Grade_Failed" }
 
 return af

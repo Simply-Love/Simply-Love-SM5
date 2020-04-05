@@ -1,4 +1,6 @@
--- 13 Ghosts II
+-- "The book is an indeterminate heap of contradictory drafts.
+-- I examined it once: in the third chapter the hero dies,
+-- in the fourth he is alive."
 
 local af = Def.ActorFrame{}
 af.InputEventCommand=function(self, event)

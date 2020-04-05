@@ -44,7 +44,7 @@ for i=1,#TapNoteScores.Types do
 			-- be colored any differently than the (lack of) JudgmentNumber,
 			-- so load a unique Metric group.
 			local gmods = SL.Global.ActiveModifiers
-			if i > gmods.WorstTimingWindow and i ~= #TapNoteScores.Types then
+			if gmods.TimingWindows[i]==false and i ~= #TapNoteScores.Types then
 				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
 				self:diffuse(color("#444444"))
 
@@ -70,7 +70,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 	local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
 
-	-- player performace value
+	-- player performance value
 	t[#t+1] = Def.RollingNumbers{
 		Font="_ScreenEvaluation numbers",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
