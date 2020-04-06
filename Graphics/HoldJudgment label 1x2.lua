@@ -17,11 +17,6 @@ return Def.Sprite{
 			label = SL[pn].ActiveModifiers.HoldJudgment or "None"
 		end
 
-		if label == "None" then
-			self:visible(false)
-			return
-		end
-
 		self:Load(THEME:GetPathG("", "_HoldJudgments/" .. label))
 	end
 }

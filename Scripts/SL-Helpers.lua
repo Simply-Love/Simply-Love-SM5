@@ -683,21 +683,9 @@ GetHoldJudgments = function()
 		-- Filter out files that aren't HoldJudgment labels
 		-- e.g. hidden system files like .DS_Store
 		if FilenameIsMultiFrameSprite(filename) then
-
-			-- remove the file extension from the string, leaving only the name of the graphic
-			-- local name = StripSpriteHints(filename)
-
-			-- Fill the table, special-casing "Yeah No" so that it comes first.
-			-- if name == "Yeah No" then
-			-- 	table.insert(hold_graphics, 1, filename)
-			-- else
-				table.insert(hold_graphics, filename)
-			-- end
+			table.insert(hold_graphics, filename)
 		end
 	end
-
-	-- "None" results in HoldJudgment label 1x2.lua returning an empty Def.Actor
-	table.insert(hold_graphics, "None")
 
 	return hold_graphics
 end
