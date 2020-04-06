@@ -14,6 +14,7 @@ local profile_whitelist = {
 	NoteSkin = "string",
 	JudgmentGraphic = "string",
 	ComboFont = "string",
+	HoldJudgment = "string",
 	BackgroundFilter = "string",
 
 	HideTargets = "boolean",

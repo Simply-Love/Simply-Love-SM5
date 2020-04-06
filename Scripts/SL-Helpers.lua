@@ -655,7 +655,7 @@ function GetJudgmentGraphics(mode)
 		-- e.g. hidden system files like .DS_Store
 		if FilenameIsMultiFrameSprite(filename) then
 
-			-- use regexp to get only the name of the graphic, stripping out the extension
+			-- remove the file extension from the string, leaving only the name of the graphic
 			local name = StripSpriteHints(filename)
 
 			-- Fill the table, special-casing Love so that it comes first.
@@ -667,11 +667,41 @@ function GetJudgmentGraphics(mode)
 		end
 	end
 
-	-- "None" -> no graphic in Player judgment.lua
+	-- "None" results in Player judgment.lua returning an empty Def.Actor
 	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
 end
+
+GetHoldJudgments = function()
+	local path = THEME:GetCurrentThemeDirectory().."Graphics/_HoldJudgments/"
+	local files = FILEMAN:GetDirListing(path)
+	local hold_graphics = {}
+
+	for i,filename in ipairs(files) do
+
+		-- Filter out files that aren't HoldJudgment labels
+		-- e.g. hidden system files like .DS_Store
+		if FilenameIsMultiFrameSprite(filename) then
+
+			-- remove the file extension from the string, leaving only the name of the graphic
+			-- local name = StripSpriteHints(filename)
+
+			-- Fill the table, special-casing "Yeah No" so that it comes first.
+			-- if name == "Yeah No" then
+			-- 	table.insert(hold_graphics, 1, filename)
+			-- else
+				table.insert(hold_graphics, filename)
+			-- end
+		end
+	end
+
+	-- "None" results in HoldJudgment label 1x2.lua returning an empty Def.Actor
+	table.insert(hold_graphics, "None")
+
+	return hold_graphics
+end
+
 
 -- -----------------------------------------------------------------------
 -- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay

@@ -167,6 +167,7 @@ local t = Def.ActorFrame{
 LoadActor("./NoteSkinPreviews.lua", t)
 LoadActor("./JudgmentGraphicPreviews.lua", t)
 LoadActor("./ComboFontPreviews.lua", t)
+LoadActor("./HoldJudgmentPreviews.lua", t)
 
 -- some functionality needed in both PlayerOptions, PlayerOptions2, and PlayerOptions3
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
