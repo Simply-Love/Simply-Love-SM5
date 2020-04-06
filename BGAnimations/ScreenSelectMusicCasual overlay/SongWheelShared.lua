@@ -117,7 +117,7 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) self:zoom(1.3):diffuse(Color.White):horizalign(left):y(-45):maxwidth(300) end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
-				self:settext( params.song:GetDisplayMainTitle() )
+				self:settext( params.song:GetDisplayMainTitle() .. " " .. params.song:GetDisplaySubTitle() )
 			end
 		end,
 	},
