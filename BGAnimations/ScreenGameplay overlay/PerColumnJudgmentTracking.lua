@@ -38,7 +38,8 @@ local actor = Def.Actor{
 -- if the player doesn't care about MissBecauseHeld, keep it simple
 if not track_missbcheld then
 	actor.JudgmentMessageCommand=function(self, params)
-		if params.Player == player and params.Notes then
+		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
+		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
 				local tns = ToEnumShortString(params.TapNoteScore)
 				judgments[col][tns] = judgments[col][tns] + 1
@@ -81,8 +82,6 @@ else
 		end
 	end
 
-
-
 	local InputHandler = function(event)
 		-- if any of these, don't attempt to handle input
 		if not event.PlayerNumber or not event.button then return false end
@@ -96,7 +95,8 @@ else
 
 	actor.OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( InputHandler ) end
 	actor.JudgmentMessageCommand=function(self, params)
-		if params.Player == player and params.Notes then
+		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
+		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
 				local tns = ToEnumShortString(params.TapNoteScore)
 				judgments[col][tns] = judgments[col][tns] + 1
@@ -106,7 +106,7 @@ else
 				end
 			end
 		end
-    end
+	end
 end
 
 return actor
