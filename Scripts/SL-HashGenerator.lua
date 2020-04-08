@@ -124,18 +124,46 @@ end
 -- stepsType is usually either 'dance-single' or 'dance-double'
 -- difficulty is usually one of {'Beginner', 'Easy', 'Medium', 'Hard', 'Challenge'}
 function GenerateHash(steps, stepsType, difficulty)
+	--Some simfiles use nonstandard difficulties such as Expert or Heavy. This table attempts to account for it
+	local difficultyConversion = {}
+	difficultyConversion.Beginner = "Beginner"
+	difficultyConversion.Novice = difficultyConversion.Beginner
+	difficultyConversion.Easy = "Easy"
+	difficultyConversion.Light = difficultyConversion.Easy
+	difficultyConversion.Medium = "Medium"
+	difficultyConversion.Standard = difficultyConversion.Medium
+	difficultyConversion.Hard = "Hard"
+	difficultyConversion.Heavy = difficultyConversion.Hard
+	difficultyConversion.Challenge = "Challenge"
+	difficultyConversion.Expert = difficultyConversion.Challenge
+
 	local msdFile = ParseMsdFile(steps)
 
 	if #msdFile == 0 then return ''	end
 
 	local bpms = ''
+	local sscSteps = ''
+	local sscDifficulty = ''
 	local allNotes = {}
 
 	for value in ivalues(msdFile) do
 		if value[1] == 'BPMS' then
 			bpms = NormalizeFloatDigits(value[2])
+		elseif value[1] == 'STEPSTYPE' then sscSteps = value[2]
+		elseif value[1] == 'DIFFICULTY' then sscDifficulty = value[2]
 		elseif value[1] == 'NOTES' then
-			table.insert(allNotes, value)
+			--SSC files don't have 7 fields in notes so it would normally fail to generate hashes
+			--We can make a temporary table mimicking what it would look like in a .SM file
+			if string.find(SONGMAN:GetSongFromSteps(steps):GetSongFilePath(),".ssc$") then
+				local sscTable = {}
+				sscTable[2] = sscSteps
+				sscTable[4] = sscDifficulty
+				sscTable[7] = value[2]
+				for i = 1,4 do table.insert(sscTable,i) end --filler so #notes >= 7
+				table.insert(allNotes,sscTable)
+			else
+				table.insert(allNotes, value)
+			end
 		end
 	end
 
@@ -144,7 +172,7 @@ function GenerateHash(steps, stepsType, difficulty)
 	for notes in ivalues(allNotes) do
 		-- StepMania considers NOTES sections with greater than 7 sections valid.
 		-- https://github.com/stepmania/stepmania/blob/master/src/NotesLoaderSM.cpp#L1072-L1079
-		if #notes >= 7 and notes[2] == stepsType and difficulty == notes[4] then
+		if #notes >= 7 and notes[2] == stepsType and difficulty == difficultyConversion[notes[4]] then
 			local minimizedChart = MinimizeChart(notes[7])
 			local chartDataAndBpm = minimizedChart .. bpms
 			local hash = sha256(chartDataAndBpm)
