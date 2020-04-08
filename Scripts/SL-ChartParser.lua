@@ -87,6 +87,7 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Steps
 	-- ----------------------------------------------------------------
 	elseif Filetype == "sm" then
 		-- SM FILE
+
 		-- Loop through each chart in the SM file
 		for chart in SimfileString:gmatch("#NOTES[^;]*") do
 			-- split the entire chart string into pieces on ":"
@@ -104,9 +105,10 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Steps
 			local st = pieces[2]:gsub("[^%w-]", "")
 			local diff = pieces[4]:gsub("[^%w]", "")
 
+
 			-- if this particular chart's steps_type matches the desired StepsType
 			-- and its difficulty string matches the desired Difficulty
-			if (st == StepsType) and (diff == Difficulty) then
+			if (st == StepsType) and (ToEnumShortString(OldStyleStringToDifficulty(diff)) == Difficulty) then
 				-- then index 7 contains the notedata that we're looking for
 				-- use gsub to remove comments, store the resulting string,
 				-- and break out of the chart loop now
