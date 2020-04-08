@@ -1,4 +1,4 @@
--- TargetScore Graphs and Pacemaker contributed by JackG
+-- TargetScore Graphs and Pacemaker contributed by iamjackg
 -- ActionOnMissedTarget contributed by DinsFire64
 -- cleanup + fixes by djpohly and andrewipark
 
