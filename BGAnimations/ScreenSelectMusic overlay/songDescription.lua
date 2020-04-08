@@ -28,6 +28,9 @@ end
 -- ----------------------------------------
 local MusicWheel, SelectedType
 
+-- width of  background quad
+local _w = IsUsingWideScreen() and 320 or 310
+
 local t = Def.ActorFrame{
 
 	OnCommand=function(self)
@@ -47,7 +50,7 @@ local t = Def.ActorFrame{
 		-- background for Artist, BPM, and Song Length
 		Def.Quad{
 			InitCommand=function(self)
-				self:setsize( IsUsingWideScreen() and 320 or 310, 50 )
+				self:setsize( _w, 50 )
 				self:diffuse(color("#1e282f"))
 
 				if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
@@ -154,13 +157,13 @@ local t = Def.ActorFrame{
 				Text=THEME:GetString("SongDescription", "Length"),
 				InitCommand=function(self)
 					self:align(1,0):diffuse(0.5,0.5,0.5,1)
-						:x(_screen.w/4.5):y(10)
+					self:x(_w-130):y(10)
 				end
 			},
 
 			-- Song Duration Value
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:align(0,0):xy(_screen.w/4.5 + 5, 10) end,
+				InitCommand=function(self) self:align(0,0):xy(_w-130 + 5, 10) end,
 				SetCommand=function(self)
 					if MusicWheel == nil then MusicWheel = SCREENMAN:GetTopScreen():GetMusicWheel() end
 

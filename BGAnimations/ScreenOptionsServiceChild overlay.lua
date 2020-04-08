@@ -13,7 +13,7 @@ af.OnCommand=function(self)
 		return
 	end
 
-	self:xy(_screen.w*WideScale(0.765,0.8), _screen.cy - 15)
+	self:xy(_screen.w*clamp(WideScale(0.765,0.8),0.765,0.8), _screen.cy - 15)
 end
 
 af.OptionRowChangedMessageCommand=function(self, params)

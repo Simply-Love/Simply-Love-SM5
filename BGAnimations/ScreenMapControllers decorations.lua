@@ -75,7 +75,7 @@ end
 af[#af+1] = Def.Quad{
 	Name="DevicesBG",
 	InitCommand=function(self)
-		self:x(_screen.cx):y(headerHeight/2):zoomto(WideScale(150,200), headerHeight*0.65):diffuse(0.5,0.5,0.5,0.9)
+		self:x(_screen.cx):y(headerHeight/2):zoomto(clamp(WideScale(160,200), 160, 200), headerHeight*0.65):diffuse(0.5,0.5,0.5,0.9)
 	end
 }
 

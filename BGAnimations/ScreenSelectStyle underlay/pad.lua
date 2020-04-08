@@ -1,4 +1,4 @@
-local _zoom = WideScale(0.435,0.525)
+local _zoom = clamp(WideScale(0.435,0.525), 0.435, 0.525)
 local _game = GAMESTATE:GetCurrentGame():GetName()
 
 local layouts = {
