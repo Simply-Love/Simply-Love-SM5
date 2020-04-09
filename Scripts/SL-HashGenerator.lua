@@ -148,8 +148,10 @@ function GenerateHash(steps, stepsType, difficulty)
 				sscTable[4] = sscDifficulty
 				sscTable[7] = value[2]
 				for i = 1,4 do table.insert(sscTable,i) end --filler so #notes >= 7
+				sscTable['bpms'] = bpms
 				table.insert(allNotes,sscTable)
 			else
+				value['bpms'] = bpms
 				table.insert(allNotes, value)
 			end
 		end
@@ -162,7 +164,7 @@ function GenerateHash(steps, stepsType, difficulty)
 		-- https://github.com/stepmania/stepmania/blob/master/src/NotesLoaderSM.cpp#L1072-L1079
 		if #notes >= 7 and notes[2] == stepsType and difficulty == ToEnumShortString(OldStyleStringToDifficulty(notes[4])) then
 			local minimizedChart = MinimizeChart(notes[7])
-			local chartDataAndBpm = minimizedChart .. bpms
+			local chartDataAndBpm = minimizedChart .. notes['bpms']
 			local hash = sha256(chartDataAndBpm)
 			-- Trace('Style: ' .. notes[2] .. '\tDifficulty: ' .. notes[4] .. '\tHash: ' .. hash)
 			return hash
