@@ -129,14 +129,25 @@ function GenerateHash(steps, stepsType, difficulty)
 
 	if #msdFile == 0 then return ''	end
 
-	local bpms = ''
+	local songBpms = ''
+	local stepBpms
+	local stepData = false --for SSC. until we get to the first 'Notes' anything we find is for the overall song
 	local sscSteps = ''
 	local sscDifficulty = ''
 	local allNotes = {}
-
 	for value in ivalues(msdFile) do
 		if value[1] == 'BPMS' then
-			bpms = NormalizeFloatDigits(value[2])
+			--if we get to BPMS before we see a chart than it's the song bpms
+			--in SM files we expect to only see BPMS once but SSC can have a different
+			--bpms for each chart. If an SSC chart doesn't have a bpms itself it will
+			--fall back on the song bpms so we need to keep track of what that is
+			if not stepData then songBpms = NormalizeFloatDigits(value[2])
+			else stepBpms = NormalizeFloatDigits(value[2]) end
+		--in SSCs each chart needs NOTEDATA or Stepmania won't even try to load it
+		--so if we see NOTEDATA we know we're past the overall values and any new
+		--bpms values we see will be chart specific
+		--https://github.com/stepmania/stepmania/blob/master/src/NotesLoaderSSC.cpp#L933
+		elseif value[1] == 'NOTEDATA' then stepData = true
 		elseif value[1] == 'STEPSTYPE' then sscSteps = value[2]
 		elseif value[1] == 'DIFFICULTY' then sscDifficulty = value[2]
 		elseif value[1] == 'NOTES' then
@@ -148,16 +159,19 @@ function GenerateHash(steps, stepsType, difficulty)
 				sscTable[4] = sscDifficulty
 				sscTable[7] = value[2]
 				for i = 1,4 do table.insert(sscTable,i) end --filler so #notes >= 7
-				sscTable['bpms'] = bpms
+				--To determine Bpms for SSC files first we check if there's a steps specific value.
+				--If no, then we check for an overall song value. If that doesn't exist either,
+				--Stepmania sets the Bpms to 60. SM files will also get set to 60 if there's no overall Bpms
+				--https://github.com/stepmania/stepmania/blob/master/src/TimingData.cpp#L1198
+				sscTable['bpms'] = stepBpms and stepBpms or songBpms and songBpms or '0.000=60.000'
+				stepBpms = nil --reset the stepBpms. If the next chart doesn't have bpms then we'll use the songBpms
 				table.insert(allNotes,sscTable)
 			else
-				value['bpms'] = bpms
+				value['bpms'] = songBpms and songBpms or '0.000=60.000'
 				table.insert(allNotes, value)
 			end
 		end
 	end
-
-	if bpms == '' then return '' end
 
 	for notes in ivalues(allNotes) do
 		-- StepMania considers NOTES sections with greater than 7 sections valid.
