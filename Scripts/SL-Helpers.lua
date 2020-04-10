@@ -419,8 +419,7 @@ end
 -- Keeping track of the logical flow of which preference overrides which metrics
 -- and attempting to extrapolate how that will play out over time in a community
 -- where players expect to be able to modify the code that drives gameplay is so
--- convoluted at this point that it seems unreasonable to expect any player to
--- follow along.
+-- convoluted that it seems unreasonable to expect any player to follow along.
 --
 -- I can barely follow along.
 --
@@ -472,6 +471,7 @@ GetDefaultFailType = function()
 		end
 	end
 
+	-- return the appropriate Enum string or "FailType_Immediate" if nothing was parsed out of DefaultModifiers
 	return fail_strings[default_fail] or "FailType_Immediate"
 end
 
