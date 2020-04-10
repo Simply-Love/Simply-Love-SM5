@@ -472,7 +472,7 @@ GetDefaultFailType = function()
 		end
 	end
 
-	return fail_strings[default_fail] or "FailType_ImmediateContinue"
+	return fail_strings[default_fail] or "FailType_Immediate"
 end
 
 -- -----------------------------------------------------------------------
