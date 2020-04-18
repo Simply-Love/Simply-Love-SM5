@@ -70,7 +70,7 @@ return {
 	{
 		{
 			Name="Caitlin / Evocait",
-			Img="caitlin.png",
+			Img="Evocait.jpg",
 			About="Caitlin redrew many of Simply Love's visual assets to be high-res, always provided feedback and assurance, and generally loved and supported me while I juggled 18 months of grad school and the initial Simply Love port."
 		},
 		{
