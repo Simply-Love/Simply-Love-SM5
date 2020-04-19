@@ -44,6 +44,9 @@ StepManiaVersionIsSupported = function()
 
 	-- remove the git hash if one is present in the version string
 	version = version:gsub("-git-.+", "")
+	
+	-- flatpak version (and maybe some other builds) has an "-UNKNOWN" suffix, remove it too
+        version = version:gsub("-UNKNOWN", "")
 
 	-- split the remaining version string on periods; store each segment in a temp table
 	local t = {}
