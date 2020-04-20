@@ -14,11 +14,21 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 
 
-## Setup
+## Supported Versions of StepMania
 
-You'll need to install [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12) or [StepMania 5.1 beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) to use this theme.
+Simply Love is compatible with current releases of SM5 from the official StepMania project.
 
-Older versions of StepMania are not compatible.  StepMania 5.2 is not compatible.
+**Compatible**<br>
+✅ [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12)<br>
+✅ [StepMania 5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)
+
+**Incompatible**<br>
+❌ Alpha builds of SM5.3 are not supported at this time, but hopefully this will change in the future<br>
+❌ Forks of SM5 (e.g. *starworlds*)<br>
+❌ Older versions of StepMania (e.g. StepMania 3.9)<br>
+❌ Forks of older versions of StepMania (e.g. OpenITG, notITG)<br>
+❌ SM5.2
+
 
 
 ## Installing Simply Love
