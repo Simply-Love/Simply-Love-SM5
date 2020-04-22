@@ -51,7 +51,7 @@ local af = Def.ActorFrame{
 	}
 }
 
-for i,player in ipairs({PLAYER_1, PLAYER_2}) do
+for i,player in ipairs( PlayerNumber ) do
 	-- colored Quad serving as a background for the text "PLAYER 1" or "PLAYER 2"
 	af[#af+1] = Def.Quad{
 		InitCommand=function(self)

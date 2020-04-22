@@ -69,7 +69,7 @@ else
 	-- the engine's InputCallback gives you ALL input, so even if only P1 is joined, the
 	-- InputCallback will report someone spamming input on P2 as valid events, so we have
 	-- to ensure that doesn't cause Lua errors here
-	for player in ivalues(PlayerNumber) do
+	for player in ivalues( PlayerNumber ) do
 		held[player] = {}
 
 		-- initialize all buttons available to this game for this player to be "not held"

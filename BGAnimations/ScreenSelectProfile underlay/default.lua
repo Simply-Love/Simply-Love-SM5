@@ -118,7 +118,7 @@ local t = Def.ActorFrame {
 		-- to have local profiles they want to use.  So, this gets tricky.
 		--
 		-- Loop through the enum for PlayerNumber that the engine has exposed to Lua.
-		for player in ivalues(PlayerNumber) do
+		for player in ivalues( PlayerNumber ) do
 			-- check if this player is joined in
 			if GAMESTATE:IsHumanPlayer(player) then
 				-- this player was joined in, so get the index of their profile scroller as it is now
