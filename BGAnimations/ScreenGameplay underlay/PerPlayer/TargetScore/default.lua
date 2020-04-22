@@ -459,21 +459,21 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "You"),
 				InitCommand=function(self)
-					self:xy( bar.offset + bar.spacing + (bar.w/2), 20 )
+					self:xy( bar.offset + bar.spacing + (bar.w/2), 20 ):shadowlength(1)
 				end,
 			},
 
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "Personal"),
 				InitCommand=function(self)
-					self:xy( bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w, 20 )
+					self:xy( bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w, 20 ):shadowlength(1)
 				end,
 			},
 
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "Target"),
 				InitCommand=function(self)
-					self:xy( bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, 20 )
+					self:xy( bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, 20 ):shadowlength(1)
 				end,
 			},
 		}
