@@ -80,7 +80,7 @@ af.InitCommand=function(self)
 	if player == PLAYER_1 then
 		self:x(_screen.w * 0.25 - 5)
 	elseif player == PLAYER_2 then
-		self:x( _screen.w * 0.75 + 5)
+		self:x(_screen.w * 0.75 + 5)
 	end
 
 	self:y(_screen.h - footer_height - pane_height)
@@ -95,9 +95,10 @@ af.PlayerJoinedMessageCommand=function(self, params)
 end
 af.PlayerUnjoinedMessageCommand=function(self, params)
 	if player==params.Player then
-		self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0)
+		self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0):queuecommand("Hide")
 	end
 end
+af.HideCommand=function(self) self:visible(false) end
 
 af.OnCommand=function(self) self:playcommand("Update") end
 af.CurrentSongChangedMessageCommand=function(self)   self:playcommand("Update") end
@@ -154,11 +155,8 @@ for i, item in ipairs(PaneItems) do
 	af[#af+1] = Def.ActorFrame{
 
 		Name=item.name,
-		OnCommand=function(self)
-			-- self:x(-_screen.w/20) -- ???
-		end,
 
-		--  numerical value
+		-- numerical value
 		LoadFont("Common Normal")..{
 			InitCommand=function(self)
 				self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
@@ -178,29 +176,66 @@ for i, item in ipairs(PaneItems) do
 
 				-- only NPS ends up in this else block for now
 				else
-					if SongOrCourse then
+					if not SongOrCourse then self:settext(""); return end
+
+					local seconds
+					if GAMESTATE:IsCourseMode() then
+						seconds = SongOrCourse:GetTotalSeconds(StepsOrTrail:GetStepsType())
+					else
 						-- song:MusicLengthSeconds() will return the duration of the music file as read from its metadata
 						-- this may not accurately correspond with first note and late note in the stepchart
 						-- if there is empty space at the start and/or end of the stepchart without notes
-						-- So, don't use it when calculating NPS.
+						-- So, let's prefer to use (LastSecond - FirstSecond)
+						seconds = SongOrCourse:GetLastSecond() - SongOrCourse:GetFirstSecond()
 
-						-- let's use LastSecond - FirstSecond (until I find a way that it doesn't work as intended)
-						local seconds
-						if GAMESTATE:IsCourseMode() then
-							seconds = SongOrCourse:GetTotalSeconds(StepsOrTrail:GetStepsType())
-						else
-							seconds = SongOrCourse:GetLastSecond() - SongOrCourse:GetFirstSecond()
+						-- however, the engine initializes Song's member variable lastSecond to -1
+						-- depending on how current engine-side parsing goes, it may never change from -1
+						--
+						-- for example:
+						--   • use audacity to generate an ogg that is 5.000 seconds
+						--   • use SM5's editor to set Song timing in the ssc file to 0.000 bpm at beat 0
+						--   • do not specify any DisplayBPM; do not use steps timing
+						--   • add a single quarter note at beat 0
+						--
+						-- GetFirstSecond() will return 0 and GetLastSecond() will return -1
+						-- I'm not suggesting such stepcharts are reasonable, but they are possible.
+
+						-- fall back on using MusicLengthSeconds in such cases
+						-- having two different ways to determine seconds is inconsistent and confusing
+						-- but I'm not sure what else to do here
+						if seconds <= 0 then seconds = SongOrCourse:MusicLengthSeconds() end
+					end
+
+					-- FIXME: DOWNS4/ymbg currently shows 107.23 NPS here and 106.67 Peak NPS in gameplay's StepStats pane
+
+
+					-- handle some circumstances by just bailing early and displaying a question mark
+					-- ------------------------------------------------------------------
+					-- the engine will return nil for GetTotalSeconds() on courses like "Most Played 01-04"
+					if seconds == nil then self:settext("?"); return end
+					-- don't allow division by zero
+					if (seconds/SL.Global.ActiveModifiers.MusicRate) <= 0 then self:settext("?"); return end
+					-- ------------------------------------------------------------------
+
+
+					local totalnotes = StepsOrTrail:GetRadarValues(player):GetValue("RadarCategory_TapsAndHolds")
+					local nps = totalnotes / (seconds/SL.Global.ActiveModifiers.MusicRate)
+
+					-- NPS shouldn't be greater than the stepchart's total note count
+					if nps > totalnotes then
+						-- so far, I've only seen this occur when seconds is <1 and >0
+						-- see: Crapyard Scent/Windows XP Critical Stop
+						if seconds < 1 and seconds > 0 then
+							seconds = SongOrCourse:MusicLengthSeconds()
+							-- try again
+							nps = totalnotes / (seconds/SL.Global.ActiveModifiers.MusicRate)
 						end
 
-						-- the engine will return nil for GetTotalSeconds() on couses like "Most Played 01-04"
-						if seconds == nil then self:settext("?"); return end
-
-						local totalnotes = StepsOrTrail:GetRadarValues(player):GetValue("RadarCategory_TapsAndHolds")
-						local val = ("%.2f"):format(totalnotes / (seconds/SL.Global.ActiveModifiers.MusicRate))
-						self:settext(val)
-					else
-						self:settext("")
+						-- I sure hope we never get here, but I'll deal with it when we do.
+						if nps > totalnotes then nps = totalnotes end
 					end
+
+					self:settext( ("%.2f"):format(nps) )
 				end
 			end
 		},
@@ -218,7 +253,7 @@ for i, item in ipairs(PaneItems) do
 end
 
 
---MACHINE HighScore value
+-- Machine HighScore value
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScore",
 	InitCommand=function(self)
@@ -229,7 +264,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 	SetCommand=function(self) self:settext(machine_score or "") end
 }
 
---MACHINE HighScore name
+-- Machine HighScore name
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScoreName",
 	InitCommand=function(self)
@@ -244,7 +279,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 }
 
 
---PLAYER PROFILE HighScore value
+-- Player Profile HighScore value
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScore",
 	InitCommand=function(self)
@@ -255,7 +290,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 	SetCommand=function(self) self:settext(player_score or "") end
 }
 
---PLAYER PROFILE HighScore name
+-- Player Profile HighScore name
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScoreName",
 	InitCommand=function(self)
