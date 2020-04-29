@@ -1,12 +1,12 @@
 local title_bg_width = _screen.w * WideScale(0.18,0.15)
 
 local t = Def.ActorFrame{}
-t.InitCommand=function(self) self:x(clamp(WideScale(12,30), 12, 30)) end
+t.InitCommand=function(self) self:x(SL_WideScale(12, 30)) end
 
 -- a row
 t[#t+1] = Def.Quad {
 	Name="RowBackgroundQuad",
-	InitCommand=function(self) self:zoomto(_screen.w * clamp(WideScale(0.475,0.54), 0.475, 0.54), _screen.h*0.0625):halign(0) end
+	InitCommand=function(self) self:zoomto(_screen.w * SL_WideScale(0.475, 0.54), _screen.h*0.0625):halign(0) end
 }
 
 -- black quad behind the title
