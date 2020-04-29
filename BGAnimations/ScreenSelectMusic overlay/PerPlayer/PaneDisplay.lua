@@ -11,11 +11,6 @@ local footer_height = 32
 -- height of the PaneDisplay in pixels
 local pane_height = 60
 
--- WideScale() is useful for scaling a number to accomodate both 4:3 and 16:9 aspect ratios
--- first arg is what will be returned if AspectRatio is 4:3
--- second arg is what will be returned if AspectRatio is 16:9
---   16:10 is scaled to be proprotionately between
---	  ultrawide AspectRatios will end up being scaled to be larger than 16:9 (usually not what SL wants)
 local text_zoom = WideScale(0.8, 0.9)
 
 -- -----------------------------------------------------------------------
