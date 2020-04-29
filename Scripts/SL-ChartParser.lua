@@ -126,6 +126,7 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 	for i, v in ipairs(TapNotes) do
 		TapNotesString = TapNotesString .. v
 	end
+	TapNotesString = "["..TapNotesString.."]"
 
 	-- Which measures are considered a stream?
 	local streamMeasures = {}
@@ -155,7 +156,7 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 			measureTiming = measureTiming + 1
 
 			-- Is this a note?
-			if(line:match("["..TapNotesString.."]")) then
+			if(line:match(TapNotesString)) then
 				table.insert(measureNotes, measureTiming)
 			end
 		end
