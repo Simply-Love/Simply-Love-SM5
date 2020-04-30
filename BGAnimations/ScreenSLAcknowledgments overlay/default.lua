@@ -51,15 +51,7 @@ end
 
 
 for i=1,#pages do
-
-	af[#af+1] = Def.ActorFrame{
-		Name="Page"..i,
-		InitCommand=function(self) self:visible(false):Center() end,
-		HideCommand=function(self) self:visible(false) end,
-		["ShowPage"..i.."Command"]=function(self) self:visible(true) end
-
-	}..LoadActor("Page.lua", {i, pages[i]})
-
+	af[#af+1] = LoadActor("Page.lua", {i, pages[i]})
 end
 
 return af
