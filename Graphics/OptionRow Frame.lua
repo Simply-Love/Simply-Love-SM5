@@ -1,16 +1,16 @@
-local t = Def.ActorFrame{
-	InitCommand=function(self)
-		self:x(_screen.cx - WideScale(30,40))
-	end
-}
+local padding    = WideScale(12, 28)
+local row_height = _screen.h * 0.0625 -- ???
+local row_width  = WideScale(582, 776) - (padding * 2)
+local proxy_offset = _screen.cx - WideScale(30,40)
+
+local t = Def.ActorFrame{}
 
 -- a row
 t[#t+1] = Def.Quad {
 	Name="RowBackgroundQuad",
 	InitCommand=function(self)
-		self:horizalign(left)
-		:x(WideScale(-271.5, -360))
-		:setsize(WideScale(543,720), 30)
+		self:horizalign(left):x(padding)
+		self:setsize(row_width , row_height)
 	end
 }
 
@@ -18,11 +18,9 @@ t[#t+1] = Def.Quad {
 t[#t+1] = Def.Quad {
 	Name="TitleBackgroundQuad",
 	OnCommand=function(self)
-		self:horizalign(left)
-		:x(WideScale(-271.5, -360))
-		:setsize(115, 30)
-		:diffuse(Color.Black)
-		:diffusealpha(DarkUI() and 0.8 or 0.25)
+		self:horizalign(left):x(padding)
+		self:setsize(115, 30):diffuse(Color.Black)
+		self:diffusealpha(DarkUI() and 0.8 or 0.25)
 	end
 }
 
@@ -83,11 +81,8 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 
 			if FindInTable(optrow:GetName(), rows_with_proxies) then
 				-- if this OptionRow needs an ActorProxy for preview purposes, set the necessary parameters
-				self:x(player==PLAYER_1 and WideScale(20, 0) or WideScale(220, 240)):zoom(0.4)
-					-- What was my reasoning for diffusing in after 0.01? It seems unnecessary.
-					-- I don't remember but am afraid to remove it.
-					:diffusealpha(0):sleep(0.01):diffusealpha(1)
-
+				self:x(proxy_offset + (player==PLAYER_1 and WideScale(20, 0) or WideScale(220, 240)))
+				self:zoom(0.4)
 			else
 				-- if this OptionRow doesn't need an ActorProxy, don't draw it and save processor cycles
 				self:hibernate(math.huge)

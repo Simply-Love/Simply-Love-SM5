@@ -1,6 +1,6 @@
 local af = Def.ActorFrame{}
 local bg_width = 272
-local bg_height = _screen.h-130
+local bg_height = 350
 local padding = 10
 local recommended_bmt
 local recommended_string = THEME:GetString("RecommendedOptionExplanations", "Recommended")
@@ -13,7 +13,7 @@ af.OnCommand=function(self)
 		return
 	end
 
-	self:xy(_screen.w * SL_WideScale(0.765,0.8), _screen.cy - 15)
+	self:xy(WideScale(490,683), _screen.cy - 15.5)
 end
 
 af.OptionRowChangedMessageCommand=function(self, params)
