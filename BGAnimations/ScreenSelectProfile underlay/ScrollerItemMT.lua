@@ -17,7 +17,7 @@ return {
 				LoadFont("Common Normal")..{
 					InitCommand=function(subself)
 						self.bmt = subself
-						subself:maxwidth(115):MaskDest()
+						subself:maxwidth(115):MaskDest():shadowlength(0.5)
 					end,
 				}
 			}
