@@ -2,7 +2,7 @@ local af = Def.ActorFrame{}
 
 af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
 
-af[#af+1] = LoadFont("_wendy small")..{
+af[#af+1] = LoadFont("Common Header")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
 	InitCommand=function(self)

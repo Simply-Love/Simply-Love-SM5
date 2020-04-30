@@ -36,7 +36,7 @@ af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
 -- session timer in EventMode
 if PREFSMAN:GetPreference("EventMode") then
 
-	af[#af+1] = LoadFont("_wendy monospace numbers")..{
+	af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 		Name="Session Timer",
 		InitCommand=function(self)
 			bmt_actor = self
@@ -52,7 +52,7 @@ if PREFSMAN:GetPreference("EventMode") then
 -- stage number when not EventMode
 else
 
-	af[#af+1] = LoadFont("_wendy small")..{
+	af[#af+1] = LoadFont("Common Header")..{
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
@@ -68,7 +68,7 @@ else
 end
 
 -- "ITG" or "FA+"; aligned to right of screen
-af[#af+1] = LoadFont("_wendy small")..{
+af[#af+1] = LoadFont("Common Header")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
 	InitCommand=function(self)

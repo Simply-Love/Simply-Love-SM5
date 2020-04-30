@@ -24,7 +24,7 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 -- -----------------------------------------------------------------------
 
-return LoadFont("_wendy monospace numbers")..{
+return LoadFont("Wendy/_wendy monospace numbers")..{
 	Text="0.00",
 
 	Name=pn.."Score",

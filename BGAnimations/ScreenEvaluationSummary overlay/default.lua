@@ -64,7 +64,7 @@ local t = Def.ActorFrame{
 -- centered text like "Page 2/5" where
 -- 2 is the current page the player is viewing, and
 -- 5 is the total number of pages
-t[#t+1] = LoadFont("_wendy small")..{
+t[#t+1] = LoadFont("Common Bold")..{
 	Name="PageNumber",
 	Text=("%s %i/%i"):format(page_text, page, pages),
 	InitCommand=function(self) self:diffusealpha(0):zoom(WideScale(0.5,0.6)):xy(_screen.cx, 15) end,

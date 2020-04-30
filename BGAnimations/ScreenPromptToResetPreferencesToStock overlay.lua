@@ -68,7 +68,7 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		choice_actors[0] = self
 	end,
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		Text=ScreenString("Yes"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},
@@ -85,7 +85,7 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		choice_actors[1] = self
 	end,
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		Text=ScreenString("No"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},
@@ -101,7 +101,7 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		choice_actors[2] = self
 	end,
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		Text=THEME:GetString("ScreenTextEntry", "Cancel"),
 		InitCommand=function(self) self:zoom(1.1) end
 	}

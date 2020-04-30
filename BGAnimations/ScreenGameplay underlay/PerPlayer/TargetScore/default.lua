@@ -497,7 +497,7 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 
 	-- pacemaker text
 	player_af[#player_af+1] = Def.BitmapText{
-		Font="_wendy small",
+		Font="Common Bold",
 		InitCommand=function(self)
 
 			-- don't draw it if we don't need it

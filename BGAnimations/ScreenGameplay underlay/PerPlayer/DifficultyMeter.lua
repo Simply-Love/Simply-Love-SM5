@@ -24,7 +24,7 @@ return Def.ActorFrame{
 	},
 
 	-- player's chart's difficulty meter
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		InitCommand=function(self)
 			self:diffuse( Color.Black )
 			self:zoom( 0.4 )

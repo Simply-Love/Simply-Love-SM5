@@ -209,7 +209,7 @@ local t = Def.ActorFrame {
 	},
 	-- "Options" text
 	Def.BitmapText{
-		Font="_wendy small",
+		Font="Common Bold",
 		Text=ScreenString("Options"),
 		InitCommand=function(self)
 			self:xy(_screen.cx, _screen.cy-92):zoom(0.4)
@@ -236,7 +236,7 @@ local t = Def.ActorFrame {
 
 	-- "Press SELECT To Cancel" text
 	Def.BitmapText{
-		Font="_wendy small",
+		Font="Common Bold",
 		Text=ScreenString("Cancel"),
 		InitCommand=function(self)
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then

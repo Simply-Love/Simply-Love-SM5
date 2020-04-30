@@ -22,7 +22,7 @@ return Def.ActorFrame{
 		end,
 	},
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Header")..{
 		Name="HeaderText",
 		Text=ScreenString("HeaderText"),
 		InitCommand=function(self) self:diffusealpha(0):horizalign(left):xy(10, 15):zoom( SL_WideScale(0.5,0.6) ) end,
