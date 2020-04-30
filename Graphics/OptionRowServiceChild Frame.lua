@@ -1,5 +1,9 @@
 local title_bg_width = SL_WideScale(115, 128)
 local row_height = _screen.h * 0.0625 -- ???
+local row_width = {
+	active   = WideScale(304, 460),
+	inactive = WideScale(300, 456)
+}
 
 local t = Def.ActorFrame{}
 t.InitCommand=function(self) self:x(WideScale(12, 30)) end
@@ -7,7 +11,9 @@ t.InitCommand=function(self) self:x(WideScale(12, 30)) end
 -- a row
 t[#t+1] = Def.Quad {
 	Name="RowBackgroundQuad",
-	InitCommand=function(self) self:zoomto(WideScale(304, 460), row_height):halign(0) end
+	InitCommand=function(self) self:zoomto(row_width.active, row_height):horizalign(left) end,
+	GainFocusCommand=function(self) self:zoomtowidth(row_width.active)   end,
+	LoseFocusCommand=function(self) self:zoomtowidth(row_width.inactive) end
 }
 
 -- black quad behind the title

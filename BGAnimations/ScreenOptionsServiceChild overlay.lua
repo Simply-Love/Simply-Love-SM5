@@ -1,5 +1,5 @@
 local af = Def.ActorFrame{}
-local bg_width = 272
+local bg_width = WideScale(289, 292)
 local bg_height = 350
 local padding = 10
 local recommended_bmt
@@ -24,8 +24,7 @@ end
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto(bg_width, bg_height)
-			:diffuse(color("#666666"))
-			:diffusealpha( DarkUI() and 0.95 or 0.75)
+		self:diffuse(DarkUI() and color("#666666") or color("#333333"))
 	end,
 }
 
