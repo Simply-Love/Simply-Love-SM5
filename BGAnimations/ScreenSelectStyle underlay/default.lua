@@ -16,16 +16,16 @@ local choices = {
 		name="versus",
 		x=_screen.cx,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex),   offset=-WideScale(42,51)},
-			{color=GetHexColor(SL.Global.ActiveColorIndex+3), offset= WideScale(42,51)}
+			{color=GetHexColor(SL.Global.ActiveColorIndex),   offset=-SL_WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+3), offset= SL_WideScale(42,51)}
 		}
 	},
 	{
 		name="double",
 		x=_screen.cx+_screen.w/4,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset=-WideScale(42,51)},
-			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset= WideScale(42,51)}
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset=-SL_WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset= SL_WideScale(42,51)}
 		}
 	},
 }
