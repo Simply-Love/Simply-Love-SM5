@@ -71,6 +71,11 @@ af[#af+1] = LoadFont("Common Bold")..{
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
 		end
 		self:zoom(0.4):y(_screen.h-30)
+
+		if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player") then
+			local player = GAMESTATE:GetHumanPlayers()[1]
+			self:x(_screen.cx + 200 * (player==PLAYER_1 and -1 or 1))
+		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
 		if GAMESTATE:IsCourseMode() then
