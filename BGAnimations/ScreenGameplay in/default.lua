@@ -4,10 +4,12 @@ local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsL
 
 local text = ""
 local SongNumberInCourse = 0
+local SongsInCourse
 local style = ThemePrefs.Get("VisualTheme")
 
 if GAMESTATE:IsCourseMode() then
-	text = THEME:GetString("Stage", "Stage") .. " 1"
+	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
+	text = ("%s 1 / %d"):format(THEME:GetString("Stage", "Stage"), SongsInCourse)
 
 elseif not PREFSMAN:GetPreference("EventMode") then
 	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
@@ -74,7 +76,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 		if GAMESTATE:IsCourseMode() then
 			InitializeMeasureCounterAndModsLevel(SongNumberInCourse)
 			SongNumberInCourse = SongNumberInCourse + 1
-			self:settext( THEME:GetString("Stage", "Stage") .. " " .. SongNumberInCourse )
+			self:settext(("%s %d / %d"):format(THEME:GetString("Stage", "Stage"), SongNumberInCourse, SongsInCourse))
 		end
 	end
 }
