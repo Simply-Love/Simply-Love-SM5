@@ -1,5 +1,5 @@
-local color1 = GetHexColor(SL.Global.ActiveColorIndex-1)
-local color2 = GetHexColor(SL.Global.ActiveColorIndex)
+local color1 = GetHexColor(SL.Global.ActiveColorIndex-1, true)
+local color2 = GetHexColor(SL.Global.ActiveColorIndex, true)
 local style = ThemePrefs.Get("VisualTheme")
 
 local t = Def.ActorFrame{ OffCommand=function(self) self:linear(1) end }

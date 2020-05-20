@@ -18,11 +18,11 @@ end
 
 -- the vertical colored bands
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:stretchto(415,78,515,402):diffuse(PlayerColor(PLAYER_1)) end
+	InitCommand=function(self) self:stretchto(415,78,515,402):diffuse(PlayerColor(PLAYER_1,true)) end
 }
 
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:stretchto(515,78,615,402):diffuse(PlayerColor(PLAYER_2)) end
+	InitCommand=function(self) self:stretchto(515,78,615,402):diffuse(PlayerColor(PLAYER_2,true)) end
 }
 
 --masking quads
