@@ -138,7 +138,7 @@ SL = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
-			color("#a272d5"),	-- purple (greatly lightened)
+			color("#b45cff"),	-- purple (greatly lightened)
 			color("#c9855e"),	-- peach?
 			color("#ff3030")	-- red (slightly lightened)
 		},
@@ -146,7 +146,7 @@ SL = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
-			color("#a272d5"),	-- purple (greatly lightened)
+			color("#b45cff"),	-- purple (greatly lightened)
 			color("#c9855e"),	-- peach?
 			color("#ff3030")	-- red (slightly lightened)
 		},
@@ -155,7 +155,7 @@ SL = {
 			color("#ffffff"),	-- white
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
-			color("#a272d5"),	-- purple (greatly lightened)
+			color("#b45cff"),	-- purple (greatly lightened)
 			color("#ff3030")	-- red (slightly lightened)
 		},
 	},
