@@ -57,7 +57,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, djjack, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, jordando, and natano."
+			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, iamjackg, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, jordando, and natano."
 		},
 		{
 			Name="SM5 Dev Team",
@@ -70,7 +70,7 @@ return {
 	{
 		{
 			Name="Caitlin / Evocait",
-			Img="caitlin.png",
+			Img="Evocait.jpg",
 			About="Caitlin redrew many of Simply Love's visual assets to be high-res, always provided feedback and assurance, and generally loved and supported me while I juggled 18 months of grad school and the initial Simply Love port."
 		},
 		{
@@ -148,8 +148,8 @@ return {
 		},
 		{
 			Name="HeySora",
-			Img="heysora.png",
-			About="HeySora kindly translated Simply Love's UI into French.\n\nHe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
+			Img="heysora.jpg",
+			About="HeySora kindly translated Simply Love's UI into French.\n\nShe also went through the theme with a fine-tooth comb to find and fix bugs, offer helpful suggestions, and help make the theme better for everyone."
 		},
 		{
 			Name="FMS_Cat",

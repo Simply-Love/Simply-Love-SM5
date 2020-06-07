@@ -31,15 +31,23 @@ local page_text = THEME:GetString("ScreenEvaluationSummary", "Page")
 -- -----------------------------------------------------------------------
 
 local t = Def.ActorFrame{
+	-- this CodeMessage is defined in metrics.ini under [ScreenEvaluationSummary]
+	-- it handles both page navigation and screenshot requests
 	CodeMessageCommand=function(self, param)
+
+		-- player wants to save a screenshot
 		if param.Name == "Screenshot" then
+			-- format a localized month string like "06-June" or "12-Diciembre"
+			local month = ("%02d-%s"):format(MonthOfYear()+1, THEME:GetString("Months", "Month"..MonthOfYear()+1))
 
-			-- organize Screenshots taken using Simply Love into directories, like...
-			-- ./Screenshots/Simply_Love/2015/06-June/2015-06-05_121708.png
-			local prefix = "Simply_Love/" .. Year() .. "/"
-			prefix = prefix .. string.format("%02d", tostring(MonthOfYear()+1)) .. "-" .. THEME:GetString("Months", "Month"..MonthOfYear()+1) .. "/"
+			-- organize screenshots Love into directories, like...
+			--      ./Screenshots/Simply_Love/2020/04-April/2020-04-22_175951.png
+			-- note that the engine's SaveScreenshot() function will convert whitespace
+			-- characters to underscores, so we might as well just use underscores here
+			local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/"
 
-			SaveScreenshot(param.PlayerNumber, false, true, prefix)
+			-- for more info on SaveScreenshot(), see ./BGA/ScreenEvaluation common/ScreenshotHandler.lua
+			SaveScreenshot(param.PlayerNumber, false, false, prefix)
 		end
 
 		if pages > 1 and buttons[param.Name] ~= nil then
@@ -56,7 +64,7 @@ local t = Def.ActorFrame{
 -- centered text like "Page 2/5" where
 -- 2 is the current page the player is viewing, and
 -- 5 is the total number of pages
-t[#t+1] = LoadFont("_wendy small")..{
+t[#t+1] = LoadFont("Common Bold")..{
 	Name="PageNumber",
 	Text=("%s %i/%i"):format(page_text, page, pages),
 	InitCommand=function(self) self:diffusealpha(0):zoom(WideScale(0.5,0.6)):xy(_screen.cx, 15) end,

@@ -31,7 +31,7 @@ local t = Def.ActorFrame{
 for index, window in ipairs(TapNoteScores) do
 
 	-- player performance value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		Text=(pattern):format(0),
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(left)
@@ -77,7 +77,7 @@ end
 for index, RCType in ipairs(RadarCategories) do
 
 	-- player performance value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		Text="000",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
@@ -120,7 +120,7 @@ for index, RCType in ipairs(RadarCategories) do
 	}
 
 	-- possible value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 

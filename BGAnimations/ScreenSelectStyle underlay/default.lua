@@ -123,7 +123,7 @@ end
 local JoinOrUnjoinPlayersMaybe = function(style, player)
 	-- if going into versus, ensure that both players are joined
 	if style == "versus" then
-		for player in ivalues({PLAYER_1, PLAYER_2}) do
+		for player in ivalues( PlayerNumber ) do
 			if not GAMESTATE:IsHumanPlayer(player) then GAMESTATE:JoinPlayer(player) end
 		end
 		return

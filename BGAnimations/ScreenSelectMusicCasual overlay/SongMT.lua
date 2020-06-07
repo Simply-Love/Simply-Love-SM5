@@ -133,11 +133,35 @@ local song_mt = {
 						if self.song == "CloseThisFolder" then
 							subself:zoom(0.8)
 						else
-							subself:zoom(0.725)
+							subself:zoom(0.775)
 						end
 						subself:y(40):visible(true)
 					end,
 				},
+				-- subtitle
+				Def.BitmapText{
+					Font="Common Normal",
+					InitCommand=function(subself)
+						self.subtitle_bmt = subself
+						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75)
+					end,
+					GainFocusCommand=function(subself)
+						if self.song == "CloseThisFolder" then
+							subself:zoom(0.9)
+						else
+							subself:visible(false)
+						end
+					end,
+					LoseFocusCommand=function(subself)
+						if self.song == "CloseThisFolder" then
+							subself:zoom(0.8)
+						else
+							subself:zoom(0.625)
+						end
+						subself:y(54):visible(true)
+					end,
+				},
+
 			}
 
 			return af
@@ -228,6 +252,7 @@ local song_mt = {
 				-- we are passed in a Song object as info
 				self.song = song
 				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):Truncate(max_chars)
+				self.subtitle_bmt:settext( self.song:GetDisplaySubTitle() ):Truncate(max_chars)
 
 				if song:HasJacket() then
 					self.img_path = song:GetJacketPath()

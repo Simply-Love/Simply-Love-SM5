@@ -1,3 +1,9 @@
+local row_height = _screen.h * 0.0625 -- ???
+local row_width = WideScale(300, 456)
+
 return Def.Quad {
-	InitCommand=function(self) self:zoomto(_screen.w * WideScale(0.475,0.54), _screen.h*0.0625):halign(0):x(WideScale(12,30)) end
+	InitCommand=function(self)
+		self:zoomto(row_width, row_height)
+		self:x( WideScale(12, 30) ):horizalign(left)
+	end
 }

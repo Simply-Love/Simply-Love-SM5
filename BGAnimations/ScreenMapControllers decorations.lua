@@ -51,7 +51,7 @@ local af = Def.ActorFrame{
 	}
 }
 
-for i,player in ipairs({PLAYER_1, PLAYER_2}) do
+for i,player in ipairs( PlayerNumber ) do
 	-- colored Quad serving as a background for the text "PLAYER 1" or "PLAYER 2"
 	af[#af+1] = Def.Quad{
 		InitCommand=function(self)
@@ -60,7 +60,7 @@ for i,player in ipairs({PLAYER_1, PLAYER_2}) do
 		end
 	}
 
-	af[#af+1] = LoadFont("_wendy small")..{
+	af[#af+1] = LoadFont("Common Header")..{
 		Text=("%s %i"):format(THEME:GetString("ScreenTestInput", "Player"), PlayerNumber:Reverse()[player]+1),
 		InitCommand=function(self)
 			self:halign(PlayerNumber:Reverse()[OtherPlayer[player]])
@@ -75,7 +75,7 @@ end
 af[#af+1] = Def.Quad{
 	Name="DevicesBG",
 	InitCommand=function(self)
-		self:x(_screen.cx):y(headerHeight/2):zoomto(WideScale(150,200), headerHeight*0.65):diffuse(0.5,0.5,0.5,0.9)
+		self:x(_screen.cx):y(headerHeight/2):zoomto(SL_WideScale(160, 200), headerHeight*0.65):diffuse(0.5,0.5,0.5,0.9)
 	end
 }
 

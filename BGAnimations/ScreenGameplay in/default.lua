@@ -4,10 +4,12 @@ local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsL
 
 local text = ""
 local SongNumberInCourse = 0
+local SongsInCourse
 local style = ThemePrefs.Get("VisualTheme")
 
 if GAMESTATE:IsCourseMode() then
-	text = THEME:GetString("Stage", "Stage") .. " 1"
+	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
+	text = ("%s 1 / %d"):format(THEME:GetString("Stage", "Stage"), SongsInCourse)
 
 elseif not PREFSMAN:GetPreference("EventMode") then
 	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
@@ -60,7 +62,7 @@ af[#af+1] = Def.ActorFrame{
 	}
 }
 
-af[#af+1] = LoadFont("_wendy small")..{
+af[#af+1] = LoadFont("Common Bold")..{
 	Text=text,
 	InitCommand=function(self) self:Center():diffusealpha(0):shadowlength(1) end,
 	OnCommand=function(self)
@@ -69,12 +71,17 @@ af[#af+1] = LoadFont("_wendy small")..{
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
 		end
 		self:zoom(0.4):y(_screen.h-30)
+
+		if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player") then
+			local player = GAMESTATE:GetHumanPlayers()[1]
+			self:x(_screen.cx + 200 * (player==PLAYER_1 and -1 or 1))
+		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
 		if GAMESTATE:IsCourseMode() then
 			InitializeMeasureCounterAndModsLevel(SongNumberInCourse)
 			SongNumberInCourse = SongNumberInCourse + 1
-			self:settext( THEME:GetString("Stage", "Stage") .. " " .. SongNumberInCourse )
+			self:settext(("%s %d / %d"):format(THEME:GetString("Stage", "Stage"), SongNumberInCourse, SongsInCourse))
 		end
 	end
 }

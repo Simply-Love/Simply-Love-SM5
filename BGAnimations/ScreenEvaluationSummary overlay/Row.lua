@@ -98,7 +98,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 -- can late-join (and maybe late-unjoin someday soon) and GetHumanPlayers()
 -- would return whichever players were currently joined at the time of ScreenEvalSummary.
 
-for player in ivalues(PlayerNumber) do
+for player in ivalues( PlayerNumber ) do
 	-- PlayerStageStats.lua handles player-specific things
 	-- like stepchart difficulty, stepartist, letter grade, and judgment breakdown
 	t[#t+1] = LoadActor("./PlayerStageStats.lua", player)

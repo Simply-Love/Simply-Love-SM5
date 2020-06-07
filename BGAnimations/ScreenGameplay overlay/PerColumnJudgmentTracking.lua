@@ -38,7 +38,8 @@ local actor = Def.Actor{
 -- if the player doesn't care about MissBecauseHeld, keep it simple
 if not track_missbcheld then
 	actor.JudgmentMessageCommand=function(self, params)
-		if params.Player == player and params.Notes then
+		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
+		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
 				local tns = ToEnumShortString(params.TapNoteScore)
 				judgments[col][tns] = judgments[col][tns] + 1
@@ -53,35 +54,29 @@ else
 		col_judgments.MissBecauseHeld=0
 	end
 
-	local buttons = {
-		dance = { "Left", "Down", "Up", "Right" },
-		pump = { "DownLeft", "UpLeft", "Center", "UpRight", "DownRight" },
-		techno = { "DownLeft", "Left", "UpLeft", "Down", "Up", "UpRight", "Right", "DownRight" },
-		para = { "Left", "UpLeft", "Up", "UpRight", "Right" },
-		kb7 = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7" },
+	local buttons = {}
+	local style = GAMESTATE:GetCurrentStyle()
+	local num_columns = style:ColumnsPerPlayer()
+	for i=1,num_columns do
+		local col = style:GetColumnInfo(player, i)
+		table.insert(buttons, col.Name)
+	end
 
-		-- these games aren't supported by SL right now
-		beat = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Scratch up", "Scratch down" },
-		kickbox = { "Down Left Foot", "Up Left Foot", "Up Left Fist", "Down Left Fist", "Down Right Fist", "Up Right Fist", "Up Right Foot", "Down Right Foot" }
-	}
 
-	local current_game = GAMESTATE:GetCurrentGame():GetName()
 	local held = {}
 
 	-- initialize to handle both players, regardless of whether both are actually joined.
 	-- the engine's InputCallback gives you ALL input, so even if only P1 is joined, the
 	-- InputCallback will report someone spamming input on P2 as valid events, so we have
 	-- to ensure that doesn't cause Lua errors here
-	for player in ivalues({PLAYER_1, PLAYER_2}) do
+	for player in ivalues( PlayerNumber ) do
 		held[player] = {}
 
 		-- initialize all buttons available to this game for this player to be "not held"
-		for button in ivalues(buttons[current_game]) do
+		for button in ivalues(buttons) do
 			held[player][button] = false
 		end
 	end
-
-
 
 	local InputHandler = function(event)
 		-- if any of these, don't attempt to handle input
@@ -96,17 +91,18 @@ else
 
 	actor.OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( InputHandler ) end
 	actor.JudgmentMessageCommand=function(self, params)
-		if params.Player == player and params.Notes then
+		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
+		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
 				local tns = ToEnumShortString(params.TapNoteScore)
 				judgments[col][tns] = judgments[col][tns] + 1
 
-				if tns == "Miss" and held[params.Player][ buttons[current_game][col] ] then
+				if tns == "Miss" and held[params.Player][ buttons[col] ] then
 					judgments[col].MissBecauseHeld = judgments[col].MissBecauseHeld + 1
 				end
 			end
 		end
-    end
+	end
 end
 
 return actor

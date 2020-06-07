@@ -57,7 +57,7 @@ t[#t+1] = Def.ActorFrame {
 		end,
 		OnCommand=function(self)
 			self:finishtweening():diffusealpha(0.85)
-				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * WideScale(1, 0.8) )
+				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * SL_WideScale(0.8, 1) )
 		end,
 		OffCommand=function(self) self:sleep(3.33):linear(0.5):diffusealpha(0) end,
 	},
@@ -66,7 +66,7 @@ t[#t+1] = Def.ActorFrame {
 		Name="Text",
 		InitCommand=function(self)
 			self:maxwidth(_screen.w-20):horizalign(left):vertalign(top)
-				:xy(10, 10):diffusealpha(0):zoom(WideScale(1, 0.8))
+				:xy(10, 10):diffusealpha(0):zoom(SL_WideScale(0.8, 1))
 			SystemMessageText = self
 		end,
 		OnCommand=function(self) self:finishtweening():diffusealpha(1) end,
@@ -74,8 +74,8 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
--- Wendy CreditText at lower-center of screen
-t[#t+1] = LoadFont("_wendy small")..{
+-- "Event Mode" or CreditText at lower-center of screen
+t[#t+1] = LoadFont("Common Footer")..{
 	InitCommand=function(self) self:xy(_screen.cx, _screen.h-16):zoom(0.5):horizalign(center) end,
 
 	OnCommand=function(self) self:playcommand("Refresh") end,

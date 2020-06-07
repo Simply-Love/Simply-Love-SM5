@@ -56,8 +56,23 @@ The next time you use StepMania, you can switch to Simply Love from the main opt
 
 Visit my imgur album for more screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
-## Features
 
+## Language Support
+
+Simply Love has support for:
+
+  * English
+  * Deutsch
+  * Español
+  * Français
+  * Italiano
+  * 日本語
+  * Português Brasileiro
+
+The current language can be changed in Simply Love under *System Options*.
+
+
+## Features
 
 #### New GameModes
 
@@ -84,19 +99,6 @@ Visit my imgur album for more screenshots of this theme in action: [http://imgur
   * [MenuTimer Options](https://i.imgur.com/SqbsMiw.png) – Set the MenuTimers for various screens.
   * [Long/Marathon Song Cutoffs](http://i.imgur.com/fzNJDVDh.png) – The cutoffs for songs that cost 2 and 3 rounds can be set in *Arcade Options*.
   * [USB Profile Options](https://i.imgur.com/ZgU9HGw.png) – Manage settings for player USB sticks, including custom songs.  Only available in SM5.1-beta and newer.
-
-#### Language Support
-
-Simply Love has support for:
-
-  * English
-  * Español
-  * Français
-  * Português Brasileiro
-  * 日本語
-  * Deutsch
-
-The current language can be changed in Simply Love under *System Options*.
 
 
 ---

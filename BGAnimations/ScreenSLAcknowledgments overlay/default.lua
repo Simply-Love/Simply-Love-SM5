@@ -15,14 +15,16 @@ local af = Def.ActorFrame{
 	end
 }
 
+local page_string = THEME:GetString("ScreenEvaluationSummary","Page")
+
 -- header text
 af[#af+1] = Def.BitmapText{
 	Name="PageNumber",
-	Font="_wendy small",
-	InitCommand=function(self) self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy( _screen.cx, 15 ) end,
+	Font="Common Header",
+	InitCommand=function(self) self:diffusealpha(0):zoom( SL_WideScale(0.5, 0.6) ):xy( _screen.cx, 15 ) end,
 	OnCommand=function(self) self:sleep(0.1):decelerate(0.33):diffusealpha(1):playcommand("Update",{page=1}) end,
 	OffCommand=function(self) self:accelerate(0.33):diffusealpha(0) end,
-	UpdateCommand=function(self, params) self:sleep(0.5):settext(THEME:GetString("ScreenEvaluationSummary","Page").." "..params.page.."/"..#pages ) end
+	UpdateCommand=function(self, params) self:sleep(0.5):settext( ("%s %d/%d"):format(page_string, params.page, #pages) ) end
 }
 
 if IsUsingWideScreen() then
@@ -49,15 +51,7 @@ end
 
 
 for i=1,#pages do
-
-	af[#af+1] = Def.ActorFrame{
-		Name="Page"..i,
-		InitCommand=function(self) self:visible(false):Center() end,
-		HideCommand=function(self) self:visible(false) end,
-		["ShowPage"..i.."Command"]=function(self) self:visible(true) end
-
-	}..LoadActor("Page.lua", {i, pages[i]})
-
+	af[#af+1] = LoadActor("Page.lua", {i, pages[i]})
 end
 
 return af

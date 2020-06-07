@@ -31,9 +31,9 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local font = mods.ComboFont
 
 -- most ComboFonts have their own dedicated sprite sheets in ./Simply Love/Fonts/_Combo Fonts/
--- "Wendy" and "Wendy (Cursed)" are exceptions for the time being; reroute both to use "_wendy small"
+-- "Wendy" and "Wendy (Cursed)" are exceptions for the time being; reroute both to use "./Fonts/Wendy/_wendy small"
 if font == "Wendy" or font == "Wendy (Cursed)" then
-	font = "_wendy small"
+	font = "Wendy/_wendy small"
 else
 	font = "_Combo Fonts/" .. font .. "/"
 end

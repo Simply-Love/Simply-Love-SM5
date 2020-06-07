@@ -1,4 +1,4 @@
-local _zoom = WideScale(0.435,0.525)
+local _zoom = SL_WideScale(0.435, 0.525)
 local _game = GAMESTATE:GetCurrentGame():GetName()
 
 local layouts = {
@@ -30,6 +30,9 @@ return function(color_used, color_unused)
 					local layout = layouts[_game] or layouts.dance
 
 					local style = params.style or (GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetName())
+					-- simplify the style string to handle technomotion's single8 and double8
+					style = style:gsub("8", "")
+
 					if _game=="dance" and style=="solo" then layout = layouts.solo end
 
 					if params.Player then

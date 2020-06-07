@@ -36,11 +36,12 @@ af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
 -- session timer in EventMode
 if PREFSMAN:GetPreference("EventMode") then
 
-	af[#af+1] = LoadFont("_wendy monospace numbers")..{
+	af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 		Name="Session Timer",
 		InitCommand=function(self)
 			bmt_actor = self
-			self:zoom( WideScale(0.3,0.36) ):y( WideScale(3.15,3.5)/self:GetZoom() )
+			self:zoom( SL_WideScale(0.3, 0.36) )
+			self:y( SL_WideScale(3.15, 3.5) / self:GetZoom() )
 			self:diffusealpha(0):x(_screen.cx)
 		end,
 		OnCommand=function(self)
@@ -51,11 +52,12 @@ if PREFSMAN:GetPreference("EventMode") then
 -- stage number when not EventMode
 else
 
-	af[#af+1] = LoadFont("_wendy small")..{
+	af[#af+1] = LoadFont("Common Header")..{
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
-			self:zoom( WideScale(0.5,0.6) ):y( WideScale(7.5,9)/self:GetZoom() )
+			self:zoom( SL_WideScale(0.5, 0.6) )
+			self:y( SL_WideScale(7.5, 9) / self:GetZoom() )
 			self:diffusealpha(0):x(_screen.cx)
 		end,
 		OnCommand=function(self)
@@ -66,17 +68,18 @@ else
 end
 
 -- "ITG" or "FA+"; aligned to right of screen
-af[#af+1] = LoadFont("_wendy small")..{
+af[#af+1] = LoadFont("Common Header")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
 	InitCommand=function(self)
-		self:diffusealpha(0):zoom( WideScale(0.5,0.6)):halign(1):y(15)
+		self:diffusealpha(0):halign(1):y(15)
+		self:zoom( SL_WideScale(0.5, 0.6) )
 
 		-- move the GameMode text further left if MenuTimer is enabled
 		if PREFSMAN:GetPreference("MenuTimer") then
-			self:x(_screen.w - WideScale(110, 125))
+			self:x(_screen.w - SL_WideScale(110, 125))
 		else
-			self:x(_screen.w - WideScale(55,62))
+			self:x(_screen.w - SL_WideScale(55, 62))
 		end
 	end,
 	OnCommand=function(self)
@@ -90,8 +93,8 @@ af[#af+1] = LoadFont("_wendy small")..{
 -- P1 pad
 af[#af+1] = DrawNinePanelPad()..{
 	InitCommand=function(self)
-		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and WideScale(90,105) or WideScale(35, 41)))
-		self:y( WideScale(22, 23.5) ):zoom(0.24)
+		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and SL_WideScale(90, 105) or SL_WideScale(35, 41)))
+		self:y( SL_WideScale(22, 23.5) ):zoom(0.24)
 		self:playcommand("Set", {Player=PLAYER_1})
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
@@ -104,8 +107,8 @@ af[#af+1] = DrawNinePanelPad()..{
 -- P2 pad
 af[#af+1] = DrawNinePanelPad()..{
 	InitCommand=function(self)
-		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and WideScale(70,81) or WideScale(15, 17)))
-		self:y( WideScale(22, 23.5) ):zoom(0.24)
+		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and SL_WideScale(70, 81) or SL_WideScale(15, 17)))
+		self:y( SL_WideScale(22, 23.5) ):zoom(0.24)
 		self:playcommand("Set", {Player=PLAYER_2})
 	end,
 	PlayerJoinedMessageCommand=function(self, params)

@@ -1,5 +1,6 @@
 local player = ...
 local pn = ToEnumShortString(player)
+
 local mods = SL[pn].ActiveModifiers
 local center1p = PREFSMAN:GetPreference("Center1Player")
 
@@ -9,6 +10,10 @@ if #GAMESTATE:GetHumanPlayers() > 1
 and mods.NPSGraphAtTop
 then return end
 
+-- -----------------------------------------------------------------------
+
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+
 local pos = {
 	[PLAYER_1] = { x=(_screen.cx - _screen.w/4.3),  y=56 },
 	[PLAYER_2] = { x=(_screen.cx + _screen.w/2.75), y=56 },
@@ -17,7 +22,9 @@ local pos = {
 local dance_points, percent
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-return LoadFont("_wendy monospace numbers")..{
+-- -----------------------------------------------------------------------
+
+return LoadFont("Wendy/_wendy monospace numbers")..{
 	Text="0.00",
 
 	Name=pn.."Score",
@@ -28,8 +35,7 @@ return LoadFont("_wendy monospace numbers")..{
 		-- assume "normal" score positioning first, but there are many reasons it will need to be moved
 		self:xy( pos[player].x, pos[player].y )
 
-
-		if mods.NPSGraphAtTop then
+		if mods.NPSGraphAtTop and styletype ~= "OnePlayerTwoSides" then
 			-- if NPSGraphAtTop and Step Statistics, move the score down
 			-- into the stepstats pane under the jugdgment breakdown
 			if mods.DataVisualizations=="Step Statistics" then

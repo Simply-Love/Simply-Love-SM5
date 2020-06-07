@@ -64,7 +64,7 @@ local bg = Def.Quad{
 	end
 }
 
--- FIXME: add inline comments explainig the intent/purpose of this code
+-- FIXME: add inline comments explaining the intent/purpose of this code
 local SlopeAngle = function(p1, p2)
 	return math.atan2(p2[1] - p1[1], p2[2] - p1[2])
 end

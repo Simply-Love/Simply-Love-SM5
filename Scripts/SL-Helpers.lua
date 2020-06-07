@@ -27,69 +27,6 @@ SupportsRenderToTexture = function()
 	return true
 end
 
--- -----------------------------------------------------------------------
--- use StepManiaVersionIsSupported() to define supported SM5 versions
-
-StepManiaVersionIsSupported = function()
-
-	-- ensure that we're using StepMania
-	if type(ProductFamily) ~= "function" or ProductFamily():lower() ~= "stepmania" then return false end
-
-	-- ensure that a global ProductVersion() function exists before attempting to call it
-	if type(ProductVersion) ~= "function" then return false end
-
-	-- get the version string, e.g. "5.0.11" or "5.1.0" or "5.2-git-96f9771" or etc.
-	local version = ProductVersion()
-	if type(version) ~= "string" then return false end
-
-	-- remove the git hash if one is present in the version string
-	version = version:gsub("-git-.+", "")
-
-	-- split the remaining version string on periods; store each segment in a temp table
-	local t = {}
-	for i in version:gmatch("[^%.]+") do
-		table.insert(t, tonumber(i))
-	end
-
-	-- if we didn't detect SM5.x.x then Something Is Terribly Wrong.
-	if not (t[1] and t[1]==5) then return false end
-
-	-- SM5.0.x is supported
-	-- SM5.1.x is supported
-	-- SM5.2 is not supported because it saw significant backwards-incompatible API changes and is now abandoned
-	-- SM5.3 is not supported for now because it is not open source
-	if not (t[2] and (t[2]==0 or t[2]==1)) then return false end
-
-	-- if we're in SM5.0.x, then check for a third segment
-	if t[2]==0 then
-		-- SM5.0.12 is supported because SM5.1 is "still in beta" and many users are reluctant to install beta software
-		-- anything older than SM5.0.12 is not supported
-		if not (t[3] and t[3]==12) then return false end
-	end
-
-	return true
-end
-
--- -----------------------------------------------------------------------
--- game types like "kickbox" and "lights" aren't supported in Simply Love, so we
--- use this function to hardcode a list of game modes that are supported, and use it
--- in ScreenInit overlay.lua to redirect players to ScreenSelectGame if necessary.
---
--- (Because so many people have accidentally gotten themselves into lights mode without
--- having any idea they'd done so, and have then messaged me saying the theme was broken.)
-
-CurrentGameIsSupported = function()
-	-- a hardcoded list of games that Simply Love supports
-	local support = {
-		dance  = true,
-		pump   = true,
-		techno = true,
-		para   = true,
-		kb7    = true
-	}
-	-- return true or nil
-	return support[GAMESTATE:GetCurrentGame():GetName()]
-end
 
 -- -----------------------------------------------------------------------
 -- There's surely a better way to do this.  I need to research this more.
@@ -234,6 +171,28 @@ Border = function(width, height, bw)
 		Def.Quad { InitCommand=function(self) self:zoomto(width,height):MaskDest() end },
 		Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
 	}
+end
+
+-- -----------------------------------------------------------------------
+-- SL_WideScale() is modified version of WideScale() from SM5.1's _fallback theme
+--
+-- _fallback's WideScale() is useful for scaling a number to accommodate both 4:3 and 16:9 aspect ratios
+-- first arg is what will be returned if AspectRatio is 4:3
+-- second arg is what will be returned if AspectRatio is 16:9
+-- The number returned will be scaled proprotionately between if AspectRatio is, for example, 16:10
+-- and likewise scaled futher up if AspectRatio is, for example, 21:9.
+--
+-- SL's UI was originally designed for 4:3 and later extended for 16:9, so WideScale() works great there.
+-- I'm opting to accommodate ultrawide displays by clamping the scale at 16:9.
+--
+-- You may not want to adopt this strategy in your theme, but for here
+-- it's easier than redesigning the UI again.
+--
+-- It's important to not override _fallback's WideScale() for the sake of scripted simfiles
+-- that expect it to behave a particular way.
+
+SL_WideScale = function(AR4_3, AR16_9)
+	return clamp(scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 ), AR4_3, AR16_9)
 end
 
 -- -----------------------------------------------------------------------
@@ -399,7 +358,7 @@ end
 --
 -- and whichever the machine operator chooses gets saved as a different hardcoded English string in
 -- the DefaultModifiers Preference for the current game:
--- '', 'FailContinue', 'FailEndOfSong', or 'FailOff'
+-- '', 'FailImmediateContinue', 'FailAtEnd', or 'FailOff'
 
 -- It is worth pointing out that a default FailType of "FailType_Immediate" is saved to the DefaultModifiers
 -- Preference as an empty string!
@@ -416,23 +375,63 @@ end
 -- FailType setting in the current game's DefaultModifiers Preference and return it as an enum value
 -- the PlayerOptions interface can accept.
 --
--- I'm pretty sute ZP Theart was wailing about such project bitrot in Lost Souls in Endless Time.
+-- Keeping track of the logical flow of which preference overrides which metrics
+-- and attempting to extrapolate how that will play out over time in a community
+-- where players expect to be able to modify the code that drives gameplay is so
+-- convoluted that it seems unreasonable to expect any player to follow along.
+--
+-- I can barely follow along.
+--
+-- I'm pretty sure ZP Theart was wailing about such project bitrot in Lost Souls in Endless Time.
 
 GetDefaultFailType = function()
 	local default_mods = PREFSMAN:GetPreference("DefaultModifiers")
+
 	local default_fail = ""
+	local fail_strings = {}
+
+	-- -------------------------------------------------------------------
+	-- these mappings just recreate the if/else chain in PlayerOptions.cpp
+	fail_strings.failarcade            = "FailType_Immediate"
+	fail_strings.failimmediate         = "FailType_Immediate"
+	fail_strings.failendofsong         = "FailType_ImmediateContinue"
+	fail_strings.failimmediatecontinue = "FailType_ImmediateContinue"
+	fail_strings.failatend             = "FailType_EndOfSong"
+	fail_strings.failoff               = "FailType_Off"
+
+	-- handle the "faildefault" string differently than the SM5 engine
+	-- PlayerOptions.cpp will lookup GAMESTATE's DefaultPlayerOptions
+	-- which applies, in sequence:
+	--    DefaultModifiers from Preferences.ini
+	--    DefaultModifers from [Common] in metrics.ini
+	--    DefaultNoteSkinName from [Common] in metrics.ini
+	--
+	-- SM5.1's _fallback theme does not currently specify any FailType
+	-- in DefaultModifiers under [Common] in its metrics.ini
+	--
+	-- This suggests that if a non-standard failstring (like "FailASDF")
+	-- is found, the _fallback theme won't enforce anything, but the engine
+	-- will enforce FailType_Immediate.  Brief testing seems to align with this
+	-- theory, but I haven't dug through enough of the src to *know*.
+	--
+	-- So, anyway, if Simply Love finds "faildefault" as a DefaultModifier in
+	-- Simply Love UserPrefs.ini, I'll go with "FailType_ImmediateContinue.
+	-- ImmediateContinue will be Simply Love's default.
+	fail_strings.faildefault           = "FailType_ImmediateContinue"
+	-- -------------------------------------------------------------------
 
 	for mod in string.gmatch(default_mods, "%w+") do
-		-- we might find a string like "FailOff", "FailImmediateContinue", or "FailEndOfSong"
-		-- if we find a string with "Fail" in it, strip out the "Fail" substring and keep the rest
-		if mod:find("Fail") then
-			default_fail = mod:gsub("Fail", "")
+		if mod:lower():find("fail") then
+			-- we found something matches "fail", so set our default_fail variable
+			-- and keep looking; don't break from the loop immediately.
+			-- I don't know if it's possible to have multiple FailType
+			-- strings saved in a single DefaultModifiers string...
+			default_fail = mod:lower()
 		end
 	end
 
-	if default_fail == "" then default_fail = "Immediate" end
-
-	return ("FailType_"..default_fail)
+	-- return the appropriate Enum string or "FailType_Immediate" if nothing was parsed out of DefaultModifiers
+	return fail_strings[default_fail] or "FailType_Immediate"
 end
 
 -- -----------------------------------------------------------------------
@@ -568,6 +567,7 @@ DiffuseEmojis = function(bmt, text)
 	-- loop through each char in the string, checking for emojis; if any are found
 	-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
 	for i=1, text:utf8len() do
+		-- FIXME: similar to _wrapwidthpixels(), if you can implement a proper utf8-friendly fix, please submit a pull request
 		if text:utf8sub(i,i):byte() >= 240 then
 			bmt:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
 		end
@@ -615,7 +615,7 @@ function GetJudgmentGraphics(mode)
 		-- e.g. hidden system files like .DS_Store
 		if FilenameIsMultiFrameSprite(filename) then
 
-			-- use regexp to get only the name of the graphic, stripping out the extension
+			-- remove the file extension from the string, leaving only the name of the graphic
 			local name = StripSpriteHints(filename)
 
 			-- Fill the table, special-casing Love so that it comes first.
@@ -627,11 +627,29 @@ function GetJudgmentGraphics(mode)
 		end
 	end
 
-	-- "None" -> no graphic in Player judgment.lua
+	-- "None" results in Player judgment.lua returning an empty Def.Actor
 	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
 end
+
+GetHoldJudgments = function()
+	local path = THEME:GetCurrentThemeDirectory().."Graphics/_HoldJudgments/"
+	local files = FILEMAN:GetDirListing(path)
+	local hold_graphics = {}
+
+	for i,filename in ipairs(files) do
+
+		-- Filter out files that aren't HoldJudgment labels
+		-- e.g. hidden system files like .DS_Store
+		if FilenameIsMultiFrameSprite(filename) then
+			table.insert(hold_graphics, filename)
+		end
+	end
+
+	return hold_graphics
+end
+
 
 -- -----------------------------------------------------------------------
 -- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay
