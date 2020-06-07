@@ -37,7 +37,7 @@ return Def.ActorFrame{
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
 			if currentSteps then
 				local currentDifficulty = currentSteps:GetDifficulty()
-				self:diffuse( DifficultyColor(currentDifficulty) )
+				self:diffuse( DifficultyColor(currentDifficulty), true )
 			end
 		end
 	},

@@ -40,7 +40,7 @@ return {
 
 			if has_focus then
 				self.container:accelerate(0.15):zoom(1.2)
-					:diffuse(GetCurrentColor()):glow(color("1,1,1,0.5"))
+					:diffuse(GetCurrentColor(true)):glow(color("1,1,1,0.5"))
 			else
 				self.container:glow(color("1,1,1,0"))
 					:accelerate(0.15):zoom(1.1)

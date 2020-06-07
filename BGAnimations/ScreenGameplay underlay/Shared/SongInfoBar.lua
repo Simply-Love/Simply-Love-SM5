@@ -12,7 +12,7 @@ return Def.ActorFrame{
 
 	Def.SongMeterDisplay{
 		StreamWidth=(w-4),
-		Stream=Def.Quad({ InitCommand=function(self) self:zoomy(18):diffuse(GetCurrentColor()) end })
+		Stream=Def.Quad({ InitCommand=function(self) self:zoomy(18):diffuse(GetCurrentColor(true)) end })
 	},
 
 	-- Song Title

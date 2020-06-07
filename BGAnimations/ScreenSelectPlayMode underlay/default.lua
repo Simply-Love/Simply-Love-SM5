@@ -202,7 +202,7 @@ local t = Def.ActorFrame{
 		},
 		-- lifemeter colored quad
 		Def.Quad{
-			InitCommand=function(self) self:zoomto(40,14):xy(59,-64):diffuse( GetCurrentColor() ) end
+			InitCommand=function(self) self:zoomto(40,14):xy(59,-64):diffuse( GetCurrentColor(true) ) end
 		},
 		-- life meter animated swoosh
 		LoadActor(THEME:GetPathB("ScreenGameplay", "underlay/PerPlayer/LifeMeter/swoosh.png"))..{

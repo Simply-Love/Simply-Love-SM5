@@ -33,7 +33,7 @@ for i=1,10 do
 	t[#t+1] = Def.Sprite {
 		Texture=file,
 		InitCommand=function(self)
-			self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i]))
+			self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true))
 		end,
 		OnCommand=function(self)
 			self:zoom(1.3):xy(anim_data.xy[i], anim_data.xy[i])
@@ -43,7 +43,7 @@ for i=1,10 do
 
 		ColorSelectedMessageCommand=function(self)
 			self:linear(0.5)
-			:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i]))
+			:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true))
 			:diffusealpha(anim_data.diffusealpha[i])
 		end
 	}

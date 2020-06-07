@@ -9,23 +9,23 @@ local choices = {
 		name="single",
 		x=_screen.cx-_screen.w/4,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex+1), offset=0}
+			{color=GetHexColor(SL.Global.ActiveColorIndex+1, true), offset=0}
 		}
 	},
 	{
 		name="versus",
 		x=_screen.cx,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex),   offset=-SL_WideScale(42,51)},
-			{color=GetHexColor(SL.Global.ActiveColorIndex+3), offset= SL_WideScale(42,51)}
+			{color=GetHexColor(SL.Global.ActiveColorIndex, true),   offset=-WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+3, true), offset= WideScale(42,51)}
 		}
 	},
 	{
 		name="double",
 		x=_screen.cx+_screen.w/4,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset=-SL_WideScale(42,51)},
-			{color=GetHexColor(SL.Global.ActiveColorIndex+2), offset= SL_WideScale(42,51)}
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2, true), offset=-WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2, true), offset= WideScale(42,51)}
 		}
 	},
 }
@@ -34,7 +34,7 @@ if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
 	choices[1].x = _screen.w/4-_screen.w/8
 	choices[2].x = (_screen.w/4)*2-_screen.w/8
 	choices[3].x = (_screen.w/4)*3-_screen.w/8
-	choices[4] = { name="solo", pads={ {color=GetHexColor(SL.Global.ActiveColorIndex+1), offset=0}}, x=_screen.w-_screen.w/8 }
+	choices[4] = { name="solo", pads={ {color=GetHexColor(SL.Global.ActiveColorIndex+1, true), offset=0}}, x=_screen.w-_screen.w/8 }
 
 -- double is not a valid style in kb7 and para
 elseif current_game=="kb7" or current_game=="para" then

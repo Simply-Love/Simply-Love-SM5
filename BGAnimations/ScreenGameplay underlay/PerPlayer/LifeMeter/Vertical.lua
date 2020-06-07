@@ -35,7 +35,7 @@ local meter = Def.ActorFrame{
 
 	Def.Quad{
 		Name="MeterFill",
-		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player)):align(0,1) end,
+		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player,true)):align(0,1) end,
 		OnCommand=function(self) self:xy( _x - width/2, height/2) end,
 
 		-- check life (LifeMeterBar)

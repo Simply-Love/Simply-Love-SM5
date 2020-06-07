@@ -73,7 +73,7 @@ for i=1,25 do
 		end,
 		NewColorCommand=function(self)
 			self:linear(delay)
-			:diffuse( GetHexColor(index+anim_data.color_add[i]))
+			:diffuse( GetHexColor(index+anim_data.color_add[i], true))
 			:diffusealpha(anim_data.a[i])
 		end
 	}

@@ -1,5 +1,5 @@
 local style = ThemePrefs.Get("VisualTheme")
-local c = GetCurrentColor()
+local c = GetCurrentColor(true)
 
 return Def.ActorFrame{
 	InitCommand=function(self) self:visible(false) end,
