@@ -1,4 +1,7 @@
-local player = ...
+local player, width = unpack(...)
+
+-- height is how tall, in pixels, the density graph will be
+local height = 105
 
 local LifeBaseSampleRate = 0.25
 local LifeLineThickness = 2
@@ -17,35 +20,14 @@ local offset = 0
 local max_seconds = 4 * 60
 
 -- width and position of the density graph
-local width = _screen.w / 2
 local pos_x = -width / 2
-if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
-	-- 16:9 aspect ratio (approximately 1.7778)
-	if GetScreenAspectRatio() > 1.7 then
-		width = (_screen.w/4 - 70) + (_screen.w/4 - 44) * 0.925
-
-		local adjust = ((_screen.w/4 - 70) - ((_screen.w/4 - 44) * 0.925)) / 2
-		pos_x = -width/2 + adjust * (player==PLAYER_1 and 1 or -1)
-	-- if 16:10 aspect ratio
-	else
-		width = (_screen.w/4 - 64) + (_screen.w/4 - 36) * 0.825
-
-		local adjust = ((_screen.w/4 - 64) - ((_screen.w/4 - 36) * 0.825)) / 2
-		pos_x = -width/2 + adjust * (player==PLAYER_1 and 1 or -1)
-	end
-end
-
 
 local scaled_width = width
-
--- height is how tall, in pixels, the density graph will be
-local height = GetNotefieldWidth() / 2.25
-
 local UpdateRate, first_second, last_second
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy( pos_x, 48 ):queuecommand("Update")
+		self:xy( pos_x, 55 ):queuecommand("Update")
 	end,
 	OnCommand=function(self)
 		LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..ToEnumShortString(player))
