@@ -1,6 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
+local ar = GetScreenAspectRatio()
 local mods = SL[pn].ActiveModifiers
 local center1p = PREFSMAN:GetPreference("Center1Player")
 
@@ -8,6 +9,7 @@ if mods.HideScore then return end
 
 if #GAMESTATE:GetHumanPlayers() > 1
 and mods.NPSGraphAtTop
+and ar < 21/9
 then return end
 
 -- -----------------------------------------------------------------------
@@ -15,8 +17,8 @@ then return end
 local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pos = {
-	[PLAYER_1] = { x=(_screen.cx - _screen.w/4.3),  y=56 },
-	[PLAYER_2] = { x=(_screen.cx + _screen.w/2.75), y=56 },
+	[PLAYER_1] = { x=(_screen.cx - clamp(_screen.w, 640, 854)/4.3),  y=56 },
+	[PLAYER_2] = { x=(_screen.cx + clamp(_screen.w, 640, 854)/2.75), y=56 },
 }
 
 local dance_points, percent
@@ -39,12 +41,8 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 			-- if NPSGraphAtTop and Step Statistics, move the score down
 			-- into the stepstats pane under the jugdgment breakdown
 			if mods.DataVisualizations=="Step Statistics" then
-				if player==PLAYER_1 then
-					self:x( _screen.w - WideScale(15, center1p and 9 or 67) )
-				else
-					self:x( WideScale(306, center1p and 280 or 358) )
-				end
-
+				local step_stats_x = self:GetParent():GetChild("StepStatsPane"..pn):GetX()
+				self:x(step_stats_x + 105.5)
 				self:y( _screen.cy + 40 )
 
 			-- if NPSGraphAtTop but not Step Statistics

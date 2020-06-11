@@ -2,7 +2,7 @@ local player = ...
 
 local w = 136
 local h = 18
-local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * WideScale(238, 288)
+local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(238, 288)
 
 local swoosh, velocity
 

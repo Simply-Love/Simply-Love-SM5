@@ -12,8 +12,8 @@ end
 local width = GetNotefieldWidth() - 30
 local height = 30
 local xpos = {
-	[PLAYER_1] = WideScale(50, 105),
-	[PLAYER_2] = _screen.cx + WideScale(45, 95),
+	[PLAYER_1] = _screen.cx - width - SL_WideScale(45, 95),
+	[PLAYER_2] = _screen.cx + SL_WideScale(45, 95),
 }
 
 local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())

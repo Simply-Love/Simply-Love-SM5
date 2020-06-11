@@ -7,7 +7,7 @@ local current_game = GAMESTATE:GetCurrentGame():GetName()
 local choices = {
 	{
 		name="single",
-		x=_screen.cx-_screen.w/4,
+		x=_screen.cx-SL_WideScale(160, 214),
 		pads = {
 			{color=GetHexColor(SL.Global.ActiveColorIndex+1, true), offset=0}
 		}
@@ -16,30 +16,30 @@ local choices = {
 		name="versus",
 		x=_screen.cx,
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex, true),   offset=-WideScale(42,51)},
-			{color=GetHexColor(SL.Global.ActiveColorIndex+3, true), offset= WideScale(42,51)}
+			{color=GetHexColor(SL.Global.ActiveColorIndex, true),   offset=-SL_WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+3, true), offset= SL_WideScale(42,51)}
 		}
 	},
 	{
 		name="double",
-		x=_screen.cx+_screen.w/4,
+		x=_screen.cx+SL_WideScale(160, 214),
 		pads = {
-			{color=GetHexColor(SL.Global.ActiveColorIndex+2, true), offset=-WideScale(42,51)},
-			{color=GetHexColor(SL.Global.ActiveColorIndex+2, true), offset= WideScale(42,51)}
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2, true), offset=-SL_WideScale(42,51)},
+			{color=GetHexColor(SL.Global.ActiveColorIndex+2, true), offset= SL_WideScale(42,51)}
 		}
 	},
 }
 
 if current_game=="dance" and ThemePrefs.Get("AllowDanceSolo") then
-	choices[1].x = _screen.w/4-_screen.w/8
-	choices[2].x = (_screen.w/4)*2-_screen.w/8
-	choices[3].x = (_screen.w/4)*3-_screen.w/8
-	choices[4] = { name="solo", pads={ {color=GetHexColor(SL.Global.ActiveColorIndex+1, true), offset=0}}, x=_screen.w-_screen.w/8 }
+	choices[1].x = _screen.cx - SL_WideScale(210,245)
+	choices[2].x = _screen.cx - SL_WideScale(75,90)
+	choices[3].x = _screen.cx + SL_WideScale(75,90)
+	choices[4] = { name="solo", pads={ {color=GetHexColor(SL.Global.ActiveColorIndex+1, true), offset=0}}, x=_screen.cx + SL_WideScale(210,245) }
 
 -- double is not a valid style in kb7 and para
 elseif current_game=="kb7" or current_game=="para" then
-	choices[1].x = _screen.cx-_screen.w/6
-	choices[2].x = _screen.cx+_screen.w/6
+	choices[1].x = _screen.cx-SL_WideScale(106, 140)
+	choices[2].x = _screen.cx+SL_WideScale(106, 140)
 	table.remove(choices, 3)
 end
 

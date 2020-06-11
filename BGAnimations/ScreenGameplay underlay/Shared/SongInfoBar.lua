@@ -1,4 +1,4 @@
-local w = _screen.w/2 - 10
+local w = SL_WideScale(310, 417)
 local h = 22
 
 -- Song Completion Meter

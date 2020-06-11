@@ -90,7 +90,7 @@ local bar = {}
 
 if use_smaller_graph then
 	-- this graph is horizontally condensed compared to the full-width alternative
-	graph.w = WideScale(25, 70)
+	graph.w = SL_WideScale(25, 70)
 	graph.y = 429
 
 	-- smaller border for the target bar

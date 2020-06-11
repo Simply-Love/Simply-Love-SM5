@@ -391,7 +391,8 @@ local Overrides = {
 			local style = GAMESTATE:GetCurrentStyle()
 			local notefieldwidth = GetNotefieldWidth()
 
-			if style and style:GetName() ~= "single"
+			if GetScreenAspectRatio() < 21/9
+			and style and style:GetName() ~= "single"
 			or notefieldwidth and notefieldwidth > _screen.w/2 then
 				table.remove(choices, 3)
 			end

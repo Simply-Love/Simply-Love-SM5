@@ -1,5 +1,6 @@
 local player, width = unpack(...)
 
+local pn = ToEnumShortString(player)
 -- height is how tall, in pixels, the density graph will be
 local height = 105
 
@@ -8,6 +9,12 @@ local LifeLineThickness = 2
 local LifeMeter = nil
 local life_verts = {}
 local offset = 0
+
+-- -----------------------------------------------------------------------
+local BothUsingStepStats = (#GAMESTATE:GetHumanPlayers()==2
+and SL.P1.ActiveModifiers.DataVisualizations == "Step Statistics"
+and SL.P2.ActiveModifiers.DataVisualizations == "Step Statistics")
+-- -----------------------------------------------------------------------
 
 -- max_seconds is how many seconds of a stepchart we want visualized on-screen at once.
 -- For very long songs (longer than, say, 10 minutes) the density graph becomes too
@@ -30,7 +37,7 @@ local af = Def.ActorFrame{
 		self:xy( pos_x, 55 ):queuecommand("Update")
 	end,
 	OnCommand=function(self)
-		LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..ToEnumShortString(player))
+		LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..pn)
 	end,
 	UpdateCommand=function(self)
 		self:sleep(UpdateRate):queuecommand("Update")
@@ -55,18 +62,31 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 	OnCommand=function(self)
 		-- offset the graph's x-position by half the thickness of the LifeLine
 		self:xy( LifeLineThickness/2, height )
+	end,
+	PeakNPSUpdatedMessageCommand=function(self) self:queuecommand("Size") end,
+	SizeCommand=function(self)
+		if BothUsingStepStats then
+			local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
+			local their_peak = GAMESTATE:Env()[ToEnumShortString(OtherPlayer[player]).."PeakNPS"]
+
+			if my_peak < their_peak then
+				self:zoomtoheight(my_peak/their_peak)
+			end
+		end
 	end
 }
 
 -- PeakNPS text
 local text = LoadFont("Common Normal")..{
-	PeakNPSUpdatedMessageCommand=function(self, params)
-		if params.PeakNPS == nil then
+	PeakNPSUpdatedMessageCommand=function(self)
+		local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
+
+		if my_peak == nil then
 			self:settext("")
 			return
 		end
 
-		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(params.PeakNPS * SL.Global.ActiveModifiers.MusicRate,2) )
+		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(my_peak * SL.Global.ActiveModifiers.MusicRate,2) )
 		self:x( width - self:GetWidth()/2 - 2 )
 			:y( -self:GetHeight()/2 - 2 )
 			:zoom(0.9)
