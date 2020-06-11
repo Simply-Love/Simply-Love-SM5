@@ -95,10 +95,10 @@ af.PlayerUnjoinedMessageCommand=function(self, params)
 end
 af.HideCommand=function(self) self:visible(false) end
 
-af.OnCommand=function(self) self:playcommand("Update") end
-af.CurrentSongChangedMessageCommand=function(self)   self:playcommand("Update") end
-af.CurrentCourseChangedMessageCommand=function(self) self:playcommand("Update") end
-af.SLGameModeChangedMessageCommand=function(self)    self:playcommand("Update") end
+af.OnCommand=function(self)                                    self:playcommand("Update") end
+af.CurrentSongChangedMessageCommand=function(self)             self:playcommand("Update") end
+af.CurrentCourseChangedMessageCommand=function(self)           self:playcommand("Update") end
+af.SLGameModeChangedMessageCommand=function(self)              self:playcommand("Update") end
 af["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:playcommand("Update") end
 af["CurrentTrail"..pn.."ChangedMessageCommand"]=function(self) self:playcommand("Update") end
 

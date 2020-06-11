@@ -513,7 +513,7 @@ ResetPreferencesToStockSM5 = function()
 end
 
 -- -----------------------------------------------------------------------
--- given a player, return a table of stepartist text for the current song or course
+-- given a player, return a table of stepartist text for the current song or trail
 -- so that various screens (SSM, Eval) can cycle through these values and players
 -- can see each for brief duration
 
@@ -521,11 +521,23 @@ GetStepsCredit = function(player)
 	local t = {}
 
 	if GAMESTATE:IsCourseMode() then
-		local course = GAMESTATE:GetCurrentCourse()
-		-- scripter
-		if course:GetScripter() ~= "" then t[#t+1] = course:GetScripter() end
-		-- description
-		if course:GetDescription() ~= "" then t[#t+1] = course:GetDescription() end
+		local trail = GAMESTATE:GetCurrentTrail(player)
+		local entries = trail:GetTrailEntries()
+		local song
+
+		for i, entry in ipairs(entries) do
+			steps = entry:GetSteps()
+			if steps then
+				-- prefer steps Description; this is where stepartists seem to put chart info
+				if steps:GetDescription() ~= "" then
+					t[i] = steps:GetDescription()
+
+				-- if no description was available, use AuthorCredit instead
+				elseif steps:GetAuthorCredit() ~= "" then
+					t[i] = steps:GetAuthorCredit()
+				end
+			end
+		end
 	else
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		-- credit

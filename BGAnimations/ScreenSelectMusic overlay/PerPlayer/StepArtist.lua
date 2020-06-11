@@ -68,30 +68,50 @@ return Def.ActorFrame{
 
 	--STEPS label
 	LoadFont("Common Normal")..{
-		OnCommand=function(self) self:diffuse(0,0,0,1):horizalign(left):x(30):settext(Screen.String("STEPS")) end
+		Text=GAMESTATE:IsCourseMode() and Screen.String("SongNumber"):format(1) or Screen.String("STEPS"),
+		InitCommand=function(self)
+			self:diffuse(0,0,0,1):horizalign(left):x(30):maxwidth(40)
+		end,
+		UpdateTrailTextMessageCommand=function(self, params)
+			self:settext( THEME:GetString("ScreenSelectCourse", "SongNumber"):format(params.index) )
+		end
 	},
 
 	--stepartist text
 	LoadFont("Common Normal")..{
-		InitCommand=function(self) self:diffuse(color("#1e282f")):horizalign(left):x(75):maxwidth(115) end,
+		InitCommand=function(self)
+			self:diffuse(color("#1e282f")):horizalign(left)
+
+			if GAMESTATE:IsCourseMode() then
+				self:x(60):maxwidth(138)
+			else
+				self:x(75):maxwidth(124)
+			end
+		end,
 		ResetCommand=function(self)
 
 			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-			local StepsOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSteps(player)
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
 			-- always stop tweening when steps change in case a MarqueeCommand is queued
 			self:stoptweening()
 
-			if SongOrCourse and StepsOrCourse then
+			if SongOrCourse and StepsOrTrail then
+
 				text_table = GetStepsCredit(player)
 				marquee_index = 0
 
-				-- only queue a marquee if there are things in the text_table to display
-				if #text_table > 0 then
-					self:queuecommand("Marquee")
-				else
-					-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
-					self:settext("")
+				-- don't queue a Marquee in CourseMode
+				-- each TrailEntry text change will be broadcast from CourseContentsList.lua
+				-- to ensure it stays synced with the scrolling list of songs
+				if not GAMESTATE:IsCourseMode() then
+					-- only queue a Marquee if there are things in the text_table to display
+					if #text_table > 0 then
+						self:queuecommand("Marquee")
+					else
+						-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
+						self:settext("")
+					end
 				end
 			else
 				-- there wasn't a song/course or a steps object, so the MusicWheel is probably hovering
@@ -108,12 +128,21 @@ return Def.ActorFrame{
 			-- set this BitmapText actor to display that text
 			self:settext( text )
 
-			-- account for the possibility that emojis shouldn't be diffused to Color.Black
+			-- check for emojis; they shouldn't be diffused to Color.Black
 			DiffuseEmojis(self, text)
 
-			-- sleep 2 seconds before queueing the next Marquee command to do this again
-			if #text_table > 1 then
-				self:sleep(2):queuecommand("Marquee")
+			if not GAMESTATE:IsCourseMode() then
+				-- sleep 2 seconds before queueing the next Marquee command to do this again
+				if #text_table > 1 then
+					self:sleep(2):queuecommand("Marquee")
+				end
+			else
+				self:sleep(0.5):queuecommand("m")
+			end
+		end,
+		UpdateTrailTextMessageCommand=function(self, params)
+			if text_table then
+				self:settext( text_table[params.index] or "" )
 			end
 		end,
 		OffCommand=function(self) self:stoptweening() end
