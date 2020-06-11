@@ -53,7 +53,7 @@ local t = Def.ActorFrame {
 		screen:RemoveInputCallback(testinput_input)
 		screen:AddInputCallback(sortmenu_input)
 
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("ShowSortMenu")
@@ -66,7 +66,7 @@ local t = Def.ActorFrame {
 		screen:RemoveInputCallback(sortmenu_input)
 		screen:AddInputCallback(testinput_input)
 
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
@@ -80,7 +80,7 @@ local t = Def.ActorFrame {
 		screen:RemoveInputCallback(sortmenu_input)
 		screen:RemoveInputCallback(testinput_input)
 
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, false)
 		end
 		self:playcommand("HideSortMenu")
