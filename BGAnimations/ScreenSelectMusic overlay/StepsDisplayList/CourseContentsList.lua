@@ -11,7 +11,7 @@ end
 local update = function(ccl, dt)
 
 	-- if ccl:GetCurrentItem() hasn't changed since the last update, the scrolling
-	-- behavior has (probably) paused on paritcular CourseEntry for a moment
+	-- behavior has (probably) paused on a particular CourseEntry for a moment
 	if (PrevCurrentItem == ccl:GetCurrentItem()) then
 		MESSAGEMAN:Broadcast("UpdateTrailText", {index=round(PrevCurrentItem)+1})
 	else
