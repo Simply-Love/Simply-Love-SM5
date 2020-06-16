@@ -1,13 +1,14 @@
--- ScreenMiniMenuContext is an "overlay" screen that appears
--- on top of ScreenOptionsManageProfiles when the player wants
--- to manage a particular local profile.
--- ScreenOptionsManageProfiles is still shown in the background.
+-- ScreenMiniMenuContext is a screen drawn on top of ScreenOptionsManageProfiles
+-- when the player wants to manage a particular local profile.
+-- It is styled to appear as a modal, with ScreenOptionsManageProfiles visible
+-- in the background.
 
 local num_rows
-local row_height = 28
+local row_height  = 28
+local container_w = 240
 
 return Def.ActorFrame {
-	InitCommand=function(self) self:xy(_screen.cx-WideScale(146, 143), -16):queuecommand("Capture") end,
+	InitCommand=function(self) self:xy(_screen.cx-container_w, -16):queuecommand("Capture") end,
 	CaptureCommand=function(self)
 		-- how many rows do we need to accommodate?
 		num_rows = #SCREENMAN:GetTopScreen():GetChild("Container"):GetChild("")
@@ -19,7 +20,7 @@ return Def.ActorFrame {
 
 	-- decorative border
 	Def.Quad{
-		SizeCommand=function(self) self:zoomto(240, row_height*num_rows) end,
+		SizeCommand=function(self) self:zoomto(container_w, row_height*num_rows) end,
 	},
 
 	LoadFont("Common Normal")..{
