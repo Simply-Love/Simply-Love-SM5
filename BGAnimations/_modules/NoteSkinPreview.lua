@@ -12,8 +12,7 @@ local noteskin_name = args.noteskin_name or ""
 -- prepare a dummy Actor using the name of NoteSkin in case errors are
 -- encountered so that a valid (inert, not-drawing) actor still gets returned
 local dummy = Def.Actor{
-	Name="NoteSkin_"..(noteskin_name or ""),
-	InitCommand=function(self) self:visible(false) end
+	Name="NoteSkin_"..(noteskin_name or "")
 }
 -- perform first check: does the NoteSkin exist for the current game?
 if not NOTESKIN:DoesNoteSkinExist(noteskin_name) then return dummy end
@@ -42,18 +41,40 @@ if okay and noteskin_actor then
 	-- to display strangely (because Lua halted and sizing/positioning/etc. never happened).
 	--
 	-- There is some version of an "smx" NoteSkin that got passed around the community
-	-- that attempts to use a nil constant "FIXUP" in its InitCommand that exhibits this.
-	-- So, pcall() again, now specifically on the noteskin_actor's InitCommand if it has one.
+	-- that attempts to use a nil constant "FIXUP" in its InitCommand like this:
+	--      InitCommand=function(self) FIXUP end,
+	--
+	-- FIXUP evaluates to nil when the NoteSkin's InitCommand is called, an error is thrown,
+	-- and the ActorProxy in Simply Love's ScreenPlayerOptions overlay remains visible
+	-- because execution didn't make it to visible(false)
+	--
+	-- That's a legitimate Lua error.  But this is tricky, because when we use pcall like
+	--      okay = pcall(noteskin_actor.InitCommand, noteskin_actor)
+	-- the noteskin_actor passed as an argument to its own InitCommand() will be a Lua table,
+	-- rather than an SM actor, and trying to use ANY actor method will throw a nil error.
+	--
+	-- So correct code like:
+	--      	InitCommand=function(self) self:x(100) end
+	-- will also throw an error because x() isn't an available method of self, which is, in
+	-- this pcall context, a generic Lua table.
+	--
+	-- Ideally, I'd like to report NoteSkin errors, but reporting false positives when
+	-- a NoteSkin's Lua is actually fine (e.g. "midi-solo" that ships with SM5) isn't good.
+	--
+	-- ...so for now, let's try wiping out this preview NoteSkin's InitCommand so it can't
+	-- contain any programmer errors or come back as a false postive because I'm incompetent.
+	--
+	-- To be clear, this doesn't modify the NoteSkins files, so a NoteSkin with actual errors
+	-- will still have those errors during ScreenGameplay.  But, this is a means of showing
+	-- players preview of NoteSkins (ScreenPlayerOptions, ScreenEvaluation, etc.) more consistently.
 	if noteskin_actor.InitCommand then
-		okay = pcall(noteskin_actor.InitCommand, noteskin_actor)
+		noteskin_actor.InitCommand = nil
 	end
 
-	if okay then
-		return noteskin_actor..{
-			Name="NoteSkin_"..noteskin_name,
-			InitCommand=function(self) self:visible(false) end
-		}
-	end
+	return noteskin_actor..{
+		Name="NoteSkin_"..noteskin_name,
+		InitCommand=function(self) self:visible(false) end
+	}
 end
 
 -- if the user has ShowThemeErrors enabled, let them know about the Lua errors.
