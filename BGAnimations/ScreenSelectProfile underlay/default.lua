@@ -249,11 +249,11 @@ local t = Def.ActorFrame {
 
 -- top mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-110):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-105):MaskSource() end
 }
 -- bottom mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+111):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+105):MaskSource() end
 }
 
 -- load PlayerFrames for both

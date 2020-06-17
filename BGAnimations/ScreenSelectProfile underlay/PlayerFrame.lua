@@ -4,56 +4,62 @@ local profile_data = args.ProfileData
 local scroller = args.Scroller
 local scroller_item_mt = LoadActor("./ScrollerItemMT.lua")
 
+-- -----------------------------------------------------------------------
+local frame = {
+	w = 200,
+	h = 210,
+	border = 2
+}
 
--- I tried really hard to use size + position variables instead of hardcoded numbers all over
--- the place, but gave up after an hour of questioning my sanity due to sub-pixel overlap
--- issues (rounding? texture sizing? I don't have time to figure it out right now.)
 local row_height = 35
-local scroller_x = -56
-local scroller_y = row_height * -5
+local info = {
+	y = frame.h / -2,
+	w = frame.w * 0.55,
+	padding = 4
+}
+
+scroller.x = -55
+scroller.y = row_height * -5
+
 
 -- account for the possibility that there are no local profiles and
 -- we want "[ Guest ]" to start in the middle, with focus
 if PROFILEMAN:GetNumLocalProfiles() <= 0 then
-	scroller_y = row_height * -4
+	scroller.y = row_height * -4
 end
-
+-- -----------------------------------------------------------------------
 
 local FrameBackground = function(c, player, w)
-	w = w or 1
+	w = w or frame.w
+	scroller.w = w - info.w
 
 	return Def.ActorFrame {
-		InitCommand=function(self) self:zoomto(w, 1) end,
+		OnCommand=function(self)
+			self:runcommandsonleaves(function(leaf) leaf:smooth(0.3):cropbottom(0) end)
+		end,
+		OffCommand=function(self)
+			if not GAMESTATE:IsSideJoined(player) then
+				self:runcommandsonleaves(function(leaf) leaf:accelerate(0.25):cropbottom(1) end)
+			end
+		end,
 
-		-- a lightly styled png asset that is not so different than a Quad
-		-- currently inherited from _fallback
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") )..{
+		-- border
+		Def.Quad{
 			InitCommand=function(self)
-				self:diffuse(c):cropbottom(1)
+				self:cropbottom(1):zoomto(w+frame.border, frame.h+frame.border)
+				if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
 			end,
-			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
-			OffCommand=function(self)
-				if not GAMESTATE:IsSideJoined(player) then
-					self:accelerate(0.25):cropbottom(1)
-				end
+		},
+		-- colored bg
+		Def.Quad{
+			InitCommand=function(self)
+				self:cropbottom(1):zoomto(w, frame.h):diffuse(c)
 			end
 		},
-
-		-- a png asset that gives the colored frame (above) a lightly frosted feel
-		-- currently inherited from _fallback
-		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") )..{
-			InitCommand=function(self) self:cropbottom(1) end,
-			OnCommand=function(self) self:smooth(0.3):cropbottom(0) end,
-			OffCommand=function(self)
-				if not GAMESTATE:IsSideJoined(player) then
-					self:accelerate(0.25):cropbottom(1)
-				end
-			end
-		}
 	}
 end
 
--- ----------------------------------------------------
+-- -----------------------------------------------------------------------
 
 return Def.ActorFrame{
 	Name=ToEnumShortString(player) .. "Frame",
@@ -80,7 +86,7 @@ return Def.ActorFrame{
 	-- (or "Enter credits to join!" depending on CoinMode and available credits)
 	Def.ActorFrame {
 		Name='JoinFrame',
-		FrameBackground(Color.Black, player),
+		FrameBackground(Color.Black, player, frame.w),
 
 		LoadFont("Common Normal")..{
 			InitCommand=function(self)
@@ -127,26 +133,29 @@ return Def.ActorFrame{
 			scroller:set_info_set(scroller_data, 0)
 		end,
 
-		FrameBackground(PlayerColor(player), player, 1.25),
+		FrameBackground(PlayerColor(player), player, frame.w * 1.1),
 
 		-- semi-transparent Quad used to indicate location in SelectProfile scroller
 		Def.Quad {
-			InitCommand=function(self) self:diffuse({0,0,0,0}):zoomto(124,row_height):x(-56) end,
+			InitCommand=function(self) self:diffuse({0,0,0,0}):zoomto(scroller.w,row_height):x(scroller.x) end,
 			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
 		},
 
 		-- sick_wheel scroller containing local profiles as choices
-		scroller:create_actors( "Scroller", 9, scroller_item_mt, scroller_x, scroller_y ),
+		scroller:create_actors( "Scroller", 9, scroller_item_mt, scroller.x, scroller.y ),
 
 		-- player profile data
 		Def.ActorFrame{
 			Name="DataFrame",
-			InitCommand=function(self) self:xy(62,1) end,
+
 			OnCommand=function(self) self:playcommand("Set", profile_data[1]) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
-				InitCommand=function(self) self:vertalign(top):diffuse(0,0,0,0):zoomto(112,221):y(-111) end,
+				InitCommand=function(self)
+					self:align(0,0):diffuse(0,0,0,0):zoomto(info.w,frame.h)
+					self:y(info.y)
+				end,
 				OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(0.5) end,
 			},
 
@@ -158,7 +167,11 @@ return Def.ActorFrame{
 				-- the name the player most recently used for high score entry
 				LoadFont("Common Normal")..{
 					Name="HighScoreName",
-					InitCommand=function(self) self:align(0,0):xy(-50,-104):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
+					InitCommand=function(self)
+						self:align(0,0):xy(info.padding,-100)
+						self:zoom(0.65):vertspacing(-2)
+						self:maxwidth(info.w/self:GetZoom())
+					end,
 					SetCommand=function(self, params)
 						if params then
 							local desc = THEME:GetString("ScreenGameOver","LastUsedHighScoreName") .. ": "
@@ -173,7 +186,10 @@ return Def.ActorFrame{
 				-- truncated so it passes the "How to Cook Delicious Rice and the Effects of Eating Rice" test.
 				LoadFont("Common Normal")..{
 					Name="MostRecentSong",
-					InitCommand=function(self) self:align(0,0):xy(-50,-85):zoom(0.65):_wrapwidthpixels(104/0.65):vertspacing(-3) end,
+					InitCommand=function(self)
+						self:align(0,0):xy(info.padding,-82):zoom(0.65):vertspacing(-3)
+						self:_wrapwidthpixels((info.w-info.padding*2)/self:GetZoom())
+					end,
 					SetCommand=function(self, params)
 						if params then
 							local desc = THEME:GetString("ScreenSelectProfile","MostRecentSong") .. ":\n"
@@ -188,7 +204,10 @@ return Def.ActorFrame{
 				-- failing a song will increment this count, but backing out will not
 				LoadFont("Common Normal")..{
 					Name="TotalSongs",
-					InitCommand=function(self) self:align(0,0):xy(-50,0):zoom(0.65):maxwidth(104/0.65):vertspacing(-2) end,
+					InitCommand=function(self)
+						self:align(0,0):xy(info.padding,0):zoom(0.65):vertspacing(-2)
+						self:maxwidth((info.w-info.padding*2)/self:GetZoom())
+					end,
 					SetCommand=function(self, params)
 						if params then
 							self:visible(true):settext(params.totalsongs or "")
@@ -203,7 +222,12 @@ return Def.ActorFrame{
 				-- to prevent it from visually spilling out of the FrameBackground
 				LoadFont("Common Normal")..{
 					Name="RecentMods",
-					InitCommand=function(self) self:align(0,0):xy(-50,25):zoom(0.625):_wrapwidthpixels(104/0.625):vertspacing(-3):ztest(true) end,
+					InitCommand=function(self)
+						self:align(0,0):xy(info.padding,25):zoom(0.625)
+						self:_wrapwidthpixels((info.w-info.padding*2)/self:GetZoom())
+						self:ztest(true)     -- ensure mask hides this text if it is too large
+						self:vertspacing(-3) -- less vertical spacing
+					end,
 					SetCommand=function(self, params)
 						if params then
 							self:visible(true):settext(params.mods or "")
@@ -216,7 +240,7 @@ return Def.ActorFrame{
 				-- NoteSkin preview
 				Def.ActorProxy{
 					Name="NoteSkinPreview",
-					InitCommand=function(self) self:zoom(0.25):xy(-42,50) end,
+					InitCommand=function(self) self:halign(0):zoom(0.25):xy(info.padding*3,50) end,
 					SetCommand=function(self, params)
 						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
 						if params and params.noteskin then
@@ -235,7 +259,7 @@ return Def.ActorFrame{
 				-- JudgmentGraphic preview
 				Def.ActorProxy{
 					Name="JudgmentGraphicPreview",
-					InitCommand=function(self) self:zoom(0.35):xy(12,68) end,
+					InitCommand=function(self) self:halign(0):zoom(0.35):xy(info.padding*2 + info.w*0.5,68) end,
 					SetCommand=function(self, params)
 						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
 						if params and params.judgment then
@@ -254,7 +278,9 @@ return Def.ActorFrame{
 
 			-- thin white line separating stats from mods
 			Def.Quad {
-				InitCommand=function(self) self:zoomto(100,1):y(17):diffusealpha(0) end,
+				InitCommand=function(self)
+					self:zoomto(info.w-info.padding*2,1):align(0,0):xy(info.padding,17):diffusealpha(0)
+				end,
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(0.5) end,
 			},
 		}
