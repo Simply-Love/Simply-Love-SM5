@@ -137,3 +137,25 @@ SaveProfileCustom = function(profile, dir)
 
 	return true
 end
+
+GetAvatarPathForPlayerProfile = function(player)
+	local profile_slot = {
+		[PLAYER_1] = "ProfileSlot_Player1",
+		[PLAYER_2] = "ProfileSlot_Player2"
+	}
+
+	if not profile_slot[player] then return end
+
+	local dir  = PROFILEMAN:GetProfileDir(profile_slot[player])
+	local name = PROFILEMAN:GetProfile(player):GetDisplayName()
+
+	-- check the player's profile directory for "avatar.png" first (or "avatar.jpg", etc.)
+	-- if nothing is found there, check ./StepMania/Appearance/Avatars/ for something matching
+	-- the player's DisplayName
+	local path = ActorUtil.ResolvePath(dir .. "avatar", 1, true)
+	          or ActorUtil.ResolvePath("/Appearance/Avatars/" .. name, 1, true)
+
+	if path and ActorUtil.GetFileType(path) == "FileType_Bitmap" then
+		return path
+	end
+end

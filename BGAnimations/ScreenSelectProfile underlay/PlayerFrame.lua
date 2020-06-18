@@ -1,26 +1,31 @@
 local args = ...
 local player = args.Player
 local profile_data = args.ProfileData
+local avatars = args.Avatars
 local scroller = args.Scroller
 local scroller_item_mt = LoadActor("./ScrollerItemMT.lua")
 
 -- -----------------------------------------------------------------------
+-- TODO: start over from scratch so that these numbers make sense in SL
+--       as-is, they are half-leftover from editing _fallback's code
+
 local frame = {
 	w = 200,
-	h = 210,
+	h = 214,
 	border = 2
 }
 
 local row_height = 35
+scroller.x = -47
+scroller.y = row_height * -5
+
 local info = {
-	y = frame.h / -2,
-	w = frame.w * 0.55,
+	y = frame.h * -0.5,
+	w = frame.w *  0.475,
 	padding = 4
 }
 
-scroller.x = -55
-scroller.y = row_height * -5
-
+local avatar_dim = info.w - (info.padding * 2.25)
 
 -- account for the possibility that there are no local profiles and
 -- we want "[ Guest ]" to start in the middle, with focus
@@ -147,7 +152,10 @@ return Def.ActorFrame{
 		-- player profile data
 		Def.ActorFrame{
 			Name="DataFrame",
-
+			InitCommand=function(self)
+				-- FIXME
+				self:x(15.5)
+			end,
 			OnCommand=function(self) self:playcommand("Set", profile_data[1]) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
@@ -164,44 +172,68 @@ return Def.ActorFrame{
 				InitCommand=function(self) self:diffusealpha(0) end,
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(1) end,
 
-				-- the name the player most recently used for high score entry
-				LoadFont("Common Normal")..{
-					Name="HighScoreName",
-					InitCommand=function(self)
-						self:align(0,0):xy(info.padding,-100)
-						self:zoom(0.65):vertspacing(-2)
-						self:maxwidth(info.w/self:GetZoom())
-					end,
-					SetCommand=function(self, params)
-						if params then
-							local desc = THEME:GetString("ScreenGameOver","LastUsedHighScoreName") .. ": "
-							self:visible(true):settext(desc .. (params.highscorename or ""))
-						else
-							self:visible(false):settext("")
-						end
-					end
-				},
+				-- --------------------------------------------------------------------------------
+				-- Avatar ActorFrame
+				Def.ActorFrame{
+					InitCommand=function(self) self:xy(info.padding*1.125,-103.5) end,
 
-				-- the song that was most recently played, presented as "group name/song name", eventually
-				-- truncated so it passes the "How to Cook Delicious Rice and the Effects of Eating Rice" test.
-				LoadFont("Common Normal")..{
-					Name="MostRecentSong",
-					InitCommand=function(self)
-						self:align(0,0):xy(info.padding,-82):zoom(0.65):vertspacing(-3)
-						self:_wrapwidthpixels((info.w-info.padding*2)/self:GetZoom())
-					end,
-					SetCommand=function(self, params)
-						if params then
-							local desc = THEME:GetString("ScreenSelectProfile","MostRecentSong") .. ":\n"
-							self:settext(desc .. (params.recentsong or "")):Truncate(112)
-						else
-							self:settext("")
+					---------------------------------------
+					-- fallback avatar
+					Def.ActorFrame{
+						InitCommand=function(self) self:visible(false) end,
+						SetCommand=function(self, params)
+							if params and params.displayname and avatars[params.displayname] then
+								self:visible(false)
+							else
+								self:visible(true)
+							end
+						end,
+
+						Def.Quad{
+							InitCommand=function(self)
+								self:align(0,0):zoomto(avatar_dim,avatar_dim):diffuse(color("#283239aa"))
+							end
+						},
+						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
+							InitCommand=function(self)
+								self:align(0,0):zoom(0.095):diffusealpha(0.9):xy(13, 8)
+							end
+						},
+						LoadFont("Common Normal")..{
+							Text=ScreenString("NoAvatar"),
+							InitCommand=function(self)
+								self:valign(0):zoom(0.815):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 13, 68)
+							end,
+							SetCommand=function(self, params)
+								if params == nil then
+									self:settext(THEME:GetString("ScreenSelectProfile", "GuestProfile"))
+								else
+									self:settext(THEME:GetString("ScreenSelectProfile", "NoAvatar"))
+								end
+							end
+						}
+					},
+					---------------------------------------
+
+					Def.Sprite{
+						Name="PlayerAvatar",
+						InitCommand=function(self)
+							self:align(0,0):scaletoclipped(avatar_dim,avatar_dim)
+						end,
+						SetCommand=function(self, params)
+							if params and params.displayname and avatars[params.displayname] then
+								self:SetTexture(avatars[params.displayname]):visible(true)
+							else
+								self:visible(false)
+							end
 						end
-					end
+					},
 				},
+				-- --------------------------------------------------------------------------------
 
 				-- how many songs this player has completed in gameplay
 				-- failing a song will increment this count, but backing out will not
+
 				LoadFont("Common Normal")..{
 					Name="TotalSongs",
 					InitCommand=function(self)
@@ -259,7 +291,7 @@ return Def.ActorFrame{
 				-- JudgmentGraphic preview
 				Def.ActorProxy{
 					Name="JudgmentGraphicPreview",
-					InitCommand=function(self) self:halign(0):zoom(0.35):xy(info.padding*2 + info.w*0.5,68) end,
+					InitCommand=function(self) self:halign(0):zoom(0.315):xy(info.padding*2.5 + info.w*0.5,66) end,
 					SetCommand=function(self, params)
 						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
 						if params and params.judgment then
@@ -279,7 +311,7 @@ return Def.ActorFrame{
 			-- thin white line separating stats from mods
 			Def.Quad {
 				InitCommand=function(self)
-					self:zoomto(info.w-info.padding*2,1):align(0,0):xy(info.padding,17):diffusealpha(0)
+					self:zoomto(info.w-info.padding*2,1):align(0,0):xy(info.padding,18):diffusealpha(0)
 				end,
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(0.5) end,
 			},

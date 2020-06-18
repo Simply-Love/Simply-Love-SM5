@@ -4,10 +4,13 @@
 -- seems to be disconcertingly possible for user data to contain errata, typos, etc.
 
 local noteskins = NOTESKIN:GetNoteSkinNames()
-local judgment_graphics = {
-	ITG=GetJudgmentGraphics("ITG"),
-	["FA+"]=GetJudgmentGraphics("FA+"),
-}
+local judgment_graphics = {}
+
+-- get a table like { "ITG", "FA+" }
+local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Graphics/_judgments/", true, false)
+for dir in ivalues(judgment_dirs) do
+	judgment_graphics[dir] = GetJudgmentGraphics(dir)
+end
 
 -- ----------------------------------------------------
 -- some local functions that will help process profile data into presentable strings
@@ -79,11 +82,7 @@ local RecentMods = function(mods)
 
 	return text, mods.NoteSkin, mods.JudgmentGraphic
 end
--- ----------------------------------------------------
-local RecentSong = function(song)
-	if not song then return "" end
-	return (song:GetGroupName() .. "/" .. song:GetDisplayMainTitle())
-end
+
 -- ----------------------------------------------------
 -- profiles have a GetTotalSessions() method, but the value doesn't (seem to?) increment in EventMode
 -- making it much less useful for the players who will most likely be using this screen
@@ -131,9 +130,8 @@ for i=1, PROFILEMAN:GetNumLocalProfiles() do
 
 	local data = {
 		index = i,
+		dir=dir,
 		displayname = profile:GetDisplayName(),
-		highscorename = profile:GetLastUsedHighScoreName(),
-		recentsong = RecentSong(profile:GetLastPlayedSong()),
 		totalsongs = TotalSongs(profile:GetNumTotalSongsPlayed()),
 		mods = mods,
 		noteskin = noteskin,

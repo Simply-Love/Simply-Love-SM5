@@ -1,6 +1,10 @@
 -- This is mostly copy/pasted directly from SM5's _fallback theme with
 -- very minor modifications.
 
+local t = Def.ActorFrame{}
+
+-- -----------------------------------------------------------------------
+
 local function CreditsText( pn )
 	return LoadFont("Common Normal") .. {
 		InitCommand=function(self)
@@ -24,16 +28,55 @@ local function CreditsText( pn )
 	}
 end
 
+-- -----------------------------------------------------------------------
+-- player avatars
+-- see: https://youtube.com/watch?v=jVhlJNJopOQ
 
-local t = Def.ActorFrame{}
+for player in ivalues(PlayerNumber) do
+	t[#t+1] = Def.Sprite{
+		ScreenChangedMessageCommand=function(self)   self:queuecommand("Update") end,
+		PlayerJoinedMessageCommand=function(self, params)   if params.Player==player then self:queuecommand("Update") end end,
+		PlayerUnjoinedMessageCommand=function(self, params) if params.Player==player then self:queuecommand("Update") end end,
 
--- Aux
+		UpdateCommand=function(self)
+			local path = GetAvatarPathForPlayerProfile(player)
+
+			if path == nil and self:GetTexture() ~= nil then
+				self:Load(nil):diffusealpha(0):visible(false)
+				return
+			end
+
+			-- only read from disk if not currently set
+			if self:GetTexture() == nil then
+				self:Load(path):finishtweening():linear(0.075):diffusealpha(1)
+
+				local dim = 32
+				local h   = (player==PLAYER_1 and left or right)
+				local x   = (player==PLAYER_1 and    0 or _screen.w)
+
+				self:horizalign(h):vertalign(bottom)
+				self:xy(x, _screen.h):setsize(dim,dim)
+			end
+
+			local screen = SCREENMAN:GetTopScreen()
+			if THEME:HasMetric(screen:GetName(), "ShowPlayerAvatar") then
+				self:visible( THEME:GetMetric(screen:GetName(), "ShowPlayerAvatar") )
+			else
+				self:visible( THEME:GetMetric(screen:GetName(), "ShowCreditDisplay") )
+			end
+		end,
+	}
+end
+
+-- -----------------------------------------------------------------------
+
+-- what is aux?
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"))
 
 -- Credits
 t[#t+1] = Def.ActorFrame {
- 	CreditsText( PLAYER_1 );
-	CreditsText( PLAYER_2 );
+ 	CreditsText( PLAYER_1 ),
+	CreditsText( PLAYER_2 )
 }
 
 local SystemMessageText = nil
