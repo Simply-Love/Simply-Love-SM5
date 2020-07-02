@@ -63,7 +63,15 @@ return function(AllSteps)
 		-- otherwise, currentSteps are an edit so let's shift what we show
 		local edit_index = 0
 		for i, edit_chart in ipairs(edits) do
-			if edit_chart:GetDescription() == currentSteps:GetDescription() then
+			-- .sm files don't have a good way that is accessible to Lua to guarantee this edit chart is really
+			-- the one you're looking for.  Comparing the (Description and ChartName and Meter) for matches
+			-- seems to be as good as we can do (short of hashing the chart data which seems like overkill here).
+			-- It is possible for two edit charts in an .sm file to have empty ChartNames, empty Descriptions,
+			-- and matching meters.  :(
+			if  edit_chart:GetDescription() == currentSteps:GetDescription()
+			and edit_chart:GetChartName()   == currentSteps:GetChartName()
+			and edit_chart:GetMeter()       == currentSteps:GetMeter()
+			then
 				edit_index = i
 				break
 			end
