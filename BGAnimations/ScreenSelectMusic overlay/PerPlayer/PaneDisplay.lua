@@ -83,11 +83,14 @@ end
 
 af.PlayerJoinedMessageCommand=function(self, params)
 	if player==params.Player then
+		-- ensure BackgroundQuad is colored before it is made visible
+		self:GetChild("BackgroundQuad"):playcommand("Set")
 		self:visible(true)
 		    :zoom(0):croptop(0):bounceend(0.3):zoom(1)
 		    :playcommand("Update")
 	end
 end
+-- player unjoining is not currently possible in SL, but maybe someday
 af.PlayerUnjoinedMessageCommand=function(self, params)
 	if player==params.Player then
 		self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0):queuecommand("Hide")
