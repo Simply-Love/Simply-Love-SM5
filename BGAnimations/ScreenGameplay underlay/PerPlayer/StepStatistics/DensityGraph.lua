@@ -10,6 +10,8 @@ local LifeMeter = nil
 local life_verts = {}
 local offset = 0
 
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+
 -- -----------------------------------------------------------------------
 local BothUsingStepStats = (#GAMESTATE:GetHumanPlayers()==2
 and SL.P1.ActiveModifiers.DataVisualizations == "Step Statistics"
@@ -78,6 +80,7 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 
 -- PeakNPS text
 local text = LoadFont("Common Normal")..{
+	InitCommand=function(self) self:horizalign(right):zoom(0.9) end,
 	PeakNPSUpdatedMessageCommand=function(self)
 		local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
 
@@ -87,9 +90,24 @@ local text = LoadFont("Common Normal")..{
 		end
 
 		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(my_peak * SL.Global.ActiveModifiers.MusicRate,2) )
-		self:x( width - self:GetWidth()/2 - 2 )
-			:y( -self:GetHeight()/2 - 2 )
-			:zoom(0.9)
+
+
+		-- -----------------------------------------------------------------------
+		-- crumby code used for
+		-- positioning x offset
+		-- of PeakNPS
+		local stepstatspane = self:GetParent():GetParent()
+		local padding = IsUltraWide and -4 or 47
+
+		local extrapadding = 0
+		if      player==PLAYER_1 and not IsUltraWide then extrapadding = -_screen.cx
+		elseif player==PLAYER_1 and     IsUltraWide then extrapadding = 15
+		elseif player==PLAYER_2 and     IsUltraWide then extrapadding = -stepstatspane:GetX() + 127
+		end
+		-- -----------------------------------------------------------------------
+
+		self:x( extrapadding + stepstatspane:GetX() + padding + (self:GetWidth()/self:GetZoom()) )
+		self:y( -self:GetHeight()/2 - 2 )
 	end,
 }
 
@@ -115,7 +133,8 @@ local graph_and_lifeline = Def.ActorFrame{
 		UpdateRate = LifeBaseSampleRate
 
 		-- FIXME: add inline comments explaining what a 'simple' BPM is -quietly
-		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means -quietly
+		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means
+		--            because I have no idea what it means -quietly
 
 		-- if the song has a 'simple' BPM, then quantize the timing
 		-- to the nearest multiple of 8ths to avoid jaggies

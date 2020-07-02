@@ -22,6 +22,7 @@ local leadingZeroAttr
 local row_height = 35
 
 local t = Def.ActorFrame{
+	Name="JudgmentNumbers",
 	InitCommand=function(self)
 		self:zoom(0.8)
 	end

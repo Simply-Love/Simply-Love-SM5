@@ -1,16 +1,18 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
-local ar = GetScreenAspectRatio()
 local mods = SL[pn].ActiveModifiers
 local center1p = PREFSMAN:GetPreference("Center1Player")
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 
 if mods.HideScore then return end
 
 if #GAMESTATE:GetHumanPlayers() > 1
 and mods.NPSGraphAtTop
-and ar < 21/9
+and not IsUltraWide
 then return end
+
+
 
 -- -----------------------------------------------------------------------
 
@@ -31,18 +33,26 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 
 	Name=pn.."Score",
 	InitCommand=function(self)
-		self:valign(1):halign(1)
-		self:zoom(0.5)
-
+		self:valign(1):horizalign(right)
+		self:zoom(IsUltraWide and 0.425 or 0.5)
+	end,
+	BeginCommand=function(self)
 		-- assume "normal" score positioning first, but there are many reasons it will need to be moved
 		self:xy( pos[player].x, pos[player].y )
 
 		if mods.NPSGraphAtTop and styletype ~= "OnePlayerTwoSides" then
-			-- if NPSGraphAtTop and Step Statistics, move the score down
-			-- into the stepstats pane under the jugdgment breakdown
+			-- if NPSGraphAtTop and Step Statistics and not double,
+			-- move the score down into the stepstats pane under
+			-- the jugdgment breakdown
 			if mods.DataVisualizations=="Step Statistics" then
-				local step_stats_x = self:GetParent():GetChild("StepStatsPane"..pn):GetX()
-				self:x(step_stats_x + 105.5)
+				local step_stats = self:GetParent():GetChild("StepStatsPane"..pn)
+				local judgmentnumbers = step_stats:GetChild("BannerAndData"):GetChild("JudgmentNumbers"):GetChild("")[1]
+				-- padding is a lazy fix for multiple ActorFrames having zoom applied and
+				-- me not feeling like recursively crawling the AF tree to factor each in
+				local padding = IsUltraWide and -4 or 37.5
+
+
+				self:x(step_stats:GetX() + judgmentnumbers:GetX() + padding)
 				self:y( _screen.cy + 40 )
 
 			-- if NPSGraphAtTop but not Step Statistics

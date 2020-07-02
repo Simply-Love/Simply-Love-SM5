@@ -13,6 +13,7 @@ then
 end
 
 -- -----------------------------------------------------------------------
+-- positioning and sizing of side pane
 
 local header_height   = 80
 local notefield_width = GetNotefieldWidth()
@@ -56,9 +57,10 @@ af[#af+1] = LoadActor("./DarkBackground.lua", {player, header_height, sidepane_w
 -- banner, judgment labels, and judgment numbers will be collectively shrunk
 -- if Center1Player is enabled to accommodate the smaller space
 af[#af+1] = Def.ActorFrame{
+	Name="BannerAndData",
 	InitCommand=function(self)
 		local zoomfactor = {
-			twentyone_nine = 0.725,
+			ultrawide    = 0.725,
 			sixteen_ten  = 0.825,
 			sixteen_nine = 0.925
 		}
@@ -71,7 +73,7 @@ af[#af+1] = Def.ActorFrame{
 
 		else
 			if #GAMESTATE:GetHumanPlayers() > 1 then
-				self:zoom(zoomfactor.twentyone_nine):addy(-55)
+				self:zoom(zoomfactor.ultrawide):addy(-55)
 			end
 		end
 	end,
