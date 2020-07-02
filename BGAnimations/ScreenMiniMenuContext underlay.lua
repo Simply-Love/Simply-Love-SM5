@@ -7,8 +7,8 @@ local num_rows
 local row_height  = 28
 local container_w = 240
 
-return Def.ActorFrame {
-	InitCommand=function(self) self:xy(_screen.cx-container_w, -16):queuecommand("Capture") end,
+local underlay = Def.ActorFrame {
+	InitCommand=function(self) self:queuecommand("Capture") end,
 	CaptureCommand=function(self)
 		-- how many rows do we need to accommodate?
 		num_rows = #SCREENMAN:GetTopScreen():GetChild("Container"):GetChild("")
@@ -16,13 +16,30 @@ return Def.ActorFrame {
 		-- so don't accommodate the decorative border for more than 10
 		num_rows = math.min(10, num_rows)
 		self:queuecommand("Size")
-	end,
+	end
+}
+
+-- darken the background behind the modal
+underlay[#underlay+1] = Def.Quad{
+	SizeCommand=function(self)
+		self:x(_screen.cx)
+		self:zoomto(_screen.w*2, _screen.h*2):diffuse(0,0,0,0.75)
+	end
+}
+
+
+-- modal of choices for managing this local profile
+-- the MiniMenu choices (set P1, set P2, edit, rename, delete, merge, move, etc.)
+-- are hardcoded by the SM5 engine for now
+underlay[#underlay+1] = Def.ActorFrame{
+	InitCommand=function(self) self:xy(_screen.cx-container_w, -16) end,
 
 	-- decorative border
 	Def.Quad{
 		SizeCommand=function(self) self:zoomto(container_w, row_height*num_rows) end,
 	},
 
+	-- local profile's display name at top of modal
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:xy(-99, -118):halign(0):diffuse(Color.Black) end,
 		BeginCommand=function(self)
@@ -33,3 +50,5 @@ return Def.ActorFrame {
 		end
 	}
 }
+
+return underlay
