@@ -344,6 +344,8 @@ local Overrides = {
 					else
 						GAMESTATE:SetCurrentSteps(pn, v)
 						MESSAGEMAN:Broadcast("CurrentSteps"..ToEnumShortString(pn).."Changed")
+						-- set SL's LastSelectedSteps to what the engine says the CurrentSteps are
+						SL[ToEnumShortString(pn)].LastSelectedSteps =  v
 					end
 					break
 				end

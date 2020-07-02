@@ -48,6 +48,7 @@ local PlayerDefaults = {
 				Stats = {}
 			}
 			self.PlayerOptionsString = nil
+			self.LastSelectedSteps = nil
 		end
 	}
 }
