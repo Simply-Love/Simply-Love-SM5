@@ -708,24 +708,3 @@ GetComboFonts = function()
 
 	return fonts
 end
-
--- -----------------------------------------------------------------------
--- Pass in a string from the engine's Difficulty enum like "Difficulty_Beginner"
--- or "Difficulty_Challenge" and this will return the index of that string within
--- the enum (or nil if not found).  This is used by SL's color system to dynamically
--- color theme elements based on difficulty as the primary color scheme changes.
-
-GetDifficultyIndex = function(difficulty)
-	-- if we weren't passed a string, return nil now
-	if type(difficulty) ~= "string" then return nil end
-
-	-- FIXME: Why is this hardcoded to 5?  I need to look into this and either change
-	-- it or leave a note explaining why it's this way.
-	if difficulty == "Difficulty_Edit" then return 5 end
-
-	-- Use Enum's reverse lookup functionality to find difficulty by index
-	-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
-	-- for our purposes, increment by 1 here
-	local difficulty_index = Difficulty:Reverse()[difficulty]
-	if type(difficulty_index) == "number" then return (difficulty_index + 1) end
-end
