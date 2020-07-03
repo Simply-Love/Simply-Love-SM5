@@ -34,13 +34,8 @@ local RecentMods = function(mods)
 		end
 	end
 
-	-- Mini should definitely be a string
-	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = ("%s %s"):format(mods.Mini, THEME:GetString("OptionTitles", "Mini")) end
-
-	-- some linebreaks to make space for NoteSkin and JudgmentGraphic previews
-	text = text.."\n\n\n"
-
-	-- the NoteSkin and JudgmentGraphic previews are not text and thus handled elsewhere
+	-- -----------------------------------------------------------------------
+	-- the NoteSkin and JudgmentGraphic previews are not text, and are loaded, handled, and positioned separately
 
 	-- ASIDE: My informal testing of reading ~80 unique JudgmentGraphic files from disk and
 	-- loading them into memory caused StepMania to hang for a few seconds, so
@@ -51,6 +46,15 @@ local RecentMods = function(mods)
 	-- available to StepMania (players commonly modify their profiles by hand and introduce typos),
 	-- we currently don't show anything.  Maybe a generic graphic of a question mark (or similar)
 	-- would be nice but that can wait for a future release.
+	-- -----------------------------------------------------------------------
+
+	-- Mini should definitely be a string
+	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = ("%s %s, "):format(mods.Mini, THEME:GetString("OptionTitles", "Mini")) end
+
+	-- DataVisualizations should be a string and a specific string at that
+	if mods.DataVisualizations=="Target Score Graph" or mods.DataVisualizations=="Step Statistics" then
+		text = text .. THEME:GetString("SLPlayerOptions", mods.DataVisualizations)..", "
+	end
 
 	-- loop for mods that save as booleans
 	local flags, hideflags = "", ""
@@ -73,10 +77,6 @@ local RecentMods = function(mods)
 	end
 	text = text .. hideflags .. flags
 
-	-- DataVisualizations should be a string and a specific string at that
-	if mods.DataVisualizations=="Target Score Graph" or mods.DataVisualizations=="Step Statistics" then
-		text = text .. THEME:GetString("SLPlayerOptions", mods.DataVisualizations)..", "
-	end
 	-- remove trailing comma and whitespace
 	text = text:sub(1,-3)
 

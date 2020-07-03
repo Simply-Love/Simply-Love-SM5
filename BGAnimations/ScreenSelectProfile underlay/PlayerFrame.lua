@@ -5,6 +5,10 @@ local avatars = args.Avatars
 local scroller = args.Scroller
 local scroller_item_mt = LoadActor("./ScrollerItemMT.lua")
 
+local LightenColor = function(c)
+	return { c[1]*1.25, c[2]*1.25, c[3]*1.25, c[4] }
+end
+
 -- -----------------------------------------------------------------------
 -- TODO: start over from scratch so that these numbers make sense in SL
 --       as-is, they are half-leftover from editing _fallback's code
@@ -58,7 +62,7 @@ local FrameBackground = function(c, player, w)
 		-- colored bg
 		Def.Quad{
 			InitCommand=function(self)
-				self:cropbottom(1):zoomto(w, frame.h):diffuse(c)
+				self:cropbottom(1):zoomto(w, frame.h):diffuse(c):diffusetopedge(LightenColor(c))
 			end
 		},
 	}
@@ -91,7 +95,7 @@ return Def.ActorFrame{
 	-- (or "Enter credits to join!" depending on CoinMode and available credits)
 	Def.ActorFrame {
 		Name='JoinFrame',
-		FrameBackground(Color.Black, player, frame.w),
+		FrameBackground(Color.Black, player, frame.w*0.9),
 
 		LoadFont("Common Normal")..{
 			InitCommand=function(self)
@@ -237,8 +241,8 @@ return Def.ActorFrame{
 				LoadFont("Common Normal")..{
 					Name="TotalSongs",
 					InitCommand=function(self)
-						self:align(0,0):xy(info.padding,0):zoom(0.65):vertspacing(-2)
-						self:maxwidth((info.w-info.padding*2)/self:GetZoom())
+						self:align(0,0):xy(info.padding*1.25,0):zoom(0.65):vertspacing(-2)
+						self:maxwidth((info.w-info.padding*2.5)/self:GetZoom())
 					end,
 					SetCommand=function(self, params)
 						if params then
@@ -249,30 +253,10 @@ return Def.ActorFrame{
 					end
 				},
 
-				-- (some of) the modifiers saved to this player's UserPrefs.ini file
-				-- if the list is long, it will line break and eventually be masked
-				-- to prevent it from visually spilling out of the FrameBackground
-				LoadFont("Common Normal")..{
-					Name="RecentMods",
-					InitCommand=function(self)
-						self:align(0,0):xy(info.padding,25):zoom(0.625)
-						self:_wrapwidthpixels((info.w-info.padding*2)/self:GetZoom())
-						self:ztest(true)     -- ensure mask hides this text if it is too large
-						self:vertspacing(-3) -- less vertical spacing
-					end,
-					SetCommand=function(self, params)
-						if params then
-							self:visible(true):settext(params.mods or "")
-						else
-							self:visible(false):settext("")
-						end
-					end
-				},
-
 				-- NoteSkin preview
 				Def.ActorProxy{
 					Name="NoteSkinPreview",
-					InitCommand=function(self) self:halign(0):zoom(0.25):xy(info.padding*3,50) end,
+					InitCommand=function(self) self:halign(0):zoom(0.25):xy(info.padding*3, 32) end,
 					SetCommand=function(self, params)
 						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
 						if params and params.noteskin then
@@ -291,7 +275,7 @@ return Def.ActorFrame{
 				-- JudgmentGraphic preview
 				Def.ActorProxy{
 					Name="JudgmentGraphicPreview",
-					InitCommand=function(self) self:halign(0):zoom(0.315):xy(info.padding*2.5 + info.w*0.5,66) end,
+					InitCommand=function(self) self:halign(0):zoom(0.315):xy(info.padding*2.5 + info.w*0.5, 48) end,
 					SetCommand=function(self, params)
 						local underlay = SCREENMAN:GetTopScreen():GetChild("Underlay")
 						if params and params.judgment then
@@ -305,13 +289,33 @@ return Def.ActorFrame{
 							self:SetTarget(underlay:GetChild("JudgmentGraphic_None"))
 						end
 					end
-				}
+				},
+
+				-- (some of) the modifiers saved to this player's UserPrefs.ini file
+				-- if the list is long, it will line break and eventually be masked
+				-- to prevent it from visually spilling out of the FrameBackground
+				LoadFont("Common Normal")..{
+					Name="RecentMods",
+					InitCommand=function(self)
+						self:align(0,0):xy(info.padding*1.25,47):zoom(0.625)
+						self:_wrapwidthpixels((info.w-info.padding*2.5)/self:GetZoom())
+						self:ztest(true)     -- ensure mask hides this text if it is too long
+						self:vertspacing(-2) -- less vertical spacing
+					end,
+					SetCommand=function(self, params)
+						if params then
+							self:visible(true):settext(params.mods or "")
+						else
+							self:visible(false):settext("")
+						end
+					end
+				},
 			},
 
 			-- thin white line separating stats from mods
 			Def.Quad {
 				InitCommand=function(self)
-					self:zoomto(info.w-info.padding*2,1):align(0,0):xy(info.padding,18):diffusealpha(0)
+					self:zoomto(info.w-info.padding*2.5,1):align(0,0):xy(info.padding*1.25,18):diffusealpha(0)
 				end,
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(0.5) end,
 			},
