@@ -85,9 +85,9 @@ The current language can be changed in Simply Love under *System Options*.
   * [Live Step Statistics](https://imgur.com/w4ddgSK.png) – This optional gameplay overlay tracks how many of each judgment have been earned in real time and features a notes-per-second density histogram.  This can make livestreaming more interesting for viewers.
   * [Judgment Scatter Plot](https://imgur.com/JK5Li2w.png) – ScreenEvaluation now features a judgment scatterplot where notes hit early are rendered "below the middle" and notes hit late are rendered "above the middle." This can offer insight into how a player performed over time. Did the player gradually hit notes earlier and earlier as the song wore on? This feature can help players answer such questions.
   * [Judgment Density Histogram](https://imgur.com/FAuieAf.png) – The evaluation screen also now features a histogram that will help players assess whether they are more often hitting notes early or late.
-  * [Per-Column Judgment Breakdown](https://imgur.com/ErcvncM.png)
+  * [Per-Column Judgment Breakdown](https://i.imgur.com/TaApeGB.png)
+  * [QR Code Integration with GrooveStats](https://i.imgur.com/TaApeGB.png) – Evaluation now displays a QR code that will upload the score you just earned to your [GrooveStats](http://groovestats.com/) account.
   * [IIDX-inspired Pacemaker](http://imgur.com/NwN8Fnbh.png)
-  * [QR Code Integration with GrooveStats](https://imgur.com/olgg4hS.png) – Evaluation now displays a QR code that will upload the score you just earned to your [GrooveStats](http://groovestats.com/) account.
   * improved MeasureCounter – Stepcharts can now be parsed ahead of time, so it is no longer necessary to play through a stepchart at least once to acquire a stream breakdown.
 
 #### New Aesthetic Features
@@ -115,19 +115,27 @@ StepMania can be tricky to install and the process has different stumbling point
 
 Refer to the [Troubleshooting StepMania README](./Other/TroubleshootingStepMania-README.md) included with Simply Love.
 
-#### How can I let players load custom songs from USB sticks?
+#### How can I load custom songs from USB sticks?
 
-The StepMania project has wiki pages for configuring USB profiles for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) and [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).
+First, configure your PC for USB profiles.  Follow the guides for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) or [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).
 
-StepMania 5.1-beta and newer supports loading custom songs from USB profiles.  If you are using SM5.1-beta and have configured your computer using the Wikis linked to above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
+StepMania 5.1 (currently in beta) added support for loading custom songs from USB profiles.  This feature is not avilable in StepMania 5.0.12 and older.
+
+If you are using [SM5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) and have configured your computer using the guides linked above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
 
 
 #### Why does my timing graph look weird?
 
-If your timing graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, you have USB polling issues.
+If your judgment distribution graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, your hardware has a low USB polling rate.
 
 ![spikey boi](https://i.imgur.com/oMAQKoM.jpg)
 
-Fixing this is outside the scope of Simply Love as a StepMania theme.
+Fixing this is outside the scope of Simply Love as a StepMania theme.  You may need to modify your operating system, hardware inside your dance pad, or both.
 
-GitHub user geefr has a [wiki page](https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues) on identifying and troubleshooting USB polling issues that may help.
+StarlightLumi wrote a giude for modifying L-Tek Dance Pads to poll at 1000 Hz by replacing hardware inside the pad with an Arduino: https://www.instructables.com/id/Modifying-an-L-tek-Dance-Pad-to-Poll-at-1000hz-on-/
+
+StarlightLumi's guide was based on original code and efforts by GitHub user [natano](https://github.com/natano): https://www.natano.net/blog/2019-12-14-usb-polling-adventure/
+
+GitHub user [sahunt](https://github.com/sahunt) has a guide on modifying Windows to poll at 1000 Hz: https://www.hackmycab.com/?portfolio=usb-polling
+
+GitHub user geefr has a wiki page on identifying and troubleshooting USB polling issues on Linux: https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues
