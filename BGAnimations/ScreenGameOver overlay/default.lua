@@ -31,13 +31,17 @@ local t = Def.ActorFrame{
 	}
 }
 
+local line_height = 58
+local profilestats_y = 145
+local horiz_line_y   = 294
+local normalstats_y  = 268
+
 for player in ivalues(Players) do
 
-	local line_height = 60
-	local middle_line_y = 220
-	local x_pos = player == PLAYER_1 and 80 or _screen.w-80
-	local PlayerStatsAF = Def.ActorFrame{ Name="PlayerStatsAF_"..ToEnumShortString(player) }
 	local stats
+	local x_pos = player==PLAYER_1 and 80 or _screen.w-80
+	local PlayerStatsAF = Def.ActorFrame{ Name="PlayerStatsAF_"..ToEnumShortString(player) }
+
 
 	-- first, check if this player is using a profile (local or MemoryCard)
 	if PROFILEMAN:IsPersistentProfile(player) then
@@ -51,20 +55,59 @@ for player in ivalues(Players) do
 			PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
 				Text=stat,
 				InitCommand=function(self)
-					self:diffuse(PlayerColor(player))
-						:xy(x_pos, (line_height*(i-1)) + 40)
-						:maxwidth(150)
+					self:diffuse(PlayerColor(player)):zoom(0.95)
+						:xy(x_pos, (line_height*(i-1)) + profilestats_y)
+						:maxwidth(150):vertspacing(-1)
 				end
 			}
 		end
 
+		local avatar_dim  = 100
+		local avatar_path = GetAvatarPathForPlayerProfile(player)
+
+		if avatar_path ~= nil then
+			PlayerStatsAF[#PlayerStatsAF+1] = Def.Sprite{
+				Texture=avatar_path,
+				InitCommand=function(self) self:align(0,0):zoomto(avatar_dim, avatar_dim):xy(x_pos-avatar_dim*0.5, 12) end
+			}
+		else
+			-- fallback avatar
+			PlayerStatsAF[#PlayerStatsAF+1] = Def.ActorFrame{
+				InitCommand=function(self) self:xy(x_pos-avatar_dim*0.5, 12) end,
+
+				Def.Quad{
+					InitCommand=function(self)
+						self:align(0,0):zoomto(avatar_dim,avatar_dim):diffuse(color("#283239aa"))
+					end
+				},
+				-- fallback visual (SL visual theme)
+				LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
+					InitCommand=function(self)
+						self:align(0,0):zoom(0.11):diffusealpha(0.9):xy(13, 8)
+					end
+				},
+				-- fallback text ("no avatar")
+				LoadFont("Common Normal")..{
+					Text=THEME:GetString("ProfileAvatar","NoAvatar"),
+					InitCommand=function(self)
+						self:valign(0):zoom(0.875):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 18, 78)
+					end,
+					SetCommand=function(self, params)
+						if params == nil then
+							self:settext(THEME:GetString("ScreenSelectProfile", "GuestProfile"))
+						else
+							self:settext(THEME:GetString("ScreenSelectProfile", "NoAvatar"))
+						end
+					end
+				}
+			}
+		end
 	end
 
-	-- draw a thin line (really just a Def.Quad) separating
-	-- the upper (profile) stats from the lower (general) stats
+	-- horizontal line separating upper stats (profile) from the lower stats (general)
 	PlayerStatsAF[#PlayerStatsAF+1] = Def.Quad{
 		InitCommand=function(self)
-			self:zoomto(120,1):xy(x_pos, middle_line_y)
+			self:zoomto(120,1):xy(x_pos, horiz_line_y)
 				:diffuse( PlayerColor(player) )
 		end
 	}
@@ -77,9 +120,9 @@ for player in ivalues(Players) do
 		PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
 			Text=stat,
 			InitCommand=function(self)
-				self:diffuse(PlayerColor(player))
-					:xy(x_pos, (line_height*i) + middle_line_y)
-					:maxwidth(150)
+				self:diffuse(PlayerColor(player)):zoom(0.95)
+					:xy(x_pos, (line_height*i) + normalstats_y)
+					:maxwidth(150):vertspacing(-1)
 			end
 		}
 	end

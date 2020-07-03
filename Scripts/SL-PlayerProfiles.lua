@@ -46,7 +46,7 @@ local profile_whitelist = {
 	PlayerOptionsString = "string"
 }
 
--- ------------------------------------------
+-- -----------------------------------------------------------------------
 
 local theme_name = THEME:GetThemeDisplayName()
 local filename =  theme_name .. " UserPrefs.ini"
@@ -137,6 +137,9 @@ SaveProfileCustom = function(profile, dir)
 
 	return true
 end
+
+-- -----------------------------------------------------------------------
+-- returns a path to a player's profile avatar, or nil if none is found
 
 GetAvatarPathForPlayerProfile = function(player)
 	local profile_slot = {

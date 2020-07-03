@@ -204,7 +204,7 @@ return Def.ActorFrame{
 							end
 						},
 						LoadFont("Common Normal")..{
-							Text=ScreenString("NoAvatar"),
+							Text=THEME:GetString("ProfileAvatar","NoAvatar"),
 							InitCommand=function(self)
 								self:valign(0):zoom(0.815):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 13, 68)
 							end,
@@ -212,7 +212,7 @@ return Def.ActorFrame{
 								if params == nil then
 									self:settext(THEME:GetString("ScreenSelectProfile", "GuestProfile"))
 								else
-									self:settext(THEME:GetString("ScreenSelectProfile", "NoAvatar"))
+									self:settext(THEME:GetString("ProfileAvatar", "NoAvatar"))
 								end
 							end
 						}
