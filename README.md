@@ -20,7 +20,8 @@ Simply Love is compatible with current releases of SM5 from the official StepMan
 
 **Compatible**<br>
 ✅ [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12)<br>
-✅ [StepMania 5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)
+✅ [StepMania 5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)<br>
+✅ [StepMania 5.1 nightly builds](https://github.com/stepmania/stepmania/wiki/Nightly-Builds)
 
 **Incompatible**<br>
 ❌ Alpha builds of SM5.3 are not supported at this time, but hopefully this will change in the future<br>
@@ -119,7 +120,7 @@ Note that support for loading custom songs from USB profiles is new to StepMania
 
 If your judgment distribution graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, your dance pad hardware is polling at a low rate.
 
-![spikey boi](https://i.imgur.com/oMAQKoM.jpg)
+![spiky boi](https://i.imgur.com/oMAQKoM.jpg)
 
 Fixing this is outside the scope of Simply Love as a StepMania theme.  You may need to install drivers for your OS, modify hardware inside your dance pad, or both.
 
