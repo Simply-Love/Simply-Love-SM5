@@ -30,31 +30,13 @@ Simply Love is compatible with current releases of SM5 from the official StepMan
 ❌ SM5.2
 
 
-
 ## Installing Simply Love
 
-You can download a zip of the latest formal release from the [Releases Page](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest).
+If you are upgrading from a previous version of Simply Love, fully delete the old Simply Love folder before moving the new folder into place.  **Do not try to merge the new folder into the old.**
 
-To install Simply Love, unzip it and move the resulting *Simply Love* folder into your [StepMania user data directory](https://github.com/stepmania/stepmania/wiki/User-Data-Locations).
+You can read about and download the current release of Simply Love at the [Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) page.
 
-The install paths will look like:
-
-* **Windows**: `%APPDATA%\StepMania 5.1\Themes\Simply Love\`
-* **macOS**: `~/Library/Application Support/StepMania 5.1/Themes/Simply Love/`
-* **Linux**: `~/.stepmania-5.1/Themes/Simply Love/`
-
-The next time you use StepMania, you can switch to Simply Love from the main options menu found on the Title Screen.  The exact process can vary depending on the theme you are currently using, but this is usually done within **Options → Display Options → Appearance Options → Theme**
-
-## Screenshots
-
-![Title Screen](https://i.imgur.com/tlKZad8l.png)
-![Gameplay](https://i.imgur.com/6PRBIHil.png)
-![Player Options](https://i.imgur.com/Jk5A4LTl.png)
-![Evaluation with QR Code](https://i.imgur.com/TaApeGBl.png)
-![Select Profile](https://i.imgur.com/bZc5xpll.png)
-![Visual Themes](https://i.imgur.com/hGB1T4nl.png)
-
-Visit my imgur album for more screenshots of this theme in action: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
+Full install instructions are in the [Installing Simply Love](./Other/InstallingSimplyLove-README.md) README.
 
 
 ## Language Support
@@ -70,6 +52,17 @@ Simply Love has support for:
   * Português Brasileiro
 
 The current language can be changed in Simply Love under *System Options*.
+
+## Screenshots
+
+![Title Screen](https://i.imgur.com/tlKZad8l.png)
+![Gameplay](https://i.imgur.com/6PRBIHil.png)
+![Player Options](https://i.imgur.com/Jk5A4LTl.png)
+![Evaluation with QR Code](https://i.imgur.com/TaApeGBl.png)
+![Select Profile](https://i.imgur.com/bZc5xpll.png)
+![Visual Themes](https://i.imgur.com/hGB1T4nl.png)
+
+Visit my imgur album for more screenshots of this theme: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
 
 ## Features
@@ -106,36 +99,34 @@ The current language can be changed in Simply Love under *System Options*.
 ## FAQ
 
 #### How can I get more songs to show up in Casual Mode?
-Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
 
+Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
 
 #### I'm getting an error when I try to install StepMania.
 
-StepMania can be tricky to install and the process has different stumbling points unique to each OS.
-
-Refer to the [Troubleshooting StepMania README](./Other/TroubleshootingStepMania-README.md) included with Simply Love.
+Refer to the [Troubleshooting StepMania](./Other/TroubleshootingStepMania-README.md) guide included with Simply Love.
 
 #### How can I load custom songs from USB sticks?
 
 First, configure your PC for USB profiles.  Follow the guides for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) or [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).
 
-StepMania 5.1 (currently in beta) added support for loading custom songs from USB profiles.  This feature is not avilable in StepMania 5.0.12 and older.
-
 If you are using [SM5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) and have configured your computer using the guides linked above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
+
+Note that support for loading custom songs from USB profiles is new to StepMania 5.1.  It is not available in StepMania 5.0.12 and older.
 
 
 #### Why does my timing graph look weird?
 
-If your judgment distribution graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, your hardware has a low USB polling rate.
+If your judgment distribution graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, your dance pad hardware is polling at a low rate.
 
 ![spikey boi](https://i.imgur.com/oMAQKoM.jpg)
 
-Fixing this is outside the scope of Simply Love as a StepMania theme.  You may need to modify your operating system, hardware inside your dance pad, or both.
+Fixing this is outside the scope of Simply Love as a StepMania theme.  You may need to install drivers for your OS, modify hardware inside your dance pad, or both.
 
-StarlightLumi wrote a giude for modifying L-Tek Dance Pads to poll at 1000 Hz by replacing hardware inside the pad with an Arduino: https://www.instructables.com/id/Modifying-an-L-tek-Dance-Pad-to-Poll-at-1000hz-on-/
+StarlightLumi wrote a guide for modifying L-Tek Dance Pads to poll at 1000 Hz:<br/>https://www.instructables.com/id/Modifying-an-L-tek-Dance-Pad-to-Poll-at-1000hz-on-/
 
-StarlightLumi's guide was based on original code and efforts by GitHub user [natano](https://github.com/natano): https://www.natano.net/blog/2019-12-14-usb-polling-adventure/
+StarlightLumi's L-TEK guide was based on original code and efforts by [natano](https://github.com/natano):<br/>https://www.natano.net/blog/2019-12-14-usb-polling-adventure/
 
-GitHub user [sahunt](https://github.com/sahunt) has a guide on modifying Windows to poll at 1000 Hz: https://www.hackmycab.com/?portfolio=usb-polling
+[sahunt](https://github.com/sahunt) has a guide on modifying Windows to poll at 1000 Hz:<br/>https://www.hackmycab.com/?portfolio=usb-polling
 
-GitHub user geefr has a wiki page on identifying and troubleshooting USB polling issues on Linux: https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues
+geefr has a wiki page on identifying and troubleshooting USB polling issues in Linux:<br/>https://github.com/geefr/stepmania-linux-goodies/wiki/So-You-Think-You-Have-Polling-Issues

@@ -4,7 +4,7 @@ Follow along with the StepMania installer, ensuring that you **do not install to
 
 You'll likely need Microsoft's [Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145).
 
-You'll also need to have Microsoft's [DirectX 9 runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=35).  It's possible you already have the DirectX 9 runtime installed, but if StepMania crashes with **d3dx9_43.dll was not found** or **XINPUT1_3.dll is missing**, you don't, and will need it first.
+You'll also need to have Microsoft's [DirectX 9 runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=35).  It's possible you already have the DirectX 9 runtime installed, but if StepMania crashes with <strong>d3dx9_43.dll was not found</strong> or <strong>XINPUT1_3.dll is missing</strong>, you don't, and will need it first.
 
 It [should be okay](https://github.com/stepmania/stepmania/issues/1936#issuecomment-557917810) to have multiple DirectX runtimes installed.
 
