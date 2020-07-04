@@ -10,7 +10,7 @@ end
 local InputHandler = function(event)
 	if not event then return false end
 	if event.type == "InputEventType_FirstPress" and event.GameButton == "Back" then
-		 if ThonkAndRTTOkay() and CurrentGameIsSupported() then
+		 if ThonkAndRTTOkay() and CurrentGameIsSupported() and StepManiaVersionIsSupported() then
 			 SCREENMAN:GetTopScreen():Cancel()
 		 end
 	end
@@ -49,12 +49,12 @@ a.OffCommand=function(self)
 
 		if not CurrentGameIsSupported() then
 			SM( THEME:GetString("ScreenInit", "UnsupportedGame"):format(GAMESTATE:GetCurrentGame():GetName()) )
-			SCREENMAN:SetNewScreen("ScreenSelectGame")
+			SCREENMAN:SetNewScreen("ScreenSystemOptions")
 		end
 
 		if not StepManiaVersionIsSupported() then
 			SM( THEME:GetString("ScreenInit", "UnsupportedSMVersion"):format(ProductVersion()) )
-			SCREENMAN:SetNewScreen("ScreenSelectGame")
+			SCREENMAN:SetNewScreen("ScreenSystemOptions")
 		end
 	end
 end

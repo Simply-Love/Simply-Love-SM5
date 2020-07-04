@@ -1,3 +1,48 @@
+-- Hi there. 🌊
+--
+-- If you're here to remove or modify StepManiaVersionIsSupported because the
+-- StepMania version you use isn't supported – I get where you're coming from.
+--
+-- It can be frustrating when you just want to play a free game and there seems
+-- to be arbitrary walls up preventing that.  I get that that is what this
+-- probably feels like.
+--
+-- For now, Simply Love supports SM5.0.12 and beta releases of SM5.1 from
+-- the main StepMania project, which can be found on GitHub at
+-- https://github.com/stepmania/stepmania/
+--
+-- Other forks, older builds, other projects, etc. are blocked here, regardless
+-- of their compatibility with Simply Love.  I am only one human person, and I've
+-- taken on too much responsibility here with moving the post-ITG community forward
+-- in a responsible, open, and inclusvie manner.
+--
+-- I've done very little with my life that I am proud of, but I am confident that
+-- this Simply Love project has helped dance game enthusiasts from all over the world
+-- enjoy a silly arrow game together, as a community.
+--
+-- Regardless of their location or language, regardless of their access to specficic
+-- hardware with limited availability, almost anyone can install and use and benefit
+-- from Simply Love.  This is a good thing, and I am proud of this.
+--
+-- Supporting this is not easy. It's almost always easier to do a quick fix that works
+-- for one circumstance – one particluar machine, one particular hardware device, one
+-- one particular community.  Writing code and designing software that accommodates the
+-- broadest community is hard, but it's critically important.  It's the responsibility
+-- I've gradually assumed over the years I've worked on Simply Love.
+--
+-- So, if you're here to remove of modify StepManiaVersionIsSupported as a quick fix,
+-- I'll ask you to consider giving back to the broader community instead.
+--
+-- What features does your fork have that mainline StepMania doesn't?  Can they be
+-- brought into mainline StepMania?  Maybe you don't know, maybe you're not a developer,
+-- but maybe you know someone who does or is.  Ask.  Get things moving.  Contribute.
+-- Everyone will be better off because you helped.
+--
+-- I appreciate your understanding.  Maybe we can share a dance in the future. :)
+--
+--                                                                quietly-turning
+--                                                                4 July 2020
+
 -- -----------------------------------------------------------------------
 -- use StepManiaVersionIsSupported() to check if Simply Love supports the version of SM5 in use
 

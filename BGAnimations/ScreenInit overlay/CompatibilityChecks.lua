@@ -17,9 +17,9 @@ return Def.Actor{
 		-- defined in ./Scripts/SL-Helpers.lua
 		if not StepManiaVersionIsSupported() then
 			SM( THEME:GetString("ScreenInit", "UnsupportedSMVersion"):format(ProductVersion()) )
-			-- ScreenSelectGame is "System Options" in the operator menu
+			-- ScreenSystemOptions is the first choice in the operator menu
 			-- players can set their game, theme, default NoteSkin, etc. from it
-			SCREENMAN:SetNewScreen("ScreenSelectGame")
+			SCREENMAN:SetNewScreen("ScreenSystemOptions")
 		end
 
 		-- also defined in ./Scripts/SL-Helpers.lua
@@ -28,8 +28,8 @@ return Def.Actor{
 			-- We can display a SystemMessage here and it will persist into ScreenSelectGame, because SystemMessages
 			-- are part of the always-present ScreenSystemLayer overlay.
 			SM( THEME:GetString("ScreenInit", "UnsupportedGame"):format(GAMESTATE:GetCurrentGame():GetName()) )
-			-- don't politely transition from ScreenInit to ScreenSelectGame with fades; just get the player there now
-			SCREENMAN:SetNewScreen("ScreenSelectGame")
+			-- don't politely transition from ScreenInit to ScreenSystemOptions with fades; just get the player there now
+			SCREENMAN:SetNewScreen("ScreenSystemOptions")
 		end
 
 		-- Simply Thonk relies heavily on ActorFrameTextures, and SM5's D3D VideoRenderer does not support
