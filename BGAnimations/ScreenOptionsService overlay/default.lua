@@ -105,9 +105,9 @@ af[#af+1] = Def.BitmapText{
 					fmt = "\n• %s"
 
 				-- the choices on the next screen would take us deeper into sub-subscreens
-				-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsDisplaySub"
+				-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsServiceSub"
 				--  which is brittle but works for now, because of how I've set up SL's metrics.)
-				elseif THEME:GetMetric("Screen"..params.Name, "Fallback") == "ScreenOptionsDisplaySub" then
+				elseif THEME:GetMetric("Screen"..params.Name, "Fallback") == "ScreenOptionsServiceSub" then
 					optrow_title = optrow_name
 					fmt = "\n %s"
 				end
