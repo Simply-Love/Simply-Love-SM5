@@ -3,7 +3,7 @@ OperatorMenuOptionRows = {}
 OperatorMenuOptionRows.EditorNoteskin = function()
 	local skins = NOTESKIN:GetNoteSkinNames()
 	return {
-		Name = "Editor Noteskin",
+		Name = "EditorNoteSkin",
 		LayoutType = "ShowOneInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
