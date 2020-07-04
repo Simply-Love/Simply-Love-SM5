@@ -1,5 +1,5 @@
-local row_height = _screen.h * 0.0625 -- ???
-local row_width = WideScale(300, 456)
+local row_height = 30
+local row_width  = WideScale(300, 456)
 
 return Def.Quad {
 	InitCommand=function(self)

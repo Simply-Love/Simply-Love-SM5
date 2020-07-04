@@ -1,18 +1,35 @@
-local af = Def.ActorFrame{}
 local bg_width = WideScale(289, 292)
 local bg_height = 350
 local padding = 10
 
 local explanation_bmt
 
-af.OptionRowChangedMessageCommand=function(self, params)
-	local OptionRowName = params.Title:GetParent():GetParent():GetName()
-	self:playcommand("Update", {Name=OptionRowName} )
+-- -----------------------------------------------------------------------
+
+local af = Def.ActorFrame{}
+
+af.InitCommand=function(self)
 	self:xy(WideScale(490,683), _screen.cy - 15.5)
 end
 
-af[#af+1] = LoadActor("./Support.lua")
+-- this broadcast is done from SL's metrics.ini under
+-- [OptionRowSimpleService] via TitleGainFocusCommand
+-- We use it here to detect when the player scrolls to a different OptionRow
+-- (that OptionRow has "gained focus") but has not yet chosen anything.
+af.OptionRowChangedMessageCommand=function(self, params)
+	local OptionRowName = params.Title:GetParent():GetParent():GetName()
+	self:playcommand("Update", {Name=OptionRowName} )
+end
 
+-- -----------------------------------------------------------------------
+-- verify certain settings/configurations are compatible with Simply Love
+--    render-to-texture is needed for Simply Thonk but not possible with the d3d renderer
+--    some StepMania game types (popn, beat, kickbox, etc.) are not supported in SL
+--    SL only supports official StepMania releases, and a limited range of versions at that
+af[#af+1] = LoadActor("./Support.lua")
+-- -----------------------------------------------------------------------
+
+-- background Quad for side pane
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto(bg_width, bg_height)
@@ -20,6 +37,7 @@ af[#af+1] = Def.Quad{
 	end
 }
 
+-- Option Explanation text
 af[#af+1] = Def.BitmapText{
 	Font="Common Normal",
 	InitCommand=function(self)
@@ -33,6 +51,7 @@ af[#af+1] = Def.BitmapText{
 	end
 }
 
+-- text for first six OptionRows on the next screen
 af[#af+1] = Def.BitmapText{
 	Font="Common Normal",
 	InitCommand=function(self)
@@ -42,43 +61,68 @@ af[#af+1] = Def.BitmapText{
 	end,
 	UpdateCommand=function(self, params)
 		local s = ""
+
+		-- Name is passed in as a param from OptionRowChangedMessageCommand (above), which gets
+		-- it from TitleGainFocusCommand under [OptionRowSimpleService] in SL's metrics.ini
+		-- It will be the internal name for this OptionRow, like "SystemOptions" or "InputOptions" or "USBProfileOptions"
+		--
+		-- We can prepend "Screen" to the beginning of this Name to get "ScreenSystemOptions" and check metrics.ini for
+		-- that screen's "LineNames" metric.  If it exists, the LineNames metric will get us a comma-delimited list like
+		-- "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix"
+		-- and those can be used to determine what OptionRows exist on the next screen to present as text to the player.
 		if THEME:HasMetric("Screen"..params.Name, "LineNames") then
 
 			local count = 0
-			for line in THEME:GetMetric("Screen"..params.Name, "LineNames"):gmatch('([^,]+)') do
+			-- split the list of internal OptionRow names (e.g. "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix") on commas
+			for optrow_name in THEME:GetMetric("Screen"..params.Name, "LineNames"):gmatch('([^,]+)') do
 
 				-- don't bother retrieving more than 6
 				count = count + 1
 				if count > 6 then
+					-- if we've already got 6, append an ellipsis and break from the loop
 					s = s .. "\n..."
 					break
 				end
 
-				local opt_title, fmt
+				-- optrow_title will be the optrow_name localized for the current language (English, Spanish, Japanese, etc.)
+				local optrow_title
+				-- fmt will be the formatting string used
+				-- if the next screen has conf-based OptionRows, present them here as a bulleted list
+				-- if the next screen has OptionRows leading deeper to subscreens, present them here as-is
+				local fmt
 
 				-- the choices on the next screen are conf-based OptionRows that set Preferences
+				-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsServiceChild"
+				--  which is brittle but works for now, because of how I've set up SL's metrics.)
 				if THEME:GetMetric("Screen"..params.Name, "Fallback") == "ScreenOptionsServiceChild" then
-					local _line = THEME:GetMetric("Screen"..params.Name, "Line"..line)
+					local _line = THEME:GetMetric("Screen"..params.Name, "Line"..optrow_name)
 
 					if _line:match("conf,") then
-						opt_title = _line:gsub("conf,","")
+						optrow_title = _line:gsub("conf,","")
 					elseif _line:match("lua,") then
-						opt_title = line
+						optrow_title = optrow_name
 					end
 					fmt = "\n• %s"
 
 				-- the choices on the next screen would take us deeper into sub-subscreens
+				-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsDisplaySub"
+				--  which is brittle but works for now, because of how I've set up SL's metrics.)
 				elseif THEME:GetMetric("Screen"..params.Name, "Fallback") == "ScreenOptionsDisplaySub" then
-					opt_title = line
+					optrow_title = optrow_name
 					fmt = "\n %s"
 				end
 
-				if THEME:HasString("OptionTitles", opt_title) then
-					s = s .. (fmt):format( THEME:GetString("OptionTitles", opt_title):gsub("\n", " "))
+				-- localize if possible
+				if THEME:HasString("OptionTitles", optrow_title) then
+					-- remove embedded newline characters so that "Allow Players\nTo Fail Set" becomes "Allow Players To Fail Set"
+					s = s .. (fmt):format( THEME:GetString("OptionTitles", optrow_title):gsub("\n", " "))
 				else
-					s = s .. line
+					s = s .. optrow_name
 				end
 			end
+
+			-- set the y position of this list based on the height of the explanation text because that
+			-- can vary (sometimes 2 lines, sometimes 3; sometimes different for different localizations)
 			self:y(-bg_height/2 + padding + explanation_bmt:GetHeight())
 		end
 
