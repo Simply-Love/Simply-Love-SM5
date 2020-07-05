@@ -91,22 +91,55 @@ local text = LoadFont("Common Normal")..{
 
 		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(my_peak * SL.Global.ActiveModifiers.MusicRate,2) )
 
+		-- -----------------------------------------------------------------------
+		local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+		local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
+
+		-- determine how many digits are needed to express the number of notes in base-10
+		local digits = (math.floor(math.log10(total_tapnotes)) + 1)
+		-- subtract 4 from the digit count; we're only really interested in how many digits past 4
+		-- this stepcount is so we can use it to align the score actor in the StepStats pane if needed
+		-- aligned-with-4-digits is the default
+		digits = clamp(math.max(4, digits) - 4, 0, 3)
 
 		-- -----------------------------------------------------------------------
 		-- crumby code used for
 		-- positioning x offset
 		-- of PeakNPS
-		local stepstatspane = self:GetParent():GetParent()
-		local padding = IsUltraWide and -4 or 47
 
-		local extrapadding = 0
-		if      player==PLAYER_1 and not IsUltraWide then extrapadding = -_screen.cx
-		elseif player==PLAYER_1 and     IsUltraWide then extrapadding = 15
-		elseif player==PLAYER_2 and     IsUltraWide then extrapadding = -stepstatspane:GetX() + 127
+		local stepstatspane = self:GetParent():GetParent()
+		local padding = {}
+
+		if IsUltraWide then
+			-- 21:9 (and wider)
+			if (#GAMESTATE:GetHumanPlayers() <= 1) then
+				padding[PLAYER_1] = -_screen.cx + 36
+				padding[PLAYER_2] = 36
+			else
+				padding[PLAYER_1] = 4
+				padding[PLAYER_2] = -908
+			end
+
+		elseif IsUsingWideScreen() then
+			-- 16:9, 16:10
+			padding[PLAYER_1] = -_screen.cx + 26.5
+			padding[PLAYER_2] = 26.5
+		else
+			-- 4:3
+			padding[PLAYER_1] = -_screen.cx + 28
+			padding[PLAYER_2] = 28
 		end
+
+		if IsUsingWideScreen() and not (IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1) then
+			-- pad with an additional ~14px for each digit past 4 the stepcount goes
+			-- this keeps the score right-aligned with the right edge of the judgment
+			-- counts in the StepStats pane
+			padding[player] = padding[player] + (digits * 14)
+		end
+
 		-- -----------------------------------------------------------------------
 
-		self:x( extrapadding + stepstatspane:GetX() + padding + (self:GetWidth()/self:GetZoom()) )
+		self:x( stepstatspane:GetX() + padding[player] + (self:GetWidth()/self:GetZoom()) )
 		self:y( -self:GetHeight()/2 - 2 )
 	end,
 }

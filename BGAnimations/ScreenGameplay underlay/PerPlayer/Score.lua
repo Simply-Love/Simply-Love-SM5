@@ -59,9 +59,13 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 				local judgmentnumbers = step_stats:GetChild("BannerAndData"):GetChild("JudgmentNumbers"):GetChild("")[1]
 				-- padding is a lazy fix for multiple ActorFrames having zoom applied and
 				-- me not feeling like recursively crawling the AF tree to factor each in
-				local padding = IsUltraWide and -4 or 37
+				local padding = 37
 
-				if IsUsingWideScreen() then
+				if IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1) then
+					padding = 5
+				end
+
+				if IsUsingWideScreen() and not (IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1) then
 					-- pad with an additional ~14px for each digit past 4 the stepcount goes
 					-- this keeps the score right-aligned with the right edge of the judgment
 					-- counts in the StepStats pane

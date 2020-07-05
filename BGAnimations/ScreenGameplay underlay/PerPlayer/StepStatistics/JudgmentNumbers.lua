@@ -1,5 +1,7 @@
 local player = ...
 
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+
 local possible, rv, pss
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
@@ -53,6 +55,10 @@ for index, window in ipairs(TapNoteScores) do
 			-- when people want to play "24 hours of 100 bpm stream" on a 4:3 monitor
 			if not IsUsingWideScreen() and digits > 5 then
 				self:x(104):maxwidth(185)
+			end
+
+			if IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1) and (digits > 4) then
+				self:x(104):maxwidth(165)
 			end
 		end,
 		JudgmentMessageCommand=function(self, params)
