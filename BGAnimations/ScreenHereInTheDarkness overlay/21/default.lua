@@ -2,23 +2,23 @@ local page = 1
 local pages = {
 	{
 		header="Credits",
-		body="here in the darkness #1\nfeatures audio from the film 5 Centimeters per Second\n\nhere in the darkness #3\nfeatures a photograph of Earth that I can no longer track down the source of :(\n\nhere in the darkness #6\nfeatures video from YouTube user maxxlover's channel\n\nhere in the darkness #8\nfeatures visual art from xkcd#1190, \"Time\"\n\nhere in the darkness #10\nfeatures the song \"13 Ghosts II\" by nine inch nails\n\nhere in the darkness #12\nfeatures a melody inspired by bt's \"The Antikythera Mechanism\""
+		body="darkness #1\nfeatures audio from the film 5 Centimeters per Second\n\ndarkness #3\nfeatures a photograph of Earth that I can no longer track down the source of :(\n\ndarkness #6\nfeatures video from YouTube user maxxlover's channel\n\ndarkness #8\nfeatures visual art from xkcd#1190, \"Time\"\n\ndarkness #10\nfeatures the song \"13 Ghosts II\" by nine inch nails\n\ndarkness #12\nfeatures a melody inspired by bt's \"The Antikythera Mechanism\""
 	},
 	{
-		header="Credits: here in the darknesss #14–17 (Connection)",
+		header="Credits: darknesss #14–17 (Connection)",
 		body="Luizsan – contributed primary visual art\n\nMahendor – composed Connection's main theme\n\nLumisauVA – voice acted in Chapter 4\n\nkbts87 – contributed visual art to Chapter 3\n\nEvocait – contributed visual art to Chapter 4"
 	},
 	{
-		header="Credits: here in the darkness #19 (Your Drifting Mind)",
+		header="Credits: darkness #19 (Your Drifting Mind)",
 		body="Evocait – contributed primary visual art\n\nanairis_q – provided voice acting"
 	},
 	{
 		header="Thanks",
-		body="I wish to thank the many creative humans whose works have shaped my outlook and my own art in ways both subtle and overt, including:\n\nMakoto Shinkai, Charlie Kaufman, Greta Gerwig, and Wong Kar-wai\n\nSylvia Plath, Kazuo Ishiguro, Milan Kundera, Mark Z. Danielewski, and _why\n\nBill Watterson and Randall Munroe\n\nbt, Benn Jordan, Laura Shigihara, Trent Reznor, and Frédéric Chopin\n\nGiant Sparrow, Unburnt Witch, Kojima Productions, Ryan and Amy Green"
+		body="I wish to thank the many creative humans whose works have shaped my outlook and my own art in ways both subtle and overt, including:\n\nMakoto Shinkai, Charlie Kaufman, Greta Gerwig, Wong Kar-wai\n\nSylvia Plath, Kazuo Ishiguro, Milan Kundera,\nMark Z. Danielewski, _why\n\nBill Watterson, Randall Munroe\n\nbt, Benn Jordan, Laura Shigihara, Trent Reznor, Frédéric Chopin\n\nGiant Sparrow, Kojima Productions, Unburnt Witch,\nRyan and Amy Green"
 	},
 	{
 		header="Thanks",
-		body="If you've made it this far, thank you for staying with me here in the darkness for a while.\n\n"
+		body="If you've made it this far, thanks for staying with me,\nhere in the darkness, for a while.\n\nIt means the world to me."
 	}
 }
 
