@@ -14,7 +14,7 @@ local pages = {
 	},
 	{
 		header="Thanks",
-		body="I wish to thank the many creative humans whose works have shaped my outlook and my own art in ways both subtle and overt, including:\n\nMakoto Shinkai, Charlie Kaufman, Greta Gerwig, Wong Kar-wai\n\nSylvia Plath, Kazuo Ishiguro, Milan Kundera,\nMark Z. Danielewski, _why\n\nBill Watterson, Randall Munroe\n\nbt, Benn Jordan, Laura Shigihara, Trent Reznor, Frédéric Chopin\n\nGiant Sparrow, Kojima Productions, Unburnt Witch,\nRyan and Amy Green"
+		body="I wish to thank the many creative humans whose works have shaped my human outlook and my artistic output, including:\n\nMakoto Shinkai, Charlie Kaufman, Greta Gerwig, Wong Kar-wai\n\nSylvia Plath, Kazuo Ishiguro, Milan Kundera,\nMark Z. Danielewski, _why\n\nBill Watterson, Randall Munroe\n\nbt, Benn Jordan, Laura Shigihara, Trent Reznor, Frédéric Chopin\n\nMeine Meinung, Caliko, Mahendor\n\nGiant Sparrow, Kojima Productions, Unburnt Witch,\nRyan and Amy Green"
 	},
 	{
 		header="Thanks",
@@ -66,7 +66,7 @@ af[#af+1] = Def.BitmapText{
 	Name="Header",
 	Text=pages[1].header,
 	File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-	InitCommand=function(self) self:vertalign(top):xy(_screen.cx, 20):zoom(1.2) end,
+	InitCommand=function(self) self:vertalign(top):xy(_screen.cx, 30):zoom(1.2) end,
 	RefreshCommand=function(self) self:settext(pages[page].header):smooth(0.25):diffuse(1,1,1,1) end
 }
 
@@ -74,7 +74,7 @@ af[#af+1] = Def.BitmapText{
 	Name="Body",
 	Text=pages[1].body,
 	File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-	InitCommand=function(self) self:align(0,0):xy(_screen.cx-240, 60):wrapwidthpixels(480/0.85):zoom(0.85) end,
+	InitCommand=function(self) self:align(0,0):xy(_screen.cx-240, 80):wrapwidthpixels(480/0.85):zoom(0.85) end,
 	RefreshCommand=function(self) self:settext(pages[page].body):smooth(0.25):diffuse(1,1,1,1) end
 }
 
