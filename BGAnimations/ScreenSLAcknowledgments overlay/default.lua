@@ -7,9 +7,9 @@ local af = Def.ActorFrame{
 		SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./InputHandler.lua", {self, #pages}) )
 	end,
 	OffCommand=function(self)
-		local rh = ThemePrefs.Get("RabbitHole")
-		if rh==0 or rh==21 then
-			ThemePrefs.Set("RabbitHole", rh+1)
+		local hitd = ThemePrefs.Get("HereInTheDarkness")
+		if hitd==0 or hitd==21 then
+			ThemePrefs.Set("HereInTheDarkness", hitd+1)
 			ThemePrefs.Save()
 		end
 	end

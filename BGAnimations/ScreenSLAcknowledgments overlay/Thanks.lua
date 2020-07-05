@@ -163,7 +163,7 @@ return {
 		{
 			Name="Moru Zerinho6",
 			Img="Moru_Zerinho6.jpg",
-			About="Moru Zerinho6 volunteered to translate Simply Love's UI into Brazilian Portuguese and the theme is richer for it.\n\nHe spoke with me extensively about his experience going down The Rabbit Hole in Simply Love and how he translated its words for other non-English-speaking people along the way.  His earnest sincerity helped me in ways I am unable to describe using any words of my own."
+			About="Moru Zerinho6 volunteered to translate Simply Love's UI into Brazilian Portuguese and the theme is richer for it.\n\nHe spoke with me extensively about his experience finding the darkness in Simply Love, translating its words for other non-English-speaking people along the way.  His earnest sincerity helped me in ways I am unable to describe using any words of my own."
 		},
 		{
 			Name="TheNick",
