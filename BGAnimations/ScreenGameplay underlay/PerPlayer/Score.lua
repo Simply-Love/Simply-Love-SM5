@@ -43,7 +43,7 @@ local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 local ar_scale = {
 	sixteen_ten  = 0.825,
-	sixteen_nine = 0.925
+	sixteen_nine = 1
 }
 local zoom_factor = scale(GetScreenAspectRatio(), 16/10, 16/9, ar_scale.sixteen_ten, ar_scale.sixteen_nine)
 
@@ -60,7 +60,8 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 
 	-- FIXME: this is out of control and points to the need for a generalized approach
 	--        to positioning and scaling actors based on AspectRatio (4:3, 16:10, 16:9, 21:9),
-	--        Step Stats (drawing or not), NPSGraphAtTop (drawing or not),
+	--        Step Stats (drawing or not),
+	--        NPSGraphAtTop (drawing or not),
 	--        Center1Player (see GetNotefieldX() in ./Scripts/SL-Helpers.lua)
 	--        and which players are joined
 
@@ -84,7 +85,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 					-- -----------------------------------------------------------------------
 					-- FIXME: "padding" is a lazy fix for multiple nested ActorFrames having zoom applied and
 					--         me not feeling like recursively crawling the AF tree to factor in each zoom
-					local padding = NoteFieldIsCentered and WideScale(-4,28) or 37
+					local padding = NoteFieldIsCentered and WideScale(-4,27) or 37
 					padding = padding * zoom_factor
 
 					-- ultrawide and both players joined
