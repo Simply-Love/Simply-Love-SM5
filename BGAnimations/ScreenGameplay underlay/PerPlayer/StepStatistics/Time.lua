@@ -145,7 +145,7 @@ if GAMESTATE:IsCourseMode() then
 			self:horizalign(left):xy(0,44)
 			local trail = GAMESTATE:GetCurrentTrail(player)
 			if trail then
-				local trail_seconds = TrailUtil.GetTotalSeconds(trail)
+				local trail_seconds = TrailUtil.GetTotalSeconds(trail) / rate
 				fmt = choose_format( trail_seconds )
 				self:settext( fmt(trail_seconds) )
 			end
