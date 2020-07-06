@@ -1,13 +1,15 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local ar = GetScreenAspectRatio()
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- if the conditions aren't right, don't bother
-if SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics"
-or SL.Global.GameMode == "Casual"
-or (ar < 21/9 -- less wide than ultrawide
-and GAMESTATE:GetCurrentStyle():GetName() ~= "single"
-and (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen()))
+if (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
+or (SL.Global.GameMode == "Casual")
+or (GetNotefieldWidth() > _screen.w/2)
+or (NoteFieldIsCentered and not IsUsingWideScreen())
+or (not IsUltraWide and GAMESTATE:GetCurrentStyle():GetName() ~= "single")
 then
 	return
 end
@@ -47,6 +49,7 @@ end
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{}
+
 af.Name="StepStatsPane"..pn
 af.InitCommand=function(self)
 	self:x(sidepane_pos_x):y(_screen.cy + header_height)
@@ -65,8 +68,8 @@ af[#af+1] = Def.ActorFrame{
 			sixteen_nine = 0.925
 		}
 
-		if ar < 21/9 then
-			if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
+		if not IsUltraWide then
+			if (NoteFieldIsCentered and IsUsingWideScreen()) then
 				local zoom = scale(GetScreenAspectRatio(), 16/10, 16/9, zoomfactor.sixteen_ten, zoomfactor.sixteen_nine)
 				self:zoom( zoom )
 			end

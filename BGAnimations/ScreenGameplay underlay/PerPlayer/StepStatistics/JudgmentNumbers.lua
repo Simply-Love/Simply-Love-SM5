@@ -1,6 +1,7 @@
 local player = ...
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 local possible, rv, pss
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
@@ -52,9 +53,11 @@ for index, window in ipairs(TapNoteScores) do
 			self:y((index-1)*row_height - 282)
 
 			-- horizontally squishing the numbers isn't pretty, but I'm not sure what else to do
-			-- when people want to play "24 hours of 100 bpm stream" on a 4:3 monitor
-			if not IsUsingWideScreen() and digits > 5 then
-				self:x(104):maxwidth(185)
+			-- when people want to play "24 hours of 100 bpm stream" on a 16:9 display with Center1Player enabled  :(
+			if (not IsUsingWideScreen() and digits > 5)
+			or (NoteFieldIsCentered and digits > 4)
+			then
+				self:x(104):maxwidth(WideScale(140,185))
 			end
 
 			if IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1) and (digits > 4) then

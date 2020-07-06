@@ -11,6 +11,7 @@ local life_verts = {}
 local offset = 0
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- -----------------------------------------------------------------------
 local BothUsingStepStats = (#GAMESTATE:GetHumanPlayers()==2
@@ -122,8 +123,14 @@ local text = LoadFont("Common Normal")..{
 
 		elseif IsUsingWideScreen() then
 			-- 16:9, 16:10
-			padding[PLAYER_1] = -_screen.cx + 26.5
-			padding[PLAYER_2] = 26.5
+			if NoteFieldIsCentered then
+				padding[PLAYER_1] = -_screen.cx - 116
+				padding[PLAYER_2] = WideScale(-20,20)
+			else
+				padding[PLAYER_1] = -_screen.cx + 26.5
+				padding[PLAYER_2] = 26.5
+			end
+
 		else
 			-- 4:3
 			padding[PLAYER_1] = -_screen.cx + 28
@@ -134,7 +141,11 @@ local text = LoadFont("Common Normal")..{
 			-- pad with an additional ~14px for each digit past 4 the stepcount goes
 			-- this keeps the score right-aligned with the right edge of the judgment
 			-- counts in the StepStats pane
-			padding[player] = padding[player] + (digits * 14)
+			local digitpadding = (digits * 14)
+			-- provide an upper bound of extra padding for extra digits when NoteFieldIsCentered
+			if NoteFieldIsCentered then digitpadding = clamp(digitpadding, 0, WideScale(7,14)) end
+
+			padding[player] = padding[player] + digitpadding
 		end
 
 		-- -----------------------------------------------------------------------
