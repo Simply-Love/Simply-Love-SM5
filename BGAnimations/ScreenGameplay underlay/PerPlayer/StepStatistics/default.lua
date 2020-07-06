@@ -22,7 +22,7 @@ local notefield_width = GetNotefieldWidth()
 local sidepane_width  = _screen.w/2
 local sidepane_pos_x  = _screen.w * (player==PLAYER_1 and 0.75 or 0.25)
 
-if ar < 21/9 then
+if not IsUltraWide then
 	if PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()  then
 		sidepane_width = (_screen.w - GetNotefieldWidth()) / 2
 
@@ -84,6 +84,7 @@ af[#af+1] = Def.ActorFrame{
 	LoadActor("./Banner.lua", player),
 	LoadActor("./JudgmentLabels.lua", player),
 	LoadActor("./JudgmentNumbers.lua", player),
+	LoadActor("./Time.lua", player),
 }
 
 af[#af+1] = LoadActor("./DensityGraph.lua", {player, sidepane_width})
