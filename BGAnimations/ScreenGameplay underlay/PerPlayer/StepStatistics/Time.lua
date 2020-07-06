@@ -12,6 +12,30 @@ local curBMT
 -- change it later if needed
 local fmt = SecondsToMSS
 
+local choose_format = function(seconds)
+	if type(seconds) ~= "number" then return SecondsToMMSS end
+
+	local _format
+
+	if seconds < 600 then
+		_format = SecondsToMSS
+
+	-- at least 10 minutes, shorter than 1 hour
+	elseif seconds >= 360 and seconds < 3600 then
+		_format = SecondsToMMSS
+
+	-- somewhere between 1 and 10 hours
+	elseif seconds >= 3600 and seconds < 36000 then
+		_format = SecondsToHMMSS
+
+	-- 10 hours or longer
+	else
+		_format = SecondsToHHMMSS
+	end
+
+	return _format
+end
+
 -- simple flag used in the Update function to stop updating curBMT once the player runs out of life
 local alive = true
 
@@ -81,10 +105,14 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end
 }
 
--- total time number
+-- total time label
 af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Total") ),
-	InitCommand=function(self) self:horizalign(right):xy(-4, 22):zoom(0.833) end
+	InitCommand=function(self)
+		self:horizalign(right):xy(-4, 22):zoom(0.833)
+
+		local s = THEME:GetString("ScreenGameplay", "Song")
+		self:settext( ("%s "):format(s) )
+	end
 }
 
 -- total time number
@@ -93,27 +121,36 @@ af[#af+1] = LoadFont("Common Normal")..{
 		self:horizalign(left):xy(0,22)
 	end,
 	CurrentSongChangedMessageCommand=function(self)
-
 		local totalseconds = GAMESTATE:GetCurrentSong():GetLastSecond() / rate
 
-		if totalseconds < 600 then
-			fmt = SecondsToMSS
-
-		-- at least 10 minutes, shorter than 1 hour
-		elseif totalseconds >= 360 and totalseconds < 3600 then
-			fmt = SecondsToMMSS
-
-		-- somewhere between 1 and 10 hours
-		elseif totalseconds >= 3600 and totalseconds < 36000 then
-			fmt = SecondsToHMMSS
-
-		-- 10 hours or longer
-		else
-			fmt = SecondsToHHMMSS
+		if not GAMESTATE:IsCourseMode() then
+			fmt = choose_format(totalseconds)
 		end
 
 		self:settext( fmt(totalseconds) )
 	end
 }
+
+if GAMESTATE:IsCourseMode() then
+
+	-- course label
+	af[#af+1] = LoadFont("Common Normal")..{
+		Text=("%s "):format( THEME:GetString("ScreenGameplay", "Course") ),
+		InitCommand=function(self) self:horizalign(right):xy(-4, 44):zoom(0.833) end
+	}
+
+	-- total course time number
+	af[#af+1] = LoadFont("Common Normal")..{
+		InitCommand=function(self)
+			self:horizalign(left):xy(0,44)
+			local trail = GAMESTATE:GetCurrentTrail(player)
+			if trail then
+				local trail_seconds = TrailUtil.GetTotalSeconds(trail)
+				fmt = choose_format( trail_seconds )
+				self:settext( fmt(trail_seconds) )
+			end
+		end
+	}
+end
 
 return af
