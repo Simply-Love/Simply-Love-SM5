@@ -168,8 +168,8 @@ for i=1, #people do
 	if type(people[i].About) == "table" then
 		about["ShowPage"..page_num.."Command"]=function(self)
 			self:settext( people[i].About[(viewcount % #people[i].About)+1] )
-			-- increment
-			viewcount = viewcount + 1
+			-- increment until viewcount reaches table size
+			viewcount = math.min(viewcount + 1, #people[i].About - 1)
 		end
 	end
 

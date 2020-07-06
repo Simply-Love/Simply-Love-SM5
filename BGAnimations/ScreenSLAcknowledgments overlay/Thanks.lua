@@ -50,6 +50,11 @@ return {
 	-- page 4
 	{
 		{
+			Name="SM5 Dev Team",
+			Img="stepmania.png",
+			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, wolfman2000, Midiman, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of open source dance games, including Lirodon, Jousway, MrThatKid, RyTak, and Squirrel."
+		},
+		{
 			Name="kyzentun",
 			Img="kyzentun.png",
 			About="kyzentun answered many of my theming questions on IRC and went out of his way to fix source-related issues that helped me along my way."
@@ -57,12 +62,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, HeySora, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, iamjackg, Flameshadowxeroshin, Horsey-, bowwychan, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, ListenerJubatus, TheNick, CrashCringle12, jordando, and natano."
-		},
-		{
-			Name="SM5 Dev Team",
-			Img="stepmania.png",
-			About="Theming in SM5 is easier and more robust than it is in SM3.95.  Thank you shakesoda, Midiman, wolfman2000, roothorick, cybik, et al!  Thanks to the OG team as well, including Chris Danford, Glenn Maynard, and Steve Checkoway.\n\nI am happy to see new and enthusiastic people working on the next iteration of open source dance games, including Lirodon, Jousway, MrThatKid, RyTak, and Squirrel."
+			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, iamjackg, tertu-m, Horsey-, Akethorpe, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, Fieoner, arcaneAgilmente, ListenerJubatus, TheNick, CrashCringle12, jordando, and natano."
 		},
 	},
 
@@ -130,7 +130,7 @@ return {
 		{
 			Name="Brittney / Galaga",
 			Img="galaga.jpg",
-			About="Brittney leads Valkyrie Dimension, a major community focused on events for women and femme-leaning/identifying people who play dance games.\n\nShe has encouraged valkyries of all skill levels from around the world to push themselves and each other to improve through innovative and compelling competition, and the overall community is better for it."
+			About="Brittney leads Valkyrie Dimension, a major community focused on events for women and femme-leaning/identifying people who play dance games.\n\nShe has encouraged valkyries of all skill levels from around the world to improve through innovative and compelling competition, and the overall community is better for it."
 		},
 		{
 			Name="Dyle / RiOdO",
