@@ -15,16 +15,7 @@ local t = Def.ActorFrame{
 	Name="StepsDisplayList",
 	InitCommand=function(self) self:vertalign(top):xy(_screen.cx-170, _screen.cy + 70) end,
 
-	OnCommand=function(self)
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			-- prefer SL's LastSelectedSteps over the engine's sense of CurrentSteps
-			-- (the engine otherwise resets CurrentSteps to the first available Edit if multiple Edit stepcharts are available)
-			local steps = SL[ToEnumShortString(player)].LastSelectedSteps
-			if steps then GAMESTATE:SetCurrentSteps(player, steps) end
-		end
-
-		self:queuecommand("RedrawStepsDisplay")
-	end,
+	OnCommand=function(self)                           self:queuecommand("RedrawStepsDisplay") end,
 	CurrentSongChangedMessageCommand=function(self)    self:queuecommand("RedrawStepsDisplay") end,
 	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
 	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
