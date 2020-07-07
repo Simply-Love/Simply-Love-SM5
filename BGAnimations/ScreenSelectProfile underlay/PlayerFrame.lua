@@ -326,7 +326,7 @@ return Def.ActorFrame{
 	LoadActor(THEME:GetPathB("ScreenMemoryCard", "overlay/usbicon.png"))..{
 		Name="USBIcon",
 		InitCommand=function(self)
-			self:rotationz(90):zoom(0.75):visible(false):diffuseshift()
+			self:rotationz(90):zoom(0.8175):visible(false):diffuseshift()
 				:effectperiod(1.5):effectcolor1(1,1,1,1):effectcolor2(1,1,1,0.5)
 		end
 	},
