@@ -200,13 +200,13 @@ return Def.ActorFrame{
 						},
 						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
 							InitCommand=function(self)
-								self:align(0,0):zoom(0.095):diffusealpha(0.9):xy(13, 8)
+								self:align(0,0):zoom(0.09):diffusealpha(0.9):xy(13, 8)
 							end
 						},
 						LoadFont("Common Normal")..{
 							Text=THEME:GetString("ProfileAvatar","NoAvatar"),
 							InitCommand=function(self)
-								self:valign(0):zoom(0.815):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 13, 68)
+								self:valign(0):zoom(0.815):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 13, 67)
 							end,
 							SetCommand=function(self, params)
 								if params == nil then

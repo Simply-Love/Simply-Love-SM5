@@ -257,7 +257,7 @@ t[#t+1] = Def.Quad{
 }
 
 -- get table of player avatars (underlying RageTextures, not full Sprite actors)
-local avatars = LoadActor("./Avatars.lua", {af=t, profile_data=profile_data})
+local avatars = LoadActor("./LoadAvatars.lua", {af=t, profile_data=profile_data})
 
 -- load PlayerFrames for both
 if AutoStyle=="none" or AutoStyle=="versus" then
