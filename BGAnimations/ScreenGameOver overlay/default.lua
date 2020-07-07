@@ -32,8 +32,8 @@ local t = Def.ActorFrame{
 }
 
 local line_height = 58
-local profilestats_y = 145
-local horiz_line_y   = 294
+local profilestats_y = 138
+local horiz_line_y   = 288
 local normalstats_y  = 268
 
 for player in ivalues(Players) do
@@ -48,10 +48,10 @@ for player in ivalues(Players) do
 
 		-- if a profile is in use, grab gameplay stats for this session that are pertinent
 		-- to this specific player's profile (highscore name, calories burned, total songs played)
-		stats = LoadActor("PlayerStatsWithProfile.lua", player)
+		local profile_stats = LoadActor("PlayerStatsWithProfile.lua", player)
 
 		-- loop through those stats, adding them to the ActorFrame for this player as BitmapText actors
-		for i,stat in ipairs(stats) do
+		for i,stat in ipairs(profile_stats) do
 			PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
 				Text=stat,
 				InitCommand=function(self)
@@ -62,46 +62,7 @@ for player in ivalues(Players) do
 			}
 		end
 
-		local avatar_dim  = 100
-		local avatar_path = GetAvatarPathForPlayerProfile(player)
-
-		if avatar_path ~= nil then
-			PlayerStatsAF[#PlayerStatsAF+1] = Def.Sprite{
-				Texture=avatar_path,
-				InitCommand=function(self) self:align(0,0):zoomto(avatar_dim, avatar_dim):xy(x_pos-avatar_dim*0.5, 12) end
-			}
-		else
-			-- fallback avatar
-			PlayerStatsAF[#PlayerStatsAF+1] = Def.ActorFrame{
-				InitCommand=function(self) self:xy(x_pos-avatar_dim*0.5, 12) end,
-
-				Def.Quad{
-					InitCommand=function(self)
-						self:align(0,0):zoomto(avatar_dim,avatar_dim):diffuse(color("#283239aa"))
-					end
-				},
-				-- fallback visual (SL visual theme)
-				LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
-					InitCommand=function(self)
-						self:align(0,0):zoom(0.11):diffusealpha(0.9):xy(13, 8)
-					end
-				},
-				-- fallback text ("no avatar")
-				LoadFont("Common Normal")..{
-					Text=THEME:GetString("ProfileAvatar","NoAvatar"),
-					InitCommand=function(self)
-						self:valign(0):zoom(0.875):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 18, 78)
-					end,
-					SetCommand=function(self, params)
-						if params == nil then
-							self:settext(THEME:GetString("ScreenSelectProfile", "GuestProfile"))
-						else
-							self:settext(THEME:GetString("ScreenSelectProfile", "NoAvatar"))
-						end
-					end
-				}
-			}
-		end
+		PlayerStatsAF[#PlayerStatsAF+1] = LoadActor("./ProfileAvatar", {player, x_pos})
 	end
 
 	-- horizontal line separating upper stats (profile) from the lower stats (general)
