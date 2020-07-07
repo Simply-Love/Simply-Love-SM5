@@ -69,8 +69,6 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Steps
 			end
 		end
 
-
-
 	-- ----------------------------------------------------------------
 	-- FIXME: this is likely to return the incorrect note data string from an sm file when
 	--   the requested Difficulty is "Edit" and there are multiple edit difficulties available.

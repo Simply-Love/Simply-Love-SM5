@@ -117,24 +117,77 @@ local function NormalizeFloatDigits(param)
 	return table.concat(paramParts, ',')
 end
 
--- We generate the hash for the CurrentSong by calculating the SHA256 of the
--- chartData + BPM string. We add the BPM string to ensure that the chart played
--- is actually accurate.
---
--- stepsType is usually either 'dance-single' or 'dance-double'
--- difficulty is usually one of {'Beginner', 'Easy', 'Medium', 'Hard', 'Challenge'}
-function GenerateHash(steps, stepsType, difficulty)
-	local msdFile = ParseMsdFile(steps)
+local function GenerateHashForSSC(msdFile, stepsType, difficulty, stepsDescription)
+	local bpms = ''
+	local allNotes = {}
+	local readingSongInfo = true
 
-	if #msdFile == 0 then return ''	end
+	-- SSC files have "SONG_INFO" and "STEP_INFO" sections.
+	-- It starts by reading the SONG_INFO section, and when we come across a NOTEDATA value,
+	-- we swap to parse a new "STEP_INFO" section.
+	-- Each "STEP_INFO" section ends after processing either a NOTES/NOTES2 or STEPFILENAME field
+	-- where it then swaps back to the "SONG_INFO" section.
+	-- You can view StepMania implementation here:
+	-- https://github.com/stepmania/stepmania/blob/5_1-new/src/NotesLoaderSSC.cpp#L977-L1041
+	for value in ivalues(msdFile) do
+		if readingSongInfo then
+			if value[1] == 'BPMS' then
+				-- This is the top level BPM, which might be different than the per chart BPM.
+				bpms = NormalizeFloatDigits(value[2])
+			elseif value[1] == 'NOTEDATA' then
+				-- Start reading note data. Insert a nested table to hold all the values.
+				readingSongInfo = false
+				table.insert(allNotes, {})
+			end
+		else
+			if value[1] == 'BPMS' then
+				-- If per chart BPM exists, save it.
+				allNotes[#allNotes][value[1]] = NormalizeFloatDigits(value[2])
+			elseif value[1] == 'STEPSTYPE' or value[1] == 'DESCRIPTION' or value[1] == 'DIFFICULTY' then
+				-- We want the description in order to handle edit data.
+				allNotes[#allNotes][value[1]] = value[2]
+			elseif value[1] == 'NOTES' or value[1] == 'NOTES2' then
+				readingSongInfo = true
+				-- There are no subsections to the NOTES field unlike SM files (which have 7 or more).
+				allNotes[#allNotes]['NOTES'] = value[2]
+			elseif value[1] == 'STEPFILENAME' then
+				readingSongInfo = true
+			end
+		end
+	end
 
+	for noteData in ivalues(allNotes) do
+		if noteData['STEPSTYPE'] ~= nil and noteData['STEPSTYPE'] == stepsType then
+			-- Search for the specific difficulty we're interested in, or the named edit.
+			if noteData['DIFFICULTY'] ~= nil and ((noteData['DIFFICULTY'] ~= 'Edit' and noteData['DIFFICULTY'] == difficulty) or
+												  (noteData['DIFFICULTY'] == 'Edit' and noteData['DESCRIPTION'] == stepsDescription)) then
+
+				-- If we found special BPMs for this chart, then use them.
+				if noteData['BPMS'] ~= nil then
+					bpms = noteData['BPMS']
+				end
+
+				if bpms == '' or noteData['NOTES'] == nil then return '' end
+
+				local minimizedChart = MinimizeChart(noteData['NOTES'])
+				local chartDataAndBpm = minimizedChart .. bpms
+				local hash = sha256(chartDataAndBpm)
+				return hash
+			end
+		end
+	end
+
+	return ''
+end
+
+local function GenerateHashForSM(msdFile, stepsType, difficulty, stepsDescription)
 	local bpms = ''
 	local allNotes = {}
 
 	for value in ivalues(msdFile) do
 		if value[1] == 'BPMS' then
 			bpms = NormalizeFloatDigits(value[2])
-		elseif value[1] == 'NOTES' then
+		elseif value[1] == 'NOTES' or value[1] == 'NOTES2' then
 			table.insert(allNotes, value)
 		end
 	end
@@ -142,9 +195,11 @@ function GenerateHash(steps, stepsType, difficulty)
 	if bpms == '' then return '' end
 
 	for notes in ivalues(allNotes) do
-		-- StepMania considers NOTES sections with greater than 7 sections valid.
+		-- StepMania considers NOTES sections with greater than 7 sections valid in SM Files.
 		-- https://github.com/stepmania/stepmania/blob/master/src/NotesLoaderSM.cpp#L1072-L1079
-		if #notes >= 7 and notes[2] == stepsType and difficulty == notes[4] then
+		-- Search for the specific difficulty we're interested in, or the named edit.
+		if #notes >= 7 and notes[2] == stepsType and ((notes[4] ~= 'Edit' and notes[4] == difficulty) or
+													  (notes[4] == 'Edit' and notes[3] == stepsDescription)) then
 			local minimizedChart = MinimizeChart(notes[7])
 			local chartDataAndBpm = minimizedChart .. bpms
 			local hash = sha256(chartDataAndBpm)
@@ -154,4 +209,24 @@ function GenerateHash(steps, stepsType, difficulty)
 	end
 
 	return ''
+end
+
+-- We generate the hash for the CurrentSong by calculating the SHA256 of the
+-- chartData + BPM string. We add the BPM string to ensure that the chart played
+-- is actually accurate.
+--
+-- stepsType is usually either 'dance-single' or 'dance-double'
+-- difficulty is usually one of {'Beginner', 'Easy', 'Medium', 'Hard', 'Challenge', 'Edit'}
+function GenerateHash(steps, stepsType, difficulty)
+	local msdFile, fileType = ParseMsdFile(steps)
+
+	if #msdFile == 0 then return ''	end
+
+	if fileType == 'sm' then
+		return GenerateHashForSM(msdFile, stepsType, difficulty, steps:GetDescription())
+	elseif fileType == 'ssc' then
+		return GenerateHashForSSC(msdFile, stepsType, difficulty, steps:GetDescription())
+	else
+		return ''
+	end
 end
