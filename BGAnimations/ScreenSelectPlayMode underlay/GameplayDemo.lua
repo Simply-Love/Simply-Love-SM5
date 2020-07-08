@@ -156,7 +156,7 @@ local function YieldStepPattern(i, dir)
 					self:blend(Blend.Multiply)
 				end
 				if file == "center-body.png" or file == "center-feet.png" or file == "arrow-body.png" then
-					self:diffuse( GetHexColor(i) )
+					self:diffuse( GetHexColor(i, true) )
 				end
 			end,
 		}

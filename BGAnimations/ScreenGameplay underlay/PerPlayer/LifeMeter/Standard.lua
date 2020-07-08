@@ -2,7 +2,7 @@ local player = ...
 
 local w = 136
 local h = 18
-local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * WideScale(238, 288)
+local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(238, 288)
 
 local swoosh, velocity
 
@@ -24,7 +24,7 @@ local meter = Def.ActorFrame{
 	-- the Quad that changes width/color depending on current Life
 	Def.Quad{
 		Name="MeterFill",
-		InitCommand=function(self) self:zoomto(0,h):diffuse(PlayerColor(player)):horizalign(left) end,
+		InitCommand=function(self) self:zoomto(0,h):diffuse(PlayerColor(player,true)):horizalign(left) end,
 		OnCommand=function(self) self:x( _x - w/2 ) end,
 
 		-- check whether the player's LifeMeter is "Hot"
@@ -37,7 +37,7 @@ local meter = Def.ActorFrame{
 					self:diffuse(1,1,1,1)
 				else
 					-- ~~man's~~ lifebar's not hot
-					self:diffuse( PlayerColor(player) )
+					self:diffuse( PlayerColor(player,true) )
 				end
 			end
 		end,

@@ -1,5 +1,8 @@
 local player = ...
 
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+
 local possible, rv, pss
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
@@ -22,6 +25,7 @@ local leadingZeroAttr
 local row_height = 35
 
 local t = Def.ActorFrame{
+	Name="JudgmentNumbers",
 	InitCommand=function(self)
 		self:zoom(0.8)
 	end
@@ -31,7 +35,7 @@ local t = Def.ActorFrame{
 for index, window in ipairs(TapNoteScores) do
 
 	-- player performance value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		Text=(pattern):format(0),
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(left)
@@ -49,9 +53,15 @@ for index, window in ipairs(TapNoteScores) do
 			self:y((index-1)*row_height - 282)
 
 			-- horizontally squishing the numbers isn't pretty, but I'm not sure what else to do
-			-- when people want to play "24 hours of 100 bpm stream" on a 4:3 monitor
-			if not IsUsingWideScreen() and digits > 5 then
-				self:x(104):maxwidth(185)
+			-- when people want to play "24 hours of 100 bpm stream" on a 16:9 display with Center1Player enabled  :(
+			if (not IsUsingWideScreen() and digits > 5)
+			or (NoteFieldIsCentered and digits > 4)
+			then
+				self:x(104):maxwidth(WideScale(140,185))
+			end
+
+			if IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1) and (digits > 4) then
+				self:x(104):maxwidth(165)
 			end
 		end,
 		JudgmentMessageCommand=function(self, params)
@@ -77,7 +87,7 @@ end
 for index, RCType in ipairs(RadarCategories) do
 
 	-- player performance value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		Text="000",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
@@ -120,7 +130,7 @@ for index, RCType in ipairs(RadarCategories) do
 	}
 
 	-- possible value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 

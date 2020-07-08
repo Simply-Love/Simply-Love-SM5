@@ -3,7 +3,7 @@ local index = Var("GameCommand"):GetIndex()
 local t = Def.ActorFrame{}
 
 -- this renders the text of a single choice in the scroller
-t[#t+1] = LoadFont("_wendy small")..{
+t[#t+1] = LoadFont("Common Bold")..{
 	Name="Choice"..index,
 	Text=THEME:GetString( 'ScreenTitleMenu', Var("GameCommand"):GetText() ),
 

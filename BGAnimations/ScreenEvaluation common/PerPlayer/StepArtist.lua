@@ -1,5 +1,20 @@
 local player = ...
-local text_table = GetStepsCredit(player)
+local info
+
+-- in CourseMode, GetStepsCredit() will return a table of info that
+-- has as many entries as there are stepcharts in the course
+-- (i.e. potentially a lot) so just show course Scripter or Description
+if GAMESTATE:IsCourseMode() then
+	local course = GAMESTATE:GetCurrentCourse()
+	local scripter = course:GetScripter()
+	local descript = course:GetDescription()
+	-- prefer scripter, use description if scripter is empty
+	info = (scripter ~= "" and scripter) or (descript ~= "" and descript) or ""
+
+else
+	info = GetStepsCredit(player)
+end
+
 local marquee_index = 0
 
 return LoadFont("Common Normal")..{
@@ -15,20 +30,24 @@ return LoadFont("Common Normal")..{
 			self:horizalign(right)
 		end
 
-		if #text_table > 0 then self:playcommand("Marquee") end
+		if type(info)=="table" and #info > 0 then
+			self:playcommand("Marquee")
+		elseif type(info)=="string" then
+			self:settext(info)
+		end
 	end,
 	MarqueeCommand=function(self)
 		-- increment the marquee_index, and keep it in bounds
-		marquee_index = (marquee_index % #text_table) + 1
+		marquee_index = (marquee_index % #info) + 1
 		-- retrieve the text we want to display
-		local text = text_table[marquee_index]
+		local text = info[marquee_index]
 
 		-- set this BitmapText actor to display that text
 		self:settext( text )
 		DiffuseEmojis(self, text)
 
 		-- sleep 2 seconds before queueing the next Marquee command to do this again
-		if #text_table > 1 then
+		if #info > 1 then
 			self:sleep(2):queuecommand("Marquee")
 		end
 	end,

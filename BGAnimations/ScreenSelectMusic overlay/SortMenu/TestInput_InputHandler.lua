@@ -3,7 +3,7 @@ local function input(event)
 	if not (event and event.PlayerNumber and event.button) then
 		return false
 	end
-	-- don't handle input for a non-joined player (latejoin still overrides this somehow...)
+	-- don't handle input for a non-joined player
 	if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		return false
 	end

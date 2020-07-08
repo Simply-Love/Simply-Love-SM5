@@ -1,52 +1,92 @@
 local player = ...
 local pn = ToEnumShortString(player)
+local ar = GetScreenAspectRatio()
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- if the conditions aren't right, don't bother
-if SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics"
-or GAMESTATE:GetCurrentStyle():GetName() ~= "single"
-or SL.Global.GameMode == "Casual"
-or (PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen())
+if (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
+or (SL.Global.GameMode == "Casual")
+or (GetNotefieldWidth() > _screen.w/2)
+or (NoteFieldIsCentered and not IsUsingWideScreen())
+or (not IsUltraWide and GAMESTATE:GetCurrentStyle():GetName() ~= "single")
 then
 	return
 end
 
-local bg_and_judgments = Def.ActorFrame{
-	InitCommand=function(self)
-		if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
-			-- 16:9 aspect ratio (approximately 1.7778)
-			if GetScreenAspectRatio() > 1.7 then
-				self:zoom(0.925)
+-- -----------------------------------------------------------------------
+-- positioning and sizing of side pane
 
-			-- if 16:10 aspect ratio
-			else
-				self:zoom(0.825)
+local header_height   = 80
+local notefield_width = GetNotefieldWidth()
+local sidepane_width  = _screen.w/2
+local sidepane_pos_x  = _screen.w * (player==PLAYER_1 and 0.75 or 0.25)
+
+if not IsUltraWide then
+	if PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()  then
+		sidepane_width = (_screen.w - GetNotefieldWidth()) / 2
+
+		if player==PLAYER_1 then
+			sidepane_pos_x = _screen.cx + notefield_width + (sidepane_width-notefield_width)/2
+		else
+			sidepane_pos_x = _screen.cx - notefield_width - (sidepane_width-notefield_width)/2
+		end
+	end
+
+-- ultrawide or wider
+else
+	if #GAMESTATE:GetHumanPlayers() > 1 then
+		sidepane_width = _screen.w/5
+		if player==PLAYER_1 then
+			sidepane_pos_x = sidepane_width/2
+		else
+			sidepane_pos_x = _screen.w - (sidepane_width/2)
+		end
+	end
+end
+
+
+-- -----------------------------------------------------------------------
+
+local af = Def.ActorFrame{}
+
+af.Name="StepStatsPane"..pn
+af.InitCommand=function(self)
+	self:x(sidepane_pos_x):y(_screen.cy + header_height)
+end
+
+af[#af+1] = LoadActor("./DarkBackground.lua", {player, header_height, sidepane_width})
+
+-- banner, judgment labels, and judgment numbers will be collectively shrunk
+-- if Center1Player is enabled to accommodate the smaller space
+af[#af+1] = Def.ActorFrame{
+	Name="BannerAndData",
+	InitCommand=function(self)
+		local zoomfactor = {
+			ultrawide    = 0.725,
+			sixteen_ten  = 0.825,
+			sixteen_nine = 0.925
+		}
+
+		if not IsUltraWide then
+			if (NoteFieldIsCentered and IsUsingWideScreen()) then
+				local zoom = scale(GetScreenAspectRatio(), 16/10, 16/9, zoomfactor.sixteen_ten, zoomfactor.sixteen_nine)
+				self:zoom( zoom )
+			end
+
+		else
+			if #GAMESTATE:GetHumanPlayers() > 1 then
+				self:zoom(zoomfactor.ultrawide):addy(-55)
 			end
 		end
 	end,
 
-	LoadActor("./BackgroundAndBanner.lua", player),
+	LoadActor("./Banner.lua", player),
 	LoadActor("./JudgmentLabels.lua", player),
 	LoadActor("./JudgmentNumbers.lua", player),
+	LoadActor("./Time.lua", player),
 }
 
-return Def.ActorFrame{
-	InitCommand=function(self)
-		local x = _screen.w/4 * (player==PLAYER_1 and 3 or 1)
+af[#af+1] = LoadActor("./DensityGraph.lua", {player, sidepane_width})
 
-		if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
-			-- 16:9 aspect ratio (approximately 1.7778)
-			if GetScreenAspectRatio() > 1.7 then
-				x = x + (70 * (player==PLAYER_1 and 1 or -1))
-
-			-- if 16:10 aspect ratio
-			else
-				x = x + (64 * (player==PLAYER_1 and 1 or -1))
-			end
-		end
-
-		self:xy(x, _screen.cy + 80)
-	end,
-
-	bg_and_judgments,
-	LoadActor("./DensityGraph.lua", player),
-}
+return af

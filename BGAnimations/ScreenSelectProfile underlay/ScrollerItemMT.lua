@@ -5,7 +5,7 @@ return {
 		create_actors = function(self, name)
 			self.name=name
 
-			return Def.ActorFrame{
+			local af = Def.ActorFrame{
 				Name=name,
 				InitCommand=function(subself)
 					self.container = subself
@@ -13,14 +13,23 @@ return {
 				end,
 				OnCommand=function(subself) subself:sleep(0.2):queuecommand("Appear") end,
 				AppearCommand=function(subself) subself:visible(true):linear(0.15):diffusealpha(1) end,
-
-				LoadFont("Common Normal")..{
-					InitCommand=function(subself)
-						self.bmt = subself
-						subself:maxwidth(115):MaskDest()
-					end,
-				}
 			}
+
+			local txt = LoadFont("Common Normal")..{
+				InitCommand=function(subself)
+					self.bmt = subself
+					subself:maxwidth(115):MaskDest():shadowlength(0.5)
+				end,
+			}
+
+			if ThemePrefs.Get("RainbowMode") then
+				txt.GainFocusCommand=function(subself) subself:diffusealpha(1) end
+				txt.LoseFocusCommand=function(subself) subself:diffusealpha(0.8) end
+			end
+
+			af[#af+1] = txt
+
+			return af
 		end,
 		transform = function(self, item_index, num_items, has_focus)
 			self.container:finishtweening()
@@ -29,6 +38,12 @@ return {
 				self.container:diffusealpha(0)
 			else
 				self.container:diffusealpha(1)
+			end
+
+			if has_focus then
+				self.bmt:playcommand("GainFocus")
+			else
+				self.bmt:playcommand("LoseFocus")
 			end
 
 			self.container:linear(0.15):y(35 * item_index)

@@ -1,5 +1,6 @@
 local numItemsToDraw = 8
-local scrolling_down = true
+local PrevCurrentItem = 0
+local SecondsToPause = 0.5
 
 local transform_function = function(self,offsetFromCenter,itemIndex,numitems)
 	self:y( offsetFromCenter * 23 )
@@ -9,18 +10,25 @@ end
 -- dt is "delta time" (time in seconds since the last frame); we don't need it here
 local update = function(ccl, dt)
 
-	-- CourseContentsList:GetCurrentItem() returns a float, so call math.floor() on it
-	-- while it's scrolling down or math.ceil() while it's scrolling up to do integer comparison.
+	-- if ccl:GetCurrentItem() hasn't changed since the last update, the scrolling
+	-- behavior has (probably) paused on a particular CourseEntry for a moment
+	if (PrevCurrentItem == ccl:GetCurrentItem()) then
+		MESSAGEMAN:Broadcast("UpdateTrailText", {index=round(PrevCurrentItem)+1})
+	else
+		PrevCurrentItem = ccl:GetCurrentItem()
+	end
+
+	-- CourseContentsList:GetCurrentItem() returns a float, so call math.floor()
+	-- on it while it's scrolling down to attempt integer comparison, and wait
+	-- for it to go negative when it's scrolling up (3 → 2 → 1 → 0 → -0.0012...)
 	--
 	-- if we've reached the bottom of the list and want the CCL to scroll up
-	if math.floor(ccl:GetCurrentItem()) == (ccl:GetNumItems() - (numItemsToDraw/2)) then
-		scrolling_down = false
+	if math.floor(ccl:GetCurrentItem()) == (ccl:GetNumItems() - 1) then
 		ccl:SetDestinationItem( 0 )
 
 	-- elseif we've reached the top of the list and want the CCL to scroll down
-	elseif math.ceil(ccl:GetCurrentItem()) == 0 then
-		scrolling_down = true
-		ccl:SetDestinationItem( math.max(0,ccl:GetNumItems() - numItemsToDraw/2) )
+	elseif ccl:GetCurrentItem() <= 0 and ccl:GetTweenTimeLeft() == 0 then
+		ccl:playcommand("Wait")
 	end
 end
 
@@ -89,30 +97,36 @@ af[#af+1] = Def.CourseContentsList {
 
 	CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
 	CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
+
+	WaitCommand=function(self)
+		self:sleep(SecondsToPause):queuecommand("StartScrollingDown")
+	end,
+	StartScrollingDownCommand=function(self)
+		self:SetDestinationItem( math.max(0, self:GetNumItems() - 1) )
+	end,
+
 	SetCommand=function(self)
+		self:finishtweening():SetFromGameState()
 
 		-- I have a very flimsy understanding of what most of these methods do,
 		-- as they were all copied from the default theme's CourseContentsList, but
 		-- commenting each one out broke the behavior of the ActorScroller in a unique
 		-- way, so I'm leaving them intact here.
-		self:SetFromGameState()
-			:SetCurrentAndDestinationItem(0)
+		self:SetCurrentAndDestinationItem(0)
 			:SetTransformFromFunction(transform_function)
 			:PositionItems()
 
 			:SetLoop(false)
-			:SetPauseCountdownSeconds(1)
-			:SetSecondsPauseBetweenItems( 0.2 )
-
-		if scrolling_down then
-			self:SetDestinationItem( math.max(0,self:GetNumItems() - numItemsToDraw/2) )
-		else
-			self:SetDestinationItem( 0 )
-		end
+			:SetPauseCountdownSeconds(0)
+			:SetSecondsPauseBetweenItems( SecondsToPause )
 	end,
 
 	-- a generic row in the CourseContentsList
 	Display=Def.ActorFrame {
+		SetCommand=function(self)
+			-- override fallback animation by forcing tween to finish immediately
+			self:finishtweening()
+		end,
 		SetSongCommand=function(self, params)
 			self:finishtweening()
 				:zoomy(0)

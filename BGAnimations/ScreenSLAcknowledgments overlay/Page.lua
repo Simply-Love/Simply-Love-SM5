@@ -49,7 +49,12 @@ local PictureActor = function( path, _y )
 end
 
 local viewcount = 0
-local page_af = Def.ActorFrame{ InitCommand=function(self) self:y(header_height) end }
+local page_af = Def.ActorFrame{
+	Name="Page"..page_num,
+	InitCommand=function(self) self:visible(false):xy(_screen.cx, header_height) end,
+	HideCommand=function(self) self:visible(false) end,
+	["ShowPage"..page_num.."Command"]=function(self) self:visible(true) end,
+}
 
 for i=1, #people do
 	local quad_y = padding*i + box_height*(i-1)
@@ -163,8 +168,8 @@ for i=1, #people do
 	if type(people[i].About) == "table" then
 		about["ShowPage"..page_num.."Command"]=function(self)
 			self:settext( people[i].About[(viewcount % #people[i].About)+1] )
-			-- increment
-			viewcount = viewcount + 1
+			-- increment until viewcount reaches table size
+			viewcount = math.min(viewcount + 1, #people[i].About - 1)
 		end
 	end
 

@@ -5,13 +5,12 @@
 -- The Quad is wrapped in an ActorFrame so that we can apply zoomto()
 -- via OnCommand without having the engine say that the OnCommand for
 -- the Frame is already defined in Metrics.ini
---
--- It is unclear why I once thought defining the height of a row in this menu
--- to be 1/20 of the screen's height was a good idea, but it works, so I
--- guess I'll just leave it alone for now...
+
+local w = 236
+local h = 24
 
 return Def.ActorFrame{
 	Def.Quad {
-		OnCommand=function(self) self:zoomto(200,_screen.h*0.05) end
+		OnCommand=function(self) self:zoomto(w,h) end
 	}
 }

@@ -107,7 +107,7 @@ end
 -- so many players have become so reliant on...
 local font = mods.ComboFont
 if font == "Wendy" or font == "Wendy (Cursed)" then
-	font = "_wendy small"
+	font = "Wendy/_wendy small"
 else
 	font = "_Combo Fonts/" .. font .. "/"
 end

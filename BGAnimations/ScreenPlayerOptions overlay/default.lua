@@ -167,6 +167,7 @@ local t = Def.ActorFrame{
 LoadActor("./NoteSkinPreviews.lua", t)
 LoadActor("./JudgmentGraphicPreviews.lua", t)
 LoadActor("./ComboFontPreviews.lua", t)
+LoadActor("./HoldJudgmentPreviews.lua", t)
 
 -- some functionality needed in both PlayerOptions, PlayerOptions2, and PlayerOptions3
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
@@ -254,7 +255,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	}
 
 	-- the large block text at the top that shows each player their current scroll speed
-	t[#t+1] = LoadFont("_wendy small")..{
+	t[#t+1] = LoadFont("Common Bold")..{
 		Name=pn.."SpeedModHelper",
 		Text="",
 		InitCommand=function(self)

@@ -1,11 +1,10 @@
 local player = ...
 
+local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(292.5, 342.5)
+
 return Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy( WideScale(27,84), 56 )
-		if player == PLAYER_2 then
-			self:x( _screen.w-WideScale(27,84) )
-		end
+		self:xy(_x, 56)
 	end,
 
 
@@ -24,7 +23,7 @@ return Def.ActorFrame{
 	},
 
 	-- player's chart's difficulty meter
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		InitCommand=function(self)
 			self:diffuse( Color.Black )
 			self:zoom( 0.4 )

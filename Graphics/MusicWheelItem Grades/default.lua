@@ -20,7 +20,7 @@ grades["Grade_Failed"] = num_tiers
 
 return Def.Sprite{
 	Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
-	InitCommand=function(self) self:zoom( WideScale(0.18, 0.3) ):animate(false) end,
+	InitCommand=function(self) self:zoom( SL_WideScale(0.18, 0.3) ):animate(false) end,
 
 	-- "SetGrade" is broadcast by the engine with two parameters:
 	--    Grade (GradeTier as number)

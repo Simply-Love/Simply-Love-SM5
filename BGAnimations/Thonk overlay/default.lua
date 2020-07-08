@@ -38,7 +38,7 @@ local function mods_randomize_positions(power,skew)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyleThonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyle" then
 		if underlay:GetChild("") then
 
 			local tab = SCREENMAN:GetTopScreen():GetChild("Underlay"):GetChildren()
@@ -77,7 +77,7 @@ local function mods_randomize_positions(power,skew)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayModeThonk" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2Thonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then
 
 		for k,v in pairs(ss_playmode_items) do
 
@@ -120,7 +120,7 @@ local function mods_shuffle_lr(strength)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyleThonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyle" then
 		if underlay:GetChild("") then
 
 			local tab = SCREENMAN:GetTopScreen():GetChild("Underlay"):GetChildren()
@@ -166,7 +166,7 @@ local function mods_shuffle_lr(strength)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayModeThonk" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2Thonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then
 
 		for k,v in pairs(ss_playmode_items) do
 
@@ -207,7 +207,7 @@ local function mods_shuffle_ud(strength)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyleThonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyle" then
 		if underlay:GetChild("") then
 
 			local tab = SCREENMAN:GetTopScreen():GetChild("Underlay"):GetChildren()
@@ -253,7 +253,7 @@ local function mods_shuffle_ud(strength)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayModeThonk" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2Thonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then
 
 		for k,v in pairs(ss_playmode_items) do
 
@@ -775,7 +775,7 @@ local Update = function(self, delta)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyleThonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectStyle" then
 		if underlay:GetChild("") then
 
 			local k = 1
@@ -834,7 +834,7 @@ local Update = function(self, delta)
 		end
 	end
 
-	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayModeThonk" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2Thonk" then
+	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode" or SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then
 
 
 		local radius = 0
@@ -870,7 +870,7 @@ local Update = function(self, delta)
 		end
 
 		local items = {"IconChoiceCasual","IconChoiceITG","IconChoiceFA+"}
-		if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2Thonk" then
+		if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectPlayMode2" then
 			items = {"IconChoiceRegular","IconChoiceMarathon"}
 		end
 

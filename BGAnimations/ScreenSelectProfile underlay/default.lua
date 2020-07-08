@@ -118,7 +118,7 @@ local t = Def.ActorFrame {
 		-- to have local profiles they want to use.  So, this gets tricky.
 		--
 		-- Loop through the enum for PlayerNumber that the engine has exposed to Lua.
-		for player in ivalues(PlayerNumber) do
+		for player in ivalues( PlayerNumber ) do
 			-- check if this player is joined in
 			if GAMESTATE:IsHumanPlayer(player) then
 				-- this player was joined in, so get the index of their profile scroller as it is now
@@ -249,21 +249,24 @@ local t = Def.ActorFrame {
 
 -- top mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-110):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-107):MaskSource() end
 }
 -- bottom mask
 t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+111):MaskSource() end
+	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+107):MaskSource() end
 }
+
+-- get table of player avatars (underlying RageTextures, not full Sprite actors)
+local avatars = LoadActor("./LoadAvatars.lua", {af=t, profile_data=profile_data})
 
 -- load PlayerFrames for both
 if AutoStyle=="none" or AutoStyle=="versus" then
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data})
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data, Avatars=avatars})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data, Avatars=avatars})
 
 -- load only for the MasterPlayerNumber
 else
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn], ProfileData=profile_data})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn], ProfileData=profile_data, Avatars=avatars})
 end
 
 LoadActor("./JudgmentGraphicPreviews.lua", {af=t, profile_data=profile_data})

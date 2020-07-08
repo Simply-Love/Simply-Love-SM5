@@ -192,8 +192,9 @@ SL_CustomPrefs.Get = function()
 			Values  = { 0, 1, 2 }
 		},
 		-- - - - - - - - - - - - - - - - - - - -
-		--- ???
-		RabbitHole = {
+		-- this was previously titled "The Rabbit Hole"
+		-- https://github.com/48productions/Simply-Potato-SM5/pull/4#issuecomment-587281943
+		HereInTheDarkness = {
 			Default = 0,
 			Choices = range(0, 22, 1),
 			Values = range(0, 22, 1),

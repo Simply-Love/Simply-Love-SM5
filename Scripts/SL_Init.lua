@@ -8,6 +8,7 @@ local PlayerDefaults = {
 				SpeedMod = 1.00,
 				JudgmentGraphic = "Love 2x6.png",
 				ComboFont = "Wendy",
+				HoldJudgment = "Love 1x2.png",
 				NoteSkin = nil,
 				Mini = "0%",
 				BackgroundFilter = "Off",
@@ -102,7 +103,23 @@ SL = {
 	Global = setmetatable( {}, GlobalDefaults),
 
 	-- Colors that Simply Love's background can be
+	-- These colors are used for text on dark backgrounds and backgrounds containing dark text:
 	Colors = {
+		"#FF5D47",
+		"#FF577E",
+		"#FF47B3",
+		"#DD57FF",
+		"#8885ff",
+		"#3D94FF",
+		"#00B8CC",
+		"#5CE087",
+		"#AEFA44",
+		"#FFFF00",
+		"#FFBE00",
+		"#FF7D00",
+	},
+	-- These are the original SL colors. They're used for decorative (non-text) elements, like the background hearts:
+	DecorativeColors = {
 		"#FF3C23",
 		"#FF003C",
 		"#C1006F",
@@ -116,30 +133,31 @@ SL = {
 		"#FFBE00",
 		"#FF7D00"
 	},
+	-- These judgment colors are used for text & numbers on dark backgrounds:
 	JudgmentColors = {
 		Casual = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
-			color("#5b2b8e"),	-- purple
+			color("#b45cff"),	-- purple (greatly lightened)
 			color("#c9855e"),	-- peach?
-			color("#ff0000")	-- red
+			color("#ff3030")	-- red (slightly lightened)
 		},
 		ITG = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
-			color("#5b2b8e"),	-- purple
+			color("#b45cff"),	-- purple (greatly lightened)
 			color("#c9855e"),	-- peach?
-			color("#ff0000")	-- red
+			color("#ff3030")	-- red (slightly lightened)
 		},
 		["FA+"] = {
 			color("#21CCE8"),	-- blue
 			color("#ffffff"),	-- white
 			color("#e29c18"),	-- gold
 			color("#66c955"),	-- green
-			color("#5b2b8e"),	-- purple
-			color("#ff0000")	-- red
+			color("#b45cff"),	-- purple (greatly lightened)
+			color("#ff3030")	-- red (slightly lightened)
 		},
 	},
 	Preferences = {

@@ -185,6 +185,21 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	HoldJudgment = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
+		Choices = function() return map(StripSpriteHints, GetHoldJudgments()) end,
+		Values = function() return GetHoldJudgments() end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			for i, val in ipairs(self.Values) do
+				if list[i] then mods.HoldJudgment = val; break end
+			end
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the HoldJudgment preview
+			MESSAGEMAN:Broadcast("HoldJudgmentChanged", {Player=pn, HoldJudgment=StripSpriteHints(mods.HoldJudgment)})
+		end
+	},
+	-------------------------------------------------------------------------
 	ComboFont = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,
@@ -376,8 +391,10 @@ local Overrides = {
 			local style = GAMESTATE:GetCurrentStyle()
 			local notefieldwidth = GetNotefieldWidth()
 
-			if style and style:GetName() ~= "single"
-			or notefieldwidth and notefieldwidth > _screen.w/2 then
+			if GetScreenAspectRatio() < 21/9 and style and style:GetName() ~= "single"
+			or notefieldwidth and notefieldwidth > _screen.w/2
+			or PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen()
+			then
 				table.remove(choices, 3)
 			end
 

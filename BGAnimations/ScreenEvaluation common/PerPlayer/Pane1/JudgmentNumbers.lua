@@ -32,7 +32,7 @@ for i=1,#TapNoteScores.Types do
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
-		Font="_ScreenEvaluation numbers",
+		Font="Wendy/_ScreenEvaluation numbers",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
 
@@ -72,7 +72,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 
 	-- player performance value
 	t[#t+1] = Def.RollingNumbers{
-		Font="_ScreenEvaluation numbers",
+		Font="Wendy/_ScreenEvaluation numbers",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)
@@ -92,7 +92,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	}
 
 	-- possible value
-	t[#t+1] = LoadFont("_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)

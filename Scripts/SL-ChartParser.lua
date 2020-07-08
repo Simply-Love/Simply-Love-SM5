@@ -4,8 +4,11 @@ GetSimfileString = function(steps)
 	local filename = steps:GetFilename()
 	if not filename then return end
 
-	local filetype = filename:match("[^.]+$")
-	-- if neither a .ssc nor a .sm file were found, bail now
+	-- get the file extension like "sm" or "SM" or "ssc" or "SSC" or "sSc" or etc.
+	-- convert to lowercase
+	local filetype = filename:match("[^.]+$"):lower()
+	-- if file doesn't match "ssc" or "sm", it was (hopefully) something else (.dwi, .bms, etc.)
+	-- that isn't supported by SL-ChartParser
 	if not (filetype=="ssc" or filetype=="sm") then return end
 
 	-- create a generic RageFile that we'll use to read the contents
@@ -13,7 +16,7 @@ GetSimfileString = function(steps)
 	local f = RageFileUtil.CreateRageFile()
 	local contents
 
-	-- the second argument here (the 1) signifies
+	-- the second argument here (the 1) signals
 	-- that we are opening the file in read-only mode
 	if f:Open(filename, 1) then
 		contents = f:Read()
@@ -124,6 +127,7 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 	for i, v in ipairs(TapNotes) do
 		TapNotesString = TapNotesString .. v
 	end
+	TapNotesString = "["..TapNotesString.."]"
 
 	-- Which measures are considered a stream?
 	local streamMeasures = {}
@@ -153,7 +157,7 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 			measureTiming = measureTiming + 1
 
 			-- Is this a note?
-			if(line:match("["..TapNotesString.."]")) then
+			if(line:match(TapNotesString)) then
 				table.insert(measureNotes, measureTiming)
 			end
 		end

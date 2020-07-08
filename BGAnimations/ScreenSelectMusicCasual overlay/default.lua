@@ -149,7 +149,7 @@ local t = Def.ActorFrame {
 }
 
 -- Add player options ActorFrames to our primary ActorFrame
-for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
+for pn in ivalues( PlayerNumber ) do
 	local x_offset = (pn==PLAYER_1 and -1) or 1
 
 	-- create an optionswheel that has enough items to handle the number of optionrows necessary

@@ -1,4 +1,4 @@
--- TargetScore Graphs and Pacemaker contributed by JackG
+-- TargetScore Graphs and Pacemaker contributed by iamjackg
 -- ActionOnMissedTarget contributed by DinsFire64
 -- cleanup + fixes by djpohly and andrewipark
 
@@ -90,7 +90,7 @@ local bar = {}
 
 if use_smaller_graph then
 	-- this graph is horizontally condensed compared to the full-width alternative
-	graph.w = WideScale(25, 70)
+	graph.w = SL_WideScale(25, 70)
 	graph.y = 429
 
 	-- smaller border for the target bar
@@ -434,15 +434,15 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 			-- pretty explody things for grade changes
 			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor()):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(0.9):linear(0.6):rotationz(0):zoom(0.5):diffusealpha(0):queuecommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(0.9):linear(0.6):rotationz(0):zoom(0.5):diffusealpha(0):queuecommand("Init") end,
 			},
 			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor()):rotationy(180):rotationz(-10):diffusealpha(0):zoom(0.2):diffusealpha(0.8):decelerate(0.6):rotationz(0):zoom(0.7):diffusealpha(0):queuecommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationy(180):rotationz(-10):diffusealpha(0):zoom(0.2):diffusealpha(0.8):decelerate(0.6):rotationz(0):zoom(0.7):diffusealpha(0):queuecommand("Init") end,
 			},
 			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn minisplode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor()):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(1):decelerate(0.8):rotationz(0):zoom(0.4):diffusealpha(0):queuecommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(1):decelerate(0.8):rotationz(0):zoom(0.4):diffusealpha(0):queuecommand("Init") end,
 			},
 
 			-- white graph border
@@ -459,21 +459,21 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "You"),
 				InitCommand=function(self)
-					self:xy( bar.offset + bar.spacing + (bar.w/2), 20 )
+					self:xy( bar.offset + bar.spacing + (bar.w/2), 20 ):shadowlength(1)
 				end,
 			},
 
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "Personal"),
 				InitCommand=function(self)
-					self:xy( bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w, 20 )
+					self:xy( bar.offset + (bar.spacing * 2) + (bar.w/2) + bar.w, 20 ):shadowlength(1)
 				end,
 			},
 
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("TargetScoreGraph", "Target"),
 				InitCommand=function(self)
-					self:xy( bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, 20 )
+					self:xy( bar.offset + (bar.spacing * 3) + (bar.w/2) + bar.w * 2, 20 ):shadowlength(1)
 				end,
 			},
 		}
@@ -497,7 +497,7 @@ if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarg
 
 	-- pacemaker text
 	player_af[#player_af+1] = Def.BitmapText{
-		Font="_wendy small",
+		Font="Common Bold",
 		InitCommand=function(self)
 
 			-- don't draw it if we don't need it

@@ -15,7 +15,7 @@ local t = Def.ActorFrame{
 	Name="StepsDisplayList",
 	InitCommand=function(self) self:vertalign(top):xy(_screen.cx-170, _screen.cy + 70) end,
 
-	OnCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
+	OnCommand=function(self)                           self:queuecommand("RedrawStepsDisplay") end,
 	CurrentSongChangedMessageCommand=function(self)    self:queuecommand("RedrawStepsDisplay") end,
 	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
 	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
@@ -105,14 +105,14 @@ for RowNumber=1,num_rows do
 			-- (and does not seem to enforce any upper bound that I can see)
 			self:customtexturerect(0, 0, num_columns, 1)
 			self:cropright( 1 - (params.Meter * (1/num_columns)) )
-			self:diffuse( DifficultyColor(params.Difficulty) )
+			self:diffuse( DifficultyColor(params.Difficulty, true) )
 		end,
 		UnsetCommand=function(self)
 			self:customtexturerect(0,0,0,0)
 		end
 	}
 
-	Grid[#Grid+1] = LoadFont("_wendy small")..{
+	Grid[#Grid+1] = LoadFont("Common Bold")..{
 		Name="Meter_"..RowNumber,
 		InitCommand=function(self)
 			local height = self:GetParent():GetChild("Blocks_"..RowNumber):GetHeight()

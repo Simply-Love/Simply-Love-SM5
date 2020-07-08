@@ -53,7 +53,7 @@ local af = Def.ActorFrame{
 			topscreen:AddInputCallback(InputHandler)
 
 			-- disable the engine's input handling
-			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			for player in ivalues(PlayerNumber) do
 				SCREENMAN:set_input_redirected(player, true)
 			end
 			-- make this overlay visible
@@ -79,7 +79,7 @@ local af = Def.ActorFrame{
 			-- deactivate the Lua InputHandler
 			topscreen:RemoveInputCallback(InputHandler)
 			-- return input handling to the SM5 engine so players can continune choosing a song
-			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			for player in ivalues(PlayerNumber) do
 				SCREENMAN:set_input_redirected(player, false)
 			end
 			-- hide this overlay
@@ -93,7 +93,7 @@ local af = Def.ActorFrame{
 			-- play the start sound effect
 			sfx.start:play()
 			-- return input handling to the SM5 engine before leaving ScreenSelectMusic
-			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			for player in ivalues(PlayerNumber) do
 				SCREENMAN:set_input_redirected(player, false)
 			end
 			-- determine what the previous screen would be (because next screen is normally PlayerOptions or Gameplay)
@@ -132,7 +132,7 @@ local no = Def.ActorFrame{
 		self:y(250):diffuse( PlayerColor(PLAYER_2) )
 	end,
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		Text=THEME:GetString("ScreenPromptToResetPreferencesToStock","No"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},
@@ -149,7 +149,7 @@ local yes = Def.ActorFrame{
 		self:y(250)
 	end,
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		Text=THEME:GetString("ScreenPromptToResetPreferencesToStock","Yes"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},

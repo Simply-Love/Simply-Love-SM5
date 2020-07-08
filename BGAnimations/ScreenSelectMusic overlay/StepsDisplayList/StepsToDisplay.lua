@@ -1,181 +1,129 @@
--- FIXME: The SM5 engine does supply a StepsDisplayList class for Lua, but its scroller-esque behavior
--- is mostly hardcoded, making it difficult to ALWAYS position easy charts at a specific y-value
--- and challenge charts at a different (but equally predictable) y-value.
---
--- I wrote this code back in April 2014 as part of bda06a0eee03a22b81b35dd12968b9d386a0fea7
--- to assist in organizing and displaying available stepcharts in ScreenSelectMusic in a
--- visually predictable fashion.  I noted then that songs with multiple edit charts caused
--- the custom steps list to "behave erratically" when both players were joined.  I imagine it
--- is still a problem.  "Tachyon Alpha/Delta Max" is probably a good test case.
---
--- This code should probably be ripped out and completely replaced at this point.
-------------------------------------------------------------
+return function(AllSteps)
 
-return function(AllAvailableSteps)
+	local StepsToShow, edits = {}, {}
 
-	--gather any edit charts into a table
-	local edits = {}
-	local StepsToShow = {}
+	for stepchart in ivalues(AllSteps) do
 
-	for k,chart in ipairs(AllAvailableSteps) do
+		local difficulty = stepchart:GetDifficulty()
 
-		local difficulty = chart:GetDifficulty()
-		if GAMESTATE:IsCourseMode() then
-			local index = GetDifficultyIndex(difficulty)
-			StepsToShow[index] = chart
+		if difficulty == "Difficulty_Edit" then
+			-- gather edit charts into a separate table for now
+			edits[#edits+1] = stepchart
 		else
-			if chart:IsAnEdit() then
-				edits[#edits+1] = chart
-			else
-				local index = GetDifficultyIndex(difficulty)
-				StepsToShow[index] = chart
-			end
+			-- use the reverse lookup functionality available to all SM enums
+			-- to map a difficulty string to a number
+			-- SM's enums are 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
+			-- for our purposes, increment by 1 here
+			StepsToShow[ Difficulty:Reverse()[difficulty] + 1 ] = stepchart
+			-- assigning a stepchart directly to numerical index like this^
+			-- can leave "holes" in the indexing, or indexing might not start at 1
+			-- so be sure to use pairs() instead of ipairs() if iterating over later
 		end
 	end
 
-	-- if there are no edits we can safely bail now
+	-- if there are no edits we can safely return now
+	-- the remainder of this function will not execute
 	if #edits == 0 then return StepsToShow end
 
-
-
-	--THERE ARE EDITS, OH NO!
-	--HORRIBLE HANDLING/LOGIC BELOW
-
-	for k,edit in ipairs(edits) do
-		StepsToShow[5+k] = edit
-	end
-
-	local currentStepsP1, currentStepsP2
-	local finalReturn = {}
-
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		currentStepsP1 = GAMESTATE:GetCurrentSteps(PLAYER_1)
-	end
-
-	if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-		currentStepsP2 = GAMESTATE:GetCurrentSteps(PLAYER_2)
-	end
+	-- -----------------------------------------------------------------------
+	-- there were edits, we might need to do more work
 
 	-- if only one player is joined
-	if (currentStepsP1 and not currentStepsP2) or (currentStepsP2 and not currentStepsP1) then
-		
-		local currentSteps
-		if (currentStepsP1 and not currentStepsP2) then
-			currentSteps = currentStepsP1
-		elseif (currentStepsP2 and not currentStepsP1) then
-			currentSteps = currentStepsP2
-		end
+	if #GAMESTATE:GetHumanPlayers() <= 1 then
+		local player = GAMESTATE:GetHumanPlayers()[1]
+		local currentSteps = GAMESTATE:GetCurrentSteps(player)
 
-		-- if the current chart is an edit
-		if currentSteps:IsAnEdit() then
+		-- there are edit stepcharts available for the current song
+		-- but this player's current steps aren't an edit, so they are
+		-- presumably looking at the normal (Beginner - Expert) range
+		if not currentSteps:IsAnEdit() then return StepsToShow end
 
-			local currentIndex
-
-			-- We've used GAMESTATE:GetCurrentSteps(pn) to get the current chart
-			-- use a for loop to match that "current chart" against each chart
-			-- in our charts table; we want the index of the current chart
-			for k,chart in pairs(StepsToShow) do
-				if chart:GetChartName()==currentSteps:GetChartName() then
-					currentIndex = tonumber(k)
-				end
-			end
-
-			local frIndex = 5
-
-			-- "i" will decrement here
-			-- if there is one edit chart, it will assign charts to finalReturn like
-			-- [5]Edit, [4]Challenge, [3]Hard, [2]Medium, [1]Easy
-			--
-			-- if there are two edit charts, it will assign charts to finalReturn like
-			-- [5]Edit, [4]Edit, [3]Challenge, [2]Hard, [1]Medium
-			-- and so on
-			for i=currentIndex, currentIndex-4, -1 do
-				finalReturn[frIndex] = StepsToShow[i]
-				frIndex = frIndex - 1
-			end
-
-		-- else we are somewhere in the normal five difficulties
-		-- and are, for all intents and purposes, uninterested in any edits for now
-		-- so remove all edits from the table we're returning
-		else
-
-			for k,chart in pairs(StepsToShow) do
-				if chart:IsAnEdit() then
-					StepsToShow[k] = nil
-				end
-			end
-
+	-- both players are joined
+	else
+		-- but neither players' steps is an edit
+		if not GAMESTATE:GetCurrentSteps(PLAYER_1):IsAnEdit() and not GAMESTATE:GetCurrentSteps(PLAYER_2):IsAnEdit() then
+			-- so just return the "normal" stepcharts
 			return StepsToShow
 		end
+	end
 
+	-- -----------------------------------------------------------------------
+	-- some shifting will be needed if we get this far
 
-	-- elseif both players are joined
-	-- This can get complicated if P1 is on beginner and P2 is on an edit
-	-- AND there is a full range of charts between
-	-- we'll have to hide SOMETHING...
-	elseif (currentStepsP1 and currentStepsP2) then
+	-- if we get this far, one or both players' stepcharts is an edit
+	-- we'll need to assess which stepcharts we want to display in our 5x20 grid
+	for i, edit_chart in ipairs(edits) do
+		StepsToShow[5+i] = edit_chart
+	end
 
-		if not currentStepsP1:IsAnEdit() and not currentStepsP2:IsAnEdit() then
-			for k,chart in pairs(StepsToShow) do
-				if chart:IsAnEdit() then
-					StepsToShow[k] = nil
-				end
-			end
-			return StepsToShow
-		end
+	if #GAMESTATE:GetHumanPlayers() <= 1 then
+		local player = GAMESTATE:GetHumanPlayers()[1]
+		local currentSteps = GAMESTATE:GetCurrentSteps(player)
 
-
-		local currentIndexP1, currentIndexP2
-
-		-- how broad is the range of charts for this song?
-		-- (where beginner=1 and edit=6+)
-		-- and how far apart are P1 and P2 currently?
-
-		for k,chart in pairs(StepsToShow) do
-
-			if chart == currentStepsP1 then
-				currentIndexP1 = k
-			end
-
-			if chart == currentStepsP2 then
-				currentIndexP2 = k
+		-- otherwise, currentSteps are an edit so let's shift what we show
+		local edit_index = 0
+		for i, edit_chart in ipairs(edits) do
+			-- .sm files don't have a good way that is accessible to Lua to guarantee this edit chart is really
+			-- the one you're looking for.  Comparing the (Description and ChartName and Meter) for matches
+			-- seems to be as good as we can do (short of hashing the chart data which seems like overkill here).
+			-- It is possible for two edit charts in an .sm file to have empty ChartNames, empty Descriptions,
+			-- and matching meters.  :(
+			if  edit_chart:GetDescription() == currentSteps:GetDescription()
+			and edit_chart:GetChartName()   == currentSteps:GetChartName()
+			and edit_chart:GetMeter()       == currentSteps:GetMeter()
+			then
+				edit_index = i
+				break
 			end
 		end
 
-		if (currentIndexP1 and currentIndexP2) then
+		return {
+			StepsToShow[1+edit_index],
+			StepsToShow[2+edit_index],
+			StepsToShow[3+edit_index],
+			StepsToShow[4+edit_index],
+			StepsToShow[5+edit_index]
+		}
 
-			local difference = math.abs(currentIndexP1-currentIndexP2)
+	-- if both players are joined
+	else
 
-			local greaterIndex, lesserIndex
-			if currentIndexP1 > currentIndexP2 then
-				greaterIndex = currentIndexP1
-				lesserIndex = currentIndexP2
+		local indexP1, indexP2 = nil, nil
+		-- use pairs() instead of ipairs() here because the StepsToShow table
+		-- might not be fully filled in (e.g. missing Beginner and Easy steps at indices 1 and 2)
+		-- and ipairs() will start at 1, increment up, and halt as soon as it hits a nil index
+		for i,stepchart in pairs(StepsToShow) do
+			if stepchart == GAMESTATE:GetCurrentSteps(PLAYER_1) then indexP1 = i end
+			if stepchart == GAMESTATE:GetCurrentSteps(PLAYER_2) then indexP2 = i end
+		end
+
+		if (indexP1 and indexP2) then
+			local lesserIndex  = math.min(indexP1, indexP2)
+			local greaterIndex = math.max(indexP1, indexP2)
+
+			-- if P1 and P2 are farther than 4 stepcharts apart (e.g. Beginner and Edit)
+			if math.abs(indexP1-indexP2) >= 5 then
+				-- inelegant but easy to understand :)
+				return {
+					StepsToShow[lesserIndex],
+					StepsToShow[lesserIndex+1],
+					StepsToShow[lesserIndex+2],
+					StepsToShow[greaterIndex-1],
+					StepsToShow[greaterIndex]
+				}
 			else
-				greaterIndex = currentIndexP2
-				lesserIndex = currentIndexP1
-			end
-
-			if difference > 4 then
-
-				local frIndex=1
-				for i=lesserIndex, lesserIndex+2 do
-					finalReturn[frIndex] = StepsToShow[i]
-					frIndex = frIndex + 1
-				end
-				for i=greaterIndex-1, greaterIndex do
-					finalReturn[frIndex] = StepsToShow[i]
-					frIndex = frIndex + 1
-				end
-
-			else
-				local frIndex = 5
-				for i=greaterIndex, greaterIndex-4, -1 do
-					finalReturn[frIndex] = StepsToShow[i]
-					frIndex = frIndex - 1
-				end
+				-- some of these indices in StepsToShow might be nil
+				-- but that's the desired behavior for this particular use-case
+				return {
+					StepsToShow[greaterIndex-4],
+					StepsToShow[greaterIndex-3],
+					StepsToShow[greaterIndex-2],
+					StepsToShow[greaterIndex-1],
+					StepsToShow[greaterIndex]
+				}
 			end
 		end
 	end
 
-	return finalReturn
+	return StepsToShow
 end

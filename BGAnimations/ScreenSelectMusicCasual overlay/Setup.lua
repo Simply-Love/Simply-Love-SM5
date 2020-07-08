@@ -27,7 +27,7 @@ local OptionsWheel = {}
 -- simple option definitions
 local OptionRows = LoadActor("./OptionRows.lua")
 
-for player in ivalues( {PLAYER_1, PLAYER_2} ) do
+for player in ivalues( PlayerNumber ) do
 	-- create the optionwheel for this player
 	OptionsWheel[player] = setmetatable({disable_wrapping = true}, sick_wheel_mt)
 
@@ -57,7 +57,7 @@ local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 -- or passively (MenuTimer running out)
 
 local InitOptionRowsForSingleSong = function()
-	for pn in ivalues( {PLAYER_1, PLAYER_2} ) do
+	for pn in ivalues( PlayerNumber ) do
 		OptionsWheel[pn]:set_info_set(OptionRows, 1)
 
 		for i,row in ipairs(OptionRows) do

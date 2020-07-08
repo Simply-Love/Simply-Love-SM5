@@ -7,25 +7,37 @@ then
 	return
 end
 
-local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+-- -----------------------------------------------------------------------
+
 local width = GetNotefieldWidth() - 30
 local height = 30
+local xpos = {
+	[PLAYER_1] = _screen.cx - width - SL_WideScale(45, 95),
+	[PLAYER_2] = _screen.cx + SL_WideScale(45, 95),
+}
+
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 -- support double, double8, and routine by constraining the UpperNPSGraph to have the same width as in single
 if styletype == "OnePlayerTwoSides" or styletype == "TwoPlayersSharedSides" then
 	width = width/2
 end
 
+-- center the UpperNPSGraph in double, double8, routine, and when Center1Player is enabled
+if #GAMESTATE:GetHumanPlayers()==1 and PREFSMAN:GetPreference("Center1Player")
+or (styletype=="OnePlayerTwoSides" or styletype=="TwoPlayersSharedSides")
+then
+	xpos[PLAYER_1] = _screen.cx - width/2
+	xpos[PLAYER_2] = _screen.cx - width/2
+end
+
 local song_percent, first_second, last_second
+
+-- -----------------------------------------------------------------------
 
 return Def.ActorFrame{
 	InitCommand=function(self)
-		self:y(71)
-		if PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers()==1 then
-			self:x(_screen.cx - width/2)
-		else
-			self:x((player==PLAYER_1 and WideScale(50, 105)) or _screen.cx+WideScale(45, 95))
-		end
+		self:y(71):x(xpos[player])
 	end,
 	-- called at the start of each new song in CourseMode, and once at the start of regular gameplay
 	CurrentSongChangedMessageCommand=function(self)

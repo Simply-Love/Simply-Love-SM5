@@ -1,10 +1,23 @@
-local player = ...
+local player, width = unpack(...)
+
+local pn = ToEnumShortString(player)
+-- height is how tall, in pixels, the density graph will be
+local height = 105
 
 local LifeBaseSampleRate = 0.25
 local LifeLineThickness = 2
 local LifeMeter = nil
 local life_verts = {}
 local offset = 0
+
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+
+-- -----------------------------------------------------------------------
+local BothUsingStepStats = (#GAMESTATE:GetHumanPlayers()==2
+and SL.P1.ActiveModifiers.DataVisualizations == "Step Statistics"
+and SL.P2.ActiveModifiers.DataVisualizations == "Step Statistics")
+-- -----------------------------------------------------------------------
 
 -- max_seconds is how many seconds of a stepchart we want visualized on-screen at once.
 -- For very long songs (longer than, say, 10 minutes) the density graph becomes too
@@ -17,38 +30,17 @@ local offset = 0
 local max_seconds = 4 * 60
 
 -- width and position of the density graph
-local width = _screen.w / 2
 local pos_x = -width / 2
-if (PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()) then
-	-- 16:9 aspect ratio (approximately 1.7778)
-	if GetScreenAspectRatio() > 1.7 then
-		width = (_screen.w/4 - 70) + (_screen.w/4 - 44) * 0.925
-
-		local adjust = ((_screen.w/4 - 70) - ((_screen.w/4 - 44) * 0.925)) / 2
-		pos_x = -width/2 + adjust * (player==PLAYER_1 and 1 or -1)
-	-- if 16:10 aspect ratio
-	else
-		width = (_screen.w/4 - 64) + (_screen.w/4 - 36) * 0.825
-
-		local adjust = ((_screen.w/4 - 64) - ((_screen.w/4 - 36) * 0.825)) / 2
-		pos_x = -width/2 + adjust * (player==PLAYER_1 and 1 or -1)
-	end
-end
-
 
 local scaled_width = width
-
--- height is how tall, in pixels, the density graph will be
-local height = GetNotefieldWidth() / 2.25
-
 local UpdateRate, first_second, last_second
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy( pos_x, 48 ):queuecommand("Update")
+		self:xy( pos_x, 55 ):queuecommand("Update")
 	end,
 	OnCommand=function(self)
-		LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..ToEnumShortString(player))
+		LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..pn)
 	end,
 	UpdateCommand=function(self)
 		self:sleep(UpdateRate):queuecommand("Update")
@@ -64,7 +56,7 @@ local bg = Def.Quad{
 	end
 }
 
--- FIXME: add inline comments explainig the intent/purpose of this code
+-- FIXME: add inline comments explaining the intent/purpose of this code
 local SlopeAngle = function(p1, p2)
 	return math.atan2(p2[1] - p1[1], p2[2] - p1[2])
 end
@@ -73,21 +65,93 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 	OnCommand=function(self)
 		-- offset the graph's x-position by half the thickness of the LifeLine
 		self:xy( LifeLineThickness/2, height )
+	end,
+	PeakNPSUpdatedMessageCommand=function(self) self:queuecommand("Size") end,
+	SizeCommand=function(self)
+		if BothUsingStepStats then
+			local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
+			local their_peak = GAMESTATE:Env()[ToEnumShortString(OtherPlayer[player]).."PeakNPS"]
+
+			if my_peak < their_peak then
+				self:zoomtoheight(my_peak/their_peak)
+			end
+		end
 	end
 }
 
 -- PeakNPS text
 local text = LoadFont("Common Normal")..{
-	PeakNPSUpdatedMessageCommand=function(self, params)
-		if params.PeakNPS == nil then
+	InitCommand=function(self) self:horizalign(right):zoom(0.9) end,
+	PeakNPSUpdatedMessageCommand=function(self)
+		local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
+
+		if my_peak == nil then
 			self:settext("")
 			return
 		end
 
-		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(params.PeakNPS * SL.Global.ActiveModifiers.MusicRate,2) )
-		self:x( width - self:GetWidth()/2 - 2 )
-			:y( -self:GetHeight()/2 - 2 )
-			:zoom(0.9)
+		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(my_peak * SL.Global.ActiveModifiers.MusicRate,2) )
+
+		-- -----------------------------------------------------------------------
+		local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+		local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
+
+		-- determine how many digits are needed to express the number of notes in base-10
+		local digits = (math.floor(math.log10(total_tapnotes)) + 1)
+		-- subtract 4 from the digit count; we're only really interested in how many digits past 4
+		-- this stepcount is so we can use it to align the score actor in the StepStats pane if needed
+		-- aligned-with-4-digits is the default
+		digits = clamp(math.max(4, digits) - 4, 0, 3)
+
+		-- -----------------------------------------------------------------------
+		-- crumby code used for
+		-- positioning x offset
+		-- of PeakNPS
+
+		local stepstatspane = self:GetParent():GetParent()
+		local padding = {}
+
+		if IsUltraWide then
+			-- 21:9 (and wider)
+			if (#GAMESTATE:GetHumanPlayers() <= 1) then
+				padding[PLAYER_1] = -_screen.cx + 36
+				padding[PLAYER_2] = 36
+			else
+				padding[PLAYER_1] = 4
+				padding[PLAYER_2] = -908
+			end
+
+		elseif IsUsingWideScreen() then
+			-- 16:9, 16:10
+			if NoteFieldIsCentered then
+				padding[PLAYER_1] = -_screen.cx - 116
+				padding[PLAYER_2] = WideScale(-20,20)
+			else
+				padding[PLAYER_1] = -_screen.cx + 26.5
+				padding[PLAYER_2] = 26.5
+			end
+
+		else
+			-- 4:3
+			padding[PLAYER_1] = -_screen.cx + 28
+			padding[PLAYER_2] = 28
+		end
+
+		if IsUsingWideScreen() and not (IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1) then
+			-- pad with an additional ~14px for each digit past 4 the stepcount goes
+			-- this keeps the score right-aligned with the right edge of the judgment
+			-- counts in the StepStats pane
+			local digitpadding = (digits * 14)
+			-- provide an upper bound of extra padding for extra digits when NoteFieldIsCentered
+			if NoteFieldIsCentered then digitpadding = clamp(digitpadding, 0, WideScale(7,14)) end
+
+			padding[player] = padding[player] + digitpadding
+		end
+
+		-- -----------------------------------------------------------------------
+
+		self:x( stepstatspane:GetX() + padding[player] + (self:GetWidth()/self:GetZoom()) )
+		self:y( -self:GetHeight()/2 - 2 )
 	end,
 }
 
@@ -113,7 +177,8 @@ local graph_and_lifeline = Def.ActorFrame{
 		UpdateRate = LifeBaseSampleRate
 
 		-- FIXME: add inline comments explaining what a 'simple' BPM is -quietly
-		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means -quietly
+		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means
+		--            because I have no idea what it means -quietly
 
 		-- if the song has a 'simple' BPM, then quantize the timing
 		-- to the nearest multiple of 8ths to avoid jaggies

@@ -3,7 +3,7 @@ OperatorMenuOptionRows = {}
 OperatorMenuOptionRows.EditorNoteskin = function()
 	local skins = NOTESKIN:GetNoteSkinNames()
 	return {
-		Name = "Editor Noteskin",
+		Name = "EditorNoteSkin",
 		LayoutType = "ShowOneInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = true,
@@ -157,13 +157,12 @@ end
 ------------------------------------------------------------
 -- Graphics/Sound Options
 
--- the OptionRow for changing the VideoRenderer should only appear in Windows
--- (see [ScreenOptionsGraphicsSound] in Metrics.ini), but we'll make an effort
--- to present valid choices in macOS and Linux, Just In Case.
-OperatorMenuOptionRows.VideoRendererWindows = function()
+OperatorMenuOptionRows.VideoRenderer = function()
 
-	-- opengl is a valid VideoRenderer for all architectures, so start
-	-- by assuming it is the only choice.
+	-- opengl is a valid VideoRenderer for all platforms right now
+	-- so start by assuming it is the only choice.
+	-- If there is a method available to Lua to get available renderers
+	-- from the engine, I haven't found it yet.
 	local choices = { "opengl" }
 	local values  = { "opengl" }
 

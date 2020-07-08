@@ -1,6 +1,10 @@
 -- This is mostly copy/pasted directly from SM5's _fallback theme with
 -- very minor modifications.
 
+local t = Def.ActorFrame{}
+
+-- -----------------------------------------------------------------------
+
 local function CreditsText( pn )
 	return LoadFont("Common Normal") .. {
 		InitCommand=function(self)
@@ -24,16 +28,55 @@ local function CreditsText( pn )
 	}
 end
 
+-- -----------------------------------------------------------------------
+-- player avatars
+-- see: https://youtube.com/watch?v=jVhlJNJopOQ
 
-local t = Def.ActorFrame{}
+for player in ivalues(PlayerNumber) do
+	t[#t+1] = Def.Sprite{
+		ScreenChangedMessageCommand=function(self)   self:queuecommand("Update") end,
+		PlayerJoinedMessageCommand=function(self, params)   if params.Player==player then self:queuecommand("Update") end end,
+		PlayerUnjoinedMessageCommand=function(self, params) if params.Player==player then self:queuecommand("Update") end end,
 
--- Aux
+		UpdateCommand=function(self)
+			local path = GetAvatarPathForPlayerProfile(player)
+
+			if path == nil and self:GetTexture() ~= nil then
+				self:Load(nil):diffusealpha(0):visible(false)
+				return
+			end
+
+			-- only read from disk if not currently set
+			if self:GetTexture() == nil then
+				self:Load(path):finishtweening():linear(0.075):diffusealpha(1)
+
+				local dim = 32
+				local h   = (player==PLAYER_1 and left or right)
+				local x   = (player==PLAYER_1 and    0 or _screen.w)
+
+				self:horizalign(h):vertalign(bottom)
+				self:xy(x, _screen.h):setsize(dim,dim)
+			end
+
+			local screen = SCREENMAN:GetTopScreen()
+			if THEME:HasMetric(screen:GetName(), "ShowPlayerAvatar") then
+				self:visible( THEME:GetMetric(screen:GetName(), "ShowPlayerAvatar") )
+			else
+				self:visible( THEME:GetMetric(screen:GetName(), "ShowCreditDisplay") )
+			end
+		end,
+	}
+end
+
+-- -----------------------------------------------------------------------
+
+-- what is aux?
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"))
 
 -- Credits
 t[#t+1] = Def.ActorFrame {
- 	CreditsText( PLAYER_1 );
-	CreditsText( PLAYER_2 );
+ 	CreditsText( PLAYER_1 ),
+	CreditsText( PLAYER_2 )
 }
 
 local SystemMessageText = nil
@@ -57,7 +100,7 @@ t[#t+1] = Def.ActorFrame {
 		end,
 		OnCommand=function(self)
 			self:finishtweening():diffusealpha(0.85)
-				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * WideScale(1, 0.8) )
+				:zoomto(_screen.w, (SystemMessageText:GetHeight() + 16) * SL_WideScale(0.8, 1) )
 		end,
 		OffCommand=function(self) self:sleep(3.33):linear(0.5):diffusealpha(0) end,
 	},
@@ -66,7 +109,7 @@ t[#t+1] = Def.ActorFrame {
 		Name="Text",
 		InitCommand=function(self)
 			self:maxwidth(_screen.w-20):horizalign(left):vertalign(top)
-				:xy(10, 10):diffusealpha(0):zoom(WideScale(1, 0.8))
+				:xy(10, 10):diffusealpha(0):zoom(SL_WideScale(0.8, 1))
 			SystemMessageText = self
 		end,
 		OnCommand=function(self) self:finishtweening():diffusealpha(1) end,
@@ -74,8 +117,8 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
--- Wendy CreditText at lower-center of screen
-t[#t+1] = LoadFont("_wendy small")..{
+-- "Event Mode" or CreditText at lower-center of screen
+t[#t+1] = LoadFont("Common Footer")..{
 	InitCommand=function(self) self:xy(_screen.cx, _screen.h-16):zoom(0.5):horizalign(center) end,
 
 	OnCommand=function(self) self:playcommand("Refresh") end,

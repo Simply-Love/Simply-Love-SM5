@@ -37,13 +37,13 @@ return Def.ActorFrame{
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
 			if currentSteps then
 				local currentDifficulty = currentSteps:GetDifficulty()
-				self:diffuse( DifficultyColor(currentDifficulty) )
+				self:diffuse( DifficultyColor(currentDifficulty), true )
 			end
 		end
 	},
 
 	-- numerical difficulty meter
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		InitCommand=function(self)
 			self:diffuse(Color.Black):zoom( 0.4 )
 			self:y( _screen.cy-71 )

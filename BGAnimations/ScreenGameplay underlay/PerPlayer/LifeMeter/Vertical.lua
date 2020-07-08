@@ -1,16 +1,25 @@
 local player = ...
+local pn = ToEnumShortString(player)
 
 local width = 16
 local height = 250
-local _x = width * WideScale(1, 3.5)
+local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(302, 400)
 
-if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
-	_x = width * WideScale(2,8)
-elseif PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
-	_x = width * WideScale(10,16)
+-- if double
+if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides"
+-- or center1player preference is enabled and only one player is playing
+or PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
+	_x =  _screen.cx + ((GetNotefieldWidth()/2 + 30) * (player==PLAYER_1 and -1 or 1))
+
+-- for the highly-specific scenario where aspect ratio is ultrawide or wider
+-- and both players are joined, and this player wants both a vertical lifemeter
+-- and step stats, move their vertical lifemeter to the inside of the notefield
+elseif GetScreenAspectRatio() > 21/9
+and #GAMESTATE:GetHumanPlayers() > 1
+and SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
+then
+	_x = _screen.cx + (player==PLAYER_1 and -1 or 1) * 60
 end
-
-if player == PLAYER_2 then _x = _screen.w - _x end
 
 
 local swoosh, velocity
@@ -35,7 +44,7 @@ local meter = Def.ActorFrame{
 
 	Def.Quad{
 		Name="MeterFill",
-		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player)):align(0,1) end,
+		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player,true)):align(0,1) end,
 		OnCommand=function(self) self:xy( _x - width/2, height/2) end,
 
 		-- check life (LifeMeterBar)

@@ -27,69 +27,6 @@ SupportsRenderToTexture = function()
 	return true
 end
 
--- -----------------------------------------------------------------------
--- use StepManiaVersionIsSupported() to define supported SM5 versions
-
-StepManiaVersionIsSupported = function()
-
-	-- ensure that we're using StepMania
-	if type(ProductFamily) ~= "function" or ProductFamily():lower() ~= "stepmania" then return false end
-
-	-- ensure that a global ProductVersion() function exists before attempting to call it
-	if type(ProductVersion) ~= "function" then return false end
-
-	-- get the version string, e.g. "5.0.11" or "5.1.0" or "5.2-git-96f9771" or etc.
-	local version = ProductVersion()
-	if type(version) ~= "string" then return false end
-
-	-- remove the git hash if one is present in the version string
-	version = version:gsub("-git-.+", "")
-
-	-- split the remaining version string on periods; store each segment in a temp table
-	local t = {}
-	for i in version:gmatch("[^%.]+") do
-		table.insert(t, tonumber(i))
-	end
-
-	-- if we didn't detect SM5.x.x then Something Is Terribly Wrong.
-	if not (t[1] and t[1]==5) then return false end
-
-	-- SM5.0.x is supported
-	-- SM5.1.x is supported
-	-- SM5.2 is not supported because it saw significant backwards-incompatible API changes and is now abandoned
-	-- SM5.3 is not supported for now because it is not open source
-	if not (t[2] and (t[2]==0 or t[2]==1)) then return false end
-
-	-- if we're in SM5.0.x, then check for a third segment
-	if t[2]==0 then
-		-- SM5.0.12 is supported because SM5.1 is "still in beta" and many users are reluctant to install beta software
-		-- anything older than SM5.0.12 is not supported
-		if not (t[3] and t[3]==12) then return false end
-	end
-
-	return true
-end
-
--- -----------------------------------------------------------------------
--- game types like "kickbox" and "lights" aren't supported in Simply Love, so we
--- use this function to hardcode a list of game modes that are supported, and use it
--- in ScreenInit overlay.lua to redirect players to ScreenSelectGame if necessary.
---
--- (Because so many people have accidentally gotten themselves into lights mode without
--- having any idea they'd done so, and have then messaged me saying the theme was broken.)
-
-CurrentGameIsSupported = function()
-	-- a hardcoded list of games that Simply Love supports
-	local support = {
-		dance  = true,
-		pump   = true,
-		techno = true,
-		para   = true,
-		kb7    = true
-	}
-	-- return true or nil
-	return support[GAMESTATE:GetCurrentGame():GetName()]
-end
 
 -- -----------------------------------------------------------------------
 -- There's surely a better way to do this.  I need to research this more.
@@ -234,6 +171,28 @@ Border = function(width, height, bw)
 		Def.Quad { InitCommand=function(self) self:zoomto(width,height):MaskDest() end },
 		Def.Quad { InitCommand=function(self) self:diffusealpha(0):clearzbuffer(true) end },
 	}
+end
+
+-- -----------------------------------------------------------------------
+-- SL_WideScale() is modified version of WideScale() from SM5.1's _fallback theme
+--
+-- _fallback's WideScale() is useful for scaling a number to accommodate both 4:3 and 16:9 aspect ratios
+-- first arg is what will be returned if AspectRatio is 4:3
+-- second arg is what will be returned if AspectRatio is 16:9
+-- The number returned will be scaled proprotionately between if AspectRatio is, for example, 16:10
+-- and likewise scaled futher up if AspectRatio is, for example, 21:9.
+--
+-- SL's UI was originally designed for 4:3 and later extended for 16:9, so WideScale() works great there.
+-- I'm opting to accommodate ultrawide displays by clamping the scale at 16:9.
+--
+-- You may not want to adopt this strategy in your theme, but for here
+-- it's easier than redesigning the UI again.
+--
+-- It's important to not override _fallback's WideScale() for the sake of scripted simfiles
+-- that expect it to behave a particular way.
+
+SL_WideScale = function(AR4_3, AR16_9)
+	return clamp(scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 ), AR4_3, AR16_9)
 end
 
 -- -----------------------------------------------------------------------
@@ -419,8 +378,7 @@ end
 -- Keeping track of the logical flow of which preference overrides which metrics
 -- and attempting to extrapolate how that will play out over time in a community
 -- where players expect to be able to modify the code that drives gameplay is so
--- convoluted at this point that it seems unreasonable to expect any player to
--- follow along.
+-- convoluted that it seems unreasonable to expect any player to follow along.
 --
 -- I can barely follow along.
 --
@@ -472,7 +430,8 @@ GetDefaultFailType = function()
 		end
 	end
 
-	return fail_strings[default_fail] or "FailType_ImmediateContinue"
+	-- return the appropriate Enum string or "FailType_Immediate" if nothing was parsed out of DefaultModifiers
+	return fail_strings[default_fail] or "FailType_Immediate"
 end
 
 -- -----------------------------------------------------------------------
@@ -554,7 +513,7 @@ ResetPreferencesToStockSM5 = function()
 end
 
 -- -----------------------------------------------------------------------
--- given a player, return a table of stepartist text for the current song or course
+-- given a player, return a table of stepartist text for the current song or trail
 -- so that various screens (SSM, Eval) can cycle through these values and players
 -- can see each for brief duration
 
@@ -562,11 +521,23 @@ GetStepsCredit = function(player)
 	local t = {}
 
 	if GAMESTATE:IsCourseMode() then
-		local course = GAMESTATE:GetCurrentCourse()
-		-- scripter
-		if course:GetScripter() ~= "" then t[#t+1] = course:GetScripter() end
-		-- description
-		if course:GetDescription() ~= "" then t[#t+1] = course:GetDescription() end
+		local trail = GAMESTATE:GetCurrentTrail(player)
+		local entries = trail:GetTrailEntries()
+		local song
+
+		for i, entry in ipairs(entries) do
+			steps = entry:GetSteps()
+			if steps then
+				-- prefer steps Description; this is where stepartists seem to put chart info
+				if steps:GetDescription() ~= "" then
+					t[i] = steps:GetDescription()
+
+				-- if no description was available, use AuthorCredit instead
+				elseif steps:GetAuthorCredit() ~= "" then
+					t[i] = steps:GetAuthorCredit()
+				end
+			end
+		end
 	else
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		-- credit
@@ -608,6 +579,7 @@ DiffuseEmojis = function(bmt, text)
 	-- loop through each char in the string, checking for emojis; if any are found
 	-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
 	for i=1, text:utf8len() do
+		-- FIXME: similar to _wrapwidthpixels(), if you can implement a proper utf8-friendly fix, please submit a pull request
 		if text:utf8sub(i,i):byte() >= 240 then
 			bmt:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
 		end
@@ -655,7 +627,7 @@ function GetJudgmentGraphics(mode)
 		-- e.g. hidden system files like .DS_Store
 		if FilenameIsMultiFrameSprite(filename) then
 
-			-- use regexp to get only the name of the graphic, stripping out the extension
+			-- remove the file extension from the string, leaving only the name of the graphic
 			local name = StripSpriteHints(filename)
 
 			-- Fill the table, special-casing Love so that it comes first.
@@ -667,11 +639,29 @@ function GetJudgmentGraphics(mode)
 		end
 	end
 
-	-- "None" -> no graphic in Player judgment.lua
+	-- "None" results in Player judgment.lua returning an empty Def.Actor
 	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
 end
+
+GetHoldJudgments = function()
+	local path = THEME:GetCurrentThemeDirectory().."Graphics/_HoldJudgments/"
+	local files = FILEMAN:GetDirListing(path)
+	local hold_graphics = {}
+
+	for i,filename in ipairs(files) do
+
+		-- Filter out files that aren't HoldJudgment labels
+		-- e.g. hidden system files like .DS_Store
+		if FilenameIsMultiFrameSprite(filename) then
+			table.insert(hold_graphics, filename)
+		end
+	end
+
+	return hold_graphics
+end
+
 
 -- -----------------------------------------------------------------------
 -- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay
@@ -717,25 +707,4 @@ GetComboFonts = function()
 	if has_wendy_cursed then table.insert(fonts, "Wendy (Cursed)") end
 
 	return fonts
-end
-
--- -----------------------------------------------------------------------
--- Pass in a string from the engine's Difficulty enum like "Difficulty_Beginner"
--- or "Difficulty_Challenge" and this will return the index of that string within
--- the enum (or nil if not found).  This is used by SL's color system to dynamically
--- color theme elements based on difficulty as the primary color scheme changes.
-
-GetDifficultyIndex = function(difficulty)
-	-- if we weren't passed a string, return nil now
-	if type(difficulty) ~= "string" then return nil end
-
-	-- FIXME: Why is this hardcoded to 5?  I need to look into this and either change
-	-- it or leave a note explaining why it's this way.
-	if difficulty == "Difficulty_Edit" then return 5 end
-
-	-- Use Enum's reverse lookup functionality to find difficulty by index
-	-- note: this is 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
-	-- for our purposes, increment by 1 here
-	local difficulty_index = Difficulty:Reverse()[difficulty]
-	if type(difficulty_index) == "number" then return (difficulty_index + 1) end
 end

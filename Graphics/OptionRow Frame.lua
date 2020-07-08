@@ -1,16 +1,16 @@
-local t = Def.ActorFrame{
-	InitCommand=function(self)
-		self:x(_screen.cx - WideScale(30,40))
-	end
-}
+local padding    = WideScale(12, 28)
+local row_height = 30
+local row_width  = WideScale(582, 776) - (padding * 2)
+local proxy_offset = _screen.cx - WideScale(30,40)
+
+local t = Def.ActorFrame{}
 
 -- a row
 t[#t+1] = Def.Quad {
 	Name="RowBackgroundQuad",
 	InitCommand=function(self)
-		self:horizalign(left)
-		:x(WideScale(-271.5, -360))
-		:setsize(WideScale(543,720), 30)
+		self:horizalign(left):x(padding)
+		self:setsize(row_width , row_height)
 	end
 }
 
@@ -18,11 +18,9 @@ t[#t+1] = Def.Quad {
 t[#t+1] = Def.Quad {
 	Name="TitleBackgroundQuad",
 	OnCommand=function(self)
-		self:horizalign(left)
-		:x(WideScale(-271.5, -360))
-		:setsize(115, 30)
-		:diffuse(Color.Black)
-		:diffusealpha(DarkUI() and 0.8 or 0.25)
+		self:horizalign(left):x(padding)
+		self:setsize(115, 30):diffuse(Color.Black)
+		self:diffusealpha(DarkUI() and 0.8 or 0.25)
 	end
 }
 
@@ -71,55 +69,76 @@ t[#t+1] = Def.Quad {
 -- If the parent OptionRow's name is "NoteSkin" or "JudgmentGraphic" or "ComboFont", we leave it drawing and allow different Message commands
 -- broadcast from ./Scripts/SL-PlayerOptoions.lua to make this generic ActorProxy look like a NoteSkin or a JudgementGraphic or a ComboFont.
 
+local rows_with_proxies = { "NoteSkin", "JudgmentGraphic", "ComboFont", "HoldJudgment" }
+
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)
 
-	t[#t+1] = Def.ActorProxy{
+	local proxy = Def.ActorProxy{
 		Name="OptionRowProxy" ..pn,
 		OnCommand=function(self)
 			local optrow = self:GetParent():GetParent():GetParent()
 
-			if optrow:GetName()=="NoteSkin" or optrow:GetName()=="JudgmentGraphic" or optrow:GetName()=="ComboFont" then
+			if FindInTable(optrow:GetName(), rows_with_proxies) then
 				-- if this OptionRow needs an ActorProxy for preview purposes, set the necessary parameters
-				self:x(player==PLAYER_1 and WideScale(20, 0) or WideScale(220, 240)):zoom(0.4)
-					-- What was my reasoning for diffusing in after 0.01? It seems unnecessary.
-					-- I don't remember but am afraid to remove it.
-					:diffusealpha(0):sleep(0.01):diffusealpha(1)
-
+				self:x(proxy_offset + (player==PLAYER_1 and WideScale(20, 0) or WideScale(220, 240)))
+				self:zoom(0.4)
 			else
 				-- if this OptionRow doesn't need an ActorProxy, don't draw it and save processor cycles
 				self:hibernate(math.huge)
 			end
-		end,
-		-- NoteSkinChanged is broadcast by the SaveSelections() function for the NoteSkin OptionRow definition
-		-- in ./Scripts/SL-PlayerOptions.lua
-		NoteSkinChangedMessageCommand=function(self, params)
-			local optrow = self:GetParent():GetParent():GetParent()
-
-			if optrow and optrow:GetName() == "NoteSkin" and player == params.Player then
-				-- attempt to find the hidden NoteSkin actor added by ./BGAnimations/ScreenPlayerOptions overlay.lua
-				local noteskin_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin)
-				-- ensure that that NoteSkin actor exists before attempting to set it as the target of this ActorProxy
-				if noteskin_actor then self:SetTarget( noteskin_actor ) end
-			end
-		end,
-		JudgmentGraphicChangedMessageCommand=function(self, params)
-			local optrow = self:GetParent():GetParent():GetParent()
-
-			if optrow and optrow:GetName() == "JudgmentGraphic" and player == params.Player then
-				local judgment_sprite = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("JudgmentGraphic_"..params.JudgmentGraphic)
-				if judgment_sprite then self:SetTarget( judgment_sprite ) end
-			end
-		end,
-		ComboFontChangedMessageCommand=function(self, params)
-			local optrow = self:GetParent():GetParent():GetParent()
-
-			if optrow and optrow:GetName() == "ComboFont" and player == params.Player then
-				local combofont_bmt = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild(pn.."_ComboFont_"..params.ComboFont)
-				if combofont_bmt then self:SetTarget( combofont_bmt ) end
-			end
 		end
 	}
+
+	-- NoteSkinChanged is broadcast by the SaveSelections() function for the NoteSkin OptionRow definition
+	-- in ./Scripts/SL-PlayerOptions.lua
+	proxy.NoteSkinChangedMessageCommand=function(self, params)
+		if player ~= params.Player then return end
+
+		local optrow = self:GetParent():GetParent():GetParent()
+
+		if optrow and optrow:GetName() == "NoteSkin" then
+			-- attempt to find the hidden NoteSkin actor added by ./BGAnimations/ScreenPlayerOptions overlay.lua
+			local noteskin_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("NoteSkin_"..params.NoteSkin)
+			-- ensure that that NoteSkin actor exists before attempting to set it as the target of this ActorProxy
+			if noteskin_actor then self:SetTarget( noteskin_actor ) end
+		end
+	end
+
+	proxy.JudgmentGraphicChangedMessageCommand=function(self, params)
+		if player ~= params.Player then return end
+
+		local optrow = self:GetParent():GetParent():GetParent()
+
+		if optrow and optrow:GetName() == "JudgmentGraphic" then
+			local judgment_sprite = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("JudgmentGraphic_"..params.JudgmentGraphic)
+			if judgment_sprite then self:SetTarget( judgment_sprite ) end
+		end
+	end
+
+	proxy.ComboFontChangedMessageCommand=function(self, params)
+		if player ~= params.Player then return end
+
+		local optrow = self:GetParent():GetParent():GetParent()
+
+		if optrow and optrow:GetName() == "ComboFont" then
+			local combofont_bmt = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild(pn.."_ComboFont_"..params.ComboFont)
+			if combofont_bmt then self:SetTarget( combofont_bmt ) end
+		end
+	end
+
+	proxy.HoldJudgmentChangedMessageCommand=function(self, params)
+		if player ~= params.Player then return end
+
+		local optrow = self:GetParent():GetParent():GetParent()
+
+		if optrow and optrow:GetName() == "HoldJudgment" then
+			local hj_sprite = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("HoldJudgment_"..params.HoldJudgment)
+			if hj_sprite then self:SetTarget( hj_sprite ) end
+		end
+	end
+
+	table.insert(t, proxy)
 end
 
 return t

@@ -49,7 +49,7 @@ local af = Def.ActorFrame{
 		self:finishtweening():sleep(0.1):smooth(0.2):diffusealpha(0)
 	end,
 
-	LoadFont("_wendy small")..{
+	LoadFont("Common Bold")..{
 		Text=THEME:GetString("ScreenSelectStyle", choiceName:gsub("^%l", string.upper)),
 		InitCommand=function(self)
 			self:shadowlength(1):y(37):zoom(0.5)

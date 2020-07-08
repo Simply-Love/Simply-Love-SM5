@@ -4,10 +4,13 @@
 -- seems to be disconcertingly possible for user data to contain errata, typos, etc.
 
 local noteskins = NOTESKIN:GetNoteSkinNames()
-local judgment_graphics = {
-	ITG=GetJudgmentGraphics("ITG"),
-	["FA+"]=GetJudgmentGraphics("FA+"),
-}
+local judgment_graphics = {}
+
+-- get a table like { "ITG", "FA+" }
+local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Graphics/_judgments/", true, false)
+for dir in ivalues(judgment_dirs) do
+	judgment_graphics[dir] = GetJudgmentGraphics(dir)
+end
 
 -- ----------------------------------------------------
 -- some local functions that will help process profile data into presentable strings
@@ -31,13 +34,8 @@ local RecentMods = function(mods)
 		end
 	end
 
-	-- Mini should definitely be a string
-	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = ("%s %s"):format(mods.Mini, THEME:GetString("OptionTitles", "Mini")) end
-
-	-- some linebreaks to make space for NoteSkin and JudgmentGraphic previews
-	text = text.."\n\n\n"
-
-	-- the NoteSkin and JudgmentGraphic previews are not text and thus handled elsewhere
+	-- -----------------------------------------------------------------------
+	-- the NoteSkin and JudgmentGraphic previews are not text, and are loaded, handled, and positioned separately
 
 	-- ASIDE: My informal testing of reading ~80 unique JudgmentGraphic files from disk and
 	-- loading them into memory caused StepMania to hang for a few seconds, so
@@ -48,6 +46,15 @@ local RecentMods = function(mods)
 	-- available to StepMania (players commonly modify their profiles by hand and introduce typos),
 	-- we currently don't show anything.  Maybe a generic graphic of a question mark (or similar)
 	-- would be nice but that can wait for a future release.
+	-- -----------------------------------------------------------------------
+
+	-- Mini should definitely be a string
+	if type(mods.Mini)=="string" and mods.Mini ~= "" then text = ("%s %s, "):format(mods.Mini, THEME:GetString("OptionTitles", "Mini")) end
+
+	-- DataVisualizations should be a string and a specific string at that
+	if mods.DataVisualizations=="Target Score Graph" or mods.DataVisualizations=="Step Statistics" then
+		text = text .. THEME:GetString("SLPlayerOptions", mods.DataVisualizations)..", "
+	end
 
 	-- loop for mods that save as booleans
 	local flags, hideflags = "", ""
@@ -70,20 +77,12 @@ local RecentMods = function(mods)
 	end
 	text = text .. hideflags .. flags
 
-	-- DataVisualizations should be a string and a specific string at that
-	if mods.DataVisualizations=="Target Score Graph" or mods.DataVisualizations=="Step Statistics" then
-		text = text .. THEME:GetString("SLPlayerOptions", mods.DataVisualizations)..", "
-	end
 	-- remove trailing comma and whitespace
 	text = text:sub(1,-3)
 
 	return text, mods.NoteSkin, mods.JudgmentGraphic
 end
--- ----------------------------------------------------
-local RecentSong = function(song)
-	if not song then return "" end
-	return (song:GetGroupName() .. "/" .. song:GetDisplayMainTitle())
-end
+
 -- ----------------------------------------------------
 -- profiles have a GetTotalSessions() method, but the value doesn't (seem to?) increment in EventMode
 -- making it much less useful for the players who will most likely be using this screen
@@ -131,9 +130,8 @@ for i=1, PROFILEMAN:GetNumLocalProfiles() do
 
 	local data = {
 		index = i,
+		dir=dir,
 		displayname = profile:GetDisplayName(),
-		highscorename = profile:GetLastUsedHighScoreName(),
-		recentsong = RecentSong(profile:GetLastPlayedSong()),
 		totalsongs = TotalSongs(profile:GetNumTotalSongsPlayed()),
 		mods = mods,
 		noteskin = noteskin,
