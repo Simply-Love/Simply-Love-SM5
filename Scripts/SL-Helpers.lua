@@ -223,21 +223,29 @@ end
 
 -- -----------------------------------------------------------------------
 -- return the x value for the center of a player's notefield
--- used to position various elements in ScreenGameplay
+--   this is used to position various elements in ScreenGameplay
+--   but it is not used to position the notefields themselves
 
 GetNotefieldX = function( player )
+	if not player then return end
+
+	local style = GAMESTATE:GetCurrentStyle()
+	if not style then return end
+
 	local p = ToEnumShortString(player)
 	local game = GAMESTATE:GetCurrentGame():GetName()
 
-	local IsPlayingDanceSolo = (GAMESTATE:GetCurrentStyle():GetStepsType() == "StepsType_Dance_Solo")
-	local NumPlayersEnabled = GAMESTATE:GetNumPlayersEnabled()
-	local NumSidesJoined = GAMESTATE:GetNumSidesJoined()
+	local IsPlayingDanceSolo = (style:GetStepsType() == "StepsType_Dance_Solo")
+	local NumPlayersEnabled  = GAMESTATE:GetNumPlayersEnabled()
+	local NumSidesJoined     = GAMESTATE:GetNumSidesJoined()
 	local IsUsingSoloSingles = PREFSMAN:GetPreference('Center1Player') or IsPlayingDanceSolo or (NumSidesJoined==1 and (game=="techno" or game=="kb7"))
 
+	-- dance solo is always centered
 	if IsUsingSoloSingles and NumPlayersEnabled == 1 and NumSidesJoined == 1 then return _screen.cx end
-	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
+	-- double is always centered
+	if style:GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
 
-	local NumPlayersAndSides = ToEnumShortString( GAMESTATE:GetCurrentStyle():GetStyleType() )
+	local NumPlayersAndSides = ToEnumShortString( style:GetStyleType() )
 	return THEME:GetMetric("ScreenGameplay","Player".. p .. NumPlayersAndSides .."X")
 end
 

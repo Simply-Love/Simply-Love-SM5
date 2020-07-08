@@ -4,12 +4,17 @@ local ar = GetScreenAspectRatio()
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
+-- -----------------------------------------------------------------------
 -- if the conditions aren't right, don't bother
+
+local stylename = GAMESTATE:GetCurrentStyle():GetName()
+
 if (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
 or (SL.Global.GameMode == "Casual")
 or (GetNotefieldWidth() > _screen.w/2)
 or (NoteFieldIsCentered and not IsUsingWideScreen())
-or (not IsUltraWide and GAMESTATE:GetCurrentStyle():GetName() ~= "single")
+or (not IsUltraWide and stylename ~= "single")
+or (    IsUltraWide and not (stylename == "single" or stylename == "versus"))
 then
 	return
 end

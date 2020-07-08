@@ -390,10 +390,17 @@ local Overrides = {
 			-- notefield width already uses more than half the screen width
 			local style = GAMESTATE:GetCurrentStyle()
 			local notefieldwidth = GetNotefieldWidth()
+			local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+			local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-			if GetScreenAspectRatio() < 21/9 and style and style:GetName() ~= "single"
-			or notefieldwidth and notefieldwidth > _screen.w/2
-			or PREFSMAN:GetPreference("Center1Player") and not IsUsingWideScreen()
+			-- if not ultrawide, StepStats only in single (not versus, not double)
+			if (not IsUltraWide and style and style:GetName() ~= "single")
+			-- if ultrawide, StepStats only in single and versus (not double)
+			or (IsUltraWide and style and not (style:GetName()=="single" or style:GetName()=="versus"))
+			-- if the notefield takes up more than half the screen width (e.g. single + Center1Player + 4:3)
+			or (notefieldwidth and notefieldwidth > _screen.w/2)
+			-- if the notefield is centered with 4:3 aspect ratio (probably don't need both these conditions)
+			or (mpn and GetNotefieldX(mpn) == _screen.cx and not IsUsingWideScreen())
 			then
 				table.remove(choices, 3)
 			end
