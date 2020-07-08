@@ -72,9 +72,10 @@ af[#af+1] = LoadFont("Common Bold")..{
 		end
 		self:zoom(0.4):y(_screen.h-30)
 
-		if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player") then
+		-- offset "stage i" text to the left or right if only one player is joined, and that player's notefield is centered
+		if #GAMESTATE:GetHumanPlayers() == 1 and GetNotefieldX( GAMESTATE:GetMasterPlayerNumber() ) == _screen.cx then
 			local player = GAMESTATE:GetHumanPlayers()[1]
-			self:x(_screen.cx + 200 * (player==PLAYER_1 and -1 or 1))
+			self:x(_screen.cx + (GetNotefieldWidth()*0.5 + self:GetWidth()*0.25) * (player==PLAYER_1 and -1 or 1))
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
