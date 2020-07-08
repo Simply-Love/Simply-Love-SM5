@@ -379,7 +379,7 @@ end
 -- DefaultModifiers=Overhead, Cel
 -- would result in the engine applying FailType_Immediate to players when they join the game
 --
--- Anyway, this is all convoluted enough that I wrote this global helper function find the default
+-- Anyway, this is all convoluted enough that I wrote this global helper function to find the default
 -- FailType setting in the current game's DefaultModifiers Preference and return it as an enum value
 -- the PlayerOptions interface can accept.
 --
@@ -501,9 +501,11 @@ end
 
 -- -----------------------------------------------------------------------
 -- Call ResetPreferencesToStockSM5() to reset all the Preferences that SL silently
--- manages for you back to their stock SM5 values.  These "managed" Preferences are
--- listed in ./Scripts/SL_Init.lua per-gamemode (Casual, ITG, FA+), and
--- actively applied (and reapplied) for each new game using SetGameModePreferences()
+-- manages for you back to their stock SM5 values.
+--
+-- These "managed" Preferences are listed in ./Scripts/SL_Init.lua
+-- per-gamemode (Casual, ITG, FA+), and actively applied (and reapplied)
+-- for each new game using SetGameModePreferences()
 --
 -- SL normally calls ResetPreferencesToStockSM5() from
 -- ./BGAnimations/ScreenPromptToResetPreferencesToStock overlay.lua
@@ -579,7 +581,15 @@ DarkUI = function()
 end
 
 -- -----------------------------------------------------------------------
--- account for the possibility that emojis shouldn't be diffused to Color.Black
+-- Check a string for emojis.  If any are found, force specifically
+-- those characters to be diffused to an rgba of 1,1,1,1
+-- that is, no color - native emoji colors will be maintained.
+--
+-- This allows us to have a string like "hello world 🌊 i am here" displayed
+-- in a single BitmapText actor, with diffuse() only applied to the text.
+--
+-- If you have string that might have emojis in it, do your normal diffuse() first,
+-- then use DiffuseEmojis() to remove that diffuse property from emoji characters.
 
 DiffuseEmojis = function(bmt, text)
 	text = text or bmt:GetText()
@@ -587,7 +597,8 @@ DiffuseEmojis = function(bmt, text)
 	-- loop through each char in the string, checking for emojis; if any are found
 	-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
 	for i=1, text:utf8len() do
-		-- FIXME: similar to _wrapwidthpixels(), if you can implement a proper utf8-friendly fix, please submit a pull request
+		-- FIXME: Similar to _wrapwidthpixels(), if you can implement a proper utf8-friendly fix,
+		--        please submit a pull request because I certainly don't know what I'm doing.
 		if text:utf8sub(i,i):byte() >= 240 then
 			bmt:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
 		end
