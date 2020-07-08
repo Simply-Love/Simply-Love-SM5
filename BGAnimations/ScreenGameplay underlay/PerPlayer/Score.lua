@@ -3,13 +3,13 @@ local pn = ToEnumShortString(player)
 
 local mods = SL[pn].ActiveModifiers
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
-
+local NumPlayers = #GAMESTATE:GetHumanPlayers()
 -- -----------------------------------------------------------------------
 -- first, check for conditions where we might not draw the score actor at all
 
 if mods.HideScore then return end
 
-if #GAMESTATE:GetHumanPlayers() > 1
+if NumPlayers > 1
 and mods.NPSGraphAtTop
 and not IsUltraWide
 then
@@ -45,7 +45,7 @@ local ar_scale = {
 	sixteen_ten  = 0.825,
 	sixteen_nine = 1
 }
-local zoom_factor = scale(GetScreenAspectRatio(), 16/10, 16/9, ar_scale.sixteen_ten, ar_scale.sixteen_nine)
+local zoom_factor = clamp(scale(GetScreenAspectRatio(), 16/10, 16/9, ar_scale.sixteen_ten, ar_scale.sixteen_nine), 0, 1.125)
 
 -- -----------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 	Name=pn.."Score",
 	InitCommand=function(self)
 		self:valign(1):horizalign(right)
-		self:zoom(IsUltraWide and 0.425 or 0.5)
+		self:zoom(0.5)
 	end,
 
 	-- FIXME: this is out of control and points to the need for a generalized approach
@@ -85,16 +85,30 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 					-- -----------------------------------------------------------------------
 					-- FIXME: "padding" is a lazy fix for multiple nested ActorFrames having zoom applied and
 					--         me not feeling like recursively crawling the AF tree to factor in each zoom
-					local padding = NoteFieldIsCentered and WideScale(-4,27) or 37
-					padding = padding * zoom_factor
+					local padding
 
-					-- ultrawide and both players joined
-					if IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1) then
-						padding = 5
+					if NoteFieldIsCentered then
+						if IsUltraWide then
+							padding = 37
+						else
+							padding = SL_WideScale(-11.5,27)
+						end
+
+					else
+						if IsUltraWide then
+							if NumPlayers > 1 then
+								padding = -2
+							else
+								padding = 37
+							end
+						else
+							padding = 37
+						end
 					end
+
 					-- -----------------------------------------------------------------------
 
-					if IsUsingWideScreen() and not (IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1) then
+					if IsUsingWideScreen() and not (IsUltraWide and NumPlayers > 1) then
 						-- pad with an additional ~14px for each digit past 4 the stepcount goes
 						-- this keeps the score right-aligned with the right edge of the judgment
 						-- counts in the StepStats pane
@@ -107,7 +121,11 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 					end
 
 					self:x(step_stats:GetX() + judgmentnumbers:GetX() + padding)
-					self:y( _screen.cy + 42 )
+					if  IsUltraWide and NumPlayers > 1 then
+						self:y(_screen.cy - 2)
+					else
+						self:y( _screen.cy + 42 )
+					end
 				end
 
 			-- if NPSGraphAtTop but not Step Statistics

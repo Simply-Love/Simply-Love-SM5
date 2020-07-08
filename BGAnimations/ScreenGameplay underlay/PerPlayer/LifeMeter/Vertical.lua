@@ -24,6 +24,7 @@ end
 
 local swoosh, velocity
 
+-- FIXME: this doesn't currently handle split BPMs
 local Update = function(self)
 	velocity = -GAMESTATE:GetSongBPS()/2
 	if GAMESTATE:GetSongFreeze() then velocity = 0 end

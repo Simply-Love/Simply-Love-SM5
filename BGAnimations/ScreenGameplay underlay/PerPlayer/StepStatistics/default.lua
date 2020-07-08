@@ -28,7 +28,7 @@ local sidepane_width  = _screen.w/2
 local sidepane_pos_x  = _screen.w * (player==PLAYER_1 and 0.75 or 0.25)
 
 if not IsUltraWide then
-	if PREFSMAN:GetPreference("Center1Player") and IsUsingWideScreen()  then
+	if NoteFieldIsCentered and IsUsingWideScreen()  then
 		sidepane_width = (_screen.w - GetNotefieldWidth()) / 2
 
 		if player==PLAYER_1 then
