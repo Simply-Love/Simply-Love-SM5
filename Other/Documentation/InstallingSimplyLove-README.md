@@ -6,7 +6,7 @@ If you are upgrading from a previous version of Simply Love, fully delete the ol
 
 **Do not merge the new folder into the old.**
 
-🔷 Reminder: If you'd added additional judgment graphics to your old copy of Simply Love, you'll want to back them up. You would have added them to `./Simply Love/Graphics/_judgments/` in the old theme, and that's where they'll go in the new theme.
+🔷 Reminder: If you added additional judgment graphics to your old copy of Simply Love, you'll want to back them up. You would have added them to `./Simply Love/Graphics/_judgments/` in the old theme, and that's where they'll go in the new theme.
 
 ## 2. Download
 

@@ -34,7 +34,7 @@ If you are able to compile StepMania's source code yourself, the [5_1-new branch
 
 ## Installing Simply Love
 
-If you are upgrading from a previous version of Simply Love, fully delete the old Simply Love folder first.  **Do not try to merge the new folder into the old.**
+If you are upgrading from a previous version of Simply Love, fully delete the old Simply Love folder first.  **Do not merge the new folder into the old.**
 
 You can download the current Simply Love release at the [Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) page.
 
@@ -58,9 +58,7 @@ The current language can be changed in Simply Love under *System Options*.
 
 ## Aspect Ratio Support
 
-Simply Love is designed to be usable at resolutions as low as 640x480 but still look crisp and clean in HD, 2k, 4k, etc.
-
-It supports many screen aspect ratios:
+Simply Love is designed to be usable at resolutions as low as 640x480 but still look crisp and clean in HD, 2k, 4k, etc.  It supports many screen aspect ratios:
 
   * <strong>16:9</strong> (common)
   * <strong>16:10</strong> (Apple laptops, some LCD monitors)
