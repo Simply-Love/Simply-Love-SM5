@@ -1,7 +1,8 @@
 # Simply Love (StepMania 5)
 
 ![Arrow Logo](https://i.imgur.com/oZmxyGo.png)
-======================
+
+---
 
 ## About
 
@@ -11,7 +12,6 @@ It features a clean and simple design, offers numerous data-driven features not 
 
 Simply Love was originally designed and implemented for a previous version of StepMania (SM3.95) by hurtpiggypig.  For more information on that version of Simply Love, check here:
 https://www.youtube.com/watch?v=OtcWy5m6-CQ
-
 
 
 ## Supported Versions of StepMania
@@ -39,7 +39,7 @@ If you are upgrading from a previous version of Simply Love, fully delete the ol
 
 You can download the current Simply Love release at the [Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) page.
 
-Full install instructions are in the [Installing Simply Love](./Other/InstallingSimplyLove-README.md) README.
+Full install instructions are in the [Installing Simply Love](./Other/Documentation/InstallingSimplyLove-README.md) README.
 
 
 ## Language Support
@@ -56,6 +56,21 @@ Simply Love has support for:
 
 The current language can be changed in Simply Love under *System Options*.
 
+
+## Aspect Ratio Support
+
+Simply Love supports many screen aspect ratios:
+
+✅ 16:9 (common)<br>
+✅ 16:10 (Apple laptops, some LCD monitors)<br>
+✅ 4:3 (CRT arcade monitors, older TVs)<br>
+✅ 21:9 ("Ultrawide")
+
+It is designed to be usable at resolutions as low as 640x480, while still looking crisp and clean at widescreen HD, 2k, etc.
+
+The aspect ratio can be changed under *Graphics / Sound Options*.
+
+
 ## Screenshots
 
 ![Title Screen](https://i.imgur.com/tlKZad8l.png)
@@ -65,37 +80,12 @@ The current language can be changed in Simply Love under *System Options*.
 ![Select Profile](https://i.imgur.com/bZc5xpll.png)
 ![Visual Themes](https://i.imgur.com/hGB1T4nl.png)
 
-Visit my imgur album for more screenshots of this theme: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
+Visit my imgur album for more screenshots: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
 
 ## Features
 
-#### New GameModes
-
-* [Casual](http://imgur.com/zLLhDWQh.png) – Intended for novice players; restricted song list, no failing, no LifeMeter, simplified UI, etc.  You can read more about customizing what content appears in Casual Mode [here](./Other/CasualMode-README.md).
-* [ITG](http://imgur.com/HS03hhJh.png) – Play using the *In the Groove* standards established over a decade ago
-* [FA+](http://imgur.com/teZtlbih.png) – Similar to ITG, but features tighter TimingWindows; can be used to qualify for ECFA events
-
-#### New Auxiliary Features
-
-  * [Live Step Statistics](https://imgur.com/w4ddgSK.png) – This optional gameplay overlay tracks how many of each judgment have been earned in real time and features a notes-per-second density histogram.  This can make livestreaming more interesting for viewers.
-  * [Judgment Scatter Plot](https://imgur.com/JK5Li2w.png) – ScreenEvaluation now features a judgment scatterplot where notes hit early are rendered "below the middle" and notes hit late are rendered "above the middle." This can offer insight into how a player performed over time. Did the player gradually hit notes earlier and earlier as the song wore on? This feature can help players answer such questions.
-  * [Judgment Density Histogram](https://imgur.com/FAuieAf.png) – The evaluation screen also now features a histogram that will help players assess whether they are more often hitting notes early or late.
-  * [Per-Column Judgment Breakdown](https://i.imgur.com/TaApeGB.png)
-  * [QR Code Integration with GrooveStats](https://i.imgur.com/TaApeGB.png) – Evaluation now displays a QR code that will upload the score you just earned to your [GrooveStats](http://groovestats.com/) account.
-  * [IIDX-inspired Pacemaker](http://imgur.com/NwN8Fnbh.png)
-  * improved MeasureCounter – Stepcharts can now be parsed ahead of time, so it is no longer necessary to play through a stepchart at least once to acquire a stream breakdown.
-
-#### New Aesthetic Features
- * [RainbowMode](http://i.imgur.com/aKsvrcch.png) – add some color to Simply Love!
- * [NoteSkin and Judgment previews](https://i.imgur.com/Jk5A4LT.png) in the modifier menu
- * improved widescreen support
-
-#### New Conveniences for Public Machine Operators
-  * [MenuTimer Options](https://i.imgur.com/SqbsMiw.png) – Set the MenuTimers for various screens.
-  * [Long/Marathon Song Cutoffs](http://i.imgur.com/fzNJDVDh.png) – The cutoffs for songs that cost 2 and 3 rounds can be set in *Arcade Options*.
-  * [USB Profile Options](https://i.imgur.com/ZgU9HGw.png) – Manage settings for player USB sticks, including custom songs.  Only available in SM5.1-beta and newer.
-
+Refer to the [Features README](./Other/Documentation/Features-README.md) for a basic list of features and screenshots.
 
 ---
 
@@ -103,11 +93,11 @@ Visit my imgur album for more screenshots of this theme: [http://imgur.com/a/56w
 
 #### How can I get more songs to show up in Casual Mode?
 
-Please refer to the [Casual Mode README](./Other/CasualMode-README.md).
+Please refer to the [Casual Mode README](./Other/Documentation/CasualMode-README.md).
 
 #### I'm getting an error when I try to install StepMania.
 
-Refer to the [Troubleshooting StepMania](./Other/TroubleshootingStepMania-README.md) guide included with Simply Love.
+Refer to the [Troubleshooting StepMania](./Other/Documentation/TroubleshootingStepMania-README.md) guide included with Simply Love.
 
 #### How can I load custom songs from USB sticks?
 
@@ -122,7 +112,7 @@ Note that support for loading custom songs from USB profiles is new to StepMania
 
 If your judgment distribution graph on Screen Evaluation has multiple individual "spikes" like Cloud Strife's hair in FFVII, your dance pad hardware is polling at a low rate.
 
-![spiky boi](https://i.imgur.com/oMAQKoM.jpg)
+![spiky boi](https://i.imgur.com/ay1G6rml.png)
 
 Fixing this is outside the scope of Simply Love as a StepMania theme.  You may need to install drivers for your OS, modify hardware inside your dance pad, or both.
 
