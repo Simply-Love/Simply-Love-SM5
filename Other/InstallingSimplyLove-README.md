@@ -32,6 +32,21 @@ If you find yourself adding content frequently, you may wish to create a shortcu
 
 The next time you use StepMania, you can switch to Simply Love from the main options menu found on the Title Screen.
 
-![Imgur](https://i.imgur.com/RoBLgZnh.png)
+![switch to Simply Love](https://i.imgur.com/RoBLgZnh.png)
 
 The exact process can vary depending on your current theme, but this setting is usually in **Options → Display Options → Appearance Options → Theme**
+
+---
+
+## Troubleshooting
+
+If you switch to Simply Love and see a plain black screen with white text, you might have nested folders too deeply.
+
+![folders nested too deeply](https://i.imgur.com/BP3TjLOh.png)
+
+You might have `/Themes/Simply Love/Simply Love/` <br>
+when you want `/Themes/Simply Love/`
+
+This can happen when unzipping the download.
+
+Quit StepMania, check to see if the theme's files are nested too deeply, and move the correct folder up a level if needed.
