@@ -2,7 +2,6 @@
 
 ![Arrow Logo](https://i.imgur.com/oZmxyGo.png)
 
----
 
 ## About
 
@@ -59,14 +58,14 @@ The current language can be changed in Simply Love under *System Options*.
 
 ## Aspect Ratio Support
 
-Simply Love supports many screen aspect ratios:
+Simply Love is designed to be usable at resolutions as low as 640x480 but still look crisp and clean in HD, 2k, 4k, etc.
 
-✅ 16:9 (common)<br>
-✅ 16:10 (Apple laptops, some LCD monitors)<br>
-✅ 4:3 (CRT arcade monitors, older TVs)<br>
-✅ 21:9 ("Ultrawide")
+It supports many screen aspect ratios:
 
-It is designed to be usable at resolutions as low as 640x480, while still looking crisp and clean at widescreen HD, 2k, etc.
+  * <strong>16:9</strong> (common)
+  * <strong>16:10</strong> (Apple laptops, some LCD monitors)
+  * <strong>4:3</strong> (CRT arcade monitors, older TVs)
+  * <strong>21:9</strong> ("Ultrawide")
 
 The aspect ratio can be changed under *Graphics / Sound Options*.
 
