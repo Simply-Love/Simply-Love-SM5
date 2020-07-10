@@ -52,6 +52,12 @@ bmt.InitCommand=function(self)
 	-- mirror image of MeasureCounter.lua
 	self:xy( GetNotefieldX(player) + (width/NumColumns), _screen.cy )
 
+	-- Fix overlapping issue when MeasureCounter isn't moved up since the
+	-- lookaheads will overlap subtractive scoring.
+	if not mods.MeasureCounterUp then
+		self:addy(-55)
+	end
+
 	-- Fix overlap issues when MeasureCounter is centered
 	-- since in this case we don't need symmetry.
 	if (mods.MeasureCounterLeft == false) then

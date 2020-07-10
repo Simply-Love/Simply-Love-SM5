@@ -43,6 +43,8 @@ end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
 	if Measures[streamIndex] == nil then return "" end
+	-- Don't display final count if it's a break.
+	if streamIndex == #Measures and Measures[streamIndex].isBreak then return "" end
 
 	-- A "segment" can be either stream or rest
 	local segmentStart = Measures[streamIndex].streamStart
@@ -91,27 +93,30 @@ local Update = function(self, delta)
 			streamIndex = streamIndex + 1
 		end
 
-		for i=1,lookAhead + 1 do
+		for i=1,lookAhead+1 do
 			-- Only the first one is the main counter, the other ones are lookaheads.
 			local isLookAhead = i ~= 1
+			-- We're looping forwards, but the BMTs are indexed in the opposite direction.
+			-- Adjust indices accordingly.
+			local adjustedIndex = lookAhead+2-i
 			local text = GetTextForMeasure(currMeasure, streams.Measures, streamIndex + i - 1, isLookAhead)
-			bmt[i]:settext(text)
+			bmt[adjustedIndex]:settext(text)
 			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
 			if streams.Measures[streamIndex + i - 1] == nil then
-				bmt[i]:visible(false)
+				bmt[adjustedIndex]:visible(false)
 			elseif streams.Measures[streamIndex + i - 1].isBreak then
 				-- Make the lookaheads be lighter than their main counterparts.
 				if not isLookAhead then
-					bmt[i]:diffuse(0.5, 0.5, 0.5 ,1)
+					bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
 				else
-					bmt[i]:diffuse(0.3, 0.3, 0.3 ,1)
+					bmt[adjustedIndex]:diffuse(0.3, 0.3, 0.3 ,1)
 				end
 			else
 				-- Make the lookaheads be lighter than their main counterparts.
 				if not isLookAhead then
-					bmt[i]:diffuse(1, 1, 1, 1)
+					bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
 				else
-					bmt[i]:diffuse(0.8, 0.8, 0.8 ,1)
+					bmt[adjustedIndex]:diffuse(0.8, 0.8, 0.8 ,1)
 				end
 			end
 		end
@@ -140,7 +145,9 @@ local af = Def.ActorFrame{
 	end,
 }
 
-for i=1,lookAhead+1 do
+-- We iterate backwards since we want the lookaheads to be drawn first in the case the
+-- main measure counter expands into them.
+for i=lookAhead+1,1,-1 do
 	af[#af+1] = LoadFont(font)..{
 		InitCommand=function(self)
 			-- Add to the collection of BMTs so our AF's update function can easily access them.
