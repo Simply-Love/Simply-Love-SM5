@@ -206,10 +206,11 @@ SL_CustomPrefs.Validate = function()
 	local file = IniFile.ReadFile("Save/ThemePrefs.ini")
 	local sl_prefs = SL_CustomPrefs.Get()
 
-	-- If a [Simply Love] section is found in ./Save/ThemePrefs.ini
-	if file["Simply Love"] then
+	-- If a section for this theme is found in ./Save/ThemePrefs.ini
+	local theme_name = THEME:GetCurThemeName()
+	if file[theme_name] then
 		-- loop through key/value pairs retrieved and do some basic validation
-		for k,v in pairs( file["Simply Love"] ) do
+		for k,v in pairs( file[theme_name] ) do
 			if sl_prefs[k] then
 				-- if we reach here, the setting exists in both the master definition as well as the user's ThemePrefs.ini
 				-- so perform some rudimentary validation; check for both type mismatch and presence in sl_prefs

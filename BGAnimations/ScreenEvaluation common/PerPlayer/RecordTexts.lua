@@ -5,6 +5,11 @@ local pn = ToEnumShortString(player)
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
+local HighScoreIndex = {
+	Machine =  pss:GetMachineHighScoreIndex(),
+	Personal = pss:GetPersonalHighScoreIndex()
+}
+
 -- ---------------------------------------------
 -- GetMachineHighScoreIndex() will always return -1 in EventMode, so...
 
@@ -20,15 +25,41 @@ local EarnedMachineHighScoreInEventMode = function()
 	-- if DancePoints were earned, and no MachineHighScores exist, it's a HighScore
 	if #MachineHighScores < 1 then return true end
 	-- otherwise, check if this score is better than the worst current HighScore retrieved from MachineProfile
-	return pss:GetHighScore():GetScore() >= MachineHighScores[math.min(MaxMachineHighScores, #MachineHighScores)]:GetScore()
+	return pss:GetHighScore():GetPercentDP() >= MachineHighScores[math.min(MaxMachineHighScores, #MachineHighScores)]:GetPercentDP()
+end
+
+-- FIXME: This approach is bizarre and heavily flawed + limited.
+--        GetMachineHighScoreIndex() should really be patched in the SM5 engine.
+local MachineHighScoreIndexInEventMode = function()
+	local index = -1
+
+	for i, highscore in ipairs(MachineHighScores) do
+		local name
+	 	if  pss:GetHighScore():GetScore() == highscore:GetScore()
+		and pss:GetHighScore():GetDate()  == highscore:GetDate()
+		and
+		(
+			name == PROFILEMAN:GetProfile(player):GetLastUsedHighScoreName()
+			or
+			(
+				(#GAMESTATE:GetHumanPlayers()==1 and name=="EVNT")
+				or (highscore:GetScore() ~= STATSMAN:GetPlayedStageStats(1):GetPlayerStageStats(OtherPlayer[player]):GetHighScore():GetScore())
+			)
+		)
+		then
+			index = i-1
+			break
+		end
+	end
+
+	return index
+end
+
+if GAMESTATE:IsEventMode() then
+	HighScoreIndex.Machine = MachineHighScoreIndexInEventMode()
 end
 
 -- ---------------------------------------------
-
-local HighScoreIndex = {
-	Machine =  pss:GetMachineHighScoreIndex(),
-	Personal = pss:GetPersonalHighScoreIndex()
-}
 
 local EarnedMachineRecord  = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or ((HighScoreIndex.Machine ~= -1) and pss:GetPercentDancePoints() >= 0.01)
 local EarnedPersonalRecord = ( HighScoreIndex.Personal ~= -1 ) and pss:GetPercentDancePoints() >= 0.01

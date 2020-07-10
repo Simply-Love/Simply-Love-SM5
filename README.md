@@ -18,24 +18,26 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 Simply Love is compatible with current releases of SM5 from the official StepMania project.
 
-**Compatible**<br>
+**Compatible Releases**<br>
 ✅ [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12)<br>
-✅ [StepMania 5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)<br>
-✅ [StepMania 5.1 nightly builds](https://github.com/stepmania/stepmania/wiki/Nightly-Builds)
+✅ [StepMania 5.1-b2](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)<br>
+
+If you are able to compile StepMania's source code yourself, the [5_1-new branch](https://github.com/stepmania/stepmania/tree/5_1-new/) is supported.  The wiki has [instructions for compiling](https://github.com/stepmania/stepmania/wiki/Compiling-StepMania).
+
 
 **Incompatible**<br>
 ❌ Alpha builds of SM5.3 are not supported at this time, but hopefully this will change in the future<br>
 ❌ Forks of SM5 (e.g. *starworlds*)<br>
 ❌ Older versions of StepMania (e.g. StepMania 3.9)<br>
-❌ Forks of older versions of StepMania (e.g. OpenITG, notITG)<br>
+❌ Forks of older versions of StepMania (e.g. OpenITG, NotITG)<br>
 ❌ SM5.2
 
 
 ## Installing Simply Love
 
-If you are upgrading from a previous version of Simply Love, fully delete the old Simply Love folder before moving the new folder into place.  **Do not try to merge the new folder into the old.**
+If you are upgrading from a previous version of Simply Love, fully delete the old Simply Love folder first.  **Do not try to merge the new folder into the old.**
 
-You can read about and download the current release of Simply Love at the [Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) page.
+You can download the current Simply Love release at the [Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) page.
 
 Full install instructions are in the [Installing Simply Love](./Other/InstallingSimplyLove-README.md) README.
 
@@ -111,7 +113,7 @@ Refer to the [Troubleshooting StepMania](./Other/TroubleshootingStepMania-README
 
 First, configure your PC for USB profiles.  Follow the guides for [Windows](https://github.com/stepmania/stepmania/wiki/Static-Mount-Points-for-USB-Profiles-(Windows)) or [Linux](https://github.com/stepmania/stepmania/wiki/Creating-Static-Mount-Points-For-USB-Profiles-%28Linux%29).
 
-If you are using [SM5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) and have configured your computer using the guides linked above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
+If you are using [SM5.1-beta](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2) and have followed the guides linked above, you can use the [USB Profile Options menu](https://i.imgur.com/ZgU9HGw.png) in Simply Love to configure settings for custom songs.
 
 Note that support for loading custom songs from USB profiles is new to StepMania 5.1.  It is not available in StepMania 5.0.12 and older.
 

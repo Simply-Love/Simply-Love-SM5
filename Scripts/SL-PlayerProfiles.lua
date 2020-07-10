@@ -98,7 +98,7 @@ LoadProfileCustom = function(profile, dir)
 					GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", v)
 
 					-- However! It's quite likely that a FailType mod could be in that^ string, meaning a player could
-					-- have their own setting for FailType saved to their profile.  I think it makes more sense to allow
+					-- have their own setting for FailType saved to their profile.  I think it makes more sense to let
 					-- machine operators specify a default FailType at a global/machine level, so use this opportunity to
 					-- use the PlayerOptions interface to set FailSetting() using the default FailType setting from
 					-- the operator menu's Advanced Options

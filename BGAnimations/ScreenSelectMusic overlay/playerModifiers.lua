@@ -15,7 +15,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		if SL[pn].PlayerOptionsString ~= GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred") then
 			GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", SL[pn].PlayerOptionsString)
 
-			-- ensure that FailSetting is maintained according whatever the machine operator set in Advanced Options
+			-- ensure that FailSetting is maintained according to whatever the machine operator set in Advanced Options
 			GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
 		end
 	end
