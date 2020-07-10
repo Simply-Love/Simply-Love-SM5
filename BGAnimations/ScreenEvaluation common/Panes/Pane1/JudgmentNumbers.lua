@@ -1,4 +1,5 @@
-local player = ...
+local player, side = unpack(...)
+
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
@@ -19,7 +20,7 @@ local t = Def.ActorFrame{
 	InitCommand=function(self)self:zoom(0.8):xy(90,_screen.cy-24) end,
 	OnCommand=function(self)
 		-- shift the x position of this ActorFrame to -90 for PLAYER_2
-		if player == PLAYER_2 then
+		if side == PLAYER_2 then
 			self:x( self:GetX() * -1 )
 		end
 	end
@@ -55,7 +56,7 @@ for i=1,#TapNoteScores.Types do
 			end
 		end,
 		BeginCommand=function(self)
-			self:x( TapNoteScores.x[pn] )
+			self:x( TapNoteScores.x[ToEnumShortString(side)] )
 			self:y((i-1)*35 -20)
 			self:targetnumber(number)
 		end
@@ -76,7 +77,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)
-			self:x( RadarCategories.x[pn] )
+			self:x( RadarCategories.x[ToEnumShortString(side)] )
 			self:targetnumber(performance)
 		end
 	}
@@ -87,7 +88,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		InitCommand=function(self) self:diffuse(color("#5A6166")):zoom(1.25):horizalign(right) end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)
-			self:x( ((player == PLAYER_1) and -168) or 230 )
+			self:x( ((side == PLAYER_1) and -168) or 230 )
 		end
 	}
 
@@ -96,7 +97,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)
-			self:x( ((player == PLAYER_1) and -114) or 286 )
+			self:x( ((side == PLAYER_1) and -114) or 286 )
 			self:settext(("%03.0f"):format(possible))
 			local leadingZeroAttr = { Length=3-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
 			self:AddAttribute(0, leadingZeroAttr )

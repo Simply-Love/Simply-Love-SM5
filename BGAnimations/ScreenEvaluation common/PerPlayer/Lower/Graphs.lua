@@ -1,12 +1,20 @@
 if SL.Global.GameMode == "Casual" then return end
 
 local player = ...
+local NumPlayers = #GAMESTATE:GetHumanPlayers()
 
-local GraphWidth = THEME:GetMetric("GraphDisplay", "BodyWidth")
+local GraphWidth  = THEME:GetMetric("GraphDisplay", "BodyWidth")
 local GraphHeight = THEME:GetMetric("GraphDisplay", "BodyHeight")
 
 return Def.ActorFrame{
-	InitCommand=function(self) self:y(_screen.cy + 124) end,
+	InitCommand=function(self)
+		self:y(_screen.cy + 124)
+		if NumPlayers == 1 then
+			-- not quite an even 0.25 because we need to accomodate the extra 10px
+			-- that would normally be between the left and right panes
+			self:addx(GraphWidth * 0.2541)
+		end
+	end,
 
 	-- Draw a Quad behind the GraphDisplay (lifebar graph) and Judgment ScatterPlot
 	Def.Quad{
@@ -40,6 +48,7 @@ return Def.ActorFrame{
 			else
 			    -- hide the GraphDisplay's body (2nd unnamed child)
 			    self:GetChild("")[2]:visible(false)
+				 self:GetChild("Line"):addy(1)
 			end
 		end
 	},

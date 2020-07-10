@@ -1,16 +1,16 @@
 -- Pane6 displays QR codes for uploading scores to groovestats.com
 
-local player = ...
+local player, side = unpack(...)
 
 -- ------------------------------------------
---
-
 -- ValidForGrooveStats.lua contains various checks requested by Archi
 -- to determine whether the score should be permitted on GrooveStats
--- and returns a table of booleans, one per check.  Obviously, this is
--- trivial to circumvent and not meant to keep malicious users out of
--- GrooveStats. The intent is to prevent well-intentioned-but-unaware
--- players from accidentally submitting invalid scores to GrooveStats.
+-- and returns a table of booleans, one per check.
+--
+-- Obviously, this is trivial to circumvent and not meant to keep
+-- malicious users out of GrooveStats. It is intended to prevent
+-- well-intentioned-but-unaware players from accidentally submitting
+-- invalid scores to GrooveStats.
 
 local checks = LoadActor("./ValidForGrooveStats.lua", player)
 
@@ -27,7 +27,9 @@ local X_HasBeenBlinked = false
 if ValidForGrooveStats then
 	url = LoadActor("./GrooveStatsURL.lua", player)
 	text = ScreenString("QRInstructions")
+
 else
+	-- hbdi
 	url = "https://www.youtube.com/watch?v=FMABVVk4Ge4"
 
 	for i, passed_check in ipairs(checks) do
@@ -49,9 +51,8 @@ local qrcode_size = 168
 -- ------------------------------------------
 
 local pane = Def.ActorFrame{
-	Name="Pane6",
-	InitCommand=function(self) self:visible(false):xy(-140, 222) end,
-	ShrinkCommand=function(self)
+	InitCommand=function(self) self:xy(-140, 222) end,
+	PaneSwitchCommand=function(self)
 		if self:GetVisible() and not ValidForGrooveStats and not X_HasBeenBlinked then
 			self:queuecommand("BlinkX")
 		end

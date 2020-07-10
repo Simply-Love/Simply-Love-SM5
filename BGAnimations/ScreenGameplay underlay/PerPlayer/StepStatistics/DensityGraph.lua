@@ -104,6 +104,7 @@ local text = LoadFont("Common Normal")..{
 		digits = clamp(math.max(4, digits) - 4, 0, 3)
 
 		-- -----------------------------------------------------------------------
+		-- FIXME:
 		-- crumby code used for
 		-- positioning x offset
 		-- of PeakNPS
@@ -117,8 +118,8 @@ local text = LoadFont("Common Normal")..{
 				padding[PLAYER_1] = -_screen.cx + 36
 				padding[PLAYER_2] = 36
 			else
-				padding[PLAYER_1] = 4
-				padding[PLAYER_2] = -908
+				padding[PLAYER_1] = -10
+				padding[PLAYER_2] = -922
 			end
 
 		elseif IsUsingWideScreen() then
@@ -147,7 +148,6 @@ local text = LoadFont("Common Normal")..{
 
 			padding[player] = padding[player] + digitpadding
 		end
-
 		-- -----------------------------------------------------------------------
 
 		self:x( stepstatspane:GetX() + padding[player] + (self:GetWidth()/self:GetZoom()) )

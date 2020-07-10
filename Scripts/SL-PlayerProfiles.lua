@@ -43,7 +43,10 @@ local profile_whitelist = {
 
 	ReceptorArrowsPosition = "string",
 
-	PlayerOptionsString = "string"
+	PlayerOptionsString = "string",
+
+	EvalPanePrimary   = "number",
+	EvalPaneSecondary = "number",
 }
 
 -- -----------------------------------------------------------------------
@@ -104,6 +107,12 @@ LoadProfileCustom = function(profile, dir)
 					-- the operator menu's Advanced Options
 					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
 				end
+
+				if k=="EvalPaneSecondary" and type(v)==profile_whitelist.EvalPaneSecondary then
+					SL[pn].EvalPaneSecondary = v
+				elseif k=="EvalPanePrimary" and type(v)==profile_whitelist.EvalPanePrimary then
+					SL[pn].EvalPanePrimary   = v
+				end
 			end
 		end
 	end
@@ -126,9 +135,11 @@ SaveProfileCustom = function(profile, dir)
 				end
 			end
 
-			-- PlayerOptionsString is saved outside the SL[pn].ActiveModifiers tables
+			-- these values are saved outside the SL[pn].ActiveModifiers tables
 			-- and thus won't be handled in the loop above
 			output.PlayerOptionsString = SL[pn].PlayerOptionsString
+			output.EvalPanePrimary   = SL[pn].EvalPanePrimary
+			output.EvalPaneSecondary = SL[pn].EvalPaneSecondary
 
 			IniFile.WriteFile( path, {[theme_name]=output} )
 			break

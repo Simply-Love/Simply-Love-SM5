@@ -64,7 +64,7 @@ local bricks = {
 }
 
 -- handles to actors
-local amv, paddle, ball, bmt_af, give_up_text, main_af
+local amv, paddle, ball, bmt_af, main_af
 
 -- ball variables
 local dx, dy = 0, 0
@@ -111,7 +111,11 @@ local Update = function(af, delta)
 		end
 
 		if held_duration > (give_up_time * 0.15) then
-			give_up_text:queuecommand("Show")
+			if input.start then
+				SCREENMAN:SystemMessage("Continue holding &START; to exit.")
+			elseif input.back then
+				SCREENMAN:SystemMessage("Continue holding &BACK; to exit.")
+			end
 		end
 
 		if held_duration > give_up_time then
@@ -153,12 +157,10 @@ local af = Def.ActorFrame{
 
 			if (event.button=="Start") then
 				held_duration, old_time = 0, 0
-				give_up_text:playcommand("Hide")
 				input.start = false
 			end
 			if (event.button=="Back") then
 				held_duration, old_time = 0, 0
-				give_up_text:playcommand("Hide")
 				input.back = false
 			end
 		end
@@ -403,17 +405,6 @@ canvas[#canvas+1] = LoadActor("./ball.png")..{
 }
 
 af[#af+1] = canvas
-
-af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-	Text="continue holding to quit",
-	InitCommand=function(self)
-		give_up_text = self
-		self:xy(_screen.cx, _screen.cy+100):zoom(1):diffuse( 0,0,0,0 )
-	end,
-	ShowCommand=function(self) self:finishtweening():linear(0.1):diffusealpha(1) end,
-	HideCommand=function(self) self:finishtweening():linear(0.1):diffusealpha(0) end,
-}
 
 -- intro (thanks, xkcd)
 af[#af+1] = Def.ActorFrame{

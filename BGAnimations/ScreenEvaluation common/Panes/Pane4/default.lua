@@ -1,7 +1,7 @@
 -- Pane4 displays an aggregate histogram of judgment offsets
 -- as well as the mean timing error, median, and mode of those offsets.
 
-local player = ...
+local player, side = unpack(...)
 local pn = ToEnumShortString(player)
 
 -- table of offset values obtained during this song's playthrough
@@ -72,10 +72,8 @@ end
 -- Actors
 
 local pane = Def.ActorFrame{
-	Name="Pane4",
 	InitCommand=function(self)
-		self:visible(false)
-			:xy(-pane_width*0.5, pane_height*1.95)
+		self:xy(-pane_width*0.5, pane_height*1.95)
 	end
 }
 

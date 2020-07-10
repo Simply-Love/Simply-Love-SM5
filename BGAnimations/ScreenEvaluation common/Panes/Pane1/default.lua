@@ -4,17 +4,14 @@
 --
 -- Pane1 is the what the original Simply Love for SM3.95 shipped with.
 
-local player = ...
-
 return Def.ActorFrame{
-	Name="Pane1",
 
 	-- labels like "FANTASTIC", "MISS", "holds", "rolls", etc.
-	LoadActor("./JudgmentLabels.lua", player),
+	LoadActor("./JudgmentLabels.lua", ...),
 
 	-- score displayed as a percentage
-	LoadActor("./Percentage.lua", player),
+	LoadActor("./Percentage.lua", ...),
 
 	-- numbers (How many Fantastics? How many Misses? etc.)
-	LoadActor("./JudgmentNumbers.lua", player),
+	LoadActor("./JudgmentNumbers.lua", ...),
 }

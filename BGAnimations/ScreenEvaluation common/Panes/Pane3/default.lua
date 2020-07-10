@@ -1,6 +1,14 @@
 -- Pane3 displays a list of HighScores for the stepchart that was played.
 
-local player = ...
+local player, side = unpack(...)
+
+local pane = Def.ActorFrame{
+	InitCommand=function(self)
+		self:y(_screen.cy - 62):zoom(0.8)
+	end
+}
+
+-- -----------------------------------------------------------------------
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local NumHighScores = math.min(10, PREFSMAN:GetPreference("MaxHighScoresPerListForMachine"))
@@ -34,18 +42,6 @@ local EarnedTop2Personal  = (HighScoreIndex.Personal >= 0 and HighScoreIndex.Per
 
 -- -----------------------------------------------------------------------
 
-local pane = Def.ActorFrame{
-	Name="Pane3",
-	InitCommand=function(self)
-		self:visible(false)
-		self:y(_screen.cy - 62):zoom(0.8)
-	end
-}
-
--- 22px RowHeight by default, which works for displaying 10 machine HighScores
-local args = { Player=player, RoundsAgo=1, RowHeight=22}
-
-
 -- Novice players frequently improve their own score while struggling to
 -- break into an overall leaderboard.  The lack of *visible* leaderboard
 -- progress can be frustrating/demoralizing, so let's do what we can to
@@ -65,6 +61,9 @@ local args = { Player=player, RoundsAgo=1, RowHeight=22}
 -- track progress is based on my experiences maintaining a heavily-used
 -- public SM5 machine for several years while away at school.
 
+
+-- 22px RowHeight by default, which works for displaying 10 machine HighScores
+local args = { Player=player, RoundsAgo=1, RowHeight=22}
 
 if (not EarnedMachineRecord and EarnedTop2Personal) then
 
