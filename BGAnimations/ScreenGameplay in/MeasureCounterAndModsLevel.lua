@@ -25,13 +25,12 @@ return function(SongNumberInCourse)
 			local steps_type = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
 			local difficulty = ToEnumShortString( steps:GetDifficulty() )
 			local notes_per_measure = tonumber(mods.MeasureCounter:match("%d+"))
-			local threshold_to_be_stream = 2
 
 			-- if any of these don't match what we're currently looking for...
 			if SL[pn].Streams.Steps ~= steps or SL[pn].Streams.StepsType ~= steps_type or SL[pn].Streams.Difficulty ~= difficulty then
 
 				-- ...then parse the simfile, given the current parameters
-				SL[pn].Streams.Measures = GetStreams(steps, steps_type, difficulty, notes_per_measure, threshold_to_be_stream)
+				SL[pn].Streams.Measures = GetStreams(steps, steps_type, difficulty, notes_per_measure)
 
 				-- and set these so we can check again next time.
 				SL[pn].Streams.Steps      = steps

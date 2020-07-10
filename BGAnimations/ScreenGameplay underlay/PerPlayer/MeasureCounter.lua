@@ -12,91 +12,108 @@ end
 -- -----------------------------------------------------------------------
 
 local PlayerState = GAMESTATE:GetPlayerState(player)
-local streams, prev_measure, bmt
-local current_count, stream_index, current_stream_length
+local streams, prevMeasure, streamIndex
+-- Collection of the BitmapTextures used for the measure counters.
+local bmt = {}
+-- How many streams to "look ahead"
+local lookAhead = 2
 
 -- We'll want to reset each of these values for each new song in the case of CourseMode
 local InitializeMeasureCounter = function()
 	-- SL[pn].Streams is initially set (and updated in CourseMode)
 	-- in ./ScreenGameplay in/MeasureCounterAndModsLevel.lua
 	streams = SL[pn].Streams
-	current_count = 0
-	stream_index = 1
-	current_stream_length = 0
-	prev_measure = 0
+	streamIndex = 1
+	prevMeasure = -1
 end
 
-local GetTextForMeasure = function(current_measure, Measures, stream_index)
-	-- validate indices
-	if Measures[stream_index] == nil then return "" end
+-- Returns whether or not we've reached the end of this stream segment.
+local IsEndOfStream = function(currMeasure, Measures, streamIndex)
+	if Measures[streamIndex] == nil then return false end
 
 	-- a "segment" can be either stream or rest
-	local segmentStart = Measures[stream_index].streamStart
-	local segmentEnd   = Measures[stream_index].streamEnd
+	local segmentStart = Measures[streamIndex].streamStart
+	local segmentEnd   = Measures[streamIndex].streamEnd
 
-	if current_measure < segmentStart then return "" end
-	if current_measure > segmentEnd   then return "" end
+	local currStreamLength = segmentEnd - segmentStart
+	local currCount = math.floor(currMeasure - segmentStart) + 1
 
-	local current_stream_length = segmentEnd - segmentStart
-	local current_count = math.floor(current_measure - segmentStart) + 1
-
-	local text = ""
-
-	if Measures[stream_index].isBreak then
-		if mods.HideRestCounts == false then
-
-			-- For the RestCount, let the lowest value be an implied 0.
-			-- e.g. for an 8 measure break, start at 7, decrement to 1, and don't show
-			--      anything for the last measure immediately before the streams begins
-			local remaining_rest = current_stream_length - current_count
-
-			-- if we are at RestCount 0 (or we're somehow negative), use an empty string
-			-- if the RestCount is somehow greater than the duration of this rest, use an empty string
-			if remaining_rest <= 0
-			or remaining_rest >= (current_stream_length-1)
-			then
-				text = ""
-			else
-				text = "(" .. remaining_rest .. ")"
-			end
-
-			-- diffuse Rest counter to be Still Grey, just like Pendulum intended
-			bmt:diffuse(0.5,0.5,0.5,1)
-		end
-	else
-		text = tostring(current_count .. "/" .. current_stream_length)
-		bmt:diffuse(1,1,1,1)
-	end
-
-	return text, current_count > current_stream_length
+	return currCount > currStreamLength
 end
 
+local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
+	if Measures[streamIndex] == nil then return "" end
+
+	-- A "segment" can be either stream or rest
+	local segmentStart = Measures[streamIndex].streamStart
+	local segmentEnd   = Measures[streamIndex].streamEnd
+
+	local currStreamLength = segmentEnd - segmentStart
+	local currCount = math.floor(currMeasure - segmentStart) + 1
+
+	local text = ""
+	if Measures[streamIndex].isBreak then
+		if mods.HideRestCounts == false then
+			if not isLookAhead then
+				local remainingRest = currStreamLength - currCount + 1
+
+				-- Ensure that the rest count is in range of the total length.
+				text = "(" .. remainingRest .. ")"
+			else
+				text = "(" .. currStreamLength .. ")"
+			end
+		end
+	else
+		if not isLookAhead then
+			text = tostring(currCount .. "/" .. currStreamLength)		
+		else
+			text = tostring(currStreamLength)
+		end	
+	end
+	return text
+end
 
 local Update = function(self, delta)
-
-	if not streams.Measures then return end
+	-- Check to make sure we even have any streams populated to display.
+	if not streams.Measures or #streams.Measures == 0 then return end
 
 	-- Things to look into:
 	-- Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
 	-- This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
-	local curr_measure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
+	local currMeasure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
 
-	-- if a new measure has occurred
-	if curr_measure > prev_measure then
+	-- If a new measure has occurred
+	if currMeasure > prevMeasure then
+		prevMeasure = currMeasure
 
-		prev_measure = curr_measure
-		local text, is_end = GetTextForMeasure(curr_measure, streams.Measures, stream_index)
+		-- If we've reached the end of the stream, we want to get values for the next stream.
+		if IsEndOfStream(currMeasure, streams.Measures, streamIndex) then
+			streamIndex = streamIndex + 1
+		end
 
-		-- if we're still within the current segment
-		if not is_end then
-			bmt:settext(text)
-
-		-- we're in a new segment, we should check if curr_measure overlaps with it
-		--                                         (what does this^ means? -quietly)
-		else
-			stream_index = stream_index + 1
-			text, is_end = GetTextForMeasure(curr_measure, streams.Measures, stream_index)
-			bmt:settext(text)
+		for i=1,lookAhead + 1 do
+			-- Only the first one is the main counter, the other ones are lookaheads.
+			local isLookAhead = i ~= 1
+			local text = GetTextForMeasure(currMeasure, streams.Measures, streamIndex + i - 1, isLookAhead)
+			bmt[i]:settext(text)
+			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
+			if streams.Measures[streamIndex + i - 1] == nil then
+				bmt[i]:visible(false)
+			elseif streams.Measures[streamIndex + i - 1].isBreak then
+				-- Make the lookaheads be lighter than their main counterparts.
+				if not isLookAhead then
+					bmt[i]:diffuse(0.5, 0.5, 0.5 ,1)
+				else
+					bmt[i]:diffuse(0.3, 0.3, 0.3 ,1)
+				end
+			else
+				-- Make the lookaheads be lighter than their main counterparts.
+				if not isLookAhead then
+					bmt[i]:diffuse(1, 1, 1, 1)
+				else
+					bmt[i]:diffuse(0.8, 0.8, 0.8 ,1)
+				end
+			end
 		end
 	end
 end
@@ -123,24 +140,29 @@ local af = Def.ActorFrame{
 	end,
 }
 
-af[#af+1] = LoadFont(font)..{
-	InitCommand=function(self)
-		-- a reference to this BitmapText actor with file scope
-		bmt = self
+for i=1,lookAhead+1 do
+	af[#af+1] = LoadFont(font)..{
+		InitCommand=function(self)
+			-- Add to the collection of BMTs so our AF's update function can easily access them.
+			bmt[#bmt+1] = self
 
-		self:zoom(0.35):shadowlength(1):horizalign(center)
-		self:xy( GetNotefieldX(player), _screen.cy )
-
-		if mods.MeasureCounterLeft then
 			local width = GetNotefieldWidth()
 			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
-			self:x( GetNotefieldX(player) - (width/NumColumns) )
-		end
+			local columnWidth = width/NumColumns
 
-		if mods.MeasureCounterUp then
-			self:y(_screen.cy - 55)
+			-- Have descending zoom sizes for each new BMT we add.
+			self:zoom(0.35 - 0.05 * (i-1)):shadowlength(1):horizalign(center)
+			self:xy(GetNotefieldX(player) + columnWidth * (0.7 * (i-1)), _screen.cy)
+
+			if mods.MeasureCounterLeft then
+				self:addx(-columnWidth)
+			end
+
+			if mods.MeasureCounterUp then
+				self:addy(-55)
+			end
 		end
-	end
-}
+	}
+end
 
 return af

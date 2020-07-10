@@ -35,7 +35,7 @@ local TapNotes = {1,2,4}
 
 
 -- Utility function to replace regex special characters with escaped characters
-local function regexEncode(var)
+local regexEncode = function(var)
 	return (var:gsub('%%', '%%%'):gsub('%^', '%%^'):gsub('%$', '%%$'):gsub('%(', '%%('):gsub('%)', '%%)'):gsub('%.', '%%.'):gsub('%[', '%%['):gsub('%]', '%%]'):gsub('%*', '%%*'):gsub('%+', '%%+'):gsub('%-', '%%-'):gsub('%?', '%%?'))
 end
 
@@ -48,7 +48,7 @@ end
 -- GetSimfileChartString() returns one value:
 --    NoteDataString, a substring from SimfileString that contains the just the requested note data
 
-local function GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
+local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	local NoteDataString = nil
 
 	if Filetype == "ssc" then
@@ -121,7 +121,7 @@ local function GetSimfileChartString(SimfileString, StepsType, Difficulty, Steps
 end
 
 -- Figure out which measures are considered a stream of notes
-local function getStreamMeasures(measuresString, notesPerMeasure)
+local getStreamMeasures = function(measuresString, notesPerMeasure)
 	-- Make our stream notes array into a string for regex
 	local TapNotesString = ""
 	for i, v in ipairs(TapNotes) do
@@ -167,14 +167,17 @@ local function getStreamMeasures(measuresString, notesPerMeasure)
 end
 
 -- Get the start/end of each stream and break sequence in our table of measures
-local function getStreamSequences(streamMeasures, measureSequenceThreshold, totalMeasures)
+local getStreamSequences = function(streamMeasures, totalMeasures)
 	local streamSequences = {}
+	-- Count every measure as stream/non-stream.
+	-- We can then later choose how we want to display the information.
+	local measureSequenceThreshold = 1
 
 	local counter = 1
 	local streamEnd = nil
 
 	-- First add an initial break if it's larger than measureSequenceThreshold
-	if(#streamMeasures > 0) then
+	if #streamMeasures > 0 then
 		local breakStart = 0
 		local k, v = next(streamMeasures) -- first element of a table
 		local breakEnd = streamMeasures[k] - 1
@@ -190,12 +193,15 @@ local function getStreamSequences(streamMeasures, measureSequenceThreshold, tota
 		local nextVal = streamMeasures[k+1] and streamMeasures[k+1] or -1
 
 		-- Are we still in sequence?
-		if(curVal + 1 == nextVal) then
+		if curVal + 1 == nextVal then
 			counter = counter + 1
 			streamEnd = curVal + 1
 		else
 			-- Found the first section that counts as a stream
 			if(counter >= measureSequenceThreshold) then
+				if streamEnd == nil then
+					streamEnd = curVal
+				end
 				local streamStart = (streamEnd - counter)
 				-- Add the current stream.
 				table.insert(streamSequences,
@@ -210,6 +216,7 @@ local function getStreamSequences(streamMeasures, measureSequenceThreshold, tota
 					{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
 			end
 			counter = 1
+			streamEnd = nil
 		end
 	end
 
@@ -230,7 +237,7 @@ end
 --			So if you're looping through the Density table, subtract 1 from the current index to get the
 --			actual measure number.
 
-function GetNPSperMeasure(Song, Steps)
+GetNPSperMeasure = function(Song, Steps)
 	if Song==nil or Steps==nil then return end
 
 	local SongDir = Song:GetSongDir()
@@ -313,7 +320,7 @@ end
 
 
 
-function GetStreams(Steps, StepsType, Difficulty, NotesPerMeasure, MeasureSequenceThreshold)
+GetStreams = function(Steps, StepsType, Difficulty, NotesPerMeasure)
 
 	local SimfileString, Filetype = GetSimfileString( Steps )
 	if not SimfileString then return end
@@ -329,5 +336,5 @@ function GetStreams(Steps, StepsType, Difficulty, NotesPerMeasure, MeasureSequen
 	local StreamMeasures, totalMeasures = getStreamMeasures(ChartString, NotesPerMeasure)
 
 	-- Which sequences of measures are considered a stream?
-	return (getStreamSequences(StreamMeasures, MeasureSequenceThreshold, totalMeasures))
+	return (getStreamSequences(StreamMeasures, totalMeasures))
 end
