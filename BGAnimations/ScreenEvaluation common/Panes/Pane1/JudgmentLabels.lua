@@ -1,4 +1,5 @@
-local player = ...
+local player, side = unpack(...)
+
 local pn = ToEnumShortString(player)
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 
@@ -42,7 +43,7 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(50 * (player==PLAYER_1 and 1 or -1), _screen.cy-24)
+		self:xy(50 * (side==PLAYER_1 and 1 or -1), _screen.cy-24)
 	end,
 }
 
@@ -60,7 +61,7 @@ for i=1, #TapNoteScores.Types do
 			Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper(),
 			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(76) end,
 			BeginCommand=function(self)
-				self:x( (player == PLAYER_1 and 28) or -28 )
+				self:x( (side == PLAYER_1 and 28) or -28 )
 				self:y((i-1)*28 -16)
 				-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
@@ -80,7 +81,7 @@ for index, label in ipairs(RadarCategories) do
 		Text=(nice and (performance == 69 or possible == 69)) and 'nice' or label,
 		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)
-			self:x( (player == PLAYER_1 and -160) or 90 )
+			self:x( (side == PLAYER_1 and -160) or 90 )
 			self:y((index-1)*28 + 41)
 		end
 	}

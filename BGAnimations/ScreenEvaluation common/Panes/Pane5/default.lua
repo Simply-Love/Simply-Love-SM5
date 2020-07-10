@@ -8,13 +8,15 @@ if not PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then return end
 local game = GAMESTATE:GetCurrentGame():GetName()
 if not (game=="dance" or game=="pump" or game=="techno") then return end
 
+-- -----------------------------------------------------------------------
+
+local player, side = unpack(...)
+
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-local player = ...
 
 local pane = Def.ActorFrame{
 	Name="Pane5",
 	InitCommand=function(self)
-		self:visible(false)
 		if style == "OnePlayerTwoSides" then
 			if IsUsingWideScreen() then
 				self:x( -107 )

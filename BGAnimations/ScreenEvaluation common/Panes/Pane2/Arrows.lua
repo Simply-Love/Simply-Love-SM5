@@ -33,7 +33,7 @@ local box_height = 146
 -- more space for double and routine
 local styletype = ToEnumShortString(style:GetStyleType())
 if not (styletype == "OnePlayerOneSide" or styletype == "TwoPlayersTwoSides") then
-	box_width = 450
+	box_width = 520
 end
 
 local col_width  = box_width/num_columns
