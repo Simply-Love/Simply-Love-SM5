@@ -8,6 +8,9 @@ af[#af+1] = Def.Sprite{
 		for profile in ivalues(args.profile_data) do
 			if profile.dir and profile.displayname then
 				local path = ActorUtil.ResolvePath(profile.dir .. "avatar", 1, true)
+				          -- support avatars from Hayoreo's Digital Dance, which uses "Profile Picture.png" in profile dir
+				          or ActorUtil.ResolvePath(profile.dir .. "profile picture", 1, true)
+				          -- support SM5.3's avatar location to ease the eventual transition
 				          or ActorUtil.ResolvePath("/Appearance/Avatars/" .. profile.displayname, 1, true)
 
 				if path then

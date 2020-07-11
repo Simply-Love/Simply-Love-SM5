@@ -167,6 +167,9 @@ GetAvatarPathForPlayerProfile = function(player)
 	-- if nothing is found there, check ./StepMania/Appearance/Avatars/ for something matching
 	-- the player's DisplayName
 	local path = ActorUtil.ResolvePath(dir .. "avatar", 1, true)
+	          -- support avatars from Hayoreo's Digital Dance, which uses "Profile Picture.png" in profile dir
+	          or ActorUtil.ResolvePath(dir .. "profile picture", 1, true)
+	          -- support SM5.3's avatar location to ease the eventual transition
 	          or ActorUtil.ResolvePath("/Appearance/Avatars/" .. name, 1, true)
 
 	if path and ActorUtil.GetFileType(path) == "FileType_Bitmap" then
