@@ -55,7 +55,7 @@ for player in ivalues(PlayerNumber) do
 		PlayerUnjoinedMessageCommand=function(self, params) if params.Player==player then self:queuecommand("Update") end end,
 
 		UpdateCommand=function(self)
-			local path = GetAvatarPathForPlayerProfile(player)
+			local path = GetPlayerAvatarPath(player)
 
 			if path == nil and self:GetTexture() ~= nil then
 				self:Load(nil):diffusealpha(0):visible(false)

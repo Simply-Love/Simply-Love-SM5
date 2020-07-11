@@ -150,9 +150,28 @@ SaveProfileCustom = function(profile, dir)
 end
 
 -- -----------------------------------------------------------------------
+-- returns a path to a profile avatar, or nil if none is found
+
+GetAvatarPath = function(profileDirectory, displayName)
+
+	if type(profileDirectory) ~= "string" then return end
+
+	-- check the profile directory for "avatar.png" first (or "avatar.jpg", etc.)
+	local path = ActorUtil.ResolvePath(profileDirectory .. "avatar", 1, true)
+	          -- support avatars from Hayoreo's Digital Dance, which uses "Profile Picture.png" in profile dir
+	          or ActorUtil.ResolvePath(profileDirectory .. "profile picture", 1, true)
+	          -- support SM5.3's avatar location to ease the eventual transition
+	          or (displayName and displayName ~= "" and ActorUtil.ResolvePath("/Appearance/Avatars/" .. displayName, 1, true) or nil)
+
+	if path and ActorUtil.GetFileType(path) == "FileType_Bitmap" then
+		return path
+	end
+end
+
+-- -----------------------------------------------------------------------
 -- returns a path to a player's profile avatar, or nil if none is found
 
-GetAvatarPathForPlayerProfile = function(player)
+GetPlayerAvatarPath = function(player)
 	local profile_slot = {
 		[PLAYER_1] = "ProfileSlot_Player1",
 		[PLAYER_2] = "ProfileSlot_Player2"
@@ -163,16 +182,5 @@ GetAvatarPathForPlayerProfile = function(player)
 	local dir  = PROFILEMAN:GetProfileDir(profile_slot[player])
 	local name = PROFILEMAN:GetProfile(player):GetDisplayName()
 
-	-- check the player's profile directory for "avatar.png" first (or "avatar.jpg", etc.)
-	-- if nothing is found there, check ./StepMania/Appearance/Avatars/ for something matching
-	-- the player's DisplayName
-	local path = ActorUtil.ResolvePath(dir .. "avatar", 1, true)
-	          -- support avatars from Hayoreo's Digital Dance, which uses "Profile Picture.png" in profile dir
-	          or ActorUtil.ResolvePath(dir .. "profile picture", 1, true)
-	          -- support SM5.3's avatar location to ease the eventual transition
-	          or ActorUtil.ResolvePath("/Appearance/Avatars/" .. name, 1, true)
-
-	if path and ActorUtil.GetFileType(path) == "FileType_Bitmap" then
-		return path
-	end
+	return GetAvatarPath(dir, name)
 end
