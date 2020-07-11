@@ -33,6 +33,10 @@ return function(AllSteps)
 		local player = GAMESTATE:GetHumanPlayers()[1]
 		local currentSteps = GAMESTATE:GetCurrentSteps(player)
 
+		-- currentSteps can be nil while reloading SelectMusic after
+		-- switching style (e.g. double → single) using SL's SortMenu
+		if not currentSteps then return StepsToShow end
+
 		-- there are edit stepcharts available for the current song
 		-- but this player's current steps aren't an edit, so they are
 		-- presumably looking at the normal (Beginner - Expert) range
