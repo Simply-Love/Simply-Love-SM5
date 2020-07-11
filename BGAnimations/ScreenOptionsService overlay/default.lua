@@ -4,6 +4,66 @@ local padding = 10
 
 local explanation_bmt
 
+local nextScreenOptRows = {}
+
+-- get the LineNames metric for ScreenOptionsService
+for childscreen_name in THEME:GetMetric("ScreenOptionsService", "LineNames"):gmatch('([^,]+)') do
+	local s = ""
+	local count = 0
+
+	if THEME:HasMetric("Screen"..childscreen_name, "LineNames") then
+		-- split the list of internal OptionRow names (e.g. "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix") on commas
+		for optrow_name in THEME:GetMetric("Screen"..childscreen_name, "LineNames"):gmatch('([^,]+)') do
+
+			-- don't bother retrieving more than 6
+			count = count + 1
+			if count > 6 then
+				-- if we've already got 6, append an ellipsis and break from the loop
+				s = s .. "\n..."
+				break
+			end
+
+			-- optrow_title will be the optrow_name localized for the current language (English, Spanish, Japanese, etc.)
+			local optrow_title
+			-- fmt will be the formatting string used
+			-- if the next screen has conf-based OptionRows, present them here as a bulleted list
+			-- if the next screen has OptionRows leading deeper to subscreens, present them here as-is
+			local fmt
+
+			-- the choices on the next screen are conf-based OptionRows that set Preferences
+			-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsServiceChild"
+			--  which is brittle but works for now, because of how I've set up SL's metrics.)
+			if THEME:GetMetric("Screen"..childscreen_name, "Fallback") == "ScreenOptionsServiceChild" then
+				local _line = THEME:GetMetric("Screen"..childscreen_name, "Line"..optrow_name)
+
+				if _line:match("conf,") then
+					optrow_title = _line:gsub("conf,","")
+				elseif _line:match("lua,") then
+					optrow_title = optrow_name
+				end
+				fmt = "\n• %s"
+
+			-- the choices on the next screen would take us deeper into sub-subscreens
+			-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsServiceSub"
+			--  which is brittle but works for now, because of how I've set up SL's metrics.)
+			elseif THEME:GetMetric("Screen"..childscreen_name, "Fallback") == "ScreenOptionsServiceSub" then
+				optrow_title = optrow_name
+				fmt = "\n %s"
+			end
+
+			-- localize if possible
+			if THEME:HasString("OptionTitles", optrow_title) then
+				-- remove embedded newline characters so that "Allow Players\nTo Fail Set" becomes "Allow Players To Fail Set"
+				s = s .. (fmt):format( THEME:GetString("OptionTitles", optrow_title):gsub("\n", " "))
+			else
+				s = s .. optrow_name
+			end
+		end
+	end
+
+	nextScreenOptRows[childscreen_name] = s
+end
+
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{}
@@ -60,7 +120,7 @@ af[#af+1] = Def.BitmapText{
 		self:_wrapwidthpixels(bg_width-padding*2)
 	end,
 	UpdateCommand=function(self, params)
-		local s = ""
+		local s = nextScreenOptRows[params.Name] or ""
 
 		-- Name is passed in as a param from OptionRowChangedMessageCommand (above), which gets
 		-- it from TitleGainFocusCommand under [OptionRowSimpleService] in SL's metrics.ini
@@ -71,56 +131,6 @@ af[#af+1] = Def.BitmapText{
 		-- "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix"
 		-- and those can be used to determine what OptionRows exist on the next screen to present as text to the player.
 		if THEME:HasMetric("Screen"..params.Name, "LineNames") then
-
-			local count = 0
-			-- split the list of internal OptionRow names (e.g. "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix") on commas
-			for optrow_name in THEME:GetMetric("Screen"..params.Name, "LineNames"):gmatch('([^,]+)') do
-
-				-- don't bother retrieving more than 6
-				count = count + 1
-				if count > 6 then
-					-- if we've already got 6, append an ellipsis and break from the loop
-					s = s .. "\n..."
-					break
-				end
-
-				-- optrow_title will be the optrow_name localized for the current language (English, Spanish, Japanese, etc.)
-				local optrow_title
-				-- fmt will be the formatting string used
-				-- if the next screen has conf-based OptionRows, present them here as a bulleted list
-				-- if the next screen has OptionRows leading deeper to subscreens, present them here as-is
-				local fmt
-
-				-- the choices on the next screen are conf-based OptionRows that set Preferences
-				-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsServiceChild"
-				--  which is brittle but works for now, because of how I've set up SL's metrics.)
-				if THEME:GetMetric("Screen"..params.Name, "Fallback") == "ScreenOptionsServiceChild" then
-					local _line = THEME:GetMetric("Screen"..params.Name, "Line"..optrow_name)
-
-					if _line:match("conf,") then
-						optrow_title = _line:gsub("conf,","")
-					elseif _line:match("lua,") then
-						optrow_title = optrow_name
-					end
-					fmt = "\n• %s"
-
-				-- the choices on the next screen would take us deeper into sub-subscreens
-				-- (assumes the "Fallback" metric of each of these literally matches "ScreenOptionsServiceSub"
-				--  which is brittle but works for now, because of how I've set up SL's metrics.)
-				elseif THEME:GetMetric("Screen"..params.Name, "Fallback") == "ScreenOptionsServiceSub" then
-					optrow_title = optrow_name
-					fmt = "\n %s"
-				end
-
-				-- localize if possible
-				if THEME:HasString("OptionTitles", optrow_title) then
-					-- remove embedded newline characters so that "Allow Players\nTo Fail Set" becomes "Allow Players To Fail Set"
-					s = s .. (fmt):format( THEME:GetString("OptionTitles", optrow_title):gsub("\n", " "))
-				else
-					s = s .. optrow_name
-				end
-			end
-
 			-- set the y position of this list based on the height of the explanation text because that
 			-- can vary (sometimes 2 lines, sometimes 3; sometimes different for different localizations)
 			self:y(-bg_height/2 + padding + explanation_bmt:GetHeight())
