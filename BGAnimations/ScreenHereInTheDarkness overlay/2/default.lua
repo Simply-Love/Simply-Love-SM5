@@ -49,7 +49,7 @@ local quotes = {
 		color=colors.person2,
 	},
 	{
-		text="Sometimes I worry about not having enough time.\n\nTo see all the things I want to see and experience all the things I want to experience.\n\nTo describe all the thoughts in my mind in adequate detail.\n\nI worry I'm building the most elaborate snow sculpture with summer just around the corner.",
+		text="Sometimes I worry about not having enough time.\n\nTo see all the things I want to see\nand experience all the things I want to experience.\n\nTo describe all the thoughts in my mind\nin adequate detail.\n\nI worry I'm building the most elaborate snow sculpture with summer just around the corner.",
 		color=colors.person2,
 
 	},
