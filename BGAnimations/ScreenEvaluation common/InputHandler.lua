@@ -121,9 +121,9 @@ return function(event)
 					for i=1,#panes[cn] do
 						panes[cn][i]:visible(false)
 					end
-					-- show the panes we want on both side
-					panes[1][active_pane[1]]:visible(true)
-					panes[2][active_pane[2]]:visible(true)
+					-- show the panes we want on both sides
+					panes[cn][active_pane[cn]]:visible(true)
+					panes[ocn][active_pane[ocn]]:visible(true)
 				end
 
 
