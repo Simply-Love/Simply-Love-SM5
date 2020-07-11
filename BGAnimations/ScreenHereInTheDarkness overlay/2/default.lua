@@ -1,6 +1,6 @@
 -- humor keeps me going
 
-local max_width = 440
+local max_width = 380
 local font_zoom = 0.9
 local quote_bmt1, quote_bmt2
 local count = 1
@@ -17,7 +17,7 @@ local quotes = {
 		color=colors.person1,
 	},
 	{
-		text="It snowed all day here.  I ended up staying in and losing hours to a Wikipedia rabbit-hole.",
+		text="It snowed all day here.\n\nI ended up staying in and losing hours\nto a Wikipedia rabbit-hole.",
 		color=colors.person2,
 	},
 	{
@@ -45,11 +45,11 @@ local quotes = {
 		}
 	},
 	{
-		text="I didn't know whether to feel happy because we'd been intelligent enough to design something that will surely out-survive us, or sad because we don't get that much time in the grand scheme of things before everything falls apart.",
+		text="I didn't know whether to feel happy we'd had the intelligence to design something that will surely out-survive us,\n\nor sad because we don't get that much time in the grand scheme of things before everything falls apart.",
 		color=colors.person2,
 	},
 	{
-		text="Sometimes I worry about not having enough time.\n\nTo see all the things I want to see and experience all the things I want to experience.  To describe all the thoughts in my mind in adequate detail.\n\nI worry I'm building the most elaborate snow sculpture with summer just around the corner.",
+		text="Sometimes I worry about not having enough time.\n\nTo see all the things I want to see and experience all the things I want to experience.\n\nTo describe all the thoughts in my mind in adequate detail.\n\nI worry I'm building the most elaborate snow sculpture with summer just around the corner.",
 		color=colors.person2,
 
 	},
@@ -99,9 +99,9 @@ af[#af+1] = Def.BitmapText{
 		if quotes[count].text then
 			self:settext(quotes[count].text):diffuse(quotes[count].color)
 			if quotes[count].color[1] == 0.8 then
-				self:y(140)
+				self:y(135)
 			else
-				self:y(70)
+				self:y(60)
 			end
 		else
 			self:settext(quotes[count][1].text):diffuse(quotes[count][1].color):y(70)
@@ -116,9 +116,9 @@ af[#af+1] = Def.BitmapText{
 	Text="",
 	InitCommand=function(self)
 		quote_bmt2 = self
-		self:wrapwidthpixels(max_width)
+		self:wrapwidthpixels(max_width-25)
 			:align(0,0)
-			:xy(-max_width/2, 120)
+			:xy(-max_width/2, 115)
 			:diffusealpha(0)
 			:playcommand("Refresh")
 	end,

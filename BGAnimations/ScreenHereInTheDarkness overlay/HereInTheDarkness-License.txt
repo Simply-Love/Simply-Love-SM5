@@ -1,5 +1,5 @@
 Project: here in the darkness
-Author: Dan Guzek
+Author: quietly turning
 License: Creative Commons BY-NC-ND 4.0
 
 ---

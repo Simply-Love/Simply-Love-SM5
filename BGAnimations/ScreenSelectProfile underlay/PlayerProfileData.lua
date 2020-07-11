@@ -98,7 +98,7 @@ local TotalSongs = function(numSongs)
 end
 
 -- ----------------------------------------------------
--- for when you just want to retrieve profile data from disk without applying it to the SL table
+-- retrieves profile data from disk without applying it to the SL table
 
 local RetrieveProfileData = function(profile, dir)
 	local theme_name = THEME:GetThemeDisplayName()

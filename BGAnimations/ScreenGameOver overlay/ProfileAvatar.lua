@@ -2,7 +2,7 @@ local player, x_pos = unpack(...)
 
 -- pixel dimension (height, width) to scale avatar to
 local avatar_dim  = 110
-local avatar_path = GetAvatarPathForPlayerProfile(player)
+local avatar_path = GetPlayerAvatarPath(player)
 
 -- player avatar was found; show that
 if avatar_path ~= nil then
