@@ -52,9 +52,9 @@ bmt.InitCommand=function(self)
 	-- mirror image of MeasureCounter.lua
 	self:xy( GetNotefieldX(player) + (width/NumColumns), _screen.cy )
 
-	-- Fix overlapping issue when MeasureCounter isn't moved up since the
-	-- lookaheads will overlap subtractive scoring.
-	if not mods.MeasureCounterUp then
+	-- Fix overlapping issue when MeasureCounter is enabled, not moved up, and displaying lookahead
+	-- since the lookaheads will overlap subtractive scoring.
+	if mods.MeasureCounter ~= "None" and not mods.MeasureCounterUp and not mods.HideLookahead then
 		self:addy(-55)
 	end
 
