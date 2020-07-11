@@ -125,7 +125,7 @@ return {
 		{
 			Name="Ian / Archi",
 			Img="archi.png",
-			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that.\n\nWhen he's not busy streaming, he encourages others to through GrooveStats, the ECS events, and an overly-enthusiastic-soccer-mom coaching style."
+			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that.\n\nWhile Ian has top-tier competitive stamina, his greatest strength is his eagerness to improve the community.  He is the driving force behind Stamina RPG, Stamina Con, Stamina visual novels, and literally hundreds of original stepcharts – all of which has dramatically shaped the post-ITG scene as we know it."
 		},
 		{
 			Name="Brittney / Galaga",
