@@ -45,6 +45,10 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 	if Measures[streamIndex] == nil then return "" end
 	-- Don't display final count if it's a break.
 	if streamIndex == #Measures and Measures[streamIndex].isBreak then return "" end
+	-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
+	if streamIndex == 1 and currMeasure < 0 and not Measures[streamIndex].isBreak then
+		return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
+	end
 
 	-- A "segment" can be either stream or rest
 	local segmentStart = Measures[streamIndex].streamStart
