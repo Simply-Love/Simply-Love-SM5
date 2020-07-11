@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 ## Supported Versions of StepMania
 
-Simply Love is compatible with current releases of SM5 from the official StepMania project.
+Simply Love is compatible with current releases from the official StepMania project.
 
 **Compatible Releases**<br>
 ✅ [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12)<br>
