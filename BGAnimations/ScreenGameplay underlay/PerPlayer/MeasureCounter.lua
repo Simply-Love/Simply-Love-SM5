@@ -15,8 +15,12 @@ local PlayerState = GAMESTATE:GetPlayerState(player)
 local streams, prevMeasure, streamIndex
 -- Collection of the BitmapTextures used for the measure counters.
 local bmt = {}
+
 -- How many streams to "look ahead"
-local lookAhead = 2
+local lookAhead = mods.HideLookahead and 0 or 2
+-- If you want to see more than 2 counts in advance, change the 2 to a larger value.
+-- Making the value very large will likely impact fps. -quietly
+
 
 -- We'll want to reset each of these values for each new song in the case of CourseMode
 local InitializeMeasureCounter = function()
@@ -59,7 +63,7 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 
 	local text = ""
 	if Measures[streamIndex].isBreak then
-		if mods.HideRestCounts == false then
+		if mods.HideLookahead == false then
 			if not isLookAhead then
 				local remainingRest = currStreamLength - currCount + 1
 
@@ -71,10 +75,10 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 		end
 	else
 		if not isLookAhead then
-			text = tostring(currCount .. "/" .. currStreamLength)		
+			text = tostring(currCount .. "/" .. currStreamLength)
 		else
 			text = tostring(currStreamLength)
-		end	
+		end
 	end
 	return text
 end
