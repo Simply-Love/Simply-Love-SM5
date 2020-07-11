@@ -5,24 +5,40 @@ local t = Def.ActorFrame{}
 
 -- -----------------------------------------------------------------------
 
-local function CreditsText( pn )
+local function CreditsText( player )
 	return LoadFont("Common Normal") .. {
 		InitCommand=function(self)
 			self:visible(false)
-			self:name("Credits" .. PlayerNumberToString(pn))
+			self:name("Credits" .. PlayerNumberToString(player))
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
 		end,
 		UpdateTextCommand=function(self)
-			local str = ScreenSystemLayerHelpers.GetCreditsMessage(pn)
+			-- this feels like a holdover from SM3.9 that just never got updated
+			local str = ScreenSystemLayerHelpers.GetCreditsMessage(player)
 			self:settext(str)
 		end,
 		UpdateVisibleCommand=function(self)
 			local screen = SCREENMAN:GetTopScreen()
 			local bShow = true
-			-- we always want to show the CreditText for each player on ScreenEval, regardless of the ShowCreditDisplay metric
-			if screen and (screen:GetName() ~= "ScreenEvaluationStage") and (screen:GetName() ~= "ScreenEvaluationNonstop") then
+
+			self:diffuse(Color.White)
+
+			if screen then
 				bShow = THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" )
+
+				if (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
+					-- ignore ShowCreditDisplay metric for ScreenEval
+					-- only show this BitmapText actor on Evaluation if the player is joined
+					bShow = GAMESTATE:IsHumanPlayer(player)
+					--        I am not human^
+					--        today, but there's always hope
+					--        I'll see tomorrow
+
+					-- dark text for RainbowMode
+					if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
+				end
 			end
+
 			self:visible( bShow )
 		end
 	}
