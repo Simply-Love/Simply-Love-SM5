@@ -70,12 +70,13 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 
 ## Screenshots
 
-![Title Screen](https://i.imgur.com/tlKZad8l.png)
+![Title Screen](https://i.imgur.com/txGZj2Ul.png)
 ![Gameplay](https://i.imgur.com/6PRBIHil.png)
+![twenty-one nine gameplay](https://i.imgur.com/rl6WibDl.png)
 ![Player Options](https://i.imgur.com/Jk5A4LTl.png)
-![Evaluation with QR Code](https://i.imgur.com/TaApeGBl.png)
-![Select Profile](https://i.imgur.com/bZc5xpll.png)
-![Visual Themes](https://i.imgur.com/hGB1T4nl.png)
+![Evaluation](https://i.imgur.com/VamMT1Ql.png)
+![Select Profile](https://i.imgur.com/1SsDc90l.png)
+![Visual Themes](https://i.imgur.com/AQeRafLl.png)
 
 Visit my imgur album for more screenshots: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
