@@ -58,6 +58,8 @@ for player in ivalues(Players) do
 					self:diffuse(PlayerColor(player)):zoom(0.95)
 						:xy(x_pos, (line_height*(i-1)) + profilestats_y)
 						:maxwidth(150):vertspacing(-1)
+
+					DiffuseEmojis(self)
 				end
 			}
 		end

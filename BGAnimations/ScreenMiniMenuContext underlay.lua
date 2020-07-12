@@ -46,6 +46,7 @@ underlay[#underlay+1] = Def.ActorFrame{
 			local profile = GAMESTATE:GetEditLocalProfile()
 			if profile then
 				self:settext(profile:GetDisplayName())
+				DiffuseEmojis(self)
 			end
 		end
 	}
