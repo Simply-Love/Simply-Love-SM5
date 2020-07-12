@@ -13,7 +13,7 @@ end
 
 local PlayerState = GAMESTATE:GetPlayerState(player)
 local streams, prevMeasure, streamIndex
--- Collection of the BitmapTextures used for the measure counters.
+-- Collection of the BitmapText actors used for the measure counters.
 local bmt = {}
 
 -- How many streams to "look ahead"
@@ -88,8 +88,8 @@ local Update = function(self, delta)
 	if not streams.Measures or #streams.Measures == 0 then return end
 
 	-- Things to look into:
-	-- Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
-	-- This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
+	-- 1. Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
+	-- 2. This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
 	local currMeasure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
 
 	-- If a new measure has occurred
@@ -112,26 +112,30 @@ local Update = function(self, delta)
 			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
 			if streams.Measures[streamIndex + i - 1] == nil then
 				bmt[adjustedIndex]:visible(false)
+
+			-- rest count
 			elseif streams.Measures[streamIndex + i - 1].isBreak then
-				-- Make the lookaheads be lighter than their main counterparts.
+				-- Make rest lookaheads be lighter than active rests.
 				if not isLookAhead then
 					bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
 				else
-					bmt[adjustedIndex]:diffuse(0.3, 0.3, 0.3 ,1)
+					bmt[adjustedIndex]:diffuse(0.4, 0.4, 0.4 ,1)
 				end
+
+			-- stream count
 			else
-				-- Make the lookaheads be lighter than their main counterparts.
+				-- Make stream lookaheads be lighter than active streams.
 				if not isLookAhead then
 					bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
 				else
-					bmt[adjustedIndex]:diffuse(0.8, 0.8, 0.8 ,1)
+					bmt[adjustedIndex]:diffuse(0.45, 0.45, 0.45 ,1)
 				end
 			end
 		end
 	end
 end
 
--- I'm not crazy about special-casing Wendy to use
+-- I'm not crazy about special-casing "Wendy" to use
 -- _wendy small for the Measure/Rest counter, but
 -- I'm hesitant to visually alter a feature that
 -- so many players have become so reliant on...
