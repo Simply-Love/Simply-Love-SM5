@@ -1,5 +1,5 @@
 local af = Def.ActorFrame{}
-local bg_width = WideScale(289, 292)
+local bg_width = WideScale(287, 292)
 local bg_height = 350
 local padding = 10
 local recommended_bmt

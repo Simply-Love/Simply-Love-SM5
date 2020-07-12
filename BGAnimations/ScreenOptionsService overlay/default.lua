@@ -1,8 +1,12 @@
-local bg_width = WideScale(289, 292)
+local bg_width = WideScale(287,292)
 local bg_height = 350
 local padding = 10
 
 local explanation_bmt
+
+-- -----------------------------------------------------------------------
+-- Do this work (assembling help strings for each OptionRow on ScreenOptionsService) now, at file load
+-- It's expensive, and causes dropped frames if attempted later/on-the-fly.
 
 local nextScreenOptRows = {}
 
@@ -10,6 +14,14 @@ local nextScreenOptRows = {}
 for childscreen_name in THEME:GetMetric("ScreenOptionsService", "LineNames"):gmatch('([^,]+)') do
 	local s = ""
 	local count = 0
+
+	-- We can prepend "Screen" to the beginning of each child screen's Name to transform
+	-- something like "InputOptions" into "ScreenInputOptions".
+	-- From there, we can see metric'c "ScreenInputOptions" has its own LineNames
+	-- and split those on commas to get OptionRows that would be available on the next screen.
+	--
+	-- This is is not a safe assumption in other themes (or even everyhere in SL), but I've configured
+	-- SL's metrics for ScreenOptionsService and children to Just Work™ for this sort of lookup.
 
 	if THEME:HasMetric("Screen"..childscreen_name, "LineNames") then
 		-- split the list of internal OptionRow names (e.g. "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix") on commas
@@ -120,21 +132,17 @@ af[#af+1] = Def.BitmapText{
 		self:_wrapwidthpixels(bg_width-padding*2)
 	end,
 	UpdateCommand=function(self, params)
-		local s = nextScreenOptRows[params.Name] or ""
-
 		-- Name is passed in as a param from OptionRowChangedMessageCommand (above), which gets
 		-- it from TitleGainFocusCommand under [OptionRowSimpleService] in SL's metrics.ini
 		-- It will be the internal name for this OptionRow, like "SystemOptions" or "InputOptions" or "USBProfileOptions"
 		--
-		-- We can prepend "Screen" to the beginning of this Name to get "ScreenSystemOptions" and check metrics.ini for
-		-- that screen's "LineNames" metric.  If it exists, the LineNames metric will get us a comma-delimited list like
-		-- "AutoMap,OnlyDedicatedMenu,OptionsNav,Debounce,ThreeKey,AxisFix"
-		-- and those can be used to determine what OptionRows exist on the next screen to present as text to the player.
-		if THEME:HasMetric("Screen"..params.Name, "LineNames") then
-			-- set the y position of this list based on the height of the explanation text because that
-			-- can vary (sometimes 2 lines, sometimes 3; sometimes different for different localizations)
-			self:y(-bg_height/2 + padding + explanation_bmt:GetHeight())
-		end
+		-- We'll use it to look up the help string associated with this OptionRow that just received focus
+		-- within the nextScreenOptRows table.
+		local s = nextScreenOptRows[params.Name] or ""
+
+		-- set the y position of this list based on the height of the explanation text because that
+		-- can vary (sometimes 2 lines, sometimes 3; sometimes different for different localizations)
+		self:y(-bg_height/2 + padding + explanation_bmt:GetHeight())
 
 		self:settext( s ):_wrapwidthpixels(bg_width-padding*2)
 	end
