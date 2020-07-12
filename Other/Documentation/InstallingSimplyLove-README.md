@@ -22,7 +22,7 @@ If you're using **SM5.0.12**, Simply Love should be installed here:
 <tbody>
   <tr>
     <td>Windows 10, Windows 7</td>
-    <td>C:\Users\<code>USERNAME</code>\AppData\Roaming\StepMania 5\Simply Love\</td>
+    <td>C:\Users\<code>USERNAME</code>\AppData\Roaming\StepMania 5\Themes\Simply Love\</td>
   </tr>
   <tr>
     <td>macOS</td>
@@ -41,7 +41,7 @@ Or, if you're using **SM5.1-beta**:
 <tbody>
   <tr>
     <td>Windows 10, Windows 7</td>
-    <td>C:\Users\<code>USERNAME</code>\AppData\Roaming\StepMania 5.1\Simply Love\</td>
+    <td>C:\Users\<code>USERNAME</code>\AppData\Roaming\StepMania 5.1\Themes\Simply Love\</td>
   </tr>
   <tr>
     <td>macOS</td>
