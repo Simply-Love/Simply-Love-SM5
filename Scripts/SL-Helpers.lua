@@ -272,7 +272,7 @@ local NoteFieldWidth = {
 		versus  = 278,
 		double  = 563,
 		routine = 563,
-	}
+	},
 	-- These values for techno, para, and kb7 are the result of empirical observation
 	-- of the SM5 engine and should not be regarded as any kind of Truth.
 	techno = {
