@@ -267,6 +267,12 @@ local NoteFieldWidth = {
 	},
 	-- the SM5 engine causes NoteField columns in pump to overlap one another slightly
 	-- this is intentional bc pump notes are visually smaller than full width
+	pump = {
+		single  = 278,
+		versus  = 278,
+		double  = 563,
+		routine = 563,
+	}
 	-- These values for techno, para, and kb7 are the result of empirical observation
 	-- of the SM5 engine and should not be regarded as any kind of Truth.
 	techno = {
