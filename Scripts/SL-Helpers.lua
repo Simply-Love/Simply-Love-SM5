@@ -265,8 +265,7 @@ local NoteFieldWidth = {
 		-- couple = 256,
 		-- threepanel = 192
 	},
-	-- the SM5 engine causes NoteField columns in pump to overlap one another slightly
-	-- this is intentional bc pump notes are visually smaller than full width
+	-- pump's values are very similar to those used in dance, but curiously smaller
 	pump = {
 		single  = 250,
 		versus  = 250,
