@@ -266,14 +266,12 @@ local NoteFieldWidth = {
 		-- threepanel = 192
 	},
 	-- the SM5 engine causes NoteField columns in pump to overlap one another slightly
-	-- SL provides a hack to "fix" that overlap in ./BGA/ScreenGameplay overlay/PumpColumnSpacingFix.lua
-	-- the NoteFieldWidth values specified here were chosen by trying different values
-	-- and eventually saying, "yeah, that looks good enough." :(
+	-- this is intentional bc pump notes are visually smaller than full width
 	pump = {
-		single  = 278,
-		versus  = 278,
-		double  = 563,
-		routine = 563,
+		single  = 250,
+		versus  = 250,
+		double  = 500,
+		routine = 500,
 	},
 	-- These values for techno, para, and kb7 are the result of empirical observation
 	-- of the SM5 engine and should not be regarded as any kind of Truth.
