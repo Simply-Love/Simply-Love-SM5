@@ -50,8 +50,8 @@ local PlayerDefaults = {
 			self.PlayerOptionsString = nil
 
 			-- default panes to intialize ScreenEvaluation to
-			-- when only a single player is joined
-			-- these won't be used in versus; both panes will initialize to Pane1
+			-- when only a single player is joined (single, double)
+			-- in versus (2 players joined) only EvalPanePrimary will be used
 			self.EvalPanePrimary   = 1 -- large score and judgment counts
 			self.EvalPaneSecondary = 4 -- offset histogram
 		end

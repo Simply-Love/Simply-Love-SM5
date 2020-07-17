@@ -36,21 +36,26 @@ for controller=1,2 do
 
 		if pane ~= nil then
 			-- single, double
+			-- initialize the side ("controller") the player is joined as to their profile's EvalPanePrimary
+			-- and the other side as their profile's EvalPaneSecondary
 			if #players==1 then
 				if ("P"..controller)==ToEnumShortString(mpn) then
 					pane:visible(i == primary_i)
-					active_pane[1] =  primary_i
+					active_pane[controller] =  primary_i
 
 				elseif ("P"..controller)==ToEnumShortString(OtherPlayer[mpn]) then
 					pane:visible(i == secondary_i)
-					active_pane[2] =  secondary_i
+					active_pane[controller] =  secondary_i
 
 				end
 
 			-- versus
 			else
-				pane:visible(i == 1)
-				active_pane[controller] = 1
+				-- initialize this player's active_pane to their profile's EvalPanePrimary
+				-- will be 1 if no profile/"Guest" profile
+				local p = clamp(SL["P"..controller].EvalPanePrimary,   1, num_panes)
+				pane:visible(i == p)
+				active_pane[controller] = p
 			end
 
 		 	table.insert(panes[controller], pane)
