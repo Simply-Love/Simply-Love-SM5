@@ -3,6 +3,15 @@
 -- and judgment counts on holds, mines, hands, rolls
 --
 -- Pane1 is the what the original Simply Love for SM3.95 shipped with.
+local player, side = unpack(...)
+local mods = SL[ToEnumShortString(player)].ActiveModifiers
+-- Replace the entire pane with an encouraging picture.
+if mods.DoNotJudgeMe then
+	image = ThemePrefs.Get("RainbowMode") and "birbs/blue.png" or "birbs/yellow.png"
+  return Def.ActorFrame{
+		LoadActor(image)..{ OnCommand=function(self) self:y(_screen.cy+45):zoom(0.095) end }
+	}
+end
 
 return Def.ActorFrame{
 
