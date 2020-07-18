@@ -2,6 +2,10 @@
 
 local player, side = unpack(...)
 
+local mods = SL[ToEnumShortString(player)].ActiveModifiers
+-- No records in DoNotJudgeMe mode.
+if mods.DoNotJudgeMe then return end
+
 local pane = Def.ActorFrame{
 	InitCommand=function(self)
 		self:y(_screen.cy - 62):zoom(0.8)

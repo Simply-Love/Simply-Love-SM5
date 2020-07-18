@@ -11,6 +11,14 @@ noteskin = noteskin:lower()
 
 local gmods = SL.Global.ActiveModifiers
 
+local function ShouldDisplayJudgmentNumber(judgment)
+	if not SL[pn].ActiveModifiers.DoNotJudgeMe then return true end
+	-- Show judgments worse than Great to help debug pad errors.
+	-- Hide others to reduce pressure.
+	if judgment > 3 then return true end
+	return false
+end
+
 -- -----------------------------------------------------------------------
 
 local style = GAMESTATE:GetCurrentStyle()
@@ -71,9 +79,15 @@ for i, column in ipairs( cols ) do
 	for j, judgment in ipairs(rows) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
 		if gmods.TimingWindows[j] or j==#rows then
+			local judgmentText
+			if ShouldDisplayJudgmentNumber(j) then
+				judgmentText=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment]
+			else
+				judgmentText = "*"
+			end
 			-- add a BitmapText actor to be the number for this column
 			af[#af+1] = LoadFont("Common Normal")..{
-				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
+				Text=judgmentText,
 				InitCommand=function(self)
 					self:xy(_x, j*row_height + 4)
 						:zoom(0.9)

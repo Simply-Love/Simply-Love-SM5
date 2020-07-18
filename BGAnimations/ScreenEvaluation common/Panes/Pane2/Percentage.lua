@@ -6,6 +6,11 @@ local percent = FormatPercentScore(PercentDP)
 -- Format the Percentage string, removing the % symbol
 percent = percent:gsub("%%", "")
 
+local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+-- No judgement in DoNotJudgeMe mode.
+-- Removing the text rather than nulling the ActorFrame, because QR pane depends on it.
+if mods.DoNotJudgeMe then percent = "" end
+
 return Def.ActorFrame{
 	Name="PercentageContainer"..ToEnumShortString(pn),
 	InitCommand=function(self)

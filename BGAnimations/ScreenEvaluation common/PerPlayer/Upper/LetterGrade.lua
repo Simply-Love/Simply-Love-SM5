@@ -1,5 +1,9 @@
 local player = ...
 
+local mods = SL[ToEnumShortString(player)].ActiveModifiers
+-- No letter grade in DoNotJudgeMe mode.
+if mods.DoNotJudgeMe then return end
+
 local playerStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local grade = playerStats:GetGrade()
 
