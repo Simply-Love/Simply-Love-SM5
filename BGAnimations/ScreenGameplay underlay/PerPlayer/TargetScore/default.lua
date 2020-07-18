@@ -493,7 +493,7 @@ end
 -- I don't have the time to fully detangle all this so it's staying this way until
 -- someone rewrites this file OR human civilization ends in fire paving the way for GNU/Hurd.
 
-if SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarget then
+if (SL[pn].ActiveModifiers.Pacemaker or FailOnMissedTarget or RestartOnMissedTarget) and not SL[pn].ActiveModifiers.DoNotJudgeMe then
 
 	-- pacemaker text
 	player_af[#player_af+1] = Def.BitmapText{

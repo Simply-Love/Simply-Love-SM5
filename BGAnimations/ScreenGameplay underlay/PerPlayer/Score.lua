@@ -8,6 +8,7 @@ local NumPlayers = #GAMESTATE:GetHumanPlayers()
 -- first, check for conditions where we might not draw the score actor at all
 
 if mods.HideScore then return end
+if mods.DoNotJudgeMe then return end
 
 if NumPlayers > 1
 and mods.NPSGraphAtTop
