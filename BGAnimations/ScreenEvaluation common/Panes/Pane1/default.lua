@@ -9,7 +9,7 @@ local mods = SL[ToEnumShortString(player)].ActiveModifiers
 if mods.DoNotJudgeMe then
 	image = ThemePrefs.Get("RainbowMode") and "birbs/blue.png" or "birbs/yellow.png"
   return Def.ActorFrame{
-		LoadActor(image)..{ OnCommand=function(self) self:y(_screen.cy+45):zoom(0.095) end }
+		LoadActor(image)..{ OnCommand=function(self) self:y(_screen.cy+45):zoom(0.4) end }
 	}
 end
 
