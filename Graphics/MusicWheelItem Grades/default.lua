@@ -17,6 +17,20 @@ end
 -- assign the "Grade_Failed" key a value equal to num_tiers
 grades["Grade_Failed"] = num_tiers
 
+-- SetGrade command has no access to player number, so the grades can only be
+-- shown or hidden for both players. If one of the players wants them hidden,
+-- do it.
+local shouldHideGrades = function()
+	local hideGrades = false
+	local Players = GAMESTATE:GetHumanPlayers()
+	for player in ivalues(Players) do
+		if SL[ToEnumShortString(player)].ActiveModifiers.DoNotJudgeMe then
+			hideGrades = true
+			break
+		end
+	end
+	return hideGrades
+end
 
 return Def.Sprite{
 	Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
@@ -26,7 +40,7 @@ return Def.Sprite{
 	--    Grade (GradeTier as number)
 	--    NumTimesPlayed (number)
 	SetGradeCommand=function(self, params)
-		if not (params.Grade and grades[params.Grade]) then
+		if not (params.Grade and grades[params.Grade]) or shouldHideGrades() then
 			self:visible(false)
 			return
 		end
