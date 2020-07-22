@@ -1,4 +1,4 @@
--- AutoStyle is a Simply Love ThemePref that can allow players to always
+-- AutoStyle is a ThemePref that can allow players to always
 -- automatically have one of [single, double, versus] chosen for them.
 -- If AutoStyle is either "single" or "double", we don't want to load
 -- SelectProfileFrames for both PLAYER_1 and PLAYER_2, but only the MasterPlayerNumber
@@ -242,9 +242,6 @@ local t = Def.ActorFrame {
 			end
 		end
 	},
-	LoadActor( THEME:GetPathS("", "what.ogg") )..{
-		WhatMessageCommand=function(self) self:play() end
-	}
 }
 
 -- top mask

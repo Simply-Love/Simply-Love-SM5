@@ -1,5 +1,6 @@
 local player = ...
 local pn = ToEnumShortString(player)
+local nsj = GAMESTATE:GetNumSidesJoined()
 
 -- get the machine_profile now at file init; no need to keep fetching with each SetCommand
 local machine_profile = PROFILEMAN:GetMachineProfile()
@@ -24,6 +25,8 @@ local player_score, player_name
 -- requires a profile (machine or player) as an argument
 -- returns formatted strings for player tag (from ScreenNameEntry) and PercentScore
 
+
+
 local GetNameAndScore = function(profile)
 	-- if we don't have everything we need, return empty strings
 	if not (profile and SongOrCourse and StepsOrTrail) then return "","" end
@@ -45,8 +48,8 @@ end
 -- -----------------------------------------------------------------------
 -- define the x positions of four columns, and the y positions of three rows of PaneItems
 local pos = {
-	col = { WideScale(-104,-133), WideScale(-36,-38), WideScale(54,76), WideScale(150, 190) },
-	row = { 13, 31, 49 }
+	col = { WideScale(-104,-140), WideScale(-36,-16), WideScale(54,76), WideScale(150, 190) },
+	row = { IsUsingWideScreen() and -25 or -75, IsUsingWideScreen() and -7 or -57, IsUsingWideScreen() and 12 or -39 }
 }
 
 -- HighScores handled as special cases for now until further refactoring
@@ -75,21 +78,35 @@ af.InitCommand=function(self)
 	self:visible(GAMESTATE:IsHumanPlayer(player))
 
 	if player == PLAYER_1 then
-		self:x(_screen.w * 0.25 - 5)
+		self:x(IsUsingWideScreen() and _screen.w * 0.25 - 5 or 160)
+		self:y(IsUsingWideScreen() and 0 or 199)
+		self:align(0,IsUsingWideScreen() and 0 or -82)
+		if IsUsingWideScreen() then
+			elseif nsj == 1 then
+				self:align(0,GAMESTATE:IsCourseMode() and 239 or 0)
+		end
+		
 	elseif player == PLAYER_2 then
-		self:x(_screen.w * 0.75 + 5)
+		self:x(IsUsingWideScreen() and _screen.w * 0.75 + 156 or _screen.w * 0.75 + 10)
+		self:align(0, IsUsingWideScreen() and 0 or -82)
+		if IsUsingWideScreen() then
+			elseif nsj == 1 then
+				self:x(160)
+				self:align(0,GAMESTATE:IsCourseMode() and 239 or 0)
+			end
 	end
 
 	self:y(_screen.h - footer_height - pane_height)
 end
 
 af.PlayerJoinedMessageCommand=function(self, params)
+	nsj = GAMESTATE:GetNumSidesJoined()
 	if player==params.Player then
 		-- ensure BackgroundQuad is colored before it is made visible
 		self:GetChild("BackgroundQuad"):playcommand("Set")
 		self:visible(true)
-		    :zoom(0):croptop(0):bounceend(0.3):zoom(1)
-		    :playcommand("Update")
+		SCREENMAN:SetNewScreen('ScreenSelectMusic')
+            self:playcommand("Init")
 	end
 end
 -- player unjoining is not currently possible in SL, but maybe someday
@@ -127,11 +144,18 @@ end
 af[#af+1] = Def.Quad{
 	Name="BackgroundQuad",
 	InitCommand=function(self)
-		self:zoomtowidth(_screen.w/2-10)
-		self:zoomtoheight(pane_height)
-		self:vertalign(top)
+		self:zoomtowidth(_screen.w/2-161)
+		self:zoomtoheight(_screen.h/8+42)
+		self:y(10)
+		self:x(-75.5)
 	end,
 	SetCommand=function(self, params)
+		if IsUsingWideScreen() then
+			else
+			self:zoomto(310,70)
+			self:x(-5)
+			self:y(-58)
+		end
 		if GAMESTATE:IsHumanPlayer(player) then
 			if StepsOrTrail then
 				local difficulty = StepsOrTrail:GetDifficulty()
@@ -191,14 +215,24 @@ for i, item in ipairs(PaneItems) do
 	}
 end
 
+-- Machine Best Text Label
+af[#af+1] = LoadFont("Common Normal")..{
+	Name="MachineTextLabel",
+	Text="Machine Best:",
+	InitCommand=function(self)
+		self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
+		self:x(IsUsingWideScreen() and WideScale(pos.col[1]+15,pos.col[1]+65) or pos.col[3]+65)
+		self:y(IsUsingWideScreen() and pos.row[1]+55 or pos.row[1])
+	end,
+}
 
 -- Machine HighScore value
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScore",
 	InitCommand=function(self)
 		self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-		self:x(pos.col[3]-5)
-		self:y(pos.row[1])
+		self:x(IsUsingWideScreen() and pos.col[2]-5 or pos.col[3]+30)
+		self:y(IsUsingWideScreen() and pos.row[1]+55 or pos.row[2])
 	end,
 	SetCommand=function(self) self:settext(machine_score or "") end
 }
@@ -208,8 +242,8 @@ af[#af+1] = LoadFont("Common Normal")..{
 	Name="MachineHighScoreName",
 	InitCommand=function(self)
 		self:zoom(text_zoom):diffuse(Color.Black):horizalign(left):maxwidth(80)
-		self:x(pos.col[3]+5)
-		self:y(pos.row[1])
+		self:x(IsUsingWideScreen() and pos.col[2]+5 or pos.col[3]+50)
+		self:y(IsUsingWideScreen() and pos.row[1]+55 or pos.row[2])
 	end,
 	SetCommand=function(self)
 		self:settext(machine_name or ""):diffuse(Color.Black)
@@ -217,51 +251,30 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end
 }
 
+-- Personal Best Text Label
+af[#af+1] = LoadFont("Common Normal")..{
+	Name="PersonalTextLabel",
+	Text="Personal Best:",
+	InitCommand=function(self)
+		self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
+		self:x(IsUsingWideScreen() and WideScale(pos.col[1]+15,pos.col[1]+65) or pos.col[3]+40)
+		self:y(IsUsingWideScreen() and pos.row[2]+55 or pos.row[3])
+	end,
+}
 
 -- Player Profile HighScore value
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="PlayerHighScore",
 	InitCommand=function(self)
 		self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-		self:x(pos.col[3]-5)
-		self:y(pos.row[2])
+		self:x(IsUsingWideScreen() and pos.col[2]-5 or pos.col[3]+90)
+		self:y(IsUsingWideScreen() and pos.row[2]+55 or pos.row[3])
 	end,
 	SetCommand=function(self) self:settext(player_score or "") end
 }
 
--- Player Profile HighScore name
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="PlayerHighScoreName",
-	InitCommand=function(self)
-		self:zoom(text_zoom):diffuse(Color.Black):horizalign(left):maxwidth(80)
-		self:x(pos.col[3]+5)
-		self:y(pos.row[2])
-	end,
-	SetCommand=function(self)
-		self:settext(player_name or ""):diffuse(Color.Black)
-		DiffuseEmojis(self)
-	end
-}
 
 
--- chart difficulty meter
-af[#af+1] = LoadFont("Wendy/_wendy small")..{
-	Name="DifficultyMeter",
-	InitCommand=function(self)
-		self:horizalign(right):diffuse(Color.Black)
-		self:xy(pos.col[4], pos.row[2])
-		if not IsUsingWideScreen() then self:maxwidth(66) end
-		self:queuecommand("Set")
-	end,
-	SetCommand=function(self)
-		local SongOrCourse = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-		if not SongOrCourse then self:settext(""); return end
 
-		local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-		local meter = StepsOrTrail and StepsOrTrail:GetMeter() or "?"
-
-		self:settext( meter )
-	end
-}
 
 return af

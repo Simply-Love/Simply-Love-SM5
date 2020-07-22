@@ -24,33 +24,36 @@ local t = Def.ActorFrame{
 
 	-- the quad behind the playerName
 	Def.Quad{
-		InitCommand=function(self) self:diffuse(0,0,0,0.75):zoomto(300, _screen.h/7) end,
+		InitCommand=cmd(diffuse,color("0,0,0,0.75"); zoomto, 300, _screen.h/7),
 	},
 
 	-- the quad behind the scrolling alphabet
 	Def.Quad{
-		InitCommand=function(self) self:diffuse(0,0,0,0.5):zoomto(300, _screen.h/10) end,
-		OnCommand=function(self) self:y(58) end
+		InitCommand=cmd(diffuse,color("0,0,0,0.5"); zoomto, 300, _screen.h/10),
+		OnCommand=cmd(y, 58)
 	},
 
 	-- the quad behind the highscore list
 	Def.Quad{
-		InitCommand=function(self) self:diffuse(0,0,0,0.25):zoomto(300, _screen.h/4) end,
-		OnCommand=function(self) self:y(142) end
+		InitCommand=cmd(diffuse,color("0,0,0,0.25"); zoomto, 300, _screen.h/4),
+		OnCommand=cmd(y,142)
 	}
 }
 
 
 t[#t+1] = LoadActor("Cursor.png")..{
 	Name="Cursor",
-	InitCommand=function(self) self:diffuse(PlayerColor(Player)):zoom(0.5) end,
-	OnCommand=function(self) self:visible( CanEnterName ):y(58) end,
-	HideCommand=function(self) self:linear(0.25):diffusealpha(0) end
+	InitCommand=cmd(diffuse,PlayerColor(Player); zoom,0.5;),
+	OnCommand=function(self)
+		self:visible( CanEnterName )
+		self:y(58)
+	end,
+	HideCommand=cmd(linear, 0.25; diffusealpha, 0)
 }
 
 t[#t+1] = LoadFont("Wendy/_wendy white")..{
 	Name="PlayerName",
-	InitCommand=function(self) self:zoom(0.75):halign(0):xy(-80,0) end,
+	InitCommand=cmd(zoom,0.75; halign,0; xy,-80,0;),
 	OnCommand=function(self)
 		self:visible( CanEnterName )
 		self:settext( SL[pn].HighScores.Name or "" )
@@ -60,9 +63,9 @@ t[#t+1] = LoadFont("Wendy/_wendy white")..{
 	end
 }
 
-t[#t+1] = LoadFont("Common Bold")..{
+t[#t+1] = LoadFont("Wendy/_wendy small")..{
 	Text=ScreenString("OutOfRanking"),
-	OnCommand=function(self) self:zoom(0.7):diffuse(PlayerColor(Player)):y(58):visible(not CanEnterName) end
+	OnCommand=cmd(zoom,0.7; diffuse,PlayerColor(Player); y, 58; visible, not CanEnterName)
 }
 
 return t

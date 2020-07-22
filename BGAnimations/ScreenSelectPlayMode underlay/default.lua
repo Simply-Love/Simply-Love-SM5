@@ -53,7 +53,7 @@ local t = Def.ActorFrame{
 		self:queuecommand("Update")
 	end,
 	OffCommand=function(self)
-		if ScreenName=="ScreenSelectPlayMode" or ScreenName=="ScreenSelectPlayModeThonk" then
+		if ScreenName=="ScreenSelectPlayMode" then
 			-- set the GameMode now; we'll use it throughout the theme
 			-- to set certain Gameplay settings and determine which screen comes next
 			SL.Global.GameMode = choices[cursor.index+1]
@@ -125,7 +125,7 @@ local t = Def.ActorFrame{
 		Name="Cursor",
 		OnCommand=function(self)
 			-- it is possible for players to have something other than "Casual" as the default choice
-			-- for ScreenSelectPlayMode (see: Simply Love Options in the Operator Menu)
+			-- for ScreenSelectPlayMode (see: Digital Dance Options in the Operator Menu)
 			-- account for that here, in the OnCommand of the cursor ActorFrame, by updating cursor.index
 			-- to match the value of ThemePrefs.Get("DefaultGameMode") in the choices table
 			if ScreenName == "ScreenSelectPlayMode" then

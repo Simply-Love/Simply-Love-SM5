@@ -28,10 +28,10 @@ spr.CodeMessageCommand=function(self, params)
 		title = title:sub(1,10)
 
 		-- organize screenshots Love into directories, like...
-		--      ./Screenshots/Simply_Love/2020/04-April/DVNO-2020-04-22_175951.png
+		--      ./Screenshots/Digital Dance/2020/04-April/DVNO-2020-04-22_175951.png
 		-- note that the engine's SaveScreenshot() function will convert whitespace
 		-- characters to underscores, so we might as well just use underscores here
-		local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/" .. title .. "_"
+		local prefix = "Digital Dance/" .. Year() .. "/" .. month .. "/" .. title .. "_"
 
 		-- attempt to write a screenshot to disk
 		-- arg1 is playernumber that requsted the screenshot; if they are using a profile, the screenshot will be saved there

@@ -198,15 +198,15 @@ return Def.ActorFrame{
 								self:align(0,0):zoomto(avatar_dim,avatar_dim):diffuse(color("#283239aa"))
 							end
 						},
-						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
+						LoadActor(THEME:GetPathB("ScreenSelectMusic","underlay/default picture.png"))..{
 							InitCommand=function(self)
-								self:align(0,0):zoom(0.09):diffusealpha(0.9):xy(13, 8)
+								self:align(0.15,0.09):zoom(0.895):diffusealpha(0.9):xy(13, 8)
 							end
 						},
 						LoadFont("Common Normal")..{
 							Text=THEME:GetString("ProfileAvatar","NoAvatar"),
 							InitCommand=function(self)
-								self:valign(0):zoom(0.815):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 13, 67)
+								self:valign(0):zoom(0.815):diffusealpha(0.9):xy(self:GetWidth()*0.5 + 13, 72)
 							end,
 							SetCommand=function(self, params)
 								if params == nil then

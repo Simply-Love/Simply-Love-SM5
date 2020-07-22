@@ -12,8 +12,8 @@ local alphabet_character_mt = {
 					subself:diffusealpha(0)
 					subself:MaskDest()
 				end,
-				OnCommand=function(self) self:linear(0.25):diffusealpha(1) end,
-				HideCommand=function(self) self:linear(0.25):diffusealpha(0) end,
+				OnCommand=cmd(linear,0.25; diffusealpha, 1),
+				HideCommand=cmd(linear, 0.25; diffusealpha, 0),
 
 				Def.BitmapText{
 					Font="Wendy/_wendy white",
@@ -22,7 +22,7 @@ local alphabet_character_mt = {
 						subself:zoom(0.5)
 						subself:diffuse(0.75,0.75,0.75,1)
 					end,
-					OnCommand=function(self) self:sleep(0.2):linear(0.25) end,
+					OnCommand=cmd(sleep, 0.2; linear, 0.25 ),
 				}
 			}
 

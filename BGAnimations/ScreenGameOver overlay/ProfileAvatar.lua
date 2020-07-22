@@ -22,16 +22,16 @@ else
 			end
 		},
 		-- fallback visual (SL visual theme)
-		LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
+		LoadActor(THEME:GetPathB("ScreenSelectMusic","underlay/default picture.png"))..{
 			InitCommand=function(self)
-				self:align(0,0):zoom(0.12):diffusealpha(0.9):xy(15, 10)
+				self:align(0,0):zoom(1.2):diffusealpha(0.9)
 			end
 		},
 		-- fallback text ("no avatar")
 		LoadFont("Common Normal")..{
 			Text=THEME:GetString("ProfileAvatar","NoAvatar"),
 			InitCommand=function(self)
-				self:valign(0):zoom(0.9):diffusealpha(0.9):xy(56, 88)
+				self:valign(0):zoom(0.9):diffusealpha(0.9):xy(56, 95)
 			end,
 			SetCommand=function(self, params)
 				if params == nil then

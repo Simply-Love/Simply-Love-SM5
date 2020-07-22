@@ -3,7 +3,7 @@
 -- due to the way I'm applying it in Edit Mode's PlayerOpions menu.
 -- see the MusicRate OptionRow definition in ./Scripts/SL-PlayerOptions.lua
 GAMESTATE:ApplyGameCommand("mod,1.0xmusic")
-SL.Global.ActiveModifiers.MusicRate = 1
+SL.Global.ActiveModifiers.MusicRateEdit = 1
 
 -- down lower in this file, we loop seven times to create seven "rows" of grey quads
 -- one for each: group, song, type, steps, fill type, fill steps, action

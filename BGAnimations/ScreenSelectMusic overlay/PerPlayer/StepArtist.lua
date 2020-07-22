@@ -3,6 +3,10 @@ local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
 
 local text_table, marquee_index
+local nsj = GAMESTATE:GetNumSidesJoined()
+
+if GAMESTATE:IsCourseMode() then
+return end
 
 return Def.ActorFrame{
 	Name="StepArtistAF_" .. pn,
@@ -19,7 +23,7 @@ return Def.ActorFrame{
 		end
 	end,
 
-	-- Simply Love doesn't support player unjoining (that I'm aware of!) but this
+	-- Digital Dance doesn't support player unjoining (that I'm aware of!) but this
 	-- animation is left here as a reminder to a future me to maybe look into it.
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if params.Player == player then
@@ -36,13 +40,17 @@ return Def.ActorFrame{
 
 		if player == PLAYER_1 then
 
-			self:y(_screen.cy + 44)
-			self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
-
+			self:y(_screen.cy + 72)
+			self:x( _screen.cx - (IsUsingWideScreen() and 453 or 347))
+			if not IsUsingWideScreen() then
+				if nsj == 2 then
+					self:y(394)
+				end
+			end
 		elseif player == PLAYER_2 then
 
-			self:y(_screen.cy + 97)
-			self:x( _screen.cx - 210)
+			self:y(_screen.cy + 12)
+			self:x( _screen.cx - (IsUsingWideScreen() and -137 or 346))
 		end
 
 		if GAMESTATE:IsHumanPlayer(player) then
@@ -53,7 +61,7 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=function(self) self:zoomto(175, _screen.h/28):x(113) end,
+		InitCommand=function(self) self:zoomto(IsUsingWideScreen() and 267 or 310, _screen.h/28):x(IsUsingWideScreen() and 158 or 181) end,
 		ResetCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
@@ -70,7 +78,12 @@ return Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Text=GAMESTATE:IsCourseMode() and Screen.String("SongNumber"):format(1) or Screen.String("STEPS"),
 		InitCommand=function(self)
-			self:diffuse(0,0,0,1):horizalign(left):x(30):maxwidth(40)
+			self
+			:diffuse(0,0,0,1)
+			:horizalign(left)
+			:x(IsUsingWideScreen() and WideScale(130,28) or 30)
+			:maxwidth(40)
+			:zoom(0.9)
 		end,
 		UpdateTrailTextMessageCommand=function(self, params)
 			self:settext( THEME:GetString("ScreenSelectCourse", "SongNumber"):format(params.index) )
@@ -85,7 +98,10 @@ return Def.ActorFrame{
 			if GAMESTATE:IsCourseMode() then
 				self:x(60):maxwidth(138)
 			else
-				self:x(75):maxwidth(124)
+				self
+				:x(IsUsingWideScreen() and WideScale(168,65) or 68)
+				:maxwidth(IsUsingWideScreen() and WideScale(140,250) or 295)
+				:zoom(0.9)
 			end
 		end,
 		ResetCommand=function(self)

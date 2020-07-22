@@ -14,6 +14,28 @@ if SL.Global.GameMode ~= "Casual" then
 	end
 end
 
+-- This is to show style icons based on style type (1-2 Player vs Double)
+if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+	t[#t+1] = LoadActor ("./4panels.png") .. {
+		InitCommand=function(self)
+			self:zoom(0.15)
+			self:xy(550,16)
+		end
+	}
+	t[#t+1] = LoadActor ("./4panels.png") .. {
+		InitCommand=function(self)
+			self:zoom(0.15)
+			self:xy(585,16)
+		end
+	}
+else
+	t[#t+1] = LoadActor ("./4panels.png") .. {
+		InitCommand=function(self)
+			self:zoom(0.15)
+			self:xy(550,16)
+		end
+	}
+	end
 -- -----------------------------------------------------------------------
 -- First, add actors that would be the same whether 1 or 2 players are joined.
 
@@ -32,6 +54,9 @@ t[#t+1] = LoadActor("./Shared/GlobalStorage.lua")
 
 -- help text that appears if we're in Casual gamemode
 t[#t+1] = LoadActor("./Shared/CasualHelpText.lua")
+
+-- Guest Steps
+t[#t+1] = LoadActor("./GuestSteps.lua")
 
 -- -----------------------------------------------------------------------
 -- Then, load player-specific actors.

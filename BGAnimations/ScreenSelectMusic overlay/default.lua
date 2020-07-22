@@ -16,9 +16,6 @@ local t = Def.ActorFrame{
 	-- ---------------------------------------------------
 	-- next, load visual elements; the order of the layers matters for most of these
 
-	-- make the MusicWheel appear to cascade down; this should draw underneath P2's PaneDisplay
-	LoadActor("./MusicWheelAnimation.lua"),
-
 	-- elements we need two of (one for each player) that draw underneath the StepsDisplayList
 	-- this includes the stepartist boxes and the PaneDisplays (number of steps, jumps, holds, etc.)
 	LoadActor("./PerPlayer/Under.lua"),

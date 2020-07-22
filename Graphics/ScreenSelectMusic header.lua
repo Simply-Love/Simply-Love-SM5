@@ -51,10 +51,6 @@ if PREFSMAN:GetPreference("EventMode") then
 	end
 end
 
-
--- generic header elements (background Def.Quad, left-aligned screen name)
-af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
-
 -- centered text
 -- session timer in EventMode
 if PREFSMAN:GetPreference("EventMode") then
@@ -63,8 +59,8 @@ if PREFSMAN:GetPreference("EventMode") then
 		Name="Session Timer",
 		InitCommand=function(self)
 			bmt_actor = self
-			self:zoom( SL_WideScale(0.3, 0.36) )
-			self:y( SL_WideScale(3.15, 3.5) / self:GetZoom() )
+			self:zoom( SL_WideScale(0.36, 0.36) )
+			self:y( SL_WideScale(165, 165) / self:GetZoom() )
 			self:diffusealpha(0):x(_screen.cx)
 		end,
 		OnCommand=function(self)
@@ -89,56 +85,5 @@ else
 	}
 
 end
-
--- "ITG" or "FA+"; aligned to right of screen
-af[#af+1] = LoadFont("Common Header")..{
-	Name="GameModeText",
-	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
-	InitCommand=function(self)
-		self:diffusealpha(0):halign(1):y(15)
-		self:zoom( SL_WideScale(0.5, 0.6) )
-
-		-- move the GameMode text further left if MenuTimer is enabled
-		if PREFSMAN:GetPreference("MenuTimer") then
-			self:x(_screen.w - SL_WideScale(110, 125))
-		else
-			self:x(_screen.w - SL_WideScale(55, 62))
-		end
-	end,
-	OnCommand=function(self)
-		self:sleep(0.1):decelerate(0.33):diffusealpha(1)
-	end,
-	SLGameModeChangedMessageCommand=function(self)
-		self:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
-	end
-}
-
--- P1 pad
-af[#af+1] = DrawNinePanelPad()..{
-	InitCommand=function(self)
-		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and SL_WideScale(90, 105) or SL_WideScale(35, 41)))
-		self:y( SL_WideScale(22, 23.5) ):zoom(0.24)
-		self:playcommand("Set", {Player=PLAYER_1})
-	end,
-	PlayerJoinedMessageCommand=function(self, params)
-		if params.Player == PLAYER_1 then
-			self:playcommand("Set", {Player=PLAYER_1})
-		end
-	end
-}
-
--- P2 pad
-af[#af+1] = DrawNinePanelPad()..{
-	InitCommand=function(self)
-		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and SL_WideScale(70, 81) or SL_WideScale(15, 17)))
-		self:y( SL_WideScale(22, 23.5) ):zoom(0.24)
-		self:playcommand("Set", {Player=PLAYER_2})
-	end,
-	PlayerJoinedMessageCommand=function(self, params)
-		if params.Player == PLAYER_2 then
-			self:playcommand("Set", {Player=PLAYER_2})
-		end
-	end
-}
 
 return af

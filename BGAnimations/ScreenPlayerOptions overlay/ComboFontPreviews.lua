@@ -51,11 +51,6 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 						if prev_beat ~= beat then
 							self:settext( tonumber(self:GetText())+1 )
 							prev_beat = beat
-
-							if ThemePrefs.Get("nice")==2 and self:GetText()=="69" then
-								SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
-								SOUND:PlayOnce(THEME:GetPathS("", "nice.ogg"))
-							end
 						end
 						-- call stoptweening() to prevent tween overflow that could occur from rapid input from the player
 						-- and re-queue this "Loop" every 25ms

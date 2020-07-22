@@ -13,8 +13,7 @@ local getStringFromTheme = function( arg )
 	return THEME:GetString(tns_string, arg);
 end
 
---Values above 0 means the user wants to be shown or told they are nice.
-local nice = ThemePrefs.Get("nice") > 0 and SL.Global.GameMode ~= "Casual"
+
 
 -- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...
 local TapNoteScores = {}
@@ -58,7 +57,7 @@ for i=1, #TapNoteScores.Types do
 		local label = getStringFromTheme( window )
 
 		t[#t+1] = LoadFont("Common Normal")..{
-			Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper(),
+			Text=label:upper(),
 			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(76) end,
 			BeginCommand=function(self)
 				self:x( (side == PLAYER_1 and 28) or -28 )
@@ -78,7 +77,7 @@ for index, label in ipairs(RadarCategories) do
 
 	t[#t+1] = LoadFont("Common Normal")..{
 		-- lua ternary operators are adorable -ian5v
-		Text=(nice and (performance == 69 or possible == 69)) and 'nice' or label,
+		Text=label,
 		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( (side == PLAYER_1 and -160) or 90 )

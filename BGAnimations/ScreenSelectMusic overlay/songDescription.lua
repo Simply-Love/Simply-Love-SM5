@@ -33,7 +33,7 @@ local _w = IsUsingWideScreen() and 320 or 310
 
 local af = Def.ActorFrame{
 	OnCommand=function(self)
-		self:xy(_screen.cx - (IsUsingWideScreen() and 170 or 165), _screen.cy - 28)
+		self:xy(_screen.cx - (IsUsingWideScreen() and 0 or 165), _screen.cy - 92)
 	end,
 
 	CurrentSongChangedMessageCommand=function(self)    self:playcommand("Set") end,
@@ -47,7 +47,7 @@ local af = Def.ActorFrame{
 -- background Quad for Artist, BPM, and Song Length
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
-		self:setsize( _w, 50 )
+		self:zoomto( IsUsingWideScreen() and 320 or 311, 48 )
 		self:diffuse(color("#1e282f"))
 
 		if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
@@ -62,12 +62,19 @@ af[#af+1] = Def.ActorFrame{
 	-- Artist Label
 	LoadFont("Common Normal")..{
 		Text=THEME:GetString("SongDescription", GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"),
-		InitCommand=function(self) self:align(1,0):y(-11):maxwidth(44):diffuse(0.5,0.5,0.5,1) end,
+		InitCommand=function(self) 
+			self
+				:zoom(0.8)
+				:horizalign(right)
+				:y(-10)
+				:x(IsUsingWideScreen() and -9 or -4)
+				:maxwidth(44)
+				:diffuse(0.5,0.5,0.5,1) end,
 	},
 
 	-- Song Artist (or number of Songs in this Course, if CourseMode)
 	LoadFont("Common Normal")..{
-		InitCommand=function(self) self:align(0,0):xy(5,-11):maxwidth(WideScale(225,260)) end,
+		InitCommand=function(self) self:zoom(0.8):horizalign(left):xy(IsUsingWideScreen() and -4 or 1,-10):maxwidth(WideScale(225,260)) end,
 		SetCommand=function(self)
 			if GAMESTATE:IsCourseMode() then
 				local course = GAMESTATE:GetCurrentCourse()
@@ -84,7 +91,16 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Text=THEME:GetString("SongDescription", "BPM"),
 		InitCommand=function(self)
-			self:align(1,0):y(10):diffuse(0.5,0.5,0.5,1)
+			self
+				:zoom(0.8)
+				:align(IsUsingWideScreen() and 1 or 1.75,0)
+				:y(-1)
+				:x(-10)
+				:diffuse(0.5,0.5,0.5,1)
+				if IsUsingWideScreen() then
+					else
+					self:x(10)
+				end
 		end
 	},
 
@@ -92,8 +108,8 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self)
 			-- vertical align has to be middle for BPM value in case of split BPMs having a line break
-			self:align(0, 0.5)
-			self:xy(5,17):diffuse(1,1,1,1):vertspacing(-8)
+			self:align(IsUsingWideScreen() and 0 or -0.3, 0.5)
+			self:xy(-5,5):diffuse(1,1,1,1):vertspacing(-8)
 		end,
 		SetCommand=function(self)
 
@@ -110,7 +126,7 @@ af[#af+1] = Def.ActorFrame{
 			-- if only one player is joined, stringify the DisplayBPMs and return early
 			if #GAMESTATE:GetHumanPlayers() == 1 then
 				-- StringifyDisplayBPMs() is defined in ./Scipts/SL-BPMDisplayHelpers.lua
-				self:settext(StringifyDisplayBPMs() or ""):zoom(1)
+				self:settext(StringifyDisplayBPMs() or ""):zoom(0.8)
 				return
 			end
 
@@ -121,12 +137,12 @@ af[#af+1] = Def.ActorFrame{
 			-- it's likely that BPM range is the same for both charts
 			-- no need to show BPM ranges for both players if so
 			if p1bpm == p2bpm then
-				self:settext(p1bpm):zoom(1)
+				self:settext(p1bpm):zoom(0.8)
 
 			-- different BPM ranges for the two players
 			else
 				-- show the range for both P1 and P2 split by a newline characters, shrunk slightly to fit the space
-				self:settext( "P1 ".. p1bpm .. "\n" .. "P2 " .. p2bpm ):zoom(0.8)
+				self:settext( "P1 ".. p1bpm .. "\n" .. "P2 " .. p2bpm ):zoom(0.6)
 				-- the "P1 " and "P2 " segments of the string should be grey
 				self:AddAttribute(0,             {Length=3, Diffuse={0.60,0.60,0.60,1}})
 				self:AddAttribute(3+p1bpm:len(), {Length=3, Diffuse={0.60,0.60,0.60,1}})
@@ -154,14 +170,19 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Text=THEME:GetString("SongDescription", "Length"),
 		InitCommand=function(self)
-			self:align(1,0):diffuse(0.5,0.5,0.5,1)
-			self:x(_w-130):y(10)
+			self:align(IsUsingWideScreen() and 1 or 0.6,0):diffuse(0.5,0.5,0.5,1):zoom(0.8)
+			self:x(_w-330):y(14)
 		end
 	},
 
 	-- Song Duration Value
 	LoadFont("Common Normal")..{
-		InitCommand=function(self) self:align(0,0):xy(_w-130 + 5, 10) end,
+		InitCommand=function(self) 
+			self
+			:align(IsUsingWideScreen() and 0 or -0.7,0)
+			:xy(_w-330 + 5, 14) 
+			:zoom(0.8)
+			end,
 		SetCommand=function(self)
 			if MusicWheel == nil then MusicWheel = SCREENMAN:GetTopScreen():GetMusicWheel() end
 

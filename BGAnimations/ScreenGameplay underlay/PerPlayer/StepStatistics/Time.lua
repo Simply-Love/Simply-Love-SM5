@@ -2,6 +2,8 @@ local player = ...
 local PlayerState  = GAMESTATE:GetPlayerState(player)
 local SongPosition = GAMESTATE:GetPlayerState(player):GetSongPosition()
 local rate = SL.Global.ActiveModifiers.MusicRate
+local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
+local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)
 
 -- -----------------------------------------------------------------------
 -- reference to the BitmapText actor that will display elapsed time (current BitmapText)
@@ -144,7 +146,12 @@ end
 
 af[#af+1] = LoadFont("Common Normal")..{
 	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Elapsed") ),
-	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.833) end
+	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.833) 
+	if P1 then
+		self:x(180)
+	end
+	end
+	
 }
 
 -- current time number
@@ -152,6 +159,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		curBMT = self
 		self:horizalign(left):xy(0,0)
+		if P1 then
+			self:x(180)
+		end
 	end,
 
 	-- HealthStateChanged is going to be broadcast quite a bit by the engine.
@@ -174,7 +184,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		self:horizalign(right):xy(-6, 20):zoom(0.833)
-
+		if P1 then
+			self:x(180)
+		end
 		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course") or THEME:GetString("ScreenGameplay", "Song")
 		self:settext( ("%s "):format(s) )
 	end
@@ -185,6 +197,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		self:horizalign(left):xy(0,20)
+		if P1 then
+			self:x(180)
+		end
 
 
 

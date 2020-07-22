@@ -28,6 +28,17 @@ local function input(event)
 			if focus.kind == "SortBy" then
 				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
 				overlay:queuecommand("DirectInputToEngine")
+				
+			elseif focus.kind == "FilterBy" then
+				MESSAGEMAN:Broadcast('Filter')
+				overlay:queuecommand("HideSortMenu")
+				overlay:queuecommand("DirectInputToEngine")
+			
+			elseif focus.kind == "HeyMan" then
+				MESSAGEMAN:Broadcast('Difficulty')
+				overlay:queuecommand("HideSortMenu")
+				overlay:queuecommand("DirectInputToEngine")
+
 
 
 			-- the player wants to change modes, for example from ITG to FA+

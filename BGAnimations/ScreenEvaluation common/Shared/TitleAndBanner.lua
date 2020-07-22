@@ -1,18 +1,24 @@
-local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualTheme")
-local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+local af = Def.ActorFrame{
 
-local banner = {
-	directory = (FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")),
-	width = 418,
-	zoom = 0.7,
+	-- quad behind the song/course title text
+	Def.Quad{
+		InitCommand=cmd(diffuse,color("#1E282F"); xy,_screen.cx, 54.5; zoomto, 292.5,20),
+	},
+
+	-- song/course title text
+	LoadFont("Miso/_miso")..{
+		InitCommand=cmd(xy,_screen.cx,54; maxwidth, 294 ),
+		OnCommand=function(self)
+			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+
+			if songtitle then
+				self:settext(songtitle)
+			end
+		end
+	}
 }
 
--- the Quad containing the bpm and music rate doesn't appear in Casual mode
--- so nudge the song title and banner down a bit when in Casual
-local y_offset = SL.Global.GameMode=="Casual" and 50 or 46
-
-
-local af = Def.ActorFrame{ InitCommand=function(self) self:xy(_screen.cx, y_offset) end }
+local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 
 if SongOrCourse and SongOrCourse:HasBanner() then
 	--song or course banner, if there is one
@@ -24,27 +30,14 @@ if SongOrCourse and SongOrCourse:HasBanner() then
 			else
 				self:LoadFromSong( GAMESTATE:GetCurrentSong() )
 			end
-			self:y(66):setsize(banner.width, 164):zoom(banner.zoom)
 		end,
+		OnCommand=cmd(xy, _screen.cx, 121.5; setsize,418,164; zoom, 0.7 )
 	}
 else
 	--fallback banner
-	af[#af+1] = LoadActor(banner.directory .. "/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png")..{
-		InitCommand=function(self) self:y(66):zoom(banner.zoom) end
+	af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/default banner.png"))..{
+		InitCommand=function(self) self:xy( _screen.cx, 121.5):zoom(0.7) end
 	}
 end
-
--- quad behind the song/course title text
-af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:diffuse(color("#1E282F")):setsize(banner.width,25):zoom(banner.zoom) end,
-}
-
--- song/course title text
-af[#af+1] = LoadFont("Common Normal")..{
-	InitCommand=function(self)
-		local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
-		if songtitle then self:settext(songtitle):maxwidth(banner.width*banner.zoom) end
-	end
-}
 
 return af

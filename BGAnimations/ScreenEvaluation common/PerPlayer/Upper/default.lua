@@ -15,9 +15,6 @@ return Def.ActorFrame{
 	-- letter grade
 	LoadActor("./LetterGrade.lua", player),
 
-	-- nice
-	LoadActor("./nice.lua", player),
-
 	-- stepartist
 	LoadActor("./StepArtist.lua", player),
 
@@ -25,5 +22,9 @@ return Def.ActorFrame{
 	LoadActor("./Difficulty.lua", player),
 
 	-- Record Texts (Machine and/or Personal)
-	LoadActor("./RecordTexts.lua", player)
+	LoadActor("./RecordTexts.lua", player),
+	
+	-- FA Gauntlet Score
+	LoadActor("./FAGauntlet.lua", player),
+	
 }

@@ -1,5 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
+local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
+local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)	
 
 local mods = SL[pn].ActiveModifiers
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
@@ -22,7 +24,7 @@ end
 local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pos = {
-	[PLAYER_1] = { x=(_screen.cx - clamp(_screen.w, 640, 854)/4.3),  y=56 },
+	[PLAYER_1] = { x=(_screen.cx - clamp(_screen.w, 600, 854)/4.3),  y=56 },
 	[PLAYER_2] = { x=(_screen.cx + clamp(_screen.w, 640, 854)/2.75), y=56 },
 }
 
@@ -75,13 +77,12 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 			-- the jugdgment breakdown
 			if mods.DataVisualizations=="Step Statistics" then
 				local step_stats = self:GetParent():GetChild("StepStatsPane"..pn)
-
+				
 				-- Step Statistics might be true in the SL table from a previous game session
 				-- but current conditions might be such that it won't actually appear.
 				-- Ensure the StepStats ActorFrame is present before trying to traverse it.
 				if step_stats then
 					local judgmentnumbers = step_stats:GetChild("BannerAndData"):GetChild("JudgmentNumbers"):GetChild("")[1]
-
 					-- -----------------------------------------------------------------------
 					-- FIXME: "padding" is a lazy fix for multiple nested ActorFrames having zoom applied and
 					--         me not feeling like recursively crawling the AF tree to factor in each zoom
@@ -103,6 +104,9 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 							end
 						else
 							padding = 37
+							if P1 then
+							padding = -92
+							end
 						end
 					end
 

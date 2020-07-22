@@ -94,32 +94,30 @@ local t = Def.ActorFrame {
 	end
 }
 
-local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualTheme")
-local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")
-
+local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
 -- Things that are constantly on the screen (fallback banner + masks)
 t[#t+1] = Def.ActorFrame {
 
 	--fallback banner
-	LoadActor(banner_directory .."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png")..{
-		OnCommand=function(self) self:xy(_screen.cx, 121.5):zoom(0.7) end
+	LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/default banner.png"))..{
+		OnCommand=cmd(xy, _screen.cx, 121.5; zoom, 0.7)
 	},
 
 	Def.Quad{
 		Name="LeftMask";
-		InitCommand=function(self) self:horizalign(left) end,
-		OnCommand=function(self) self:xy(0, _screen.cy):zoomto(_screen.cx-272, _screen.h):MaskSource() end
+		InitCommand=cmd(halign,0),
+		OnCommand=cmd(xy, 0, _screen.cy; zoomto, _screen.cx-272, _screen.h; MaskSource)
 	},
 
 	Def.Quad{
 		Name="CenterMask",
-		OnCommand=function(self) self:Center():zoomto(110, _screen.h):MaskSource() end
+		OnCommand=cmd(Center; zoomto, 110, _screen.h; MaskSource)
 	},
 
 	Def.Quad{
 		Name="RightMask",
-		InitCommand=function(self) self:horizalign(right) end,
-		OnCommand=function(self) self:xy(_screen.w, _screen.cy):zoomto(_screen.cx-272, _screen.h):MaskSource() end
+		InitCommand=cmd(halign,1),
+		OnCommand=cmd(xy, _screen.w, _screen.cy; zoomto, _screen.cx-272, _screen.h; MaskSource)
 	}
 }
 
@@ -133,7 +131,7 @@ for i=1,NumStages do
 	local SongNameAndBanner = Def.ActorFrame{
 		InitCommand=function(self) self:visible(false) end,
 		OnCommand=function(self)
-			self:sleep(DurationPerStage * (i-1) )
+			self:sleep(DurationPerStage * (i-1) );
 			self:queuecommand("Display")
 		end,
 		DisplayCommand=function(self)
@@ -149,9 +147,9 @@ for i=1,NumStages do
 	}
 
 	-- song name
-	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("Common Normal")..{
+	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("Miso/_miso")..{
 		Name="SongName"..i,
-		InitCommand=function(self) self:xy(_screen.cx, 54):maxwidth(294):shadowlength(0.333) end,
+		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 		OnCommand=function(self)
 			if SongOrCourse then
 				self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
@@ -162,7 +160,7 @@ for i=1,NumStages do
 	-- song banner
 	SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
 		Name="SongBanner"..i,
-		InitCommand=function(self) self:xy(_screen.cx, 121.5) end,
+		InitCommand=cmd(xy, _screen.cx, 121.5),
 		OnCommand=function(self)
 			if SongOrCourse then
 				if GAMESTATE:IsCourseMode() then

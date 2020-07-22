@@ -19,8 +19,8 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- perform some rudimentary validation
 -- clamp both values to be within permitted ranges and don't allow them to be the same
 
-local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_panes)
-local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
+local primary_i   = 1
+local secondary_i = 2
 
 -- -----------------------------------------------------------------------
 
@@ -44,8 +44,13 @@ for controller=1,2 do
 					active_pane[controller] =  primary_i
 
 				elseif ("P"..controller)==ToEnumShortString(OtherPlayer[mpn]) then
-					pane:visible(i == secondary_i)
-					active_pane[controller] =  secondary_i
+					if style == "OnePlayerTwoSides" then
+						pane:visible(i == 4)
+						active_pane[controller] =  4
+					else
+						pane:visible(i == secondary_i)
+						active_pane[2] =  secondary_i
+					end
 
 				end
 

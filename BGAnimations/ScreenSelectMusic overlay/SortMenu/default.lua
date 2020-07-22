@@ -9,6 +9,8 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 -- is large enough that I moved it to its own file
 local sortmenu_input = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
 local testinput_input = LoadActor("TestInput_InputHandler.lua")
+local SongSearch = LoadActor("SongSearch.lua")
+local SongDifficulty = LoadActor("Difficulty.lua")
 
 -- WheelItemMT is a generic definition of an choice within the SortMenu
 -- "mt" is my personal means of denoting that it (the file, the variable, whatever)
@@ -33,7 +35,7 @@ local t = Def.ActorFrame {
 	Name="SortMenu",
 
 	-- Always ensure player input is directed back to the engine when initializing SelectMusic.
-	InitCommand=function(self) self:visible(false):queuecommand("DirectInputToEngine") end,
+	InitCommand=function(self) self:draworder(105):visible(false):queuecommand("DirectInputToEngine") end,
 	-- Always ensure player input is directed back to the engine when leaving SelectMusic.
 	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 
@@ -103,31 +105,15 @@ local t = Def.ActorFrame {
 
 		local wheel_options = {
 			{"SortBy", "Group"},
+			{"FilterBy", "Song Search"},
+			{"HeyMan", "Difficulty"},
 			{"SortBy", "Title"},
 			{"SortBy", "Artist"},
 			{"SortBy", "Genre"},
 			{"SortBy", "BPM"},
-			{"SortBy", "Length"},
+			{"SortBy", "Length"}	
 		}
 
-		-- the engine's MusicWheel has distinct items in the SortOrder enum for double
-		if style == "double" then
-			table.insert(wheel_options, {"SortBy", "DoubleChallengeMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleHardMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleMediumMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleEasyMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleBeginnerMeter"})
-
-		-- Otherwise... use the SortOrders that don't specify double.
-		-- Does this imply that difficulty sorting in more uncommon styles
-		-- (solo, routine, etc.) probably doesn't work?
-		else
-			table.insert(wheel_options, {"SortBy", "ChallengeMeter"})
-			table.insert(wheel_options, {"SortBy", "HardMeter"})
-			table.insert(wheel_options, {"SortBy", "MediumMeter"})
-			table.insert(wheel_options, {"SortBy", "EasyMeter"})
-			table.insert(wheel_options, {"SortBy", "BeginnerMeter"})
-		end
 
 		table.insert(wheel_options, {"SortBy", "Popularity"})
 		table.insert(wheel_options, {"SortBy", "Recent"})
@@ -251,6 +237,8 @@ local t = Def.ActorFrame {
 	sort_wheel:create_actors( "Sort Menu", 7, wheel_item_mt, _screen.cx, _screen.cy )
 }
 
+t[#t+1] = SongSearch
+t[#t+1] = SongDifficulty
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
 t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }
 

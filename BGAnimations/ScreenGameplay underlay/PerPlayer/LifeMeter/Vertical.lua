@@ -1,34 +1,24 @@
 local player = ...
-local pn = ToEnumShortString(player)
 
 local width = 16
 local height = 250
-local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(302, 400)
+local _x = width * WideScale(1, 3.5)
 
--- if double
-if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides"
--- or center1player preference is enabled and only one player is playing
-or PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
-	_x =  _screen.cx + ((GetNotefieldWidth()/2 + 30) * (player==PLAYER_1 and -1 or 1))
-
--- for the highly-specific scenario where aspect ratio is ultrawide or wider
--- and both players are joined, and this player wants both a vertical lifemeter
--- and step stats, move their vertical lifemeter to the inside of the notefield
-elseif GetScreenAspectRatio() > 21/9
-and #GAMESTATE:GetHumanPlayers() > 1
-and SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
-then
-	_x = _screen.cx + (player==PLAYER_1 and -1 or 1) * 60
+if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+	_x = width * WideScale(2,8)
+elseif PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
+	_x = width * WideScale(10,16)
 end
 
+if player == PLAYER_2 then _x = _screen.w - _x end
 
-local swoosh, velocity
 
--- FIXME: this doesn't currently handle split BPMs
+local swoosh, move
+
 local Update = function(self)
-	velocity = -GAMESTATE:GetSongBPS()/2
-	if GAMESTATE:GetSongFreeze() then velocity = 0 end
-	if swoosh then swoosh:texcoordvelocity(velocity, 0) end
+	move = -GAMESTATE:GetSongBPS()/2
+	if GAMESTATE:GetSongFreeze() then move = 0 end
+	if swoosh then swoosh:texcoordvelocity(move, 0) end
 end
 
 local meter = Def.ActorFrame{
@@ -40,25 +30,31 @@ local meter = Def.ActorFrame{
 	end,
 
 	-- frame
-	Def.Quad{ InitCommand=function(self) self:zoomto(width+2, height+2):x(_x) end },
-	Def.Quad{ InitCommand=function(self) self:zoomto(width, height):x(_x):diffuse(0,0,0,1) end },
+	Def.Quad{
+		InitCommand=function(self) self:zoomto(width+2, height+2):x(_x) end
+	},
 
 	Def.Quad{
-		Name="MeterFill",
-		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player,true)):align(0,1) end,
+		InitCommand=function(self) self:zoomto(width, height):x(_x):diffuse(0,0,0,1) end
+	},
+
+	-- // start meter proper //
+	Def.Quad{
+		Name="MeterFill";
+		InitCommand=function(self) self:zoomto(width,0):diffuse(color("#7623ba")):align(0,1) end,
 		OnCommand=function(self) self:xy( _x - width/2, height/2) end,
 
 		-- check life (LifeMeterBar)
 		LifeChangedMessageCommand=function(self,params)
-			if params.Player == player then
+			if(params.Player == player) then
 				local life = params.LifeMeter:GetLife() * height
 				self:finishtweening()
-				self:bouncebegin(0.1):zoomy( life )
+				self:bouncebegin(0.1)
+				self:zoomy( life )
 			end
 		end,
 	},
 
-	-- a simple scrolling gradient texture applied on top of MeterFill
 	LoadActor("swoosh.png")..{
 		Name="MeterSwoosh",
 		InitCommand=function(self)
@@ -70,14 +66,24 @@ local meter = Def.ActorFrame{
 				 :xy(_x, height/2)
 		end,
 		OnCommand=function(self)
-			self:customtexturerect(0,0,1,1)
+			self:customtexturerect(0,0,1,1);
 			--texcoordvelocity is handled by the Update function below
+		end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if(params.PlayerNumber == player) then
+				if(params.HealthState == 'HealthState_Hot') then
+					self:diffusealpha(1)
+				else
+					self:diffusealpha(0.2)
+				end
+			end
 		end,
 		LifeChangedMessageCommand=function(self,params)
 			if(params.Player == player) then
 				local life = params.LifeMeter:GetLife() * height
 				self:finishtweening()
-				self:bouncebegin(0.1):zoomto( life, width )
+				self:bouncebegin(0.1)
+				self:zoomto( life, width )
 			end
 		end
 	}
