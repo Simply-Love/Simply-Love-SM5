@@ -31,7 +31,6 @@ local function gen_vertices(player, width, height)
 
 		-- magic numbers obtained from Photoshop's Eyedrop tool in rgba percentage form (0 to 1)
 		local yellow   = {0.968, 0.953, 0.2, 1}
-		local orange = {0.863, 0.553, 0.2, 1}
 		local red
 		local ratio
 		local fastcolor
@@ -39,7 +38,7 @@ local function gen_vertices(player, width, height)
 		-- Make the density graph be colored based on the PeakNPS to show differences in speed.
 		if PeakNPS > 0 then
 		--- Use 23.333 for 350bpm (anything faster is not going to come up often)
-		ratio = PeakNPS/23.333
+		ratio = (PeakNPS * SL.Global.ActiveModifiers.MusicRate)/23.333
 			if ratio <= 1 then
 				red = {0.879, 0, 0, 1}
 				fastcolor = lerp_color(math.abs(ratio), yellow, red )
