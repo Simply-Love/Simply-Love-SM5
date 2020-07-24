@@ -31,8 +31,23 @@ local function gen_vertices(player, width, height)
 
 		-- magic numbers obtained from Photoshop's Eyedrop tool in rgba percentage form (0 to 1)
 		local yellow   = {0.968, 0.953, 0.2, 1}
-		local red = {0.863, 0.553, 0.2, 1}
-		--local red = {0.879, 0, 0, 1}
+		local orange = {0.863, 0.553, 0.2, 1}
+		local red
+		local ratio
+		local fastcolor
+		
+		-- Make the density graph be colored based on the PeakNPS to show differences in speed.
+		if PeakNPS > 0 then
+		--- Use 23.333 for 350bpm (anything faster is not going to come up often)
+		ratio = PeakNPS/23.333
+			if ratio <= 1 then
+				red = {0.879, 0, 0, 1}
+				fastcolor = lerp_color(math.abs(ratio), yellow, red )
+			else
+			fastcolor = {0.879, 0, 0, 1}
+			end
+		end
+		
 		local upper
 		
 		for i, nps in ipairs(NPSperMeasure) do
@@ -64,7 +79,7 @@ local function gen_vertices(player, width, height)
 					--    color2
 					-- and returns a color that has been linearly interpolated by that percent between the two colors provided
 					-- for example, lerp_color(0.5, yellow, red) will return the color that is halfway between yellow and red
-					upper = lerp_color(math.abs(y/height), yellow, red )
+					upper = lerp_color(math.abs(y/height), yellow, fastcolor )
 
 					verts[#verts+1] = {{x, 0, 0}, yellow} -- bottom of graph (yellow)
 					verts[#verts+1] = {{x, y, 0}, upper}  -- top of graph (somewhere between yellow and red)
