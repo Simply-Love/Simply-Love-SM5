@@ -1,6 +1,8 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
+local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
+local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)	
 
 -- I feel like this surely must be the wrong way to do this...
 local GlobalOffsetSeconds = PREFSMAN:GetPreference("GlobalOffsetSeconds")

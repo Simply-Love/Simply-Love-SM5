@@ -33,7 +33,7 @@ local pad = Def.ActorFrame{}
 if show_player_label then
 	pad[#pad+1] = LoadFont("Common Bold")..{
 		Text=("%s %i"):format(THEME:GetString("ScreenTestInput", "Player"), PlayerNumber:Reverse()[player]+1),
-		InitCommand=function(self) self:y(-210):zoom(0.7):visible(false) end,
+		InitCommand=function(self) self:draworder(105):y(-210):zoom(0.7):visible(false) end,
 		OnCommand=function(self)
 			local screenname =  SCREENMAN:GetTopScreen():GetName()
 			local screenclass = THEME:GetMetric(screenname, "Class")
@@ -42,17 +42,17 @@ if show_player_label then
 	}
 end
 
-pad[#pad+1] = LoadActor(game..".png")..{  InitCommand=function(self) self:y(-80):zoom(0.8) end }
+pad[#pad+1] = LoadActor(game..".png")..{  InitCommand=function(self) self:draworder(105):y(-80):zoom(0.8) end }
 
 if show_menu_buttons then
 	pad[#pad+1] = LoadActor("buttons.png")..{
-		InitCommand=function(self) self:y(80):zoom(0.5) end
+		InitCommand=function(self) self:draworder(105):y(80):zoom(0.5) end
 	}
 end
 
 for panel,values in pairs(Highlights) do
 	pad[#pad+1] = LoadActor( values.graphic )..{
-		InitCommand=function(self) self:xy(values.x, values.y):rotationz(values.rotationz):zoom(values.zoom):visible(false) end,
+		InitCommand=function(self) self:draworder(105):xy(values.x, values.y):rotationz(values.rotationz):zoom(values.zoom):visible(false) end,
 		TestInputEventMessageCommand=function(self, event)
 			local style = GAMESTATE:GetCurrentStyle()
 			local styletype = style and style:GetStyleType() or nil
