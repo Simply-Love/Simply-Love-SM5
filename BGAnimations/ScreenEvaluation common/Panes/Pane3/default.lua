@@ -29,15 +29,15 @@ local MachineHighScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOr
 local EarnedMachineHighScoreInEventMode = function()
 	-- if no DancePoints were earned, it's not a HighScore
 	if pss:GetPercentDancePoints() <= 0.01 then return false end
-	-- if DancePoints were earned, and no MachineHighScores exist, it's a HighScore
-	if #MachineHighScores < 1 then return true end
+	-- if DancePoints were earned, but no MachineHighScores exist at this point, it's a fail which was not considered a HighScore
+	if #MachineHighScores < 1 then return false end
 	-- otherwise, check if this score is better than the worst current HighScore retrieved from MachineProfile
 	return pss:GetHighScore():GetPercentDP() >= MachineHighScores[math.min(NumHighScores, #MachineHighScores)]:GetPercentDP()
 end
 
 -- -----------------------------------------------------------------------
 
-local EarnedMachineRecord = GAMESTATE:IsEventMode() and HighScoreIndex.Machine  >= 0 or EarnedMachineHighScoreInEventMode()
+local EarnedMachineRecord = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or HighScoreIndex.Machine  >= 0
 local EarnedTop2Personal  = (HighScoreIndex.Personal >= 0 and HighScoreIndex.Personal < 2)
 
 -- -----------------------------------------------------------------------
