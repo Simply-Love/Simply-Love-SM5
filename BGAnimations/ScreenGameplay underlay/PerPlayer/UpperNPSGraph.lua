@@ -9,19 +9,30 @@ end
 
 -- -----------------------------------------------------------------------
 
-local width = GetNotefieldWidth() - 30
+local horizontal_padding = 30
 local height = 30
+local width  = GetNotefieldWidth()
+
+-- support double, double8, and routine by constraining the UpperNPSGraph to have the same width as in single
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+if styletype == "OnePlayerTwoSides" or styletype == "TwoPlayersSharedSides" then
+	width = width/2
+end
+
+-- support dance solo by setting the UpperNPSGraph to have the same width as single
+if GAMESTATE:GetCurrentStyle():GetName() == "solo" then
+	-- FIXME: don't hardcode this (maybe?)
+	width = 256
+end
+
+-- subtract 30px from whatever we've determined the width of the NPSGraph to be
+width = width - horizontal_padding
+
 local xpos = {
 	[PLAYER_1] = _screen.cx - width - SL_WideScale(45, 95),
 	[PLAYER_2] = _screen.cx + SL_WideScale(45, 95),
 }
 
-local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-
--- support double, double8, and routine by constraining the UpperNPSGraph to have the same width as in single
-if styletype == "OnePlayerTwoSides" or styletype == "TwoPlayersSharedSides" then
-	width = width/2
-end
 
 -- center the UpperNPSGraph in double, double8, routine, and when Center1Player is enabled
 if #GAMESTATE:GetHumanPlayers()==1 and PREFSMAN:GetPreference("Center1Player")
