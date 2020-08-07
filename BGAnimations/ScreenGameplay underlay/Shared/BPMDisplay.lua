@@ -83,12 +83,15 @@ local t = Def.ActorFrame{
 		self:xy(_screen.cx, 52):valign(1):zoom(1.33)
 
 		local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+		local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-		if (styletype == "OnePlayerTwoSides") or (PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1) then
-			local mpn = GAMESTATE:GetMasterPlayerNumber()
-			if SL[ToEnumShortString(mpn)].ActiveModifiers.NPSGraphAtTop then
-				self:x(_screen.cx + _screen.w * (mpn==PLAYER_1 and 0.3 or -0.3))
-			end
+		-- if only one player is joined, and their notefield is centered, and they are using UpperNPSGraph
+		-- push this BPM bmt off to the side; the UpperNPSGraph will take priority in the center
+		if #GAMESTATE:GetHumanPlayers() == 1
+		and GetNotefieldX(mpn) == _screen.cx
+		and SL[ToEnumShortString(mpn)].ActiveModifiers.NPSGraphAtTop
+		then
+			self:x(_screen.cx + _screen.w * (mpn==PLAYER_1 and 0.3 or -0.3))
 		end
 	end,
 

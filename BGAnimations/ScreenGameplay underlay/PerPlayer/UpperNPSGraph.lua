@@ -34,10 +34,8 @@ local xpos = {
 }
 
 
--- center the UpperNPSGraph in double, double8, routine, and when Center1Player is enabled
-if #GAMESTATE:GetHumanPlayers()==1 and PREFSMAN:GetPreference("Center1Player")
-or (styletype=="OnePlayerTwoSides" or styletype=="TwoPlayersSharedSides")
-then
+-- center the UpperNPSGraph in double, double8, routine, dance solo, when Center1Player is enabled, etc.
+if GetNotefieldX(player) == _screen.cx then
 	xpos[PLAYER_1] = _screen.cx - width/2
 	xpos[PLAYER_2] = _screen.cx - width/2
 end
