@@ -21,30 +21,20 @@ function ParseMsdFile(steps)
 		local param = table.concat(p, '', 1, plen)
 
 		-- -- Normalize all line endings to \n and remove all leading and trailing whitespace.
-		param = param:gsub('\r\n', '\n'):gsub('\r', '\n'):match('^%s*(.-)%s*$')
+		param = param:gsub('\r\n?', '\n'):match('^%s*(.-)%s*$')
 
 		-- Field specific modifications. We length check the last table to make sure we're
 		-- actually parsing what we want.
 		-- TODO(teejusb): We should probably do this for most fields for consistency.
-		-- NOTE(teejusb): This is for *.sm files only. This is easily changeable,
-		-- I just haven't got around to it yet.
-		if((#t[#t] == 6 and t[#t][1] == 'NOTES')) then
+		if (#t[#t] == 6 and (t[#t][1] == 'NOTES' or t[#t][1] == 'NOTES2')) then
 			-- Spaces don't matter for the chart data itself, remove them all.
 			param = param:gsub(' ', '')
-		elseif((#t[#t] == 1 and t[#t][1] == 'BPMS')) then
+		elseif (#t[#t] == 1 and t[#t][1] == 'BPMS') then
 			-- Line endings and spaces don't matter for BPMs, remove them all.
-			param = param:gsub('\n', ''):gsub(' ', '')
+			param = param:gsub('\n? ?', '')
 		end
 
 		table.insert(t[#t], param)
-	end
-
-	local function AddValue(t)
-		table.insert(t, {})
-	end
-
-	local function at(s, i)
-		return s:sub(i, i)
 	end
 
 	local simfileString, fileType = GetSimfileString(steps)
@@ -64,17 +54,13 @@ function ParseMsdFile(steps)
 	local continue = false
 
 	while i < length do
-		if(i + 1 < length and at(simfileString, i+1) == '/' and at(simfileString, i+2) == '/') then
+		if i + 1 < length and simfileString:sub(i+1, i+1) == '/' and simfileString:sub(i+2, i+2) == '/' then
 			-- Skip a comment entirely; don't copy the comment to the value/parameter
-			i = i + 1
-			while i < length and at(simfileString, i+1) ~= '\n' do
-				i = i + 1
-			end
-
+			i = simfileString:find('\n', i+1)
 			continue = true
 		end
 
-		if(not continue and ReadingValue and at(simfileString, i+1) == '#') then
+		if not continue and ReadingValue and simfileString:sub(i+1, i+1) == '#' then
 			-- Unfortunately, many of these files are missing ;'s.
 			-- If we get a # when we thought we were inside a value, assume we
 			-- missed the ;.  Back up and end the value.
@@ -92,13 +78,13 @@ function ParseMsdFile(steps)
 
 			if not firstChar then
 				-- We're not the first char on a line.  Treat it as if it were a normal character.
-				processed[processedLen+1] = at(simfileString, i+1)
+				processed[processedLen+1] = char1
 				processedLen = processedLen + 1
 				i = i + 1
 				continue = true
 			end
 
-			if(not continue) then
+			if not continue then
 				-- Skip newlines and whitespace before adding the value.
 				processedLen = j
 				while(processedLen > 0 and
@@ -117,13 +103,14 @@ function ParseMsdFile(steps)
 		end
 
 		-- # starts a new value.
-		if(not continue and not ReadingValue and at(simfileString, i+1) == '#') then
-			AddValue(final)
+		local char1 = simfileString:sub(i+1, i+1)
+		if not continue and not ReadingValue and char1 == '#' then
+			table.insert(final, {})
 			ReadingValue = true
 		end
 
-		if(not continue and not ReadingValue) then
-			if(at(simfileString, i+1) == '\\') then
+		if not continue and not ReadingValue then
+			if(char1 == '\\') then
 				i = i + 2
 			else
 				i = i + 1
@@ -132,20 +119,21 @@ function ParseMsdFile(steps)
 			continue = true
 		end
 
+		char1 = simfileString:sub(i+1, i+1)
 		-- : and ; end the current param, if any.
-		if(not continue and processedLen ~= -1 and (at(simfileString, i+1) == ':' or at(simfileString, i+1) == ';')) then
+		if not continue and processedLen ~= -1 and (char1 == ':' or char1 == ';') then
 			AddParam(final, processed, processedLen)
 		end
 
 		-- # and : begin new params.
-		if(not continue and (at(simfileString, i+1) == '#' or at(simfileString, i+1) == ':')) then
+		if not continue and (char1 == '#' or char1 == ':') then
 			i = i + 1
 			processedLen = 0
 			continue = true
 		end
 
 		-- ; ends the current value.
-		if(not continue and at(simfileString, i+1) == ';') then
+		if not continue and simfileString:sub(i+1, i+1) == ';' then
 			ReadingValue = false
 			i = i + 1
 			continue = true
@@ -155,13 +143,13 @@ function ParseMsdFile(steps)
 		-- ie \#, \\, \:, etc., or a regular character.
 		-- NOTE: There is usually an 'unescape' bool passed to this top level function,
 		-- but when reading SM/SSC files it's always set to true so we assume that.
-		if(not continue and i < length and at(simfileString, i+1) == '\\') then
+		if not continue and i < length and simfileString:sub(i+1, i+1) == '\\' then
 			i = i + 1
 		end
 
 		-- Add any unterminated value at the very end.
-		if (not continue and i < length) then
-			processed[processedLen+1] = at(simfileString, i+1)
+		if not continue and i < length then
+			processed[processedLen+1] = simfileString:sub(i+1, i+1)
 			processedLen = processedLen + 1
 			i = i + 1
 		end
@@ -169,7 +157,7 @@ function ParseMsdFile(steps)
 		continue = false
 	end
 
-	if(ReadingValue) then
+	if ReadingValue then
 		AddParam(final, processed, processedLen)
 	end
 
