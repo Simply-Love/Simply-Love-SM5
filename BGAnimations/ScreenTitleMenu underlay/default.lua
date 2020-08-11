@@ -76,7 +76,11 @@ af[#af+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
 
 -- SIMPLY [something]
 af[#af+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/"..image.." (doubleres).png"))..{
-	InitCommand=function(self) self:x(2):zoom(0.7):shadowlength(0.75) end,
+	InitCommand=function(self)
+		self:zoom(0.7):vertalign(top)
+		self:x(2):y(-102)
+		self:shadowlength(0.75)
+	end,
 	OffCommand=function(self) self:linear(0.5):shadowlength(0) end
 }
 
