@@ -14,7 +14,7 @@ play_sample_music = function()
 
 		if songpath and sample_start and sample_len then
 			SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"), math.huge)
-			SOUND:PlayMusicPart(songpath, sample_start,sample_len, 0.5, 1.5, true, true)
+			SOUND:PlayMusicPart(songpath, sample_start,sample_len, 0.5, 1.5, false, true)
 		else
 			stop_music()
 		end

@@ -20,7 +20,7 @@ valid[3] = not GAMESTATE:IsCourseMode()
 -- FA+ is okay because it just halves ITG's TimingWindowW1 but keeps everything else the same.
 -- Casual (and Experimental, Demonic, etc.) uses different settings
 -- that are incompatible with GrooveStats ranking.
-valid[4] = (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+")
+valid[4] = (SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+" or SL.Global.GameMode == "DD")
 
 -- ------------------------------------------
 -- Next, check global Preferences that would invalidate the score.

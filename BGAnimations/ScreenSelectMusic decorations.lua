@@ -23,7 +23,7 @@ if not GAMESTATE:IsCourseMode() then
         self:zoom(22/toScale * ratio)
     end;
     t[#t+1] = Def.ActorFrame {
-        OnCommand=cmd(draworder,101;x,IsUsingWideScreen() and SCREEN_CENTER_X+100 or 260;y,SCREEN_CENTER_Y-92;zoom,1;diffusealpha,1;SetUpdateFunction,CDTitleUpdate);
+        OnCommand=cmd(draworder,101;x,IsUsingWideScreen() and SCREEN_CENTER_X+100 or 260;y,SCREEN_CENTER_Y-92;zoom,1;diffusealpha,0.75;SetUpdateFunction,CDTitleUpdate);
         OffCommand=cmd(bouncebegin,0.15;zoomx,0;zoomy,0);
         Def.Sprite {
             Name="CDTitle";

@@ -8,14 +8,22 @@ local col = args[6]
 local Input = args[7]
 local PruneSongsFromGroup = args[8]
 
+local max_chars = 64
 
-local switch_to_songs = function(group_name)
+local switch_to_songs = function(group_name,event)
 	local songs, index = PruneSongsFromGroup(group_name)
 	songs[#songs+1] = "CloseThisFolder"
-
 	SongWheel:set_info_set(songs, index)
+	
 end
 
+local switch_to_songs_from_group = function(group_name,event)
+	local songs, index = PruneSongsFromGroup(group_name)
+	songs[#songs+1] = "CloseThisFolder"
+	index = 0
+	SongWheel:set_info_set(songs,index)
+	
+end
 
 local item_mt = {
 	__index = {
@@ -40,7 +48,7 @@ local item_mt = {
 							subself:playcommand("LoseFocus"):diffusealpha(0)
 						else
 							-- position this folder in the header
-							subself:playcommand("GainFocus"):xy(70,35):zoom(0.35)
+							subself:zoom(0)
 
 							local starting_group = GAMESTATE:GetCurrentSong():GetGroupName()
 							switch_to_songs(starting_group)
@@ -67,46 +75,36 @@ local item_mt = {
 					if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
 						subself:playcommand("SlideBackIntoGrid")
 						MESSAGEMAN:Broadcast("SwitchFocusToGroups")
+						self.container:addy(45)
 					else
 						subself:sleep(0.25):linear(0.2):diffusealpha(1)
 					end
 				end,
-				GainFocusCommand=function(subself) subself:linear(0.2):zoom(0.8) end,
-				LoseFocusCommand=function(subself) subself:linear(0.2):zoom(0.6) end,
+				GainFocusCommand=function(subself) subself:linear(0):zoom(1) end,
+				LoseFocusCommand=function(subself) subself:linear(0):zoom(1) end,
 				SlideToTopCommand=function(subself)
-					subself:linear(0.12):y(35):zoom(0.35)
-					       :linear(0.2 ):x(70):queuecommand("Switch")
+					subself:linear(0.12):zoom(0)
+					       :linear(0.2 ):queuecommand("Switch")
 				end,
 				SlideBackIntoGridCommand=function(subself)
 					subself:linear( 0.2 ):x( _screen.cx )
-					       :linear( 0.12 ):zoom( 0.9 ):y( _screen.cy )
+					       :linear( 0.12 ):zoom(1):y( _screen.cy )
 				end,
-				SwitchCommand=function(subself) switch_to_songs(self.groupName) end,
+				SwitchCommand=function(subself) switch_to_songs_from_group(self.groupName) end,
 
-
-				-- back of folder
-				LoadActor("./img/folderBack.png")..{
-					Name="back",
-					InitCommand=function(subself) subself:zoom(0.75) end,
-					OnCommand=function(subself) subself:y(-10) end,
-					GainFocusCommand=function(subself) subself:diffuse(color("#c47215")) end,
-					LoseFocusCommand=function(subself) subself:diffuse(color("#4e4f54")) end
-				},
-
-				-- group banner
-				Def.Banner{
-					Name="Banner",
-					InitCommand=function(subself) self.banner = subself end,
-					OnCommand=function(subself) subself:y(-30):setsize(418,164):zoom(0.48) end,
-				},
-
-				-- front of folder
-				LoadActor("./img/folderFront.png")..{
-					Name="front",
-					InitCommand=function(subself) subself:zoom(0.75):vertalign(bottom) end,
-					OnCommand=function(subself) subself:y(64) end,
-					GainFocusCommand=function(subself) subself:diffusetopedge(color("#eebc54")):diffusebottomedge(color("#7c5505")):decelerate(0.33):rotationx(50) end,
-					LoseFocusCommand=function(subself) subself:diffusebottomedge(color("#3d3e43")):diffusetopedge(color("#8d8e93")):decelerate(0.15):rotationx(0) end,
+				-- Wheel Item quad for the group folder.
+				Def.Quad{
+					Name="GroupWheelQuad",
+					InitCommand=function(self)
+						self:y(_screen.cy - 240)
+						self:x(0)
+						self:diffuse(color("#4c565d"))
+						self:zoomx(320)
+						self:zoomy(24)
+							
+					end,
+					OnCommand=function(self)
+					end
 				},
 
 				-- group title bmt
@@ -114,21 +112,25 @@ local item_mt = {
 					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt = subself
-						subself:_wrapwidthpixels(150):vertspacing(-4):shadowlength(0.5)
+						subself:maxwidth(300):vertspacing(-4):shadowlength(0.5)
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):xy(150,-6):zoom(3):diffuse(Color.White):_wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate")
+							subself:horizalign(left):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(480):shadowlength(0):playcommand("Untruncate")
 						end
 					end,
+					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
+					TruncateCommand=function(subself) subself:settext(self.groupName):Truncate(max_chars) end,
 
-					GainFocusCommand=function(subself) subself:x(0):horizalign(center):linear(0.15):y(20):zoom(1.1) end,
-					LoseFocusCommand=function(subself) subself:xy(0,6):horizalign(center):linear(0.15):zoom(1):diffuse(Color.White) end,
-
-					SlideToTopCommand=function(subself) subself:sleep(0.3):diffuse(Color.White):queuecommand("SlideToTop2") end,
-					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):xy(150,-6):zoom(3):_wrapwidthpixels(480):shadowlength(0):playcommand("Untruncate") end,
-					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):xy(0,20):zoom(1.1):diffuse(Color.White):_wrapwidthpixels(150):shadowlength(0.5):playcommand("Truncate") end,
-				}
+					GainFocusCommand=function(subself) BannerOfGroup = self.groupName  subself:horizalign(center):linear(0.15):zoom(0.8) MESSAGEMAN:Broadcast("GroupsHaveChanged") end,
+					LoseFocusCommand=function(subself) subself:horizalign(center):linear(0.15):zoom(0.8):diffuse(color("#4ffff3")) end,
+					
+					
+					SlideToTopCommand=function(subself) subself:diffuse(color("#4ffff3")):queuecommand("SlideToTop2") end,
+					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):zoom(0.8):maxwidth(480):shadowlength(0):playcommand("Untruncate") end,
+					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(300):shadowlength(0.5):playcommand("Truncate") end,
+				},
+				
 			}
 
 			return af
@@ -137,7 +139,6 @@ local item_mt = {
 		transform = function(self, item_index, num_items, has_focus)
 
 			local offset = item_index - math.floor(num_items/2)
-			local zm = scale(math.abs(offset),0,math.floor(num_items/2),0.9,0.05 )
 			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()
 
@@ -145,18 +146,20 @@ local item_mt = {
 			-- so we want to position all the folders "behind the scenes", and then call Init
 			-- on the group folder with focus so that it is positioned correctly at the top
 			if Input.WheelWithFocus ~= GroupWheel then
-				self.container:x( offset * col.w * zm + _screen.cx ):z( -1 * math.abs(offset) ):zoom( zm ):rotationy( ry )
-				if has_focus then self.container:playcommand("Init") end
+				self.container:y( ((offset * col.w)/8.4 + _screen.cy) + 45 )
+				if has_focus then 
+				self.container:playcommand("Init") end
 
 			-- otherwise, we are performing a normal transform
 			else
 				if has_focus then
 					self.container:playcommand("GainFocus")
 					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
+					NameOfGroup = self.groupName
 				else
 					self.container:playcommand("LoseFocus")
 				end
-				self.container:x( offset * col.w * zm + _screen.cx ):z( -1 * math.abs(offset) ):zoom( zm ):rotationy( ry )
+				self.container:y( ((offset * col.w)/8.4 + _screen.cy) + 45 )
 			end
 		end,
 
@@ -165,10 +168,7 @@ local item_mt = {
 			self.groupName = groupName
 
 			-- handle text
-			self.bmt:settext(self.groupName)
-
-			-- handle banner
-			self.banner:LoadFromSongGroup(self.groupName):playcommand("On")
+			self.bmt:settext(self.groupName):Truncate(max_chars)
 		end
 	}
 }

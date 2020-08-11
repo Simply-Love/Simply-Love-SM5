@@ -62,8 +62,10 @@ SelectMusicOrCourse = function()
 	else
 		if SL.Global.GameMode == "Casual" then
 			return "ScreenSelectMusicCasual"
+		elseif SL.Global.GameMode == "DD" then
+			return "ScreenSelectMusicDD"
 		end
-
+		
 		return "ScreenSelectMusic"
 	end
 end

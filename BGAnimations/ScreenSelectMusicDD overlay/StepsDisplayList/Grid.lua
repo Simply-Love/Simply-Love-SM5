@@ -95,7 +95,7 @@ for RowNumber=1,num_rows do
 
 	Grid[#Grid+1] =	Def.Sprite{
 		Name="Blocks_"..RowNumber,
-		Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/StepsDisplayList/_block.png"),
+		Texture=THEME:GetPathB("ScreenSelectMusicDD", "overlay/StepsDisplayList/_block.png"),
 
 		InitCommand=function(self) self:diffusealpha(0) end,
 		OnCommand=function(self)
