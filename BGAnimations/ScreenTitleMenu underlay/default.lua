@@ -11,7 +11,10 @@ local SongStats = ("%i %s %i %s, %i %s"):format(
 )
 
 -- - - - - - - - - - - - - - - - - - - - -
-local game = GAMESTATE:GetCurrentGame():GetName();
+-- use the current game (dance, pump, etc.) to load the apporopriate logo
+-- SL currently has logo assets for: dance, pump, techno
+--   use the techno logo asset for less common games (para, kb7, etc.)
+local game = GAMESTATE:GetCurrentGame():GetName()
 if game ~= "dance" and game ~= "pump" then
 	game = "techno"
 end
@@ -57,6 +60,11 @@ if FILEMAN:DoesFileExist("/Themes/"..sl_name.."/Graphics/_VisualStyles/"..ThemeP
 	if math.random(1,100) <= 10 then image="TitleMenuAlt" end
 end
 
+
+-- -----------------------------------------------------------------------
+-- preliminary Lua setup is done
+-- now define actors to be passed back to the SM engine
+
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		--see: ./Scripts/SL_Init.lua
@@ -64,24 +72,37 @@ local af = Def.ActorFrame{
 
 		self:Center()
 	end,
-	OffCommand=function(self) self:linear(0.5):diffusealpha(0) end,
+	OffCommand=function(self) self:smooth(0.65):diffusealpha(0) end,
+}
+
+-- SIMPLY [something]
+af[#af+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/"..image.." (doubleres).png"))..{
+	Name="Simply Text",
+	InitCommand=function(self)
+		self:zoom(0.7):vertalign(top)
+		self:y(-102):shadowlength(0.75)
+	end,
+	OffCommand=function(self) self:linear(0.5):shadowlength(0) end
 }
 
 -- decorative arrows
 af[#af+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
 	InitCommand=function(self)
-		self:y(-16):zoom( game=="pump" and 0.2 or 0.205 )
-	end
-}
+		self:y(-16)
 
--- SIMPLY [something]
-af[#af+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/"..image.." (doubleres).png"))..{
-	InitCommand=function(self)
-		self:zoom(0.7):vertalign(top)
-		self:x(2):y(-102)
-		self:shadowlength(0.75)
-	end,
-	OffCommand=function(self) self:linear(0.5):shadowlength(0) end
+		-- get a reference to the SIMPLY [something] graphic
+		-- it's rasterized text in the Wendy font like "SIMPLY LOVE" or "SIMPLY THONK" or etc.
+		local simply = self:GetParent():GetChild("Simply Text")
+
+		-- zoom the logo's width to match the width of the text graphic
+		-- zoomtowidth() performs a "horizontal" zoom (on the x-axis) to meet a provided pixel quantity
+		--    and leaves the y-axis zoom as-is, potentially skewing/squishing the appearance of the asset
+		self:zoomtowidth( simply:GetZoomedWidth() )
+
+		-- so, get the horizontal zoom factor of these decorative arrows
+		-- and apply it to the y-axis as well to maintain proportions
+		self:zoomy( self:GetZoomX() )
+	end
 }
 
 -- SM version, SL version, song stats
