@@ -12,8 +12,9 @@ noteskin = noteskin:lower()
 local gmods = SL.Global.ActiveModifiers
 
 -- -----------------------------------------------------------------------
-
+local game  = GAMESTATE:GetCurrentGame():GetName()
 local style = GAMESTATE:GetCurrentStyle()
+local style_name = style:GetName()
 local num_columns = style:ColumnsPerPlayer()
 
 local rows = { "W1", "W2", "W3", "W4", "W5", "Miss" }
@@ -49,11 +50,11 @@ for i, column in ipairs( cols ) do
 
 	local _x = col_width * i
 
-	-- Calculating column positioning like this in techno game results in each column
-	-- being ~10px too far left; this does not happen in any other game I've tested.
-	-- There's probably a cleaner fix involving scaling column.XOffset to fit within
-	-- the bounds of box_width but this is easer for now.
-	if GAMESTATE:GetCurrentGame():GetName() == "techno" then
+	-- Calculating column positioning like this in techno game and dance solor results
+	-- in each column being ~10px too far left; this does not happen in other games that
+	-- I've tested.  There's probably a cleaner fix involving scaling column.XOffset to
+	-- fit within the bounds of box_width but this is easer for now.
+	if game == "techno" or (game == "dance" and style_name == "solo") then
 		_x = _x + 10
 	end
 
