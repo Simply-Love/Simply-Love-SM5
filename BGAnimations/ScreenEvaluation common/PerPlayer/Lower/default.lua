@@ -20,8 +20,9 @@ local af = Def.ActorFrame{
 	Name=ToEnumShortString(player).."_AF_Lower",
 	InitCommand=function(self)
 
-		-- if 2 players joined, give each their own distinct pane space
-		if NumPlayers == 2 then
+		-- if 2 players joined, or if Casual Mode where panes are not full-width,
+		-- give each player their own distinct space for a half-width pane
+		if NumPlayers == 2 or SL.Global.GameMode == "Casual" then
 			self:x(_screen.cx + ((small_pane_w + pane_spacing) * (player==PLAYER_1 and -0.5 or 0.5)))
 
 		else
