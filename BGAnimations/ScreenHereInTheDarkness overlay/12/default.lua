@@ -18,7 +18,7 @@ local quotes = {
 		y=140,
 	},
 	{
-		text="For me anyway, it's a combination of understanding and being understood, forgiving and being forgiven.\n\nThe people I harmed are okay and better than ever, I forgive the man who hurts me in my dreams, and we all laugh about how silly it was to have held onto to so much pain for so long.",
+		text="For me anyway, it's a combination of understanding and being understood, forgiving and being forgiven.\n\nThe people I hurt are okay and better than ever, I forgive the man who rapes me in my dreams, and we all laugh about how silly it was to have held onto to so much pain for so long.",
 		color={0.666, 0.666, 0.8, 0},
 		y=70,
 	},
