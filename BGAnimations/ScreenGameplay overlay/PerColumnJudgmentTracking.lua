@@ -41,8 +41,16 @@ if not track_missbcheld then
 		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
 		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
-				local tns = ToEnumShortString(params.TapNoteScore)
-				judgments[col][tns] = judgments[col][tns] + 1
+
+				local tnt = tapnote:GetTapNoteType()
+
+				-- we don't want to consider TapNoteTypes like Mine, HoldTail, Attack, etc. when counting judgments
+				-- we do want to consider normal tapnotes, hold heads, and lifts
+				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
+				if tnt == "TapNoteType_Tap" or tnt == "TapNoteType_HoldHead" or tnt == "TapNoteType_Lift" then
+					local tns = ToEnumShortString(params.TapNoteScore)
+					judgments[col][tns] = judgments[col][tns] + 1
+				end
 			end
 		end
 	end
@@ -94,11 +102,19 @@ else
 		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
 		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
-				local tns = ToEnumShortString(params.TapNoteScore)
-				judgments[col][tns] = judgments[col][tns] + 1
 
-				if tns == "Miss" and held[params.Player][ buttons[col] ] then
-					judgments[col].MissBecauseHeld = judgments[col].MissBecauseHeld + 1
+				local tnt = tapnote:GetTapNoteType()
+
+				-- we don't want to consider TapNoteTypes like Mine, HoldTail, Attack, etc. when counting judgments
+				-- we do want to consider normal tapnotes, hold heads, and lifts
+				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
+				if tnt == "TapNoteType_Tap" or tnt == "TapNoteType_HoldHead" or tnt == "TapNoteType_Lift" then
+					local tns = ToEnumShortString(params.TapNoteScore)
+					judgments[col][tns] = judgments[col][tns] + 1
+
+					if tns == "Miss" and held[params.Player][ buttons[col] ] then
+						judgments[col].MissBecauseHeld = judgments[col].MissBecauseHeld + 1
+					end
 				end
 			end
 		end
