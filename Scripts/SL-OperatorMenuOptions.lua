@@ -1,5 +1,54 @@
 OperatorMenuOptionRows = {}
 
+-- -----------------------------------------------------------------------
+-- System Options
+
+OperatorMenuOptionRows.Theme = function()
+	return {
+		Name = "Theme",
+		Choices = THEME:GetSelectableThemeNames(),
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		LoadSelections = function(self, list, pn)
+			local theme = THEME:GetCurThemeName()
+			if not theme then return end
+
+			local i = FindInTable(theme, self.Choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #list do
+				if list[i] then
+					if self.Choices[i] ~= THEME:GetCurThemeName() then
+						-- if the user is switching to some other version of SL they have installed
+						-- don't bother them with the ResetPreferences prompt; just switch to that theme
+						-- try a simple check first
+						if self.Choices[i]:match("Simply Love")	then
+							THEME:SetTheme( self.Choices[i] )
+							return
+						end
+
+						-- if not, attempt a more roundabout check by peeking into the new theme's ThemeInfo.ini
+						if FILEMAN:DoesFileExist("/Themes/"..self.Choices[i].."/ThemeInfo.ini") then
+							local info = IniFile.ReadFile("/Themes/"..self.Choices[i].."/ThemeInfo.ini")
+							if info and info.ThemeInfo and info.ThemeInfo.DisplayName and info.ThemeInfo.DisplayName:match("Simply Love") then
+								THEME:SetTheme( self.Choices[i] )
+								return
+							end
+						end
+
+						-- if not, we'll assume the new theme is different enough to warrant prompting the user
+						SL.NextTheme = self.Choices[i]
+						SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPromptToResetPreferencesToStock")
+					end
+				end
+			end
+		end,
+	}
+end
+
 OperatorMenuOptionRows.EditorNoteskin = function()
 	local skins = NOTESKIN:GetNoteSkinNames()
 	return {
@@ -30,12 +79,22 @@ OperatorMenuOptionRows.EditorNoteskin = function()
 	}
 end
 
+-- -----------------------------------------------------------------------
+-- Advanced Options
+
 OperatorMenuOptionRows.LongAndMarathonTime = function( str )
+	-- define a range of reasonable choices first
+	-- 150 seconds is 2.5 minutes
+	-- 300 seconds is 5   minutes
+	-- 600 seconds is 10  minutes
 	local choices = {
-		Long={Choices=SecondsToMMSS_range(150, 300, 15), Values=range(150, 300, 15)},
+		Long=    {Choices=SecondsToMMSS_range(150, 300, 15), Values=range(150, 300, 15)},
 		Marathon={Choices=SecondsToMMSS_range(300, 600, 15), Values=range(300, 600, 15)}
 	}
 
+	-- 999999 seconds ≅ 11 days, 13 hours
+	-- it's an arbitrarily large numerical value to stand-in for "no song should count as multiple rounds"
+	-- it will be presented to the user as the last choice in the OptionRows as a localized "Off"
 	choices.Long.Choices[#choices.Long.Choices+1] = THEME:GetString("ThemePrefs", "Off")
 	choices.Long.Values[#choices.Long.Values+1] = 999999
 	choices.Marathon.Choices[#choices.Marathon.Choices+1] = THEME:GetString("ThemePrefs", "Off")
@@ -105,52 +164,6 @@ OperatorMenuOptionRows.MusicWheelSpeed = function()
 				end
 			end
 		end
-	}
-end
-
-OperatorMenuOptionRows.Theme = function()
-	return {
-		Name = "Theme",
-		Choices = THEME:GetSelectableThemeNames(),
-		LayoutType = "ShowAllInRow",
-		SelectType = "SelectOne",
-		OneChoiceForAllPlayers = true,
-		ExportOnChange = false,
-		LoadSelections = function(self, list, pn)
-			local theme = THEME:GetCurThemeName()
-			if not theme then return end
-
-			local i = FindInTable(theme, self.Choices) or 1
-			list[i] = true
-		end,
-		SaveSelections = function(self, list, pn)
-			for i=1, #list do
-				if list[i] then
-					if self.Choices[i] ~= THEME:GetCurThemeName() then
-						-- if the user is switching to some other version of SL they have installed
-						-- don't bother them with the ResetPreferences prompt; just switch to that theme
-						-- try a simple check first
-						if self.Choices[i]:match("Simply Love")	then
-							THEME:SetTheme( self.Choices[i] )
-							return
-						end
-
-						-- if not, attempt a more roundabout check by peeking into the new theme's ThemeInfo.ini
-						if FILEMAN:DoesFileExist("/Themes/"..self.Choices[i].."/ThemeInfo.ini") then
-							local info = IniFile.ReadFile("/Themes/"..self.Choices[i].."/ThemeInfo.ini")
-							if info and info.ThemeInfo and info.ThemeInfo.DisplayName and info.ThemeInfo.DisplayName:match("Simply Love") then
-								THEME:SetTheme( self.Choices[i] )
-								return
-							end
-						end
-
-						-- if not, we'll assume the new theme is different enough to warrant prompting the user
-						SL.NextTheme = self.Choices[i]
-						SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPromptToResetPreferencesToStock")
-					end
-				end
-			end
-		end,
 	}
 end
 
@@ -251,7 +264,7 @@ OperatorMenuOptionRows.VisualDelaySeconds = function()
 	}
 end
 
-------------------------------------------------------------
+-- -----------------------------------------------------------------------
 -- USB profiles
 
 -- the engine doesn't seem to have a conf definition
