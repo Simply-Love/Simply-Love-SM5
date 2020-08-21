@@ -14,7 +14,7 @@
 -- TableToString_Recursive() function via:
 -- http://www.hpelbers.org/lua/print_r
 -- Copyright 2009: hans@hpelbers.org
-local function TableToString_Recursive(t, name, indent)
+local TableToString_Recursive = function(t, name, indent)
 	local tableList = {}
 
 	function table_r (t, name, indent, full)
@@ -57,41 +57,51 @@ end
 -- SM()
 -- Shorthand for SCREENMAN:SystemMessage(), this is useful for rapid iterative
 -- testing by allowing us to pretty-print tables and variables to the screen.
--- If passed a table, SM() will use TableToString_Recursive (from above)
+--
+-- If the first argument is a table, SM() will use TableToString_Recursive (from above)
 -- to display children recursively.  Larger tables will spill offscreen, so
 -- rec_print_table() from the _fallback theme is good to know about and use when
--- debugging.  It will recursively pretty-print table structures to ./Logs/Log.txt
+-- debugging.  That will recursively pretty-print table structures to ./Logs/Log.txt
+--
+-- The second arugment is optional and allows you to provide a specific duration,
+-- in seconds, for how long you want the text to appear on screen.
+-- in Simply Love, the default SystemMessage duration used in ./BGA/ScreenSystemLayer overlay.lua is 3
 
-function SM( arg )
+SM = function( arg, duration )
+	local msg
 
-	-- if a table has been passed in
+	-- if a table has been passed in, recursively stringify the table's keys and values
 	if type( arg ) == "table" then
+		msg = TableToString_Recursive(arg)
 
-		-- recursively print its contents to a string
-		local msg = TableToString_Recursive(arg)
-		-- and SystemMessage() that string
-		SCREENMAN:SystemMessage( msg )
+	-- otherwise, Lua's standard tostring() should suffice
 	else
-		SCREENMAN:SystemMessage( tostring(arg) )
+		msg = tostring(arg)
 	end
+
+	-- SCREENMAN:SystemMessage() is effectively a convenience function for broadcasting
+	-- "SystemMessage" with certain parameters.  see: ScreenManager.cpp
+	-- let's broadcast directly using MESSAGEMAN so that we can also pack in a duration
+	-- value (how long to display the SystemMessage for) if so desired
+	MESSAGEMAN:Broadcast("SystemMessage", {Message=msg, Duration=duration})
 end
 
 
 -- range() accepts one, two, or three arguments and returns a table
 -- Example Usage:
 
--- range(4)			--> {1, 2, 3, 4}
--- range(4, 7)		--> {4, 5, 6, 7}
--- range(5, 27, 5) 	--> {5, 10, 15, 20, 25}
+-- range(4)           → {1, 2, 3, 4}
+-- range(4, 7)        → {4, 5, 6, 7}
+-- range(5, 27, 5)    → {5, 10, 15, 20, 25}
 
 -- either of these are acceptable
--- range(-1,-3, 0.5)	--> {-1, -1.5, -2, -2.5, -3 }
--- range(-1,-3, -0.5)	--> {-1, -1.5, -2, -2.5, -3 }
+-- range(-1,-3, 0.5)  → {-1, -1.5, -2, -2.5, -3 }
+-- range(-1,-3, -0.5) → {-1, -1.5, -2, -2.5, -3 }
 
 -- but this just doesn't make sense and will return an empty table
--- range(1, 3, -0.5)	--> {}
+-- range(1, 3, -0.5)  → {}
 
-function range(start, stop, step)
+range = function(start, stop, step)
 	if start == nil then return end
 
 	if not stop then
