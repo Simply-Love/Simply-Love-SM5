@@ -393,8 +393,12 @@ local Overrides = {
 			local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 			local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-			-- if not ultrawide, StepStats only in single (not versus, not double)
-			if (not IsUltraWide and style and style:GetName() ~= "single")
+			-- if not ultrawide, StepStats only in single (not versus, not double) 
+			-- OLD --> if (not IsUltraWide and style and style:GetName() ~= "single")
+			-- Avoid to remove StepStats also in versus, nothing seems changed on the screen style. 
+			-- If is not ultrawide the opt is anyway ignored, but the DataVisualizations 
+			-- on UserPrefs doesn't change to None everytime the style used is "versus"
+			if (not IsUltraWide and style and style:GetName() == "double")
 			-- if ultrawide, StepStats only in single and versus (not double)
 			or (IsUltraWide and style and not (style:GetName()=="single" or style:GetName()=="versus"))
 			-- if the notefield takes up more than half the screen width (e.g. single + Center1Player + 4:3)
