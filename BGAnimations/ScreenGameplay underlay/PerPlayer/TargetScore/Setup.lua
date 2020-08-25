@@ -107,11 +107,11 @@ local target_grade_score = 0
 
 if (target_grade_index == 17) then
 	-- player set TargetGrade as Machine best
-	target_grade_score = GetTopScore(player, "Machine")
+	target_grade_score = GetTopScore("Machine")
 
 elseif (target_grade_index == 18) then
 	-- player set TargetGrade as Personal best
-	target_grade_score = GetTopScore(player, "Personal")
+	target_grade_score = GetTopScore("Personal")
 else
 	-- player set TargetGrade as a particular letter grade
 	-- anything from C- to ☆☆☆☆
