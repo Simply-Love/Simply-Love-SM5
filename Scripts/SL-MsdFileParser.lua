@@ -16,7 +16,7 @@
 -- we'll recover.
 
 function ParseMsdFile(steps)
-	local function AddParam(t, p, plen)
+	local function AddParam(t, p, plen, file_type)
 		-- table.concat(table_name, separator, start, end)
 		local param = table.concat(p, '', 1, plen)
 
@@ -26,8 +26,14 @@ function ParseMsdFile(steps)
 		-- Field specific modifications. We length check the last table to make sure we're
 		-- actually parsing what we want.
 		-- TODO(teejusb): We should probably do this for most fields for consistency.
-		if (#t[#t] == 6 and (t[#t][1] == 'NOTES' or t[#t][1] == 'NOTES2')) then
+		if (#t[#t] == 6 and (t[#t][1] == 'NOTES' or t[#t][1] == 'NOTES2') and file_type == "sm") then
 			-- Spaces don't matter for the chart data itself, remove them all.
+			-- NOTE(teejusb): NOTES in the SM file has multiple parts. We specifically only want to strip
+			-- the 6th part (the chart data), as the others can contain spaces e.g. chart description.
+			param = param:gsub(' ', '')
+		elseif (#t[#t] == 1 and (t[#t][1] == 'NOTES' or t[#t][1] == 'NOTES2') and file_type == "ssc") then
+			-- Spaces don't matter for the chart data itself, remove them all.
+			-- NOTE(teejusb): NOTES in an SSC file only contains the chart data itself.
 			param = param:gsub(' ', '')
 		elseif (#t[#t] == 1 and t[#t][1] == 'BPMS') then
 			-- Line endings and spaces don't matter for BPMs, remove them all.
@@ -56,7 +62,7 @@ function ParseMsdFile(steps)
 	while i < length do
 		if i + 1 < length and simfileString:sub(i+1, i+1) == '/' and simfileString:sub(i+2, i+2) == '/' then
 			-- Skip a comment entirely; don't copy the comment to the value/parameter
-			i = simfileString:find('\n', i+1)
+			i = simfileString:find('\n', i+1) - 1
 			continue = true
 		end
 
@@ -95,7 +101,7 @@ function ParseMsdFile(steps)
 					processedLen = processedLen - 1
 				end
 
-				AddParam(final, processed, processedLen)
+				AddParam(final, processed, processedLen, fileType)
 
 				processedLen = 0
 				ReadingValue = false
@@ -122,7 +128,7 @@ function ParseMsdFile(steps)
 		char1 = simfileString:sub(i+1, i+1)
 		-- : and ; end the current param, if any.
 		if not continue and processedLen ~= -1 and (char1 == ':' or char1 == ';') then
-			AddParam(final, processed, processedLen)
+			AddParam(final, processed, processedLen, fileType)
 		end
 
 		-- # and : begin new params.
