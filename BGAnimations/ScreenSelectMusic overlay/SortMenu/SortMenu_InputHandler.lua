@@ -1,7 +1,7 @@
 local sort_wheel = ...
 
 -- this handles user input while in the SortMenu
-local function input(event)
+local input = function(event)
 	if not (event and event.PlayerNumber and event.button) then
 		return false
 	end

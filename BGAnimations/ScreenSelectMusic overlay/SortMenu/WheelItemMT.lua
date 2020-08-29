@@ -76,16 +76,16 @@ return {
 
 			elseif self.kind == "ChangeMode" or self.kind == "ChangeStyle" then
 				self.change = info[2]
+
 			else
 				self.new_overlay = info[2]
 			end
 
-			local toptext = self.kind ~= "" and THEME:GetString("ScreenSelectMusic", self.kind) or ""
+			local toptext    = self.kind ~= "" and THEME:GetString("ScreenSelectMusic", self.kind) or ""
+			local bottomtext = THEME:GetString(self.kind == "ChangeMode" and "ScreenSelectPlayMode" or "ScreenSelectMusic", info[2])
 
 			self.top_text:settext(toptext)
-			-- don't duplicate the names of game modes in en.ini.
-			-- but "single", "double" has different semantic meaning in 1P.
-			self.bottom_text:settext(THEME:GetString(self.kind == "ChangeMode" and "ScreenSelectPlayMode" or "ScreenSelectMusic", info[2]))
+			self.bottom_text:settext(bottomtext)
 		end
 	}
 }
