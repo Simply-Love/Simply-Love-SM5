@@ -12,13 +12,14 @@ local function gen_vertices(player, width, height)
 	end
 
 	local PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, Steps)
-	-- broadcast this for any other actors on the current screen that rely on knowing the peak nps
-	MESSAGEMAN:Broadcast("PeakNPSUpdated", {PeakNPS=PeakNPS})
 
-	-- also, store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
+	-- store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
 	-- their charts may have different peak densities, and if they both want histograms,
 	-- we'll need to be able to compare densities and scale one of the graphs vertically
 	GAMESTATE:Env()[ToEnumShortString(player).."PeakNPS"] = PeakNPS
+	
+	-- broadcast this for any other actors on the current screen that rely on knowing the peak nps
+	MESSAGEMAN:Broadcast("PeakNPSUpdated", {PeakNPS=PeakNPS})
 
 	local verts = {}
 	local x, y, t
