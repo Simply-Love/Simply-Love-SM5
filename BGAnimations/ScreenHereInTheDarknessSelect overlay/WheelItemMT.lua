@@ -1,4 +1,6 @@
 -- the metatable for an item in the sort_wheel
+local row_height = 30
+
 return {
 	__index = {
 		create_actors = function(self, name)
@@ -11,11 +13,21 @@ return {
 					self.container = subself
 				end,
 				OnCommand=function(subself)
-					subself:y((((self.hitd_index-1)%10)+1)*30)
-					subself:addx(self.hitd_index <= 10 and -180 or WideScale(60,100))
 
-					if self.hitd_index > 20 then
-						subself:xy( 100, (self.hitd_index-9)*30 )
+					-- here in the darkness
+					if self.hitd_index < 21 then
+						subself:y((((self.hitd_index-1)%10)+1)*row_height)
+						subself:x(self.hitd_index <= 10 and -180 or WideScale(60,100))
+
+					-- basement stories
+					-- the closet there is safe; no one will look for me there
+					elseif self.hitd_index > 20 and self.hitd_index < 23 then
+						subself:y(row_height*11.5)
+						subself:x((self.hitd_index-20)%2 == 1 and -180 or WideScale(60,100))
+
+					-- acknowledgments, exit
+					elseif self.hitd_index > 22 then
+						subself:xy( 100, (self.hitd_index-10)*row_height )
 					end
 				end
 			}
@@ -25,7 +37,7 @@ return {
 				File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 				InitCommand=function(subself)
 					self.bmt = subself
-					subself:diffusealpha(0):halign(0):x(-100)
+					subself:diffusealpha(0):x(-100):horizalign(left)
 				end,
 				OnCommand=function(subself)
 					subself:sleep(0.1):smooth(0.25):diffusealpha(1)
@@ -53,10 +65,19 @@ return {
 			self.info = info
 			self.hitd_index = info[1]
 			self.text = info[2]
-			if self.hitd_index < 21 then
+
+			if self.hitd_index < 10 then
+				self.bmt:settext(" " .. self.hitd_index .. ". " .. self.text)
+
+			elseif self.hitd_index >= 10 and self.hitd_index < 21 then
 				self.bmt:settext(self.hitd_index .. ". " .. self.text)
+
 			else
-				self.bmt:settext(self.text):halign(0.5)
+				self.bmt:settext(self.text)
+			end
+
+			if self.hitd_index > 22 then
+				self.bmt:halign(0.5)
 			end
 		end
 	}

@@ -22,8 +22,12 @@ local wheel_options = {
 	{18, "A Beige Colored Bookmark"},
 	{19, "Your Drifting Mind"},
 	{20, "A Walk In the Snow"},
-	{21, "– Acknowledgments & Thanks –"},
-	{22, "Exit" }
+
+	{21, "b1. Distant Towers"},
+	{22, "b2. Hold On"},
+
+	{23, "– Acknowledgments & Thanks –"},
+	{24, "Exit" },
 }
 
 local Cancel = function()
@@ -38,69 +42,77 @@ local InputHandler = function(event)
 		return false
 	end
 
-	if event.type ~= "InputEventType_Release" then
-
-		if event.GameButton=="MenuDown" then
-			local i = hitd_wheel:get_info_at_focus_pos()[1]
-
-			if (i == 10) then
-				-- vertical jump from 10 → 21
-				hitd_wheel:scroll_by_amount(11)
-			else
-				hitd_wheel:scroll_by_amount(1)
-			end
-
-		elseif event.GameButton=="MenuUp" then
-			hitd_wheel:scroll_by_amount(-1)
-
-		elseif event.GameButton == "MenuRight" then
-			local i = hitd_wheel:get_info_at_focus_pos()[1]
-
-			if (i <= 10) then
-				-- e.g. horizontal jump from 1 → 11
-				hitd_wheel:scroll_by_amount(10)
-			elseif (i > 10 and i < 20) then
-				-- e.g. horizontal jump from 11 → 2
-				hitd_wheel:scroll_by_amount(-9)
-			else
-				-- e.g. from 20 → 21
-				hitd_wheel:scroll_by_amount(1)
-			end
-
-		elseif event.GameButton == "MenuLeft" then
-			local i = hitd_wheel:get_info_at_focus_pos()[1]
-
-			if (i > 1 and i <= 10) then
-				-- e.g. horizontal jump from 2 → 11
-				hitd_wheel:scroll_by_amount(9)
-			elseif (i > 10 and i <= 20) then
-				-- e.g. horizontal jump from 11 → 1
-				hitd_wheel:scroll_by_amount(-10)
-			else
-				-- e.g. from 21 → 20
-				hitd_wheel:scroll_by_amount(-1)
-			end
-
-		elseif event.GameButton == "Start" then
-			local i = hitd_wheel:get_info_at_focus_pos()[1]
-
-			-- exit
-			if i == #wheel_options then
-				Cancel()
-				return
-			end
-
-			-- set index to persist through reload
-			SL.Global.HereInTheDarkness = i
-			-- reload into darkness
-			local topscreen = SCREENMAN:GetTopScreen()
-			topscreen:SetNextScreenName("ScreenHereInTheDarkness")
-			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
-
-		elseif event.GameButton == "Back" or event.GameButton == "Select" then
-			Cancel()
-		end
+	if event.type == "InputEventType_Release" then
+		return false
 	end
+
+	local i = hitd_wheel:get_info_at_focus_pos()[1]
+
+	if event.GameButton=="MenuDown" then
+		if (i == 10) then
+			-- vertical jump from 10 → 21
+			hitd_wheel:scroll_by_amount(11)
+		elseif (i==20 or i == 21) then
+			-- vertical jump from 21 → 23
+			hitd_wheel:scroll_by_amount(2)
+		else
+			hitd_wheel:scroll_by_amount(1)
+		end
+
+	elseif event.GameButton=="MenuUp" then
+		if (i == 11 or i == 21) then
+			-- column jump from 11 → 21
+			hitd_wheel:scroll_by_amount(-11)
+		elseif (i == 22) then
+			-- vertical jump from 22 → 20
+			hitd_wheel:scroll_by_amount(-2)
+		else
+			hitd_wheel:scroll_by_amount(-1)
+		end
+
+	elseif event.GameButton == "MenuRight" then
+		if (i <= 10) then
+			-- e.g. horizontal jump from 1 → 11
+			hitd_wheel:scroll_by_amount(10)
+		elseif (i > 10 and i < 20) then
+			-- e.g. horizontal jump from 11 → 2
+			hitd_wheel:scroll_by_amount(-9)
+		else
+			-- e.g. from 20 → 21
+			hitd_wheel:scroll_by_amount(1)
+		end
+
+	elseif event.GameButton == "MenuLeft" then
+		if (i > 1 and i <= 10) then
+			-- e.g. horizontal jump from 2 → 11
+			hitd_wheel:scroll_by_amount(9)
+		elseif (i > 10 and i <= 20) then
+			-- e.g. horizontal jump from 11 → 1
+			hitd_wheel:scroll_by_amount(-10)
+		else
+			-- e.g. from 21 → 20
+			hitd_wheel:scroll_by_amount(-1)
+		end
+
+	elseif event.GameButton == "Start" then
+		-- exit
+		if i == #wheel_options then
+			Cancel()
+			return false
+		end
+
+		-- set index to persist through reload
+		SL.Global.HereInTheDarkness = i
+		-- reload into darkness
+		local topscreen = SCREENMAN:GetTopScreen()
+		topscreen:SetNextScreenName("ScreenHereInTheDarkness")
+		topscreen:StartTransitioningScreen("SM_GoToNextScreen")
+
+	elseif event.GameButton == "Back" or event.GameButton == "Select" then
+		Cancel()
+	end
+
+	return false
 end
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,7 +125,7 @@ local t = Def.ActorFrame {
 	end,
 
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
-	hitd_wheel:create_actors( "hitd_wheel", #wheel_options, wheel_item_mt, _screen.cx, 40 )
+	hitd_wheel:create_actors( "hitd_wheel", #wheel_options, wheel_item_mt, _screen.cx, 30 )
 }
 
 return t
