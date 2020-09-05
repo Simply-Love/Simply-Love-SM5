@@ -2,7 +2,7 @@ local page = 1
 local pages = {
 	{
 		header="here in the darkness",
-		body="here in the darkness is a collection of essays, poems, songs, and feelings I output in 2018 and 2019 after a hospital stay.\n\nIt's a kind of creative non-fiction if that makes sense.  Specific and identifying details were obscured, but I consider it an accurate reflection on my life at that time.\n\nThough most of this darkness is my own doing, I do need to acknowledge those who contributed assets and inspiration.\n\nquietly-turning",
+		body="here in the darkness is a collection of essays, poems, songs, and feelings I output in 2018 and 2019 after a hospital stay.\n\nYou can think of it as creative non-fiction.  Specific and identifying details were obscured, but I consider it an accurate reflection on my life at that time.\n\nThough most of this darkness is my own doing, I do need to acknowledge those who contributed assets and inspiration.\n\nquietly-turning",
 	},
 	{
 		header="non-original assets",
