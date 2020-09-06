@@ -97,11 +97,12 @@ end
 CurrentGameIsSupported = function()
 	-- a hardcoded list of games that Simply Love supports
 	local support = {
-		dance  = true,
-		pump   = true,
-		techno = true,
-		para   = true,
-		kb7    = true
+		dance   = true,
+		pump    = true,
+		techno  = true,
+		para    = true,
+		kb7     = true,
+		horizon = true
 	}
 	-- return true or nil
 	return support[GAMESTATE:GetCurrentGame():GetName()]

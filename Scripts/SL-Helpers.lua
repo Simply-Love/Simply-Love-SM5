@@ -149,6 +149,11 @@ local NoteFieldWidth = {
 		versus8 = 272,
 		double8 = 543,
 	},
+	horizon = {
+		single = 448,
+		versus = 272,
+		double = 543,
+	},
 	para = {
 		single = 280,
 		versus = 280,
@@ -186,6 +191,7 @@ GetComboThreshold = function( MaintainOrContinue )
 		dance	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
 		pump	=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
 		techno	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+		horizon	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
 		kb7		=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
 		-- these values are chosen to match Deluxe's PARASTAR
 		para	=	{ Maintain = "TapNoteScore_W5", Continue = "TapNoteScore_W3" },
