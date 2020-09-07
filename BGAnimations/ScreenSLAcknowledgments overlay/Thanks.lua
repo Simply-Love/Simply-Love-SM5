@@ -95,7 +95,7 @@ return {
 		},
 		{
 			Name="DDRIllini",
-			Img={ "uiuc/uiuc.jpg", "uiuc/uiuc2.jpg", "uiuc/uiuc3.jpg", "uiuc/uiuc4.jpg", "uiuc/uiuc5.jpg", "uiuc/wendy.jpg" },
+			Img={ "uiuc/uiuc.jpg", "uiuc/uiuc2.jpg", "uiuc/uiuc3.jpg", "uiuc/uiuc4.jpg", "uiuc/uiuc5.jpg", "uiuc/uiuc6.jpg", "uiuc/wendy.jpg" },
 			About="Thanks to the DDRIllini crew for being DDM's loving counterpart a time zone away.  I have fond memories of driving with DDM friends to DDRIllini's annual Rumble in the Prairie events each spring.\n\nThank you, Kyt-Xune, Z0rk, feedbacker, Sudzi, ian5v, Benpai, pez, mtgmackid, Krysel, Kasemei, Juni, rikame, Mary, andrewipark, et al!"
 		}
 	},
