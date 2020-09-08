@@ -355,7 +355,7 @@ GetBreakdown = function(Steps, SongDir, StepsType, Difficulty)
         end
     end
 	
-	if mbstrlen (table.concat(breakdown)) > 40 then
+	if mbstrlen (table.concat(breakdown)) > 28 then
 		local total = 0
 		for i, run in ipairs(breakdown) do
 			total = total + tonumber(run)

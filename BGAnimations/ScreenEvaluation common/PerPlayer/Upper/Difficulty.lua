@@ -9,8 +9,6 @@ return Def.ActorFrame{
 			self:y(_screen.cy-64)
 			self:x(115 * (player==PLAYER_1 and -1 or 1))
 			self:halign(pn):zoom(0.7)
-			-- darken the text for RainbowMode to make it more legible
-			if (ThemePrefs.Get("RainbowMode") and not HolidayCheer()) then self:diffuse(Color.Black) end
 
 			local style = GAMESTATE:GetCurrentStyle():GetName()
 			if style == "versus" then style = "single" end

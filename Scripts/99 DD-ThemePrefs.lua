@@ -40,7 +40,7 @@ SL_CustomPrefs.Get = function()
 		},
 		MusicWheelStyle =
 		{
-			Default = "ITG",
+			Default = "IIDX",
 			Choices = { "ITG", "IIDX" }
 		},
 		AllowDanceSolo =
