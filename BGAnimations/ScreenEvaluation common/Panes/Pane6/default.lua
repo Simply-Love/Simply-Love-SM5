@@ -59,7 +59,7 @@ local pane = Def.ActorFrame{
 	end
 }
 
-pane[#pane+1] = qrcode_amv( url, qrcode_size )..{
+pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/QR Code/SL-QRCode.lua") , {url, qrcode_size} )..{
 	InitCommand=function(self) self:xy(116, -32):align(0,0.5) end
 }
 
