@@ -171,8 +171,18 @@ local function GenerateHashForSSC(msdFile, stepsType, difficulty, stepsDescripti
 
 				local minimizedChart = MinimizeChart(noteData['NOTES'])
 				local chartDataAndBpm = minimizedChart .. bpms
-				local hash = sha256(chartDataAndBpm)
-				return hash
+
+				-- using CRYPTMAN's SHA256String to compute a hash is ~4 orders of magnitude faster
+				-- computing the same hash using Lua.  CRYPTMAN.SHA256String() and BinaryToHex() were
+				-- made available to Lua for SM5.1, see: https://github.com/stepmania/stepmania/pull/2053
+				-- These won't be in SM5.0.12, so ensure they're available before using them.
+				if CRYPTMAN.SHA256String ~= nil and type(BinaryToHex)=="function" then
+					return BinaryToHex( CRYPTMAN:SHA256String(chartDataAndBpm) )
+				else
+					-- pure-Lua implementation of SHA256
+					-- see: ./SL/Scripts/sha2for51.lua
+					return sha256(chartDataAndBpm)
+				end
 			end
 		end
 	end
@@ -202,9 +212,14 @@ local function GenerateHashForSM(msdFile, stepsType, difficulty, stepsDescriptio
 													  (notes[4] == 'Edit' and notes[3] == stepsDescription)) then
 			local minimizedChart = MinimizeChart(notes[7])
 			local chartDataAndBpm = minimizedChart .. bpms
-			local hash = sha256(chartDataAndBpm)
-			-- Trace('Style: ' .. notes[2] .. '\tDifficulty: ' .. notes[4] .. '\tHash: ' .. hash)
-			return hash
+
+			if CRYPTMAN.SHA256String ~= nil and type(BinaryToHex)=="function" then
+				return BinaryToHex( CRYPTMAN:SHA256String(chartDataAndBpm) )
+			else
+				-- pure-Lua implementation of SHA256
+				-- see: ./SL/Scripts/sha2for51.lua
+				return sha256(chartDataAndBpm)
+			end
 		end
 	end
 
