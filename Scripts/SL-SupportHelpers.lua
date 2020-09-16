@@ -14,18 +14,18 @@
 -- Other forks, older builds, other projects, etc. are blocked here, regardless
 -- of their compatibility with Simply Love.  I am only one human person, and I've
 -- taken on too much responsibility here with moving the post-ITG community forward
--- in a responsible, open, and inclusvie manner.
+-- in a responsible, open, and inclusive manner.
 --
 -- I've done very little with my life that I am proud of, but I am confident that
 -- this Simply Love project has helped dance game enthusiasts from all over the world
 -- enjoy a silly arrow game together, as a community.
 --
--- Regardless of their location or language, regardless of their access to specficic
+-- Regardless of their location or language, regardless of their access to specific
 -- hardware with limited availability, almost anyone can install and use and benefit
 -- from Simply Love.  This is a good thing, and I am proud of this.
 --
 -- Supporting this is not easy. It's almost always easier to do a quick fix that works
--- for one circumstance – one particluar machine, one particular hardware device, one
+-- for one circumstance – one particular machine, one particular hardware device, one
 -- one particular community.  Writing code and designing software that accommodates the
 -- broadest community is hard, but it's critically important.  It's the responsibility
 -- I've gradually assumed over the years I've worked on Simply Love.
@@ -105,4 +105,18 @@ CurrentGameIsSupported = function()
 	}
 	-- return true or nil
 	return support[GAMESTATE:GetCurrentGame():GetName()]
+end
+
+-- -----------------------------------------------------------------------
+-- read the theme version from ThemeInfo.ini to display on ScreenTitleMenu underlay
+-- this allows players to more easily identify what version of the theme they are currently using
+
+GetThemeVersion = function()
+	local file = IniFile.ReadFile( THEME:GetCurrentThemeDirectory() .. "ThemeInfo.ini" )
+	if file then
+		if file.ThemeInfo and file.ThemeInfo.Version then
+			return file.ThemeInfo.Version
+		end
+	end
+	return false
 end
