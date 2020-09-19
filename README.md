@@ -89,6 +89,10 @@ Refer to the [Features README](./Other/Documentation/Features-README.md) for a b
 
 ## FAQ
 
+#### How do I add an avatar for my profile?
+
+Please refer to the [Profile Avatars README](./Other/Documentation/ProfileAvatars-README.md).
+
 #### How can I get more songs to show up in Casual Mode?
 
 Please refer to the [Casual Mode README](./Other/Documentation/CasualMode-README.md).
