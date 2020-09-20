@@ -1,7 +1,6 @@
-local args = ...
-local offsets, worst_window = args[1], args[2]
-local pane_width, pane_height = args[3], args[4]
-local colors = args[5]
+local offsets, worst_window,
+      pane_width, pane_height,
+		colors = unpack(...)
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0

@@ -1,6 +1,6 @@
 -- Pane6 displays QR codes for uploading scores to groovestats.com
 
-local player, side = unpack(...)
+local player, _, ComputedData = unpack(...)
 
 -- ------------------------------------------
 -- ValidForGrooveStats.lua contains various checks requested by Archi
@@ -25,7 +25,17 @@ local X_HasBeenBlinked = false
 
 -- GrooveStatsURL.lua returns a formatted URL with some parameters in the query string
 if ValidForGrooveStats then
-	url = LoadActor("./GrooveStatsURL.lua", player)
+
+	-- don't generate the GrooveStats URL twice if only one player is joined
+	-- and we've already generated it for a previous controller's pane
+	-- it involves expensive hash computations
+	if ComputedData and ComputedData.GrooveStatsURL then
+		url = ComputedData.GrooveStatsURL
+	else
+		url = LoadActor("./GrooveStatsURL.lua", player)
+		if ComputedData then ComputedData.GrooveStatsURL = url end
+	end
+
 	text = ScreenString("QRInstructions")
 
 else
@@ -59,9 +69,19 @@ local pane = Def.ActorFrame{
 	end
 }
 
-pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/QR Code/SL-QRCode.lua") , {url, qrcode_size} )..{
-	InitCommand=function(self) self:xy(116, -32):align(0,0.5) end
-}
+local qr_amv
+-- don't generate the QR code twice if only one player is joined
+-- and we've already generated it for a previous controller's pane
+if ComputedData and ComputedData.QRCode then
+	qr_amv = ComputedData.QRCode
+else
+	local qr_module_path = THEME:GetPathB("", "_modules/QR Code/SL-QRCode.lua")
+	qr_amv = LoadActor( qr_module_path , {url, qrcode_size} )..{}
+	qr_amv.InitCommand=function(self) self:xy(116, -32):align(0,0.5) end
+	if ComputedData then ComputedData.QRCode = qr_amv end
+end
+
+pane[#pane+1] = qr_amv
 
 -- red X to visually cover the QR code if the score was invalid
 if not ValidForGrooveStats then

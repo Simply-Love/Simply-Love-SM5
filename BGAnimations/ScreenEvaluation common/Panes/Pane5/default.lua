@@ -10,7 +10,7 @@ if not (game=="dance" or game=="pump" or game=="techno") then return end
 
 -- -----------------------------------------------------------------------
 
-local player, side = unpack(...)
+local player = unpack(...)
 
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 

@@ -7,6 +7,7 @@ then
 end
 
 -- -----------------------------------------------------------------------
+-- local variables
 
 local panes, active_pane = {}, {}
 
@@ -25,6 +26,7 @@ local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_p
 local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
 
 -- -----------------------------------------------------------------------
+-- initialize local tables (panes, active_pane) for the the input handling function to use
 
 for controller=1,2 do
 
@@ -33,8 +35,8 @@ for controller=1,2 do
 	-- Iterate through all potential panes, and only add the non-nil ones to the
 	-- list of panes we want to consider.
 	for i=1,num_panes do
-		local pane_str = ("Pane%i_SideP%i"):format(i, controller)
-		local pane = af:GetChild("Panes"):GetChild(pane_str)
+
+		local pane = af:GetChild("Panes"):GetChild( ("Pane%i_SideP%i"):format(i, controller) )
 
 		if pane ~= nil then
 			-- single, double
@@ -55,7 +57,7 @@ for controller=1,2 do
 			else
 				-- initialize this player's active_pane to their profile's EvalPanePrimary
 				-- will be 1 if no profile/"Guest" profile
-				local p = clamp(SL["P"..controller].EvalPanePrimary,   1, num_panes)
+				local p = clamp(SL["P"..controller].EvalPanePrimary, 1, num_panes)
 				pane:visible(i == p)
 				active_pane[controller] = p
 			end
@@ -65,10 +67,12 @@ for controller=1,2 do
 	end
 end
 
+-- -----------------------------------------------------------------------
 -- don't allow double to initialize into a configuration like
 -- EvalPanePrimary=2
 -- EvalPaneSecondary=4
 -- because Pane2 is full-width in double and the other pane is supposed to be hidden when it is visible
+
 if style == "OnePlayerTwoSides" then
 	local cn  = PlayerNumber:Reverse()[mpn] + 1
 	local ocn = (cn % 2) + 1
@@ -102,8 +106,9 @@ if style == "OnePlayerTwoSides" then
 	end
 end
 
-
 -- -----------------------------------------------------------------------
+-- input handling function
+
 local OtherController = {
 	GameController_1 = "GameController_2",
 	GameController_2 = "GameController_1"
@@ -113,8 +118,15 @@ return function(event)
 
 	if not (event and event.PlayerNumber and event.button) then return false end
 
+	-- get a "controller number" and an "other controller number"
+	-- if the input event came from GameController_1, cn will be 1 and ocn will be 2
+	-- if the input event came from GameController_2, cn will be 2 and ocn will be 1
+	--
+	-- we'll use these integers to index the active_pane table, which keeps track
+	-- of which pane is currently showing on each side
 	local  cn = tonumber(ToEnumShortString(event.controller))
 	local ocn = tonumber(ToEnumShortString(OtherController[event.controller]))
+
 
 	if event.type == "InputEventType_FirstPress" and panes[cn] then
 

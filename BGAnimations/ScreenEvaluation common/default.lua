@@ -46,12 +46,13 @@ for player in ivalues(Players) do
 	-- stepartist, difficulty text, difficulty meter, machine/personal HighScore text
 	t[#t+1] = LoadActor("./PerPlayer/Upper/default.lua", player)
 
-	-- the per-player lower half of ScreenEvaluation, including: judgment scatterplot,
-	-- modifier list, disqualified text, and panes 1-6
+	-- the per-player lower half of ScreenEvaluation, including:
+	-- judgment scatterplot, modifier list, disqualified text
 	t[#t+1] = LoadActor("./PerPlayer/Lower/default.lua", player)
 end
 
 -- -----------------------------------------------------------------------
+-- Finally, load Panes.
 
 t[#t+1] = LoadActor("./Panes/default.lua", NumPanes)
 

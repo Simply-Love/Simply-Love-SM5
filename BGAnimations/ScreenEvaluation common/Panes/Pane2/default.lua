@@ -3,7 +3,7 @@
 -- In "pump" the columns are downleft, upleft, center, upright, downright
 -- etc.
 
-local player, side = unpack(...)
+local player, controller = unpack(...)
 
 return Def.ActorFrame{
 	-- ExpandForDoubleCommand() does not do anything here, but we check for its presence in
@@ -12,7 +12,7 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 		local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 		if style == "OnePlayerTwoSides" then
-			if side == PLAYER_2 then self:x(-310) end
+			if controller == PLAYER_2 then self:x(-310) end
 		end
 	end,
 

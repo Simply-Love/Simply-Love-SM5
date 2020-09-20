@@ -12,7 +12,7 @@ valid[1] = GAMESTATE:GetCurrentGame():GetName() == "dance"
 -- https://en.wikipedia.org/wiki/Dance_Dance_Revolution_Solo
 valid[2] = GAMESTATE:GetCurrentStyle():GetName() ~= "solo"
 
--- GrooveStats does rank Marathons from ITG1, ITG2, and ITG Home
+-- GrooveStats actually does rank Marathons from ITG1, ITG2, and ITG Home
 -- but there isn't QR support at this time.
 valid[3] = not GAMESTATE:IsCourseMode()
 

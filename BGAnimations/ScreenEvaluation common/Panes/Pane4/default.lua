@@ -1,7 +1,7 @@
 -- Pane4 displays an aggregate histogram of judgment offsets
 -- as well as the mean timing error, median, and mode of those offsets.
 
-local player, side = unpack(...)
+local player, _, ComputedData = unpack(...)
 local pn = ToEnumShortString(player)
 
 -- table of offset values obtained during this song's playthrough
@@ -194,7 +194,18 @@ pane[#pane+1] = Def.Quad{
 -- only bother crunching the numbers and adding extra BitmapText actors if there are
 -- valid offset values to analyze; (MISS has no numerical offset and can't be analyzed)
 if next(offsets) ~= nil then
-	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
+
+	local histogram
+	-- don't re-run the calculations if only one player is joined
+	-- and we've already run them for a previous pane
+	if ComputedData and ComputedData.Histogram then
+		histogram = ComputedData.Histogram
+	else
+		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
+		if ComputedData then ComputedData.Histogram = histogram end
+	end
+
+	pane[#pane+1] = histogram
 end
 
 local label = {}

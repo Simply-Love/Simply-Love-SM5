@@ -9,36 +9,55 @@ local offset = {
 	[PLAYER_2] = _screen.cx+155
 }
 
--- add available Panes to the ActorFrame via a loop
--- Note(teejusb): Some of these actors may be nil. This is not a bug, but
--- a feature for any panes we want to be conditional.
+-- -----------------------------------------------------------------------
+-- Note: Some of these Pane actors may be nil. This is not a bug, but
+--       a feature for any panes we want to be conditional.  -teejusb
 
 if #players == 2 or SL.Global.GameMode=="Casual" then
 	for player in ivalues(players) do
+		-- add Panes for this player to the ActorFrame using a simple, numerical for-loop
 		for i=1, NumPanes do
-			local pn = ToEnumShortString(player)
-			local player_pane = LoadActor("./Pane"..i, {player, player})
+			local pn   = ToEnumShortString(player)
+			local pane = LoadActor("./Pane"..i, {player, player})
 
-			if player_pane then
+			if pane then
 				af[#af+1] = Def.ActorFrame{
 					Name="Pane"..i.."_".."Side"..pn,
 					InitCommand=function(self) self:x(offset[player]) end,
-					player_pane
+					pane
 				}
 			end
 		end
 	end
 
 elseif #players == 1 then
+	-- When only one player is joined (single, double, solo, etc.), we end up loading each
+	-- Pane twice, effectively doing the same work twice.
+	--
+	-- This approach (loading two of each Pane, even in single) was easier for me to write
+	-- InputHandling for.  An approach I considered was loading one of each pane and then
+	-- moving the panes around (between left and right sides of ScreenEval) via InputHandling.
+	-- That was less computional work (not loading everything twice), but it was more work
+	-- for my milquetoast mind.
+	--
+	-- Some of the Panes (QR code, timing histogram) contain expensive computation that can
+	-- delay ScreenEvaluation's load time, *especially* when done performed twice.  If only
+	-- one player is joined, it's wasteful to do these calculations twice.
+	--
+	-- So, use ComputedData as a table local to this file (it won't persist past ScreenEvaluation)
+	-- and pass it into Pane sub-files as a "reference" to achieve pointer-like behavior.
+	-- In this way, we can check if some expensive calculations have already been run, and
+	-- refer to this table to get the results.
+	local ComputedData = {}
+
 	local mpn = GAMESTATE:GetMasterPlayerNumber()
 
 	for i=1, NumPanes do
-		-- left
-		local left_pane  = LoadActor("./Pane"..i, {mpn, PLAYER_1})
-		local right_pane = LoadActor("./Pane"..i, {mpn, PLAYER_2})
+		local left_pane  = LoadActor("./Pane"..i, {mpn, PLAYER_1, ComputedData})
+		local right_pane = LoadActor("./Pane"..i, {mpn, PLAYER_2, ComputedData})
 
-		-- these need to be wrapped in an extra AF to offset left and right
-		-- panes can be nil, however, so don't add extra AFs with nil children
+		-- These need to be wrapped in an extra AF to offset left and right.
+		-- Panes can be nil, however, so don't add extra AFs with nil children
 		if left_pane and right_pane then
 			af[#af+1] = Def.ActorFrame{
 				Name="Pane"..i.."_".."SideP1",

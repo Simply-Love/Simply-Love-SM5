@@ -1,4 +1,4 @@
-local player, side = unpack(...)
+local player, controller = unpack(...)
 
 local pn = ToEnumShortString(player)
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
@@ -9,17 +9,15 @@ local firstToUpper = function(str)
     return (str:gsub("^%l", string.upper))
 end
 
-local getStringFromTheme = function( arg )
-	return THEME:GetString(tns_string, arg);
+local GetTNSStringFromTheme = function( arg )
+	return THEME:GetString(tns_string, arg)
 end
 
---Values above 0 means the user wants to be shown or told they are nice.
-local nice = ThemePrefs.Get("nice") > 0 and SL.Global.GameMode ~= "Casual"
-
--- Iterating through the enum isn't worthwhile because the sequencing is so bizarre...
+-- iterating through the TapNoteScore enum directly isn't helpful because the
+-- sequencing is strange, so make our own data structures for this purpose
 local TapNoteScores = {}
 TapNoteScores.Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
-TapNoteScores.Names = map(getStringFromTheme, TapNoteScores.Types)
+TapNoteScores.Names = map(GetTNSStringFromTheme, TapNoteScores.Types)
 
 local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Holds'),
@@ -43,25 +41,22 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(50 * (side==PLAYER_1 and 1 or -1), _screen.cy-24)
+		self:xy(50 * (controller==PLAYER_1 and 1 or -1), _screen.cy-24)
 	end,
 }
 
 local windows = SL.Global.ActiveModifiers.TimingWindows
 
---  labels: W1 ---> Miss
+--  labels: W1, W2, W3, W4, W5, Miss
 for i=1, #TapNoteScores.Types do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
 	if windows[i] or i==#TapNoteScores.Types then
 
-		local window = TapNoteScores.Types[i]
-		local label = getStringFromTheme( window )
-
 		t[#t+1] = LoadFont("Common Normal")..{
-			Text=(nice and scores_table[window] == 69) and 'NICE' or label:upper(),
+			Text=TapNoteScores.Names[i]:upper(),
 			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(76) end,
 			BeginCommand=function(self)
-				self:x( (side == PLAYER_1 and 28) or -28 )
+				self:x( (controller == PLAYER_1 and 28) or -28 )
 				self:y((i-1)*28 -16)
 				-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
@@ -77,11 +72,10 @@ for index, label in ipairs(RadarCategories) do
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
 	t[#t+1] = LoadFont("Common Normal")..{
-		-- lua ternary operators are adorable -ian5v
-		Text=(nice and (performance == 69 or possible == 69)) and 'nice' or label,
+		Text=label,
 		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)
-			self:x( (side == PLAYER_1 and -160) or 90 )
+			self:x( (controller == PLAYER_1 and -160) or 90 )
 			self:y((index-1)*28 + 41)
 		end
 	}

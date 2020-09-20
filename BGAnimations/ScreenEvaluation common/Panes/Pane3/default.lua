@@ -1,6 +1,6 @@
 -- Pane3 displays a list of HighScores for the stepchart that was played.
 
-local player, side = unpack(...)
+local player = unpack(...)
 
 local pane = Def.ActorFrame{
 	InitCommand=function(self)
