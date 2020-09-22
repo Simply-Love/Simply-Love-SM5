@@ -155,7 +155,6 @@ t[#t+1] = Def.ActorFrame {
 }
 -- -----------------------------------------------------------------------
 
-
 -- "Event Mode" or CreditText at lower-center of screen
 t[#t+1] = LoadFont("Common Footer")..{
 	InitCommand=function(self) self:xy(_screen.cx, _screen.h-16):zoom(0.5):horizalign(center) end,
@@ -170,7 +169,7 @@ t[#t+1] = LoadFont("Common Footer")..{
 		local screen = SCREENMAN:GetTopScreen()
 
 		-- if this screen's Metric for ShowCreditDisplay=false, then hide this BitmapText actor
-		-- PS: "ShowCreditDisplay" isn't a real Metric as far as the engine is concerned
+		-- PS: "ShowCreditDisplay" isn't a real Metric as far as the engine is concerned.
 		-- I invented it for Simply Love and it has (understandably) confused other themers.
 		-- Sorry about this.
 		if screen then
@@ -182,13 +181,22 @@ t[#t+1] = LoadFont("Common Footer")..{
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Pay" then
 			local credits = GetCredits()
-			local text = THEME:GetString("ScreenSystemLayer", "Credits")..'  '
-
-			text = text..credits.Credits..'  '
+			local text
 
 			if credits.CoinsPerCredit > 1 then
-				text = text .. credits.Remainder .. '/' .. credits.CoinsPerCredit
+				text = ("%s     %d     %d/%d"):format(
+					THEME:GetString("ScreenSystemLayer", "CreditsCredits"),
+					credits.Credits,
+					credits.Remainder,
+					credits.CoinsPerCredit
+				)
+			else
+				text = ("%s     %d"):format(
+					THEME:GetString("ScreenSystemLayer", "CreditsCredits"),
+					credits.Credits
+				)
 			end
+
 			self:settext(text)
 
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Free" then
