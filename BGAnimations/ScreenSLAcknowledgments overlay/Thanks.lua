@@ -91,7 +91,7 @@ return {
 		{
 			Name="Dance Dance Maniacs",
 			Img={ "ddm/2020.jpg", "ddm/2019.jpg", "ddm/2017.jpg", "ddm/2016.jpg", "ddm/2015b.jpg", "ddm/2016b.jpg", "ddm/2015.jpg", "ddm/2018.jpg", "ddm/2012.jpg", "ddm/2010.jpg", "ddm/2009.jpg", "ddm/2016HolidayCheer.jpg" },
-			About="The PSU Dance Dance Maniacs dance gamed with me at my best and worst.\n\nLightningXCE, Zyroplex, Captain Swagonforce, rawinput, milk, teejusb, NBCrescendo, Vidur, freemansbackup, chronohat\n\nDJ OMiY, minomotu, Kristina, blakjakal, Vale, Silverheart97, AndyBeard, Alex, tfrederick, Catherine, Elena, Jonathan, Eileen, Ali, Anna\n\nRime, PirateKing, Fox, Lev, Cathy, Grant, Koopa, CCTV, MathMatt, TheNick, Nate(s), Crash Cringle, Daisy1218, Miaou Miaou Miaou, Silverwolfstar, and more."
+			About="The PSU Dance Dance Maniacs dance gamed with me at my best and worst.\n\nLightningXCE, Zyroplex, Captain Swagonforce, rawinput, milk, teejusb, NBCrescendo, Vidur, freemansbackup, chronohat\n\nDJ OMiY, minomotu, Kristina, blakjakal, Vale, Silverheart97, AndyBeard, Alex, tfrederick, Catherine, Elena, Jonathan, Eileen, Ali, Anna\n\nRime, PirateKing, Fox, Lev, Cathy², Grant, Koopa, CCTV, MathMatt, TheNick, Nate(s), Crash Cringle, Daisy1218, Miaou Miaou Miaou, Silverwolfstar, and more."
 		},
 		{
 			Name="DDRIllini",
@@ -125,7 +125,7 @@ return {
 		{
 			Name="Ian / Archi",
 			Img="archi.png",
-			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that.\n\nWhile Ian has top-tier competitive stamina, his greatest strength is his eagerness to improve the community.  He is the driving force behind Stamina RPG, Stamina Con, Stamina visual novels, and literally hundreds of original stepcharts – all of which has dramatically shaped the post-ITG scene as we know it."
+			About="I'm pretty sure the Pendulum packs singlehandedly instigated the notion that \"ITG is all streams\" and we have Ian to thank/blame for that.\n\nThough Ian has top-tier competitive stamina, his greatest strength is his eagerness to improve the community.  He is the driving force behind Stamina RPG, Stamina Con, Stamina visual novels, and literally hundreds of original stepcharts – all of which has dramatically shaped the post-ITG scene as we know it."
 		},
 		{
 			Name="Brittney / Galaga",
@@ -177,7 +177,7 @@ return {
 		{
 			Name="Lamar / Crash Cringle",
 			Img="CrashCringle.jpg",
-			About="Lamar is a visible leader for the Penn State Dance Dance Maniacs, handling everything from managing adminstartive duties and promotional events, to upkeeping the pads and sysadmin'ing the Arch Linux SM5 PC, to writing stepcharts and Lua-driven theme customizations.\n\nBy engaging current club members through recurring events like the Good Reads Tournament and actively promoting the club to new students, he goes above and beyond to keep dance games alive.\n\nLamar is a truly upstanding young man, one I am so very fortunate to know."
+			About="Lamar is a visible leader for the Penn State Dance Dance Maniacs, handling everything from managing administrative duties and promotional events, to upkeeping the pads and Arch Linux SM5 PC, to writing stepcharts and Lua-driven theme customizations.\n\nBy engaging current club members through recurring events like the Good Reads Tournament and actively promoting the club to new students, he goes above and beyond to keep dance games alive.\n\nLamar is a truly upstanding young man, one I am so very fortunate to know."
 		}
 	},
 
