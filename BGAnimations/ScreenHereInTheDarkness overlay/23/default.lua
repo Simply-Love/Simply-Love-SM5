@@ -22,7 +22,7 @@ local pages = {
 	},
 	{
 		header="Thanks",
-		body="I wish to thank the many creative humans whose works have shaped my human outlook and my artistic output, including:\n\nMakoto Shinkai, Charlie Kaufman, Greta Gerwig, Wong Kar-wai\n\nSylvia Plath, Kazuo Ishiguro, Milan Kundera, _why\n\nBill Watterson, Randall Munroe\n\nbt, Benn Jordan, Laura Shigihara, Trent Reznor, Frédéric Chopin\n\nMeine Meinung, Caliko, Mahendor\n\nGiant Sparrow, Kojima Productions, Unburnt Witch,\nRyan and Amy Green"
+		body="I wish to thank the many creative humans whose works have shaped my human outlook and my artistic output, including:\n\nMakoto Shinkai, Charlie Kaufman, Greta Gerwig, Wong Kar-wai\n\nSylvia Plath, Kazuo Ishiguro, Emily Dickinson, _why\n\nBill Watterson, Randall Munroe\n\nbt, Benn Jordan, Trent Reznor, Ólafur Arnalds, Frédéric Chopin\n\nMeine Meinung, Caliko, Mahendor\n\nGiant Sparrow, Unburnt Witch, Laura Shigihara,\nRyan and Amy Green"
 	},
 	{
 		header="Thanks",

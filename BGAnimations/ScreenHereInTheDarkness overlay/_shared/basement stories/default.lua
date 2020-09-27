@@ -23,6 +23,10 @@ local fade_duration = 1.666
 local start_time = nil
 local uptime = 0
 
+local give_up_time = 0.5
+local held_duration, old_time = 0, 0
+local input = { start=false, back=false }
+
 -- ----------------------------------------
 -- update function
 
@@ -30,11 +34,29 @@ local uptime = 0
 --    reference to main ActorFrame
 --    delta time in ms since last update call (not used here)
 local update = function(af, dt)
+
+	-- handle input indicating the player wishes to leave early
+	if input.start or input.back then
+		if old_time == 0 then
+			old_time = GetTimeSinceStart()
+			held_duration = 0
+		else
+			held_duration = GetTimeSinceStart() - old_time
+		end
+
+		if held_duration > give_up_time then
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+		end
+	end
+
 	if start_time ~= nil then
 		uptime = GetTimeSinceStart() - start_time
 
-		if scenes[scene_index]
+		-- if there is a next scene to show
+		if  scenes[scene_index]
+		-- and kinetic novel uptime has reached the point where it's time to show it
 		and uptime > scenes[scene_index][1]
+		-- and it hasn't already been queued to be shown
 		and not scenes[scene_index][2]
 		then
 			-- queue the appropriate Show or FadeOut for the current scene
@@ -63,6 +85,27 @@ local af =  Def.ActorFrame{}
 af.InitCommand=function(self)
 	self:SetUpdateFunction( update )
 end
+
+af.InputEventCommand=function(self, event)
+
+	if event.type ~= "InputEventType_Release" then
+		if (event.button=="Start") then input.start = true end
+		if (event.button=="Back")  then input.back  = true end
+
+	else
+
+		if (event.button=="Start") then
+			held_duration, old_time = 0, 0
+			input.start = false
+		end
+		if (event.button=="Back") then
+			held_duration, old_time = 0, 0
+			input.back = false
+		end
+	end
+end
+
+
 
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)

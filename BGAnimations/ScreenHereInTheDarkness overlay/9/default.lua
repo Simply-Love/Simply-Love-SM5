@@ -6,7 +6,7 @@ local count = 1
 
 local quotes = {
 	{
-		text="I recall you saying, once, that silence was a thing you couldn't do without.",
+		text="I recall you saying, once,\nthat silence was a thing\nyou couldn't do without.",
 		color={0.666, 0.666, 0.8, 0},
 		y=70,
 	},
@@ -26,7 +26,7 @@ local quotes = {
 		y=70,
 	},
 	{
-		text="That is a nice thought. I got pleasantly lost in it for several moments, stirred back to reality only by the blinking cursor on my screen.",
+		text="That's a nice thought.\n\nI got lost in it for several moments,\nstirred back to reality only by the\nblinking cursor on my screen.",
 		color={0.666, 0.666, 0.8, 0},
 		y=70,
 	},

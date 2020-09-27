@@ -8,7 +8,7 @@
 -- I awoke with a start, and felt quite certain, quite suddenly, that if
 -- there were a heaven, that would have been it.
 
-local max_width = 350
+local max_width = 450
 local quote_bmts = {}
 local count = 1
 local quotes = {
@@ -18,7 +18,7 @@ local quotes = {
 		y=140,
 	},
 	{
-		text="For me anyway, it's a combination of understanding and being understood, forgiving and being forgiven.\n\nThe people I hurt are okay and better than ever, I forgive the man who rapes me in my dreams, and we all laugh about how silly it was to have held onto to so much pain for so long.",
+		text="For me anyway, it's a combination\nof understanding and being understood,\nforgiving and being forgiven.\n\nThe people I hurt are okay and better than ever,\nI forgive the man who rapes me in my dreams,\nand we all laugh about how silly it was\nto have held onto to so much pain for so long.",
 		color={0.666, 0.666, 0.8, 0},
 		y=70,
 	},
@@ -28,7 +28,7 @@ local quotes = {
 		y=140,
 	},
 	{
-		text="If I found you there, I'd smile to finally see you as you are–your mind, your physical form, you, all at once, in color and motion, with sound and texture.",
+		text="If I found you there, I'd smile\nto finally see you as you are—\n\nyour mind, your physical form, you,\nall at once, in color and motion,\nwith sound and texture.",
 		color={0.666, 0.666, 0.8, 0},
 		y=70,
 	},

@@ -31,6 +31,23 @@ local font_zoom = 0.975
 local count = 1
 local bgm_volume = 1
 
+local onset, panic
+local will_to_fight = 23
+
+local update = function(af, dt)
+	if count ~= 6 then return end
+
+	panic = GetTimeSinceStart() - onset
+
+	if panic > will_to_fight then
+		af:queuecommand("Next")
+
+	elseif panic > 6 then
+		local mag = scale(panic, 0, will_to_fight-6, 0, 3 )
+		quote_bmts[6]:vibrate():effectmagnitude(mag, mag, mag)
+	end
+end
+
 local quotes = {
 	"But the wicked are like a troubled sea\nthat knows no rest\nwhose waves cast up mire and mud.",
 	"I always want to retroactively apply the question \"why,\" despite what actually occurs in the moment. After waking, I try to re-imagine myself asking why.\n\nWhy are you doing this?\nWhy can't I move?\nWhy are you holding me down? \nWhy are you putting your mouth on me? \nWhy can't I scream?\nWhy?",
@@ -38,32 +55,48 @@ local quotes = {
 	"It starts as discomfort as I gain awareness that you are holding me down. It doesn't matter how I got here; I am here again.\n\nThe discomfort quickly rises within me, transforming to fear as I understand that I cannot move a muscle. My arms, my legs, my mouth–all unable to respond. Fear overwhelms me so quickly, as though I am a drinking glass being filled with a terrible ocean.",
 	"Is it instantaneous? The question is meaningless. There is no understanding of time here. The previous fear gives way to new terror. What was the previous thing that happened? The previous feeling I experienced? They are gone, one moment violently torn away by the furious storm as a new one is swept in to replace it.",
 	"You are on me, sucking on me, pulling me as an undercurrent does, and it is now that language finally breaks through into my consciousness: no.\n\nNo no no no no no NO.\n\nI cannot speak it, I cannot control the muscles in my lips to scream it, but that is how it takes form in my mind. I am motionless, powerless, I lack bodily autonomy. I want to scream, but I cannot. I want to fight back, but I cannot.\n\nFear is now wholly consuming, and all I can comprehend. I understand that I'm going to die like this, drowning in the still-rising sea inside me, and I cannot bear any more.",
-	"And I don't.\n\nI am suddenly free.\n\nAwake, in bed, vaguely aware that I have just screamed, I take note of how wet my face is, doused in a mixture of sweat and saliva.\n\nI am shaken, but alive.",
-	"The effects of the adrenaline remain noticeable for ten to fifteen minutes, and I am aware of this passing of time.",
+	"And I don't.\n\nI am suddenly free.\n\nAwake, in bed, vaguely aware that I have just screamed, I take note of how wet my face is,\ndoused in a mixture of sweat and saliva.\n\nI am shaken, but alive.",
+	"The effects of the adrenaline remain noticeable\nfor ten to fifteen minutes, and I am aware of\nthis passing of time.",
 	"I am aware that I was just fighting for my survival.",
 	"I am aware\nthat my life\nmust still\nmean something\nto me."
 }
 
-local af = Def.ActorFrame{
-	InputEventCommand=function(self, event)
-		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back" or event.GameButton=="MenuRight") then
-			quote_line:playcommand("FadeOut")
-			quote_bmts[count]:playcommand("FadeOut")
+local af = Def.ActorFrame{}
 
-			if quotes[count+1] then
-				count = count + 1
-				quote_bmts[count]:queuecommand("FadeIn")
-				if count == 6 then self:queuecommand("Fear") end
-				if count == 7 then self:queuecommand("WakeUp") end
-			else
-				self:sleep(1.5):queuecommand("Transition")
-			end
-		end
-	end,
-	TransitionCommand=function(self)
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+af.InitCommand=function(self)
+	self:SetUpdateFunction( update )
+end
+
+af.InputEventCommand=function(self, event)
+	if event.type == "InputEventType_FirstPress"
+	and (event.GameButton=="Start" or event.GameButton=="Back" or event.GameButton=="MenuRight")
+	and count ~= 6 then
+		self:queuecommand("Next")
 	end
-}
+end
+
+af.NextCommand=function(self)
+	quote_line:playcommand("FadeOut")
+	quote_bmts[count]:playcommand("FadeOut")
+
+	if quotes[count+1] then
+		count = count + 1
+		quote_bmts[count]:queuecommand("FadeIn")
+		if count == 6 then self:queuecommand("Fear") end
+		if count == 7 then self:queuecommand("WakeUp") end
+	else
+		self:sleep(1.5):queuecommand("Transition")
+	end
+end
+
+af.FearCommand=function(self)
+	onset = GetTimeSinceStart()
+end
+
+af.TransitionCommand=function(self)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+end
+
 
 -- storm
 af[#af+1] = LoadActor("./storm.ogg")..{
@@ -92,6 +125,12 @@ af[#af+1] = LoadActor("./fear2.ogg")..{
 	WakeUpCommand=function(self) self:stop() end
 }
 
+-- fear3
+af[#af+1] = LoadActor("./fear3.ogg")..{
+	FearCommand=function(self) self:play() end,
+	WakeUpCommand=function(self) self:stop() end
+}
+
 -- thunder
 af[#af+1] = LoadActor("./thunder.ogg")..{
 	WakeUpCommand=function(self) self:play() end
@@ -113,7 +152,10 @@ for i=1, #quotes do
 				:visible(false)
 				:playcommand("Refresh")
 		end,
-		FadeInCommand=function(self) self:visible(true):sleep(0.5):smooth(0.65):diffusealpha(1) end,
+		FadeInCommand=function(self)
+			self:stopeffect():finishtweening():visible(true):sleep(0.5):smooth(0.65):diffuse(1,1,1,1)
+			if count == 6 then self:accelerate(will_to_fight):diffuse(0.85,0.1,0.1,1) end
+		end,
 		FadeOutCommand=function(self) self:finishtweening():smooth(0.65):diffusealpha(0):queuecommand("Hide") end,
 		HideCommand=function(self) self:visible(false) end
 	}
