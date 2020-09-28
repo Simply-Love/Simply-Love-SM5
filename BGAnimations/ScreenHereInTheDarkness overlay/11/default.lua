@@ -24,7 +24,7 @@
 
 -- a troubled sea 🌊
 
-local max_width = 450
+local max_width = 435
 local quote_bmts = {}
 local quote_line
 local font_zoom = 0.975
@@ -38,19 +38,24 @@ local update = function(af, dt)
 	if count ~= 6 then return end
 
 	panic = GetTimeSinceStart() - onset
+	local mag = 0
 
 	if panic > will_to_fight then
 		af:queuecommand("Next")
 
-	elseif panic > 6 then
-		local mag = scale(panic, 0, will_to_fight-6, 0, 3 )
-		quote_bmts[6]:vibrate():effectmagnitude(mag, mag, mag)
+	-- squared ramp isn't quite right; this is awkward but good enough
+	elseif panic < 16 then
+		mag = scale(panic, 0, 16, 0,1)
+	elseif panic >= 16 then
+		mag = scale(panic, 16, will_to_fight, 1,6 )
 	end
+
+	quote_bmts[6]:vibrate():effectmagnitude(mag, mag, mag)
 end
 
 local quotes = {
 	"But the wicked are like a troubled sea\nthat knows no rest\nwhose waves cast up mire and mud.",
-	"I always want to retroactively apply the question \"why,\" despite what actually occurs in the moment. After waking, I try to re-imagine myself asking why.\n\nWhy are you doing this?\nWhy can't I move?\nWhy are you holding me down? \nWhy are you putting your mouth on me? \nWhy can't I scream?\nWhy?",
+	"I always want to retroactively apply the question \"why,\" despite what actually occurs in the moment.\n\nAfter waking, I try to imagine myself asking why.\n\nWhy are you doing this?\nWhy can't I move?\nWhy are you holding me down? \nWhy are you putting your mouth on me? \nWhy can't I scream?\nWhy?",
 	"The truth is that in the moment, I don't pause to ask why. Maybe there isn't time, or maybe I'm too taken by panic to reason. I don't know.\n\nThe reality is that there are only raw emotions and non-verbal feelings.",
 	"It starts as discomfort as I gain awareness that you are holding me down. It doesn't matter how I got here; I am here again.\n\nThe discomfort quickly rises within me, transforming to fear as I understand that I cannot move a muscle. My arms, my legs, my mouth–all unable to respond. Fear overwhelms me so quickly, as though I am a drinking glass being filled with a terrible ocean.",
 	"Is it instantaneous? The question is meaningless. There is no understanding of time here. The previous fear gives way to new terror. What was the previous thing that happened? The previous feeling I experienced? They are gone, one moment violently torn away by the furious storm as a new one is swept in to replace it.",
@@ -154,7 +159,7 @@ for i=1, #quotes do
 		end,
 		FadeInCommand=function(self)
 			self:stopeffect():finishtweening():visible(true):sleep(0.5):smooth(0.65):diffuse(1,1,1,1)
-			if count == 6 then self:accelerate(will_to_fight):diffuse(0.85,0.1,0.1,1) end
+			if count == 6 then self:accelerate(will_to_fight):diffuse(0.85,0.15,0.2,1) end
 		end,
 		FadeOutCommand=function(self) self:finishtweening():smooth(0.65):diffusealpha(0):queuecommand("Hide") end,
 		HideCommand=function(self) self:visible(false) end
