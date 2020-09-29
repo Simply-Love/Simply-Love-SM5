@@ -32,7 +32,7 @@ local count = 1
 local bgm_volume = 1
 
 local onset, panic
-local will_to_fight = 23
+local will_to_fight = 22.5
 
 local update = function(af, dt)
 	if count ~= 6 then return end
@@ -44,10 +44,12 @@ local update = function(af, dt)
 		af:queuecommand("Next")
 
 	-- squared ramp isn't quite right; this is awkward but good enough
-	elseif panic < 16 then
-		mag = scale(panic, 0, 16, 0,1)
-	elseif panic >= 16 then
-		mag = scale(panic, 16, will_to_fight, 1,6 )
+	elseif panic < 17 then
+		mag = scale(panic, 0, 17, 0, 1.25)
+	elseif panic >= 16 and panic < 20 then
+		mag = scale(panic, 17, will_to_fight, 1.25, 5)
+	elseif panic >= 20 then
+		mag = scale(panic, 20, will_to_fight, 5, 50)
 	end
 
 	quote_bmts[6]:vibrate():effectmagnitude(mag, mag, mag)
@@ -141,6 +143,13 @@ af[#af+1] = LoadActor("./thunder.ogg")..{
 	WakeUpCommand=function(self) self:play() end
 }
 
+-- background
+af[#af+1] = Def.Quad{
+	InitCommand=function(self) self:FullScreen():Center():diffuse(0,0,0,1) end,
+	FearCommand=function(self) self:sleep(18):accelerate(5):diffuse(1,0.1,0.12,1) end,
+	WakeUpCommand=function(self) self:finishtweening():diffuse(0,0,0,1) end
+}
+
 for i=1, #quotes do
 
 	af[#af+1] = Def.BitmapText{
@@ -159,7 +168,7 @@ for i=1, #quotes do
 		end,
 		FadeInCommand=function(self)
 			self:stopeffect():finishtweening():visible(true):sleep(0.5):smooth(0.65):diffuse(1,1,1,1)
-			if count == 6 then self:accelerate(will_to_fight):diffuse(0.85,0.15,0.2,1) end
+			if count == 6 then self:accelerate(will_to_fight):diffuse(0.85,0.15,0.175,1) end
 		end,
 		FadeOutCommand=function(self) self:finishtweening():smooth(0.65):diffusealpha(0):queuecommand("Hide") end,
 		HideCommand=function(self) self:visible(false) end
