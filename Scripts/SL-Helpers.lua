@@ -450,6 +450,12 @@ DarkUI = function()
 end
 
 -- -----------------------------------------------------------------------
+-- "The chills, I have them down my spine."
+IsSpooky = function()
+	return (PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==9 and ThemePrefs.Get("VisualTheme")=="Spooky")
+end
+
+-- -----------------------------------------------------------------------
 -- functions that handle custom judgment graphic detection/loading
 
 -- look for the "[frames wide] x [frames tall]" and some sort of all-letters file extension

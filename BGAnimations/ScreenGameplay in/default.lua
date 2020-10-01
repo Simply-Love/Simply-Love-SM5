@@ -6,6 +6,15 @@ local text = ""
 local SongNumberInCourse = 0
 local SongsInCourse
 local style = ThemePrefs.Get("VisualTheme")
+local assets = {
+	splode     = THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"),
+	minisplode = THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn minisplode")
+}
+
+if IsSpooky() then
+	assets.splode     = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
+	assets.minisplode = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
+end
 
 if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
@@ -48,15 +57,15 @@ af[#af+1] = Def.ActorFrame{
 		OnCommand=function(self) self:sleep(1.4):accelerate(0.6):diffusealpha(0) end
 	},
 
-	LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"))..{
+	LoadActor(assets.splode)..{
 		InitCommand=function(self) self:diffuse(GetCurrentColor(true)):Center():rotationz(10):zoom(0):diffusealpha(0.9) end,
 		OnCommand=function(self) self:sleep(0.4):linear(0.6):rotationz(0):zoom(1.1):diffusealpha(0) end
 	},
-	LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"))..{
+	LoadActor(assets.splode)..{
 		InitCommand=function(self) self:diffuse(GetCurrentColor(true)):Center():rotationy(180):rotationz(-10):zoom(0):diffusealpha(0.8) end,
 		OnCommand=function(self) self:sleep(0.4):decelerate(0.6):rotationz(0):zoom(1.3):diffusealpha(0) end
 	},
-	LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn minisplode"))..{
+	LoadActor(assets.minisplode)..{
 		InitCommand=function(self) self:diffuse(GetCurrentColor(true)):Center():rotationz(10):zoom(0) end,
 		OnCommand=function(self) self:sleep(0.4):decelerate(0.8):rotationz(0):zoom(0.9):diffusealpha(0) end
 	}

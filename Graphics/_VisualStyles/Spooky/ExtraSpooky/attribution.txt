@@ -1,0 +1,14 @@
+Spooky.ogg uses Cave Bats.wav, downloaded 30 September 2020 from:
+http://soundbible.com/1938-Cave-Bats.html
+
+It's listed as having a license of: Attr-Noncommercial 3.0
+
+You can read more about that license here:
+https://creativecommons.org/licenses/by-nc/3.0/us/
+
+Other sound effects:
+ • wooshes
+ • Mr. X-style sine-wave-bass-drop
+ • bell toll in D# to match Paranoia Hades
+
+were created and overlaid by quietly-turning using Logic Pro X.
