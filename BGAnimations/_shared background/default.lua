@@ -18,7 +18,7 @@ local file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme"
 af[#af+1] = Def.Quad{
 	InitCommand=function(self) self:FullScreen():Center():diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ) end,
 	BackgroundImageChangedMessageCommand=function(self)
-		THEME:ReloadMetrics()
+		THEME:ReloadMetrics() -- is this needed here?  -quietly
 		SL.Global.ActiveColorIndex = ThemePrefs.Get("RainbowMode") and 3 or ThemePrefs.Get("SimplyLoveColor")
 		self:linear(1):diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
 	end

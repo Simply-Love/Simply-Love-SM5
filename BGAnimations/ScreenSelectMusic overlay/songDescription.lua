@@ -125,7 +125,7 @@ af[#af+1] = Def.ActorFrame{
 
 			-- different BPM ranges for the two players
 			else
-				-- show the range for both P1 and P2 split by a newline characters, shrunk slightly to fit the space
+				-- show the range for both P1 and P2 split by a newline character, shrunk slightly to fit the space
 				self:settext( "P1 ".. p1bpm .. "\n" .. "P2 " .. p2bpm ):zoom(0.8)
 				-- the "P1 " and "P2 " segments of the string should be grey
 				self:AddAttribute(0,             {Length=3, Diffuse={0.60,0.60,0.60,1}})

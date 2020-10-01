@@ -41,13 +41,14 @@ elseif #players == 1 then
 	-- for my milquetoast mind.
 	--
 	-- Some of the Panes (QR code, timing histogram) contain expensive computation that can
-	-- delay ScreenEvaluation's load time, *especially* when done performed twice.  If only
-	-- one player is joined, it's wasteful to do these calculations twice.
+	-- delay ScreenEvaluation's load time, *especially* when performed twice.  If only one
+	-- player is joined, it's wasteful to do these identical calculations twice.
 	--
 	-- So, use ComputedData as a table local to this file (it won't persist past ScreenEvaluation)
-	-- and pass it into Pane sub-files as a "reference" to achieve pointer-like behavior.
-	-- In this way, we can check if some expensive calculations have already been run, and
-	-- refer to this table to get the results.
+	-- and pass it into Pane sub-files as a "reference" to achieve pointer-like behavior within
+	-- the scoping contexts that exist within this file within ScreenEvaluation.  In this way, we can
+	-- check if some expensive calculations have already been run, and refer to the ComputedData
+	-- table to get the results.
 	local ComputedData = {}
 
 	local mpn = GAMESTATE:GetMasterPlayerNumber()
