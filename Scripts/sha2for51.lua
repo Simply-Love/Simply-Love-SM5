@@ -344,6 +344,7 @@ local function sha256ext(width, text)
 
 end
 
+--[[
 
 local function sha512ext(width, text)
 
@@ -403,10 +404,13 @@ local function sha512ext(width, text)
 
 end
 
+--]]
+
+
 -- Add these functions to the global scope.
-function sha224(text) return sha256ext(224, text) end  -- SHA-224
+-- function sha224(text) return sha256ext(224, text) end  -- SHA-224
 function sha256(text) return sha256ext(256, text) end  -- SHA-256
-function sha384(text) return sha512ext(384, text) end  -- SHA-384
-function sha512(text) return sha512ext(512, text) end  -- SHA-512
-function sha512_224(text) return sha512ext(224, text) end  -- SHA-512/224
-function sha512_256(text) return sha512ext(256, text) end  -- SHA-512/256
+-- function sha384(text) return sha512ext(384, text) end  -- SHA-384
+-- function sha512(text) return sha512ext(512, text) end  -- SHA-512
+-- function sha512_224(text) return sha512ext(224, text) end  -- SHA-512/224
+-- function sha512_256(text) return sha512ext(256, text) end  -- SHA-512/256

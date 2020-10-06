@@ -16,8 +16,9 @@
 -- Copyright 2009: hans@hpelbers.org
 local TableToString_Recursive = function(t, name, indent)
 	local tableList = {}
+	local table_r
 
-	function table_r (t, name, indent, full)
+	table_r = function(t, name, indent, full)
 		local id = not full and name or type(name)~="number" and tostring(name) or '['..name..']'
 		local tag = indent .. id .. ' = '
 		local out = {}	-- result
