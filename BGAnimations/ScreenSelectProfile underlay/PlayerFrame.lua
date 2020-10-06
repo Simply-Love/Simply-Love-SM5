@@ -157,7 +157,6 @@ return Def.ActorFrame{
 		Def.ActorFrame{
 			Name="DataFrame",
 			InitCommand=function(self)
-				-- FIXME
 				self:x(15.5)
 			end,
 			OnCommand=function(self) self:playcommand("Set", profile_data[1]) end,

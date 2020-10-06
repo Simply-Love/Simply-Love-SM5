@@ -165,7 +165,7 @@ local Overrides = {
 				if list[i] then mods.NoteSkin = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
-			MESSAGEMAN:Broadcast('NoteSkinChanged', {Player=pn, NoteSkin=mods.NoteSkin})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkin", Value=mods.NoteSkin})
 			playeroptions:NoteSkin( mods.NoteSkin )
 		end
 	},
@@ -181,7 +181,7 @@ local Overrides = {
 				if list[i] then mods.JudgmentGraphic = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Judgment preview
-			MESSAGEMAN:Broadcast("JudgmentGraphicChanged", {Player=pn, JudgmentGraphic=StripSpriteHints(mods.JudgmentGraphic)})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="JudgmentGraphic", Value=StripSpriteHints(mods.JudgmentGraphic)})
 		end
 	},
 	-------------------------------------------------------------------------
@@ -196,7 +196,7 @@ local Overrides = {
 				if list[i] then mods.HoldJudgment = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the HoldJudgment preview
-			MESSAGEMAN:Broadcast("HoldJudgmentChanged", {Player=pn, HoldJudgment=StripSpriteHints(mods.HoldJudgment)})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="HoldJudgment", Value=StripSpriteHints(mods.HoldJudgment)})
 		end
 	},
 	-------------------------------------------------------------------------
@@ -210,7 +210,7 @@ local Overrides = {
 				if list[i] then mods.ComboFont = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the ComboFont preview
-			MESSAGEMAN:Broadcast("ComboFontChanged", {Player=pn, ComboFont=mods.ComboFont})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="ComboFont", Value=mods.ComboFont})
 		end
 	},
 	-------------------------------------------------------------------------
@@ -282,6 +282,9 @@ local Overrides = {
 			end
 
 			MESSAGEMAN:Broadcast("MusicRateChanged")
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can update ActorProxies
+			-- in the MusicRate OptionRow for split BPMs if needed
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="MusicRate", Value=""})
 		end
 	},
 	-------------------------------------------------------------------------

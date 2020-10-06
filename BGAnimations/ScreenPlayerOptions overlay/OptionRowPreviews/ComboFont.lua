@@ -1,30 +1,29 @@
 local t = ...
 
--- ----------------------------------------------------
+-- -----------------------------------------------------------------------
 -- Figure out where on the screen the OptionRow for ComboFont is.
 -- We could just hardcode this to be a number like 6, because ComboFont
 -- is the 7th OptionRow as on this screen as defined in Metrics.ini,
 -- but a lot of people like to edit their Metrics.ini and far fewer people
 -- are comfortable digging into the many, many Lua files throughout this theme.
 -- So, maybe they've moved the ComboFont row somewhere else.  Let's try to accommodate.
-local ComboFontOptRowIndex
-local i = 0
+local ComboFontOptRowIndex = nil
+
 -- get all the LinesNames as a single string from Metrics.ini, split on commas,
+local LineNames = split(",", THEME:GetMetric("ScreenPlayerOptions", "LineNames"))
 -- and loop through until we find one that matches "ComboFont" (or, we don't).
-for name in THEME:GetMetric("ScreenPlayerOptions", "LineNames"):gmatch('([^,]+)') do
-	if name == "ComboFont" then ComboFontOptRowIndex = i; break end
-	i = i + 1
+for i, name in ipairs(LineNames) do
+	if name == "ComboFont" then ComboFontOptRowIndex = i-1; break end
 end
 
 local PlayerOnComboFontOptRow = function(p)
 	return SCREENMAN:GetTopScreen():GetCurrentRowIndex(p) == ComboFontOptRowIndex
 end
 
--- ----------------------------------------------------
+-- -----------------------------------------------------------------------
 
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
-	local mods = SL[pn].ActiveModifiers
 
 	for combo_font in ivalues( GetComboFonts() ) do
 		if combo_font ~= "None" then
@@ -38,7 +37,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 				-- OptionRowChanged is broadcast from Metrics.ini under [OptionRow] via TitleGainFocusCommand
 				OptionRowChangedMessageCommand=function(self, params)
-					-- if the player is currently on the ComboFont OptionRow and their current choice isn't "None"
+					-- if the player is currently on the ComboFont OptionRow
 					if PlayerOnComboFontOptRow(player) then
 						-- then enter into a "Loop" queue to increment the combo numbers
 						self:queuecommand("Loop")

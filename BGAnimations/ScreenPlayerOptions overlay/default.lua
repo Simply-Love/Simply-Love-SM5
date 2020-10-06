@@ -154,6 +154,7 @@ local t = Def.ActorFrame{
 				else
 					text = THEME:GetString("ScreenPlayerOptions", "SplitBPMs")
 				end
+				MESSAGEMAN:Broadcast("RefreshBPMRange", bpms)
 			end
 
 			title_bmt:settext( ("%s\nbpm: %s"):format(THEME:GetString("OptionTitles", "MusicRate"), text) )
@@ -164,10 +165,11 @@ local t = Def.ActorFrame{
 -- attach NoteSkin actors and Judgment graphic sprites and Combo bitmaptexts to
 -- this overlay ActorFrame; they'll each be hidden immediately via visible(false)
 -- and referred to as needed via ActorProxy in ./Graphics/OptionRow Frame.lua
-LoadActor("./NoteSkinPreviews.lua", t)
-LoadActor("./JudgmentGraphicPreviews.lua", t)
-LoadActor("./ComboFontPreviews.lua", t)
-LoadActor("./HoldJudgmentPreviews.lua", t)
+LoadActor("./OptionRowPreviews/NoteSkin.lua", t)
+LoadActor("./OptionRowPreviews/JudgmentGraphic.lua", t)
+LoadActor("./OptionRowPreviews/ComboFont.lua", t)
+LoadActor("./OptionRowPreviews/HoldJudgment.lua", t)
+LoadActor("./OptionRowPreviews/MusicRate.lua", t)
 
 -- some functionality needed in both PlayerOptions, PlayerOptions2, and PlayerOptions3
 t[#t+1] = LoadActor(THEME:GetPathB("ScreenPlayerOptions", "common"))
