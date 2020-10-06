@@ -20,7 +20,9 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 	t[#t+1] = LoadFont("Common Normal")..{
 		Name=pn.."_MusicRate_",
-		InitCommand=function(self) self:zoom(2):x(-238):visible(false) end,
+		InitCommand=function(self)
+			self:zoom(2):x(SL_WideScale(-222,-238)):visible(false)
+		end,
 
 		-- OptionRowChanged is broadcast from Metrics.ini under [OptionRow] via TitleGainFocusCommand
 		OptionRowChangedMessageCommand=function(self, params)
