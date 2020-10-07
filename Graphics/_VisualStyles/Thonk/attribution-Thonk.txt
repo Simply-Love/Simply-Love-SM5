@@ -1,0 +1,20 @@
+Simply Thonk was intially schemed up by TheNick, but
+it was originally supposed to be Simply Got'eem.
+
+---
+
+Thonk visual assets were drawn by Evocait for Simply Thonk.
+https://www.instagram.com/EvocaitArt/
+
+Thonk fallback banners were laid out by quietly-turning.
+
+Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix (loop).ogg
+was created by cardboard_box for Simply Thonk.
+https://soundcloud.com/cardboard_box
+
+The final audio was mastered by ashastral for Simply Thonk.
+https://soundcloud.com/ashastral
+
+TaroNuke is solely responsible for Simply Thonk's Lua scripting magic.
+He is the only sorcerer powerful enough to write code that makes me
+laugh until my face hurts from smiling. :D
