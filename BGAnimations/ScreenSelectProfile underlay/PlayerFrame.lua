@@ -185,7 +185,7 @@ return Def.ActorFrame{
 					Def.ActorFrame{
 						InitCommand=function(self) self:visible(false) end,
 						SetCommand=function(self, params)
-							if params and params.displayname and avatars[params.displayname] then
+							if params and params.index and avatars[params.index] then
 								self:visible(false)
 							else
 								self:visible(true)
@@ -224,8 +224,8 @@ return Def.ActorFrame{
 							self:align(0,0):scaletoclipped(avatar_dim,avatar_dim)
 						end,
 						SetCommand=function(self, params)
-							if params and params.displayname and avatars[params.displayname] then
-								self:SetTexture(avatars[params.displayname]):visible(true)
+							if params and params.index and avatars[params.index] then
+								self:SetTexture(avatars[params.index]):visible(true)
 							else
 								self:visible(false)
 							end

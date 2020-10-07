@@ -156,22 +156,47 @@ GetAvatarPath = function(profileDirectory, displayName)
 
 	if type(profileDirectory) ~= "string" then return end
 
-	-- check the profile directory for "avatar.png" first (or "avatar.jpg", etc.)
-	local path = ActorUtil.ResolvePath(profileDirectory .. "avatar", 1, true)
-	          -- support avatars from Hayoreo's Digital Dance, which uses "Profile Picture.png" in profile dir
-	          or ActorUtil.ResolvePath(profileDirectory .. "profile picture", 1, true)
-	          -- support SM5.3's avatar location to ease the eventual transition
-	          or (displayName and displayName ~= "" and ActorUtil.ResolvePath("/Appearance/Avatars/" .. displayName, 1, true) or nil)
+	local path = nil
 
-	if path and ActorUtil.GetFileType(path) == "FileType_Bitmap" then
-		return path
+	-- sequence matters here
+	-- prefer png first, then jpg, then jpeg, etc.
+	-- (note that SM5 does not support animated gifs at this time, so SL doesn't either)
+	-- TODO: investigate effects (memory footprint, fps) of allowing movie files as avatars in SL
+	local extensions = { "png", "jpg", "jpeg", "bmp", "gif" }
+
+	-- prefer an avatar named:
+	--    "avatar" in the player's profile directory (preferred by Simply Love)
+	--    then "profile picture" in the player's profile directory (used by Digital Dance)
+	--    then (whatever the profile's DisplayName is) in /Appearance/Avatars/ (used in OutFox?)
+	local paths = {
+		("%savatar"):format(profileDirectory),
+		("%sprofile picture"):format(profileDirectory),
+		("/Appearance/Avatars/%s"):format(displayName)
+	}
+
+	for _, path in ipairs(paths) do
+		for _, extension in ipairs(extensions) do
+			local avatar_path = ("%s.%s"):format(path, extension)
+
+			if FILEMAN:DoesFileExist(avatar_path)
+			and ActorUtil.GetFileType(avatar_path) == "FileType_Bitmap"
+			then
+				-- return the first valid avatar path that is found
+				return avatar_path
+			end
+		end
 	end
+
+	-- or, return nil if no avatars were found in any of the permitted paths
+	return nil
 end
 
 -- -----------------------------------------------------------------------
 -- returns a path to a player's profile avatar, or nil if none is found
 
 GetPlayerAvatarPath = function(player)
+	if not player then return end
+
 	local profile_slot = {
 		[PLAYER_1] = "ProfileSlot_Player1",
 		[PLAYER_2] = "ProfileSlot_Player2"
