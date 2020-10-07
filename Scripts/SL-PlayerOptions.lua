@@ -38,7 +38,7 @@ end
 -- when to use Choices() vs. Values()
 --
 -- Each OptionRow needs stringified choices to present to the player.  Sometimes using hardcoded strings
--- is okay. For example, SpeedModType choices (x, C, M) are the same in English as in French.
+-- is okay. For example, SpeedModType choices (X, C, M) are the same in English as in French.
 --
 -- Other times, we need to be able to localize the choices presented to the player but also
 -- maintain an internal value that code within the theme can rely on regardless of language.
@@ -86,7 +86,7 @@ local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Choices = { "X", "C", "M" },
+		Values = { "X", "C", "M" },
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
@@ -94,7 +94,7 @@ local Overrides = {
 				if list[i] then
 					-- Broadcast a message that ./BGAnimations/ScreenPlayerOptions overlay.lua will be listening for
 					-- so it can hackishly modify the single BitmapText actor used in the SpeedMod optionrow
-					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Choices[i], Player=pn})
+					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Values[i], Player=pn})
 				end
 			end
 		end
@@ -413,7 +413,16 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetScore = {
-		Values = { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' },
+		Values = function()
+			local t = {}
+			-- "GradeTier16" to "GradeTier01"
+			for i=16,1,-1 do
+				table.insert(t, ("GradeTier%02d"):format(i))
+			end
+			table.insert(t, "Machine best")
+			table.insert(t, "Personal best")
+			return t
+		end,
 		LoadSelections = function(self, list, pn)
 			local i = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore) or 11
 			list[i] = true
