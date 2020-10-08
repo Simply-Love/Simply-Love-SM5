@@ -1,33 +1,4 @@
 -- -----------------------------------------------------------------------
--- NOTE: This is the preferred way to check for RTT support, but we cannot rely on it to
---   accurately tell us whether the current system atually supports RTT!
---   Some players on Linux and [some version of] SM5.1-beta reported that DISPLAY:SupportsRenderToTexture()
---   returned false, when render to texture was definitely working for them.
---   I'm leaving this check here, but commented out, both as "inline instruction" for current SM5 themers
---   and so that it can be easily uncommented and used ~~when we are trees again~~ at a future date.
-
--- SupportsRenderToTexture = function()
--- 	-- ensure the method exists and, if so, ensure that it returns true
--- 	return DISPLAY.SupportsRenderToTexture and DISPLAY:SupportsRenderToTexture()
--- end
-
-
--- -----------------------------------------------------------------------
--- SM5's d3d implementation does not support render to texture. The DISPLAY
--- singleton has a method to check this but it doesn't seem to be implemented
--- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
-
-SupportsRenderToTexture = function()
-	-- This is not a sensible way to assess this; it is a hack and should be removed at a future date.
-	if HOOKS:GetArchName():lower():match("windows")
-	and PREFSMAN:GetPreference("VideoRenderers"):sub(1,3):lower() == "d3d" then
-		return false
-	end
-
-	return true
-end
-
--- -----------------------------------------------------------------------
 -- call this to draw a Quad with a border
 -- arguments are: width of quad, height of quad, and border width, in pixels
 
@@ -95,6 +66,7 @@ end
 -- return the x value for the center of a player's notefield
 --   this is used to position various elements in ScreenGameplay
 --   but it is not used to position the notefields themselves
+--   (that's handled in Metrics.ini under [ScreenGameplay])
 
 GetNotefieldX = function( player )
 	if not player then return end
@@ -180,34 +152,37 @@ end
 --
 -- We reference this function in Metrics.ini under the [Gameplay] section.
 GetComboThreshold = function( MaintainOrContinue )
-	local CurrentGame = GAMESTATE:GetCurrentGame():GetName()
 
-	local ComboThresholdTable = {
-		dance	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-		pump	=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
-		techno	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-		kb7		=	{ Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" },
-		-- these values are chosen to match Deluxe's PARASTAR
-		para	=	{ Maintain = "TapNoteScore_W5", Continue = "TapNoteScore_W3" },
+	local Combo = {}
+	Combo.dance = { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+	Combo.pump  = { Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" }
+	Combo.techno= { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+	Combo.kb7   = { Maintain = "TapNoteScore_W4", Continue = "TapNoteScore_W4" }
 
-		-- I don't know what these values are supposed to actually be...
-		popn	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-		beat	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-		kickbox	=	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
+	-- values for para were inherited from freem's Moonlight theme which had an inline comment stating:
+	-- "these are chosen to match Deluxe's PARASTAR"
+	Combo.para = { Maintain = "TapNoteScore_W5", Continue = "TapNoteScore_W3" }
 
-		-- lights is not a playable game mode, but it is, oddly, a selectable one within the operator menu
-		-- include dummy values here to prevent Lua errors in case players accidentally switch to lights
-		lights =	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
-	}
+	-- I don't know what these values are supposed to be.
+	Combo.popn    = { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+	Combo.beat    = { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+	Combo.kickbox = { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
 
-	if CurrentGame ~= "para" then -- is this needed? -quietly
-		if SL.Global.GameMode=="FA+" then
-			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
-			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
-		end
+	-- lights is not a playable game mode, but it is, oddly, a selectable one within the operator menu
+	-- include dummy values here to prevent Lua errors in case players accidentally switch to lights
+	Combo.lights  = { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
+
+
+	-- handle FA+ for Dance
+	-- should these values change for Pump?  I guess that's up to me.
+	if SL.Global.GameMode=="FA+" then
+		Combo.dance.Maintain = "TapNoteScore_W4"
+		Combo.dance.Continue = "TapNoteScore_W4"
 	end
 
-	return ComboThresholdTable[CurrentGame][MaintainOrContinue]
+
+	local game = GAMESTATE:GetCurrentGame():GetName() or "dance"
+	return Combo[game][MaintainOrContinue]
 end
 
 -- -----------------------------------------------------------------------
@@ -354,14 +329,16 @@ SetGameModePreferences = function()
 
 	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
 	-- Stats.xml, ECFA-Stats.xml, Casual-Stats.xml
+	local prefix = {}
+	-- ITG has no prefix and scores go directly into the main Stats.xml
+	-- this was probably a Bad Decision™ on my part in hindsight
+	prefix["ITG"] = ""
+
 	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"
 	-- and I don't want to deal with renaming relatively critical files from the theme.
 	-- Thus, scores from FA+ mode will continue to go into ECFA-Stats.xml.
-	local prefix = {
-		ITG = "",
-		["FA+"] = "ECFA-",
-		Casual = "Casual-"
-	}
+	prefix["FA+"] = "ECFA-"
+	prefix["Casual"] = "Casual-"
 
 	if PROFILEMAN:GetStatsPrefix() ~= prefix[SL.Global.GameMode] then
 		PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])

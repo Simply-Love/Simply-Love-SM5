@@ -22,13 +22,13 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = true,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		NumberOfContinuesAllowed =
 		{
 			Default = 0,
 			Choices = { 0,1,2,3,4,5,6,7,8,9 },
-			Values = { 0,1,2,3,4,5,6,7,8,9 }
+			Values  = { 0,1,2,3,4,5,6,7,8,9 }
 		},
 
 
@@ -36,7 +36,7 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = false,
 			Choices = { THEME:GetString("ThemePrefs", "Show"), THEME:GetString("ThemePrefs", "Hide") },
-			Values 	= { false, true }
+			Values  = { false, true }
 		},
 		MusicWheelStyle =
 		{
@@ -47,7 +47,7 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = false,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		DefaultGameMode =
 		{
@@ -57,7 +57,7 @@ SL_CustomPrefs.Get = function()
 				THEME:GetString("ScreenSelectPlayMode", "ITG"),
 				THEME:GetString("ScreenSelectPlayMode", "FA+"),
 			},
-			Values 	= { "Casual", "ITG", "FA+" }
+			Values = { "Casual", "ITG", "FA+" }
 		},
 		AutoStyle =
 		{
@@ -68,7 +68,7 @@ SL_CustomPrefs.Get = function()
 				THEME:GetString("ScreenSelectStyle", "Versus"),
 				THEME:GetString("ScreenSelectStyle", "Double")
 			},
-			Values 	= { "none", "single", "versus", "double" }
+			Values = { "none", "single", "versus", "double" }
 		},
 		VisualTheme =
 		{
@@ -83,7 +83,7 @@ SL_CustomPrefs.Get = function()
 				THEME:GetString("ThemePrefs", "On"),
 				THEME:GetString("ThemePrefs", "Off")
 			},
-			Values 	= { true , false }
+			Values = { true , false }
 		},
 		-- - - - - - - - - - - - - - - - - - - -
 		-- SimplyLoveColor saves the theme color for the next time
@@ -93,7 +93,7 @@ SL_CustomPrefs.Get = function()
 			-- a nice pinkish-purple, by default
 			Default = 3,
 			Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
-			Values = { 1,2,3,4,5,6,7,8,9,10,11,12 }
+			Values  = { 1,2,3,4,5,6,7,8,9,10,11,12 }
 		},
 
 		-- - - - - - - - - - - - - - - - - - - -
@@ -102,37 +102,37 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = 300,
 			Choices = SecondsToMMSS_range(60, 450, 15),
-			Values = range(60, 450, 15),
+			Values  = range(60, 450, 15),
 		},
 		ScreenSelectMusicCasualMenuTimer =
 		{
 			Default = 300,
 			Choices = SecondsToMMSS_range(60, 450, 15),
-			Values = range(60, 450, 15),
+			Values  = range(60, 450, 15),
 		},
 		ScreenPlayerOptionsMenuTimer =
 		{
 			Default = 90,
 			Choices = SecondsToMMSS_range(30, 450, 15),
-			Values = range(30, 450, 15),
+			Values  = range(30, 450, 15),
 		},
 		ScreenEvaluationMenuTimer =
 		{
 			Default = 60,
 			Choices = SecondsToMMSS_range(15, 450, 15),
-			Values = range(15, 450, 15),
+			Values  = range(15, 450, 15),
 		},
 		ScreenEvaluationSummaryMenuTimer =
 		{
 			Default = 60,
 			Choices = SecondsToMMSS_range(30, 450, 15),
-			Values = range(30, 450, 15),
+			Values  = range(30, 450, 15),
 		},
 		ScreenNameEntryMenuTimer =
 		{
 			Default = 60,
 			Choices = SecondsToMMSS_range(15, 450, 15),
-			Values = range(15, 450, 15),
+			Values  = range(15, 450, 15),
 		},
 
 		-- - - - - - - - - - - - - - - - - - - -
@@ -141,38 +141,38 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = false,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		AllowScreenSelectColor =
 		{
 			Default = true,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		AllowScreenEvalSummary =
 		{
 			Default = true,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		AllowScreenGameOver =
 		{
 			Default = true,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		AllowScreenNameEntry =
 		{
 			Default = true,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
+			Values  = { true, false }
 		},
 		-- - - - - - - - - - - - - - - - - - - -
 		-- Casual GameMode Settings
 		CasualMaxMeter = {
 			Default = 10,
 			Choices = range(5, 15, 1),
-			Values = range(5, 15, 1)
+			Values  = range(5, 15, 1)
 		},
 
 		-- - - - - - - - - - - - - - - - - - - -
@@ -180,7 +180,7 @@ SL_CustomPrefs.Get = function()
 		UseImageCache = {
 			Default = false,
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values	= { true, false }
+			Values  = { true, false }
 		},
 
 		-- - - - - - - - - - - - - - - - - - - -
@@ -197,7 +197,7 @@ SL_CustomPrefs.Get = function()
 		HereInTheDarkness = {
 			Default = 0,
 			Choices = range(0, 22, 1),
-			Values = range(0, 22, 1),
+			Values  = range(0, 22, 1),
 		},
 	}
 end

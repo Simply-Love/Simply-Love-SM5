@@ -120,3 +120,32 @@ GetThemeVersion = function()
 	end
 	return false
 end
+
+-- -----------------------------------------------------------------------
+-- NOTE: This is the preferred way to check for RTT support, but we cannot rely on it to
+--   accurately tell us whether the current system atually supports RTT!
+--   Some players on Linux and [some version of] SM5.1-beta reported that DISPLAY:SupportsRenderToTexture()
+--   returned false, when render to texture was definitely working for them.
+--   I'm leaving this check here, but commented out, both as "inline instruction" for current SM5 themers
+--   and so that it can be easily uncommented and used ~~when we are trees again~~ at a future date.
+
+-- SupportsRenderToTexture = function()
+-- 	-- ensure the method exists and, if so, ensure that it returns true
+-- 	return DISPLAY.SupportsRenderToTexture and DISPLAY:SupportsRenderToTexture()
+-- end
+
+
+-- -----------------------------------------------------------------------
+-- SM5's d3d implementation does not support render to texture. The DISPLAY
+-- singleton has a method to check this but it doesn't seem to be implemented
+-- in RageDisplay_D3D which is, ironically, where it's most needed.  So, this.
+
+SupportsRenderToTexture = function()
+	-- This is not a sensible way to assess this; it is a hack and should be removed at a future date.
+	if HOOKS:GetArchName():lower():match("windows")
+	and PREFSMAN:GetPreference("VideoRenderers"):sub(1,3):lower() == "d3d" then
+		return false
+	end
+
+	return true
+end
