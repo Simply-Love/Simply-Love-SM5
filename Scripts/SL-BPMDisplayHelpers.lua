@@ -6,7 +6,7 @@ local GetTrailBPMs = function(player, trail)
 	local lowest, highest
 
 	for i, entry in ipairs(trail:GetTrailEntries()) do
-		-- TrailEntry:GetSteps() will return nil for randomly generated courses :(
+		-- TrailEntry:GetSteps() will return nil for (auto)generated courses :(
 		local steps = entry:GetSteps()
 		if steps==nil then return end
 
@@ -115,10 +115,27 @@ StringifyDisplayBPMs = function(player, StepsOrTrail, MusicRate)
 	-- format DisplayBPMs to not show decimals unless a musicrate
 	-- modifier is in effect, in which case show 1 decimal of precision
 	local fmt = MusicRate==1 and "%.0f" or "%.1f"
+	local s
 
+	-- lower and upper bpms match
 	if bpms[1] == bpms[2] then
-		return ("%g"):format( fmt:format(bpms[1]) )
+		s = fmt:format(bpms[1])
+		-- musicrate will show one decimal place of precision
+		-- remove it if came out to be something.0
+		-- to reduce visual noise and save a few pixels of UI space
+		if MusicRate ~= 1 then
+			s = s:gsub("%.0", "")
+		end
+
+	-- lower and upper bpms were different
+	-- so format the string to display a range
+	else
+		if MusicRate == 1 then
+			s = ("%s - %s"):format(fmt:format(bpms[1]), fmt:format(bpms[2]))
+		else
+			s = ("%s - %s"):format(fmt:format(bpms[1]):gsub("%.0", ""), fmt:format(bpms[2]):gsub("%.0", ""))
+		end
 	end
 
-	return ( ("%g - %g"):format(fmt:format(bpms[1]), fmt:format(bpms[2])) )
+	return s
 end
