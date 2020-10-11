@@ -4,7 +4,15 @@ local show_menu_buttons = args.ShowMenuButtons
 local show_player_label = args.ShowPlayerLabel
 
 local af = Def.ActorFrame{}
-local game = GAMESTATE:GetCurrentGame():GetName()
+local pad_img = GAMESTATE:GetCurrentGame():GetName()
+
+if pad_img == "dance" and ThemePrefs.Get("AllowDanceSolo") then
+	local style = GAMESTATE:GetCurrentStyle()
+	-- style will be nil in ScreenTestInput within the operator menu
+	if style==nil or style:GetName()=="solo" then
+		pad_img = "dance-solo"
+	end
+end
 
 local Highlights = {
 	UpLeft={    x=-67, y=-148, rotationz=0, zoom=0.8, graphic="highlight.png" },
@@ -42,7 +50,7 @@ if show_player_label then
 	}
 end
 
-pad[#pad+1] = LoadActor(game..".png")..{  InitCommand=function(self) self:y(-80):zoom(0.8) end }
+pad[#pad+1] = LoadActor(pad_img..".png")..{  InitCommand=function(self) self:y(-80):zoom(0.8) end }
 
 if show_menu_buttons then
 	pad[#pad+1] = LoadActor("buttons.png")..{
