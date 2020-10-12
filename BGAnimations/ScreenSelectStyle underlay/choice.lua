@@ -4,8 +4,6 @@ local frame_x = args[1].x
 local pads = args[1].pads
 local choice_index = args[2]
 
-local DrawNinePanelPad = LoadActor("./pad.lua")
-
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{
@@ -60,10 +58,10 @@ local af = Def.ActorFrame{
 }
 
 -- draw as many pads as needed for this choice
-for pad in ivalues(pads) do
-	af[#af+1] = DrawNinePanelPad(pad.color, {0.2,0.2,0.2,1})..{
+for i, pad in ipairs(pads) do
+	af[#af+1] = LoadActor("./pad.lua", {pad.color, {0.2,0.2,0.2,1}, i, choiceName})..{
 		InitCommand=function(self)
-			self:x(pad.offset):playcommand("Set", {style=choiceName})
+			self:x(pad.offset):playcommand("Set")
 		end,
 	}
 end
