@@ -50,7 +50,7 @@ for i, mode in ipairs(BackgroundFitMode) do
 			fit_choices[i]= self
 			-- This positions the choice on the screen.  Choices are placed in a
 			-- row across the center of the screen, evenly spaced.
-			self:xy(xstart + ((i-1) * width_per_choice), _screen.cy)
+			self:xy(xstart + ((i-1) * width_per_choice), _screen.cy+50)
 		end,
 		LoadFont("Common Normal")..{
 			-- This actor is a label for the choice, so the player knows the name
@@ -108,12 +108,6 @@ for i, mode in ipairs(BackgroundFitMode) do
 			mini_screen_w= mini_screen_w, mini_screen_h= mini_screen_h,
 			example_function= bg_fit_functions[mode],
 			example_label= BGFitNormalExampleText(16, 9),
-			sbg_color= color("0,0,0,1"), soutline_color= color("#39b54a")},
-		BGFitChoiceExample{
-			exname= "16_10.png", x= 0, y= mini_screen_h * 1.5,
-			mini_screen_w= mini_screen_w, mini_screen_h= mini_screen_h,
-			example_function= bg_fit_functions[mode],
-			example_label= BGFitNormalExampleText(16, 10),
 			sbg_color= color("0,0,0,1"), soutline_color= color("#39b54a")},
 	}
 end
