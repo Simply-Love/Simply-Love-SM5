@@ -2,23 +2,27 @@ local page = 1
 local pages = {
 	{
 		header="here in the darkness",
-		body="here in the darkness is a collection of essays, poems, songs, and feelings I output in 2018 and 2019 after a hospital stay.\n\nYou can think of it as creative non-fiction.  Specific and identifying details were obscured, but I consider it an accurate reflection on my life at that time.\n\nThough most of this darkness is my own doing, I do need to acknowledge those who contributed assets and inspiration.\n\nquietly-turning",
+		body="here in the darkness is a collection of essays, poems, songs, and feelings I worked in 2018 and 2019 following a hospital stay.\n\nYou can think of it as creative nonfiction.  Specific and identifying details were obscured, but I consider it an accurate reflection on my life at that time.\n\nThough most of this darkness is my own doing, I do need to acknowledge those who contributed assets and inspiration.\n\nquietly-turning",
 	},
 	{
 		header="non-original assets",
-		body="darkness #1\nfeatures audio from the film 5 Centimeters per Second\n\ndarkness #3\nfeatures a photograph of Earth that I can no longer track down the source of\n\ndarkness #6\nfeatures video from YouTube user maxxlover's channel\n\ndarkness #8\nfeatures visual art from xkcd#1190, \"Time\"\n\ndarkness #10\nfeatures the song \"13 Ghosts II\" by nine inch nails\n\ndarkness #12\nfeatures a melody inspired by bt's \"The Antikythera Mechanism\""
+		body="darkness #1\nfeatures audio from the film 5 Centimeters per Second\n\ndarkness #3\nfeatures a photograph of Earth that... I can no longer track down the source of\n\ndarkness #6\nfeatures video from YouTube user maxxlover's channel\n\ndarkness #8\nfeatures visual art from xkcd#1190, \"Time\"\n\ndarkness #10\nfeatures the song \"13 Ghosts II\" by nine inch nails\n\ndarkness #12\nfeatures a melody inspired by bt's \"The Antikythera Mechanism\""
 	},
 	{
-		header="darknesss #14–17: Connection",
-		body="Luizsan\n• primary visual art\n\nMahendor\n• composed Connection's main theme\n\nLumisauVA\n• voice acting in Chapter 4\n\nkbts87\n• contributed visual art to Chapter 3\n\nEvocait\n• contributed visual art to Chapter 4"
+		header="darkness #14–17: Connection",
+		body="Art\n• Luizsan – primary visual art\n• kbts87 – additional visual art, chapter 3\n• Evocait – additional visual art, chapter 4\n\nMusic\n• Mahendor – composed Connection's main theme\n\nVoice Acting\n• quietly-turning – voice of Ben, chapters 3 & 4\n • LumisauVA – voice of Zoe, chapter 4\n\nWriting\n• Dan\n• Zelda"
 	},
 	{
 		header="darkness #19: Your Drifting Mind",
-		body="Evocait\n • digital art\n\nanairis_q\n• voice acting"
+		body="Art\n• Evocait – digital art\n\nVoice Acting\n• anairis_q – voice of Elli"
 	},
 	{
 		header="basement stories\n\n\n\n\n\nnon-original music",
 		body="pluto\n • watercolor\n• digital art\n• narrative consulting\n\n\n\n\nb1 – Distant Towers\n• \"Turning Inconsolate\" by The Flashbulb\n\nb2 – Hold On\n• \"saman\" and \"undir\" by Ólafur Arnalds"
+	},
+	{
+		header="darkness #1–20, basement stories 1 & 2",
+		body="All other materials, including writing, music, audio, visual art, video, programming, and general project direction are by quietly-turning."
 	},
 	{
 		header="Thanks",
