@@ -4,10 +4,10 @@ local SongPosition = GAMESTATE:GetPlayerState(player):GetSongPosition()
 local rate = SL.Global.ActiveModifiers.MusicRate
 
 -- -----------------------------------------------------------------------
--- reference to the BitmapText actor that will display elapsed time (current BitmapText)
-local curBMT
+-- reference to the BitmapText actor that will display remaining time
+local remBMT
 
--- simple flag used in the Update function to stop updating curBMT once the player runs out of life
+-- simple flag used in the Update function to stop updating remBMT once the player runs out of life
 local alive = true
 
 
@@ -45,6 +45,12 @@ else
 		totalseconds = song:GetLastSecond()
 	end
 end
+
+-- totalseconds is initilialzed in the engine as -1
+-- https://github.com/stepmania/stepmania/blob/6a645b4710/src/Song.cpp#L80
+-- and might not have ever been set to anything meaningful in edge cases
+-- e.g. ogg file is 5 seconds, ssc file has 1 tapnote occuring at beat 0
+if totalseconds < 0 then totalseconds = 0 end
 
 -- factor in MusicRate
 totalseconds = totalseconds / rate
@@ -92,8 +98,13 @@ if GAMESTATE:IsCourseMode() then
 	end
 end
 
--- variable scoped to this entire file, updated in CurrentSongChangedMessageCommand
--- so it can be included in calculatations in Update()
+-- use seconds_offset in CourseMode to initialize timer text
+-- for songs after the first
+-- (i.e. by the start of the 4th song, 6 minutes have already elapsed)
+--
+-- seconds_offset is scoped to this entire file and updated in
+-- CurrentSongChangedMessageCommand so it can be referenced
+-- from within Update()
 local seconds_offset = 0
 
 -- -----------------------------------------------------------------------
@@ -107,11 +118,11 @@ local Update = function(af, delta)
 	-- the beginnging depending on how the stepartist set the offset
 	-- don't show negative time; just use 0
 	if SongPosition:GetMusicSeconds() < 0 then
-		curBMT:settext(fmt(seconds_offset))
+		remBMT:settext(fmt(totalseconds - seconds_offset))
 		return
 	end
 
-	curBMT:settext( fmt((SongPosition:GetMusicSeconds() / rate) +  seconds_offset) )
+	remBMT:settext( fmt(clamp(totalseconds - seconds_offset - (SongPosition:GetMusicSeconds()/rate), 0, totalseconds)) )
 end
 
 -- -----------------------------------------------------------------------
@@ -140,17 +151,17 @@ af.CurrentSongChangedMessageCommand=function(self,params)
 end
 
 -- -----------------------------------------------------------------------
--- current time label
+-- remaining time label
 
 af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Elapsed") ),
+	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining") ),
 	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.833) end
 }
 
--- current time number
+-- remaining time number
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
-		curBMT = self
+		remBMT = self
 		self:horizalign(left):xy(0,0)
 	end,
 
@@ -159,7 +170,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 	-- their lifemeter and run out of life, but I don't see anything specifically being
 	-- broadcast for that.  So, this.
 	HealthStateChangedMessageCommand=function(self, params)
-		-- color time red if the player reaches a HealthState of Dead
+		-- color the BitmapText actor red if the player reaches a HealthState of Dead
 		if params.PlayerNumber == player and params.HealthState == "HealthState_Dead" then
 			self:diffuse(color("#ff3030"))
 			alive = false
@@ -185,9 +196,6 @@ af[#af+1] = LoadFont("Common Normal")..{
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		self:horizalign(left):xy(0,20)
-
-
-
 		self:settext( fmt(totalseconds) )
 	end
 }

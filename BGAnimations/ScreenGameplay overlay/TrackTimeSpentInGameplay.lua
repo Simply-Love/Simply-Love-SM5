@@ -1,7 +1,7 @@
 -- We want to be able to display the time spent in gameplay across the entire set
 -- for ScreenGameover.  We could call GAMESTATE:GetCurrentSong():MusicLengthSeconds(),
 -- store that, and sum each value at ScreenGameover, but that wouldn't (easily) handle
--- quitting/backing out of songs accurately.
+-- early quitting/escaping out of songs accurately.
 --
 -- So instead, calculate the duration of time actually spent in ScreenGameplay when its
 -- OffCommand is called.
