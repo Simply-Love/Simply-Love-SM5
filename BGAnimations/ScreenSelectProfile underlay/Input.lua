@@ -3,6 +3,15 @@ local af = args.af
 local scrollers = args.Scrollers
 local profile_data = args.ProfileData
 
+-- a simple boolean flag we'll use to ignore input once profiles have been
+-- selected and the screen's OffCommand has been queued.
+--
+-- aside: SM's screen class does have a RemoveInputCallback() method,
+-- but it needs a reference to the original input handler funtion as
+-- a passed-in argument, and that's tricky with how I've split
+-- ScreenSelectProfile's code across multiple files.
+local finished = false
+
 -- we need to calculate how many dummy rows the scroller was "padded" with
 -- (to achieve the desired transform behavior since I am not mathematically
 -- perspicacious enough to have done so otherwise).
@@ -59,6 +68,7 @@ Handle.Start = function(event)
 			end
 		end
 
+		finished = true
 		-- otherwise, play the StartButton sound
 		MESSAGEMAN:Broadcast("StartButton")
 		-- and queue the OffCommand for the entire screen
@@ -120,6 +130,7 @@ end
 
 
 local InputHandler = function(event)
+	if finished then return false end
 	if not event or not event.button then return false end
 	if (AutoStyle=="single" or AutoStyle=="double") and event.PlayerNumber ~= mpn then return false	end
 

@@ -247,15 +247,6 @@ local t = Def.ActorFrame {
 	}
 }
 
--- top mask
-t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(_screen.cx-self:GetWidth()/2, _screen.cy-107):MaskSource() end
-}
--- bottom mask
-t[#t+1] = Def.Quad{
-	InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(_screen.cx-self:GetWidth()/2, _screen.cy+107):MaskSource() end
-}
-
 -- get table of player avatars (underlying RageTextures, not full Sprite actors)
 local avatar_textures = LoadActor("./LoadAvatars.lua", {t, profile_data})
 

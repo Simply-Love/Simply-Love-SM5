@@ -52,6 +52,15 @@ local FrameBackground = function(c, player, w)
 			end
 		end,
 
+		-- top mask to hide scroller text
+		Def.Quad{
+			InitCommand=function(self) self:horizalign(left):vertalign(bottom):setsize(540,50):xy(-self:GetWidth()/2, -107):MaskSource() end
+		},
+		-- bottom mask to hide scroller text
+		Def.Quad{
+			InitCommand=function(self) self:horizalign(left):vertalign(top):setsize(540,120):xy(-self:GetWidth()/2, 107):MaskSource() end
+		},
+
 		-- border
 		Def.Quad{
 			InitCommand=function(self)
