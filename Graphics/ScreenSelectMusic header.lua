@@ -1,5 +1,4 @@
 local bmt_actor
-local DrawNinePanelPad = LoadActor( THEME:GetPathB("ScreenSelectStyle", "underlay/pad.lua") )
 
 -- -----------------------------------------------------------------------
 
@@ -114,7 +113,7 @@ af[#af+1] = LoadFont("Common Header")..{
 }
 
 -- P1 pad
-af[#af+1] = DrawNinePanelPad()..{
+af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectStyle", "underlay/pad.lua"), {nil, nil, 1, nil} )..{
 	InitCommand=function(self)
 		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and SL_WideScale(90, 105) or SL_WideScale(35, 41)))
 		self:y( SL_WideScale(22, 23.5) ):zoom(0.24)
@@ -128,7 +127,7 @@ af[#af+1] = DrawNinePanelPad()..{
 }
 
 -- P2 pad
-af[#af+1] = DrawNinePanelPad()..{
+af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectStyle", "underlay/pad.lua"), {nil, nil, 2, nil} )..{
 	InitCommand=function(self)
 		self:x(_screen.w - (PREFSMAN:GetPreference("MenuTimer") and SL_WideScale(70, 81) or SL_WideScale(15, 17)))
 		self:y( SL_WideScale(22, 23.5) ):zoom(0.24)
