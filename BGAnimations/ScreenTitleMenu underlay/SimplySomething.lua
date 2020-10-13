@@ -8,11 +8,11 @@ end
 
 
 -- -----------------------------------------------------------------------
-local style = ThemePrefs.Get("VisualTheme")
+local style = ThemePrefs.Get("VisualStyle")
 local image = "TitleMenu"
 
 -- see: watch?v=wxBO6KX9qTA etc.
-if FILEMAN:DoesFileExist("/Themes/"..THEME:GetCurThemeName().."/Graphics/_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/TitleMenuAlt (doubleres).png") then
+if FILEMAN:DoesFileExist("/Themes/"..THEME:GetCurThemeName().."/Graphics/_VisualStyles/"..ThemePrefs.Get("VisualStyle").."/TitleMenuAlt (doubleres).png") then
 	if math.random(1,100) <= 10 then image="TitleMenuAlt" end
 end
 

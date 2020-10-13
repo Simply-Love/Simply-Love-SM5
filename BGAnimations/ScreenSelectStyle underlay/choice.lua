@@ -17,13 +17,13 @@ local af = Def.ActorFrame{
 
 		self:zoom(0.5):xy( frame_x, _screen.cy + WideScale(0,10) )
 
-		if ThemePrefs.Get("VisualTheme")=="Gay" and not HolidayCheer() then
+		if ThemePrefs.Get("VisualStyle")=="Gay" and not HolidayCheer() then
 			self:bob():effectmagnitude(0,0,0):effectclock('bgm'):effectperiod(0.666)
 		end
 	end,
 	GainFocusCommand=function(self)
 		self:finishtweening():linear(0.125):zoom(1)
-		if ThemePrefs.Get("VisualTheme")=="Gay" and not HolidayCheer() then
+		if ThemePrefs.Get("VisualStyle")=="Gay" and not HolidayCheer() then
 			self:effectmagnitude(0,4,0)
 		end
 	end,
@@ -52,8 +52,8 @@ local af = Def.ActorFrame{
 		InitCommand=function(self)
 			self:shadowlength(1):y(37):zoom(0.5)
 		end,
-		GainFocusCommand=function(self) if ThemePrefs.Get("VisualTheme")=="Gay" then self:rainbowscroll(true) end end,
-		LoseFocusCommand=function(self) if ThemePrefs.Get("VisualTheme")=="Gay" then self:rainbowscroll(false) end end,
+		GainFocusCommand=function(self) if ThemePrefs.Get("VisualStyle")=="Gay" then self:rainbowscroll(true) end end,
+		LoseFocusCommand=function(self) if ThemePrefs.Get("VisualStyle")=="Gay" then self:rainbowscroll(false) end end,
 	}
 }
 

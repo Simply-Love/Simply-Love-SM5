@@ -7,7 +7,7 @@ local ColorSelected = false
 
 local NumHeartsToDraw = IsUsingWideScreen() and 11 or 7
 
-local style = ThemePrefs.Get("VisualTheme")
+local style = ThemePrefs.Get("VisualStyle")
 
 local text
 if style == "Gay" then

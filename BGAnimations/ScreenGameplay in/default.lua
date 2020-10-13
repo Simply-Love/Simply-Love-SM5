@@ -5,7 +5,7 @@ local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsL
 local text = ""
 local SongNumberInCourse = 0
 local SongsInCourse
-local style = ThemePrefs.Get("VisualTheme")
+local style = ThemePrefs.Get("VisualStyle")
 local assets = {
 	splode     = THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"),
 	minisplode = THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn minisplode")

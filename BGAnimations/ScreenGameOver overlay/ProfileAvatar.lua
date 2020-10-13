@@ -22,7 +22,7 @@ else
 			end
 		},
 		-- fallback visual (SL visual theme)
-		LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
+		LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualStyle") .."/SelectColor"))..{
 			InitCommand=function(self)
 				self:align(0,0):zoom(0.12):diffusealpha(0.9):xy(15, 10)
 			end

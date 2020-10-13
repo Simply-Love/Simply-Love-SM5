@@ -37,7 +37,7 @@ local af2 = Def.ActorFrame{
 	end,
 	BackgroundImageChangedMessageCommand=function(self)
 		if ThemePrefs.Get("RainbowMode") then
-			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
+			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualStyle") .. "/SharedBackground.png")
 			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
 		end
 	end,

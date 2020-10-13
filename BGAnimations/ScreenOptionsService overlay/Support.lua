@@ -1,6 +1,6 @@
 -- Simply Thonk needs render-to-texture, and render-to-texture doesn't work with SM5's D3D implementation
 local ThonkAndRTTOkay = function()
-	if ThemePrefs.Get("VisualTheme") == "Thonk" and not SupportsRenderToTexture() then
+	if ThemePrefs.Get("VisualStyle") == "Thonk" and not SupportsRenderToTexture() then
 		SM( THEME:GetString("ScreenThemeOptions", "ThonkRequiresRenderToTexture") )
 		return false
 	end
@@ -33,7 +33,7 @@ a.BeginCommand=function(self)
 	-- Aside: the engine does not broadcast anything when SM5's language is changed via ConfOption
 	--        and the engine does not expose any methods for setting the language directly using Lua.
 
-	-- Broadcast a message for "./BGAnimations/_shared background/" to listen for in case VisualTheme has changed.
+	-- Broadcast a message for "./BGAnimations/_shared background/" to listen for in case VisualStyle has changed.
 	-- This compensates for ThemePrefsRows' current lack of support for ExportOnChange() and SaveSelections().
 	MESSAGEMAN:Broadcast("BackgroundImageChanged")
 end

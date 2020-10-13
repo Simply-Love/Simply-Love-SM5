@@ -197,7 +197,7 @@ return Def.ActorFrame{
 								self:align(0,0):zoomto(avatar_dim,avatar_dim):diffuse(color("#283239aa"))
 							end
 						},
-						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualTheme") .."/SelectColor"))..{
+						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualStyle") .."/SelectColor"))..{
 							InitCommand=function(self)
 								self:align(0,0):zoom(0.09):diffusealpha(0.9):xy(13, 8)
 							end

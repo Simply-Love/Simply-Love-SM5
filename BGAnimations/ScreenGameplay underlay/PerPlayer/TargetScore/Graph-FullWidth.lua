@@ -98,21 +98,21 @@ if not SL[pn].ActiveModifiers.HideComboExplosions then
 			self:sleep(0.8):queuecommand("Init")
 		end,
 
-		LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
+		LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualStyle").."/GameplayIn splode"))..{
 			GradeChangedCommand=function(self)
 				self:diffusealpha(0):diffuse(GetCurrentColor(true))
 				self:rotationz(10):zoom(0):diffusealpha(0.9)
 				self:linear(0.6):rotationz(0):zoom(0.5):diffusealpha(0)
 			end
 		},
-		LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
+		LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualStyle").."/GameplayIn splode"))..{
 			GradeChangedCommand=function(self)
 				self:diffusealpha(0):diffuse(GetCurrentColor(true))
 				self:rotationy(180):rotationz(-10):zoom(0.2):diffusealpha(0.8)
 				self:decelerate(0.6):rotationz(0):zoom(0.7):diffusealpha(0)
 			end
 		},
-		LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn minisplode"))..{
+		LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualStyle").."/GameplayIn minisplode"))..{
 			GradeChangedCommand=function(self)
 				self:diffusealpha(0):diffuse(GetCurrentColor(true))
 				self:rotationz(10):zoom(0):diffusealpha(1)

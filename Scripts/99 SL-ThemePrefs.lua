@@ -70,7 +70,7 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "none", "single", "versus", "double" }
 		},
-		VisualTheme =
+		VisualStyle =
 		{
 			Default = "Hearts",
 			 -- emojis are our lingua franca for the 21st century

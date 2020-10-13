@@ -21,7 +21,7 @@ for i=1,7 do
 		InitCommand=function(self) self:x((i-4) * 50):diffusealpha(0) end,
 		OnCommand=function(self)
 			-- thonk
-			if ThemePrefs.Get("VisualTheme")=="Thonk" then
+			if ThemePrefs.Get("VisualStyle")=="Thonk" then
 				self:diffusealpha(1):rotationy(-90):sleep(i*0.1 + 0.2)
 				self:smooth(0.25):rotationy(0):sleep(0.8):bouncebegin(0.8):y(_screen.h)
 			-- everything else
@@ -41,7 +41,7 @@ for i=1,7 do
 	}
 
 	-- only add Thonk asset if needed
-	if ThemePrefs.Get("VisualTheme")=="Thonk" then
+	if ThemePrefs.Get("VisualStyle")=="Thonk" then
 		arrow[#arrow+1] = LoadActor("thonk.png")..{
 			InitCommand=function(self) self:zoom(0.1):xy(6,-2) end,
 		}

@@ -21,7 +21,7 @@ local t = Def.ActorFrame {
 		if not ThemePrefs.Get("RainbowMode") then
 			self:visible(true):linear(0.6):diffusealpha(1)
 
-			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualTheme") .. "/SharedBackground.png")
+			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualStyle") .. "/SharedBackground.png")
 			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
 		else
 			self:linear(0.6):diffusealpha(0):queuecommand("Hide")

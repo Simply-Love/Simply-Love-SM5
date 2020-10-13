@@ -429,7 +429,7 @@ end
 -- -----------------------------------------------------------------------
 -- "The chills, I have them down my spine."
 IsSpooky = function()
-	return (PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==9 and ThemePrefs.Get("VisualTheme")=="Spooky")
+	return (PREFSMAN:GetPreference("EasterEggs") and MonthOfYear()==9 and ThemePrefs.Get("VisualStyle")=="Spooky")
 end
 
 -- -----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 local color1 = GetHexColor(SL.Global.ActiveColorIndex-1, true)
 local color2 = GetHexColor(SL.Global.ActiveColorIndex, true)
-local style = ThemePrefs.Get("VisualTheme")
+local style = ThemePrefs.Get("VisualStyle")
 
 local assets = {}
 assets.flycenter = THEME:GetPathG("", "_VisualStyles/".. style .."/TitleMenu flycenter")
