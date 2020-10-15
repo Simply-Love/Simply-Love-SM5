@@ -3,13 +3,17 @@ local PlayerState  = GAMESTATE:GetPlayerState(player)
 local SongPosition = GAMESTATE:GetPlayerState(player):GetSongPosition()
 local rate = SL.Global.ActiveModifiers.MusicRate
 
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+
 -- -----------------------------------------------------------------------
 -- reference to the BitmapText actor that will display remaining time
 local remBMT
+-- how wide (in visual pixels) the total time is, used to offset the label
+local total_width
 
 -- simple flag used in the Update function to stop updating remBMT once the player runs out of life
 local alive = true
-
 
 -- -----------------------------------------------------------------------
 -- prefer the engine's SecondsToHMMSS()
@@ -130,7 +134,17 @@ end
 local af = Def.ActorFrame{}
 af.InitCommand=function(self)
 	self:SetUpdateFunction(Update)
-	self:xy(-85,-50)
+	self:x(SL_WideScale(150,202) * (player==PLAYER_1 and -1 or 1))
+	self:y(-40)
+
+	if NoteFieldIsCentered and IsUsingWideScreen() then
+		self:x( 154 * (player==PLAYER_1 and -1 or 1) )
+	end
+
+	-- flip alignment when ultrawide and both players joined
+	if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+		self:x(self:GetX() * -1)
+	end
 end
 
 af.CurrentSongChangedMessageCommand=function(self,params)
@@ -151,18 +165,19 @@ af.CurrentSongChangedMessageCommand=function(self,params)
 end
 
 -- -----------------------------------------------------------------------
--- remaining time label
-
-af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining") ),
-	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.833) end
-}
-
 -- remaining time number
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		remBMT = self
-		self:horizalign(left):xy(0,0)
+		self:x(0)
+		self:halign(PlayerNumber:Reverse()[player]):vertalign(bottom)
+
+		-- flip alignment and adjust for smaller pane size
+		-- when ultrawide and both players joined
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+			self:x(50 * (player==PLAYER_1 and -1 or 1))
+		end
 	end,
 
 	-- HealthStateChanged is going to be broadcast quite a bit by the engine.
@@ -178,27 +193,87 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end
 }
 
--- -----------------------------------------------------------------------
--- total time label
--- "song" in normal gameplay, "course" in CourseMode
-
+-- remaining time label
 af[#af+1] = LoadFont("Common Normal")..{
+	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining") ),
 	InitCommand=function(self)
-		self:horizalign(right):xy(-6, 20):zoom(0.833)
+		self:halign(PlayerNumber:Reverse()[player]):vertalign(bottom)
+		self:zoom(0.833)
 
-		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course") or THEME:GetString("ScreenGameplay", "Song")
-		self:settext( ("%s "):format(s) )
+		-- flip alignment and adjust for smaller pane size
+		-- when ultrawide and both players joined
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+			self:x(50 * (player==PLAYER_1 and -1 or 1))
+		end
+	end,
+	OnCommand=function(self)
+		if player==PLAYER_1 then
+			self:x( 32 + (total_width-28))
+		else
+			self:x(-32 - (total_width-28))
+		end
+
+		-- flip offset when ultrawide and both players
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			if player==PLAYER_1 then
+				self:x(-86 - (total_width-28))
+			else
+				self:x( 86 + (total_width-28))
+			end
+		end
 	end
 }
 
+-- -----------------------------------------------------------------------
 -- total time number
 -- song duration in normal gameplay, overall course duration in CourseMode
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
-		self:horizalign(left):xy(0,20)
+		self:xy(0,20)
+		self:halign(PlayerNumber:Reverse()[player]):vertalign(bottom)
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+			self:x(50 * (player==PLAYER_1 and -1 or 1))
+		end
+
 		self:settext( fmt(totalseconds) )
+		total_width = self:GetWidth()
 	end
 }
+
+-- total time label
+-- "song" in normal gameplay, "course" in CourseMode
+af[#af+1] = LoadFont("Common Normal")..{
+	InitCommand=function(self)
+		self:zoom(0.833)
+		self:halign(PlayerNumber:Reverse()[player]):vertalign(bottom)
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+		end
+
+		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course") or THEME:GetString("ScreenGameplay", "Song")
+		self:settext( ("%s "):format(s) )
+	end,
+	OnCommand=function(self)
+		if player==PLAYER_1 then
+			self:x(32 + (total_width-28))
+		else
+			self:x(-32 - (total_width-28))
+		end
+		self:y(20)
+
+		-- flip offset when ultrawide and both players
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			if player==PLAYER_1 then
+				self:x(-86 - (total_width-28))
+			else
+				self:x( 86 + (total_width-28))
+			end
+		end
+	end
+}
+
 -- -----------------------------------------------------------------------
 
 return af

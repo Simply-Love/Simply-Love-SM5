@@ -28,7 +28,7 @@ local sidepane_width  = _screen.w/2
 local sidepane_pos_x  = _screen.w * (player==PLAYER_1 and 0.75 or 0.25)
 
 if not IsUltraWide then
-	if NoteFieldIsCentered and IsUsingWideScreen()  then
+	if NoteFieldIsCentered and IsUsingWideScreen() then
 		sidepane_width = (_screen.w - GetNotefieldWidth()) / 2
 
 		if player==PLAYER_1 then
@@ -49,7 +49,6 @@ else
 		end
 	end
 end
-
 
 -- -----------------------------------------------------------------------
 
@@ -87,8 +86,8 @@ af[#af+1] = Def.ActorFrame{
 	end,
 
 	LoadActor("./Banner.lua", player),
-	LoadActor("./JudgmentLabels.lua", player),
-	LoadActor("./JudgmentNumbers.lua", player),
+	LoadActor("./TapNoteJudgments.lua", player),
+	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
 }
 

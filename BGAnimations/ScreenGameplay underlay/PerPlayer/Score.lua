@@ -80,7 +80,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 				-- but current conditions might be such that it won't actually appear.
 				-- Ensure the StepStats ActorFrame is present before trying to traverse it.
 				if step_stats then
-					local judgmentnumbers = step_stats:GetChild("BannerAndData"):GetChild("JudgmentNumbers"):GetChild("")[1]
+					local judgmentnumbers = step_stats:GetChild("BannerAndData"):GetChild("TapNoteJudgments"):GetChild("")[1]
 
 					-- -----------------------------------------------------------------------
 					-- FIXME: "padding" is a lazy fix for multiple nested ActorFrames having zoom applied and
