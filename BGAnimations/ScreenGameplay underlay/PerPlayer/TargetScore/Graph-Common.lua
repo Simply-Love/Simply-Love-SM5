@@ -2,9 +2,9 @@ local player, pss, isTwoPlayers, pos_data, target_score, use_smaller_graph = unp
 local pn = ToEnumShortString(player)
 
 -- ---------------------------------------------------------------
--- some flags that will help us determine what to draw and where to draw it
-
-local bothWantBars = isTwoPlayers and (SL.P1.ActiveModifiers.DataVisualizations == "Target Score Graph") and (SL.P2.ActiveModifiers.DataVisualizations == "Target Score Graph")
+local bothWantBars =   isTwoPlayers
+                   and (SL.P1.ActiveModifiers.DataVisualizations == "Target Score Graph")
+                   and (SL.P2.ActiveModifiers.DataVisualizations == "Target Score Graph")
 
 -- ---------------------------------------------------------------
 -- some helper functions local to this file

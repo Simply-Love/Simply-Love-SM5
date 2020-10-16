@@ -43,64 +43,50 @@ local pacemaker = Def.BitmapText{
 	end
 }
 
--- FIXME: rewrite this code to position the Pacemaker bmt soon
 --------------------------------------------------------------
---[[
 -- if the player wanted the Pacemaker mod
+
 if SL[pn].ActiveModifiers.Pacemaker then
 
 	pacemaker.InitCommand=function(self)
 
-		local nf_cx    = GetNotefieldX(player)
-		local nf_width = GetNotefieldWidth()
-
-		local noteX = nf_width / 4 -- ???
-		local noteY = 56
+		local isCentered = (GetNotefieldX(player) == _screen.cx)
+		local _y = 56
 		local zoomF = 0.4
 
+		local _x = {
+			[PLAYER_1] = GetNotefieldX(PLAYER_1) + 64,
+			[PLAYER_2] = GetNotefieldX(PLAYER_2) - 64
+		}
 
-		-- non-symmetry kludge; nudge PLAYER_2's pacemaker text to the left so that it
-		-- doesn't possibly overlap with the percent score text.  this is necessary because
-		-- P1 and P2 percent scores are not strictly symmetrical around the horizontal middle
-		if (player ~= PLAYER_1 and isTwoPlayers) then
-			noteX = noteX + 25
+		if isTwoPlayers and SL[pn].ActiveModifiers.NPSGraphAtTop then
+			_x[PLAYER_1] = GetNotefieldX(PLAYER_1) - 128
+			_x[PLAYER_2] = GetNotefieldX(PLAYER_2) + 128
+			_y = 84
 		end
 
+		self:horizalign(center):zoom(zoomF)
+		self:y(_y)
+		self:x( _x[player] )
 
-		-- flip x-coordinate based on player
-		if (player ~= PLAYER_1) then
-			noteX = -1 * noteX
-		end
-		noteX = noteX + nf_cx
-
-		self:horizalign(center):xy( noteX, noteY ):zoom(zoomF)
-
-		-- FIXME: Theme elements start to visually overlap in the following circumstance:
-		-- a 4:3 display is in use, and both have the NPSGraphAtTop enabled, and both have the
-		-- Pacemaker enabled, AND they are playing different charts in the same song that
-		-- feature "split BPMs" (i.e. steps timing).  It's unlikely, but possible.
-
-		if SL[pn].ActiveModifiers.NPSGraphAtTop then
-
-			-- if the playfield is centered (Center1Player, double, dance solo, routine, techno8, etc.)
-			if GetNotefieldX(player) == _screen.cx then
-				-- self:addx((player==PLAYER_1 and 10 or -10 ))
+		if (not isTwoPlayers) and SL[pn].ActiveModifiers.NPSGraphAtTop then
+			if not isCentered then
+				self:x( _x[OtherPlayer[player]] )
 			else
-				self:addx((player==PLAYER_1 and (nf_width/2.75) or -(nf_width/3.5) ))
+				self:x( _x[player] + (82 * (player==PLAYER_1 and 1 or -1)) )
 			end
 		end
 	end
---]]
---------------------------------------------------------------
 
+--------------------------------------------------------------
 -- the player didn't want the Pacemaker mod
 
--- else
+else
 	pacemaker.InitCommand=function(self)
 		-- so don't bother with any of the (above) positioning code
 		-- and don't even draw the BitmapText actor
 		self:visible(false)
 	end
--- end
+end
 
 return pacemaker

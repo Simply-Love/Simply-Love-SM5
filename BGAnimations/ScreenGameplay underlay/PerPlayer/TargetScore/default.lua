@@ -6,14 +6,14 @@
 -- ineffable fire described by quietly-turning
 
 -- ---------------------------------------------------------------
+-- nothing handled by this file applies to or should appear in Casual mode
+if SL.Global.GameMode == "Casual" then return end
+
+-- ---------------------------------------------------------------
 -- first, the usual suspects
 
 local player = ...
 local pn = ToEnumShortString(player)
-
--- ---------------------------------------------------------------
--- nothing handled by this file applies to or should appear in Casual mode
-if SL.Global.GameMode == "Casual" then return end
 
 -- ---------------------------------------------------------------
 -- Make sure that someone requested *something* from this file.
