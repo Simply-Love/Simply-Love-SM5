@@ -84,6 +84,7 @@ local text = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		self:zoom(0.9)
 		self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+		self:vertalign(bottom)
 
 		-- flip alignment if ultrawide and both players joined because the pane
 		-- will now appear on the player's side of the screen rather than opposite
