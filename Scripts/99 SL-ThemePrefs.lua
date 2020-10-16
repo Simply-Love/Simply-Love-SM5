@@ -101,37 +101,37 @@ SL_CustomPrefs.Get = function()
 		ScreenSelectMusicMenuTimer =
 		{
 			Default = 300,
-			Choices = SecondsToMMSS_range(60, 450, 15),
+			Choices = map(SecondsToMSS, range(60, 450, 15)),
 			Values  = range(60, 450, 15),
 		},
 		ScreenSelectMusicCasualMenuTimer =
 		{
 			Default = 300,
-			Choices = SecondsToMMSS_range(60, 450, 15),
+			Choices = map(SecondsToMSS, range(60, 450, 15)),
 			Values  = range(60, 450, 15),
 		},
 		ScreenPlayerOptionsMenuTimer =
 		{
 			Default = 90,
-			Choices = SecondsToMMSS_range(30, 450, 15),
+			Choices = map(SecondsToMSS, range(30, 450, 15)),
 			Values  = range(30, 450, 15),
 		},
 		ScreenEvaluationMenuTimer =
 		{
 			Default = 60,
-			Choices = SecondsToMMSS_range(15, 450, 15),
+			Choices = map(SecondsToMSS, range(15, 450, 15)),
 			Values  = range(15, 450, 15),
 		},
 		ScreenEvaluationSummaryMenuTimer =
 		{
 			Default = 60,
-			Choices = SecondsToMMSS_range(30, 450, 15),
+			Choices = map(SecondsToMSS, range(30, 450, 15)),
 			Values  = range(30, 450, 15),
 		},
 		ScreenNameEntryMenuTimer =
 		{
 			Default = 60,
-			Choices = SecondsToMMSS_range(15, 450, 15),
+			Choices = map(SecondsToMSS, range(15, 450, 15)),
 			Values  = range(15, 450, 15),
 		},
 

@@ -88,8 +88,8 @@ OperatorMenuOptionRows.LongAndMarathonTime = function( str )
 	-- 300 seconds is 5   minutes
 	-- 600 seconds is 10  minutes
 	local choices = {
-		Long=    {Choices=SecondsToMMSS_range(150, 300, 15), Values=range(150, 300, 15)},
-		Marathon={Choices=SecondsToMMSS_range(300, 600, 15), Values=range(300, 600, 15)}
+		Long=    {Choices=map(SecondsToMSS, range(150, 300, 15)), Values=range(150, 300, 15)},
+		Marathon={Choices=map(SecondsToMSS, range(300, 600, 15)), Values=range(300, 600, 15)}
 	}
 
 	-- 999999 seconds ≅ 11 days, 13 hours
@@ -295,7 +295,7 @@ end
 
 OperatorMenuOptionRows.CustomSongsMaxSeconds = function()
 	-- first, define a reasonable range of 1:45 to 15:00
-	local choices = SecondsToMMSS_range(105,900,15)
+	local choices = map(SecondsToMSS, range(105,900,15))
 	local values  = range(105,900,15)
 	-- top it off by including 2 hours as a choice
 	table.insert(choices, "2:00:00")
