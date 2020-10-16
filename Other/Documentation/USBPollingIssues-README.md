@@ -14,7 +14,7 @@ StarlightLumi wrote a guide for modifying L-Tek Dance Pads to poll at 1000 Hz:
 StarlightLumi's L-TEK guide was based on original code and efforts by [natano](https://github.com/natano):<br/>
 https://www.natano.net/blog/2019-12-14-usb-polling-adventure/
 
-# Modifying Windows
+# Windows
 
 [sahunt](https://github.com/sahunt) has a guide on modifying Windows to poll at 1000 Hz:<br/>
 https://www.hackmycab.com/?portfolio=usb-polling

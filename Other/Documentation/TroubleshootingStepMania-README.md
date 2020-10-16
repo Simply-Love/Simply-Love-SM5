@@ -1,14 +1,14 @@
 ## Windows
 
-Follow along with the StepMania installer, ensuring that you **do not install to Program Files** to avoid conflicts with Windows UAC.  By default, the installer will install to `C:\Games\` and this is recommended.
+**1.** Follow along with the StepMania installer, ensuring that you **do not install to Program Files** to avoid conflicts with Windows UAC.  By default, the installer will install to `C:\Games\` and this is recommended.
 
-You'll likely need Microsoft's [Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145).
+**2.** You'll likely need Microsoft's [Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145).
 
-You'll also need to have Microsoft's [DirectX 9 runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=35).  It's possible you already have the DirectX 9 runtime installed, but if StepMania crashes with <strong>d3dx9_43.dll was not found</strong> or <strong>XINPUT1_3.dll is missing</strong>, you don't, and will need it first.
+**3.** You'll also need to have Microsoft's [DirectX 9 runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=35).  It's possible you already have it installed from something else, but if StepMania crashes with <strong>d3dx9_43.dll was not found</strong> or <strong>XINPUT1_3.dll is missing</strong>, you don't, and you'll need to install it.
 
 ## macOS
 
-#### 10.15 Catalina
+### 10.15 Catalina
 
 macOS 10.15 (Catalina) dropped support for 32-bit apps.  As a result, the most recent release of StepMania (SM5.1-beta2) is not compatible with macOS 10.15.
 

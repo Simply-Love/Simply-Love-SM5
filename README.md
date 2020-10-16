@@ -102,31 +102,40 @@ Refer to the [Features README](./Other/Documentation/Features-README.md) for a b
 Guide by Rob Nichols:
 [Player Options Menu](https://robnicholsgames.com/2020/04/13/how-to-setup-stepmania-for-modern-dance-gaming/#menus)
 
-### 4-Panel Dance Pads
-
-An excellent summary of 4-panel dance pad options in 2020 by Dom ITG:<br/>
-https://www.youtube.com/watch?v=sEWj2_BNG_0
-
 ### Custom Songs from USB
 
 [Custom Songs from USB](./Other/Documentation/CustomSongsFromUSB-README.md)
 
-### USB Polling Issues
-
-[USB Polling Issues](./Other/Documentation/USBPollingIssues-README.md)
-
 ### Casual Mode
 
-Casual Mode was designed with public arcade machines and casual players in mind.<br/>
-Learn more here: [Casual Mode](./Other/Documentation/CasualMode-README.md)
+<p>Casual Mode was designed with public arcade machines and casual players in mind. Learn more here:</p>
+
+[Casual Mode](./Other/Documentation/CasualMode-README.md)
 
 ### Tips for installing StepMania
 
 [Troubleshooting StepMania](./Other/Documentation/TroubleshootingStepMania-README.md)
 
-### Arcade Hardware
 
-din maintains a Linux image for running SM5 on common arcade hardware.
-It streamlines the setup process for those who have arcade hardware and
-want to start playing as quickly as possible.<br/>
-https://dinsfire.com/itgimage
+## Hardware Guides
+
+### Buying a 4-Panel Dance Pad
+
+*Dom ITG* has an excellent summary of 4-panel dance pad available in 2020:<br/>
+https://www.youtube.com/watch?v=sEWj2_BNG_0
+
+### USB Polling Issues
+
+[USB Polling Issues](./Other/Documentation/USBPollingIssues-README.md)
+
+### Linux for a Dedicated SM5 PC
+
+<p>
+  din maintains a Linux image for running SM5 on common arcade hardware:<br/>
+  https://dinsfire.com/itgimage
+</p>
+
+<p>
+  It streamlines the setup process for those who have arcade hardware and
+  want to start playing as quickly as possible.
+</p>
