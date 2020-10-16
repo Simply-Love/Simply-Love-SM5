@@ -9,10 +9,10 @@ style  = style  or (GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():
 local zoom = SL_WideScale(0.435, 0.525)
 local game = GAMESTATE:GetCurrentGame():GetName()
 
-local init_panel = function(self, col, row)
-	self:zoom(zoom)
-	self:x(zoom * self:GetWidth()  * (col-1))
-	self:y(zoom * self:GetHeight() * (row-2))
+local init_panel = function(self, col, row, z)
+	self:zoom(z)
+	self:x(z * self:GetWidth()  * (col-1))
+	self:y(z * self:GetHeight() * (row-2))
 	return self
 end
 
@@ -28,28 +28,6 @@ local layouts = {
 
 local pad = Def.ActorFrame{}
 
-if IsSpooky() then
-	local spooky_bpm = 120
-	local spooky_bps = spooky_bpm/60
-	local globalOffset = PREFSMAN:GetPreference("GlobalOffsetSeconds")
-	local footspeed, old_footspeed = false, nil
-
-	local Update = function(self, delta)
-		beat = (self:GetSecsIntoEffect() + globalOffset) * (spooky_bps)
-		footspeed = (beat >= 48 and beat < 80)
-		if footspeed ~= old_footspeed then
-			old_footspeed = footspeed
-			self:playcommand(footspeed and "Footspeed" or "NotFootspeed")
-		end
-	end
-
-	pad.OnCommand=function(self)
-		if SCREENMAN:GetTopScreen():GetName()=="ScreenSelectStyle" then
-			self:effectclock('music'):SetUpdateFunction( Update )
-		end
-	end
-end
-
 for row=0,2 do
 	for col=0,2 do
 		local panel_index = row*3+col+1
@@ -59,12 +37,7 @@ for row=0,2 do
 		panel_af.SetCommand=function(self, params)
 			local layout = layouts[game] or layouts.dance
 
-			-- simplify the style string to handle technomotion's single8 and double8
-			style = style:gsub("8", "")
-
-			if   game=="dance"
-			and style=="solo"
-			then
+			if game=="dance" and style=="solo" then
 				layout = layouts.solo
 			end
 
@@ -75,11 +48,11 @@ for row=0,2 do
 				layout = layouts.inactive
 			end
 
-			self:playcommand("Reassess", layout)
+			self:GetParent():playcommand("Reassess", layout)
 		end
 
 		panel_af[#panel_af+1] = LoadActor("rounded-square.png")..{
-			InitCommand=function(self) init_panel(self, col, row) end,
+			InitCommand=function(self) init_panel(self, col, row, zoom) end,
 			ReassessCommand=function(self, layout)
 				if layout[panel_index] then
 					self:diffuse(color_used)
@@ -89,24 +62,15 @@ for row=0,2 do
 			end
 		}
 
-		-- -----------------------------------------------------------------------
-		-- setup specific to IsSpooky() is mostly off in
-		-- ExtraSpooky.lua in order to keep this file less cluttered
-		if IsSpooky() then
-			local spider = LoadActor("./ExtraSpooky.lua", {game, style, padNum, panel_index})
-			spider.InitCommand=function(self)
-				init_panel(self, col, row)
-			end
-			spider.ReassessCommand=function(self, layout)
-				self:visible( layout[panel_index] )
-			end
-
-			panel_af[#panel_af+1] = spider
-		end
-		-- -----------------------------------------------------------------------
-
 		pad[#pad+1] = panel_af
 	end
 end
+
+-- -----------------------------------------------------------------------
+-- https://www.youtube.com/watch?v=PKx_ihQ7mrY&lc=UgxXSurH391nm907OEh4AaABAg
+if IsSpooky() then
+	pad[#pad+1] = LoadActor("./ExtraSpooky.lua", {game, style, padNum, zoom, init_panel})
+end
+-- -----------------------------------------------------------------------
 
 return pad

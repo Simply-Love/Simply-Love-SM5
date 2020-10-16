@@ -1,4 +1,5 @@
-local game, style, padNum, panel_index = unpack(...)
+local game, style, padNum,
+      zoom, init_panel = unpack(...)
 
 local rotations = {
 	315,   0,  45,
@@ -90,21 +91,115 @@ num_panels.kb7   = num_panels.dance
 num_panels.para  = num_panels.dance
 
 -- -----------------------------------------------------------------------
+local action_index = 1
+local actions = {
+	{  0,    function(_af) _af:playcommand("Normal") end },
 
-return LoadActor( THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Spider.png") )..{
-	OnCommand=function(self)
-		self:rotationz(rotations[panel_index])
-		self:diffuseblink():effectcolor1(0,0,0,1):effectcolor2(1,1,1,1)
-		self:effectclock("beatnooffset")
-	end,
-	NotFootspeedCommand=function(self)
-		self:effectoffset(effect_offsets[game][style][padNum][panel_index])
-		self:effectperiod(2)
-		self:effecttiming(0,0,0, 0.5, num_panels[game][style] - 0.5)
-	end,
-	FootspeedCommand=function(self)
-		self:effectoffset(effect_offsets[game][style][padNum][panel_index]*0.25)
-		self:effectperiod(0.5)
-		self:effecttiming(0,0,0, 0.125, num_panels[game][style]*0.25 - 0.125)
-	end
+	{  6.50, function(_af) _af:playcommand("AllOn")  end },
+	{  6.75, function(_af) _af:playcommand("AllOff") end },
+	{  7,    function(_af) _af:playcommand("AllOn")  end },
+	{  7.25, function(_af) _af:playcommand("Normal") end },
+
+	{ 14.5,  function(_af) _af:playcommand("AllOn")  end },
+	{ 14.75, function(_af) _af:playcommand("AllOff") end },
+	{ 15,    function(_af) _af:playcommand("AllOn")  end },
+	{ 15.25, function(_af) _af:playcommand("Normal") end },
+
+	{ 22.5,  function(_af) _af:playcommand("AllOn")  end },
+	{ 22.75, function(_af) _af:playcommand("AllOff") end },
+	{ 23,    function(_af) _af:playcommand("AllOn")  end },
+	{ 23.25, function(_af) _af:playcommand("Normal") end },
+
+	{ 30.5,  function(_af) _af:playcommand("AllOn")  end },
+	{ 30.75, function(_af) _af:playcommand("AllOff") end },
+	{ 31,    function(_af) _af:playcommand("AllOn")  end },
+	{ 31.25, function(_af) _af:playcommand("Normal") end },
+
+	{ 38.5,  function(_af) _af:playcommand("AllOn")  end },
+	{ 38.75, function(_af) _af:playcommand("AllOff") end },
+	{ 39,    function(_af) _af:playcommand("AllOn")  end },
+	{ 39.25, function(_af) _af:playcommand("Normal") end },
+
+	{ 46.5,  function(_af) _af:playcommand("AllOn")  end },
+	{ 46.75, function(_af) _af:playcommand("AllOff") end },
+	{ 47,    function(_af) _af:playcommand("AllOn")  end },
+	{ 47.25, function(_af) _af:playcommand("Normal") end },
+
+	{ 48,   function(_af) _af:playcommand("Footspeed") end },
+	{ 80,   function(_af) _af:playcommand("Normal")    end },
+
+	{ 95.75,   function(_af) _af:playcommand("AllOff"); action_index = 1 end },
 }
+
+local spooky_bpm = 120
+local spooky_bps = spooky_bpm/60
+local globalOffset = PREFSMAN:GetPreference("GlobalOffsetSeconds")
+local footspeed, old_footspeed = false, nil
+
+local Update = function(self, delta)
+	beat = (self:GetSecsIntoEffect() + globalOffset) * (spooky_bps)
+
+	if beat >= actions[action_index][1] then
+		actions[action_index][2](self)
+
+		action_index = action_index + 1
+
+		if action_index > #actions then
+			action_index = 1
+		end
+	end
+end
+
+-- -----------------------------------------------------------------------
+
+local af = Def.ActorFrame{}
+af.OnCommand=function(self)
+	if SCREENMAN:GetTopScreen():GetName()=="ScreenSelectStyle" then
+		self:effectclock('music'):SetUpdateFunction( Update )
+	end
+end
+
+
+for row=0,2 do
+	for col=0,2 do
+		local panel_index = row*3+col+1
+
+		af[#af+1] = LoadActor( THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Spider.png") )..{
+			InitCommand=function(self)
+				init_panel(self, col, row, zoom)
+			end,
+			ReassessCommand=function(self, layout)
+				self:visible( layout[panel_index] )
+			end,
+			OnCommand=function(self)
+				self:stopeffect()
+				self:rotationz(rotations[panel_index]):diffuse(0,0,0,1)
+				self:playcommand("Normal")
+			end,
+
+			AllOnCommand=function(self)
+				self:diffuseblink():effectcolor1(1,1,1,1):effectcolor2(1,1,1,1):effectperiod(spooky_bps)
+			end,
+			AllOffCommand=function(self)
+				self:diffuseblink():effectcolor1(0,0,0,1):effectcolor2(0,0,0,1):effectperiod(spooky_bps)
+			end,
+
+			NormalCommand=function(self)
+				self:diffuseblink():effectcolor1(0,0,0,1):effectcolor2(1,1,1,1)
+				self:effectclock("beatnooffset")
+				self:effectoffset(effect_offsets[game][style][padNum][panel_index])
+				self:effectperiod(2)
+				self:effecttiming(0,0,0, 0.5, num_panels[game][style] - 0.5)
+			end,
+			FootspeedCommand=function(self)
+				self:diffuseblink():effectcolor1(0,0,0,1):effectcolor2(1,1,1,1)
+				self:effectclock("beatnooffset")
+				self:effectoffset(effect_offsets[game][style][padNum][panel_index]*0.25)
+				self:effectperiod(0.5)
+				self:effecttiming(0,0,0, 0.125, num_panels[game][style]*0.25 - 0.125)
+			end,
+		}
+	end
+end
+
+return af
