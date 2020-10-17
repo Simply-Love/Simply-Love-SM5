@@ -24,46 +24,59 @@
 
 -- a troubled sea 🌊
 
-local max_width = 435
+local max_width = 400
 local quote_bmts = {}
 local quote_line
 local font_zoom = 0.975
 local count = 1
 local bgm_volume = 1
 
+local time_at_start, storm_audio
+local storm_loops = 1
+
 local onset, panic
 local will_to_fight = 22.5
 
 local update = function(af, dt)
-	if count ~= 6 then return end
+	if count >= 7 then return end
 
-	panic = GetTimeSinceStart() - onset
-	local mag = 0
-
-	if panic > will_to_fight then
-		af:queuecommand("Next")
-
-	-- squared ramp isn't quite right; this is awkward but good enough
-	elseif panic < 17 then
-		mag = scale(panic, 0, 17, 0, 1.25)
-	elseif panic >= 16 and panic < 20 then
-		mag = scale(panic, 17, will_to_fight, 1.25, 5)
-	elseif panic >= 20 then
-		mag = scale(panic, 20, will_to_fight, 5, 50)
+	-- loop storm.ogg while needed
+	if type(time_at_start) == "number" then
+		if (GetTimeSinceStart() - time_at_start) > (120 * storm_loops) then
+			storm_audio:queuecommand("On")
+			storm_loops = storm_loops + 1
+		end
 	end
 
-	quote_bmts[6]:vibrate():effectmagnitude(mag, mag, mag)
+	if count == 6 then
+		panic = GetTimeSinceStart() - onset
+		local mag = 0
+
+		if panic > will_to_fight then
+			af:queuecommand("Next")
+
+		-- squared ramp isn't quite right; this is awkward but good enough
+		elseif panic < 17 then
+			mag = scale(panic, 0, 17, 0, 1.25)
+		elseif panic >= 16 and panic < 20 then
+			mag = scale(panic, 17, will_to_fight, 1.25, 5)
+		elseif panic >= 20 then
+			mag = scale(panic, 20, will_to_fight, 5, 50)
+		end
+
+		quote_bmts[6]:vibrate():effectmagnitude(mag, mag, mag)
+	end
 end
 
 local quotes = {
 	"But the wicked are like a troubled sea\nthat knows no rest\nwhose waves cast up mire and mud.",
 	"I always want to retroactively apply the question \"why,\" despite what actually occurs in the moment.\n\nAfter waking, I try to imagine myself asking why.\n\nWhy are you doing this?\nWhy can't I move?\nWhy are you holding me down? \nWhy are you putting your mouth on me? \nWhy can't I scream?\nWhy?",
 	"The truth is that in the moment, I don't pause to ask why. Maybe there isn't time, or maybe I'm too taken by panic to reason. I don't know.\n\nThe reality is that there are only raw emotions and non-verbal feelings.",
-	"It starts as discomfort as I gain awareness that you are holding me down. It doesn't matter how I got here; I am here again.\n\nThe discomfort quickly rises within me, transforming to fear as I understand that I cannot move a muscle. My arms, my legs, my mouth–all unable to respond. Fear overwhelms me so quickly, as though I am a drinking glass being filled with a terrible ocean.",
-	"Is it instantaneous? The question is meaningless. There is no understanding of time here. The previous fear gives way to new terror. What was the previous thing that happened? The previous feeling I experienced? They are gone, one moment violently torn away by the furious storm as a new one is swept in to replace it.",
-	"You are on me, sucking on me, pulling me as an undercurrent does, and it is now that language finally breaks through into my consciousness: no.\n\nNo no no no no no NO.\n\nI cannot speak it, I cannot control the muscles in my lips to scream it, but that is how it takes form in my mind. I am motionless, powerless, I lack bodily autonomy. I want to scream, but I cannot. I want to fight back, but I cannot.\n\nFear is now wholly consuming, and all I can comprehend. I understand that I'm going to die like this, drowning in the still-rising sea inside me, and I cannot bear any more.",
-	"And I don't.\n\nI am suddenly free.\n\nAwake, in bed, vaguely aware that I have just screamed, I take note of how wet my face is,\ndoused in a mixture of sweat and saliva.\n\nI am shaken, but alive.",
-	"The effects of the adrenaline remain noticeable\nfor ten to fifteen minutes, and I am aware of\nthis passing of time.",
+	"It starts as recognition as I gain awareness that you are holding me down. It doesn't matter how I got here; I am here again.\n\nDread rapidly bubbles up as I understand that I cannot move a muscle.\n\nMy arms, my legs, my mouth–all unable to respond. It overwhelms me so quickly, as though I am being filled with a terrible ocean.",
+	"Is it instantaneous? I don't even know. There is no sense of time here. The previous fear gives way to new panic.\n\nWhat was it that just happened? The moment before. The way I got here again.\n\nEverything is gone, again and again, this moment violently torn away by the furious storm as a new one is swept in to replace it.",
+	"You are on top of me, sucking on me, pulling me as an undercurrent does, and it is now that language finally breaks through into my consciousness: no.\n\nno no no no no no NO\n\nI cannot speak it, I cannot control the muscles in my lips to scream it, but that is how it takes form in my mind. I am motionless. Powerless. My bodily autonomy is gone. I want to scream, but I cannot. I want to fight back, but I cannot.\n\nPanic is wholly consuming, and all I can comprehend. I understand that I'm going to die like this, drowning in the still-rising sea inside me, and I cannot bear any more.",
+	"And I don't.\n\nI'm suddenly free.\n\nAwake, in bed, vaguely aware that I have just screamed, I take note of how wet my face is,\ndoused in a mixture of sweat and saliva.\n\nI am shaken, but alive.",
+	"The effects of the adrenaline remain noticeable for ten to fifteen minutes,\nand I am aware of this passing of time.",
 	"I am aware that I was just fighting for my survival.",
 	"I am aware\nthat my life\nmust still\nmean something\nto me."
 }
@@ -72,6 +85,9 @@ local af = Def.ActorFrame{}
 
 af.InitCommand=function(self)
 	self:SetUpdateFunction( update )
+end
+af.OnCommand=function()
+	time_at_start = GetTimeSinceStart()
 end
 
 af.InputEventCommand=function(self, event)
@@ -92,32 +108,24 @@ af.NextCommand=function(self)
 		if count == 6 then self:queuecommand("Fear") end
 		if count == 7 then self:queuecommand("WakeUp") end
 	else
-		self:sleep(1.5):queuecommand("Transition")
+		self:sleep(1.5):queuecommand("NextScreen")
 	end
 end
 
-af.FearCommand=function(self)
+af.FearCommand=function()
 	onset = GetTimeSinceStart()
 end
 
-af.TransitionCommand=function(self)
+af.NextScreenCommand=function(self)
 	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
 
 -- storm
 af[#af+1] = LoadActor("./storm.ogg")..{
+	InitCommand=function(self) storm_audio = self end,
 	OnCommand=function(self) self:play() end,
-	WakeUpCommand=function(self) self:queuecommand("FadeOutAudio") end,
-	FadeOutAudioCommand=function(self)
-		if bgm_volume >= 0 then
-			local ragesound = self:get()
-			bgm_volume = bgm_volume-0.1
-			if bgm_volume < 0 then bgm_volume = 0 end
-			ragesound:volume(bgm_volume)
-			self:sleep(0.1):queuecommand("FadeOutAudio")
-		end
-	end,
+	WakeUpCommand=function(self) self:stop() end
 }
 
 -- fear
