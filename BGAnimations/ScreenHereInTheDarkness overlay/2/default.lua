@@ -1,9 +1,8 @@
 -- humor keeps me going
 
 local max_width = 390
-local font_zoom = 0.9
-local quote_bmt1, quote_bmt2
 local count = 1
+local input_permitted = false
 
 local people = {
 	person1 = {
@@ -75,9 +74,12 @@ local quotes = {
 
 local af = Def.ActorFrame{}
 af.InitCommand=function(self) self:x(_screen.cx):diffusealpha(0) end
-af.OnCommand=function(self) self:smooth(1):diffusealpha(1) end
+af.OnCommand=function(self) self:smooth(1):diffusealpha(1) :queuecommand("ReadyForInput") end
+af.ReadyForInputCommand=function() input_permitted = true end
 
 af.InputEventCommand=function(self, event)
+	if not input_permitted then return end
+
 	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back" or event.GameButton=="MenuRight") then
 		if quotes[count+1] then
 			count = count + 1
