@@ -134,28 +134,36 @@ local actions = {
 local spooky_bpm = 120
 local spooky_bps = spooky_bpm/60
 local globalOffset = PREFSMAN:GetPreference("GlobalOffsetSeconds")
-local footspeed, old_footspeed = false, nil
 
-local Update = function(self, delta)
-	beat = (self:GetSecsIntoEffect() + globalOffset) * (spooky_bps)
+local last_beat = -1
+local beat = 0
+
+local Update = function(af, delta)
+	beat = (af:GetSecsIntoEffect() + globalOffset) * spooky_bps
+
+	if beat < last_beat then action_index = 1 end
 
 	if beat >= actions[action_index][1] then
-		actions[action_index][2](self)
-
+		actions[action_index][2](af)
 		action_index = action_index + 1
-
-		if action_index > #actions then
-			action_index = 1
-		end
 	end
+
+	last_beat = beat
 end
+
+local noop = function() end
 
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{}
+af.InitCommand=function(self)
+	self:effectclock('music'):SetUpdateFunction( Update )
+end
 af.OnCommand=function(self)
-	if SCREENMAN:GetTopScreen():GetName()=="ScreenSelectStyle" then
-		self:effectclock('music'):SetUpdateFunction( Update )
+	-- if we're not on ScreenSelectStyle,
+	-- replace the real Update function with a noop
+	if SCREENMAN:GetTopScreen():GetName() ~= "ScreenSelectStyle" then
+		self:SetUpdateFunction( noop )
 	end
 end
 
@@ -174,7 +182,14 @@ for row=0,2 do
 			OnCommand=function(self)
 				self:stopeffect()
 				self:rotationz(rotations[panel_index]):diffuse(0,0,0,1)
-				self:playcommand("Normal")
+
+				-- for ScreenGameplay and other headers that these will appear in
+				if SCREENMAN:GetTopScreen():GetName() ~= "ScreenSelectStyle" then
+					-- sync all spiders to blink with beatnooffset, same as musicwheel cursor
+					self:diffuseblink():effectcolor1(0,0,0,1):effectcolor2(1,1,1,1):effectclock("beatnooffset")
+				else
+					self:playcommand("Normal")
+				end
 			end,
 
 			AllOnCommand=function(self)
