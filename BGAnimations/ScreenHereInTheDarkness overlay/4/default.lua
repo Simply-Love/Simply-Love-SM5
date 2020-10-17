@@ -1,7 +1,5 @@
 -- "I long for the day on which I can hear your voice again."
 
-local haiku = "as my cursor blinks\nidle, my mind is active\nrecalling your voice"
-
 -- init mouse starting coordinates
 local mouse_pos = {
 	x = INPUTFILTER:GetMouseX(),
@@ -26,38 +24,43 @@ local Update = function(af, delta)
 end
 
 
-local af = Def.ActorFrame{
-	InitCommand=function(self) self:SetUpdateFunction(Update) end,
-	InputEventCommand=function(self, event)
-		if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
-			self:smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
-		end
-	end,
-	NextScreenCommand=function(self)
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+local af = Def.ActorFrame{}
+af.InitCommand=function(self) self:SetUpdateFunction(Update) end
+af.InputEventCommand=function(self, event)
+	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back") then
+		self:smooth(1):diffuse(0,0,0,1):queuecommand("NextScreen")
 	end
-}
+end
+af.NextScreenCommand=function(self)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+end
 
 
 af[#af+1] = LoadActor("./recalling.ogg")..{
 	OnCommand=function(self) self:play() end
 }
 
-af[#af+1] = Def.BitmapText{
-	File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
-	Text=haiku,
-	InitCommand=function(self) self:Center():diffusealpha(0) end,
-	OnCommand=function(self) self:sleep(2.5):linear(1):diffusealpha(1) end
+af[#af+1] = LoadActor("./recalling (doubleres).png")..{
+	InitCommand=function(self) self:zoom(0.5):Center() end
 }
 
 af[#af+1] = LoadActor("./mask.png")..{
-	InitCommand=function(self) self:zoom(0.5):Center(); mask = self end,
-	OnCommand=function(self) self:sleep(0.5):pulse():effectmagnitude(14,1,1):effectperiod(6) end
+	InitCommand=function(self) self:zoom(0.5):Center():diffuse(0,0,0,1); mask = self end,
+	OnCommand=function(self) self:pulse():effectmagnitude(14,1,1):effectperiod(6) end
+}
+
+-- cover
+af[#af+1] = Def.Quad{
+	InitCommand=function(self) self:FullScreen():Center():diffuse(0,0,0,1) end,
+	OnCommand=function(self) self:sleep(2.5):smooth(3):diffuse(0,0,0,0) end
 }
 
 -- cursor
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:halign(0):xy(_screen.cx,_screen.cy-100):zoomto(2,20):diffuseblink():effectperiod(1):effectcolor1(0,0,0,1):effectcolor2(1,1,1,1) end
+	InitCommand=function(self)
+		self:align(0,0):zoomto(2,20):xy(_screen.cx-98,_screen.cy-30)
+		self:diffuseblink():effectperiod(1):effectcolor1(0,0,0,1):effectcolor2(1,1,1,1)
+	end
 }
 
 

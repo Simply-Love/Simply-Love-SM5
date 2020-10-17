@@ -13,12 +13,12 @@ local people = {
 	},
 	person2 = {
 		diffuse = {0.666, 0.666, 0.8, 1},
-		y = 90,
+		y = 100,
 		halign = 1,
 	},
 	wikipedia = {
 		diffuse = {0.9,  0.9,  0.9, 1},
-		y = 100,
+		y = 95,
 		halign = 0
 	}
 }
@@ -83,11 +83,11 @@ af.InputEventCommand=function(self, event)
 			count = count + 1
 			self:finishtweening():smooth(0.25):diffusealpha(0):queuecommand("Refresh"):smooth(0.25):diffusealpha(1)
 		else
-			self:finishtweening():smooth(0.25):diffusealpha(0):queuecommand("Transition")
+			self:finishtweening():smooth(0.25):diffusealpha(0):queuecommand("NextScreen")
 		end
 	end
 end
-af.TransitionCommand=function(self)
+af.NextScreenCommand=function(self)
 	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
