@@ -7,7 +7,7 @@ local intro = {"Walking on the balls of my feet", "I led her down a dark hallway
 local footsteps = { "our","feet","gently","tip","tap","tapping","on","the","cold","dark","floor","as we","walked","hand in hand","together" }
 local outro = {"Where were we going?", "How would we know when we got there?", "I gripped her hand more tightly."}
 
-local line_height = 18
+local line_height = 20
 local font_path = THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini")
 
 local line = function(text, i, num_lines, wait)

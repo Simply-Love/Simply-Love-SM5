@@ -35,43 +35,42 @@ local pages = {
 }
 
 local Cancel = function(self)
-	self:finishtweening():smooth(0.5):diffuse(0,0,0,1):queuecommand("Transition")
+	self:finishtweening():smooth(0.5):diffuse(0,0,0,1):queuecommand("NextScreen")
 end
 local ChangePage = function(self)
 	self:GetChild("Header"):finishtweening():smooth(0.2):diffuse(0,0,0,1):sleep(0.2):queuecommand("Refresh")
 	self:GetChild("Body"):finishtweening():smooth(0.2):diffuse(0,0,0,1):sleep(0.2):queuecommand("Refresh")
 end
 
-local af = Def.ActorFrame{
+local af = Def.ActorFrame{}
 
-	InitCommand=function(self) self:diffuse(0,0,0,1) end,
-	OnCommand=function(self) self:smooth(1):diffuse(1,1,1,1) end,
+af.InitCommand=function(self) self:diffuse(0,0,0,1) end
+af.OnCommand=function(self) self:smooth(1):diffuse(1,1,1,1) end
 
-	InputEventCommand=function(self, event)
-		if event.type == "InputEventType_FirstPress" then
-			if event.GameButton=="Start" or event.GameButton=="MenuRight" then
-				if pages[page+1] then
-					page = page + 1
-					ChangePage(self)
-				else
-					Cancel(self)
-				end
-
-			elseif event.GameButton=="MenuLeft" then
-				if pages[page-1] then
-					page = page - 1
-					ChangePage(self)
-				end
-
-			elseif event.GameButton=="Back" then
+af.InputEventCommand=function(self, event)
+	if event.type == "InputEventType_FirstPress" then
+		if event.GameButton=="Start" or event.GameButton=="MenuRight" then
+			if pages[page+1] then
+				page = page + 1
+				ChangePage(self)
+			else
 				Cancel(self)
 			end
+
+		elseif event.GameButton=="MenuLeft" then
+			if pages[page-1] then
+				page = page - 1
+				ChangePage(self)
+			end
+
+		elseif event.GameButton=="Back" then
+			Cancel(self)
 		end
-	end,
-	TransitionCommand=function(self)
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end
-}
+end
+af.NextScreenCommand=function(self)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+end
 
 
 af[#af+1] = Def.BitmapText{
