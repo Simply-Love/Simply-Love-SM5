@@ -41,7 +41,7 @@ return Def.ActorFrame{
 
 	-- audio
 	LoadActor("./YourDriftingMindAQ.ogg")..{
-		OnCommand=function(self) self:sleep(13):queuecommand("PlayAudio") end,
+		OnCommand=function(self) self:sleep(8):queuecommand("PlayAudio") end,
 		PlayAudioCommand=function(self) self:play() end
 	},
 
@@ -54,7 +54,10 @@ return Def.ActorFrame{
 	-- it handles more logic than it should because of time constraints :(
 	Def.Quad{
 		InitCommand=function(self) self:diffuse(0,0,0,1):FullScreen():Center(); g.SceneFade = self end,
-		OnCommand=function(self) self:hibernate(13):queuecommand("FadeToClear") end,
+		OnCommand=function(self) self:hibernate(10.5):queuecommand("InitialReveal") end,
+		InitialRevealCommand=function(self)
+			self:smooth(1):diffusealpha(0)
+		end,
 		FadeToBlackCommand=function(self)
 			g.InputIsLocked = true
 			self:smooth(0.5):diffusealpha(1):queuecommand("ChangeMap")

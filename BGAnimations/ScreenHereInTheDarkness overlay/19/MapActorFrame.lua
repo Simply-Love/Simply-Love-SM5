@@ -15,9 +15,11 @@ local map_af = Def.ActorFrame{
 		self:GetChild("Map"..g.CurrentMap):playcommand("MoveMap")
 	end,
 	OnCommand=function(self)
-		self:hibernate(13)
+		self:hibernate(10.5)
 		self:GetChild("Map1"):visible(true)
-
+		self:queuecommand("AllowInput")
+	end,
+	AllowInputCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		screen:SetUpdateFunction( Update )
 		screen:AddInputCallback( LoadActor("InputHandler.lua", {map_data, g}) )

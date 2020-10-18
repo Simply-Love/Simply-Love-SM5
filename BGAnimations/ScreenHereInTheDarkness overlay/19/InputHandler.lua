@@ -178,7 +178,7 @@ local InputHandler = function(event)
 	----------------------------------------------------------------------------
 
 
-	-- this should only be used to terminate input handling early for cut scenes
+	-- this should only be used to terminate input handling early for cutscenes
 	if g.InputIsLocked then return false end
 
 	if event.type == "InputEventType_FirstPress" then

@@ -2,7 +2,7 @@ local map_data = ...
 
 local af = Def.ActorFrame{
 	Name="ParallaxAF",
-	InitCommand=function(self) self:hibernate(13) end,
+	InitCommand=function(self) self:hibernate(10.5) end,
 }
 
 for map_index,map in ipairs(map_data) do
