@@ -57,11 +57,13 @@ af.InputEventCommand=function(self, event)
 	if not input_permitted then return end
 
 	if event.type == "InputEventType_FirstPress" and (event.GameButton=="Start" or event.GameButton=="Back" or event.GameButton=="MenuRight") then
+		self:finishtweening():smooth(0.5):diffusealpha(0)
+
 		if quotes[count+1] then
 			count = count + 1
-			self:finishtweening():smooth(0.25):diffusealpha(0):queuecommand("Refresh"):smooth(0.25):diffusealpha(1)
+			self:queuecommand("Refresh"):smooth(0.5):diffusealpha(1)
 		else
-			self:finishtweening():smooth(0.25):diffusealpha(0):queuecommand("NextScreen")
+			self:queuecommand("NextScreen")
 		end
 	end
 end
@@ -72,7 +74,7 @@ end
 af[#af+1] = Def.Sound{
 	File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/4/recalling.ogg"),
 	OnCommand=function(self) self:play() end,
-	TransitionCommand=function(self) self:stop() end
+	NextScreenCommand=function(self) self:stop() end
 }
 
 -- quote
