@@ -94,7 +94,7 @@ local InputHandler = function(event)
 			hitd_wheel:scroll_by_amount(-1)
 		end
 
-	elseif event.GameButton == "Start" then
+	elseif event.GameButton == "Start" and event.type == "InputEventType_FirstPress" then
 		-- exit
 		if i == #wheel_options then
 			Cancel()
@@ -118,7 +118,7 @@ end
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 local t = Def.ActorFrame {
-	Name="RH_Menu",
+	Name="hitd_Menu",
 	OnCommand=function(self)
 		hitd_wheel:set_info_set(wheel_options, 1)
 		SCREENMAN:GetTopScreen():AddInputCallback( InputHandler )
