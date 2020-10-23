@@ -14,7 +14,7 @@
 -- Other forks, older builds, other projects, etc. are blocked here, regardless
 -- of their compatibility with Simply Love.  I am only one human person, and I've
 -- taken on too much responsibility here with moving the post-ITG community forward
--- in a responsible, open, and inclusvie manner.
+-- in a responsible, open, and inclusive manner.
 --
 -- I've done very little with my life that I am proud of, but I am confident that
 -- this Simply Love project has helped dance game enthusiasts from all over the world
