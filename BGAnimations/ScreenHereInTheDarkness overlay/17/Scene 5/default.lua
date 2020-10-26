@@ -3,7 +3,8 @@
 local bgm_volume = 10
 local _phone = { w=225, h=400 }
 
-local af = Def.ActorFrame{ StartSceneCommand=function(self) self:visible(true):diffuse(1,1,1,1) end }
+local af = Def.ActorFrame{}
+af.StartSceneCommand=function(self) self:visible(true):diffuse(1,1,1,1) end
 
 af[#af+1] = LoadActor("./buzz.ogg")..{
 	StartSceneCommand=function(self) self:sleep(0.5):queuecommand("Play") end,
@@ -21,11 +22,12 @@ af[#af+1] = LoadActor("./buzz.ogg")..{
 -- phone
 af[#af+1] = Def.ActorFrame{
 
-	StartSceneCommand=function(self) self:sleep(6):queuecommand("Appear") end,
+	StartSceneCommand=function(self) self:sleep(1.65):queuecommand("Appear") end,
 
+	-- technology
 	Def.ActorFrame{
-		InitCommand=function(self) self:diffuse(0,0,0,1) end,
-		AppearCommand=function(self) self:sleep(0.25):smooth(0.75):diffuse(1,1,1,1) end,
+		InitCommand=function(self) self:diffuse(0,0,0,0) end,
+		AppearCommand=function(self) self:sleep(1.5):smooth(1.5):diffuse(1,1,1,1) end,
 
 		-- screen
 		Def.Quad{
@@ -36,11 +38,6 @@ af[#af+1] = Def.ActorFrame{
 		LoadActor("./chobi.png")..{
 			InitCommand=function(self) self:zoom(0.35):xy(_screen.cx, _screen.cy+40) end,
 		},
-	},
-
-	Def.ActorFrame{
-		InitCommand=function(self) self:diffuse(0,0,0,1) end,
-		AppearCommand=function(self) self:smooth(0.75):diffuse(1,1,1,1) end,
 
 		-- shell
 		LoadActor("./phone.png")..{
@@ -53,7 +50,12 @@ af[#af+1] = Def.ActorFrame{
 			Text="4:04",
 			InitCommand=function(self) self:diffuse(0.1,0.1,0.1,1):xy(_screen.cx, _screen.cy-130):zoom(1.5) end
 		},
+	},
 
+	-- humanity
+	Def.ActorFrame{
+		InitCommand=function(self) self:diffuse(0,0,0,1) end,
+		AppearCommand=function(self) self:smooth(1.5):diffuse(1,1,1,1) end,
 
 		Def.ActorFrame{
 			InitCommand=function(self) self:xy(_screen.cx+4, _screen.cy-85):valign(0) end,

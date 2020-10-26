@@ -1,4 +1,4 @@
-local num_particles = 250
+local num_particles = 300
 -- particle size in pixels
 local min_size = 12
 local max_size = 25
