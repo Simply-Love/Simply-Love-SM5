@@ -7,7 +7,7 @@ local scene2 = {
 	delay=0.0625,
 	width=355,
 	song_delay=2,
-	song="14/dear.ogg",
+	song="14/Correspondence.ogg",
 	header="FROM: Ben\nTO: Zoe\nDATE: Jan-07-2006\nSUBJECT: RE: get to know you\n---------------------------------------------------------",
 	body="Hi Zoe,\n\nI wasn't expecting to receive an email like that, but it was certainly a pleasant surprise. How did you find my blog?  I'm curious, because no one I didn't already know \"in real life\" has ever contacted me because of it.\n\nSo.\n\nAre you asking why I write, or why I write my private thoughts in a public blog on the internet?\n\nThis is my mind posing a question where you asked none. It does this constantly.\nPose questions, that is.\n\nThere's satisfaction, I think, to be found in getting my thoughts down in writing from time to time. It's lasting.  Even if I were to now disagree with something I wrote a year earlier, it's there in writing, a definitive testament to a thought I once held valuable enough to write about.\n\nI guess you could say that I write in a public blog because I hoped someone like you would read it.\n\nBen"
 }
@@ -49,27 +49,19 @@ local scene5 = {
 	{ author="Zoe", delay=95.5, words="Stupid computer." },
 }
 
-
-local af = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
-
 local title = {
 	chapter=3,
 	img={
-		LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/17/Scene 8/1.png"))..{
-			InitCommand=function(self) self:Center():zoom(2/3):diffuse(0,0,0,1) end,
-			OnCommand=function(self)
-				self:sleep(2):smooth(3):diffuse(0.8,0.8,0.8,1):queuecommand("Pulse")
-			end,
-			PulseCommand=function(self) self:diffuseshift():effectperiod(5):effectcolor1(0.8,0.8,0.8,1):effectcolor2(0.4,0.4,0.4,1) end
-		},
-	}
+		THEME:GetPathB("ScreenHereInTheDarkness", "overlay/17/Scene 8/1.png"),
+	},
+	scenes=scenes
 }
 
+-- -----------------------------------------------------------------------
 
-af[#af+1] = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/14/title.lua"), title)..{
-	InitCommand=function(self) scenes[1] = self end,
-	OnCommand=function(self) self:queuecommand("StartScene") end
-}
+local af = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
+
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/Connection/Title.lua"), title)
 
 -- scene 2: a pleasant surprise
 af[#af+1] = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/14/email.lua"), scene2)..{

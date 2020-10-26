@@ -16,32 +16,24 @@ local scene5 = {
 	delay=0.095,
 	width=355,
 	song_delay=2,
-	song="14/monarchButterflies.ogg",
+	song="14/Monarch Butterflies.ogg",
 	header="FROM: Zoe\nTO: Ben\nDATE: Jan-05-2006\nSUBJECT: get to know you\n---------------------------------------------------------",
 	body="Ben,\nIt's me, Zoe.  I IMed you the other day about your blog.\n\nI'm interested in learning about you, Ben.\nAbout why you write,\nabout your depression,\nabout your time in a psych ward.\n\nThen we can move to more general topics, like books or movies.\nI like to start friendships backwards, you know?\n\nI won't ask you questions, just tell me whatever you want\nand maybe later I'll discreetly prod you to further\nexplain certain areas.\n\nYou should come online more often.\n-Zoe"
 }
 
-
-local af = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
-
 local title = {
 	chapter=2,
 	img={
-		LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/17/Scene 8/2.png"))..{
-			InitCommand=function(self) self:Center():zoom(2/3):diffuse(0,0,0,1) end,
-			OnCommand=function(self)
-				self:sleep(2):smooth(3):diffuse(0.8,0.8,0.8,1):queuecommand("Pulse")
-			end,
-			PulseCommand=function(self) self:diffuseshift():effectperiod(5):effectcolor1(0.8,0.8,0.8,1):effectcolor2(0.4,0.4,0.4,1) end
-		},
-	}
+		THEME:GetPathB("ScreenHereInTheDarkness", "overlay/17/Scene 8/2.png"),
+	},
+	scenes=scenes
 }
 
-af[#af+1] = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/14/title.lua"), title)..{
-	InitCommand=function(self) scenes[1] = self end,
-	OnCommand=function(self) self:queuecommand("StartScene") end
-}
+-- -----------------------------------------------------------------------
 
+local af = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/Connection/Stage.lua"), {duration=duration, scenes=scenes})
+
+af[#af+1] = LoadActor(THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/Connection/Title.lua"), title)
 
 -- scene 2: Two households
 af[#af+1] = LoadActor("./blog.lua", scene2)..{

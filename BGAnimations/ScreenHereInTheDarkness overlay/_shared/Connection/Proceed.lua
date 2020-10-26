@@ -9,6 +9,6 @@ return Def.BitmapText{
 			:diffusealpha(0)
 	end,
 	HideCommand=function(self) self:linear(0.5):diffusealpha(0) end,
-	Ch4Sc3HideCommand=function(self) self:diffusealpha(0):sleep(9):queuecommand("Show") end,
+	Ch4Sc3HideCommand=function(self) self:diffusealpha(0):sleep(1.5):queuecommand("Show") end,
 	ShowCommand=function(self) self:linear(0.75):diffusealpha(1) end,
 }
