@@ -27,7 +27,7 @@ af[#af+1] = Def.ActorFrame{
 	-- technology
 	Def.ActorFrame{
 		InitCommand=function(self) self:diffuse(0,0,0,0) end,
-		AppearCommand=function(self) self:sleep(1.5):smooth(1.5):diffuse(1,1,1,1) end,
+		AppearCommand=function(self) self:sleep(2):smooth(1.5):diffuse(1,1,1,1) end,
 
 		-- screen
 		Def.Quad{
@@ -55,7 +55,7 @@ af[#af+1] = Def.ActorFrame{
 	-- humanity
 	Def.ActorFrame{
 		InitCommand=function(self) self:diffuse(0,0,0,1) end,
-		AppearCommand=function(self) self:smooth(1.5):diffuse(1,1,1,1) end,
+		AppearCommand=function(self) self:smooth(0.666):diffuse(1,1,1,1) end,
 
 		Def.ActorFrame{
 			InitCommand=function(self) self:xy(_screen.cx+4, _screen.cy-85):valign(0) end,

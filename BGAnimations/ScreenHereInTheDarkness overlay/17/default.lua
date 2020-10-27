@@ -21,11 +21,17 @@ local af = Def.ActorFrame{
 	TransitionSceneCommand=function(self)
 		self:GetChild("Proceed"):stoptweening():queuecommand("Hide")
 
-		if scene == 7 then
-			scenes[7]:queuecommand("FadeOutAudio")
+		if scenes[scene] then
+			scenes[scene]:queuecommand("FadeOutAudio")
+		end
+
+		if scene == 1 then
+			scenes[1]:queuecommand("FadeToWhite")
+			self:sleep(3):queuecommand("SwitchScene")
+		elseif scene == 7 then
 			self:sleep(2):queuecommand("SwitchScene")
 		else
-			scenes[scene]:queuecommand("FadeOutAudio"):smooth(1):diffuse( Color.Black )
+			scenes[scene]:smooth(1):diffuse( Color.Black )
 			self:sleep(1):queuecommand("SwitchScene")
 		end
 	end,

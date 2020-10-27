@@ -21,7 +21,7 @@ local conversation = {
 	{ author="Zoe", delay=56.286, words="How are you, Ben?" },
 	{ author="Ben", delay=59.286, words="4:14 in the am.  Haven't gone in to work yet.  Listening to harp music on YouTube." },
 
-	{ author="Zoe", delay=63.787, words="Harp, eh?  Like this?  [YouTube]" },
+	{ author="Zoe", delay=63.787, words="Harp, eh?  Like this?  [YouTube]", attributes={21, {Length=10, Diffuse=color("#007bff")}} },
 	{ author="Ben", delay=67.787, words="Wow." },
 	{ author="Ben", delay=69.787, words="That's..." },
 	{ author="Ben", delay=71.787, words="That's beautiful." },
@@ -37,7 +37,7 @@ local conversation = {
 	{ author="Ben", delay=98.268, words="I wouldn't miss it for the world." },
 
 	{ author="Zoe", delay=102.503, words="I have to run now!  Until then!" },
-	{ author="Ben", delay=106.738, words="Zoe..." },
+	{ author="Ben", delay=106.738, words="Mm." },
 	{ author="Ben", delay=110.974, words="Until then." },
 }
 
@@ -112,7 +112,9 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		File=THEME:GetPathB("ScreenHereInTheDarkness", "overlay/_shared/helvetica neue/_helvetica neue 20px.ini"),
 		Text="4:14 AM",
-		InitCommand=function(self) self:y(-_phone.Ben.h/2*_phone.Ben.zoom + 68):zoom(0.55):diffuse(0,0,0,1) end
+		InitCommand=function(self) self:y(-_phone.Ben.h/2*_phone.Ben.zoom + 68):zoom(0.55):diffuse(0,0,0,1) end,
+		StartSceneCommand=function(self) self:sleep(81.832):queuecommand("BackToEarth") end,
+		BackToEarthCommand=function(self) self:settext("4:52 AM") end
 	},
 	-- Ben is chatting with Zoe
 	Def.BitmapText{
@@ -185,10 +187,14 @@ for human in ivalues({"Ben"}) do
 				Text=conversation[i].words,
 				InitCommand=function(self)
 					self:zoom(font_zoom)
-						:wrapwidthpixels((_phone[human].w*_phone[human].zoom-60-padding*1.5)/font_zoom)
-						:halign(0):valign(0)
-						:x(conversation[i].author==human and padding*2.5 or padding*1.5)
-						:diffuse( _phone[human].text[conversation[i].author] )
+					    :wrapwidthpixels((_phone[human].w*_phone[human].zoom-60-padding*1.5)/font_zoom)
+					    :halign(0):valign(0)
+					    :x(conversation[i].author==human and padding*2.5 or padding*1.5)
+					    :diffuse( _phone[human].text[conversation[i].author] )
+
+					if type(conversation[i].attributes)=="table" then
+						self:AddAttribute( unpack(conversation[i].attributes) )
+					end
 				end,
 				OnCommand=function(self)
 					self:y(h + padding * 0.75)
