@@ -165,23 +165,15 @@ return {
 			Img="Moru_Zerinho6.jpg",
 			About="Moru Zerinho6 volunteered to translate Simply Love's UI into Brazilian Portuguese and the theme is richer for it.\n\nHe spoke with me extensively about his experience finding the darkness in Simply Love, translating its words for other non-English-speaking people along the way.  His earnest sincerity helped me in ways I am unable to describe using any words of my own."
 		},
-	},
-
-	-- page 11
-	{
 		{
 			Name="TheNick",
 			Img="TheNick.jpg",
 			About="Nick enthusiastically translated Simply Love's UI into German.  He's also something of a memer and has been responsible for such magical experiences as What a Wonderful World (UPS4).\n\nWhen I left Penn State, I initially wondered what would become of the arcade machine there.  Would it fall into disrepair?\n\nDuring my first visit back, I saw a then-freshman Nick already quoting Shady Business like he and Mr. Nagasaki went way back.  I understood immediately that the future of dance games would be just fine."
 		},
-		{
-			Name="Lamar / Crash Cringle",
-			Img="CrashCringle.jpg",
-			About="Lamar is a visible leader for the Penn State Dance Dance Maniacs, handling everything from managing administrative duties and promotional events, to upkeeping the pads and Arch Linux SM5 PC, to writing stepcharts and Lua-driven theme customizations.\n\nBy engaging current club members with recurring events like the Good Reads Tournament and actively promoting the club to new students, he goes above and beyond to keep dance games alive.\n\nLamar is a truly upstanding young man, one I am so very fortunate to know."
-		}
 	},
 
-	-- page 12
+	-- page 11
+
 	{
 		{
 			Name="Riakodoadm",
@@ -194,6 +186,20 @@ return {
 			Img="pluto.png",
 			About="Pluto has created exceptional art for many dance game projects such as ECS, Stamina RPG, and SteveReen's Waterfall project, and has infused each with her signature style.\n\nWhen she collaborated with me on my visual novel, her artistic output brought life and vitality to my moribund mind, and her feedback as a friend kept my soul on life support and my heart beating while I was otherwise dead.",
 		},
+	},
+
+	-- page 12
+	{
+		{
+			Name="Lamar / Crash Cringle",
+			Img="CrashCringle.jpg",
+			About="Lamar is a visible leader for the Penn State Dance Dance Maniacs, handling everything from managing administrative duties and promotional events, to upkeeping the pads and Arch Linux SM5 PC, to writing stepcharts and Lua-driven theme customizations.\n\nBy engaging current club members with recurring events like the Good Reads Tournament and actively promoting the club to new students, he goes above and beyond to keep dance games alive.\n\nLamar is a truly upstanding young man, one I am so very fortunate to know."
+		},
+		{
+			Name="Jeremy",
+			Img={ "jb/JB-pixelart.jpg", "jb/ParanoiaHadesCDP.mp4",  "jb/NaokiStandard.jpg" },
+			About="Jeremy is a dedicated pixel artist on a mission to help the world smile through retro video game aesthetic. He has contributed visual art and design feedback to Simply Love many times, helping make a better experience for everyone.\n\nOne time, when I was young and stupid and trying to jog 4 miles home from the arcade in below-freezing temperatures in shorts and a t-shirt, Jeremy was the person I called to save my sorry, freezing butt.\n\nWe've been dance game compatriots and best friends for nearly 20 years, which both humbles and warms me."
+		}
 	},
 
 	-- page 13

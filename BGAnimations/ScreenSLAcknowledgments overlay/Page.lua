@@ -18,8 +18,10 @@ local display_time = 3
 -- abstract out what is common between both those scenarios into this function
 -- and append extra functionality (fading, etc.) later, if needed
 local PictureActor = function( path, _y )
+	local texture_path = THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..path)
+
 	local spr = Def.Sprite{
-		Texture=THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..path),
+		Texture=texture_path,
 		InitCommand=function(self)
 			src_width  = self:GetTexture():GetSourceWidth()
 			src_height = self:GetTexture():GetSourceHeight()
@@ -35,11 +37,11 @@ local PictureActor = function( path, _y )
 			img_height = img_width * (src_height/src_width)
 
 			self:zoomto(img_width, img_height)
-				:halign(0):valign(0)
-				:x(-space.w/2 + padding*2)
-				:y(padding + _y)
+			self:halign(0):valign(0)
+			self:x(-space.w/2 + padding*2)
+			self:y(padding + _y)
 
-			if path:match(".mp4") then
+			if ActorUtil.GetFileType(texture_path) == "FileType_Movie" then
 				self:animate(false):loop(false)
 			end
 		end
@@ -48,7 +50,6 @@ local PictureActor = function( path, _y )
 	return spr
 end
 
-local viewcount = 0
 local page_af = Def.ActorFrame{
 	Name="Page"..page_num,
 	InitCommand=function(self) self:visible(false):xy(_screen.cx, header_height) end,
@@ -57,6 +58,7 @@ local page_af = Def.ActorFrame{
 }
 
 for i=1, #people do
+	local viewcount = 0
 	local quad_y = padding*i + box_height*(i-1)
 
 
@@ -84,17 +86,17 @@ for i=1, #people do
 			-- to this sub-AF and later add this sub-AF to the page AF
 			local _af = Def.ActorFrame{}
 
-
 			for j=1, #people[i].Img do
 				local spr = PictureActor(people[i].Img[j], quad_y)
 
 				-- multiple images and multiple About texts
-				if people[i].About and type(people[i].About)=="table" and #people[i].About==#people[i].Img then
+				if type(people[i].About)=="table" and #people[i].About==#people[i].Img then
 
 
 					spr["ShowPage"..page_num.."Command"]=function(self)
 						self:visible( ((viewcount % #people[i].Img)+1) == j )
-						if people[i].Img[j]:match(".mp4") then
+
+						if ActorUtil.GetFileType(THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..people[i].Img[j])) == "FileType_Movie" then
 							self:animate(self:GetVisible())
 						end
 					end
@@ -104,19 +106,29 @@ for i=1, #people do
 				else
 					spr.OnCommand=function(self)
 						self:diffusealpha( j==1 and 1 or 0 ):sleep( (j-1)*display_time ):queuecommand("Loop")
+						if ActorUtil.GetFileType(THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..people[i].Img[j])) == "FileType_Movie" then
+							self:animate(false)
+						end
 					end
 					spr.LoopCommand=function(self)
 						if self:GetDiffuseAlpha() == 0 then
 							self:linear(fade_time):diffusealpha(1)
 						end
 
+						if ActorUtil.GetFileType(THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..people[i].Img[j])) == "FileType_Movie" then
+							self:play()
+						end
+
 						self:sleep( display_time )
-							:linear(fade_time):diffusealpha(0)
-							:sleep( (#people[i].Img-1) * display_time )
-							:queuecommand("Loop")
+						self:linear(fade_time):diffusealpha(0)
+						self:sleep( (#people[i].Img-1) * display_time )
+						self:queuecommand("Loop")
 					end
 					spr.HideCommand=function(self)
 						self:stoptweening():queuecommand("On")
+						if ActorUtil.GetFileType(THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..people[i].Img[j])) == "FileType_Movie" then
+							self:pause()
+						end
 					end
 				end
 
