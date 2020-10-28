@@ -81,13 +81,9 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 Visit my imgur album for more screenshots: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
 
-## Features
-
-Refer to the [Features README](./Other/Documentation/Features-README.md) for a basic list of features and screenshots.
-
 ---
 
-## Guides
+# Guides
 
 ### Installing Simply Love
 
