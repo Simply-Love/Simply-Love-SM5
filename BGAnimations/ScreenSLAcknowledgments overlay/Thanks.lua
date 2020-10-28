@@ -62,7 +62,7 @@ return {
 		{
 			Name="GitHub Community",
 			Img="GitHub.png",
-			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, iamjackg, tertu-m, Horsey-, Akethorpe, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, mcognetta, Fieoner, arcaneAgilmente, ListenerJubatus, aeubanks, TheNick, CrashCringle12, jordando, Roujo, JapanYoshi, Valentina16, and natano."
+			About="Many thanks go to the GitHub users who have contributed to SL over the years.  This includes:\n\nKauhsa, OmnipotentEntity, ianklatzco, FishamanP, itg-abby, camsta4, fent, iamjackg, tertu-m, Horsey-, Akethorpe, tfrederick74656, DinsFire64, sahunt, StefanoFiumara, concubidated, sangyeolbaek, nayotodot, dougshell, shockdude, Sereni, karamel59, electromuis, mcognetta, Fieoner, arcaneAgilmente, ListenerJubatus, aeubanks, JapanYoshi, TheNick, CrashCringle12, jordando, Roujo, mmagdon, Valentina16, and natano."
 		},
 	},
 
@@ -111,7 +111,7 @@ return {
 		{
 			Name="Alan / TaroNuke",
 			Img="taronuke.png",
-			About="Alan leads development on NotITG, a StepMania fork that focuses on creative \"mod\" content.\n\nHis own creative resumé includes some of best and most memorable content available, from the UKSRT and the Mawaru series, to the Simply Thonk experience found in this theme.\n\nThe community he has fostered around NotITG is warm and welcoming, and I am so fortunate to live in this timeline where he exists."
+			About="Alan leads development on NotITG, a StepMania fork that focuses on creative \"mod\" content.\n\nAlan's creative resumé includes some of best and most memorable content available, from the UKSRT and the Mawaru series, to the Simply Thonk experience found in this theme.\n\nThe community he has fostered around NotITG is warm and welcoming, and I am so fortunate to live in this timeline where he exists."
 		},
 		{
 			Name="bblum",
@@ -192,7 +192,7 @@ return {
 	{
 		{
 			Name="Lamar / Crash Cringle",
-			Img="CrashCringle.jpg",
+			Img="CrashCringle.png",
 			About="Lamar is a visible leader for the Penn State Dance Dance Maniacs, handling everything from managing administrative duties and promotional events, to upkeeping the pads and Arch Linux SM5 PC, to writing stepcharts and Lua-driven theme customizations.\n\nBy engaging current club members with recurring events like the Good Reads Tournament and actively promoting the club to new students, he goes above and beyond to keep dance games alive.\n\nLamar is a truly upstanding young man, one I am so very fortunate to know."
 		},
 		{
