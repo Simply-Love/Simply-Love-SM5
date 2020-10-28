@@ -113,10 +113,10 @@ for i=1, #people do
 					spr.LoopCommand=function(self)
 						if self:GetDiffuseAlpha() == 0 then
 							self:linear(fade_time):diffusealpha(1)
-						end
 
-						if ActorUtil.GetFileType(THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..people[i].Img[j])) == "FileType_Movie" then
-							self:play()
+							if ActorUtil.GetFileType(THEME:GetPathB("ScreenSLAcknowledgments", "overlay/img/"..people[i].Img[j])) == "FileType_Movie" then
+								self:play()
+							end
 						end
 
 						self:sleep( display_time )
