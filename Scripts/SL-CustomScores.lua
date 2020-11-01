@@ -8,8 +8,8 @@ end
 function WriteScores()
 	local template = {
 		Version = 1,
-		Theme = 'Simply Love',
-		ThemeVersion = GetThemeVersion(),
+		Theme = THEME:GetThemeDisplayName(),
+		ThemeVersion = tostring(GetThemeVersion()),
 		ProductID = ProductID(),
 		ProductVersion = ProductVersion(),
 		MachineGuid = PROFILEMAN:GetMachineProfile():GetGUID(),
