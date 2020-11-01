@@ -58,33 +58,35 @@ StepManiaVersionIsSupported = function()
 	local version = ProductVersion()
 	if type(version) ~= "string" then return false end
 
-	-- remove the git hash if one is present in the version string
-	-- if Stepmania has been built without git, git hash will be UNKNOWN
-	version = version:gsub("-git-.+", ""):gsub("-UNKNOWN", "")
+	-- Stepmania version formats
+	-- Major releases should conform to traditional, other builds to git.
+	-- If the git executable can not be found during build (e.g. in sandboxed environments),
+	-- an UNKNOWN version will be returned, even for major releases.
+	local traditional = "(%d+)%.(%d+)%.(%d)"
+	local git = "(%d+)%.(%d+)-git-%x+"
+	local unknown = "(%d+)%.(%d+)-UNKNOWN"
 
-	-- split the remaining version string on periods; store each segment in a temp table
-	local t = {}
-	for i in version:gmatch("[^%.]+") do
-		table.insert(t, tonumber(i))
-	end
+	local start, major, minor, patch
+	start, _, major, minor, patch = version:find(traditional)
+	if not start then start, _, major, minor = version:find(git) end
+	if not start then start, _, major, minor = version:find(unknown) end
 
-	-- if we didn't detect SM5.x.x then Something Is Terribly Wrong.
-	if not (t[1] and t[1]==5) then return false end
-
-	-- SM5.0.x is supported
+	-- SM5.0.12 is supported
 	-- SM5.1.x is supported
 	-- SM5.2 is not supported because it saw significant backwards-incompatible API changes and is now abandoned
 	-- SM5.3 is not supported for now because it is not open source
-	if not (t[2] and (t[2]==0 or t[2]==1)) then return false end
+	local supported = {
+		{"5", "0", "12"},
+		{"5", "1", nil},
+		{"5", "1", "0"},
+	}
 
-	-- if we're in SM5.0.x, then check for a third segment
-	if t[2]==0 then
-		-- SM5.0.12 is supported because SM5.1 is "still in beta" and many users are reluctant to install beta software
-		-- anything older than SM5.0.12 is not supported
-		if not (t[3] and t[3]==12) then return false end
+	for _, v in ipairs(supported) do
+		if v[1] == major and v[2] == minor and v[3] == patch then
+			return true
+		end
 	end
-
-	return true
+	return false
 end
 
 -- -----------------------------------------------------------------------
