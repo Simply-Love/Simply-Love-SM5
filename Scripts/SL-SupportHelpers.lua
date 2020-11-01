@@ -59,7 +59,8 @@ StepManiaVersionIsSupported = function()
 	if type(version) ~= "string" then return false end
 
 	-- remove the git hash if one is present in the version string
-	version = version:gsub("-git-.+", "")
+	-- if Stepmania has been built without git, git hash will be UNKNOWN
+	version = version:gsub("-git-.+", ""):gsub("-UNKNOWN", "")
 
 	-- split the remaining version string on periods; store each segment in a temp table
 	local t = {}
