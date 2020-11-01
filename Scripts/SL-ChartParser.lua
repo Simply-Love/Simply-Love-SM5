@@ -71,21 +71,6 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 				end
 			end
 		end
-
-	-- ----------------------------------------------------------------
-	-- FIXME: this is likely to return the incorrect note data string from an sm file when
-	--   the requested Difficulty is "Edit" and there are multiple edit difficulties available.
-	--   StepMania uses each steps' "Description" attribute to unique identify Edit charts.
-	--
-	--   ssc files use a dedicated #DESCRIPTION for this purpose
-	--   but sm files have the description as part of an inline comment like
-	--
-	--   //---------------dance-single - test----------------
-	--
-	--   that^ edit stepchart would have a description of "test"
-	--
-	--   For now, SL-ChartParser.lua supports ssc files with multiple edits but not sm files.
-	-- ----------------------------------------------------------------
 	elseif Filetype == "sm" then
 		-- SM FILE
 		-- Loop through each chart in the SM file
@@ -104,10 +89,12 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			-- use gsub to scrub out line breaks (and other irrelevant characters?)
 			local st = pieces[2]:gsub("[^%w-]", "")
 			local diff = pieces[4]:gsub("[^%w]", "")
+			-- trim leading whitespace
+			local description = pieces[3]:gsub("^%s*", "")
 
 			-- if this particular chart's steps_type matches the desired StepsType
 			-- and its difficulty string matches the desired Difficulty
-			if (st == StepsType) and (diff == Difficulty) then
+			if (st == StepsType) and (diff == Difficulty) and (diff ~= "Edit" or description == StepsDescription) then
 				-- then index 7 contains the notedata that we're looking for
 				-- use gsub to remove comments, store the resulting string,
 				-- and break out of the chart loop now
