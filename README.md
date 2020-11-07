@@ -11,7 +11,7 @@ WIP Theme for SM5 that uses Simply Love as a base, but hopefully over time I can
 - Step artist field extended and text made slightly smaller to fit more information before it gets squished into oblivion.
 - Difficulties are colored by their actual difficulty, but are slightly lighter to avoid eye strain.
 - CDTitle support added.
-- Massive removal of bloat from the theme bringing it down from ~120mbs to just about 15mbs.
+- Reduced the total filesize of the theme bringing it down from ~120mbs to just about 15mbs.
 - Preview music no longer loops so you can actually hold a conversation with someone inbetween songs without having to leave the song folder.
 - Song title present at the bottom of the mod menu. (Just in case you forget what you picked after the music stops looping)
 - Style indicator at the top right on evaluation (to distinguish between single and double)
@@ -39,7 +39,7 @@ The image must:
   * <strong>16:9</strong> (common)
   * <strong>16:10</strong> (Apple laptops, some LCD monitors)
   * <strong>4:3</strong> (CRT arcade monitors, older TVs)
-  
+
  - This might work, but I haven't had the chance to take a look.
   * <strong>21:9</strong> ("Ultrawide")
 
