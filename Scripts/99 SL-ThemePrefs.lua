@@ -195,15 +195,7 @@ SL_CustomPrefs.Get = function()
 			Default = 0,
 			Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound") },
 			Values  = { 0, 1, 2 }
-		},
-		-- - - - - - - - - - - - - - - - - - - -
-		-- this was previously titled "The Rabbit Hole"
-		-- https://github.com/48productions/Simply-Potato-SM5/pull/4#issuecomment-587281943
-		HereInTheDarkness = {
-			Default = 0,
-			Choices = range(0, 22, 1),
-			Values  = range(0, 22, 1),
-		},
+		}
 	}
 end
 
