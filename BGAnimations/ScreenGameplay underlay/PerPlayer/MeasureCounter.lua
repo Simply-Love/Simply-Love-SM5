@@ -29,6 +29,10 @@ local InitializeMeasureCounter = function()
 	streams = SL[pn].Streams
 	streamIndex = 1
 	prevMeasure = -1
+
+	for actor in ivalues(bmt) do
+		actor:visible(true)
+	end
 end
 
 -- Returns whether or not we've reached the end of this stream segment.
