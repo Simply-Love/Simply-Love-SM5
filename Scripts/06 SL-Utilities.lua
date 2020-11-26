@@ -85,6 +85,7 @@ SM = function( arg, duration )
 	-- let's broadcast directly using MESSAGEMAN so that we can also pack in a duration
 	-- value (how long to display the SystemMessage for) if so desired
 	MESSAGEMAN:Broadcast("SystemMessage", {Message=msg, Duration=duration})
+	Trace(msg)
 end
 
 
