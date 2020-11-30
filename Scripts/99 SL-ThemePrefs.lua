@@ -195,7 +195,14 @@ SL_CustomPrefs.Get = function()
 			Default = 0,
 			Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound") },
 			Values  = { 0, 1, 2 }
-		}
+		},
+
+		-- Replace the game duration with the current date and time
+		ShowDateTimeOnHeader = {
+			Default = false,
+			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values	= { true, false }
+		},
 	}
 end
 

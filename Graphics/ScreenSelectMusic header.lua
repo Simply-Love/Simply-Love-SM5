@@ -16,20 +16,25 @@ local SecondsToHMMSS = SecondsToHMMSS or function(s)
 end
 
 local UpdateTimer = function(af, dt)
-	local seconds = GetTimeSinceStart() - SL.Global.TimeAtSessionStart
+	if ThemePrefs.Get("ShowDateTimeOnHeader") then
+		local DateFormat = "%02d.%02d.%02d     %02d:%02d:%02d"
+		bmt_actor:settext(DateFormat:format(DayOfMonth(), MonthOfYear()+1, Year(), Hour(), Minute(), Second()))
+	else 
+		local seconds = GetTimeSinceStart() - SL.Global.TimeAtSessionStart
 
-	-- if this game session is less than 1 hour in duration so far
-	if seconds < 3600 then
-		bmt_actor:settext( SecondsToMMSS(seconds) )
+		-- if this game session is less than 1 hour in duration so far
+		if seconds < 3600 then
+			bmt_actor:settext( SecondsToMMSS(seconds) )
 
-	-- somewhere between 1 and 10 hours
-	elseif seconds >= 3600 and seconds < 36000 then
-		bmt_actor:settext( SecondsToHMMSS(seconds) )
+		-- somewhere between 1 and 10 hours
+		elseif seconds >= 3600 and seconds < 36000 then
+			bmt_actor:settext( SecondsToHMMSS(seconds) )
 
-	-- in it for the long haul
-	else
-		bmt_actor:settext( SecondsToHHMMSS(seconds) )
-	end
+		-- in it for the long haul
+		else
+			--bmt_actor:settext( SecondsToHHMMSS(seconds) )
+		end
+	end 
 end
 
 -- -----------------------------------------------------------------------
