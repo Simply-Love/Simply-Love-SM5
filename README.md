@@ -39,7 +39,7 @@ The image must:
   * <strong>16:9</strong> (common)
   * <strong>16:10</strong> (Apple laptops, some LCD monitors)
   * <strong>4:3</strong> (CRT arcade monitors, older TVs)
-
+  
  - This might work, but I haven't had the chance to take a look.
   * <strong>21:9</strong> ("Ultrawide")
 

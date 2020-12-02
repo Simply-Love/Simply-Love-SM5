@@ -18,16 +18,9 @@ local af = Def.ActorFrame{
 		self:aux(0)
 
 		self:zoom(0.5):xy( frame_x, _screen.cy + WideScale(0,10) )
-
-		if ThemePrefs.Get("VisualTheme")=="Gay" and not HolidayCheer() then
-			self:bob():effectmagnitude(0,0,0):effectclock('bgm'):effectperiod(0.666)
-		end
 	end,
 	GainFocusCommand=function(self)
 		self:finishtweening():linear(0.125):zoom(1)
-		if ThemePrefs.Get("VisualTheme")=="Gay" and not HolidayCheer() then
-			self:effectmagnitude(0,4,0)
-		end
 	end,
 	LoseFocusCommand=function(self)
 		self:finishtweening():linear(0.125):zoom(0.5):effectmagnitude(0,0,0)
