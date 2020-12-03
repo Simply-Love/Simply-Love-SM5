@@ -12,6 +12,8 @@ local t = Def.ActorFrame{
 	LoadActor("./MenuTimer.lua"),
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),
+	-- Clear SongInfo.txt
+	LoadActor("./ClearSongInfo.lua"),
 
 	-- ---------------------------------------------------
 	-- next, load visual elements; the order of the layers matters for most of these
