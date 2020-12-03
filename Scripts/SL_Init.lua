@@ -229,6 +229,16 @@ SL = {
 		},
 	},
 	Metrics = {
+		-- The PercentScoreWeightCheckpointHit and
+		-- GradeWeightCheckpointHit metrics are only used in pump game
+		-- mode. We have to set them to 0 for two reasons:
+		-- 1. Due to an inconsistency in the game engine the score for
+		--    perfect play adds up to less than 100% when
+		--    PercentScoreWeightCheckpointHit is > 0.
+		-- 2. It brings the scoring in pump mode closer to PIU scoring,
+		--    which does not award points for held checkpoints, but
+		--    only penalizes missed checkpoints.
+
 		Casual = {
 			PercentScoreWeightW1=3,
 			PercentScoreWeightW2=2,
@@ -237,8 +247,9 @@ SL = {
 			PercentScoreWeightW5=0,
 			PercentScoreWeightMiss=0,
 			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=3,
+			PercentScoreWeightHeld=IsGame("pump") and 0 or 3,
 			PercentScoreWeightHitMine=-1,
+			PercentScoreWeightCheckpointHit=0,
 
 			GradeWeightW1=3,
 			GradeWeightW2=2,
@@ -247,8 +258,9 @@ SL = {
 			GradeWeightW5=0,
 			GradeWeightMiss=0,
 			GradeWeightLetGo=0,
-			GradeWeightHeld=3,
+			GradeWeightHeld=IsGame("pump") and 0 or 3,
 			GradeWeightHitMine=-1,
+			GradeWeightCheckpointHit=0,
 
 			LifePercentChangeW1=0,
 			LifePercentChangeW2=0,
@@ -268,8 +280,9 @@ SL = {
 			PercentScoreWeightW5=-6,
 			PercentScoreWeightMiss=-12,
 			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=5,
+			PercentScoreWeightHeld=IsGame("pump") and 0 or 5,
 			PercentScoreWeightHitMine=-6,
+			PercentScoreWeightCheckpointHit=0,
 
 			GradeWeightW1=5,
 			GradeWeightW2=4,
@@ -278,8 +291,9 @@ SL = {
 			GradeWeightW5=-6,
 			GradeWeightMiss=-12,
 			GradeWeightLetGo=0,
-			GradeWeightHeld=5,
+			GradeWeightHeld=IsGame("pump") and 0 or 5,
 			GradeWeightHitMine=-6,
+			GradeWeightCheckpointHit=0,
 
 			LifePercentChangeW1=0.008,
 			LifePercentChangeW2=0.008,
@@ -299,8 +313,9 @@ SL = {
 			PercentScoreWeightW5=0,
 			PercentScoreWeightMiss=-12,
 			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=5,
+			PercentScoreWeightHeld=IsGame("pump") and 0 or 5,
 			PercentScoreWeightHitMine=-6,
+			PercentScoreWeightCheckpointHit=0,
 
 			GradeWeightW1=5,
 			GradeWeightW2=5,
@@ -309,8 +324,9 @@ SL = {
 			GradeWeightW5=0,
 			GradeWeightMiss=-12,
 			GradeWeightLetGo=0,
-			GradeWeightHeld=5,
+			GradeWeightHeld=IsGame("pump") and 0 or 5,
 			GradeWeightHitMine=-6,
+			GradeWeightCheckpointHit=0,
 
 			LifePercentChangeW1=0.008,
 			LifePercentChangeW2=0.008,
@@ -318,8 +334,8 @@ SL = {
 			LifePercentChangeW4=0.004,
 			LifePercentChangeW5=0,
 			LifePercentChangeMiss=-0.1,
-			LifePercentChangeLetGo=-0.08,
-			LifePercentChangeHeld=0.008,
+			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
+			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.05,
 		},
 	}
