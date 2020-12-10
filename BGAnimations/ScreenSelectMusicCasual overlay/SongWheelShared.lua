@@ -129,7 +129,7 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) self:zoom(0.85):diffuse(Color.White):y(-20):horizalign(left) end,
 		CurrentSongChangedMessageCommand=function(self, params)
 			if params.song then
-				self:settext( THEME:GetString("ScreenSelectMusic", "Artist") .. ": " .. params.song:GetDisplayArtist() )
+				self:settext( THEME:GetString("SongDescription", "Artist") .. ": " .. params.song:GetDisplayArtist() )
 			end
 		end,
 	},
@@ -144,7 +144,7 @@ af[#af+1] = Def.ActorFrame{
 			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(0):horizalign(left) end,
 			CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
-					self:settext( ("%s: %s"):format(THEME:GetString("ScreenSelectMusic", "BPM"), StringifyDisplayBPMs() or "") )
+					self:settext( ("%s: %s"):format(THEME:GetString("SongDescription", "BPM"), StringifyDisplayBPMs() or "") )
 				end
 			end,
 		},
@@ -155,7 +155,7 @@ af[#af+1] = Def.ActorFrame{
 			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(14):horizalign(left) end,
 	 		CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
-		 			self:settext( THEME:GetString("ScreenSelectMusic", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
+		 			self:settext( THEME:GetString("SongDescription", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
 				end
 	 		end,
 		},
@@ -168,7 +168,7 @@ af[#af+1] = Def.ActorFrame{
 			end,
 			CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
-					self:settext( THEME:GetString("ScreenSelectMusic", "Genre") .. ": " .. params.song:GetGenre() )
+					self:settext( THEME:GetString("SongDescription", "Genre") .. ": " .. params.song:GetGenre() )
 				end
 			end,
 		},
