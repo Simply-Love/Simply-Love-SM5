@@ -103,9 +103,13 @@ t[#t+1] = Def.ActorFrame {
 -- or SM(text)
 
 local bmt = nil
+local timestamp = nil
 
 -- SystemMessage ActorFrame
 t[#t+1] = Def.ActorFrame {
+	InitCommand=function(self)
+		self:SetUpdateFunction(updateTimestamp)
+	end,
 	SystemMessageMessageCommand=function(self, params)
 		bmt:settext( params.Message )
 
@@ -208,12 +212,20 @@ t[#t+1] = LoadFont("Common Footer")..{
 	end
 }
 
+function updateTimestamp(af)
+	if timestamp then
+		timestamp:playcommand("Refresh")
+	end
+end
+
 -- Date & time at lower-center of screen
 -- This is only shown on the ScreenEvaluationStage and ScreenEvaluationSummary
 -- screens. The above actor is not shown on either screen, so it doesn't
 -- overlap with it.
 t[#t+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 	InitCommand=function(self)
+		timestamp = self
+
 		self:x(_screen.cx):horizalign(center)
 		self:zoom(0.18)
 	end,
