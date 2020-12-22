@@ -36,7 +36,7 @@ If you are able to compile StepMania's source code yourself, the [5_1-new branch
 
 If you are upgrading from a previous version of Simply Love, fully delete the old Simply Love folder first.  **Do not merge the new folder into the old.**
 
-You can download the current Simply Love release at the [Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest) page.
+You can download the current Simply Love release at the [Latest Release](https://github.com/Simply-Love/Simply-Love-SM5/releases/latest) page.
 
 Full install instructions are in the [Installing Simply Love](./Other/Documentation/InstallingSimplyLove-README.md) README.
 
@@ -78,7 +78,7 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 ![Select Profile](https://i.imgur.com/1SsDc90l.png)
 ![Visual Themes](https://i.imgur.com/AQeRafLl.png)
 
-Visit my imgur album for more screenshots: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
+Check out this imgur album for more screenshots: [http://imgur.com/a/56wDq](http://imgur.com/a/56wDq)
 
 
 ---

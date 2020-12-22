@@ -28,6 +28,7 @@ local testinput_input = LoadActor("TestInput_InputHandler.lua")
 -- results in programming tutorials so abstract they don't seem applicable to this world,
 -- but its prose was approachable enough for wastes-of-space like me, so I guess I'll
 -- recommend it until I find a more helpful one.
+--                                      -quietly
 local wheel_item_mt = LoadActor("WheelItemMT.lua")
 
 local sortmenu = { w=210, h=160 }
