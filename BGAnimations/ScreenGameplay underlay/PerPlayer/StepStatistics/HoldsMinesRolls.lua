@@ -34,8 +34,8 @@ for index, RCType in ipairs(RadarCategories) do
 		Text="000",
 		InitCommand=function(self)
 			self:zoom(0.4)
-			self:halign(PlayerNumber:Reverse()[OtherPlayer[player]])
-			self:x( 0 )
+			self:horizalign(left)
+			self:x( player==PLAYER_1 and -100 or 0 )
 			self:y((index-1)*row_height - 22)
 		end,
 		BeginCommand=function(self)
@@ -79,8 +79,8 @@ for index, RCType in ipairs(RadarCategories) do
 	af[#af+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		InitCommand=function(self)
 			self:zoom(0.4)
-			self:halign(PlayerNumber:Reverse()[player])
-			self:x( 100 * (player==PLAYER_1 and -1 or 1) )
+			self:horizalign(right)
+			self:x( player==PLAYER_1 and 0 or 100 )
 			self:y((index-1)*row_height - 22)
 		end,
 		BeginCommand=function(self)
