@@ -38,7 +38,7 @@ elseif #players == 1 then
 	-- InputHandling for.  An approach I considered was loading one of each pane and then
 	-- moving the panes around (between left and right sides of ScreenEval) via InputHandling.
 	-- That was less computional work (not loading everything twice), but it was more work
-	-- for my milquetoast mind.
+	-- for my milquetoast mind. (-quietly)
 	--
 	-- Some of the Panes (QR code, timing histogram) contain expensive computation that can
 	-- delay ScreenEvaluation's load time, *especially* when performed twice.  If only one

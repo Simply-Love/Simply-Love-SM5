@@ -289,11 +289,12 @@ end
 -- -----------------------------------------------------------------------
 
 SetGameModePreferences = function()
-	-- apply the preferences associated with this GameMode
+	-- apply the preferences associated with this SL GameMode (Casual, ITG, FA+)
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
 		PREFSMAN:SetPreference(key, val)
 	end
 
+	--------------------------------------------
 	-- If we're switching to Casual mode,
 	-- we want to reduce the number of judgments,
 	-- so turn Decents and WayOffs off now.
@@ -305,6 +306,7 @@ SetGameModePreferences = function()
  		SL.Global.ActiveModifiers.TimingWindows = {true,true,true,true,true}
 	end
 
+	--------------------------------------------
 	-- loop through human players and apply whatever mods need to be set now
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		-- Now that we've set the SL table for TimingWindows appropriately,
@@ -327,11 +329,15 @@ SetGameModePreferences = function()
 		player_modslevel:FailSetting( GetDefaultFailType() )
 	end
 
+	--------------------------------------------
+	-- finally, load the Stats.xml file appropriate for this SL GameMode
+
 	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
 	-- Stats.xml, ECFA-Stats.xml, Casual-Stats.xml
 	local prefix = {}
+
 	-- ITG has no prefix and scores go directly into the main Stats.xml
-	-- this was probably a Bad Decision™ on my part in hindsight
+	-- this was probably a Bad Decision™ on my part in hindsight  -quietly
 	prefix["ITG"] = ""
 
 	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"

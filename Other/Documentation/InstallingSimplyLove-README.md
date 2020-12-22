@@ -10,7 +10,7 @@ If you are upgrading from a previous version of Simply Love, fully delete the ol
 
 ## 2. Download
 
-You can download the current Simply Love release at the **[Latest Release](https://github.com/quietly-turning/Simply-Love-SM5/releases/latest)** page.
+You can download the current Simply Love release at the **[Latest Release](https://github.com/Simply-Love/Simply-Love-SM5/releases/latest)** page.
 
 As of this writing, GitHub puts the download link at the bottom of the release page, under the **Assets** header.
 
