@@ -49,8 +49,6 @@ af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto( IsUsingWideScreen() and 320 or 311, 48 )
 		self:diffuse(color("#1e282f"))
-
-		if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
 	end
 }
 
@@ -118,13 +116,13 @@ af[#af+1] = Def.ActorFrame{
 			-- we only want to try to show BPM values for Songs and Courses
 			-- not Section, Roulette, Random, Portal, Sort, or Custom
 			-- (aside: what is "WheelItemDataType_Custom"?  I need to look into that.)
-			if not (SelectedType=="WheelItemDataType_Song" or SelectedType=="WheelItemDataType_Course") then
+			if not (SelectedType=="WheelItemDataType_Song" or SelectedType=="WheelItemDataType_Course" or SelectedType=="WheelItemDataType_Portal") then
 				self:settext("")
 				return
 			end
 
 			-- if only one player is joined, stringify the DisplayBPMs and return early
-			if #GAMESTATE:GetHumanPlayers() == 1 then
+			if #GAMESTATE:GetHumanPlayers() == 1 or SelectedType=="WheelItemDataType_Portal" then
 				-- StringifyDisplayBPMs() is defined in ./Scipts/SL-BPMDisplayHelpers.lua
 				self:settext(StringifyDisplayBPMs() or ""):zoom(0.8)
 				return
@@ -189,7 +187,7 @@ af[#af+1] = Def.ActorFrame{
 			SelectedType = MusicWheel:GetSelectedType()
 			local seconds
 
-			if SelectedType == "WheelItemDataType_Song" then
+			if SelectedType == "WheelItemDataType_Song" or "WheelItemDataType_Portal" then
 				-- GAMESTATE:GetCurrentSong() can return nil here if we're in pay mode on round 2 (or later)
 				-- and we're returning to SSM to find that the song we'd just played is no longer available
 				-- because it exceeds the 2-round or 3-round time limit cutoff.
