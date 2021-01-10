@@ -26,8 +26,9 @@ end
 local PlayerThatLateJoined = nil
 
 return Def.Actor{
+	-- "PlayerJoined" will be broadcast by the StepMania engine when a player latejoins on
+	-- ScreenSelectMusic.  We'll need to check for a profile and apply modifiers.
 	PlayerJoinedMessageCommand=function(self, params)
-		-- ...and queue a command to set that player's modifiers
 		-- Queueing is necessary here to give LoadProfileCustom() time to read this player's mods from file
 		-- and set the SL[pn].ActiveModifiers table accordingly.  If we call ApplyMods(params.Player) here,
 		-- the SL[pn].ActiveModifiers table is still in its default state, and mods won't be set properly.
@@ -38,7 +39,7 @@ return Def.Actor{
 		if PlayerThatLateJoined then
 			-- ApplyMods() is defined at the bottom of ./Scripts/SL-PlayerOptions.lua
 			ApplyMods(PlayerThatLateJoined)
-			-- and reset this back to nil... just in case...
+			-- and reset this back to nil
 			PlayerThatLateJoined = nil
 		end
 	end

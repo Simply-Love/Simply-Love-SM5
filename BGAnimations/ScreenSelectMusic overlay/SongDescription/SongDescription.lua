@@ -1,34 +1,5 @@
--- before loading actors, pre-calculate each group's overall duration by
--- looping through its songs and summing their duration
--- store each group's overall duration in a lookup table, keyed by group_name
--- to be retrieved + displayed when actively hovering on a group (not a song)
---
--- I haven't checked, but I assume that continually recalculating group durations could
--- have performance ramifications when rapidly scrolling through the MusicWheel
---
--- a consequence of pre-calculating and storing the group_durations like this is that
--- live-reloading a song on ScreenSelectMusic via [Shift Control R] might cause the
--- group duration to then be inaccurate, until the screen is reloaded.
-
-local group_durations = {}
-local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
-
-for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
-	group_durations[group_name] = 0
-
-	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
-
-		-- skip this song if it doesn't have any playable steps for the current game (dance, pump, etc.)
-		if #SongUtil.GetPlayableSteps(song) > 0
-		and (GAMESTATE:IsEventMode() or song:GetStageCost() <= stages_remaining)
-		then
-			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
-		end
-	end
-end
-
--- ----------------------------------------
 local MusicWheel, SelectedType
+local group_durations = LoadActor("./GroupDurations.lua")
 
 -- width of background quad
 local _w = IsUsingWideScreen() and 320 or 310
