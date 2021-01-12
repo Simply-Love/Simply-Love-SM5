@@ -2,6 +2,18 @@ local player = Var "Player"
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
+-- lowest judge variable and animations for DDR mode
+local LowerJudge={ 0, 0 }
+local Pulse = THEME:GetMetric("Combo", "PulseCommand")
+local PulseLabel = THEME:GetMetric("Combo", "PulseLabelCommand")
+
+local NumberMinZoom = THEME:GetMetric("Combo", "NumberMinZoom")
+local NumberMaxZoom = THEME:GetMetric("Combo", "NumberMaxZoom")
+local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt")
+
+local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom")
+local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom")
+
 local available_fonts = GetComboFonts()
 local combo_font = (FindInTable(mods.ComboFont, available_fonts) ~= nil and mods.ComboFont) or available_fonts[1] or nil
 
@@ -60,11 +72,57 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	OnCommand=function(self)
 		self:shadowlength(1):vertalign(middle):zoom(0.75)
 	end,
+	JudgmentMessageCommand=function(self, params)
+		if params.Player ~= player then return end;
+		if params.TapNoteScore == 'TapNoteScore_W1' and LowerJudge[p] < 1 then
+			LowerJudge[p]=1
+		elseif params.TapNoteScore == 'TapNoteScore_W2' and LowerJudge[p] < 2 then
+			LowerJudge[p]=2
+		elseif params.TapNoteScore == 'TapNoteScore_W3' and LowerJudge[p] < 3 then
+			LowerJudge[p]=3
+		elseif params.TapNoteScore == 'TapNoteScore_W4' and LowerJudge[p] < 4 then
+			LowerJudge[p]=4
+		elseif params.TapNoteScore == 'TapNoteScore_CheckpointMiss' 
+			or params.TapNoteScore == 'TapNoteScore_W5' 
+			or params.TapNoteScore == 'TapNoteScore_Miss' then
+			LowerJudge[p]=0
+		end
+	end,
 	ComboCommand=function(self, params)
 		self:settext( params.Combo or params.Misses or "" )
+		local iCombo = params.Combo;
+		
 		if SL.Global.GameMode == "DDR" then
-			self:zoom(1.2):linear(0.05):zoom(1)
-			self:settext( params.Combo .. " combo" or params.Misses or "" )
+			params.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom )
+			params.Zoom = clamp( params.Zoom, NumberMinZoom, NumberMaxZoom )
+			params.LabelZoom = scale( iCombo, 0, 100, 0.8, 0.9 )
+			params.LabelZoom = clamp( params.LabelZoom, LabelMinZoom, 0.9)
+
+			-- fancy (yet maybe also very distracting) animation
+			if iCombo > 99 then
+				params.Zoom = scale( iCombo, 0, NumberMaxZoomAt, 1, 1 )
+				params.Zoom = clamp( params.Zoom, 1, 1 )
+			end
+
+			if iCombo > 999 then
+				params.Zoom = scale( iCombo, 0, NumberMaxZoomAt, 0.825, 0.825 )
+				params.Zoom = clamp( params.Zoom, 0.825, 0.825 )
+			end
+
+			if iCombo > 9999 then
+				params.Zoom = scale( iCombo, 0, NumberMaxZoomAt, 0.66, 0.66 )
+				params.Zoom = clamp( params.Zoom, 0.66, 0.66 )
+			end
+
+			if iCombo > 99999 then
+				params.Zoom = scale( iCombo, 0, NumberMaxZoomAt, 0.55, 0.55 )
+				params.Zoom = clamp( params.Zoom, 0.55, 0.55 )
+			end
+
+			-- Animate
+			Pulse(self, params)
+
+			self:settext( params.Combo or params.Misses or "" )
 		end
 		self:diffuseshift():effectperiod(0.8):playcommand("Color", params)
 	end,
