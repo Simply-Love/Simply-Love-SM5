@@ -1,10 +1,16 @@
 local player = ...
 
 local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(292.5, 342.5)
+local _y = 56
+
+if SL.Global.GameMode=="DDR" then
+	_x = 25
+	_y = _screen.h - 47
+end
 
 return Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(_x, 56)
+		self:xy(_x, _y)
 	end,
 
 
