@@ -247,10 +247,11 @@ SL = {
 			AllowW1="AllowW1_Everywhere",
 			SubSortByNumSteps=true,
 
-			TimingWindowSecondsW1=0.016667,
-			TimingWindowSecondsW2=0.033333,
-			TimingWindowSecondsW3=0.083333,
-			TimingWindowSecondsW4=0.123333,
+			TimingWindowSecondsW1=0.016667, -- Marv
+			TimingWindowSecondsW2=0.033333, -- Perf
+			TimingWindowSecondsW3=0.083333, -- Great
+			TimingWindowSecondsW4=0.123333, -- Good
+			TimingWindowSecondsW5=0.163333, -- "Almost"
 			-- NOTE(teejusb): Not quite sure. Just stick with ITG for now.
 			TimingWindowSecondsHold=0.320000,
 			-- NOTE(teejusb): I believe shock arrows are the same as greats?
