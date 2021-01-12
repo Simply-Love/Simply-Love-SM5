@@ -1,5 +1,9 @@
 local pss = ...
 
+if SL.Global.GameMode == "DDR" then
+    return LoadActor("./assets/aaa.png")..{ OnCommand=function(self) self:zoom(0.85) end }
+end
+
 local function Spin(self)
 	r = math.min(math.random(3,51),36)
 	s = math.random()*7+1

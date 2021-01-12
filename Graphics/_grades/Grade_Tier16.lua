@@ -1,1 +1,3 @@
-return LoadActor("./assets/c-minus.png")..{ OnCommand=function(self) self:zoom(0.85) end }
+local path = (SL.Global.GameMode == "DDR" and "./assets/d.png") or "./assets/c-minus.png"
+
+return LoadActor(path)..{ OnCommand=function(self) self:zoom(0.85) end }

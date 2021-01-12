@@ -62,6 +62,10 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	end,
 	ComboCommand=function(self, params)
 		self:settext( params.Combo or params.Misses or "" )
+		if SL.Global.GameMode == "DDR" then
+			self:zoom(1.2):linear(0.05):zoom(1)
+			self:settext( params.Combo .. " combo" or params.Misses or "" )
+		end
 		self:diffuseshift():effectperiod(0.8):playcommand("Color", params)
 	end,
 	ColorCommand=function(self, params)
