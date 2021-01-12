@@ -16,6 +16,7 @@ local bottombar_height = 13
 local abbreviations = {
 	ITG = { "Fan", "Ex", "Gr", "Dec", "WO" },
 	["FA+"] = { "Fan", "Fan", "Ex", "Gr", "Dec" },
+	DDR = {"Mar", "Per", "Gre", "Gd", "Ms"},
 }
 
 local colors = {}

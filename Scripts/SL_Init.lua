@@ -165,6 +165,15 @@ SL = {
 			color("#b45cff"),	-- purple (greatly lightened)
 			color("#ff3030")	-- red (slightly lightened)
 		},
+		DDR = {
+			color("#faf6d1"),	-- white
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#21CCE8"),	-- blue
+			-- Colors below are basically unused.
+			color("#b45cff"),	-- purple (greatly lightened)
+			color("#ff3030")	-- red (slightly lightened)
+		},
 	},
 	Preferences = {
 		Casual = {
@@ -225,6 +234,27 @@ SL = {
 			TimingWindowSecondsW5=0.135000,
 			TimingWindowSecondsHold=0.320000,
 			TimingWindowSecondsMine=0.065000,
+			TimingWindowSecondsRoll=0.350000,
+		},
+		DDR = {
+			TimingWindowAdd=0.0000,
+			RegenComboAfterMiss=0,
+			MaxRegenComboAfterMiss=0,
+			MinTNSToHideNotes="TapNoteScore_W4",
+			HarshHotLifePenalty=true,
+
+			PercentageScoring=true,
+			AllowW1="AllowW1_Everywhere",
+			SubSortByNumSteps=true,
+
+			TimingWindowSecondsW1=0.016667,
+			TimingWindowSecondsW2=0.033333,
+			TimingWindowSecondsW3=0.083333,
+			TimingWindowSecondsW4=0.123333,
+			-- NOTE(teejusb): Not quite sure. Just stick with ITG for now.
+			TimingWindowSecondsHold=0.320000,
+			-- NOTE(teejusb): I believe shock arrows are the same as greats?
+			TimingWindowSecondsMine=0.083333,
 			TimingWindowSecondsRoll=0.350000,
 		},
 	},
@@ -337,6 +367,40 @@ SL = {
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.05,
+		},
+		DDR = {
+			-- Use EX scoring weights.
+			PercentScoreWeightW1=3,
+			PercentScoreWeightW2=2,
+			PercentScoreWeightW3=1,
+			PercentScoreWeightW4=0,
+			PercentScoreWeightW5=0,
+			PercentScoreWeightMiss=0,
+			PercentScoreWeightLetGo=0,
+			PercentScoreWeightHeld=3,
+			PercentScoreWeightHitMine=0,
+
+			GradeWeightW1=3,
+			GradeWeightW2=2,
+			GradeWeightW3=1,
+			GradeWeightW4=0,
+			GradeWeightW5=0,
+			GradeWeightMiss=0,
+			GradeWeightLetGo=0,
+			GradeWeightHeld=3,
+			GradeWeightHitMine=0,
+
+			-- TODO(teejusb): Emulating the DDR life bar is hard.
+			-- Empirically determine better values.
+			LifePercentChangeW1=0.008, -- Marv
+			LifePercentChangeW2=0.008, -- Perf
+			LifePercentChangeW3=0.004, -- Great
+			LifePercentChangeW4=0, -- Good
+			LifePercentChangeW5=0, -- Unused
+			LifePercentChangeMiss=-0.1, -- Miss
+			LifePercentChangeLetGo=-0.01,
+			LifePercentChangeHeld=0.008,
+			LifePercentChangeHitMine=-0.01,
 		},
 	}
 }

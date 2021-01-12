@@ -57,7 +57,7 @@ SL_CustomPrefs.Get = function()
 				THEME:GetString("ScreenSelectPlayMode", "ITG"),
 				THEME:GetString("ScreenSelectPlayMode", "FA+"),
 			},
-			Values = { "Casual", "ITG", "FA+" }
+			Values = { "Casual", "ITG", "FA+", "DDR" }
 		},
 		AutoStyle =
 		{
