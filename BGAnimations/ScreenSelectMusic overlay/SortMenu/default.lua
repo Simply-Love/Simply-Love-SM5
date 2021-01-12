@@ -172,6 +172,7 @@ local t = Def.ActorFrame {
 		if SL.Global.Stages.PlayedThisGame == 0 then
 			if SL.Global.GameMode ~= "ITG"      then table.insert(wheel_options, {"ChangeMode", "ITG"}) end
 			if SL.Global.GameMode ~= "FA+"      then table.insert(wheel_options, {"ChangeMode", "FA+"}) end
+			if SL.Global.GameMode ~= "DDR"      then table.insert(wheel_options, {"ChangeMode", "DDR"}) end
 		end
 
 		-- allow players to switch to a TestInput overlay if the current game has visual assets to support it
