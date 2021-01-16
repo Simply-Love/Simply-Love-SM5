@@ -148,6 +148,8 @@ local t = Def.ActorFrame {
 	LoadActor("FooterHelpText.lua"),
 }
 
+t[#t+1] = LoadActor("SoundEffects.lua")
+
 -- Add player options ActorFrames to our primary ActorFrame
 for pn in ivalues( PlayerNumber ) do
 	local x_offset = (pn==PLAYER_1 and -1) or 1
