@@ -59,6 +59,7 @@ local CloseCurrentFolder = function()
 	t.WheelWithFocus.container:queuecommand("Hide")
 	t.WheelWithFocus = GroupWheel
 	t.WheelWithFocus.container:queuecommand("Unhide")
+	MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeGroup"})
 end
 
 local UnhideOptionRows = function(pn)
@@ -132,6 +133,7 @@ t.Handler = function(event)
 			GAMESTATE:JoinPlayer( event.PlayerNumber )
 			Players = GAMESTATE:GetHumanPlayers()
 			UnhideOptionRows(event.PlayerNumber)
+			MESSAGEMAN:Broadcast("PlaySFX", {Action="Start"})
 		end
 		return false
 	end
@@ -150,13 +152,14 @@ t.Handler = function(event)
 			-- navigate the wheel left and right
 			if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" then
 				t.WheelWithFocus:scroll_by_amount(1)
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
+
 				if t.WheelWithFocus==SongWheel then
 					SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("SongWheelShared"):GetChild("Arrows"):GetChild("RightArrow"):finishtweening():playcommand("Press")
 				end
+
 			elseif event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
 				t.WheelWithFocus:scroll_by_amount(-1)
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
+
 				if t.WheelWithFocus==SongWheel then
 					SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("SongWheelShared"):GetChild("Arrows"):GetChild("LeftArrow"):finishtweening():playcommand("Press")
 				end
@@ -187,9 +190,21 @@ t.Handler = function(event)
 				CloseCurrentFolder()
 			end
 
+			-- sound effects
+			if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" or event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
+				if t.WheelWithFocus==GroupWheel then
+					MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeGroup", Player=event.PlayerNumber})
+				else
+					MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeSong", Player=event.PlayerNumber})
+				end
+
+			elseif event.GameButton == "Start" then
+				MESSAGEMAN:Broadcast("PlaySFX", {Action="Start"})
+			end
+
 		--------------------------------------------------------------
 		--------------------------------------------------------------
-		-- handle simple options menu input
+		-- handle SSMCasual's custom PlayerPptions menu input
 
 		else
 			-- get the index of the active optionrow for this player
@@ -200,6 +215,7 @@ t.Handler = function(event)
 				t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(1)
 				-- animate the right cursor
 				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("RightArrow"):finishtweening():playcommand("Press")
+				MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeSong", Player=event.PlayerNumber})
 
 
 			elseif event.GameButton == "MenuLeft" then
@@ -207,6 +223,7 @@ t.Handler = function(event)
 				t.WheelWithFocus[event.PlayerNumber][index]:scroll_by_amount(-1)
 				-- animate the left cursor
 				t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):GetChild("LeftArrow"):finishtweening():playcommand("Press")
+				MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeSong", Player=event.PlayerNumber})
 
 
 			elseif event.GameButton == "MenuUp" then
@@ -217,6 +234,7 @@ t.Handler = function(event)
 					-- scroll up to previous optionrow for this player
 					t.WheelWithFocus[event.PlayerNumber]:scroll_by_amount( -1 )
 					MESSAGEMAN:Broadcast("CancelBothPlayersAreReady")
+					MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeSong", Player=event.PlayerNumber})
 				end
 
 			elseif event.GameButton == "Start" or event.GameButton == "MenuDown" then
@@ -224,6 +242,8 @@ t.Handler = function(event)
 				-- if both players are ALREADY here (before changing the row)
 				-- it means it's time to start gameplay
 				if event.GameButton == "Start" and t.AllPlayersAreAtLastRow() then
+					MESSAGEMAN:Broadcast("PlaySFX", {Action="Start", Player=event.PlayerNumber})
+
 					local topscreen = SCREENMAN:GetTopScreen()
 					if topscreen then
 						topscreen:StartTransitioningScreen("SM_GoToNextScreen")
@@ -252,6 +272,8 @@ t.Handler = function(event)
 				if index == #OptionRows then
 					t.WheelWithFocus[event.PlayerNumber].container:GetChild("item"..index):GetChild("Cursor"):playcommand("ExitRow", {PlayerNumber=event.PlayerNumber})
 				end
+
+				MESSAGEMAN:Broadcast("PlaySFX", {Action="ChangeSong", Player=event.PlayerNumber})
 
 				-- if all available players are now at the final row (start icon), animate cursors spinning
 				if t.AllPlayersAreAtLastRow() then
