@@ -99,7 +99,6 @@ function interpolate_vert(v1, v2, offset)
 	return {{offset, y, 0}, color}
 end
 
-
 function NPS_Histogram(player, width, height)
     local amv = Def.ActorMultiVertex{
         Name="DensityGraph_AMV",
@@ -107,9 +106,13 @@ function NPS_Histogram(player, width, height)
             self:SetDrawState({Mode="DrawMode_QuadStrip"})
         end,
         CurrentStepsP1ChangedMessageCommand=function(self)
+			self:stoptweening()
+			self:sleep(0.1)
             self:queuecommand("Redraw")
         end,
         CurrentStepsP2ChangedMessageCommand=function(self)
+			self:stoptweening()
+			self:sleep(0.1)
             self:queuecommand("Redraw")
         end,
         RedrawCommand=function(self)
