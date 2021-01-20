@@ -1,4 +1,4 @@
-local player = ...
+local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
@@ -153,7 +153,10 @@ end
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{
-	InitCommand=function(self) self:queuecommand("SetUpdate") end,
+	InitCommand=function(self)
+		self:xy(GetNotefieldX(player), layout.y)
+		self:queuecommand("SetUpdate")
+	end,
 	SetUpdateCommand=function(self) self:SetUpdateFunction( Update ) end,
 
 	CurrentSongChangedMessageCommand=function(self)
@@ -175,14 +178,10 @@ for i=lookAhead+1,1,-1 do
 
 			-- Have descending zoom sizes for each new BMT we add.
 			self:zoom(0.35 - 0.05 * (i-1)):shadowlength(1):horizalign(center)
-			self:xy(GetNotefieldX(player) + columnWidth * (0.7 * (i-1)), _screen.cy)
+			self:x(columnWidth * (0.7 * (i-1)))
 
 			if mods.MeasureCounterLeft then
 				self:addx(-columnWidth)
-			end
-
-			if mods.MeasureCounterUp then
-				self:addy(-55)
 			end
 		end
 	}

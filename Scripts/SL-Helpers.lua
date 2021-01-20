@@ -51,11 +51,18 @@ end
 -- used by the judgment scatter plot and offset histogram in ScreenEvaluation
 
 DetermineTimingWindow = function(offset)
-	for i=1,5 do
+	for i=1,NumJudgmentsAvailable() do
 		if math.abs(offset) < GetTimingWindow(i) then
 			return i
 		end
 	end
+	return 5
+end
+
+-- -----------------------------------------------------------------------
+-- return number of available judgments
+
+NumJudgmentsAvailable = function()
 	return 5
 end
 

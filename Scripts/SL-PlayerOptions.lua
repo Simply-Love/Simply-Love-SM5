@@ -489,6 +489,14 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = { "MissBecauseHeld", "NPSGraphAtTop" }
 	},
+	ErrorBar = {
+		Values = { "None", "Colorful", "Monochrome", "Text" },
+	},
+	-------------------------------------------------------------------------
+	ErrorBarOptions = {
+		SelectType = "SelectMultiple",
+		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
+	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Values = { "None", "8th", "12th", "16th", "24th", "32nd" },
@@ -534,7 +542,7 @@ local Overrides = {
 			for i=1,#list do
 				if list[i] then
 					gmods.TimingWindows = self.Values[i]
-					for w=1,5 do
+					for w=1,NumJudgmentsAvailable() do
 						if self.Values[i][w] then
 							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..w])
 						else
