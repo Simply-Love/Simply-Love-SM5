@@ -49,6 +49,9 @@ local permitted_profile_settings = {
 	Pacemaker            = "boolean",
 	MissBecauseHeld      = "boolean",
 	NPSGraphAtTop        = "boolean",
+	ErrorBar             = "string",
+	ErrorBarUp           = "boolean",
+	ErrorBarMultiTick    = "boolean",
 
 
 	----------------------------------

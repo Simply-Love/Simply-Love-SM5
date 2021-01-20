@@ -23,9 +23,9 @@ local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
-local worst_window = GetTimingWindow(5)
+local worst_window = GetTimingWindow(NumJudgmentsAvailable())
 local windows = SL.Global.ActiveModifiers.TimingWindows
-for i=5,1 do
+for i=NumJudgmentsAvailable(),1,-1 do
 	if windows[i] then
 		worst_window = GetTimingWindow(i)
 		break
@@ -35,7 +35,7 @@ end
 -- ---------------------------------------------
 
 local colors = {}
-for w=5,1,-1 do
+for w=NumJudgmentsAvailable(),1,-1 do
 	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else

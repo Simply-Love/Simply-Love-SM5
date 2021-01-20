@@ -19,7 +19,7 @@ local abbreviations = {
 }
 
 local colors = {}
-for w=5,1,-1 do
+for w=NumJudgmentsAvailable(),1,-1 do
 	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
@@ -31,11 +31,11 @@ end
 -- ---------------------------------------------
 -- if players have disabled W5 or W4+W5, there will be a smaller range
 -- of judgments that could have possibly been earned
-local num_judgments_available = 5
-local worst_window = GetTimingWindow(5)
+local num_judgments_available = NumJudgmentsAvailable()
+local worst_window = GetTimingWindow(num_judgments_available)
 local windows = SL.Global.ActiveModifiers.TimingWindows
 
-for i=5,1,-1 do
+for i=NumJudgmentsAvailable(),1,-1 do
 	if windows[i]==true then
 		num_judgments_available = i
 		worst_window = GetTimingWindow(i)
