@@ -102,6 +102,19 @@ SL_CustomPrefs.Get = function()
 		},
 
 		-- - - - - - - - - - - - - - - - - - - -
+		-- Save the last seen song in Edit Mode to disk so that ScreenEditMenu
+		-- can load with it already selected, instead of the first song in the
+		-- first pack.  See: ./BGAnimations/ScreenEditMenu underlay.lua
+		EditModeLastSeenSong =
+		{
+			Default = "",
+			Validation = function(val)
+				if SONGMAN:FindSong(val) then return true end
+				return false
+			end
+		},
+
+		-- - - - - - - - - - - - - - - - - - - -
 		-- MenuTimer values for various screens
 		ScreenSelectMusicMenuTimer =
 		{
@@ -210,8 +223,10 @@ SL_CustomPrefs.Validate = function()
 		for k,v in pairs( file[theme_name] ) do
 			if sl_prefs[k] then
 				-- if we reach here, the setting exists in both the master definition as well as the user's ThemePrefs.ini
-				-- so perform some rudimentary validation; check for both type mismatch and presence in sl_prefs
-				if type( v ) ~= type( sl_prefs[k].Default )
+				-- if the ThemePref has its own validation function, use that
+				-- otherwise check for type mismatch and presence in sl_prefs
+				if (type(sl_prefs[k].Validation)=="function" and sl_prefs[k].Validation(v) ~= true)
+				or type( v ) ~= type( sl_prefs[k].Default )
 				or not FindInTable(v, (sl_prefs[k].Values or sl_prefs[k].Choices))
 				then
 					-- overwrite the user's erroneous setting with the default value
