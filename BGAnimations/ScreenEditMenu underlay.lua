@@ -104,6 +104,32 @@ local t = Def.ActorFrame{
 	end
 }
 
+t[#t+1] = Def.Actor{
+	InitCommand=function()
+		local str = ThemePrefs.Get("EditModeLastSeenSong")
+
+		if str ~= "" then
+			local song = SONGMAN:FindSong( str )
+			if song then
+				-- If a song was saved in ThemePrefs, set GAMESTATE's CurrentSong now
+				-- during Init.  In the engine's code, EditMenu::RefreshAll() is called
+				-- once at the end of EditMode::Load(), and uses GAMESTATE's current song.
+				GAMESTATE:SetCurrentSong( song )
+			end
+		end
+	end,
+	OffCommand=function()
+		local song = GAMESTATE:GetCurrentSong()
+
+		if song then
+			-- the string returned by song:GetSongDir() isn't usable by SONGMAN:FindSong()
+			local path = ("/%s/%s"):format(song:GetGroupName(), Basename(song:GetSongDir()))
+			ThemePrefs.Set("EditModeLastSeenSong", path)
+			ThemePrefs.Save()
+		end
+	end
+}
+
 
 -- the overall BG
 t[#t+1] = Def.Quad {
