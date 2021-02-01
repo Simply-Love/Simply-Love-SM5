@@ -13,21 +13,17 @@ if ThemePrefs.Get("nice") > 0 then
 			local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 			local PercentDP = pss:GetPercentDancePoints()
 			local percent = FormatPercentScore(PercentDP):gsub("%%", "")
-			-- pss:GetCurrentCombo() ignores potential "Miss combo"
-			-- so get the text from the Combo actor instead if it exists
 			local combo = nil
 
 			if not mods.HideCombo then
-				local player_actor = SCREENMAN:GetTopScreen():GetChild("Player"..pn)
-				if player_actor then
-					local combo_actor = player_actor:GetChild("Combo")
-					if combo_actor then
-						combo = combo_actor:GetChild("Number"):GetText()
-					end
-				end
+				-- At any given time either the normal combo or
+				-- the miss combo is zero. We can just add them
+				-- together to get the currently active combo
+				-- count.
+				combo = pss:GetCurrentCombo() + pss:GetCurrentMissCombo()
 			end
 
-			if combo == "69" or string.match(tostring(percent), "69") ~= nil then
+			if combo == 69 or string.match(tostring(percent), "69") ~= nil then
 				self:visible(true):linear(0.8):y(self:GetY()-50):zoom(3):diffusealpha(0)
 			end
 		end
