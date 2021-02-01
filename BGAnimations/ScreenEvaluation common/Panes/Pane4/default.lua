@@ -32,13 +32,13 @@ end
 -- if players have disabled W5 or W4+W5, there will be a smaller range
 -- of judgments that could have possibly been earned
 local num_judgments_available = 5
-local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
+local worst_window = GetTimingWindow(5)
 local windows = SL.Global.ActiveModifiers.TimingWindows
 
 for i=5,1,-1 do
 	if windows[i]==true then
 		num_judgments_available = i
-		worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW"..i)
+		worst_window = GetTimingWindow(i)
 		break
 	end
 end
@@ -145,8 +145,8 @@ for i=2,num_judgments_available do
 		Font="Common Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
-			local window = -1 * SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i]
-			local better_window = -1 * SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i-1]
+			local window = -1 * GetTimingWindow(i)
+			local better_window = -1 * GetTimingWindow(i - 1)
 
 			local x = scale(window, -worst_window, worst_window, 0, pane_width )
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
@@ -163,8 +163,8 @@ for i=2,num_judgments_available do
 		Font="Common Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
-			local window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i]
-			local better_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i-1]
+			local window = GetTimingWindow(i)
+			local better_window = GetTimingWindow(i - 1)
 
 			local x = scale(window, -worst_window, worst_window, 0, pane_width )
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)

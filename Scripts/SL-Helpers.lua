@@ -36,13 +36,23 @@ SL_WideScale = function(AR4_3, AR16_9)
 	return clamp(scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 ), AR4_3, AR16_9)
 end
 
+
+-- -----------------------------------------------------------------------
+-- get timing window in milliseconds
+
+GetTimingWindow = function(n)
+	local prefs = SL.Preferences[SL.Global.GameMode]
+	local scale = PREFSMAN:GetPreference("TimingWindowScale")
+	return prefs["TimingWindowSecondsW"..n] * scale + prefs.TimingWindowAdd
+end
+
 -- -----------------------------------------------------------------------
 -- determines which timing_window an offset value (number) belongs to
 -- used by the judgment scatter plot and offset histogram in ScreenEvaluation
 
 DetermineTimingWindow = function(offset)
 	for i=1,5 do
-		if math.abs(offset) < SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i] * PREFSMAN:GetPreference("TimingWindowScale") + SL.Preferences[SL.Global.GameMode]["TimingWindowAdd"] then
+		if math.abs(offset) < GetTimingWindow(i) then
 			return i
 		end
 	end
