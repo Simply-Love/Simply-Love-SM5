@@ -23,11 +23,11 @@ local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 -- ---------------------------------------------
 -- if players have disabled W4 or W4+W5, there will be a smaller pool
 -- of judgments that could have possibly been earned
-local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
+local worst_window = GetTimingWindow(5)
 local windows = SL.Global.ActiveModifiers.TimingWindows
 for i=5,1 do
 	if windows[i] then
-		worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW"..i)
+		worst_window = GetTimingWindow(i)
 		break
 	end
 end
