@@ -263,7 +263,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		InitCommand=function(self)
 			self:diffuse(PlayerColor(player)):diffusealpha(0)
 			self:zoom(0.5):y(48)
-			self:x(player==PLAYER_1 and -100 or 150)
+			self:x(player==PLAYER_1 and WideScale(-77, -100) or WideScale(140,154))
 			self:shadowlength(0.55)
 		end,
 		OnCommand=function(self) self:linear(0.4):diffusealpha(1) end,
