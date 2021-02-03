@@ -79,51 +79,6 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 	end
 }
 
--- PeakNPS text
-local text = LoadFont("Common Normal")..{
-	InitCommand=function(self)
-		self:zoom(0.9)
-		self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
-		self:vertalign(bottom)
-
-		-- flip alignment if ultrawide and both players joined because the pane
-		-- will now appear on the player's side of the screen rather than opposite
-		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
-			self:halign( PlayerNumber:Reverse()[player] )
-		end
-	end,
-	PeakNPSUpdatedMessageCommand=function(self)
-		local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
-
-		if my_peak == nil then
-			self:settext("")
-			return
-		end
-
-		if player == PLAYER_1 then
-			self:x(_screen.w*0.5 - SL_WideScale(6,59))
-
-			if NoteFieldIsCentered then
-				self:x(_screen.w*0.5 - 134)
-			end
-			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
-				self:x(52)
-			end
-		else
-			self:x(SL_WideScale(6,130))
-			if NoteFieldIsCentered then
-				self:x(69)
-			end
-			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
-				self:x(180)
-			end
-		end
-
-		self:y( -self:GetHeight()/2 - 2 )
-		self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
-	end,
-}
-
 local graph_and_lifeline = Def.ActorFrame{
 
 	CurrentSongChangedMessageCommand=function(self)
@@ -239,7 +194,6 @@ local graph_and_lifeline = Def.ActorFrame{
 	},
 }
 
-af[#af+1] = text
 af[#af+1] = bg
 af[#af+1] = graph_and_lifeline
 

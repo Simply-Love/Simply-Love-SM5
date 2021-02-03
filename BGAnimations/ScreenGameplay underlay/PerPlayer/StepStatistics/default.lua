@@ -89,6 +89,7 @@ af[#af+1] = Def.ActorFrame{
 	LoadActor("./TapNoteJudgments.lua", player),
 	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
+	LoadActor("./PeakBPMAndNPS.lua", player),
 }
 
 af[#af+1] = LoadActor("./DensityGraph.lua", {player, sidepane_width})
