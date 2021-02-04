@@ -47,7 +47,7 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 
 ## Screenshots
 ![Select Music w/ Simplified Breakdown](https://i.imgur.com/uvBeh6u.png)
-![Select Music on 2P w/ Guest Profile](https://i.imgur.com/2vOx8MP.png)
+![Select Music on 2P w/ Guest Profile](https://i.imgur.com/HAC5rap.jpg)
 ![4:3 w/ Player Stats](https://i.imgur.com/1Y9l8nC.jpg)
 ![2P in 4:3, no Player Stats are shown](https://i.imgur.com/07HFW5f.png)
 
