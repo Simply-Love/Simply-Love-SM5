@@ -70,8 +70,10 @@ for index, RCType in ipairs(RadarCategories.Types) do
 
 	local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
 	local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+	possible = clamp(possible, 0, 999)
 
 	-- player performance value
+	-- use a RollingNumber to animate the count tallying up for visual effect
 	t[#t+1] = Def.RollingNumbers{
 		Font="Wendy/_ScreenEvaluation numbers",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
@@ -82,24 +84,14 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		end
 	}
 
-	--  slash
-	t[#t+1] = LoadFont("Common Normal")..{
-		Text="/",
-		InitCommand=function(self) self:diffuse(color("#5A6166")):zoom(1.25):horizalign(right) end,
-		BeginCommand=function(self)
-			self:y((index-1)*35 + 53)
-			self:x( ((controller == PLAYER_1) and -168) or 230 )
-		end
-	}
-
-	-- possible value
+	-- slash and possible value
 	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:y((index-1)*35 + 53)
 			self:x( ((controller == PLAYER_1) and -114) or 286 )
-			self:settext(("%03.0f"):format(possible))
-			local leadingZeroAttr = { Length=3-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
+			self:settext(("/%03d"):format(possible))
+			local leadingZeroAttr = { Length=4-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
 			self:AddAttribute(0, leadingZeroAttr )
 		end
 	}
