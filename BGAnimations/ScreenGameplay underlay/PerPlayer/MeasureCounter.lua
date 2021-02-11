@@ -66,7 +66,6 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 
 	local text = ""
 	if Measures[streamIndex].isBreak then
-		if mods.HideLookahead == false then
 			if not isLookAhead then
 				local remainingRest = currStreamLength - currCount + 1
 
@@ -75,7 +74,6 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 			else
 				text = "(" .. currStreamLength .. ")"
 			end
-		end
 	else
 		if not isLookAhead then
 			text = tostring(currCount .. "/" .. currStreamLength)
