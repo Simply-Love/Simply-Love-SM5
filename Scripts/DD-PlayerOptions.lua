@@ -245,7 +245,7 @@ local Overrides = {
 		Choices = function()
 			local first	= 1
 			local last 	= 2.8
-			local step 	= 0.005
+			local step 	= 0.01
 
 			return stringify( range(first, last, step), "%g")
 		end,

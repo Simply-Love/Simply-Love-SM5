@@ -107,12 +107,12 @@ function NPS_Histogram(player, width, height)
         end,
         CurrentStepsP1ChangedMessageCommand=function(self)
 			self:stoptweening()
-			self:sleep(0.1)
+			self:sleep(0.3)
             self:queuecommand("Redraw")
         end,
         CurrentStepsP2ChangedMessageCommand=function(self)
 			self:stoptweening()
-			self:sleep(0.1)
+			self:sleep(0.3)
             self:queuecommand("Redraw")
         end,
         RedrawCommand=function(self)

@@ -105,9 +105,10 @@ local t = Def.ActorFrame {
 
 		local wheel_options = {
 			{"SortBy", "Group"},
+			{"SortBy", "Title"},
 			{"FilterBy", "Song Search"},
 			{"HeyMan", "Difficulty"},
-			{"SortBy", "Title"},
+			{"GS", "Groovestats"},
 			{"SortBy", "Artist"},
 			{"SortBy", "Genre"},
 			{"SortBy", "BPM"},
@@ -239,6 +240,7 @@ local t = Def.ActorFrame {
 
 t[#t+1] = SongSearch
 t[#t+1] = SongDifficulty
+t[#t+1] = Groovestats
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
 t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }
 

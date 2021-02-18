@@ -82,6 +82,7 @@ local GlobalDefaults = {
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.GameMode = "ITG"
+			PROFILEMAN:SetStatsPrefix("")
 			self.ScreenshotTexture = nil
 			self.MenuTimer = {
 				ScreenSelectMusic = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),

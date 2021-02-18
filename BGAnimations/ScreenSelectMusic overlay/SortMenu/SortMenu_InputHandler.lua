@@ -39,6 +39,14 @@ local function input(event)
 				overlay:queuecommand("HideSortMenu")
 				overlay:queuecommand("DirectInputToEngine")
 
+			elseif focus.kind == "GS" then
+				screen = SCREENMAN:GetTopScreen()
+				wheel = screen:GetMusicWheel()
+				SONGMAN:SetPreferredSongs("Groovestats.txt")
+                wheel:ChangeSort("SortOrder_Preferred")
+				screen:SetNextScreenName("ScreenSelectMusic")
+				screen:StartTransitioningScreen("SM_GoToNextScreen")
+
 
 
 			-- the player wants to change modes, for example from ITG to FA+
