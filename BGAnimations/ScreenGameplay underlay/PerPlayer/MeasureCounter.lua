@@ -175,7 +175,8 @@ for i=lookAhead+1,1,-1 do
 			self:xy(GetNotefieldX(player) + columnWidth * (0.64 * (i-1)), _screen.cy)
 			
 			if mods.HideLookahead then
-				self:addx(14)
+				self:x(GetNotefieldX(player) + columnWidth/20 - 2)
+				self:horizalign(center)
 			end
 
 			if mods.MeasureCounterLeft then
