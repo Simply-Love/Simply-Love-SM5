@@ -12,7 +12,8 @@
 local speedmod_def = {
 	X = { upper=20,   increment=0.05 },
 	C = { upper=2000, increment=5 },
-	M = { upper=2000, increment=5 }
+	M = { upper=2000, increment=5 },
+	A = { upper=2000, increment=5 },
 }
 
 local song = GAMESTATE:GetCurrentSong()
@@ -47,6 +48,13 @@ local CalculateScrollSpeed = function(player)
 	elseif SpeedModType=="C" then
 		bpms[1] = SpeedMod
 		bpms[2] = SpeedMod
+
+	elseif SpeedModType=="A" then
+		-- XXX: not accurate
+                local factor = SpeedMod / ((bpms[1] + bpms[2])/2)
+
+		bpms[1] = bpms[1] * factor
+		bpms[2] = bpms[2] * factor
 	end
 
 	-- format as strings
@@ -181,7 +189,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 	t[#t+1] = Def.Actor{
 
-		-- this is called from ./Scripts/SL-PlayerOptions.lua when the player changes their SpeedModType (X, M, C)
+		-- this is called from ./Scripts/SL-PlayerOptions.lua when the player changes their SpeedModType (X, M, C, A)
 		["SpeedModType" .. pn .. "SetMessageCommand"]=function(self,params)
 			if params.Player ~= player then return end
 
@@ -227,6 +235,9 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
 			elseif  SL[pn].ActiveModifiers.SpeedModType == "M" then
 				text = "M" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
+
+			elseif  SL[pn].ActiveModifiers.SpeedModType == "A" then
+				text = "A" .. tostring(SL[pn].ActiveModifiers.SpeedMod)
 			end
 
 			SpeedModBMTs[pn]:settext( text )

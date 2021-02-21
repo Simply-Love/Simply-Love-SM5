@@ -29,7 +29,7 @@ local RecentMods = function(mods)
 			-- and finally convert that back to a string
 			text = ("%gx"):format(tonumber(("%.2f"):format(mods.SpeedMod)))
 
-		elseif (mods.SpeedModType=="M" or mods.SpeedModType=="C") and mods.SpeedMod > 0 then
+		elseif (mods.SpeedModType=="C" or mods.SpeedModType=="M" or mods.SpeedModType=="A") and mods.SpeedMod > 0 then
 			text = ("%s%.0f"):format(mods.SpeedModType, mods.SpeedMod)
 		end
 	end

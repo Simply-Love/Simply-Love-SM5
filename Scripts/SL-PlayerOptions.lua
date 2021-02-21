@@ -86,7 +86,15 @@ local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Values = { "X", "C", "M" },
+		Values = function()
+                    local vals = { "X", "C", "M" }
+
+                    if IsSMVersion(5, 3) then
+                        vals[#vals+1] = "A"
+                    end
+
+                    return vals
+                end,
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
