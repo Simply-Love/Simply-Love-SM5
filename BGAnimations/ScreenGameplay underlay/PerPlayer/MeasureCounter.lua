@@ -173,6 +173,10 @@ for i=lookAhead+1,1,-1 do
 			-- Have descending zoom sizes for each new BMT we add.
 			self:zoom(0.35 - 0.03 * (i-1)):shadowlength(1):horizalign(right)
 			self:xy(GetNotefieldX(player) + columnWidth * (0.64 * (i-1)), _screen.cy)
+			
+			if mods.HideLookahead then
+				self:addx(14)
+			end
 
 			if mods.MeasureCounterLeft then
 				self:addx(-columnWidth)
