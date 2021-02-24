@@ -108,10 +108,6 @@ SL_CustomPrefs.Get = function()
 		EditModeLastSeenSong =
 		{
 			Default = "",
-			Validation = function(val)
-				if SONGMAN:FindSong(val) then return true end
-				return false
-			end
 		},
 
 		-- - - - - - - - - - - - - - - - - - - -
@@ -222,12 +218,14 @@ SL_CustomPrefs.Validate = function()
 		-- loop through key/value pairs retrieved and do some basic validation
 		for k,v in pairs( file[theme_name] ) do
 			if sl_prefs[k] then
-				-- if we reach here, the setting exists in both the master definition as well as the user's ThemePrefs.ini
-				-- if the ThemePref has its own validation function, use that
-				-- otherwise check for type mismatch and presence in sl_prefs
-				if (type(sl_prefs[k].Validation)=="function" and sl_prefs[k].Validation(v) ~= true)
-				or type( v ) ~= type( sl_prefs[k].Default )
-				or not FindInTable(v, (sl_prefs[k].Values or sl_prefs[k].Choices))
+				-- if we reach here, the setting exists in both the master definition as well
+				-- as the user's ThemePrefs.ini so perform some rudimentary validation; check
+				-- for both type mismatch and presence in sl_prefs
+
+				local values = sl_prefs[k].Values or sl_prefs[k].Choices
+
+				if type( v ) ~= type( sl_prefs[k].Default )
+				or (values and not FindInTable(v, values))
 				then
 					-- overwrite the user's erroneous setting with the default value
 					ThemePrefs.Set(k, sl_prefs[k].Default)
