@@ -222,15 +222,29 @@ SL_CustomPrefs.Validate = function()
 		-- loop through key/value pairs retrieved and do some basic validation
 		for k,v in pairs( file[theme_name] ) do
 			if sl_prefs[k] then
-				-- if we reach here, the setting exists in both the master definition as well as the user's ThemePrefs.ini
-				-- if the ThemePref has its own validation function, use that
-				-- otherwise check for type mismatch and presence in sl_prefs
-				if (type(sl_prefs[k].Validation)=="function" and sl_prefs[k].Validation(v) ~= true)
-				or type( v ) ~= type( sl_prefs[k].Default )
-				or not FindInTable(v, (sl_prefs[k].Values or sl_prefs[k].Choices))
-				then
-					-- overwrite the user's erroneous setting with the default value
-					ThemePrefs.Set(k, sl_prefs[k].Default)
+				-- If we reach here, the setting exists in both the master definition
+				-- as well as the user's ThemePrefs.ini, so at this point,
+				-- perform validation on the value retrieved for this setting.
+				-- Maybe the user edited ThemePrefs.ini by hand and
+				-- introduced a value that isn't valid; this happens a lot.
+
+				-- if the ThemePref has its own custom validation function, prefer that
+				if type(sl_prefs[k].Validation) == "function" then
+					if not sl_prefs[k].Validation(v) then
+						-- the ThemePref value retrieved from disk failed validation,
+						-- so overwrite it with the default value
+						ThemePrefs.Set(k, sl_prefs[k].Default)
+					end
+
+				-- if this ThemePref doesn't have a custom validation function,
+				-- check for type mismatch and presence in sl_prefs
+				else
+					if (type( v ) ~= type( sl_prefs[k].Default ))
+					or (not FindInTable(v, (sl_prefs[k].Values or sl_prefs[k].Choices)))
+					then
+						-- Rudimentary validaiton failed, so overwrite with the default value.
+						ThemePrefs.Set(k, sl_prefs[k].Default)
+					end
 				end
 
 			-- It's possible a setting exists in the ThemePrefs.ini file, but does not exist
