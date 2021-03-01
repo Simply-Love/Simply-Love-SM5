@@ -75,10 +75,12 @@ for player in ivalues(PlayerNumber) do
 			end
 
 			local screen = SCREENMAN:GetTopScreen()
-			if THEME:HasMetric(screen:GetName(), "ShowPlayerAvatar") then
-				self:visible( THEME:GetMetric(screen:GetName(), "ShowPlayerAvatar") )
-			else
-				self:visible( THEME:GetMetric(screen:GetName(), "ShowCreditDisplay") )
+			if screen then
+				if THEME:HasMetric(screen:GetName(), "ShowPlayerAvatar") then
+					self:visible( THEME:GetMetric(screen:GetName(), "ShowPlayerAvatar") )
+				else
+					self:visible( THEME:GetMetric(screen:GetName(), "ShowCreditDisplay") )
+				end
 			end
 		end,
 	}
