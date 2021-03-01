@@ -24,7 +24,9 @@ local InputHandler = function(event)
 
 		elseif event.GameButton == "Back" or (event.GameButton == "Start" and active_index == 2) then
 			-- send the player back to the previous screen
-			SCREENMAN:GetTopScreen():SetNextScreenName("ScreenSelectGame"):StartTransitioningScreen("SM_GoToNextScreen")
+			local top_screen = SCREENMAN:GetTopScreen()
+			local prev_screen_name = top_screen:GetPrevScreenName()
+			top_screen:SetNextScreenName(prev_screen_name):StartTransitioningScreen("SM_GoToNextScreen")
 
 		elseif event.GameButton == "Start" and (active_index == 0 or active_index == 1) then
 
