@@ -105,13 +105,9 @@ t[#t+1] = Def.ActorFrame {
 -- or SM(text)
 
 local bmt = nil
-local timestamp = nil
 
 -- SystemMessage ActorFrame
 t[#t+1] = Def.ActorFrame {
-	InitCommand=function(self)
-		self:SetUpdateFunction(updateTimestamp)
-	end,
 	SystemMessageMessageCommand=function(self, params)
 		bmt:settext( params.Message )
 
@@ -211,49 +207,6 @@ t[#t+1] = LoadFont("Common Footer")..{
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Home" then
 			self:settext('')
 		end
-	end
-}
-
-function updateTimestamp(af)
-	if timestamp then
-		timestamp:playcommand("Refresh")
-	end
-end
-
--- Date & time at lower-center of screen
--- This is only shown on the ScreenEvaluationStage and ScreenEvaluationSummary
--- screens. The above actor is not shown on either screen, so it doesn't
--- overlap with it.
-t[#t+1] = LoadFont("Wendy/_wendy monospace numbers")..{
-	InitCommand=function(self)
-		timestamp = self
-
-		self:x(_screen.cx):horizalign(center)
-		self:zoom(0.18)
-	end,
-
-	OnCommand=function(self) self:playcommand("Refresh") end,
-	ScreenChangedMessageCommand=function(self) self:playcommand("Refresh") end,
-
-	RefreshCommand=function(self)
-		local screen = SCREENMAN:GetTopScreen()
-		local visible = false
-
-		if screen then
-			if screen:GetName() == 'ScreenEvaluationStage' then
-				visible = true
-				self:y(_screen.h - 15)
-			elseif screen:GetName() == 'ScreenEvaluationSummary' then
-				visible = true
-				self:y(_screen.h - 20)
-			end
-		end
-
-		self:visible(visible)
-		self:diffuse(ThemePrefs.Get("RainbowMode") and Color.Black or Color.White)
-
-		local DateFormat = "%04d/%02d/%02d %02d:%02d"
-		self:settext(DateFormat:format(Year(), MonthOfYear()+1, DayOfMonth(), Hour(), Minute()))
 	end
 }
 
