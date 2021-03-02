@@ -7,46 +7,59 @@
 -- For now, this table is local to this file, but might be moved into the SL table (or something)
 -- in the future to facilitate type checking in ./Scripts/SL-PlayerOptions.lua and elsewhere.
 
-local profile_whitelist = {
-	SpeedModType = "string",
-	SpeedMod = "number",
-	Mini = "string",
-	NoteSkin = "string",
-	JudgmentGraphic = "string",
-	ComboFont = "string",
-	HoldJudgment = "string",
+local permitted_profile_settings = {
+
+	----------------------------------
+	-- "Main Modifiers"
+	-- OptionRows that appear in SL's first page of PlayerOptions
+
+	SpeedModType     = "string",
+	SpeedMod         = "number",
+	Mini             = "string",
+	NoteSkin         = "string",
+	JudgmentGraphic  = "string",
+	ComboFont        = "string",
+	HoldJudgment     = "string",
 	BackgroundFilter = "string",
 
-	HideTargets = "boolean",
-	HideSongBG = "boolean",
-	HideCombo = "boolean",
-	HideLifebar = "boolean",
-	HideScore = "boolean",
-	HideDanger = "boolean",
-	HideComboExplosions = "boolean",
+	----------------------------------
+	-- "Advanced Modifiers"
+	-- OptionRows that appear in SL's second page of PlayerOptions
 
-	LifeMeterType = "string",
-	DataVisualizations = "string",
-	TargetScore = "number",
+	HideTargets          = "boolean",
+	HideSongBG           = "boolean",
+	HideCombo            = "boolean",
+	HideLifebar          = "boolean",
+	HideScore            = "boolean",
+	HideDanger           = "boolean",
+	HideComboExplosions  = "boolean",
+
+	LifeMeterType        = "string",
+	DataVisualizations   = "string",
+	TargetScore          = "number",
 	ActionOnMissedTarget = "string",
 
-	MeasureCounter = "string",
-	MeasureCounterLeft = "boolean",
-	MeasureCounterUp = "boolean",
-	HideLookahead = "boolean",
+	MeasureCounter       = "string",
+	MeasureCounterLeft   = "boolean",
+	MeasureCounterUp     = "boolean",
+	HideLookahead        = "boolean",
 
-	ColumnFlashOnMiss = "boolean",
-	SubtractiveScoring = "boolean",
-	Pacemaker = "boolean",
-	MissBecauseHeld = "boolean",
-	NPSGraphAtTop = "boolean",
+	ColumnFlashOnMiss    = "boolean",
+	SubtractiveScoring   = "boolean",
+	Pacemaker            = "boolean",
+	MissBecauseHeld      = "boolean",
+	NPSGraphAtTop        = "boolean",
 
-	ReceptorArrowsPosition = "string",
+
+	----------------------------------
+	-- Profile Settings without OptionRows
+	-- these settings are saved per-profile, but are transparently managed by the theme
+	-- they have no player-facing OptionRows
 
 	PlayerOptionsString = "string",
 
-	EvalPanePrimary   = "number",
-	EvalPaneSecondary = "number",
+	EvalPanePrimary     = "number",
+	EvalPaneSecondary   = "number",
 }
 
 -- -----------------------------------------------------------------------
@@ -75,10 +88,10 @@ LoadProfileCustom = function(profile, dir)
 
 		-- for each key/value pair read in from the player's profile
 		for k,v in pairs(filecontents) do
-			-- ensure that the key has a corresponding key in profile_whitelist
-			if profile_whitelist[k]
-			--  ensure that the datatype of the value matches the datatype specified in profile_whitelist
-			and type(v)==profile_whitelist[k] then
+			-- ensure that the key has a corresponding key in permitted_profile_settings
+			if permitted_profile_settings[k]
+			--  ensure that the datatype of the value matches the datatype specified in permitted_profile_settings
+			and type(v)==permitted_profile_settings[k] then
 				-- if the datatype is string and this key corresponds with an OptionRow in ScreenPlayerOptions
 				-- ensure that the string read in from the player's profile
 				-- is a valid value (or choice) for the corresponding OptionRow
@@ -108,9 +121,9 @@ LoadProfileCustom = function(profile, dir)
 					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
 				end
 
-				if k=="EvalPaneSecondary" and type(v)==profile_whitelist.EvalPaneSecondary then
+				if k=="EvalPaneSecondary" and type(v)==permitted_profile_settings.EvalPaneSecondary then
 					SL[pn].EvalPaneSecondary = v
-				elseif k=="EvalPanePrimary" and type(v)==profile_whitelist.EvalPanePrimary then
+				elseif k=="EvalPanePrimary" and type(v)==permitted_profile_settings.EvalPanePrimary then
 					SL[pn].EvalPanePrimary   = v
 				end
 			end
@@ -130,7 +143,7 @@ SaveProfileCustom = function(profile, dir)
 			local pn = ToEnumShortString(player)
 			local output = {}
 			for k,v in pairs(SL[pn].ActiveModifiers) do
-				if profile_whitelist[k] and type(v)==profile_whitelist[k] then
+				if permitted_profile_settings[k] and type(v)==permitted_profile_settings[k] then
 					output[k] = v
 				end
 			end
