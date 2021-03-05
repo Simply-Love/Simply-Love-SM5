@@ -187,7 +187,7 @@ local t = Def.ActorFrame {
 			else
 				-- only attempt to unjoin the player if that side is currently joined
 				if GAMESTATE:IsSideJoined(params.PlayerNumber) then
-					MESSAGEMAN:Broadcast("BackButton")
+					MESSAGEMAN:Broadcast("BackButton", {PlayerNumber=params.PlayerNumber})
 					-- ScreenSelectProfile:SetProfileIndex() will interpret -2 as
 					-- "Unjoin this player and unmount their USB stick if there is one"
 					-- see ScreenSelectProfile.cpp for details
@@ -263,7 +263,36 @@ end
 if AutoStyle=="none" or AutoStyle=="versus" then
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data, Avatars=avatars})
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data, Avatars=avatars})
-
+		-- decorative arrows
+	t[#t+1] = LoadActor(THEME:GetPathG("", "EditMenu Right.png"))..{
+		InitCommand=function(self)
+			self:visible(false):Center():addx(-275):zoom(0.60)
+		end,
+		CursorMessageCommand=function(self, pn)
+			if pn.PlayerNumber == PLAYER_1 then self:visible(true) end
+		end,
+		StartButtonMessageCommand=function(self)
+			self:visible(false)
+		end,
+		BackButtonMessageCommand=function(self, pn)
+			if pn.PlayerNumber == PLAYER_1 then self:visible(false) end
+				self:visible(false)
+		end
+	}
+	t[#t+1] = LoadActor(THEME:GetPathG("", "EditMenu Right.png"))..{
+		InitCommand=function(self)
+			self:visible(false):Center():addx(25):zoom(0.60)
+		end,
+		CursorMessageCommand=function(self, pn)
+			if pn.PlayerNumber == PLAYER_2 then self:visible(true) end
+		end,
+		StartButtonMessageCommand=function(self)
+			self:visible(false)
+		end,
+		BackButtonMessageCommand=function(self, pn)
+			if pn.PlayerNumber == PLAYER_2 then self:visible(false) end
+		end
+	}
 -- load only for the MasterPlayerNumber
 else
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn], ProfileData=profile_data, Avatars=avatars})
