@@ -12,6 +12,14 @@ local profile_data = args.ProfileData
 -- ScreenSelectProfile's code across multiple files.
 local finished = false
 
+-- Table used to determine whether a player has selected their profile. 
+-- This value basically represents the amount of players that are ready to
+-- move forward.
+local readyPlayers = {
+	["P1"] = false,
+	["P2"] = false,
+  }
+
 -- we need to calculate how many dummy rows the scroller was "padded" with
 -- (to achieve the desired transform behavior since I am not mathematically
 -- perspicacious enough to have done so otherwise).
@@ -67,7 +75,17 @@ Handle.Start = function(event)
 				return
 			end
 		end
-
+		readyPlayers[ToEnumShortString(event.PlayerNumber)] = true
+		MESSAGEMAN:Broadcast("Cursor", {PlayerNumber=event.PlayerNumber})
+		-- if both players have selected a profile, we're ready to move on
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			-- if at least one player hasn't selected a profile, we're not ready to move on
+			if not readyPlayers[ToEnumShortString(player)] then
+				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
+				return
+			end
+		end
+		-- if we're here, both players have selected a profile
 		finished = true
 		-- otherwise, play the StartButton sound
 		MESSAGEMAN:Broadcast("StartButton")
@@ -120,7 +138,11 @@ Handle.Back = function(event)
 	if GAMESTATE:GetNumPlayersEnabled()==0 then
 		SCREENMAN:GetTopScreen():Cancel()
 	else
-		MESSAGEMAN:Broadcast("BackButton")
+		MESSAGEMAN:Broadcast("BackButton", {PlayerNumber=event.PlayerNumber})
+		if (readyPlayers[ToEnumShortString(event.PlayerNumber)]) then
+			readyPlayers[ToEnumShortString(event.PlayerNumber)] = false
+			return
+		end
 		-- ScreenSelectProfile:SetProfileIndex() will interpret -2 as
 		-- "Unjoin this player and unmount their USB stick if there is one"
 		-- see ScreenSelectProfile.cpp for details
