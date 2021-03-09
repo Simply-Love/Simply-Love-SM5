@@ -210,4 +210,57 @@ t[#t+1] = LoadFont("Common Footer")..{
 	end
 }
 
+-- -----------------------------------------------------------------------
+-- Modules
+
+local function LoadModules()
+	-- A table that contains a [ScreenName] -> Table of Actors mapping.
+	-- Each entry will then be converted to an ActorFrame with the actors as children.
+	local modules = {}
+	local files = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."Modules/")
+	for file in ivalues(files) do
+		-- Get the file extension (everything past the last period).
+		local filetype = file:match("[^.]+$"):lower()
+		if filetype == "lua" then
+			local full_path = THEME:GetCurrentThemeDirectory().."Modules/"..file
+			Trace("Loading module: "..full_path)
+
+			-- Load the Lua file as proper lua.
+			local loaded_t = dofile(full_path)
+			for screenName, actor in pairs(loaded_t) do
+				if modules[screenName] == nil then
+					modules[screenName] = {}
+				end
+				modules[screenName][#modules[screenName]+1] = actor
+			end
+		end
+	end
+
+	for screenName, table_of_actors in pairs(modules) do
+		local module_af = Def.ActorFrame {
+			InitCommand=function(self) end,
+			ScreenChangedMessageCommand=function(self)
+				local screen = SCREENMAN:GetTopScreen()
+				if screen then
+					local name = screen:GetName()
+					if name == screenName then
+						self:visible(true)
+						self:queuecommand("Module")
+					else
+						self:visible(false)
+					end
+				else
+					self:visible(false)
+				end
+			end,
+		}
+		for actor in ivalues(table_of_actors) do
+			module_af[#module_af+1] = actor
+		end
+		t[#t+1] = module_af
+	end
+end
+
+LoadModules()
+
 return t
