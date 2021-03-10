@@ -226,19 +226,23 @@ local function LoadModules()
 			Trace("Loading module: "..full_path)
 
 			-- Load the Lua file as proper lua.
-			local loaded_t = dofile(full_path)
-			for screenName, actor in pairs(loaded_t) do
-				if modules[screenName] == nil then
-					modules[screenName] = {}
+			local loaded_module, error = loadfile(full_path)
+			if loaded_module then
+				local loaded_t = loaded_module()
+				for screenName, actor in pairs(loaded_t) do
+					if modules[screenName] == nil then
+						modules[screenName] = {}
+					end
+					modules[screenName][#modules[screenName]+1] = actor
 				end
-				modules[screenName][#modules[screenName]+1] = actor
+			else
+				Trace("Error loading module: "..full_path.." with error:\n    "..error)
 			end
 		end
 	end
 
 	for screenName, table_of_actors in pairs(modules) do
 		local module_af = Def.ActorFrame {
-			InitCommand=function(self) end,
 			ScreenChangedMessageCommand=function(self)
 				local screen = SCREENMAN:GetTopScreen()
 				if screen then
