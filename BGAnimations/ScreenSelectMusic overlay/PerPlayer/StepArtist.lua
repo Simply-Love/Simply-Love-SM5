@@ -36,13 +36,23 @@ return Def.ActorFrame{
 
 		if player == PLAYER_1 then
 
-			self:y(_screen.cy + 44)
-			self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
+			if GAMESTATE:IsCourseMode() then
+				self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
+				self:y(_screen.cy + 44)
+			else
+				self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
+				self:y(_screen.cy + 12)
+			end
 
 		elseif player == PLAYER_2 then
 
-			self:y(_screen.cy + 97)
-			self:x( _screen.cx - 210)
+			if GAMESTATE:IsCourseMode() then
+				self:x( _screen.cx - 210)
+				self:y(_screen.cy + 97)
+			else
+				self:x( _screen.cx - 244)
+				self:y(_screen.cy + 40)
+			end
 		end
 
 		if GAMESTATE:IsHumanPlayer(player) then
@@ -53,7 +63,7 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=function(self) self:zoomto(175, _screen.h/28):x(113) end,
+		InitCommand=function(self) self:zoomto(175, _screen.h/28):x(113):diffuse(color("#000000")) end,
 		ResetCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
@@ -70,7 +80,7 @@ return Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Text=GAMESTATE:IsCourseMode() and Screen.String("SongNumber"):format(1) or Screen.String("STEPS"),
 		InitCommand=function(self)
-			self:diffuse(0,0,0,1):horizalign(left):x(30):maxwidth(40)
+			self:diffuse(0,0,0,1):horizalign(left):x(30):maxwidth(40):zoom(0.8)
 		end,
 		UpdateTrailTextMessageCommand=function(self, params)
 			self:settext( THEME:GetString("ScreenSelectCourse", "SongNumber"):format(params.index) )
@@ -80,12 +90,12 @@ return Def.ActorFrame{
 	--stepartist text
 	LoadFont("Common Normal")..{
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f")):horizalign(left)
+			self:diffuse(color("#1e282f")):horizalign(left):zoom(0.8)
 
 			if GAMESTATE:IsCourseMode() then
 				self:x(60):maxwidth(138)
 			else
-				self:x(75):maxwidth(124)
+				self:x(75):maxwidth(124):diffuse(color("#000000"))
 			end
 		end,
 		ResetCommand=function(self)

@@ -96,7 +96,13 @@ function NPS_Histogram(player, width, height)
 		InitCommand=function(self)
 			self:SetDrawState({Mode="DrawMode_QuadStrip"})
 		end,
-		CurrentSongChangedMessageCommand=function(self)
+		CurrentStepsP1ChangedMessageCommand=function(self)
+			self:queuecommand("Redraw")
+		end,
+		CurrentStepsP2ChangedMessageCommand=function(self)
+			self:queuecommand("Redraw")
+		end,
+		RedrawCommand=function(self)
 			-- we've reached a new song, so reset the vertices for the density graph
 			-- this will occur at the start of each new song in CourseMode
 			-- and at the start of "normal" gameplay
