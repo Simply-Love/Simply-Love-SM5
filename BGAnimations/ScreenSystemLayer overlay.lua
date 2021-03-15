@@ -228,15 +228,19 @@ local function LoadModules()
 			-- Load the Lua file as proper lua.
 			local loaded_module, error = loadfile(full_path)
 			if loaded_module then
-				local loaded_t = loaded_module()
-				for screenName, actor in pairs(loaded_t) do
-					if modules[screenName] == nil then
-						modules[screenName] = {}
+				local status, ret = pcall(loaded_module)
+				if status then
+					for screenName, actor in pairs(ret) do
+						if modules[screenName] == nil then
+							modules[screenName] = {}
+						end
+						modules[screenName][#modules[screenName]+1] = actor
 					end
-					modules[screenName][#modules[screenName]+1] = actor
+				else
+					lua.ReportScriptError("Error executing module: "..full_path.." with error:\n    "..ret)
 				end
 			else
-				Trace("Error loading module: "..full_path.." with error:\n    "..error)
+				lua.ReportScriptError("Error loading module: "..full_path.." with error:\n    "..error)
 			end
 		end
 	end
