@@ -38,7 +38,7 @@ return Def.ActorFrame{
 
 			if GAMESTATE:IsCourseMode() then
 				self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
-				self:y(_screen.cy + 44)
+				self:y(_screen.cy + 32)
 			else
 				self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
 				self:y(_screen.cy + 12)
@@ -48,7 +48,7 @@ return Def.ActorFrame{
 
 			if GAMESTATE:IsCourseMode() then
 				self:x( _screen.cx - 210)
-				self:y(_screen.cy + 97)
+				self:y(_screen.cy + 85)
 			else
 				self:x( _screen.cx - 244)
 				self:y(_screen.cy + 40)

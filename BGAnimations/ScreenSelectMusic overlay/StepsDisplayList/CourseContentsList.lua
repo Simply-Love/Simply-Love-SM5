@@ -36,7 +36,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(_screen.cx-170, _screen.cy + 40)
+		self:xy(_screen.cx-170, _screen.cy + 28)
 	end,
 
 	---------------------------------------------------------------------
