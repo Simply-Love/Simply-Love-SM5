@@ -67,17 +67,6 @@ af[#af+1] = NPS_Histogram(player, width, height)..{
 	OnCommand=function(self)
 		self:addx(-width/2):addy(height/2)
 	end,
-	PeakNPSUpdatedMessageCommand=function(self)
-		-- local peakNps = nil
-		-- if player == PLAYER_1 then
-		--     peakNps = GAMESTATE:Env()["P1PeakNPS"]
-		-- else
-		--     peakNps = GAMESTATE:Env()["P2PeakNPS"]
-		-- end
-		-- if peakNps then
-		--     self:zoomy(clamp(peakNps/maxNps, 0, 1))
-		-- end
-	end
 }
 
 -- The Peak NPS text
@@ -143,8 +132,6 @@ af[#af+1] = Def.ActorFrame{
 		UpdateBreakdownCommand=function(self)
 		end,
 	}
-	
-	
 }
 
 return af
