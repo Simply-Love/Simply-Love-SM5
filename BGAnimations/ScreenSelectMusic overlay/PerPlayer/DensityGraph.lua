@@ -2,11 +2,9 @@ local player = ...
 local pn = ToEnumShortString(player)
 local p = PlayerNumber:Reverse()[player]
 
+-- Height and width of the density graph.
 local height = 64
 local width = IsUsingWideScreen() and 286 or 276
-
--- Max height at 280 BPM 16ths. Anything faster will just scale the graph. 
-local maxNps = 280/60 * 4
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
@@ -32,19 +30,17 @@ local af = Def.ActorFrame{
 		end
 	end,
 
-	CurrentSongChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
-	CurrentCourseChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
 	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
 	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
 
 	UpdateGraphCommand=function(self)
 		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong() then
 			self:GetChild("Breakdown"):visible(true)
-			self:GetChild("Histogram"):visible(true)
+			self:GetChild("DensityGraph"):visible(true)
 			self:GetChild("NPS"):visible(false)
 		else
 			self:GetChild("Breakdown"):visible(false)
-			self:GetChild("Histogram"):visible(false)
+			self:GetChild("DensityGraph"):visible(false)
 			self:GetChild("NPS"):settext("Peak NPS: ")
 			self:GetChild("NPS"):visible(false)
 		end
@@ -62,8 +58,9 @@ af[#af+1] = Def.Quad{
 }
 
 -- The Density Graph itself
+-- The name "DensityGraph_AMV" comes from SL-Histogram.lua
 af[#af+1] = NPS_Histogram(player, width, height)..{
-	Name="Histogram",
+	Name="DensityGraph",
 	OnCommand=function(self)
 		self:addx(-width/2):addy(height/2)
 	end,
