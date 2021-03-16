@@ -92,7 +92,6 @@ end
 
 function NPS_Histogram(player, width, height)
 	local amv = Def.ActorMultiVertex{
-		Name="DensityGraph_AMV",
 		InitCommand=function(self)
 			self:SetDrawState({Mode="DrawMode_QuadStrip"})
 		end,
@@ -120,7 +119,6 @@ function Scrolling_NPS_Histogram(player, width, height)
 	local left_idx, right_idx
 
 	local amv = Def.ActorMultiVertex{
-		Name="ScrollingDensityGraph_AMV",
 		InitCommand=function(self)
 			self:SetDrawState({Mode="DrawMode_QuadStrip"})
 		end,
