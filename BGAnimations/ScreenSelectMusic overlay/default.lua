@@ -21,8 +21,11 @@ local af = Def.ActorFrame{
 	-- make the MusicWheel appear to cascade down; this should draw underneath P2's PaneDisplay
 	LoadActor("./MusicWheelAnimation.lua"),
 
+	-- number of steps, jumps, holds, etc., and high scores associated with the current stepchart
+	LoadActor("./PaneDisplay.lua"),
+
 	-- elements we need two of (one for each player) that draw underneath the StepsDisplayList
-	-- this includes the stepartist boxes and the PaneDisplays (number of steps, jumps, holds, etc.)
+	-- this includes the stepartist boxes, the density graph, and the cursors.
 	LoadActor("./PerPlayer/default.lua"),
 	-- The grid for the difficulty picker (normal) or CourseContentsList (CourseMode)
 	LoadActor("./StepsDisplayList/default.lua"),
@@ -37,6 +40,11 @@ local af = Def.ActorFrame{
 	LoadActor("./SortMenu/default.lua"),
 	-- a Test Input overlay can (maybe) be accessed from the SortMenu
 	LoadActor("./TestInput.lua"),
+
+	-- The GrooveStats leaderboard that can (maybe) be accessed from the SortMenu
+	-- This is only added in "dance" mode and if the service is available.
+	LoadActor("./Leaderboard.lua"),
+
 	-- a yes/no prompt overlay for backing out of SelectMusic when in EventMode can be
 	-- activated via "CodeEscapeFromEventMode" under [ScreenSelectMusic] in Metrics.ini
 	LoadActor("./EscapeFromEventMode.lua"),

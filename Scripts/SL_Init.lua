@@ -68,6 +68,9 @@ local PlayerDefaults = {
 			-- in versus (2 players joined) only EvalPanePrimary will be used
 			self.EvalPanePrimary   = 1 -- large score and judgment counts
 			self.EvalPaneSecondary = 4 -- offset histogram
+
+			-- The Groovestats API key loaded for this player
+			self.ApiKey = ""
 		end
 	}
 }
@@ -352,6 +355,26 @@ SL = {
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.05,
 		},
+	},
+	-- Fields used to determine the existence of the launcher and the
+	-- available GrooveStats services.
+	GrooveStats = {
+		-- Whether we're launching StepMania with a launcher.
+		-- Determined once on boot in ScreenSystemLayer.
+		Launcher = false,
+
+		-- Available GrooveStats services. Subject to change while
+		-- StepMania is running.
+		GetScores = false,
+		Leaderboard = false,
+		AutoSubmit = false,
+
+		-- ************* CURRENT QR VERSION *************
+		-- * Update whenever we change relevant QR code *
+		-- *  and when GrooveStats backend is also      *
+		-- *   updated to properly consume this value.  *
+		-- **********************************************
+		ChartHashVersion = 3
 	}
 }
 

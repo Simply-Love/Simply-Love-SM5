@@ -69,6 +69,9 @@ local input = function(event)
 			elseif focus.new_overlay then
 				if focus.new_overlay == "TestInput" then
 					sortmenu:queuecommand("DirectInputToTestInput")
+				elseif focus.new_overlay == "Leaderboard" then
+					-- The leaderboard entry is removed altogether if the service isn't available.
+					sortmenu:queuecommand("DirectInputToLeaderboard")
 				end
 			end
 

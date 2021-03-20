@@ -1,3 +1,7 @@
+-- Currently the Density Graph in SSM doesn't work for Courses.
+-- Disable the functionality.
+if GAMESTATE:IsCourseMode() then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 
@@ -28,21 +32,6 @@ local af = Def.ActorFrame{
 			self:visible(false)
 		end
 	end,
-	CurrentSongChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
-	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("UpdateGraph") end,
-
-	UpdateGraphCommand=function(self)
-		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong() then
-			self:GetChild("Breakdown"):visible(true)
-			self:GetChild("DensityGraph"):visible(true)
-			self:GetChild("NPS"):visible(true)
-		else
-			self:GetChild("Breakdown"):visible(false)
-			self:GetChild("DensityGraph"):visible(false)
-			self:GetChild("NPS"):settext("Peak NPS: ")
-			self:GetChild("NPS"):visible(false)
-		end
-	end,
 }
 
 -- Background quad for the density graph
@@ -55,16 +44,52 @@ af[#af+1] = Def.Quad{
 	end
 }
 
--- The Density Graph itself
-af[#af+1] = NPS_Histogram(player, width, height)..{
+af[#af+1] = Def.ActorFrame{
+	Name="ChartParser",
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
+		self:GetChild("DensityGraph"):visible(false)
+		self:GetChild("NPS"):settext("Peak NPS: ")
+		self:GetChild("NPS"):visible(false)
+		self:GetChild("Breakdown"):GetChild("BreakdownText"):settext("")
+		self:GetChild("Breakdown"):visible(false)
+		self:stoptweening()
+		self:sleep(0.4)
+		self:queuecommand("ParseChart")
+	end,
+	ParseChartCommand=function(self)
+		local steps = GAMESTATE:GetCurrentSteps(player)
+		if steps then
+			MESSAGEMAN:Broadcast(pn.."ChartParsing")
+			ParseChartInfo(steps, pn)
+			self:queuecommand("Unhide")
+		end
+	end,
+	UnhideCommand=function(self)
+		if GAMESTATE:GetCurrentSteps(player) then
+			MESSAGEMAN:Broadcast(pn.."ChartParsed")
+			self:GetChild("DensityGraph"):visible(true)
+			self:GetChild("NPS"):visible(true)
+			self:GetChild("Breakdown"):visible(true)
+			self:queuecommand("Redraw")
+		end
+	end
+}
+
+local af2 = af[#af]
+
+-- The Density Graph itself. It already has a "RedrawCommand".
+af2[#af2+1] = NPS_Histogram(player, width, height)..{
 	Name="DensityGraph",
 	OnCommand=function(self)
 		self:addx(-width/2):addy(height/2)
 	end,
 }
+-- Don't let the density graph parse the chart.
+-- We do this in parent actorframe because we want to "stall" before we parse.
+af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 
 -- The Peak NPS text
-af[#af+1] = LoadFont("Miso/_miso")..{
+af2[#af2+1] = LoadFont("Miso/_miso")..{
 	Name="NPS",
 	Text="Peak NPS: ",
 	InitCommand=function(self)
@@ -77,14 +102,7 @@ af[#af+1] = LoadFont("Miso/_miso")..{
 		-- We want black text in Rainbow mode, white otherwise.
 		self:diffuse(DarkUI() and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
-	-- Need this in the case someone scrolls out of the folder and then back in
-	-- since we don't end up reparsing the chart in that case.
-	["CurrentSteps"..pn.."ChangedMessageCommand"] = function(self)
-		if SL[pn].Streams.PeakNPS ~= 0 then
-			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS))
-		end
-	end,
-	[pn.."ChartParsedMessageCommand"] = function(self)
+	RedrawCommand=function(self)
 		if SL[pn].Streams.PeakNPS ~= 0 then
 			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS))
 		end
@@ -92,7 +110,7 @@ af[#af+1] = LoadFont("Miso/_miso")..{
 }
 
 -- Breakdown
-af[#af+1] = Def.ActorFrame{
+af2[#af2+1] = Def.ActorFrame{
 	Name="Breakdown",
 	InitCommand=function(self)
 		local actorHeight = 17
@@ -108,15 +126,13 @@ af[#af+1] = Def.ActorFrame{
 	
 	LoadFont("Miso/_miso")..{
 		Text="",
+		Name="BreakdownText",
 		InitCommand=function(self)
 			local textHeight = 17
 			local textZoom = 0.8
 			self:maxwidth(width/textZoom):zoom(textZoom)
 		end,
-		["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
-			self:queuecommand("UpdateBreakdown")
-		end,
-		UpdateBreakdownCommand=function(self)
+		RedrawCommand=function(self)
 			local textZoom = 0.8
 			self:settext(GenerateBreakdownText(pn, 0))
 			local minimization_level = 1

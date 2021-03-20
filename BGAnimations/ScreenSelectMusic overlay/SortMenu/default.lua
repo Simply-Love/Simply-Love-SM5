@@ -9,6 +9,7 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 -- is large enough that I moved it to its own file
 local sortmenu_input = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
 local testinput_input = LoadActor("TestInput_InputHandler.lua")
+local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
 
 -- "MT" is my personal means of denoting that this thing (the file, the variable, whatever)
 -- has something to do with a Lua metatable.
@@ -33,6 +34,8 @@ local wheel_item_mt = LoadActor("WheelItemMT.lua")
 
 local sortmenu = { w=210, h=160 }
 
+local hasSong = GAMESTATE:GetCurrentSong() and true or false
+
 ------------------------------------------------------------
 
 local t = Def.ActorFrame {
@@ -48,6 +51,18 @@ local t = Def.ActorFrame {
 	-- We'll want to (re)assess available choices in the SortMenu if a player late-joins
 	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
 
+	-- We'll also (re)asses if we want to display the leaderboard depending on if we're actually hovering over a song.
+	CurrentSongChangedMessageCommand=function(self)
+		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+			local curSong = GAMESTATE:GetCurrentSong()
+			-- Only reasses if we go from song->group or group->song
+			if (curSong and not hasSong) or (not curSong and hasSong) then
+				self:queuecommand("AssessAvailableChoices")
+			end
+			hasSong = curSong and true or false
+		end
+	end,
+
 
 	ShowSortMenuCommand=function(self) self:visible(true) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
@@ -57,6 +72,7 @@ local t = Def.ActorFrame {
 		local overlay = self:GetParent()
 
 		screen:RemoveInputCallback(testinput_input)
+		screen:RemoveInputCallback(leaderboard_input)
 		screen:AddInputCallback(sortmenu_input)
 
 		for player in ivalues(PlayerNumber) do
@@ -64,6 +80,7 @@ local t = Def.ActorFrame {
 		end
 		self:playcommand("ShowSortMenu")
 		overlay:playcommand("HideTestInput")
+		overlay:playcommand("HideLeaderboard")
 	end,
 	DirectInputToTestInputCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
@@ -76,7 +93,22 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
+		
 		overlay:playcommand("ShowTestInput")
+	end,
+	DirectInputToLeaderboardCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+
+		screen:RemoveInputCallback(sortmenu_input)
+		screen:AddInputCallback(leaderboard_input)
+
+		for player in ivalues(PlayerNumber) do
+			SCREENMAN:set_input_redirected(player, true)
+		end
+		self:playcommand("HideSortMenu")
+		
+		overlay:playcommand("ShowLeaderboard")
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
 	DirectInputToEngineCommand=function(self)
@@ -85,12 +117,14 @@ local t = Def.ActorFrame {
 
 		screen:RemoveInputCallback(sortmenu_input)
 		screen:RemoveInputCallback(testinput_input)
+		screen:RemoveInputCallback(leaderboard_input)
 
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, false)
 		end
 		self:playcommand("HideSortMenu")
 		overlay:playcommand("HideTestInput")
+		overlay:playcommand("HideLeaderboard")
 	end,
 
 
@@ -179,6 +213,14 @@ local t = Def.ActorFrame {
 		local game = GAMESTATE:GetCurrentGame():GetName()
 		if (game=="dance" or game=="pump" or game=="techno") and GAMESTATE:IsEventMode() then
 			table.insert(wheel_options, {"FeelingSalty", "TestInput"})
+		end
+
+		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
+		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+			-- Also only add this if we're actually hovering over a song.
+			if GAMESTATE:GetCurrentSong() then
+				table.insert(wheel_options, {"GrooveStats", "Leaderboard"})
+			end
 		end
 
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
