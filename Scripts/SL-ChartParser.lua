@@ -403,3 +403,129 @@ ParseChartInfo = function(steps, pn)
 		end
 	end
 end
+
+-- See the "Which Stepcharts are Crossoveriest" series from SIGBOVIK, esp. 2017 and 2019.
+GetSongStatsSIGBOVIKEdition = function(Steps)
+	-- the algorithm supports only 4-panel
+	-- TODO: make caller check for this return value and fall back to hands/mines/etc
+	local StepsType = ToEnumShortString(Steps:GetStepsType()):gsub("_", "-"):lower()
+	if (StepsType ~= "dance-single") then return 69, 420, 0, 0, 0 end
+
+	-- parse the chart
+	-- this setup stuff is largely copied from GetNPSperMeasure
+	local SimfileString, FileType = GetSimfileString(Steps)
+	if not SimfileString then return 69, 421, 0, 0, 0 end
+
+	local Difficulty = ToEnumShortString(Steps:GetDifficulty())
+	local StepsDescription = Steps:GetDescription()
+	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, FileType)
+	if not ChartString then return 69, 422, 0, 0, 0 end
+
+	local RegexStep = "[124]"
+	local RegexAny = "[%dM]"
+	-- NB: not sure if charts can have junk eg "0000 // whatever", so not matching `$`
+	local RegexL = "^" .. RegexStep .. RegexAny .. RegexAny .. RegexAny
+	local RegexD = "^" .. RegexAny .. RegexStep .. RegexAny .. RegexAny
+	local RegexU = "^" .. RegexAny .. RegexAny .. RegexStep .. RegexAny
+	local RegexR = "^" .. RegexAny .. RegexAny .. RegexAny .. RegexStep
+
+	-- output counters
+	local NumCrossovers = 0
+	local NumFootswitches = 0
+	local NumSideswitches = 0
+	local NumJacks = 0
+	local NumBrackets = 0
+
+	-- transient algorithm state
+	local LastFoot = false -- false = left, true = right
+	local WasLastStreamFlipped = false
+	local LastStep = 0 -- 0 = None, or some combo of LDUR
+	local LastRepeatedFoot = 0 -- 0 = None, or some combo of LDUR
+	local StepsLR = {}
+
+	local CommitStream = function()
+		local ns = #StepsLR
+		local nx = 0
+		for _i, step in ipairs(StepsLR) do
+			-- count crossed-over steps given initial footing
+			if not step then nx = nx + 1 end
+		end
+		-- TODO: splitIndex/splitStream
+		local needFlip = false
+		if nx * 2 > ns then
+			-- easy case - more than half the L/R steps in this stream were crossed over,
+			-- so we guessed the initial footing wrong and need to flip the stream.
+			needFlip = true
+		elseif nx * 2 == ns then
+			-- exactly half crossed over. note that flipping the stream will introduce
+			-- a jack (i.e. break the alternating-feet assumption) on the first note,
+			-- whereas leaving it as is will footswitch that note. break the tie by
+			-- looking at history to see if the chart is already more jacky or switchy.
+			-- (otoh, the reverse applies if the previous stream was also flipped.)
+			if NumFootswitches > NumJacks then
+				needFlip = LastFlip -- match flipness of last chunk -> footswitch
+			else
+				needFlip = not LastFlip -- don't match -> jack
+			end
+		end
+
+		if needFlip then
+			NumCrossovers = NumCrossovers + ns - nx
+		else
+			NumCrossovers = NumCrossovers + nx
+		end
+
+		if LastRepeatedFoot ~= 0 then
+			if needFlip == LastFlip then
+				NumFootswitches = NumFootswitches + 1
+				if LastRepeatedFoot == "L" or LastRepeatedFoot == "R" then
+					NumSideswitches = NumSideswitches + 1
+				end
+			else
+				NumJacks = NumJacks + 1
+			end
+		end
+
+		StepsLR = {}
+		LastFlip = needFlip
+	end
+
+	-- TODO - why \r\n, how about testing w a not-dos-formatted chart? `\r?` ?
+	for line in ChartString:gmatch("[^%s*\r\n]+") do
+		if line:match(RegexStep) then
+			local step = ""
+			if line:match(RegexL) then step = step .. "L" end
+			if line:match(RegexD) then step = step .. "D" end
+			if line:match(RegexU) then step = step .. "U" end
+			if line:match(RegexR) then step = step .. "R" end
+
+			if step:len() == 1 then
+				-- normal step
+				if step == LastStep then
+					-- jack or footswitch
+					CommitStream()
+					LastRepeatedFoot = step
+				end
+
+				-- a normal streamy step
+				LastStep = step
+				-- switch feet
+				if LastFoot then LastFoot = false else LastFoot = true end
+				-- record whether we stepped on a matching or crossed-over L/R arrow
+				-- TODO: check yes/not true/false left/right parity here (vs .hs/.cpps)
+				if step == "L" then
+					StepsLR[#StepsLR+1] = not LastFoot
+				elseif step == "R" then
+					StepsLR[#StepsLR+1] = LastFoot
+				end
+			elseif step:len() > 1 then
+				-- jump
+				CommitStream()
+				LastStep = 0
+				LastRepeatedFoot = 0
+			end
+		end
+	end
+
+	return NumCrossovers, NumFootswitches, NumSideswitches, NumJacks, NumBrackets
+end
