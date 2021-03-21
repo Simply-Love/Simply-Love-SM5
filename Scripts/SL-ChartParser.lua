@@ -422,7 +422,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	if not ChartString then return 69, 422, 0, 0, 0 end
 
 	local RegexStep = "[124]"
-	local RegexAny = "[%dM]"
+	local RegexAny = "." -- "[%dM]" -- performance, i think
 	-- NB: not sure if charts can have junk eg "0000 // whatever", so not matching `$`
 	local RegexL = "^" .. RegexStep .. RegexAny .. RegexAny .. RegexAny
 	local RegexD = "^" .. RegexAny .. RegexStep .. RegexAny .. RegexAny
@@ -439,8 +439,8 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	-- transient algorithm state
 	local LastFoot = false -- false = left, true = right
 	local WasLastStreamFlipped = false
-	local LastStep = 0 -- 0 = None, or some combo of LDUR
-	local LastRepeatedFoot = 0 -- 0 = None, or some combo of LDUR
+	local LastStep -- Option<LDUR>
+	local LastRepeatedFoot -- Option<LDUR>
 	local StepsLR = {}
 
 	local CommitStream = function()
@@ -475,7 +475,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			NumCrossovers = NumCrossovers + nx
 		end
 
-		if LastRepeatedFoot ~= 0 then
+		if LastRepeatedFoot then
 			if needFlip == LastFlip then
 				NumFootswitches = NumFootswitches + 1
 				if LastRepeatedFoot == "L" or LastRepeatedFoot == "R" then
@@ -501,7 +501,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 
 			if step:len() == 1 then
 				-- normal step
-				if step == LastStep then
+				if LastStep and step == LastStep then
 					-- jack or footswitch
 					CommitStream()
 					LastRepeatedFoot = step
@@ -521,8 +521,8 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			elseif step:len() > 1 then
 				-- jump
 				CommitStream()
-				LastStep = 0
-				LastRepeatedFoot = 0
+				LastStep = nil
+				LastRepeatedFoot = nil
 			end
 		end
 	end
