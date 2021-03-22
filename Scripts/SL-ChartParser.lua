@@ -510,7 +510,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 				-- a normal streamy step
 				LastStep = step
 				-- switch feet
-				if LastFoot then LastFoot = false else LastFoot = true end
+				LastFoot = not LastFoot
 				-- record whether we stepped on a matching or crossed-over L/R arrow
 				-- TODO: check yes/not true/false left/right parity here (vs .hs/.cpps)
 				if step == "L" then
@@ -526,6 +526,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			end
 		end
 	end
+	CommitStream()
 
 	return NumCrossovers, NumFootswitches, NumSideswitches, NumJacks, NumBrackets
 end
