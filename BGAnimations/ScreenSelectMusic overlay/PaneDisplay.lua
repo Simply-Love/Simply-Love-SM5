@@ -152,7 +152,7 @@ end
 -- -----------------------------------------------------------------------
 -- define the x positions of four columns, and the y positions of three rows of PaneItems
 local pos = {
-	col = { WideScale(-104,-133), WideScale(-36,-38), WideScale(54,76), WideScale(150, 190) },
+	col = { WideScale(-124,-153), WideScale(-52,-54), WideScale(69,91), WideScale(150, 190) },
 	row = { 13, 31, 49 }
 }
 
