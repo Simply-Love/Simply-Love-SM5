@@ -441,16 +441,18 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	local WasLastStreamFlipped = false
 	local LastStep -- Option<LDUR>
 	local LastRepeatedFoot -- Option<LDUR>
+	-- TODO: microoptimize(?) by counting `NumLRCrossed` explicitly here,
+	-- and maybe even eg `NumConsecutiveFlipped`. test on longass trancemania songs
 	local StepsLR = {}
 
-	local CommitStream = function()
+	function CommitStream()
 		local ns = #StepsLR
 		local nx = 0
 		for _i, step in ipairs(StepsLR) do
 			-- count crossed-over steps given initial footing
 			if not step then nx = nx + 1 end
 		end
-		-- TODO: splitIndex/splitStream
+
 		local needFlip = false
 		if nx * 2 > ns then
 			-- easy case - more than half the L/R steps in this stream were crossed over,
@@ -469,25 +471,84 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			end
 		end
 
-		if needFlip then
-			NumCrossovers = NumCrossovers + ns - nx
-		else
-			NumCrossovers = NumCrossovers + nx
-		end
-
-		if LastRepeatedFoot then
-			if needFlip == LastFlip then
-				NumFootswitches = NumFootswitches + 1
-				if LastRepeatedFoot == "L" or LastRepeatedFoot == "R" then
-					NumSideswitches = NumSideswitches + 1
+		-- now that we know the correct flip, see if the stream needs split.
+		-- if "too much" of the stream is *completely* crossed over, force a
+		-- double-step there by splitting the stream to stay facing forward.
+		-- heuristic value (9) chosen by inspection on Subluminal - After Hours.
+		local splitIndex -- Option<int>
+		local splitFirstUncrossedStepIndex -- Option<Int>
+		local numConsecutiveCrossed = 0
+		for i, step in ipairs(StepsLR) do
+			local stepIsCrossed = step == needFlip
+			if not splitIndex then -- lua doesn't have `break` huh. ok
+				if stepIsCrossed then
+					numConsecutiveCrossed = numConsecutiveCrossed + 1
+					if numConsecutiveCrossed == 9 then
+						splitIndex = i - 8 -- beware the 1-index
+					end
+				else
+					numConsecutiveCrossed = 0
 				end
-			else
-				NumJacks = NumJacks + 1
+			elseif not splitFirstUncrossedStepIndex then
+				-- also search for the first un-crossed step after the fux section,
+				-- which will be used below in the `splitIndex == 1` case.
+				if not stepIsCrossed then
+					splitFirstUncrossedStepIndex = i
+				end
 			end
 		end
 
-		StepsLR = {}
-		LastFlip = needFlip
+		if splitIndex then
+			-- note that since we take O(n) to compute `needFlip`, and then we might
+			-- do repeated work scanning already-analyzed ranges of `StepsLR` during
+			-- the recursive call here, it's technically possible for a worst case
+			-- performance of O(n^2 / 18), if the whole chart fits this pattern.
+			-- but this is expected to be pretty rare to happen even once so probs ok.
+			-- TODO: optmz that ^^^ by using a separate explicit counter for `nx`.
+			if splitIndex == 1 then
+				-- prevent infinite splittage if the fux section starts immediately.
+				-- in that case split instead at the first non-crossed step.
+				-- the next index is guaranteed to be set in this case, b/c i said so.
+				splitIndex = splitFirstUncrossedStepIndex -- .unwrap()
+			end
+			-- split that sucker
+			local StepsLR1 = {}
+			local StepsLR2 = {}
+			for i, step in ipairs(StepsLR) do
+				if i < splitIndex then
+					StepsLR1[#StepsLR1+1] = step
+				else
+					StepsLR2[#StepsLR2+1] = step
+				end
+			end
+			-- recurse for each split half
+			StepsLR = StepsLR1
+			CommitStream()
+			LastRepeatedFoot = nil
+			StepsLR = StepsLR2
+			CommitStream()
+		else
+			-- no heuristic doublestep splittage necessary; update the stats.
+			if needFlip then
+				NumCrossovers = NumCrossovers + ns - nx
+			else
+				NumCrossovers = NumCrossovers + nx
+			end
+
+			if LastRepeatedFoot then
+				if needFlip == LastFlip then
+					NumFootswitches = NumFootswitches + 1
+					if LastRepeatedFoot == "L" or LastRepeatedFoot == "R" then
+						NumSideswitches = NumSideswitches + 1
+					end
+				else
+					NumJacks = NumJacks + 1
+				end
+			end
+
+			StepsLR = {}
+			LastFlip = needFlip
+		end
 	end
 
 	-- TODO - why \r\n, how about testing w a not-dos-formatted chart? `\r?` ?
