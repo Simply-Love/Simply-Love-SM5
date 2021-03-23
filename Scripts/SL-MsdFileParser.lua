@@ -20,24 +20,24 @@ function ParseMsdFile(steps)
 		-- table.concat(table_name, separator, start, end)
 		local param = table.concat(p, '', 1, plen)
 
-		-- -- Normalize all line endings to \n and remove all leading and trailing whitespace.
+		-- Normalize all line endings to \n and remove all leading and trailing whitespace.
 		param = param:gsub('\r\n?', '\n'):match('^%s*(.-)%s*$')
 
 		-- Field specific modifications. We length check the last table to make sure we're
 		-- actually parsing what we want.
 		-- TODO(teejusb): We should probably do this for most fields for consistency.
 		if #t[#t] == 6 and (t[#t][1] == 'NOTES' or t[#t][1] == 'NOTES2') and fileType == "sm" then
-			-- Spaces don't matter for the chart data itself, remove them all.
+			-- Remove all whitespace that isn't the \n character.
 			-- NOTE(teejusb): NOTES in the SM file has multiple parts. We specifically only want to strip
 			-- the 6th part (the chart data), as the others can contain spaces e.g. chart description.
-			param = param:gsub(' ', '')
+			param = param:gsub('[\r\t\f\v ]+', '')
 		elseif #t[#t] == 1 and (t[#t][1] == 'NOTES' or t[#t][1] == 'NOTES2') and fileType == "ssc" then
-			-- Spaces don't matter for the chart data itself, remove them all.
+			-- Remove all whitespace that isn't the \n character.
 			-- NOTE(teejusb): NOTES in an SSC file only contains the chart data itself.
-			param = param:gsub(' ', '')
+			param = param:gsub('[\r\t\f\v ]+', '')
 		elseif #t[#t] == 1 and t[#t][1] == 'BPMS' then
-			-- Line endings and spaces don't matter for BPMs, remove them all.
-			param = param:gsub('\n? ?', '')
+			-- Whitespace doesn't matter for BPMs, remove them all.
+			param = param:gsub('%s+', '')
 		end
 
 		table.insert(t[#t], param)

@@ -89,6 +89,7 @@ local function NormalizeFloatDigits(param)
 	-- 3.95 usually uses three digits after the decimal point while
 	-- SM5 uses 6. We normalize everything here to 6. If for some reason
 	-- there are more than 6, we just remove the trailing ones.
+	--
 	-- local function NormalizeDecimal(decimal)
 	-- 	local int, frac = decimal:match('(.+)%.(.+)')
 	-- 	if frac ~= nil then
@@ -104,11 +105,26 @@ local function NormalizeFloatDigits(param)
 	-- end
 
 	-- V2, uses string.format to round all the decimals to 3 decimal places.
+	--
+	-- local function NormalizeDecimal(decimal)
+	-- 	-- Remove any control characters from the string to prevent conversion failures.
+	-- 	decimal = decimal:gsub("%c", "")
+	-- 	return string.format("%.3f", tonumber(decimal))
+
+	-- V3, uses a faster version of math.floor(x - 0.5) for rounding (no function call).
+	--   the V2 version would fail on "82.0625" where it would round it to 82.062 instead
+	--   of the expected 82.063
 	local function NormalizeDecimal(decimal)
 		-- Remove any control characters from the string to prevent conversion failures.
 		decimal = decimal:gsub("%c", "")
-		return string.format("%.3f", tonumber(decimal))
+		local rounded = tonumber(decimal)
+
+		-- Round to 3 decimal places
+		local mult = 10^3
+		rounded = (rounded * mult + 0.5 - (rounded * mult + 0.5) % 1) / mult
+		return string.format("%.3f", rounded)
 	end
+
 	local paramParts = {}
 	for beat_bpm in param:gmatch('[^,]+') do
 		local beat, bpm = beat_bpm:match('(.+)=(.+)')
