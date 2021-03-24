@@ -27,13 +27,13 @@ else
 	style = "dance-single"
 end
 
-local hash = GenerateHash(steps, style, difficulty):sub(1, 16)
+local hash = GenerateHash(steps, style, difficulty):sub(1, 12)
 
 -- ************* CURRENT QR VERSION *************
 -- * Update whenever we change relevant QR code *
 -- *  and when the backend GrooveStats is also  *
 -- *   updated to properly consume this value.  *
 -- **********************************************
-local qr_version = 3
+local qr_version = 2
 
 return ("https://groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s&v=%d"):format(hash, score, failed, rate, qr_version)
