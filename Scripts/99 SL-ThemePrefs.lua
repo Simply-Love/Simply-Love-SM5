@@ -109,6 +109,18 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = "",
 		},
+		EditModeLastSeenStepsType =
+		{
+			Default = "",
+		},
+		EditModeLastSeenStyleType =
+		{
+			Default = "",
+		},
+		EditModeLastSeenDifficulty =
+		{
+			Default = "",
+		},
 
 		-- - - - - - - - - - - - - - - - - - - -
 		-- MenuTimer values for various screens
