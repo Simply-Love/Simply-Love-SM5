@@ -49,7 +49,7 @@ local t = Def.ActorFrame{
 					end
 
 					if cursorY == rowYvalues[4] then
-						editMenu:GetChild("StepsDisplay"):GetChild("Meter"):diffuse( 0,0,0,1 )
+						editMenu:GetChild("StepsDisplay"):diffuse( 0,0,0,1 )
 					end
 					if cursorY == rowYvalues[6] then
 						editMenu:GetChild("StepsDisplaySource"):GetChild("Meter"):diffuse( 0,0,0,1 )
@@ -65,7 +65,7 @@ local t = Def.ActorFrame{
 					end
 
 					if cursorY ~= rowYvalues[4] then
-						editMenu:GetChild("StepsDisplay"):GetChild("Meter"):diffuse(1,1,1,1)
+						editMenu:GetChild("StepsDisplay"):diffuse(1,1,1,1)
 					end
 					if cursorY ~= rowYvalues[6] then
 						editMenu:GetChild("StepsDisplaySource"):GetChild("Meter"):diffuse(1,1,1,1)
@@ -97,7 +97,7 @@ local t = Def.ActorFrame{
 			if cursor then
 				local cursorY = cursor:GetY()
 				if cursorY == rowYvalues[4] then
-					editMenu:GetChild("StepsDisplay"):GetChild("Meter"):diffuse(0,0,0,1)
+					editMenu:GetChild("StepsDisplay"):diffuse(0,0,0,1)
 				end
 			end
 		end

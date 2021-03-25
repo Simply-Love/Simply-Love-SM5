@@ -3,7 +3,7 @@
 -- This can be handy when a player is working on the same stepchart
 -- over the course of multiple days/SM5 restarts.
 --
--- These steps (retreiving strings from ThemePrefs and setting GAMESTATE)
+-- The 1st half of this (retreiving strings from ThemePrefs and setting GAMESTATE)
 -- can be performed immediately when this file is loaded.  None of it requires
 -- Actors.
 --
