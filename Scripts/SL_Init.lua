@@ -38,10 +38,20 @@ local PlayerDefaults = {
 				ErrorBarMultiTick = false,
 			}
 			self.Streams = {
-				SongDir = nil,
-				StepsType = nil,
-				Difficulty = nil,
-				Measures = nil,
+				-- Chart identifiers for caching purposes.
+				Filename = "",
+				StepsType = "",
+				Difficulty = "",
+				Description = "",
+
+				-- Information parsed out from the chart.
+				NotesPerMeasure = {},
+				PeakNPS = 0,
+				NPSperMeasure = {},
+
+				-- Data for measure counter. Populated in ./ScreenGameplay in/MeasureCounterAndMods.lua.
+				-- Uses the notesThreshold option.
+				Measures = {},
 			}
 			self.HighScores = {
 				EnteringName = false,

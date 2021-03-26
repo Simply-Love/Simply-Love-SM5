@@ -61,8 +61,7 @@ return Def.Sprite{
 
 	OnCommand=function(self) self:queuecommand("Set") end,
 	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("Set") end,
 
 	SetCommand=function(self)
 		local song = GAMESTATE:GetCurrentSong()
