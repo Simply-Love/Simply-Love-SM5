@@ -23,11 +23,9 @@ local af = Def.ActorFrame{
 
 	-- elements we need two of (one for each player) that draw underneath the StepsDisplayList
 	-- this includes the stepartist boxes and the PaneDisplays (number of steps, jumps, holds, etc.)
-	LoadActor("./PerPlayer/Under.lua"),
-	-- grid of Difficulty Blocks (normal) or CourseContentsList (CourseMode)
+	LoadActor("./PerPlayer/default.lua"),
+	-- The grid for the difficulty picker (normal) or CourseContentsList (CourseMode)
 	LoadActor("./StepsDisplayList/default.lua"),
-	-- elements we need two of that draw over the StepsDisplayList (just the bouncing cursors, really)
-	LoadActor("./PerPlayer/Over.lua"),
 
 	-- Banner Art
 	LoadActor("./Banner.lua"),

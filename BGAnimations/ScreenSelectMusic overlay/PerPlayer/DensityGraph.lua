@@ -56,7 +56,6 @@ af[#af+1] = Def.Quad{
 }
 
 -- The Density Graph itself
--- The name "DensityGraph_AMV" comes from SL-Histogram.lua
 af[#af+1] = NPS_Histogram(player, width, height)..{
 	Name="DensityGraph",
 	OnCommand=function(self)
@@ -116,12 +115,7 @@ af[#af+1] = Def.ActorFrame{
 				--self:horizalign(right):addx(width/2)
 			end
 		end,
-		CurrentSongChangedMessageCommand=function(self)
-		end,
-		CurrentStepsP1ChangedMessageCommand=function(self)
-			self:queuecommand("UpdateBreakdown")
-		end,
-		CurrentStepsP2ChangedMessageCommand=function(self)
+		["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
 			self:queuecommand("UpdateBreakdown")
 		end,
 		UpdateBreakdownCommand=function(self)
