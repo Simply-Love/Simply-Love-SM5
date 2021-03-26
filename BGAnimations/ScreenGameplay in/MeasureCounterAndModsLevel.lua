@@ -2,7 +2,6 @@
 local GetStreamSequences = function(notesPerMeasure, notesThreshold)
 	local streamMeasures = {}
 	for i,n in ipairs(notesPerMeasure) do
-		Trace(tostring(i)..": "..tostring(n))
 		if n >= notesThreshold then
 			table.insert(streamMeasures, i)
 		end
