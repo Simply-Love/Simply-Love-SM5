@@ -11,10 +11,10 @@
 -- global utility functions (below) will depend on these
 ------------------------------------------------------------
 
--- TableToString_Recursive() function via:
+-- TableToString() function via:
 -- http://www.hpelbers.org/lua/print_r
 -- Copyright 2009: hans@hpelbers.org
-local TableToString_Recursive = function(t, name, indent)
+TableToString = function(t, name, indent)
 	local tableList = {}
 	local table_r
 
@@ -59,7 +59,7 @@ end
 -- Shorthand for SCREENMAN:SystemMessage(), this is useful for rapid iterative
 -- testing by allowing us to pretty-print tables and variables to the screen.
 --
--- If the first argument is a table, SM() will use TableToString_Recursive (from above)
+-- If the first argument is a table, SM() will use TableToString (from above)
 -- to display children recursively.  Larger tables will spill offscreen, so
 -- rec_print_table() from the _fallback theme is good to know about and use when
 -- debugging.  That will recursively pretty-print table structures to ./Logs/Log.txt
@@ -73,7 +73,7 @@ SM = function( arg, duration )
 
 	-- if a table has been passed in, recursively stringify the table's keys and values
 	if type( arg ) == "table" then
-		msg = TableToString_Recursive(arg)
+		msg = TableToString(arg)
 
 	-- otherwise, Lua's standard tostring() should suffice
 	else

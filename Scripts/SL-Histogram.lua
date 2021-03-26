@@ -1,6 +1,7 @@
 local function gen_vertices(player, width, height)
 	local Song, Steps
 	local first_step_has_occurred = false
+	local pn = ToEnumShortString(player)
 
 	if GAMESTATE:IsCourseMode() then
 		local TrailEntry = GAMESTATE:GetCurrentTrail(player):GetTrailEntry(GAMESTATE:GetCourseSongIndex())
@@ -10,13 +11,19 @@ local function gen_vertices(player, width, height)
 		Steps = GAMESTATE:GetCurrentSteps(player)
 		Song = GAMESTATE:GetCurrentSong()
 	end
+	
+	if not Steps then return {} end
 
-	local PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, Steps)
-
+	-- There's also a notesPerMeasure argument, but we don't really care about it so it'll default to 16
+	-- even if we don't provide it.
+	-- This function does no work if we already have the data in SL.Streams cache.
+	ParseChartInfo(Steps, pn)
+	PeakNPS = SL[pn].Streams.PeakNPS
+	NPSperMeasure = SL[pn].Streams.NPSperMeasure 
 	-- store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
 	-- their charts may have different peak densities, and if they both want histograms,
 	-- we'll need to be able to compare densities and scale one of the graphs vertically
-	GAMESTATE:Env()[ToEnumShortString(player).."PeakNPS"] = PeakNPS
+	GAMESTATE:Env()[pn.."PeakNPS"] = PeakNPS
 
 	-- use MESSAGEMAN to broadcast that the peak NPS has been calculated (and/or updated in CourseMode)
 	-- and is available.  actors on the current screen can listen for this via something like:
@@ -30,7 +37,6 @@ local function gen_vertices(player, width, height)
 	local x, y, t
 
 	if (PeakNPS and NPSperMeasure and #NPSperMeasure > 1) then
-
 		local TimingData = Steps:GetTimingData()
 		local FirstSecond = math.min(TimingData:GetElapsedTimeFromBeat(0), 0)
 		local LastSecond = Song:GetLastSecond()
@@ -91,14 +97,12 @@ end
 
 
 function NPS_Histogram(player, width, height)
+	local pn = ToEnumShortString(player)
 	local amv = Def.ActorMultiVertex{
 		InitCommand=function(self)
 			self:SetDrawState({Mode="DrawMode_QuadStrip"})
 		end,
-		CurrentStepsP1ChangedMessageCommand=function(self)
-			self:queuecommand("Redraw")
-		end,
-		CurrentStepsP2ChangedMessageCommand=function(self)
+		["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
 			self:queuecommand("Redraw")
 		end,
 		RedrawCommand=function(self)

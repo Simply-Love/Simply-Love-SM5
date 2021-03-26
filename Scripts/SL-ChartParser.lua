@@ -30,9 +30,6 @@ end
 -- ----------------------------------------------------------------
 -- SOURCE: https://github.com/JonathanKnepp/SM5StreamParser
 
--- Which note types are counted as part of the stream?
-local TapNotes = {1,2,4}
-
 
 -- Utility function to replace regex special characters with escaped characters
 local regexEncode = function(var)
@@ -121,164 +118,27 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 end
 
 -- Figure out which measures are considered a stream of notes
-local getStreamMeasures = function(measuresString, notesPerMeasure)
-	-- Make our stream notes array into a string for regex
-	local TapNotesString = ""
-	for i, v in ipairs(TapNotes) do
-		TapNotesString = TapNotesString .. v
-	end
-	TapNotesString = "["..TapNotesString.."]"
-
+local GetMeasureInfo = function(Steps, measuresString)
+	-- Stream Measures Variables
 	-- Which measures are considered a stream?
-	local streamMeasures = {}
-
-	-- Keep track of the measure and its timing (8ths, 16ths, etc)
+	local notesPerMeasure = {}
 	local measureCount = 1
-	local measureTiming = 0
-	-- Keep track of the notes in a measure
-	local measureNotes = {}
+	local notesInMeasure = 0
+
+	-- NPS and Density Graph Variables
+	local NPSperMeasure = {}
+	local NPSForThisMeasure, peakNPS = 0, 0
+	local timingData = Steps:GetTimingData()
 
 	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
-	for line in measuresString:gmatch("[^%s*\r\n]+")
-	do
+	for line in measuresString:gmatch("[^%s*\r\n]+") do
 		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
 		if(line:match("^[,;]%s*")) then
-			-- Does this measure contain a stream of notes based on our notesPerMeasure global?
-			if(#measureNotes >= notesPerMeasure) then
-				table.insert(streamMeasures, measureCount)
-			end
+			-- Does the number of notes in this measure meet our threshold to be considered a stream?
+			table.insert(notesPerMeasure, notesInMeasure)
 
-			-- Reset iterative variables
-			measureTiming = 0
-			measureCount = measureCount + 1
-			measureNotes = {}
-		else
-			-- increment the measure timing
-			measureTiming = measureTiming + 1
-
-			-- Is this a note?
-			if(line:match(TapNotesString)) then
-				table.insert(measureNotes, measureTiming)
-			end
-		end
-	end
-
-	return streamMeasures, measureCount
-end
-
--- Get the start/end of each stream and break sequence in our table of measures
-local getStreamSequences = function(streamMeasures, totalMeasures)
-	local streamSequences = {}
-	-- Count every measure as stream/non-stream.
-	-- We can then later choose how we want to display the information.
-	local measureSequenceThreshold = 1
-
-	local counter = 1
-	local streamEnd = nil
-
-	-- First add an initial break if it's larger than measureSequenceThreshold
-	if #streamMeasures > 0 then
-		local breakStart = 0
-		local k, v = next(streamMeasures) -- first element of a table
-		local breakEnd = streamMeasures[k] - 1
-		if (breakEnd - breakStart >= measureSequenceThreshold) then
-			table.insert(streamSequences,
-				{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
-		end
-	end
-
-	-- Which sequences of measures are considered a stream?
-	for k,v in pairs(streamMeasures) do
-		local curVal = streamMeasures[k]
-		local nextVal = streamMeasures[k+1] and streamMeasures[k+1] or -1
-
-		-- Are we still in sequence?
-		if curVal + 1 == nextVal then
-			counter = counter + 1
-			streamEnd = curVal + 1
-		else
-			-- Found the first section that counts as a stream
-			if(counter >= measureSequenceThreshold) then
-				if streamEnd == nil then
-					streamEnd = curVal
-				end
-				local streamStart = (streamEnd - counter)
-				-- Add the current stream.
-				table.insert(streamSequences,
-					{streamStart=streamStart, streamEnd=streamEnd, isBreak=false})
-			end
-
-			-- Add any trailing breaks if they're larger than measureSequenceThreshold
-			local breakStart = curVal
-			local breakEnd = (nextVal ~= -1) and nextVal - 1 or totalMeasures
-			if (breakEnd - breakStart >= measureSequenceThreshold) then
-				table.insert(streamSequences,
-					{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
-			end
-			counter = 1
-			streamEnd = nil
-		end
-	end
-
-	return streamSequences
-end
-
-
--- GetNPSperMeasure() accepts two arguments:
--- 		Song, a song object provided by something like GAMESTATE:GetCurrentSong()
--- 		Steps, a steps object provided by something like GAMESTATE:GetCurrentSteps(player)
---
--- GetNPSperMeasure() returns two values:
---		PeakNPS, a number representing the peak notes-per-second for the given stepchart
---			This is an imperfect measurement, as we sample the note density per-second-per-measure, not per-second.
---			It is (unlikely but) possible for the true PeakNPS to be spread across the boundary of two measures.
---		Density, a numerically indexed table containing the notes-per-second value for each measure
---			The Density table is indexed from 1 (as Lua tables go); simfile charts, however, start at measure 0.
---			So if you're looping through the Density table, subtract 1 from the current index to get the
---			actual measure number.
-
-GetNPSperMeasure = function(Song, Steps)
-	if Song==nil or Steps==nil then return end
-
-	local SongDir = Song:GetSongDir()
-	local SimfileString, Filetype = GetSimfileString( Steps )
-	if not SimfileString then return end
-
-	-- StepsType, a string like "dance-single" or "pump-double"
-	local StepsType = ToEnumShortString( Steps:GetStepsType() ):gsub("_", "-"):lower()
-	-- Difficulty, a string like "Beginner" or "Challenge"
-	local Difficulty = ToEnumShortString( Steps:GetDifficulty() )
-	-- an arbitary but unique string provded by the stepartist, needed here to identify Edit charts
-	local StepsDescription = Steps:GetDescription()
-
-	-- Discard header info; parse out only the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
-	if not ChartString then return end
-
-	-- Make our stream notes array into a string for regex
-	local TapNotesString = ""
-	for i, v in ipairs(TapNotes) do
-		TapNotesString = TapNotesString .. v
-	end
-	TapNotesString = "["..TapNotesString.."]"
-
-	-- the main density table, indexed by measure number
-	local Density = {}
-	-- Keep track of the measure
-	local measureCount = 0
-	-- Keep track of the number of notes in the current measure while we iterate
-	local NotesInThisMeasure = 0
-
-	local NPSforThisMeasure, PeakNPS, BPM = 0, 0, 0
-	local TimingData = Steps:GetTimingData()
-
-	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
-	for line in ChartString:gmatch("[^%s*\r\n]+") do
-
-		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
-		if (line:match("^[,;]%s*")) then
-
-			DurationOfMeasureInSeconds = TimingData:GetElapsedTimeFromBeat((measureCount+1)*4) - TimingData:GetElapsedTimeFromBeat(measureCount*4)
+			-- NPS Calculation
+			durationOfMeasureInSeconds = timingData:GetElapsedTimeFromBeat((measureCount+1) * 4) - timingData:GetElapsedTimeFromBeat(measureCount*4)
 
 			-- FIXME: We subtract the time at the current measure from the time at the next measure to determine
 			-- the duration of this measure in seconds, and use that to calculate notes per second.
@@ -290,51 +150,89 @@ GetNPSperMeasure = function(Song, Steps)
 			-- This doesn't always hold true.  Measures 48 and 49 of "Mudkyp Korea/Can't Nobody" use a properly
 			-- timed negative stop, but the engine reports them as having very small but positive durations
 			-- which erroneously inflates the notes per second calculation.
-
-			if (DurationOfMeasureInSeconds == 0) then
-				NPSforThisMeasure = 0
+			if durationOfMeasureInSeconds == 0 then
+				NPSForThisMeasure = 0
 			else
-				NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds
+				NPSForThisMeasure = notesInMeasure/durationOfMeasureInSeconds
 			end
 
-			-- measureCount in SM truly starts at 0, but Lua's native ipairs() iterator needs indexed tables
-			-- that start at 1.   Add 1 now so the table behaves and subtract 1 later when drawing the histogram.
-			Density[measureCount+1] = NPSforThisMeasure
+			NPSperMeasure[measureCount] = NPSForThisMeasure
 
 			-- determine whether this measure contained the PeakNPS
-			if NPSforThisMeasure > PeakNPS then PeakNPS = NPSforThisMeasure end
-			-- increment the measureCount
+			if NPSForThisMeasure > peakNPS then
+				peakNPS = NPSForThisMeasure
+			end
+
+			-- Reset iterative variables
+			notesInMeasure = 0
 			measureCount = measureCount + 1
-			-- and reset NotesInThisMeasure
-			NotesInThisMeasure = 0
 		else
-			-- does this line contain a note?
-			if (line:match(TapNotesString)) then
-				NotesInThisMeasure = NotesInThisMeasure + 1
+			-- Is this a note? (Tap, Hold Head, Roll Head)
+			if(line:match("[124]")) then
+				notesInMeasure = notesInMeasure + 1
 			end
 		end
 	end
 
-	return PeakNPS, Density
+	return notesPerMeasure, peakNPS, NPSperMeasure
 end
 
+local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty, description)
+	local opposite_player = pn == "P1" and "P2" or "P1"
 
+	-- Check if we already have the data stored in the opposite player's cache.
+	if (SL[opposite_player].Streams.Filename == filename and
+			SL[opposite_player].Streams.StepsType == stepsType and
+			SL[opposite_player].Streams.Difficulty == difficulty and
+			SL[opposite_player].Streams.Description == description) then
+		-- If so then just copy everything over.
+		SL[pn].Streams.NotesPerMeasure = SL[opposite_player].Streams.NotesPerMeasure
+		SL[pn].Streams.PeakNPS = SL[opposite_player].Streams.PeakNPS
+		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
 
-GetStreams = function(Steps, StepsType, Difficulty, NotesPerMeasure)
+		SL[pn].Streams.Filename = SL[opposite_player].Streams.Filename
+		SL[pn].Streams.StepsType = SL[opposite_player].Streams.StepsType
+		SL[pn].Streams.Difficulty = SL[opposite_player].Streams.Difficulty
+		SL[pn].Streams.Description = SL[opposite_player].Streams.Description
+	end
+end
+		
+ParseChartInfo = function(steps, pn)
+	-- The filename for these steps in the StepMania cache 
+	local filename = steps:GetFilename()
+	-- StepsType, a string like "dance-single" or "pump-double"
+	local stepsType = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
+	-- Difficulty, a string like "Beginner" or "Challenge"
+	local difficulty = ToEnumShortString( steps:GetDifficulty() )
+	-- An arbitary but unique string provided by the stepartist, needed here to identify Edit charts
+	local description = steps:GetDescription()
 
-	local SimfileString, Filetype = GetSimfileString( Steps )
-	if not SimfileString then return end
+	MaybeCopyFromOppositePlayer(pn, filename, stepsType, difficulty, description)
 
-	-- an arbitary but unique string provded by the stepartist, needed here to identify Edit charts
-	local StepsDescription = Steps:GetDescription()
+	-- Only parse the file if it's not what's already stored in SL Cache.
+	if (SL[pn].Streams.Filename ~= filename or
+			SL[pn].Streams.StepsType ~= stepsType or
+			SL[pn].Streams.Difficulty ~= difficulty or
+			SL[pn].Streams.Description ~= description) then
+		local simfileString, fileType = GetSimfileString( steps )
+		if simfileString then
+			-- Parse out just the contents of the notes
+			local chartString = GetSimfileChartString(simfileString, stepsType, difficulty, description, fileType)
+			if chartString then
+				-- Which measures have enough notes to be considered as part of a stream?
+				-- We cam also extract the PeakNPS and the NPSperMeasure table info in the same pass.
+				local NotesPerMeasure, PeakNPS, NPSperMeasure = GetMeasureInfo(steps, chartString)
 
-	-- Parse out just the contents of the notes
-	local ChartString = GetSimfileChartString(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
-	if not ChartString then return end
+				-- Which sequences of measures are considered a stream?
+				SL[pn].Streams.NotesPerMeasure = NotesPerMeasure
+				SL[pn].Streams.PeakNPS = PeakNPS
+				SL[pn].Streams.NPSperMeasure = NPSperMeasure
 
-	-- Which measures have enough notes to be considered as part of a stream?
-	local StreamMeasures, totalMeasures = getStreamMeasures(ChartString, NotesPerMeasure)
-
-	-- Which sequences of measures are considered a stream?
-	return (getStreamSequences(StreamMeasures, totalMeasures))
+				SL[pn].Streams.Filename = filename
+				SL[pn].Streams.StepsType = stepsType
+				SL[pn].Streams.Difficulty = difficulty
+				SL[pn].Streams.Description = description
+			end
+		end
+	end
 end

@@ -1,6 +1,5 @@
 local player = ...
 local pn = ToEnumShortString(player)
-local p = PlayerNumber:Reverse()[player]
 
 -- Height and width of the density graph.
 local height = 64
@@ -29,9 +28,8 @@ local af = Def.ActorFrame{
 			self:visible(false)
 		end
 	end,
-
-	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
-	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
+	CurrentSongChangedMessageCommand=function(self) self:queuecommand("UpdateGraph") end,
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("UpdateGraph") end,
 
 	UpdateGraphCommand=function(self)
 		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong() then
