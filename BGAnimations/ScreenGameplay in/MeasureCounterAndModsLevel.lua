@@ -18,8 +18,8 @@ local GetStreamSequences = function(notesPerMeasure, notesThreshold)
 	-- First add an initial break if it's larger than measureSequenceThreshold
 	if #streamMeasures > 0 then
 		local breakStart = 0
-		local k, v = next(streamMeasures) -- first element of a table
-		local breakEnd = streamMeasures[k] - 1
+		local k, curVal = next(streamMeasures) -- first element of a table
+		local breakEnd = curVal - 1
 		if (breakEnd - breakStart >= measureSequenceThreshold) then
 			table.insert(streamSequences,
 				{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
@@ -27,8 +27,7 @@ local GetStreamSequences = function(notesPerMeasure, notesThreshold)
 	end
 
 	-- Which sequences of measures are considered a stream?
-	for k,v in pairs(streamMeasures) do
-		local curVal = streamMeasures[k]
+	for k, curVal in pairs(streamMeasures) do
 		local nextVal = streamMeasures[k+1] and streamMeasures[k+1] or -1
 
 		-- Are we still in sequence?
