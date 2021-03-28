@@ -28,7 +28,7 @@ local af = Def.ActorFrame{
 -- Course mode needs to get all subsong density graphs and put them togetehr which we
 -- don't currently support.
 if not GAMESTATE:IsCourseMode() then
-	af[#af+1] = NPS_Histogram(player, GraphWidth, GraphHeight, 0.7)..{
+	af[#af+1] = NPS_Histogram(player, GraphWidth, GraphHeight, 0.5)..{
 		Name="DensityGraph",
 		OnCommand=function(self)
 			self:addx(-GraphWidth/2):addy(GraphHeight)
