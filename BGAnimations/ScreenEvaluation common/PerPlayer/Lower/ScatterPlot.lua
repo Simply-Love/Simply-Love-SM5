@@ -13,8 +13,10 @@ local sequential_offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.
 
 -- a table to store the AMV's vertices
 local verts= {}
+local Steps = GAMESTATE:GetCurrentSteps(player)
+local TimingData = Steps:GetTimingData()
 -- TotalSeconds is used in scaling the x-coordinates of the AMV's vertices
-local FirstSecond = GAMESTATE:GetCurrentSong():GetFirstSecond()
+local FirstSecond = math.min(TimingData:GetElapsedTimeFromBeat(0), 0)
 local TotalSeconds = GAMESTATE:GetCurrentSong():GetLastSecond()
 
 -- variables that will be used and re-used in the loop while calculating the AMV's vertices
