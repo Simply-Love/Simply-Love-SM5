@@ -341,6 +341,7 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		SL[pn].Streams.NotesPerMeasure = SL[opposite_player].Streams.NotesPerMeasure
 		SL[pn].Streams.PeakNPS = SL[opposite_player].Streams.PeakNPS
 		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
+		SL[pn].Streams.Hash = SL[opposite_player].Streams.Hash
 
 		SL[pn].Streams.Filename = SL[opposite_player].Streams.Filename
 		SL[pn].Streams.StepsType = SL[opposite_player].Streams.StepsType
