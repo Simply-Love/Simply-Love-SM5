@@ -48,6 +48,7 @@ local PlayerDefaults = {
 				NotesPerMeasure = {},
 				PeakNPS = 0,
 				NPSperMeasure = {},
+				Hash = '',
 
 				-- Data for measure counter. Populated in ./ScreenGameplay in/MeasureCounterAndMods.lua.
 				-- Uses the notesThreshold option.
