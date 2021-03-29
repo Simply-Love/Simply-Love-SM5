@@ -1,6 +1,3 @@
--- don't allow ColumnFlashOnMiss to appear in Casual gamemode via profile settings
-if SL.Global.GameMode == "Casual" then return end
-
 local player = ...
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
 

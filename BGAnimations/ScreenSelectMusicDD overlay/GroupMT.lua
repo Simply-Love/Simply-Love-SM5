@@ -137,7 +137,6 @@ local item_mt = {
 		end,
 
 		transform = function(self, item_index, num_items, has_focus)
-
 			local offset = item_index - math.floor(num_items/2)
 			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()

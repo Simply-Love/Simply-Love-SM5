@@ -2,8 +2,8 @@ local player = ...
 local args = ...
 local GroupWheel = args.GroupWheel
 local SongWheel = args.SongWheel
-local OptionsWheel = args.OptionsWheel
-local OptionRows = args.OptionRows
+
+local ChartUpdater = LoadActor("./UpdateChart.lua")
 
 -- initialize Players to be any HumanPlayers at screen init
 -- we'll update this later via latejoin if needed
@@ -11,22 +11,24 @@ local Players = GAMESTATE:GetHumanPlayers()
 
 local ActiveOptionRow
 
+local didSelectSong = false
+
 -----------------------------------------------------
 -- input handler
 local t = {}
 -----------------------------------------------------
 
 local SwitchInputFocus = function(button)
-
 	if button == "Start" then
 
 		if t.WheelWithFocus == GroupWheel then
 			t.WheelWithFocus = SongWheel
 
 		elseif t.WheelWithFocus == SongWheel then
-				SCREENMAN:SetNewScreen("ScreenPlayerOptions")
+			didSelectSong = true
+			SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
+			MESSAGEMAN:Broadcast('ShowOptionsJawn')
 		end
-
 	elseif button == "Select" or button == "Back" then
 		if t.WheelWithFocus == SongWheel then
 			t.WheelWithFocus = GroupWheel
@@ -72,6 +74,9 @@ t.Init = function()
 	
 end
 
+local lastMenuUpPressTime = 0
+local lastMenuDownPressTime = 0
+
 t.Handler = function(event)
 	-- if any of these, don't attempt to handle input
 	if t.Enabled == false or not event or not event.PlayerNumber or not event.button then
@@ -92,43 +97,68 @@ t.Handler = function(event)
 	if event.type ~= "InputEventType_Release" then
 
 		if event.GameButton == "Back" then
+			if didSelectSong then
+				didSelectSong = false
+				MESSAGEMAN:Broadcast('HideOptionsJawn')
+				return false
+			end
+		
 			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
 		end
 
 		--------------------------------------------------------------
 		--------------------------------------------------------------
-		-- handle wheel input
-		if t.WheelWithFocus ~= OptionsWheel then
+		-- proceed to the next wheel
+		if event.GameButton == "Start" then
+			if didSelectSong then
+				SCREENMAN:SetNewScreen("ScreenPlayerOptions")
+				return false
+			end
 
-			-- navigate the wheel left and right
-			if event.GameButton == "MenuRight" then
-				t.WheelWithFocus:scroll_by_amount(1)
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-			elseif event.GameButton == "MenuLeft" then
-				t.WheelWithFocus:scroll_by_amount(-1)
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
+			if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
+				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+				CloseCurrentFolder()
+				return false
+			end
 
+			if t.WheelWithFocus == GroupWheel then
+				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+			end
 
-			-- proceed to the next wheel
-			elseif event.GameButton == "Start" then
+			t.WheelWithFocus.container:queuecommand("Start")
+			SwitchInputFocus(event.GameButton)
 
-				if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
-					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-					CloseCurrentFolder()
-					return false
-				end
-				
-				if t.WheelWithFocus == GroupWheel then
-					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-				end
+			if t.WheelWithFocus.container then
+				t.WheelWithFocus.container:queuecommand("Unhide")
+			end
+		elseif didSelectSong then
+			return false
+		-- navigate the wheel left and right
+		elseif event.GameButton == "MenuRight" then
+			t.WheelWithFocus:scroll_by_amount(1)
+			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 
-				t.Enabled = false
-				t.WheelWithFocus.container:queuecommand("Start")
-				SwitchInputFocus(event.GameButton)
+			ChartUpdater.UpdateCharts()
+		elseif event.GameButton == "MenuLeft" then
+			t.WheelWithFocus:scroll_by_amount(-1)
+			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 
-				if t.WheelWithFocus.container then
-					t.WheelWithFocus.container:queuecommand("Unhide")
-				end
+			ChartUpdater.UpdateCharts()
+		elseif event.GameButton == "MenuUp" then
+			local t = GetTimeSinceStart()
+			local dt = t - lastMenuUpPressTime
+			lastMenuUpPressTime = t
+			if dt < 0.5 then
+				ChartUpdater.DecreaseDifficulty(event.PlayerNumber)
+				lastMenuUpPressTime = 0
+			end
+		elseif event.GameButton == "MenuDown" then
+			local t = GetTimeSinceStart()
+			local dt = t - lastMenuDownPressTime
+			lastMenuDownPressTime = t
+			if dt < 0.5 then
+				ChartUpdater.IncreaseDifficulty(event.PlayerNumber)
+				lastMenuDownPressTime = 0
 			end
 		end
 	end

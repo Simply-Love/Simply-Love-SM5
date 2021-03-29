@@ -4,15 +4,9 @@ local mods = SL[pn].ActiveModifiers
 
 if not mods.SubtractiveScoring then return end
 
--- don't allow SubtractiveScoring to appear in Casual gamemode via profile settings
-if SL.Global.GameMode == "Casual" then return end
-
 -- -----------------------------------------------------------------------
 
-local metrics = SL.Metrics[SL.Global.GameMode]
--- a flag to determine if we are using a GameMode that utilizes FA+ timing windows
-local FAplus = (metrics.PercentScoreWeightW1 == metrics.PercentScoreWeightW2)
-local undesirable_judgment = FAplus and "W3" or "W2"
+local undesirable_judgment = "W2"
 
 -- flag to determine whether to bother to continue counting excellents
 -- or whether to just display percent away from 100%
@@ -114,7 +108,7 @@ bmt.SetScoreCommand=function(self, params)
 		end
 
 	-- else if this wouldn't subtract from percentage (W1 or mine miss)
-	elseif (((FAplus and tns ~= "W1" and tns ~= "W2") or (not FAplus and tns ~= "W1")) and tns ~= "AvoidMine")
+	elseif tns ~= "W1" and tns ~= "AvoidMine"
 	-- unless it actually would subtract from percentage (W1 + let go)
 	or (hns == "LetGo")
 	-- or we're already dead (and so can't gain any percentage.)

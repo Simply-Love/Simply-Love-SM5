@@ -1,3 +1,5 @@
+local DDStats = LoadActor('./ScreenSelectMusicDD overlay/DDStats.lua')
+
 ---- this is to calculate the average bpm/difficulty but not let it increment unless the song was finished. HELP ----
 local SongInSet = SL.Global.Stages.PlayedThisGame
 local SongsInSet = SongInSet + 1
@@ -25,6 +27,7 @@ PlayerOneNPS = GetNPSperMeasure(GAMESTATE:GetCurrentSong(), PlayerOneChart)
 PlayerTwoNPS = GetNPSperMeasure(GAMESTATE:GetCurrentSong(), PlayerTwoChart)
 
 local MusicRate = SL.Global.ActiveModifiers.MusicRate
+
 
 -- Have the BPM based off PeakNPS instead to get the 16th equivalent BPM for things with 24th/32nd stream etc.
 PlayerOneTrueBPM = ((PlayerOneNPS / 16) * 240) * MusicRate
@@ -78,8 +81,18 @@ TotalDifficultyPlayer2 = PlayerTwoREALDifficulty + TotalDifficultyPlayer2
 AverageDifficultyPlayer2 = TotalDifficultyPlayer2 / P2SongsInSet
 end
 
+-- Update stats
+local song = GAMESTATE:GetCurrentSong()
+if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+	DDStats.SetStat(PLAYER_1, 'LastSong', song:GetSongDir())
+	DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())
+	DDStats.Save(PLAYER_1)
+end
 
-
-
+if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+	DDStats.SetStat(PLAYER_2, 'LastSong', song:GetSongDir())
+	DDStats.SetStat(PLAYER_2, 'LastDifficulty', PlayerTwoChart:GetDifficulty())
+	DDStats.Save(PLAYER_2)
+end
 
 return Def.ActorFrame { }

@@ -1,8 +1,4 @@
--- there aren't meaningful life delta values in Casual
--- so these danger/fail flashes should never be possible there
-if SL.Global.GameMode == "Casual" then return end
-
--- ------------------------------------------------------------------
+-- You in danger girl...
 
 local player = ...
 

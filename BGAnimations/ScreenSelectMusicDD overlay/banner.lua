@@ -21,8 +21,7 @@ local t = Def.ActorFrame{
 		CloseThisFolderHasFocusMessageCommand=function(self) self:playcommand("Set") end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:playcommand("Set") end,
 		SwitchFocusToSongsMessageCommand=function(self) self:playcommand("Set") end,
-		GroupsHaveChangedMessageCommand=function(self)
-		self:visible(true):playcommand("Set")
+		GroupsHaveChangedMessageCommand=function(self) self:visible(true):playcommand("Set")
 		end,
 		SetCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
@@ -70,8 +69,6 @@ local t = Def.ActorFrame{
 			end,
 		CloseThisFolderHasFocusMessageCommand=function(self) BannerOfGroup = NameOfGroup GroupJawn = true self:visible(true):playcommand("Set") end,
 		SetCommand=function(self)
-		CurrentSong = GAMESTATE:GetCurrentSong()
-		CurrentGroup = CurrentSong:GetGroupName()
 			if BannerOfGroup == nil then
 				self:visible(false)
 			elseif GroupJawn == true then

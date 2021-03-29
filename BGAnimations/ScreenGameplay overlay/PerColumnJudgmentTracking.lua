@@ -17,9 +17,6 @@
 -- transient judgment data to persist beyond ScreenGameplay.
 ------------------------------------------------------------
 
--- don't bother tracking per-column judgment data in Casual gamemode
-if SL.Global.GameMode == "Casual" then return end
-
 local player = ...
 local track_missbcheld = SL[ToEnumShortString(player)].ActiveModifiers.MissBecauseHeld
 

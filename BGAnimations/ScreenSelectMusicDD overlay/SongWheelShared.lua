@@ -21,7 +21,9 @@ af[#af+1] = Def.ActorFrame{
 		self:visible(false):runcommandsonleaves(function(leaf) if leaf.settext then leaf:settext("") end end)
 	end,
 	CloseThisFolderHasFocusMessageCommand=function(self)
-		self:runcommandsonleaves(function(leaf) if leaf.settext then leaf:settext(GAMESTATE:GetCurrentSong():GetGroupName()) end end)
+		local song = GAMESTATE:GetCurrentSong()
+		local groupName = song and song:GetGroupName() or ''
+		self:runcommandsonleaves(function(leaf) if leaf.settext then leaf:settext(groupName) end end)
 	end,
 	SwitchFocusToSongsMessageCommand=function(self)
 		self:visible(true):linear(0.2):zoom(0.8)

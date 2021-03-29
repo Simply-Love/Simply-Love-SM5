@@ -2,9 +2,6 @@
 -- ActionOnMissedTarget contributed by DinsFire64
 -- cleanup + fixes by djpohly and andrewipark
 
--- nothing handled by this file applies to or should appear in Casual mode
-if SL.Global.GameMode == "Casual" then return end
-
 -- ---------------------------------------------------------------
 -- first, the usual suspects
 

@@ -330,14 +330,6 @@ GetComboThreshold = function( MaintainOrContinue )
 		lights =	{ Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" },
 	}
 
-
-	if CurrentGame ~= "para" then
-		if SL.Global.GameMode=="FA+" then
-			ComboThresholdTable.dance.Maintain = "TapNoteScore_W4"
-			ComboThresholdTable.dance.Continue = "TapNoteScore_W4"
-		end
-	end
-
 	return ComboThresholdTable[CurrentGame][MaintainOrContinue]
 end
 
@@ -450,16 +442,7 @@ SetGameModePreferences = function()
 		PREFSMAN:SetPreference(key, val)
 	end
 
-	-- If we're switching to Casual mode,
-	-- we want to reduce the number of judgments,
-	-- so turn Decents and WayOffs off now.
-	if SL.Global.GameMode == "Casual" then
-		SL.Global.ActiveModifiers.TimingWindows = {true,true,true,false,false}
-
-	-- Otherwise, we want all TimingWindows enabled by default.
-	else
- 		SL.Global.ActiveModifiers.TimingWindows = {true,true,true,true,true}
-	end
+	SL.Global.ActiveModifiers.TimingWindows = {true,true,true,true,true}
 
 	-- loop through human players and apply whatever mods need to be set now
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
@@ -484,18 +467,14 @@ SetGameModePreferences = function()
 	end
 
 	-- these are the prefixes that are prepended to each custom Stats.xml, resulting in
-	-- Stats.xml, ECFA-Stats.xml, Casual-Stats.xml
-	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"
-	-- and I don't want to deal with renaming relatively critical files from the theme.
-	-- Thus, scores from FA+ mode will continue to go into ECFA-Stats.xml.
+	-- Stats.xml
 	local prefix = {
 		ITG = "",
-		["FA+"] = "ECFA-",
-		Casual = "Casual-"
+		DD = "",
 	}
 
-	if PROFILEMAN:GetStatsPrefix() ~= "ITG" then
-		PROFILEMAN:SetStatsPrefix("ITG")
+	if PROFILEMAN:GetStatsPrefix() ~= prefix[SL.Global.GameMode] then
+		PROFILEMAN:SetStatsPrefix(prefix[SL.Global.GameMode])
 	end
 end
 
@@ -504,7 +483,7 @@ end
 -- manages for you back to their stock SM5 values.
 --
 -- These "managed" Preferences are listed in ./Scripts/SL_Init.lua
--- per-gamemode (Casual, ITG, FA+), and actively applied (and reapplied)
+-- per-gamemode (DD, ITG), and actively applied (and reapplied)
 -- for each new game using SetGameModePreferences()
 --
 -- SL normally calls ResetPreferencesToStockSM5() from
@@ -625,7 +604,6 @@ function StripSpriteHints(filename)
 end
 
 function GetJudgmentGraphics(mode)
-	if mode == 'Casual' then mode = 'ITG' end
 	local path = THEME:GetPathG('', '_judgments/' .. mode)
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}

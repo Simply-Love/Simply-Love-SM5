@@ -111,6 +111,7 @@ local song_mt = {
 					InitCommand=function(subself)
 						self.subtitle_bmt = subself
 						subself:zoom(0.5):diffuse(Color.White):shadowlength(0.75)
+						subself:y(32)
 					end,
 					GainFocusCommand=function(subself)
 						if self.song == "CloseThisFolder" then
@@ -149,6 +150,7 @@ local song_mt = {
 					self.container:y( ((offset * col.w)/8.4 + _screen.cy ) - 33)
 					self.container:x(_screen.cx)
 				else
+					GAMESTATE:SetCurrentSong(nil)
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 				end
 				self.container:playcommand("GainFocus")
@@ -174,7 +176,6 @@ local song_mt = {
 			if type(song) == "string" then
 				self.song = song
 				self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):horizalign(center):valign(0.5):x(0)
-				self.img_path = THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/CloseThisFolder.png")
 				self.QuadColor:diffuse(color("#4c565d"))
 				self.subtitle_bmt:settext("")
 

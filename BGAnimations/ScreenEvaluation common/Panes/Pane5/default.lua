@@ -1,7 +1,5 @@
 -- Pane5 displays TestInput.
 
-if SL.Global.GameMode == "Casual" then return end
-
 -- DedicatedMenu buttons are necessary here to prevent players from getting stuck in this pane
 if not PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") then return end
 

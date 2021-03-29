@@ -5,9 +5,6 @@
 -- judgment system in any way. It just allows transient judgment data to persist beyond ScreenGameplay.
 ------------------------------------------------------------
 
--- don't bother tracking for Casual gamemode
-if SL.Global.GameMode == "Casual" then return end
-
 local player = ...
 local sequential_offsets = {}
 

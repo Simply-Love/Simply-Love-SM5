@@ -53,12 +53,10 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = "ITG",
 			Choices = {
-				THEME:GetString("ScreenSelectPlayMode", "Casual"),
 				THEME:GetString("ScreenSelectPlayMode", "ITG"),
-				THEME:GetString("ScreenSelectPlayMode", "FA+"),
 				THEME:GetString("ScreenSelectPlayMode", "DD"),
 			},
-			Values 	= { "Casual", "ITG", "FA+", "DD" }
+			Values 	= { "ITG", "DD" }
 		},
 		AutoStyle =
 		{
@@ -93,12 +91,6 @@ SL_CustomPrefs.Get = function()
 		-- - - - - - - - - - - - - - - - - - - -
 		-- MenuTimer values for various screens
 		ScreenSelectMusicMenuTimer =
-		{
-			Default = 300,
-			Choices = SecondsToMMSS_range(60, 450, 15),
-			Values = range(60, 450, 15),
-		},
-		ScreenSelectMusicCasualMenuTimer =
 		{
 			Default = 300,
 			Choices = SecondsToMMSS_range(60, 450, 15),
@@ -155,16 +147,9 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values 	= { true, false }
 		},
+		
 		-- - - - - - - - - - - - - - - - - - - -
-		-- Casual GameMode Settings
-		CasualMaxMeter = {
-			Default = 10,
-			Choices = range(5, 15, 1),
-			Values = range(5, 15, 1)
-		},
-
-		-- - - - - - - - - - - - - - - - - - - -
-		-- SM5.1's ImageCache System (used in CasualMode)
+		-- SM5.1's ImageCache System (used in DDMode)
 		UseImageCache = {
 			Default = false,
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },

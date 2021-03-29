@@ -81,12 +81,10 @@ local GlobalDefaults = {
 				PlayerOptions3 = "ScreenGameplay",
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
-			self.GameMode = "ITG"
-			PROFILEMAN:SetStatsPrefix("")
+			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "ITG"
 			self.ScreenshotTexture = nil
 			self.MenuTimer = {
 				ScreenSelectMusic = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),
-				ScreenSelectMusicCasual = ThemePrefs.Get("ScreenSelectMusicCasualMenuTimer"),
 				ScreenSelectMusicDD = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),
 				ScreenPlayerOptions = ThemePrefs.Get("ScreenPlayerOptionsMenuTimer"),
 				ScreenEvaluation = ThemePrefs.Get("ScreenEvaluationMenuTimer"),
@@ -144,14 +142,6 @@ SL = {
 	},
 	-- These judgment colors are used for text & numbers on dark backgrounds:
 	JudgmentColors = {
-		Casual = {
-			color("#21CCE8"),	-- blue
-			color("#e29c18"),	-- gold
-			color("#66c955"),	-- green
-			color("#b45cff"),	-- purple (greatly lightened)
-			color("#c9855e"),	-- peach?
-			color("#ff3030")	-- red (slightly lightened)
-		},
 		ITG = {
 			color("#21CCE8"),	-- blue
 			color("#e29c18"),	-- gold
@@ -166,38 +156,10 @@ SL = {
 			color("#66c955"),	-- green
 			color("#b45cff"),	-- purple (greatly lightened)
 			color("#c9855e"),	-- peach?
-			color("#ff3030")	-- red (slightly lightened)
-		},
-		["FA+"] = {
-			color("#21CCE8"),	-- blue
-			color("#ffffff"),	-- white
-			color("#e29c18"),	-- gold
-			color("#66c955"),	-- green
-			color("#b45cff"),	-- purple (greatly lightened)
 			color("#ff3030")	-- red (slightly lightened)
 		},
 	},
 	Preferences = {
-		Casual = {
-			TimingWindowAdd=0.0015,
-			RegenComboAfterMiss=0,
-			MaxRegenComboAfterMiss=0,
-			MinTNSToHideNotes="TapNoteScore_W3",
-			HarshHotLifePenalty=true,
-
-			PercentageScoring=true,
-			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=true,
-
-			TimingWindowSecondsW1=0.021500,
-			TimingWindowSecondsW2=0.043000,
-			TimingWindowSecondsW3=0.102000,
-			TimingWindowSecondsW4=0.102000,
-			TimingWindowSecondsW5=0.102000,
-			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
-		},
 		ITG = {
 			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
@@ -236,61 +198,10 @@ SL = {
 			TimingWindowSecondsW5=0.180000,
 			TimingWindowSecondsHold=0.320000,
 			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
-		},
-		["FA+"] = {
-			TimingWindowAdd=0.0015,
-			RegenComboAfterMiss=5,
-			MaxRegenComboAfterMiss=10,
-			MinTNSToHideNotes="TapNoteScore_W4",
-			HarshHotLifePenalty=true,
-
-			PercentageScoring=true,
-			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=true,
-
-			TimingWindowSecondsW1=0.011000,
-			TimingWindowSecondsW2=0.021500,
-			TimingWindowSecondsW3=0.043000,
-			TimingWindowSecondsW4=0.102000,
-			TimingWindowSecondsW5=0.135000,
-			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.065000,
 			TimingWindowSecondsRoll=0.350000,
 		},
 	},
 	Metrics = {
-		Casual = {
-			PercentScoreWeightW1=3,
-			PercentScoreWeightW2=2,
-			PercentScoreWeightW3=1,
-			PercentScoreWeightW4=0,
-			PercentScoreWeightW5=0,
-			PercentScoreWeightMiss=0,
-			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=3,
-			PercentScoreWeightHitMine=-1,
-
-			GradeWeightW1=3,
-			GradeWeightW2=2,
-			GradeWeightW3=1,
-			GradeWeightW4=0,
-			GradeWeightW5=0,
-			GradeWeightMiss=0,
-			GradeWeightLetGo=0,
-			GradeWeightHeld=3,
-			GradeWeightHitMine=-1,
-
-			LifePercentChangeW1=0,
-			LifePercentChangeW2=0,
-			LifePercentChangeW3=0,
-			LifePercentChangeW4=0,
-			LifePercentChangeW5=0,
-			LifePercentChangeMiss=0,
-			LifePercentChangeLetGo=0,
-			LifePercentChangeHeld=0,
-			LifePercentChangeHitMine=0,
-		},
 		ITG = {
 			PercentScoreWeightW1=5,
 			PercentScoreWeightW2=4,
@@ -352,37 +263,6 @@ SL = {
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.050,
-		},
-		["FA+"] = {
-			PercentScoreWeightW1=5,
-			PercentScoreWeightW2=5,
-			PercentScoreWeightW3=4,
-			PercentScoreWeightW4=2,
-			PercentScoreWeightW5=0,
-			PercentScoreWeightMiss=-12,
-			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=5,
-			PercentScoreWeightHitMine=-6,
-
-			GradeWeightW1=5,
-			GradeWeightW2=5,
-			GradeWeightW3=4,
-			GradeWeightW4=2,
-			GradeWeightW5=0,
-			GradeWeightMiss=-12,
-			GradeWeightLetGo=0,
-			GradeWeightHeld=5,
-			GradeWeightHitMine=-6,
-
-			LifePercentChangeW1=0.008,
-			LifePercentChangeW2=0.008,
-			LifePercentChangeW3=0.008,
-			LifePercentChangeW4=0.004,
-			LifePercentChangeW5=0,
-			LifePercentChangeMiss=-0.1,
-			LifePercentChangeLetGo=-0.08,
-			LifePercentChangeHeld=0.008,
-			LifePercentChangeHitMine=-0.05,
 		},
 	}
 }

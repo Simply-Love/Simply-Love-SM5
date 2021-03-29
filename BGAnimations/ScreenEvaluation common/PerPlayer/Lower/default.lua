@@ -12,7 +12,7 @@ local pane_height  = 180
 
 -- if only one player is joined, use more screen width to draw two
 -- side-by-side panes that both belong to this player
-if NumPlayers == 1 and SL.Global.GameMode ~= "Casual" then
+if NumPlayers == 1 then
 	pane_width = (pane_width * 2) + pane_spacing
 end
 

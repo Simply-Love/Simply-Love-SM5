@@ -124,10 +124,6 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		Name="Cursor",
 		OnCommand=function(self)
-			-- it is possible for players to have something other than "Casual" as the default choice
-			-- for ScreenSelectPlayMode (see: Digital Dance Options in the Operator Menu)
-			-- account for that here, in the OnCommand of the cursor ActorFrame, by updating cursor.index
-			-- to match the value of ThemePrefs.Get("DefaultGameMode") in the choices table
 			if ScreenName == "ScreenSelectPlayMode" then
 				cursor.index = (FindInTable(ThemePrefs.Get("DefaultGameMode"), choices) or 1) - 1
 			end
@@ -159,23 +155,11 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "Casual" then
-					self:stoptweening():linear(0.25):diffusealpha(0)
-				else
-					if choices[cursor.index+1] == "FA+" then
-						self:settext("99.50")
-					else
-						self:settext("77.41")
-					end
-					self:stoptweening():linear(0.25):diffusealpha(1)
-				end
+				self:settext("77.41")
+				self:stoptweening():linear(0.25):diffusealpha(1)
 			else
 				self:diffusealpha(1)
-				if SL.Global.GameMode == "FA+" then
-					self:settext("99.50")
-				else
-					self:settext("77.41")
-				end
+				self:settext("77.41")
 			end
 		end,
 
@@ -187,11 +171,7 @@ local t = Def.ActorFrame{
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
 		UpdateCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "ITG" or choices[cursor.index+1] == "FA+" then
-					self:stoptweening():linear(0.25):diffusealpha(1)
-				else
-					self:stoptweening():linear(0.25):diffusealpha(0)
-				end
+				self:stoptweening():linear(0.25):diffusealpha(1)
 			else
 				self:diffusealpha(1)
 			end

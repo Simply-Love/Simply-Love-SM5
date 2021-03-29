@@ -49,7 +49,7 @@ t[#t+1] = Def.Quad {
 -- ScreenPlayerOptions uses the "OptionRow" system provided by the StepMania engine.  It's a generic framework that allows players
 -- to scroll between multiple rows where each row has multiple things to choose from.  I like OptionRows because it manages
 -- nearly all input handling out of the box, including 3Key input (traditional DDR arcade cabs), 4Key input (ITG dedicabs),
--- keyboard input, etc.  Handling input is complicated and tedious at best (see ScreenSelectMusicCasual if you want an example).
+-- keyboard input, etc.  Handling input is complicated and tedious at best (see ScreenSelectMusicDD if you want an example).
 --
 -- But the OptionRow system only supports text as choices.  Not visual representations of NoteSkins, not judgment graphic textures.
 -- Just text.  I really like being able to *show* players what the NoteSkin looks instead of just tellig the name of it, but OptionRow

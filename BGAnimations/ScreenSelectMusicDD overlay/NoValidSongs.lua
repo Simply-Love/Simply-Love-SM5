@@ -12,7 +12,7 @@ end
 local af = Def.ActorFrame{
 	OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( Input ) end,
 
-	LoadActor(THEME:GetPathB("ScreenSelectMusicCasual", "overlay/Header.lua"), {h=60} ),
+	LoadActor(THEME:GetPathB("ScreenSelectMusicDD", "overlay/Header.lua"), {h=60} ),
 
 	Def.Quad{
 		InitCommand=function(self) self:FullScreen():Center():diffuse(0,0,0,0.6) end

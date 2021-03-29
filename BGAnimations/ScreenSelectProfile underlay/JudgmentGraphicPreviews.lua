@@ -3,7 +3,7 @@ local af = args.af
 
 local already_loaded = {}
 
--- get a table like { "ITG", "FA+" }
+-- get a table like { "ITG", "DD" }
 local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Graphics/_judgments/", true, false)
 
 for profile in ivalues(args.profile_data) do

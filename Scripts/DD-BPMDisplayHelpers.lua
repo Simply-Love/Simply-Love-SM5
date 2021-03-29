@@ -51,15 +51,6 @@ GetDisplayBPMs = function(player, StepsOrTrail, MusicRate)
 	StepsOrTrail = StepsOrTrail or (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 	MusicRate    = MusicRate    or SL.Global.ActiveModifiers.MusicRate
 
-	-- steps are not always set in the Engine in Casual mode (prior to the first stage being played) so
-	-- GAMESTATE:GetCurrentSteps() will sometimes return nil; but, it's okay. We don't need such rigorous BPM
-	-- analysis there anyway.  Don't worry about split timing and just use BPM values for the first playable chart.
-	if SL.Global.GameMode == "Casual" then
-		-- there is no CourseMode in Casual, so no need to worry about trails here
-		local steps = SongUtil.GetPlayableSteps( GAMESTATE:GetCurrentSong() )
-		if steps and steps[1] then StepsOrTrail = steps[1] end
-	end
-
 	if not StepsOrTrail then return end
 
 	local bpms

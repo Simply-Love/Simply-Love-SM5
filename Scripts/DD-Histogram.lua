@@ -105,6 +105,9 @@ function NPS_Histogram(player, width, height)
         InitCommand=function(self)
             self:SetDrawState({Mode="DrawMode_QuadStrip"})
         end,
+		OnCommand=function(self)
+			self:queuecommand("Redraw")
+		end,
         CurrentStepsP1ChangedMessageCommand=function(self)
 			self:stoptweening()
 			self:sleep(0.3)

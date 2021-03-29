@@ -6,7 +6,7 @@
 local noteskins = NOTESKIN:GetNoteSkinNames()
 local judgment_graphics = {}
 
--- get a table like { "ITG", "FA+" }
+-- get a table like { "ITG", "DD" }
 local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Graphics/_judgments/", true, false)
 for dir in ivalues(judgment_dirs) do
 	judgment_graphics[dir] = GetJudgmentGraphics(dir)

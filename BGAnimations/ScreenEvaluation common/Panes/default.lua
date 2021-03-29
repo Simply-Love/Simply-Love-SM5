@@ -13,7 +13,7 @@ local offset = {
 -- Note(teejusb): Some of these actors may be nil. This is not a bug, but
 -- a feature for any panes we want to be conditional.
 
-if #players == 2 or SL.Global.GameMode=="Casual" then
+if #players == 2 then
 	for player in ivalues(players) do
 		for i=1, NumPanes do
 			local pn = ToEnumShortString(player)
