@@ -194,6 +194,8 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		SL[pn].Streams.StepsType = SL[opposite_player].Streams.StepsType
 		SL[pn].Streams.Difficulty = SL[opposite_player].Streams.Difficulty
 		SL[pn].Streams.Description = SL[opposite_player].Streams.Description
+
+		MESSAGEMAN:Broadcast(pn.."ChartParsed")
 	end
 end
 		
@@ -232,6 +234,8 @@ ParseChartInfo = function(steps, pn)
 				SL[pn].Streams.StepsType = stepsType
 				SL[pn].Streams.Difficulty = difficulty
 				SL[pn].Streams.Description = description
+
+				MESSAGEMAN:Broadcast(pn.."ChartParsed")
 			end
 		end
 	end

@@ -35,7 +35,7 @@ local af = Def.ActorFrame{
 		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong() then
 			self:GetChild("Breakdown"):visible(true)
 			self:GetChild("DensityGraph"):visible(true)
-			self:GetChild("NPS"):visible(false)
+			self:GetChild("NPS"):visible(true)
 		else
 			self:GetChild("Breakdown"):visible(false)
 			self:GetChild("DensityGraph"):visible(false)
@@ -75,15 +75,16 @@ af[#af+1] = LoadFont("Miso/_miso")..{
 			self:addx(-136):addy(-43)
 		end
 	end,
-	PeakNPSUpdatedMessageCommand=function(self)
-		local peakNps = nil
-		if player == PLAYER_1 then
-			peakNps = GAMESTATE:Env()["P1PeakNPS"]
-		else
-			peakNps = GAMESTATE:Env()["P2PeakNPS"]
+	-- Need this in the case someone scrolls out of the folder and then back in
+	-- since we don't end up reparsing the chart in that case.
+	["CurrentSteps"..pn.."ChangedMessageCommand"] = function(self)
+		if SL[pn].Streams.PeakNPS ~= 0 then
+			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS))
 		end
-		if peakNps then
-			self:settext(("Peak NPS: %.1f"):format(peakNps))
+	end,
+	[pn.."ChartParsedMessageCommand"] = function(self)
+		if SL[pn].Streams.PeakNPS ~= 0 then
+			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS))
 		end
 	end
 }
@@ -92,33 +93,35 @@ af[#af+1] = LoadFont("Miso/_miso")..{
 af[#af+1] = Def.ActorFrame{
 	Name="Breakdown",
 	InitCommand=function(self)
-		local actor_height = 17
-		self:addy(height/2 - actor_height/2)
+		local actorHeight = 17
+		self:addy(height/2 - actorHeight/2)
 	end,
 
 	Def.Quad{
 		InitCommand=function(self)
-			local bg_height = 17
-			self:diffuse(color("#000000")):zoomto(width, bg_height):diffusealpha(0.5)
+			local bgHeight = 17
+			self:diffuse(color("#000000")):zoomto(width, bgHeight):diffusealpha(0.5)
 		end
 	},
 	
 	LoadFont("Miso/_miso")..{
-		Text="No Streams!",
+		Text="",
 		InitCommand=function(self)
-			local text_height = 17
-			local text_zoom = 0.8
-			self:maxwidth(width/text_zoom):zoom(text_zoom)
-			if player == PLAYER_1 then
-				--self:horizalign(left):addx(-width/2)
-			else
-				--self:horizalign(right):addx(width/2)
-			end
+			local textHeight = 17
+			local textZoom = 0.8
+			self:maxwidth(width/textZoom):zoom(textZoom)
 		end,
 		["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
 			self:queuecommand("UpdateBreakdown")
 		end,
 		UpdateBreakdownCommand=function(self)
+			local textZoom = 0.8
+			self:settext(GenerateBreakdownText(pn, 0))
+			local minimization_level = 1
+			while self:GetWidth() > (width/textZoom) and minimization_level < 4 do
+				self:settext(GenerateBreakdownText(pn, minimization_level))
+				minimization_level = minimization_level + 1
+			end
 		end,
 	}
 }
