@@ -70,9 +70,9 @@ af[#af+1] = LoadFont("Miso/_miso")..{
 	InitCommand=function(self)
 		self:horizalign(left):zoom(0.8)
 		if player == PLAYER_1 then
-			self:addx(60):addy(-43)
+			self:addx(60):addy(-41)
 		else
-			self:addx(-136):addy(-43)
+			self:addx(-136):addy(-41)
 		end
 	end,
 	-- Need this in the case someone scrolls out of the folder and then back in
