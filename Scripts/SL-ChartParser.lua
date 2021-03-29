@@ -1,5 +1,4 @@
 local GetSimfileString = function(steps)
-
 	-- steps:GetFilename() returns the filename of the sm or ssc file, including path, as it is stored in SM's cache
 	local filename = steps:GetFilename()
 	if not filename then return end
@@ -153,7 +152,7 @@ end
 --    Difficulty    - a string like "Beginner" or "Challenge" or "Edit"
 --    Filetype      - either "sm" or "ssc"
 --
--- GetSimfileChartString() returns one value:
+-- GetSimfileChartString() returns two value:
 --    NoteDataString, a substring from SimfileString that contains the just the requested (minimized) note data
 --    BPMs, a substring from SimfileString that contains the BPM string for this specific chart
 
@@ -171,7 +170,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 	-- ----------------------------------------------------------------
 
 	if Filetype == "ssc" then
-		local top_level_bpm = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
+		local topLevelBpm = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
 		-- SSC File
 		-- Loop through each chart in the SSC file
 		for noteData in SimfileString:gmatch("#NOTEDATA.-#NOTES:[^;]*") do
@@ -181,6 +180,8 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			-- WHY? Why does StepMania allow the same fields to be defined multiple times
 			-- in a single NOTEDATA stanza.
 			-- We'll just use the first non-empty one.
+			-- TODO(teejsub): Double check the expected behavior even though it is
+			-- currently sufficient for all ranked charts on GrooveStats.
 			local stepsType = ''
 			for st in normalizedNoteData:gmatch("#STEPSTYPE:(.-);") do
 				if stepsType == '' and st ~= '' then
@@ -218,7 +219,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 					splitBpm = splitBpm:gsub("%s+", "")
 
 					if #splitBpm == 0 then
-						BPMs = top_level_bpm
+						BPMs = topLevelBpm
 					else
 						BPMs = NormalizeFloatDigits(splitBpm)
 					end
@@ -374,13 +375,12 @@ ParseChartInfo = function(steps, pn)
 			if chartString ~= nil and BPMs ~= nil then
 				-- We use 16 characters for the V3 GrooveStats hash.
 				local Hash = Bin2Hex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
-				Trace(Hash)
 
 				-- Append the semi-colon at the end so it's easier for GetMeasureInfo to get the contents
 				-- of the last measure.
 				chartString = chartString .. ';'
 				-- Which measures have enough notes to be considered as part of a stream?
-				-- We cab also extract the PeakNPS and the NPSperMeasure table info in the same pass.
+				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
 				local NotesPerMeasure, PeakNPS, NPSperMeasure = GetMeasureInfo(steps, chartString)
 
 				-- Which sequences of measures are considered a stream?
