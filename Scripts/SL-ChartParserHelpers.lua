@@ -91,13 +91,13 @@ end
 -- Refer to the following example for what's the expected output.
 --
 -- minimization_level = 0  ->  No Minimization
---    20 (2) 30 (1) 10 (32) 16 (8) 4
+--    20 (2) 30 10 (32) 16 (8) 4
 --
 -- minimization_level = 1  -> Basic Stream Notation
 --    20-30-10|16/4
 --
 -- minimization_level = 2  -> Adding "broken" notation
---    63*/16/4
+--    61*/16/4
 --
 -- minimization_level = 3  -> Aggregating total streams
 --    80 Total
@@ -106,70 +106,90 @@ GenerateBreakdownText = function(pn, minimization_level)
 
 	-- Assume 16ths for the breakdown text
 	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
-
 	local text_segments = {}
-	
-	if minimization_level <= 2 then
-		-- Variables for level 2 minimization
-		local segment_sum = 0
-		local is_broken = false
 
-		for i, segment in ipairs(segments) do
-			local size = segment.streamEnd - segment.streamStart
-			if segment.isBreak then
-				-- Never include leading and trailing breaks.
-				if i ~= 1 and i ~= #segments then
-					if minimization_level == 0 then
-						text_segments[#text_segments+1] = " (" .. tostring(size) .. ") "
-					else
-						if size <= 4 then
-							if minimization_level == 1 then
-								text_segments[#text_segments+1] = "-"
-							else
-								segment_sum = segment_sum + size
-								is_broken = true
-							end
-						elseif size < 32 then
-							if minimization_level == 2 and segment_sum ~= 0 then
-								text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
-							end
-							text_segments[#text_segments+1] = "/"
-							is_broken = false
-							segment_sum = 0
-						else
-							if minimization_level == 2 and segment_sum ~= 0 then
-								text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
-							end
-							text_segments[#text_segments+1] = "|"
-							is_broken = false
-							segment_sum = 0
-						end
-					end
-				end
-			else
+	-- The following is used for level 2 and 3 minimization levels.
+	local segment_sum = 0
+	local is_broken = false
+	local total_sum = 0
+
+	local AddNotationForSegment = function(
+			notation, segment_size, minimization_level, text_segments,segment_sum, is_broken, total_sum)
+		if minimization_level == 0 then
+			text_segments[#text_segments+1] = " (" .. tostring(segment_size) .. ") "
+		else
+			if segment_sum ~= 0 then
 				if minimization_level == 2 then
-					-- These segments get added to the text_segments table when we encounter a large enough break.
-					segment_sum = segment_sum + size
-				else
-					text_segments[#text_segments+1] = tostring(size)
+					text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
+				elseif minimization_level == 3 then
+					total_sum = total_sum + segment_sum
 				end
 			end
+			if minimization_level ~= 3 then
+				text_segments[#text_segments+1] = notation
+			else
+				is_broken = false
+				segment_sum = 0
+			end
 		end
-		
-		-- Add any trailing segments we haven't accounted for yet.
-		if minimization_level == 2 and segment_sum ~= 0 then
-			text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
-		end
-	else
-		local sum = 0
-		for i, segment in ipairs(segment) do
-			if not segment.isBreak then
-				sum = sum + segment.streamEnd - segment.streamStart
+
+		-- The variables that might get updated need to be returned.
+		-- text_segments is "pass by value" so don't need to explicitly return it.
+		return segment_sum, is_broken, total_sum
+	end
+
+	for i, segment in ipairs(segments) do
+		local segment_size = segment.streamEnd - segment.streamStart
+		if segment.isBreak then
+			-- Never include leading and trailing breaks.
+			if i ~= 1 and i ~= #segments then
+				if segment_size == 1 then
+					if minimization_level == 0 then
+						-- For very small breaks, don't display "( )" notation since it adds a lot of visual clutter.
+						-- Use a space to differentiate it from '-'
+						text_segments[#text_segments+1] = " "
+					elseif minimization_level == 1 then
+						text_segments[#text_segments+1] = "-"
+					else
+						-- Don't count this as a true "break"
+						is_broken = true
+						segment_sum = segment_sum + segment_size
+					end
+				elseif segment_size <= 4 then
+					segment_sum, is_broken, total_sum = AddNotationForSegment(
+						"-", segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+				elseif segment_size < 32 then
+					segment_sum, is_broken, total_sum = AddNotationForSegment(
+						"/",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+				else
+					segment_sum, is_broken, total_sum = AddNotationForSegment(
+						" | ",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+				end
+			end
+		else
+			if minimization_level == 2 or minimization_level == 3 then
+				-- For minimization_level == 2, these segments get added to the text_segments table
+				-- when we encounter a large enough break. For minimization_level == 3, these segments
+				-- get summed up before reporting the total.
+				segment_sum = segment_sum + segment_size
+			else
+				text_segments[#text_segments+1] = tostring(segment_size)
 			end
 		end
 	end
+	
+	-- Add any trailing segments we haven't accounted for yet.
+	if segment_sum ~= 0 then
+		if minimization_level == 2 then
+			text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
+		elseif minimization_level == 3 then
+			total_sum = total_sum + segment_sum
+		end
+	end
 
-	if #text_segments == 0 then
+	if minimization_level == 3 then
+		return string.format("%d Total", total_sum)
+	elseif #text_segments == 0 then
 		return 'No Streams!'
 	else
 		return table.concat(text_segments, '')

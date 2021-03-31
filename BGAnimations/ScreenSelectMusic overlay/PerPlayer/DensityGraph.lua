@@ -74,6 +74,8 @@ af[#af+1] = LoadFont("Miso/_miso")..{
 		else
 			self:addx(-136):addy(-41)
 		end
+		-- We want black text in Rainbow mode, white otherwise.
+		self:diffuse(DarkUI() and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
 	-- Need this in the case someone scrolls out of the folder and then back in
 	-- since we don't end up reparsing the chart in that case.
