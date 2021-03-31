@@ -93,7 +93,7 @@ local MinimizeChart = function(ChartString)
 		-- If we hit a comma, that denotes the end of a measure.
 		-- Try to minimize it, and then add it to the final chart data with
 		-- the delimiter.
-		-- Note: Semi-colons are already stripped out by the MsdFileParser.
+		-- Note: The ending semi-colon has been stripped out.
 		if line == ',' then
 			MinimizeMeasure(curMeasure)
 
