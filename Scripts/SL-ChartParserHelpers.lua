@@ -91,7 +91,7 @@ end
 -- Refer to the following example for what's the expected output.
 --
 -- minimization_level = 0  ->  No Minimization
---    20 (2) 30 10 (32) 16 (8) 4
+--    20 (2) 30-10 (32) 16 (8) 4
 --
 -- minimization_level = 1  -> Basic Stream Notation
 --    20-30-10|16/4
@@ -144,11 +144,8 @@ GenerateBreakdownText = function(pn, minimization_level)
 			-- Never include leading and trailing breaks.
 			if i ~= 1 and i ~= #segments then
 				if segment_size == 1 then
-					if minimization_level == 0 then
+					if minimization_level == 0 or minimization_level == 1 then
 						-- For very small breaks, don't display "( )" notation since it adds a lot of visual clutter.
-						-- Use a space to differentiate it from '-'
-						text_segments[#text_segments+1] = " "
-					elseif minimization_level == 1 then
 						text_segments[#text_segments+1] = "-"
 					else
 						-- Don't count this as a true "break"
