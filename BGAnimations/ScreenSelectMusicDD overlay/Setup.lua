@@ -2,7 +2,6 @@ local DDStats = LoadActor('./DDStats.lua')
 
 -- You know that spot under the rug where you sweep away all the dirty
 -- details and then hope no one finds them?  This file is that spot.
---
 -- The idea is basically to just throw setup-related stuff
 -- in here that we don't want cluttering up default.lua
 ---------------------------------------------------------------------------
@@ -73,19 +72,109 @@ end
 -- provided a group title as a string, prune out songs that don't have valid steps
 -- returns an indexed table of song objects
 
+----- Lower Difficulty Filter profile settings ----- 
+function GetLowerDifficultyFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'LowerDifficultyFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'LowerDifficultyFilter')
+	end
+
+	if value == nil then
+		value = 0
+	end
+
+	return tonumber(value)
+end
+
+----- Upper Difficulty Filter profile settings ----- 
+function GetUpperDifficultyFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'UpperDifficultyFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'UpperDifficultyFilter')
+	end
+
+	if value == nil then
+		value = 0
+	end
+
+	return tonumber(value)
+end
+
+----- Lower Length Filter profile settings ----- 
+function GetLowerLengthFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'LowerLengthFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'LowerLengthFilter')
+	end
+
+	if value == nil then
+		value = 0
+	end
+
+	return tonumber(value)
+end
+
+----- Upper Length Filter profile settings ----- 
+function GetUpperLengthFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'UpperLengthFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'UpperLengthFilter')
+	end
+	
+	return tonumber(value)
+end
+
 local PruneSongsFromGroup = function(group)
 	local songs = {}
 	local current_song = GAMESTATE:GetCurrentSong()
 	local index = 1
 
-	-- prune out songs that don't have valid steps
+	-- prune out songs that don't have valid steps or fit the filters
 	for i,song in ipairs(SONGMAN:GetSongsInGroup(group)) do
 		-- this should be guaranteed by this point, but better safe than segfault
+		
 		if song:HasStepsType(steps_type) then
-			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-					songs[#songs+1] = song
-					break
+			local passesFilters = true
+			--- Filter for Length
+			if GetLowerLengthFilter() ~= 0 then
+				if GetLowerLengthFilter() > song:MusicLengthSeconds() then
+					passesFilters = false
+				end
 			end
+
+			if GetUpperLengthFilter() ~= 0 then
+				if GetUpperLengthFilter() < song:MusicLengthSeconds() then
+					passesFilters = false
+				end
+			end
+			
+			---- Filter for Difficulty
+			if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
+				local hasPassingDifficulty = false
+				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+					local passesLower = GetLowerDifficultyFilter() == 0 or steps:GetMeter() >= GetLowerDifficultyFilter()
+					local passesUpper = GetUpperDifficultyFilter() == 0 or steps:GetMeter() <= GetUpperDifficultyFilter()
+					if passesLower and passesUpper then
+						hasPassingDifficulty = true
+					end
+				end
+				if not hasPassingDifficulty then
+					passesFilters = false
+				end
+			end
+			
+			if passesFilters then
+				songs[#songs+1] = song
+			end
+			
 		end
 		-- we need to retain the index of the current song so we can set the SongWheel to start on it
 		if current_song == song then index = #songs end
@@ -93,11 +182,51 @@ local PruneSongsFromGroup = function(group)
 
 	return songs, index
 end
-
 ------------------------------------------------------------------------------
--- wow it really is that easy to call the groups huh
+------------------------------------------------------------------------------
+
+function GetGroovestatsFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'GroovestatsFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'GroovestatsFilter')
+	end
+
+	if value == nil then
+		value = 'No'
+	end
+
+	return value
+end
+
 local GetGroups = function()
-	return SONGMAN:GetSongGroupNames()
+	if GetGroovestatsFilter() == 'Yes' then
+		local path = THEME:GetCurrentThemeDirectory() .. "Other/Groovestats-Groups.txt"
+		local preliminary_groups = GetFileContents(path)
+
+		-- if the file didn't exist or was empty or contained no valid groups,
+		-- return the full list of groups available to SM
+		if preliminary_groups == nil or #preliminary_groups == 0 then
+			return SONGMAN:GetSongGroupNames()
+		end
+
+		local groups = {}
+		-- some Groups found in the file may not actually exist due to human error, typos, etc.
+		for prelim_group in ivalues(preliminary_groups) do
+			-- if this group exists
+			if SONGMAN:DoesSongGroupExist( prelim_group ) then
+				-- add this preliminary group to the table of finalized groups
+				groups[#groups+1] = prelim_group
+			end
+		end
+
+		if #groups > 0 then
+			return groups
+		end
+	elseif GetGroovestatsFilter() == 'No' then
+		return SONGMAN:GetSongGroupNames()
+	end
 end
 
 ---------------------------------------------------------------------------
@@ -113,7 +242,7 @@ local GetDefaultSong = function(groups)
 	else
 		playerNum = PLAYER_2
 	end
-
+	
 	local lastSong = DDStats.GetStat(playerNum, 'LastSong')
 	if lastSong ~= nil then
 		for i, song in ipairs(SONGMAN:GetAllSongs()) do
@@ -131,37 +260,54 @@ local GetDefaultSong = function(groups)
 	else
 		return PruneSongsFromGroup( groups[1] )[1]
 	end
+
 end
+
+---------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------
 -- prune out groups that have no valid steps
 -- passed an indexed table of strings representing potential group names
 -- returns an indexed table of group names as strings
 
-local PruneGroups = function(_groups)
-	local groups = {}
 
+
+local PruneGroups = function(_groups)
+--- Somewhere in here we need to figure out where to remove packs that aren't what we want.
+	local groups = {}
+	local info = {}
+	
 	for group in ivalues( _groups ) do
 		local group_has_been_added = false
-
+		local songs = PruneSongsFromGroup(group)
+		info[group] = {}
+		info[group].num_songs = #songs
+		
 		for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
-			if song:HasStepsType(steps_type) then
+			if #songs ~= 0 then
+				if song:HasStepsType(steps_type) then
 
-				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-						groups[#groups+1] = group
-						group_has_been_added = true
-						break
+					for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+							groups[#groups+1] = group
+							group_has_been_added = true
+							break
+					end
 				end
-			end
-			if group_has_been_added then break end
+				if group_has_been_added then break end
+			else end
 		end
 	end
-
+		
+	for group in ivalues(groups) do
+		
+		
+	end
+		
 	return groups
 end
 
 ---------------------------------------------------------------------------
--- currently not used
+
 
 local GetGroupInfo = function(groups)
 	local info = {}
@@ -207,6 +353,7 @@ local GetGroupInfo = function(groups)
 		end
 		for i,difficulty in ipairs(Difficulty) do
 			if i>5 then break end
+			if charts[difficulty] == nil then charts[difficulty] = 0 end
 			info[group].charts = info[group].charts .. charts[difficulty] .. " " .. THEME:GetString( "CustomDifficulty", ToEnumShortString(difficulty) ) .. "\n"
 		end
 
@@ -222,7 +369,12 @@ local group_index = 1
 
 local groups = GetGroups()
 -- prune the list of potential groups down to valid groups
-groups = PruneGroups(SONGMAN:GetSongGroupNames())
+
+if GetGroovestatsFilter() == 'No' then
+	groups = PruneGroups(SONGMAN:GetSongGroupNames())
+elseif GetGroovestatsFilter() == 'Yes' then
+	groups = PruneGroups(groups)
+end
 
 -- If there are STILL no valid groups, we aren't going to find any.
 -- return nil, which default.lua will interpret to mean the
@@ -236,6 +388,14 @@ if current_song == nil then
 	current_song = GetDefaultSong(groups)
 	GAMESTATE:SetCurrentSong(current_song)
 end
+
+--[[ForceFirstSongInFirstGroup = function()
+	if current_song == nil then
+		current_song = GetDefaultSong(groups)
+		GAMESTATE:SetCurrentSong(current_song)
+	end
+end--]]
+		
 
 group_index = FindInTable(current_song:GetGroupName(), groups) or 1
 

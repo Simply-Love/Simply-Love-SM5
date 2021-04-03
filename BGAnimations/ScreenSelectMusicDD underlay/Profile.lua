@@ -345,7 +345,7 @@ Def.BitmapText{
 			SCREENMAN:GetTopScreen():AddInputCallback(getInputHandler(self, 'PlayerNumber_P2'))
 		end
 	}
-	}
+}
 
 
 

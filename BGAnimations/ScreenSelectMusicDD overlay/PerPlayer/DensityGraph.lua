@@ -8,44 +8,48 @@ local nsj = GAMESTATE:GetNumSidesJoined()
 
 local function getInputHandler(actor)
     return (function (event)
-	if event.GameButton == "MenuLeft" and event.PlayerNumber == player and GAMESTATE:IsHumanPlayer(event.PlayerNumber) and nsj == 1 then
-        if event.type == "InputEventType_FirstPress" then
-                show = false
-                actor:queuecommand("UpdateGraphState")
-		elseif event.type == "InputEventType_Release" or not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-                show = true
-                actor:queuecommand("UpdateGraphState")
+	
+	--- Ignore input if the SortMenu is open.
+	if isSortMenuVisible == false then
+		if event.GameButton == "MenuLeft" and event.PlayerNumber == player and GAMESTATE:IsHumanPlayer(event.PlayerNumber) and nsj == 1 then
+			if event.type == "InputEventType_FirstPress" then
+					show = false
+					actor:stoptweening():queuecommand("UpdateGraphState")
+			elseif event.type == "InputEventType_Release" or not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+					show = true
+					actor:stoptweening():sleep(0.3):queuecommand("UpdateGraphState")
+			end
 		end
-	end
-	if event.GameButton == "MenuRight" and event.PlayerNumber == player and GAMESTATE:IsHumanPlayer(event.PlayerNumber) and nsj == 1 then
-        if event.type == "InputEventType_FirstPress" then
-                show = false
-                actor:queuecommand("UpdateGraphState")
-		elseif event.type == "InputEventType_Release" or not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
-                show = true
-                actor:queuecommand("UpdateGraphState")
+		if event.GameButton == "MenuRight" and event.PlayerNumber == player and GAMESTATE:IsHumanPlayer(event.PlayerNumber) and nsj == 1 then
+			if event.type == "InputEventType_FirstPress" then
+					show = false
+					actor:stoptweening():queuecommand("UpdateGraphState")
+			elseif event.type == "InputEventType_Release" or not GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+					show = true
+					actor:stoptweening():sleep(0.3):queuecommand("UpdateGraphState")
+			end
 		end
-	end
-	if event.GameButton == "MenuLeft" and nsj == 2 then
-        if event.type == "InputEventType_FirstPress" then
-                show = false
-                actor:queuecommand("UpdateGraphState")
-		elseif event.type == "InputEventType_Release" then
-                show = true
-                actor:queuecommand("UpdateGraphState")
+		if event.GameButton == "MenuLeft" and nsj == 2 then
+			if event.type == "InputEventType_FirstPress" then
+					show = false
+					actor:stoptweening():queuecommand("UpdateGraphState")
+			elseif event.type == "InputEventType_Release" then
+					show = true
+					actor:stoptweening():sleep(0.3):queuecommand("UpdateGraphState")
+			end
 		end
-	end
-	if event.GameButton == "MenuRight" and nsj == 2 then
-        if event.type == "InputEventType_FirstPress" then
-                show = false
-                actor:queuecommand("UpdateGraphState")
-		elseif event.type == "InputEventType_Release" then
-                show = true
-                actor:queuecommand("UpdateGraphState")
+		if event.GameButton == "MenuRight" and nsj == 2 then
+			if event.type == "InputEventType_FirstPress" then
+					show = false
+					actor:stoptweening():queuecommand("UpdateGraphState")
+			elseif event.type == "InputEventType_Release" then
+					show = true
+					actor:stoptweening():sleep(0.3):queuecommand("UpdateGraphState")
+			end
 		end
-	end
 
         return false
+	else end
     end)
 end
 
@@ -112,10 +116,10 @@ return Def.ActorFrame {
             local steps = GAMESTATE:GetCurrentSteps(player)
             self:playcommand("ChangeSteps", {song=song, steps=steps})
             self:stoptweening()
-            self:linear(0.1):diffusealpha(0.9)
+            self:decelerate(0.2):diffusealpha(0.9)
         else
             self:stoptweening()
-            self:linear(0.1):diffusealpha(0)
+            self:decelerate(0.1):diffusealpha(0)
         end
     end,
 	

@@ -1,0 +1,70 @@
+Maybe have this menu be a seperate screen or subscreen(?) like how player options is. 
+Large % of the time you go in you're gonna reload the songwheel anyway for sorting.
+
+
+----------Other----------
+
+- Song search: Returns song(s) based on what the player searched for. (defaults to alphabetical if no subsort)
+
+- Mark as Favorite: Have an option in the sort menu to mark the current song (or group?) 
+to add to your "favorites". Saves them to a file in the player's profile like "DD-Favorites.txt"
+
+- Test Input Screen: This already exists, just need to add it in.
+
+- Switch from SINGLE/DOUBLE. [Seperately saved sorts for single vs double? or same?]
+
+
+----------SORT----------
+
+- Group: Normal groups in alphabetical order. (if no subsorts/filters)
+
+- Title: Songs sorted alphabetically with a seperate folder for each letter + numbers/symbols
+
+- Artist - Sorts songs into individual folders (alphabetically) for each artist.
+
+- Length - Sorts songs by length to the full second.
+Folder structure based on(?):
+30sec increments for songs <5min
+1min increments for songs >=5min and <10min
+5min increments for songs >=10min and <30min
+10min increments for songs <=30min
+
+- NPS: Sorts songs in order of their max NPS, 
+but with folder structure based on their 16th stream BPM equivalents. 
+(Songs that have charts with different max NPS will show up again across multiple folders with the corresponding difficulty highlighted.)
+
+- Difficulty: Sorts all charts by difficulty in a folder for each one. 
+Songs with multiple charts will appear across multiple folders and the correct chart will be highlighted
+based on what folder you are in.
+(If this is possible) In the event that there are multiple charts with the same difficulty 
+have it select the one that you are closest to in the song wheel if you aren't already on it.
+Otherwise just having multiple instances of it in the same folder is ok with it highlighting for each one.
+
+----------SUBSORT----------
+
+- idk how this is going to work tbh. Like only 1 sub sort or another layer or more?
+
+- Subsort default to "None" which will just do the ~default~ of the main sorts
+
+defaults?
+Group: default subsort is by title obviously
+Title: default subsort is by group? so i guess as is lol
+Artist: default subsort is title
+Length: default subsort is title? (maybe difficulty)
+NPS: default subsort is difficulty, note count, then title?
+Difficulty: default subsort it note count?
+
+
+----------FILTER----------
+
+Filters can be stacked. If no songs are available based on user settings let them know they fucked up and/or undo their most recent filter that fucked it up.
+
+- Difficulty: Only shows charts within a difficulty range specified by the player.
+
+- NPS: Only shows songs within a certain BPM range (based on MaxNPS)
+
+- Length: Only shows songs within a certain time range.
+
+- Groovestats: Only shows groups from a predetermined list of packs ranked on GS.
+
+- Favorites: Only shows the songs/groups you selected as your favorite.

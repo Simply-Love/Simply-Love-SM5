@@ -86,30 +86,24 @@ local t = Def.ActorFrame {
 		-- simultaneous button presses (CancelSingleSong when ThreeKeyNavigation=1),
 		-- as well as long input patterns (Exit from EventMode) and I see no need to
 		-- reinvent that functionality for the Lua InputCallback that I'm using otherwise.
-
-		if params.Name == "Exit" then
-			if PREFSMAN:GetPreference("EventMode") then
+		
+		-- Don't do these codes if the sort menu is open
+		if isSortMenuVisible == false then
+			if params.Name == "Exit" then
 				SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
-			else
-				if SL.Global.Stages.PlayedThisGame == 0 then
-					SL.Global.GameMode = "ITG"
-					SetGameModePreferences()
-					THEME:ReloadMetrics()
-					SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM"):StartTransitioningScreen("SM_GoToNextScreen")
+			end
+			if params.Name == "CancelSingleSong" then
+				-- otherwise, run the function to cancel this single song choice
+				Input.CancelSongChoice()
+			end
+			if params.Name == "CloseCurrentFolder" then
+				if Input.WheelWithFocus == SongWheel then
+					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+					CloseCurrentFolder()
+					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 				end
 			end
-		end
-		if params.Name == "CancelSingleSong" then
-			-- otherwise, run the function to cancel this single song choice
-			Input.CancelSongChoice()
-		end
-		if params.Name == "CloseCurrentFolder" then
-			if Input.WheelWithFocus == SongWheel then
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-				CloseCurrentFolder()
-				MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
-			end
-		end
+		else end
 	end,
 
 	-- a hackish solution to prevent users from button-spamming and breaking input :O
@@ -146,6 +140,8 @@ local t = Def.ActorFrame {
 	LoadActor("./StepsDisplayList/default.lua"),
 	-- included, but unused for now
 	LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
+	-- Sort and Filter menu wow
+	LoadActor("./SortMenu/default.lua"),
 	-- For transitioning to either gameplay or player options.
 	LoadActor('./OptionsMessage.lua'),
 }

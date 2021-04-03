@@ -69,6 +69,7 @@ local item_mt = {
 						subself:linear(0.2):diffusealpha(0)
 					end
 				end,
+				
 				UnhideCommand=function(subself)
 					-- we're going back to group selection
 					-- slide the chosen group Actor back into grid position

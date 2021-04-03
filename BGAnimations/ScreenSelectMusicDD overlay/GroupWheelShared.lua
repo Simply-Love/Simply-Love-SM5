@@ -6,7 +6,7 @@ local args = ...
 local row = args[1]
 local col = args[1]
 local group_info = args[3]
-
+CurrentGroupIsInvalid = false
 
 if group_info == nil then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
