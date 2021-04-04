@@ -1,7 +1,3 @@
-Maybe have this menu be a seperate screen or subscreen(?) like how player options is. 
-Large % of the time you go in you're gonna reload the songwheel anyway for sorting.
-
-
 ----------Other----------
 
 - Song search: Returns song(s) based on what the player searched for. (defaults to alphabetical if no subsort)
@@ -24,10 +20,12 @@ to add to your "favorites". Saves them to a file in the player's profile like "D
 
 - Length - Sorts songs by length to the full second.
 Folder structure based on(?):
-30sec increments for songs <5min
-1min increments for songs >=5min and <10min
+5sec increments for songs <3min
+10sec increments for songs >=3min and <5min
+30sec increments for songs >=5min and <10min
 5min increments for songs >=10min and <30min
-10min increments for songs <=30min
+10min increments for songs <=30min and <1h
+all 1h+ songs in one folder
 
 - NPS: Sorts songs in order of their max NPS, 
 but with folder structure based on their 16th stream BPM equivalents. 
@@ -44,8 +42,6 @@ Otherwise just having multiple instances of it in the same folder is ok with it 
 
 - idk how this is going to work tbh. Like only 1 sub sort or another layer or more?
 
-- Subsort default to "None" which will just do the ~default~ of the main sorts
-
 defaults?
 Group: default subsort is by title obviously
 Title: default subsort is by group? so i guess as is lol
@@ -59,12 +55,6 @@ Difficulty: default subsort it note count?
 
 Filters can be stacked. If no songs are available based on user settings let them know they fucked up and/or undo their most recent filter that fucked it up.
 
-- Difficulty: Only shows charts within a difficulty range specified by the player.
-
 - NPS: Only shows songs within a certain BPM range (based on MaxNPS)
-
-- Length: Only shows songs within a certain time range.
-
-- Groovestats: Only shows groups from a predetermined list of packs ranked on GS.
 
 - Favorites: Only shows the songs/groups you selected as your favorite.
