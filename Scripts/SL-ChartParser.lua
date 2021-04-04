@@ -224,7 +224,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 						BPMs = NormalizeFloatDigits(splitBpm)
 					end
 					-- Get the chart data, remove comments, and then get rid of all non-'\n' whitespace.
-					NoteDataString = normalizedNoteData:match("#NOTES:[\n]+([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
+					NoteDataString = normalizedNoteData:match("#NOTES:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 					NoteDataString = MinimizeChart(NoteDataString)
 					break
 				end
