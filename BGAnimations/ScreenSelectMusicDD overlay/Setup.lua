@@ -163,6 +163,10 @@ function GetUpperLengthFilter()
 		value = DDStats.GetStat(PLAYER_2, 'UpperLengthFilter')
 	end
 	
+	if value == nil then
+		value = 0
+	end
+	
 	return tonumber(value)
 end
 
@@ -448,7 +452,7 @@ if current_song == nil then
 	GAMESTATE:SetCurrentSong(current_song)
 end
 
-SCREENMAN:SystemMessage(tostring(GAMESTATE:GetCurrentSong()))
+--SCREENMAN:SystemMessage(tostring(GAMESTATE:GetCurrentSong()))
 
 group_index = FindInTable(current_song:GetGroupName(), groups) or 1
 
