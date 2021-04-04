@@ -291,7 +291,7 @@ GetNPSperMeasure = function(Song, Steps)
 			-- timed negative stop, but the engine reports them as having very small but positive durations
 			-- which erroneously inflates the notes per second calculation.
 
-			if (DurationOfMeasureInSeconds == 0) then
+			if (DurationOfMeasureInSeconds < 0.05) then
 				NPSforThisMeasure = 0
 			else
 				NPSforThisMeasure = NotesInThisMeasure/DurationOfMeasureInSeconds

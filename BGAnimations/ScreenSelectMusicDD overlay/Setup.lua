@@ -191,21 +191,22 @@ local PruneSongsFromGroup = function(group)
 			end
 			
 			--- Filter for BPM (NPS)
-			--[[for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-				local GetStepsNPS = GetNPSperMeasure(song,steps)
-				local MusicRate = SL.Global.ActiveModifiers.MusicRate
-				local TrueSongBPM = ((GetStepsNPS / 16) * 240) * MusicRate
-				if GetLowerBPMFilter() ~= 49 then
-					if TrueSongBPM < GetLowerBPMFilter() then
-						passesFilters = false
+			if GetLowerBPMFilter() ~= 49 or GetUpperBPMFilter() ~= 49 then
+				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+					local GetStepsNPS = GetNPSperMeasure(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps())
+					local TrueChartBPM = ((GetStepsNPS / 16) * 240)
+					if GetLowerBPMFilter() ~= 49 then
+						if TrueChartBPM < GetLowerBPMFilter() then
+							passesFilters = false
+						end
+					end
+					if GetUpperBPMFilter() ~= 49 then
+						if TrueChartBPM > GetUpperBPMFilter() then
+							passesFilters = false
+						end
 					end
 				end
-				if GetUpperBPMFilter() ~= 49 then
-					if TrueSongBPM > GetUpperBPMFilter() then
-						passesFilters = false
-					end
-				end
-			end--]]
+			end
 			
 			---- Filter for Difficulty
 			if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
@@ -230,9 +231,7 @@ local PruneSongsFromGroup = function(group)
 		-- we need to retain the index of the current song so we can set the SongWheel to start on it
 		if current_song == song then 
 			index = #songs
-		else
-			index = 1
-		end
+		else end
 	end
 
 	return songs, index
