@@ -34,14 +34,18 @@ local function check_metatable(item_metatable)
 	assert(item_metatable.__index.set, "The metatable must have a set function.  The set function must take an instance of info, which it should use to set its actors to display the info.")
 end
 
-function sick_wheel:create_actors(name, num_items, item_metatable, mx, my)
+function sick_wheel:create_actors(name, num_items, item_metatable, mx, my, focus_pos)
 	self.name= name
 	self.info_pos= 1
 	self.info_map= {}
 	self.num_items= num_items
 	assert(item_metatable, "A metatable for items to be put in the wheel must be provided.")
 	check_metatable(item_metatable)
-	self.focus_pos= math.floor(num_items / 2)
+	if focus_pos == nil then
+		self.focus_pos= math.floor(num_items / 2)
+	else
+		self.focus_pos = focus_pos
+	end
 	mx= mx or SCREEN_CENTER_X
 	my= my or SCREEN_TOP
 	self.items= {}

@@ -194,24 +194,18 @@ local PruneSongsFromGroup = function(group)
 				end
 			end
 			
-			--- Filter for BPM (NPS)
-			--[[if GetLowerBPMFilter() ~= 49 or GetUpperBPMFilter() ~= 49 then
-				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-					local GetStepsNPS = GetNPSperMeasure(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps())
-					local TrueChartBPM = ((GetStepsNPS / 16) * 240)
-					if GetLowerBPMFilter() ~= 49 then
-						if TrueChartBPM < GetLowerBPMFilter() then
-							passesFilters = false
-						end
-					end
-					if GetUpperBPMFilter() ~= 49 then
-						if TrueChartBPM > GetUpperBPMFilter() then
-							passesFilters = false
-						end
-					end
+			--- Filter for BPM
+			if GetLowerBPMFilter() ~= 49 then
+				if song:GetDisplayBpms()[2] < GetLowerBPMFilter() then
+					passesFilters = false
 				end
-			end--]]
-			
+			end
+			if GetUpperBPMFilter() ~= 49 then
+				if song:GetDisplayBpms()[2] > GetUpperBPMFilter() then
+					passesFilters = false
+				end
+			end
+		
 			---- Filter for Difficulty
 			if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
 				local hasPassingDifficulty = false
@@ -304,9 +298,11 @@ local GetDefaultSong = function(groups)
 	
 	local lastSong = DDStats.GetStat(playerNum, 'LastSong')
 	if lastSong ~= nil then
-		for i, song in ipairs(SONGMAN:GetAllSongs(songs)) do
-			if song:GetSongDir() == lastSong then
-				return song
+		for group in ivalues(groups) do
+			for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
+				if song:GetSongDir() == lastSong then
+					return song
+				end
 			end
 		end
 	end
@@ -314,11 +310,11 @@ local GetDefaultSong = function(groups)
 	local Profile = PROFILEMAN:GetProfile(playerNum)
 	local LastSong = Profile:GetLastPlayedSong()
 
-	if Profile and LastSong then
-		return LastSong
-	else
+	--if Profile and LastSong then
+	--	return LastSong
+	--else
 		return PruneSongsFromGroup( groups[1] )[1]
-	end
+	--end
 
 end
 
@@ -420,16 +416,6 @@ end
 local current_song = GAMESTATE:GetCurrentSong()
 local group_index = 1
 
-IsCurrentSongValid = function(groups)
-	if GetDefaultSong(groups) ~= current_song or GetDefaultSong(groups) == nil then
-		current_song = PruneSongsFromGroup( groups[1] )[1]
-		GAMESTATE:SetCurrentSong(current_song)
-	else
-		current_song = GetDefaultSong(groups)
-		GAMESTATE:SetCurrentSong(current_song)	
-	end
-end
-
 local groups = GetGroups()
 -- prune the list of potential groups down to valid groups
 
@@ -447,10 +433,10 @@ if #groups == 0 then
 end
 
 -- there will be a current_song if we're on stage 2 or later
-if current_song == nil then
-	current_song = GetDefaultSong(groups)
-	GAMESTATE:SetCurrentSong(current_song)
-end
+
+current_song = GetDefaultSong(groups)
+GAMESTATE:SetCurrentSong(current_song)
+
 
 --SCREENMAN:SystemMessage(tostring(GAMESTATE:GetCurrentSong()))
 

@@ -85,8 +85,8 @@ local item_mt = {
 						subself:sleep(0.25):linear(0.2):diffusealpha(1)
 					end
 				end,
-				GainFocusCommand=function(subself) subself:linear(0):zoom(1) end,
-				LoseFocusCommand=function(subself) subself:linear(0):zoom(1) end,
+				GainFocusCommand=function(subself) subself:decelerate(0):zoom(1) end,
+				LoseFocusCommand=function(subself) subself:decelerate(0):zoom(1) end,
 				SlideToTopCommand=function(subself)
 					subself:linear(0.12):zoom(0)
 					       :linear(0.2 ):queuecommand("Switch")
@@ -146,6 +146,7 @@ local item_mt = {
 			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()
 
+
 			-- if we are initializing the screen, the focus starts (should start) on the SongWheel
 			-- so we want to position all the folders "behind the scenes", and then call Init
 			-- on the group folder with focus so that it is positioned correctly at the top
@@ -162,6 +163,9 @@ local item_mt = {
 					NameOfGroup = self.groupName
 				else
 					self.container:playcommand("LoseFocus")
+				end
+				if item_index ~= 1 and item_index ~= num_items then
+					self.container:decelerate(0.1)
 				end
 				self.container:y( ((offset * col.w)/8.4 + _screen.cy) + 45 )
 			end

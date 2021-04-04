@@ -5,7 +5,7 @@ local y_offset = args[3]
 
 local af = Def.ActorFrame{
 	Name="SongWheelShared",
-	InitCommand=function(self) self:y(y_offset) end
+	InitCommand=function(self) self:zoom(0) end
 }
 
 

@@ -140,6 +140,10 @@ local song_mt = {
 			self.container:finishtweening()
 			stop_music()
 
+			if item_index ~= 1 and item_index ~= num_items then
+				self.container:decelerate(0.1)
+			end
+
 			if has_focus then
 				if self.song ~= "CloseThisFolder" then
 					GAMESTATE:SetCurrentSong(self.song)
