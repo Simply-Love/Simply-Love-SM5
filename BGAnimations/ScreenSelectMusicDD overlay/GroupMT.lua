@@ -36,7 +36,6 @@ local item_mt = {
 
 			local af = Def.ActorFrame{
 				Name=name,
-
 				InitCommand=function(subself)
 					self.container = subself
 
@@ -57,6 +56,11 @@ local item_mt = {
 						end
 					end
 				end,
+				
+				ReloadDDMusicWheelMessageCommand=function(subself)
+					subself:queuecommand("set")
+				end,
+				
 				OnCommand=function(subself) subself:finishtweening() end,
 
 				StartCommand=function(subself)

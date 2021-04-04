@@ -96,70 +96,70 @@ t.Handler = function(event)
 	
 	if isSortMenuVisible then
 		if event.type ~= "InputEventType_Release" then
-			
-			if event.GameButton == "Select" or event.GameButton == "Back" then
-				if IsSortMenuInputToggled == false then
-					if SortMenuNeedsUpdating == true then
-						SortMenuNeedsUpdating = false
-						MESSAGEMAN:Broadcast("ToggleSortMenu")
-						MESSAGEMAN:Broadcast("ReloadSSMDD")
-						isSortMenuVisible = false
-						
-					elseif SortMenuNeedsUpdating == false then
-						isSortMenuVisible = false
-						SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
-						MESSAGEMAN:Broadcast("ToggleSortMenu")
-					end
-				else end
-			end
-			if event.GameButton == "Start" then
-				if DDSortMenuCursorPosition == 9 then
-					SortMenuNeedsUpdating = true
-				end	
-				if DDSortMenuCursorPosition == 10 then
-					SortMenuNeedsUpdating = true
-				end	
-			end
-			
-			if event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
-				MESSAGEMAN:Broadcast("MoveCursorLeft")
-				SOUND:PlayOnce( THEME:GetPathS("", "_prev row.ogg") )
-				
-			end
-			
-			if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" then
-				MESSAGEMAN:Broadcast("MoveCursorRight")
-				SOUND:PlayOnce( THEME:GetPathS("", "_next row.ogg") )
-			end
-			
-			if IsSortMenuInputToggled == true then
-				if event.GameButton == "Start" then
-					MESSAGEMAN:Broadcast("SetSortMenuTopStats")
+			if GAMESTATE:IsSideJoined(event.PlayerNumber) then
+				if event.GameButton == "Select" or event.GameButton == "Back" then
+					if IsSortMenuInputToggled == false then
+						if SortMenuNeedsUpdating == true then
+							SortMenuNeedsUpdating = false
+							MESSAGEMAN:Broadcast("ToggleSortMenu")
+							MESSAGEMAN:Broadcast("ReloadSSMDD")
+							isSortMenuVisible = false
+							
+						elseif SortMenuNeedsUpdating == false then
+							isSortMenuVisible = false
+							SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
+							MESSAGEMAN:Broadcast("ToggleSortMenu")
+						end
+					else end
 				end
-			end
-					if IsSortMenuInputToggled == true then
-						if event.GameButton == "Start" then
+				if event.GameButton == "Start" then
+					if DDSortMenuCursorPosition == 9 then
+						SortMenuNeedsUpdating = true
+					end	
+					if DDSortMenuCursorPosition == 10 then
+						SortMenuNeedsUpdating = true
+					end	
+				end
+				
+				if event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
+					MESSAGEMAN:Broadcast("MoveCursorLeft")
+					SOUND:PlayOnce( THEME:GetPathS("", "_prev row.ogg") )
+					
+				end
+				
+				if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" then
+					MESSAGEMAN:Broadcast("MoveCursorRight")
+					SOUND:PlayOnce( THEME:GetPathS("", "_next row.ogg") )
+				end
+				
+				if IsSortMenuInputToggled == true then
+					if event.GameButton == "Start" then
+						MESSAGEMAN:Broadcast("SetSortMenuTopStats")
+					end
+				end
+						if IsSortMenuInputToggled == true then
+							if event.GameButton == "Start" then
+								MESSAGEMAN:Broadcast("SortMenuOptionSelected")
+								SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
+							end
+						elseif event.GameButton == "Start" then
 							MESSAGEMAN:Broadcast("SortMenuOptionSelected")
 							SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
 						end
-					elseif event.GameButton == "Start" then
-						MESSAGEMAN:Broadcast("SortMenuOptionSelected")
-						SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
+				
+				---- This stops the cursor from moving when selecting a variable option
+				---- Like filtering bpms/difficulties/etc
+				if IsSortMenuInputToggled == true then
+					if event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
+						MESSAGEMAN:Broadcast("MoveSortMenuOptionLeft")
+					elseif event.GameButton == "MenuRight" or event.GameButton == "MenuDown"then
+						MESSAGEMAN:Broadcast("MoveSortMenuOptionRight")
+					elseif event.GameButton == "Select" or event.GameButton == "Back" then
+						SOUND:PlayOnce( THEME:GetPathS("common", "invalid.ogg") )
+						MESSAGEMAN:Broadcast("ToggleSortMenuMovement")
 					end
-			
-			---- This stops the cursor from moving when selecting a variable option
-			---- Like filtering bpms/difficulties/etc
-			if IsSortMenuInputToggled == true then
-				if event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then
-					MESSAGEMAN:Broadcast("MoveSortMenuOptionLeft")
-				elseif event.GameButton == "MenuRight" or event.GameButton == "MenuDown"then
-					MESSAGEMAN:Broadcast("MoveSortMenuOptionRight")
-				elseif event.GameButton == "Select" or event.GameButton == "Back" then
-					SOUND:PlayOnce( THEME:GetPathS("common", "invalid.ogg") )
-					MESSAGEMAN:Broadcast("ToggleSortMenuMovement")
 				end
-			end
-			
+			else end
 		end
 		
 		return false

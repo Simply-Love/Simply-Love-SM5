@@ -104,6 +104,40 @@ function GetUpperDifficultyFilter()
 	return tonumber(value)
 end
 
+----- Lower BPM Filter profile settings ----- 
+function GetLowerBPMFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'LowerBPMFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'LowerBPMFilter')
+	end
+
+	if value == nil then
+		value = 49
+	end
+
+	return tonumber(value)
+end
+
+
+----- Upper BPM Filter profile settings ----- 
+function GetUpperBPMFilter()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'UpperBPMFilter')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'UpperBPMFilter')
+	end
+
+	if value == nil then
+		value = 49
+	end
+
+	return tonumber(value)
+end
+
+
 ----- Lower Length Filter profile settings ----- 
 function GetLowerLengthFilter()
 	local value
@@ -156,6 +190,23 @@ local PruneSongsFromGroup = function(group)
 				end
 			end
 			
+			--- Filter for BPM (NPS)
+			--[[for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				local GetStepsNPS = GetNPSperMeasure(song,steps)
+				local MusicRate = SL.Global.ActiveModifiers.MusicRate
+				local TrueSongBPM = ((GetStepsNPS / 16) * 240) * MusicRate
+				if GetLowerBPMFilter() ~= 49 then
+					if TrueSongBPM < GetLowerBPMFilter() then
+						passesFilters = false
+					end
+				end
+				if GetUpperBPMFilter() ~= 49 then
+					if TrueSongBPM > GetUpperBPMFilter() then
+						passesFilters = false
+					end
+				end
+			end--]]
+			
 			---- Filter for Difficulty
 			if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
 				local hasPassingDifficulty = false
@@ -177,7 +228,11 @@ local PruneSongsFromGroup = function(group)
 			
 		end
 		-- we need to retain the index of the current song so we can set the SongWheel to start on it
-		if current_song == song then index = #songs end
+		if current_song == song then 
+			index = #songs
+		else
+			index = 1
+		end
 	end
 
 	return songs, index
@@ -251,7 +306,7 @@ local GetDefaultSong = function(groups)
 			end
 		end
 	end
-
+	
 	local Profile = PROFILEMAN:GetProfile(playerNum)
 	local LastSong = Profile:GetLastPlayedSong()
 
@@ -264,7 +319,6 @@ local GetDefaultSong = function(groups)
 end
 
 ---------------------------------------------------------------------------
-
 ---------------------------------------------------------------------------
 -- prune out groups that have no valid steps
 -- passed an indexed table of strings representing potential group names
@@ -273,7 +327,6 @@ end
 
 
 local PruneGroups = function(_groups)
---- Somewhere in here we need to figure out where to remove packs that aren't what we want.
 	local groups = {}
 	local info = {}
 	
@@ -284,6 +337,7 @@ local PruneGroups = function(_groups)
 		info[group].num_songs = #songs
 		
 		for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
+			--- If a pack has no songs in it after filtering don't show it, otherwise carry on.
 			if #songs ~= 0 then
 				if song:HasStepsType(steps_type) then
 
@@ -297,16 +351,15 @@ local PruneGroups = function(_groups)
 			else end
 		end
 	end
-		
-	for group in ivalues(groups) do
-		
-		
-	end
-		
 	return groups
 end
 
 ---------------------------------------------------------------------------
+--[[if GAMESTATE:GetCurrentSong() == nil then
+		current_song = PruneSongsFromGroup( groups[1] )[1]
+		return current_song
+end--]]
+
 
 
 local GetGroupInfo = function(groups)
@@ -389,13 +442,11 @@ if current_song == nil then
 	GAMESTATE:SetCurrentSong(current_song)
 end
 
---[[ForceFirstSongInFirstGroup = function()
-	if current_song == nil then
-		current_song = GetDefaultSong(groups)
-		GAMESTATE:SetCurrentSong(current_song)
-	end
-end--]]
-		
+if current_song == false then
+	current_song = PruneSongsFromGroup( groups[1] )[1]
+	GAMESTATE:SetCurrentSong(current_song)
+end
+
 
 group_index = FindInTable(current_song:GetGroupName(), groups) or 1
 

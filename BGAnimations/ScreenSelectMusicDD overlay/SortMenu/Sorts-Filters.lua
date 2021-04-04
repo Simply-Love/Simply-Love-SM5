@@ -610,8 +610,6 @@ end,
 				self:zoom(1.1)
 				if tonumber(GetLowerDifficultyFilter()) == 0 then
 					self:settext("none")
-				elseif tonumber(GetLowerDifficultyFilter()) == 30 then
-					self:settext("30+")
 				else
 					self:settext(GetLowerDifficultyFilter())
 				end
@@ -620,8 +618,6 @@ end,
 			RefreshLowerDifficultyCommand=function(self)
 				if tonumber(GetLowerDifficultyFilter()) == 0 then
 					self:settext("none")
-				elseif tonumber(GetLowerDifficultyFilter()) == 30 then
-					self:settext("30+")
 				else
 					self:settext(GetLowerDifficultyFilter())
 				end
@@ -630,8 +626,6 @@ end,
 			UpdateLowerDifficultyCommand=function(self)
 				if tonumber(CurrentLowerDifficulty) == 0 then
 					self:settext("none")
-				elseif tonumber(CurrentLowerDifficulty) == 30 then
-					self:settext("30+")
 				else
 					self:settext(CurrentLowerDifficulty)
 				end
@@ -648,8 +642,6 @@ end,
 				self:zoom(1.1)
 				if tonumber(GetUpperDifficultyFilter()) == 0 then
 					self:settext("none")
-				elseif tonumber(GetUpperDifficultyFilter()) == 30 then
-					self:settext("30+")
 				else
 					self:settext(GetUpperDifficultyFilter())
 				end
@@ -658,8 +650,6 @@ end,
 			RefreshUpperDifficultyCommand=function(self)
 				if tonumber(GetUpperDifficultyFilter()) == 0 then
 					self:settext("none")
-				elseif tonumber(GetUpperDifficultyFilter()) == 30 then
-					self:settext("30+")
 				else
 					self:settext(GetUpperDifficultyFilter())
 				end
@@ -669,8 +659,6 @@ end,
 			UpdateUpperDifficultyCommand=function(self)
 				if tonumber(CurrentUpperDifficulty) == 0 then
 					self:settext("none")
-				elseif tonumber(CurrentUpperDifficulty) == 30 then
-					self:settext("30+")
 				else
 					self:settext(CurrentUpperDifficulty)
 				end
@@ -687,8 +675,6 @@ end,
 			self:zoom(1.1)
 			if tonumber(GetLowerBPMFilter()) == 49 then
 				self:settext("none")
-			elseif tonumber(GetLowerBPMFilter()) == 330 then
-				self:settext("330+")
 			else
 				self:settext(GetLowerBPMFilter())
 			end
@@ -697,8 +683,6 @@ end,
 		RefreshLowerBPMCommand=function(self)
 			if tonumber(GetLowerBPMFilter()) == 49 then
 				self:settext("none")
-			elseif tonumber(GetLowerBPMFilter()) == 330 then
-				self:settext("330+")
 			else
 				self:settext(GetLowerBPMFilter())
 			end
@@ -708,8 +692,6 @@ end,
 		UpdateLowerBPMCommand=function(self)
 			if tonumber(CurrentLowerBPM) == 49 then
 				self:settext("none")
-			elseif tonumber(CurrentLowerBPM) == 330 then
-				self:settext("330+")
 			else
 				self:settext(CurrentLowerBPM)
 			end
@@ -727,8 +709,6 @@ end,
 			self:zoom(1.1)
 			if tonumber(GetUpperBPMFilter()) == 49 then
 				self:settext("none")
-			elseif tonumber(GetUpperBPMFilter()) == 330 then
-				self:settext("330+")
 			else
 				self:settext(GetUpperBPMFilter())
 			end
@@ -737,8 +717,6 @@ end,
 		RefreshUpperBPMCommand=function(self)
 			if tonumber(GetUpperBPMFilter()) == 49 then
 				self:settext("none")
-			elseif tonumber(GetUpperBPMFilter()) == 330 then
-				self:settext("330+")
 			else
 				self:settext(GetUpperBPMFilter())
 			end
@@ -747,8 +725,6 @@ end,
 		UpdateUpperBPMCommand=function(self)
 			if tonumber(CurrentUpperBPM) == 49 then
 				self:settext("none")
-			elseif tonumber(CurrentUpperBPM) == 330 then
-				self:settext("330+")
 			else
 				self:settext(CurrentUpperBPM)
 			end
@@ -771,7 +747,7 @@ end,
 			elseif tonumber(GetLowerLengthFilter()) >= 600 and tonumber(GetLowerLengthFilter()) < 3600 then
 				self:settext(SecondsToMMSS(GetLowerLengthFilter()))
 			elseif tonumber(GetLowerLengthFilter()) == 3600 then
-				self:settext("1:00:00+")
+				self:settext("1:00:00")
 			end
 		end,
 		
@@ -783,7 +759,7 @@ end,
 			elseif tonumber(GetLowerLengthFilter()) >= 600 and tonumber(GetLowerLengthFilter()) < 3600 then
 				self:settext(SecondsToMMSS(GetLowerLengthFilter()))
 			elseif tonumber(GetLowerLengthFilter()) == 3600 then
-				self:settext("1:00:00+")
+				self:settext("1:00:00")
 			end
 		end,
 		
@@ -795,7 +771,7 @@ end,
 			elseif tonumber(CurrentLowerLength) >= 600 and tonumber(CurrentLowerLength) < 3600 then
 				self:settext(SecondsToMMSS(CurrentLowerLength))
 			elseif tonumber(CurrentLowerLength) == 3600 then
-				self:settext("1:00:00+")
+				self:settext("1:00:00")
 			end
 		end,
 		
@@ -816,7 +792,7 @@ end,
 			elseif tonumber(GetUpperLengthFilter()) >= 600 and tonumber(GetUpperLengthFilter()) < 3600 then
 				self:settext(SecondsToMMSS(GetUpperLengthFilter()))
 			elseif tonumber(GetUpperLengthFilter()) == 3600 then
-				self:settext("1:00:00+")
+				self:settext("1:00:00")
 			end
 		end,
 		
@@ -828,7 +804,7 @@ end,
 			elseif tonumber(GetUpperLengthFilter()) >= 600 and tonumber(GetUpperLengthFilter()) < 3600 then
 				self:settext(SecondsToMMSS(GetUpperLengthFilter()))
 			elseif tonumber(GetUpperLengthFilter()) == 3600 then
-				self:settext("1:00:00+")
+				self:settext("1:00:00")
 			end
 		end,
 		
@@ -840,7 +816,7 @@ end,
 			elseif tonumber(CurrentUpperLength) >= 600 and tonumber(CurrentUpperLength) < 3600 then
 				self:settext(SecondsToMMSS(CurrentUpperLength))
 			elseif tonumber(CurrentUpperLength) == 3600 then
-				self:settext("1:00:00+")
+				self:settext("1:00:00")
 			end
 		end,
 		
