@@ -40,8 +40,7 @@ end
 if not Branch then Branch = {} end
 
 Branch.AfterScreenSelectProfile = function()
-
-	local nsj = GAMESTATE:GetNumSidesJoined()
+local nsj = GAMESTATE:GetNumSidesJoined()
 	
 	if nsj == 1 and st ~= 2 then
 		GAMESTATE:SetCurrentStyle("Single")

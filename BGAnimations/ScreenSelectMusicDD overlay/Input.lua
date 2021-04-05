@@ -21,6 +21,30 @@ isSortMenuVisible = false
 local t = {}
 -----------------------------------------------------
 
+local function GetLastStyle()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'LastStyle')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'LastStyle')
+	end
+
+	if value == nil then
+		value = "Single"
+	end
+
+	return value
+end
+
+
+local function SetLastStyle(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'LastStyle', value)
+		DDStats.Save(playerNum)
+	end
+end
+
+
 local SwitchInputFocus = function(button)
 	if button == "Start" then
 
@@ -119,6 +143,17 @@ t.Handler = function(event)
 					if DDSortMenuCursorPosition == 10 then
 						SortMenuNeedsUpdating = true
 					end	
+					if DDSortMenuCursorPosition == 13 then
+						local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
+						if current_style == "StyleType_OnePlayerOneSide" then
+							SetLastStyle("Double")
+							GAMESTATE:SetCurrentStyle("Double")
+						else
+							SetLastStyle("Single")
+							GAMESTATE:SetCurrentStyle("Single")
+						end
+						MESSAGEMAN:Broadcast("ReloadSSMDD")
+					end
 				end
 				
 				if event.GameButton == "MenuLeft" or event.GameButton == "MenuUp" then

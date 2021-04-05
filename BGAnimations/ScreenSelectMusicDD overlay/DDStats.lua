@@ -83,10 +83,22 @@ local DDStats = {
 			return
 		end
 
+		local keyValuePairs = {}
+		for key, value in pairs(playerProfiles[profileId]) do
+			keyValuePairs[#keyValuePairs+1] = {
+				key=key,
+				value=value,
+			}
+		end
+
+		table.sort(keyValuePairs, function(a, b)
+			return a.key < b.key
+		end)
+
 		file = RageFileUtil:CreateRageFile()
 		file:Open(dir, 2)
-		for key, value in pairs(playerProfiles[profileId]) do
-			file:Write(key .. '=' .. value .. '\n')
+		for keyValuePair in ivalues(keyValuePairs) do
+			file:Write(keyValuePair.key .. '=' .. keyValuePair.value .. '\n')
 		end
 		file:Close()
 	end,

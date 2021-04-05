@@ -307,14 +307,8 @@ local GetDefaultSong = function(groups)
 		end
 	end
 	
-	local Profile = PROFILEMAN:GetProfile(playerNum)
-	local LastSong = Profile:GetLastPlayedSong()
+	return PruneSongsFromGroup( groups[1] )[1]
 
-	--if Profile and LastSong then
-	--	return LastSong
-	--else
-		return PruneSongsFromGroup( groups[1] )[1]
-	--end
 
 end
 

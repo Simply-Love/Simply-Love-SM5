@@ -517,7 +517,7 @@ FilterLabel = {
 
 OtherLabel = {
 	"SONG SEARCH",
-	"ADD TO FAVORITES",
+	"MARK AS FAVORITE",
 	switchStepsTypeLabel,
 	"TEST INPUT",
 }
