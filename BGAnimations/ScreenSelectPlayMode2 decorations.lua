@@ -19,7 +19,6 @@ end
 if nsj ~= 2 then
 	local yo = GetLastStyle()
 	GAMESTATE:SetCurrentStyle(yo)
-	SCREENMAN:SystemMessage('yo '..yo)
 end
 
 return Def.ActorFrame{}
