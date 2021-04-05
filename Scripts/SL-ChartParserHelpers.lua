@@ -127,10 +127,10 @@ GenerateBreakdownText = function(pn, minimization_level)
 			end
 			if minimization_level ~= 3 then
 				text_segments[#text_segments+1] = notation
-			else
-				is_broken = false
-				segment_sum = 0
 			end
+
+			is_broken = false
+			segment_sum = 0
 		end
 
 		-- The variables that might get updated need to be returned.
