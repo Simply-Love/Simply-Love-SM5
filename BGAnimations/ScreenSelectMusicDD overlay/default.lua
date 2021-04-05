@@ -139,6 +139,8 @@ local t = Def.ActorFrame {
 	LoadActor("./StepsDisplayList/default.lua"),
 	-- included, but unused for now
 	LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
+	-- CDTitles are fun, said no one ever.
+	--LoadActor("./CDTitle.lua"),
 	-- Sort and Filter menu wow
 	LoadActor("./SortMenu/default.lua"),
 	-- For transitioning to either gameplay or player options.

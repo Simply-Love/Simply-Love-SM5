@@ -203,6 +203,14 @@ t.Handler = function(event)
 		return false
 	end
 
+--- potentially code for updating CDTitle?
+	if t.WheelWithFocus == SongWheel then
+		if event.GameButton == "MenuLeft" then
+			MESSAGEMAN:Broadcast('UpdateCDTitle')
+		elseif event.GameButton == "MenuRight" then
+			MESSAGEMAN:Broadcast('UpdateCDTitle')
+		end
+	end
 
 	if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		if not t.AllowLateJoin() then return false end
