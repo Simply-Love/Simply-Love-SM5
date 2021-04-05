@@ -113,7 +113,9 @@ t.Handler = function(event)
 		if event.type ~= "InputEventType_Release" then
 			if event.GameButton == "Select" then
 				MESSAGEMAN:Broadcast("InitializeDDSortMenu")
-				DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
+				if GAMESTATE:GetCurrentSong() ~= nil then
+					DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
+				end
 			end
 		end
 	end
