@@ -348,7 +348,60 @@ local PruneGroups = function(_groups)
 	return groups
 end
 
----------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+if SongSearchSSMDD == true then
+	local results = {}
+		for i, Song in ipairs(SONGMAN:GetAllSongs()) do
+			local match = false
+			title = Song:GetDisplayFullTitle():lower()
+			-- the query "xl grind" will match a song called "Axle Grinder" no matter
+			-- what the chart info says
+			if title:match(SongSearchAnswer:lower()) then
+					results[#results+1] = Song
+					match = true
+			end
+			if not match then
+				for i, steps in ipairs(Song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
+					local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
+					match = true
+					-- the query "br xo fs" will match any song with at least one chart that
+					-- has "br", "xo" and "fs" in its AuthorCredit + Description
+					for word in SongSearchAnswer:gmatch("%S+") do
+						if not chartStr:lower():match(word:lower()) then
+						match = false
+						break
+					end
+				end
+				if match then
+					results[#results+1] = Song
+				end
+			end
+		end
+	end
+	
+	
+	if #results > 0 then
+		filepath = THEME:GetCurrentThemeDirectory().."Other/SongManager SearchResults.txt"
+		f = RageFileUtil.CreateRageFile()
+		f:Open(filepath, 2) -- 2 = write
+		f:PutLine("---Search Results") -- folder name
+		for i, song in ipairs(results) do
+			f:PutLine(song:GetGroupName().."/"..song:GetDisplayFullTitle()) -- song
+		end
+		f:Close()
+		f:destroy()
+	else
+		SCREENMAN:SystemMessage("No songs found!")
+	end
+	
+	if SongSearchSSMDD == true then
+		SongSearchSSMDD = false
+		SongSearchAnswer = nil
+	end
+
+end
+
 
 
 

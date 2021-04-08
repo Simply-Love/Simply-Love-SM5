@@ -22,7 +22,7 @@ local t = Def.ActorFrame {
 	LoadActor("./cursor.lua"),
 	-- Where all the sorts-filters exist
 	LoadActor("./Sorts-Filters.lua"),
-	-- The "logic" for all the Sorting and Filtering AND Updating Oh god.
+	-- Updates the music wheel only when needed
 	LoadActor("./UpdateSongWheel.lua"),
 }
 

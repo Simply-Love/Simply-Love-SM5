@@ -33,7 +33,6 @@ af[#af+1] = Def.ActorFrame{
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if params.group then
 				self:settext( group_info[params.group].num_songs)
-				GroupSongCount = group_info[params.group].num_songs
 			else
 				self:self("")
 			end

@@ -1,6 +1,6 @@
 local t = Def.ActorFrame{
 	Name="WheelHighlight",
-	InitCommand=cmd(x,_screen.cx;y,_screen.cy + 45; draworder, 105),
+	InitCommand=cmd(x,_screen.cx;y,_screen.cy + 45;),
 
 Def.Quad{
 		Name="WheelHighlight",

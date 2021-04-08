@@ -15,6 +15,9 @@ local ActiveOptionRow
 
 local didSelectSong = false
 isSortMenuVisible = false
+SongSearchSSMDD = false
+SongSearchAnswer = ""
+InputMenuHasFocus = false
 
 -----------------------------------------------------
 -- input handler
@@ -131,6 +134,7 @@ t.Handler = function(event)
 							MESSAGEMAN:Broadcast("ToggleSortMenu")
 							MESSAGEMAN:Broadcast("ReloadSSMDD")
 							isSortMenuVisible = false
+							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 							
 						elseif SortMenuNeedsUpdating == false then
 							isSortMenuVisible = false
@@ -146,6 +150,20 @@ t.Handler = function(event)
 					if DDSortMenuCursorPosition == 10 then
 						SortMenuNeedsUpdating = true
 					end	
+					if DDSortMenuCursorPosition == 11 then
+						SCREENMAN:AddNewScreenToTop("ScreenTextEntry");
+						local songSearch = {
+							Question = "\nSEARCH FOR:\nSongs\nSong Artists\nStep Artists",
+							MaxInputLength = 52,
+							OnOK = function(answer)
+								SongSearchSSMDD = true
+								SongSearchAnswer = answer
+								SCREENMAN:GetTopScreen():SetNextScreenName("ScreenSelectMusicSSMDD")
+								SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+							end,
+							};
+							SCREENMAN:GetTopScreen():Load(songSearch)
+					end
 					if DDSortMenuCursorPosition == 13 then
 						local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
 						if current_style == "StyleType_OnePlayerOneSide" then
@@ -156,6 +174,12 @@ t.Handler = function(event)
 							GAMESTATE:SetCurrentStyle("Single")
 						end
 						MESSAGEMAN:Broadcast("ReloadSSMDD")
+					end
+					if DDSortMenuCursorPosition == 14 then
+						isSortMenuVisible = false
+						InputMenuHasFocus = true
+						MESSAGEMAN:Broadcast("ShowTestInput")
+						MESSAGEMAN:Broadcast("ToggleSortMenu")
 					end
 				end
 				
@@ -202,6 +226,41 @@ t.Handler = function(event)
 		
 		return false
 	end
+	
+	--- Input handler for the Test Input screen
+	if InputMenuHasFocus then
+		if not (event and event.PlayerNumber and event.button) then
+			return false
+		end
+		-- don't handle input for a non-joined player
+		if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
+			return false
+		end
+
+		SOUND:StopMusic()
+
+		local screen   = SCREENMAN:GetTopScreen()
+		local overlay  = screen:GetChild("Overlay")
+
+		-- broadcast event data using MESSAGEMAN for the TestInput overlay to listen for
+		if event.type ~= "InputEventType_Repeat" then
+			MESSAGEMAN:Broadcast("TestInputEvent", event)
+		end
+
+		-- pressing Start or Back (typically Esc on a keyboard) will queue "DirectInputToEngine"
+		-- but only if the event.type is not a Release
+		-- as soon as TestInput is activated via the SortMenu, the player is likely still holding Start
+		-- and will soon release it to start testing their input, which would inadvertently close TestInput
+		if (event.GameButton == "Start" or event.GameButton == "Back") and event.type ~= "InputEventType_Release" then
+			InputMenuHasFocus = false
+			SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
+			MESSAGEMAN:Broadcast("HideTestInput")
+		end
+
+		return false
+	end
+	
+	
 
 --- potentially code for updating CDTitle?
 	if t.WheelWithFocus == SongWheel then

@@ -107,3 +107,30 @@ SSM_Header_StageText = function()
 		end
 	end
 end
+
+
+--- Returns the grade for a given song and chart or nil if there isn't a high score.
+--- @param player Enum
+--- @param songParam Song
+--- @param chartParam Steps
+--- @param rateParam boolean
+function GetTopGrade(player, songParam, chartParam)
+	local song = GAMESTATE:GetCurrentSong()
+	local chart = GAMESTATE:GetCurrentSteps(player)
+	local grade
+	local pn = ToEnumShortString(player)
+	
+	if song then
+		local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()[1]
+		if score then
+			grade = score:GetGrade()
+		else
+		end
+		if grade then
+			local converted_grade = Grade:Reverse()[grade]
+			if converted_grade > 17 then converted_grade = 17 end
+			return converted_grade
+		end
+	else end
+	return nil
+end

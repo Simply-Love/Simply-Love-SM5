@@ -129,6 +129,37 @@ local song_mt = {
 				},
 
 			}
+			
+			--Things we need two of
+			for pn in ivalues({'P1','P2'}) do
+				local side
+				if pn == 'PLAYER_1' then side = -1
+				else side = 1 end
+				local grade_position
+				if pn == 'P1' then
+					grade_position = -145
+				else
+					grade_position = -120
+				end
+				--A box for the pass type
+				--TODO this might be better as an AMV
+				af[#af+1] = Def.ActorFrame {
+					InitCommand=function(subself) 
+						subself:visible(true) 
+					end,
+					-- The grade shown to the left of the song box
+					Def.Sprite{
+						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
+						InitCommand=function(subself) subself:visible(false):zoom(WideScale(.25,.22)):x(side*grade_position):animate(0) self[pn..'grade_sprite'] = subself end,
+						SlideToTopCommand=function(subself)
+							subself:linear(.12):diffusealpha(0):xy(side*-1*-55,50):zoom(1):linear(.12):diffusealpha(1)
+						end,
+						SlideBackIntoGridCommand=function(subself)
+							subself:linear(.12):diffusealpha(0):zoom( WideScale(.25, 0.22)):xy(side*grade_position,0):linear(.12):diffusealpha(1)
+						end,
+					}
+				}
+			end
 
 			return af
 		end,
@@ -166,8 +197,36 @@ local song_mt = {
 				self.container:x(_screen.cx)
 			end
 			
-		end,
+			--change the Grade sprite and pass box
+			--TODO makes this not display multiple times for the same song
+			--[[for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local pn = ToEnumShortString(player)
+				if self.song ~= "CloseThisFolder" then
+					local current_difficulty
+					local grade
+					local steps
+					if GAMESTATE:GetCurrentSteps(pn) then
+						current_difficulty = GAMESTATE:GetCurrentSteps(pn):GetDifficulty() --are we looking at steps?
+					end
+					if current_difficulty and self.song:GetOneSteps(GAMESTATE:GetCurrentSteps(pn):GetStepsType(),current_difficulty) then
+						steps = self.song:GetOneSteps(GAMESTATE:GetCurrentSteps(pn):GetStepsType(),current_difficulty)
+					end
+					if steps then
+						grade = GetTopGrade(player, self.song, steps)
+					end
+					--if we have a grade then set the grade sprite
+					if grade then
+						self[pn..'grade_sprite']:visible(true):setstate(grade)
+					else
+						self[pn..'grade_sprite']:visible(false)
+					end
+				else
+					self[pn..'grade_sprite']:visible(false)
+				end
 
+			end--]]
+		end,
+		
 		set = function(self, song)
 
 			if not song then return end

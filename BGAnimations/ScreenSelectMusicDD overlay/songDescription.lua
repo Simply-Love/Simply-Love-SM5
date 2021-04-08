@@ -12,6 +12,26 @@
 
 local group_durations = {}
 local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
+local currentsong = GAMESTATE:GetCurrentSong()
+local HasCDTitle = currentsong:HasCDTitle()
+local blank = THEME:GetPathG("", "_blank.png")
+local CDTitlePath
+
+
+if CDTitlePath == blank or CDTitlePath == nil then
+		if HasCDTitle then
+			CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
+		else
+			CDTitlePath = blank
+		end
+		if CDTitlePath == nil then
+			CDTitlePath = blank
+		elseif HasCDTitle then
+			CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
+		else
+			CDTitlePath = blank
+		end
+	end
 
 for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	group_durations[group_name] = 0
@@ -54,10 +74,54 @@ af[#af+1] = Def.Quad{
 	end
 }
 
--- ActorFrame for Artist, BPM, and Song length
+-- ActorFrame for Artist, BPM, Song length, and CDTitles because I'M GAY LOL
 af[#af+1] = Def.ActorFrame{
 	InitCommand=function(self) self:xy(-110,-6) end,
-
+	
+	
+	--- CDTitle
+	Def.Sprite{
+		Name="CDTitle",
+		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end,
+		GroupsHaveChangedMessageCommand=function(self) self:visible(false) end,
+		InitCommand=function(self) 
+			local Height = self:GetHeight()
+			local Width = self:GetWidth()
+			local dim1, dim2=math.max(Width, Height), math.min(Width, Height)
+			local ratio=math.max(dim1/dim2, 2)
+			local toScale = Width > Height and Width or Height
+			self:zoom(22/toScale * ratio)
+			self:horizalign(right)
+			self:xy(265,6)
+			self:diffusealpha(0)
+		end,
+		OnCommand=function(self) 
+			self:decelerate(0.4)
+			self:diffusealpha(0.9) 
+		end,
+		SetCommand=function(self)
+			self:stoptweening()
+			local Height = self:GetHeight()
+			local Width = self:GetWidth()
+			local dim1, dim2=math.max(Width, Height), math.min(Width, Height)
+			local ratio=math.max(dim1/dim2, 2)
+			local toScale = Width > Height and Width or Height	
+			
+			if GAMESTATE:GetCurrentSong() ~= nil then
+				if GAMESTATE:GetCurrentSong():HasCDTitle() == true then
+					CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
+					self:Load(CDTitlePath)
+				else
+					self:Load(blank)
+				end
+			end
+			self:zoom(22/toScale * ratio)
+			self:visible(true)
+			
+		end
+	},
+	
 	-- ----------------------------------------
 	-- Artist Label
 	LoadFont("Common Normal")..{
