@@ -445,6 +445,22 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	-- and maybe even eg `NumConsecutiveFlipped`. test on longass trancemania songs
 	local StepsLR = {}
 
+	-- bracket jump stuff
+	-- tracks the last arrow(s) (can be plural in the case of brackets themselves)
+	-- that each of the L and R feet was last on, respectively; however,
+	-- note that this can be flipped while recording a (unflipped?) stream...
+	local lastArrowL = ""
+	local lastArrowR = ""
+	-- ...so these track the true state of what happened (which become known only
+	-- after deciding whether to flip, hence are updated every CommitStream)
+	local trueLastArrowL = ""
+	local trueLastArrowR = ""
+	local trueLastFoot = nil
+
+	-- TODO(bracket) - figure out what corner cases this is needed for...?
+	-- local justBracketed = false -- used for tiebreaks
+
+	-- TODO(bracket) - make take `tiebreakFoot` arg
 	function CommitStream()
 		local ns = #StepsLR
 		local nx = 0
@@ -548,6 +564,24 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 
 			StepsLR = {}
 			LastFlip = needFlip
+
+			-- merge the (flip-ambiguous) last-arrow tracking into the source of truth
+			-- TODO(bracket) - do you need to check if the `lastArrow`s are empty, like
+			-- the hs version does? i hypothesize it actually makes no difference.
+			if ns > 0 then
+				if needFlip then
+					-- this thing is a tristate so can't just copy the bool
+					if LastFoot then trueLastFoot = "R" else trueLastFoot = "L" end
+					trueLastArrowL = lastArrowR
+					trueLastArrowR = lastArrowL
+				else
+					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
+					trueLastArrowL = lastArrowL
+					trueLastArrowR = lastArrowR
+				end
+			end
+			lastArrowL = ""
+			lastArrowR = ""
 		end
 	end
 
@@ -579,11 +613,56 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 				elseif step == "R" then
 					StepsLR[#StepsLR+1] = LastFoot
 				end
+				-- regardless, record what arrow the foot stepped on (for brackets l8r)
+				if LastFoot then
+					lastArrowR = step
+				else
+					lastArrowL = step
+				end
 			elseif step:len() > 1 then
 				-- jump
+				-- TODO(bracket) - make stream able to continue thru a bracket jump
 				CommitStream()
 				LastStep = nil
 				LastRepeatedFoot = nil
+
+				if step:len() == 2 then
+					local isBracketLeft  = step:match("L[^R]")
+					local isBracketRight = step:match("[^L]R")
+					if isBracketLeft or isBracketRight then
+						-- possibly bracketable
+						if isBracketLeft and (not trueLastFoot or trueLastFoot == "R") then
+							-- check for interference from the right foot
+							if not step:match(trueLastArrowR) then
+								NumBrackets = NumBrackets + 1
+								-- this prevents e.g. "LD bracket, DR also bracket"
+								trueLastArrowL = step
+							else
+								-- right foot is in the way; hafta step w both feet
+								-- NB: i don't think resetting the lastarrows is
+								-- actually necessary here since i think any chart
+								-- where it would matter would already be ambiguous
+							end
+						elseif isBracketRight and (not trueLastFoot or trueLastFoot == "L") then
+							-- check for interference from the left foot
+							if not step:match(trueLastArrowL) then
+								NumBrackets = NumBrackets + 1
+								-- this prevents e.g. "DR bracket, LD also bracket"
+								trueLastArrowR = step
+							else
+								-- (same as above)
+							end
+						end
+					else
+						-- LR or DU
+						trueLastArrowL = ""
+						trueLastArrowR = ""
+						-- TODO(bracket) - decideDUFacing?
+					end
+				else
+					-- triple/quad - always gotta bracket these
+					NumBrackets = NumBrackets + 1
+				end
 			end
 		end
 	end
