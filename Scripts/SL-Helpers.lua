@@ -712,7 +712,10 @@ GetApiKeyForPlayer = function(player)
 		for k,v in pairs(contents) do
 			if k == "ApiKey" then
 				if #v ~= 64 then
-					SM(ToEnumShortString(player).." has invalid ApiKey length!")
+					-- Print the error only if the ApiKey is non-empty.
+					if #v ~= 0 then
+						SM(ToEnumShortString(player).." has invalid ApiKey length!")
+					end
 					return ""
 				else
 					return v
