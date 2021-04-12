@@ -10,23 +10,6 @@ local failed = stats:GetFailed() and "1" or "0"
 local rate = tostring(SL.Global.ActiveModifiers.MusicRate * 100):gsub("%.", "")
 
 local steps = GAMESTATE:GetCurrentSteps(player)
-local difficulty = ""
-
-if steps then
-	difficulty = steps:GetDifficulty()
-	-- GetDifficulty() returns a value from the Difficulty Enum
-	-- "Difficulty_Hard" for example.
-	-- Strip the characters up to and including the underscore.
-	difficulty = ToEnumShortString(difficulty)
-end
-
--- Will need to update this to not be hardcoded to dance if GrooveStats supports other games in the future
-local style = ""
-if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
-	style = "dance-double"
-else
-	style = "dance-single"
-end
 
 -- ParseChartInfo will do no work if the data already exists in the SL.Streams Cache.
 ParseChartInfo(steps, pn)

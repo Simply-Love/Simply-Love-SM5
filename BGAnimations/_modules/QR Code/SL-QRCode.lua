@@ -54,10 +54,18 @@ qr[#qr+1] = Def.Quad{
 
 -- QR code
 qr[#qr+1] = Def.ActorMultiVertex{
+	Name="QRCodeData",
 	InitCommand=function(self)
 		self:SetDrawState({Mode="DrawMode_Quads"})
 		self:SetVertices(verts)
 		self:zoom(pixel_size)
+	end,
+	HideCommand=function(self)
+		-- To hide the QR, we just set all the vertices to a common color.
+		for vert in ivalues(verts) do
+			vert[2] = color("0.1,0.1,0.1")
+		end
+		self:SetVertices(verts)
 	end
 }
 

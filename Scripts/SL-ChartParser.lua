@@ -173,7 +173,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 		local topLevelBpm = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
 		-- SSC File
 		-- Loop through each chart in the SSC file
-		for noteData in SimfileString:gmatch("#NOTEDATA.-#NOTES:[^;]*") do
+		for noteData in SimfileString:gmatch("#NOTEDATA.-#NOTES2?:[^;]*") do
 			-- Normalize all the line endings to '\n'
 			local normalizedNoteData = noteData:gsub('\r\n?', '\n')
 
@@ -207,7 +207,6 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 					break
 				end
 			end
-			description = description:gsub("%s+", "")
 
 			-- Find the chart that matches our difficulty and game type.
 			if (stepsType == StepsType and difficulty == Difficulty) then
@@ -224,7 +223,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 						BPMs = NormalizeFloatDigits(splitBpm)
 					end
 					-- Get the chart data, remove comments, and then get rid of all non-'\n' whitespace.
-					NoteDataString = normalizedNoteData:match("#NOTES:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
+					NoteDataString = normalizedNoteData:match("#NOTES2?:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 					NoteDataString = MinimizeChart(NoteDataString)
 					break
 				end
@@ -234,7 +233,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 		-- SM FILE
 		BPMs = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
 		-- Loop through each chart in the SM file
-		for noteData in SimfileString:gmatch("#NOTES[^;]*") do
+		for noteData in SimfileString:gmatch("#NOTES2?[^;]*") do
 			-- Normalize all the line endings to '\n'
 			local normalizedNoteData = noteData:gsub('\r\n?', '\n')
 			-- Split the entire chart string into pieces on ":"

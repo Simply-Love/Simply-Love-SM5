@@ -34,8 +34,8 @@ local GetNameAndScore = function(profile, SongOrCourse, StepsOrTrail)
 		score = FormatPercentScore( topscore:GetPercentDP() )
 		name = topscore:GetName()
 	else
-		score = string.format("%.2f%%", 0)
-		name = "????"
+		score = "??.??%"
+		name = "----"
 	end
 
 	return score, name
@@ -67,6 +67,10 @@ end
 
 local GetScoresRequestProcessor = function(res, master)
 	if master == nil then return end
+	-- If we're not hovering over a song when we get the request, then we don't
+	-- have to update anything. We don't have to worry about courses here since
+	-- we don't run the RequestResponseActor in CourseMode.
+	if GAMESTATE:GetCurrentSong() == nil then return end
 
 	for i=1,2 do
 		local paneDisplay = master:GetChild("PaneDisplayP"..i)
@@ -77,11 +81,13 @@ local GetScoresRequestProcessor = function(res, master)
 		local playerScore = paneDisplay:GetChild("PlayerHighScore")
 		local playerName = paneDisplay:GetChild("PlayerHighScoreName")
 
+		local loadingText = paneDisplay:GetChild("Loading")
+
 		local playerStr = "player"..i
 		local rivalNum = 1
 		local worldRecordSet = false
 		local personalRecordSet = false
-		local data = res["success"] and res["data"] or false
+		local data = res["status"] == "success" and res["data"] or nil
 
 		-- First check to see if the leaderboard even exists.
 		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] then
@@ -146,6 +152,23 @@ local GetScoresRequestProcessor = function(res, master)
 			rivalScore:settext("??.??%")
 			rivalName:settext("----")
 		end
+
+		if res["status"] == "success" then
+			if data and data[playerStr] then
+				if data[playerStr]["isRanked"] then
+					loadingText:settext("Loaded")
+				else
+					loadingText:settext("Not Ranked")
+				end
+			else
+				-- Just hide the text
+				loadingText:queuecommand("Set")
+			end
+		elseif res["status"] == "fail" then
+			loadingText:settext("Failed")
+		elseif res["status"] == "disabled" then
+			loadingText:settext("Disabled")
+		end
 	end
 end
 
@@ -180,56 +203,70 @@ local PaneItems = {
 -- -----------------------------------------------------------------------
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
--- Only add this actor if it's relevant.
-if IsServiceAllowed(SL.GrooveStats.GetScores) then
-	af[#af+1] = RequestResponseActor("GetScores", 10)..{
-		OnCommand=function(self)
-			-- Create variables for both players, even if they're not currently active.
-			self.IsParsing = {false, false}
-		end,
-		-- Broadcasted from ./PerPlayer/DensityGraph.lua
-		P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,
-		P2ChartParsingMessageCommand=function(self)	self.IsParsing[2] = true end,
-		P1ChartParsedMessageCommand=function(self)
-			self.IsParsing[1] = false
-			self:queuecommand("ChartParsed")
-		end,
-		P2ChartParsedMessageCommand=function(self)
-			self.IsParsing[2] = false
-			self:queuecommand("ChartParsed")
-		end,
-		ChartParsedCommand=function(self)
-			-- Make sure we're still not parsing either chart.
-			if self.IsParsing[1] or self.IsParsing[2] then return end
-
-			-- This makes sure that the Hash in the ChartInfo cache exists.
-			local sendRequest = false
-			local data = {
-				action="groovestats/player-scores",
-			}
-
-			for i=1,2 do
-				local pn = "P"..i
-				if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
-					data["player"..i] = {
-						chartHash=SL[pn].Streams.Hash,
-						apiKey=SL[pn].ApiKey
-					}
-					sendRequest = true
-				end
-			end
-
-			-- Only send the request if it's applicable.
-			if sendRequest then
-				MESSAGEMAN:Broadcast("GetScores", {
-					data=data,
-					args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"),
-					callback=GetScoresRequestProcessor
-				})
+af[#af+1] = RequestResponseActor("GetScores", 10)..{
+	OnCommand=function(self)
+		-- Create variables for both players, even if they're not currently active.
+		self.IsParsing = {false, false}
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			-- If a profile is joined for this player, try and fetch the API key.
+			-- A non-valid API key will have the field set to the empty string.
+			if PROFILEMAN:GetProfile(player) then
+				ParseGrooveStatsIni(player)
 			end
 		end
-	}
-end
+	end,
+	PlayerJoinedMessageCommand=function(self, params)
+		if GAMESTATE:IsHumanPlayer(params.Player) and PROFILEMAN:GetProfile(params.Player) then
+			ParseGrooveStatsIni(params.Player)
+		end
+	end,
+	-- Broadcasted from ./PerPlayer/DensityGraph.lua
+	P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,
+	P2ChartParsingMessageCommand=function(self)	self.IsParsing[2] = true end,
+	P1ChartParsedMessageCommand=function(self)
+		self.IsParsing[1] = false
+		self:queuecommand("ChartParsed")
+	end,
+	P2ChartParsedMessageCommand=function(self)
+		self.IsParsing[2] = false
+		self:queuecommand("ChartParsed")
+	end,
+	ChartParsedCommand=function(self)
+		if not IsServiceAllowed(SL.GrooveStats.GetScores) then return end
+
+		-- Make sure we're still not parsing either chart.
+		if self.IsParsing[1] or self.IsParsing[2] then return end
+
+		-- This makes sure that the Hash in the ChartInfo cache exists.
+		local sendRequest = false
+		local data = {
+			action="groovestats/player-scores",
+		}
+
+		for i=1,2 do
+			local pn = "P"..i
+			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
+				data["player"..i] = {
+					chartHash=SL[pn].Streams.Hash,
+					apiKey=SL[pn].ApiKey
+				}
+				local loadingText = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"):GetChild("PaneDisplayP"..i):GetChild("Loading")
+				loadingText:visible(true)
+				loadingText:settext("Loading ...")
+				sendRequest = true
+			end
+		end
+
+		-- Only send the request if it's applicable.
+		if sendRequest then
+			MESSAGEMAN:Broadcast("GetScores", {
+				data=data,
+				args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"),
+				callback=GetScoresRequestProcessor
+			})
+		end
+	end
+}
 
 for player in ivalues(PlayerNumber) do
 	local pn = ToEnumShortString(player)
@@ -269,6 +306,8 @@ for player in ivalues(PlayerNumber) do
 
 	af2.OnCommand=function(self)                                    self:playcommand("Set") end
 	af2.SLGameModeChangedMessageCommand=function(self)              self:playcommand("Set") end
+	af2.CurrentCourseChangedMessageCommand=function(self)			self:playcommand("Set") end
+	af2.CurrentSongChangedMessageCommand=function(self)				self:playcommand("Set") end
 	af2["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:playcommand("Set") end
 	af2["CurrentTrail"..pn.."ChangedMessageCommand"]=function(self) self:playcommand("Set") end
 
@@ -446,6 +485,21 @@ for player in ivalues(PlayerNumber) do
 		end
 	}
 
+	af2[#af2+1] = LoadFont("Common Normal")..{
+		Name="Loading",
+		Text="Loading ... ",
+		InitCommand=function(self)
+			self:zoom(text_zoom):diffuse(Color.Black)
+			self:x(pos.col[3]-15)
+			self:y(pos.row[3])
+			self:visible(false)
+		end,
+		SetCommand=function(self)
+			self:settext("Loading ...")
+			self:visible(false)
+		end
+	}
+
 	-- Chart Difficulty Meter
 	af2[#af2+1] = LoadFont("Wendy/_wendy small")..{
 		Name="DifficultyMeter",
@@ -454,12 +508,13 @@ for player in ivalues(PlayerNumber) do
 			self:xy(pos.col[4], pos.row[2])
 			if not IsUsingWideScreen() then self:maxwidth(66) end
 			self:queuecommand("Set")
+		end,
+		SetCommand=function(self)
 			-- Hide the difficulty number if we're connected.
 			if IsServiceAllowed(SL.GrooveStats.GetScores) then
 				self:visible(false)
 			end
-		end,
-		SetCommand=function(self)
+
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
 			if not SongOrCourse then self:settext("") return end
 			local meter = StepsOrTrail and StepsOrTrail:GetMeter() or "?"
@@ -478,6 +533,8 @@ for player in ivalues(PlayerNumber) do
 				self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
 				self:x(pos.col[3]+50*text_zoom)
 				self:y(pos.row[i])
+			end,
+			OnCommand=function(self)
 				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
 			end,
 			SetCommand=function(self)
@@ -492,6 +549,8 @@ for player in ivalues(PlayerNumber) do
 				self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
 				self:x(pos.col[3]+125*text_zoom)
 				self:y(pos.row[i])
+			end,
+			OnCommand=function(self)
 				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
 			end,
 			SetCommand=function(self)

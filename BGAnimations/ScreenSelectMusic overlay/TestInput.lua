@@ -10,7 +10,7 @@ local af = Def.ActorFrame{
 
 	Def.Quad{ InitCommand=function(self) self:FullScreen():diffuse(0,0,0,0.875) end },
 	LoadFont("Common Normal")..{
-		Text=THEME:GetString("ScreenSelectMusic", "TestInputHelpText"),
+		Text=THEME:GetString("Common", "PopupDismissText"),
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h-120):zoom(1.1) end
 	}
 }

@@ -26,14 +26,6 @@ return Def.Actor{
 		-- reset this to nil now so values don't accidentally persist into the next game cycle
 		SL.Global.PlayersToRejoin = nil
 
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			-- If a profile is joined for this player, try and fetch the API key.
-			-- A non-valid API key will have this field set to the empty string.
-			if PROFILEMAN:GetProfile(player) then
-				SL[ToEnumShortString(player)].ApiKey = GetApiKeyForPlayer(player)
-			end
-		end
-
 		-- and proceed to whatever the next screen should be
 		SCREENMAN:SetNewScreen( Branch.AllowScreenSelectColor() )
 	end

@@ -71,6 +71,8 @@ local PlayerDefaults = {
 
 			-- The Groovestats API key loaded for this player
 			self.ApiKey = ""
+			-- Whether or not the player is playing on pad.
+			self.IsPadPlayer = false
 		end
 	}
 }
@@ -241,7 +243,15 @@ SL = {
 			TimingWindowSecondsW4=0.102000,
 			TimingWindowSecondsW5=0.135000,
 			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.065000,
+			-- NOTE(teejusb): FA+ mode previously had mines set to
+			-- 65ms instead of the actual window size of 70ms. This
+			-- was to account for "SM5 Mines" but now with the patch here:
+			-- https://gist.github.com/DinsFire64/4a3f763cd3033afd55a176980b32a3b5
+			-- and the development in the thread here:
+			-- https://github.com/stepmania/stepmania/issues/1896
+			-- it's as good as "fixed" for the very very large majority of
+			-- cases so we can set this back to 70ms now.
+			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},
 	},
@@ -288,6 +298,8 @@ SL = {
 			LifePercentChangeLetGo=0,
 			LifePercentChangeHeld=0,
 			LifePercentChangeHitMine=0,
+
+			InitialValue=0.5,
 		},
 		ITG = {
 			PercentScoreWeightW1=5,
@@ -321,6 +333,8 @@ SL = {
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.050,
+
+			InitialValue=0.5,
 		},
 		["FA+"] = {
 			PercentScoreWeightW1=5,
@@ -354,6 +368,8 @@ SL = {
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.05,
+
+			InitialValue=0.5,
 		},
 	},
 	-- Fields used to determine the existence of the launcher and the

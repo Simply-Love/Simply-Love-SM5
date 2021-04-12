@@ -22,7 +22,7 @@ if #players == 2 or SL.Global.GameMode=="Casual" then
 
 			if pane then
 				af[#af+1] = Def.ActorFrame{
-					Name="Pane"..i.."_".."Side"..pn,
+					Name="Pane"..i.."_Side"..pn,
 					InitCommand=function(self) self:x(offset[player]) end,
 					pane
 				}
@@ -61,12 +61,12 @@ elseif #players == 1 then
 		-- Panes can be nil, however, so don't add extra AFs with nil children
 		if left_pane and right_pane then
 			af[#af+1] = Def.ActorFrame{
-				Name="Pane"..i.."_".."SideP1",
+				Name="Pane"..i.."_SideP1",
 				InitCommand=function(self) self:x(offset.PlayerNumber_P1) end,
 				left_pane
 			}
 			af[#af+1] = Def.ActorFrame{
-				Name="Pane"..i.."_".."SideP2",
+				Name="Pane"..i.."_SideP2",
 				InitCommand=function(self) self:x(offset.PlayerNumber_P2) end,
 				right_pane
 			}

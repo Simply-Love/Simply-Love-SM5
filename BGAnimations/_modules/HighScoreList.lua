@@ -1,4 +1,4 @@
-local af = Def.ActorFrame{}
+local af = Def.ActorFrame{Name="HighScoreList"}
 
 -- ---------------------------------------------
 -- setup involving optional arguments that might have been passed in via a key/value table
@@ -130,7 +130,7 @@ for i=lower,upper do
 		date	= "----------"
 	end
 
-	local row = Def.ActorFrame{}
+	local row = Def.ActorFrame{Name="HighScoreEntry"..(row_index+1)}
 
 	-- if we wanted to compare a player's performance against the list of highscores we are returning
 	if args.RoundsAgo then
@@ -146,23 +146,27 @@ for i=lower,upper do
 	end
 
 	row[#row+1] = LoadFont(Font)..{
+		Name="Rank",
 		Text=i..". ",
-		InitCommand=function(self) self:horizalign(right):xy(-120, row_index*row_height) end
+		InitCommand=function(self) self:horizalign(right):xy(-120, row_index*row_height) end,
 	}
 
 	row[#row+1] = LoadFont(Font)..{
+		Name="Name",
 		Text=name,
-		InitCommand=function(self) self:horizalign(left):xy(-110, row_index*row_height) end
+		InitCommand=function(self) self:horizalign(left):xy(-110, row_index*row_height) end,
 	}
 
 	row[#row+1] = LoadFont(Font)..{
+		Name="Score",
 		Text=score,
-		InitCommand=function(self) self:horizalign(left):xy(-24, row_index*row_height) end
+		InitCommand=function(self) self:horizalign(left):xy(-24, row_index*row_height) end,
 	}
 
 	row[#row+1] = LoadFont(Font)..{
+		Name="Date",
 		Text=date,
-		InitCommand=function(self) self:horizalign(left):xy(50, row_index*row_height) end
+		InitCommand=function(self) self:horizalign(left):xy(50, row_index*row_height) end,
 	}
 
 	af[#af+1] = row

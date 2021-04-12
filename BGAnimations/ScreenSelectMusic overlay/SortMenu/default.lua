@@ -130,8 +130,6 @@ local t = Def.ActorFrame {
 
 
 	AssessAvailableChoicesCommand=function(self)
-		self:visible(false)
-
 		-- normally I would give variables like these file scope, and not declare
 		-- within OnCommand(), but if the player uses the SortMenu to switch from
 		-- single to double, we'll need reassess which choices to present.
