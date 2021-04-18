@@ -449,12 +449,13 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	-- tracks the last arrow(s) (can be plural in the case of brackets themselves)
 	-- that each of the L and R feet was last on, respectively; however,
 	-- note that this can be flipped while recording a (unflipped?) stream...
-	local lastArrowL = ""
-	local lastArrowR = ""
+	local lastArrowL = "X"
+	local lastArrowR = "X"
 	-- ...so these track the true state of what happened (which become known only
 	-- after deciding whether to flip, hence are updated every CommitStream)
-	local trueLastArrowL = ""
-	local trueLastArrowR = ""
+	-- NB: these are "X" not "" b/c we use them in `match()`, and "" shouldn't match
+	local trueLastArrowL = "X"
+	local trueLastArrowR = "X"
 	local trueLastFoot = nil
 
 	-- TODO(bracket) - figure out what corner cases this is needed for...?
@@ -570,12 +571,12 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			-- the hs version does? i hypothesize it actually makes no difference.
 			if ns > 0 then
 				if needFlip then
-					-- this thing is a tristate so can't just copy the bool
-					if LastFoot then trueLastFoot = "R" else trueLastFoot = "L" end
+					-- LastFoot is a tristate so can't just copy the bool
+					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
 					trueLastArrowL = lastArrowR
 					trueLastArrowR = lastArrowL
 				else
-					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
+					if LastFoot then trueLastFoot = "R" else trueLastFoot = "L" end
 					trueLastArrowL = lastArrowL
 					trueLastArrowR = lastArrowR
 				end
@@ -655,8 +656,8 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 						end
 					else
 						-- LR or DU
-						trueLastArrowL = ""
-						trueLastArrowR = ""
+						trueLastArrowL = "X"
+						trueLastArrowR = "X"
 						-- TODO(bracket) - decideDUFacing?
 					end
 				else
