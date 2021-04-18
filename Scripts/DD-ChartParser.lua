@@ -61,7 +61,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 				-- there can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
 				if (Difficulty ~= "Edit") or (Difficulty=="Edit" and chart:match("#DESCRIPTION:"..regexEncode(StepsDescription))) then
 					-- Find just the notes
-					NoteDataString = chart:match("#NOTES:[\r\n]+([^;]*)\n?$")
+					NoteDataString = chart:match("#NOTES:[\r\n]*([^;]*)\n?$")
 					-- remove possible comments
 					NoteDataString = NoteDataString:gsub("\\[^\r\n]*", "")
 					NoteDataString = NoteDataString:gsub("//[^\r\n]*", "")
