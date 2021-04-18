@@ -444,6 +444,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	-- TODO: microoptimize(?) by counting `NumLRCrossed` explicitly here,
 	-- and maybe even eg `NumConsecutiveFlipped`. test on longass trancemania songs
 	local StepsLR = {}
+	local AnyStepsSinceLastCommitStream = false
 
 	-- bracket jump stuff
 	-- tracks the last arrow(s) (can be plural in the case of brackets themselves)
@@ -569,7 +570,9 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			-- merge the (flip-ambiguous) last-arrow tracking into the source of truth
 			-- TODO(bracket) - do you need to check if the `lastArrow`s are empty, like
 			-- the hs version does? i hypothesize it actually makes no difference.
-			if ns > 0 then
+			-- NB: this can't just be `ns > 0` bc we want to update the trueLastFoot
+			-- even when there were just U/D steps (whereupon StepsLR would be empty).
+			if AnyStepsSinceLastCommitStream then
 				if needFlip then
 					-- LastFoot is a tristate so can't just copy the bool
 					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
@@ -581,6 +584,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 					trueLastArrowR = lastArrowR
 				end
 			end
+			AnyStepsSinceLastCommitStream = false
 			lastArrowL = ""
 			lastArrowR = ""
 		end
@@ -614,6 +618,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 				elseif step == "R" then
 					StepsLR[#StepsLR+1] = LastFoot
 				end
+				AnyStepsSinceLastCommitStream = true
 				-- regardless, record what arrow the foot stepped on (for brackets l8r)
 				if LastFoot then
 					lastArrowR = step
@@ -634,24 +639,34 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 						-- possibly bracketable
 						if isBracketLeft and (not trueLastFoot or trueLastFoot == "R") then
 							-- check for interference from the right foot
+							-- NB: this should be `intersect` in case of eg LU <-> LR
+							-- but we dodge this by taking sub(2)/sub(1,1) down below.
 							if not step:match(trueLastArrowR) then
 								NumBrackets = NumBrackets + 1
+								-- allow subsequent brackets to stream
+								trueLastFoot = "L"
+								LastFoot = false
 								-- this prevents e.g. "LD bracket, DR also bracket"
-								trueLastArrowL = step
+								-- NB: take only the U or D arrow (cf above NB)
+								trueLastArrowL = step:sub(2)
 							else
 								-- right foot is in the way; hafta step w both feet
-								-- NB: i don't think resetting the lastarrows is
-								-- actually necessary here since i think any chart
-								-- where it would matter would already be ambiguous
+								trueLastFoot = nil
+								trueLastArrowL = "L"
+								trueLastArrowR = step:sub(2)
 							end
 						elseif isBracketRight and (not trueLastFoot or trueLastFoot == "L") then
 							-- check for interference from the left foot
+							-- symmetric logic; see comments above
 							if not step:match(trueLastArrowL) then
 								NumBrackets = NumBrackets + 1
-								-- this prevents e.g. "DR bracket, LD also bracket"
-								trueLastArrowR = step
+								trueLastFoot = "R"
+								LastFoot = true
+								trueLastArrowR = step:sub(1,1)
 							else
-								-- (same as above)
+								trueLastFoot = nil
+								trueLastArrowL = step:sub(1,1)
+								trueLastArrowR = "R"
 							end
 						end
 					else
