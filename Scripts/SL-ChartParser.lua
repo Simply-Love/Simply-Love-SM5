@@ -656,13 +656,37 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 						end
 					else
 						-- LR or DU
-						trueLastArrowL = "X"
-						trueLastArrowR = "X"
-						-- TODO(bracket) - decideDUFacing?
+						if step == "DU" then
+							-- past footing influences which way the player can
+							-- comfortably face while jumping DU
+							local leftD  = trueLastArrowL:match("D")
+							local leftU  = trueLastArrowL:match("U")
+							local rightD = trueLastArrowR:match("D")
+							local rightU = trueLastArrowR:match("U")
+							-- the haskell version of this (decideDUFacing) is a
+							-- little more strict, and asserts each foot can't be
+							-- be on both D and U at once, but whatever.
+							if (leftD and not rightD) or (rightU and not leftU) then
+								trueLastArrowL = "D"
+								trueLastArrowR = "U"
+							elseif (leftU and not rightU) or (rightD and not leftD) then
+								trueLastArrowL = "U"
+								trueLastArrowR = "D"
+							else
+								trueLastArrowL = "X"
+								trueLastArrowR = "X"
+							end
+						else
+							-- not going to bother thinking about spin-jumps ><
+							trueLastArrowL = "X"
+							trueLastArrowR = "X"
+						end
+						trueLastFoot = nil
 					end
 				else
 					-- triple/quad - always gotta bracket these
 					NumBrackets = NumBrackets + 1
+					trueLastFoot = nil
 				end
 			end
 		end
