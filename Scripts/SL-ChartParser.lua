@@ -462,8 +462,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	-- TODO(bracket) - figure out what corner cases this is needed for...?
 	-- local justBracketed = false -- used for tiebreaks
 
-	-- TODO(bracket) - make take `tiebreakFoot` arg
-	function CommitStream()
+	function CommitStream(tieBreakFoot)
 		local ns = #StepsLR
 		local nx = 0
 		for _i, step in ipairs(StepsLR) do
@@ -482,7 +481,15 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			-- whereas leaving it as is will footswitch that note. break the tie by
 			-- looking at history to see if the chart is already more jacky or switchy.
 			-- (otoh, the reverse applies if the previous stream was also flipped.)
-			if NumFootswitches > NumJacks then
+			if tieBreakFoot then
+				-- but first, as a higher priority tiebreaker: if this stream is followed
+				-- by a bracketable jump, choose whichever flipness lets us bracket it.
+				if LastFoot then
+					needFlip = (tieBreakFoot == "R")
+				else
+					needFlip = (tieBreakFoot == "L")
+				end
+			elseif NumFootswitches > NumJacks then
 				needFlip = LastFlip -- match flipness of last chunk -> footswitch
 			else
 				needFlip = not LastFlip -- don't match -> jack
@@ -541,10 +548,10 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			end
 			-- recurse for each split half
 			StepsLR = StepsLR1
-			CommitStream()
+			CommitStream(nil)
 			LastRepeatedFoot = nil
 			StepsLR = StepsLR2
-			CommitStream()
+			CommitStream(tieBreakFoot)
 		else
 			-- no heuristic doublestep splittage necessary; update the stats.
 			if needFlip then
@@ -578,6 +585,9 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
 					trueLastArrowL = lastArrowR
 					trueLastArrowR = lastArrowL
+					-- TODO: "if we had to flip a stream right after a bracket jump,
+					-- that'd make it retroactively unbracketable; if so cancel it"
+					-- (...do i even believe this anymore? probs not...)
 				else
 					if LastFoot then trueLastFoot = "R" else trueLastFoot = "L" end
 					trueLastArrowL = lastArrowL
@@ -603,7 +613,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 				-- normal step
 				if LastStep and step == LastStep then
 					-- jack or footswitch
-					CommitStream()
+					CommitStream(nil)
 					LastRepeatedFoot = step
 				end
 
@@ -628,13 +638,21 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			elseif step:len() > 1 then
 				-- jump
 				-- TODO(bracket) - make stream able to continue thru a bracket jump
-				CommitStream()
-				LastStep = nil
-				LastRepeatedFoot = nil
 
 				if step:len() == 2 then
 					local isBracketLeft  = step:match("L[^R]")
 					local isBracketRight = step:match("[^L]R")
+
+					local tieBreakFoot = nil
+					if isBracketLeft then
+						tieBreakFoot = "L"
+					elseif isBracketRight then
+						tieBreakFoot = "R"
+					end
+					CommitStream(tieBreakFoot)
+					LastStep = nil
+					LastRepeatedFoot = nil
+
 					if isBracketLeft or isBracketRight then
 						-- possibly bracketable
 						if isBracketLeft and (not trueLastFoot or trueLastFoot == "R") then
@@ -654,7 +672,9 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 								trueLastFoot = nil
 								trueLastArrowL = "L"
 								trueLastArrowR = step:sub(2)
+								lastArrowR = trueLastArrowR
 							end
+							lastArrowL = trueLastArrowL
 						elseif isBracketRight and (not trueLastFoot or trueLastFoot == "L") then
 							-- check for interference from the left foot
 							-- symmetric logic; see comments above
@@ -667,7 +687,9 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 								trueLastFoot = nil
 								trueLastArrowL = step:sub(1,1)
 								trueLastArrowR = "R"
+								lastArrowL = trueLastArrowL
 							end
+							lastArrowR = trueLastArrowR
 						end
 					else
 						-- LR or DU
@@ -699,6 +721,9 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 						trueLastFoot = nil
 					end
 				else
+					CommitStream()
+					LastStep = nil
+					LastRepeatedFoot = nil
 					-- triple/quad - always gotta bracket these
 					NumBrackets = NumBrackets + 1
 					trueLastFoot = nil
@@ -706,7 +731,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			end
 		end
 	end
-	CommitStream()
+	CommitStream(nil)
 
 	return NumCrossovers, NumFootswitches, NumSideswitches, NumJacks, NumBrackets
 end
