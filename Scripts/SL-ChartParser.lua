@@ -458,6 +458,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	local TrueLastArrowL = "X"
 	local TrueLastArrowR = "X"
 	local TrueLastFoot = nil
+	local JustBracketed = false
 
 	-- TODO(bracket) - figure out what corner cases this is needed for...?
 	-- local justBracketed = false -- used for tiebreaks
@@ -484,7 +485,11 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			if tieBreakFoot then
 				-- but first, as a higher priority tiebreaker: if this stream is followed
 				-- by a bracketable jump, choose whichever flipness lets us bracket it.
-				if LastFoot then
+				if JustBracketed then
+					-- (however, don't get too overzealous -- if also preceded by a
+					-- bracket jump, that forces the footing, so we can't bracket both)
+					needFlip = false
+				elseif LastFoot then
 					needFlip = (tieBreakFoot == "R")
 				else
 					needFlip = (tieBreakFoot == "L")
@@ -597,6 +602,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			AnyStepsSinceLastCommitStream = false
 			LastArrowL = ""
 			LastArrowR = ""
+			JustBracketed = false
 		end
 	end
 
@@ -667,6 +673,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 								-- this prevents e.g. "LD bracket, DR also bracket"
 								-- NB: take only the U or D arrow (cf above NB)
 								TrueLastArrowL = step:sub(2)
+								JustBracketed = true
 							else
 								-- right foot is in the way; hafta step w both feet
 								TrueLastFoot = nil
@@ -683,6 +690,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 								TrueLastFoot = "R"
 								LastFoot = true
 								TrueLastArrowR = step:sub(1,1)
+								JustBracketed = true
 							else
 								TrueLastFoot = nil
 								TrueLastArrowL = step:sub(1,1)
