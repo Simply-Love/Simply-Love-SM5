@@ -450,14 +450,14 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 	-- tracks the last arrow(s) (can be plural in the case of brackets themselves)
 	-- that each of the L and R feet was last on, respectively; however,
 	-- note that this can be flipped while recording a (unflipped?) stream...
-	local lastArrowL = "X"
-	local lastArrowR = "X"
+	local LastArrowL = "X"
+	local LastArrowR = "X"
 	-- ...so these track the true state of what happened (which become known only
 	-- after deciding whether to flip, hence are updated every CommitStream)
 	-- NB: these are "X" not "" b/c we use them in `match()`, and "" shouldn't match
-	local trueLastArrowL = "X"
-	local trueLastArrowR = "X"
-	local trueLastFoot = nil
+	local TrueLastArrowL = "X"
+	local TrueLastArrowR = "X"
+	local TrueLastFoot = nil
 
 	-- TODO(bracket) - figure out what corner cases this is needed for...?
 	-- local justBracketed = false -- used for tiebreaks
@@ -575,28 +575,28 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			LastFlip = needFlip
 
 			-- merge the (flip-ambiguous) last-arrow tracking into the source of truth
-			-- TODO(bracket) - do you need to check if the `lastArrow`s are empty, like
+			-- TODO(bracket) - do you need to check if the `LastArrow`s are empty, like
 			-- the hs version does? i hypothesize it actually makes no difference.
-			-- NB: this can't just be `ns > 0` bc we want to update the trueLastFoot
+			-- NB: this can't just be `ns > 0` bc we want to update the TrueLastFoot
 			-- even when there were just U/D steps (whereupon StepsLR would be empty).
 			if AnyStepsSinceLastCommitStream then
 				if needFlip then
-					-- trueLastFoot is a tristate so can't just copy the bool
-					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
-					trueLastArrowL = lastArrowR
-					trueLastArrowR = lastArrowL
+					-- TrueLastFoot is a tristate so can't just copy the bool
+					if LastFoot then TrueLastFoot = "L" else TrueLastFoot = "R" end
+					TrueLastArrowL = LastArrowR
+					TrueLastArrowR = LastArrowL
 					-- TODO: "if we had to flip a stream right after a bracket jump,
 					-- that'd make it retroactively unbracketable; if so cancel it"
 					-- (...do i even believe this anymore? probs not...)
 				else
-					if LastFoot then trueLastFoot = "R" else trueLastFoot = "L" end
-					trueLastArrowL = lastArrowL
-					trueLastArrowR = lastArrowR
+					if LastFoot then TrueLastFoot = "R" else TrueLastFoot = "L" end
+					TrueLastArrowL = LastArrowL
+					TrueLastArrowR = LastArrowR
 				end
 			end
 			AnyStepsSinceLastCommitStream = false
-			lastArrowL = ""
-			lastArrowR = ""
+			LastArrowL = ""
+			LastArrowR = ""
 		end
 	end
 
@@ -631,9 +631,9 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 				AnyStepsSinceLastCommitStream = true
 				-- regardless, record what arrow the foot stepped on (for brackets l8r)
 				if LastFoot then
-					lastArrowR = step
+					LastArrowR = step
 				else
-					lastArrowL = step
+					LastArrowL = step
 				end
 			elseif step:len() > 1 then
 				-- jump
@@ -655,70 +655,70 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 
 					if isBracketLeft or isBracketRight then
 						-- possibly bracketable
-						if isBracketLeft and (not trueLastFoot or trueLastFoot == "R") then
+						if isBracketLeft and (not TrueLastFoot or TrueLastFoot == "R") then
 							-- check for interference from the right foot
 							-- NB: this should be `intersect` in case of eg LU <-> LR
 							-- but we dodge this by taking sub(2)/sub(1,1) down below.
-							if not step:match(trueLastArrowR) then
+							if not step:match(TrueLastArrowR) then
 								NumBrackets = NumBrackets + 1
 								-- allow subsequent brackets to stream
-								trueLastFoot = "L"
+								TrueLastFoot = "L"
 								LastFoot = false
 								-- this prevents e.g. "LD bracket, DR also bracket"
 								-- NB: take only the U or D arrow (cf above NB)
-								trueLastArrowL = step:sub(2)
+								TrueLastArrowL = step:sub(2)
 							else
 								-- right foot is in the way; hafta step w both feet
-								trueLastFoot = nil
-								trueLastArrowL = "L"
-								trueLastArrowR = step:sub(2)
-								lastArrowR = trueLastArrowR
+								TrueLastFoot = nil
+								TrueLastArrowL = "L"
+								TrueLastArrowR = step:sub(2)
+								LastArrowR = TrueLastArrowR
 							end
-							lastArrowL = trueLastArrowL
-						elseif isBracketRight and (not trueLastFoot or trueLastFoot == "L") then
+							LastArrowL = TrueLastArrowL
+						elseif isBracketRight and (not TrueLastFoot or TrueLastFoot == "L") then
 							-- check for interference from the left foot
 							-- symmetric logic; see comments above
-							if not step:match(trueLastArrowL) then
+							if not step:match(TrueLastArrowL) then
 								NumBrackets = NumBrackets + 1
-								trueLastFoot = "R"
+								TrueLastFoot = "R"
 								LastFoot = true
-								trueLastArrowR = step:sub(1,1)
+								TrueLastArrowR = step:sub(1,1)
 							else
-								trueLastFoot = nil
-								trueLastArrowL = step:sub(1,1)
-								trueLastArrowR = "R"
-								lastArrowL = trueLastArrowL
+								TrueLastFoot = nil
+								TrueLastArrowL = step:sub(1,1)
+								TrueLastArrowR = "R"
+								LastArrowL = TrueLastArrowL
 							end
-							lastArrowR = trueLastArrowR
+							LastArrowR = TrueLastArrowR
 						end
 					else
 						-- LR or DU
 						if step == "DU" then
 							-- past footing influences which way the player can
 							-- comfortably face while jumping DU
-							local leftD  = trueLastArrowL:match("D")
-							local leftU  = trueLastArrowL:match("U")
-							local rightD = trueLastArrowR:match("D")
-							local rightU = trueLastArrowR:match("U")
+							local leftD  = TrueLastArrowL:match("D")
+							local leftU  = TrueLastArrowL:match("U")
+							local rightD = TrueLastArrowR:match("D")
+							local rightU = TrueLastArrowR:match("U")
 							-- the haskell version of this (decideDUFacing) is a
 							-- little more strict, and asserts each foot can't be
 							-- be on both D and U at once, but whatever.
 							if (leftD and not rightD) or (rightU and not leftU) then
-								trueLastArrowL = "D"
-								trueLastArrowR = "U"
+								TrueLastArrowL = "D"
+								TrueLastArrowR = "U"
 							elseif (leftU and not rightU) or (rightD and not leftD) then
-								trueLastArrowL = "U"
-								trueLastArrowR = "D"
+								TrueLastArrowL = "U"
+								TrueLastArrowR = "D"
 							else
-								trueLastArrowL = "X"
-								trueLastArrowR = "X"
+								TrueLastArrowL = "X"
+								TrueLastArrowR = "X"
 							end
 						else
 							-- not going to bother thinking about spin-jumps ><
-							trueLastArrowL = "X"
-							trueLastArrowR = "X"
+							TrueLastArrowL = "X"
+							TrueLastArrowR = "X"
 						end
-						trueLastFoot = nil
+						TrueLastFoot = nil
 					end
 				else
 					CommitStream()
@@ -726,7 +726,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 					LastRepeatedFoot = nil
 					-- triple/quad - always gotta bracket these
 					NumBrackets = NumBrackets + 1
-					trueLastFoot = nil
+					TrueLastFoot = nil
 				end
 			end
 		end
