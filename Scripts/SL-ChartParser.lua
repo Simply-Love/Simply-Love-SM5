@@ -574,7 +574,7 @@ GetSongStatsSIGBOVIKEdition = function(Steps)
 			-- even when there were just U/D steps (whereupon StepsLR would be empty).
 			if AnyStepsSinceLastCommitStream then
 				if needFlip then
-					-- LastFoot is a tristate so can't just copy the bool
+					-- trueLastFoot is a tristate so can't just copy the bool
 					if LastFoot then trueLastFoot = "L" else trueLastFoot = "R" end
 					trueLastArrowL = lastArrowR
 					trueLastArrowR = lastArrowL
