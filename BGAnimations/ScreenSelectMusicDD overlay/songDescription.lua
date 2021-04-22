@@ -69,8 +69,6 @@ af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto( IsUsingWideScreen() and 320 or 311, 48 )
 		self:diffuse(color("#1e282f"))
-
-		if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
 	end
 }
 

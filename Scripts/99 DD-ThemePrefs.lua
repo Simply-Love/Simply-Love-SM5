@@ -69,25 +69,6 @@ SL_CustomPrefs.Get = function()
 			},
 			Values 	= { "none", "single", "versus", "double" }
 		},
-		RainbowMode = {
-			Default = false,
-			Choices = {
-				THEME:GetString("ThemePrefs", "On"),
-				THEME:GetString("ThemePrefs", "Off")
-			},
-			Values 	= { true , false }
-		},
-		-- - - - - - - - - - - - - - - - - - - -
-		-- SimplyLoveColor saves the theme color for the next time
-		-- the StepMania application is started.
-		SimplyLoveColor =
-		{
-			-- a nice pinkish-purple, by default
-			Default = 3,
-			Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
-			Values = { 1,2,3,4,5,6,7,8,9,10,11,12 }
-		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		-- MenuTimer values for various screens
 		ScreenSelectMusicMenuTimer =
@@ -121,14 +102,6 @@ SL_CustomPrefs.Get = function()
 			Values = range(15, 450, 15),
 		},
 
-		-- - - - - - - - - - - - - - - - - - - -
-		-- Enable/Disable Certain Screens
-		AllowScreenSelectColor =
-		{
-			Default = true,
-			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
-		},
 		AllowScreenEvalSummary =
 		{
 			Default = true,
@@ -154,15 +127,6 @@ SL_CustomPrefs.Get = function()
 			Default = false,
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values	= { true, false }
-		},
-
-		-- - - - - - - - - - - - - - - - - - - -
-		-- this was previously titled "The Rabbit Hole"
-		-- https://github.com/48productions/Simply-Potato-SM5/pull/4#issuecomment-587281943
-		HereInTheDarkness = {
-			Default = 0,
-			Choices = range(0, 22, 1),
-			Values = range(0, 22, 1),
 		},
 	}
 end

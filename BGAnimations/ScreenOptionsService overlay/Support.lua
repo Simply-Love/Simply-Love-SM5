@@ -21,10 +21,6 @@ a.BeginCommand=function(self)
 
 	-- Aside: the engine does not broadcast anything when SM5's language is changed via ConfOption
 	--        and the engine does not expose any methods for setting the language directly using Lua.
-
-	-- Broadcast a message for "./BGAnimations/_shared background/" to listen for in case VisualTheme has changed.
-	-- This compensates for ThemePrefsRows' current lack of support for ExportOnChange() and SaveSelections().
-	MESSAGEMAN:Broadcast("BackgroundImageChanged")
 end
 
 -- OffCommand() will be called if the player tries to leave the operator menu by choosing an OptionRow

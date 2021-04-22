@@ -18,7 +18,6 @@ local t = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(160,_screen.h):xy(80, _screen.h/2):diffuse(color("#00000099"))
-			if ThemePrefs.Get("RainbowMode") then self:diffuse(color("#000000dd")) end
 		end,
 	},
 
@@ -26,7 +25,6 @@ local t = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(160,_screen.h):xy(_screen.w-80, _screen.h/2):diffuse(color("#00000099"))
-			if ThemePrefs.Get("RainbowMode") then self:diffuse(color("#000000dd")) end
 		end,
 	}
 }

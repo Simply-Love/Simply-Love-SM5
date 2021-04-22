@@ -22,7 +22,7 @@ t[#t+1] = Def.Quad {
 	OnCommand=function(self)
 		self:zoomto(title_bg_width, row_height)
 			:halign(0):x(0)
-			:diffuse(Color.Black):diffusealpha( DarkUI() and 0.75 or 0.25)
+			:diffuse(Color.Black):diffusealpha(0.25)
 	end
 }
 

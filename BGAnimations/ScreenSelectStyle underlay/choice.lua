@@ -47,8 +47,6 @@ local af = Def.ActorFrame{
 		InitCommand=function(self)
 			self:shadowlength(1):y(37):zoom(0.5)
 		end,
-		GainFocusCommand=function(self) if ThemePrefs.Get("VisualTheme")=="Gay" then self:rainbowscroll(true) end end,
-		LoseFocusCommand=function(self) if ThemePrefs.Get("VisualTheme")=="Gay" then self:rainbowscroll(false) end end,
 	}
 }
 

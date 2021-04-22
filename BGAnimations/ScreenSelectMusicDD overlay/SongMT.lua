@@ -197,7 +197,7 @@ local song_mt = {
 				self.container:x(_screen.cx)
 			end
 			
-			--change the Grade sprite and pass box
+			--change the Grade sprite
 			--TODO makes this not display multiple times for the same song
 			--[[for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 				local pn = ToEnumShortString(player)

@@ -22,11 +22,6 @@ return {
 				end,
 			}
 
-			if ThemePrefs.Get("RainbowMode") then
-				txt.GainFocusCommand=function(subself) subself:diffusealpha(1) end
-				txt.LoseFocusCommand=function(subself) subself:diffusealpha(0.8) end
-			end
-
 			af[#af+1] = txt
 
 			return af

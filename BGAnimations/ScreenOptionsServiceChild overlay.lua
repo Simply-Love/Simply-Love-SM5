@@ -24,7 +24,7 @@ end
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:zoomto(bg_width, bg_height)
-		self:diffuse(DarkUI() and color("#666666") or color("#333333"))
+		self:diffuse(color("#333333"))
 	end,
 }
 

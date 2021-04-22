@@ -224,7 +224,6 @@ local PruneSongsFromGroup = function(group)
 			if passesFilters then
 				songs[#songs+1] = song
 			end
-			
 		end
 		-- we need to retain the index of the current song so we can set the SongWheel to start on it
 		if current_song == song then 
@@ -280,6 +279,22 @@ local GetGroups = function()
 		return SONGMAN:GetSongGroupNames()
 	end
 end
+
+
+--- This doesn't do shit yet I wanna fucking die man
+---------------------------------------------------------------------------
+--[[local SortSongsInGroup = function (self)
+	local songs = {}
+	for i,song in ipairs(SONGMAN:PruneSongsFromGroup(groups)) do
+		local songtitle = song:GetMainTitle()
+		for k in pairs(songs) do
+			table.sort(songs, function(k1,k2)
+				return k1.songtitle < k2.songtitle
+			end)
+		end
+	end
+end--]]
+
 
 ---------------------------------------------------------------------------
 

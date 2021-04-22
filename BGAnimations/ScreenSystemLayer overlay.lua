@@ -33,9 +33,6 @@ local function CreditsText( player )
 					--        I am not human^
 					--        today, but there's always hope
 					--        I'll see tomorrow
-
-					-- dark text for RainbowMode
-					if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
 				end
 			end
 

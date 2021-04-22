@@ -98,7 +98,7 @@ local GlobalDefaults = {
 
 		-- These values outside initialize() won't be reset each game cycle,
 		-- but are rather manipulated as needed by the theme.
-		ActiveColorIndex = ThemePrefs.Get("SimplyLoveColor") or 1,
+		ActiveColorIndex = 3,
 	}
 }
 

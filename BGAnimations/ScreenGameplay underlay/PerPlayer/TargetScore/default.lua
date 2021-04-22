@@ -429,17 +429,17 @@ if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
 			},
 
 			-- pretty explody things for grade changes
-			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/".."Arrows_splode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(0.9):linear(0.6):rotationz(0):zoom(0.5):diffusealpha(0):queuecommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(0.9):linear(0.6):rotationz(0):zoom(0.25):diffusealpha(0):queuecommand("Init") end,
 			},
-			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn splode"))..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/".."Arrows_splode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationy(180):rotationz(-10):diffusealpha(0):zoom(0.2):diffusealpha(0.8):decelerate(0.6):rotationz(0):zoom(0.7):diffusealpha(0):queuecommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationy(180):rotationz(-10):diffusealpha(0):zoom(0.2):diffusealpha(0.8):decelerate(0.6):rotationz(0):zoom(0.35):diffusealpha(0):queuecommand("Init") end,
 			},
-			LoadActor(THEME:GetPathG("","_VisualStyles/"..ThemePrefs.Get("VisualTheme").."/GameplayIn minisplode"))..{
+			LoadActor(THEME:GetPathB("ScreenGameplay","in/".."Arrows_minisplode"))..{
 				InitCommand=function(self) self:visible(false):diffusealpha(0) end,
-				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(1):decelerate(0.8):rotationz(0):zoom(0.4):diffusealpha(0):queuecommand("Init") end,
+				GradeChangedCommand=function(self) self:visible(true):y(getYFromGradeEnum(currentGrade)):diffuse(GetCurrentColor(true)):rotationz(10):diffusealpha(0):zoom(0):diffusealpha(1):decelerate(0.8):rotationz(0):zoom(0.2):diffusealpha(0):queuecommand("Init") end,
 			},
 
 			-- white graph border

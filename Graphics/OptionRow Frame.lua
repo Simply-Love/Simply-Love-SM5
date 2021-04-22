@@ -20,7 +20,7 @@ t[#t+1] = Def.Quad {
 	OnCommand=function(self)
 		self:horizalign(left):x(padding)
 		self:setsize(115, 30):diffuse(Color.Black)
-		self:diffusealpha(DarkUI() and 0.8 or 0.25)
+		self:diffusealpha(0.25)
 	end
 }
 

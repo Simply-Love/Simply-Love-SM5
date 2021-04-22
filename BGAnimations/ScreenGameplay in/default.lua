@@ -5,7 +5,6 @@ local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsL
 local text = ""
 local SongNumberInCourse = 0
 local SongsInCourse
-local style = ThemePrefs.Get("VisualTheme")
 
 if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()

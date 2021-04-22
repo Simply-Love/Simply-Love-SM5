@@ -12,7 +12,7 @@ local layouts = {
 return function(color_used, color_unused)
 
 	color_used   = color_used   or {1, 1, 1, 1.0}
-	color_unused = color_unused or (DarkUI() and {0.25,0.25,0.25,1} or {1, 1, 1, 0.3})
+	color_unused = color_unused or ({1, 1, 1, 0.3})
 
 	local layout = layouts[_game] or layouts.dance
 
