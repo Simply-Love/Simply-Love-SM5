@@ -1,7 +1,11 @@
 if not GAMESTATE:IsCourseMode() then
 	local sTable = GAMESTATE:GetCurrentSong():GetStepsByStepsType( "StepsType_Dance_Single" );
 	local DDStats = LoadActor('./ScreenSelectMusicDD overlay/DDStats.lua')
-
+	local nsj = GAMESTATE:GetNumSidesJoined()
+	
+	Player1MinesAvoided = 0
+	Player2MinesAvoided = 0
+	
 	for playerIndex=0,1 do
 		if GAMESTATE:IsPlayerEnabled(playerIndex) then
 			local difficulty = GAMESTATE:GetCurrentSteps(playerIndex):GetDifficulty()
@@ -12,6 +16,15 @@ if not GAMESTATE:IsCourseMode() then
 		local song = GAMESTATE:GetCurrentSong()
 		local PlayerOneChart = GAMESTATE:GetCurrentSteps(0)
 		local PlayerTwoChart = GAMESTATE:GetCurrentSteps(1)
+		local TotalMinesP1
+		local TotalMinesP2
+		if GAMESTATE:IsPlayerEnabled(0) then
+			TotalMinesP1 = PlayerOneChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
+		elseif GAMESTATE:IsPlayerEnabled(1) then
+			TotalMinesP2 = PlayerTwoChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
+		end
+		
+		
 		if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 			DDStats.SetStat(PLAYER_1, 'LastSong', song:GetSongDir())
 			DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())
@@ -41,8 +54,39 @@ if not GAMESTATE:IsCourseMode() then
 							local curMaxPoints = stats:GetCurrentPossibleDancePoints()
 							local totalPoints = stats:GetPossibleDancePoints()
 							
-							if curMaxPoints ~= totalPoints then
-								numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+							--- this is stupid but #stepmania-moment
+							local statsP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P1")
+							local statsP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P2")
+							local MinesHitP1 = statsP1:GetTapNoteScores('TapNoteScore_HitMine')
+							local MinesHitP2 = statsP2:GetTapNoteScores('TapNoteScore_HitMine')
+							local MinesPassedByP1 = MinesHitP1 + Player1MinesAvoided
+							local MinesPassedByP2 = MinesHitP2 + Player2MinesAvoided
+							
+							--- TODO: On Versus it will not exit early. Why????????
+							if nsj == 2 then
+								if curMaxPoints ~= totalPoints then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
+								if MinesPassedByP1 ~= TotalMinesP1 then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
+								if MinesPassedByP2 ~= TotalMinesP2 then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
+							elseif GAMESTATE:IsPlayerEnabled(0) then
+								if curMaxPoints ~= totalPoints then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
+								if MinesPassedByP1 ~= TotalMinesP1 then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
+							elseif GAMESTATE:IsPlayerEnabled(1) then
+								if curMaxPoints ~= totalPoints then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
+								if MinesPassedByP2 ~= TotalMinesP2 then
+									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
+								end
 							end
 						end
 					end

@@ -1,5 +1,8 @@
 local player = ...
 
+Player1MinesAvoided = 0
+Player2MinesAvoided = 0
+
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
@@ -104,6 +107,12 @@ for index, RCType in ipairs(RadarCategories) do
 			if RCType=="Mines" and params.TapNoteScore == "TapNoteScore_AvoidMine" then
 				RadarCategoryJudgments.Mines = RadarCategoryJudgments.Mines + 1
 				self:settext( string.format("%03d", RadarCategoryJudgments.Mines) )
+				if player == PLAYER_1 then
+					Player1MinesAvoided = Player1MinesAvoided + 1
+				elseif player == PLAYER_2 then
+					Player2MinesAvoided = Player2MinesAvoided + 1
+				end
+				
 
 			elseif RCType=="Holds" and params.TapNote and params.TapNote:GetTapNoteSubType() == "TapNoteSubType_Hold" then
 				RadarCategoryJudgments.Holds = RadarCategoryJudgments.Holds + 1
