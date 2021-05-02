@@ -37,7 +37,7 @@ local params_for_input = { GroupWheel=GroupWheel, SongWheel=SongWheel, SortWheel
 local Input = LoadActor( "./Input.lua", params_for_input )
 
 -- metatables
-local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col,Input,setup.PruneSongsFromGroup})
+local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col,Input,setup.PruneSongsFromGroup,Groups[group_index]})
 local song_mt = LoadActor("./SongMT.lua", {SongWheel,TransitionTime,row,col})
 
 ---------------------------------------------------------------------------
@@ -45,7 +45,7 @@ local song_mt = LoadActor("./SongMT.lua", {SongWheel,TransitionTime,row,col})
 local CloseCurrentFolder = function()
 	-- if focus is already on the GroupWheel, we don't need to do anything more
 	if Input.WheelWithFocus == GroupWheel then 
-	NameOfGroup = GAMESTATE:GetCurrentSong():GetGroupName()
+	NameOfGroup = ""
 	return end
 
 	GAMESTATE:SetCurrentSong(nil)

@@ -14,6 +14,7 @@ local Players = GAMESTATE:GetHumanPlayers()
 local ActiveOptionRow
 
 local didSelectSong = false
+local PressStartForOptions = false
 isSortMenuVisible = false
 SongSearchSSMDD = false
 SongSearchAnswer = ""
@@ -56,6 +57,7 @@ local SwitchInputFocus = function(button)
 
 		elseif t.WheelWithFocus == SongWheel then
 			didSelectSong = true
+			PressStartForOptions = true
 			SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 			MESSAGEMAN:Broadcast('ShowOptionsJawn')
 		end
@@ -71,7 +73,7 @@ end
 local CloseCurrentFolder = function()
 	-- if focus is already on the GroupWheel, we don't need to do anything more
 	if t.WheelWithFocus == GroupWheel then 
-	NameOfGroup = GAMESTATE:GetCurrentSong():GetGroupName()
+	NameOfGroup = ""
 	return end
 
 	-- otherwise...
@@ -112,6 +114,7 @@ t.Handler = function(event)
 		return false
 	end
 	
+
 	if isSortMenuVisible == false then
 		if event.type ~= "InputEventType_Release" then
 			if event.GameButton == "Select" then
@@ -287,6 +290,7 @@ t.Handler = function(event)
 		if event.GameButton == "Back" then
 			if didSelectSong then
 				didSelectSong = false
+				PressStartForOptions = false
 				MESSAGEMAN:Broadcast('HideOptionsJawn')
 				return false
 			end
@@ -296,12 +300,14 @@ t.Handler = function(event)
 		--------------------------------------------------------------
 		
 		if event.GameButton == "Select" then
-			if nsj ~= 2 then
-				isSortMenuVisible = true
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
-				stop_music()
-				MESSAGEMAN:Broadcast("ToggleSortMenu")
-			else end
+			if PressStartForOptions == false then
+				if nsj ~= 2 then
+					isSortMenuVisible = true
+					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
+					stop_music()
+					MESSAGEMAN:Broadcast("ToggleSortMenu")
+				else end
+			end
 		end
 		UpdateGroupWheelMessageCommand = function(self)
 			t.WheelWithFocus:scroll_by_amount(1)

@@ -9,8 +9,6 @@ local NoJacketTexture = nil
 
 local Subtitle
 
-NameOfGroup = GAMESTATE:GetCurrentSong():GetGroupName()
-
 local song_mt = {
 	__index = {
 		create_actors = function(self, name)
@@ -241,7 +239,6 @@ local song_mt = {
 				self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):horizalign(center):valign(0.5):x(0)
 				self.QuadColor:diffuse(color("#4c565d"))
 				self.subtitle_bmt:settext("")
-
 			else
 				-- we are passed in a Song object as info
 				self.song = song

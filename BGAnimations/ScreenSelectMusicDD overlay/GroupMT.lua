@@ -7,6 +7,7 @@ local row = args[5]
 local col = args[6]
 local Input = args[7]
 local PruneSongsFromGroup = args[8]
+local starting_group = args[9]
 
 local max_chars = 64
 
@@ -14,7 +15,6 @@ local switch_to_songs = function(group_name,event)
 	local songs, index = PruneSongsFromGroup(group_name)
 	songs[#songs+1] = "CloseThisFolder"
 	SongWheel:set_info_set(songs, index)
-	
 end
 
 local switch_to_songs_from_group = function(group_name,event)
@@ -49,7 +49,6 @@ local item_mt = {
 							-- position this folder in the header
 							subself:zoom(0)
 
-							local starting_group = GAMESTATE:GetCurrentSong():GetGroupName()
 							switch_to_songs(starting_group)
 							MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 							MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=starting_group})

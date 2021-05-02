@@ -170,13 +170,64 @@ function GetUpperLengthFilter()
 	return tonumber(value)
 end
 
+----- MAIN SORT PROFILE PREFERNCE ----- 
+local function GetMainSortPreference()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'MainSortPreference')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'MainSortPreference')
+	end
+
+	if value == nil then
+		value = 1
+	end
+	
+	MainSortIndex = tonumber(value)
+
+	return tonumber(value)
+end
+
+----- SUB SORT PROFILE PREFERNCE -----
+local function GetSubSortPreference()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'SubSortPreference')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'SubSortPreference')
+	end
+
+	if value == nil then
+		value = 2
+	end
+	
+	SubSortIndex = tonumber(value)
+
+	return tonumber(value)
+end
+
+
 local PruneSongsFromGroup = function(group)
+	local group_songs
 	local songs = {}
 	local current_song = GAMESTATE:GetCurrentSong()
-	local index = 1
+
+	if GetMainSortPreference() == 2 then
+		group_songs = {}
+
+		for song in ivalues(SONGMAN:GetAllSongs()) do
+			local is_a = song:GetDisplayMainTitle():lower():sub(1,1) == 'a'
+			local is_yo = group == 'A'
+			if is_a == is_yo then
+				group_songs[#group_songs+1] = song
+			end
+		end
+	else
+		group_songs = SONGMAN:GetSongsInGroup(group)
+	end
 
 	-- prune out songs that don't have valid steps or fit the filters
-	for i,song in ipairs(SONGMAN:GetSongsInGroup(group)) do
+	for i,song in ipairs(group_songs) do
 		-- this should be guaranteed by this point, but better safe than segfault
 		
 		if song:HasStepsType(steps_type) then
@@ -225,10 +276,58 @@ local PruneSongsFromGroup = function(group)
 				songs[#songs+1] = song
 			end
 		end
-		-- we need to retain the index of the current song so we can set the SongWheel to start on it
-		if current_song == song then 
-			index = #songs
-		else end
+	end
+	
+	--[[
+	"GROUP",
+	"TITLE",
+	"ARTIST",
+	"LENGTH",
+	"BPM",
+	"# OF STEPS",
+	"DIFFICULTY",
+	]]--
+
+	local function GetHighestDifficulty(song)
+		local difficulty = 0
+		for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
+			difficulty = math.max(difficulty, steps:GetMeter())
+		end
+		return difficulty
+	end
+
+	local function GetHighestStepCount(song)
+		local count = 0
+		for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
+			count = math.max(count, steps:GetRadarValues(PLAYER_1):GetValue('RadarCategory_TapsAndHolds'))
+		end
+		return count
+	end
+
+	local sort_funcs = {
+		function(s) return s:GetGroupName() end,
+		function(s) return s:GetDisplayMainTitle():lower() end,
+		function(s) return s:GetDisplayArtist():lower() end,
+		function(s) return s:MusicLengthSeconds() end,
+		function(s) return s:GetDisplayBpms()[2] end,
+		GetHighestStepCount,
+		GetHighestDifficulty,
+	}
+
+	local sort_func = sort_funcs[GetSubSortPreference()]
+
+	table.sort(songs, function(a, b)
+		return sort_func(a) < sort_func(b)
+	end)
+
+	-- we need to retain the index of the current song so we can set the SongWheel to start on it
+	local index = 1
+	for i, song in ipairs(songs) do
+		if current_song == song then
+			index = i
+			NameOfGroup = group
+			break
+		end
 	end
 
 	return songs, index
@@ -252,6 +351,10 @@ function GetGroovestatsFilter()
 end
 
 local GetGroups = function()
+	if GetMainSortPreference() == 2 then
+		return {'A', 'Not A'}
+	end
+
 	if GetGroovestatsFilter() == 'Yes' then
 		local path = THEME:GetCurrentThemeDirectory() .. "Other/Groovestats-Groups.txt"
 		local preliminary_groups = GetFileContents(path)
@@ -279,21 +382,6 @@ local GetGroups = function()
 		return SONGMAN:GetSongGroupNames()
 	end
 end
-
-
---- This doesn't do shit yet I wanna fucking die man
----------------------------------------------------------------------------
---[[local SortSongsInGroup = function (self)
-	local songs = {}
-	for i,song in ipairs(SONGMAN:PruneSongsFromGroup(groups)) do
-		local songtitle = song:GetMainTitle()
-		for k in pairs(songs) do
-			table.sort(songs, function(k1,k2)
-				return k1.songtitle < k2.songtitle
-			end)
-		end
-	end
-end--]]
 
 
 ---------------------------------------------------------------------------
@@ -337,27 +425,21 @@ end
 
 local PruneGroups = function(_groups)
 	local groups = {}
-	local info = {}
-	
+
 	for group in ivalues( _groups ) do
 		local group_has_been_added = false
 		local songs = PruneSongsFromGroup(group)
-		info[group] = {}
-		info[group].num_songs = #songs
 		
-		for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
-			--- If a pack has no songs in it after filtering don't show it, otherwise carry on.
-			if #songs ~= 0 then
-				if song:HasStepsType(steps_type) then
+		for song in ivalues(songs) do
+			if song:HasStepsType(steps_type) then
 
-					for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-							groups[#groups+1] = group
-							group_has_been_added = true
-							break
-					end
+				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+						groups[#groups+1] = group
+						group_has_been_added = true
+						break
 				end
-				if group_has_been_added then break end
-			else end
+			end
+			if group_has_been_added then break end
 		end
 	end
 	return groups
@@ -481,11 +563,7 @@ local group_index = 1
 local groups = GetGroups()
 -- prune the list of potential groups down to valid groups
 
-if GetGroovestatsFilter() == 'No' then
-	groups = PruneGroups(SONGMAN:GetSongGroupNames())
-elseif GetGroovestatsFilter() == 'Yes' then
-	groups = PruneGroups(groups)
-end
+groups = PruneGroups(groups)
 
 -- If there are STILL no valid groups, we aren't going to find any.
 -- return nil, which default.lua will interpret to mean the
@@ -502,7 +580,7 @@ GAMESTATE:SetCurrentSong(current_song)
 
 --SCREENMAN:SystemMessage(tostring(GAMESTATE:GetCurrentSong()))
 
-group_index = FindInTable(current_song:GetGroupName(), groups) or 1
+group_index = FindInTable(NameOfGroup, groups) or 1
 
 return {
 	steps_type=steps_type,
