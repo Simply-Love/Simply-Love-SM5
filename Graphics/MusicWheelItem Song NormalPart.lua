@@ -4,7 +4,7 @@ local af = LoadActor("./MusicWheelItem Course NormalPart.lua")
 
 local stepstype = GAMESTATE:GetCurrentStyle():GetStepsType()
 
--- using a png in a Sprite ties the visual to a specific rasterized font (currently Miso),
+-- using a png in a Sprite ties the visual to a specific rasterized font (currently Miso Light),
 -- but Sprites are cheaper than BitmapTexts, so we should use them where dynamic text is not needed
 af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathG("", "Has Edit (doubleres).png"),

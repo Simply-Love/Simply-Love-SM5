@@ -1,0 +1,15 @@
+The FAQ at http://martennettelbladt.se/miso/ states:
+
+---
+Q: Can I use Miso for an App?
+
+A: Yes, but you’ll need an app license.
+---
+
+It links to: https://www.fontspring.com/fonts/marten-nettelbladt/miso
+
+quietly-turning purchased a "25000 Users Appplication License" for Miso Light
+for the Simply-Love-SM5 project on 2 May 2021.
+
+License Assignee attributed to:
+github.com/Simply-Love/
