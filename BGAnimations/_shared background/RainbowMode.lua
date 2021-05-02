@@ -14,11 +14,14 @@ local delay = 0
 
 local af1 = Def.ActorFrame{
 	InitCommand=function(self)
-		self:visible( ThemePrefs.Get("RainbowMode") )
+		local style = ThemePrefs.Get("VisualStyle")
+		self:visible(ThemePrefs.Get("RainbowMode") and style ~= "SRPG5")
 	end,
 	OnCommand=function(self) self:Center():bob():effectmagnitude(0,50,0):effectperiod(8) end,
-	BackgroundImageChangedMessageCommand=function(self)
-		if ThemePrefs.Get("RainbowMode") then
+	VisualStyleSelectedMessageCommand=function(self)
+		local style = ThemePrefs.Get("VisualStyle")
+
+		if ThemePrefs.Get("RainbowMode") and style ~= "SRPG5" then
 			self:visible(true):linear(0.6):diffusealpha(1)
 		else
 			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
@@ -35,7 +38,7 @@ local af2 = Def.ActorFrame{
 		delay = 0.7
 		self:bob():effectmagnitude(0,0,50):effectperiod(12)
 	end,
-	BackgroundImageChangedMessageCommand=function(self)
+	VisualStyleSelectedMessageCommand=function(self)
 		if ThemePrefs.Get("RainbowMode") then
 			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualStyle") .. "/SharedBackground.png")
 			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)

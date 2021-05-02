@@ -37,7 +37,7 @@ for i=1,7 do
 
 	-- desaturated SM5 logo
 	arrow[#arrow+1] = LoadActor("logo.png")..{
-		InitCommand=function(self) self:zoom(0.1):diffuse(GetHexColor(slc-i-3, true)) end,
+		InitCommand=function(self) self:zoom(0.1):diffuse(GetHexColor(slc-i-4, true)) end,
 	}
 
 	-- only add Thonk asset if needed

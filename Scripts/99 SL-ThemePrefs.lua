@@ -74,8 +74,8 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = "Hearts",
 			 -- emojis are our lingua franca for the 21st century
-			Choices = { "♡", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔" },
-			Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk" },
+			Choices = { "♡", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔", "🗡" },
+			Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk", "SRPG5" },
 		},
 		RainbowMode = {
 			Default = false,
@@ -193,6 +193,7 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values  = { true, false }
 		},
+
 		-- - - - - - - - - - - - - - - - - - - -
 		-- Casual GameMode Settings
 		CasualMaxMeter = {
@@ -216,7 +217,13 @@ SL_CustomPrefs.Get = function()
 			Default = 0,
 			Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound") },
 			Values  = { 0, 1, 2 }
-		}
+		},
+
+		-- - - - - - - - - - - - - - - - - - - -
+		LastActiveEvent =
+		{
+			Default = "",
+		},
 	}
 end
 

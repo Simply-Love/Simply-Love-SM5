@@ -239,13 +239,25 @@ local af = Def.ActorFrame {
 
 af[#af+1] = LoadActor("./RpgOverlay.lua")
 
+
+local textColor = Color.White
+local shadowLength = 0
+if ThemePrefs.Get("RainbowMode") then
+	textColor = Color.Black
+end
+if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+	textColor = color(SL.SRPG5.TextColor)
+	shadowLength = 0.4
+end
+
 af[#af+1] = LoadFont("Miso/_miso").. {
 	Name="P1SubmitText",
 	Text="",
 	Condition=GAMESTATE:IsSideJoined(PLAYER_1),
 	InitCommand=function(self)
 		self:xy(_screen.w * 0.25, _screen.h - 15)
-		self:diffuse(Color.White)
+		self:diffuse(textColor)
+		self:shadowlength(shadowLength)
 		self:zoom(0.8)
 		self:visible(GAMESTATE:IsSideJoined(PLAYER_1))
 	end,
@@ -268,7 +280,8 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	Text="",
 	InitCommand=function(self)
 		self:xy(_screen.w * 0.75, _screen.h - 15)
-		self:diffuse(Color.White)
+		self:diffuse(textColor)
+		self:shadowlength(shadowLength)
 		self:zoom(0.8)
 		self:visible(GAMESTATE:IsSideJoined(PLAYER_2))
 	end,

@@ -12,6 +12,7 @@ local function CreditsText( player )
 			self:name("Credits" .. PlayerNumberToString(player))
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
 		end,
+		VisualStyleSelectedMessageCommand=function(self) self:playcommand("UpdateVisible") end,
 		UpdateTextCommand=function(self)
 			-- this feels like a holdover from SM3.9 that just never got updated
 			local str = ScreenSystemLayerHelpers.GetCreditsMessage(player)
@@ -21,12 +22,18 @@ local function CreditsText( player )
 			local screen = SCREENMAN:GetTopScreen()
 			local bShow = true
 
-			self:diffuse(Color.White)
+			local textColor = Color.White
+			local shadowLength = 0
 
 			if screen then
 				bShow = THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" )
 
-				if (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
+				if screen:GetName() == "ScreenTitleMenu" then
+					if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+						textColor = color(SL.SRPG5.TextColor)
+						shadowLength = 0.4
+					end
+				elseif (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
 					-- ignore ShowCreditDisplay metric for ScreenEval
 					-- only show this BitmapText actor on Evaluation if the player is joined
 					bShow = GAMESTATE:IsHumanPlayer(player)
@@ -35,11 +42,19 @@ local function CreditsText( player )
 					--        I'll see tomorrow
 
 					-- dark text for RainbowMode
-					if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
+					if ThemePrefs.Get("RainbowMode") then
+						textColor = Color.Black
+					end
+					if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+						textColor = color(SL.SRPG5.TextColor)
+						shadowLength = 0.4
+					end
 				end
 			end
 
 			self:visible( bShow )
+			self:diffuse(textColor)
+			self:shadowlength(shadowLength)
 		end
 	}
 end
@@ -105,9 +120,9 @@ t[#t+1] = LoadFont("Common Footer")..{
 	ScreenChangedMessageCommand=function(self) self:playcommand("Refresh") end,
 	CoinModeChangedMessageCommand=function(self) self:playcommand("Refresh") end,
 	CoinsChangedMessageCommand=function(self) self:playcommand("Refresh") end,
+	VisualStyleSelectedMessageCommand=function(self) self:playcommand("Refresh") end,
 
 	RefreshCommand=function(self)
-
 		local screen = SCREENMAN:GetTopScreen()
 
 		-- if this screen's Metric for ShowCreditDisplay=false, then hide this BitmapText actor
@@ -147,6 +162,14 @@ t[#t+1] = LoadFont("Common Footer")..{
 		elseif GAMESTATE:GetCoinMode() == "CoinMode_Home" then
 			self:settext('')
 		end
+
+		local textColor = Color.White
+		if screen ~= nil and screen:GetName() == "ScreenTitleMenu" then
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				textColor = color(SL.SRPG5.TextColor)
+			end
+		end
+		self:diffuse(textColor)
 	end
 }
 
@@ -259,14 +282,16 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 		SL.GrooveStats.Leaderboard = false
 		SL.GrooveStats.AutoSubmit = false
 		groovestats:settext("❌ GrooveStats")
+
+		DiffuseEmojis(service1:ClearAttributes())
 		return
 	end
 
 	local data = res["data"]
 	if data == nil then return end
 
-	if data["servicesAllowed"] ~= nil then
-		local services = data["servicesAllowed"]
+	local services = data["servicesAllowed"]
+	if services ~= nil then
 		local serviceCount = 1
 
 		if services["playerScores"] ~= nil then
@@ -303,6 +328,20 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 		end
 	end
 
+	local events = data["activeEvents"]
+	local easter_eggs = PREFSMAN:GetPreference("EasterEggs")
+	local game = GAMESTATE:GetCurrentGame():GetName()
+	if events ~= nil and easter_eggs and game == "dance" then
+		local last_active_event = ThemePrefs.Get("LastActiveEvent")
+
+		for event in ivalues(events) do
+			if event["shortName"] == "SRPG5" and last_active_event ~= "SRPG5" then
+				SL.SRPG5:ActivateVisualStyle()
+				break
+			end
+		end
+	end
+
 	-- All services are enabled, display a green check.
 	if SL.GrooveStats.GetScores and SL.GrooveStats.Leaderboard and SL.GrooveStats.AutoSubmit then
 		groovestats:settext("✔ GrooveStats")
@@ -315,12 +354,29 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 		service3:visible(false)
 	-- Some combination of the two, we display a caution symbol.
 	else
-		groovestats:settext("⚠️ GrooveStats")
+		groovestats:settext("⚠ GrooveStats")
 	end
+
+	DiffuseEmojis(groovestats:ClearAttributes())
+	DiffuseEmojis(service1:ClearAttributes())
+	DiffuseEmojis(service2:ClearAttributes())
+	DiffuseEmojis(service3:ClearAttributes())
 
 end
 
-local TextColor = (ThemePrefs.Get("RainbowMode") and (not HolidayCheer()) and Color.Black) or Color.White
+function DiffuseText(bmt)
+	local textColor = Color.White
+	local shadowLength = 0
+	if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
+		textColor = Color.Black
+	end
+	if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+		textColor = color(SL.SRPG5.TextColor)
+		shadowLength = 0.4
+	end
+
+	bmt:diffuse(textColor):shadowlength(shadowLength)
+end
 
 t[#t+1] = Def.ActorFrame{
 	Name="GrooveStatsInfo",
@@ -345,28 +401,44 @@ t[#t+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Name="GrooveStats",
 		Text=" ... GrooveStats",
-		InitCommand=function(self) self:diffuse(TextColor):horizalign(left) end,
+		InitCommand=function(self)
+			self:horizalign(left)
+			DiffuseText(self)
+		end,
+		VisualStyleSelectedMessageCommand=function(self) DiffuseText(self) end,
 		ResetCommand=function(self) self:settext(" ... GrooveStats") end
 	},
 
 	LoadFont("Common Normal")..{
 		Name="Service1",
 		Text="",
-		InitCommand=function(self) self:diffuse(TextColor):visible(true):addy(18):horizalign(left) end,
+		InitCommand=function(self)
+			self:visible(true):addy(18):horizalign(left)
+			DiffuseText(self)
+		end,
+		VisualStyleSelectedMessageCommand=function(self) DiffuseText(self) end,
 		ResetCommand=function(self) self:settext("") end
 	},
 
 	LoadFont("Common Normal")..{
 		Name="Service2",
 		Text="",
-		InitCommand=function(self) self:diffuse(TextColor):visible(true):addy(36):horizalign(left) end,
+		InitCommand=function(self)
+			self:visible(true):addy(36):horizalign(left)
+			DiffuseText(self)
+		end,
+		VisualStyleSelectedMessageCommand=function(self) DiffuseText(self) end,
 		ResetCommand=function(self) self:settext("") end
 	},
 
 	LoadFont("Common Normal")..{
 		Name="Service3",
 		Text="",
-		InitCommand=function(self) self:diffuse(TextColor):visible(true):addy(54):horizalign(left) end,
+		InitCommand=function(self)
+			self:visible(true):addy(54):horizalign(left)
+			DiffuseText(self)
+		end,
+		VisualStyleSelectedMessageCommand=function(self) DiffuseText(self) end,
 		ResetCommand=function(self) self:settext("") end
 	},
 

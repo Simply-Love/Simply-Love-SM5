@@ -35,7 +35,7 @@ a.BeginCommand=function(self)
 
 	-- Broadcast a message for "./BGAnimations/_shared background/" to listen for in case VisualStyle has changed.
 	-- This compensates for ThemePrefsRows' current lack of support for ExportOnChange() and SaveSelections().
-	MESSAGEMAN:Broadcast("BackgroundImageChanged")
+	MESSAGEMAN:Broadcast("VisualStyleSelected")
 end
 
 -- OffCommand() will be called if the player tries to leave the operator menu by choosing an OptionRow

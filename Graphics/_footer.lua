@@ -6,7 +6,9 @@ return Def.Quad{
 	Name="Footer",
 	InitCommand=function(self)
 		self:draworder(90):zoomto(_screen.w, 32):vertalign(bottom):y(32)
-		if DarkUI() then
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+			self:diffuse(GetCurrentColor(true))
+		elseif DarkUI() then
 			self:diffuse(dark)
 		else
 			self:diffuse(light)
@@ -16,5 +18,13 @@ return Def.Quad{
 		if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectMusicCasual" then
 			self:diffuse(dark)
 		end
-	end
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+			self:diffuse(GetCurrentColor(true))
+		end
+	end,
+	ColorSelectedMessageCommand=function(self)
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+			self:diffuse(GetCurrentColor(true))
+		end
+	end,
 }

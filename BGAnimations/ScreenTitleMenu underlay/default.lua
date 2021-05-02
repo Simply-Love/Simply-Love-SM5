@@ -3,10 +3,12 @@
 -- this is defined in:  ./Scripts/SL_Init.lua
 InitializeSimplyLove()
 
+if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+	SL.SRPG5:MaybeRandomizeColor()
+end
+
 -- - - - - - - - - - - - - - - - - - - - -
 -- okay, now we can move on to normal actor definitions
-
-local TextColor = (ThemePrefs.Get("RainbowMode") and (not HolidayCheer()) and Color.Black) or Color.White
 
 -- generate a string like "7741 songs in 69 groups, 10 courses"
 local SongStats = ("%i %s %i %s, %i %s"):format(
@@ -72,21 +74,33 @@ af2.Name="SLInfo"
 
 -- the big blocky Wendy text that says SIMPLY LOVE (or SIMPLY THONK, or SIMPLY DUCKS, etc.)
 -- and the arrows graphic that appears between the two words
-af2[#af2+1] = LoadActor("./SimplySomething.lua")
+af2[#af2+1] = LoadActor("./Logo.lua")
+
 
 -- SM version, SL version, song stats
-af2[#af2+1] = Def.ActorFrame{
-	InitCommand=function(self) self:zoom(0.8):y(-120):diffusealpha(0) end,
+af2[#af2+1] = LoadFont("Common Normal")..{
+	Text=sl_name .. (sl_version and (" v" .. sl_version) or "") .. "\n" .. sm_version .. "\n" .. SongStats,
+	InitCommand=function(self)
+		self:zoom(0.8):y(-150):diffusealpha(0)
+		self:playcommand("UpdateColor")
+	end,
 	OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
+	UpdateColorCommand=function(self)
+		local textColor = Color.White
+		local shadowLength = 0
+		if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
+			textColor = Color.Black
+		end
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+			textColor = color(SL.SRPG5.TextColor)
+			shadowLength = 0.4
+		end
 
-	LoadFont("Common Normal")..{
-		Text=sl_name .. (sl_version and (" v" .. sl_version) or "") .. "\n" .. sm_version,
-		InitCommand=function(self) self:y(-36):diffuse(TextColor) end,
-	},
-	LoadFont("Common Normal")..{
-		Text=SongStats,
-		InitCommand=function(self) self:diffuse(TextColor) end,
-	}
+		self:diffuse(textColor):shadowlength(shadowLength)
+	end,
+	VisualStyleSelectedMessageCommand=function(self)
+		self:playcommand("UpdateColor")
+	end,
 }
 
 -- "The chills, I have them down my spine."

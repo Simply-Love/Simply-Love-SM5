@@ -1,5 +1,5 @@
-local color1 = GetHexColor(SL.Global.ActiveColorIndex-1, true)
-local color2 = GetHexColor(SL.Global.ActiveColorIndex, true)
+local color1 = GetHexColor(SL.Global.ActiveColorIndex-2, true)
+local color2 = GetHexColor(SL.Global.ActiveColorIndex-1, true)
 local style = ThemePrefs.Get("VisualStyle")
 
 local assets = {}

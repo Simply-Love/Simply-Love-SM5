@@ -17,7 +17,9 @@ DiffuseEmojis = function(bmt, text)
 	for i=1, text:utf8len() do
 		-- FIXME: Similar to _wrapwidthpixels(), if you can implement a proper utf8-friendly fix,
 		--        please submit a pull request because I certainly don't know what I'm doing.
-		if text:utf8sub(i,i):byte() >= 240 then
+		-- utf8 encoded emojis start with a 0xe2 or 0xf0 byte, see
+		-- https://apps.timwhitlock.info/emoji/tables/unicode
+		if text:utf8sub(i, i):byte() == 0xe2 or text:utf8sub(i, i):byte() == 0xf0 then
 			bmt:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
 		end
 	end

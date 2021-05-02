@@ -50,7 +50,15 @@ af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 			end
 		end
 
-		self:diffuse(ThemePrefs.Get("RainbowMode") and Color.Black or Color.White)
+		local textColor = Color.White
+		if ThemePrefs.Get("RainbowMode") then
+			textColor = Color.Black
+		end
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+			textColor = color(SL.SRPG5.TextColor)
+		end
+
+		self:diffuse(textColor)
 		self:playcommand("Refresh")
 	end,
 	RefreshCommand=function(self)

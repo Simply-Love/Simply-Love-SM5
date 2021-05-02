@@ -8,6 +8,8 @@ local ColorSelected = false
 local NumHeartsToDraw = IsUsingWideScreen() and 11 or 7
 
 local style = ThemePrefs.Get("VisualStyle")
+local colorTable = (style == "SRPG5") and SL.SRPG5.Colors or SL.DecorativeColors
+local factionBmt
 
 local text
 if style == "Gay" then
@@ -76,6 +78,9 @@ local wheel_item_mt = {
 					self.heart = subself
 					subself:diffusealpha(0)
 					subself:zoom(0.25)
+					if style == "SRPG5" then
+						subself:shadowlength(3)
+					end
 				end,
 				OnCommand=function(subself)
 					subself:sleep(0.2)
@@ -135,12 +140,17 @@ local wheel_item_mt = {
 			else
 				self.container:effectmagnitude(0,0,0)
 			end
+
+			if style == "SRPG5" and has_focus then
+				local idx = self.color_index % #colorTable + 1
+				factionBmt:settext(SL.SRPG5.GetFactionName(idx))
+			end
 		end,
 
 		set = function(self, color)
 			if not color then return end
 			self.color = color
-			self.color_index = FindInTable(color, SL.DecorativeColors)
+			self.color_index = FindInTable(color, colorTable)
 			if style=="Gay" and type(text)=="table" then
 				self.text:settext(text[(self.color_index - (SL.Global.ActiveColorIndex-(#text-1))) % #text + 1])
 			end
@@ -150,7 +160,7 @@ local wheel_item_mt = {
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		wheel:set_info_set(SL.DecorativeColors, SL.Global.ActiveColorIndex)
+		wheel:set_info_set(colorTable, SL.Global.ActiveColorIndex - 1)
 		self:queuecommand("Capture")
 		self:GetChild("ColorWheel"):SetDrawByZPosition(true)
 	end,
@@ -176,7 +186,8 @@ local t = Def.ActorFrame{
 	FinishCommand=function(self)
 		self:GetChild("start_sound"):play()
 
-		SL.Global.ActiveColorIndex = FindInTable( wheel:get_info_at_focus_pos(), SL.DecorativeColors )
+		SL.Global.ActiveColorIndex = FindInTable(wheel:get_info_at_focus_pos(), colorTable)
+		SL.Global.ActiveColorIndex = (SL.Global.ActiveColorIndex % #colorTable) + 1
 		ThemePrefs.Set("SimplyLoveColor", SL.Global.ActiveColorIndex)
 		ThemePrefs.Save()
 
@@ -187,6 +198,33 @@ local t = Def.ActorFrame{
 	end,
 	wheel:create_actors( "ColorWheel", NumHeartsToDraw, wheel_item_mt, _screen.cx, _screen.cy )
 }
+
+if style == "SRPG5" then
+	t[#t+1] = Def.BitmapText{
+		Font="Common Normal",
+		Text="Choose your faction!",
+		InitCommand=function(self)
+			self:xy(_screen.cx, 80)
+			self:zoom(1.5)
+			self:diffuse(color(SL.SRPG5.TextColor))
+			self:shadowlength(0.5)
+		end
+	}
+
+	t[#t+1] = Def.BitmapText{
+		Font="Common Normal",
+		Text="",
+		InitCommand=function(self)
+			factionBmt = self
+
+			self:xy(_screen.cx, _screen.h - 110)
+			self:zoom(2.0)
+			self:diffuse(color(SL.SRPG5.TextColor))
+			self:shadowlength(0.5)
+			self:wrapwidthpixels(150)
+		end
+	}
+end
 
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
 t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }

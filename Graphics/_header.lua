@@ -8,7 +8,9 @@ return Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(_screen.w, 32):vertalign(top):x(_screen.cx)
-			if DarkUI() then
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				self:diffuse(GetCurrentColor(true))
+			elseif DarkUI() then
 				self:diffuse(dark)
 			else
 				self:diffuse(light)
@@ -18,6 +20,14 @@ return Def.ActorFrame{
 			local topscreen = SCREENMAN:GetTopScreen():GetName()
 			if SL.Global.GameMode == "Casual" and (topscreen == "ScreenEvaluationStage" or topscreen == "ScreenEvaluationSummary") then
 				self:diffuse(dark)
+			end
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				self:diffuse(GetCurrentColor(true))
+			end
+		end,
+		ColorSelectedMessageCommand=function(self)
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				self:diffuse(GetCurrentColor(true))
 			end
 		end,
 	},

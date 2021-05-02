@@ -5,10 +5,6 @@ local avatars = args.Avatars
 local scroller = args.Scroller
 local scroller_item_mt = LoadActor("./ScrollerItemMT.lua")
 
-local LightenColor = function(c)
-	return { c[1]*1.25, c[2]*1.25, c[3]*1.25, c[4] }
-end
-
 -- -----------------------------------------------------------------------
 -- TODO: start over from scratch so that these numbers make sense in SL
 --       as-is, they are half-leftover from editing _fallback's code

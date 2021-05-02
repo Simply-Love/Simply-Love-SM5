@@ -4,7 +4,7 @@
 local file = ...
 
 local anim_data = {
-	color_add = {0,1,1,0,0,0,1,1,1,1},
+	color_add = {-1,0,0,-1,-1,-1,0,0,0,0},
 	diffusealpha = {0.05,0.2,0.1,0.1,0.1,0.1,0.1,0.05,0.1,0.1},
 	xy = {0,40,80,120,200,280,360,400,480,560},
 	texcoordvelocity = {{0.03,0.01},{0.03,0.02},{0.03,0.01},{0.02,0.02},{0.03,0.03},{0.02,0.02},{0.03,0.01},{-0.03,0.01},{0.05,0.03},{0.03,0.04}}
@@ -12,19 +12,22 @@ local anim_data = {
 
 local t = Def.ActorFrame {
 	InitCommand=function(self)
-		self:visible(not ThemePrefs.Get("RainbowMode"))
+		local style = ThemePrefs.Get("VisualStyle")
+		self:visible(not ThemePrefs.Get("RainbowMode") and style ~= "SRPG5")
 	end,
 	OnCommand=function(self) self:accelerate(0.8):diffusealpha(1) end,
 	HideCommand=function(self) self:visible(false) end,
 
-	BackgroundImageChangedMessageCommand=function(self)
-		if not ThemePrefs.Get("RainbowMode") then
+	VisualStyleSelectedMessageCommand=function(self)
+		local style = ThemePrefs.Get("VisualStyle")
+
+		if ThemePrefs.Get("RainbowMode") or style == "SRPG5" then
+			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
+		else
 			self:visible(true):linear(0.6):diffusealpha(1)
 
-			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualStyle") .. "/SharedBackground.png")
+			local new_file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
 			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
-		else
-			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
 		end
 	end
 }

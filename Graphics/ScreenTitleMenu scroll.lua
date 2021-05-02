@@ -21,17 +21,40 @@ t[#t+1] = LoadFont("Common Bold")..{
 
 		self:sleep(index*0.075):linear(0.18):diffusealpha(0)
 	end,
+	VisualStyleSelectedMessageCommand=function(self)
+		self:playcommand("UpdateColor")
+	end,
+	UpdateColorCommand=function(self)
+		if has_focus then
+			local textColor = PlayerColor(PLAYER_2)
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				textColor = GetCurrentColor(true)
+			end
+			self:diffuse(textColor)
+		else
+			local textColor = color("#888888")
+			if ThemePrefs.Get("RainbowMode") then
+				textColor = Color.White
+			end
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				textColor = color(SL.SRPG5.TextColor)
+			end
+			self:diffuse(textColor)
+		end
+	end,
 
 	GainFocusCommand=function(self)
 		has_focus = true
 		self:stoptweening():zoom(0.5)
-		self:accelerate(0.1):diffuse(PlayerColor(PLAYER_2)):glow(1,1,1,0.5)
+		self:accelerate(0.1):glow(1,1,1,0.5)
 		self:decelerate(0.05):glow(1,1,1,0)
+		self:playcommand("UpdateColor")
 	end,
 	LoseFocusCommand=function(self)
 		has_focus = false
 		self:stoptweening():zoom(0.4)
-		self:accelerate(0.1):diffuse(ThemePrefs.Get("RainbowMode") and {1,1,1,1} or color("#888888")):glow(1,1,1,0)
+		self:accelerate(0.1):glow(1,1,1,0)
+		self:playcommand("UpdateColor")
 	end
 }
 
