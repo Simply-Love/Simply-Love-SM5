@@ -122,13 +122,15 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
 					if upperPane then
-						local recordTexts = upperPane:GetChild("RecordTexts")
 						if recordTexts then
 							if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
+								local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
+								recordText:visible(true)
 								if personalRank == 1 then
-									recordTexts:GetChild("MachineRecord"):settext("World Record!")
+									recordText:settext("World Record!")
+								else
+									recordText:settext("Personal Best!")
 								end
-								recordTexts:GetChild("PersonalRecord"):settext("Personal Best!")
 							end
 						end
 					end
@@ -182,32 +184,43 @@ local af = Def.ActorFrame {
 				local player = "PlayerNumber_P"..i
 				local pn = ToEnumShortString(player)
 
-				local _, valid = ValidForGrooveStats(player)
-				local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+				if GAMESTATE:IsHumanPlayer(player) and GAMESTATE:IsSideJoined(player) then
+					local _, valid = ValidForGrooveStats(player)
+					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+					local submitForPlayer = false
 
-				if GAMESTATE:IsHumanPlayer(player) and
-						-- not stats:GetFailed() and
-						valid and
-						SL[pn].IsPadPlayer then
-					local percentDP = stats:GetPercentDancePoints()
-					local score = FormatPercentScore(percentDP)
-					score = tonumber(score:gsub("%%", "") * 100)
+					if valid and
+							not stats:GetFailed() and
+							SL[pn].IsPadPlayer then
+						local percentDP = stats:GetPercentDancePoints()
+						local score = FormatPercentScore(percentDP)
+						score = tonumber(score:gsub("%%", "") * 100)
 
-					local profileName = ""
-					if PROFILEMAN:IsPersistentProfile(player) and PROFILEMAN:GetProfile(player) then
-						profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+						local profileName = ""
+						if PROFILEMAN:IsPersistentProfile(player) and PROFILEMAN:GetProfile(player) then
+							profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+						end
+						
+						if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
+							data["player"..i] = {
+								chartHash=SL[pn].Streams.Hash,
+								apiKey=SL[pn].ApiKey,
+								rate=rate,
+								score=score,
+								comment=CreateCommentString(player),
+								profileName=profileName,
+							}
+							sendRequest = true
+							submitForPlayer = true
+						end
 					end
-					
-					if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
-						data["player"..i] = {
-							chartHash=SL[pn].Streams.Hash,
-							apiKey=SL[pn].ApiKey,
-							rate=rate,
-							score=score,
-							comment=CreateCommentString(player),
-							profileName=profileName,
-						}
-						sendRequest = true
+
+					if not submitForPlayer then
+						-- Hide the submit text if we're not submitting a score for a player.
+						-- For example in versus, if one player fails and the other passes, we
+						-- want to show that the first player score won't be submitted.
+						local submitText = self:GetParent():GetChild("P"..i.."SubmitText")
+						submitText:visible(false)
 					end
 				end
 			end
@@ -275,5 +288,24 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	end,
 }
 
+af[#af+1] = LoadFont("Common Bold")..{
+	Name="P1RecordText",
+	InitCommand=function(self)
+		local x = _screen.cx - 225
+		self:zoom(0.225)
+		self:xy(x,40)
+		self:visible(GAMESTATE:IsSideJoined(PLAYER_1))
+	end,
+}
+
+af[#af+1] = LoadFont("Common Bold")..{
+	Name="P2RecordText",
+	InitCommand=function(self)
+		local x = _screen.cx + 225
+		self:zoom(0.225)
+		self:xy(x,40)
+		self:visible(GAMESTATE:IsSideJoined(PLAYER_2))
+	end,
+}
 
 return af
