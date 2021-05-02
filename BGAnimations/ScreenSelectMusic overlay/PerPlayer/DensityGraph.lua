@@ -97,7 +97,7 @@ af2[#af2+1] = NPS_Histogram(player, width, height)..{
 af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 
 -- The Peak NPS text
-af2[#af2+1] = LoadFont("Miso/_miso")..{
+af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="NPS",
 	Text="Peak NPS: ",
 	InitCommand=function(self)
@@ -142,8 +142,8 @@ af2[#af2+1] = Def.ActorFrame{
 			self:diffuse(color("#000000")):zoomto(width, bgHeight):diffusealpha(0.5)
 		end
 	},
-	
-	LoadFont("Common normal")..{
+
+	LoadFont("Common Normal")..{
 		Text="",
 		Name="BreakdownText",
 		InitCommand=function(self)
@@ -241,7 +241,7 @@ for i, row in ipairs(layout) do
 			end
 		}
 
-		af3[#af3+1] = LoadFont("Common normal")..{
+		af3[#af3+1] = LoadFont("Common Normal")..{
 			Text=col,
 			Name=col,
 			InitCommand=function(self)
