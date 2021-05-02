@@ -76,7 +76,7 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local paneTexts = {}
 	local paneFunctions = {}
-	
+
 	if rpgData["result"] == "score-added" then
 		score = pss:GetPercentDancePoints()
 		scoreDelta = score
@@ -119,7 +119,7 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 					"Completed \"%s\"!\n",
 					quest["title"]
 				))
-				
+
 				-- Group all the rewards by type.
 				local allRewards = {}
 				for reward in ivalues(quest["rewards"]) do
@@ -194,7 +194,7 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 					Length=#substring,
 					Diffuse=color
 				})
-	  
+
 				offset = j + 1
 			end
 		end)
@@ -323,7 +323,7 @@ for player in ivalues(PlayerNumber) do
 		},
 
 		-- Main Body Text
-		LoadFont("Miso/_miso").. {
+		LoadFont("Common Normal").. {
 			Name="BodyText",
 			Text="",
 			InitCommand=function(self)
@@ -345,8 +345,8 @@ for player in ivalues(PlayerNumber) do
 			InitCommand=function(self)
 				self:y(paneHeight/2 - RowHeight/2)
 			end,
-	
-			LoadFont("Miso/_miso").. {
+
+			LoadFont("Common Normal").. {
 				Name="LeftIcon",
 				Text="&MENULEFT;",
 				InitCommand=function(self)
@@ -358,16 +358,16 @@ for player in ivalues(PlayerNumber) do
 					self:queuecommand("Bounce")
 				end,
 			},
-	
-			LoadFont("Miso/_miso").. {
+
+			LoadFont("Common Normal").. {
 				Name="Text",
 				Text="More Information",
 				InitCommand=function(self)
 					self:diffuse(color("0.514,0.306,0.337,1"))
 				end,
 			},
-	
-			LoadFont("Miso/_miso").. {
+
+			LoadFont("Common Normal").. {
 				Name="RightIcon",
 				Text="&MENURiGHT;",
 				InitCommand=function(self)
@@ -434,7 +434,7 @@ for player in ivalues(PlayerNumber) do
 				end
 			end,
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Rank",
 				Text="",
 				InitCommand=function(self)
@@ -446,7 +446,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Name",
 				Text="",
 				InitCommand=function(self)
@@ -458,7 +458,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Score",
 				Text="",
 				InitCommand=function(self)
@@ -469,7 +469,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Date",
 				Text="",
 				InitCommand=function(self)

@@ -20,7 +20,7 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 		if leaderboardData["Name"] then
 			leaderboard:GetChild("Header"):settext(leaderboardData["Name"])
 		end
-		
+
 		if leaderboardData["Data"] then
 			for gsEntry in ivalues(leaderboardData["Data"]) do
 				local entry = leaderboard:GetChild("LeaderboardEntry"..entryNum)
@@ -96,7 +96,7 @@ local LeaderboardRequestProcessor = function(res, master)
 		local leaderboardList = master[pn]["Leaderboards"]
 		if res["status"] == "success" then
 			if data[playerStr] then
-				master[pn].isRanked = data[playerStr]["isRanked"] 
+				master[pn].isRanked = data[playerStr]["isRanked"]
 
 				-- First add the main GrooveStats leaderboard.
 				if data[playerStr]["gsLeaderboard"] then
@@ -122,7 +122,7 @@ local LeaderboardRequestProcessor = function(res, master)
 					leaderboard:GetChild("PaneIcons"):visible(false)
 				end
 			end
-			
+
 			-- We assume that at least one leaderboard has been added.
 			-- If leaderboardData is nil as a result, the SetLeaderboardForPlayer
 			-- function will handle it.
@@ -184,7 +184,7 @@ local af = Def.ActorFrame{
 				end
 			elseif event.GameButton == "MenuRight" then
 				self[pn].LeaderboardIndex = self[pn].LeaderboardIndex + 1
-				
+
 				if self[pn].LeaderboardIndex > #self[pn].Leaderboards then
 					-- Wrap around if we incremented past #Leaderboards
 					self[pn].LeaderboardIndex = 1
@@ -389,7 +389,7 @@ for player in ivalues( PlayerNumber ) do
 				self:visible(false)
 			end,
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="LeftIcon",
 				Text="&MENULEFT;",
 				InitCommand=function(self)
@@ -402,7 +402,7 @@ for player in ivalues( PlayerNumber ) do
 				end,
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Text",
 				Text="More Leaderboards",
 				InitCommand=function(self)
@@ -410,7 +410,7 @@ for player in ivalues( PlayerNumber ) do
 				end,
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="RightIcon",
 				Text="&MENURiGHT;",
 				InitCommand=function(self)
@@ -424,7 +424,7 @@ for player in ivalues( PlayerNumber ) do
 			},
 		}
 	}
-	
+
 	local af2 = af[#af]
 	for i=1, NumEntries do
 		--- Each entry has a Rank, Name, and Score subactor.
@@ -443,7 +443,7 @@ for player in ivalues( PlayerNumber ) do
 				self:GetChild("Date"):visible(GAMESTATE:GetNumSidesJoined() == 1)
 			end,
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Rank",
 				Text="",
 				InitCommand=function(self)
@@ -458,7 +458,7 @@ for player in ivalues( PlayerNumber ) do
 				end
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Name",
 				Text=(i==1 and "Loading" or ""),
 				InitCommand=function(self)
@@ -473,7 +473,7 @@ for player in ivalues( PlayerNumber ) do
 				end
 			},
 
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Score",
 				Text="",
 				InitCommand=function(self)
@@ -486,7 +486,7 @@ for player in ivalues( PlayerNumber ) do
 					self:diffuse(Color.White)
 				end
 			},
-			LoadFont("Miso/_miso").. {
+			LoadFont("Common Normal").. {
 				Name="Date",
 				Text="",
 				InitCommand=function(self)

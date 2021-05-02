@@ -112,7 +112,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							P2SubmitText:queuecommand("Submit")
 						end
 					end
-					
+
 					-- Only display the RPG on the sides that are actually joined.
 					if ToEnumShortString("PLAYER_P"..i) == "P"..side and data[playerStr]["rpg"] then
 						local rpgAf = overlay:GetChild("AutoSubmitMaster"):GetChild("RpgOverlay"):GetChild("P"..i.."RpgAf")
@@ -142,7 +142,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 					end
 				end
 			end
-	
+
 			-- Empty out any remaining entries on a successful response.
 			-- For failed responses we fallback to the scores available in the machine.
 			if res["status"] == "success" then
@@ -204,7 +204,7 @@ local af = Def.ActorFrame {
 						if PROFILEMAN:IsPersistentProfile(player) and PROFILEMAN:GetProfile(player) then
 							profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
 						end
-						
+
 						if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
 							data["player"..i] = {
 								chartHash=SL[pn].Streams.Hash,
@@ -255,7 +255,7 @@ if ThemePrefs.Get("VisualStyle") == "SRPG5" then
 	shadowLength = 0.4
 end
 
-af[#af+1] = LoadFont("Miso/_miso").. {
+af[#af+1] = LoadFont("Common Normal").. {
 	Name="P1SubmitText",
 	Text="",
 	Condition=GAMESTATE:IsSideJoined(PLAYER_1),
@@ -280,7 +280,7 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	end,
 }
 
-af[#af+1] = LoadFont("Miso/_miso").. {
+af[#af+1] = LoadFont("Common Normal").. {
 	Name="P2SubmitText",
 	Text="",
 	InitCommand=function(self)
