@@ -135,7 +135,22 @@ local t = Def.ActorFrame {
 		overlay:playcommand("ShowLeaderboard")
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
-	DirectInputToEngineCommand=function(self, params)
+	DirectInputToEngineCommand=function(self)
+		local screen = SCREENMAN:GetTopScreen()
+		local overlay = self:GetParent()
+
+		screen:RemoveInputCallback(sortmenu_input)
+		screen:RemoveInputCallback(testinput_input)
+		screen:RemoveInputCallback(leaderboard_input)
+
+		for player in ivalues(PlayerNumber) do
+			SCREENMAN:set_input_redirected(player, false)
+		end
+		self:playcommand("HideSortMenu")
+		overlay:playcommand("HideTestInput")
+		overlay:playcommand("HideLeaderboard")
+	end,
+	DirectInputToEngineForSongSearchCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
 
@@ -150,12 +165,6 @@ local t = Def.ActorFrame {
 		overlay:playcommand("HideTestInput")
 		overlay:playcommand("HideLeaderboard")
 
-		-- Begin the song search if we're redirecting to the engine because of that.
-		if params.songSearch then
-			self:queuecommand("StartSongSearch")
-		end
-	end,
-	StartSongSearchCommand=function(self)
 		-- Then add the ScreenTextEntry on top.
 		SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
 		SCREENMAN:GetTopScreen():Load(SongSearchSettings)

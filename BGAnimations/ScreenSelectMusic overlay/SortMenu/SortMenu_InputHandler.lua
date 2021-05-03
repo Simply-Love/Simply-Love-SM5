@@ -73,7 +73,7 @@ local input = function(event)
 				elseif focus.new_overlay == "SongSearch" then
 					-- Direct the input back to the engine, so that the ScreenTextEntry overlay
 					-- works correctly.
-					overlay:playcommand("DirectInputToEngine", {songSearch=true})
+					overlay:queuecommand("DirectInputToEngineForSongSearch")
 				end
 			end
 
