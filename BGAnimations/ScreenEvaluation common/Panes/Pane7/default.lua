@@ -14,7 +14,7 @@ local pane = Def.ActorFrame{
 -- -----------------------------------------------------------------------
 
 -- 22px RowHeight by default, which works for displaying 10 machine HighScores
-local args = { Player=player, RoundsAgo=1, RowHeight=22}
+local args = { Player=player, RowHeight=22}
 
 -- top 10 machine HighScores
 args.NumHighScores = 10
