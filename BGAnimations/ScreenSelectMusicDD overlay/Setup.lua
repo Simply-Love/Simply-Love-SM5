@@ -799,9 +799,6 @@ end
 current_song = GetDefaultSong(groups)
 GAMESTATE:SetCurrentSong(current_song)
 
-
---SCREENMAN:SystemMessage(tostring(GAMESTATE:GetCurrentSong()))
-
 group_index = FindInTable(NameOfGroup, groups) or 1
 
 return {
