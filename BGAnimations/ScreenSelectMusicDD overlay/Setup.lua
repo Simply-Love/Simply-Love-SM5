@@ -140,9 +140,47 @@ local GetFileContents = function(path)
 	return lines
 end
 
----------------------------------------------------------------------------
--- provided a group title as a string, prune out songs that don't have valid steps
--- returns an indexed table of song objects
+-------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+--------------------------------PROFILE PREFENCES TO LOAD----------------------------------------
+-------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+
+----- MAIN SORT PROFILE PREFERNCE ----- 
+local function GetMainSortPreference()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'MainSortPreference')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'MainSortPreference')
+	end
+
+	if value == nil then
+		value = 1
+	end
+	
+	MainSortIndex = tonumber(value)
+
+	return tonumber(value)
+end
+
+----- SUB SORT PROFILE PREFERNCE -----
+local function GetSubSortPreference()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'SubSortPreference')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'SubSortPreference')
+	end
+
+	if value == nil then
+		value = 2
+	end
+	
+	SubSortIndex = tonumber(value)
+
+	return tonumber(value)
+end
 
 ----- Lower Difficulty Filter profile settings ----- 
 function GetLowerDifficultyFilter()
@@ -242,40 +280,20 @@ function GetUpperLengthFilter()
 	return tonumber(value)
 end
 
------ MAIN SORT PROFILE PREFERNCE ----- 
-local function GetMainSortPreference()
+---- Groovestats profile preference
+function GetGroovestatsFilter()
 	local value
 	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'MainSortPreference')
+		value = DDStats.GetStat(PLAYER_1, 'GroovestatsFilter')
 	else
-		value = DDStats.GetStat(PLAYER_2, 'MainSortPreference')
+		value = DDStats.GetStat(PLAYER_2, 'GroovestatsFilter')
 	end
 
 	if value == nil then
-		value = 1
-	end
-	
-	MainSortIndex = tonumber(value)
-
-	return tonumber(value)
-end
-
------ SUB SORT PROFILE PREFERNCE -----
-local function GetSubSortPreference()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'SubSortPreference')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'SubSortPreference')
+		value = 'No'
 	end
 
-	if value == nil then
-		value = 2
-	end
-	
-	SubSortIndex = tonumber(value)
-
-	return tonumber(value)
+	return value
 end
 
 local function LetterToGroup(letter)
@@ -347,7 +365,9 @@ local subsort_funcs = {
 	GetHighestStepCount,
 	GetHighestDifficulty,
 }
-
+---------------------------------------------------------------------------
+-- provided a group title as a string, prune out songs that don't have valid steps
+-- returns an indexed table of song objects
 local pruned_songs_by_group = {}
 local UpdatePrunedSongs = function()
 	pruned_songs_by_group = {}
@@ -493,21 +513,6 @@ local PruneSongsFromGroup = function(group)
 end
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
-
-function GetGroovestatsFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'GroovestatsFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'GroovestatsFilter')
-	end
-
-	if value == nil then
-		value = 'No'
-	end
-
-	return value
-end
 
 local function GetGroupsBy(func)
 	local groups_set = {}
@@ -721,8 +726,6 @@ if SongSearchSSMDD == true then
 end
 
 
-
-
 local GetGroupInfo = function(groups)
 	local info = {}
 	for group in ivalues(groups) do
@@ -778,13 +781,12 @@ end
 ---------------------------------------------------------------------------
 
 
-local current_song = GAMESTATE:GetCurrentSong()
-local group_index = 1
+local current_song
+local group_index
 
 local groups = GetGroups()
 UpdatePrunedSongs()
 -- prune the list of potential groups down to valid groups
-
 groups = PruneGroups(groups)
 
 -- If there are STILL no valid groups, we aren't going to find any.
