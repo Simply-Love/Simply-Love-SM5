@@ -49,8 +49,8 @@ local t = Def.ActorFrame{
 		UpdateCursorColorMessageCommand=function(self)
 			if IsSortMenuInputToggled == true then
 				self:stoptweening()
-				self:linear(0.2):diffusealpha(0.5)
-				self:linear(0.2):diffuse(color("#FFFFFF"))
+				self:diffusealpha(0.5)
+				self:diffuse(color("#FFFFFF"))
 				self:queuecommand("FadeOut")
 			else
 				self:stoptweening()
