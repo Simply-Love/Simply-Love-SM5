@@ -1,5 +1,77 @@
 local DDStats = LoadActor('./DDStats.lua')
 
+local max_length_group = '1:00:00+'
+local max_difficulty_group = '40+'
+local max_bpm_group = '400+'
+
+
+local song_lengths = {}
+for i=0,90-1,30 do
+	song_lengths[#song_lengths+1] = i
+end
+for i=90,5*60-10,5 do
+	song_lengths[#song_lengths+1] = i
+end
+for i=5*60,10*60-60,30 do
+	song_lengths[#song_lengths+1] = i
+end
+for i=10*60,60*60-60,60*5 do
+	song_lengths[#song_lengths+1] = i
+end
+for i=30*60,60*60-10*60,10*60 do
+	song_lengths[#song_lengths+1] = i
+end
+song_lengths[#song_lengths+1] = 60*60
+
+
+local function GetMaxIndexBelowOrEqual(values, exact_value)
+	local min_index = 1
+	local max_index = #values
+
+	while min_index < max_index do
+		local mid_index = math.floor((min_index + max_index+1)/2)
+		local song_length = values[mid_index]
+		if song_length <= exact_value then
+			min_index = mid_index
+		else
+			max_index = mid_index-1
+		end
+	end
+
+	return min_index
+end
+
+local GetSongLengthGroup = function(song)
+	local exact_length = song:MusicLengthSeconds()
+	local index = GetMaxIndexBelowOrEqual(song_lengths, exact_length)
+
+	if index == #song_lengths then
+		return max_length_group
+	else
+		return SecondsToMMSS(song_lengths[index])
+			.. ' - '
+			.. SecondsToMMSS(song_lengths[index+1] - 1)
+	end
+end
+
+local song_bpms = {}
+for i=0,400,10 do
+	song_bpms[#song_bpms+1] = i
+end
+
+
+local function GetSongBpmGroup(song)
+	local exact_bpm = math.round(song:GetDisplayBpms()[2])
+	local index = GetMaxIndexBelowOrEqual(song_bpms, exact_bpm)
+
+	if index == #song_bpms then
+		return max_bpm_group
+	else
+		return song_bpms[index] .. ' - ' .. (song_bpms[index+1] - 1)
+	end
+end
+
+
 -- You know that spot under the rug where you sweep away all the dirty
 -- details and then hope no one finds them?  This file is that spot.
 -- The idea is basically to just throw setup-related stuff
@@ -206,120 +278,207 @@ local function GetSubSortPreference()
 	return tonumber(value)
 end
 
-
-local PruneSongsFromGroup = function(group)
-	local group_songs
-	local songs = {}
-	local current_song = GAMESTATE:GetCurrentSong()
-
-	if GetMainSortPreference() == 2 then
-		group_songs = {}
-
-		for song in ivalues(SONGMAN:GetAllSongs()) do
-			local is_a = song:GetDisplayMainTitle():lower():sub(1,1) == 'a'
-			local is_yo = group == 'A'
-			if is_a == is_yo then
-				group_songs[#group_songs+1] = song
-			end
-		end
+local function LetterToGroup(letter)
+	if 'A' <= letter and letter <= 'Z' then
+		return letter
+	elseif '0' <= letter and letter <= '9' then
+		return '#'
 	else
-		group_songs = SONGMAN:GetSongsInGroup(group)
+		return 'Other'
 	end
+end
 
-	-- prune out songs that don't have valid steps or fit the filters
-	for i,song in ipairs(group_songs) do
-		-- this should be guaranteed by this point, but better safe than segfault
-		
-		if song:HasStepsType(steps_type) then
-			local passesFilters = true
-			--- Filter for Length
-			if GetLowerLengthFilter() ~= 0 then
-				if GetLowerLengthFilter() > song:MusicLengthSeconds() then
-					passesFilters = false
-				end
-			end
+local function GetSongFirstLetter(song)
+	local letter = song:GetDisplayMainTitle():sub(1,1):upper()
+	return LetterToGroup(letter)
+end
 
-			if GetUpperLengthFilter() ~= 0 then
-				if GetUpperLengthFilter() < song:MusicLengthSeconds() then
-					passesFilters = false
-				end
-			end
-			
-			--- Filter for BPM
-			if GetLowerBPMFilter() ~= 49 then
-				if song:GetDisplayBpms()[2] < GetLowerBPMFilter() then
-					passesFilters = false
-				end
-			end
-			if GetUpperBPMFilter() ~= 49 then
-				if song:GetDisplayBpms()[2] > GetUpperBPMFilter() then
-					passesFilters = false
-				end
-			end
-		
-			---- Filter for Difficulty
-			if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
-				local hasPassingDifficulty = false
-				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-					local passesLower = GetLowerDifficultyFilter() == 0 or steps:GetMeter() >= GetLowerDifficultyFilter()
-					local passesUpper = GetUpperDifficultyFilter() == 0 or steps:GetMeter() <= GetUpperDifficultyFilter()
-					if passesLower and passesUpper then
-						hasPassingDifficulty = true
-					end
-				end
-				if not hasPassingDifficulty then
-					passesFilters = false
-				end
-			end
-			
-			if passesFilters then
-				songs[#songs+1] = song
-			end
+local function GetSongArtistFirstLetter(song)
+	local letter = song:GetDisplayArtist():sub(1,1):upper()
+	return LetterToGroup(letter)
+end
+
+local function GetStepsDifficultyGroup(steps)
+	local meter = steps:GetMeter()
+	if meter >= 40 then return max_difficulty_group end
+	return meter
+end
+
+local GroupSongsBy = function(func)
+	grouped_songs = {}
+
+	for song in ivalues(SONGMAN:GetAllSongs()) do
+		local song_group = func(song)
+
+		if grouped_songs[song_group] == nil then
+			grouped_songs[song_group] = {song}
+		else
+			local songs = grouped_songs[song_group]
+			songs[#songs+1] = song
 		end
 	end
-	
+
+	return grouped_songs
+end
+
+
+local function GetHighestDifficulty(song)
+	local difficulty = 0
+	for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
+		difficulty = math.max(difficulty, steps:GetMeter())
+	end
+	return difficulty
+end
+
+local function GetHighestStepCount(song)
+	local count = 0
+	for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
+		count = math.max(count, steps:GetRadarValues(PLAYER_1):GetValue('RadarCategory_TapsAndHolds'))
+	end
+	return count
+end
+
+local subsort_funcs = {
+	function(s) return s:GetGroupName() end,
+	function(s) return s:GetDisplayMainTitle():lower() end,
+	function(s) return s:GetDisplayArtist():lower() end,
+	function(s) return s:MusicLengthSeconds() end,
+	function(s) return s:GetDisplayBpms()[2] end,
+	GetHighestStepCount,
+	GetHighestDifficulty,
+}
+
+local pruned_songs_by_group = {}
+local UpdatePrunedSongs = function()
+	pruned_songs_by_group = {}
+
 	--[[
 	"GROUP",
 	"TITLE",
 	"ARTIST",
 	"LENGTH",
 	"BPM",
-	"# OF STEPS",
 	"DIFFICULTY",
 	]]--
 
-	local function GetHighestDifficulty(song)
-		local difficulty = 0
-		for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
-			difficulty = math.max(difficulty, steps:GetMeter())
+	local sort_pref = GetMainSortPreference()
+	local songs_by_group
+	if sort_pref == 1 then
+		songs_by_group = GroupSongsBy(function(song) return song:GetGroupName() end)
+	elseif sort_pref == 2 then
+		songs_by_group = GroupSongsBy(GetSongFirstLetter)
+	elseif sort_pref == 3 then
+		songs_by_group = GroupSongsBy(GetSongArtistFirstLetter)
+	elseif sort_pref == 4 then
+		songs_by_group = GroupSongsBy(GetSongLengthGroup)
+	elseif sort_pref == 5 then
+		songs_by_group = GroupSongsBy(GetSongBpmGroup)
+	elseif sort_pref == 6 then
+		songs_by_group = {}
+		for song in ivalues(SONGMAN:GetAllSongs()) do
+			local meters_set = {}
+			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				local meter = GetStepsDifficultyGroup(steps)
+				meters_set[meter] = true
+			end
+			for meter, _ in pairs(meters_set) do
+				if songs_by_group[meter] == nil then
+					songs_by_group[meter] = {song}
+				else
+					local songs = songs_by_group[meter]
+					songs[#songs+1] = song
+				end
+			end
 		end
-		return difficulty
 	end
 
-	local function GetHighestStepCount(song)
-		local count = 0
-		for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
-			count = math.max(count, steps:GetRadarValues(PLAYER_1):GetValue('RadarCategory_TapsAndHolds'))
+	for group, group_songs in pairs(songs_by_group) do
+		local songs = {}
+		
+		-- prune out songs that don't have valid steps or fit the filters
+		for i,song in ipairs(group_songs) do
+			-- this should be guaranteed by this point, but better safe than segfault
+			
+			if song:HasStepsType(steps_type) then
+				local passesFilters = true
+				--- Filter for Length
+				if GetLowerLengthFilter() ~= 0 then
+					if GetLowerLengthFilter() > song:MusicLengthSeconds() then
+						passesFilters = false
+					end
+				end
+
+				if GetUpperLengthFilter() ~= 0 then
+					if GetUpperLengthFilter() < song:MusicLengthSeconds() then
+						passesFilters = false
+					end
+				end
+				
+				--- Filter for BPM
+				if GetLowerBPMFilter() ~= 49 then
+					if song:GetDisplayBpms()[2] < GetLowerBPMFilter() then
+						passesFilters = false
+					end
+				end
+				if GetUpperBPMFilter() ~= 49 then
+					if song:GetDisplayBpms()[2] > GetUpperBPMFilter() then
+						passesFilters = false
+					end
+				end
+			
+				---- Filter for Difficulty
+				if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
+					local hasPassingDifficulty = false
+					for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+						local passesLower = GetLowerDifficultyFilter() == 0 or steps:GetMeter() >= GetLowerDifficultyFilter()
+						local passesUpper = GetUpperDifficultyFilter() == 0 or steps:GetMeter() <= GetUpperDifficultyFilter()
+						if passesLower and passesUpper then
+							hasPassingDifficulty = true
+						end
+					end
+					if not hasPassingDifficulty then
+						passesFilters = false
+					end
+				end
+				
+				if passesFilters then
+					songs[#songs+1] = song
+				end
+			end
 		end
-		return count
+		
+		--[[
+		"GROUP",
+		"TITLE",
+		"ARTIST",
+		"LENGTH",
+		"BPM",
+		"# OF STEPS",
+		"DIFFICULTY",
+		]]--
+
+		local sort_func = subsort_funcs[GetSubSortPreference()]
+
+		table.sort(songs, function(a, b)
+			return sort_func(a) < sort_func(b)
+		end)
+
+		pruned_songs_by_group[group] = songs
 	end
+end
 
-	local sort_funcs = {
-		function(s) return s:GetGroupName() end,
-		function(s) return s:GetDisplayMainTitle():lower() end,
-		function(s) return s:GetDisplayArtist():lower() end,
-		function(s) return s:MusicLengthSeconds() end,
-		function(s) return s:GetDisplayBpms()[2] end,
-		GetHighestStepCount,
-		GetHighestDifficulty,
-	}
+local PruneSongsFromGroup = function(group)
+	local songs = pruned_songs_by_group[group]
+	if songs == nil then songs = {} end
 
-	local sort_func = sort_funcs[GetSubSortPreference()]
+	-- Copy songs so that the calling function can mutate the returned table.
+	local songs_copy = {}
+	for song in ivalues(songs) do
+		songs_copy[#songs_copy+1] = song
+	end
+	songs = songs_copy
 
-	table.sort(songs, function(a, b)
-		return sort_func(a) < sort_func(b)
-	end)
-
+	local current_song = GAMESTATE:GetCurrentSong()
 	-- we need to retain the index of the current song so we can set the SongWheel to start on it
 	local index = 1
 	for i, song in ipairs(songs) do
@@ -350,9 +509,73 @@ function GetGroovestatsFilter()
 	return value
 end
 
+local function GetGroupsBy(func)
+	local groups_set = {}
+	for song in ivalues(SONGMAN:GetAllSongs()) do
+		local group = func(song)
+		groups_set[group] = true
+	end
+	local groups = {}
+	for group, _ in pairs(groups_set) do
+		groups[#groups+1] = group
+	end
+	return groups
+end
+
+local function SortByLetter(a, b)
+	if a == 'Other' then return false end
+	if b == 'Other' then return true end
+	if a == '#' then return false end
+	if b == '#' then return true end
+	return a < b
+end
+
 local GetGroups = function()
-	if GetMainSortPreference() == 2 then
-		return {'A', 'Not A'}
+	local sort_pref = GetMainSortPreference()
+	if sort_pref == 1 then
+		-- TODO : return SONGMAN:GetSongGroupNames()
+		-- then make groovestats filter per song
+	elseif sort_pref == 2 then
+		local groups = GetGroupsBy(GetSongFirstLetter)
+		table.sort(groups, SortByLetter)
+		return groups
+	elseif sort_pref == 3 then
+		local groups = GetGroupsBy(GetSongArtistFirstLetter)
+		table.sort(groups, SortByLetter)
+		return groups
+	elseif sort_pref == 4 then
+		local groups = GetGroupsBy(GetSongLengthGroup)
+		table.sort(groups, function(a,b)
+			if a == max_length_group then return false end
+			if b == max_length_group then return true end
+			return a < b
+		end)
+		return groups
+	elseif sort_pref == 5 then
+		local groups = GetGroupsBy(GetSongBpmGroup)
+		table.sort(groups, function(a,b)
+			local a_bpm = tonumber(a:match('^[0-9]*'))
+			local b_bpm = tonumber(b:match('^[0-9]*'))
+			return a_bpm < b_bpm
+		end)
+		return groups
+	elseif sort_pref == 6 then
+		local groups_set = {}
+		for song in ivalues(SONGMAN:GetAllSongs()) do
+			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
+				groups_set[GetStepsDifficultyGroup(steps)] = true
+			end
+		end
+		local groups = {}
+		for group, _ in pairs(groups_set) do
+			groups[#groups+1] = group
+		end
+		table.sort(groups, function(a,b)
+			if a == max_difficulty_group then return false end
+			if b == max_difficulty_group then return true end
+			return a < b
+		end)
+		return groups
 	end
 
 	if GetGroovestatsFilter() == 'Yes' then
@@ -398,21 +621,19 @@ local GetDefaultSong = function(groups)
 	else
 		playerNum = PLAYER_2
 	end
-	
+
 	local lastSong = DDStats.GetStat(playerNum, 'LastSong')
 	if lastSong ~= nil then
 		for group in ivalues(groups) do
-			for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
+			for song in ivalues(PruneSongsFromGroup(group)) do
 				if song:GetSongDir() == lastSong then
 					return song
 				end
 			end
 		end
 	end
-	
+
 	return PruneSongsFromGroup( groups[1] )[1]
-
-
 end
 
 ---------------------------------------------------------------------------
@@ -561,6 +782,7 @@ local current_song = GAMESTATE:GetCurrentSong()
 local group_index = 1
 
 local groups = GetGroups()
+UpdatePrunedSongs()
 -- prune the list of potential groups down to valid groups
 
 groups = PruneGroups(groups)

@@ -147,6 +147,9 @@ t.Handler = function(event)
 					else end
 				end
 				if event.GameButton == "Start" then
+					if DDSortMenuCursorPosition < 9 then
+						MESSAGEMAN:Broadcast("UpdateCursorColor")
+					end
 					if DDSortMenuCursorPosition == 9 then
 						SortMenuNeedsUpdating = true
 					end	
@@ -200,6 +203,7 @@ t.Handler = function(event)
 				if IsSortMenuInputToggled == true then
 					if event.GameButton == "Start" then
 						MESSAGEMAN:Broadcast("SetSortMenuTopStats")
+						MESSAGEMAN:Broadcast("UpdateCursorColor")
 					end
 				end
 						if IsSortMenuInputToggled == true then
@@ -264,17 +268,7 @@ t.Handler = function(event)
 	end
 	
 	
-
---- potentially code for updating CDTitle?
-	if t.WheelWithFocus == SongWheel then
-		if event.GameButton == "MenuLeft" then
-			MESSAGEMAN:Broadcast('UpdateCDTitle')
-		elseif event.GameButton == "MenuRight" then
-			MESSAGEMAN:Broadcast('UpdateCDTitle')
-		end
-	end
-
-	if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
+if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		if not t.AllowLateJoin() then return false end
 
 		-- latejoin
@@ -350,7 +344,7 @@ t.Handler = function(event)
 			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 
 			ChartUpdater.UpdateCharts()
-		elseif event.GameButton == "MenuUp" then
+		elseif event.GameButton == "MenuUp" or event.GameButton == "Up" then
 			local t = GetTimeSinceStart()
 			local dt = t - lastMenuUpPressTime
 			lastMenuUpPressTime = t
@@ -359,7 +353,7 @@ t.Handler = function(event)
 				ChartUpdater.DecreaseDifficulty(event.PlayerNumber)
 				lastMenuUpPressTime = 0
 			end
-		elseif event.GameButton == "MenuDown" then
+		elseif event.GameButton == "MenuDown" or event.GameButton == "Down" then
 			local t = GetTimeSinceStart()
 			local dt = t - lastMenuDownPressTime
 			lastMenuDownPressTime = t

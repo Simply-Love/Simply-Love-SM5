@@ -46,6 +46,20 @@ local t = Def.ActorFrame{
 			self:queuecommand("FadeIn")
 		end,
 		
+		UpdateCursorColorMessageCommand=function(self)
+			if IsSortMenuInputToggled == true then
+				self:stoptweening()
+				self:linear(0.2):diffusealpha(0.5)
+				self:linear(0.2):diffuse(color("#FFFFFF"))
+				self:queuecommand("FadeOut")
+			else
+				self:stoptweening()
+				self:linear(0.2):diffusealpha(0.5)
+				self:linear(0.2):diffuse(color("#59ff85"))
+				self:queuecommand("FadeOut")
+			end
+		end,
+		
 		------------ I'm so sorry, this is garbage mama ------------
 		
 		ToggleSortMenuMovementMessageCommand=function(self)
