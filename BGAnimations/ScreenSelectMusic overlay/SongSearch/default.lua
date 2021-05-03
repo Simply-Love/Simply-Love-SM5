@@ -31,9 +31,6 @@ local paneWidth = 319
 local borderWidth = 2
 
 local textHeight = 15
-local numScrollers = 6
-local scrollerHeight = (paneHeight - (numScrollers - 1) * borderWidth)/numScrollers
-local scrollerWidth = paneWidth/2
 
 local af = Def.ActorFrame {
     Name="SongSearch",
