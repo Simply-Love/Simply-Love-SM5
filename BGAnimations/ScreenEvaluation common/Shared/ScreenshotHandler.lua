@@ -25,7 +25,7 @@ spr.CodeMessageCommand=function(self, params)
 		-- song titles can be very long, and the engine's SaveScreenshot() function
 		-- is already hardcoded to make the filename long via DateTime::GetNowDateTime()
 		-- so, let's use only the first 10 characters of the title in the screenshot filename
-		title = title:sub(1,10)
+		title = title:utf8sub(1,10)
 
 		-- some song titles have slashes in them, which is interpreted as a folder in the path as
 		-- screenshot is saved. we'll substitute those slashes with underscores to prevent this.
