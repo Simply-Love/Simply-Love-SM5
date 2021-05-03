@@ -36,6 +36,30 @@ local sortmenu = { w=210, h=160 }
 
 local hasSong = GAMESTATE:GetCurrentSong() and true or false
 
+
+local SongSearchSettings = {
+    Question="Search: ",
+    InitialAnswer="",
+    MaxInputLength=30,
+    OnOK=function(input)
+		local searchText = input:lower()
+		local candidates = {}
+        if #input ~= 0 then
+			local allSongs = SONGMAN:GetAllSongs()
+			for song in ivalues(allSongs) do
+				-- Search both the normal title as well as the transliterated title.
+				if song:GetDisplayFullTitle():lower():find(searchText) ~= nil or
+						song:GetTranslitFullTitle():lower():find(searchText) ~= nil then
+					table.insert(candidates, song)
+				end
+			end
+
+			-- Even if we don't have any results, we want to show that to the player.
+			MESSAGEMAN:Broadcast("DisplaySearchResults", {searchText=input, candidates=candidates})
+        end
+    end,
+}
+
 ------------------------------------------------------------
 
 local t = Def.ActorFrame {
@@ -111,7 +135,7 @@ local t = Def.ActorFrame {
 		overlay:playcommand("ShowLeaderboard")
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
-	DirectInputToEngineCommand=function(self)
+	DirectInputToEngineCommand=function(self, params)
 		local screen = SCREENMAN:GetTopScreen()
 		local overlay = self:GetParent()
 
@@ -125,9 +149,17 @@ local t = Def.ActorFrame {
 		self:playcommand("HideSortMenu")
 		overlay:playcommand("HideTestInput")
 		overlay:playcommand("HideLeaderboard")
+
+		-- Begin the song search if we're redirecting to the engine because of that.
+		if params.songSearch then
+			self:queuecommand("StartSongSearch")
+		end
 	end,
-
-
+	StartSongSearchCommand=function(self)
+		-- Then add the ScreenTextEntry on top.
+		SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
+		SCREENMAN:GetTopScreen():Load(SongSearchSettings)
+	end,
 
 	AssessAvailableChoicesCommand=function(self)
 		-- normally I would give variables like these file scope, and not declare
@@ -218,6 +250,13 @@ local t = Def.ActorFrame {
 			-- Also only add this if we're actually hovering over a song.
 			if GAMESTATE:GetCurrentSong() then
 				table.insert(wheel_options, {"GrooveStats", "Leaderboard"})
+			end
+		end
+
+		for device in ivalues(INPUTMAN:GetDescriptions()) do
+			-- Only display this option if a Keyboard is actually connected.
+			if device == "Keyboard" then
+				table.insert(wheel_options, {"WhereforeArtThou", "SongSearch"})
 			end
 		end
 

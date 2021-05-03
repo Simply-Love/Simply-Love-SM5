@@ -48,6 +48,8 @@ local af = Def.ActorFrame{
 	-- a yes/no prompt overlay for backing out of SelectMusic when in EventMode can be
 	-- activated via "CodeEscapeFromEventMode" under [ScreenSelectMusic] in Metrics.ini
 	LoadActor("./EscapeFromEventMode.lua"),
+
+	LoadActor("./SongSearch/default.lua"),
 }
 
 return af
