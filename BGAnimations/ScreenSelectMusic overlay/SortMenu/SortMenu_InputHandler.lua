@@ -29,7 +29,6 @@ local input = function(event)
 				MESSAGEMAN:Broadcast('Sort',{order=focus.sort_by})
 				overlay:queuecommand("DirectInputToEngine")
 
-
 			-- the player wants to change modes, for example from ITG to FA+
 			elseif focus.kind == "ChangeMode" then
 				SL.Global.GameMode = focus.change
@@ -43,7 +42,6 @@ local input = function(event)
 				-- Reload the SortMenu's available options and queue "DirectInputToEngine"
 				-- to return input from Lua back to the engine and hide the SortMenu from view
 				sortmenu:playcommand("AssessAvailableChoices"):queuecommand("DirectInputToEngine")
-
 
 			-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
@@ -72,6 +70,10 @@ local input = function(event)
 				elseif focus.new_overlay == "Leaderboard" then
 					-- The leaderboard entry is removed altogether if the service isn't available.
 					sortmenu:queuecommand("DirectInputToLeaderboard")
+				elseif focus.new_overlay == "SongSearch" then
+					-- Direct the input back to the engine, so that the ScreenTextEntry overlay
+					-- works correctly.
+					overlay:playcommand("DirectInputToEngine", {songSearch=true})
 				end
 			end
 
