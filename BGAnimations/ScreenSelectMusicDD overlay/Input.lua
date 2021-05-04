@@ -137,13 +137,13 @@ t.Handler = function(event)
 							MESSAGEMAN:Broadcast("ReloadSSMDD")
 							isSortMenuVisible = false
 							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-							
 						elseif SortMenuNeedsUpdating == false then
 							isSortMenuVisible = false
 							SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
 							MESSAGEMAN:Broadcast("ToggleSortMenu")
 						end
-					else end
+					end
+					MESSAGEMAN:Broadcast("UpdateCursorColor")
 				end
 				if event.GameButton == "Start" then
 					if DDSortMenuCursorPosition < 9 then
