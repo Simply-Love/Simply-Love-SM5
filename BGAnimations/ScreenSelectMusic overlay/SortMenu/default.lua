@@ -44,13 +44,17 @@ local SongSearchSettings = {
     OnOK=function(input)
 		local searchText = input:lower()
 		local candidates = {}
+		local stepsType = GAMESTATE:GetCurrentStyle():GetStepsType()
         if #input ~= 0 then
 			local allSongs = SONGMAN:GetAllSongs()
 			for song in ivalues(allSongs) do
-				-- Search both the normal title as well as the transliterated title.
-				if song:GetDisplayFullTitle():lower():find(searchText) ~= nil or
-						song:GetTranslitFullTitle():lower():find(searchText) ~= nil then
-					table.insert(candidates, song)
+				-- Only add valid candidates if there are steps in the current mode.
+				if song:HasStepsType(stepsType) then
+					-- Search both the normal title as well as the transliterated title.
+					if song:GetDisplayFullTitle():lower():find(searchText) ~= nil or
+							song:GetTranslitFullTitle():lower():find(searchText) ~= nil then
+						table.insert(candidates, song)
+					end
 				end
 			end
 
