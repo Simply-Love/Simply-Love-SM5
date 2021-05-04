@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
---------------------------------PROFILE PREFENCES TO LOAD----------------------------------------
+--------------------------------DD PROFILE PREFENCES TO LOAD/SAVE--------------------------------
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
 
@@ -22,6 +22,13 @@ function GetMainSortPreference()
 	return tonumber(value)
 end
 
+function SetMainSortPreference(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'MainSortPreference', value)
+		DDStats.Save(playerNum)
+	end
+end
+
 ----- SUB SORT PROFILE PREFERNCE -----
 function GetSubSortPreference()
 	local value
@@ -40,6 +47,13 @@ function GetSubSortPreference()
 	return tonumber(value)
 end
 
+function SetSubSortPreference(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'SubSortPreference', value)
+		DDStats.Save(playerNum)
+	end
+end
+
 ----- Lower Difficulty Filter profile settings ----- 
 function GetLowerDifficultyFilter()
 	local value
@@ -54,6 +68,13 @@ function GetLowerDifficultyFilter()
 	end
 
 	return tonumber(value)
+end
+
+function SetLowerDifficultyFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'LowerDifficultyFilter', value)
+		DDStats.Save(playerNum)
+	end
 end
 
 ----- Upper Difficulty Filter profile settings ----- 
@@ -72,6 +93,13 @@ function GetUpperDifficultyFilter()
 	return tonumber(value)
 end
 
+function SetUpperDifficultyFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'UpperDifficultyFilter', value)
+		DDStats.Save(playerNum)
+	end
+end
+
 ----- Lower BPM Filter profile settings ----- 
 function GetLowerBPMFilter()
 	local value
@@ -88,6 +116,12 @@ function GetLowerBPMFilter()
 	return tonumber(value)
 end
 
+function SetLowerBPMFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'LowerBPMFilter', value)
+		DDStats.Save(playerNum)
+	end
+end
 
 ----- Upper BPM Filter profile settings ----- 
 function GetUpperBPMFilter()
@@ -105,6 +139,12 @@ function GetUpperBPMFilter()
 	return tonumber(value)
 end
 
+function SetUpperBPMFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'UpperBPMFilter', value)
+		DDStats.Save(playerNum)
+	end
+end
 
 ----- Lower Length Filter profile settings ----- 
 function GetLowerLengthFilter()
@@ -120,6 +160,13 @@ function GetLowerLengthFilter()
 	end
 
 	return tonumber(value)
+end
+
+function SetLowerLengthFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'LowerLengthFilter', value)
+		DDStats.Save(playerNum)
+	end
 end
 
 ----- Upper Length Filter profile settings ----- 
@@ -138,6 +185,13 @@ function GetUpperLengthFilter()
 	return tonumber(value)
 end
 
+function SetUpperLengthFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'UpperLengthFilter', value)
+		DDStats.Save(playerNum)
+	end
+end
+
 ---- Groovestats profile preference
 function GetGroovestatsFilter()
 	local value
@@ -152,4 +206,11 @@ function GetGroovestatsFilter()
 	end
 
 	return value
+end
+
+function SetGroovestatsFilter(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'GroovestatsFilter', value)
+		DDStats.Save(playerNum)
+	end
 end

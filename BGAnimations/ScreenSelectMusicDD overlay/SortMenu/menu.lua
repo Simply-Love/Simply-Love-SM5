@@ -70,14 +70,6 @@ local function GetGroovestatsFilter()
 	return value
 end
 
-local function SetGroovestatsFilter(value)
-	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
-		DDStats.SetStat(playerNum, 'GroovestatsFilter', value)
-		DDStats.Save(playerNum)
-	end
-end
-
-
 local t = Def.ActorFrame{
 	Name="SortMenu",
 	InitCommand=function(self)

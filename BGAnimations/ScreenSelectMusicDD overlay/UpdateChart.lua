@@ -55,19 +55,28 @@ local function UpdateChart(playerNum, difficultyChange)
 		local targetMeter = tonumber(NameOfGroup)
 
 		local oldDifficulty = difficulties[curDifficultyIndices[playerNum]];
+		local matchingSteps = nil
 		-- Check for meter AND difficulty match
 		for steps in ivalues(stepses) do
 			if steps:GetMeter() == targetMeter and steps:GetDifficulty() == oldDifficulty then
-				GAMESTATE:SetCurrentSteps(playerNum, steps)
-				return
+				matchingSteps = steps
+				break
 			end
 		end
 
-		for steps in ivalues(stepses) do
-			if steps:GetMeter() == targetMeter then
-				GAMESTATE:SetCurrentSteps(playerNum, steps)
-				return
+		if matchingSteps == nil then
+			for steps in ivalues(stepses) do
+				if steps:GetMeter() == targetMeter then
+					matchingSteps = steps
+					break
+				end
 			end
+		end
+
+		if matchingSteps ~= nil then
+			curDifficultyIndices[playerNum] = difficultyToIndex[matchingSteps:GetDifficulty()]
+			GAMESTATE:SetCurrentSteps(playerNum, matchingSteps)
+			return
 		end
 	end
 
