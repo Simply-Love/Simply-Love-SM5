@@ -1,5 +1,3 @@
-local DDStats = LoadActor('./ScreenSelectMusicDD overlay/DDStats.lua')
-
 ---- this is to calculate the average bpm/difficulty but not let it increment unless the song was finished. HELP ----
 local SongInSet = SL.Global.Stages.PlayedThisGame
 local SongsInSet = SongInSet + 1

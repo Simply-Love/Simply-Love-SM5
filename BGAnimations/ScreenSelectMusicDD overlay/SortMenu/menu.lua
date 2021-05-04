@@ -1,5 +1,3 @@
-local DDStats = LoadActor('../DDStats.lua')
-
 local SelectedButtonColor = "#3b3b3b"
 local DimmedButtonColor = "#222222"
 local UnselectedTextColor = "#bdbdbd"

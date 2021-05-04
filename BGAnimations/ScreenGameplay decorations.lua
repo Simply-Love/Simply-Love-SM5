@@ -1,6 +1,5 @@
 if not GAMESTATE:IsCourseMode() then
 	local sTable = GAMESTATE:GetCurrentSong():GetStepsByStepsType( "StepsType_Dance_Single" );
-	local DDStats = LoadActor('./ScreenSelectMusicDD overlay/DDStats.lua')
 	local nsj = GAMESTATE:GetNumSidesJoined()
 	
 	Player1MinesAvoided = 0

@@ -1,4 +1,3 @@
-local DDStats = LoadActor("../BGAnimations/ScreenSelectMusicDD overlay/DDStats.lua")
 local nsj = GAMESTATE:GetNumSidesJoined()
 
 local function GetLastStyle()

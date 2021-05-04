@@ -1,8 +1,3 @@
-
-if _DDStats ~= nil then
-	return _DDStats
-end
-
 local playerProfiles = {}
 
 local function getPlayerProfileDir(playerNum)
@@ -59,7 +54,7 @@ local function loadProfile(playerNum)
 	return stats
 end
 
-local DDStats = {
+DDStats = {
 	GetStat = function(playerNum, statName)
 		local profileId = PROFILEMAN:GetProfile(playerNum):GetGUID()
 		if playerProfiles[profileId] == nil then
@@ -103,7 +98,3 @@ local DDStats = {
 		file:Close()
 	end,
 }
-
-_DDStats = DDStats
-
-return DDStats

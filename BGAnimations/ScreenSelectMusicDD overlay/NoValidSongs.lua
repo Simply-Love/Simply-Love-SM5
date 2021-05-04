@@ -1,4 +1,3 @@
-local DDStats = LoadActor('./DDStats.lua')
 local HasResetFilterPreferences = false
 local HelpText
 

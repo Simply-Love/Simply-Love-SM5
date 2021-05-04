@@ -1,4 +1,3 @@
-local DDStats = LoadActor('../DDStats.lua')
 SortMenuNeedsUpdating = false
 
 ----- Option names for each dynamic sort/filter value

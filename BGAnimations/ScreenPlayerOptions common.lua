@@ -1,4 +1,3 @@
-local DDStats = LoadActor('./ScreenSelectMusicDD overlay/DDStats.lua')
 local af = Def.ActorFrame{}
 
 -- this is broadcast from [OptionRow] TitleGainFocusCommand in metrics.ini

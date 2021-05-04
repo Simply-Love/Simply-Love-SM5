@@ -1,5 +1,3 @@
-local DDStats = LoadActor('./DDStats.lua')
-
 local max_length_group = '1:00:00+'
 local max_difficulty_group = '40+'
 local max_bpm_group = '400+'
@@ -71,6 +69,45 @@ local function GetSongBpmGroup(song)
 	end
 end
 
+---------------------------------------------------------------------------
+-- helper function used for groovestats filtering.
+-- returns the contents of a txt file as an indexed table, split on newline
+
+local GetFileContents = function(path)
+	local contents = ""
+
+	if FILEMAN:DoesFileExist(path) then
+		-- create a generic RageFile that we'll use to read the contents
+		local file = RageFileUtil.CreateRageFile()
+		-- the second argument here (the 1) signifies
+		-- that we are opening the file in read-only mode
+		if file:Open(path, 1) then
+			contents = file:Read()
+		end
+
+		-- destroy the generic RageFile now that we have the contents
+		file:destroy()
+	end
+
+	-- split the contents of the file on newline
+	-- to create a table of lines as strings
+	local lines = {}
+	for line in contents:gmatch("[^\r\n]+") do
+		lines[#lines+1] = line
+	end
+
+	return lines
+end
+
+-- Initialize Groovestats filter
+local path = THEME:GetCurrentThemeDirectory() .. "Other/Groovestats-Groups.txt"
+local groovestats_groups = GetFileContents(path)
+local groovestats_groups_set = {}
+if groovestats_groups ~= nil then
+	for group in ivalues(groovestats_groups) do
+		groovestats_groups_set[group] = true
+	end
+end
 
 -- You know that spot under the rug where you sweep away all the dirty
 -- details and then hope no one finds them?  This file is that spot.
@@ -110,191 +147,6 @@ local row = {
 
 local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 
----------------------------------------------------------------------------
--- helper function used by GetGroups() and GetDefaultSong()
--- returns the contents of a txt file as an indexed table, split on newline
-
-local GetFileContents = function(path)
-	local contents = ""
-
-	if FILEMAN:DoesFileExist(path) then
-		-- create a generic RageFile that we'll use to read the contents
-		local file = RageFileUtil.CreateRageFile()
-		-- the second argument here (the 1) signifies
-		-- that we are opening the file in read-only mode
-		if file:Open(path, 1) then
-			contents = file:Read()
-		end
-
-		-- destroy the generic RageFile now that we have the contents
-		file:destroy()
-	end
-
-	-- split the contents of the file on newline
-	-- to create a table of lines as strings
-	local lines = {}
-	for line in contents:gmatch("[^\r\n]+") do
-		lines[#lines+1] = line
-	end
-
-	return lines
-end
-
--------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------
---------------------------------PROFILE PREFENCES TO LOAD----------------------------------------
--------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------
-
------ MAIN SORT PROFILE PREFERNCE ----- 
-local function GetMainSortPreference()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'MainSortPreference')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'MainSortPreference')
-	end
-
-	if value == nil then
-		value = 1
-	end
-	
-	MainSortIndex = tonumber(value)
-
-	return tonumber(value)
-end
-
------ SUB SORT PROFILE PREFERNCE -----
-local function GetSubSortPreference()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'SubSortPreference')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'SubSortPreference')
-	end
-
-	if value == nil then
-		value = 2
-	end
-	
-	SubSortIndex = tonumber(value)
-
-	return tonumber(value)
-end
-
------ Lower Difficulty Filter profile settings ----- 
-function GetLowerDifficultyFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'LowerDifficultyFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'LowerDifficultyFilter')
-	end
-
-	if value == nil then
-		value = 0
-	end
-
-	return tonumber(value)
-end
-
------ Upper Difficulty Filter profile settings ----- 
-function GetUpperDifficultyFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'UpperDifficultyFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'UpperDifficultyFilter')
-	end
-
-	if value == nil then
-		value = 0
-	end
-
-	return tonumber(value)
-end
-
------ Lower BPM Filter profile settings ----- 
-function GetLowerBPMFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'LowerBPMFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'LowerBPMFilter')
-	end
-
-	if value == nil then
-		value = 49
-	end
-
-	return tonumber(value)
-end
-
-
------ Upper BPM Filter profile settings ----- 
-function GetUpperBPMFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'UpperBPMFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'UpperBPMFilter')
-	end
-
-	if value == nil then
-		value = 49
-	end
-
-	return tonumber(value)
-end
-
-
------ Lower Length Filter profile settings ----- 
-function GetLowerLengthFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'LowerLengthFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'LowerLengthFilter')
-	end
-
-	if value == nil then
-		value = 0
-	end
-
-	return tonumber(value)
-end
-
------ Upper Length Filter profile settings ----- 
-function GetUpperLengthFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'UpperLengthFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'UpperLengthFilter')
-	end
-	
-	if value == nil then
-		value = 0
-	end
-	
-	return tonumber(value)
-end
-
----- Groovestats profile preference
-function GetGroovestatsFilter()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'GroovestatsFilter')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'GroovestatsFilter')
-	end
-
-	if value == nil then
-		value = 'No'
-	end
-
-	return value
-end
 
 local function LetterToGroup(letter)
 	if 'A' <= letter and letter <= 'Z' then
@@ -445,7 +297,14 @@ local UpdatePrunedSongs = function()
 						passesFilters = false
 					end
 				end
-			
+
+				---- Filter for Groovestats
+				if GetGroovestatsFilter() == 'Yes' then
+					if not groovestats_groups_set[song:GetGroupName()] then
+						passesFilters = false
+					end
+				end
+
 				---- Filter for Difficulty
 				if GetLowerDifficultyFilter() ~= 0 or GetUpperDifficultyFilter() ~= 0 then
 					local hasPassingDifficulty = false
@@ -504,7 +363,6 @@ local PruneSongsFromGroup = function(group)
 	for i, song in ipairs(songs) do
 		if current_song == song then
 			index = i
-			NameOfGroup = group
 			break
 		end
 	end
@@ -538,8 +396,7 @@ end
 local GetGroups = function()
 	local sort_pref = GetMainSortPreference()
 	if sort_pref == 1 then
-		-- TODO : return SONGMAN:GetSongGroupNames()
-		-- then make groovestats filter per song
+		return SONGMAN:GetSongGroupNames()
 	elseif sort_pref == 2 then
 		local groups = GetGroupsBy(GetSongFirstLetter)
 		table.sort(groups, SortByLetter)
@@ -581,33 +438,6 @@ local GetGroups = function()
 			return a < b
 		end)
 		return groups
-	end
-
-	if GetGroovestatsFilter() == 'Yes' then
-		local path = THEME:GetCurrentThemeDirectory() .. "Other/Groovestats-Groups.txt"
-		local preliminary_groups = GetFileContents(path)
-
-		-- if the file didn't exist or was empty or contained no valid groups,
-		-- return the full list of groups available to SM
-		if preliminary_groups == nil or #preliminary_groups == 0 then
-			return SONGMAN:GetSongGroupNames()
-		end
-
-		local groups = {}
-		-- some Groups found in the file may not actually exist due to human error, typos, etc.
-		for prelim_group in ivalues(preliminary_groups) do
-			-- if this group exists
-			if SONGMAN:DoesSongGroupExist( prelim_group ) then
-				-- add this preliminary group to the table of finalized groups
-				groups[#groups+1] = prelim_group
-			end
-		end
-
-		if #groups > 0 then
-			return groups
-		end
-	elseif GetGroovestatsFilter() == 'No' then
-		return SONGMAN:GetSongGroupNames()
 	end
 end
 
@@ -800,6 +630,28 @@ end
 
 current_song = GetDefaultSong(groups)
 GAMESTATE:SetCurrentSong(current_song)
+
+-- Find the group of the current song.
+local found_group = false
+if NameOfGroup ~= nil then
+	for song in ivalues(PruneSongsFromGroup(NameOfGroup)) do
+		if song == current_song then
+			found_group = true
+		end
+	end
+end
+if not found_group then
+	for group in ivalues(groups) do
+		for song in ivalues(PruneSongsFromGroup(group)) do
+			if song == current_song then
+				NameOfGroup = group
+				found_group = true
+				break
+			end
+			if found_group then break end
+		end
+	end
+end
 
 group_index = FindInTable(NameOfGroup, groups) or 1
 

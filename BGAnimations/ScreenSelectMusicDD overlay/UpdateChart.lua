@@ -1,5 +1,3 @@
-local DDStats = LoadActor('./DDStats.lua')
-
 local difficulties = {
 	'Difficulty_Beginner',
 	'Difficulty_Easy',
@@ -49,6 +47,28 @@ local function UpdateChart(playerNum, difficultyChange)
 	local stepses = SongUtil.GetPlayableSteps(song)
 	if #stepses == 0 then
 		return
+	end
+
+	-- If we're sorted by difficulty and difficultyChange == 0,
+	-- try to keep the same meter
+	if GetMainSortPreference() == 6 and difficultyChange == 0 then
+		local targetMeter = tonumber(NameOfGroup)
+
+		local oldDifficulty = difficulties[curDifficultyIndices[playerNum]];
+		-- Check for meter AND difficulty match
+		for steps in ivalues(stepses) do
+			if steps:GetMeter() == targetMeter and steps:GetDifficulty() == oldDifficulty then
+				GAMESTATE:SetCurrentSteps(playerNum, steps)
+				return
+			end
+		end
+
+		for steps in ivalues(stepses) do
+			if steps:GetMeter() == targetMeter then
+				GAMESTATE:SetCurrentSteps(playerNum, steps)
+				return
+			end
+		end
 	end
 
 	local oldDifficultyIndex = curDifficultyIndices[playerNum]

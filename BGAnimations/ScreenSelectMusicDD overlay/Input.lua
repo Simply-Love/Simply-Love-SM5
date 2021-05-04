@@ -2,7 +2,6 @@ local player = ...
 local args = ...
 local GroupWheel = args.GroupWheel
 local SongWheel = args.SongWheel
-local DDStats = LoadActor('./DDStats.lua')
 local nsj = GAMESTATE:GetNumSidesJoined()
 
 local ChartUpdater = LoadActor("./UpdateChart.lua")
