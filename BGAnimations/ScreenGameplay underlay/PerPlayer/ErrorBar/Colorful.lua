@@ -30,10 +30,7 @@ local wscale = barWidth / 2 / maxTimingOffset
 local af = Def.ActorFrame{
     InitCommand = function(self)
         self:xy(GetNotefieldX(player), layout.y)
-
-        if numTicks == 1 then
-            self:zoom(0)
-        end
+        self:GetChild("Bar"):zoom(0)
     end,
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
@@ -42,27 +39,33 @@ local af = Def.ActorFrame{
         local score = ToEnumShortString(params.TapNoteScore)
         if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
             local tick = self:GetChild("Tick" .. currentTick)
+            local bar = self:GetChild("Bar")
+
             currentTick = currentTick % numTicks + 1
 
-            if numTicks > 1 then
-                tick:finishtweening()
+            tick:finishtweening()
+            bar:finishtweening()
+            bar:zoom(1)
 
+            if numTicks > 1 then
                 tick:diffusealpha(1)
                     :x(params.TapNoteOffset * wscale)
                     :sleep(0.03):linear(tickDuration - 0.03)
                     :diffusealpha(0)
             else
-                self:finishtweening()
-                self:zoom(1)
-
                 tick:diffusealpha(1)
                     :x(params.TapNoteOffset * wscale)
-
-                self:sleep(tickDuration)
-                    :zoom(0)
+                    :sleep(tickDuration):diffusealpha(0)
             end
+
+            bar:sleep(tickDuration)
+                :zoom(0)
         end
     end,
+}
+
+local bar_af = Def.ActorFrame{
+    Name = "Bar",
 
     -- Background
     Def.Quad{
@@ -72,6 +75,7 @@ local af = Def.ActorFrame{
         end
     },
 }
+af[#af+1] = bar_af
 
 local lastx = 0
 
@@ -82,12 +86,12 @@ for i = 1, #enabledTimingWindows do
     local width = x - lastx
     local judgmentColor = SL.JudgmentColors[SL.Global.GameMode][wi]
 
-    af[#af+1] = Def.Quad{
+    bar_af[#bar_af+1] = Def.Quad{
         InitCommand = function(self)
             self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor)
         end
     }
-    af[#af+1] = Def.Quad{
+    bar_af[#bar_af+1] = Def.Quad{
         InitCommand = function(self)
             self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor)
         end
