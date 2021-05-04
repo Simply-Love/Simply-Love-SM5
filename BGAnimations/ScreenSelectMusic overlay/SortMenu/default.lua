@@ -355,10 +355,12 @@ local t = Def.ActorFrame {
 			end
 		end
 
-		for device in ivalues(INPUTMAN:GetDescriptions()) do
-			-- Only display this option if a Keyboard is actually connected.
-			if device == "Keyboard" then
-				table.insert(wheel_options, {"WhereforeArtThou", "SongSearch"})
+		if not GAMESTATE:IsCourseMode() then
+			for device in ivalues(INPUTMAN:GetDescriptions()) do
+				-- Only display this option if a Keyboard is actually connected.
+				if device == "Keyboard" then
+					table.insert(wheel_options, {"WhereforeArtThou", "SongSearch"})
+				end
 			end
 		end
 
