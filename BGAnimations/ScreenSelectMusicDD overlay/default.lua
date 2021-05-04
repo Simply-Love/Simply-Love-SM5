@@ -156,6 +156,8 @@ local t = Def.ActorFrame {
 	LoadActor("./SortMenu/default.lua"),
 	-- a Test Input overlay can be accessed from the SortMenu
 	LoadActor("./TestInput.lua"),
+	-- Handles song search data
+	LoadActor("./SongSearch.lua"),
 	-- For transitioning to either gameplay or player options.
 	LoadActor('./OptionsMessage.lua'),
 }

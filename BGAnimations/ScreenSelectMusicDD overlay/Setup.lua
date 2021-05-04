@@ -235,7 +235,10 @@ local UpdatePrunedSongs = function()
 
 	local sort_pref = GetMainSortPreference()
 	local songs_by_group
-	if sort_pref == 1 then
+	if SongSearchSSMDD then
+		songs_by_group = {}
+		songs_by_group['Song Search'] = SONGMAN:GetAllSongs()
+	elseif sort_pref == 1 then
 		songs_by_group = GroupSongsBy(function(song) return song:GetGroupName() end)
 	elseif sort_pref == 2 then
 		songs_by_group = GroupSongsBy(GetSongFirstLetter)
@@ -320,9 +323,40 @@ local UpdatePrunedSongs = function()
 					end
 				end
 				
+				----- Filter For song search
+				if SongSearchSSMDD == true then
+					local match = false
+					local title = song:GetDisplayFullTitle():lower()
+					-- the query "xl grind" will match a song called "Axle Grinder" no matter
+					-- what the chart info says
+					if title:match(SongSearchAnswer:lower()) then
+						match = true
+					end
+					if not match then
+						for i, steps in ipairs(song:GetStepsByStepsType(steps_type)) do
+							local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
+							match = true
+							-- the query "br xo fs" will match any song with at least one chart that
+							-- has "br", "xo" and "fs" in its AuthorCredit + Description
+							for word in SongSearchAnswer:gmatch("%S+") do
+								if not chartStr:lower():match(word:lower()) then
+									match = false
+									break
+								end
+							end
+						end
+					end
+					
+					if match == false then
+						passesFilters = false
+					end
+				
+				end
+				
 				if passesFilters then
 					songs[#songs+1] = song
 				end
+				
 			end
 		end
 		
@@ -394,6 +428,10 @@ local function SortByLetter(a, b)
 end
 
 local GetGroups = function()
+	if SongSearchSSMDD == true then
+		return {'Song Search'}
+	end	
+	
 	local sort_pref = GetMainSortPreference()
 	if sort_pref == 1 then
 		return SONGMAN:GetSongGroupNames()
@@ -502,60 +540,6 @@ local PruneGroups = function(_groups)
 end
 
 --------------------------------------------------------------------------
-
-if SongSearchSSMDD == true then
-	local results = {}
-		for i, Song in ipairs(SONGMAN:GetAllSongs()) do
-			local match = false
-			title = Song:GetDisplayFullTitle():lower()
-			-- the query "xl grind" will match a song called "Axle Grinder" no matter
-			-- what the chart info says
-			if title:match(SongSearchAnswer:lower()) then
-					results[#results+1] = Song
-					match = true
-			end
-			if not match then
-				for i, steps in ipairs(Song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
-					local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
-					match = true
-					-- the query "br xo fs" will match any song with at least one chart that
-					-- has "br", "xo" and "fs" in its AuthorCredit + Description
-					for word in SongSearchAnswer:gmatch("%S+") do
-						if not chartStr:lower():match(word:lower()) then
-						match = false
-						break
-					end
-				end
-				if match then
-					results[#results+1] = Song
-				end
-			end
-		end
-	end
-	
-	
-	if #results > 0 then
-		filepath = THEME:GetCurrentThemeDirectory().."Other/SongManager SearchResults.txt"
-		f = RageFileUtil.CreateRageFile()
-		f:Open(filepath, 2) -- 2 = write
-		f:PutLine("---Search Results") -- folder name
-		for i, song in ipairs(results) do
-			f:PutLine(song:GetGroupName().."/"..song:GetDisplayFullTitle()) -- song
-		end
-		f:Close()
-		f:destroy()
-	else
-		SCREENMAN:SystemMessage("No songs found!")
-	end
-	
-	if SongSearchSSMDD == true then
-		SongSearchSSMDD = false
-		SongSearchAnswer = nil
-	end
-
-end
-
-
 local GetGroupInfo = function(groups)
 	local info = {}
 	for group in ivalues(groups) do

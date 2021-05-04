@@ -15,8 +15,6 @@ local ActiveOptionRow
 local didSelectSong = false
 local PressStartForOptions = false
 isSortMenuVisible = false
-SongSearchSSMDD = false
-SongSearchAnswer = ""
 InputMenuHasFocus = false
 
 -----------------------------------------------------
@@ -156,18 +154,7 @@ t.Handler = function(event)
 						SortMenuNeedsUpdating = true
 					end	
 					if DDSortMenuCursorPosition == 11 then
-						SCREENMAN:AddNewScreenToTop("ScreenTextEntry");
-						local songSearch = {
-							Question = "\nSEARCH FOR:\nSongs\nSong Artists\nStep Artists",
-							MaxInputLength = 52,
-							OnOK = function(answer)
-								SongSearchSSMDD = true
-								SongSearchAnswer = answer
-								SCREENMAN:GetTopScreen():SetNextScreenName("ScreenSelectMusicSSMDD")
-								SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-							end,
-							};
-							SCREENMAN:GetTopScreen():Load(songSearch)
+						MESSAGEMAN:Broadcast("SongSearchSSMDD")
 					end
 					if DDSortMenuCursorPosition == 13 then
 						local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
