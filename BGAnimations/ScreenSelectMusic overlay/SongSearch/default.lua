@@ -124,7 +124,7 @@ local overlay = Def.ActorFrame {
 		end
 	},
 
-	candidatesScroller:create_actors("Candidates", 10, candidateItemMt, -paneWidth/4, -paneHeight/2 - textHeight/2)
+	candidatesScroller:create_actors("Candidates", 12, candidateItemMt, -paneWidth/4, -paneHeight/2 - textHeight * 2.5)
 }
 
 local songDetails = {

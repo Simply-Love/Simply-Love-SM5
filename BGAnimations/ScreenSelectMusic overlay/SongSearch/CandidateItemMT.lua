@@ -55,9 +55,6 @@ return {
 			else
 				self.container:diffusealpha(1)
 			end
-
-			self.container:diffusealpha(1)
-
 		end,
 
 		set = function(self, info)
