@@ -62,7 +62,11 @@ local median_offset = 0
 -- we'll use it to scale the histogram to be an appropriate height
 local highest_offset_count = 0
 
+-- sum_timing_error will be used in a loop to sum the total timing error
+-- accumulated over the entire stepchart during gameplay
 local sum_timing_error = 0
+-- we'll divide sum_timing_error by the number of judgments that occured
+-- to get the mean timing error
 local avg_timing_error = 0
 
 -- ---------------------------------------------
@@ -85,6 +89,13 @@ end
 -- this will make calculating the median very straightforward
 local list = {}
 for offset=-worst_window, worst_window, 0.001 do
+
+	-- TODO: Ruminate over whether rounding to 3 decimal places (millisecond precision)
+	-- is the right thing to be doing here.  Things to consider include:
+	--   • are we losing precision in a way that could impact players?
+	--   • does Lua 5.1's floating point precision come into play here?
+	--   • should hardware (e.g. low polling rates) be considered here?  can it?
+	--   • does the judgment offset histogram really need 10x more verts to draw?
 	offset = round(offset,3)
 
 	if offsets[offset] then
@@ -110,8 +121,28 @@ if #list > 0 then
 		sum_timing_error = sum_timing_error + math.abs(list[i])
 	end
 
-	-- calculate the avg timing error, rounded to 3 decimals
-	avg_timing_error = round(sum_timing_error/#list,3)
+	-- calculate the mean timing error
+	avg_timing_error = sum_timing_error / #list
+	-- convert seconds to ms
+	avg_timing_error = avg_timing_error * 1000
+
+	-- round ms value to 1 decimal place
+	-- we'll string.format() this value before handing it off to the BitmapText so that
+	-- an avg_timing_error >= 10 displays with no decimal precision
+	-- and avg_timing_error < 10 displays to 1 decimal place
+	--
+	-- But! round() here first to handle values very-close-to-but-less than 10
+	-- for example, with an avg_timing_error of 9.99999, we want to
+	--    1. rounded to 10.0,
+	--    2. determine 10.0 to be >= 10
+	--    3. format 10.0 to display as "10ms"
+	--
+	-- this^ approach avoids a formatting edge case where we might
+	--    1. determine that 9.99999 is < 10
+	--    2. format it to 1 decimal place so that it displays as "10.0ms"
+
+	avg_timing_error = round(avg_timing_error, 1)
+
 end
 -- ---------------------------------------------
 
@@ -177,34 +208,41 @@ af[#af+1] = Def.ActorMultiVertex{
 }
 
 -- ---------------------------------------------
--- avg_timing_error value
-af[#af+1] = Def.BitmapText{
+-- BitmapText actors for text
+local bmts = Def.ActorFrame{}
+bmts.InitCommand=function(self) self:y(-pane_height+32) end
+
+-- avg_timing_error value with "ms" label
+bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
-	Text=(avg_timing_error*1000).."ms",
+	Text=(avg_timing_error < 10 and "%.1fms" or "%dms"):format(avg_timing_error),
 	InitCommand=function(self)
-		self:x(40):y(-pane_height+32)
-			:zoom(0.8)
+		self:x(40):zoom(0.8)
 	end,
 }
 
--- median_offset value
-af[#af+1] = Def.BitmapText{
+-- median_offset value with "ms" label
+bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=(median_offset*1000).."ms",
 	InitCommand=function(self)
-		self:x(pane_width/2):y(-pane_height+32)
-			:zoom(0.8)
+		self:x(pane_width/2):zoom(0.8)
 	end,
 }
 
--- mode_offset value
-af[#af+1] = Def.BitmapText{
+-- mode_offset value with "ms" label
+bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=(mode_offset*1000).."ms",
 	InitCommand=function(self)
-		self:x(pane_width-40):y(-pane_height+32)
-			:zoom(0.8)
+		self:x(pane_width-40):zoom(0.8)
 	end,
 }
 
+-- add bmts ActorFrame to overall ActorFrame
+af[#af+1] = bmts
+
+-- ---------------------------------------------
+
+-- return overall ActorFrame
 return af
