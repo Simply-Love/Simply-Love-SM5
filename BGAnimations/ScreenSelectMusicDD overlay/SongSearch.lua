@@ -13,10 +13,18 @@ local t = Def.ActorFrame{
 			Question = "\nSEARCH FOR:\nSongs\nSong Artists\nStep Artists",
 			MaxInputLength = 52,
 			OnOK = function(answer)
-				SongSearchSSMDD = true
-				SongSearchAnswer = answer
 				--- has to sleep in order to be able to reload because #StepmaniaMoment
-				self:sleep(0.1):queuecommand("ReloadScreen")
+				--- If the player doesn't enter any text and just presses enter  just reload the screen to the normal wheel
+				if answer ~= "" then
+					SongSearchSSMDD = true
+					SongSearchAnswer = answer
+					self:sleep(0.1):queuecommand("ReloadScreen")
+				else
+					SongSearchSSMDD = false
+					SongSearchAnswer = nil
+					self:sleep(0.1):queuecommand("ReloadScreen")
+				end
+				
 			end,
 			};
 			SCREENMAN:GetTopScreen():Load(songSearch)
