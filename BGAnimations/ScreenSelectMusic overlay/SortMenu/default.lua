@@ -38,14 +38,14 @@ local hasSong = GAMESTATE:GetCurrentSong() and true or false
 
 local FilterTable = function(arr, func)
 	local new_index = 1
-    local size_orig = #arr
-    for v in ivalues(arr) do
-        if func(v) then
-            arr[new_index] = v
-            new_index = new_index + 1
-        end
-    end
-    for i = new_index, size_orig do arr[i] = nil end
+	local size_orig = #arr
+	for v in ivalues(arr) do
+		if func(v) then
+			arr[new_index] = v
+			new_index = new_index + 1
+		end
+	end
+	for i = new_index, size_orig do arr[i] = nil end
 end
 
 local GetBpmTier = function(bpm)
@@ -53,10 +53,10 @@ local GetBpmTier = function(bpm)
 end
 
 local SongSearchSettings = {
-    Question="Search: ",
-    InitialAnswer="",
-    MaxInputLength=30,
-    OnOK=function(input)
+	Question="'pack/song' format will search for songs in specific packs\n'[###]' format will search for BPMs/Difficulties",
+	InitialAnswer="",
+	MaxInputLength=30,
+	OnOK=function(input)
 		if #input == 0 then return end
 
 		-- Lowercase the input text for comparison
@@ -150,7 +150,7 @@ local SongSearchSettings = {
 
 		-- Even if we don't have any results, we want to show that to the player.
 		MESSAGEMAN:Broadcast("DisplaySearchResults", {searchText=input, candidates=candidates})
-    end,
+	end,
 }
 
 ------------------------------------------------------------

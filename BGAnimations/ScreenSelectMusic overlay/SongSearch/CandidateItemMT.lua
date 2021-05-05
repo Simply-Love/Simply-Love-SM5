@@ -30,6 +30,20 @@ return {
 				end
 			}
 
+			-- Song Name
+			af[#af+1] = Def.BitmapText{
+				Font="Common Bold",
+				Name="Exit",
+				Text="Exit",
+				InitCommand=function(subself)
+					self.exit_text = subself
+					subself:y(0):diffusealpha(0):maxwidth(155):zoom(0.5):diffuse(Color.Red)
+				end,
+				OnCommand=function(subself)
+					subself:sleep(0.13):linear(0.05):diffusealpha(1)
+				end
+			}
+
 			return af
 		end,
 
@@ -62,12 +76,14 @@ return {
 
 			local songOrExit = info.songOrExit
 
-			-- We need some way to differentiate between Songs and the "Exit" text.
+			-- We use type(songOrExit) as a way to differentiate between Songs and the "Exit" text.
 			-- Don't want to run into the issue of someone searching for "Exit".
 			if type(songOrExit) == "string" then
-				self.song_name:settext(songOrExit):diffuse(Color.Red)
+				self.song_name:diffusealpha(0)
+				self.exit_text:diffusealpha(1)
 			else
-				self.song_name:settext(songOrExit:GetDisplayMainTitle()):diffuse(Color.White)
+				self.exit_text:diffusealpha(0)
+				self.song_name:diffusealpha(1):settext(songOrExit:GetDisplayMainTitle()):diffuse(Color.White)
 			end
 			self.song_name.songOrExit = songOrExit
 		end
