@@ -61,6 +61,14 @@ af[#af+1] = Def.ActorFrame{
 		if steps then
 			MESSAGEMAN:Broadcast(pn.."ChartParsing")
 			ParseChartInfo(steps, pn)
+			local streams = SL[pn].Streams
+			SM(
+				"XO = "..streams.Crossovers.."\n"..
+				"FS = "..streams.Footswitches.."\n"..
+				"SS = "..streams.Sideswitches.."\n"..
+				"JA = "..streams.Jacks.."\n"..
+				"BR = "..streams.Brackets.."\n"
+			)
 			self:queuecommand("Unhide")
 		end
 	end,
