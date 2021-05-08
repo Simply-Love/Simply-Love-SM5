@@ -189,9 +189,7 @@ local af = Def.ActorFrame {
 					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 					local submitForPlayer = false
 
-					if valid and
-							not stats:GetFailed() and
-							SL[pn].IsPadPlayer then
+					if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
 						local percentDP = stats:GetPercentDancePoints()
 						local score = FormatPercentScore(percentDP)
 						score = tonumber(score:gsub("%%", "") * 100)

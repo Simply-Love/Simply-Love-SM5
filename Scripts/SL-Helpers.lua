@@ -566,3 +566,9 @@ GetComboFonts = function()
 
 	return fonts
 end
+
+
+-- -----------------------------------------------------------------------
+IsAutoplay = function(player)
+	return GAMESTATE:GetPlayerState(player):GetPlayerController() ~= "PlayerController_Human"
+end

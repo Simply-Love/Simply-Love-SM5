@@ -351,6 +351,9 @@ ValidForGrooveStats = function(player)
 	-- only FailTypes "Immediate" and "ImmediateContinue" are valid for GrooveStats
 	valid[11] = (po:FailSetting() == "FailType_Immediate" or po:FailSetting() == "FailType_ImmediateContinue")
 
+	-- AutoPlay is not allowed
+	valid[12] = not IsAutoplay(player)
+
 	-- ------------------------------------------
 	-- return the entire table so that we can let the player know which settings,
 	-- if any, prevented their score from being valid for GrooveStats
