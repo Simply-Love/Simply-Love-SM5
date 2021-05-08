@@ -289,7 +289,7 @@ local GetMeasureInfo = function(Steps, measuresString)
 			table.insert(notesPerMeasure, notesInMeasure)
 
 			-- NPS Calculation
-			durationOfMeasureInSeconds = timingData:GetElapsedTimeFromBeat((measureCount+1) * 4) - timingData:GetElapsedTimeFromBeat(measureCount*4)
+			durationOfMeasureInSeconds = timingData:GetElapsedTimeFromBeat(measureCount * 4) - timingData:GetElapsedTimeFromBeat((measureCount-1)*4)
 
 			-- FIXME: We subtract the time at the current measure from the time at the next measure to determine
 			-- the duration of this measure in seconds, and use that to calculate notes per second.
