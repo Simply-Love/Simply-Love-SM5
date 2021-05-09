@@ -122,16 +122,22 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
 					if upperPane then
-						if recordTexts then
-							if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
-								local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
-								recordText:visible(true)
-								if personalRank == 1 then
-									recordText:settext("World Record!")
-								else
-									recordText:settext("Personal Best!")
-								end
+						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
+							local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
+							local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
+
+							recordText:visible(true)
+							GSIcon:visible(true)
+							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
+							if personalRank == 1 then
+								recordText:settext("World Record!")
+							else
+								recordText:settext("Personal Best!")
 							end
+							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
+							local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()
+							-- This will automatically adjust based on the length of the recordText length.
+							GSIcon:xy(recordTextXStart - GSIconWidth/2, recordText:GetY())
 						end
 					end
 				end
@@ -237,7 +243,6 @@ local af = Def.ActorFrame {
 	}
 }
 
-af[#af+1] = LoadActor("./RpgOverlay.lua")
 
 
 local textColor = Color.White
@@ -299,13 +304,31 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	end,
 }
 
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","GrooveStats.png"),
+	Name="P1GrooveStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.3)
+		self:visible(false)
+	end,
+}
+
 af[#af+1] = LoadFont("Common Bold")..{
 	Name="P1RecordText",
 	InitCommand=function(self)
 		local x = _screen.cx - 225
 		self:zoom(0.225)
 		self:xy(x,40)
-		self:visible(GAMESTATE:IsSideJoined(PLAYER_1))
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","GrooveStats.png"),
+	Name="P2GrooveStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.3)
+		self:visible(false)
 	end,
 }
 
@@ -315,8 +338,10 @@ af[#af+1] = LoadFont("Common Bold")..{
 		local x = _screen.cx + 225
 		self:zoom(0.225)
 		self:xy(x,40)
-		self:visible(GAMESTATE:IsSideJoined(PLAYER_2))
+		self:visible(false)
 	end,
 }
+
+af[#af+1] = LoadActor("./RpgOverlay.lua")
 
 return af
