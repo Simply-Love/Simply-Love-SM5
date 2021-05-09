@@ -1,11 +1,10 @@
--- Pane4 displays a list of High Scores obrained from GrooveStats for the stepchart that was played.
+-- Pane7 displays a list of High Scores obrained from GrooveStats for the stepchart that was played.
 
 if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then return end
 
 local player = unpack(...)
 
 local pane = Def.ActorFrame{
-	Name="GSHighScorePane",
 	InitCommand=function(self)
 		self:y(_screen.cy - 62):zoom(0.8)
 	end

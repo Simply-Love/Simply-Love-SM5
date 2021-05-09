@@ -45,7 +45,6 @@ local qrcode_size = 168
 -- ------------------------------------------
 
 local pane = Def.ActorFrame{
-	Name="QRPane",
 	InitCommand=function(self) self:xy(-140, 222) end,
 	PaneSwitchCommand=function(self)
 		if self:GetVisible() and not allChecksPassed and not X_HasBeenBlinked then
