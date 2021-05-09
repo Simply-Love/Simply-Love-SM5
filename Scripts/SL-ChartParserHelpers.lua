@@ -76,6 +76,7 @@ GetStreamSequences = function(notesPerMeasure, notesThreshold)
 	return streamSequences
 end
 
+-- ----------------------------------------------------------------
 -- Generate Breakdown text using commonly known stream notation.
 -- We also include an option for compressing the output text based off of a
 -- 'minimization level'.
@@ -191,4 +192,23 @@ GenerateBreakdownText = function(pn, minimization_level)
 	else
 		return table.concat(text_segments, '')
 	end
+end
+
+-- ----------------------------------------------------------------
+-- Returns the total amount of stream and break measures in a chart.
+GetTotalStreamAndBreakMeasures = function(pn)
+	local totalStream, totalBreak = 0, 0
+
+	-- Assume 16ths for the breakdown text
+	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	for i, segment in ipairs(segments) do
+		local segment_size = segment.streamEnd - segment.streamStart
+		if segment.isBreak then
+			totalBreak = totalBreak + segment_size
+		else
+			totalStream = totalStream + segment_size
+		end
+	end
+
+	return totalStream, totalBreak
 end
