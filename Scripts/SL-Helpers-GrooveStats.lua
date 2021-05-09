@@ -380,7 +380,7 @@ CreateCommentString = function(player)
 		if #comment ~= 0 then
 			comment = comment .. ", "
 		end
-		comment = comment..("%gx"):format(rate)
+		comment = comment..("%gx Rate"):format(rate)
 	end
 
 	-- Ignore the top window in all cases.

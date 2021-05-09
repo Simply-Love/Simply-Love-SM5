@@ -211,6 +211,8 @@ local af = Def.ActorFrame {
 							sendRequest = true
 							submitForPlayer = true
 						end
+
+						Warn("comment: "..CreateCommentString(player))
 					end
 
 					if not submitForPlayer then
