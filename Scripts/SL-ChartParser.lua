@@ -37,7 +37,7 @@ local Bin2Hex = type(BinaryToHex)=="function" and BinaryToHex or function(s)
 end
 
 -- Reduce the chart to it's smallest unique representable form.
-local MinimizeChart = function(ChartString)
+local MinimizeChart = function(chartString)
 	local function MinimizeMeasure(measure)
 		local minimal = false
 		-- We can potentially minimize the chart to get the most compressed
@@ -89,7 +89,7 @@ local MinimizeChart = function(ChartString)
 
 	local finalChartData = {}
 	local curMeasure = {}
-	for line in ChartString:gmatch('[^\n]+') do
+	for line in chartString:gmatch('[^\n]+') do
 		-- If we hit a comma, that denotes the end of a measure.
 		-- Try to minimize it, and then add it to the final chart data with
 		-- the delimiter.
@@ -269,7 +269,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 end
 
 -- Figure out which measures are considered a stream of notes
-local GetMeasureInfo = function(Steps, measuresString)
+local GetMeasureInfo = function(Steps, chartString)
 	-- Stream Measures Variables
 	-- Which measures are considered a stream?
 	local notesPerMeasure = {}
@@ -282,7 +282,7 @@ local GetMeasureInfo = function(Steps, measuresString)
 	local timingData = Steps:GetTimingData()
 
 	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
-	for line in measuresString:gmatch("[^%s*\r\n]+") do
+	for line in chartString:gmatch("[^%s*\r\n]+") do
 		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
 		if(line:match("^[,;]%s*")) then
 			-- Does the number of notes in this measure meet our threshold to be considered a stream?
@@ -383,7 +383,7 @@ ParseChartInfo = function(steps, pn)
 
 				-- Append the semi-colon at the end so it's easier for GetMeasureInfo to get the contents
 				-- of the last measure.
-				chartString = chartString .. ';'
+				chartString = chartString .. '\n;'
 				-- Which measures have enough notes to be considered as part of a stream?
 				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
 				local NotesPerMeasure, PeakNPS, NPSperMeasure = GetMeasureInfo(steps, chartString)
