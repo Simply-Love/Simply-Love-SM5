@@ -364,7 +364,7 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 
 end
 
-function DiffuseText(bmt)
+local function DiffuseText(bmt)
 	local textColor = Color.White
 	local shadowLength = 0
 	if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
