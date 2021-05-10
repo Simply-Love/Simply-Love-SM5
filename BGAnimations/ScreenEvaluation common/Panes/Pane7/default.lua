@@ -13,9 +13,8 @@ local pane = Def.ActorFrame{
 -- -----------------------------------------------------------------------
 
 -- 22px RowHeight by default, which works for displaying 10 machine HighScores
-local args = { Player=player, RowHeight=22}
+local args = { Player=player, RowHeight=22, HideScores=true }
 
--- top 10 machine HighScores
 args.NumHighScores = 10
 pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)
 
