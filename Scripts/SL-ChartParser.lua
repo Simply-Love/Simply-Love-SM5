@@ -669,11 +669,11 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
 		SL[pn].Streams.Hash = SL[opposite_player].Streams.Hash
 
-		SL[pn].Crossovers = SL[opposite_player].Crossovers
-		SL[pn].Footswitches = SL[opposite_player].Footswitches
-		SL[pn].Sideswitches = SL[opposite_player].Sideswitches
-		SL[pn].Jacks = SL[opposite_player].Jacks
-		SL[pn].Brackets = SL[opposite_player].Brackets
+		SL[pn].Streams.Crossovers = SL[opposite_player].Streams.Crossovers
+		SL[pn].Streams.Footswitches = SL[opposite_player].Streams.Footswitches
+		SL[pn].Streams.Sideswitches = SL[opposite_player].Streams.Sideswitches
+		SL[pn].Streams.Jacks = SL[opposite_player].Streams.Jacks
+		SL[pn].Streams.Brackets = SL[opposite_player].Streams.Brackets
 
 		SL[pn].Streams.Filename = SL[opposite_player].Streams.Filename
 		SL[pn].Streams.StepsType = SL[opposite_player].Streams.StepsType
