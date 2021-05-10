@@ -319,10 +319,8 @@ ValidForGrooveStats = function(player)
 					-- We could use FloatEquals here, but that's a 0.0001 margin of error for the equality case which I think 
 					-- will be generally irrelevant.
 					valid[7] = valid[7] and (PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA <= ExpectedWindows[1])
-					valid[7] = valid[7] and THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[1]
 				else
 					valid[7] = valid[7] and FloatEquals(PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA, ExpectedWindows[idx])
-					valid[7] = valid[7] and THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[idx]
 				end
 			end
 		end
@@ -331,8 +329,10 @@ ValidForGrooveStats = function(player)
 			local idx = (i < 6 and i-1 or i)
 			if i == 1 then
 				valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[1])
+				valid[7] = valid[7] and THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[1]
 			else
 				valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[idx])
+				valid[7] = valid[7] and THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[idx]
 			end
 		end
 	end
