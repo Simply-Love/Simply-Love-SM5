@@ -308,7 +308,7 @@ af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathG("","GrooveStats.png"),
 	Name="P1GrooveStats_Logo",
 	InitCommand=function(self)
-		self:zoom(0.3)
+		self:zoom(0.2)
 		self:visible(false)
 	end,
 }
@@ -327,7 +327,7 @@ af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathG("","GrooveStats.png"),
 	Name="P2GrooveStats_Logo",
 	InitCommand=function(self)
-		self:zoom(0.3)
+		self:zoom(0.2)
 		self:visible(false)
 	end,
 }
