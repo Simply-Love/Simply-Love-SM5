@@ -1,14 +1,14 @@
 -- get the machine_profile now at file init; no need to keep fetching with each SetCommand
 local machine_profile = PROFILEMAN:GetMachineProfile()
-
+local nsj = GAMESTATE:GetNumSidesJoined()
 -- the height of the footer is defined in ./Graphics/_footer.lua, but we'll
 -- use it here when calculating where to position the PaneDisplay
 local footer_height = 32
 
 -- height of the PaneDisplay in pixels
-local pane_height = 60
+local pane_height = 48
 
-local text_zoom = WideScale(0.8, 0.9)
+local text_zoom = IsUsingWideScreen() and WideScale(0.8, 0.9) or 0.9
 
 -- -----------------------------------------------------------------------
 -- Convenience function to return the SongOrCourse and StepsOrTrail for a
@@ -175,29 +175,37 @@ end
 -- -----------------------------------------------------------------------
 -- define the x positions of four columns, and the y positions of three rows of PaneItems
 local pos = {
-	col = { WideScale(-104,-140), WideScale(-36,-16), WideScale(54,76), WideScale(150, 190) },
-	row = { IsUsingWideScreen() and -25 or -75, IsUsingWideScreen() and -7 or -57, IsUsingWideScreen() and 12 or -39 }
+	col = { 
+	IsUsingWideScreen() and WideScale(-120,-155) or -90, 
+	IsUsingWideScreen() and WideScale(-36,-16) or 50, 
+	WideScale(54,76), 
+	WideScale(150, 190) },
+	
+	row = { 
+	IsUsingWideScreen() and -55 or -55, 
+	IsUsingWideScreen() and -37 or -37, 
+	IsUsingWideScreen() and -19 or -19,
+	IsUsingWideScreen() and -1 or -1, 
+	IsUsingWideScreen() and 17 or 17, 
+	IsUsingWideScreen() and 35 or 35, }
 }
 
-local num_rows = 3
+local num_rows = 6
 local num_cols = 2
 
 -- HighScores handled as special cases for now until further refactoring
 local PaneItems = {
-	-- first row
+	-- all in one row now
 	{ name=THEME:GetString("RadarCategory","Taps"),  rc='RadarCategory_TapsAndHolds'},
-	{ name=THEME:GetString("RadarCategory","Mines"), rc='RadarCategory_Mines'},
-	-- { name=THEME:GetString("ScreenSelectMusic","NPS") },
-
-	-- second row
-	{ name=THEME:GetString("RadarCategory","Jumps"), rc='RadarCategory_Jumps'},
-	{ name=THEME:GetString("RadarCategory","Hands"), rc='RadarCategory_Hands'},
-	-- { name=THEME:GetString("RadarCategory","Lifts"), rc='RadarCategory_Lifts'},
-
-	-- third row
 	{ name=THEME:GetString("RadarCategory","Holds"), rc='RadarCategory_Holds'},
 	{ name=THEME:GetString("RadarCategory","Rolls"), rc='RadarCategory_Rolls'},
+	{ name=THEME:GetString("RadarCategory","Jumps"), rc='RadarCategory_Jumps'},
+	{ name=THEME:GetString("RadarCategory","Hands"), rc='RadarCategory_Hands'},
+	{ name=THEME:GetString("RadarCategory","Mines"), rc='RadarCategory_Mines'},
+	
+	
 	-- { name=THEME:GetString("RadarCategory","Fakes"), rc='RadarCategory_Fakes'},
+	-- { name=THEME:GetString("RadarCategory","Lifts"), rc='RadarCategory_Lifts'},
 }
 
 -- -----------------------------------------------------------------------
@@ -280,20 +288,24 @@ for player in ivalues(PlayerNumber) do
 		if player == PLAYER_1 then
 			self:x(IsUsingWideScreen() and _screen.w * 0.25 - 5 or 160)
 			self:y(IsUsingWideScreen() and 0 or 199)
-			self:align(0,IsUsingWideScreen() and 0 or -82)
+			self:align(0,IsUsingWideScreen() and 0 or 0)
 			if IsUsingWideScreen() then
 				elseif nsj == 1 then
 					self:align(0,GAMESTATE:IsCourseMode() and 239 or 0)
 			end
 			
 		elseif player == PLAYER_2 then
-			self:x(IsUsingWideScreen() and _screen.w * 0.75 + 156 or _screen.w * 0.75 + 10)
-			self:align(0, IsUsingWideScreen() and 0 or -82)
-			if IsUsingWideScreen() then
-				elseif nsj == 1 then
+			self:x(IsUsingWideScreen() and _screen.w * 0.75 + 156 or SCREEN_RIGHT - 160)
+			self:align(0, IsUsingWideScreen() and 0 or 0)
+			if not IsUsingWideScreen()then
+				if nsj == 1 then
 					self:x(160)
 					self:align(0,GAMESTATE:IsCourseMode() and 239 or 0)
+				elseif nsj == 2 then
+					self:x(SCREEN_RIGHT - 160)
+					self:align(0,GAMESTATE:IsCourseMode() and 239 or 0)
 				end
+			end
 		end
 
 		self:y(_screen.h - footer_height - pane_height)
@@ -329,10 +341,14 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = Def.Quad{
 		Name="BackgroundQuad",
 		InitCommand=function(self)
-			self:zoomtowidth(_screen.w/2-161)
-			self:zoomtoheight(_screen.h/8+42)
-			self:y(10)
-			self:x(-75.5)
+			self:zoomtowidth(IsUsingWideScreen() and _screen.w/2-160 or 310)
+			self:zoomtoheight(_screen.h/8+56)
+			self:y(-10)
+			self:x(IsUsingWideScreen() and -76.5 or -6)
+			if player == PLAYER_2 and not IsUsingWideScreen() and nsj == 2 then
+				self:zoomtowidth(320)
+				self:addx(5)
+			end
 		end,
 		SetCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
@@ -353,8 +369,8 @@ for player in ivalues(PlayerNumber) do
 
 	for i, item in ipairs(PaneItems) do
 
-		local col = ((i-1)%num_cols) + 1
-		local row = math.floor((i-1)/num_cols) + 1
+		local col = 1
+		local row = math.floor((i-1)/1) + 1
 
 		af2[#af2+1] = Def.ActorFrame{
 
@@ -396,11 +412,16 @@ for player in ivalues(PlayerNumber) do
 	-- Machine/World Record Text Label
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="MachineTextLabel",
-		Text="Machine Best:",
+		Text="Local Best:",
 		InitCommand=function(self)
-			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[1]+15,pos.col[1]+65) or pos.col[3]+65)
-			self:y(IsUsingWideScreen() and pos.row[1]+55 or pos.row[1])
+			self:zoom(text_zoom-0.15):diffuse(Color.Black):horizalign(right)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
+			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
+		end,
+		OnCommand=function(self)
+			if IsServiceAllowed(SL.GrooveStats.GetScores) then
+				self:settext("WR:")
+			end
 		end,
 	}
 
@@ -408,9 +429,9 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="MachineHighScoreName",
 		InitCommand=function(self)
-			self:zoom(text_zoom):diffuse(Color.Black):horizalign(left):maxwidth(80)
-			self:x(IsUsingWideScreen() and pos.col[2]+5 or pos.col[3]+50)
-			self:y(IsUsingWideScreen() and pos.row[1]+55 or pos.row[2])
+			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(center):maxwidth(80)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+40,pos.col[2]+48) or pos.col[3]+50)
+			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
@@ -433,9 +454,9 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="MachineHighScore",
 		InitCommand=function(self)
-			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and pos.col[2]-5 or pos.col[3]+30)
-			self:y(IsUsingWideScreen() and pos.row[1]+55 or pos.row[2])
+			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.25,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(right)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+20,pos.col[2]+28) or pos.col[2]+28)
+			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
@@ -456,11 +477,11 @@ for player in ivalues(PlayerNumber) do
 	-- Personal Best Text Label
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="PersonalTextLabel",
-		Text="Personal Best:",
+		Text="PB:",
 		InitCommand=function(self)
-			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[1]+15,pos.col[1]+65) or pos.col[3]+40)
-			self:y(IsUsingWideScreen() and pos.row[2]+55 or pos.row[3])
+			self:zoom(text_zoom-0.15):diffuse(Color.Black):horizalign(right)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
+			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 	}
 
@@ -468,9 +489,9 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="PlayerHighScoreName",
 		InitCommand=function(self)
-			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and pos.col[2]+33 or pos.col[3]+90)
-			self:y(IsUsingWideScreen() and pos.row[2]+55 or pos.row[3])
+			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(center)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+40,pos.col[2]+48) or pos.col[3]+50)
+			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
@@ -496,9 +517,9 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="PlayerHighScore",
 		InitCommand=function(self)
-			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and pos.col[2]-5 or pos.col[3]+90)
-			self:y(IsUsingWideScreen() and pos.row[2]+55 or pos.row[3])
+			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.25,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(right)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+20,pos.col[2]+28) or pos.col[2]+28)
+			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
@@ -519,19 +540,25 @@ for player in ivalues(PlayerNumber) do
 			self:settext(player_score or "")
 		end
 	}
-
+	
+	---loading text/status
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="Loading",
 		Text="Loading ... ",
 		InitCommand=function(self)
 			self:zoom(text_zoom):diffuse(Color.Black)
-			self:x(pos.col[3]-15)
-			self:y(pos.row[3])
+			self:x(pos.col[2]+6)
+			self:y(pos.row[1])
 			self:visible(false)
+			self:horizalign(center)
 		end,
 		SetCommand=function(self)
 			self:settext("Loading ...")
 			self:visible(false)
+			if not IsServiceAllowed(SL.GrooveStats.GetScores) then
+				self:settext("SCORES")
+				self:visible(true)
+			end
 		end
 	}
 
@@ -542,9 +569,9 @@ for player in ivalues(PlayerNumber) do
 		af2[#af2+1] = LoadFont("Common Normal")..{
 			Name="Rival"..i.."Name",
 			InitCommand=function(self)
-				self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
-				self:x(pos.col[3]+50*text_zoom)
-				self:y(pos.row[i])
+				self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):maxwidth(30):horizalign(center)
+				self:x(IsUsingWideScreen() and WideScale(pos.col[2]+40,pos.col[2]+48) or pos.col[3]+50)
+				self:y(pos.row[i]+55)
 			end,
 			OnCommand=function(self)
 				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
@@ -558,9 +585,9 @@ for player in ivalues(PlayerNumber) do
 		af2[#af2+1] = LoadFont("Common Normal")..{
 			Name="Rival"..i.."Score",
 			InitCommand=function(self)
-				self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-				self:x(pos.col[3]+125*text_zoom)
-				self:y(pos.row[i])
+				self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(right)
+				self:x(IsUsingWideScreen() and WideScale(pos.col[2]+20,pos.col[2]+28) or pos.col[2]+28)
+				self:y(pos.row[i]+55)
 			end,
 			OnCommand=function(self)
 				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
@@ -569,6 +596,22 @@ for player in ivalues(PlayerNumber) do
 				self:settext("??.??%")
 			end
 		}
+		
+		-- Rival label
+		af2[#af2+1] = LoadFont("Common Normal")..{
+			Name="Rival"..i.."Label",
+			Text="Rival"..i..":",
+			InitCommand=function(self)
+				self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.25,text_zoom-0.15) or text_zoom-0.15):diffuse(Color.Black):horizalign(right)
+				self:horizalign(right)
+				self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
+				self:y(pos.row[i]+55)
+			end,
+			OnCommand=function(self)
+				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
+			end,
+		}
+		
 	end
 end
 

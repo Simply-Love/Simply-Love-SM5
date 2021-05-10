@@ -76,8 +76,10 @@ local song_mt = {
 						SwitchFocusToSingleSongMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
 						
 						SetCommand=function(subself)
-							subself:xy(0, _screen.cy-215):finishtweening()
-							:accelerate(0.2):cropbottom(0)
+							subself:x(0)
+							subself:y(_screen.cy-215)
+							subself:finishtweening()
+							subself:accelerate(0.2):cropbottom(0)
 								
 						end,
 					},
@@ -121,6 +123,7 @@ local song_mt = {
 					LoseFocusCommand=function(subself)
 						if self.song == "CloseThisFolder" then
 							subself:zoom(0.5)
+						else
 						end
 						subself:y(32):visible(true)
 					end,
@@ -163,7 +166,7 @@ local song_mt = {
 		end,
 
 		transform = function(self, item_index, num_items, has_focus)
-			local offset = item_index - math.floor(num_items/2)
+			local offset = IsUsingWideScreen() and WideScale( (item_index - math.floor(num_items/10)) - 3.4 , item_index - math.floor(num_items/3) - 0.4 ) or item_index - math.floor(num_items/2) + 3
 			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()
 			self.container:finishtweening()
@@ -180,7 +183,7 @@ local song_mt = {
 
 					-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
-					self.container:y( ((offset * col.w)/8.4 + _screen.cy ) - 33)
+					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
 					self.container:x(_screen.cx)
 				else
 					GAMESTATE:SetCurrentSong(nil)
@@ -188,10 +191,10 @@ local song_mt = {
 				end
 				self.container:playcommand("GainFocus")
 				self.container:x(_screen.cx)
-				self.container:y( ((offset * col.w)/8.4 + _screen.cy ) + 33)
+				self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
 			else
 				self.container:playcommand("LoseFocus")
-				self.container:y( ((offset * col.w)/8.4 + _screen.cy ) + 33)
+				self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
 				self.container:x(_screen.cx)
 			end
 			

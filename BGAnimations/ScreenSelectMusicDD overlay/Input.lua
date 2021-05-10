@@ -144,19 +144,26 @@ t.Handler = function(event)
 					MESSAGEMAN:Broadcast("UpdateCursorColor")
 				end
 				if event.GameButton == "Start" then
+					-- main sorts/filters
 					if DDSortMenuCursorPosition < 9 then
 						MESSAGEMAN:Broadcast("UpdateCursorColor")
 					end
+					-- GS pack filter/toggle
 					if DDSortMenuCursorPosition == 9 then
 						SortMenuNeedsUpdating = true
 					end	
-					if DDSortMenuCursorPosition == 10 then
+					
+					-- Favorites filter/toggle
+					--[[if DDSortMenuCursorPosition == 10 then
 						SortMenuNeedsUpdating = true
-					end	
-					if DDSortMenuCursorPosition == 11 then
+					end	--]]
+					-- 
+					-- Song search
+					if DDSortMenuCursorPosition == 10 then
 						MESSAGEMAN:Broadcast("SongSearchSSMDD")
 					end
-					if DDSortMenuCursorPosition == 13 then
+					-- Switch between single/double
+					if DDSortMenuCursorPosition == 11 then
 						local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
 						if current_style == "StyleType_OnePlayerOneSide" then
 							SetLastStyle("Double")
@@ -167,7 +174,12 @@ t.Handler = function(event)
 						end
 						MESSAGEMAN:Broadcast("ReloadSSMDD")
 					end
-					if DDSortMenuCursorPosition == 14 then
+					-- GS/RPG Leaderboards
+					if DDSortMenuCursorPosition == 12 then
+						
+					end
+					-- Test Input
+					if DDSortMenuCursorPosition == 13 then
 						isSortMenuVisible = false
 						InputMenuHasFocus = true
 						MESSAGEMAN:Broadcast("ShowTestInput")

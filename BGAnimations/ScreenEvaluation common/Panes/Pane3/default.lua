@@ -3,7 +3,6 @@
 local player = unpack(...)
 
 local pane = Def.ActorFrame{
-	Name="HighScorePane",
 	InitCommand=function(self)
 		self:y(_screen.cy - 62):zoom(0.8)
 	end

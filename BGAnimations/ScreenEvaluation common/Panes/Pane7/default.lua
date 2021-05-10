@@ -5,7 +5,6 @@ if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then return end
 local player = unpack(...)
 
 local pane = Def.ActorFrame{
-	Name="GSHighScorePane",
 	InitCommand=function(self)
 		self:y(_screen.cy - 62):zoom(0.8)
 	end

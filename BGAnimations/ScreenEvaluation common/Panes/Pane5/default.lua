@@ -15,7 +15,6 @@ local player = unpack(...)
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pane = Def.ActorFrame{
-	Name="Pane5",
 	InitCommand=function(self)
 		if style == "OnePlayerTwoSides" then
 			if IsUsingWideScreen() then

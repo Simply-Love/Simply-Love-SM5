@@ -33,7 +33,7 @@ return Def.Sprite{
 
 		if player == PLAYER_1 then
 			self:x( IsUsingWideScreen() and _screen.cx-330 or 0)
-			self:y( IsUsingWideScreen() and WideScale(317,320) or 194)
+			self:y( IsUsingWideScreen() and WideScale(303,305.75) or 194)
 			self:effectmagnitude(-6,0,6)
 				if IsUsingWideScreen() then
 				else
@@ -41,7 +41,7 @@ return Def.Sprite{
 				end
 
 		elseif player == PLAYER_2 then
-			self:y(IsUsingWideScreen()and WideScale(318,319) or 193)
+			self:y(IsUsingWideScreen()and WideScale(303,305.75) or 193)
 			self:effectmagnitude(-6,0,6)
 				if IsUsingWideScreen() then
 					self:align(WideScale(-12.7,-12.21),0.49)

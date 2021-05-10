@@ -317,13 +317,13 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 
 end
 
-local TextColor = (ThemePrefs.Get("RainbowMode") and (not HolidayCheer()) and Color.Black) or Color.White
+local TextColor = Color.White
 
 t[#t+1] = Def.ActorFrame{
 	Name="GrooveStatsInfo",
 	InitCommand=function(self)
 		-- Put the info in the top right corner.
-		self:zoom(0.8):x(10):y(15)
+		self:zoom(0.8):x(SCREEN_RIGHT - 120):y(25)
 	end,
 	ScreenChangedMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()

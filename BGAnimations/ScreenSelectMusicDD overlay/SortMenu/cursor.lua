@@ -1,6 +1,6 @@
 DDSortMenuCursorPosition = 1
 IsSortMenuInputToggled = false
-local MaxCursorPosition = 14
+local MaxCursorPosition = IsServiceAllowed(SL.GrooveStats.Leaderboard) and 13 or 12
 
 
 local t = Def.ActorFrame{
@@ -23,6 +23,7 @@ local t = Def.ActorFrame{
 		end,
 		
 		InitializeDDSortMenuMessageCommand=function(self)
+			self:stoptweening()
 			self:xy(SCREEN_CENTER_X + 145,SCREEN_CENTER_Y - 135)
 			self:diffuse(color("#FFFFFF"))
 			self:zoomx(190)
@@ -101,48 +102,71 @@ local t = Def.ActorFrame{
 		UpdateCursorCommand=function(self)
 			self:stoptweening()
 			self:decelerate(0.2)
+			-- Main sort
 			if DDSortMenuCursorPosition == 1 then
 				self:xy(SCREEN_CENTER_X + 145,SCREEN_CENTER_Y - 135)
 				self:zoomx(190)
+			-- Sub Sort
 			elseif DDSortMenuCursorPosition == 2 then
 				self:xy(SCREEN_CENTER_X + 145,SCREEN_CENTER_Y - 110)
 				self:zoomx(190)
+			-- Lower Difficulty filter
 			elseif DDSortMenuCursorPosition == 3 then
 				self:zoomx(40)
 				self:xy(SCREEN_CENTER_X + 55,SCREEN_CENTER_Y - 85)
+			-- Upper Difficulty filter
 			elseif DDSortMenuCursorPosition == 4 then
 				self:zoomx(40)
 				self:xy(SCREEN_CENTER_X + 135,SCREEN_CENTER_Y - 85)
+			-- Lower Bpm Filter
 			elseif DDSortMenuCursorPosition == 5 then
 				self:zoomx(40)
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y - 60)
+			-- Upper Bpm Filter
 			elseif DDSortMenuCursorPosition == 6 then
 				self:zoomx(40)
 				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y - 60)
+			-- Lower Length Filter
 			elseif DDSortMenuCursorPosition == 7 then
 				self:zoomx(65)
 				self:xy(SCREEN_CENTER_X + 48.5,SCREEN_CENTER_Y - 35)
+			-- Upper Length Filter
 			elseif DDSortMenuCursorPosition == 8 then
 				self:zoomx(65)
 				self:xy(SCREEN_CENTER_X + 147.5,SCREEN_CENTER_Y - 35)
+				
+			--- Favorites toggle/filter (add this back later)
+			--[[elseif DDSortMenuCursorPosition == 9 then
+				self:zoomx(65)
+				self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y - 10)--]]
+			
+			-- Groovestats filter/toggle
 			elseif DDSortMenuCursorPosition == 9 then
 				self:zoomx(65)
 				self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y - 10)
+			-------------- Bottom half of the sort menu --------------
+			-- Song Search
 			elseif DDSortMenuCursorPosition == 10 then
-				self:zoomx(64)
-				self:xy(SCREEN_CENTER_X + 121,SCREEN_CENTER_Y + 15)
+				self:zoomx(160)
+				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 30)
+				
+			-- Mark/Unmark as favorite (add this back later)
+			--[[elseif DDSortMenuCursorPosition == 12 then
+				self:zoomx(160)
+				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 80)--]]
+				
+			-- Switch from single/double
 			elseif DDSortMenuCursorPosition == 11 then
 				self:zoomx(160)
 				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 55)
+			-- GS Leaderboards
 			elseif DDSortMenuCursorPosition == 12 then
 				self:zoomx(160)
 				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 80)
+			-- Test Input
 			elseif DDSortMenuCursorPosition == 13 then
 				self:zoomx(160)
 				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 105)
-			elseif DDSortMenuCursorPosition == 14 then
-				self:zoomx(160)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 130)
 			end
 			self:queuecommand("FadeOut")
 			

@@ -133,9 +133,9 @@ local t = Def.ActorFrame {
 		Input.Enabled = true
 	end,
 	
-	-- #Wheels
-	SongWheel:create_actors( "SongWheel", 14, song_mt, 0, songwheel_y_offset, 6),
-	GroupWheel:create_actors( "GroupWheel", row.how_many * col.how_many, group_mt, 0, 0),
+	-- #Wheels. Define how many items exist in the wheel here and how many songs it's offset by/the X/Y positioning btw.
+	SongWheel:create_actors( "SongWheel", IsUsingWideScreen() and 14 or 19, song_mt, IsUsingWideScreen() and 0 or 160, songwheel_y_offset, IsUsingWideScreen() and 6 or 10),
+	GroupWheel:create_actors( "GroupWheel", IsUsingWideScreen() and row.how_many * col.how_many or 19, group_mt, IsUsingWideScreen() and 0 or 160, IsUsingWideScreen() and 0 or -98),
 	
 	-- The highlight for the current song/group
 	LoadActor("./WheelHighlight.lua"),
@@ -144,6 +144,8 @@ local t = Def.ActorFrame {
 	-- Song info like artist, bpm, and song length.
 	LoadActor("./songDescription.lua"),
 	LoadActor("./playerModifiers.lua"),
+	-- The profile pane that shows things like songs played set, average bpm/diff/etc
+	LoadActor("./ProfileDisplay/default.lua"),
 	-- number of steps, jumps, holds, etc., and high scores associated with the current stepchart
 	LoadActor("./PaneDisplay.lua"),
 	-- this includes the stepartist boxes and the PaneDisplays (number of steps, jumps, holds, etc.)

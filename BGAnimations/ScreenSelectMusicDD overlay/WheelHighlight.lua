@@ -1,6 +1,9 @@
 local t = Def.ActorFrame{
 	Name="WheelHighlight",
-	InitCommand=cmd(x,_screen.cx;y,_screen.cy + 45;),
+	InitCommand=function(self)
+		self:x(IsUsingWideScreen() and _screen.cx or _screen.cx + 160)
+		self:y(IsUsingWideScreen() and _screen.cy + 45 or  _screen.cy - 53)
+	end,
 
 Def.Quad{
 		Name="WheelHighlight",

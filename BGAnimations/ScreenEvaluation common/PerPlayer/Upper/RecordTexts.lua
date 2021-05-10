@@ -86,9 +86,7 @@ t[#t+1] = LoadFont("Common Bold")..{
 	Name="MachineRecord",
 	InitCommand=function(self) self:xy(-110,-18):diffuse(PlayerColor(player)) end,
 	OnCommand=function(self)
-		if EarnedMachineRecord and
-				HighScoreIndex.Machine+1 and
-				not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then
+		if EarnedMachineRecord and HighScoreIndex.Machine+1 then
 			self:settext(ScreenString("MachineRecord"):format(HighScoreIndex.Machine+1))
 		end
 	end,
@@ -98,9 +96,7 @@ t[#t+1] = LoadFont("Common Bold")..{
 	Name="PersonalRecord",
 	InitCommand=function(self) self:xy(-110,24):diffuse(PlayerColor(player)) end,
 	OnCommand=function(self)
-		if EarnedPersonalRecord and
-				HighScoreIndex.Personal+1 > 0 and
-				not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then
+		if EarnedPersonalRecord and	HighScoreIndex.Personal+1 > 0 then
 			self:settext(ScreenString("PersonalRecord"):format(HighScoreIndex.Personal+1))
 		end
 	end,

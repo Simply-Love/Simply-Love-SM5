@@ -150,7 +150,7 @@ local item_mt = {
 			-- so we want to position all the folders "behind the scenes", and then call Init
 			-- on the group folder with focus so that it is positioned correctly at the top
 			if Input.WheelWithFocus ~= GroupWheel then
-				self.container:y( ((offset * col.w)/8.4 + _screen.cy) + 45 )
+				self.container:y( IsUsingWideScreen() and WideScale( ((offset * col.w)/6.8 + _screen.cy) + 45 , ((offset * col.w)/8.4 + _screen.cy) + 45 )  or ((offset * col.w)/6.4 + _screen.cy) + 45 )
 				if has_focus then 
 				self.container:playcommand("Init") end
 
@@ -166,7 +166,7 @@ local item_mt = {
 				if item_index ~= 1 and item_index ~= num_items then
 					self.container:decelerate(0.1)
 				end
-				self.container:y( ((offset * col.w)/8.4 + _screen.cy) + 45 )
+				self.container:y( IsUsingWideScreen() and WideScale( ((offset * col.w)/6.8 + _screen.cy) + 45 , ((offset * col.w)/8.4 + _screen.cy) + 45 )  or ((offset * col.w)/6.4 + _screen.cy) + 45 )
 			end
 		end,
 

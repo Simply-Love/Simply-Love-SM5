@@ -40,17 +40,25 @@ return Def.ActorFrame{
 
 		if player == PLAYER_1 then
 
-			self:y(_screen.cy + 72)
+			self:y(IsUsingWideScreen() and _screen.cy + 58 or _screen.cy + 14)
 			self:x( _screen.cx - (IsUsingWideScreen() and 453 or 347))
 			if not IsUsingWideScreen() then
 				if nsj == 2 then
-					self:y(394)
+					self:y(353)
 				end
 			end
 		elseif player == PLAYER_2 then
-
-			self:y(_screen.cy + 12)
-			self:x( _screen.cx - (IsUsingWideScreen() and -137 or 346))
+			self:y(_screen.cy - 2)
+			self:x( _screen.cx - (IsUsingWideScreen() and WideScale(-29,-136) or 346))
+			if not IsUsingWideScreen() then
+				self:y(_screen.cy - 27)
+				if nsj == 2 then
+					self:y(293)
+					self:x(_screen.cx - 25)
+				elseif nsj == 1 then
+					self:y(192)
+				end
+			end
 		end
 
 		if GAMESTATE:IsHumanPlayer(player) then
@@ -61,7 +69,16 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=function(self) self:zoomto(IsUsingWideScreen() and 267 or 310, _screen.h/28):x(IsUsingWideScreen() and 158 or 181) end,
+		InitCommand=function(self) 
+			self:zoomto(IsUsingWideScreen() and WideScale(160,267) or 310, _screen.h/28)
+			self:x(IsUsingWideScreen() and WideScale(212,158) or 181)
+			if not IsUsingWideScreen() then
+				if nsj == 2 and player == PLAYER_2 then
+					self:zoomx(320)
+					self:addx(4)
+				end
+			end
+		end,
 		ResetCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 

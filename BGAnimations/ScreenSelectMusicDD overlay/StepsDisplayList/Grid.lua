@@ -25,7 +25,7 @@ end
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=function(self) self:draworder(0):vertalign(top):xy(IsUsingWideScreen() and _screen.cx-294 or _screen.cx-219.5,IsUsingWideScreen() and _screen.cy - 154 or _screen.cy - 355.8):zoom(IsUsingWideScreen() and WideScale(0.7,1) or 1) end,
+	InitCommand=function(self) self:draworder(0):vertalign(top):xy(IsUsingWideScreen() and _screen.cx-294 or _screen.cx-219.5,IsUsingWideScreen() and _screen.cy - 168 or _screen.cy - 355.8):zoom(IsUsingWideScreen() and WideScale(0.7,1) or 1) end,
 
 	OnCommand=function(self)                           self:queuecommand("RedrawStepsDisplay") end,
 	CurrentSongChangedMessageCommand=function(self)    self:queuecommand("RedrawStepsDisplay") end,
@@ -88,6 +88,49 @@ local t = Def.ActorFrame{
 local Grid = Def.ActorFrame{
 	Name="Grid",
 	InitCommand=function(self) self:horizalign(left):vertalign(top):xy(8, -52 ) end,
+	
+	--[[--- The background quad for the grid to make the whole thing more legible.
+	Def.Quad{
+		Name="DiffBackground",
+		InitCommand=function(self)
+				self:x(IsUsingWideScreen() and WideScale(_screen.cx-_screen.w/2.7,SCREEN_LEFT - 8) or 45)
+				self:y(IsUsingWideScreen() and _screen.cy + 43.5 or _screen.cy + 120)
+				self:draworder(0)
+				self:diffuse(color("#1e282f"))
+				if IsUsingWideScreen() then
+					self:zoomx(WideScale(160,267))
+					self:zoomy(56)
+					self:visible(P1)
+				else
+					self:zoomto(270,40)
+					self:visible(true)
+				end
+				
+		end,
+		OnCommand=function(self)
+			SCREENMAN:GetTopScreen():AddInputCallback(getInputHandler(self, 'PlayerNumber_P1'))
+		end
+	},
+	
+	Def.Quad{
+		Name="DiffBackground2",
+		InitCommand=function(self)
+			if IsUsingWideScreen() then
+				self:visible(P2)
+				self:xy(WideScale(_screen.cx+_screen.w/2.7,_screen.cx+_screen.w/2.91), _screen.cy + 64)
+				self:draworder(0)
+				self:diffuse(color("#1e282f"))
+				self:zoomx(WideScale(160,267))
+				self:zoomy(56)
+			else
+			end
+		end,
+		OnCommand=function(self)
+			SCREENMAN:GetTopScreen():AddInputCallback(getInputHandler(self, 'PlayerNumber_P2'))
+		end
+	},--]]
+	
+	
 }
 
 

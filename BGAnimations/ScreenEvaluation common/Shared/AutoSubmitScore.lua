@@ -51,8 +51,8 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 			local rivalNum = 1
 			local data = res["status"] == "success" and res["data"] or nil
 			-- Pane 7 is the groovestats highscores pane.
-			local highScorePane = panes:GetChild("Pane7_SideP"..i):GetChild("GSHighScorePane")
-			local QRPane = panes:GetChild("Pane6_SideP"..i):GetChild("QRPane")
+			local highScorePane = panes:GetChild("Pane7_SideP"..i):GetChild("")
+			local QRPane = panes:GetChild("Pane6_SideP"..i):GetChild("")
 
 			-- If only one player is joined, we then need to update both panes with only
 			-- one players' data.
@@ -122,16 +122,22 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
 					if upperPane then
-						if recordTexts then
-							if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
-								local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
-								recordText:visible(true)
-								if personalRank == 1 then
-									recordText:settext("World Record!")
-								else
-									recordText:settext("Personal Best!")
-								end
+						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
+							local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
+							local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
+
+							recordText:visible(true)
+							GSIcon:visible(true)
+							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
+							if personalRank == 1 then
+								recordText:settext("World Record!")
+							else
+								recordText:settext("Personal Best!")
 							end
+							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
+							local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()
+							-- This will automatically adjust based on the length of the recordText length.
+							GSIcon:xy(recordTextXStart - GSIconWidth/2, recordText:GetY())
 						end
 					end
 				end
@@ -189,7 +195,7 @@ local af = Def.ActorFrame {
 					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 					local submitForPlayer = false
 
-					if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
+					--if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
 						local percentDP = stats:GetPercentDancePoints()
 						local score = FormatPercentScore(percentDP)
 						score = tonumber(score:gsub("%%", "") * 100)
@@ -211,7 +217,7 @@ local af = Def.ActorFrame {
 							sendRequest = true
 							submitForPlayer = true
 						end
-					end
+					--end
 
 					if not submitForPlayer then
 						-- Hide the submit text if we're not submitting a score for a player.
@@ -237,7 +243,17 @@ local af = Def.ActorFrame {
 	}
 }
 
-af[#af+1] = LoadActor("./RpgOverlay.lua")
+
+
+local textColor = Color.White
+local shadowLength = 0
+if ThemePrefs.Get("RainbowMode") then
+	textColor = Color.Black
+end
+if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+	textColor = color(SL.SRPG5.TextColor)
+	shadowLength = 0.4
+end
 
 af[#af+1] = LoadFont("Miso/_miso").. {
 	Name="P1SubmitText",
@@ -245,7 +261,8 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	Condition=GAMESTATE:IsSideJoined(PLAYER_1),
 	InitCommand=function(self)
 		self:xy(_screen.w * 0.25, _screen.h - 15)
-		self:diffuse(Color.White)
+		self:diffuse(textColor)
+		self:shadowlength(shadowLength)
 		self:zoom(0.8)
 		self:visible(GAMESTATE:IsSideJoined(PLAYER_1))
 	end,
@@ -268,7 +285,8 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	Text="",
 	InitCommand=function(self)
 		self:xy(_screen.w * 0.75, _screen.h - 15)
-		self:diffuse(Color.White)
+		self:diffuse(textColor)
+		self:shadowlength(shadowLength)
 		self:zoom(0.8)
 		self:visible(GAMESTATE:IsSideJoined(PLAYER_2))
 	end,
@@ -286,13 +304,31 @@ af[#af+1] = LoadFont("Miso/_miso").. {
 	end,
 }
 
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","GrooveStats.png"),
+	Name="P1GrooveStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.2)
+		self:visible(false)
+	end,
+}
+
 af[#af+1] = LoadFont("Common Bold")..{
 	Name="P1RecordText",
 	InitCommand=function(self)
 		local x = _screen.cx - 225
 		self:zoom(0.225)
 		self:xy(x,40)
-		self:visible(GAMESTATE:IsSideJoined(PLAYER_1))
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","GrooveStats.png"),
+	Name="P2GrooveStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.2)
+		self:visible(false)
 	end,
 }
 
@@ -302,8 +338,10 @@ af[#af+1] = LoadFont("Common Bold")..{
 		local x = _screen.cx + 225
 		self:zoom(0.225)
 		self:xy(x,40)
-		self:visible(GAMESTATE:IsSideJoined(PLAYER_2))
+		self:visible(false)
 	end,
 }
+
+af[#af+1] = LoadActor("./RpgOverlay.lua")
 
 return af

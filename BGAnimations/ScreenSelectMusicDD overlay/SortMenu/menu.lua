@@ -11,7 +11,7 @@ local YesButtonColor = "#222222"
 
 
 ----- Favorite filter settings ----- 
-local function GetFavoriteFilter()
+--[[local function GetFavoriteFilter()
 	local value
 	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 		value = DDStats.GetStat(PLAYER_1, 'FavoriteFilter')
@@ -34,7 +34,7 @@ local function GetFavoriteFilter()
 	end
 
 	return value
-end
+end--]]
 
 
 local function SetFavoriteFilter(value)
@@ -74,11 +74,11 @@ local t = Def.ActorFrame{
 	Name="SortMenu",
 	InitCommand=function(self)
 		self:draworder(105)
-		if GetFavoriteFilter() == 'Yes' then
+		--[[if GetFavoriteFilter() == 'Yes' then
 			MESSAGEMAN:Broadcast('FavoriteFilterYes')
 		else
 			MESSAGEMAN:Broadcast('FavoriteFilterNo')
-		end
+		end--]]
 		
 		if GetGroovestatsFilter() == 'Yes' then
 			MESSAGEMAN:Broadcast('GroovestatsFilterYes')
@@ -93,7 +93,7 @@ local t = Def.ActorFrame{
 			MESSAGEMAN:Broadcast('ToggleSortMenuMovement')
 		end
 		
-		if DDSortMenuCursorPosition == 9 then
+		--[[if DDSortMenuCursorPosition == 9 then
 			if GetFavoriteFilter() == 'No' then
 				SetFavoriteFilter('Yes')
 				MESSAGEMAN:Broadcast('FavoriteFilterYes')
@@ -101,9 +101,9 @@ local t = Def.ActorFrame{
 				SetFavoriteFilter('No')
 				MESSAGEMAN:Broadcast('FavoriteFilterNo')
 			end
-		end
+		end--]]
 		
-		if DDSortMenuCursorPosition == 10 then
+		if DDSortMenuCursorPosition == 9 then
 			if GetGroovestatsFilter() == 'No' then
 				SetGroovestatsFilter('Yes')
 				MESSAGEMAN:Broadcast('GroovestatsFilterYes')
@@ -137,7 +137,8 @@ local t = Def.ActorFrame{
 					self:draworder(0)
 					self:diffuse(color("#FFFFFF"))
 					self:zoomx(305)
-					self:zoomy(305)
+					self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and 280 or 255)
+					self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and -12.5 or -25)
 					self:diffusealpha(0.6)
 					self:visible(true)
 			end,
@@ -151,7 +152,8 @@ local t = Def.ActorFrame{
 					self:draworder(0)
 					self:diffuse(color("#111111"))
 					self:zoomx(300)
-					self:zoomy(300)
+					self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and 275 or 250)
+					self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and -12.5 or -25)
 					self:visible(true)
 			end,
 		},
@@ -160,7 +162,7 @@ local t = Def.ActorFrame{
 	Def.Quad{
 			Name="MenuBorder",
 			InitCommand=function(self)
-					self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y + 34)
+					self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y + 9)
 					self:draworder(0)
 					self:diffuse(color("#FFFFFF"))
 					self:zoomx(300)
@@ -320,7 +322,7 @@ local t = Def.ActorFrame{
 		
 		
 			----- FAVORITE FILTER BOX 1 -----
-		Def.Quad{
+		--[[Def.Quad{
 			Name="MenuBackground",
 			InitCommand=function(self)
 					self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y - 10)
@@ -397,13 +399,13 @@ local t = Def.ActorFrame{
 		FavoriteFilterNoMessageCommand=function(self)
 			self:diffuse(color(UnselectedTextColor))
 		end,
-		},
+		},--]]
 		
 			----- GROOVESTATS FILTER BOX 1 -----
 		Def.Quad{
 			Name="MenuBackground",
 			InitCommand=function(self)
-					self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 15)
+					self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y - 10)
 					self:draworder(0)
 					self:diffuse(color(NoButtonColor))
 					self:zoomx(28)
@@ -423,7 +425,7 @@ local t = Def.ActorFrame{
 		Def.Quad{
 			Name="MenuBackground",
 			InitCommand=function(self)
-					self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y + 15)
+					self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y - 10)
 					self:draworder(0)
 					self:diffuse(color(YesButtonColor))
 					self:zoomx(36)
@@ -448,7 +450,7 @@ local t = Def.ActorFrame{
 			--self:diffuse(color("#ff3729"))
 			self:diffuse(color(UnselectedTextColor))
 			self:horizalign(center)
-			self:xy(SCREEN_CENTER_X + 70,SCREEN_CENTER_Y + 15)
+			self:xy(SCREEN_CENTER_X + 70,SCREEN_CENTER_Y - 10)
 			self:zoom(1.25)
 			self:settext("NO")
 		end,
@@ -468,7 +470,7 @@ local t = Def.ActorFrame{
 			---self:diffuse(color("#19e326"))
 			self:diffuse(color(UnselectedTextColor))
 			self:horizalign(center)
-			self:xy(SCREEN_CENTER_X + 105,SCREEN_CENTER_Y + 15)
+			self:xy(SCREEN_CENTER_X + 105,SCREEN_CENTER_Y - 10)
 			self:zoom(1.25)
 			self:settext("YES")
 		end,
@@ -501,17 +503,18 @@ FilterLabel = {
 	"FILTER DIFFICULTY:",
 	"FILTER BPM:",
 	"FILTER LENGTH:",
-	"FILTER FAVORITES?",
+	--"FILTER FAVORITES?",
 	"FILTER GROOVESTATS?",
 }
 
-OtherLabel = {
-	"SONG SEARCH",
-	"MARK AS FAVORITE",
-	switchStepsTypeLabel,
-	"TEST INPUT",
-}
-
+OtherLabel = {}
+OtherLabel[#OtherLabel+1] = "SONG SEARCH"
+-- OtherLabel[#OtherLabel+1] = "MARK AS FAVORITE"
+OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
+if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+	OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
+end
+OtherLabel[#OtherLabel+1] = "TEST INPUT"
 
 for i,SortText in ipairs(SortLabel) do
 	t[#t+1] = Def.BitmapText{
@@ -548,7 +551,7 @@ for i,OtherText in ipairs(OtherLabel) do
 			self:diffuse(color("#FFFFFF"))
 			self:horizalign(center)
 			self:x(SCREEN_CENTER_X)
-			self:y(SCREEN_CENTER_Y + 30 + 25*i)
+			self:y(SCREEN_CENTER_Y + 5 + 25*i)
 			self:zoom(1.25)
 			self:settext(OtherText)
 		end,

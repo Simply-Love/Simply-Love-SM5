@@ -172,7 +172,6 @@ end
 IsServiceAllowed = function(condition)
 	return (condition and
 		GAMESTATE:GetCurrentGame():GetName()=="dance" and
-		(SL.Global.GameMode == "DD") and
 		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= "") and
 		not GAMESTATE:IsCourseMode())
 end
@@ -261,6 +260,17 @@ ValidForGrooveStats = function(player)
 		 0.008,  -- Held
 		-0.050,  -- Hit Mine
 	}
+	local ExpectedScoreWeight = {
+		 5,  -- Fantastics
+		 4,  -- Excellents
+		 2,  -- Greats
+		 0,  -- Decents
+		-6,  -- Way Offs
+		-12,  -- Miss
+		 0,  -- Let Go
+		 5,  -- Held
+		-6,  -- Hit Mine
+	}
 	local LifeWindows = { "W1", "W2", "W3", "W4", "W5", "Miss", "LetGo", "Held", "HitMine" }
 
 	-- Originally verify the ComboToRegainLife metrics.
@@ -285,6 +295,8 @@ ValidForGrooveStats = function(player)
 
 		for i, window in ipairs(LifeWindows) do
 			valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i])
+
+			valid[7] = valid[7] and THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[i]
 		end
 	end
 
@@ -346,7 +358,7 @@ CreateCommentString = function(player)
 		if #comment ~= 0 then
 			comment = comment .. ", "
 		end
-		comment = comment..("%gx"):format(rate)
+		comment = comment..("%gx Rate"):format(rate)
 	end
 
 	-- Ignore the top window in all cases.

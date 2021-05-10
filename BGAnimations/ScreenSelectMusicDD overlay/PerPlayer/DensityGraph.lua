@@ -1,34 +1,59 @@
 -- Currently the Density Graph in SSM doesn't work for Courses.
 -- Disable the functionality.
+-- Also disable if in 4:3 and on 2 player (there is not enough room)
+local nsj = GAMESTATE:GetNumSidesJoined()
+
 if GAMESTATE:IsCourseMode() then return end
+if not IsUsingWideScreen() and nsj == 2 then return end
 
 local player = ...
 local pn = ToEnumShortString(player)
 
 -- Height and width of the density graph.
 local height = 64
-local width = IsUsingWideScreen() and 267 or 276
+local width = IsUsingWideScreen() and WideScale(161,267) or 309
+
+local function getInputHandler(actor, player)
+	return (function(event)
+		if event.GameButton == "Start" and event.PlayerNumber == player and GAMESTATE:IsHumanPlayer(event.PlayerNumber) then
+			actor:visible(true)
+		end
+	end)
+end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:xy(_screen.cx-288.5, _screen.cy+1)
+		self:horizalign(left)
+		self:x(SCREEN_LEFT + width/2)
+		self:y(IsUsingWideScreen() and _screen.cy-13 or _screen.cy+60)
 
 		if player == PLAYER_2 then
-			self:addx(587)
+			self:x(SCREEN_RIGHT - width/2)
+			if IsUsingWideScreen() then
+				self:addx(0.5)
+			elseif nsj == 1 then
+				self:x(SCREEN_LEFT + width/2)
+			end
 		end
-
 		if IsUsingWideScreen() then
-			self:addx(-5)
+			self:addx(-1)
 		end
+		if not IsUsingWideScreen() and nsj == 2 then
+			self:visible(false)
+		return end
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
-		if params.Player == player then
+		if not IsUsingWideScreen() then
+			self:visible(false)
+		elseif params.Player == player then
 			self:visible(true)
 		end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
-		if params.Player == player then
+		if not IsUsingWideScreen() then
+			self:visible(false)
+		elseif params.Player == player then
 			self:visible(false)
 		end
 	end,
@@ -110,9 +135,17 @@ af2[#af2+1] = LoadFont("Miso/_miso")..{
 	InitCommand=function(self)
 		self:horizalign(left):zoom(0.8)
 		if player == PLAYER_1 then
-			self:addx(54):addy(-41)
-		else
-			self:addx(-131):addy(-41)
+			self:addx(IsUsingWideScreen() and WideScale(1,54) or 74):addy(-41)
+		elseif not IsUsingWideScreen() then
+			if player == PLAYER_2 and nsj == 2 then
+				self:addx(WideScale(-70,-131)):addy(-41)
+			elseif nsj == 1 then
+				self:addx(74)
+				self:addy(-41)
+			end
+		elseif player == PLAYER_2 then
+			self:addy(-41)
+			self:addx(WideScale(-70,-131))
 		end
 		-- We want black text in Rainbow mode, white otherwise.
 		self:diffuse({1, 1, 1, 1})
@@ -135,7 +168,7 @@ af2[#af2+1] = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			local bgHeight = 17
-			self:diffuse(color("#000000")):zoomto(width, bgHeight):diffusealpha(0.5)
+			self:diffuse(color("#000000")):zoomto(width, bgHeight):diffusealpha(0.85)
 		end
 	},
 	
