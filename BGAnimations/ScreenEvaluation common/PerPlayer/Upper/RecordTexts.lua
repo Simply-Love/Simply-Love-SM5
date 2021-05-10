@@ -96,7 +96,7 @@ t[#t+1] = LoadFont("Common Bold")..{
 	Name="PersonalRecord",
 	InitCommand=function(self) self:xy(-110,24):diffuse(PlayerColor(player)) end,
 	OnCommand=function(self)
-		if EarnedPersonalRecord and	HighScoreIndex.Personal+1 > 0 then
+		if EarnedPersonalRecord and HighScoreIndex.Personal+1 > 0 then
 			self:settext(ScreenString("PersonalRecord"):format(HighScoreIndex.Personal+1))
 		end
 	end,
