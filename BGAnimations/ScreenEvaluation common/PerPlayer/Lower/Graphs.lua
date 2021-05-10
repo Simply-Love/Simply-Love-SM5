@@ -50,7 +50,8 @@ af[#af+1] = Def.GraphDisplay{
 	Name="GraphDisplay",
 	InitCommand=function(self)
 		self:vertalign(top)
-		self:Load("GraphDisplayEvalScreen")
+		local ColorIndex = ((SL.Global.ActiveColorIndex + (player==PLAYER_1 and -1 or 1)) % #SL.Colors) + 1
+		self:Load("GraphDisplay" .. ColorIndex )
 
 		if not GAMESTATE:IsCourseMode() then
 			local steps = GAMESTATE:GetCurrentSteps(player)

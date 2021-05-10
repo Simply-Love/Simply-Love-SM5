@@ -45,7 +45,7 @@ function DifficultyColor( difficulty, decorative )
 	-- use the reverse lookup functionality available to all SM enums
 	-- to map a difficulty string to a number
 	-- SM's enums are 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
-	local clr = SL.Global.ActiveColorIndex + (Difficulty:Reverse()[difficulty] - 2)
+	local clr = SL.Global.ActiveColorIndex + (Difficulty:Reverse()[difficulty] - 4)
 	return GetHexColor(clr, decorative)
 end
 
