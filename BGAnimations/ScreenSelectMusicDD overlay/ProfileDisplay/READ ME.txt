@@ -1,0 +1,8 @@
+If you want to use your own custom image for your profile then all you need to do 
+is add a new image at the root of your save folder of your profile. 
+(Example: \Save\LocalProfiles\00000000\Profile Picture.png)
+
+The image must:
+- be in png format
+- have a resolution of 96x96
+- be titled "Profile Picture"
