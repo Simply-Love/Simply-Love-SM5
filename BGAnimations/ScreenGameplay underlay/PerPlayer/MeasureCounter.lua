@@ -1,9 +1,11 @@
-local player = ...
+local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
--- don't allow MeasureCounter to appear if disabled
-if not mods.MeasureCounter or mods.MeasureCounter == "None" then
+-- don't allow MeasureCounter to appear in Casual gamemode via profile settings
+if SL.Global.GameMode == "Casual"
+or not mods.MeasureCounter
+or mods.MeasureCounter == "None" then
 	return
 end
 
@@ -15,7 +17,7 @@ local streams, prevMeasure, streamIndex
 local bmt = {}
 
 -- How many streams to "look ahead"
-local lookAhead = mods.HideLookahead and 0 or 3
+local lookAhead = mods.HideLookahead and 0 or 2
 -- If you want to see more than 2 counts in advance, change the 2 to a larger value.
 -- Making the value very large will likely impact fps. -quietly
 
@@ -28,10 +30,9 @@ local InitializeMeasureCounter = function()
 	streamIndex = 1
 	prevMeasure = -1
 
-		for actor in ivalues(bmt) do
+	for actor in ivalues(bmt) do
 		actor:visible(true)
 	end
-	
 end
 
 -- Returns whether or not we've reached the end of this stream segment.
@@ -50,6 +51,8 @@ end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
 	if Measures[streamIndex] == nil then return "" end
+	-- Don't display final count if it's a break.
+	if streamIndex == #Measures and Measures[streamIndex].isBreak then return "" end
 	-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
 	if streamIndex == 1 and currMeasure < 0 and not Measures[streamIndex].isBreak then
 		return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
@@ -148,7 +151,10 @@ end
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{
-	InitCommand=function(self) self:queuecommand("SetUpdate") end,
+	InitCommand=function(self)
+		self:xy(GetNotefieldX(player), layout.y)
+		self:queuecommand("SetUpdate")
+	end,
 	SetUpdateCommand=function(self) self:SetUpdateFunction( Update ) end,
 
 	CurrentSongChangedMessageCommand=function(self)
@@ -169,18 +175,17 @@ for i=lookAhead+1,1,-1 do
 			local columnWidth = width/NumColumns
 
 			-- Have descending zoom sizes for each new BMT we add.
-			self:zoom(0.35 - 0.03 * (i-1)):shadowlength(1):horizalign(right)
-			self:xy(GetNotefieldX(player) + columnWidth * (0.64 * (i-1)), _screen.cy)
+			self:zoom(0.35 - 0.05 * (i-1)):shadowlength(1):horizalign(center)
+			self:x(columnWidth * (0.7 * (i-1)))
 			
 			if mods.HideLookahead then
-				self:x(GetNotefieldX(player) + columnWidth/20 - 2)
 				self:horizalign(center)
 			end
-
+			
 			if mods.MeasureCounterLeft then
 				self:addx(-columnWidth)
 			end
-
+			
 			if mods.MeasureCounterUp then
 				self:addy(-55)
 			end

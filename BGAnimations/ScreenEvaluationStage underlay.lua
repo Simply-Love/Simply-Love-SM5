@@ -21,15 +21,16 @@ TotalDifficultyPlayer2 = 0
 else
 end
 
-PlayerOneNPS = GetNPSperMeasure(GAMESTATE:GetCurrentSong(), PlayerOneChart)
-PlayerTwoNPS = GetNPSperMeasure(GAMESTATE:GetCurrentSong(), PlayerTwoChart)
+
+--PlayerOneNPS = tonumber(SL[PlayerNumber_P1].Streams.PeakNPS)
+--PlayerTwoNPS = tonumber(SL[PlayerNumber_P2].Streams.PeakNPS)
 
 local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
 
 -- Have the BPM based off PeakNPS instead to get the 16th equivalent BPM for things with 24th/32nd stream etc.
-PlayerOneTrueBPM = ((PlayerOneNPS / 16) * 240) * MusicRate
-PlayerTwoTrueBPM = ((PlayerTwoNPS / 16) * 240) * MusicRate
+--PlayerOneTrueBPM = ((PlayerOneNPS / 16) * 240) * MusicRate
+--PlayerTwoTrueBPM = ((PlayerTwoNPS / 16) * 240) * MusicRate
 
 ---------- Only do these if the player is currently active or else things will get messy. ----------
 if P1 then
@@ -50,8 +51,8 @@ if P1 then
 	end
 
 P1SongsInSet = P1SongsInSet + 1
-TotalBPMPlayer1 = PlayerOneTrueBPM + TotalBPMPlayer1
-AverageBPMPlayer1 = TotalBPMPlayer1 / P1SongsInSet
+--TotalBPMPlayer1 = PlayerOneTrueBPM + TotalBPMPlayer1
+--AverageBPMPlayer1 = TotalBPMPlayer1 / P1SongsInSet
 TotalDifficultyPlayer1 = PlayerOneREALDifficulty + TotalDifficultyPlayer1
 AverageDifficultyPlayer1 = TotalDifficultyPlayer1 / P1SongsInSet
 end

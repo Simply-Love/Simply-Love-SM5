@@ -22,9 +22,5 @@ return Def.ActorFrame{
 	LoadActor("./Difficulty.lua", player),
 
 	-- Record Texts (Machine and/or Personal)
-	LoadActor("./RecordTexts.lua", player),
-	
-	-- FA Gauntlet Score
-	LoadActor("./FAGauntlet.lua", player),
-	
+	LoadActor("./RecordTexts.lua", player)
 }

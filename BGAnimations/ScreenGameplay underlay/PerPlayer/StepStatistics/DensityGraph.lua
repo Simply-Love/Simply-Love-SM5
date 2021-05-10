@@ -81,7 +81,17 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 
 -- PeakNPS text
 local text = LoadFont("Common Normal")..{
-	InitCommand=function(self) self:horizalign(right):zoom(0.9) end,
+	InitCommand=function(self)
+		self:zoom(0.9)
+		self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+		self:vertalign(bottom)
+
+		-- flip alignment if ultrawide and both players joined because the pane
+		-- will now appear on the player's side of the screen rather than opposite
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			self:halign( PlayerNumber:Reverse()[player] )
+		end
+	end,
 	PeakNPSUpdatedMessageCommand=function(self)
 		local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
 
@@ -90,68 +100,27 @@ local text = LoadFont("Common Normal")..{
 			return
 		end
 
-		self:settext( THEME:GetString("ScreenGameplay", "PeakNPS") .. ": " .. round(my_peak * SL.Global.ActiveModifiers.MusicRate,2) )
+		if player == PLAYER_1 then
+			self:x(_screen.w*0.5 - SL_WideScale(6,59))
 
-		-- -----------------------------------------------------------------------
-		local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
-		local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
-
-		-- determine how many digits are needed to express the number of notes in base-10
-		local digits = (math.floor(math.log10(total_tapnotes)) + 1)
-		-- subtract 4 from the digit count; we're only really interested in how many digits past 4
-		-- this stepcount is so we can use it to align the score actor in the StepStats pane if needed
-		-- aligned-with-4-digits is the default
-		digits = clamp(math.max(4, digits) - 4, 0, 3)
-
-		-- -----------------------------------------------------------------------
-		-- FIXME:
-		-- crumby code used for
-		-- positioning x offset
-		-- of PeakNPS
-
-		local stepstatspane = self:GetParent():GetParent()
-		local padding = {}
-
-		if IsUltraWide then
-			-- 21:9 (and wider)
-			if (#GAMESTATE:GetHumanPlayers() <= 1) then
-				padding[PLAYER_1] = -_screen.cx + 36
-				padding[PLAYER_2] = 36
-			else
-				padding[PLAYER_1] = -10
-				padding[PLAYER_2] = -922
-			end
-
-		elseif IsUsingWideScreen() then
-			-- 16:9, 16:10
 			if NoteFieldIsCentered then
-				padding[PLAYER_1] = -_screen.cx - 116
-				padding[PLAYER_2] = WideScale(-20,20)
-			else
-				padding[PLAYER_1] = -_screen.cx + 26.5
-				padding[PLAYER_2] = 26.5
+				self:x(_screen.w*0.5 - 134)
 			end
-
+			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+				self:x(52)
+			end
 		else
-			-- 4:3
-			padding[PLAYER_1] = -_screen.cx + 28
-			padding[PLAYER_2] = 28
+			self:x(SL_WideScale(6,130))
+			if NoteFieldIsCentered then
+				self:x(69)
+			end
+			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+				self:x(180)
+			end
 		end
 
-		if IsUsingWideScreen() and not (IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1) then
-			-- pad with an additional ~14px for each digit past 4 the stepcount goes
-			-- this keeps the score right-aligned with the right edge of the judgment
-			-- counts in the StepStats pane
-			local digitpadding = (digits * 14)
-			-- provide an upper bound of extra padding for extra digits when NoteFieldIsCentered
-			if NoteFieldIsCentered then digitpadding = clamp(digitpadding, 0, WideScale(7,14)) end
-
-			padding[player] = padding[player] + digitpadding
-		end
-		-- -----------------------------------------------------------------------
-
-		self:x( stepstatspane:GetX() + padding[player] + (self:GetWidth()/self:GetZoom()) )
 		self:y( -self:GetHeight()/2 - 2 )
+		self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
 	end,
 }
 

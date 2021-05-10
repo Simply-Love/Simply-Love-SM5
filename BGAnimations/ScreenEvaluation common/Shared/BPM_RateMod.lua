@@ -1,3 +1,6 @@
+-- don't bother showing the bpm and music rate in Casual mode
+if SL.Global.GameMode == "Casual" then return end
+
 return Def.ActorFrame{
 	InitCommand=function(self) self:xy(_screen.cx, 175) end,
 

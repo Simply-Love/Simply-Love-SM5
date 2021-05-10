@@ -8,7 +8,6 @@ return function(SongNumberInCourse)
 		local pn = ToEnumShortString(player)
 		SL[pn].PlayerOptionsString = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 
-
 		-- Check if MeasureCounter is turned on.  We may need to parse the chart.
 		local mods = SL[pn].ActiveModifiers
 		if mods.MeasureCounter and mods.MeasureCounter ~= "None" then
@@ -22,22 +21,13 @@ return function(SongNumberInCourse)
 				steps = GAMESTATE:GetCurrentSteps(player)
 			end
 
-			local steps_type = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
-			local difficulty = ToEnumShortString( steps:GetDifficulty() )
-			local notes_per_measure = tonumber(mods.MeasureCounter:match("%d+"))
-			local threshold_to_be_stream = 2
+			-- This will parse out and set all the required info for the chart in the SL.Streams cache,
+			-- The function will only do work iff we're parsing a chart different than what's in the cache.
+			ParseChartInfo(steps, pn)
 
-			-- if any of these don't match what we're currently looking for...
-			if SL[pn].Streams.Steps ~= steps or SL[pn].Streams.StepsType ~= steps_type or SL[pn].Streams.Difficulty ~= difficulty then
-
-				-- ...then parse the simfile, given the current parameters
-				SL[pn].Streams.Measures = GetStreams(steps, steps_type, difficulty, notes_per_measure, threshold_to_be_stream)
-
-				-- and set these so we can check again next time.
-				SL[pn].Streams.Steps      = steps
-				SL[pn].Streams.StepsType  = steps_type
-				SL[pn].Streams.Difficulty = difficulty
-			end
+			-- Set the actual stream information for the player based on their selected notes threshold.
+			local notesThreshold = tonumber(mods.MeasureCounter:match("%d+"))
+			SL[pn].Streams.Measures = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, notesThreshold)
 		end
 	end
 end

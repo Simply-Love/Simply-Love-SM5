@@ -1,7 +1,7 @@
 -- Pane4 displays an aggregate histogram of judgment offsets
 -- as well as the mean timing error, median, and mode of those offsets.
 
-local player, side = unpack(...)
+local player, _, ComputedData = unpack(...)
 local pn = ToEnumShortString(player)
 
 -- table of offset values obtained during this song's playthrough
@@ -14,12 +14,11 @@ local bottombar_height = 13
 -- ---------------------------------------------
 
 local abbreviations = {
-	ITG = { "Fan", "Ex", "Gr", "Dec", "WO" },
 	DD = { "Fan", "Ex", "Gr", "Dec", "WO" },
 }
 
 local colors = {}
-for w=5,1,-1 do
+for w=NumJudgmentsAvailable(),1,-1 do
 	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
@@ -31,14 +30,14 @@ end
 -- ---------------------------------------------
 -- if players have disabled W5 or W4+W5, there will be a smaller range
 -- of judgments that could have possibly been earned
-local num_judgments_available = 5
-local worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW5")
+local num_judgments_available = NumJudgmentsAvailable()
+local worst_window = GetTimingWindow(num_judgments_available)
 local windows = SL.Global.ActiveModifiers.TimingWindows
 
-for i=5,1,-1 do
+for i=NumJudgmentsAvailable(),1,-1 do
 	if windows[i]==true then
 		num_judgments_available = i
-		worst_window = PREFSMAN:GetPreference("TimingWindowSecondsW"..i)
+		worst_window = GetTimingWindow(i)
 		break
 	end
 end
@@ -145,8 +144,8 @@ for i=2,num_judgments_available do
 		Font="Common Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
-			local window = -1 * SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i]
-			local better_window = -1 * SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i-1]
+			local window = -1 * GetTimingWindow(i)
+			local better_window = -1 * GetTimingWindow(i - 1)
 
 			local x = scale(window, -worst_window, worst_window, 0, pane_width )
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
@@ -163,8 +162,8 @@ for i=2,num_judgments_available do
 		Font="Common Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
-			local window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i]
-			local better_window = SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..i-1]
+			local window = GetTimingWindow(i)
+			local better_window = GetTimingWindow(i - 1)
 
 			local x = scale(window, -worst_window, worst_window, 0, pane_width )
 			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
@@ -194,7 +193,18 @@ pane[#pane+1] = Def.Quad{
 -- only bother crunching the numbers and adding extra BitmapText actors if there are
 -- valid offset values to analyze; (MISS has no numerical offset and can't be analyzed)
 if next(offsets) ~= nil then
-	pane[#pane+1] = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
+
+	local histogram
+	-- don't re-run the calculations if only one player is joined
+	-- and we've already run them for a previous pane
+	if ComputedData and ComputedData.Histogram then
+		histogram = ComputedData.Histogram
+	else
+		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
+		if ComputedData then ComputedData.Histogram = histogram end
+	end
+
+	pane[#pane+1] = histogram
 end
 
 local label = {}

@@ -1,3 +1,7 @@
+-- if we're in Casual mode, don't let players save screenshots at all
+if SL.Global.GameMode == "Casual" then return end
+-- -----------------------------------------------------------------------
+
 local player = nil
 
 local spr = Def.Sprite{ InitCommand=function(self) self:draworder(200) end }
@@ -21,13 +25,17 @@ spr.CodeMessageCommand=function(self, params)
 		-- song titles can be very long, and the engine's SaveScreenshot() function
 		-- is already hardcoded to make the filename long via DateTime::GetNowDateTime()
 		-- so, let's use only the first 10 characters of the title in the screenshot filename
-		title = title:sub(1,10)
+		title = title:utf8sub(1,10)
+
+		-- some song titles have slashes in them, which is interpreted as a folder in the path as
+		-- screenshot is saved. we'll substitute those slashes with underscores to prevent this.
+		title = title:gsub("/", "_")
 
 		-- organize screenshots Love into directories, like...
-		--      ./Screenshots/Digital Dance/2020/04-April/DVNO-2020-04-22_175951.png
+		--      ./Screenshots/Simply_Love/2020/04-April/DVNO-2020-04-22_175951.png
 		-- note that the engine's SaveScreenshot() function will convert whitespace
 		-- characters to underscores, so we might as well just use underscores here
-		local prefix = "Digital Dance/" .. Year() .. "/" .. month .. "/" .. title .. "_"
+		local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/" .. title .. "_"
 
 		-- attempt to write a screenshot to disk
 		-- arg1 is playernumber that requsted the screenshot; if they are using a profile, the screenshot will be saved there

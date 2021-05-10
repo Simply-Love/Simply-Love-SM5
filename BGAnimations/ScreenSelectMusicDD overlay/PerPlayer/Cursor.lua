@@ -65,13 +65,18 @@ return Def.Sprite{
 	CurrentTrailP1ChangedMessageCommand=cmd(queuecommand,"Set"),
 	CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set"),
 	CurrentTrailP2ChangedMessageCommand=cmd(queuecommand,"Set"),
+	
+	CloseThisFolderHasFocusMessageCommand=cmd(queuecommand,"Dissappear"),
 
 	SetCommand=function(self)
 		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
-
+		if GAMESTATE:IsHumanPlayer(player) then
+			self:playcommand( "Appear" .. pn)
+		end
 		if song then
+			
 			steps = (GAMESTATE:IsCourseMode() and song:GetAllTrails()) or SongUtil.GetPlayableSteps( song )
-
+			
 			if steps then
 				StepsToDisplay = GetStepsToDisplay(steps)
 				self:playcommand("StepsHaveChanged", {Steps=StepsToDisplay, Player=player})
@@ -92,6 +97,7 @@ return Def.Sprite{
 	end,
 
 	["Appear" .. pn .. "Command"]=function(self) self:visible(true) end,
+	DissappearCommand=function(self) self:visible(false) end,
 
 	StepsHaveChangedCommand=function(self, params)
 

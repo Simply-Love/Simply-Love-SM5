@@ -1,6 +1,7 @@
-local function gen_vertices(player, width, height)
+local function gen_vertices(player, width, height, desaturation)
 	local Song, Steps
 	local first_step_has_occurred = false
+	local pn = ToEnumShortString(player)
 
 	if GAMESTATE:IsCourseMode() then
 		local TrailEntry = GAMESTATE:GetCurrentTrail(player):GetTrailEntry(GAMESTATE:GetCourseSongIndex())
@@ -10,21 +11,30 @@ local function gen_vertices(player, width, height)
 		Steps = GAMESTATE:GetCurrentSteps(player)
 		Song = GAMESTATE:GetCurrentSong()
 	end
+	
+	if not Steps or not Song then return {} end
 
-	local PeakNPS, NPSperMeasure = GetNPSperMeasure(Song, Steps)
-	-- broadcast this for any other actors on the current screen that rely on knowing the peak nps
-	MESSAGEMAN:Broadcast("PeakNPSUpdated", {PeakNPS=PeakNPS})
-
-	-- also, store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
+	-- This function does no work if we already have the data in SL.Streams cache.
+	ParseChartInfo(Steps, pn)
+	PeakNPS = SL[pn].Streams.PeakNPS
+	NPSperMeasure = SL[pn].Streams.NPSperMeasure 
+	-- store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
 	-- their charts may have different peak densities, and if they both want histograms,
 	-- we'll need to be able to compare densities and scale one of the graphs vertically
-	GAMESTATE:Env()[ToEnumShortString(player).."PeakNPS"] = PeakNPS
+	GAMESTATE:Env()[pn.."PeakNPS"] = PeakNPS
+
+	-- use MESSAGEMAN to broadcast that the peak NPS has been calculated (and/or updated in CourseMode)
+	-- and is available.  actors on the current screen can listen for this via something like:
+	--
+	-- PeakNPSUpdatedMessageCommand=function(self)
+	--   local p1peak = GAMESTATE:Env()["P1PeakNPS"]
+	-- end
+	MESSAGEMAN:Broadcast("PeakNPSUpdated")
 
 	local verts = {}
 	local x, y, t
 
 	if (PeakNPS and NPSperMeasure and #NPSperMeasure > 1) then
-
 		local TimingData = Steps:GetTimingData()
 		local FirstSecond = math.min(TimingData:GetElapsedTimeFromBeat(0), 0)
 		local LastSecond = Song:GetLastSecond()
@@ -34,27 +44,38 @@ local function gen_vertices(player, width, height)
 		local red
 		local ratio
 		local fastcolor
-		
-		-- Make the density graph be colored based on the PeakNPS to show differences in speed.
+
 		if PeakNPS > 0 then
-		--- Use 23.333 for 350bpm (anything faster is not going to come up often)
-		ratio = (PeakNPS * SL.Global.ActiveModifiers.MusicRate)/23.333
+			--- Use 23.333 for 350bpm (anything faster is not going to come up often)
+			ratio = (PeakNPS * SL.Global.ActiveModifiers.MusicRate)/23.333
 			if ratio <= 1 then
 				red = {0.879, 0, 0, 1}
 				fastcolor = lerp_color(math.abs(ratio), yellow, red )
 			else
-			fastcolor = {0.879, 0, 0, 1}
+				fastcolor = {0.879, 0, 0, 1}
 			end
 		end
 		
+		if desaturation ~= nil then
+			local function Desaturate(color, desaturation)
+				local luma = 0.3 * color[1] + 0.59 * color[2] + 0.11 * color[3]
+				color[1] = color[1] + desaturation * (luma - color[1])
+				color[2] = color[2] + desaturation * (luma - color[2])
+				color[3] = color[3] + desaturation * (luma - color[3])
+				return color
+			end
+			yellow = Desaturate(yellow, desaturation)
+			fastcolor = Desaturate(fastcolor, desaturation)
+		end
+
+
 		local upper
-		
+
 		for i, nps in ipairs(NPSperMeasure) do
 
 			if nps > 0 then first_step_has_occurred = true end
 
 			if first_step_has_occurred then
-
 				-- i will represent the current measure number but will be 1 larger than
 				-- it should be (measures in SM start at 0; indexed Lua tables start at 1)
 				-- subtract 1 from i now to get the actual measure number to calculate time
@@ -77,7 +98,7 @@ local function gen_vertices(player, width, height)
 					--    color1
 					--    color2
 					-- and returns a color that has been linearly interpolated by that percent between the two colors provided
-					-- for example, lerp_color(0.5, yellow, red) will return the color that is halfway between yellow and red
+					-- for example, lerp_color(0.5, yellow, orange) will return the color that is halfway between yellow and orange
 					upper = lerp_color(math.abs(y/height), yellow, fastcolor )
 
 					verts[#verts+1] = {{x, 0, 0}, yellow} -- bottom of graph (yellow)
@@ -99,44 +120,34 @@ function interpolate_vert(v1, v2, offset)
 	return {{offset, y, 0}, color}
 end
 
-function NPS_Histogram(player, width, height)
-    local amv = Def.ActorMultiVertex{
-        Name="DensityGraph_AMV",
-        InitCommand=function(self)
-            self:SetDrawState({Mode="DrawMode_QuadStrip"})
-        end,
-		OnCommand=function(self)
+
+function NPS_Histogram(player, width, height, desaturation)
+	local pn = ToEnumShortString(player)
+	local amv = Def.ActorMultiVertex{
+		InitCommand=function(self)
+			self:SetDrawState({Mode="DrawMode_QuadStrip"})
+		end,
+		["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
 			self:queuecommand("Redraw")
 		end,
-        CurrentStepsP1ChangedMessageCommand=function(self)
-			self:stoptweening()
-			self:sleep(0.3)
-            self:queuecommand("Redraw")
-        end,
-        CurrentStepsP2ChangedMessageCommand=function(self)
-			self:stoptweening()
-			self:sleep(0.3)
-            self:queuecommand("Redraw")
-        end,
-        RedrawCommand=function(self)
-            -- we've reached a new song, so reset the vertices for the density graph
-            -- this will occur at the start of each new song in CourseMode
-            -- and at the start of "normal" gameplay
-            local verts = gen_vertices(player, width, height)
-            self:SetNumVertices(#verts):SetVertices(verts)
-        end
-    }
- 
-    return amv
+		RedrawCommand=function(self)
+			-- we've reached a new song, so reset the vertices for the density graph
+			-- this will occur at the start of each new song in CourseMode
+			-- and at the start of "normal" gameplay
+			local verts = gen_vertices(player, width, height, desaturation)
+			self:SetNumVertices(#verts):SetVertices(verts)
+		end
+	}
+
+	return amv
 end
 
 
-function Scrolling_NPS_Histogram(player, width, height)
+function Scrolling_NPS_Histogram(player, width, height, desaturation)
 	local verts, visible_verts
 	local left_idx, right_idx
 
 	local amv = Def.ActorMultiVertex{
-		Name="ScrollingDensityGraph_AMV",
 		InitCommand=function(self)
 			self:SetDrawState({Mode="DrawMode_QuadStrip"})
 		end,
@@ -148,7 +159,7 @@ function Scrolling_NPS_Histogram(player, width, height)
 		end,
 
 		LoadCurrentSong=function(self, scaled_width)
-			verts = gen_vertices(player, scaled_width, height)
+			verts = gen_vertices(player, scaled_width, height, desaturation)
 
 			left_idx = 1
 			right_idx = 2

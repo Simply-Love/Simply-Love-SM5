@@ -3,6 +3,10 @@ local player = ...
 local playerStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local grade = playerStats:GetGrade()
 
+-- "I passd with a q though."
+local title = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+if title == "D" then grade = "Grade_Tier99" end
+
 local t = Def.ActorFrame{}
 
 t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), playerStats)..{

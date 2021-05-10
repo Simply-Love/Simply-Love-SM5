@@ -1,3 +1,5 @@
+if SL.Global.GameMode == "Casual" then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 

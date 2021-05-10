@@ -30,6 +30,7 @@ local function loadProfile(playerNum)
 	file:Open(dir, 1)
 	local statsStr = file:Read()
 	file:Close()
+	file:destroy()
 
 	local stats = {}
 
@@ -96,5 +97,6 @@ DDStats = {
 			file:Write(keyValuePair.key .. '=' .. keyValuePair.value .. '\n')
 		end
 		file:Close()
+		file:destroy()
 	end,
 }

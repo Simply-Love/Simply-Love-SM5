@@ -1,8 +1,9 @@
 -- Pane3 displays a list of HighScores for the stepchart that was played.
 
-local player, side = unpack(...)
+local player = unpack(...)
 
 local pane = Def.ActorFrame{
+	Name="HighScorePane",
 	InitCommand=function(self)
 		self:y(_screen.cy - 62):zoom(0.8)
 	end
@@ -29,15 +30,15 @@ local MachineHighScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOr
 local EarnedMachineHighScoreInEventMode = function()
 	-- if no DancePoints were earned, it's not a HighScore
 	if pss:GetPercentDancePoints() <= 0.01 then return false end
-	-- if DancePoints were earned, and no MachineHighScores exist, it's a HighScore
-	if #MachineHighScores < 1 then return true end
+	-- if DancePoints were earned, but no MachineHighScores exist at this point, it's a fail which was not considered a HighScore
+	if #MachineHighScores < 1 then return false end
 	-- otherwise, check if this score is better than the worst current HighScore retrieved from MachineProfile
 	return pss:GetHighScore():GetPercentDP() >= MachineHighScores[math.min(NumHighScores, #MachineHighScores)]:GetPercentDP()
 end
 
 -- -----------------------------------------------------------------------
 
-local EarnedMachineRecord = GAMESTATE:IsEventMode() and HighScoreIndex.Machine  >= 0 or EarnedMachineHighScoreInEventMode()
+local EarnedMachineRecord = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or HighScoreIndex.Machine  >= 0
 local EarnedTop2Personal  = (HighScoreIndex.Personal >= 0 and HighScoreIndex.Personal < 2)
 
 -- -----------------------------------------------------------------------
@@ -84,11 +85,10 @@ if (not EarnedMachineRecord and EarnedTop2Personal) then
 		InitCommand=function(self) self:y(args.RowHeight*9) end
 	}
 
-
 -- the player did not meet the conditions to show the 8+2 HighScores
--- just show top 10 machine HighScores
+-- Just show top 10 machine HighScores
+-- We can also hijack the 10 rows of high scores to display those ones fetched from GrooveStats.
 else
-
 	-- top 10 machine HighScores
 	args.NumHighScores = 10
 	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)

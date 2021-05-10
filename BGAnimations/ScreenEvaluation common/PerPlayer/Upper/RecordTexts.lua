@@ -1,3 +1,5 @@
+if SL.Global.GameMode == "Casual" then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 
@@ -64,33 +66,44 @@ local EarnedPersonalRecord = ( HighScoreIndex.Personal ~= -1 ) and pss:GetPercen
 
 -- ---------------------------------------------
 
+-- this player earned some record and the ability to enter a high score name
+-- we'll check for this flag later in ./BGAnimations/ScreenNameEntryTradtional underlay/default.lua
 if EarnedMachineRecord or EarnedPersonalRecord then
-
-	-- this player earned some record and the ability to enter a high score name
-	-- we'll check for this flag later in ./BGAnimations/ScreenNameEntryTradtional underlay/default.lua
 	SL[pn].HighScores.EnteringName = true
-
-	local t = Def.ActorFrame{
-		InitCommand=function(self) self:zoom(0.225) end,
-		OnCommand=function(self)
-			self:x( player == PLAYER_1 and -45 or 95 )
-			self:y( 54 )
-		end
-	}
-
-	if HighScoreIndex.Machine+1 > 0 then
-		t[#t+1] = LoadFont("Common Bold")..{
-			Text=(ScreenString("MachineRecord")):format(HighScoreIndex.Machine+1),
-			InitCommand=function(self) self:xy(-110,-18):diffuse(PlayerColor(player)) end,
-		}
-	end
-
-	if HighScoreIndex.Personal+1 > 0 then
-		t[#t+1] = LoadFont("Common Bold")..{
-			Text=(ScreenString("PersonalRecord")):format(HighScoreIndex.Personal+1),
-			InitCommand=function(self) self:xy(-110,24):diffuse(PlayerColor(player)) end,
-		}
-	end
-
-	return t
 end
+
+-- We always want to return this actor frame in case we need to "hijack" it for GrooveStats functionality.
+local t = Def.ActorFrame{
+	Name="RecordTexts",
+	InitCommand=function(self) self:zoom(0.225) end,
+	OnCommand=function(self)
+		self:x( player == PLAYER_1 and -45 or 95 )
+		self:y( 54 )
+	end
+}
+
+t[#t+1] = LoadFont("Common Bold")..{
+	Name="MachineRecord",
+	InitCommand=function(self) self:xy(-110,-18):diffuse(PlayerColor(player)) end,
+	OnCommand=function(self)
+		if EarnedMachineRecord and
+				HighScoreIndex.Machine+1 and
+				not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then
+			self:settext(ScreenString("MachineRecord"):format(HighScoreIndex.Machine+1))
+		end
+	end,
+}
+
+t[#t+1] = LoadFont("Common Bold")..{
+	Name="PersonalRecord",
+	InitCommand=function(self) self:xy(-110,24):diffuse(PlayerColor(player)) end,
+	OnCommand=function(self)
+		if EarnedPersonalRecord and
+				HighScoreIndex.Personal+1 > 0 and
+				not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then
+			self:settext(ScreenString("PersonalRecord"):format(HighScoreIndex.Personal+1))
+		end
+	end,
+}
+
+return t

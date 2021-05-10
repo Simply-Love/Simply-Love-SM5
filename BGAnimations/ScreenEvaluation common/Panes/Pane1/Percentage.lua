@@ -1,4 +1,4 @@
-local player, side = unpack(...)
+local player, controller = unpack(...)
 
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local PercentDP = stats:GetPercentDancePoints()
@@ -16,8 +16,8 @@ return Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:diffuse(color("#101519")):zoomto(158.5, 60)
-			self:horizalign(side==PLAYER_1 and left or right)
-			self:x(150 * (side == PLAYER_1 and -1 or 1))
+			self:horizalign(controller==PLAYER_1 and left or right)
+			self:x(150 * (controller == PLAYER_1 and -1 or 1))
 		end
 	},
 
@@ -26,7 +26,7 @@ return Def.ActorFrame{
 		Text=percent,
 		InitCommand=function(self)
 			self:horizalign(right):zoom(0.585)
-			self:x( (side == PLAYER_1 and 1.5 or 141))
+			self:x( (controller == PLAYER_1 and 1.5 or 141))
 		end
 	}
 }
