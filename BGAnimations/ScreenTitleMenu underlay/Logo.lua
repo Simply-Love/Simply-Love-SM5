@@ -1,9 +1,18 @@
 -- use the current game (dance, pump, etc.) to load the apporopriate logo
--- SL currently has logo assets for: dance, pump, techno
---   use the techno logo asset for less common games (para, kb7, etc.)
 local game = GAMESTATE:GetCurrentGame():GetName()
-if game ~= "dance" and game ~= "pump" then
-	game = "techno"
+local path = ("/%s/Graphics/_logos/%s"):format( THEME:GetCurrentThemeDirectory(), game)
+
+-- Fall back on using the dance logo asset if one isn't found for the current game.
+-- We can't use FILEMAN:DoesFileExist() here because it needs an already-resolved path,
+-- but "path" (above) might resolve to either a png or a directory.
+--
+-- So, use ActorUtil.ResolvePath() to attempt to resolve the path.
+-- If it doesn't resolve to a valid StepMania path, it will return nil,
+-- and we can use that mean that neither a png nor a directory was found for this game.
+local resolved_path = ActorUtil.ResolvePath(path, 1, true)
+if resolved_path == nil then
+	game = "dance"
+	resolved_path = ("/%s/Graphics/_logos/dance.png"):format( THEME:GetCurrentThemeDirectory() )
 end
 
 -- -----------------------------------------------------------------------
@@ -39,28 +48,32 @@ af[#af+1] = Def.Sprite{
 	end,
 }
 
--- decorative arrows
-af[#af+1] = LoadActor(THEME:GetPathG("", "_logos/" .. game))..{
-	InitCommand=function(self)
-		self:y(-16)
-		self:visible(ThemePrefs.Get("VisualStyle") ~= "SRPG5")
 
-		-- get a reference to the SIMPLY [something] graphic
-		-- it's rasterized text in the Wendy font like "SIMPLY LOVE" or "SIMPLY THONK" or etc.
-		local simply = self:GetParent():GetChild("Simply Text")
+if ThemePrefs.Get("VisualStyle") ~= "SRPG5" then
+	-- decorative arrows for current game (dance, pump, techno, etc.)
+	af[#af+1] = LoadActor(resolved_path)..{
+		InitCommand=function(self)
+			self:y(-16)
 
-		-- zoom the logo's width to match the width of the text graphic
-		-- zoomtowidth() performs a "horizontal" zoom (on the x-axis) to meet a provided pixel quantity
-		--    and leaves the y-axis zoom as-is, potentially skewing/squishing the appearance of the asset
-		self:zoomtowidth( simply:GetZoomedWidth() )
+			-- use ActorUtil to resolve the path and find out if it's a png or a directory
+			-- if it's a png, scale it
+			-- if it's a directory, assume the default.lua returns an AF and handles its own scaling
+			if ActorUtil.GetFileType(resolved_path) == "FileType_Bitmap" then
+				-- get a reference to the SIMPLY [something] graphic
+				-- it's rasterized text in the Wendy font like "SIMPLY LOVE" or "SIMPLY THONK" or etc.
+				local simply = self:GetParent():GetChild("Simply Text")
 
-		-- so, get the horizontal zoom factor of these decorative arrows
-		-- and apply it to the y-axis as well to maintain proportions
-		self:zoomy( self:GetZoomX() )
-	end,
-	VisualStyleSelectedMessageCommand=function(self)
-		self:visible(ThemePrefs.Get("VisualStyle") ~= "SRPG5")
-	end,
-}
+				-- zoom the logo's width to match the width of the text graphic
+				-- zoomtowidth() performs a "horizontal" zoom (on the x-axis) to meet a provided pixel quantity
+				--    and leaves the y-axis zoom as-is, potentially skewing/squishing the appearance of the asset
+				self:zoomtowidth( simply:GetZoomedWidth() )
+
+				-- so, get the horizontal zoom factor of these decorative arrows
+				-- and apply it to the y-axis as well to maintain proportions
+				self:zoomy( self:GetZoomX() )
+			end
+		end
+	}
+end
 
 return af
