@@ -1,4 +1,7 @@
-function getSMVersion()
+-- -----------------------------------------------------------------------
+-- local helper function to transform a StepMania version string ("5.0.12") into a table of numbers { 5, 0, 12 }
+
+local getSMVersion = function()
 	-- get the version string, e.g. "5.0.11" or "5.1.0" or "5.2-git-96f9771" or etc.
 	local version = ProductVersion()
 	if type(version) ~= "string" then return {} end
@@ -17,6 +20,18 @@ function getSMVersion()
 	return v
 end
 
+-- IsSMVersion() accepts multiple number arguments representing StepMania family, major, and minor releases
+-- returns true if the user's StepMania engine version matches arguments
+-- returns false if not
+--
+-- all arguments are optional and IsSMVersion() will only check the engine's version number
+-- for as many arguments as are provided
+--
+-- for example, if the user's SM version is "5.0.12"
+--   IsSMVersion(5, 0, 11) will return false
+--   IsSMVersion(5, 0, 12) will return true
+--   IsSMVersion(5, 0)     will return true
+--   IsSMVersion(5, 1)     will return false
 
 function IsSMVersion(...)
 	local version = getSMVersion()
