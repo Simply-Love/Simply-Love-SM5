@@ -258,7 +258,6 @@ end
 af[#af+1] = LoadFont("Common Normal").. {
 	Name="P1SubmitText",
 	Text="",
-	Condition=GAMESTATE:IsSideJoined(PLAYER_1),
 	InitCommand=function(self)
 		self:xy(_screen.w * 0.25, _screen.h - 15)
 		self:diffuse(textColor)
