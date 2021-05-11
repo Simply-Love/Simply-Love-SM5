@@ -216,8 +216,9 @@ SL = {
 			PercentScoreWeightW5=-6,
 			PercentScoreWeightMiss=-12,
 			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=5,
+			PercentScoreWeightHeld=IsGame("pump") and 0 or 5,
 			PercentScoreWeightHitMine=-6,
+			PercentScoreWeightCheckpointHit=0,
 
 			GradeWeightW1=5,
 			GradeWeightW2=4,
@@ -226,8 +227,9 @@ SL = {
 			GradeWeightW5=-6,
 			GradeWeightMiss=-12,
 			GradeWeightLetGo=0,
-			GradeWeightHeld=5,
+			GradeWeightHeld=IsGame("pump") and 0 or 5,
 			GradeWeightHitMine=-6,
+			GradeWeightCheckpointHit=0,
 
 			LifePercentChangeW1=0.008,
 			LifePercentChangeW2=0.008,
@@ -238,6 +240,8 @@ SL = {
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.050,
+
+			InitialValue=0.5,
 		},
 		DD = {
 			PercentScoreWeightW1=5,
@@ -247,8 +251,9 @@ SL = {
 			PercentScoreWeightW5=-6,
 			PercentScoreWeightMiss=-12,
 			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=5,
+			PercentScoreWeightHeld=IsGame("pump") and 0 or 5,
 			PercentScoreWeightHitMine=-6,
+			PercentScoreWeightCheckpointHit=0,
 
 			GradeWeightW1=5,
 			GradeWeightW2=4,
@@ -257,8 +262,9 @@ SL = {
 			GradeWeightW5=-6,
 			GradeWeightMiss=-12,
 			GradeWeightLetGo=0,
-			GradeWeightHeld=5,
+			GradeWeightHeld=IsGame("pump") and 0 or 5,
 			GradeWeightHitMine=-6,
+			GradeWeightCheckpointHit=0,
 
 			LifePercentChangeW1=0.008,
 			LifePercentChangeW2=0.008,
@@ -269,6 +275,8 @@ SL = {
 			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
 			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
 			LifePercentChangeHitMine=-0.050,
+			
+			InitialValue=0.5,
 		},
 	},
 	
