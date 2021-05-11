@@ -82,6 +82,7 @@ local GetScoresRequestProcessor = function(res, master)
 		local playerName = paneDisplay:GetChild("PlayerHighScoreName")
 
 		local loadingText = paneDisplay:GetChild("Loading")
+		local WRorLBText = paneDisplay:GetChild("MachineTextLabel")
 
 		local playerStr = "player"..i
 		local rivalNum = 1
@@ -157,12 +158,15 @@ local GetScoresRequestProcessor = function(res, master)
 			if data and data[playerStr] then
 				if data[playerStr]["isRanked"] then
 					loadingText:settext("Loaded")
+					WRorLBText:settext("WR:")
 				else
 					loadingText:settext("Not Ranked")
+					WRorLBText:settext("Local Best:")
 				end
 			else
 				-- Just hide the text
 				loadingText:queuecommand("Set")
+				WRorLBText:settext("Local Best:")
 			end
 		elseif res["status"] == "fail" then
 			loadingText:settext("Failed")
@@ -417,11 +421,6 @@ for player in ivalues(PlayerNumber) do
 			self:zoom(text_zoom-0.15):diffuse(Color.Black):horizalign(right)
 			self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
 			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
-		end,
-		OnCommand=function(self)
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("WR:")
-			end
 		end,
 	}
 

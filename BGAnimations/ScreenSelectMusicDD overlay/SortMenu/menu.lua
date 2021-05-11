@@ -481,18 +481,17 @@ local t = Def.ActorFrame{
 			self:diffuse(color(UnselectedTextColor))
 		end,
 		},
-		
-		
 }
 
 --- When changing between single/double show the correct mode to switch to.
 local stepsType = GAMESTATE:GetCurrentStyle():GetStepsType()
-local switchStepsTypeLabel
+switchStepsTypeLabel = ""
 if stepsType == 'StepsType_Dance_Single' then
 	switchStepsTypeLabel = 'SWITCH TO DOUBLE'
 else
 	switchStepsTypeLabel = 'SWITCH TO SINGLE'
 end
+
 
 SortLabel = {
 	"MAIN SORT:",
@@ -513,13 +512,8 @@ OtherLabel[#OtherLabel+1] = "SONG SEARCH"
 OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
 
 if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-	local curSong = GAMESTATE:GetCurrentSong()
-	if curSong then
-		OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
-	end
+	OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
 end
-
-
 OtherLabel[#OtherLabel+1] = "TEST INPUT"
 
 for i,SortText in ipairs(SortLabel) do

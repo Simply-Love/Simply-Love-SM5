@@ -175,9 +175,19 @@ t.Handler = function(event)
 						end
 						MESSAGEMAN:Broadcast("ReloadSSMDD")
 					end
-					-- GS/RPG Leaderboards
+					-- GS/RPG Leaderboards if GS Launcher is running, otherwise test input
 					if DDSortMenuCursorPosition == 12 then
-						
+						if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+							local curSong=GAMESTATE:GetCurrentSong()
+							if not curSong then
+								SM("No song selected for leaderboards!")
+							end
+						else
+							isSortMenuVisible = false
+							InputMenuHasFocus = true
+							MESSAGEMAN:Broadcast("ShowTestInput")
+							MESSAGEMAN:Broadcast("ToggleSortMenu")
+						end
 					end
 					-- Test Input
 					if DDSortMenuCursorPosition == 13 then
