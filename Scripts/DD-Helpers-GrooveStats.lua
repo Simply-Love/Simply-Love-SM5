@@ -172,7 +172,6 @@ end
 IsServiceAllowed = function(condition)
 	return (condition and
 		GAMESTATE:GetCurrentGame():GetName()=="dance" and
-		(SL.Global.GameMode == "DD" or SL.Global.GameMode == "FA+") and
 		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= "") and
 		not GAMESTATE:IsCourseMode())
 end
@@ -266,6 +265,8 @@ ValidForGrooveStats = function(player)
 	-- Originally verify the ComboToRegainLife metrics.
 	valid[7] = (PREFSMAN:GetPreference("RegenComboAfterMiss") == 5 and PREFSMAN:GetPreference("MaxRegenComboAfterMiss") == 10)
 
+	SM(tostring(PREFSMAN:GetPreference("RegenComboAfterMiss")) .. ',' .. tostring(PREFSMAN:GetPreference("MaxRegenComboAfterMiss")))
+
 	local FloatEquals = function(a, b)
 		return math.abs(a-b) < 0.0001
 	end
@@ -275,18 +276,15 @@ ValidForGrooveStats = function(player)
 
 	-- And then verify the windows themselves.
 	local TWA = PREFSMAN:GetPreference("TimingWindowAdd")
-	if SL.Global.GameMode == "DD" then
-		for i, window in ipairs(TimingWindows) do
-			-- Only check if the Timing Window is actually "enabled".
-			if i > 5 or SL.Global.ActiveModifiers.TimingWindows[i] then
-				valid[7] = valid[7] and FloatEquals(PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA, ExpectedWindows[i])
-			end
-		end
-
-		for i, window in ipairs(LifeWindows) do
-			valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i])
-		end
+	for i, window in ipairs(TimingWindows) do
+		-- Only check if the Timing Window is actually "enabled".
+		valid[7] = valid[7] and FloatEquals(PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA, ExpectedWindows[i])
 	end
+
+	for i, window in ipairs(LifeWindows) do
+		valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i])
+	end
+
 
 	-- Validate Rate Mod
 	local rate = SL.Global.ActiveModifiers.MusicRate * 100
@@ -368,14 +366,12 @@ CreateCommentString = function(player)
 
 	local timingWindowOption = ""
 
-	if SL.Global.GameMode == "DD" then
-		if not SL.Global.ActiveModifiers.TimingWindows[4] and not SL.Global.ActiveModifiers.TimingWindows[5] then
-			timingWindowOption = "No Dec/WO"
-		elseif not SL.Global.ActiveModifiers.TimingWindows[5] then
-			timingWindowOption = "No WO"
-		elseif not SL.Global.ActiveModifiers.TimingWindows[1] and not SL.Global.ActiveModifiers.TimingWindows[2] then
-			timingWindowOption = "No Fan/Exc"
-		end
+	if not SL.Global.ActiveModifiers.TimingWindows[4] and not SL.Global.ActiveModifiers.TimingWindows[5] then
+		timingWindowOption = "No Dec/WO"
+	elseif not SL.Global.ActiveModifiers.TimingWindows[5] then
+		timingWindowOption = "No WO"
+	elseif not SL.Global.ActiveModifiers.TimingWindows[1] and not SL.Global.ActiveModifiers.TimingWindows[2] then
+		timingWindowOption = "No Fan/Exc"
 	end
 
 	if #timingWindowOption ~= 0 then

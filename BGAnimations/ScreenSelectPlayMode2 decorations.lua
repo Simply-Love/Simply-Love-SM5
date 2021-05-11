@@ -1,5 +1,5 @@
 local nsj = GAMESTATE:GetNumSidesJoined()
-
+SetGameModePreferences()
 local function GetLastStyle()
 	local value
 	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
