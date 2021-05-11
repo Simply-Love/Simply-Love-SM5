@@ -265,8 +265,6 @@ ValidForGrooveStats = function(player)
 	-- Originally verify the ComboToRegainLife metrics.
 	valid[7] = (PREFSMAN:GetPreference("RegenComboAfterMiss") == 5 and PREFSMAN:GetPreference("MaxRegenComboAfterMiss") == 10)
 
-	SM(tostring(PREFSMAN:GetPreference("RegenComboAfterMiss")) .. ',' .. tostring(PREFSMAN:GetPreference("MaxRegenComboAfterMiss")))
-
 	local FloatEquals = function(a, b)
 		return math.abs(a-b) < 0.0001
 	end
