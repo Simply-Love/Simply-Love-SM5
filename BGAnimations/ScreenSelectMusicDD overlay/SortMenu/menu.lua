@@ -511,9 +511,15 @@ OtherLabel = {}
 OtherLabel[#OtherLabel+1] = "SONG SEARCH"
 -- OtherLabel[#OtherLabel+1] = "MARK AS FAVORITE"
 OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
+
 if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-	OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
+	local curSong = GAMESTATE:GetCurrentSong()
+	if curSong then
+		OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
+	end
 end
+
+
 OtherLabel[#OtherLabel+1] = "TEST INPUT"
 
 for i,SortText in ipairs(SortLabel) do

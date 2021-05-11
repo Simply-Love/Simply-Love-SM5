@@ -195,7 +195,7 @@ local af = Def.ActorFrame {
 					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 					local submitForPlayer = false
 
-					--if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
+					if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
 						local percentDP = stats:GetPercentDancePoints()
 						local score = FormatPercentScore(percentDP)
 						score = tonumber(score:gsub("%%", "") * 100)
@@ -217,7 +217,7 @@ local af = Def.ActorFrame {
 							sendRequest = true
 							submitForPlayer = true
 						end
-					--end
+					end
 
 					if not submitForPlayer then
 						-- Hide the submit text if we're not submitting a score for a player.
@@ -258,7 +258,6 @@ end
 af[#af+1] = LoadFont("Miso/_miso").. {
 	Name="P1SubmitText",
 	Text="",
-	Condition=GAMESTATE:IsSideJoined(PLAYER_1),
 	InitCommand=function(self)
 		self:xy(_screen.w * 0.25, _screen.h - 15)
 		self:diffuse(textColor)

@@ -78,6 +78,7 @@ af[#af+1] = Def.ActorFrame{
 		self:queuecommand('ShowDensityGraph')
 	end,
 	CloseThisFolderHasFocusMessageCommand=function(self)
+		self:stoptweening()
 		self:queuecommand('Hide')
 	end,
 	ShowDensityGraphCommand=function(self)
