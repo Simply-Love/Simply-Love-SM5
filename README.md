@@ -1,5 +1,6 @@
 # Digital Dance v1.0.0
 Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
+Also thanks to Box for help getting the new Song Wheel in it's current state!
 Without them this update wouldn't be nearly as awesome~
 
 # ---------------- GrooveStats Integration ----------------
@@ -21,6 +22,9 @@ Passed a new song? Got a new score? Your scores will be automatically uploaded t
 
 # ---------------- New Song Wheel and Sort Menu ----------------
 
+I started working on this song wheel way back in like 2018? and it's based of Casual Mode in Simply Love (Thanks quietly-turning <3)
+I ended up giving up because it was well out of my abilities, but after picking it back up earlier this year I was determined to finish it. If it wasn't for Box though I don't think this would have ever seen the light of day. He helped me so much with a lot of sorting/filtering logic and I could not have done it without him. I learned a lot about coding and also how terrible Stepmania is while doing this. I definitely still have a lot more to learn too lol.
+
 - A brand new songwheel with custom sorting and filtering options!
 
 - New Sort Menu has Sort/Sub sort options.
@@ -29,9 +33,9 @@ Passed a new song? Got a new score? Your scores will be automatically uploaded t
 
 - A Groovestats filter that will only display packs that are ranked on Groovestats.
 
-- Song sorts/filters will be remembered between sessions as well
+- Song sorts/filters will be remembered between sessions as well. (Profile based)
 
-Currently to access the Sort Menu you have to press the "Select" button (typically the red button on a cab). To update any options all you need to do is back out of the sort menu (either by pressing "Select" or "Escape") after changing your desired options and it will automatically reload the music wheel with your new sort/filter preferences.
+Currently to access the Sort Menu you have to press the "Select" button (typically the red button on a cab). To update any options all you need to do is select your desired sorts/filters and back out of the sort menu (either by pressing "Select" or "Escape"). It will automatically reload the music wheel with your new sort/filter preferences.
 
 ![sortmenu](https://i.imgur.com/37sNdIj.png)
 
@@ -76,8 +80,9 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 
 # ---------------- TO DO ----------------
 - Make the Sort Menu accessible to people with 3 button navigation.
+- Make the Sort Menu input only be controlled by the player who opened it if on 2 Player.
 - Maybe add more player stats (highest difficulty passed?)
-- Add more sorts/filters
+- Add more sorts/filters?
 - Add "Favorites" and/or tags for songs/groups.
 - Add a hashcache so I can do sorts like NPS.
 - Have the Groovestats filter use chart hash to filter rather than by pack directory.
