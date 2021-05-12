@@ -32,7 +32,7 @@ t[#t+1] = Def.Quad{
 }
 
 --fallback banner
-t[#t+1] = LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/default banner.png"))..{
+t[#t+1] = LoadActor( THEME:GetPathB("ScreenSelectMusicDD", "overlay/default banner.png"))..{
 	Name="FallbackBanner",
 	InitCommand=function(self) self:y(-6):zoom(0.333) end,
 	DrawStageCommand=function(self) self:visible(SongOrCourse ~= nil and not SongOrCourse:HasBanner()) end

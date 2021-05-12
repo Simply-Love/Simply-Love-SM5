@@ -15,7 +15,7 @@ return Def.ActorFrame { }
 end
 
 return Def.Sprite{
-	Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/PerPlayer/highlight.png"),
+	Texture=THEME:GetPathB("ScreenSelectMusicDD","overlay/PerPlayer/highlight.png"),
 	Name="Cursor"..pn,
 	InitCommand=function(self)
 	

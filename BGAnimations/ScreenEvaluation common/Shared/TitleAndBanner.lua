@@ -35,7 +35,7 @@ if SongOrCourse and SongOrCourse:HasBanner() then
 	}
 else
 	--fallback banner
-	af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectMusic", "overlay/default banner.png"))..{
+	af[#af+1] = LoadActor( THEME:GetPathB("ScreenSelectMusicDD", "overlay/default banner.png"))..{
 		InitCommand=function(self) self:xy( _screen.cx, 121.5):zoom(0.7) end
 	}
 end

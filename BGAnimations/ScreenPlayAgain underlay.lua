@@ -58,7 +58,7 @@ local function input(event)
 				SL.Global.Stages.Remaining = PREFSMAN:GetPreference("SongsPerPlay")
 				SL.Global.ContinuesRemaining = SL.Global.ContinuesRemaining - 1
 
-				SL.Global.ScreenAfter.PlayAgain = "ScreenSelectMusic"
+				SL.Global.ScreenAfter.PlayAgain = "ScreenSelectMusicDD"
 			else
 				SL.Global.ScreenAfter.PlayAgain = "ScreenEvaluationSummary"
 			end

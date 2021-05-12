@@ -6,7 +6,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		-- SL[pn].PlayerOptionsString is set in ScreenGameplay in.lua
 		-- Each ScreenGameplay in, we store the current PlayerOptions (from the engine) there as a string.
 		--
-		-- Here, in ScreenSelectMusic, we compare the engine's sense of PlayerOptions against that previously
+		-- Here, in ScreenSelectMusicDD, we compare the engine's sense of PlayerOptions against that previously
 		-- stored in SL[pn].PlayerOptionsString.  If they don't match, we assume that the engine's
 		-- sense of PlayerOptions was modified during the last ScreenGameplay by ITG mods via ApplyGameCommands()
 		--

@@ -23,7 +23,7 @@ if name2 == "" then
 	Guest2 = false
 end
 
-local file3 = THEME:GetPathB("ScreenSelectMusic","underlay/default picture.png")
+local file3 = THEME:GetPathB("ScreenSelectMusicDD","overlay/ProfileDisplay/default picture.png")
 
 local function getInputHandler(actor, player)
 	return (function(event)

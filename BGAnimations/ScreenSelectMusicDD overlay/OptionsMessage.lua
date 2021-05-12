@@ -29,7 +29,7 @@ return Def.ActorFrame {
 	},
 	Def.BitmapText {
 		Font="Wendy/_wendy small",
-		Text=THEME:GetString("ScreenSelectMusic", "Press Start for Options"),
+		Text=THEME:GetString("ScreenSelectMusicDD", "Press Start for Options"),
 		InitCommand=function(self)
 			self:xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 			self:zoom(0.8)
