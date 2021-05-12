@@ -73,14 +73,13 @@ The image must:
 The aspect ratio can be changed under *Graphics / Sound Options*.
 
 # -- KNOWN ISSUES and general things to note --
-- Sort Menu can only be accessed if you have 4 button naviation on at the moment (aka having a "Select"/Red button)
+- Sort Menu can only be accessed if you have 4 button navigation on at the moment (aka having a "Select"/Red button)
 - Theme is intended for home use only.
 - I don't expect this to work outside of event mode.
 - 4:3 aspect ratio has less info displayed on 2 player because of lack of room. (No density graph or profile pane)
 
 # ---------------- TO DO ----------------
 - Make the Sort Menu accessible to people with 3 button navigation.
-- Make the Sort Menu input only be controlled by the player who opened it if on 2 Player.
 - Maybe add more player stats (highest difficulty passed?)
 - Add more sorts/filters?
 - Add "Favorites" and/or tags for songs/groups.

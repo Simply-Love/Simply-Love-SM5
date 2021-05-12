@@ -3,6 +3,7 @@ local args = ...
 local GroupWheel = args.GroupWheel
 local SongWheel = args.SongWheel
 local nsj = GAMESTATE:GetNumSidesJoined()
+local PlayerControllingSort
 
 local ChartUpdater = LoadActor("./UpdateChart.lua")
 local screen = SCREENMAN:GetTopScreen()
@@ -116,6 +117,11 @@ t.Handler = function(event)
 	if isSortMenuVisible == false then
 		if event.type ~= "InputEventType_Release" then
 			if event.GameButton == "Select" then
+				if event.PlayerNumber == 'PlayerNumber_P1' then
+					PlayerControllingSort = 'PlayerNumber_P1' 
+				else
+					PlayerControllingSort = 'PlayerNumber_P2'
+				end
 				MESSAGEMAN:Broadcast("InitializeDDSortMenu")
 				MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
 				if GAMESTATE:GetCurrentSong() ~= nil then
@@ -128,7 +134,7 @@ t.Handler = function(event)
 	
 	if isSortMenuVisible then
 		if event.type ~= "InputEventType_Release" then
-			if GAMESTATE:IsSideJoined(event.PlayerNumber) then
+			if GAMESTATE:IsSideJoined(event.PlayerNumber) and event.PlayerNumber == PlayerControllingSort then
 				if event.GameButton == "Select" or event.GameButton == "Back" then
 					if IsSortMenuInputToggled == false then
 						if SortMenuNeedsUpdating == true then
