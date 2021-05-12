@@ -125,7 +125,7 @@ local t = Def.ActorFrame{
 		Name="Cursor",
 		OnCommand=function(self)
 			if ScreenName == "ScreenSelectPlayMode" then
-				cursor.index = (FindInTable(ThemePrefs.Get("DefaultGameMode"), choices) or 1) - 1
+				cursor.index = (1) - 1
 			end
 			self:x(-150):y( -60 + (cursor.h * cursor.index) )
 		end,

@@ -36,11 +36,6 @@ for i=1,#TapNoteScores.Types do
 		Font="Wendy/_ScreenEvaluation numbers",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
-
-			if SL.Global.GameMode ~= "ITG" then
-				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
-			end
-
 			-- if some TimingWindows were turned off, the leading 0s should not
 			-- be colored any differently than the (lack of) JudgmentNumber,
 			-- so load a unique Metric group.

@@ -155,7 +155,7 @@ end
 local af = Def.ActorFrame{
 	Name="LeaderboardMaster",
 	InitCommand=function(self) self:visible(false) end,
-	ShowLeaderboardCommand=function(self)
+	ShowLeaderboardMessageCommand=function(self)
 		self:visible(true)
 		for i=1, 2 do
 			local pn = "P"..i
@@ -168,7 +168,7 @@ local af = Def.ActorFrame{
 		-- Only make the request when this actor gets actually displayed through the sort menu.
 		self:queuecommand("SendLeaderboardRequest")
 	end,
-	HideLeaderboardCommand=function(self) self:visible(false) end,
+	HideLeaderboardMessageCommand=function(self) self:visible(false) end,
 	LeaderboardInputEventMessageCommand=function(self, event)
 		local pn = ToEnumShortString(event.PlayerNumber)
 		if #self[pn].Leaderboards == 0 then return end

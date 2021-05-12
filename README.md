@@ -3,7 +3,7 @@ WIP Theme for SM5 that uses Simply Love as a base, but hopefully over time I can
 # ---------------- Notable changes ----------------
 
 - Removal of visual themes
-- Removal of different game modes (ITG only) [Kind of]
+- Removal of different game modes.
 - No more difficulty "blocks". Difficulty numbers are displayed, but enlarged and accompanied by a highlight cursor to indicate which difficulty you've selected. Both cursors are colored based on player.
 - The chart pane on screen select music (the thing that lists steps, holds, etc) has the difficulty number removed as well. Don't need the redundancy of having the difficulty shown in 3 different ways. Also gives more space for additional info in the future.
 - Density graphs always present on screen select music along with a generalized breakdown if any.

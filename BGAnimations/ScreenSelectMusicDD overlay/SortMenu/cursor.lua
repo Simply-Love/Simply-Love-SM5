@@ -1,7 +1,16 @@
 DDSortMenuCursorPosition = 1
 IsSortMenuInputToggled = false
-local MaxCursorPosition = IsServiceAllowed(SL.GrooveStats.Leaderboard) and 13 or 12
-
+local function GetMaxCursorPosition()
+	local curSong = GAMESTATE:GetCurrentSong()
+	local SongIsSelected
+	
+	if curSong then 
+		SongIsSelected = true
+	else
+		SongIsSelected = false
+	end
+	return IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and 13 or 12
+end
 
 local t = Def.ActorFrame{
 	Name="MenuCursor",
@@ -77,7 +86,7 @@ local t = Def.ActorFrame{
 			MoveCursorLeftMessageCommand=function(self)
 				if IsSortMenuInputToggled == false then
 					if DDSortMenuCursorPosition == 1 then
-						DDSortMenuCursorPosition = MaxCursorPosition
+						DDSortMenuCursorPosition = GetMaxCursorPosition()
 						self:playcommand("UpdateCursor")
 					else
 						DDSortMenuCursorPosition = DDSortMenuCursorPosition - 1
@@ -88,7 +97,7 @@ local t = Def.ActorFrame{
 				
 			MoveCursorRightMessageCommand=function(self)
 				if IsSortMenuInputToggled == false then
-					if DDSortMenuCursorPosition == MaxCursorPosition then
+					if DDSortMenuCursorPosition == GetMaxCursorPosition() then
 						DDSortMenuCursorPosition = 1
 						self:playcommand("UpdateCursor")
 					else

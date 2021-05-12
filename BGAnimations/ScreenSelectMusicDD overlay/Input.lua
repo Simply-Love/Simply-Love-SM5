@@ -5,7 +5,7 @@ local SongWheel = args.SongWheel
 local nsj = GAMESTATE:GetNumSidesJoined()
 
 local ChartUpdater = LoadActor("./UpdateChart.lua")
-
+local screen = SCREENMAN:GetTopScreen()
 -- initialize Players to be any HumanPlayers at screen init
 -- we'll update this later via latejoin if needed
 local Players = GAMESTATE:GetHumanPlayers()
@@ -16,6 +16,7 @@ local didSelectSong = false
 local PressStartForOptions = false
 isSortMenuVisible = false
 InputMenuHasFocus = false
+LeadboardHasFocus = false
 
 -----------------------------------------------------
 -- input handler
@@ -180,7 +181,15 @@ t.Handler = function(event)
 						if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 							local curSong=GAMESTATE:GetCurrentSong()
 							if not curSong then
-								SM("No song selected for leaderboards!")
+								isSortMenuVisible = false
+								InputMenuHasFocus = true
+								MESSAGEMAN:Broadcast("ShowTestInput")
+								MESSAGEMAN:Broadcast("ToggleSortMenu")
+							else
+								LeadboardHasFocus = true
+								isSortMenuVisible = false
+								MESSAGEMAN:Broadcast("ToggleSortMenu")
+								MESSAGEMAN:Broadcast("ShowLeaderboard")
 							end
 						else
 							isSortMenuVisible = false
@@ -271,6 +280,39 @@ t.Handler = function(event)
 			InputMenuHasFocus = false
 			SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
 			MESSAGEMAN:Broadcast("HideTestInput")
+		end
+
+		return false
+	end
+	
+	
+	if LeadboardHasFocus then
+		if not (event and event.PlayerNumber and event.button) then
+			return false
+		end
+		-- Don't handle input for a non-joined player.
+		if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
+			return false
+		end
+
+		SOUND:StopMusic()
+
+		local screen   = SCREENMAN:GetTopScreen()
+		local overlay  = screen:GetChild("Overlay")
+
+		-- Broadcast event data using MESSAGEMAN for the Leaderboard overlay to listen for.
+		if event.type ~= "InputEventType_Repeat" then
+			MESSAGEMAN:Broadcast("LeaderboardInputEvent", event)
+		end
+
+		-- Pressing Start or Back (typically Esc on a keyboard) will queue "DirectInputToEngine"
+		-- but only if the event.type is not a Release.
+		-- As soon as the Leaderboard is activated via the SortMenu, the player is likely still holding Start
+		-- and will soon release it to start testing their input, which would inadvertently close the Leaderboard.
+		if (event.GameButton == "Start" or event.GameButton == "Back") and event.type ~= "InputEventType_Release" then
+			LeadboardHasFocus = false
+			SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
+			MESSAGEMAN:Broadcast("HideLeaderboard")
 		end
 
 		return false

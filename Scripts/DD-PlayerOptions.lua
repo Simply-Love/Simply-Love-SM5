@@ -510,7 +510,7 @@ local Overrides = {
 			}
 		end,
 		Choices = function()
-			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
+			local tns = "TapNoteScore" .. (SL.Global.GameMode=="DD" and "")
 			local t = {THEME:GetString("SLPlayerOptions","None")}
 			-- assume pluralization via terminal s
 			t[2] = THEME:GetString(tns,"W5").."s"

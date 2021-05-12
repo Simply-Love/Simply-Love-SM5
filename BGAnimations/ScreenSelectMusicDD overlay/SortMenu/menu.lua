@@ -133,14 +133,28 @@ local t = Def.ActorFrame{
 	Def.Quad{
 			Name="MenuBorder",
 			InitCommand=function(self)
-					self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 					self:draworder(0)
 					self:diffuse(color("#FFFFFF"))
 					self:zoomx(305)
-					self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and 280 or 255)
-					self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and -12.5 or -25)
 					self:diffusealpha(0.6)
 					self:visible(true)
+					self:queuecommand('UpdateZoom')
+			end,
+			InitializeDDSortMenuMessageCommand=function(self)
+				self:queuecommand('UpdateZoom')
+			end,
+			UpdateZoomCommand=function(self)
+				local curSong = GAMESTATE:GetCurrentSong()
+				local SongIsSelected
+				
+				if curSong then 
+					SongIsSelected = true
+				else
+					SongIsSelected = false
+				end
+				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
+				self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and 280 or 255)
+				self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and -12.5 or -25)
 			end,
 		},
 		
@@ -148,13 +162,27 @@ local t = Def.ActorFrame{
 	Def.Quad{
 			Name="MenuBackground",
 			InitCommand=function(self)
-					self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 					self:draworder(0)
 					self:diffuse(color("#111111"))
 					self:zoomx(300)
-					self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and 275 or 250)
-					self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and -12.5 or -25)
+					self:queuecommand('UpdateZoom')
 					self:visible(true)
+			end,
+			InitializeDDSortMenuMessageCommand=function(self)
+				self:queuecommand('UpdateZoom')
+			end,
+			UpdateZoomCommand=function(self)
+				local curSong = GAMESTATE:GetCurrentSong()
+				local SongIsSelected
+				
+				if curSong then 
+					SongIsSelected = true
+				else
+					SongIsSelected = false
+				end
+				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
+				self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and 275 or 250)
+				self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and -12.5 or -25)
 			end,
 		},
 		
@@ -506,16 +534,6 @@ FilterLabel = {
 	"FILTER GROOVESTATS?",
 }
 
-OtherLabel = {}
-OtherLabel[#OtherLabel+1] = "SONG SEARCH"
--- OtherLabel[#OtherLabel+1] = "MARK AS FAVORITE"
-OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
-
-if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-	OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
-end
-OtherLabel[#OtherLabel+1] = "TEST INPUT"
-
 for i,SortText in ipairs(SortLabel) do
 	t[#t+1] = Def.BitmapText{
 		Font="Miso/_miso",
@@ -544,6 +562,15 @@ for i,FilterText in ipairs(FilterLabel) do
 	}
 end
 
+OtherLabel = {}
+OtherLabel[#OtherLabel+1] = "SONG SEARCH"
+-- OtherLabel[#OtherLabel+1] = "MARK AS FAVORITE"
+OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
+OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
+local leaderboards_label_index = #OtherLabel
+OtherLabel[#OtherLabel+1] = "TEST INPUT"
+
+
 for i,OtherText in ipairs(OtherLabel) do
 	t[#t+1] = Def.BitmapText{
 		Font="Miso/_miso",
@@ -551,9 +578,25 @@ for i,OtherText in ipairs(OtherLabel) do
 			self:diffuse(color("#FFFFFF"))
 			self:horizalign(center)
 			self:x(SCREEN_CENTER_X)
-			self:y(SCREEN_CENTER_Y + 5 + 25*i)
 			self:zoom(1.25)
 			self:settext(OtherText)
+			self:queuecommand('Update')
+		end,
+		InitializeDDSortMenuMessageCommand=function(self)
+			self:queuecommand('Update')
+		end,
+		UpdateCommand=function(self)
+			local curSong = GAMESTATE:GetCurrentSong()
+			local is_leaderboard_enabled = curSong ~= nil and IsServiceAllowed(SL.GrooveStats.Leaderboard)
+			local active_index = i
+
+			if not is_leaderboard_enabled and i >= leaderboards_label_index then
+				active_index = i - 1
+			end
+			self:y(SCREEN_CENTER_Y + 5 + 25*active_index)
+			if i == leaderboards_label_index then
+				self:visible(is_leaderboard_enabled)
+			end
 		end,
 	}
 end

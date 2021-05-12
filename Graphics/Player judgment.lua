@@ -70,7 +70,7 @@ return Def.ActorFrame{
 			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.
 			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
-				self:Load( THEME:GetPathG("", "_judgments/ITG/Love") )
+				self:Load( THEME:GetPathG("", "_judgments/DD/Love") )
 
 			else
 				self:Load( THEME:GetPathG("", "_judgments/" .. mode .. "/" .. file_to_load) )

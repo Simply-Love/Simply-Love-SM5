@@ -49,15 +49,6 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values 	= { true, false }
 		},
-		DefaultGameMode =
-		{
-			Default = "ITG",
-			Choices = {
-				THEME:GetString("ScreenSelectPlayMode", "ITG"),
-				THEME:GetString("ScreenSelectPlayMode", "DD"),
-			},
-			Values 	= { "ITG", "DD" }
-		},
 		AutoStyle =
 		{
 			Default = "none",

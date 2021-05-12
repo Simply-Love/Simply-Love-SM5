@@ -3,7 +3,7 @@ local pn = ToEnumShortString(player)
 local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 
 local TapNoteScores = { Types={'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}, Names={} }
-local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
+local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="DD" and "")
 -- get TNS names appropriate for the current GameMode, localized to the current language
 for i, judgment in ipairs(TapNoteScores.Types) do
 	TapNoteScores.Names[#TapNoteScores.Names+1] = THEME:GetString(tns_string, judgment)
