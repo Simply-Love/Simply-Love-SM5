@@ -230,7 +230,7 @@ return Def.ActorFrame{
 						end,
 						SetCommand=function(self, params)
 							if params and params.index and avatars[params.index] then
-								self:SetTexture(avatars[params.index]):visible(true)
+								self:Load(avatars[params.index]):visible(true)
 							else
 								self:visible(false)
 							end
