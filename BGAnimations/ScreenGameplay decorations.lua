@@ -112,7 +112,6 @@ if not GAMESTATE:IsCourseMode() then
 					
 					if isDone then
 						IsFinished = true
-						SM(tostring(IsFinished))
 						self:queuecommand('Finished')
 					else
 						self:sleep(0.1):queuecommand('CheckEnd')
