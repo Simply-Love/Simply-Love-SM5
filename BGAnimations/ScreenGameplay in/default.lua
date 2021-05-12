@@ -9,10 +9,6 @@ local SongsInCourse
 if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
 	text = ("%s 1 / %d"):format(THEME:GetString("Stage", "Stage"), SongsInCourse)
-
-elseif not PREFSMAN:GetPreference("EventMode") then
-	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
-
 else
 	text = THEME:GetString("Stage", "Event")
 end
@@ -69,7 +65,12 @@ af[#af+1] = LoadFont("Common Bold")..{
 		if not SL.Global.GameplayReloadCheck then
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
 		end
-		self:zoom(0.4):y(_screen.h-30)
+		--- make the EVENT text disappear after Gameplay In. Don't do it for courses though.
+		if GAMESTATE:IsCourseMode() then
+			self:zoom(0.4):y(_screen.h-30)
+		else
+			self:zoom(0):y(_screen.h-30)
+		end
 
 		-- offset "stage i" text to the left or right if only one player is joined, and that player's notefield is centered
 		if #GAMESTATE:GetHumanPlayers() == 1 and GetNotefieldX( GAMESTATE:GetMasterPlayerNumber() ) == _screen.cx then

@@ -22,8 +22,8 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- FIXME: num_panes won't be accurate if any panes were nil,
 --        so this is more like "validation" than validation
 
-local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_panes)
-local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
+local primary_i   = 1
+local secondary_i = 2
 
 -- -----------------------------------------------------------------------
 -- initialize local tables (panes, active_pane) for the the input handling function to use
