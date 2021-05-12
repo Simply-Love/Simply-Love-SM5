@@ -342,21 +342,17 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		
 			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
 		end
-		--------------------------------------------------------------
-		
+		-------------------------------------------------------------
 		if event.GameButton == "Select" then
 			if PressStartForOptions == false then
-				if nsj ~= 2 then
 					isSortMenuVisible = true
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
 					stop_music()
 					MESSAGEMAN:Broadcast("ToggleSortMenu")
-				else end
 			end
 		end
 		UpdateGroupWheelMessageCommand = function(self)
 			t.WheelWithFocus:scroll_by_amount(1)
-			SCREENMAN:SystemMessage("hello")
 		end
 		--------------------------------------------------------------
 		-- proceed to the next wheel

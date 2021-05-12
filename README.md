@@ -1,12 +1,9 @@
 # Digital Dance v1.0.0
-Huge thanks to Nantano, Sujeet, Ian, and Dom for the GS Launcher!
+Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
 Without them this update wouldn't be nearly as awesome~
 
 # ---------------- GrooveStats Integration ----------------
 Rivals, Scores, Leaderboards, Auto-Uploading of scores, it's all here! Please [watch the video](https://www.youtube.com/watch?v=8yMzp7xMQq0) and refer the [GrooveStats Launcher Guide](https://github.com/GrooveStats/gslauncher#readme) on how to setup the StepMania wrapper program that will get you connected.
-
-As of this writing, both Waterfall and Digital Dance will be adding GrooveStats integration Soon™!
-Additionally, users of @dinsfire64/TJ's Image will be happy to note that a future update will also have support for the launcher.
 
 First, check and see if you're connected!
 
@@ -30,13 +27,19 @@ Passed a new song? Got a new score? Your scores will be automatically uploaded t
 
 - It can also filter songs by things like difficulty, bpm, and length.
 
-- A Groovestats filter that will only display packs/songs that are ranked on Groovestats.
+- A Groovestats filter that will only display packs that are ranked on Groovestats.
+
+- Song sorts/filters will be remembered between sessions as well
+
+Currently to access the Sort Menu you have to press the "Select" button (typically the red button on a cab). To update any options all you need to do is back out of the sort menu (either by pressing "Select" or "Escape") after changing your desired options and it will automatically reload the music wheel with your new sort/filter preferences.
 
 ![sortmenu](https://i.imgur.com/37sNdIj.png)
 
 - Added a song search functionality. (In the sort menu)
 
 ![songsearch](https://i.imgur.com/bZ4R32V.png)
+
+If you don't have a keyboard you can just press enter to go back to the music wheel. In the future I will change this to just not show up if you don't have a keyboard, but I want this release to come out asap.
 
 
 # ---------------- Other Changes ----------------
