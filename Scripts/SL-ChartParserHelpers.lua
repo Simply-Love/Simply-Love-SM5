@@ -147,16 +147,9 @@ GenerateBreakdownText = function(pn, minimization_level)
 		if segment.isBreak then
 			-- Never include leading and trailing breaks.
 			if i ~= 1 and i ~= #segments then
-				if segment_size == 1 then
-					if minimization_level == 0 or minimization_level == 1 then
-						-- For very small breaks, don't display "( )" notation since it adds a lot of visual clutter.
-						text_segments[#text_segments+1] = "-"
-					else
-						-- Don't count this as a true "break"
-						is_broken = true
-						segment_sum = segment_sum + segment_size
-					end
-				elseif segment_size <= 4 then
+				-- Break segments of size 1 aren't handled here as they don't show up.
+				-- Instead we handle them below when we see two stream sequences in succession.
+				if segment_size <= 4 then
 					segment_sum, is_broken, total_sum = AddNotationForSegment(
 						"-", segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
 				elseif segment_size < 32 then
@@ -168,17 +161,22 @@ GenerateBreakdownText = function(pn, minimization_level)
 				end
 			end
 		else
-			-- If we find two streams in sequence, then there's an implicit (1) in between.
-			-- Make sure we still account for that.
-			if i > 1 and not segments[i-1].isBreak then
-				text_segments[#text_segments+1] = "-"
-			end
 			if minimization_level == 2 or minimization_level == 3 then
+				if i > 1 and not segments[i-1].isBreak then
+					-- Don't count this as a true "break"
+					is_broken = true
+					segment_sum = segment_sum + segment_size
+				end
 				-- For minimization_level == 2, these segments get added to the text_segments table
 				-- when we encounter a large enough break. For minimization_level == 3, these segments
 				-- get summed up before reporting the total.
 				segment_sum = segment_sum + segment_size
 			else
+				-- If we find two streams in sequence, then there's an implicit (1) in between.
+				-- Make sure we still account for that for minimization levels 0 and 1.
+				if i > 1 and not segments[i-1].isBreak then
+					text_segments[#text_segments+1] = "-"
+				end
 				text_segments[#text_segments+1] = tostring(segment_size)
 			end
 		end
