@@ -115,7 +115,7 @@ t.Handler = function(event)
 	
 
 	if isSortMenuVisible == false then
-		if event.type ~= "InputEventType_Release" then
+		if event.type ~= "InputEventType_Release" and event.type == "InputEventType_FirstPress" then
 			if event.GameButton == "Select" then
 				if event.PlayerNumber == 'PlayerNumber_P1' then
 					PlayerControllingSort = 'PlayerNumber_P1' 
@@ -136,20 +136,22 @@ t.Handler = function(event)
 		if event.type ~= "InputEventType_Release" then
 			if GAMESTATE:IsSideJoined(event.PlayerNumber) and event.PlayerNumber == PlayerControllingSort then
 				if event.GameButton == "Select" or event.GameButton == "Back" then
-					if IsSortMenuInputToggled == false then
-						if SortMenuNeedsUpdating == true then
-							SortMenuNeedsUpdating = false
-							MESSAGEMAN:Broadcast("ToggleSortMenu")
-							MESSAGEMAN:Broadcast("ReloadSSMDD")
-							isSortMenuVisible = false
-							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-						elseif SortMenuNeedsUpdating == false then
-							isSortMenuVisible = false
-							SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
-							MESSAGEMAN:Broadcast("ToggleSortMenu")
+					if event.type ~= "InputEventType_Release" and event.type == "InputEventType_FirstPress" then
+						if IsSortMenuInputToggled == false then
+							if SortMenuNeedsUpdating == true then
+								SortMenuNeedsUpdating = false
+								MESSAGEMAN:Broadcast("ToggleSortMenu")
+								MESSAGEMAN:Broadcast("ReloadSSMDD")
+								isSortMenuVisible = false
+								SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+							elseif SortMenuNeedsUpdating == false then
+								isSortMenuVisible = false
+								SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
+								MESSAGEMAN:Broadcast("ToggleSortMenu")
+							end
 						end
+						MESSAGEMAN:Broadcast("UpdateCursorColor")
 					end
-					MESSAGEMAN:Broadcast("UpdateCursorColor")
 				end
 				if event.GameButton == "Start" then
 					-- main sorts/filters
