@@ -135,8 +135,8 @@ t.Handler = function(event)
 	if isSortMenuVisible then
 		if event.type ~= "InputEventType_Release" then
 			if GAMESTATE:IsSideJoined(event.PlayerNumber) and event.PlayerNumber == PlayerControllingSort then
-				if event.GameButton == "Select" or event.GameButton == "Back" then
-					if event.type ~= "InputEventType_Release" and event.type == "InputEventType_FirstPress" then
+				if event.type ~= "InputEventType_Release" and event.type == "InputEventType_FirstPress" then
+					if event.GameButton == "Select" or event.GameButton == "Back" then
 						if IsSortMenuInputToggled == false then
 							if SortMenuNeedsUpdating == true then
 								SortMenuNeedsUpdating = false
@@ -150,7 +150,6 @@ t.Handler = function(event)
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
 							end
 						end
-						MESSAGEMAN:Broadcast("UpdateCursorColor")
 					end
 				end
 				if event.GameButton == "Start" then
@@ -251,6 +250,7 @@ t.Handler = function(event)
 						MESSAGEMAN:Broadcast("MoveSortMenuOptionRight")
 					elseif event.GameButton == "Select" or event.GameButton == "Back" then
 						SOUND:PlayOnce( THEME:GetPathS("common", "invalid.ogg") )
+						MESSAGEMAN:Broadcast("UpdateCursorColor")
 						MESSAGEMAN:Broadcast("ToggleSortMenuMovement")
 					end
 				end

@@ -23,19 +23,22 @@ GetStreamSequences = function(notesPerMeasure, notesThreshold)
 	end
 
 	local streamSequences = {}
-	-- Count every measure as stream/non-stream.
-	-- We can then later choose how we want to display the information.
-	local measureSequenceThreshold = 1
+	
+	-- Count every "stream" measure.
+	local streamSequenceThreshold = 1
+	-- Ignore (1) breaks as those are implicitly determined already by virtue
+	-- of seeing two streams in sequence (instead of one combined larger sequence).
+	local breakSequenceThreshold = 2
 
 	local counter = 1
 	local streamEnd = nil
 
-	-- First add an initial break if it's larger than measureSequenceThreshold
+	-- First add an initial break if it's larger than breakSequenceThreshold
 	if #streamMeasures > 0 then
 		local breakStart = 0
 		local k, curVal = next(streamMeasures) -- first element of a table
 		local breakEnd = curVal - 1
-		if (breakEnd - breakStart >= measureSequenceThreshold) then
+		if (breakEnd - breakStart >= breakSequenceThreshold) then
 			table.insert(streamSequences,
 				{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
 		end
@@ -51,7 +54,7 @@ GetStreamSequences = function(notesPerMeasure, notesThreshold)
 			streamEnd = curVal + 1
 		else
 			-- Found the first section that counts as a stream
-			if(counter >= measureSequenceThreshold) then
+			if(counter >= streamSequenceThreshold) then
 				if streamEnd == nil then
 					streamEnd = curVal
 				end
@@ -61,10 +64,10 @@ GetStreamSequences = function(notesPerMeasure, notesThreshold)
 					{streamStart=streamStart, streamEnd=streamEnd, isBreak=false})
 			end
 
-			-- Add any trailing breaks if they're larger than measureSequenceThreshold
+			-- Add any trailing breaks if they're larger than breakSequenceThreshold
 			local breakStart = curVal
 			local breakEnd = (nextVal ~= -1) and nextVal - 1 or #notesPerMeasure
-			if (breakEnd - breakStart >= measureSequenceThreshold) then
+			if (breakEnd - breakStart >= breakSequenceThreshold) then
 				table.insert(streamSequences,
 					{streamStart=breakStart, streamEnd=breakEnd, isBreak=true})
 			end
@@ -164,6 +167,12 @@ GenerateBreakdownText = function(pn, minimization_level)
 				end
 			end
 		else
+			-- If we find two streams in sequence, then there's an implicit (1) in between.
+			-- Make sure we still account for that.
+			if i > 1 and not segments[i-1].isBreak then
+				text_segments[#text_segments+1] = "-"
+			end
+		
 			if minimization_level == 2 or minimization_level == 3 then
 				-- For minimization_level == 2, these segments get added to the text_segments table
 				-- when we encounter a large enough break. For minimization_level == 3, these segments
