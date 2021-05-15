@@ -91,8 +91,7 @@ local song_mt = {
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75):y(25)
 					end,
 					GainFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
-						else
+						if not self.song == "CloseThisFolder" then
 							subself:visible(true):maxwidth(315):y(25)
 						end
 					end,
@@ -239,8 +238,8 @@ local song_mt = {
 			-- so this is a special case song metatable item
 			if type(song) == "string" then
 				self.song = song
-				self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):horizalign(center):valign(0.5):x(0)
-				self.QuadColor:diffuse(color("#4c565d"))
+				self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):shadowlength(1.1):horizalign(center):valign(0.5):x(0)
+				self.QuadColor:diffuse(color("#363d42"))
 				self.subtitle_bmt:settext("")
 			else
 				-- we are passed in a Song object as info

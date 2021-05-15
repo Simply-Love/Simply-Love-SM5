@@ -13,7 +13,6 @@
 -- I'm using files in Gameplay's underlay for actors that get drawn to the screen.  You can
 -- poke around in those to learn more.
 ------------------------------------------------------------
-
 local af = Def.ActorFrame{}
 
 af[#af+1] = LoadActor("./WhoIsCurrentlyWinning.lua")

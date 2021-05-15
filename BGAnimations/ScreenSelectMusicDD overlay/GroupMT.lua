@@ -102,7 +102,7 @@ local item_mt = {
 					InitCommand=function(self)
 						self:y(_screen.cy - 240)
 						self:x(0)
-						self:diffuse(color("#4c565d"))
+						self:diffuse(color("#363d42"))
 						self:zoomx(320)
 						self:zoomy(24)
 							
@@ -116,23 +116,23 @@ local item_mt = {
 					Font="Common Normal",
 					InitCommand=function(subself)
 						self.bmt = subself
-						subself:maxwidth(300):vertspacing(-4):shadowlength(0.5)
+						subself:maxwidth(300):vertspacing(-4):shadowlength(1.1)
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(480):shadowlength(0):playcommand("Untruncate")
+							subself:horizalign(left):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(480):shadowlength(1.1):playcommand("Untruncate")
 						end
 					end,
 					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
 					TruncateCommand=function(subself) subself:settext(self.groupName):Truncate(max_chars) end,
 
 					GainFocusCommand=function(subself) BannerOfGroup = self.groupName  subself:horizalign(center):linear(0.15):zoom(0.8) MESSAGEMAN:Broadcast("GroupsHaveChanged") end,
-					LoseFocusCommand=function(subself) subself:horizalign(center):linear(0.15):zoom(0.8):diffuse(color("#4ffff3")) end,
+					LoseFocusCommand=function(subself) subself:horizalign(center):linear(0.15):zoom(0.8):shadowlength(1.1):diffuse(color("#4ffff3")) end,
 					
 					
 					SlideToTopCommand=function(subself) subself:diffuse(color("#4ffff3")):queuecommand("SlideToTop2") end,
 					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):zoom(0.8):maxwidth(480):shadowlength(0):playcommand("Untruncate") end,
-					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(300):shadowlength(0.5):playcommand("Truncate") end,
+					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(300):shadowlength(1.1):playcommand("Truncate") end,
 				},
 				
 			}
