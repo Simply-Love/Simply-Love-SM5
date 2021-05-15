@@ -398,22 +398,26 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 
 			ChartUpdater.UpdateCharts()
 		elseif event.GameButton == "MenuUp" or event.GameButton == "Up" then
-			local t = GetTimeSinceStart()
-			local dt = t - lastMenuUpPressTime
-			lastMenuUpPressTime = t
-			if dt < 0.5 and dt > 0.1 then
-				SOUND:PlayOnce( THEME:GetPathS("", "_easier.ogg") )
-				ChartUpdater.DecreaseDifficulty(event.PlayerNumber)
-				lastMenuUpPressTime = 0
+			if event.type == "InputEventType_FirstPress" then
+				local t = GetTimeSinceStart()
+				local dt = t - lastMenuUpPressTime
+				lastMenuUpPressTime = t
+				if dt < 0.5 then
+					SOUND:PlayOnce( THEME:GetPathS("", "_easier.ogg") )
+					ChartUpdater.DecreaseDifficulty(event.PlayerNumber)
+					lastMenuUpPressTime = 0
+				end
 			end
 		elseif event.GameButton == "MenuDown" or event.GameButton == "Down" then
-			local t = GetTimeSinceStart()
-			local dt = t - lastMenuDownPressTime
-			lastMenuDownPressTime = t
-			if dt < 0.5 and dt > 0.1 then
-				SOUND:PlayOnce( THEME:GetPathS("", "_harder.ogg") )
-				ChartUpdater.IncreaseDifficulty(event.PlayerNumber)
-				lastMenuDownPressTime = 0
+			if event.type == "InputEventType_FirstPress" then
+				local t = GetTimeSinceStart()
+				local dt = t - lastMenuDownPressTime
+				lastMenuDownPressTime = t
+				if dt < 0.5 then
+					SOUND:PlayOnce( THEME:GetPathS("", "_harder.ogg") )
+					ChartUpdater.IncreaseDifficulty(event.PlayerNumber)
+					lastMenuDownPressTime = 0
+				end
 			end
 		end
 	end
