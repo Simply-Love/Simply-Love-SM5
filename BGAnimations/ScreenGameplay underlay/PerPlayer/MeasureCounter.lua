@@ -78,7 +78,7 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 			end
 		end
 	else
-		if not isLookAhead then
+		if not isLookAhead and currCount ~= 0 then
 			text = tostring(currCount .. "/" .. currStreamLength)
 		else
 			text = tostring(currStreamLength)
@@ -130,7 +130,12 @@ local Update = function(self, delta)
 			else
 				-- Make stream lookaheads be lighter than active streams.
 				if not isLookAhead then
-					bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
+					if string.find(text, "/") then
+						bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
+					else
+						-- If this is a mini-break, make it lighter.
+						bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
+					end
 				else
 					bmt[adjustedIndex]:diffuse(0.45, 0.45, 0.45 ,1)
 				end
