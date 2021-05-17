@@ -1,4 +1,4 @@
-# Digital Dance v1.0.0
+# Digital Dance v1.0.1
 Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
 Also thanks to Box for help getting the new Song Wheel in it's current state!
 Without them this update wouldn't be nearly as awesome~
