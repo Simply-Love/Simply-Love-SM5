@@ -34,7 +34,8 @@ local Input = function(event)
 
 	if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
 		local topscreen = SCREENMAN:GetTopScreen()
-		if HasResetFilterPreferences == true then
+		if HasResetFilterPreferences == true or SongSearchSSMDD == true then
+			SongSearchSSMDD = false
 			topscreen:SetNextScreenName("ScreenReloadSSMDD")
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 		else
@@ -48,6 +49,10 @@ end
 if HasResetFilterPreferences == false then
 	HelpText = ScreenString("NoValidSongs")
 else
+	HelpText = ScreenString("NoValidFilters")
+end
+
+if SongSearchSSMDD then
 	HelpText = ScreenString("NoValidFilters")
 end
 
