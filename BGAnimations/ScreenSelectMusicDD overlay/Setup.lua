@@ -348,9 +348,7 @@ local UpdatePrunedSongs = function()
 					end
 					
 					if match == false then
-						SM("No songs found!")
 						passesFilters = false
-						SongSearchSSMDD = false
 					end
 				
 				end

@@ -121,7 +121,7 @@ if not GAMESTATE:IsCourseMode() then
 					SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_DoNextScreen")
 				end,
 				OffCommand=function(self)
-					self:sleep(0.3):queuecommand("Fail")
+					self:sleep(0.6):queuecommand("Fail")
 				end,
 				FailCommand=function(self)
 					if not IsFinished then
