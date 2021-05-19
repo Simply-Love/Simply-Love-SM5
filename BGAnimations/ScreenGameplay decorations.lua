@@ -18,10 +18,12 @@ end
 if not GAMESTATE:IsCourseMode() then
 	local sTable = GAMESTATE:GetCurrentSong():GetStepsByStepsType( "StepsType_Dance_Single" );
 	local nsj = GAMESTATE:GetNumSidesJoined()
+	local Player1MinesAvoided = 0
+	local Player2MinesAvoided = 0
 	
 	IsFinished = false
-	Player1MinesAvoided = 0
-	Player2MinesAvoided = 0
+	--Player1MinesAvoided = 0
+	--Player2MinesAvoided = 0
 	
 	for playerIndex=0,1 do
 		if GAMESTATE:IsPlayerEnabled(playerIndex) then
@@ -37,7 +39,8 @@ if not GAMESTATE:IsCourseMode() then
 		local TotalMinesP2
 		if GAMESTATE:IsPlayerEnabled(0) then
 			TotalMinesP1 = PlayerOneChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
-		elseif GAMESTATE:IsPlayerEnabled(1) then
+		end
+		if GAMESTATE:IsPlayerEnabled(1) then
 			TotalMinesP2 = PlayerTwoChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
 		end
 		
@@ -56,63 +59,87 @@ if not GAMESTATE:IsCourseMode() then
 
 	local t = Def.ActorFrame {
 			OnCommand=function(self)
-				self:sleep(999)
+				--self:sleep(999)
 			end,
 			Def.ActorFrame {
 				OnCommand=function(self)
 					self:sleep(0.1):queuecommand('CheckEnd')
 				end,
+				JudgmentMessageCommand=function(self, params)
+					if params.TapNoteScore == "TapNoteScore_AvoidMine" then
+						if params.Player == PLAYER_1 then
+							Player1MinesAvoided = Player1MinesAvoided + 1
+						end
+						if params.Player == PLAYER_2 then
+							Player2MinesAvoided = Player2MinesAvoided + 1
+						end
+					end
+				end,
 				CheckEndCommand=function(self)
-					local numberOfPlayersWhoAreNotDone = 0
+					local P1IsNotDone = 0
+					local P2IsNotDone = 0
 					
-					for playerIndex=1,2 do
-						if GAMESTATE:IsPlayerEnabled(playerIndex-1) then
-							local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats("P"..playerIndex)
-							local curMaxPoints = stats:GetCurrentPossibleDancePoints()
-							local totalPoints = stats:GetPossibleDancePoints()
-							
-							--- this is stupid but #stepmania-moment
-							local statsP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P1")
-							local statsP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P2")
-							local MinesHitP1 = statsP1:GetTapNoteScores('TapNoteScore_HitMine')
-							local MinesHitP2 = statsP2:GetTapNoteScores('TapNoteScore_HitMine')
-							local MinesPassedByP1 = MinesHitP1 + Player1MinesAvoided
-							local MinesPassedByP2 = MinesHitP2 + Player2MinesAvoided
-							
-							--- TODO: On Versus it will not exit early. Why????????
-							if nsj == 2 then
-								if curMaxPoints ~= totalPoints then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
-								if MinesPassedByP1 ~= TotalMinesP1 then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
-								if MinesPassedByP2 ~= TotalMinesP2 then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
-							elseif GAMESTATE:IsPlayerEnabled(0) then
-								if curMaxPoints ~= totalPoints then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
-								if MinesPassedByP1 ~= TotalMinesP1 then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
-							elseif GAMESTATE:IsPlayerEnabled(1) then
-								if curMaxPoints ~= totalPoints then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
-								if MinesPassedByP2 ~= TotalMinesP2 then
-									numberOfPlayersWhoAreNotDone = numberOfPlayersWhoAreNotDone + 1
-								end
+					--- this is stupid but #stepmania-moment
+					local statsP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P1")
+					local statsP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P2")
+					
+					local curMaxPointsP1 = statsP1:GetCurrentPossibleDancePoints()
+					local curMaxPointsP2 = statsP2:GetCurrentPossibleDancePoints()
+					
+					local totalPointsP1 = statsP1:GetPossibleDancePoints()
+					local totalPointsP2 = statsP2:GetPossibleDancePoints()
+					
+					local MinesHitP1 = statsP1:GetTapNoteScores('TapNoteScore_HitMine')
+					local MinesHitP2 = statsP2:GetTapNoteScores('TapNoteScore_HitMine')
+					
+					local MinesPassedByP1 = MinesHitP1 + Player1MinesAvoided
+					local MinesPassedByP2 = MinesHitP2 + Player2MinesAvoided
+					
+					--- TODO: On Versus it will not exit early. Why????????
+					if nsj == 2 then
+						if curMaxPointsP1 ~= totalPointsP1 then
+							P1IsNotDone = P1IsNotDone + 1
+						end
+						if curMaxPointsP2 ~= totalPointsP2 then
+							P2IsNotDone = P2IsNotDone + 1
+						end
+						if MinesPassedByP1 ~= TotalMinesP1 then
+							P1IsNotDone = P1IsNotDone + 1
+						end
+						if MinesPassedByP2 ~= TotalMinesP2 then
+							P2IsNotDone = P2IsNotDone + 1
+						end
+					else
+						if GAMESTATE:IsPlayerEnabled(0) then
+							if curMaxPointsP1 ~= totalPointsP1 then
+								P1IsNotDone = P1IsNotDone + 1
+							end
+							if MinesPassedByP1 ~= TotalMinesP1 then
+								P1IsNotDone = P1IsNotDone + 1
+							end
+						elseif GAMESTATE:IsPlayerEnabled(1) then
+							if curMaxPointsP2 ~= totalPointsP2 then
+								P2IsNotDone = P2IsNotDone + 1
+							end
+							if MinesPassedByP2 ~= TotalMinesP2 then
+								P2IsNotDone = P2IsNotDone + 1
 							end
 						end
 					end
 					
-					isDone = numberOfPlayersWhoAreNotDone == 0
+					if nsj == 2 then
+						isDone = P1IsNotDone == 0 and P2IsNotDone == 0
+					else
+						if GAMESTATE:IsPlayerEnabled(0) then
+							isDone = P1IsNotDone == 0
+						else
+							isDone = P2IsNotDone == 0
+						end
+					end
 					
 					if isDone then
 						IsFinished = true
-						self:queuecommand('Finished')
+						self:sleep(0.6):queuecommand('Finished')
 					else
 						self:sleep(0.1):queuecommand('CheckEnd')
 					end

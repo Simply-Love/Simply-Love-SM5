@@ -18,21 +18,6 @@ local blank = THEME:GetPathG("", "_blank.png")
 local CDTitlePath
 
 
-if CDTitlePath == blank or CDTitlePath == nil then
-		if HasCDTitle then
-			CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
-		else
-			CDTitlePath = blank
-		end
-		if CDTitlePath == nil then
-			CDTitlePath = blank
-		elseif HasCDTitle then
-			CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
-		else
-			CDTitlePath = blank
-		end
-	end
-
 for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	group_durations[group_name] = 0
 
