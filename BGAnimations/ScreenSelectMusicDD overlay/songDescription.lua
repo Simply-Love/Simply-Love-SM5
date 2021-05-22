@@ -101,7 +101,6 @@ af[#af+1] = Def.ActorFrame{
 			end
 			self:zoom(22/toScale * ratio)
 			self:visible(true)
-			
 		end
 	},
 	

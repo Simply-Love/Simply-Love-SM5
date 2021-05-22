@@ -52,13 +52,13 @@ local function UpdateChart(playerNum, difficultyChange)
 	-- If we're sorted by difficulty and difficultyChange == 0,
 	-- try to keep the same meter
 	if GetMainSortPreference() == 6 and difficultyChange == 0 then
-		local targetMeter = tonumber(NameOfGroup)
+		local targetMeter = NameOfGroup
 
 		local oldDifficulty = difficulties[curDifficultyIndices[playerNum]];
 		local matchingSteps = nil
 		-- Check for meter AND difficulty match
 		for steps in ivalues(stepses) do
-			if steps:GetMeter() == targetMeter and steps:GetDifficulty() == oldDifficulty then
+			if GetStepsDifficultyGroup(steps) == targetMeter and steps:GetDifficulty() == oldDifficulty then
 				matchingSteps = steps
 				break
 			end
@@ -66,7 +66,7 @@ local function UpdateChart(playerNum, difficultyChange)
 
 		if matchingSteps == nil then
 			for steps in ivalues(stepses) do
-				if steps:GetMeter() == targetMeter then
+				if GetStepsDifficultyGroup(steps) == targetMeter then
 					matchingSteps = steps
 					break
 				end

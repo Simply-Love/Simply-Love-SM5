@@ -434,12 +434,10 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		elseif event.GameButton == "MenuRight" then
 			t.WheelWithFocus:scroll_by_amount(1)
 			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-
 			ChartUpdater.UpdateCharts()
 		elseif event.GameButton == "MenuLeft" then
 			t.WheelWithFocus:scroll_by_amount(-1)
 			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
-
 			ChartUpdater.UpdateCharts()
 		elseif event.GameButton == "MenuUp" or event.GameButton == "Up" then
 			if event.type == "InputEventType_FirstPress" then

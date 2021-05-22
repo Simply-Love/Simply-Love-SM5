@@ -168,7 +168,7 @@ local function GetSongArtistFirstLetter(song)
 	return LetterToGroup(letter)
 end
 
-local function GetStepsDifficultyGroup(steps)
+function GetStepsDifficultyGroup(steps)
 	local meter = steps:GetMeter()
 	if meter >= 40 then return max_difficulty_group end
 	return meter
@@ -192,7 +192,7 @@ local GroupSongsBy = function(func)
 end
 
 
-local function GetHighestDifficulty(song)
+local function GetHighestDifficulty(group, song)
 	local difficulty = 0
 	for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
 		difficulty = math.max(difficulty, steps:GetMeter())
@@ -200,21 +200,28 @@ local function GetHighestDifficulty(song)
 	return difficulty
 end
 
-local function GetHighestStepCount(song)
+local function GetStepCount(group, song)
 	local count = 0
+	local mpn = GAMESTATE:GetMasterPlayerNumber()
+
 	for steps in ivalues(song:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
-		count = math.max(count, steps:GetRadarValues(PLAYER_1):GetValue('RadarCategory_TapsAndHolds'))
+		local steps_count = steps:GetRadarValues(mpn):GetValue('RadarCategory_TapsAndHolds')
+		if GetMainSortPreference() ~= 6 or GetStepsDifficultyGroup(steps) == group then
+			return steps_count
+		end
+		count = math.max(count, steps_count)
 	end
+	
 	return count
 end
 
 local subsort_funcs = {
-	function(s) return s:GetGroupName() end,
-	function(s) return s:GetDisplayMainTitle():lower() end,
-	function(s) return s:GetDisplayArtist():lower() end,
-	function(s) return s:MusicLengthSeconds() end,
-	function(s) return s:GetDisplayBpms()[2] end,
-	GetHighestStepCount,
+	function(g, s) return s:GetGroupName() end,
+	function(g, s) return s:GetDisplayMainTitle():lower() end,
+	function(g, s) return s:GetDisplayArtist():lower() end,
+	function(g, s) return s:MusicLengthSeconds() end,
+	function(g, s) return s:GetDisplayBpms()[2] end,
+	GetStepCount,
 	GetHighestDifficulty,
 }
 ---------------------------------------------------------------------------
@@ -373,7 +380,7 @@ local UpdatePrunedSongs = function()
 		local sort_func = subsort_funcs[GetSubSortPreference()]
 
 		table.sort(songs, function(a, b)
-			return sort_func(a) < sort_func(b)
+			return sort_func(group, a) < sort_func(group, b)
 		end)
 
 		pruned_songs_by_group[group] = songs
