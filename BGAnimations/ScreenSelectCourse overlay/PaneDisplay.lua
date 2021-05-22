@@ -560,6 +560,30 @@ for player in ivalues(PlayerNumber) do
 			end
 		end
 	}
+	
+	
+	-- Chart Difficulty Meter
+	af2[#af2+1] = LoadFont("Wendy/_wendy small")..{
+		Name="DifficultyMeter",
+		InitCommand=function(self)
+			self:horizalign(center):diffuse(Color.Black)
+			self:xy(pos.col[2]+10, pos.row[5])
+			if not IsUsingWideScreen() then self:maxwidth(66) end
+			self:queuecommand("Set")
+		end,
+		SetCommand=function(self)
+			-- Hide the difficulty number if we're connected.
+			if IsServiceAllowed(SL.GrooveStats.GetScores) then
+				self:visible(false)
+			end
+
+			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
+			if not SongOrCourse then self:settext("") return end
+			local meter = StepsOrTrail and StepsOrTrail:GetMeter() or "?"
+
+			self:settext( meter )
+		end
+	}
 
 	-- Add actors for Rival score data. Hidden by default
 	-- We position relative to column 3 for spacing reasons.

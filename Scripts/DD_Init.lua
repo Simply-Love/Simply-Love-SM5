@@ -164,6 +164,7 @@ SL = {
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",
 			HarshHotLifePenalty=true,
+			MusicWheelSwitchSpeed=15,
 
 			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
