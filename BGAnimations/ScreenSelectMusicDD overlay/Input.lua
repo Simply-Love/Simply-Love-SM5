@@ -235,12 +235,10 @@ t.Handler = function(event)
 									MESSAGEMAN:Broadcast("ShowLeaderboard")
 								end
 							else
-								if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-									isSortMenuVisible = false
-									InputMenuHasFocus = true
-									MESSAGEMAN:Broadcast("ShowTestInput")
-									MESSAGEMAN:Broadcast("ToggleSortMenu")
-								end
+								isSortMenuVisible = false
+								InputMenuHasFocus = true
+								MESSAGEMAN:Broadcast("ShowTestInput")
+								MESSAGEMAN:Broadcast("ToggleSortMenu")
 							end
 						else
 							isSortMenuVisible = false
