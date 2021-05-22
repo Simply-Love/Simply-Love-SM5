@@ -117,7 +117,7 @@ GenerateBreakdownText = function(pn, minimization_level)
 	local total_sum = 0
 
 	local AddNotationForSegment = function(
-			notation, segment_size, minimization_level, text_segments,segment_sum, is_broken, total_sum)
+			notation, segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
 		if minimization_level == 0 then
 			text_segments[#text_segments+1] = " (" .. tostring(segment_size) .. ") "
 		else
@@ -166,7 +166,10 @@ GenerateBreakdownText = function(pn, minimization_level)
 			if i > 1 and not segments[i-1].isBreak then
 					-- Don't count this as a true "break"
 					is_broken = true
-					segment_sum = segment_sum + segment_size
+					-- For * notation, we want to add short breaks as part of the number.
+					if minimization_level == 2 then
+						segment_sum = segment_sum + 1
+					end
 				end
 				-- For minimization_level == 2, these segments get added to the text_segments table
 				-- when we encounter a large enough break. For minimization_level == 3, these segments

@@ -1,5 +1,12 @@
 local NumEntries = 13
 local RowHeight = 24
+local RpgYellow = color("0.902,0.765,0.529,1")
+
+local paneWidth1Player = 330
+local paneWidth2Player = 230
+local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or paneWidth2Player
+local paneHeight = 360
+local borderWidth = 2
 
 
 local SetEntryText = function(rank, name, score, date, actor)
@@ -163,15 +170,24 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 		table.insert(paneFunctions, function(rpgAf)
 			rpgAf:GetChild("Leaderboard"):visible(false)
 			local bodyText = rpgAf:GetChild("BodyText")
-			bodyText:settext(text):visible(true)
+			-- We don't want text to run out through the bottom.
+			-- Incrementally adjust the zoom while adjust wrapwdithpixels until it fits.
+			-- Not the prettiest solution but it works.
+			for zoomVal=1.0, 0.1, -0.05 do
+				bodyText:zoom(zoomVal)
+				bodyText:wrapwidthpixels(paneWidth/(zoomVal))
+				bodyText:settext(text):visible(true)
+				Trace(bodyText:GetHeight() * zoomVal)
+				if bodyText:GetHeight() * zoomVal <= paneHeight - RowHeight*1.5 then
+					break
+				end
+			end
 			local offset = 0
 
 			while offset <= #text do
 				-- Search for all numbers (decimals included).
 				-- They may include the +/- prefixes and also potentially %/x as suffixes.
-				-- HACK(teejusb): I include a trailing space character because there are some
-				-- weird offset issues, supposedly because of wrapwidthpixels.
-				local i, j = string.find(text, "[-+]?[%d]*%.?[%d]+[%%x]? ?", offset)
+				local i, j = string.find(text, "[-+]?[%d]*%.?[%d]+[%%x]?", offset)
 				-- No more numbers found. Break out.
 				if i == nil then
 					break
@@ -180,19 +196,39 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 				local substring = string.sub(text, i, j)
 
 				-- Numbers should be a blueish hue by default.
-				local color = color("0.231,0.412,0.573,1")
+				local clr = color("0,1,1,1")
 
 				-- Except negatives should be red.
 				if substring:sub(1, 1) == "-" then
-					color = Color.Red
+					clr = Color.Red
 				-- And positives should be green.
 				elseif substring:sub(1, 1) == "+" then
-					color = Color.Green
+					clr = Color.Green
 				end
 
 				bodyText:AddAttribute(i-1, {
 					Length=#substring,
-					Diffuse=color
+					Diffuse=clr
+				})
+
+				offset = j + 1
+			end
+
+			offset = 0
+
+			while offset <= #text do
+				-- Search for all quoted strings.
+				local i, j = string.find(text, "\".-\"", offset)
+				-- No more found. Break out.
+				if i == nil then
+					break
+				end
+				-- Extract the actual numeric text.
+				local substring = string.sub(text, i, j)
+
+				bodyText:AddAttribute(i-1, {
+					Length=#substring,
+					Diffuse=Color.Green
 				})
 	  
 				offset = j + 1
@@ -224,12 +260,6 @@ local af = Def.ActorFrame{
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h-50):zoom(1.1) end
 	}
 }
-
-local paneWidth1Player = 330
-local paneWidth2Player = 230
-local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or paneWidth2Player
-local paneHeight = 360
-local borderWidth = 2
 
 for player in ivalues(PlayerNumber) do
 	af[#af+1] = Def.ActorFrame{
@@ -282,24 +312,32 @@ for player in ivalues(PlayerNumber) do
 				end
 			end
 		end,
-		-- Black border
+		-- White border
 		Def.Quad {
 			InitCommand=function(self)
-				self:diffuse(Color.Black):zoomto(paneWidth + borderWidth, paneHeight + borderWidth)
+				self:diffuse(RpgYellow):zoomto(paneWidth + borderWidth, paneHeight + borderWidth + 1)
 			end
 		},
 
-		-- Main Tan body
+		-- Main Black cement background
+		Def.Sprite {
+			Texture=THEME:GetPathG("", "/SRPG5/Overlay-BG.png"),
+			InitCommand=function(self)
+				self:zoomto(paneWidth, paneHeight)
+			end
+		},
+
+		-- A quad that goes over the black cement background to try and lighten/darken it however we want.
 		Def.Quad {
 			InitCommand=function(self)
-				self:diffuse(color("1,1,0.835,1")):zoomto(paneWidth, paneHeight)
+				self:diffuse(color("0,0,0,0.3")):zoomto(paneWidth, paneHeight)
 			end
 		},
 
 		-- Header border
 		Def.Quad {
 			InitCommand=function(self)
-				self:diffuse(Color.Black):zoomto(paneWidth + borderWidth, RowHeight + borderWidth):y(-paneHeight/2 + RowHeight/2)
+				self:diffuse(RpgYellow):zoomto(paneWidth + borderWidth, RowHeight + borderWidth + 1):y(-paneHeight/2 + RowHeight/2)
 			end
 		},
 
@@ -317,7 +355,7 @@ for player in ivalues(PlayerNumber) do
 			Text="Stamina RPG",
 			InitCommand=function(self)
 				self:zoom(0.5)
-				self:diffuse(color("0.902,0.765,0.529,1"))
+				self:diffuse(RpgYellow)
 				self:y(-paneHeight/2 + 12)
 			end
 		},
@@ -328,7 +366,7 @@ for player in ivalues(PlayerNumber) do
 			Text="",
 			InitCommand=function(self)
 				self:valign(0)
-				self:diffuse(color("0.514,0.306,0.337,1"))
+				self:diffuse(Color.White)
 				self:wrapwidthpixels(paneWidth)
 				self:y(-paneHeight/2 + RowHeight * 3/2)
 			end,
@@ -363,7 +401,7 @@ for player in ivalues(PlayerNumber) do
 				Name="Text",
 				Text="More Information",
 				InitCommand=function(self)
-					self:diffuse(color("0.514,0.306,0.337,1"))
+					self:diffuse(RpgYellow)
 				end,
 			},
 	
@@ -425,7 +463,7 @@ for player in ivalues(PlayerNumber) do
 		af3[#af3+1] = Def.ActorFrame{
 			Name="LeaderboardEntry"..i,
 			InitCommand=function(self)
-				self:diffuse(color("0.514,0.306,0.337,1"))
+				self:diffuse(Color.White)
 				self:x(-(paneWidth-paneWidth2Player)/2)
 				if NumEntries % 2 == 1 then
 					self:y(RowHeight*(i - (NumEntries+1)/2) )
@@ -438,11 +476,10 @@ for player in ivalues(PlayerNumber) do
 				Name="Rank",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(color("0.514,0.306,0.337,1"))
+					self:diffuse(Color.White)
 					self:horizalign(right)
 					self:maxwidth(30)
 					self:x(-paneWidth2Player/2 + 30 + borderWidth)
-					self:diffuse(Color.White)
 				end,
 			},
 
@@ -450,11 +487,10 @@ for player in ivalues(PlayerNumber) do
 				Name="Name",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(color("0.514,0.306,0.337,1"))
+					self:diffuse(Color.White)
 					self:horizalign(center)
 					self:maxwidth(130)
 					self:x(-paneWidth2Player/2 + 100)
-					self:diffuse(Color.White)
 				end,
 			},
 
@@ -462,10 +498,9 @@ for player in ivalues(PlayerNumber) do
 				Name="Score",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(color("0.514,0.306,0.337,1"))
+					self:diffuse(Color.White)
 					self:horizalign(right)
 					self:x(paneWidth2Player/2-borderWidth)
-					self:diffuse(Color.White)
 				end,
 			},
 
@@ -473,9 +508,9 @@ for player in ivalues(PlayerNumber) do
 				Name="Date",
 				Text="",
 				InitCommand=function(self)
+					self:diffuse(Color.White)
 					self:horizalign(right)
 					self:x(paneWidth2Player/2 + 100 - borderWidth)
-					self:diffuse(Color.White)
 					self:visible(GAMESTATE:GetNumSidesJoined() == 1)
 				end,
 			},
