@@ -1,5 +1,5 @@
 local SongOrCourse
-local CurrentSong
+local CurrentCourse
 
 local t = Def.ActorFrame{
 	OnCommand=function(self)
@@ -12,70 +12,36 @@ local t = Def.ActorFrame{
 		end
 	end,
 
+	-- Preload the Fallback Banner.
 	Def.ActorFrame{
+		InitCommand=function(self) self:playcommand("Set") end,
+		OnCommand=function(self) self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
 		SetCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			self:visible(true)
 		end,
-
-		LoadActor("default banner")..{
+		LoadActor(THEME:GetPathB("ScreenSelectMusicDD", "overlay/default banner.png"))..{
 			Name="FallbackBanner",
 			OnCommand=cmd(setsize,418,164)
 		},
 	},
-
+	
+	-- Load the banner from the course and throw it on top of the fallback.
 	Def.Sprite{
 		Name="LoadFromSong",
-		InitCommand=function(self) 
-			if SongOrCourse and SongOrCourse:HasBanner() then
-				self:visible(true)
-			else
-				self:visible(false)
-			end
-			OnCommand=cmd(setsize,418,164)
-			self:LoadFromSongBanner(CurrentSong)
-			self:zoomto(418,164)
-		end,
+		InitCommand=function(self) self:playcommand("Set") end,
+		OnCommand=function(self) self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
 		SetCommand=function(self)
-		CurrentSong = GAMESTATE:GetCurrentCourse()
+			CurrentCourse = GAMESTATE:GetCurrentCourse()
 			if SongOrCourse and SongOrCourse:HasBanner() then
 				self:visible(true)
 			else
 				self:visible(false)
 			end
 			OnCommand=cmd(setsize,418,164)
-			self:LoadFromSongBanner(CurrentSong)
-			self:zoomto(418,164)
-		end
-	},
-	
-	Def.Banner{
-		Name="LoadFromGroup",
-		CurrentSongChangedMessageCommand=function(self) GroupScrollBanners = false GroupJawn = false self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) GroupScrollBanners = false GroupJawn = false self:playcommand("Set") end,
-		GroupsHaveChangedMessageCommand=function(self) 
-			GroupScrollBanners = true
-			GroupJawn = false 
-			self
-			:playcommand("Set") 
-			:visible(true)
-			end,
-		CloseThisFolderHasFocusMessageCommand=function(self) BannerOfGroup = NameOfGroup GroupJawn = true self:visible(true):playcommand("Set") end,
-		SetCommand=function(self)
-			if BannerOfGroup == nil then
-				self:visible(false)
-			elseif GroupJawn == true then
-				self:visible(true)
-				self:LoadFromSongGroup(BannerOfGroup)
-			elseif GroupScrollBanners == true then
-				self:visible(true)
-				self:LoadFromSongGroup(BannerOfGroup)
-			else
-				self:visible(false)
-			end
-			OnCommand=cmd(setsize,418,164)
+			self:LoadFromSongBanner(CurrentCourse)
 			self:zoomto(418,164)
 		end
 	},
