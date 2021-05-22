@@ -153,8 +153,21 @@ local t = Def.ActorFrame{
 					SongIsSelected = false
 				end
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
-				self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and 280 or 255)
-				self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and -12.5 or -25)
+				-- initial zoom before additional options are added
+				local InitialZoomY = 230
+				local InitialAddY = -37.5
+				
+				if ThemePrefs.Get("AllowSongSearch") then
+					InitialZoomY = InitialZoomY + 25
+					InitialAddY = InitialAddY + 12.5
+				end
+				if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
+					InitialZoomY = InitialZoomY + 25
+					InitialAddY = InitialAddY + 12.5
+				end
+				
+				self:zoomy(InitialZoomY)
+				self:addy(InitialAddY)
 			end,
 		},
 		
@@ -180,9 +193,23 @@ local t = Def.ActorFrame{
 				else
 					SongIsSelected = false
 				end
+				
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
-				self:zoomy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and 275 or 250)
-				self:addy(IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and -12.5 or -25)
+				-- initial zoom before additional options are added
+				local InitialZoomY = 225
+				local InitialAddY = -37.5
+				
+				if ThemePrefs.Get("AllowSongSearch") then
+					InitialZoomY = InitialZoomY + 25
+					InitialAddY = InitialAddY + 12.5
+				end
+				if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
+					InitialZoomY = InitialZoomY + 25
+					InitialAddY = InitialAddY + 12.5
+				end
+				
+				self:zoomy(InitialZoomY)
+				self:addy(InitialAddY)
 			end,
 		},
 		
@@ -563,7 +590,9 @@ for i,FilterText in ipairs(FilterLabel) do
 end
 
 OtherLabel = {}
-OtherLabel[#OtherLabel+1] = "SONG SEARCH"
+if ThemePrefs.Get("AllowSongSearch") then
+	OtherLabel[#OtherLabel+1] = "SONG SEARCH"
+end
 -- OtherLabel[#OtherLabel+1] = "MARK AS FAVORITE"
 OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
 OtherLabel[#OtherLabel+1] = "LEADERBOARDS"

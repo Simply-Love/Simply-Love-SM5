@@ -169,34 +169,78 @@ t.Handler = function(event)
 					-- 
 					-- Song search
 					if DDSortMenuCursorPosition == 10 then
-						MESSAGEMAN:Broadcast("SongSearchSSMDD")
+						if ThemePrefs.Get("AllowSongSearch") then
+							MESSAGEMAN:Broadcast("SongSearchSSMDD")
+						else
+							local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
+							if current_style == "StyleType_OnePlayerOneSide" then
+								SetLastStyle("Double")
+								GAMESTATE:SetCurrentStyle("Double")
+							else
+								SetLastStyle("Single")
+								GAMESTATE:SetCurrentStyle("Single")
+							end
+							MESSAGEMAN:Broadcast("ReloadSSMDD")
+						end
 					end
 					-- Switch between single/double
 					if DDSortMenuCursorPosition == 11 then
-						local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
-						if current_style == "StyleType_OnePlayerOneSide" then
-							SetLastStyle("Double")
-							GAMESTATE:SetCurrentStyle("Double")
+						if ThemePrefs.Get("AllowSongSearch") then
+							local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
+							if current_style == "StyleType_OnePlayerOneSide" then
+								SetLastStyle("Double")
+								GAMESTATE:SetCurrentStyle("Double")
+							else
+								SetLastStyle("Single")
+								GAMESTATE:SetCurrentStyle("Single")
+							end
+							MESSAGEMAN:Broadcast("ReloadSSMDD")
 						else
-							SetLastStyle("Single")
-							GAMESTATE:SetCurrentStyle("Single")
-						end
-						MESSAGEMAN:Broadcast("ReloadSSMDD")
-					end
-					-- GS/RPG Leaderboards if GS Launcher is running, otherwise test input
-					if DDSortMenuCursorPosition == 12 then
-						if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-							local curSong=GAMESTATE:GetCurrentSong()
-							if not curSong then
+							if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+								local curSong=GAMESTATE:GetCurrentSong()
+								if not curSong then
+									isSortMenuVisible = false
+									InputMenuHasFocus = true
+									MESSAGEMAN:Broadcast("ShowTestInput")
+									MESSAGEMAN:Broadcast("ToggleSortMenu")
+								else
+									LeadboardHasFocus = true
+									isSortMenuVisible = false
+									MESSAGEMAN:Broadcast("ToggleSortMenu")
+									MESSAGEMAN:Broadcast("ShowLeaderboard")
+								end
+							else
 								isSortMenuVisible = false
 								InputMenuHasFocus = true
 								MESSAGEMAN:Broadcast("ShowTestInput")
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
+							end
+						end
+						
+					end
+					-- GS/RPG Leaderboards if GS Launcher is running, otherwise test input
+					if DDSortMenuCursorPosition == 12 then
+						if ThemePrefs.Get("AllowSongSearch") then
+							if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+								local curSong=GAMESTATE:GetCurrentSong()
+								if not curSong then
+									isSortMenuVisible = false
+									InputMenuHasFocus = true
+									MESSAGEMAN:Broadcast("ShowTestInput")
+									MESSAGEMAN:Broadcast("ToggleSortMenu")
+								else
+									LeadboardHasFocus = true
+									isSortMenuVisible = false
+									MESSAGEMAN:Broadcast("ToggleSortMenu")
+									MESSAGEMAN:Broadcast("ShowLeaderboard")
+								end
 							else
-								LeadboardHasFocus = true
-								isSortMenuVisible = false
-								MESSAGEMAN:Broadcast("ToggleSortMenu")
-								MESSAGEMAN:Broadcast("ShowLeaderboard")
+								if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+									isSortMenuVisible = false
+									InputMenuHasFocus = true
+									MESSAGEMAN:Broadcast("ShowTestInput")
+									MESSAGEMAN:Broadcast("ToggleSortMenu")
+								end
 							end
 						else
 							isSortMenuVisible = false

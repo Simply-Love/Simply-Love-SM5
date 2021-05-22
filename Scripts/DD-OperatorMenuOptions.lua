@@ -68,46 +68,6 @@ OperatorMenuOptionRows.LongAndMarathonTime = function( str )
 	}
 end
 
-OperatorMenuOptionRows.MusicWheelSpeed = function()
-
-	local choices = { "Slow", "Normal", "Fast", "Faster", "Ridiculous", "Ludicrous", "Plaid" }
-	local values = { 5, 10, 15, 25, 30, 45, 100 }
-	local localized_choices = {}
-
-	for i=1, #choices do
-		localized_choices[i] = THEME:GetString("MusicWheelSpeed", choices[i] )
-	end
-
-	-- it's possible the user has manually edited Preferences.ini and set an arbitrary value
-	-- try to accommodate, rather than obliterating that custom setting
-	local user_setting = PREFSMAN:GetPreference("MusicWheelSwitchSpeed") or 15
-	if not FindInTable(user_setting, values) then
-		values[#values+1] = user_setting
-		choices[ #choices+1 ] = THEME:GetString("MusicWheelSpeed", "Custom")
-	end
-
-	return {
-		Name = "MusicWheelSpeed",
-		LayoutType = "ShowAllInRow",
-		SelectType = "SelectOne",
-		OneChoiceForAllPlayers = true,
-		ExportOnChange = false,
-		Choices = localized_choices,
-		LoadSelections = function(self, list, pn)
-			local i = FindInTable(user_setting, values) or 1
-			list[i] = true
-		end,
-		SaveSelections = function(self, list, pn)
-			for i = 1, #values do
-				if list[i] then
-					PREFSMAN:SetPreference("MusicWheelSwitchSpeed", values[i] )
-					break
-				end
-			end
-		end
-	}
-end
-
 OperatorMenuOptionRows.Theme = function()
 	return {
 		Name = "Theme",
@@ -130,7 +90,7 @@ OperatorMenuOptionRows.Theme = function()
 						-- if the user is switching to some other version of SL they have installed
 						-- don't bother them with the ResetPreferences prompt; just switch to that theme
 						-- try a simple check first
-						if self.Choices[i]:match("Simply Love")	then
+						if self.Choices[i]:match("Digital Dance")	then
 							THEME:SetTheme( self.Choices[i] )
 							return
 						end
@@ -138,7 +98,7 @@ OperatorMenuOptionRows.Theme = function()
 						-- if not, attempt a more roundabout check by peeking into the new theme's ThemeInfo.ini
 						if FILEMAN:DoesFileExist("/Themes/"..self.Choices[i].."/ThemeInfo.ini") then
 							local info = IniFile.ReadFile("/Themes/"..self.Choices[i].."/ThemeInfo.ini")
-							if info and info.ThemeInfo and info.ThemeInfo.DisplayName and info.ThemeInfo.DisplayName:match("Simply Love") then
+							if info and info.ThemeInfo and info.ThemeInfo.DisplayName and info.ThemeInfo.DisplayName:match("Digital Dance") then
 								THEME:SetTheme( self.Choices[i] )
 								return
 							end

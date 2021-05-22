@@ -30,18 +30,17 @@ SL_CustomPrefs.Get = function()
 			Choices = { 0,1,2,3,4,5,6,7,8,9 },
 			Values = { 0,1,2,3,4,5,6,7,8,9 }
 		},
-
-
+		AllowSongSearch =
+		{
+			Default = true,
+			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values 	= { true, false }
+		},
 		HideStockNoteSkins =
 		{
 			Default = false,
 			Choices = { THEME:GetString("ThemePrefs", "Show"), THEME:GetString("ThemePrefs", "Hide") },
 			Values 	= { false, true }
-		},
-		MusicWheelStyle =
-		{
-			Default = "IIDX",
-			Choices = { "ITG", "IIDX" }
 		},
 		AllowDanceSolo =
 		{
@@ -92,7 +91,6 @@ SL_CustomPrefs.Get = function()
 			Choices = SecondsToMMSS_range(15, 450, 15),
 			Values = range(15, 450, 15),
 		},
-
 		AllowScreenEvalSummary =
 		{
 			Default = true,

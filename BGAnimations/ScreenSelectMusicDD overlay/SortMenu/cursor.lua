@@ -1,5 +1,6 @@
 DDSortMenuCursorPosition = 1
 IsSortMenuInputToggled = false
+
 local function GetMaxCursorPosition()
 	local curSong = GAMESTATE:GetCurrentSong()
 	local SongIsSelected
@@ -9,7 +10,17 @@ local function GetMaxCursorPosition()
 	else
 		SongIsSelected = false
 	end
-	return IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected and 13 or 12
+	
+	-- the minimum amount of items
+	local MaxCursorPosition = 11
+	
+	if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
+		MaxCursorPosition = MaxCursorPosition + 1
+	end
+	if ThemePrefs.Get("AllowSongSearch") then
+		MaxCursorPosition = MaxCursorPosition + 1
+	end
+	return tonumber(MaxCursorPosition)
 end
 
 local t = Def.ActorFrame{
