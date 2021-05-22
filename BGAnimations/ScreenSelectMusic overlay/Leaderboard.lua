@@ -16,6 +16,12 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 	local entryNum = 1
 	local rivalNum = 1
 
+	-- Hide the rival and self highlights.
+	-- They will be unhidden and repositioned as needed below.
+	for i=1,3 do
+		leaderboard:GetChild("Rival"..i):visible(false)
+	end
+
 	if leaderboardData then
 		if leaderboardData["Name"] then
 			leaderboard:GetChild("Header"):settext(leaderboardData["Name"])
