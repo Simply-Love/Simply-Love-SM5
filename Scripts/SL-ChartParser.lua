@@ -707,6 +707,8 @@ ParseChartInfo = function(steps, pn)
 			SL[pn].Streams.Difficulty ~= difficulty or
 			SL[pn].Streams.Description ~= description) then
 		local simfileString, fileType = GetSimfileString( steps )
+		local parsed = false
+
 		if simfileString then
 			-- Parse out just the contents of the notes
 			local chartString, BPMs = GetSimfileChartString(simfileString, stepsType, difficulty, description, fileType)
@@ -738,7 +740,28 @@ ParseChartInfo = function(steps, pn)
 				SL[pn].Streams.StepsType = stepsType
 				SL[pn].Streams.Difficulty = difficulty
 				SL[pn].Streams.Description = description
+
+				parsed = true
 			end
+		end
+
+		-- Clear stream data if we can't parse the chart
+		if not parsed then
+			SL[pn].Streams.NotesPerMeasure = {}
+			SL[pn].Streams.PeakNPS = 0
+			SL[pn].Streams.NPSperMeasure = {}
+			SL[pn].Streams.Hash = ''
+
+			SL[pn].Streams.Crossovers = 0
+			SL[pn].Streams.Footswitches = 0
+			SL[pn].Streams.Sideswitches = 0
+			SL[pn].Streams.Jacks = 0
+			SL[pn].Streams.Brackets = 0
+
+			SL[pn].Streams.Filename = filename
+			SL[pn].Streams.StepsType = stepsType
+			SL[pn].Streams.Difficulty = difficulty
+			SL[pn].Streams.Description = description
 		end
 	end
 end
