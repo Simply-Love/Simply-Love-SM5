@@ -50,13 +50,27 @@ local IsEndOfStream = function(currMeasure, Measures, streamIndex)
 end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
-	if Measures[streamIndex] == nil then return "" end
-	-- Don't display final count if it's a break.
-	if streamIndex == #Measures and Measures[streamIndex].isBreak then return "" end
-	-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
-	if streamIndex == 1 and currMeasure < 0 and not Measures[streamIndex].isBreak then
-		return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
+	if currMeasure < 0 then
+		if not isLookAhead then
+			-- Measures[1] is guaranteed to exist as we check for non-empty tables at the start of Update() below.
+			if not Measures[1].isBreak then
+				-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
+				return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
+			else
+				-- If the first thing is a break, then add the negative space to the existing break count
+				local segmentStart = Measures[1].streamStart
+				local segmentEnd   = Measures[1].streamEnd
+				local currStreamLength = segmentEnd - segmentStart
+				return "(" .. math.floor(currMeasure * -1) + 1 + currStreamLength .. ")"
+			end
+		else
+			if not Measures[1].isBreak then
+				-- Push all the stream segments back by one since we're adding an additional ephemeral break.
+				streamIndex = streamIndex - 1
+			end
+		end
 	end
+	if Measures[streamIndex] == nil then return "" end
 
 	-- A "segment" can be either stream or rest
 	local segmentStart = Measures[streamIndex].streamStart
