@@ -40,15 +40,24 @@ af[#af+1] = Def.ActorFrame{
 
 	-- Song Artist (or number of Songs in this Course, if CourseMode)
 	LoadFont("Common Normal")..{
-		InitCommand=function(self) self:align(0,0):xy(5,-11):maxwidth(WideScale(225,260)) end,
+		InitCommand=function(self) self:align(0,0):xy(5,-11) end,
 		SetCommand=function(self)
+			local maxwidth = _w - 60
+
 			if GAMESTATE:IsCourseMode() then
 				local course = GAMESTATE:GetCurrentCourse()
 				self:settext( course and #course:GetCourseEntries() or "" )
 			else
 				local song = GAMESTATE:GetCurrentSong()
 				self:settext( song and song:GetDisplayArtist() or "" )
+
+				if not GAMESTATE:IsEventMode() and song and (song:IsLong() or song:IsMarathon()) then
+					-- make room for the "COUNTS AS 2/3 ROUNDS" bubble
+					maxwidth = maxwidth - 120
+				end
 			end
+
+			self:maxwidth(maxwidth)
 		end
 	},
 
@@ -191,7 +200,8 @@ if not GAMESTATE:IsEventMode() then
 	-- long/marathon version bubble graphic and text
 	af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self)
-			self:x( IsUsingWideScreen() and 103.4 or 98.5 )
+			self:x( IsUsingWideScreen() and 98 or 92 )
+			self:y(-12)
 		end,
 		SetCommand=function(self)
 			local song = GAMESTATE:GetCurrentSong()
@@ -204,18 +214,18 @@ if not GAMESTATE:IsEventMode() then
 				-- these coordinates aren't neat and tidy, but they do create three triangles
 				-- that fit together to approximate hurtpiggypig's original png asset
 				local verts = {
-				 	--   x   y  z    r,g,b,a
-				 	{{-113, 81, 0}, {1,1,1,1}},
-				 	{{ 113, 81, 0}, {1,1,1,1}},
-				 	{{ 113, 50, 0}, {1,1,1,1}},
+					--   x   y  z    r,g,b,a
+					{{-113, -15, 0}, {1,1,1,1}},
+					{{ 113, -15, 0}, {1,1,1,1}},
+					{{ 113, 16, 0}, {1,1,1,1}},
 
-				 	{{ 113, 50, 0}, {1,1,1,1}},
-				 	{{-113, 50, 0}, {1,1,1,1}},
-				 	{{-113, 81, 0}, {1,1,1,1}},
+					{{ 113, 16, 0}, {1,1,1,1}},
+					{{-113, 16, 0}, {1,1,1,1}},
+					{{-113, -15, 0}, {1,1,1,1}},
 
-				 	{{ -98, 50, 0}, {1,1,1,1}},
-				 	{{ -78, 50, 0}, {1,1,1,1}},
-				 	{{ -88, 37, 0}, {1,1,1,1}},
+					{{ -98, 16, 0}, {1,1,1,1}},
+					{{ -78, 16, 0}, {1,1,1,1}},
+					{{ -88, 29, 0}, {1,1,1,1}},
 				}
 				self:SetDrawState({Mode="DrawMode_Triangles"}):SetVertices(verts)
 				self:diffuse(GetCurrentColor())
@@ -224,7 +234,7 @@ if not GAMESTATE:IsEventMode() then
 		},
 
 		LoadFont("Common Normal")..{
-			InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8):y(33) end,
+			InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8) end,
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				if not song then self:settext(""); return end
