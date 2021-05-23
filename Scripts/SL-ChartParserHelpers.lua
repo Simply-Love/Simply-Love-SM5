@@ -106,7 +106,7 @@ end
 -- minimization_level = 3  -> Aggregating total streams
 --    80 Total
 GenerateBreakdownText = function(pn, minimization_level)
-	if #SL[pn].Streams.NotesPerMeasure == 0 then return 'No Streams!' end
+	if #SL[pn].Streams.NotesPerMeasure == 0 then return 'Not available!' end
 
 	-- Assume 16ths for the breakdown text
 	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)

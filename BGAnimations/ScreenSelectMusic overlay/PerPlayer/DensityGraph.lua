@@ -233,7 +233,7 @@ for i, row in ipairs(layout) do
 					local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(pn)
 					local totalMeasures = streamMeasures + breakMeasures
 					if streamMeasures == 0 then
-						self:settext("None (0.00%)")
+						self:settext("None (0.0%)")
 					else
 						self:settext(string.format("%d/%d (%0.1f%%)", streamMeasures, totalMeasures, streamMeasures/totalMeasures*100))
 					end
