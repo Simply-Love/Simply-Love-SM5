@@ -1,7 +1,7 @@
 local GetSimfileString = function(steps)
 	-- steps:GetFilename() returns the filename of the sm or ssc file, including path, as it is stored in SM's cache
 	local filename = steps:GetFilename()
-	if not filename then return end
+	if not filename or filename == "" then return end
 
 	-- get the file extension like "sm" or "SM" or "ssc" or "SSC" or "sSc" or etc.
 	-- convert to lowercase
