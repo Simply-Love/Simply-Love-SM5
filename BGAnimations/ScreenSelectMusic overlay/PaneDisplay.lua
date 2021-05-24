@@ -23,7 +23,7 @@ end
 -- requires a profile (machine or player) as an argument
 -- returns formatted strings for player tag (from ScreenNameEntry) and PercentScore
 
-local GetNameAndScore = function(profile, SongOrCourse, StepsOrTrail)
+local GetScoreAndName = function(profile, SongOrCourse, StepsOrTrail)
 	-- if we don't have everything we need, return empty strings
 	if not (profile and SongOrCourse and StepsOrTrail) then return "","" end
 
@@ -45,7 +45,7 @@ local GetLocalScoreAndNameForPlayer = function(player)
 	local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
 	local player_score, player_name
 	if PROFILEMAN:IsPersistentProfile(player) then
-		player_score, player_name = GetNameAndScore(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
+		player_score, player_name = GetScoreAndName(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
 	end
 	return player_score, player_name
 end
@@ -416,7 +416,7 @@ for player in ivalues(PlayerNumber) do
 		end,
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-			local machine_score, machine_name = GetNameAndScore(machine_profile, SongOrCourse, StepsOrTrail)
+			local machine_score, machine_name = GetScoreAndName(machine_profile, SongOrCourse, StepsOrTrail)
 			self:settext(machine_name or ""):diffuse(Color.Black)
 			DiffuseEmojis(self)
 		end
@@ -441,7 +441,7 @@ for player in ivalues(PlayerNumber) do
 		end,
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-			local machine_score, machine_name = GetNameAndScore(machine_profile, SongOrCourse, StepsOrTrail)
+			local machine_score, machine_name = GetScoreAndName(machine_profile, SongOrCourse, StepsOrTrail)
 			self:settext(machine_score or "")
 		end
 	}
