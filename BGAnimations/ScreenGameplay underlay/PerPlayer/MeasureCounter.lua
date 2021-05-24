@@ -46,11 +46,27 @@ local IsEndOfStream = function(currMeasure, Measures, streamIndex)
 end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
-	if Measures[streamIndex] == nil then return "" end
-	-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
-	if streamIndex == 1 and currMeasure < 0 and not Measures[streamIndex].isBreak then
-		return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
+	if currMeasure < 0 then
+		if not isLookAhead then
+			-- Measures[1] is guaranteed to exist as we check for non-empty tables at the start of Update() below.
+			if not Measures[1].isBreak then
+				-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
+				return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
+			else
+				-- If the first thing is a break, then add the negative space to the existing break count
+				local segmentStart = Measures[1].streamStart
+				local segmentEnd   = Measures[1].streamEnd
+				local currStreamLength = segmentEnd - segmentStart
+				return "(" .. math.floor(currMeasure * -1) + 1 + currStreamLength .. ")"
+			end
+		else
+			if not Measures[1].isBreak then
+				-- Push all the stream segments back by one since we're adding an additional ephemeral break.
+				streamIndex = streamIndex - 1
+			end
+		end
 	end
+	if Measures[streamIndex] == nil then return "" end
 
 	-- A "segment" can be either stream or rest
 	local segmentStart = Measures[streamIndex].streamStart
@@ -61,16 +77,17 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 
 	local text = ""
 	if Measures[streamIndex].isBreak then
+		if mods.HideLookahead == false then
 			if not isLookAhead then
 				local remainingRest = currStreamLength - currCount + 1
-
 				-- Ensure that the rest count is in range of the total length.
 				text = "(" .. remainingRest .. ")"
 			else
 				text = "(" .. currStreamLength .. ")"
 			end
+		end
 	else
-		if not isLookAhead then
+		if not isLookAhead and currCount ~= 0 then
 			text = tostring(currCount .. "/" .. currStreamLength)
 		else
 			text = tostring(currStreamLength)
@@ -122,7 +139,12 @@ local Update = function(self, delta)
 			else
 				-- Make stream lookaheads be lighter than active streams.
 				if not isLookAhead then
-					bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
+					if string.find(text, "/") then
+						bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
+					else
+						-- If this is a mini-break, make it lighter.
+						bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
+					end
 				else
 					bmt[adjustedIndex]:diffuse(0.45, 0.45, 0.45 ,1)
 				end
