@@ -106,13 +106,27 @@ local GetScoresRequestProcessor = function(res, master)
 					end
 
 					if gsEntry["isSelf"] then
-						SetNameAndScore(
-							GetMachineTag(gsEntry),
-							string.format("%.2f%%", gsEntry["score"]/100),
-							playerName,
-							playerScore
-						)
-						personalRecordSet = true
+						-- Let's check if the GS high score is higher than the local high score
+						local player = i - 1
+						local localScore, localName
+
+						local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
+						if PROFILEMAN:IsPersistentProfile(player) then
+							localScore, localName = GetNameAndScore(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
+						end
+
+						local gsScore = gsEntry["score"]
+						localScore = localScore and tonumber(localScore:gsub("%%", "") * 100) or nil
+						if not localScore or gsScore > localScore then
+							-- It is! Let's use it instead of the local one.
+							SetNameAndScore(
+								GetMachineTag(gsEntry),
+								string.format("%.2f%%", gsScore/100),
+								playerName,
+								playerScore
+							)
+							personalRecordSet = true
+						end
 					end
 
 					if gsEntry["isRival"] then
