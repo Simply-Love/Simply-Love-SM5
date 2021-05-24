@@ -115,12 +115,13 @@ local GetScoresRequestProcessor = function(res, master)
 					end
 
 					if gsEntry["isSelf"] then
-						-- Let's check if the GS high score is higher than the local high score
+						-- Let's check if the GS high score is higher (or equal to) than the local high score
+						-- We'll use the GS score if it's equal so that we use the GS name over the local one in those cases
 						local player = PlayerNumber[i]
 						local localScore, localName = GetLocalScoreAndNameForPlayer(player)
 						local gsScore = gsEntry["score"]
 						localScore = localScore and tonumber(localScore:gsub("%%", "") * 100) or nil
-						if not localScore or gsScore > localScore then
+						if not localScore or gsScore >= localScore then
 							-- It is! Let's use it instead of the local one.
 							SetNameAndScore(
 								GetMachineTag(gsEntry),
