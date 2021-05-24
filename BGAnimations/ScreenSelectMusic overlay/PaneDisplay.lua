@@ -41,6 +41,15 @@ local GetNameAndScore = function(profile, SongOrCourse, StepsOrTrail)
 	return score, name
 end
 
+local GetLocalScoreAndNameForPlayer = function(player)
+	local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
+	local player_score, player_name
+	if PROFILEMAN:IsPersistentProfile(player) then
+		player_score, player_name = GetNameAndScore(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
+	end
+	return player_score, player_name
+end
+
 -- -----------------------------------------------------------------------
 local SetNameAndScore = function(name, score, nameActor, scoreActor)
 	if not scoreActor or not nameActor then return end
@@ -108,13 +117,7 @@ local GetScoresRequestProcessor = function(res, master)
 					if gsEntry["isSelf"] then
 						-- Let's check if the GS high score is higher than the local high score
 						local player = i - 1
-						local localScore, localName
-
-						local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-						if PROFILEMAN:IsPersistentProfile(player) then
-							localScore, localName = GetNameAndScore(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
-						end
-
+						local localScore, localName = GetLocalScoreAndNameForPlayer(player)
 						local gsScore = gsEntry["score"]
 						localScore = localScore and tonumber(localScore:gsub("%%", "") * 100) or nil
 						if not localScore or gsScore > localScore then
@@ -461,11 +464,7 @@ for player in ivalues(PlayerNumber) do
 			end
 		end,
 		SetDefaultCommand=function(self)
-			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-			local player_score, player_name
-			if PROFILEMAN:IsPersistentProfile(player) then
-				player_score, player_name = GetNameAndScore(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
-			end
+			local player_score, player_name = GetLocalScoreAndNameForPlayer(player)
 			self:settext(player_name or ""):diffuse(Color.Black)
 			DiffuseEmojis(self)
 		end
@@ -489,12 +488,7 @@ for player in ivalues(PlayerNumber) do
 			end
 		end,
 		SetDefaultCommand=function(self)
-			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-			local player_score, player_name
-			if PROFILEMAN:IsPersistentProfile(player) then
-				player_score, player_name = GetNameAndScore(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
-			end
-
+			local player_score, player_name = GetLocalScoreAndNameForPlayer(player)
 			self:settext(player_score or "")
 		end
 	}
