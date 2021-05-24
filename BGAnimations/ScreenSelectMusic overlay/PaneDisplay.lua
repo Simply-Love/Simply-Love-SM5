@@ -20,34 +20,20 @@ local GetSongAndSteps = function(player)
 end
 
 -- -----------------------------------------------------------------------
--- requires a profile (machine or player) as an argument
--- returns formatted strings for player tag (from ScreenNameEntry) and PercentScore
+local GetScoreFromProfile = function(profile, SongOrCourse, StepsOrTrail)
+	-- if we don't have everything we need, return nil
+	if not (profile and SongOrCourse and StepsOrTrail) then return nil end
 
-local GetScoreAndName = function(profile, SongOrCourse, StepsOrTrail)
-	-- if we don't have everything we need, return empty strings
-	if not (profile and SongOrCourse and StepsOrTrail) then return "","" end
-
-	local score, name
-	local topscore = profile:GetHighScoreList(SongOrCourse, StepsOrTrail):GetHighScores()[1]
-
-	if topscore then
-		score = FormatPercentScore( topscore:GetPercentDP() )
-		name = topscore:GetName()
-	else
-		score = "??.??%"
-		name = "----"
-	end
-
-	return score, name
+	return profile:GetHighScoreList(SongOrCourse, StepsOrTrail):GetHighScores()[1]
 end
 
-local GetLocalScoreAndNameForPlayer = function(player)
-	local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-	local player_score, player_name
+local GetScoreForPlayer = function(player)
+	local highScore
 	if PROFILEMAN:IsPersistentProfile(player) then
-		player_score, player_name = GetScoreAndName(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
+		local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
+		highScore = GetScoreFromProfile(PROFILEMAN:GetProfile(player), SongOrCourse, StepsOrTrail)
 	end
-	return player_score, player_name
+	return highScore
 end
 
 -- -----------------------------------------------------------------------
@@ -117,10 +103,10 @@ local GetScoresRequestProcessor = function(res, master)
 					if gsEntry["isSelf"] then
 						-- Let's check if the GS high score is higher than the local high score
 						local player = PlayerNumber[i]
-						local localScore, localName = GetLocalScoreAndNameForPlayer(player)
+						local localScore = GetScoreForPlayer(player)
 						local gsScore = gsEntry["score"]
-						localScore = localScore and tonumber(localScore:gsub("%%", "") * 100) or nil
-						if not localScore or gsScore > localScore then
+
+						if not localScore or gsScore >= localScore:GetPercentDP() * 100 then
 							-- It is! Let's use it instead of the local one.
 							SetNameAndScore(
 								GetMachineTag(gsEntry),
@@ -416,9 +402,9 @@ for player in ivalues(PlayerNumber) do
 		end,
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-			local machine_score, machine_name = GetScoreAndName(machine_profile, SongOrCourse, StepsOrTrail)
-			self:settext(machine_name or ""):diffuse(Color.Black)
-			DiffuseEmojis(self)
+			local machineScore = GetScoreFromProfile(machine_profile, SongOrCourse, StepsOrTrail)
+			self:settext(machineScore and machineScore:GetName() or "----")
+			DiffuseEmojis(self:ClearAttributes())
 		end
 	}
 
@@ -441,8 +427,12 @@ for player in ivalues(PlayerNumber) do
 		end,
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
-			local machine_score, machine_name = GetScoreAndName(machine_profile, SongOrCourse, StepsOrTrail)
-			self:settext(machine_score or "")
+			local machineScore = GetScoreFromProfile(machine_profile, SongOrCourse, StepsOrTrail)
+			if machineScore ~= nil then
+				self:settext(FormatPercentScore(machineScore:GetPercentDP()))
+			else
+				self:settext("??.??%")
+			end
 		end
 	}
 
@@ -464,9 +454,9 @@ for player in ivalues(PlayerNumber) do
 			end
 		end,
 		SetDefaultCommand=function(self)
-			local player_score, player_name = GetLocalScoreAndNameForPlayer(player)
-			self:settext(player_name or ""):diffuse(Color.Black)
-			DiffuseEmojis(self)
+			local playerScore = GetScoreForPlayer(player)
+			self:settext(playerScore and playerScore:GetName() or "----")
+			DiffuseEmojis(self:ClearAttributes())
 		end
 	}
 
@@ -488,8 +478,12 @@ for player in ivalues(PlayerNumber) do
 			end
 		end,
 		SetDefaultCommand=function(self)
-			local player_score, player_name = GetLocalScoreAndNameForPlayer(player)
-			self:settext(player_score or "")
+			local playerScore = GetScoreForPlayer(player)
+			if playerScore ~= nil then
+				self:settext(FormatPercentScore(playerScore:GetPercentDP()))
+			else
+				self:settext("??.??%")
+			end
 		end
 	}
 
