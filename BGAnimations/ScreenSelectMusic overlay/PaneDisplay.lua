@@ -116,7 +116,7 @@ local GetScoresRequestProcessor = function(res, master)
 
 					if gsEntry["isSelf"] then
 						-- Let's check if the GS high score is higher than the local high score
-						local player = i - 1
+						local player = PlayerNumber[i]
 						local localScore, localName = GetLocalScoreAndNameForPlayer(player)
 						local gsScore = gsEntry["score"]
 						localScore = localScore and tonumber(localScore:gsub("%%", "") * 100) or nil
