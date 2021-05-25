@@ -219,18 +219,6 @@ af[#af+1] = RequestResponseActor("GetScores", 10)..{
 	OnCommand=function(self)
 		-- Create variables for both players, even if they're not currently active.
 		self.IsParsing = {false, false}
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			-- If a profile is joined for this player, try and fetch the API key.
-			-- A non-valid API key will have the field set to the empty string.
-			if PROFILEMAN:GetProfile(player) then
-				ParseGrooveStatsIni(player)
-			end
-		end
-	end,
-	PlayerJoinedMessageCommand=function(self, params)
-		if GAMESTATE:IsHumanPlayer(params.Player) and PROFILEMAN:GetProfile(params.Player) then
-			ParseGrooveStatsIni(params.Player)
-		end
 	end,
 	-- Broadcasted from ./PerPlayer/DensityGraph.lua
 	P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,

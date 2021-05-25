@@ -69,7 +69,11 @@ LoadProfileCustom = function(profile, dir)
 			break
 		end
 	end
-
+	
+	if pn then
+		ParseGrooveStatsIni(player)
+	end
+	
 	if pn and FILEMAN:DoesFileExist(path) then
 		filecontents = IniFile.ReadFile(path)[theme_name]
 

@@ -167,7 +167,7 @@ t.Handler = function(event)
 						SortMenuNeedsUpdating = true
 					end	--]]
 					-- 
-					-- Song search
+					-- Song search (if enabled, else it's switch style)
 					if DDSortMenuCursorPosition == 10 then
 						if ThemePrefs.Get("AllowSongSearch") then
 							MESSAGEMAN:Broadcast("SongSearchSSMDD")
@@ -183,7 +183,7 @@ t.Handler = function(event)
 							MESSAGEMAN:Broadcast("ReloadSSMDD")
 						end
 					end
-					-- Switch between single/double
+					-- Switch between single/double (or leaderboards if song search is off, or test input if both are off)
 					if DDSortMenuCursorPosition == 11 then
 						if ThemePrefs.Get("AllowSongSearch") then
 							local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
@@ -218,7 +218,7 @@ t.Handler = function(event)
 						end
 						
 					end
-					-- GS/RPG Leaderboards if GS Launcher is running, otherwise test input
+					-- GS/RPG Leaderboards if GS Launcher is running (otherwise test input)
 					if DDSortMenuCursorPosition == 12 then
 						if ThemePrefs.Get("AllowSongSearch") then
 							if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
