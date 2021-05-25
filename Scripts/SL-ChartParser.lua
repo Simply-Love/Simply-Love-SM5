@@ -27,7 +27,8 @@ local GetSimfileString = function(steps)
 end
 
 -- ----------------------------------------------------------------
--- Prefer using the engine's BinaryToHex function if it's available.
+-- We use our own BinaryToHex function as it seems like the current
+-- implementation from the engine doesn't handle sequential zeroes correctly.
 local Bin2Hex = function(s)
 	local hex_bytes = {}
 	for i = 1, string.len(s), 1 do
