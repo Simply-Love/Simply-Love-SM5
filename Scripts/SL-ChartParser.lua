@@ -28,7 +28,7 @@ end
 
 -- ----------------------------------------------------------------
 -- Prefer using the engine's BinaryToHex function if it's available.
-local Bin2Hex = type(BinaryToHex)=="function" and BinaryToHex or function(s)
+local Bin2Hex = function(s)
 	local hex_bytes = {}
 	for i = 1, string.len(s), 1 do
 		hex_bytes[#hex_bytes+1] = string.format('%02x', string.byte(s, i))
