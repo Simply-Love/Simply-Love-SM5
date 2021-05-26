@@ -74,7 +74,6 @@ local song_mt = {
 						SwitchFocusToGroupsMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
 						SwitchFocusToSongsMessageCommand=function(subself) subself:smooth(0.3):cropright(0):playcommand("Set") end,
 						SwitchFocusToSingleSongMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
-						
 						SetCommand=function(subself)
 							subself:x(0)
 							subself:y(_screen.cy-215)

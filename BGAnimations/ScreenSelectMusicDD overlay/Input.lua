@@ -439,7 +439,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 			t.WheelWithFocus:scroll_by_amount(-1)
 			SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "change.ogg") )
 			ChartUpdater.UpdateCharts()
-		elseif event.GameButton == "MenuUp" or event.GameButton == "Up" then
+		elseif event.GameButton == "MenuUp" or event.button == "Up" then
 			if event.type == "InputEventType_FirstPress" then
 				local t = GetTimeSinceStart()
 				local dt = t - lastMenuUpPressTime
@@ -450,7 +450,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 					lastMenuUpPressTime = 0
 				end
 			end
-		elseif event.GameButton == "MenuDown" or event.GameButton == "Down" then
+		elseif event.GameButton == "MenuDown" or event.button == "Down" then
 			if event.type == "InputEventType_FirstPress" then
 				local t = GetTimeSinceStart()
 				local dt = t - lastMenuDownPressTime

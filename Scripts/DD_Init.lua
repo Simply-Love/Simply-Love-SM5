@@ -169,6 +169,8 @@ SL = {
 			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
 			SubSortByNumSteps=true,
+			-- idk if this will actually work without the mine fix? yolo
+			PadStickSeconds=0.050000,
 
 			TimingWindowSecondsW1=0.021500,
 			TimingWindowSecondsW2=0.043000,
