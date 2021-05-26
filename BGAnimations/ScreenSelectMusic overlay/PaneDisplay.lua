@@ -104,13 +104,15 @@ local GetScoresRequestProcessor = function(res, master)
 						-- Let's check if the GS high score is higher than the local high score
 						local player = PlayerNumber[i]
 						local localScore = GetScoreForPlayer(player)
-						local gsScore = gsEntry["score"]
+						-- GS's score entry is a value like 9823, so we need to divide it by 100 to get 98.23
+						local gsScore = gsEntry["score"] / 100
 
+						-- GetPercentDP() returns a value like 0.9823, so we need to multiply it by 100 to get 98.23
 						if not localScore or gsScore >= localScore:GetPercentDP() * 100 then
 							-- It is! Let's use it instead of the local one.
 							SetNameAndScore(
 								GetMachineTag(gsEntry),
-								string.format("%.2f%%", gsScore/100),
+								string.format("%.2f%%", gsScore),
 								playerName,
 								playerScore
 							)
