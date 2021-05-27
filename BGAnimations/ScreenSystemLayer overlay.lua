@@ -241,6 +241,8 @@ t[#t+1] = RequestResponseActor("PingLauncher", 10)..{
 			data={action="ping", protocol=1},
 			args={},
 			callback=function(res, args)
+				if res == nil then return end
+
 				SL.GrooveStats.Launcher = true
 				MESSAGEMAN:Broadcast("NewSessionRequest")
 			end,
