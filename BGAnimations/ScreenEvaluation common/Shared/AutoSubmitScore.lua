@@ -251,12 +251,8 @@ local af = Def.ActorFrame {
 
 local textColor = Color.White
 local shadowLength = 0
-if ThemePrefs.Get("RainbowMode") then
+if ThemePrefs.Get("RainbowMode") and ThemePrefs.Get("VisualStyle") ~= "SRPG5" then
 	textColor = Color.Black
-end
-if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-	textColor = Color.White
-	shadowLength = 0.4
 end
 
 af[#af+1] = LoadFont("Common Normal").. {
