@@ -230,7 +230,7 @@ local af = Def.ActorFrame{
 		Text=THEME:GetString("Common", "PopupDismissText"),
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h-50):zoom(1.1) end
 	},
-	RequestResponseActor("Leaderboard", 10)..{
+	RequestResponseActor("Leaderboard", 10, 17, 50)..{
 		SendLeaderboardRequestCommand=function(self)
 			if not IsServiceAllowed(SL.GrooveStats.Leaderboard) then return end
 
