@@ -72,6 +72,13 @@ if ThemePrefs.Get("VisualStyle") ~= "SRPG5" then
 				-- and apply it to the y-axis as well to maintain proportions
 				self:zoomy( self:GetZoomX() )
 			end
+		end,
+		VisualStyleSelectedMessageCommand=function(self)
+			-- In case we auto-switch to SRPG5, then it's possible this actor may have been added to the screen.
+			-- If so, we want to hide the logo as it interferes with the SRPG5 logo.
+			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+				self:visible(false)
+			end
 		end
 	}
 end
