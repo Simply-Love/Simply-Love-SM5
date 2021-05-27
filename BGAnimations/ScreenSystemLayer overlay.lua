@@ -1,7 +1,15 @@
 -- This is mostly copy/pasted directly from SM5's _fallback theme with
 -- very minor modifications.
 
-local t = Def.ActorFrame{}
+local t = Def.ActorFrame{
+	InitCommand=function(self)
+		-- In case we loaded the theme with SRPG5 and had Rainbow Mode enabled, disable it.
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" and ThemePrefs.Get("RainbowMode") == true then
+			ThemePrefs.Set("RainbowMode", false)
+			ThemePrefs.Save()
+		end
+	end
+}
 
 -- -----------------------------------------------------------------------
 

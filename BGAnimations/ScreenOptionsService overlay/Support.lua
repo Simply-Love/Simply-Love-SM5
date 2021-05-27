@@ -25,6 +25,12 @@ a.BeginCommand=function(self)
 	-- in which case we'll want to call ThemePrefs.Save() now
 	ThemePrefs.Save()
 
+	-- In case we switched into SRPG5 and had Rainbow Mode enabled, disable it.
+	if ThemePrefs.Get("VisualStyle") == "SRPG5" and ThemePrefs.Get("RainbowMode") == true then
+		ThemePrefs.Set("RainbowMode", false)
+		ThemePrefs.Save()
+	end
+
 	-- but, we might have also just backed out of ScreenSelectGame ("System Options")
 	-- where we might have just changed the language, in which case the ThemePrefsRows table
 	-- needs to update its text to use that language.
