@@ -14,6 +14,24 @@ local yellowSrpg = {
 	["ScreenSelectPlayMode"] = true,
 	["ScreenSelectPlayMode2"] = true,
 	["ScreenProfileLoad"] = true, -- hidden screen
+
+	-- Operator Menu screens and sub screens.
+	["ScreenOptionsService"] = true,
+	["ScreenSystemOptions"] = true,
+	["ScreenMapControllers"] = true,
+	["ScreenTestInput"] = true,
+	["ScreenInputOptions"] = true,
+	["ScreenGraphicsSoundOptions"] = true,
+	["ScreenVisualOptions"] = true,
+	["ScreenAppearanceOptions"] = true,
+	["ScreenSetBGFit"] = true,
+	["ScreenOverscanConfig"] = true,
+	["ScreenArcadeOptions"] = true,
+	["ScreenAdvancedOptions"] = true,
+	["ScreenMenuTimerOptions"] = true,
+	["ScreenUSBProfileOptions"] = true,
+	["ScreenOptionsManageProfiles"] = true,
+	["ScreenThemeOptions"] = true,
 }
 
 local sprite = Def.Sprite {
@@ -48,6 +66,7 @@ local sprite = Def.Sprite {
 
 		local new_file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
 		self:Load(new_file)
+		self:zoomto(_screen.w, _screen.h)
 
 		if style == "SRPG5" then
 			self:visible(true)
