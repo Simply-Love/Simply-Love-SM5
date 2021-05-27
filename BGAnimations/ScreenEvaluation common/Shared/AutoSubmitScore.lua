@@ -195,7 +195,8 @@ local af = Def.ActorFrame {
 					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 					local submitForPlayer = false
 
-					if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
+					-- if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
+					if true then
 						local percentDP = stats:GetPercentDancePoints()
 						local score = FormatPercentScore(percentDP)
 						score = tonumber(score:gsub("%%", "") * 100)
@@ -243,15 +244,13 @@ local af = Def.ActorFrame {
 	}
 }
 
-
-
 local textColor = Color.White
 local shadowLength = 0
 if ThemePrefs.Get("RainbowMode") then
 	textColor = Color.Black
 end
 if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-	textColor = color(SL.SRPG5.TextColor)
+	textColor = Color.White
 	shadowLength = 0.4
 end
 

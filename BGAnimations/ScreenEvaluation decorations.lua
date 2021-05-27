@@ -55,7 +55,7 @@ af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 			textColor = Color.Black
 		end
 		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-			textColor = color(SL.SRPG5.TextColor)
+			textColor = Color.White
 		end
 
 		self:diffuse(textColor)

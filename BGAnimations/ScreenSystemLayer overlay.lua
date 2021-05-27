@@ -46,7 +46,7 @@ local function CreditsText( player )
 						textColor = Color.Black
 					end
 					if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-						textColor = color(SL.SRPG5.TextColor)
+						textColor = Color.White
 						shadowLength = 0.4
 					end
 				end
