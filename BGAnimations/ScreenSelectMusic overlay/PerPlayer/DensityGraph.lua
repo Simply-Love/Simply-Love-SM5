@@ -107,8 +107,13 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		else
 			self:addx(-136):addy(-41)
 		end
-		-- We want black text in Rainbow mode, white otherwise.
-		self:diffuse(DarkUI() or ThemePrefs.Get("VisualStyle") == "SRPG5" and {0, 0, 0, 1} or {1, 1, 1, 1})
+		if ThemePrefs.Get("VisualStyle") == "SRPG5" then
+			-- Always white for the SRPG visual style.
+			self:diffuse({1, 1, 1, 1})
+		else
+			-- We want black text in Rainbow mode, white otherwise.
+			self:diffuse(DarkUI() and {0, 0, 0, 1} or {1, 1, 1, 1})
+		end
 	end,
 	HideCommand=function(self)
 		self:settext("Peak NPS: ")

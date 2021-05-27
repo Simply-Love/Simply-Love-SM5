@@ -331,7 +331,7 @@ for player in ivalues(PlayerNumber) do
 		Def.Sprite {
 			Texture=THEME:GetPathG("", "_VisualStyles/SRPG5/Overlay-BG.png"),
 			InitCommand=function(self)
-				self:zoomto(paneWidth, paneHeight)
+				self:CropTo(paneWidth, paneHeight)
 			end
 		},
 
