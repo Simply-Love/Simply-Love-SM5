@@ -94,6 +94,24 @@ end
 
 local LeaderboardRequestProcessor = function(res, master)
 	if master == nil then return end
+
+	if res == nil then
+		for i=1, 2 do
+			local pn = "P"..i
+			local leaderboard = master:GetChild(pn.."Leaderboard")
+			for j=1, NumEntries do
+				local entry = leaderboard:GetChild("LeaderboardEntry"..j)
+				if j == 1 then
+					SetEntryText("", "Timed Out", "", "", entry)
+				else
+					-- Empty out the remaining rows.
+					SetEntryText("", "", "", "", entry)
+				end
+			end
+		end
+		return
+	end
+
 	local data = res["status"] == "success" and res["data"] or nil
 
 	for i=1, 2 do
@@ -136,9 +154,9 @@ local LeaderboardRequestProcessor = function(res, master)
 			local leaderboardData = leaderboardList[1]
 			SetLeaderboardForPlayer(i, leaderboard, leaderboardData, master[pn].isRanked)
 		elseif res["status"] == "fail" then
-			for i=1, NumEntries do
-				local entry = leaderboard:GetChild("LeaderboardEntry"..i)
-				if i == 1 then
+			for j=1, NumEntries do
+				local entry = leaderboard:GetChild("LeaderboardEntry"..j)
+				if j == 1 then
 					SetEntryText("", "Failed to Load 😞", "", "", entry)
 				else
 					-- Empty out the remaining rows.
@@ -146,9 +164,9 @@ local LeaderboardRequestProcessor = function(res, master)
 				end
 			end
 		elseif res["status"] == "disabled" then
-			for i=1, NumEntries do
-				local entry = leaderboard:GetChild("LeaderboardEntry"..i)
-				if i == 1 then
+			for j=1, NumEntries do
+				local entry = leaderboard:GetChild("LeaderboardEntry"..j)
+				if j == 1 then
 					SetEntryText("", "Leaderboard Disabled", "", "", entry)
 				else
 					-- Empty out the remaining rows.

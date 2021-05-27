@@ -243,7 +243,7 @@ t[#t+1] = RequestResponseActor("PingLauncher", 10)..{
 			callback=function(res, args)
 				SL.GrooveStats.Launcher = true
 				MESSAGEMAN:Broadcast("NewSessionRequest")
-			end
+			end,
 		})
 	end
 }
@@ -268,6 +268,11 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 	service1:visible(false)
 	service2:visible(false)
 	service3:visible(false)
+
+	if res == nil then
+		groovestats:settext("Timed Out")
+		return
+	end
 
 	if not res["status"] == "success" then
 		if res["status"] == "fail" then
@@ -361,7 +366,6 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 	DiffuseEmojis(service1:ClearAttributes())
 	DiffuseEmojis(service2:ClearAttributes())
 	DiffuseEmojis(service3:ClearAttributes())
-
 end
 
 local function DiffuseText(bmt)
@@ -448,7 +452,7 @@ t[#t+1] = Def.ActorFrame{
 				MESSAGEMAN:Broadcast("NewSession", {
 					data={action="groovestats/new-session", ChartHashVersion=SL.GrooveStats.ChartHashVersion},
 					args=self:GetParent(),
-					callback=NewSessionRequestProcessor
+					callback=NewSessionRequestProcessor,
 				})
 			end
 		end

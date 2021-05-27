@@ -29,15 +29,17 @@
 -- args: Arguments that will be made accesible to the callback function. This
 --       can of any type as long as the callback knows what to do with it.
 -- callback: A function that processes the response. It must take at least two
---           parameters:	
---              data: The JSON response which has been converted back to a lua table
---              args: The same args as listed above above.
+--       parameters:
+--           data: The JSON response which has been converted back to a lua table
+--           args: The same args as listed above.
+--       If data is nil then that means the request has timed out and can be
+--       processed by the callback accordingly.
 
 -- name: A name that will trigger the request for this actor.
 --       It should generally be unique for each actor of this type.
 -- timeout: A positive number in seconds between [1.0, 59.0] inclusive. It must
---          be less than 60 seconds as responses are expected to be cleaned up
---          by the launcher by then.
+--       be less than 60 seconds as responses are expected to be cleaned up
+--       by the launcher by then.
 RequestResponseActor = function(name, timeout)
 	-- Sanitize the timeout value.
 	local timeout = clamp(timeout, 1.0, 59.0)
@@ -64,12 +66,17 @@ RequestResponseActor = function(name, timeout)
 				local f = RageFileUtil.CreateRageFile()
 				-- Check to see if the response file was written.
 				if f:Open(path_prefix.."responses/"..self.request_id..".json", 1) then
-					local data = json.decode(f:Read())
+					local json_str = f:Read()
+					local data = {}
+					if #json_str ~= 0 then
+						data = json.decode(json_str)
+					end
 					self.callback(data, self.args)
 					f:Close()
 					Reset(self)
 				-- Have we timed out?
 				elseif now - self.request_time > timeout then
+					self.callback(nil, self.args)
 					Reset(self)
 				end
 				f:destroy()
@@ -94,17 +101,17 @@ RequestResponseActor = function(name, timeout)
 			local f = RageFileUtil:CreateRageFile()
 			if f:Open(path_prefix .. "requests/".. id .. ".json", 2) then
 				f:Write(json.encode(params.data))
+				f:Close()
+
+				self:stoptweening()
 				self.request_id = id
 				self.request_time = GetTimeSinceStart()
 				self.args = params.args
 				self.callback = params.callback
-				f:Close()
+
+				self:sleep(0.1):queuecommand('Wait')
 			end
 			f:destroy()
-
-			if self.request_id ~= nil then
-				self:queuecommand('Wait')
-			end
 		end
 	}
 end
