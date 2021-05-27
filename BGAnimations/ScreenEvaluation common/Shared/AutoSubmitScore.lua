@@ -245,7 +245,7 @@ local af = Def.ActorFrame {
 
 local textColor = Color.White
 local shadowLength = 0
-if ThemePrefs.Get("RainbowMode") and ThemePrefs.Get("VisualStyle") ~= "SRPG5" then
+if ThemePrefs.Get("RainbowMode") then
 	textColor = Color.Black
 end
 

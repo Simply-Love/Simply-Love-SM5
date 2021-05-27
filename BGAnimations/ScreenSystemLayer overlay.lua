@@ -42,7 +42,7 @@ local function CreditsText( player )
 					--        I'll see tomorrow
 
 					-- dark text for RainbowMode
-					if ThemePrefs.Get("RainbowMode") and ThemePrefs.Get("VisualStyle") ~= "SRPG5" then
+					if ThemePrefs.Get("RainbowMode") then
 						textColor = Color.Black
 					end
 				end
