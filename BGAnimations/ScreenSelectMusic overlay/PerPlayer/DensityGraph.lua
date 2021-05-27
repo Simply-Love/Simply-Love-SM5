@@ -108,8 +108,8 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:addx(-136):addy(-41)
 		end
 
-		-- We want black text in non-SRPG5 Rainbow mode, white otherwise.
-		self:diffuse(DarkUI() and ThemePrefs.Get("VisualStyle") ~= "SRPG5" and {0, 0, 0, 1} or {1, 1, 1, 1})
+		-- We want black text in Rainbow mode, white otherwise.
+		self:diffuse(DarkUI() and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
 	HideCommand=function(self)
 		self:settext("Peak NPS: ")
