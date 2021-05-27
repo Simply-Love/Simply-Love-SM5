@@ -67,6 +67,16 @@ local GetScoresRequestProcessor = function(res, master)
 	-- we don't run the RequestResponseActor in CourseMode.
 	if GAMESTATE:GetCurrentSong() == nil then return end
 
+	if res == nil then
+		for i=1,2 do
+			local paneDisplay = master:GetChild("PaneDisplayP"..i)
+			local loadingText = paneDisplay:GetChild("Loading")
+			loadingText:settext("Timed Out")
+		end
+
+		return
+	end
+
 	for i=1,2 do
 		local paneDisplay = master:GetChild("PaneDisplayP"..i)
 
