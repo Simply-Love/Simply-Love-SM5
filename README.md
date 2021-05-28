@@ -3,6 +3,18 @@ Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Interg
 Also thanks to Box for help getting the new Song Wheel in it's current state!
 Without them this update wouldn't be nearly as awesome~
 
+
+# ---------------- Differences from 1.0.0/1.0.1 ----------------
+- Fixed major bug with song search that let you not be able to play the game.
+- Added a reset for Sorts/Filters in the sort menu.
+- Closing the "folder" of a song search will now reset the wheel back to normal sort.
+- Added loading circle for GS related UI when doing API calls.
+- Fix for the GS intergration/hash generation.
+- Fixed some sort menu input bugs
+- Fixed some chart parser/measure counter bugs.
+- Other minor bug fixes.
+
+
 # ---------------- GrooveStats Integration ----------------
 Rivals, Scores, Leaderboards, Auto-Uploading of scores, it's all here! Please [watch the video](https://www.youtube.com/watch?v=8yMzp7xMQq0) and refer the [GrooveStats Launcher Guide](https://github.com/GrooveStats/gslauncher#readme) on how to setup the StepMania wrapper program that will get you connected.
 

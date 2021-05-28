@@ -208,18 +208,20 @@ end
 
 LoadModules()
 
-t[#t+1] = RequestResponseActor("PingLauncher", 10)..{
+t[#t+1] = RequestResponseActor("PingLauncher", 10, _screen.w-15, 15)..{
 	-- OnCommand doesn't work in ScreenSystemLayer
 	InitCommand=function(self)
 		MESSAGEMAN:Broadcast("PingLauncher", {
 			data={action="ping", protocol=1},
 			args={},
 			callback=function(res, args)
+				if res == nil then return end
+				
 				SL.GrooveStats.Launcher = true
 				MESSAGEMAN:Broadcast("NewSessionRequest")
 			end
 		})
-	end
+	end,
 }
 
 -- -----------------------------------------------------------------------
@@ -242,6 +244,11 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 	service1:visible(false)
 	service2:visible(false)
 	service3:visible(false)
+	
+	if res == nil then
+		groovestats:settext("Timed Out")
+		return
+	end
 
 	if not res["status"] == "success" then
 		if res["status"] == "fail" then
@@ -314,7 +321,6 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 	else
 		groovestats:settext("⚠️ GrooveStats")
 	end
-
 end
 
 local TextColor = Color.White
@@ -341,9 +347,9 @@ t[#t+1] = Def.ActorFrame{
 
 	LoadFont("Common Normal")..{
 		Name="GrooveStats",
-		Text=" ... GrooveStats",
+		Text="     GrooveStats",
 		InitCommand=function(self) self:diffuse(TextColor):horizalign(left) end,
-		ResetCommand=function(self) self:settext(" ... GrooveStats") end
+		ResetCommand=function(self) self:settext("     GrooveStats") end
 	},
 
 	LoadFont("Common Normal")..{
@@ -367,13 +373,13 @@ t[#t+1] = Def.ActorFrame{
 		ResetCommand=function(self) self:settext("") end
 	},
 
-	RequestResponseActor("NewSession", 10)..{
+	RequestResponseActor("NewSession", 10, 5, 0)..{
 		NewSessionRequestMessageCommand=function(self)
 			if SL.GrooveStats.Launcher then
 				MESSAGEMAN:Broadcast("NewSession", {
 					data={action="groovestats/new-session", ChartHashVersion=SL.GrooveStats.ChartHashVersion},
 					args=self:GetParent(),
-					callback=NewSessionRequestProcessor
+					callback=NewSessionRequestProcessor,
 				})
 			end
 		end

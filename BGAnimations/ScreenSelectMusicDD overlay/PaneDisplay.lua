@@ -71,6 +71,16 @@ local GetScoresRequestProcessor = function(res, master)
 	-- have to update anything. We don't have to worry about courses here since
 	-- we don't run the RequestResponseActor in CourseMode.
 	if GAMESTATE:GetCurrentSong() == nil then return end
+	
+	if res == nil then
+		for i=1,2 do
+			local paneDisplay = master:GetChild("PaneDisplayP"..i)
+			local loadingText = paneDisplay:GetChild("Loading")
+			loadingText:settext("Timed Out")
+		end
+
+		return
+	end
 
 	for i=1,2 do
 		local paneDisplay = master:GetChild("PaneDisplayP"..i)
@@ -215,7 +225,7 @@ local PaneItems = {
 -- -----------------------------------------------------------------------
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
-af[#af+1] = RequestResponseActor("GetScores", 10)..{
+af[#af+1] = RequestResponseActor("GetScores", 10, SCREEN_CENTER_X, SCREEN_CENTER_Y - 85)..{
 	OnCommand=function(self)
 		-- Create variables for both players, even if they're not currently active.
 		self.IsParsing = {false, false}

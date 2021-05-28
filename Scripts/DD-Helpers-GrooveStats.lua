@@ -29,26 +29,32 @@
 -- args: Arguments that will be made accesible to the callback function. This
 --       can of any type as long as the callback knows what to do with it.
 -- callback: A function that processes the response. It must take at least two
---           parameters:	
---              data: The JSON response which has been converted back to a lua table
---              args: The same args as listed above above.
+--       parameters:
+--           data: The JSON response which has been converted back to a lua table
+--           args: The same args as listed above.
+--       If data is nil then that means the request has timed out and can be
+--       processed by the callback accordingly.
 
 -- name: A name that will trigger the request for this actor.
 --       It should generally be unique for each actor of this type.
 -- timeout: A positive number in seconds between [1.0, 59.0] inclusive. It must
---          be less than 60 seconds as responses are expected to be cleaned up
---          by the launcher by then.
-RequestResponseActor = function(name, timeout)
+--       be less than 60 seconds as responses are expected to be cleaned up
+--       by the launcher by then.
+
+--    x: The x position of the loading spinner.
+--    y: The y position of the loading spinner.
+RequestResponseActor = function(name, timeout, x, y)
 	-- Sanitize the timeout value.
 	local timeout = clamp(timeout, 1.0, 59.0)
 	local path_prefix = "/Save/GrooveStats/"
 
-	return Def.Actor{
+	return Def.ActorFrame{
 		InitCommand=function(self)
 			self.request_id = nil
 			self.request_time = nil
 			self.args = nil
 			self.callback = nil
+			self:xy(x, y)
 		end,
 		WaitCommand=function(self)
 			local Reset = function(self)
@@ -56,20 +62,28 @@ RequestResponseActor = function(name, timeout)
 				self.request_time = nil
 				self.args = nil
 				self.callback = nil
+				self:GetChild("Spinner"):visible(false)
 			end
+			local now = GetTimeSinceStart()
+			-- Tell the spinner how much remaining time there is.
+			self:playcommand("UpdateSpinner", {time=timeout - (now - self.request_time)})
+			
 			-- We're waiting on a response.
 			if self.request_id ~= nil then
-				local now = GetTimeSinceStart()
-
 				local f = RageFileUtil.CreateRageFile()
 				-- Check to see if the response file was written.
 				if f:Open(path_prefix.."responses/"..self.request_id..".json", 1) then
-					local data = json.decode(f:Read())
+					local json_str = f:Read()
+					local data = {}
+					if #json_str ~= 0 then
+						data = json.decode(json_str)
+					end
 					self.callback(data, self.args)
 					f:Close()
 					Reset(self)
 				-- Have we timed out?
 				elseif now - self.request_time > timeout then
+					self.callback(nil, self.args)
 					Reset(self)
 				end
 				f:destroy()
@@ -94,18 +108,42 @@ RequestResponseActor = function(name, timeout)
 			local f = RageFileUtil:CreateRageFile()
 			if f:Open(path_prefix .. "requests/".. id .. ".json", 2) then
 				f:Write(json.encode(params.data))
+				f:Close()
+
+				self:stoptweening()
 				self.request_id = id
 				self.request_time = GetTimeSinceStart()
 				self.args = params.args
 				self.callback = params.callback
-				f:Close()
+				self:sleep(0.1):queuecommand('Wait')
 			end
 			f:destroy()
+		end,
 
-			if self.request_id ~= nil then
-				self:queuecommand('Wait')
-			end
-		end
+		Def.ActorFrame{
+			Name="Spinner",
+			InitCommand=function(self)
+				self:visible(false)
+			end,
+			UpdateSpinnerCommand=function(self)
+				self:visible(true)
+			end,
+			Def.Sprite{
+				Texture=THEME:GetPathG("", "LoadingSpinner 10x3.png"),
+				Frames=Sprite.LinearFrames(30,1),
+				InitCommand=function(self)
+					self:zoom(0.15)
+				end
+			},
+			LoadFont("Common Normal")..{
+				InitCommand=function(self) self:zoom(0.9) end,
+				UpdateSpinnerCommand=function(self, params)
+					if params.time > 1 then
+						self:settext(math.floor(params.time))
+					end
+				end
+			}
+		},
 	}
 end
 
