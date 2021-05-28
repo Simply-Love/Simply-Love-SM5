@@ -47,6 +47,7 @@ local t = Def.ActorFrame{
 					if results > 0 then
 						SongSearchSSMDD = true
 						SongSearchAnswer = answer
+						SongSearchWheelNeedsResetting = true
 						self:sleep(0.1):queuecommand("ReloadScreen")
 					else
 						SM("No songs found!")

@@ -74,13 +74,18 @@ local CloseCurrentFolder = function()
 	if t.WheelWithFocus == GroupWheel then 
 	NameOfGroup = ""
 	return end
-
-	-- otherwise...
-	t.Enabled = false
-	MESSAGEMAN:Broadcast("SwitchFocusToGroups")
-	t.WheelWithFocus.container:queuecommand("Hide")
-	t.WheelWithFocus = GroupWheel
-	t.WheelWithFocus.container:queuecommand("Unhide")
+	
+	if SongSearchWheelNeedsResetting == true then
+		SongSearchWheelNeedsResetting = false
+		MESSAGEMAN:Broadcast("ReloadSSMDD")
+	else	
+		-- otherwise...
+		t.Enabled = false
+		MESSAGEMAN:Broadcast("SwitchFocusToGroups")
+		t.WheelWithFocus.container:queuecommand("Hide")
+		t.WheelWithFocus = GroupWheel
+		t.WheelWithFocus.container:queuecommand("Unhide")
+	end
 end
 
 t.AllowLateJoin = function()

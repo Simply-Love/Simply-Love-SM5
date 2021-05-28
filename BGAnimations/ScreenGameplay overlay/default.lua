@@ -15,6 +15,8 @@
 ------------------------------------------------------------
 local af = Def.ActorFrame{}
 
+SongSearchWheelNeedsResetting = false
+
 af[#af+1] = LoadActor("./WhoIsCurrentlyWinning.lua")
 
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do

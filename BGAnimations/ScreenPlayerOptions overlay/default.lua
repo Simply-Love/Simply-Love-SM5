@@ -17,6 +17,7 @@ local speedmod_def = {
 
 local song = GAMESTATE:GetCurrentSong()
 
+SongSearchWheelNeedsResetting = false
 ------------------------------------------------------------
 -- functions local to this file
 

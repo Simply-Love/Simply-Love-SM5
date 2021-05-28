@@ -153,7 +153,7 @@ af2[#af2+1] = LoadFont("Miso/_miso")..{
 	end,
 	RedrawCommand=function(self)
 		if SL[pn].Streams.PeakNPS ~= 0 then
-			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS))
+			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
 		end
 	end
 }
