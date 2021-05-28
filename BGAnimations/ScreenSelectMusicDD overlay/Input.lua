@@ -174,6 +174,7 @@ t.Handler = function(event)
 					-- 
 					-- Reset the sorts/prefrences
 					if DDSortMenuCursorPosition == 10 then
+						SongSearchWheelNeedsResetting = false
 						----- Default preference values
 						local DefaultMainSort = 1
 						local DefaultSubSort = 2
