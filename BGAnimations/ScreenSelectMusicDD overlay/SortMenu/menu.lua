@@ -154,8 +154,8 @@ local t = Def.ActorFrame{
 				end
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 				-- initial zoom before additional options are added
-				local InitialZoomY = 230
-				local InitialAddY = -37.5
+				local InitialZoomY = 255
+				local InitialAddY = -25
 				
 				if ThemePrefs.Get("AllowSongSearch") then
 					InitialZoomY = InitialZoomY + 25
@@ -196,8 +196,8 @@ local t = Def.ActorFrame{
 				
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 				-- initial zoom before additional options are added
-				local InitialZoomY = 225
-				local InitialAddY = -37.5
+				local InitialZoomY = 250
+				local InitialAddY = -25
 				
 				if ThemePrefs.Get("AllowSongSearch") then
 					InitialZoomY = InitialZoomY + 25
@@ -590,6 +590,7 @@ for i,FilterText in ipairs(FilterLabel) do
 end
 
 OtherLabel = {}
+OtherLabel[#OtherLabel+1] = "RESET SORT/FILTERS"
 if ThemePrefs.Get("AllowSongSearch") then
 	OtherLabel[#OtherLabel+1] = "SONG SEARCH"
 end

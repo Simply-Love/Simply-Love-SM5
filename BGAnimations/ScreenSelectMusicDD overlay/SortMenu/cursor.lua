@@ -12,7 +12,7 @@ local function GetMaxCursorPosition()
 	end
 	
 	-- the minimum amount of items
-	local MaxCursorPosition = 11
+	local MaxCursorPosition = 12
 	
 	if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
 		MaxCursorPosition = MaxCursorPosition + 1
@@ -165,28 +165,32 @@ local t = Def.ActorFrame{
 				self:zoomx(65)
 				self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y - 10)
 			-------------- Bottom half of the sort menu --------------
-			-- Song Search
+			-- Reset sorts
 			elseif DDSortMenuCursorPosition == 10 then
-				self:zoomx(160)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 30)
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 30)
 				
 			-- Mark/Unmark as favorite (add this back later)
 			--[[elseif DDSortMenuCursorPosition == 12 then
 				self:zoomx(160)
 				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 80)--]]
 				
-			-- Switch from single/double
+			-- Song Search or Switch from single/double
 			elseif DDSortMenuCursorPosition == 11 then
-				self:zoomx(160)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 55)
-			-- GS Leaderboards
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 55)
+			-- Switch from single/double or GS Leaderboards or test input
 			elseif DDSortMenuCursorPosition == 12 then
-				self:zoomx(160)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 80)
-			-- Test Input
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 80)
+			-- leaderboards or test input
 			elseif DDSortMenuCursorPosition == 13 then
-				self:zoomx(160)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 105)
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 105)
+			-- test input
+			elseif DDSortMenuCursorPosition == 14 then
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 130)
 			end
 			self:queuecommand("FadeOut")
 			
