@@ -65,8 +65,7 @@ RequestResponseActor = function(name, timeout, x, y)
 			end
 			local now = GetTimeSinceStart()
 			local remaining_time = timeout - (now - self.request_time)
-			-- Only display the spinner after we've waiting for some amount of time.
-			if self.request_id ~= "ping" and timeout - remaining_time > 2 then
+			if self.request_id ~= "ping" then
 				-- Tell the spinner how much remaining time there is.
 				self:playcommand("UpdateSpinner", {time=remaining_time})
 			end
@@ -151,6 +150,12 @@ RequestResponseActor = function(name, timeout, x, y)
 					self:diffuse(DarkUI() and name ~= "Leaderboard" and Color.Black or Color.White)
 				end,
 				UpdateSpinnerCommand=function(self, params)
+				-- Only display the countdown after we've waiting for some amount of time.
+					if timeout - params.time > 2 then
+						self:visible(true)
+					else
+						self:visible(false)
+					end
 					if params.time > 1 then
 						self:settext(math.floor(params.time))
 					end
