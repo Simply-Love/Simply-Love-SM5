@@ -136,7 +136,10 @@ RequestResponseActor = function(name, timeout, x, y)
 				end
 			},
 			LoadFont("Common Normal")..{
-				InitCommand=function(self) self:zoom(0.9) end,
+				InitCommand=function(self)
+					self:zoom(0.9)
+					self:diffuse(DarkUI() and Color.Black or Color.White)
+				end,
 				UpdateSpinnerCommand=function(self, params)
 					if params.time > 1 then
 						self:settext(math.floor(params.time))
