@@ -89,48 +89,6 @@ local Grid = Def.ActorFrame{
 	Name="Grid",
 	InitCommand=function(self) self:horizalign(left):vertalign(top):xy(8, -52 ) end,
 	
-	--[[--- The background quad for the grid to make the whole thing more legible.
-	Def.Quad{
-		Name="DiffBackground",
-		InitCommand=function(self)
-				self:x(IsUsingWideScreen() and WideScale(_screen.cx-_screen.w/2.7,SCREEN_LEFT - 8) or 45)
-				self:y(IsUsingWideScreen() and _screen.cy + 43.5 or _screen.cy + 120)
-				self:draworder(0)
-				self:diffuse(color("#1e282f"))
-				if IsUsingWideScreen() then
-					self:zoomx(WideScale(160,267))
-					self:zoomy(56)
-					self:visible(P1)
-				else
-					self:zoomto(270,40)
-					self:visible(true)
-				end
-				
-		end,
-		OnCommand=function(self)
-			SCREENMAN:GetTopScreen():AddInputCallback(getInputHandler(self, 'PlayerNumber_P1'))
-		end
-	},
-	
-	Def.Quad{
-		Name="DiffBackground2",
-		InitCommand=function(self)
-			if IsUsingWideScreen() then
-				self:visible(P2)
-				self:xy(WideScale(_screen.cx+_screen.w/2.7,_screen.cx+_screen.w/2.91), _screen.cy + 64)
-				self:draworder(0)
-				self:diffuse(color("#1e282f"))
-				self:zoomx(WideScale(160,267))
-				self:zoomy(56)
-			else
-			end
-		end,
-		OnCommand=function(self)
-			SCREENMAN:GetTopScreen():AddInputCallback(getInputHandler(self, 'PlayerNumber_P2'))
-		end
-	},--]]
-	
-	
 }
 
 
@@ -177,7 +135,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -202,7 +164,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -227,7 +193,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -252,7 +222,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -278,7 +252,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( DifficultyColor(params.Difficulty) )
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -306,7 +284,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -332,7 +314,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -358,7 +344,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -384,7 +374,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( Color.Black)
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
@@ -411,7 +405,11 @@ for RowNumber=1,num_rows do
 		SetCommand=function(self, params)
 			-- diffuse and set each chart's difficulty meter
 			self:diffuse( DifficultyColor(params.Difficulty) )
-			self:settext(params.Meter)
+			if params.Meter < 40 then
+				self:settext(params.Meter)
+			else
+				self:settext("M")
+			end
 		end,
 		UnsetCommand=function(self) self:settext(""):diffuse(color("#182025")) end,
 		OnCommand=function(self)
