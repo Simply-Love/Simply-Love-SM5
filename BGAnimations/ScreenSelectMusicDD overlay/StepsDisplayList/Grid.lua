@@ -1,5 +1,5 @@
--- this difficulty grid doesn't support CourseMode
--- CourseContentsList.lua should be used instead
+---  this difficulty grid doesn't support CourseMode
+---  CourseContentsList.lua should be used instead
 if GAMESTATE:IsCourseMode() then return end
 -- ----------------------------------------------
 
