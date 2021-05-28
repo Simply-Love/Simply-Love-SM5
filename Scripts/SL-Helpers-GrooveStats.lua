@@ -138,6 +138,10 @@ RequestResponseActor = function(name, timeout, x, y)
 				Frames=Sprite.LinearFrames(30,1),
 				InitCommand=function(self)
 					self:zoom(0.15)
+					self:diffuse(GetHexColor(SL.Global.ActiveColorIndex, true))
+				end,
+				VisualStyleSelectedMessageCommand=function(self)
+					self:diffuse(GetHexColor(SL.Global.ActiveColorIndex, true))
 				end
 			},
 			LoadFont("Common Normal")..{
