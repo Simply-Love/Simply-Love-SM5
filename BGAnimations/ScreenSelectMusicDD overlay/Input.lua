@@ -221,6 +221,7 @@ t.Handler = function(event)
 								SetLastStyle("Single")
 								GAMESTATE:SetCurrentStyle("Single")
 							end
+							SongSearchWheelNeedsResetting = false
 							MESSAGEMAN:Broadcast("ReloadSSMDD")
 						end
 					end
@@ -235,6 +236,7 @@ t.Handler = function(event)
 								SetLastStyle("Single")
 								GAMESTATE:SetCurrentStyle("Single")
 							end
+							SongSearchWheelNeedsResetting = false
 							MESSAGEMAN:Broadcast("ReloadSSMDD")
 						else
 							if IsServiceAllowed(SL.GrooveStats.Leaderboard) then

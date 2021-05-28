@@ -17,7 +17,7 @@ local t = Def.ActorFrame{
 				--- If the player doesn't enter any text and just presses enter  just reload the screen to the normal wheel
 				if answer ~= "" then
 					local results = 0
-					for i,song in ipairs(SONGMAN:GetAllSongs()) do
+					for i,song in ipairs(SONGMAN:GetAllSongs(GAMESTATE:GetCurrentStyle():GetStepsType())) do
 						local match = false
 						local title = song:GetDisplayFullTitle():lower()
 						local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
@@ -52,13 +52,11 @@ local t = Def.ActorFrame{
 					else
 						SM("No songs found!")
 						SongSearchSSMDD = false
-						SongSearchAnswer = answer
-						self:sleep(0.1):queuecommand("ReloadScreen")
+						SongSearchAnswer = nil
 					end
 				else
 					SongSearchSSMDD = false
 					SongSearchAnswer = nil
-					self:sleep(0.1):queuecommand("ReloadScreen")
 				end
 				
 			end,
