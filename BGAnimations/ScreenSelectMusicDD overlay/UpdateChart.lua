@@ -12,6 +12,9 @@ for k,v in pairs(difficulties) do
    difficultyToIndex[v]=k
 end
 
+local EasierDifficulty
+local HarderDifficulty
+
 local curDifficultyIndices = {}
 
 local function GetStartingDifficultyIndex(playerNumber)
@@ -99,7 +102,6 @@ local function UpdateChart(playerNum, difficultyChange)
 			editCount = editCount + 1
 		end
 
-		local isValid
 		if difficultyChange > 0 then
 			isValid = stepsDifficultyIndex > oldDifficultyIndex
 		elseif difficultyChange < 0 then
@@ -125,6 +127,11 @@ local function UpdateChart(playerNum, difficultyChange)
 	end
 
 	if selectedSteps ~= nil then
+		if EasierDifficulty then
+			SOUND:PlayOnce( THEME:GetPathS("", "_easier.ogg") )
+		elseif HarderDifficulty then
+			SOUND:PlayOnce( THEME:GetPathS("", "_harder.ogg") )
+		end
 		GAMESTATE:SetCurrentSteps(playerNum, selectedSteps)
 	end
 end
@@ -133,13 +140,19 @@ end
 return {
 	UpdateCharts=function()
 		for _, playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+			EasierDifficulty = false
+			HarderDifficulty = false
 			UpdateChart(playerNum, 0)
 		end
 	end,
 	IncreaseDifficulty=function(playerNum)
+		EasierDifficulty = true
+		HarderDifficulty = false
 		UpdateChart(playerNum, 1)
 	end,
 	DecreaseDifficulty=function(playerNum)
+		EasierDifficulty = false
+		HarderDifficulty = true
 		UpdateChart(playerNum, -1)
 	end,
 }

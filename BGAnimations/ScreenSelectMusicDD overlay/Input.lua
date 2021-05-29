@@ -489,7 +489,6 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 				local dt = t - lastMenuUpPressTime
 				lastMenuUpPressTime = t
 				if dt < 0.5 then
-					SOUND:PlayOnce( THEME:GetPathS("", "_easier.ogg") )
 					ChartUpdater.DecreaseDifficulty(event.PlayerNumber)
 					lastMenuUpPressTime = 0
 				end
@@ -500,7 +499,6 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 				local dt = t - lastMenuDownPressTime
 				lastMenuDownPressTime = t
 				if dt < 0.5 then
-					SOUND:PlayOnce( THEME:GetPathS("", "_harder.ogg") )
 					ChartUpdater.IncreaseDifficulty(event.PlayerNumber)
 					lastMenuDownPressTime = 0
 				end
