@@ -140,7 +140,7 @@ t.Handler = function(event)
 	if isSortMenuVisible then
 		if event.type ~= "InputEventType_Release" then
 			if GAMESTATE:IsSideJoined(event.PlayerNumber) and event.PlayerNumber == PlayerControllingSort then
-				if event.type ~= "InputEventType_Release" and event.type == "InputEventType_FirstPress" then
+				if event.type == "InputEventType_FirstPress" then
 					if event.GameButton == "Select" or event.GameButton == "Back" then
 						if IsSortMenuInputToggled == false then
 							if SortMenuNeedsUpdating == true then
@@ -158,124 +158,136 @@ t.Handler = function(event)
 					end
 				end
 				if event.GameButton == "Start" then
-					-- main sorts/filters
-					if DDSortMenuCursorPosition < 9 then
-						MESSAGEMAN:Broadcast("UpdateCursorColor")
-					end
-					-- GS pack filter/toggle
-					if DDSortMenuCursorPosition == 9 then
-						SortMenuNeedsUpdating = true
-					end	
-					
-					-- Favorites filter/toggle
-					--[[if DDSortMenuCursorPosition == 10 then
-						SortMenuNeedsUpdating = true
-					end	--]]
-					-- 
-					-- Reset the sorts/prefrences
-					if DDSortMenuCursorPosition == 10 then
-						SongSearchWheelNeedsResetting = false
-						----- Default preference values
-						local DefaultMainSort = 1
-						local DefaultSubSort = 2
-						local DefaultLowerDifficulty = 0
-						local DefaultUpperDifficulty = 0
-						local DefaultLowerBPM = 49
-						local DefaultUpperBPM = 49
-						local DefaultLowerLength = 0
-						local DefaultUpperLength = 0
-						local DefaultGroovestats = 'No'
-
-						if 
-						GetMainSortPreference() ~= DefaultMainSort or
-						GetSubSortPreference() ~= DefaultSubSort or
-						GetLowerDifficultyFilter() ~= DefaultLowerDifficulty or
-						GetUpperDifficultyFilter() ~= DefaultUpperDifficulty or
-						GetLowerBPMFilter() ~= DefaultLowerBPM or
-						GetUpperBPMFilter() ~= DefaultUpperBPM or
-						GetLowerLengthFilter() ~= DefaultLowerLength or
-						GetUpperLengthFilter() ~= DefaultUpperLength or
-						GetGroovestatsFilter() ~= DefaultGroovestats then
-							SetMainSortPreference(DefaultMainSort)
-							SetSubSortPreference(DefaultSubSort)
-							SetLowerDifficultyFilter(DefaultLowerDifficulty)
-							SetUpperDifficultyFilter(DefaultUpperDifficulty)
-							SetLowerBPMFilter(DefaultLowerBPM)
-							SetUpperBPMFilter(DefaultUpperBPM)
-							SetLowerLengthFilter(DefaultLowerLength)
-							SetUpperLengthFilter(DefaultUpperLength)
-							SetGroovestatsFilter(DefaultGroovestats)
+					if event.type == "InputEventType_FirstPress" then
+						-- main sorts/filters
+						if DDSortMenuCursorPosition < 9 then
+							MESSAGEMAN:Broadcast("UpdateCursorColor")
 						end
-						MESSAGEMAN:Broadcast("ReloadSSMDD")
-					end
-					-- Song search (if enabled, else it's switch style)
-					if DDSortMenuCursorPosition == 11 then
-						if ThemePrefs.Get("AllowSongSearch") then
-							MESSAGEMAN:Broadcast("SongSearchSSMDD")
-						else
-							local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
-							if current_style == "StyleType_OnePlayerOneSide" then
-								SetLastStyle("Double")
-								GAMESTATE:SetCurrentStyle("Double")
-							else
-								SetLastStyle("Single")
-								GAMESTATE:SetCurrentStyle("Single")
-							end
-							SongSearchWheelNeedsResetting = false
-							MESSAGEMAN:Broadcast("ReloadSSMDD")
-						end
-					end
-					-- Switch between single/double (or leaderboards if song search is off, or test input if both are off)
-					if DDSortMenuCursorPosition == 12 then
-						if ThemePrefs.Get("AllowSongSearch") then
-							local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
-							if current_style == "StyleType_OnePlayerOneSide" then
-								SetLastStyle("Double")
-								GAMESTATE:SetCurrentStyle("Double")
-							else
-								SetLastStyle("Single")
-								GAMESTATE:SetCurrentStyle("Single")
-							end
-							SongSearchWheelNeedsResetting = false
-							MESSAGEMAN:Broadcast("ReloadSSMDD")
-						else
-							if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-								local curSong=GAMESTATE:GetCurrentSong()
-								if not curSong then
-									isSortMenuVisible = false
-									InputMenuHasFocus = true
-									MESSAGEMAN:Broadcast("ShowTestInput")
-									MESSAGEMAN:Broadcast("ToggleSortMenu")
-								else
-									LeadboardHasFocus = true
-									isSortMenuVisible = false
-									MESSAGEMAN:Broadcast("ToggleSortMenu")
-									MESSAGEMAN:Broadcast("ShowLeaderboard")
-								end
-							else
-								isSortMenuVisible = false
-								InputMenuHasFocus = true
-								MESSAGEMAN:Broadcast("ShowTestInput")
-								MESSAGEMAN:Broadcast("ToggleSortMenu")
-							end
-						end
+						-- GS pack filter/toggle
+						if DDSortMenuCursorPosition == 9 then
+							SortMenuNeedsUpdating = true
+						end	
 						
-					end
-					-- GS/RPG Leaderboards if GS Launcher is running (otherwise test input)
-					if DDSortMenuCursorPosition == 13 then
-						if ThemePrefs.Get("AllowSongSearch") then
-							if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-								local curSong=GAMESTATE:GetCurrentSong()
-								if not curSong then
+						-- Favorites filter/toggle
+						--[[if DDSortMenuCursorPosition == 10 then
+							SortMenuNeedsUpdating = true
+						end	--]]
+						-- 
+						-- Reset the sorts/prefrences
+						if DDSortMenuCursorPosition == 10 then
+							----- Default preference values
+							local DefaultMainSort = 1
+							local DefaultSubSort = 2
+							local DefaultLowerDifficulty = 0
+							local DefaultUpperDifficulty = 0
+							local DefaultLowerBPM = 49
+							local DefaultUpperBPM = 49
+							local DefaultLowerLength = 0
+							local DefaultUpperLength = 0
+							local DefaultGroovestats = 'No'
+
+							if 
+							SongSearchWheelNeedsResetting == true or
+							SortMenuNeedsUpdating == true or
+							GetMainSortPreference() ~= DefaultMainSort or
+							GetSubSortPreference() ~= DefaultSubSort or
+							GetLowerDifficultyFilter() ~= DefaultLowerDifficulty or
+							GetUpperDifficultyFilter() ~= DefaultUpperDifficulty or
+							GetLowerBPMFilter() ~= DefaultLowerBPM or
+							GetUpperBPMFilter() ~= DefaultUpperBPM or
+							GetLowerLengthFilter() ~= DefaultLowerLength or
+							GetUpperLengthFilter() ~= DefaultUpperLength or
+							GetGroovestatsFilter() ~= DefaultGroovestats then
+								SetMainSortPreference(DefaultMainSort)
+								SetSubSortPreference(DefaultSubSort)
+								SetLowerDifficultyFilter(DefaultLowerDifficulty)
+								SetUpperDifficultyFilter(DefaultUpperDifficulty)
+								SetLowerBPMFilter(DefaultLowerBPM)
+								SetUpperBPMFilter(DefaultUpperBPM)
+								SetLowerLengthFilter(DefaultLowerLength)
+								SetUpperLengthFilter(DefaultUpperLength)
+								SetGroovestatsFilter(DefaultGroovestats)
+								SongSearchWheelNeedsResetting = false
+								SortMenuNeedsUpdating = false
+								MESSAGEMAN:Broadcast("ReloadSSMDD")
+							else
+								SM("Nothing to reset!")
+							end
+						end
+						-- Song search (if enabled, else it's switch style)
+						if DDSortMenuCursorPosition == 11 then
+							if ThemePrefs.Get("AllowSongSearch") then
+								MESSAGEMAN:Broadcast("SongSearchSSMDD")
+							else
+								local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
+								if current_style == "StyleType_OnePlayerOneSide" then
+									SetLastStyle("Double")
+									GAMESTATE:SetCurrentStyle("Double")
+								else
+									SetLastStyle("Single")
+									GAMESTATE:SetCurrentStyle("Single")
+								end
+								SongSearchWheelNeedsResetting = false
+								MESSAGEMAN:Broadcast("ReloadSSMDD")
+							end
+						end
+						-- Switch between single/double (or leaderboards if song search is off, or test input if both are off)
+						if DDSortMenuCursorPosition == 12 then
+							if ThemePrefs.Get("AllowSongSearch") then
+								local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
+								if current_style == "StyleType_OnePlayerOneSide" then
+									SetLastStyle("Double")
+									GAMESTATE:SetCurrentStyle("Double")
+								else
+									SetLastStyle("Single")
+									GAMESTATE:SetCurrentStyle("Single")
+								end
+								SongSearchWheelNeedsResetting = false
+								MESSAGEMAN:Broadcast("ReloadSSMDD")
+							else
+								if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+									local curSong=GAMESTATE:GetCurrentSong()
+									if not curSong then
+										isSortMenuVisible = false
+										InputMenuHasFocus = true
+										MESSAGEMAN:Broadcast("ShowTestInput")
+										MESSAGEMAN:Broadcast("ToggleSortMenu")
+									else
+										LeadboardHasFocus = true
+										isSortMenuVisible = false
+										MESSAGEMAN:Broadcast("ToggleSortMenu")
+										MESSAGEMAN:Broadcast("ShowLeaderboard")
+									end
+								else
 									isSortMenuVisible = false
 									InputMenuHasFocus = true
 									MESSAGEMAN:Broadcast("ShowTestInput")
 									MESSAGEMAN:Broadcast("ToggleSortMenu")
+								end
+							end
+							
+						end
+						-- GS/RPG Leaderboards if GS Launcher is running (otherwise test input)
+						if DDSortMenuCursorPosition == 13 then
+							if ThemePrefs.Get("AllowSongSearch") then
+								if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+									local curSong=GAMESTATE:GetCurrentSong()
+									if not curSong then
+										isSortMenuVisible = false
+										InputMenuHasFocus = true
+										MESSAGEMAN:Broadcast("ShowTestInput")
+										MESSAGEMAN:Broadcast("ToggleSortMenu")
+									else
+										LeadboardHasFocus = true
+										isSortMenuVisible = false
+										MESSAGEMAN:Broadcast("ToggleSortMenu")
+										MESSAGEMAN:Broadcast("ShowLeaderboard")
+									end
 								else
-									LeadboardHasFocus = true
 									isSortMenuVisible = false
+									InputMenuHasFocus = true
+									MESSAGEMAN:Broadcast("ShowTestInput")
 									MESSAGEMAN:Broadcast("ToggleSortMenu")
-									MESSAGEMAN:Broadcast("ShowLeaderboard")
 								end
 							else
 								isSortMenuVisible = false
@@ -283,19 +295,14 @@ t.Handler = function(event)
 								MESSAGEMAN:Broadcast("ShowTestInput")
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
 							end
-						else
+						end
+						-- Test Input
+						if DDSortMenuCursorPosition == 14 then
 							isSortMenuVisible = false
 							InputMenuHasFocus = true
 							MESSAGEMAN:Broadcast("ShowTestInput")
 							MESSAGEMAN:Broadcast("ToggleSortMenu")
 						end
-					end
-					-- Test Input
-					if DDSortMenuCursorPosition == 14 then
-						isSortMenuVisible = false
-						InputMenuHasFocus = true
-						MESSAGEMAN:Broadcast("ShowTestInput")
-						MESSAGEMAN:Broadcast("ToggleSortMenu")
 					end
 				end
 				
@@ -311,17 +318,17 @@ t.Handler = function(event)
 				end
 				
 				if IsSortMenuInputToggled == true then
-					if event.GameButton == "Start" then
+					if event.GameButton == "Start" and event.type == "InputEventType_FirstPress" and event.type ~= "InputEventType_Release" then
 						MESSAGEMAN:Broadcast("SetSortMenuTopStats")
 						MESSAGEMAN:Broadcast("UpdateCursorColor")
 					end
 				end
 						if IsSortMenuInputToggled == true then
-							if event.GameButton == "Start" then
+							if event.GameButton == "Start" and event.type == "InputEventType_FirstPress" and event.type ~= "InputEventType_Release" then
 								MESSAGEMAN:Broadcast("SortMenuOptionSelected")
 								SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
 							end
-						elseif event.GameButton == "Start" then
+						elseif event.GameButton == "Start" and event.type == "InputEventType_FirstPress" and event.type ~= "InputEventType_Release" then
 							MESSAGEMAN:Broadcast("SortMenuOptionSelected")
 							SOUND:PlayOnce( THEME:GetPathS("common", "start.ogg") )
 						end
@@ -451,26 +458,28 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		--------------------------------------------------------------
 		-- proceed to the next wheel
 		if event.GameButton == "Start" then
-			if didSelectSong then
-				SCREENMAN:SetNewScreen("ScreenPlayerOptions")
-				return false
-			end
+			if event.type == "InputEventType_FirstPress" then
+				if didSelectSong then
+					SCREENMAN:SetNewScreen("ScreenPlayerOptions")
+					return false
+				end
 
-			if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-				CloseCurrentFolder()
-				return false
-			end
+				if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
+					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+					CloseCurrentFolder()
+					return false
+				end
 
-			if t.WheelWithFocus == GroupWheel then
-				SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-			end
+				if t.WheelWithFocus == GroupWheel then
+					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+				end
 
-			t.WheelWithFocus.container:queuecommand("Start")
-			SwitchInputFocus(event.GameButton)
+				t.WheelWithFocus.container:queuecommand("Start")
+				SwitchInputFocus(event.GameButton)
 
-			if t.WheelWithFocus.container then
-				t.WheelWithFocus.container:queuecommand("Unhide")
+				if t.WheelWithFocus.container then
+					t.WheelWithFocus.container:queuecommand("Unhide")
+				end
 			end
 		elseif didSelectSong then
 			return false
