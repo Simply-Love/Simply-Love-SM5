@@ -43,7 +43,7 @@
 
 --    x: The x position of the loading spinner.
 --    y: The y position of the loading spinner.
-RequestResponseActor = function(name, timeout, x, y)
+RequestResponseActor = function(name, timeout, x, y, zoom)
 	-- Sanitize the timeout value.
 	local timeout = clamp(timeout, 1.0, 59.0)
 	local path_prefix = "/Save/GrooveStats/"
@@ -55,6 +55,7 @@ RequestResponseActor = function(name, timeout, x, y)
 			self.args = nil
 			self.callback = nil
 			self:xy(x, y)
+			self:zoom(zoom)
 		end,
 		WaitCommand=function(self)
 			local Reset = function(self)

@@ -419,6 +419,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		if event.GameButton == "Start" then
 			GAMESTATE:JoinPlayer( event.PlayerNumber )
 			Players = GAMESTATE:GetHumanPlayers()
+			MESSAGEMAN:Broadcast("ReloadSSMDD")
 		end
 		return false
 	end

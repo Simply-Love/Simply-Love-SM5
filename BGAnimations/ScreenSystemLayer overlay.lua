@@ -208,7 +208,7 @@ end
 
 LoadModules()
 
-t[#t+1] = RequestResponseActor("PingLauncher", 10, 0, 0)..{
+t[#t+1] = RequestResponseActor("PingLauncher", 10, 0, 0, 1)..{
 	-- OnCommand doesn't work in ScreenSystemLayer
 	InitCommand=function(self)
 		MESSAGEMAN:Broadcast("PingLauncher", {
@@ -373,7 +373,7 @@ t[#t+1] = Def.ActorFrame{
 		ResetCommand=function(self) self:settext("") end
 	},
 
-	RequestResponseActor("NewSession", 10, 0, 0)..{
+	RequestResponseActor("NewSession", 10, 0, 0, 1)..{
 		NewSessionRequestMessageCommand=function(self)
 			MESSAGEMAN:Broadcast("NewSession", {
 					data={action="groovestats/new-session", ChartHashVersion=SL.GrooveStats.ChartHashVersion},

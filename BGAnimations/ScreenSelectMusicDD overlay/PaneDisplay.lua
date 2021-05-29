@@ -10,6 +10,46 @@ local pane_height = 48
 
 local text_zoom = IsUsingWideScreen() and WideScale(0.8, 0.9) or 0.9
 
+local CirclePositionX
+local CirclePositionY
+
+-- Set the position of the loading circle's X position
+if nsj == 2 then
+	if IsUsingWideScreen() then
+		CirclePositionX = SCREEN_CENTER_X
+	else
+		CirclePositionX = SCREEN_LEFT + 150
+	end
+elseif GAMESTATE:IsPlayerEnabled(0) then 
+	if IsUsingWideScreen() then
+		CirclePositionX = WideScale(SCREEN_LEFT + 155, SCREEN_LEFT + 245)
+	else
+		CirclePositionX = SCREEN_LEFT + 260
+	end
+else
+	if IsUsingWideScreen() then
+		CirclePositionX = WideScale(SCREEN_RIGHT - 6,SCREEN_RIGHT - 20)
+	else
+		CirclePositionX = SCREEN_LEFT + 260
+	end
+end
+
+-- Set the position of the loading circle's Y position
+if nsj == 2 then
+	if IsUsingWideScreen() then
+		CirclePositionY = SCREEN_CENTER_Y - 85
+	else
+		CirclePositionY = SCREEN_CENTER_Y - 83
+	end
+else
+	if IsUsingWideScreen() then
+		CirclePositionY = SCREEN_BOTTOM - 134
+	else
+		CirclePositionY = SCREEN_BOTTOM - 134
+	end
+end
+
+
 -- -----------------------------------------------------------------------
 -- Convenience function to return the SongOrCourse and StepsOrTrail for a
 -- for a player.
@@ -224,59 +264,6 @@ local PaneItems = {
 
 -- -----------------------------------------------------------------------
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
-
-af[#af+1] = RequestResponseActor("GetScores", 10, SCREEN_CENTER_X, SCREEN_CENTER_Y - 85)..{
-	OnCommand=function(self)
-		-- Create variables for both players, even if they're not currently active.
-		self.IsParsing = {false, false}
-	end,
-	-- Broadcasted from ./PerPlayer/DensityGraph.lua
-	P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,
-	P2ChartParsingMessageCommand=function(self)	self.IsParsing[2] = true end,
-	P1ChartParsedMessageCommand=function(self)
-		self.IsParsing[1] = false
-		self:queuecommand("ChartParsed")
-	end,
-	P2ChartParsedMessageCommand=function(self)
-		self.IsParsing[2] = false
-		self:queuecommand("ChartParsed")
-	end,
-	ChartParsedCommand=function(self)
-		if not IsServiceAllowed(SL.GrooveStats.GetScores) then return end
-
-		-- Make sure we're still not parsing either chart.
-		if self.IsParsing[1] or self.IsParsing[2] then return end
-
-		-- This makes sure that the Hash in the ChartInfo cache exists.
-		local sendRequest = false
-		local data = {
-			action="groovestats/player-scores",
-		}
-
-		for i=1,2 do
-			local pn = "P"..i
-			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
-				data["player"..i] = {
-					chartHash=SL[pn].Streams.Hash,
-					apiKey=SL[pn].ApiKey
-				}
-				local loadingText = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"):GetChild("PaneDisplayP"..i):GetChild("Loading")
-				loadingText:visible(true)
-				loadingText:settext("Loading ...")
-				sendRequest = true
-			end
-		end
-
-		-- Only send the request if it's applicable.
-		if sendRequest then
-			MESSAGEMAN:Broadcast("GetScores", {
-				data=data,
-				args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"),
-				callback=GetScoresRequestProcessor
-			})
-		end
-	end
-}
 
 for player in ivalues(PlayerNumber) do
 	local pn = ToEnumShortString(player)
@@ -611,5 +598,58 @@ for player in ivalues(PlayerNumber) do
 		
 	end
 end
+
+af[#af+1] = RequestResponseActor("GetScores", 10, CirclePositionX, CirclePositionY, nsj == 2 and 1 or 0.75)..{
+	OnCommand=function(self)
+		-- Create variables for both players, even if they're not currently active.
+		self.IsParsing = {false, false}
+	end,
+	-- Broadcasted from ./PerPlayer/DensityGraph.lua
+	P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,
+	P2ChartParsingMessageCommand=function(self)	self.IsParsing[2] = true end,
+	P1ChartParsedMessageCommand=function(self)
+		self.IsParsing[1] = false
+		self:queuecommand("ChartParsed")
+	end,
+	P2ChartParsedMessageCommand=function(self)
+		self.IsParsing[2] = false
+		self:queuecommand("ChartParsed")
+	end,
+	ChartParsedCommand=function(self)
+		if not IsServiceAllowed(SL.GrooveStats.GetScores) then return end
+
+		-- Make sure we're still not parsing either chart.
+		if self.IsParsing[1] or self.IsParsing[2] then return end
+
+		-- This makes sure that the Hash in the ChartInfo cache exists.
+		local sendRequest = false
+		local data = {
+			action="groovestats/player-scores",
+		}
+
+		for i=1,2 do
+			local pn = "P"..i
+			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
+				data["player"..i] = {
+					chartHash=SL[pn].Streams.Hash,
+					apiKey=SL[pn].ApiKey
+				}
+				local loadingText = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"):GetChild("PaneDisplayP"..i):GetChild("Loading")
+				loadingText:visible(true)
+				loadingText:settext("Loading ...")
+				sendRequest = true
+			end
+		end
+
+		-- Only send the request if it's applicable.
+		if sendRequest then
+			MESSAGEMAN:Broadcast("GetScores", {
+				data=data,
+				args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"),
+				callback=GetScoresRequestProcessor
+			})
+		end
+	end
+}
 
 return af
