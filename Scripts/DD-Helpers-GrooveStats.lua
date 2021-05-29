@@ -126,7 +126,11 @@ RequestResponseActor = function(name, timeout, x, y)
 				self:visible(false)
 			end,
 			UpdateSpinnerCommand=function(self)
-				self:visible(true)
+				if SL.GrooveStats.Launcher then
+					self:visible(true)
+				else
+					self:visible(false)
+				end
 			end,
 			Def.Sprite{
 				Texture=THEME:GetPathG("", "LoadingSpinner 10x3.png"),
