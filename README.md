@@ -1,21 +1,24 @@
-# Digital Dance v1.0.1
+# Digital Dance v1.0.2
 Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
 Also thanks to Box for help getting the new Song Wheel in it's current state!
 Without them this update wouldn't be nearly as awesome~
 
 
-# ---------------- Differences from 1.0.0/1.0.1 ----------------
-- Fixed major bug with song search that let you not be able to play the game.
+# ------------ Differences from 1.0.0/1.0.1 ------------
+- Fixed major bug with song search that made unable to play the game.
+- Fixed major bug with the fail script [that could potentially fail you](https://www.youtube.com/watch?v=ikKGLurlaZU) if the song ended on the last beat of a measure.
 - Added a reset for Sorts/Filters in the sort menu.
-- Closing the "folder" of a song search will now reset the wheel back to normal sort.
-- Added loading circle for GS related UI when doing API calls.
+- Closing the "folder" in a song search will now reset the wheel back to normal sort.
+- Added a loading circle for GS related UI when doing API calls.
 - Fix for the GS intergration/hash generation.
 - Fixed some sort menu input bugs
 - Fixed some chart parser/measure counter bugs.
+- Added better song tracking for the music wheel. (This lets the music wheel go back to the correct song after updating sort/filters)
+- Updated the look of the Leaderboards menu. (Located in the sort menu.)
 - Other minor bug fixes.
 
 
-# ---------------- GrooveStats Integration ----------------
+# -------------- GrooveStats Integration --------------
 Rivals, Scores, Leaderboards, Auto-Uploading of scores, it's all here! Please [watch the video](https://www.youtube.com/watch?v=8yMzp7xMQq0) and refer the [GrooveStats Launcher Guide](https://github.com/GrooveStats/gslauncher#readme) on how to setup the StepMania wrapper program that will get you connected.
 
 First, check and see if you're connected!
@@ -32,7 +35,7 @@ Want to see more scores? Open the sort menu and select the "Leaderboard" option!
 
 Passed a new song? Got a new score? Your scores will be automatically uploaded to GrooveStats! Note that we do not upload failed scores and that those still need to be uploaded manually (either through the QR code or the web portal).
 
-# ---------------- New Song Wheel and Sort Menu ----------------
+# ------------- New Song Wheel and Sort Menu -------------
 
 I started working on this song wheel way back in like 2018? and it's based of Casual Mode in Simply Love (Thanks quietly-turning <3)
 I ended up giving up because it was well out of my abilities, but after picking it back up earlier this year I was determined to finish it. If it wasn't for Box though I don't think this would have ever seen the light of day. He helped me so much with a lot of sorting/filtering logic and I could not have done it without him. I learned a lot about coding and also how terrible Stepmania is while doing this. I definitely still have a lot more to learn too lol.
@@ -92,10 +95,11 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 
 # ---------------- TO DO ----------------
 - Make the Sort Menu accessible to people with 3 button navigation.
+- Add back player grades on the music wheel. (I know I want these back badly too lol)
 - Maybe add more player stats (highest difficulty passed?)
 - Add more sorts/filters?
 - Add "Favorites" and/or tags for songs/groups.
-- Add a hashcache so I can do sorts like NPS.
+- Create a hashcache so I can do sorts like NPS.
 - Have the Groovestats filter use chart hash to filter rather than by pack directory.
 - I really want to add a chart preview. This might be possible with HashCache, but we'll see in the future I guess.
-- Clean up my code. It's better now than it was in the last version, but could be better.
+- Clean up my code, it could be better.
