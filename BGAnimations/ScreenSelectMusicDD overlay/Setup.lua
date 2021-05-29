@@ -503,7 +503,16 @@ local GetDefaultSong = function(groups)
 	end
 
 	local lastSong = DDStats.GetStat(playerNum, 'LastSong')
-	if lastSong ~= nil then
+	
+	if LastSeenSong ~= nil then
+		for group in ivalues(groups) do
+			for song in ivalues(PruneSongsFromGroup(group)) do
+				if song:GetSongDir() == LastSeenSong then
+					return song
+				end
+			end
+		end
+	elseif lastSong ~= nil then
 		for group in ivalues(groups) do
 			for song in ivalues(PruneSongsFromGroup(group)) do
 				if song:GetSongDir() == lastSong then

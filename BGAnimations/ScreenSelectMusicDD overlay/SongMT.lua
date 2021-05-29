@@ -178,7 +178,9 @@ local song_mt = {
 				if self.song ~= "CloseThisFolder" then
 					GAMESTATE:SetCurrentSong(self.song)
 					MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
-
+					if GAMESTATE:GetCurrentSong() ~= nil then
+						LastSeenSong = GAMESTATE:GetCurrentSong():GetSongDir()
+					end
 					-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
@@ -243,6 +245,9 @@ local song_mt = {
 			else
 				-- we are passed in a Song object as info
 				self.song = song
+				if GAMESTATE:GetCurrentSong() ~= nil then
+					LastSeenSong = GAMESTATE:GetCurrentSong():GetSongDir()
+				end
 				Subtitle = self.song:GetDisplaySubTitle()
 				self.title_bmt:settext( self.song:GetDisplayMainTitle() ):maxwidth(300):diffuse(Color.White):horizalign(left):x(-100)
 				self.subtitle_bmt:settext( self.song:GetDisplaySubTitle() ):maxwidth(300):horizalign(left):x(-100)
