@@ -50,12 +50,14 @@ RequestResponseActor = function(name, timeout, x, y, zoom)
 
 	return Def.ActorFrame{
 		InitCommand=function(self)
-			self.request_id = nil
-			self.request_time = nil
-			self.args = nil
-			self.callback = nil
-			self:xy(x, y)
-			self:zoom(zoom)
+			if not  GAMESTATE:IsCourseMode() then
+				self.request_id = nil
+				self.request_time = nil
+				self.args = nil
+				self.callback = nil
+				self:xy(x, y)
+				self:zoom(zoom)
+			else end
 		end,
 		WaitCommand=function(self)
 			local Reset = function(self)
