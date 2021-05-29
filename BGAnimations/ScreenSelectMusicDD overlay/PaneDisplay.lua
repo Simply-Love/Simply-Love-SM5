@@ -279,8 +279,9 @@ for player in ivalues(PlayerNumber) do
 			self:y(IsUsingWideScreen() and 0 or 199)
 			self:align(0,IsUsingWideScreen() and 0 or 0)
 			if IsUsingWideScreen() then
-				elseif nsj == 1 then
+				if nsj == 1 then
 					self:align(0,0)
+				end
 			end
 			
 		elseif player == PLAYER_2 then
