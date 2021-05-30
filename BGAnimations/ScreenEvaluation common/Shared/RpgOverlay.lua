@@ -92,12 +92,12 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 	local paneFunctions = {}
 
 	if rpgData["result"] == "score-added" then
-		score = pss:GetPercentDancePoints()
+		score = pss:GetPercentDancePoints() * 100
 		scoreDelta = score
 		rate = SL.Global.ActiveModifiers.MusicRate or 1.0
 		rateDelta = rate
 	elseif rpgData["result"] == "improved" or rpgData["result"] == "score-not-improved" then
-		score = pss:GetPercentDancePoints()
+		score = pss:GetPercentDancePoints() * 100
 		scoreDelta = rpgData["scoreDelta"] and rpgData["scoreDelta"]/100.0 or 0.0
 		rate = SL.Global.ActiveModifiers.MusicRate or 1.0
 		rateDelta = rpgData["rateDelta"] and rpgData["rateDelta"]/100.0 or 0.0
