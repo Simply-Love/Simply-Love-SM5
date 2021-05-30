@@ -68,8 +68,12 @@ RequestResponseActor = function(name, timeout, x, y, zoom)
 				self:GetChild("Spinner"):visible(false)
 			end
 			local now = GetTimeSinceStart()
-			-- Tell the spinner how much remaining time there is.
-			self:playcommand("UpdateSpinner", {time=timeout - (now - self.request_time)})
+			local remaining_time = timeout - (now - self.request_time)
+			-- Only display the spinner after we've waiting for some amount of time.
+			if self.request_id ~= "ping" then
+				-- Tell the spinner how much remaining time there is.
+				self:playcommand("UpdateSpinner", {time=remaining_time})
+			end
 			
 			-- We're waiting on a response.
 			if self.request_id ~= nil then
@@ -85,7 +89,7 @@ RequestResponseActor = function(name, timeout, x, y, zoom)
 					f:Close()
 					Reset(self)
 				-- Have we timed out?
-				elseif now - self.request_time > timeout then
+				elseif remaining_time < 0 then
 					self.callback(nil, self.args)
 					Reset(self)
 				end
@@ -118,6 +122,8 @@ RequestResponseActor = function(name, timeout, x, y, zoom)
 				self.request_time = GetTimeSinceStart()
 				self.args = params.args
 				self.callback = params.callback
+				
+				self:GetChild("Spinner"):visible(false)
 				self:sleep(0.1):queuecommand('Wait')
 			end
 			f:destroy()
@@ -145,6 +151,12 @@ RequestResponseActor = function(name, timeout, x, y, zoom)
 			LoadFont("Common Normal")..{
 				InitCommand=function(self) self:zoom(0.9) end,
 				UpdateSpinnerCommand=function(self, params)
+					-- Only display the countdown after we've waiting for some amount of time.
+					if timeout - params.time > 2 then
+						self:visible(true)
+					else
+						self:visible(false)
+					end
 					if params.time > 1 then
 						self:settext(math.floor(params.time))
 					end

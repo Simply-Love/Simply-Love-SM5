@@ -1,6 +1,4 @@
---- Here we will do all the heavy lifting for the sorts/filters I think?
---- At the very least this reloads the songwheel once everything has been set.
-
+--- Reload the music wheel whenever the song wheel has been updated.
 local t = Def.ActorFrame {
 	InitCommand=function(self)
 		self:draworder(105)
