@@ -41,6 +41,12 @@ local function GetStartingDifficultyIndex(playerNumber)
 	return 5
 end
 
+local function SetChart(playerNum, steps)
+	curDifficultyIndices[playerNum] = difficultyToIndex[steps:GetDifficulty()]
+	GAMESTATE:SetCurrentSteps(playerNum, steps)
+	MESSAGEMAN:Broadcast('CurrentStepsChanged', {playerNum=playerNum, steps=steps})
+end
+
 local function UpdateChart(playerNum, difficultyChange)
 	local song = GAMESTATE:GetCurrentSong()
 	if song == nil then
@@ -77,8 +83,7 @@ local function UpdateChart(playerNum, difficultyChange)
 		end
 
 		if matchingSteps ~= nil then
-			curDifficultyIndices[playerNum] = difficultyToIndex[matchingSteps:GetDifficulty()]
-			GAMESTATE:SetCurrentSteps(playerNum, matchingSteps)
+			SetChart(playerNum, matchingSteps)
 			return
 		end
 	end
@@ -112,7 +117,6 @@ local function UpdateChart(playerNum, difficultyChange)
 		if isValid then
 			if selectedSteps == nil then
 				selectedSteps = steps
-				curDifficultyIndices[playerNum] = stepsDifficultyIndex
 			else
 				local selectedDifficultyIndex = difficultyToIndex[selectedSteps:GetDifficulty()]
 				local selectedDifference = math.abs(selectedDifficultyIndex-oldDifficultyIndex)
@@ -120,7 +124,6 @@ local function UpdateChart(playerNum, difficultyChange)
 
 				if stepsDifference < selectedDifference then
 					selectedSteps = steps
-					curDifficultyIndices[playerNum] = stepsDifficultyIndex
 				end
 			end
 		end
@@ -132,7 +135,7 @@ local function UpdateChart(playerNum, difficultyChange)
 		elseif HarderDifficulty then
 			SOUND:PlayOnce( THEME:GetPathS("", "_harder.ogg") )
 		end
-		GAMESTATE:SetCurrentSteps(playerNum, selectedSteps)
+		SetChart(playerNum, selectedSteps)
 	end
 end
 

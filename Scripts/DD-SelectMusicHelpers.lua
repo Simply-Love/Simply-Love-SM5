@@ -111,21 +111,24 @@ end
 
 --- Returns the grade for a given song and chart or nil if there isn't a high score.
 --- @param player Enum
---- @param songParam Song
---- @param chartParam Steps
+--- @param song Song
+--- @param chart Steps
 --- @param rateParam boolean
-function GetTopGrade(player, songParam, chartParam)
-	local song = GAMESTATE:GetCurrentSong()
-	local chart = GAMESTATE:GetCurrentSteps(player)
-	local grade
+function GetTopGrade(player, song, chart)
+	local grade = nil
 	local pn = ToEnumShortString(player)
 	
 	if song then
-		local score = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()[1]
-		if score then
-			grade = score:GetGrade()
-		else
+		local scores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()
+
+		for score in ivalues(scores) do
+			local cur_grade = score:GetGrade()
+			grade = cur_grade
+			if grade ~= 'Grade_Failed' then
+				break
+			end
 		end
+
 		if grade then
 			local converted_grade = Grade:Reverse()[grade]
 			if converted_grade > 17 then converted_grade = 17 end
