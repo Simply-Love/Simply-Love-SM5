@@ -34,7 +34,8 @@ local MachineHighScoreIndexInEventMode = function()
 	local index = -1
 
 	for i, highscore in ipairs(MachineHighScores) do
-		local name
+		local name = pss:GetHighScore():GetName()
+		
 	 	if  pss:GetHighScore():GetScore() == highscore:GetScore()
 		and pss:GetHighScore():GetDate()  == highscore:GetDate()
 		and
@@ -86,7 +87,7 @@ t[#t+1] = LoadFont("Common Bold")..{
 	Name="MachineRecord",
 	InitCommand=function(self) self:xy(-110,-18):diffuse(PlayerColor(player)) end,
 	OnCommand=function(self)
-		if EarnedMachineRecord and HighScoreIndex.Machine+1 then
+		if EarnedMachineRecord and HighScoreIndex.Machine+1 > 0 then
 			self:settext(ScreenString("MachineRecord"):format(HighScoreIndex.Machine+1))
 		end
 	end,

@@ -114,7 +114,7 @@ for i=lower,upper do
 	local score, name, date
 	local numbers = {}
 
-	if HighScores[i] then
+	if HighScores[i] and not args.HideScores then
 		score = FormatPercentScore(HighScores[i]:GetPercentDP())
 		name = HighScores[i]:GetName()
 		date = HighScores[i]:GetDate()
@@ -173,6 +173,5 @@ for i=lower,upper do
 
 	row_index = row_index + 1
 end
-
 
 return af

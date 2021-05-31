@@ -159,12 +159,12 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 					if j == 1 then
 						if data and data[playerStr] then
 							if data[playerStr]["isRanked"] then
-								SetEntryText("", "No Scores", "", entry)
+								SetEntryText("", "No Scores", "", "", entry)
 							else
-								SetEntryText("", "Chart Not Ranked", "", entry)
+								SetEntryText("", "Chart Not Ranked", "", "", entry)
 							end
 						else
-							SetEntryText("", "No Scores", "", entry)
+							SetEntryText("", "No Scores", "", "", entry)
 						end
 					else
 						-- Empty out the remaining rows.

@@ -22,6 +22,13 @@ local SetLeaderboardData = function(rpgAf, rpgData)
 	local entryNum = 1
 	local rivalNum = 1
 	local leaderboard = rpgAf:GetChild("Leaderboard")
+	
+	-- Hide the rival and self highlights.
+	-- They will be unhidden and repositioned as needed below.
+	for i=1,3 do
+		leaderboard:GetChild("Rival"..i):visible(false)
+	end
+	leaderboard:GetChild("Self"):visible(false)
 
 	for gsEntry in ivalues(rpgData["rpgLeaderboard"]) do
 		local entry = leaderboard:GetChild("LeaderboardEntry"..entryNum)

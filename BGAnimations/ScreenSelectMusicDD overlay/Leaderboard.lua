@@ -21,7 +21,9 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 	for i=1,3 do
 		leaderboard:GetChild("Rival"..i):visible(false)
 	end
-
+	
+	leaderboard:GetChild("Self"):visible(false)
+	
 	if leaderboardData then
 		if leaderboardData["Name"] then
 			leaderboard:GetChild("Header"):settext(leaderboardData["Name"])
