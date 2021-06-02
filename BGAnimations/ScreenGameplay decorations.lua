@@ -18,11 +18,23 @@ if not GAMESTATE:IsCourseMode() then
 	local PlayerTwoChart = GAMESTATE:GetCurrentSteps(1)
 	local TotalMinesP1
 	local TotalMinesP2
+	
+	local IsNoMinesP1 = GAMESTATE:GetPlayerState(PLAYER_1):GetPlayerOptions(3):NoMines()
+	local IsNoMinesP2 = GAMESTATE:GetPlayerState(PLAYER_2):GetPlayerOptions(3):NoMines()
+	
 	if GAMESTATE:IsPlayerEnabled(0) then
-		TotalMinesP1 = PlayerOneChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
+		if IsNoMinesP1 then
+			TotalMinesP1 = 0
+		else
+			TotalMinesP1 = PlayerOneChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
+		end
 	end
 	if GAMESTATE:IsPlayerEnabled(1) then
-		TotalMinesP2 = PlayerTwoChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
+		if IsNoMinesP2 then
+			TotalMinesP2 = 0
+		else
+			TotalMinesP2 = PlayerTwoChart:GetRadarValues(playerIndex):GetValue('RadarCategory_Mines')
+		end
 	end
 	
 	local Player1MinesAvoided = 0
@@ -31,7 +43,7 @@ if not GAMESTATE:IsCourseMode() then
 	local function IsSongOver()
 		local P1IsNotDone = 0
 		local P2IsNotDone = 0
-
+		
 		--- this is stupid but #stepmania-moment
 		local statsP1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P1")
 		local statsP2 = STATSMAN:GetCurStageStats():GetPlayerStageStats("P2")
