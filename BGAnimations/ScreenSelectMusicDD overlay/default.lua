@@ -107,7 +107,7 @@ local t = Def.ActorFrame {
 						-- otherwise, run the function to cancel this single song choice
 						Input.CancelSongChoice()
 					end
-					if params.Name == "CloseCurrentFolder" then
+					if params.Name == "CloseCurrentFolder" or params.Name == "CloseCurrentFolder2" then
 						if Input.WheelWithFocus == SongWheel then
 							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 							CloseCurrentFolder()
