@@ -57,6 +57,8 @@ local t = Def.ActorFrame{
 				else
 					SongSearchSSMDD = false
 					SongSearchAnswer = nil
+					SongSearchWheelNeedsResetting = false
+					self:sleep(0.1):queuecommand("ReloadScreen")
 				end
 				
 			end,
