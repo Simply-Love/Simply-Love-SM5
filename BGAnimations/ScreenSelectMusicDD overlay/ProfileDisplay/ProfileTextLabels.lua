@@ -1,6 +1,6 @@
 local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
 local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)
-local profile = PROFILEMAN:GetLocalProfileFromIndex(0)
+
 local nsj = GAMESTATE:GetNumSidesJoined()
 local name1 = PROFILEMAN:GetPlayerName(0)
 local name2 = PROFILEMAN:GetPlayerName(1)
