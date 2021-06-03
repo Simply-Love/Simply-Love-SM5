@@ -111,6 +111,22 @@ local t = Def.ActorFrame {
 							MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 						end
 					end
+					if params.Name == "SortList" or params.Name == "SortList2" then
+						isSortMenuVisible = true
+						SOUND:StopMusic()
+						SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
+						if params.PlayerNumber == 'PlayerNumber_P1' then
+							PlayerControllingSort = 'PlayerNumber_P1' 
+						else
+							PlayerControllingSort = 'PlayerNumber_P2'
+						end
+						if GAMESTATE:GetCurrentSong() ~= nil then
+							DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
+						end
+						MESSAGEMAN:Broadcast("InitializeDDSortMenu")
+						MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
+						MESSAGEMAN:Broadcast("ToggleSortMenu")
+					end
 				end
 			else end
 		end

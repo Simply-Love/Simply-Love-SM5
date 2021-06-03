@@ -1,21 +1,15 @@
-# Digital Dance v1.0.2
+# Digital Dance v1.0.3
 Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
 Also thanks to Box for help getting the new Song Wheel in it's current state!
 Without them this update wouldn't be nearly as awesome~
 
 
-# ------------ Differences from 1.0.0/1.0.1 ------------
-- Fixed major bug with song search that made unable to play the game.
-- Fixed major bug with the fail script [that could potentially fail you](https://www.youtube.com/watch?v=ikKGLurlaZU) if the song ended on the last beat of a measure.
-- Added a reset for Sorts/Filters in the sort menu.
-- Closing the "folder" in a song search will now reset the wheel back to normal sort.
-- Added a loading circle for GS related UI when doing API calls.
-- Fix for the GS intergration/hash generation.
-- Fixed some sort menu input bugs
-- Fixed some chart parser/measure counter bugs.
-- Added better song tracking for the music wheel. (This lets the music wheel go back to the correct song after updating sort/filters)
-- Updated the look of the Leaderboards menu. (Located in the sort menu.)
-- Other minor bug fixes.
+# ------------ Differences from 1.0.2 ------------
+- Music Wheel Grades are back!
+- Menu Up + Menu Down will now close folders on song select. (Up/Down already does this)
+- Left + Right (or Menu-Left + Menu-Right if using dedicated menu buttons) will bring up the Sort Menu now.
+- No Mines will now work with the fail script (it wont fail you now).
+- Some small input bug fixes.
 
 
 # -------------- GrooveStats Integration --------------
@@ -94,8 +88,6 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 - 4:3 aspect ratio has less info displayed on 2 player because of lack of room. (No density graph or profile pane)
 
 # ---------------- TO DO ----------------
-- Make the Sort Menu accessible to people with 3 button navigation.
-- Add back player grades on the music wheel. (I know I want these back badly too lol)
 - Maybe add more player stats (highest difficulty passed?)
 - Add more sorts/filters?
 - Add "Favorites" and/or tags for songs/groups.

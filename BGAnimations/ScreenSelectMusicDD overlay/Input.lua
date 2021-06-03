@@ -3,7 +3,6 @@ local args = ...
 local GroupWheel = args.GroupWheel
 local SongWheel = args.SongWheel
 local nsj = GAMESTATE:GetNumSidesJoined()
-local PlayerControllingSort
 
 local ChartUpdater = LoadActor("./UpdateChart.lua")
 local screen = SCREENMAN:GetTopScreen()
@@ -118,7 +117,6 @@ t.Handler = function(event)
 		return false
 	end
 	
-
 	if isSortMenuVisible == false then
 		if event.type ~= "InputEventType_Release" and event.type == "InputEventType_FirstPress" then
 			if event.GameButton == "Select" then
@@ -448,7 +446,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 			SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
 		end
 		-------------------------------------------------------------
-		if event.GameButton == "Select" then
+		if event.GameButton == "Select" and event.type == "InputEventType_FirstPress"  then
 			if PressStartForOptions == false then
 					isSortMenuVisible = true
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
