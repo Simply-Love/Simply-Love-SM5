@@ -100,9 +100,6 @@ local t = Def.ActorFrame {
 		if LeavingScreenSelectMusicDD == false then
 			if isSortMenuVisible == false then
 				if InputMenuHasFocus == false then
-					if params.Name == "Exit" then
-						SCREENMAN:GetTopScreen():SetNextScreenName( Branch.SSMCancel() ):StartTransitioningScreen("SM_GoToNextScreen")
-					end
 					if params.Name == "CancelSingleSong" then
 						-- otherwise, run the function to cancel this single song choice
 						Input.CancelSongChoice()
@@ -165,6 +162,8 @@ local t = Def.ActorFrame {
 	LoadActor("./TestInput.lua"),
 	-- Handles song search data
 	LoadActor("./SongSearch.lua"),
+	-- For backing out of SSMDD.
+	LoadActor('./EscapeFromEventMode.lua'),
 	-- For transitioning to either gameplay or player options.
 	LoadActor('./OptionsMessage.lua'),
 }

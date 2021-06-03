@@ -385,7 +385,7 @@ t.Handler = function(event)
 		return false
 	end
 	
-	
+	--- Input handler for the GS/RPG leaderboards
 	if LeadboardHasFocus then
 		if not (event and event.PlayerNumber and event.button) then
 			return false
@@ -418,6 +418,10 @@ t.Handler = function(event)
 		return false
 	end
 	
+	-- Disable input if EscapeFromEventMode is active
+	if EscapeFromEventMode then
+		t.enabled = false
+	end
 	
 if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		if not t.AllowLateJoin() then return false end
