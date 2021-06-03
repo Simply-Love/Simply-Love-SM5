@@ -128,7 +128,28 @@ local t = Def.ActorFrame {
 						MESSAGEMAN:Broadcast("ToggleSortMenu")
 					end
 				end
-			else end
+			--- do this to close the sort menu for people using 3 button input
+			else 
+				if params.Name == "SortList" or params.Name == "SortList2" then
+					if IsSortMenuInputToggled == false then
+						if SortMenuNeedsUpdating == true then
+							SortMenuNeedsUpdating = false
+							MESSAGEMAN:Broadcast("ToggleSortMenu")
+							MESSAGEMAN:Broadcast("ReloadSSMDD")
+							isSortMenuVisible = false
+							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+						elseif SortMenuNeedsUpdating == false then
+							isSortMenuVisible = false
+							SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
+							MESSAGEMAN:Broadcast("ToggleSortMenu")
+						end
+					else
+						SOUND:PlayOnce( THEME:GetPathS("common", "invalid.ogg") )
+						MESSAGEMAN:Broadcast("UpdateCursorColor")
+						MESSAGEMAN:Broadcast("ToggleSortMenuMovement")
+					end
+				end
+			end
 		end
 	end,
 
