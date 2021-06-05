@@ -53,8 +53,8 @@ Accessing the Sort Menu is the same as the default sort menu. To update any opti
 
 ![songsearch](https://i.imgur.com/bZ4R32V.png)
 
-If you don't have a keyboard you can just press enter to go back to the music wheel. In the future I will change this to just not show up if you don't have a keyboard, but I want this release to come out asap.
-
+If your setup doesn't have a keyboard you can disable it from appearing in the sort menu in the Operator Menu under "Theme Options".
+You can also refresh the music wheel/undo the song search by either closing the folder of the search or resetting your sorts in the sort menu.
 
 # ---------------- Other Changes ----------------
 
