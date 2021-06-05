@@ -6,7 +6,9 @@ local file = ...
 -- We want the yellow BG to be used on the following screens.
 local yellowSrpg = {
 	["ScreenInit"] = true,
+	["ScreenLogo"] = true,
 	["ScreenTitleMenu"] = true,
+	["ScreenTitleJoin"] = true,
 	["ScreenSelectProfile"] = true,
 	["ScreenAfterSelectProfile"] = true, -- hidden screen
 	["ScreenSelectColor"] = true,
