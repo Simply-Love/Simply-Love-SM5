@@ -9,6 +9,7 @@ Without them this update wouldn't be nearly as awesome~
 - Menu Up + Menu Down will now close folders on song select. (Up/Down already does this)
 - Left + Right (or Menu-Left + Menu-Right if using dedicated menu buttons) will bring up the Sort Menu now.
 - No Mines will now work with the fail script (it wont fail you now).
+- Density Graph will now properly show breaks with look ahead disabled.
 - Some small input bug fixes.
 
 
