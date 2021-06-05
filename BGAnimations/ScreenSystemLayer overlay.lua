@@ -36,7 +36,8 @@ local function CreditsText( player )
 			if screen then
 				bShow = THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" )
 
-				if screen:GetName() == "ScreenTitleMenu" then
+				local screenName = screen:GetName()
+				if screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo" then
 					if ThemePrefs.Get("VisualStyle") == "SRPG5" then
 						textColor = color(SL.SRPG5.TextColor)
 						shadowLength = 0.4
@@ -168,7 +169,8 @@ t[#t+1] = LoadFont("Common Footer")..{
 		end
 
 		local textColor = Color.White
-		if screen ~= nil and screen:GetName() == "ScreenTitleMenu" then
+		local screenName = screen:GetName()
+		if screen ~= nil and (screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo") then
 			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
 				textColor = color(SL.SRPG5.TextColor)
 			end
