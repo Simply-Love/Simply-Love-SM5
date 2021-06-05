@@ -24,6 +24,7 @@ return Def.ActorFrame{
 			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
 				self:diffuse(GetCurrentColor(true))
 			end
+			self:visible(topscreen ~= "ScreenCRTTestPatterns")
 		end,
 		ColorSelectedMessageCommand=function(self)
 			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
