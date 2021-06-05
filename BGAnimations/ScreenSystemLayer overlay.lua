@@ -398,7 +398,7 @@ t[#t+1] = Def.ActorFrame{
 	end,
 	ScreenChangedMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
-		if screen:GetName() == "ScreenTitleMenu" then
+		if screen:GetName() == "ScreenTitleMenu" or screen:GetName() == "ScreenTitleJoin" then
 			self:queuecommand("Reset")
 			self:visible(SL.GrooveStats.Launcher)
 			self:diffusealpha(0):sleep(0.2):linear(0.4):diffusealpha(1)
