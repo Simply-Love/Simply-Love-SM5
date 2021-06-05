@@ -45,9 +45,9 @@ I ended up giving up because it was well out of my abilities, but after picking 
 
 - Song sorts/filters will be remembered between sessions as well. (Profile based)
 
-Currently to access the Sort Menu you have to press the "Select" button (typically the red button on a cab). To update any options all you need to do is select your desired sorts/filters and back out of the sort menu (either by pressing "Select" or "Escape"). It will automatically reload the music wheel with your new sort/filter preferences.
+Accessing the Sort Menu is the same as the default sort menu. To update any options all you need to do is select your desired sorts/filters and back out of the sort menu (either by pressing "Select" or "Escape"). It will automatically reload the music wheel with your new sort/filter preferences.
 
-![sortmenu](https://i.imgur.com/37sNdIj.png)
+![sortmenu](https://i.imgur.com/zxYdwMk.png)
 
 - Added a song search functionality. (In the sort menu)
 
@@ -83,7 +83,7 @@ The image must:
 The aspect ratio can be changed under *Graphics / Sound Options*.
 
 # -- KNOWN ISSUES and general things to note --
-- Sort Menu can only be accessed if you have 4 button navigation on at the moment (aka having a "Select"/Red button)
+- For some people the song search wont update until after leaving the screen and returning. Not sure if a hardware issue or Windows issue?
 - Theme is intended for home use only.
 - I don't expect this to work outside of event mode.
 - 4:3 aspect ratio has less info displayed on 2 player because of lack of room. (No density graph or profile pane)
