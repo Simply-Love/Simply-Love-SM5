@@ -497,10 +497,38 @@ GetJudgmentGraphics = function(mode)
 		end
 	end
 
+	-- Append 5.3 judgments
+	if FILEMAN:DoesFileExist('/Appearance/Judgments/') then
+		local external_files = FILEMAN:GetDirListing('/Appearance/Judgments/')
+
+		-- TODO: Should we filter by looking at "ITG"/"ECFA" instead of the sprite sheet size?
+		local size
+		if mode == 'ITG' then size = "2x6"
+		elseif mode == 'FA+' then size = "2x7"
+		end
+
+		for i,filename in ipairs(external_files) do
+			if string.find(filename, size) ~= nil then
+				judgment_graphics[#judgment_graphics+1] = filename
+			end
+		end
+	end
+
 	-- "None" results in Player judgment.lua returning an empty Def.Actor
 	judgment_graphics[#judgment_graphics+1] = "None"
 
 	return judgment_graphics
+end
+
+GetJudgmentGraphicsPath = function(filename, mode)
+	-- TODO: Putting the THEME:GetPathG() call first causes it to print a loud warning and
+	-- return graphics from the fallback theme, so we're loading the external judgments first.
+	-- Does this make sense?
+	if FILEMAN:DoesFileExist('/Appearance/Judgments/'..filename) then
+		return '/Appearance/Judgments/'..filename
+	else
+		return THEME:GetPathG("", "_judgments/" .. mode .. "/" .. filename)
+	end
 end
 
 GetHoldJudgments = function()

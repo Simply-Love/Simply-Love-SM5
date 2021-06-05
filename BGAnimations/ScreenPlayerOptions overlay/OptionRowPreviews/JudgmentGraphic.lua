@@ -2,7 +2,7 @@ local t = ...
 
 for judgment_filename in ivalues( GetJudgmentGraphics(SL.Global.GameMode) ) do
 	if judgment_filename ~= "None" then
-		t[#t+1] = LoadActor( THEME:GetPathG("", "_judgments/" .. SL.Global.GameMode .. "/" .. judgment_filename) )..{
+		t[#t+1] = LoadActor( GetJudgmentGraphicsPath(judgment_filename, SL.Global.GameMode) )..{
 			Name="JudgmentGraphic_"..StripSpriteHints(judgment_filename),
 			InitCommand=function(self)
 				self:visible(false):animate(false)

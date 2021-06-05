@@ -74,7 +74,7 @@ return Def.ActorFrame{
 				self:Load( THEME:GetPathG("", "_judgments/ITG/Love") )
 
 			else
-				self:Load( THEME:GetPathG("", "_judgments/" .. mode .. "/" .. file_to_load) )
+				self:Load( GetJudgmentGraphicsPath(file_to_load, mode) )
 			end
 		end,
 		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end

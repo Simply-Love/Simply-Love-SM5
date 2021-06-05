@@ -11,7 +11,7 @@ for profile in ivalues(args.profile_data) do
 
 		for dir in ivalues(judgment_dirs) do
 
-			local path = ("/%s/Graphics/_judgments/%s/%s"):format(THEME:GetCurrentThemeDirectory(), dir, profile.judgment)
+			path = GetJudgmentGraphicsPath(profile.judgment, dir)
 			if FILEMAN:DoesFileExist(path) then
 
 				af[#af+1] = Def.Sprite{
