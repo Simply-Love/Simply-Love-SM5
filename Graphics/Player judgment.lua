@@ -51,6 +51,12 @@ return Def.ActorFrame{
 		if sprite:GetNumStates() == 12 then
 			frame = frame * 2
 			if not param.Early then frame = frame + 1 end
+		-- however, OutFox uses sheets with 14 frames for FA+ game mode, with an extra row for Way Off (W6)
+		-- since we don't have this judgment in SL, we need to skip it
+		elseif sprite:GetNumStates() == 14 then
+			if frame == 5 then frame = frame + 1 end
+			frame = frame * 2
+			if not param.Early then frame = frame + 1 end
 		end
 
 		self:playcommand("Reset")
