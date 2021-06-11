@@ -4,9 +4,6 @@ local TransitionTime = args[2]
 local row = args[3]
 local col = args[4]
 
-local CloseFolderTexture = nil
-local NoJacketTexture = nil
-
 local Subtitle
 
 local function update_grade(self)

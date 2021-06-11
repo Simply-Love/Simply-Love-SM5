@@ -1,4 +1,6 @@
 local TextColor = Color.White
+LastSeenSong = nil
+
 
 local SongStats = SONGMAN:GetNumSongs() .. " songs in "
 SongStats = SongStats .. SONGMAN:GetNumSongGroups() .. " groups, "

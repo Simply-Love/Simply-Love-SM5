@@ -46,13 +46,11 @@ if not GAMESTATE:IsCourseMode() then
 	local PlayerOneChart = GAMESTATE:GetCurrentSteps(0)
 	local PlayerTwoChart = GAMESTATE:GetCurrentSteps(1)
 	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		DDStats.SetStat(PLAYER_1, 'LastSong', song:GetSongDir())
 		DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())
 		DDStats.Save(PLAYER_1)
 	end
 
 	if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-		DDStats.SetStat(PLAYER_2, 'LastSong', song:GetSongDir())
 		DDStats.SetStat(PLAYER_2, 'LastDifficulty', PlayerTwoChart:GetDifficulty())
 		DDStats.Save(PLAYER_2)
 	end

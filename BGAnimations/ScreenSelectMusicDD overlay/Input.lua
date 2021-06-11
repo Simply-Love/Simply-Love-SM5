@@ -127,9 +127,6 @@ t.Handler = function(event)
 				end
 				MESSAGEMAN:Broadcast("InitializeDDSortMenu")
 				MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
-				if GAMESTATE:GetCurrentSong() ~= nil then
-					DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
-				end
 			end
 		end
 	end
