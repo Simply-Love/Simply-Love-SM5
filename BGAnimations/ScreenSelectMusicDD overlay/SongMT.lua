@@ -219,7 +219,19 @@ local song_mt = {
 					GAMESTATE:SetCurrentSong(nil)
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 				else
-					GAMESTATE:SetCurrentSong(SONGMAN:GetRandomSong())
+					if GetMainSortPreference() == 1 then
+						-- Only call a random song from within the same group
+						-- TODO: Make this work for all sort types
+						local groupsongs = {}
+						for i in pairs(SONGMAN:GetSongsInGroup(NameOfGroup)) do
+							table.insert(groupsongs, i)
+						end
+						local RandomGroupSong = SONGMAN:GetSongsInGroup(NameOfGroup)[groupsongs[math.random(#groupsongs)]]
+						GAMESTATE:SetCurrentSong(RandomGroupSong)
+					else
+						-- If the main sort is not by group call a random song (for now)
+						GAMESTATE:SetCurrentSong(SONGMAN:GetRandomSong())
+					end
 					MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 					if GAMESTATE:GetCurrentSong() ~= nil then

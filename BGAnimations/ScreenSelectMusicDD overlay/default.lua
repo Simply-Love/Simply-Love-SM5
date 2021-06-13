@@ -48,12 +48,18 @@ local CloseCurrentFolder = function()
 	NameOfGroup = ""
 	return end
 
-	GAMESTATE:SetCurrentSong(nil)
-
-	MESSAGEMAN:Broadcast("SwitchFocusToGroups")
-	Input.WheelWithFocus.container:queuecommand("Hide")
-	Input.WheelWithFocus = GroupWheel
-	Input.WheelWithFocus.container:queuecommand("Unhide")
+	--GAMESTATE:SetCurrentSong(nil)
+	if SongSearchWheelNeedsResetting == true then
+		SongSearchWheelNeedsResetting = false
+		MESSAGEMAN:Broadcast("ReloadSSMDD")
+	else	
+		-- otherwise...
+		MESSAGEMAN:Broadcast("SwitchFocusToGroups")
+		Input.WheelWithFocus.container:queuecommand("Hide")
+		Input.WheelWithFocus = GroupWheel
+		Input.WheelWithFocus.container:queuecommand("Unhide")
+	end
+	
 end
 
 

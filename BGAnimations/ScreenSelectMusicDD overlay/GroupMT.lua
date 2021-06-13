@@ -16,6 +16,7 @@ local switch_to_songs = function(group_name,event)
 	songs[#songs+1] = "Random-Portal"
 	songs[#songs+1] = "CloseThisFolder"
 	SongWheel:set_info_set(songs, index)
+	
 end
 
 local switch_to_songs_from_group = function(group_name,event)

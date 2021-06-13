@@ -1,16 +1,13 @@
-# Digital Dance v1.0.3
+# Digital Dance v1.0.4
 Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
 Also thanks to Box for help getting the new Song Wheel in it's current state!
 Without them this update wouldn't be nearly as awesome~
 
 
-# ------------ Differences from 1.0.2 ------------
-- Music Wheel Grades are back!
-- Menu Up + Menu Down will now close folders on song select. (Up/Down already does this)
-- Left + Right (or Menu-Left + Menu-Right if using dedicated menu buttons) will bring up the Sort Menu now.
-- No Mines will now work with the fail script (it wont fail you now).
-- Density Graph will now properly show breaks with look ahead disabled.
-- Some small input bug fixes.
+# ------------ Differences from 1.0.3 ------------
+- "Random" added to song wheel.
+- Last song played/seen are properly set now.
+- Small bug fixes involving music wheel input.
 
 
 # -------------- GrooveStats Integration --------------
