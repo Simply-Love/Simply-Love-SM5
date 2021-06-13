@@ -40,7 +40,7 @@ af.OptionRowChangedMessageCommand=function(self, params)
 
 end
 
----- set last song played
+---- set last difficulty played
 if not GAMESTATE:IsCourseMode() then
 	local song = GAMESTATE:GetCurrentSong()
 	local PlayerOneChart = GAMESTATE:GetCurrentSteps(0)

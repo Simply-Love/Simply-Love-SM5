@@ -10,7 +10,7 @@ local function update_grade(self)
 	--change the Grade sprite
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local pn = ToEnumShortString(player)
-		if self.song ~= "CloseThisFolder" then
+		if self.song ~= "CloseThisFolder" and self.song ~= "Random-Portal" then
 			local current_difficulty
 			local grade
 			local steps
@@ -120,12 +120,12 @@ local song_mt = {
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75):y(25)
 					end,
 					GainFocusCommand=function(subself)
-						if not self.song == "CloseThisFolder" then
+						if not self.song == "CloseThisFolder" or not self.song == "Random-Portal" then
 							subself:visible(true):maxwidth(315):y(25)
 						end
 					end,
 					LoseFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
+						if self.song == "CloseThisFolder" or self.song == "Random-Portal" then
 							subself:zoom(0.8):y(25)
 						else
 							subself:zoom(0.8):y(25)
@@ -142,14 +142,14 @@ local song_mt = {
 						subself:y(32)
 					end,
 					GainFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
+						if self.song == "CloseThisFolder" or self.song == "Random-Portal" then
 							subself:zoom(0.5)
 						else
 							subself:visible(true)
 						end
 					end,
 					LoseFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
+						if self.song == "CloseThisFolder" or self.song == "Random-Portal" then
 							subself:zoom(0.5)
 						else
 						end
@@ -205,7 +205,7 @@ local song_mt = {
 			end
 
 			if has_focus then
-				if self.song ~= "CloseThisFolder" then
+				if self.song ~= "CloseThisFolder" and self.song ~= "Random-Portal" then
 					GAMESTATE:SetCurrentSong(self.song)
 					MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
 					if GAMESTATE:GetCurrentSong() ~= nil then
@@ -215,9 +215,18 @@ local song_mt = {
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
 					self.container:x(_screen.cx)
-				else
+				elseif self.song == "CloseThisFolder" then
 					GAMESTATE:SetCurrentSong(nil)
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
+				else
+					GAMESTATE:SetCurrentSong(SONGMAN:GetRandomSong())
+					MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
+					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
+					if GAMESTATE:GetCurrentSong() ~= nil then
+						LastSeenSong = GAMESTATE:GetCurrentSong():GetSongDir()
+					end
+					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
+					self.container:x(_screen.cx)
 				end
 				self.container:playcommand("GainFocus")
 				self.container:x(_screen.cx)
@@ -236,13 +245,20 @@ local song_mt = {
 			self.img_path = ""
 			self.img_type = ""
 
-			-- this SongMT was passed the string "CloseThisFolder"
-			-- so this is a special case song metatable item
+			-- this SongMT was passed the string "CloseThisFolder" or "Random-Portal"
+			-- so this is a special case for song metatable items
 			if type(song) == "string" then
-				self.song = song
-				self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):shadowlength(1.1):horizalign(center):valign(0.5):x(0)
-				self.QuadColor:diffuse(color("#363d42"))
-				self.subtitle_bmt:settext("")
+				if self.song == "CloseThisFolder" then
+					self.song = song
+					self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):shadowlength(1.1):horizalign(center):valign(0.5):x(0)
+					self.QuadColor:diffuse(color("#363d42"))
+					self.subtitle_bmt:settext("")
+				else
+					self.song = song
+					self.title_bmt:settext("RANDOM"):diffuse(color("#f70000")):shadowlength(1.1):horizalign(center):valign(0.5):x(0)
+					self.QuadColor:diffuse(color("#000000"))
+					self.subtitle_bmt:settext("")
+				end
 			else
 				-- we are passed in a Song object as info
 				self.song = song
