@@ -27,7 +27,6 @@ local t = Def.ActorFrame{
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 			BannerOfGroup = BannerOfGroup
 			self:visible(true)
-			
 		end,
 
 		LoadActor("default banner")..{
@@ -102,6 +101,33 @@ local t = Def.ActorFrame{
 			OnCommand=function(self)
 				self:settext(("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate"))
 			end
+		}
+	},
+	
+	--- Add text on top of the fallback banner when Main Sort isn't set to Groups.
+	Def.ActorFrame{
+		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(GetMainSortPreference() ~= 1):playcommand("Set") end,
+		CurrentSongChangedMessageCommand=function(self) self:visible(false) end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:visible(GetMainSortPreference() ~= 1):playcommand("Set") end,
+		GroupsHaveChangedMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(GetMainSortPreference() ~= 1):queuecommand("Set") end,
+		
+		LoadFont("Wendy/_wendy white")..{
+			OnCommand=function(self)
+				self:shadowlength(2):zoom(1)
+				self:playcommand("Set")
+			end,
+			SetCommand=function(self)
+				self:stoptweening()
+				self:settext(NameOfGroup)
+				if GetMainSortPreference() == 4 then
+					self:zoom(0.6)
+				elseif GetMainSortPreference() == 5 then
+					self:zoom(0.9)
+				end
+				if NameOfGroup == "#" then
+					self:settext("NUMBER")
+				end
+			end,
 		}
 	}
 }
