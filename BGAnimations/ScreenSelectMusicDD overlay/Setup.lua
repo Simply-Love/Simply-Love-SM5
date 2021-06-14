@@ -227,7 +227,7 @@ local subsort_funcs = {
 ---------------------------------------------------------------------------
 -- provided a group title as a string, prune out songs that don't have valid steps
 -- returns an indexed table of song objects
-local pruned_songs_by_group = {}
+pruned_songs_by_group = {}
 local UpdatePrunedSongs = function()
 	pruned_songs_by_group = {}
 
