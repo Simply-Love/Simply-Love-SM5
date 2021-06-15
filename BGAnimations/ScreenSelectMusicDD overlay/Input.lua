@@ -464,6 +464,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 				end
 
 				if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
+					SOUND:StopMusic()
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 					CloseCurrentFolder()
 					return false

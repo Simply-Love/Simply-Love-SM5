@@ -120,7 +120,7 @@ local song_mt = {
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75):y(25)
 					end,
 					GainFocusCommand=function(subself)
-						if not self.song == "CloseThisFolder" or not self.song == "Random-Portal" then
+						if not self.song == "CloseThisFolder" and not self.song == "Random-Portal" then
 							subself:visible(true):maxwidth(315):y(25)
 						end
 					end,
@@ -213,8 +213,6 @@ local song_mt = {
 					end
 					-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
-					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
-					self.container:x(_screen.cx)
 				elseif self.song == "CloseThisFolder" then
 					GAMESTATE:SetCurrentSong(nil)
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
@@ -228,8 +226,6 @@ local song_mt = {
 					if GAMESTATE:GetCurrentSong() ~= nil then
 						LastSeenSong = GAMESTATE:GetCurrentSong():GetSongDir()
 					end
-					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
-					self.container:x(_screen.cx)
 				end
 				self.container:playcommand("GainFocus")
 				self.container:x(_screen.cx)
