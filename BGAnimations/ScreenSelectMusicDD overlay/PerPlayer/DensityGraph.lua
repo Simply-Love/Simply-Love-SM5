@@ -81,6 +81,7 @@ af[#af+1] = Def.ActorFrame{
 		self:stoptweening()
 		self:queuecommand('Hide')
 	end,
+	SwitchFocusToGroupsMessageCommand=function(self) self:stoptweening():queuecommand('Hide') end,
 	ShowDensityGraphCommand=function(self)
 		self:GetChild("DensityGraph"):visible(false)
 		self:GetChild("NPS"):settext("Peak NPS: ")

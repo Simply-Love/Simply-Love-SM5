@@ -121,6 +121,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- Song Artist (or number of Songs in this Course, if CourseMode)
 	LoadFont("Common Normal")..{
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		InitCommand=function(self) self:zoom(0.8):horizalign(left):xy(IsUsingWideScreen() and -4 or 1,-10):maxwidth(WideScale(225,260)) end,
 		SetCommand=function(self)
 			if GAMESTATE:IsCourseMode() then
@@ -153,6 +154,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- BPM value
 	LoadFont("Common Normal")..{
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		InitCommand=function(self)
 			-- vertical align has to be middle for BPM value in case of split BPMs having a line break
 			self:align(IsUsingWideScreen() and 0 or -0.3, 0.5)
@@ -219,6 +221,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- Song Duration Value
 	LoadFont("Common Normal")..{
+		SwitchFocusToGroupsMessageCommand=function(self) self:settext("") end,
 		InitCommand=function(self) 
 			self
 			:align(IsUsingWideScreen() and 0 or -0.7,0)

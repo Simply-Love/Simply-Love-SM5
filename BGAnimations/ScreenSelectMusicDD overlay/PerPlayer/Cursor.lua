@@ -67,6 +67,7 @@ return Def.Sprite{
 	CurrentTrailP2ChangedMessageCommand=cmd(queuecommand,"Set"),
 	
 	CloseThisFolderHasFocusMessageCommand=cmd(queuecommand,"Dissappear"),
+	SwitchFocusToGroupsMessageCommand=cmd(queuecommand,"Dissappear"),
 
 	SetCommand=function(self)
 		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
