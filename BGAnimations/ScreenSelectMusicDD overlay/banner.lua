@@ -16,16 +16,8 @@ local t = Def.ActorFrame{
 	end,
 
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:playcommand("Set") end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:playcommand("Set") end,
-		SwitchFocusToSongsMessageCommand=function(self) self:playcommand("Set") end,
-		GroupsHaveChangedMessageCommand=function(self) self:visible(true):playcommand("Set")
-		end,
-		SetCommand=function(self)
+		InitCommand=function(self)
 			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-			BannerOfGroup = BannerOfGroup
 			self:visible(true)
 		end,
 
@@ -39,16 +31,13 @@ local t = Def.ActorFrame{
 		Name="LoadFromSong",
 		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) 
-		end,
+		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end,
 		GroupsHaveChangedMessageCommand=function(self) self:visible(false) end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
 		SetCommand=function(self)
 			CurrentSong = GAMESTATE:GetCurrentSong()
 			if SongOrCourse and SongOrCourse:HasBanner() then
 				self:visible(true)
-			else
-				self:visible(false)
 			end
 			OnCommand=cmd(setsize,418,164)
 			self:LoadFromSongBanner(CurrentSong)
@@ -58,27 +47,18 @@ local t = Def.ActorFrame{
 	
 	Def.Banner{
 		Name="LoadFromGroup",
-		CurrentSongChangedMessageCommand=function(self) GroupScrollBanners = false GroupJawn = false self:playcommand("Set") end,
-		CurrentCourseChangedMessageCommand=function(self) GroupScrollBanners = false GroupJawn = false self:playcommand("Set") end,
-		GroupsHaveChangedMessageCommand=function(self) 
-			GroupScrollBanners = true
-			GroupJawn = false 
-			self
-			:playcommand("Set") 
-			:visible(true)
-			end,
-		CloseThisFolderHasFocusMessageCommand=function(self) BannerOfGroup = NameOfGroup GroupJawn = true self:visible(true):playcommand("Set") end,
+		CurrentSongChangedMessageCommand=function(self) self:visible(false) end,
+		CurrentCourseChangedMessageCommand=function(self) self:stoptweening():sleep(0.1):queuecommand("Set") end,
+		GroupsHaveChangedMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(true):queuecommand("Set") end,
+		CloseThisFolderHasFocusMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(true):queuecommand("Set") end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(true):queuecommand("Set") end,
 		SetCommand=function(self)
-			if BannerOfGroup == nil then
+			self:stoptweening()
+			if NameOfGroup == nil then
 				self:visible(false)
-			elseif GroupJawn == true then
-				self:visible(true)
-				self:LoadFromSongGroup(BannerOfGroup)
-			elseif GroupScrollBanners == true then
-				self:visible(true)
-				self:LoadFromSongGroup(BannerOfGroup)
 			else
-				self:visible(false)
+				self:visible(true)
+				self:LoadFromSongGroup(NameOfGroup)
 			end
 			OnCommand=cmd(setsize,418,164)
 			self:zoomto(418,164)
@@ -109,7 +89,7 @@ local t = Def.ActorFrame{
 	Def.ActorFrame{
 		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(GetMainSortPreference() ~= 1):playcommand("Set") end,
 		CurrentSongChangedMessageCommand=function(self) self:visible(false) end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:visible(GetMainSortPreference() ~= 1):playcommand("Set") end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:stoptweening():visible(GetMainSortPreference() ~= 1):queuecommand("Set") end,
 		GroupsHaveChangedMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(GetMainSortPreference() ~= 1):queuecommand("Set") end,
 		
 		--- diffuse black bg to make more legible
@@ -118,7 +98,6 @@ local t = Def.ActorFrame{
 				self:diffuse( color("#000000") )
 				self:zoomto(418,80)
 				self:diffusealpha(0.5)
-				
 			end
 		},
 		
