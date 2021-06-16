@@ -49,6 +49,7 @@ local song_mt = {
 				SwitchFocusToGroupsMessageCommand=function(self)
 					GAMESTATE:SetCurrentSong(nil)
 				end,
+			
 				InitCommand=function(subself)
 					self.container = subself
 					subself:diffusealpha(0)
