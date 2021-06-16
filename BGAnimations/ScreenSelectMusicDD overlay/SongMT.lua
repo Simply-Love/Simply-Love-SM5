@@ -46,10 +46,7 @@ local song_mt = {
 
 			local af = Def.ActorFrame{
 				Name=name,
-				SwitchFocusToGroupsMessageCommand=function(self)
-					GAMESTATE:SetCurrentSong(nil)
-				end,
-			
+
 				InitCommand=function(subself)
 					self.container = subself
 					subself:diffusealpha(0)
