@@ -27,7 +27,6 @@ local switch_to_songs_from_group = function(group_name,event)
 	SongWheel:set_info_set(songs,index)	
 end
 
-
 local item_mt = {
 	__index = {
 		create_actors = function(self, name)

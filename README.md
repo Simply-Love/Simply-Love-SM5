@@ -7,7 +7,6 @@ Without them this update wouldn't be nearly as awesome~
 # ------------ Differences from 1.0.3 ------------
 - "Random" added to song wheel.
 - Last song played/seen are properly set now.
-- Added the group name text on top of the fallback group banner in song select for sorts other than "Group"
 - Small bug fixes involving music wheel input.
 
 
