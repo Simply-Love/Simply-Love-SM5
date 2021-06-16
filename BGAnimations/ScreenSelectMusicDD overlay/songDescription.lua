@@ -68,7 +68,6 @@ af[#af+1] = Def.ActorFrame{
 		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end,
 		GroupsHaveChangedMessageCommand=function(self) self:visible(false) end,
-		SwitchFocusToGroupsMessageCommand=function(self) self:visible(false) end,
 		InitCommand=function(self) 
 			local Height = self:GetHeight()
 			local Width = self:GetWidth()
