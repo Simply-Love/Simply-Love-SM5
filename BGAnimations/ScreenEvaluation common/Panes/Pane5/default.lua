@@ -10,14 +10,15 @@ if not (game=="dance" or game=="pump" or game=="techno") then return end
 
 -- -----------------------------------------------------------------------
 
-local player = unpack(...)
+local player, controller = unpack(...)
 
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pane = Def.ActorFrame{
 	InitCommand=function(self)
 		if style == "OnePlayerTwoSides" then
-			self:x( 50)
+			if controller == PLAYER_2 then self:x(-260) 
+			else self:x(50) end
 		end
 	end,
 	-- ExpandForDoubleCommand() does not do anything here, but we check for its presence in
