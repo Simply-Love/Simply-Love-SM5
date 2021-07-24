@@ -159,12 +159,12 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 
 	table.insert(paneTexts, string.format(
 		"Skill Improvements\n\n"..
-		"%.2f%% (%s%.2f%%) at\n"..
-		"%.2fx (%s%.2fx) rate\n\n"..
+		"%.2f%% (%+.2f%%) at\n"..
+		"%.2fx (%+.2fx) rate\n\n"..
 		"%s"..
 		"%s",
-		score, scoreDelta < 0 and "-" or "+", scoreDelta,
-		rate, rateDelta < 0 and "-" or "+", rateDelta,
+		score, scoreDelta,
+		rate, rateDelta,
 		#statImprovements == 0 and "" or table.concat(statImprovements, "\n").."\n\n",
 		#skillImprovements == 0 and "" or table.concat(skillImprovements, "\n").."\n\n"
 	))
