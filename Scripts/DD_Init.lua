@@ -5,13 +5,13 @@ local PlayerDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				SpeedModType = "C",
-				SpeedMod = 550,
+				SpeedMod = 600,
 				JudgmentGraphic = "Love 2x6.png",
 				ComboFont = "Wendy",
 				HoldJudgment = "Ice 1x2.png",
 				NoteSkin = nil,
 				Mini = "0%",
-				BackgroundFilter = "Off",
+				BackgroundFilter = "Darkest",
 
 				HideTargets = false,
 				HideSongBG = false,
@@ -23,7 +23,7 @@ local PlayerDefaults = {
 
 				ColumnFlashOnMiss = false,
 				SubtractiveScoring = false,
-				MeasureCounter = "None",
+				MeasureCounter = "16th",
 				MeasureCounterLeft = false,
 				MeasureCounterUp = false,
 				DataVisualizations = "None",

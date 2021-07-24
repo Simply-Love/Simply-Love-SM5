@@ -111,6 +111,16 @@ local t = Def.ActorFrame{
 		SwitchFocusToGroupsMessageCommand=function(self) self:visible(GetMainSortPreference() ~= 1):playcommand("Set") end,
 		GroupsHaveChangedMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(GetMainSortPreference() ~= 1):queuecommand("Set") end,
 		
+		--- diffuse black bg to make more legible
+		Def.Quad{
+			InitCommand=function(self) 
+				self:diffuse( color("#000000") )
+				self:zoomto(418,80)
+				self:diffusealpha(0.5)
+			end
+		},
+		
+		--- group "name" text
 		LoadFont("Wendy/_wendy white")..{
 			OnCommand=function(self)
 				self:shadowlength(2):zoom(1)
