@@ -41,10 +41,10 @@ local t = Def.ActorFrame{
 			local month = ("%02d-%s"):format(MonthOfYear()+1, THEME:GetString("Months", "Month"..MonthOfYear()+1))
 
 			-- organize screenshots Love into directories, like...
-			--      ./Screenshots/Simply_Love/2020/04-April/2020-04-22_175951.png
+			--      ./Screenshots/Digital Dance/2020/04-April/2020-04-22_175951.png
 			-- note that the engine's SaveScreenshot() function will convert whitespace
 			-- characters to underscores, so we might as well just use underscores here
-			local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/"
+			local prefix = "Digital Dance/" .. Year() .. "/" .. month .. "/"
 
 			-- for more info on SaveScreenshot(), see ./BGA/ScreenEvaluation common/ScreenshotHandler.lua
 			SaveScreenshot(param.PlayerNumber, false, false, prefix)

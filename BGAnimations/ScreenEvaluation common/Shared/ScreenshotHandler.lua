@@ -28,7 +28,7 @@ spr.CodeMessageCommand=function(self, params)
 		title = title:gsub("/", "_")
 
 		-- organize screenshots Love into directories, like...
-		--      ./Screenshots/Simply_Love/2020/04-April/DVNO-2020-04-22_175951.png
+		--      ./Screenshots/Digital Dance/2020/04-April/DVNO-2020-04-22_175951.png
 		-- note that the engine's SaveScreenshot() function will convert whitespace
 		-- characters to underscores, so we might as well just use underscores here
 		local prefix = "Digital Dance/" .. Year() .. "/" .. month .. "/"

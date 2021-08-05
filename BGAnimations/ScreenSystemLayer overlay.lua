@@ -109,8 +109,7 @@ t[#t+1] = LoadFont("Common Footer")..{
 
 		-- if this screen's Metric for ShowCreditDisplay=false, then hide this BitmapText actor
 		-- PS: "ShowCreditDisplay" isn't a real Metric as far as the engine is concerned.
-		-- I invented it for Simply Love and it has (understandably) confused other themers.
-		-- Sorry about this.
+		-- It was invented it for Simply Love and it has (understandably) confused other themers.
 		if screen then
 			self:visible( THEME:GetMetric( screen:GetName(), "ShowCreditDisplay" ) )
 		end
