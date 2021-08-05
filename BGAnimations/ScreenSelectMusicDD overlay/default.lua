@@ -113,8 +113,8 @@ local t = Def.ActorFrame {
 					if params.Name == "CloseCurrentFolder" or params.Name == "CloseCurrentFolder2" then
 						if Input.WheelWithFocus == SongWheel then
 							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
+							MESSAGEMAN:Broadcast("CloseCurrentFolder")
 							CloseCurrentFolder()
-							MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 						end
 					end
 					if params.Name == "SortList" or params.Name == "SortList2" then

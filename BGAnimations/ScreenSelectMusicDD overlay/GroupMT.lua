@@ -96,6 +96,7 @@ local item_mt = {
 					subself:linear( 0.2 ):x( _screen.cx )
 					       :linear( 0.12 ):zoom(1):y( _screen.cy )
 				end,
+				CloseCurrentFolderMessageCommand=function(subself) switch_to_songs_from_group(self.groupName) end,
 				SwitchCommand=function(subself) switch_to_songs_from_group(self.groupName) end,
 
 				-- Wheel Item quad for the group folder.
