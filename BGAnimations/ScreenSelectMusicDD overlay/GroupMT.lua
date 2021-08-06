@@ -59,7 +59,7 @@ local item_mt = {
 				end,
 				
 				CloseCurrentFolderMessageCommand=function(self)
-					switch_to_songs_from_group(self.groupName) 
+					switch_to_songs_from_group(self.groupName)
 				end,
 				
 				ReloadDDMusicWheelMessageCommand=function(subself)

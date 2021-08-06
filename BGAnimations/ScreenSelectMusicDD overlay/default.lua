@@ -55,9 +55,9 @@ local CloseCurrentFolder = function()
 	else	
 		-- otherwise...
 		MESSAGEMAN:Broadcast("SwitchFocusToGroups")
-		Input.WheelWithFocus.container:queuecommand("Hide")
+		Input.WheelWithFocus.container:playcommand("Hide")
 		Input.WheelWithFocus = GroupWheel
-		Input.WheelWithFocus.container:queuecommand("Unhide")
+		Input.WheelWithFocus.container:playcommand("Unhide")
 	end
 	
 end

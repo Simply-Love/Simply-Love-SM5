@@ -1,7 +1,4 @@
 -----------------------------------------------------------------
--- The code in this file works, but is currently not used.
--- To try it out, uncomment the group_info key near the bottom of Setup.lua
-
 local args = ...
 local row = args[1]
 local col = args[1]
