@@ -214,3 +214,16 @@ function SetGroovestatsFilter(value)
 		DDStats.Save(playerNum)
 	end
 end
+
+
+function IsUsingFilters()
+	if GetLowerDifficultyFilter() ~= nil and GetLowerDifficultyFilter() ~= 0 then return true
+	elseif GetUpperDifficultyFilter() ~= nil and GetUpperDifficultyFilter() ~= 0 then return true
+	elseif GetLowerBPMFilter() ~= nil and GetLowerBPMFilter() ~= 49 then return true
+	elseif GetUpperBPMFilter() ~= nil and GetUpperBPMFilter() ~= 49 then return true
+	elseif GetLowerLengthFilter() ~= nil and GetLowerLengthFilter() ~= 0 then return true
+	elseif GetUpperLengthFilter() ~= nil and GetUpperLengthFilter() ~= 0 then return true
+	end
+	
+	return false
+end

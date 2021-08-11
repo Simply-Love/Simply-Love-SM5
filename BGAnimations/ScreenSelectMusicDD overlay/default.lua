@@ -181,6 +181,7 @@ local t = Def.ActorFrame {
 	LoadActor("./WheelHighlight.lua"),
 	-- Graphical Banner
 	LoadActor("./banner.lua"),
+	LoadActor("./footer.lua"),
 	-- Song info like artist, bpm, and song length.
 	LoadActor("./songDescription.lua"),
 	LoadActor("./playerModifiers.lua"),
