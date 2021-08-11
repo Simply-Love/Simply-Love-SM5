@@ -223,6 +223,7 @@ function IsUsingFilters()
 	elseif GetUpperBPMFilter() ~= nil and GetUpperBPMFilter() ~= 49 then return true
 	elseif GetLowerLengthFilter() ~= nil and GetLowerLengthFilter() ~= 0 then return true
 	elseif GetUpperLengthFilter() ~= nil and GetUpperLengthFilter() ~= 0 then return true
+	elseif GetGroovestatsFilter() ~= nil and GetGroovestatsFilter() ~= 'No' then return true
 	end
 	
 	return false
