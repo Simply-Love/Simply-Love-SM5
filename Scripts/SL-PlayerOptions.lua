@@ -214,6 +214,10 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	JudgmentBehaviour = {
+		Values = { 'Default','Etterna','ITG3' },
+	},
+	-------------------------------------------------------------------------
 	HoldJudgment = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,

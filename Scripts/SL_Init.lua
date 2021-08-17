@@ -7,6 +7,7 @@ local PlayerDefaults = {
 				SpeedModType = "X",
 				SpeedMod = 1.00,
 				JudgmentGraphic = "Love 2x6 (doubleres).png",
+				JudgmentBehaviour = "Default",
 				ComboFont = "Wendy",
 				HoldJudgment = "Love 1x2 (doubleres).png",
 				NoteSkin = nil,

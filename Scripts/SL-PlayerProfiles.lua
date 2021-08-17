@@ -18,6 +18,7 @@ local permitted_profile_settings = {
 	Mini             = "string",
 	NoteSkin         = "string",
 	JudgmentGraphic  = "string",
+	JudgmentBehaviour= "string",
 	ComboFont        = "string",
 	HoldJudgment     = "string",
 	BackgroundFilter = "string",
