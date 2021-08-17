@@ -8,6 +8,7 @@ local sprite
 -- If so, use the first available Judgment graphic
 -- If that fails too, fail gracefully and do nothing
 local mode = SL.Global.GameMode
+local judgmentBehaviour = mods.JudgmentBehaviour
 if mode == "Casual" then mode = "ITG" end
 local available_judgments = GetJudgmentGraphics(SL.Global.GameMode)
 
@@ -56,14 +57,19 @@ return Def.ActorFrame{
 		self:playcommand("Reset")
 
 		sprite:visible(true):setstate(frame)
-		-- this should match the custom JudgmentTween() from SL for 3.95
-		--sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 
+		-- this should match the custom JudgmentTween() from SL for 3.95
+		if judgmentBehaviour == "Default" then
+			sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		
 		-- this should match the behaviour of Etterna
-		--sprite:zoom(0.75)
+		elseif judgmentBehaviour == "Etterna" then
+			sprite:zoom(0.75)
 
 		-- this should match the behaviour of ITG2/ITG3
-		sprite:zoom(1):decelerate(0.2):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		elseif judgmentBehaviour == "ITG3" then
+			sprite:zoom(1):decelerate(0.2):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		end
 
 	end,
 
