@@ -60,7 +60,10 @@ return Def.ActorFrame{
 		--sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 
 		-- this should match the behaviour of Etterna
-		sprite:zoom(0.75)
+		--sprite:zoom(0.75)
+
+		-- this should match the behaviour of ITG2/ITG3
+		sprite:zoom(1):decelerate(0.2):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 
 	end,
 
