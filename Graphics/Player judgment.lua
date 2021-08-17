@@ -57,7 +57,11 @@ return Def.ActorFrame{
 
 		sprite:visible(true):setstate(frame)
 		-- this should match the custom JudgmentTween() from SL for 3.95
-		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		--sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+
+		-- this should match the behaviour of Etterna
+		sprite:zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+
 	end,
 
 	Def.Sprite{
