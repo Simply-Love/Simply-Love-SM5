@@ -260,8 +260,13 @@ local UpdatePrunedSongs = function()
 		for song in ivalues(SONGMAN:GetAllSongs()) do
 			local meters_set = {}
 			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
-				local meter = GetStepsDifficultyGroup(steps)
-				meters_set[meter] = true
+				if GetGroovestatsFilter() == 'No' or (
+					steps:GetDifficulty() ~= 'Difficulty_Beginner'
+					and steps:GetDifficulty() ~= 'Difficulty_Edit'
+				) then
+					local meter = GetStepsDifficultyGroup(steps)
+					meters_set[meter] = true
+				end
 			end
 			for meter, _ in pairs(meters_set) do
 				if songs_by_group[meter] == nil then
