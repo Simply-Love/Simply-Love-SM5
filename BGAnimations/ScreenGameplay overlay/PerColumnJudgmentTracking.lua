@@ -21,104 +21,35 @@
 if SL.Global.GameMode == "Casual" then return end
 
 local player = ...
-local track_missbcheld = SL[ToEnumShortString(player)].ActiveModifiers.MissBecauseHeld
 
 local judgments = {}
 for i=1,GAMESTATE:GetCurrentStyle():ColumnsPerPlayer() do
-	judgments[#judgments+1] = { W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0 }
+	judgments[#judgments+1] = { W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0 }
 end
 
-local actor = Def.Actor{
+return Def.Actor{
 	OffCommand=function(self)
 		local storage = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 		storage.column_judgments = judgments
-	end
-}
-
--- if the player doesn't care about MissBecauseHeld, keep it simple
-if not track_missbcheld then
-	actor.JudgmentMessageCommand=function(self, params)
+	end,
+	JudgmentMessageCommand=function(self, params)
 		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
 		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
 			for col,tapnote in pairs(params.Notes) do
-
-				local tnt = tapnote:GetTapNoteType()
+				local tnt = ToEnumShortString(tapnote:GetTapNoteType())
 
 				-- we don't want to consider TapNoteTypes like Mine, HoldTail, Attack, etc. when counting judgments
 				-- we do want to consider normal tapnotes, hold heads, and lifts
 				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
-				if tnt == "TapNoteType_Tap" or tnt == "TapNoteType_HoldHead" or tnt == "TapNoteType_Lift" then
-					local tns = ToEnumShortString(params.TapNoteScore)
-					judgments[col][tns] = judgments[col][tns] + 1
-				end
-			end
-		end
-	end
-
--- if the player wants to track MissBecauseHeld, we need to do a lot more work
-else
-	-- add MissBecauseHeld as a possible judgment for all columns
-	for i,col_judgments in ipairs(judgments) do
-		col_judgments.MissBecauseHeld=0
-	end
-
-	local buttons = {}
-	local style = GAMESTATE:GetCurrentStyle()
-	local num_columns = style:ColumnsPerPlayer()
-	for i=1,num_columns do
-		local col = style:GetColumnInfo(player, i)
-		table.insert(buttons, col.Name)
-	end
-
-
-	local held = {}
-
-	-- initialize to handle both players, regardless of whether both are actually joined.
-	-- the engine's InputCallback gives you ALL input, so even if only P1 is joined, the
-	-- InputCallback will report someone spamming input on P2 as valid events, so we have
-	-- to ensure that doesn't cause Lua errors here
-	for player in ivalues( PlayerNumber ) do
-		held[player] = {}
-
-		-- initialize all buttons available to this game for this player to be "not held"
-		for button in ivalues(buttons) do
-			held[player][button] = false
-		end
-	end
-
-	local InputHandler = function(event)
-		-- if any of these, don't attempt to handle input
-		if not event.PlayerNumber or not event.button then return false end
-
-		if event.type == "InputEventType_FirstPress" then
-			held[event.PlayerNumber][event.button] = true
-		elseif event.type == "InputEventType_Release" then
-			held[event.PlayerNumber][event.button] = false
-		end
-	end
-
-	actor.OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( InputHandler ) end
-	actor.JudgmentMessageCommand=function(self, params)
-		local health_state = GAMESTATE:GetPlayerState(params.Player):GetHealthState()
-		if params.Player == player and params.Notes and health_state ~= 'HealthState_Dead' then
-			for col,tapnote in pairs(params.Notes) do
-
-				local tnt = tapnote:GetTapNoteType()
-
-				-- we don't want to consider TapNoteTypes like Mine, HoldTail, Attack, etc. when counting judgments
-				-- we do want to consider normal tapnotes, hold heads, and lifts
-				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
-				if tnt == "TapNoteType_Tap" or tnt == "TapNoteType_HoldHead" or tnt == "TapNoteType_Lift" then
+				if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
 					local tns = ToEnumShortString(params.TapNoteScore)
 					judgments[col][tns] = judgments[col][tns] + 1
 
-					if tns == "Miss" and held[params.Player][ buttons[col] ] then
+					if tnt ~= "Lift" and tns == "Miss" and tapnote:GetTapNoteResult():GetHeld() then
 						judgments[col].MissBecauseHeld = judgments[col].MissBecauseHeld + 1
 					end
 				end
 			end
 		end
 	end
-end
-
-return actor
+}
