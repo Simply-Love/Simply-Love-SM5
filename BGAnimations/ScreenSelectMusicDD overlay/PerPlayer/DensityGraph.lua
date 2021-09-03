@@ -148,7 +148,7 @@ af2[#af2+1] = LoadFont("Miso/_miso")..{
 			self:addy(-41)
 			self:addx(WideScale(-70,-131))
 		end
-		-- We want black text in Rainbow mode, white otherwise.
+		-- We want white text.
 		self:diffuse({1, 1, 1, 1})
 	end,
 	RedrawCommand=function(self)

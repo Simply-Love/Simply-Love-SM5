@@ -52,7 +52,7 @@ local nsj = GAMESTATE:GetNumSidesJoined()
 end
 
 Branch.AfterScreenRankingDouble = function()
-	return PREFSMAN:GetPreference("MemoryCards") and "ScreenMemoryCard" or "ScreenRainbow"
+	return PREFSMAN:GetPreference("MemoryCards") and "ScreenMemoryCard"
 end
 
 SelectMusicOrCourse = function()

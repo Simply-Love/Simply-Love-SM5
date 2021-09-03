@@ -120,7 +120,7 @@ local song_mt = {
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75):y(25)
 					end,
 					GainFocusCommand=function(subself)
-						if not self.song == "CloseThisFolder" or not self.song == "Random-Portal" then
+						if not self.song == "CloseThisFolder" and not self.song == "Random-Portal" then
 							subself:visible(true):maxwidth(315):y(25)
 						end
 					end,

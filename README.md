@@ -8,6 +8,7 @@ Without them this update wouldn't be nearly as awesome~
 - "Random" added to song wheel.
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
+- If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will not show up in their respective difficulty folders. (Only ranked charts will show up)
 
 
 # -------------- GrooveStats Integration --------------

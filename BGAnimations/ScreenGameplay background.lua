@@ -36,5 +36,5 @@ if P2 and P2SongsInSet == 0 then
 	Player2StartingSteps = P2numTotalSteps
 end
 
-
-return Def.ActorFrame { }
+return Def.ActorFrame {
+}
