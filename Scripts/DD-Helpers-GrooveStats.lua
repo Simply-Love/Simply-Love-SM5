@@ -343,7 +343,7 @@ ValidForGrooveStats = function(player)
 
 	-- Validate Rate Mod
 	local rate = SL.Global.ActiveModifiers.MusicRate * 100
-	valid[8] = 100 <= rate and rate <= 300
+	valid[8] = 100 <= rate
 
 
 	-- ------------------------------------------
