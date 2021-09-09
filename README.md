@@ -68,7 +68,6 @@ You can also refresh the music wheel/undo the song search by either closing the 
 # ---------------- Other Changes ----------------
 
 - Density Graph color is based off of NPS. The higher the NPS the more red it is.
-- Density Graph breakdown on song select is now more detailed and caches so it only needs to be parsed once. (Thanks Sujeet!)
 - Removal of game modes.
 - CDTitle support added.
 
