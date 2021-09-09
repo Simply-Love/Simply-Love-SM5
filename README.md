@@ -18,7 +18,7 @@ Not only do we now have true random for both all songs on the setup AND songs wi
 
 ![Random from a pack/group] (https://i.imgur.com/0tn3JsT.png)
 
-Not to mention that you can call randoms in any sort! (Unlike the default music wheel *cough cough* imagine still using the same sort options from 2003 *cough cough*)
+Not to mention that you can call randoms in any sort! (Unlike the default music wheel)
 ![Random for any sort!](https://i.imgur.com/vwoDD9Z.png)
 
 
