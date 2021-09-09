@@ -111,7 +111,7 @@ range = function(start, stop, step)
 		start = 1
 	end
 
-	step = step or (start < stop and 1 or -1)
+	step = step or 1
 
 	-- if step has been explicitly provided as a positive number
 	-- but the start and stop values tell us to decrement
@@ -121,9 +121,8 @@ range = function(start, stop, step)
 	end
 
 	local t = {}
-	while start < stop+step do
-		t[#t+1] = start
-		start = start + step
+	for i = start, stop, step do
+		t[#t+1] = i
 	end
 	return t
 end
