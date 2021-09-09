@@ -58,7 +58,7 @@ local item_mt = {
 					end
 				end,
 				
-				CloseCurrentFolderMessageCommand=function(self)
+				CloseCurrentFolderMessageCommand=function(subself)
 					switch_to_songs_from_group(self.groupName)
 				end,
 				
@@ -102,19 +102,26 @@ local item_mt = {
 				end,
 				---CloseCurrentFolderMessageCommand=function(subself) subself:sleep(0.5) switch_to_songs_from_group(self.groupName) end,--]]
 				SwitchCommand=function(subself) switch_to_songs_from_group(self.groupName) end,
+				
+				-- wrap the function that plays the preview music in its own Actor so that we can
+				-- call sleep() and queuecommand() and stoptweening() on it and not mess up other Actors
+				Def.Actor{
+					InitCommand=function(subself) self.preview_music = subself end,
+					PlayMusicPreviewCommand=function(subself) play_sample_music() end,
+				},
 
 				-- Wheel Item quad for the group folder.
 				Def.Quad{
 					Name="GroupWheelQuad",
-					InitCommand=function(self)
-						self:y(_screen.cy - 240)
-						self:x(0)
-						self:diffuse(color("#363d42"))
-						self:zoomx(320)
-						self:zoomy(24)
-							
+					InitCommand=function(subself)
+						self.QuadColor = subself
+						subself:y(_screen.cy - 240)
+						subself:x(0)
+						--subself:diffuse(color("#363d42"))
+						subself:zoomx(320)
+						subself:zoomy(24)
 					end,
-					OnCommand=function(self)
+					OnCommand=function(subself)
 					end
 				},
 
@@ -127,19 +134,19 @@ local item_mt = {
 					end,
 					OnCommand=function(subself)
 						if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
-							subself:horizalign(left):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(480):shadowlength(1.1):playcommand("Untruncate")
+							subself:horizalign(left):zoom(0.8):maxwidth(480):shadowlength(1.1):playcommand("Untruncate")
 						end
 					end,
 					UntruncateCommand=function(subself) subself:settext(self.groupName) end,
 					TruncateCommand=function(subself) subself:settext(self.groupName):Truncate(max_chars) end,
 
 					GainFocusCommand=function(subself) BannerOfGroup = self.groupName  subself:horizalign(center):linear(0.15):zoom(0.8) MESSAGEMAN:Broadcast("GroupsHaveChanged") end,
-					LoseFocusCommand=function(subself) subself:horizalign(center):linear(0.15):zoom(0.8):shadowlength(1.1):diffuse(color("#4ffff3")) end,
+					LoseFocusCommand=function(subself) subself:horizalign(center):linear(0.15):zoom(0.8):shadowlength(1.1) end,
 					
 					
-					SlideToTopCommand=function(subself) subself:diffuse(color("#4ffff3")):queuecommand("SlideToTop2") end,
+					SlideToTopCommand=function(subself) subself:queuecommand("SlideToTop2") end,
 					SlideToTop2Command=function(subself) subself:horizalign(left):linear(0.2):zoom(0.8):maxwidth(480):shadowlength(0):playcommand("Untruncate") end,
-					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):zoom(0.8):diffuse(color("#4ffff3")):maxwidth(300):shadowlength(1.1):playcommand("Truncate") end,
+					SlideBackIntoGridCommand=function(subself) subself:horizalign(center):linear(0.2):zoom(0.8):maxwidth(300):shadowlength(1.1):playcommand("Truncate") end,
 				},
 				
 			}
@@ -163,13 +170,32 @@ local item_mt = {
 
 			-- otherwise, we are performing a normal transform
 			else
-				if has_focus then
+				if has_focus and self.groupName == "RANDOM-PORTAL" then
+					local SongsAvailable = {}
+					for groupName, group in pairs (pruned_songs_by_group) do
+						for song in ivalues (group) do
+							SongsAvailable[#SongsAvailable+1] = song
+						end
+					end
+					local RandomSong = SongsAvailable[math.random(#SongsAvailable)]
+					GAMESTATE:SetCurrentSong(RandomSong)
+					if GAMESTATE:GetCurrentSong() ~= nil then
+						LastSeenSong = GAMESTATE:GetCurrentSong():GetSongDir()
+					end
+					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
+					self.container:playcommand("GainFocus")
+					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
+					NameOfGroup = self.groupName
+				elseif has_focus and self.groupName ~= "RANDOM-PORTAL" then
+					GAMESTATE:SetCurrentSong(nil)
+					SOUND:StopMusic()
 					self.container:playcommand("GainFocus")
 					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
 					NameOfGroup = self.groupName
 				else
 					self.container:playcommand("LoseFocus")
 				end
+				
 				if item_index ~= 1 and item_index ~= num_items then
 					self.container:decelerate(0.1)
 				end
@@ -178,11 +204,19 @@ local item_mt = {
 		end,
 
 		set = function(self, groupName)
+		
+			if groupName == "RANDOM-PORTAL" then
+				self.groupName = groupName
+				self.bmt:settext("RANDOM"):diffuse(color("#f70000"))
+				self.QuadColor:diffuse(color("#000000"))	
+			else
 
-			self.groupName = groupName
-
-			-- handle text
-			self.bmt:settext(self.groupName):Truncate(max_chars)
+				self.groupName = groupName
+				self.QuadColor:diffuse(color("#363d42"))
+				self.bmt:diffuse(color("#4ffff3"))
+				-- handle text
+				self.bmt:settext(self.groupName):Truncate(max_chars)
+			end
 		end
 	}
 }

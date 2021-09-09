@@ -51,7 +51,15 @@ local SwitchInputFocus = function(button)
 	if button == "Start" then
 
 		if t.WheelWithFocus == GroupWheel then
-			t.WheelWithFocus = SongWheel
+			if NameOfGroup == "RANDOM-PORTAL" then
+				didSelectSong = true
+				PressStartForOptions = true
+				SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
+				MESSAGEMAN:Broadcast('ShowOptionsJawn')
+				t.WheelWithFocus = SongWheel
+			else
+				t.WheelWithFocus = SongWheel
+			end
 
 		elseif t.WheelWithFocus == SongWheel then
 			didSelectSong = true
@@ -462,6 +470,14 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 					SCREENMAN:SetNewScreen("ScreenPlayerOptions")
 					return false
 				end
+				
+				if NameOfGroup == "RANDOM-PORTAL" then
+					didSelectSong = true
+					PressStartForOptions = true
+					SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
+					MESSAGEMAN:Broadcast('ShowOptionsJawn')
+					return
+				end
 
 				if t.WheelWithFocus:get_info_at_focus_pos() == "CloseThisFolder" then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
@@ -469,7 +485,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 					return false
 				end
 
-				if t.WheelWithFocus == GroupWheel then
+				if t.WheelWithFocus == GroupWheel and NameOfGroup ~= "RANDOM-PORTAL" then
 					SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 				end
 

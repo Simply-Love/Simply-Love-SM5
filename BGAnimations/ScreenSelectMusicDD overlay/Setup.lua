@@ -494,7 +494,7 @@ end
 
 ---------------------------------------------------------------------------
 
--- First looks to DDStats for the default song and if it doesn't exist it will look at the stats.xml
+-- First looks to the last "seen" song for the default song and if it doesn't exist it will look at DDStats
 -- since the DD GameMode can't rely on SM to save LastPlayedSong. If neither exist then it defaults 
 -- to the 1st song in the 1st folder.
 
@@ -527,7 +527,7 @@ local GetDefaultSong = function(groups)
 		end
 	end
 
-	return PruneSongsFromGroup( groups[1] )[1]
+	return PruneSongsFromGroup( groups[2] )[1]
 end
 
 ---------------------------------------------------------------------------
@@ -540,11 +540,11 @@ end
 
 local PruneGroups = function(_groups)
 	local groups = {}
+	groups[#groups+1] = "RANDOM-PORTAL"
 
 	for group in ivalues( _groups ) do
 		local group_has_been_added = false
 		local songs = PruneSongsFromGroup(group)
-		
 		for song in ivalues(songs) do
 			if song:HasStepsType(steps_type) then
 
@@ -632,7 +632,6 @@ if #groups == 0 then
 end
 
 -- there will be a current_song if we're on stage 2 or later
-
 current_song = GetDefaultSong(groups)
 GAMESTATE:SetCurrentSong(current_song)
 

@@ -13,7 +13,10 @@
 local group_durations = {}
 local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
 local currentsong = GAMESTATE:GetCurrentSong()
-local HasCDTitle = currentsong:HasCDTitle()
+local HasCDTitle
+if GAMESTATE:GetCurrentSong() ~= nil then
+HasCDTitle = currentsong:HasCDTitle()
+end
 local blank = THEME:GetPathG("", "_blank.png")
 local CDTitlePath
 
