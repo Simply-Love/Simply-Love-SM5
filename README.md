@@ -9,7 +9,7 @@ Without them this update wouldn't be nearly as awesome~
 - "Random" added to group wheel.
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
-- If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will not show up in their respective difficulty folders. (Only ranked charts will show up)
+- If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will now be hidden from their respective difficulty folders. (Only ranked charts will show up)
 - New original menu & game over music.
 
 # ----------- "RANDOM" is back and better than ever! -----------
