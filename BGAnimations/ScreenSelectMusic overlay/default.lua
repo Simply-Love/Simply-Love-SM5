@@ -3,7 +3,15 @@ local af = Def.ActorFrame{
 	-- if ScreenGameplay is being entered "properly" or being reloaded by a scripted mod-chart.
 	-- If we're here in SelectMusic, set GameplayReloadCheck to false, signifying that the next
 	-- time ScreenGameplay loads, it should have a properly animated entrance.
-	InitCommand=function(self) SL.Global.GameplayReloadCheck = false end,
+	InitCommand=function(self)
+		SL.Global.GameplayReloadCheck = false
+
+		-- While other SM versions don't need this, Outfox resets the
+		-- the music rate to 1 between songs, but we want to be using
+		-- the preselected music rate.
+		local songOptions = GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
+		songOptions:MusicRate(SL.Global.ActiveModifiers.MusicRate)
+	end,
 
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
