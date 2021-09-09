@@ -8,7 +8,7 @@
 - If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will now be hidden from their respective difficulty folders. (Only ranked charts will show up)
 - New original menu & game over music.
 
-# ----------- "RANDOM" is back and better than ever! -----------
+# ------- "RANDOM" is back and better than ever! -------
 Not only do we now have true random for both all songs on the setup AND songs within a group folder; they also respect the current filters that are active too!
 ![Random from all available songs](https://i.imgur.com/6CrXWxG.png)
 
