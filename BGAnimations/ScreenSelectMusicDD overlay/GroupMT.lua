@@ -184,6 +184,7 @@ local item_mt = {
 					end
 					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 					self.container:playcommand("GainFocus")
+					MESSAGEMAN:Broadcast("CurrentSongChanged")
 					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
 					NameOfGroup = self.groupName
 				elseif has_focus and self.groupName ~= "RANDOM-PORTAL" then
@@ -192,6 +193,7 @@ local item_mt = {
 					self.container:playcommand("GainFocus")
 					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
 					NameOfGroup = self.groupName
+					MESSAGEMAN:Broadcast("GroupsHaveFocus")
 				else
 					self.container:playcommand("LoseFocus")
 				end
