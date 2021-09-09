@@ -58,6 +58,7 @@ local SwitchInputFocus = function(button)
 				MESSAGEMAN:Broadcast('ShowOptionsJawn')
 				t.WheelWithFocus = SongWheel
 			else
+				MESSAGEMAN:Broadcast("SwitchFocusToSongs")
 				t.WheelWithFocus = SongWheel
 			end
 

@@ -169,8 +169,17 @@ local t = Def.ActorFrame {
 	SwitchFocusToSingleSongMessageCommand=function(self)
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,
+	SwitchFocusToSongsMessageCommand=function(self)
+		self:playcommand("DisableInput"):sleep(TransitionTime):queuecommand("EnableInput")
+	end,
+	CloseCurrentFolderMessageCommand=function(self)
+		self:playcommand("DisableInput"):sleep(TransitionTime):queuecommand("EnableInput")
+	end,
 	EnableInputCommand=function(self)
 		Input.Enabled = true
+	end,
+	DisableInputCommand=function(self)
+		Input.Enabled = false
 	end,
 	
 	-- #Wheels. Define how many items exist in the wheel here and how many songs it's offset by/the X/Y positioning btw.

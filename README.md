@@ -6,9 +6,20 @@ Without them this update wouldn't be nearly as awesome~
 
 # ------------ Differences from 1.0.3 ------------
 - "Random" added to song wheel.
+- "Random" added to group wheel.
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
 - If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will not show up in their respective difficulty folders. (Only ranked charts will show up)
+- New original menu & game over music.
+
+# -------------- "RANDOM" is back and better than ever! --------------
+Not only do we now have true random for both all songs on the setup AND songs within a group folder; they also respect the current filters that are active too!
+![Random from all available songs](https://i.imgur.com/6CrXWxG.png)
+
+![Random from a pack/group] (https://i.imgur.com/0tn3JsT.png)
+
+Not to mention that you can call randoms in any sort! (Unlike the default music wheel *cough cough* imagine still using the same sort options from 2003 *cough cough*)
+![Random for any sort!](https://i.imgur.com/vwoDD9Z.png)
 
 
 # -------------- GrooveStats Integration --------------
@@ -80,13 +91,25 @@ The image must:
   
 The aspect ratio can be changed under *Graphics / Sound Options*.
 
+## SM5 Build Support
+As noted in the "About" section this theme is intended for use with SM5 only.
+* <strong>SM5.1 Beta 2</strong> (This is what I have been using to make/test this theme.)
+* <strong>SM5.0.12</strong> (This should work in theory, but I haven't tested it personally.)
+* <strong>SM5.3</strong> (Use at your own risk.)
+
+
 # -- KNOWN ISSUES and general things to note --
-- For some people the song search wont update until after leaving the screen and returning. Not sure if a hardware issue or Windows issue?
+- For some people the song search wont update until after leaving the screen and returning. Not sure if this an OS issue or an issue with certain builds of SM5?
 - Theme is intended for home use only.
-- I don't expect this to work outside of event mode.
+- Theme is only intended for event mode.
 - 4:3 aspect ratio has less info displayed on 2 player because of lack of room. (No density graph or profile pane)
 
 # ---------------- TO DO ----------------
+- Make the measure counter not be dependant on runs being measure aligned.
+- Make the Course Wheel accessible from the Music Wheel.
+- Add a slightly dumbed down Sort Menu for Course Mode. (HOW IS THERE STILL NO SORTING IN SM5 FOR COURSES)
+- Remove all calls/special cases for Event Mode (and the ability to toggle it) and force it on during init.
+- Replace any graphics or sound assets from SL that still exist with new original ones.
 - Maybe add more player stats (highest difficulty passed?)
 - Add more sorts/filters?
 - Add "Favorites" and/or tags for songs/groups.
