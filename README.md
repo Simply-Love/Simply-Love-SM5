@@ -16,7 +16,7 @@ Without them this update wouldn't be nearly as awesome~
 Not only do we now have true random for both all songs on the setup AND songs within a group folder; they also respect the current filters that are active too!
 ![Random from all available songs](https://i.imgur.com/6CrXWxG.png)
 
-![Random from a pack/group] (https://i.imgur.com/0tn3JsT.png)
+![Random from a pack/group](https://i.imgur.com/0tn3JsT.png)
 
 Not to mention that you can call randoms in any sort! (Unlike the default music wheel)
 ![Random for any sort!](https://i.imgur.com/vwoDD9Z.png)
