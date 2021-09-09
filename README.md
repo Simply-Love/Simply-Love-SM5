@@ -1,8 +1,4 @@
 # Digital Dance v1.0.4
-Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
-Also thanks to Box for help getting the new Song Wheel in it's current state!
-Without them this update wouldn't be nearly as awesome~
-
 
 # ------------ Differences from 1.0.3 ------------
 - "Random" added to song wheel.
@@ -23,6 +19,7 @@ Not to mention that you can call randoms in any sort! (Unlike the default music 
 
 
 # -------------- GrooveStats Integration --------------
+Huge thanks to Nantano, Sujeet, Ian, and Dom for the Groovestats Launcher/Intergration!
 Rivals, Scores, Leaderboards, Auto-Uploading of scores, it's all here! Please [watch the video](https://www.youtube.com/watch?v=8yMzp7xMQq0) and refer the [GrooveStats Launcher Guide](https://github.com/GrooveStats/gslauncher#readme) on how to setup the StepMania wrapper program that will get you connected.
 
 First, check and see if you're connected!
@@ -37,9 +34,10 @@ Want to see more scores? Open the sort menu and select the "Leaderboard" option!
 
 ![Additionalscores](https://i.imgur.com/YOiiCcr.png)
 
-Passed a new song? Got a new score? Your scores will be automatically uploaded to GrooveStats! Note that we do not upload failed scores and that those still need to be uploaded manually (either through the QR code or the web portal).
+Passed a new song? Got a new score? Your scores will be automatically uploaded to GrooveStats! Note that we do not upload failed scores and that those still need to be uploaded manually (either through the QR code or the [website](https://groovestats.com/)).
 
 # ------------- New Song Wheel and Sort Menu -------------
+Thanks to Box for help getting the new Song Wheel in it's current state!
 
 I started working on this song wheel way back in like 2018? and it's based of Casual Mode in Simply Love (Thanks quietly-turning <3)
 I ended up giving up because it was well out of my abilities, but after picking it back up earlier this year I was determined to finish it. If it wasn't for Box though I don't think this would have ever seen the light of day. He helped me so much with a lot of sorting/filtering logic and I could not have done it without him. I learned a lot about coding and also how terrible Stepmania is while doing this. I definitely still have a lot more to learn too lol.
