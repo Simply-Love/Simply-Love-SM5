@@ -3,6 +3,7 @@
 # ------------ Differences from 1.0.3 ------------
 - "Random" added to song wheel.
 - "Random" added to group wheel.
+- A notification sits at the bottom corner to notify if the player has filters active. (In case they forget!)
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
 - If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will now be hidden from their respective difficulty folders. (Only ranked charts will show up)
