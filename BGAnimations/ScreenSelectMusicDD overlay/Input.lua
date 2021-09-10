@@ -468,6 +468,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		if event.GameButton == "Start" then
 			if event.type == "InputEventType_FirstPress" then
 				if didSelectSong then
+					SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 					SCREENMAN:SetNewScreen("ScreenPlayerOptions")
 					return false
 				end
