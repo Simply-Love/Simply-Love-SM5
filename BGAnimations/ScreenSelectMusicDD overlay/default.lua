@@ -166,9 +166,6 @@ local t = Def.ActorFrame {
 	SwitchFocusToGroupsMessageCommand=function(self)
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,
-	SwitchFocusToSingleSongMessageCommand=function(self)
-		self:sleep(TransitionTime):queuecommand("EnableInput")
-	end,
 	SwitchFocusToSongsMessageCommand=function(self)
 		self:playcommand("DisableInput"):sleep(TransitionTime):queuecommand("EnableInput")
 	end,
