@@ -5,7 +5,15 @@ local function gen_vertices(player, width, height, Steps, desaturation)
 
 	if not Steps then 
 		if GAMESTATE:IsCourseMode() then
-			local TrailEntry = GAMESTATE:GetCurrentTrail(player):GetTrailEntry(GAMESTATE:GetCourseSongIndex())
+			local Trail = GAMESTATE:GetCurrentTrail(player)
+			if not Trail then return {} end
+
+			local CourseSongIndex = GAMESTATE:GetCourseSongIndex()
+			if CourseSongIndex < 0 then return {} end
+
+			local TrailEntry = Trail:GetTrailEntry(CourseSongIndex)
+			if not TrailEntry then return {} end
+
 			Steps = TrailEntry:GetSteps()
 		else
 			Steps = GAMESTATE:GetCurrentSteps(player)
