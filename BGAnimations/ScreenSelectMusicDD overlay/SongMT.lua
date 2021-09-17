@@ -251,7 +251,7 @@ local song_mt = {
 			-- this SongMT was passed the string "CloseThisFolder" or "Random-Portal"
 			-- so this is a special case for song metatable items
 			if type(song) == "string" then
-				if self.song == "CloseThisFolder" then
+				if song == "CloseThisFolder" then
 					self.song = song
 					self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):shadowlength(1.1):horizalign(center):valign(0.5):x(0)
 					self.QuadColor:diffuse(color("#363d42"))
