@@ -31,6 +31,31 @@ local t = Def.ActorFrame{
 	}
 }
 
+local function drawCheeseBurgers(position, align, calories)
+	local burgerHolder = Def.ActorFrame{
+		InitCommand=function(self) 
+			self:xy(position, 205)
+		end
+	}
+
+	local burgerCount = calories / 600
+	local burgerIndex = 0
+
+	while burgerIndex < burgerCount do
+		local i = burgerIndex -- lua wtf, have to cache burgerIndex to work
+		burgerHolder[#burgerHolder +1] = Def.Sprite{
+			Texture=THEME:GetPathB("ScreenGameOver", "overlay/burger.png"),
+			InitCommand=function(self)
+				self:zoomto(50,50):x(i * 40 * align):cropright(1 - (burgerCount - i))
+			end
+		}
+
+		burgerIndex = burgerIndex + 1
+	end
+
+	return burgerHolder
+end
+
 local line_height = 58
 local profilestats_y = 138
 local horiz_line_y   = 288
@@ -91,6 +116,13 @@ for player in ivalues(Players) do
 	end
 
 	t[#t+1] = PlayerStatsAF
+
+	if PROFILEMAN:IsPersistentProfile(player) then
+		local calories = PROFILEMAN:GetProfile(player):GetCaloriesBurnedToday()
+		local burgerPosition = player == PLAYER_1 and 35 or _screen.w-35
+		local burgerAlignment = player == PLAYER_1 and 1 or -1
+		t[#t+1] = drawCheeseBurgers(burgerPosition, burgerAlignment, calories)
+	end
 end
 
 return t
