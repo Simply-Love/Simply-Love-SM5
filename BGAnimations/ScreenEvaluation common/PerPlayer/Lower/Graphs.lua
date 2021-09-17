@@ -53,6 +53,24 @@ af[#af+1] = Def.GraphDisplay{
 
 		local ColorIndex = ((SL.Global.ActiveColorIndex + (player==PLAYER_1 and -1 or 1)) % #SL.Colors) + 1
 		self:Load("GraphDisplay" .. ColorIndex )
+		
+		if not GAMESTATE:IsCourseMode() then
+			local steps = GAMESTATE:GetCurrentSteps(player)
+			local timingData = steps:GetTimingData()
+			local firstSecond = math.min(timingData:GetElapsedTimeFromBeat(0), 0)
+			local chartStartSecond = GAMESTATE:GetCurrentSong():GetFirstSecond()
+			local lastSecond = GAMESTATE:GetCurrentSong():GetLastSecond()
+			local duration = lastSecond - firstSecond
+
+			-- GraphDisplay starts at chartStartSecond, but the NPS graph
+			-- and the scatter plot start at firstSecond, so we have to
+			-- move the lifebar to the correct offset to align it with the
+			-- NPS graph.
+			local offsetFactor = (chartStartSecond - firstSecond) / duration
+			local offset = GraphWidth * offsetFactor
+			self:addx(offset/2)
+			self:SetWidth(GraphWidth - offset)
+		end
 
 		local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local stageStats = STATSMAN:GetCurStageStats()
