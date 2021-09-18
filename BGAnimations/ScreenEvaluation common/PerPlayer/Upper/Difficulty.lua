@@ -56,7 +56,13 @@ return Def.ActorFrame{
 				if steps then meter = steps:GetMeter() end
 			end
 
-			if meter then self:settext(meter) end
+			if meter then 
+				if meter < 40 then
+					self:settext(meter)
+				else
+					self:settext("M")
+				end
+			end
 		end
 	}
 }
