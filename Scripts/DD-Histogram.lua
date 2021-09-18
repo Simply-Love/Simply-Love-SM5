@@ -106,15 +106,6 @@ local function gen_vertices(player, width, height, desaturation)
 				end
 			end
 		end
-		
-			-- Insert a 0 NPS datapoint at the end of the graph, otherwise
-			-- the last measure will not have a nice downwards slope like
-			-- all the other measures but end abruptly at the start of the
-			-- measure.
-			if NPSperMeasure[#NPSperMeasure] ~= 0 then
-				verts[#verts+1] = {{width, 0, 0}, blue}
-				verts[#verts+1] = {{width, 0, 0}, blue}
-			end
 	end
 
 	return verts
