@@ -120,7 +120,11 @@ local text = LoadFont("Common Normal")..{
 		end
 
 		self:y( -self:GetHeight()/2 - 2 )
-		self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
+		if ThemePrefs.Get("PeakSpeedUnit") =='eBPM' then
+			self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakBPM"), round(my_peak * 15 * SL.Global.ActiveModifiers.MusicRate,2)) )
+		else
+			self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
+		end 
 	end,
 }
 

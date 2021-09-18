@@ -85,6 +85,11 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { true , false }
 		},
+		PeakSpeedUnit =
+		{
+			Default = "NPS",
+			Choices = { "NPS", "eBPM" }
+		},
 		WriteCustomScores = {
 			Default = false,
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },

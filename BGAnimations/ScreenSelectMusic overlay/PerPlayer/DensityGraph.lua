@@ -99,11 +99,11 @@ af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 -- The Peak NPS text
 af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="NPS",
-	Text="Peak NPS: ",
+	Text=" ",
 	InitCommand=function(self)
 		self:horizalign(left):zoom(0.8)
 		if player == PLAYER_1 then
-			self:addx(60):addy(-41)
+			self:addx(54):addy(-41)
 		else
 			self:addx(-136):addy(-41)
 		end
@@ -112,12 +112,16 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:diffuse(DarkUI() and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
 	HideCommand=function(self)
-		self:settext("Peak NPS: ")
+		self:settext(" ")
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
 		if SL[pn].Streams.PeakNPS ~= 0 then
-			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
+			if ThemePrefs.Get("PeakSpeedUnit") =="eBPM" then
+				self:settext(("Peak eBPM: %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate * 15))
+			else 
+				self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
+			end
 			self:visible(true)
 		end
 	end,
