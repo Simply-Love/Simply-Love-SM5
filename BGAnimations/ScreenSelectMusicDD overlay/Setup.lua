@@ -526,7 +526,7 @@ local GetDefaultSong = function(groups)
 			end
 		end
 	end
-
+	-- "RANDOM" bumps down the actual first group to #2
 	return PruneSongsFromGroup( groups[2] )[1]
 end
 
@@ -654,6 +654,14 @@ if not found_group then
 			end
 			if found_group then break end
 		end
+	end
+end
+
+-- Update group if we're sorted by difficulty.
+if GetMainSortPreference() == 6 then
+	local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber())
+	if steps ~= nil then
+		NameOfGroup = GetStepsDifficultyGroup(steps)
 	end
 end
 
