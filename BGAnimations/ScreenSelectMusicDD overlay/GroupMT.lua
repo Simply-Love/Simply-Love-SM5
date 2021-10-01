@@ -13,7 +13,9 @@ local max_chars = 64
 
 local switch_to_songs = function(group_name,event)
 	local songs, index = PruneSongsFromGroup(group_name)
-	songs[#songs+1] = "Random-Portal"
+	if SongSearchWheelNeedsResetting == false then
+		songs[#songs+1] = "Random-Portal"
+	end
 	songs[#songs+1] = "CloseThisFolder"
 	SongWheel:set_info_set(songs, index)
 	
@@ -21,7 +23,9 @@ end
 
 local switch_to_songs_from_group = function(group_name,event)
 	local songs, index = PruneSongsFromGroup(group_name)
-	songs[#songs+1] = "Random-Portal"
+	if SongSearchWheelNeedsResetting == false then
+		songs[#songs+1] = "Random-Portal"
+	end
 	songs[#songs+1] = "CloseThisFolder"
 	index = 0
 	SongWheel:set_info_set(songs,index)	

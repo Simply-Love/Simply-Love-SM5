@@ -14,19 +14,29 @@ local t = Def.ActorFrame{
 			MaxInputLength = 52,
 			OnOK = function(answer)
 				--- has to sleep in order to be able to reload because #StepmaniaMoment
-				--- If the player doesn't enter any text and just presses enter  just reload the screen to the normal wheel
+				--- If the player doesn't enter any text and just presses enter just reload the screen to the normal wheel
 				if answer ~= "" then
 					local results = 0
-					for i,song in ipairs(SONGMAN:GetAllSongs(GAMESTATE:GetCurrentStyle():GetStepsType())) do
+					local SongsAvailable = {}
+					for groupName, group in pairs (pruned_songs_by_group) do
+						for song in ivalues (group) do
+							SongsAvailable[#SongsAvailable+1] = song
+						end
+					end
+					for i,song in ipairs(SongsAvailable) do
 						local match = false
 						local title = song:GetDisplayFullTitle():lower()
 						local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 						-- the query "xl grind" will match a song called "Axle Grinder" no matter
 						-- what the chart info says
 						if title:match(answer:lower()) then
-							match = true
-							results = results + 1
+							if title ~= "Random-Portal" and title ~= "RANDOM-PORTAL" then
+								match = true
+								results = results + 1
+							end
 						end
+						
+						-- This code works, but the code in Setup.lua does not so do not use this for the moment.
 						if not match then
 							for i, steps in ipairs(song:GetStepsByStepsType(steps_type)) do
 								local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
@@ -34,8 +44,11 @@ local t = Def.ActorFrame{
 								-- has "br", "xo" and "fs" in its AuthorCredit + Description
 								for word in answer:gmatch("%S+") do
 									if chartStr:lower():match(word:lower()) then
-										match = true
-										results = results + 1
+										if chartStr ~= "Random-Portal" and chartStr ~= "RANDOM-PORTAL" then
+											FoundChart = chartStr
+											match = true
+											results = results + 1
+										end
 									else
 										match = false
 										break
@@ -48,17 +61,19 @@ local t = Def.ActorFrame{
 						SongSearchSSMDD = true
 						SongSearchAnswer = answer
 						SongSearchWheelNeedsResetting = true
-						self:sleep(0.1):queuecommand("ReloadScreen")
+						--SearchResultsYo = results
+						self:sleep(0.25):queuecommand("ReloadScreen")
 					else
-						SM("No songs found!")
 						SongSearchSSMDD = false
 						SongSearchAnswer = nil
+						SongSearchWheelNeedsResetting = false
+						SM("No songs found!")
 					end
 				else
 					SongSearchSSMDD = false
 					SongSearchAnswer = nil
 					SongSearchWheelNeedsResetting = false
-					self:sleep(0.1):queuecommand("ReloadScreen")
+					self:sleep(0.25):queuecommand("ReloadScreen")
 				end
 				
 			end,

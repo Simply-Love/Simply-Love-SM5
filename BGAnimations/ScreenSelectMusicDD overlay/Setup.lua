@@ -3,6 +3,13 @@ local max_difficulty_group = '40+'
 local max_bpm_group = '400+'
 
 
+---- Currently searching in chart discription/chart author doesn't work here but works in 'SongSearch.lua'. 
+---- Figure out why and fix. Also add back in song artist search, not sure what happened to that lol.
+
+--SM("SongSearchSSMDD = " .. tostring(SongSearchSSMDD) .. " and SongSearchAnswer = " .. tostring(SongSearchAnswer))
+--SM(SearchResultsYo)
+--SM("Matching Song = " .. tostring(FoundTitle) .. " and/or found chart string = " .. tostring(FoundChart))
+
 local song_lengths = {}
 for i=0,90-1,30 do
 	song_lengths[#song_lengths+1] = i
@@ -353,7 +360,6 @@ local UpdatePrunedSongs = function()
 							for word in SongSearchAnswer:gmatch("%S+") do
 								if not chartStr:lower():match(word:lower()) then
 									match = false
-									break
 								end
 							end
 						end
@@ -362,7 +368,6 @@ local UpdatePrunedSongs = function()
 					if match == false then
 						passesFilters = false
 					end
-				
 				end
 				
 				if passesFilters then
@@ -527,7 +532,11 @@ local GetDefaultSong = function(groups)
 		end
 	end
 	-- "RANDOM" bumps down the actual first group to #2
-	return PruneSongsFromGroup( groups[2] )[1]
+	if SongSearchWheelNeedsResetting == false then
+		return PruneSongsFromGroup( groups[2] )[1]
+	else
+		return PruneSongsFromGroup( groups[1] )[1]
+	end
 end
 
 ---------------------------------------------------------------------------
@@ -540,7 +549,9 @@ end
 
 local PruneGroups = function(_groups)
 	local groups = {}
-	groups[#groups+1] = "RANDOM-PORTAL"
+	if SongSearchWheelNeedsResetting == false then
+		groups[#groups+1] = "RANDOM-PORTAL"
+	end
 
 	for group in ivalues( _groups ) do
 		local group_has_been_added = false

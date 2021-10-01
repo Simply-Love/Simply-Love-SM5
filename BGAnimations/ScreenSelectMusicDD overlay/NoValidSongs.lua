@@ -36,6 +36,7 @@ local Input = function(event)
 		local topscreen = SCREENMAN:GetTopScreen()
 		if HasResetFilterPreferences == true or SongSearchSSMDD == true then
 			SongSearchSSMDD = false
+			SongSearchAnswer = nil
 			topscreen:SetNextScreenName("ScreenReloadSSMDD")
 			topscreen:StartTransitioningScreen("SM_GoToNextScreen")
 		else
@@ -58,8 +59,6 @@ end
 
 local af = Def.ActorFrame{
 	OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( Input ) end,
-
-	LoadActor(THEME:GetPathB("ScreenSelectMusicDD", "overlay/Header.lua"), {h=60} ),
 
 	Def.Quad{
 		InitCommand=function(self) self:FullScreen():Center():diffuse(0,0,0,0.6) end

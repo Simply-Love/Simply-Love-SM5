@@ -13,6 +13,10 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- indexed by "ProfileIndex" (provided by engine)
 local profile_data = LoadActor("./PlayerProfileData.lua")
 
+-- Set these globals to false/empty just in case.
+SongSearchSSMDD = false
+SongSearchAnswer = nil
+
 local scrollers = {}
 scrollers[PLAYER_1] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
 scrollers[PLAYER_2] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
