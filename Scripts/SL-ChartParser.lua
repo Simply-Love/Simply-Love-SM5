@@ -27,14 +27,21 @@ local GetSimfileString = function(steps)
 end
 
 -- ----------------------------------------------------------------
--- We use our own BinaryToHex function as it seems like the current
--- implementation from the engine doesn't handle sequential zeroes correctly.
+-- hex-encode binary data
 local Bin2Hex = function(s)
 	local hex_bytes = {}
 	for i = 1, string.len(s), 1 do
 		hex_bytes[#hex_bytes+1] = string.format('%02x', string.byte(s, i))
 	end
 	return table.concat(hex_bytes, '')
+end
+
+-- StepMania 5.1 has a BinaryToHex function, but an older version of it was
+-- broken and stopped when encountering a zero byte in the input. Let's detect
+-- if the function exists and if it works as intended before using it. If not
+-- useable we fall back to the lua implementation defined above.
+if type(BinaryToHex) == "function" and BinaryToHex("\0") == "00" then
+	Bin2Hex = BinaryToHex
 end
 
 -- Reduce the chart to it's smallest unique representable form.
