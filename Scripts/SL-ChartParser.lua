@@ -26,24 +26,6 @@ local GetSimfileString = function(steps)
 	return contents, filetype
 end
 
--- ----------------------------------------------------------------
--- hex-encode binary data
-local Bin2Hex = function(s)
-	local hex_bytes = {}
-	for i = 1, string.len(s), 1 do
-		hex_bytes[#hex_bytes+1] = string.format('%02x', string.byte(s, i))
-	end
-	return table.concat(hex_bytes, '')
-end
-
--- StepMania 5.1 has a BinaryToHex function, but an older version of it was
--- broken and stopped when encountering a zero byte in the input. Let's detect
--- if the function exists and if it works as intended before using it. If not
--- useable we fall back to the lua implementation defined above.
-if type(BinaryToHex) == "function" and BinaryToHex("\0") == "00" then
-	Bin2Hex = BinaryToHex
-end
-
 -- Reduce the chart to it's smallest unique representable form.
 local MinimizeChart = function(chartString)
 	local function MinimizeMeasure(measure)
@@ -801,7 +783,7 @@ ParseChartInfo = function(steps, pn)
 			local chartString, BPMs = GetSimfileChartString(simfileString, stepsType, difficulty, description, fileType)
 			if chartString ~= nil and BPMs ~= nil then
 				-- We use 16 characters for the V3 GrooveStats hash.
-				local Hash = Bin2Hex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
+				local Hash = BinaryToHex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
 
 				-- Append the semi-colon at the end so it's easier for GetMeasureInfo to get the contents
 				-- of the last measure.
