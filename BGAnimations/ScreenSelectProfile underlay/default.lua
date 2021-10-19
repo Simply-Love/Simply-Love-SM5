@@ -16,6 +16,7 @@ local profile_data = LoadActor("./PlayerProfileData.lua")
 -- Set these globals to false/empty just in case.
 SongSearchSSMDD = false
 SongSearchAnswer = nil
+SongSearchWheelNeedsResetting = false
 
 local scrollers = {}
 scrollers[PLAYER_1] = setmetatable({disable_wrapping=true}, sick_wheel_mt)
