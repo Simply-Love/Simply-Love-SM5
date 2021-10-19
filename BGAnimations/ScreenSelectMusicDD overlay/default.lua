@@ -24,7 +24,7 @@ local SearchWheel = setmetatable({}, sick_wheel_mt)
 local row = setup.row
 local col = setup.col
 
-local TransitionTime = 0.3
+TransitionTime = 0.3
 local songwheel_y_offset = 13
 
 ---------------------------------------------------------------------------

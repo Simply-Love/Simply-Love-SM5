@@ -53,6 +53,7 @@ local SwitchInputFocus = function(button)
 		if t.WheelWithFocus == GroupWheel then
 			if NameOfGroup == "RANDOM-PORTAL" then
 				didSelectSong = true
+				TransitionTime = 0
 				PressStartForOptions = true
 				SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 				MESSAGEMAN:Broadcast('ShowOptionsJawn')
@@ -64,6 +65,7 @@ local SwitchInputFocus = function(button)
 
 		elseif t.WheelWithFocus == SongWheel then
 			didSelectSong = true
+			TransitionTime = 0
 			PressStartForOptions = true
 			SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 			MESSAGEMAN:Broadcast('ShowOptionsJawn')
