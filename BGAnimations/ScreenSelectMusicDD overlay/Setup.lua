@@ -20,7 +20,7 @@ end
 for i=5*60,10*60-60,30 do
 	song_lengths[#song_lengths+1] = i
 end
-for i=10*60,60*60-60,60*5 do
+for i=10*60,30*60-60,60*5 do
 	song_lengths[#song_lengths+1] = i
 end
 for i=30*60,60*60-10*60,10*60 do
