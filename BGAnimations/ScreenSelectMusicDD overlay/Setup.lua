@@ -6,9 +6,6 @@ local max_bpm_group = '400+'
 ---- Currently searching in chart discription/chart author doesn't work here but works in 'SongSearch.lua'. 
 ---- Figure out why and fix. Also add back in song artist search, not sure what happened to that lol.
 
---SM("SongSearchSSMDD = " .. tostring(SongSearchSSMDD) .. " and SongSearchAnswer = " .. tostring(SongSearchAnswer))
---SM(SearchResultsYo)
---SM("Matching Song = " .. tostring(FoundTitle) .. " and/or found chart string = " .. tostring(FoundChart))
 
 local song_lengths = {}
 for i=0,90-1,30 do
@@ -532,11 +529,7 @@ local GetDefaultSong = function(groups)
 		end
 	end
 	-- "RANDOM" bumps down the actual first group to #2
-	if SongSearchWheelNeedsResetting == false then
-		return PruneSongsFromGroup( groups[2] )[1]
-	else
-		return PruneSongsFromGroup( groups[1] )[1]
-	end
+	return PruneSongsFromGroup( groups[2] )[1]
 end
 
 ---------------------------------------------------------------------------
@@ -549,9 +542,7 @@ end
 
 local PruneGroups = function(_groups)
 	local groups = {}
-	if SongSearchWheelNeedsResetting == false then
-		groups[#groups+1] = "RANDOM-PORTAL"
-	end
+	groups[#groups+1] = "RANDOM-PORTAL"
 
 	for group in ivalues( _groups ) do
 		local group_has_been_added = false
