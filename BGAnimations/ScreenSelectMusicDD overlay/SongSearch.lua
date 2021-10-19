@@ -37,6 +37,7 @@ local t = Def.ActorFrame{
 						end
 						
 						-- This code works, but the code in Setup.lua does not so do not use this for the moment.
+						--[[
 						if not match then
 							for i, steps in ipairs(song:GetStepsByStepsType(steps_type)) do
 								local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
@@ -55,7 +56,7 @@ local t = Def.ActorFrame{
 									end
 								end
 							end
-						end
+						end--]]
 					end
 					if results > 0 then
 						SongSearchSSMDD = true
