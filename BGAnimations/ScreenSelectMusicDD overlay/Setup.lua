@@ -448,7 +448,9 @@ local GetGroups = function()
 	
 	local sort_pref = GetMainSortPreference()
 	if sort_pref == 1 then
-		return SONGMAN:GetSongGroupNames()
+		local groups = SONGMAN:GetSongGroupNames()
+		table.sort(groups, SortByLetter)
+		return groups
 	elseif sort_pref == 2 then
 		local groups = GetGroupsBy(GetSongFirstLetter)
 		table.sort(groups, SortByLetter)
