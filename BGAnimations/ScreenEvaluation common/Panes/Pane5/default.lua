@@ -16,9 +16,9 @@ local pane = Def.ActorFrame{
 	InitCommand=function(self)
 		if style == "OnePlayerTwoSides" then
 			if IsUsingWideScreen() then
-				self:x( -107 )
+				self:x(SCREEN_CENTER_X/8.75)
 			else
-				self:x( -_screen.w/6 )
+				self:x(SCREEN_CENTER_X/6.25 )
 			end
 		end
 	end,
