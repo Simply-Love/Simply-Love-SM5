@@ -78,7 +78,7 @@ RequestResponseActor = function(name, timeout, x, y)
 					local json_str = f:Read()
 					local data = {}
 					if #json_str ~= 0 then
-						data = json.decode(json_str)
+						data = JsonDecode(json_str)
 					end
 					self.callback(data, self.args)
 					f:Close()
@@ -109,7 +109,7 @@ RequestResponseActor = function(name, timeout, x, y)
 
 			local f = RageFileUtil:CreateRageFile()
 			if f:Open(path_prefix .. "requests/".. id .. ".json", 2) then
-				f:Write(json.encode(params.data))
+				f:Write(JsonEncode(params.data, true))
 				f:Close()
 
 				self:stoptweening()
