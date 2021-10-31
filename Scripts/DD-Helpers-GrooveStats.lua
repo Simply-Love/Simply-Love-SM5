@@ -446,6 +446,10 @@ CreateCommentString = function(player)
 		end
 		comment = comment.."C"..SL[pn].ActiveModifiers.SpeedMod
 	end
+	
+	if #comment == 0 then
+		comment = "FFC"
+	end
 
 	return comment
 end
