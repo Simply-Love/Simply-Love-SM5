@@ -507,6 +507,33 @@ local Overrides = {
 		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideLookahead" },
 	},
 	-------------------------------------------------------------------------
+	VisualDelay = {
+		Choices = function()
+			local first	= -100
+			local last 	= 100
+			local step 	= 1
+			return stringify( range(first, last, step), "%gms")
+		end,
+		ExportOnChange = true,
+		LayoutType = "ShowOneInRow",
+		LoadSelections = function(self, list, pn)
+			local i = FindInTable(SL[ToEnumShortString(pn)].ActiveModifiers.VisualDelay, self.Choices) or 1
+			list[i] = true
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.VisualDelay = self.Choices[i]
+				end
+			end
+			SM(type(playeroptions.VisualDelay))
+			playeroptions:VisualDelay( tonumber( (mods.VisualDelay:gsub("ms",""))  ) )
+		end
+	},
+	-------------------------------------------------------------------------
 	TimingWindows = {
 		Values = function()
 			return {
