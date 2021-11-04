@@ -62,6 +62,9 @@ local permitted_profile_settings = {
 	ShowEXScore      = "boolean",
 	ShowFaPlusPane   = "boolean",
 
+	VisualDelay          = "string",
+
+
 	----------------------------------
 	-- Profile Settings without OptionRows
 	-- these settings are saved per-profile, but are transparently managed by the theme
