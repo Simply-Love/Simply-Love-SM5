@@ -171,10 +171,10 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 	-- ----------------------------------------------------------------
 
 	if Filetype == "ssc" then
-		local topLevelBpm = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
+		local topLevelBpm = NormalizeFloatDigits(SimfileString:match("#[Bb][Pp][Mm][Ss]:(.-);"):gsub("%s+", ""))
 		-- SSC File
 		-- Loop through each chart in the SSC file
-		for noteData in SimfileString:gmatch("#NOTEDATA.-#NOTES2?:[^;]*") do
+		for noteData in SimfileString:gmatch("#[Nn][Oo][Tt][Ee][Dd][Aa][Tt][Aa].-#[Nn][Oo][Tt][Ee][Ss]2?:[^;]*") do
 			-- Normalize all the line endings to '\n'
 			local normalizedNoteData = noteData:gsub('\r\n?', '\n')
 
@@ -184,7 +184,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			-- TODO(teejsub): Double check the expected behavior even though it is
 			-- currently sufficient for all ranked charts on GrooveStats.
 			local stepsType = ''
-			for st in normalizedNoteData:gmatch("#STEPSTYPE:(.-);") do
+			for st in normalizedNoteData:gmatch("#[Ss][Tt][Ee][Pp][Ss][Tt][Yy][Pp][Ee]:(.-);") do
 				if stepsType == '' and st ~= '' then
 					stepsType = st
 					break
@@ -193,7 +193,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			stepsType = stepsType:gsub("%s+", "")
 
 			local difficulty = ''
-			for diff in normalizedNoteData:gmatch("#DIFFICULTY:(.-);") do
+			for diff in normalizedNoteData:gmatch("#[Dd][Ii][Ff][Ff][Ii][Cc][Uu][Ll][Tt][Yy]:(.-);") do
 				if difficulty == '' and diff ~= '' then
 					difficulty = diff
 					break
@@ -202,7 +202,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			difficulty = difficulty:gsub("%s+", "")
 
 			local description = ''
-			for desc in normalizedNoteData:gmatch("#DESCRIPTION:(.-);") do
+			for desc in normalizedNoteData:gmatch("#[Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn]:(.-);") do
 				if description == '' and desc ~= '' then
 					description = desc
 					break
@@ -215,7 +215,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 				-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
 				if (difficulty ~= "Edit" or description == StepsDescription) then
 					-- Get chart specific BPMS (if any).
-					local splitBpm = normalizedNoteData:match("#BPMS:(.-);") or ''
+					local splitBpm = normalizedNoteData:match("#[Bb][Pp][Mm][Ss]:(.-);") or ''
 					splitBpm = splitBpm:gsub("%s+", "")
 
 					if #splitBpm == 0 then
@@ -224,7 +224,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 						BPMs = NormalizeFloatDigits(splitBpm)
 					end
 					-- Get the chart data, remove comments, and then get rid of all non-'\n' whitespace.
-					NoteDataString = normalizedNoteData:match("#NOTES2?:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
+					NoteDataString = normalizedNoteData:match("#[Nn][Oo][Tt][Ee][Ss]2?:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 					NoteDataString = MinimizeChart(NoteDataString)
 					break
 				end
@@ -232,9 +232,9 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 		end
 	elseif Filetype == "sm" then
 		-- SM FILE
-		BPMs = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
+		BPMs = NormalizeFloatDigits(SimfileString:match("#[Bb][Pp][Mm][Ss]:(.-);"):gsub("%s+", ""))
 		-- Loop through each chart in the SM file
-		for noteData in SimfileString:gmatch("#NOTES2?[^;]*") do
+		for noteData in SimfileString:gmatch("#[Nn][Oo][Tt][Ee][Ss]2?[^;]*") do
 			-- Normalize all the line endings to '\n'
 			local normalizedNoteData = noteData:gsub('\r\n?', '\n')
 			-- Split the entire chart string into pieces on ":"
