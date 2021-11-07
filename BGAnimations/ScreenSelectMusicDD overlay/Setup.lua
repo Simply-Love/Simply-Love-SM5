@@ -438,7 +438,7 @@ local function SortByLetter(a, b)
 	if b == 'Other' then return true end
 	if a == '#' then return false end
 	if b == '#' then return true end
-	return a < b
+	return a:lower() < b:lower()
 end
 
 local GetGroups = function()
