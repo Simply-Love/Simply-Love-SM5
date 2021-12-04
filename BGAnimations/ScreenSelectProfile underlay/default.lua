@@ -162,6 +162,7 @@ local t = Def.ActorFrame {
 		-- if no available human players wanted to use a local profile, they will have been unjoined by now
 		-- and we won't be able to Finish() the screen without any joined players. If this happens, don't bother
 		-- trying to Finish(), just force StepMania to the next screen.
+		Warn("next screen: "..SCREENMAN:GetTopScreen():GetNextScreenName())
 		if type(SL.Global.PlayersToRejoin) == "table" then
 			if (#SL.Global.PlayersToRejoin == 1 and #GAMESTATE:GetHumanPlayers() == 0) or (#SL.Global.PlayersToRejoin == 2) then
 				SCREENMAN:SetNewScreen("ScreenAfterSelectProfile")

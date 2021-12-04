@@ -1,5 +1,7 @@
 return Def.Actor{
 	InitCommand=function(self)
+		Warn("ScreenAfterSelectProfile")
+
 		-- ScreenSelectProfile's Finish() method is hardcoded to assign DefaultProfileIDs
 		-- which will interfere with SL's notion of NOT requiring all players to use profiles.
 		-- If the player went out of their way to enable ScreenSelectProfile, they presumably want
@@ -27,6 +29,11 @@ return Def.Actor{
 		SL.Global.PlayersToRejoin = nil
 
 		-- and proceed to whatever the next screen should be
-		SCREENMAN:SetNewScreen( Branch.AllowScreenSelectColor() )
+		if SL.Global.FastProfileSwitch then
+			SL.Global.FastProfileSwitch = false
+			SCREENMAN:SetNewScreen( SelectMusicOrCourse() )
+		else
+			SCREENMAN:SetNewScreen( Branch.AllowScreenSelectColor() )
+		end
 	end
 }

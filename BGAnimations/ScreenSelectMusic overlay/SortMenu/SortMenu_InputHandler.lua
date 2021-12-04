@@ -60,6 +60,11 @@ local input = function(event)
 					-- Direct the input back to the engine, so that the ScreenTextEntry overlay
 					-- works correctly.
 					overlay:queuecommand("DirectInputToEngineForSongSearch")
+				elseif focus.new_overlay == "SwitchProfile" then
+					SL.Global.FastProfileSwitch = true
+					--overlay:queuecommand("DirectInputToEngine")
+					SCREENMAN:AddNewScreenToTop( "ScreenSelectProfile" )
+					Warn("next screen: "..SCREENMAN:GetTopScreen():GetNextScreenName())
 				end
 			end
 
