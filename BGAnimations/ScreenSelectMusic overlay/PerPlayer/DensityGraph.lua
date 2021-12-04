@@ -109,7 +109,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		end
 
 		-- We want black text in Rainbow mode, white otherwise.
-		self:diffuse(DarkUI() and {0, 0, 0, 1} or {1, 1, 1, 1})
+		self:diffuse(ThemePrefs.Get("RainbowMode") and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
 	HideCommand=function(self)
 		self:settext("Peak NPS: ")
