@@ -516,11 +516,6 @@ local Overrides = {
 		end,
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
-		LoadSelections = function(self, list, pn)
-			local i = FindInTable(SL[ToEnumShortString(pn)].ActiveModifiers.VisualDelay, self.Choices) or 1
-			list[i] = true
-			return list
-		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
@@ -529,8 +524,7 @@ local Overrides = {
 					mods.VisualDelay = self.Choices[i]
 				end
 			end
-			SM(type(playeroptions.VisualDelay))
-			playeroptions:VisualDelay( tonumber( (mods.VisualDelay:gsub("ms",""))  ) )
+			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
 		end
 	},
 	-------------------------------------------------------------------------

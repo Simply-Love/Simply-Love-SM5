@@ -53,6 +53,8 @@ local permitted_profile_settings = {
 	ErrorBarUp           = "boolean",
 	ErrorBarMultiTick    = "boolean",
 
+	VisualDelay          = "string",
+
 
 	----------------------------------
 	-- Profile Settings without OptionRows
