@@ -308,7 +308,7 @@ local GetMeasureInfo = function(Steps, measuresString)
 			-- This doesn't always hold true.  Measures 48 and 49 of "Mudkyp Korea/Can't Nobody" use a properly
 			-- timed negative stop, but the engine reports them as having very small but positive durations
 			-- which erroneously inflates the notes per second calculation.
-			if durationOfMeasureInSeconds == 0 then
+			if durationOfMeasureInSeconds <= 0.02 then
 				NPSForThisMeasure = 0
 			else
 				NPSForThisMeasure = notesInMeasure/durationOfMeasureInSeconds
