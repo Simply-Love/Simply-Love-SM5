@@ -210,10 +210,10 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			end
 
 			-- Find the chart that matches our difficulty and game type.
-			if (stepsType == StepsType and difficulty == Difficulty) then
+			if (stepsType:lower() == StepsType:lower() and difficulty:lower() == Difficulty:lower()) then
 				-- Ensure that we've located the correct edit stepchart within the SSC file.
 				-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
-				if (difficulty ~= "Edit" or description == StepsDescription) then
+				if (difficulty:lower() ~= "edit" or description == StepsDescription) then
 					-- Get chart specific BPMS (if any).
 					local splitBpm = normalizedNoteData:match("#[Bb][Pp][Mm][Ss]:(.-);") or ''
 					splitBpm = splitBpm:gsub("%s+", "")
@@ -253,10 +253,10 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 				local difficulty = parts[4]:gsub("[^%w]", "")
 				local description = parts[3]:gsub("^%s*(.-)", "")
 				-- Find the chart that matches our difficulty and game type.
-				if (stepsType == StepsType and difficulty == Difficulty) then
+				if (stepsType:lower() == StepsType:lower() and difficulty:lower() == Difficulty:lower()) then
 					-- Ensure that we've located the correct edit stepchart within the SSC file.
 					-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
-					if (difficulty ~= "Edit" or description == StepsDescription) then
+					if (difficulty:lower() ~= "edit" or description == StepsDescription) then
 						NoteDataString = parts[7]:gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 						NoteDataString = MinimizeChart(NoteDataString)
 						break
@@ -361,6 +361,7 @@ ParseChartInfo = function(steps, pn)
 	local stepsType = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
 	-- Difficulty, a string like "Beginner" or "Challenge"
 	local difficulty = ToEnumShortString( steps:GetDifficulty() )
+	
 	-- An arbitary but unique string provided by the stepartist, needed here to identify Edit charts
 	local description = steps:GetDescription()
 
