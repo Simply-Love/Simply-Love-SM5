@@ -92,6 +92,10 @@ af[#af+1] = Def.ActorFrame{
 	LoadActor("./Time.lua", player),
 }
 
+if IsServiceAllowed(SL.GrooveStats.GetScores) then
+	af[#af+1] = LoadActor("./Scorebox.lua", player)
+end
+
 af[#af+1] = LoadActor("./DensityGraph.lua", {player, sidepane_width})
 
 return af
