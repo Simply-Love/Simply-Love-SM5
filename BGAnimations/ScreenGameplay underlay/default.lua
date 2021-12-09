@@ -4,7 +4,34 @@ if PREFSMAN:GetPreference("MenuTimer") then
 end
 
 local Players = GAMESTATE:GetHumanPlayers()
-local t = Def.ActorFrame{ Name="GameplayUnderlay" }
+local holdingCtrl = false
+
+local RestartHandler = function(event)
+	if not event then return end
+
+	if event.type == "InputEventType_FirstPress" then
+		if event.DeviceInput.button == "DeviceButton_left ctrl" then
+			holdingCtrl = true
+		elseif event.DeviceInput.button == "DeviceButton_r" then
+			if holdingCtrl then
+				SCREENMAN:SetNewScreen("ScreenGameplay");
+			end
+		end
+	elseif event.type == "InputEventType_Release" then
+		if event.DeviceInput.button == "DeviceButton_left ctrl" then
+			holdingCtrl = false
+		end
+	end
+end
+
+local t = Def.ActorFrame{
+	Name="GameplayUnderlay",
+	OnCommand=function(self)
+		if ThemePrefs.Get("KeyboardFeatures") then
+			SCREENMAN:GetTopScreen():AddInputCallback(RestartHandler)
+		end
+	end
+}
 
 for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
