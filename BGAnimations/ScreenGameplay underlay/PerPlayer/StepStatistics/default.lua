@@ -10,6 +10,7 @@ local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local stylename = GAMESTATE:GetCurrentStyle():GetName()
 
 if (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
+or (not IsUltraWide and stylename == "versus")
 or (SL.Global.GameMode == "Casual")
 or (GetNotefieldWidth() > _screen.w/2)
 or (NoteFieldIsCentered and not IsUsingWideScreen())
@@ -86,7 +87,7 @@ af[#af+1] = Def.ActorFrame{
 	end,
 
 	LoadActor("./Banner.lua", player),
-	LoadActor("./TapNoteJudgments.lua", player),
+	LoadActor("./TapNoteJudgments.lua", {player, true}), -- second argument is if it has labels or not
 	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
 }
