@@ -425,10 +425,10 @@ local Overrides = {
 			local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 			local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-			-- if not ultrawide, StepStats only in single (not versus, not double)
-			if (not IsUltraWide and style and style:GetName() ~= "single")
-			-- if ultrawide, StepStats only in single and versus (not double)
-			or (IsUltraWide and style and not (style:GetName()=="single" or style:GetName()=="versus"))
+			-- Never available in double
+			if style and style:GetName() == "double"
+			-- In 4:3 versus mode
+			or (not IsUsingWideScreen() and style and style:GetName() == "versus")
 			-- if the notefield takes up more than half the screen width
 			or (notefieldwidth and notefieldwidth > _screen.w/2)
 			-- if the notefield is centered with 4:3 aspect ratio

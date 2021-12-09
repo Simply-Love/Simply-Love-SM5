@@ -1,4 +1,6 @@
-local player = ...
+local args = ...
+local player = args[1]
+local has_labels = args[2]
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
@@ -94,28 +96,30 @@ for index, window in ipairs(TNS.Types) do
 
 	-- TNS label
 	-- no need to add BitmapText actors for TimingWindows that were turned off
-	if windows[index] or index==#TNS.Names then
+	if has_labels then
+		if windows[index] or index==#TNS.Names then
 
-		af[#af+1] = LoadFont("Common Normal")..{
-			Text=TNS.Names[index]:upper(),
-			InitCommand=function(self)
-				self:zoom(0.833):maxwidth(72)
-				self:halign( PlayerNumber:Reverse()[player] )
-				if player==PLAYER_1 then
-					self:x( 80 + (digits-4)*16)
-				else
-					self:x(-80 - (digits-4)*16)
-				end
-				self:y((index-1) * row_height - 279)
-				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
+			af[#af+1] = LoadFont("Common Normal")..{
+				Text=TNS.Names[index]:upper(),
+				InitCommand=function(self)
+					self:zoom(0.833):maxwidth(72)
+					self:halign( PlayerNumber:Reverse()[player] )
+					if player==PLAYER_1 then
+						self:x( 80 + (digits-4)*16)
+					else
+						self:x(-80 - (digits-4)*16)
+					end
+					self:y((index-1) * row_height - 279)
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][index] )
 
-				-- flip alignment when ultrawide and both players joined
-				if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
-					self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
-					self:x(self:GetX() * -1)
-				end
-			end,
-		}
+					-- flip alignment when ultrawide and both players joined
+					if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+						self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+						self:x(self:GetX() * -1)
+					end
+				end,
+			}
+		end
 	end
 
 end
