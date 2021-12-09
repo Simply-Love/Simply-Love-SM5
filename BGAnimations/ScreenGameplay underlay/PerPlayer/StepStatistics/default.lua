@@ -92,7 +92,7 @@ af[#af+1] = Def.ActorFrame{
 	LoadActor("./Time.lua", player),
 }
 
-if IsServiceAllowed(SL.GrooveStats.GetScores) then
+if IsServiceAllowed(SL.GrooveStats.GetScores) and GAMESTATE:GetNumSidesJoined() == 1 then
 	af[#af+1] = LoadActor("./Scorebox.lua", player)
 end
 
