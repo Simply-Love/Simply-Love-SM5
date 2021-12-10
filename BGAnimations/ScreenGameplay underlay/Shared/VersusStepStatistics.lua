@@ -67,13 +67,14 @@ for player in ivalues(Players) do
             self:x(-7 * (player==PLAYER_1 and -1 or 1))
 
             if digits > 4 then
-                -- This works okay for 5 and 6 digits.
+                -- This works okay enough for 5 and 6 digits.
                 self:zoomx(self:GetZoomX() - 0.12 * (digits-4))
             end
         end
 
         af[#af+1] = judgments
 
+        -- Add a score to Step Stats if it's hidden by the NPS graph.
         if SL[ToEnumShortString(player)].ActiveModifiers.NPSGraphAtTop then
             af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
                 Text="0.00",
