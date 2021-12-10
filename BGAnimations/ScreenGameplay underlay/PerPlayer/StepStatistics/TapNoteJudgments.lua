@@ -1,6 +1,4 @@
-local args = ...
-local player = args[1]
-local has_labels = args[2]
+local player, has_labels = unpack(...)
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
