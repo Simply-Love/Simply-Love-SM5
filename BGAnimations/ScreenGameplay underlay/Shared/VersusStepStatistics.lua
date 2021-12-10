@@ -64,7 +64,7 @@ for player in ivalues(Players) do
 
             self:zoom(0.8)
             self:y(100)
-            self:x(-7 * (player==PLAYER_1 and -1 or 1))
+            self:x(65 * (player==PLAYER_1 and -1 or 1) + 1)
 
             if digits > 4 then
                 -- This works okay enough for 5 and 6 digits.
