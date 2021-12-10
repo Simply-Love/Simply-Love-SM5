@@ -1,6 +1,8 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local n = player==PLAYER_1 and "1" or "2"
+local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 local border = 5
 local width = 162
@@ -27,7 +29,8 @@ for i=1,num_styles do
 			["name"]="",
 			["score"]="",
 			["isSelf"]=false,
-			["isRival"]=false
+			["isRival"]=false,
+			["isFail"]=false
 		}
 	end
 	all_data[#all_data + 1] = data
@@ -38,15 +41,16 @@ local HasData = function(idx)
 	return all_data[idx+1] and all_data[idx+1].has_data
 end
 
-local SetScoreData = function(data_idx, score_idx, rank, name, score, isSelf, isRival)
+local SetScoreData = function(data_idx, score_idx, rank, name, score, isSelf, isRival, isFail)
 	all_data[data_idx].has_data = true
 
 	local score_data = all_data[data_idx]["scores"][score_idx]
-	score_data.rank = tostring(rank)
+	score_data.rank = rank..((#rank > 0) and "." or "")
 	score_data.name = name
-	score_data.score = tostring(score)
+	score_data.score = score
 	score_data.isSelf = isSelf
 	score_data.isRival = isRival
+	score_data.isFail = isFail
 end
 
 local LeaderboardRequestProcessor = function(res, master)
@@ -61,6 +65,15 @@ local LeaderboardRequestProcessor = function(res, master)
 
 	-- First check to see if the leaderboard even exists.
 	if data and data[playerStr] then
+		-- These will get overwritten if we have any entries in the leaderboard below.
+		if data[playerStr]["isRanked"] then
+			SetScoreData(1, 1, "", "No Scores", "", false, false, false)
+		else
+			if not data[playerStr]["rpg"] or not data[playerStr]["rpg"]["rpgLeaderboard"] then
+				SetScoreData(1, 1, "", "Chart Not Ranked", "", false, false, false)
+			end
+		end
+
 		if data[playerStr]["gsLeaderboard"] then
 			local numEntries = 0
 			for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
@@ -70,22 +83,15 @@ local LeaderboardRequestProcessor = function(res, master)
 								entry["name"],
 								string.format("%.2f", entry["score"]/100),
 								entry["isSelf"],
-								entry["isRival"])
-			end
-
-			if numEntries == 0 then
-				if data[playerStr]["isRanked"] then
-					SetScoreData(1, 1, "", "No Scores", "", false, false)
-				else
-					if not data[playerStr]["rpg"] and not data[playerStr]["rpg"]["rpgLeaderboard"] then
-						SetScoreData(1, 1, "", "Chart Not Ranked", "", false, false)
-					end
-				end
+								entry["isRival"],
+								entry["isFail"])
 			end
 		end
 
 		if data[playerStr]["rpg"] then
 			local numEntries = 0
+			SetScoreData(2, 1, "", "No Scores", "", false, false, false)
+
 			if data[playerStr]["rpg"]["rpgLeaderboard"] then
 				for entry in ivalues(data[playerStr]["rpg"]["rpgLeaderboard"]) do
 					numEntries = numEntries + 1
@@ -94,11 +100,10 @@ local LeaderboardRequestProcessor = function(res, master)
 									entry["name"],
 									string.format("%.2f", entry["score"]/100),
 									entry["isSelf"],
-									entry["isRival"])
+									entry["isRival"],
+									entry["isFail"]
+								)
 				end
-			end
-			if numEntries == 0 then
-				SetScoreData(2, 1, "", "No Scores", "", false, false)
 			end
 		end
  	end
@@ -109,6 +114,16 @@ local af = Def.ActorFrame{
 	Name="ScoreBox"..pn,
 	InitCommand=function(self)
 		self:xy(70 * (player==PLAYER_1 and 1 or -1), -115)
+		-- offset a bit more when NoteFieldIsCentered
+		if NoteFieldIsCentered and IsUsingWideScreen() then
+			self:addx( 2 * (player==PLAYER_1 and 1 or -1) )
+		end
+
+		-- ultrawide and both players joined
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			self:x(self:GetX() * -1)
+		end
+		self.isFirst = true
 	end,
 	CheckCommand=function(self)
 		self:queuecommand("Loop")
@@ -117,16 +132,25 @@ local af = Def.ActorFrame{
 		local start = cur_style
 
 		cur_style = (cur_style + 1) % num_styles
-		while cur_style ~= start do
+		while cur_style ~= start or self.isFirst do
 			-- Make sure we have the next set of data.
+
 			if HasData(cur_style) then
-				break
+				-- If this is the first time we're looping, update the start variable
+				-- since it may be different than the default
+				if self.isFirst then
+					start = cur_style
+					self.isFirst = false
+					-- Continue looping to figure out the next style.
+				else
+					break
+				end
 			end
 			cur_style = (cur_style + 1) % num_styles
 		end
+
 		-- Loop only if there's something new to loop to.
 		if start ~= cur_style then
-			SM("Looping")
 			self:sleep(loop_seconds):queuecommand("Loop")
 		end
 	end,
@@ -146,6 +170,9 @@ local af = Def.ActorFrame{
 				sendRequest = true
 			end
 
+			-- We technically will send two requests in ultrawide versus mode since
+			-- both players will have their own individual scoreboxes.
+			-- Should be fine though.
 			if sendRequest then
 				self:GetParent():GetChild("Name1"):settext("Loading...")
 				MESSAGEMAN:Broadcast("Leaderboard", {
@@ -183,11 +210,11 @@ local af = Def.ActorFrame{
 		Texture=THEME:GetPathG("", "GrooveStats.png"),
 		Name="GrooveStatsLogo",
 		InitCommand=function(self)
-			self:zoom(0.8):diffusealpha(0.4)
+			self:zoom(0.8):diffusealpha(0.3)
 		end,
 		LoopCommand=function(self)
 			if cur_style == 0 then
-				self:linear(transition_seconds):diffusealpha(0.4)
+				self:linear(transition_seconds):diffusealpha(0.3)
 			elseif cur_style == 1 then
 				self:linear(transition_seconds):diffusealpha(0)
 			end
@@ -195,16 +222,16 @@ local af = Def.ActorFrame{
 	},
 	-- SRPG Logo
 	Def.Sprite{
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG5/logo_main (doubleres).png"),
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG5/logo_small (doubleres).png"),
 		Name="SRPG5Logo",
 		InitCommand=function(self)
-			self:diffusealpha(0.4):zoom(0.24):addy(-1):diffusealpha(0)
+			self:diffusealpha(0.4):zoom(0.32):addy(3):diffusealpha(0)
 		end,
 		LoopCommand=function(self)
 			if cur_style == 0 then
 				self:linear(transition_seconds):diffusealpha(0)
 			elseif cur_style == 1 then
-				self:linear(transition_seconds):diffusealpha(0.4)
+				self:linear(transition_seconds):diffusealpha(0.3)
 			end
 		end
 	},
@@ -220,7 +247,7 @@ for i=1,5 do
 			Name="Rank"..i,
 			Texture=THEME:GetPathG("", "crown.png"),
 			InitCommand=function(self)
-				self:zoom(0.07):xy(-width/2 + 12, y):diffusealpha(0)
+				self:zoom(0.09):xy(-width/2 + 14, y):diffusealpha(0)
 			end,
 			LoopCommand=function(self)
 				self:linear(transition_seconds/2):diffusealpha(0):queuecommand("Set")
@@ -237,15 +264,21 @@ for i=1,5 do
 			Name="Rank"..i,
 			Text="",
 			InitCommand=function(self)
-				self:diffuse(Color.White):xy(-width/2 + 20, y):maxwidth(20):horizalign(right):zoom(zoom)
+				self:diffuse(Color.White):xy(-width/2 + 27, y):maxwidth(30):horizalign(right):zoom(zoom)
 			end,
 			LoopCommand=function(self)
 				self:linear(transition_seconds/2):diffusealpha(0):queuecommand("Set")
 			end,
 			SetCommand=function(self)
 				local score = all_data[cur_style+1]["scores"][i]
+				local clr = Color.White
+				if score.isSelf then
+					clr = color("#a1ff94")
+				elseif score.isRival then
+					clr = color("#c29cff")
+				end
 				self:settext(score.rank)
-				self:linear(transition_seconds/2):diffusealpha(1)
+				self:linear(transition_seconds/2):diffusealpha(1):diffuse(clr)
 			end
 		}
 	end
@@ -254,7 +287,7 @@ for i=1,5 do
 		Name="Name"..i,
 		Text="",
 		InitCommand=function(self)
-			self:diffuse(Color.White):xy(-width/2 + 25, y):maxwidth(110):horizalign(left):zoom(zoom)
+			self:diffuse(Color.White):xy(-width/2 + 30, y):maxwidth(100):horizalign(left):zoom(zoom)
 		end,
 		LoopCommand=function(self)
 			self:linear(transition_seconds/2):diffusealpha(0):queuecommand("Set")
@@ -284,7 +317,9 @@ for i=1,5 do
 		SetCommand=function(self)
 			local score = all_data[cur_style+1]["scores"][i]
 			local clr = Color.White
-			if score.isSelf then
+			if score.isFail then
+				clr = Color.Red
+			elseif score.isSelf then
 				clr = color("#a1ff94")
 			elseif score.isRival then
 				clr = color("#c29cff")
