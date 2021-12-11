@@ -312,16 +312,16 @@ SetGameModePreferences = function()
 	end
 
 	--------------------------------------------
-	-- If we're switching to Casual mode,
-	-- we want to reduce the number of judgments,
-	-- so turn Decents and WayOffs off now.
-	if SL.Global.GameMode == "Casual" then
-		SL.Global.ActiveModifiers.TimingWindows = {true,true,true,false,false}
-	end
-
-	--------------------------------------------
 	-- loop through human players and apply whatever mods need to be set now
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		local pn = ToEnumShortString(player)
+		-- If we're switching to Casual mode,
+		-- we want to reduce the number of judgments,
+		-- so turn Decents and WayOffs off now.
+		if SL.Global.GameMode == "Casual" then
+			SL[pn].ActiveModifiers.TimingWindows = {true,true,true,false,false}
+		end
+
 		-- Now that we've set the SL table for TimingWindows appropriately,
 		-- use it to apply TimingWindows.
 		local TW_OptRow = CustomOptionRow( "TimingWindows" )
@@ -642,7 +642,7 @@ GetExJudgmentCounts = function(player)
 			-- For the last window (Decent) in FA+ mode...
 			if window == "W5" then
 				-- Only populate if the window is still active.
-				if SL.Global.ActiveModifiers.TimingWindows[5] then
+				if SL[pn].ActiveModifiers.TimingWindows[5] then
 					counts[adjusted_window] = number
 				end
 			else
@@ -664,8 +664,8 @@ GetExJudgmentCounts = function(player)
 			else
 				if ((window ~= "W4" and window ~= "W5") or
 						-- Only populate decent and way off windows if they're active.
-						(window == "W4" and SL.Global.ActiveModifiers.TimingWindows[4]) or
-						(window == "W5" and SL.Global.ActiveModifiers.TimingWindows[5])) then
+						(window == "W4" and SL[pn].ActiveModifiers.TimingWindows[4]) or
+						(window == "W5" and SL[pn].ActiveModifiers.TimingWindows[5])) then
 					counts[window] = number
 				end
 			end

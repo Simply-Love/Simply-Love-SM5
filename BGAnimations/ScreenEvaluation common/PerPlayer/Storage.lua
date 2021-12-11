@@ -40,13 +40,13 @@ return Def.Actor{
 			storage.difficulty = storage.steps:GetDifficulty()
 			storage.meter      = storage.steps:GetMeter()
 			storage.stepartist = GAMESTATE:GetCurrentCourse(player):GetScripter()
-
 		else
 			storage.steps      = GAMESTATE:GetCurrentSteps(player)
 			storage.difficulty = pss:GetPlayedSteps()[1]:GetDifficulty()
 			storage.meter      = pss:GetPlayedSteps()[1]:GetMeter()
 			storage.stepartist = pss:GetPlayedSteps()[1]:GetAuthorCredit()
-
 		end
+
+		storage.timingwindows =SL[pn].ActiveModifiers.TimingWindows
 	end
 }

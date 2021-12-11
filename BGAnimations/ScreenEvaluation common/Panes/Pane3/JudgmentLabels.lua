@@ -18,7 +18,7 @@ local t = Def.ActorFrame{
 
 local miss_bmt
 
-local windows = SL.Global.ActiveModifiers.TimingWindows
+local windows = SL[pn].ActiveModifiers.TimingWindows
 
 --  labels: W1 ---> Miss
 for i=1, #TapNoteScores.Types do
