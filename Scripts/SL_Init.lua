@@ -42,6 +42,7 @@ local PlayerDefaults = {
 				ErrorBarMultiTick = false,
 				ErrorBarTrim = "Off",
 
+				TimingWindows = {true, true, true, true, true},
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
 				ShowFaPlusPane = true,
@@ -109,7 +110,6 @@ local GlobalDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
-				TimingWindows = {true, true, true, true, true},
 			}
 			self.Stages = {
 				PlayedThisGame = 0,

@@ -9,8 +9,6 @@ local noteskin = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():Note
 noteskin = noteskin:lower()
 
 
-local gmods = SL.Global.ActiveModifiers
-
 -- -----------------------------------------------------------------------
 local game  = GAMESTATE:GetCurrentGame():GetName()
 local style = GAMESTATE:GetCurrentStyle()
@@ -74,8 +72,7 @@ for i, column in ipairs( cols ) do
 	-- for each possible judgment
 	for j, judgment in ipairs(rows) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
-		-- (GMODS Timing Windows) - Zankoku
-		if gmods.TimingWindows[j] or j==#rows or (mods.ShowFaPlusWindow and mods.ShowFaPlusPane and gmods.TimingWindows[j-1]) then
+		if SL[pn].ActiveModifiers.TimingWindows[j] or j==#rows or (mods.ShowFaPlusWindow and mods.ShowFaPlusPane and SL[pn].ActiveModifiers.TimingWindows[j-1]) then
 			-- add a BitmapText actor to be the number for this column
 			af[#af+1] = LoadFont("Common Normal")..{
 				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
