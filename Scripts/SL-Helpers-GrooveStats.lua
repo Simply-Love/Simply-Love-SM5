@@ -244,6 +244,7 @@ end
 -- well-intentioned-but-unaware players from accidentally submitting
 -- invalid scores to GrooveStats.
 ValidForGrooveStats = function(player)
+	local pn = ToEnumShortString(player)
 	local valid = {}
 
 	-- ------------------------------------------
@@ -346,7 +347,7 @@ ValidForGrooveStats = function(player)
 	if SL.Global.GameMode == "ITG" then
 		for i, window in ipairs(TimingWindows) do
 			-- Only check if the Timing Window is actually "enabled".
-			if i > 5 or SL.Global.ActiveModifiers.TimingWindows[i] then
+			if i > 5 or SL[pn].ActiveModifiers.TimingWindows[i] then
 				valid[7] = valid[7] and FloatEquals(PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA, ExpectedWindows[i])
 			end
 		end
@@ -369,7 +370,7 @@ ValidForGrooveStats = function(player)
 			-- 7  7 - Mines
 			-- 8  8 - Rolls
 			-- Only check if the Timing Window is actually "enabled".
-			if i > 5 or SL.Global.ActiveModifiers.TimingWindows[i] then
+			if i > 5 or SL[pn].ActiveModifiers.TimingWindows[i] then
 				local idx = (i < 6 and i-1 or i)
 				if i == 1 then
 					-- For the FA+ fantastic, the first window can be anything as long as it's <= the actual fantastic window
@@ -441,6 +442,7 @@ end
 -- -----------------------------------------------------------------------
 
 CreateCommentString = function(player)
+	local pn = ToEnumShortString(player)
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 	local suffixes = {"w", "e", "g", "d", "wo"}
@@ -475,19 +477,19 @@ CreateCommentString = function(player)
 	local timingWindowOption = ""
 
 	if SL.Global.GameMode == "ITG" then
-		if not SL.Global.ActiveModifiers.TimingWindows[4] and not SL.Global.ActiveModifiers.TimingWindows[5] then
+		if not SL[pn].ActiveModifiers.TimingWindows[4] and not SL[pn].ActiveModifiers.TimingWindows[5] then
 			timingWindowOption = "No Dec/WO"
-		elseif not SL.Global.ActiveModifiers.TimingWindows[5] then
+		elseif not SL[pn].ActiveModifiers.TimingWindows[5] then
 			timingWindowOption = "No WO"
-		elseif not SL.Global.ActiveModifiers.TimingWindows[1] and not SL.Global.ActiveModifiers.TimingWindows[2] then
+		elseif not SL[pn].ActiveModifiers.TimingWindows[1] and not SL[pn].ActiveModifiers.TimingWindows[2] then
 			timingWindowOption = "No Fan/Exc"
 		end
 	elseif SL.Global.GameMode == "FA+" then
-		if not SL.Global.ActiveModifiers.TimingWindows[4] and not SL.Global.ActiveModifiers.TimingWindows[5] then
+		if not SL[pn].ActiveModifiers.TimingWindows[4] and not SL[pn].ActiveModifiers.TimingWindows[5] then
 			timingWindowOption = "No Gre/Dec/WO"
-		elseif not SL.Global.ActiveModifiers.TimingWindows[5] then
+		elseif not SL[pn].ActiveModifiers.TimingWindows[5] then
 			timingWindowOption = "No Dec/WO"
-		elseif not SL.Global.ActiveModifiers.TimingWindows[1] and not SL.Global.ActiveModifiers.TimingWindows[2] then
+		elseif not SL[pn].ActiveModifiers.TimingWindows[1] and not SL[pn].ActiveModifiers.TimingWindows[2] then
 			-- Weird flex but okay
 			timingWindowOption = "No Fan/WO"
 		else
