@@ -2,11 +2,11 @@
 -- later modified for SL.
 
 local player, layout = ...
-local gmods = SL.Global.ActiveModifiers
+local mods = SL[ToEnumShortString(player)].ActiveModifiers
 
 local threshold = nil
 for i = 1, NumJudgmentsAvailable() do
-    if gmods.TimingWindows[i] then
+    if mods.TimingWindows[i] then
         threshold = GetTimingWindow(i)
         break
     end
