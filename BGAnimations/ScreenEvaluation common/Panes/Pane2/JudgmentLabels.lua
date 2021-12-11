@@ -54,8 +54,8 @@ local t = Def.ActorFrame{
 
 -- The FA+ window shares the status as the FA window.
 -- If the FA window is disabled, then we consider the FA+ window disabled as well.
-local windows = {SL.Global.ActiveModifiers.TimingWindows[1]} 
-for v in ivalues( SL.Global.ActiveModifiers.TimingWindows) do
+local windows = {SL[pn].ActiveModifiers.TimingWindows[1]}
+for v in ivalues(SL[pn].ActiveModifiers.TimingWindows) do
 	windows[#windows + 1] = v
 end
 
