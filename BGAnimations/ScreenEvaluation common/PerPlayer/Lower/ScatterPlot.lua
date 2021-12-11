@@ -10,8 +10,10 @@ local GraphWidth = args.GraphWidth
 local GraphHeight = args.GraphHeight
 local mods = SL[pn].ActiveModifiers
 
+local pn = ToEnumShortString(player)
+
 -- sequential_offsets gathered in ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
-local sequential_offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
+local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 
 -- a table to store the AMV's vertices
 -- this will be a table of tables, to get around ActorMultiVertex limitations on D3D renderer
@@ -36,7 +38,7 @@ local worst_window = GetTimingWindow(math.max(2, GetWorstJudgment(sequential_off
 
 local colors = {}
 for w=NumJudgmentsAvailable(),1,-1 do
-	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
+	if SL[pn].ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
 		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
