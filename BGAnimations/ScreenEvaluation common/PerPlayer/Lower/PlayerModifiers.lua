@@ -18,7 +18,7 @@ end
 for i,option in ipairs(PlayerOptions) do
 
 	-- these don't need to show up in the mods list
-	if option ~= "FailAtEnd" and option ~= "FailImmediateContinue" and option ~= "FailImmediate" then
+	if option ~= "FailAtEnd" and option ~= "FailImmediateContinue" and option ~= "FailImmediate" and not option:match("No (W[1-5]/?)") then
 		-- 100% Mini will be in the PlayerOptions as just "Mini" so use the value from the SL table instead
 		if option:match("Mini") then
 			option = SL[pn].ActiveModifiers.Mini .. " Mini"
@@ -28,11 +28,10 @@ for i,option in ipairs(PlayerOptions) do
 			option = THEME:GetString("OptionNames", "Cover")
 		end
 
-		if i < #PlayerOptions then
-			optionslist = optionslist..option..", "
-		else
-			optionslist = optionslist..option
+		if #optionslist > 0 then
+			optionslist = optionslist..", "
 		end
+		optionslist = optionslist..option
 	end
 end
 
