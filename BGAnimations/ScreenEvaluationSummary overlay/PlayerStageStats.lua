@@ -146,7 +146,7 @@ for i=1,#TNSTypes do
 				local val = playerStats.judgments[TNSTypes[i]]
 				if val then self:settext(val) end
 
-				self:visible( SL.Global.Stages.Stats[params.StageNum].TimingWindows[i] or i==#TNSTypes )
+				self:visible( playerStats.timingwindows[i] or i==#TNSTypes )
 			else
 				self:settext("")
 			end

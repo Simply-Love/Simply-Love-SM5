@@ -4,7 +4,6 @@
 local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-local gmods = SL.Global.ActiveModifiers
 
 local barWidth = 160
 local barHeight = 10
@@ -15,7 +14,7 @@ local currentTick = 1
 
 local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
-    if gmods.TimingWindows[i] then
+    if mods.TimingWindows[i] then
         enabledTimingWindows[#enabledTimingWindows+1] = i
     end
 end

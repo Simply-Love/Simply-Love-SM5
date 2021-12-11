@@ -20,7 +20,7 @@ local abbreviations = {
 
 local colors = {}
 for w=NumJudgmentsAvailable(),1,-1 do
-	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
+	if SL[pn].ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
 		abbreviations[SL.Global.GameMode][w] = abbreviations[SL.Global.GameMode][w+1]
@@ -33,7 +33,7 @@ end
 -- of judgments that could have possibly been earned
 local num_judgments_available = NumJudgmentsAvailable()
 local worst_window = GetTimingWindow(num_judgments_available)
-local windows = SL.Global.ActiveModifiers.TimingWindows
+local windows = SL[pn].ActiveModifiers.TimingWindows
 
 for i=NumJudgmentsAvailable(),1,-1 do
 	if windows[i]==true then

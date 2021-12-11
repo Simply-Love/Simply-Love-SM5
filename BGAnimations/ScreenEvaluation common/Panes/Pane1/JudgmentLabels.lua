@@ -45,7 +45,7 @@ local t = Def.ActorFrame{
 	end,
 }
 
-local windows = SL.Global.ActiveModifiers.TimingWindows
+local windows = SL[pn].ActiveModifiers.TimingWindows
 
 --  labels: W1, W2, W3, W4, W5, Miss
 for i=1, #TapNoteScores.Types do
