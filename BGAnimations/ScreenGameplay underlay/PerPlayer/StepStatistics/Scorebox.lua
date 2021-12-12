@@ -200,9 +200,9 @@ local af = Def.ActorFrame{
 	},
 	-- Main body
 	Def.Quad{
-		Name="Outline",
+		Name="Background",
 		InitCommand=function(self)
-			self:diffuse(color("#454545")):setsize(width, height)
+			self:diffuse(color("#000000")):setsize(width, height)
 		end,
 	},
 	-- GrooveStats Logo
@@ -210,13 +210,13 @@ local af = Def.ActorFrame{
 		Texture=THEME:GetPathG("", "GrooveStats.png"),
 		Name="GrooveStatsLogo",
 		InitCommand=function(self)
-			self:zoom(0.8):diffusealpha(0.3)
+			self:zoom(0.8):diffusealpha(0.5)
 		end,
 		LoopCommand=function(self)
 			if cur_style == 0 then
-				self:linear(transition_seconds):diffusealpha(0.3)
+				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0.5)
 			elseif cur_style == 1 then
-				self:linear(transition_seconds):diffusealpha(0)
+				self:linear(transition_seconds/2):diffusealpha(0)
 			end
 		end
 	},
@@ -229,9 +229,9 @@ local af = Def.ActorFrame{
 		end,
 		LoopCommand=function(self)
 			if cur_style == 0 then
-				self:linear(transition_seconds):diffusealpha(0)
+				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0)
 			elseif cur_style == 1 then
-				self:linear(transition_seconds):diffusealpha(0.3)
+				self:linear(transition_seconds/2):diffusealpha(0.5)
 			end
 		end
 	},
@@ -241,6 +241,7 @@ local af = Def.ActorFrame{
 for i=1,5 do
 	local y = -height/2 + 16 * i - 8
 	local zoom = 0.87
+
 	-- Rank 1 gets a crown.
 	if i == 1 then
 		af[#af+1] = Def.Sprite{
