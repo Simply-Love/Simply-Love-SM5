@@ -13,7 +13,7 @@
 - Small bug fixes applied to the chart parser to support older .SM files. (ie. Heavy and Expert for difficulty names)
 - Fixed input display on double when using the Player 2 side.
 - Fixed missing string bug that broke the GSL
-- Fixed the music wheel/sort to account for Additional Song Foldrs properly.
+- Fixed the music wheel/sort to account for Additional Song Folders properly.
 - Fixed Song Search behaviour
 
 # ------- "RANDOM" is back and better than ever! -------
