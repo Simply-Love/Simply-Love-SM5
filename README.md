@@ -99,19 +99,19 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 ## SM5 Build Support
 As noted in the "About" section this theme is intended for use with SM5 only.
 * <strong>SM5.1 Beta 2</strong> (This is what I have been using to make/test this theme.)
-* <strong>SM5.0.12</strong> (This should work in theory, but I haven't tested it personally.)
+* <strong>SM5.0.12</strong> (This should work in theory, but I haven't tested it extensively.)
 * <strong>SM5.3</strong> (Use at your own risk.)
 
 
-# -- KNOWN ISSUES and general things to note --
-- For some people the song search wont update until after leaving the screen and returning. Not sure if this an OS issue or an issue with certain builds of SM5?
+# -- General things to note --
 - Theme is intended for home use only.
 - Theme is only intended for event mode.
-- 4:3 aspect ratio has less info displayed on 2 player because of lack of room. (No density graph or profile pane)
+- I am going to stop supporting 4:3 asepect ratio after this update (1.0.4)
 
 # ---------------- TO DO ----------------
 - Make the measure counter not be dependant on runs being measure aligned.
-- Make the Course Wheel accessible from the Music Wheel.
+- Make the Course Wheel accessible from the Music Wheel/sort menu.
+- Make a custom Course Wheel similar to that of the custom Music Wheel. (oof)
 - Add a slightly dumbed down Sort Menu for Course Mode. (HOW IS THERE STILL NO SORTING IN SM5 FOR COURSES)
 - Remove all calls/special cases for Event Mode (and the ability to toggle it) and force it on during init.
 - Replace any graphics or sound assets from SL that still exist with new original ones.
@@ -119,6 +119,7 @@ As noted in the "About" section this theme is intended for use with SM5 only.
 - Add more sorts/filters?
 - Add "Favorites" and/or tags for songs/groups.
 - Create a hashcache so I can do sorts like NPS.
+- Add some sort of basic mouse support ??? and utilize more of the keyboard/move away from "machine buttons".
 - Have the Groovestats filter use chart hash to filter rather than by pack directory.
 - I really want to add a chart preview. This might be possible with HashCache, but we'll see in the future I guess.
 - Clean up my code, it could be better.
