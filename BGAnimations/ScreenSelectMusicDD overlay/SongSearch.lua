@@ -17,15 +17,10 @@ local t = Def.ActorFrame{
 				--- If the player doesn't enter any text and just presses enter just reload the screen to the normal wheel
 				if answer ~= "" then
 					local results = 0
-					local SongsAvailable = {}
-					for groupName, group in pairs (pruned_songs_by_group) do
-						for song in ivalues (group) do
-							SongsAvailable[#SongsAvailable+1] = song
-						end
-					end
 					for i,song in ipairs(SongsAvailable) do
 						local match = false
 						local title = song:GetDisplayFullTitle():lower()
+						local artist = song:GetDisplayArtist():lower()
 						local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 						-- the query "xl grind" will match a song called "Axle Grinder" no matter
 						-- what the chart info says
@@ -34,10 +29,14 @@ local t = Def.ActorFrame{
 								match = true
 								results = results + 1
 							end
+						elseif artist:match(answer:lower()) then
+							if artist ~= "Random-Portal" and artist ~= "RANDOM-PORTAL" then
+								match = true
+								results = results + 1
+							end
 						end
 						
 						-- This code works, but the code in Setup.lua does not so do not use this for the moment.
-						--[[
 						if not match then
 							for i, steps in ipairs(song:GetStepsByStepsType(steps_type)) do
 								local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
@@ -56,18 +55,14 @@ local t = Def.ActorFrame{
 									end
 								end
 							end
-						end--]]
+						end
 					end
 					if results > 0 then
 						SongSearchSSMDD = true
 						SongSearchAnswer = answer
 						SongSearchWheelNeedsResetting = true
-						--SearchResultsYo = results
 						self:sleep(0.25):queuecommand("ReloadScreen")
 					else
-						SongSearchSSMDD = false
-						SongSearchAnswer = nil
-						SongSearchWheelNeedsResetting = false
 						SM("No songs found!")
 					end
 				else

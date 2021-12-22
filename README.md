@@ -4,10 +4,17 @@
 - "Random" added to song wheel.
 - "Random" added to group wheel.
 - A notification sits at the bottom corner to notify if the player has filters active. (In case they forget!)
+- New original menu & game over music.
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
 - If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will now be hidden from their respective difficulty folders. (Only ranked charts will show up)
-- New original menu & game over music.
+- Fixed bug with density graph involving warps.
+- Allow Life and Judge difficulties that are harder than ITG's (greater than 4) for anyone that wants to suffer.
+- Small bug fixes applied to the chart parser to support older .SM files. (ie. Heavy and Expert for difficulty names)
+- Fixed input display on double when using the Player 2 side.
+- Fixed missing string bug that broke the GSL
+- Fixed the music wheel/sort to account for Additional Song Foldrs properly.
+- Fixed Song Search behaviour
 
 # ------- "RANDOM" is back and better than ever! -------
 Not only do we now have true random for both all songs on the setup AND songs within a group folder; they also respect the current filters that are active too!

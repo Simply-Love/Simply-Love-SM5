@@ -343,9 +343,12 @@ local UpdatePrunedSongs = function()
 				if SongSearchSSMDD == true then
 					local match = false
 					local title = song:GetDisplayFullTitle():lower()
+					local artist = song:GetDisplayArtist():lower()
 					-- the query "xl grind" will match a song called "Axle Grinder" no matter
 					-- what the chart info says
 					if title:match(SongSearchAnswer:lower()) then
+						match = true
+					elseif artist:match(SongSearchAnswer:lower()) then
 						match = true
 					end
 					if not match then
@@ -666,6 +669,16 @@ if GetMainSortPreference() == 6 then
 	local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber())
 	if steps ~= nil then
 		NameOfGroup = GetStepsDifficultyGroup(steps)
+	end
+end
+
+-- Create list of all available songs to use for song search.
+if SongSearchSSMDD == false then
+	SongsAvailable = {}
+	for groupName, group in pairs (pruned_songs_by_group) do
+		for song in ivalues (group) do
+			SongsAvailable[#SongsAvailable+1] = song
+		end
 	end
 end
 
