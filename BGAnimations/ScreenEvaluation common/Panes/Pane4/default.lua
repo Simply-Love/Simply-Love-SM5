@@ -155,6 +155,10 @@ for i=2,num_judgments_available do
 			self:diffuse( colors[i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
+			-- Hide the text if it's the same as the previous window.
+			if abbreviations[SL.Global.GameMode][i] == abbreviations[SL.Global.GameMode][i-1] then
+				self:visible(false)
+			end
 		end,
 	}
 
@@ -173,6 +177,10 @@ for i=2,num_judgments_available do
 			self:diffuse( colors[i] )
 				:addx(x_avg):addy(7)
 				:zoom(0.65)
+			-- Hide the text if it's the same as the previous window.
+			if abbreviations[SL.Global.GameMode][i] == abbreviations[SL.Global.GameMode][i-1] then
+				self:visible(false)
+			end
 		end,
 	}
 
