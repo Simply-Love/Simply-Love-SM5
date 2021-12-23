@@ -6,6 +6,9 @@ local t = Def.ActorFrame {
 	
 	ReloadSSMDDMessageCommand = function(self)
 		if SortMenuNeedsUpdating == false then
+			SongSearchSSMDD = false
+			SongSearchAnswer = nil
+			SongSearchWheelNeedsResetting = false
 			SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSMDD")
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 		end
