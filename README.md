@@ -3,7 +3,9 @@
 # ------------ Differences from 1.0.3 ------------
 - "Random" added to song wheel.
 - "Random" added to group wheel.
-- A notification sits at the bottom corner to notify if the player has filters active. (In case they forget!)
+- "Random" will work for all sorts/subsorts and filters.
+- Add usb icon to signify songs with edit charts.
+- A notification at the bottom corner of screen select music to notify if the player has filters active. (In case they forget!)
 - New original menu & game over music.
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
@@ -15,15 +17,6 @@
 - Fixed missing string bug that broke the GSL
 - Fixed the music wheel/sort to account for Additional Song Folders properly.
 - Fixed Song Search behaviour
-
-# ------- "RANDOM" is back and better than ever! -------
-Not only do we now have true random for both all songs on the setup AND songs within a group folder; they also respect the current filters that are active too!
-![Random from all available songs](https://i.imgur.com/6CrXWxG.png)
-
-![Random from a pack/group](https://i.imgur.com/0tn3JsT.png)
-
-Not to mention that you can call randoms in any sort! (Unlike the default music wheel)
-![Random for any sort!](https://i.imgur.com/vwoDD9Z.png)
 
 
 # -------------- GrooveStats Integration --------------
@@ -71,11 +64,6 @@ Accessing the Sort Menu is the same as the default sort menu. To update any opti
 If your setup doesn't have a keyboard you can disable it from appearing in the sort menu in the Operator Menu under "Theme Options".
 You can also refresh the music wheel/undo the song search by either closing the folder of the search or resetting your sorts in the sort menu.
 
-# ---------------- Other Changes ----------------
-
-- Density Graph color is based off of NPS. The higher the NPS the more red it is.
-- Removal of game modes.
-- CDTitle support added.
 
 # ---------------- How to use a profile picture ----------------
 
