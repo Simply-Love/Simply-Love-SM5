@@ -30,7 +30,7 @@ local t = Def.ActorFrame{
 								results = results + 1
 							end
 						elseif artist:match(answer:lower()) then
-							if artist ~= "Random-Portal" and artist ~= "RANDOM-PORTAL" then
+							if title ~= "Random-Portal" and title ~= "RANDOM-PORTAL" then
 								match = true
 								results = results + 1
 							end
@@ -42,17 +42,15 @@ local t = Def.ActorFrame{
 								local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
 								-- the query "br xo fs" will match any song with at least one chart that
 								-- has "br", "xo" and "fs" in its AuthorCredit + Description
-								for word in answer:gmatch("%S+") do
-									if chartStr:lower():match(word:lower()) then
-										if chartStr ~= "Random-Portal" and chartStr ~= "RANDOM-PORTAL" then
-											FoundChart = chartStr
-											match = true
-											results = results + 1
-										end
-									else
-										match = false
-										break
+								
+								if chartStr:lower():match(answer:lower()) then
+									if title ~= "Random-Portal" and title ~= "RANDOM-PORTAL" then
+										match = true
+										results = results + 1
 									end
+								else
+									match = false
+									break
 								end
 							end
 						end

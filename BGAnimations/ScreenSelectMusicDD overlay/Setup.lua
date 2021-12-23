@@ -354,13 +354,10 @@ local UpdatePrunedSongs = function()
 					if not match then
 						for i, steps in ipairs(song:GetStepsByStepsType(steps_type)) do
 							local chartStr = steps:GetAuthorCredit().." "..steps:GetDescription()
-							match = true
-							-- the query "br xo fs" will match any song with at least one chart that
-							-- has "br", "xo" and "fs" in its AuthorCredit + Description
-							for word in SongSearchAnswer:gmatch("%S+") do
-								if not chartStr:lower():match(word:lower()) then
-									match = false
-								end
+							if chartStr:lower():match(SongSearchAnswer:lower()) then
+								match = true
+							else
+								match = false
 							end
 						end
 					end
