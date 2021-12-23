@@ -5,6 +5,20 @@ local row = args[3]
 local col = args[4]
 
 local Subtitle
+local CurrentStyle = GAMESTATE:GetCurrentStyle():GetStepsType()
+
+
+local function update_edit(self)
+	if self.song ~= nil and self.song ~= "CloseThisFolder" and self.song ~= "Random-Portal" then
+		if self.song:GetOneSteps(CurrentStyle, 'Difficulty_Edit') ~= nil then
+			self.edit:visible(true)
+		else
+			self.edit:visible(false)
+		end
+	else
+		self.edit:visible(false)
+	end
+end
 
 local function update_grade(self)
 	--change the Grade sprite
@@ -156,6 +170,19 @@ local song_mt = {
 						subself:y(32):visible(true)
 					end,
 				},
+				-- Load an edit icon if the song has an edit chart(s).
+				Def.Sprite{
+				Texture=THEME:GetPathG("", "usbicon.png"),
+				InitCommand=function(subself) 
+					subself:visible(false):zoom(0.1):xy(SCREEN_WIDTH/6, 25):animate(0) self.edit = subself 
+				end,
+				SlideToTopCommand=function(subself)
+					subself:linear(.12):diffusealpha(0):xy(SCREEN_WIDTH/6,75):zoom(0.1):linear(.12):diffusealpha(1)
+				end,
+				SlideBackIntoGridCommand=function(subself)
+					subself:linear(.12):diffusealpha(0):zoom(0.1):xy(SCREEN_WIDTH/6,25):linear(.12):diffusealpha(1)
+				end,
+				},
 
 			}
 			
@@ -170,13 +197,11 @@ local song_mt = {
 				else
 					grade_position = -120
 				end
-				--A box for the pass type
-				--TODO this might be better as an AMV
 				af[#af+1] = Def.ActorFrame {
 					InitCommand=function(subself) 
 						subself:visible(true) 
 					end,
-					-- The grade shown to the left of the song box
+					-- The grade shown to the left of the song name
 					Def.Sprite{
 						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
 						InitCommand=function(subself) subself:visible(false):zoom(WideScale(.25,.22)):xy(side*grade_position, 25):animate(0) self[pn..'grade_sprite'] = subself end,
@@ -280,6 +305,8 @@ local song_mt = {
 			end
 
 			update_grade(self)
+			update_edit(self)
+			
 		end
 	}
 }
