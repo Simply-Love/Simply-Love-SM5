@@ -499,7 +499,7 @@ end
 ---------------------------------------------------------------------------
 
 -- First looks to the last "seen" song for the default song and if it doesn't exist it will look at DDStats
--- since the DD GameMode can't rely on SM to save LastPlayedSong. If neither exist then it defaults 
+-- since the DD GameMode can't rely on the engine to properly save LastPlayedSong. If neither exist then it defaults 
 -- to the 1st song in the 1st folder.
 
 local GetDefaultSong = function(groups)
@@ -530,7 +530,7 @@ local GetDefaultSong = function(groups)
 			end
 		end
 	end
-	-- "RANDOM" bumps down the actual first group to #2
+	-- "RANDOM" gets counted as the first group so bump it down to start at #2
 	return PruneSongsFromGroup( groups[2] )[1]
 end
 
