@@ -123,10 +123,12 @@ function GetTopGrade(player, song, chart)
 		local scores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song,chart):GetHighScores()
 
 		for score in ivalues(scores) do
-			local cur_grade = score:GetGrade()
-			grade = cur_grade
-			if grade ~= 'Grade_Failed' then
-				break
+			if score:GetPercentDP() ~= 0 then
+				local cur_grade = score:GetGrade()
+				grade = cur_grade
+				if grade ~= 'Grade_Failed' then
+					break
+				end
 			end
 		end
 
