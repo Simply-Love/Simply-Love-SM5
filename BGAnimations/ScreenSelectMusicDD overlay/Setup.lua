@@ -2,9 +2,6 @@ local max_length_group = '1:00:00+'
 local max_difficulty_group = '40+'
 local max_bpm_group = '400+'
 
----- Currently searching in chart discription/chart author doesn't work here but works in 'SongSearch.lua'. 
----- Figure out why and fix. Also add back in song artist search, not sure what happened to that lol.
-
 
 local song_lengths = {}
 for i=0,90-1,30 do
