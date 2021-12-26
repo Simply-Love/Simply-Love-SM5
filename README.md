@@ -109,5 +109,5 @@ As noted in the "About" section this theme is intended for use with SM5 only.
 - Create a hashcache so I can do sorts like NPS.
 - Add some sort of basic mouse support ??? and utilize more of the keyboard/move away from "machine buttons".
 - Have the Groovestats filter use chart hash to filter rather than by pack directory.
-- I really want to add a chart preview. This might be possible with HashCache, but we'll see in the future I guess.
+- Add a chart preview? This might be possible with HashCache, but we'll see in the future I guess.
 - Clean up my code, it could be better.
