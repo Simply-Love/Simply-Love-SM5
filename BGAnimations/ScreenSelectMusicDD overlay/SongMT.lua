@@ -174,13 +174,13 @@ local song_mt = {
 				Def.Sprite{
 				Texture=THEME:GetPathG("", "usbicon.png"),
 				InitCommand=function(subself) 
-					subself:visible(false):zoom(0.1):xy(SCREEN_WIDTH/6, 25):animate(0) self.edit = subself 
+					subself:visible(false):zoom(0.1):xy(IsUsingWideScreen() and SCREEN_WIDTH/6 or SCREEN_WIDTH/4.8, 25):animate(0) self.edit = subself 
 				end,
 				SlideToTopCommand=function(subself)
-					subself:linear(.12):diffusealpha(0):xy(SCREEN_WIDTH/6,75):zoom(0.1):linear(.12):diffusealpha(1)
+					subself:linear(.12):diffusealpha(0):xy(IsUsingWideScreen() and SCREEN_WIDTH/6 or SCREEN_WIDTH/4.8,75):zoom(0.1):linear(.12):diffusealpha(1)
 				end,
 				SlideBackIntoGridCommand=function(subself)
-					subself:linear(.12):diffusealpha(0):zoom(0.1):xy(SCREEN_WIDTH/6,25):linear(.12):diffusealpha(1)
+					subself:linear(.12):diffusealpha(0):zoom(0.1):xy(IsUsingWideScreen() and SCREEN_WIDTH/6 or SCREEN_WIDTH/4.8,25):linear(.12):diffusealpha(1)
 				end,
 				},
 
