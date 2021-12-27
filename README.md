@@ -7,11 +7,11 @@
 - Add usb icon to signify songs with edit charts.
 - You can now restart a song during gameplay by pressing "Ctrl + R".
 - A notification at the bottom corner of screen select music to notify if the player has filters active. (In case they forget!)
-- New original menu & game over music.
+- New original menu, game over and course music.
 - Last song played/seen are properly set now.
 - Small bug fixes involving music wheel input.
 - If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will now be hidden from their respective difficulty folders. (Only ranked charts will show up)
-- Fixed bug with density graph involving warps.
+- Partially fixed bug with density graph involving warps.
 - Allow Life and Judge difficulties that are harder than ITG's (greater than 4) for anyone that wants to suffer.
 - Small bug fixes applied to the chart parser to support older .SM files. (ie. Heavy and Expert for difficulty names)
 - Fixed input display on double when using the Player 2 side.
