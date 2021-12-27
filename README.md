@@ -5,6 +5,7 @@
 - "Random" added to group wheel.
 - "Random" will work for all sorts/subsorts and filters.
 - Add usb icon to signify songs with edit charts.
+- You can now restart a song during gameplay by pressing "Ctrl + R".
 - A notification at the bottom corner of screen select music to notify if the player has filters active. (In case they forget!)
 - New original menu & game over music.
 - Last song played/seen are properly set now.
