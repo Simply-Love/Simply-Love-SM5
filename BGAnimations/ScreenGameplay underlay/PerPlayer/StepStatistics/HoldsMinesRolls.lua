@@ -2,6 +2,7 @@ local player = ...
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+local IsOnSameSideAsPlayer = IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1 or GAMESTATE:GetCurrentStyle():GetName() == "double")
 
 -- gray is used for leading 0s
 local gray = color("#5A6166")
@@ -95,8 +96,8 @@ af.InitCommand=function(self)
 		self:x( player==PLAYER_1 and 155 or -88 )
 	end
 
-	-- adjust for smaller panes when ultrawide and both players joined
-	if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+	-- adjust for smaller panes when stats are on same side as player
+	if IsOnSameSideAsPlayer then
 		self:x( player==PLAYER_1 and 14 or 50 )
 	end
 end

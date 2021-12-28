@@ -3,6 +3,8 @@ local pn = ToEnumShortString(player)
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+local IsDouble = GAMESTATE:GetCurrentStyle():GetName() == "double"
+local IsOnSameSideAsPlayer = IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1 or IsDouble)
 
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
@@ -74,12 +76,13 @@ af.InitCommand=function(self)
 	self:x( SL_WideScale(152,204) * (player==PLAYER_1 and -1 or 1))
 
 	if NoteFieldIsCentered and IsUsingWideScreen() then
-		self:x( 156 * (player==PLAYER_1 and -1 or 1))
+		self:x(156 * (player==PLAYER_1 and -1 or 1))
 	end
 
-	-- adjust for smaller panes when ultrawide and both players joined
-	if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
-		self:x( 154 * (player==PLAYER_1 and 1 or -1))
+	-- adjust for smaller panes when stats are on the same side as the player
+	if IsOnSameSideAsPlayer then
+		local x = IsDouble and 204 or 154
+		self:x(x * (player==PLAYER_1 and 1 or -1))
 	end
 end
 
@@ -94,8 +97,8 @@ for index, window in ipairs(TNS.Types) do
 			self:y((index-1)*row_height - 280)
 			self:halign( PlayerNumber:Reverse()[player] )
 
-			-- flip alignment when ultrawide and both players joined
-			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			-- flip alignment when stats are on the same side as the player
+			if IsOnSameSideAsPlayer then
 				self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
 			end
 
@@ -162,8 +165,8 @@ for index, window in ipairs(TNS.Types) do
 					self:y((index-1) * row_height - 279)
 					self:diffuse( TNS.Colors[index] )
 
-					-- flip alignment when ultrawide and both players joined
-					if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+					-- flip alignment when stats are on the same side as the player
+					if IsOnSameSideAsPlayer then
 						self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
 						self:x(self:GetX() * -1)
 					end

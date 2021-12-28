@@ -1,6 +1,7 @@
 local player = ...
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local IsOnSameSideAsPlayer = IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1 or GAMESTATE:GetCurrentStyle():GetName() == "double")
 
 return Def.Banner{
 	CurrentSongChangedMessageCommand=function(self)
@@ -13,8 +14,8 @@ return Def.Banner{
 			self:x( 72 * (player==PLAYER_1 and 1 or -1) )
 		end
 
-		-- ultrawide and both players joined
-		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+		-- stats on same side as player
+		if IsOnSameSideAsPlayer then
 			self:x(self:GetX() * -1)
 		end
 	end

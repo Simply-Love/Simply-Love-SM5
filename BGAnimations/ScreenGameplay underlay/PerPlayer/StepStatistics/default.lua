@@ -3,19 +3,22 @@ local pn = ToEnumShortString(player)
 local ar = GetScreenAspectRatio()
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+local IsDouble = GAMESTATE:GetCurrentStyle():GetName() == "double"
 
 -- -----------------------------------------------------------------------
 -- if the conditions aren't right, don't bother
+-- Note: These conditions should be kept in sync with those for DataVisualizations in "SL-PlayerOptions.lua"
 
 local stylename = GAMESTATE:GetCurrentStyle():GetName()
 
+-- No use computing this if the visualization isn't enabled
 if (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
-or (not IsUltraWide and stylename == "versus")
+-- No step statistics in Casual
 or (SL.Global.GameMode == "Casual")
-or (GetNotefieldWidth() > _screen.w/2)
-or (NoteFieldIsCentered and not IsUsingWideScreen())
+-- There's not enough space in non-ultra-wide for more than a single notefield
 or (not IsUltraWide and stylename ~= "single")
-or (    IsUltraWide and not (stylename == "single" or stylename == "versus"))
+-- Even in "single", if you center the playfield but don't have a wide screen then there's not enough space
+or (NoteFieldIsCentered and not IsUsingWideScreen())
 then
 	return
 end
@@ -41,8 +44,14 @@ if not IsUltraWide then
 
 -- ultrawide or wider
 else
-	if #GAMESTATE:GetHumanPlayers() > 1 then
-		sidepane_width = _screen.w/5
+	if #GAMESTATE:GetHumanPlayers() > 1 or IsDouble then
+		if IsDouble then
+			-- The space between the notefield and the edge of the screen, minus some (arbitrary) padding
+			sidepane_width = _screen.cx - (GetNotefieldWidth() / 2) - 10
+		else
+			sidepane_width = _screen.w/5
+		end
+
 		if player==PLAYER_1 then
 			sidepane_pos_x = sidepane_width/2
 		else
@@ -79,7 +88,7 @@ af[#af+1] = Def.ActorFrame{
 				self:zoom( zoom )
 			end
 		else
-			if #GAMESTATE:GetHumanPlayers() > 1 then
+			if #GAMESTATE:GetHumanPlayers() > 1 or IsDouble then
 				self:zoom(zoomfactor.ultrawide):addy(-55)
 			end
 		end

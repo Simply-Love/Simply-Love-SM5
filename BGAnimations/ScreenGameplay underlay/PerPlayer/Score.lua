@@ -5,7 +5,7 @@ local mods = SL[pn].ActiveModifiers
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NumPlayers = #GAMESTATE:GetHumanPlayers()
 local IsEX = SL[pn].ActiveModifiers.ShowEXScore
-
+local IsDouble = GAMESTATE:GetCurrentStyle():GetName() == "double"
 -- -----------------------------------------------------------------------
 -- first, check for conditions where we might not draw the score actor at all
 
@@ -86,8 +86,8 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 		-- assume "normal" score positioning first, but there are many reasons it will need to be moved
 		self:xy( pos[player].x, pos[player].y )
 
-		if mods.NPSGraphAtTop and styletype ~= "OnePlayerTwoSides" then
-			-- if NPSGraphAtTop and Step Statistics and not double,
+		if mods.NPSGraphAtTop then
+			-- if NPSGraphAtTop and Step Statistics,
 			-- move the score down into the stepstats pane under
 			-- the judgment breakdown
 			if mods.DataVisualizations=="Step Statistics" then
@@ -97,8 +97,12 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 				-- but current conditions might be such that it won't actually appear.
 				-- Ensure the StepStats ActorFrame is present before trying to traverse it.
 				if step_stats then
+					self:y( 282 )
+
 					if player==PLAYER_1 then
-						if NoteFieldIsCentered then
+						if IsDouble then
+							self:xy(step_stats:GetX() + 20, 240)
+						elseif NoteFieldIsCentered then
 							self:x( pos[ OtherPlayer[player] ].x + SL_WideScale( 94, 112.5) )
 						else
 							self:x( pos[ OtherPlayer[player] ].x - SL_WideScale(-84, -60) )
@@ -106,14 +110,14 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 
 					-- PLAYER_2
 					else
-						if NoteFieldIsCentered then
+						if IsDouble then
+							self:xy(step_stats:GetX() + 110, 240)
+						elseif NoteFieldIsCentered then
 							self:x( pos[ OtherPlayer[player] ].x - 65.5 )
 						else
 							self:x( pos[ OtherPlayer[player] ].x - SL_WideScale(-6, -2))
 						end
 					end
-
-					self:y( 282 )
 				end
 
 			-- if NPSGraphAtTop but not Step Statistics

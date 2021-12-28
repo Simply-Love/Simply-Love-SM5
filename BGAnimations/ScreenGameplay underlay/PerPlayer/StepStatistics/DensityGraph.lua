@@ -11,6 +11,8 @@ local life_verts = {}
 local offset = 0
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local StyleName = GAMESTATE:GetCurrentStyle():GetName()
+local IsOnSameSideAsPlayer = IsUltraWide and (#GAMESTATE:GetHumanPlayers() > 1 or StyleName == "double")
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- -----------------------------------------------------------------------
@@ -90,9 +92,8 @@ local text = LoadFont("Common Normal")..{
 		self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
 		self:vertalign(bottom)
 
-		-- flip alignment if ultrawide and both players joined because the pane
-		-- will now appear on the player's side of the screen rather than opposite
-		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+		-- flip alignment if the pane will appear on the player's side of the screen rather than opposite
+		if IsOnSameSideAsPlayer then
 			self:halign( PlayerNumber:Reverse()[player] )
 		end
 	end,
@@ -107,19 +108,17 @@ local text = LoadFont("Common Normal")..{
 		if player == PLAYER_1 then
 			self:x(_screen.w*0.5 - SL_WideScale(6,59))
 
-			if NoteFieldIsCentered then
-				self:x(_screen.w*0.5 - 134)
-			end
-			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			if IsOnSameSideAsPlayer then
 				self:x(52)
+			elseif NoteFieldIsCentered then
+				self:x(_screen.w*0.5 - 134)
 			end
 		else
 			self:x(SL_WideScale(6,130))
-			if NoteFieldIsCentered then
-				self:x(69)
-			end
-			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			if IsOnSameSideAsPlayer then
 				self:x(180)
+			elseif NoteFieldIsCentered then
+				self:x(69)
 			end
 		end
 
