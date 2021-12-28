@@ -89,17 +89,20 @@ local function UpdateChart(playerNum, difficultyChange)
 			end
 		else	--- Remember the last difficulty manually selected by the player and pick that.
 			local targetDifficulty = DDStats.GetStat(playerNum, 'LastDifficulty')
-			local matchingDifficulty = nil
+			local minDifficultyDifference = 999
+			local matchingSteps = nil
 			
 			for steps in ivalues(stepses) do
-				if steps:GetDifficulty() == targetDifficulty then
-					matchingDifficulty = steps
-					break
+				local difficultyDifference = math.abs(difficultyToIndex[steps:GetDifficulty()] - difficultyToIndex[targetDifficulty])
+
+				if difficultyDifference < minDifficultyDifference then
+					minDifficultyDifference = difficultyDifference
+					matchingSteps = steps
 				end
 			end
-			
-			if matchingDifficulty ~= nil then
-				SetChart(playerNum, matchingDifficulty)
+
+			if matchingSteps ~= nil then
+				SetChart(playerNum, matchingSteps)
 				return
 			end
 			
