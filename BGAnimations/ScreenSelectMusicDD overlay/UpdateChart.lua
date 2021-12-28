@@ -60,31 +60,49 @@ local function UpdateChart(playerNum, difficultyChange)
 
 	-- If we're sorted by difficulty and difficultyChange == 0,
 	-- try to keep the same meter
-	if GetMainSortPreference() == 6 and difficultyChange == 0 then
-		local targetMeter = NameOfGroup
+	if difficultyChange == 0 then
+		if GetMainSortPreference() == 6 then
+			local targetMeter = NameOfGroup
 
-		local oldDifficulty = difficulties[curDifficultyIndices[playerNum]];
-		local matchingSteps = nil
-		-- Check for meter AND difficulty match
-		for steps in ivalues(stepses) do
-			if GetStepsDifficultyGroup(steps) == targetMeter and steps:GetDifficulty() == oldDifficulty then
-				matchingSteps = steps
-				break
-			end
-		end
-
-		if matchingSteps == nil then
+			local oldDifficulty = difficulties[curDifficultyIndices[playerNum]];
+			local matchingSteps = nil
+			-- Check for meter AND difficulty match
 			for steps in ivalues(stepses) do
-				if GetStepsDifficultyGroup(steps) == targetMeter then
+				if GetStepsDifficultyGroup(steps) == targetMeter and steps:GetDifficulty() == oldDifficulty then
 					matchingSteps = steps
 					break
 				end
 			end
-		end
 
-		if matchingSteps ~= nil then
-			SetChart(playerNum, matchingSteps)
-			return
+			if matchingSteps == nil then
+				for steps in ivalues(stepses) do
+					if GetStepsDifficultyGroup(steps) == targetMeter then
+						matchingSteps = steps
+						break
+					end
+				end
+			end
+
+			if matchingSteps ~= nil then
+				SetChart(playerNum, matchingSteps)
+				return
+			end
+		else	--- Remember the last difficulty manually selected by the player and pick that.
+			local targetDifficulty = DDStats.GetStat(playerNum, 'LastDifficulty')
+			local matchingDifficulty = nil
+			
+			for steps in ivalues(stepses) do
+				if steps:GetDifficulty() == targetDifficulty then
+					matchingDifficulty = steps
+					break
+				end
+			end
+			
+			if matchingDifficulty ~= nil then
+				SetChart(playerNum, matchingDifficulty)
+				return
+			end
+			
 		end
 	end
 
@@ -136,6 +154,20 @@ local function UpdateChart(playerNum, difficultyChange)
 			SOUND:PlayOnce( THEME:GetPathS("", "_harder.ogg") )
 		end
 		SetChart(playerNum, selectedSteps)
+		if difficultyChange > 0 or difficultyChange < 0 then
+			if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+				local PlayerOneChart = GAMESTATE:GetCurrentSteps(0)
+				DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())
+				DDStats.Save(PLAYER_1)
+			end
+			
+			if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+				local PlayerTwoChart = GAMESTATE:GetCurrentSteps(1)
+				DDStats.SetStat(PLAYER_2, 'LastDifficulty', PlayerTwoChart:GetDifficulty())
+				DDStats.Save(PLAYER_2)
+			end
+		end
+		
 	end
 end
 
