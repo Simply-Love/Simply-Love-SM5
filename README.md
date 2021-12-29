@@ -18,6 +18,7 @@
 - Fixed missing string bug that broke the GSL
 - Fixed the music wheel/sort to account for Additional Song Folders properly.
 - Fixed Song Search behaviour
+- Song wheel difficulty selection more resembles that of the original engine (remembering last difficulty picked while scrolling through the wheel).
 
 
 # -------------- GrooveStats Integration --------------
