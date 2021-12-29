@@ -93,7 +93,7 @@ return Def.ActorFrame{
 
 	--STEPS label
 	LoadFont("Common Normal")..{
-		Text=GAMESTATE:IsCourseMode() and Screen.String("SongNumber"):format(1) or Screen.String("STEPS"),
+		Text=GAMESTATE:IsCourseMode() and Screen.String("SongNumber"):format(1),
 		InitCommand=function(self)
 			self
 			:diffuse(0,0,0,1)
@@ -101,6 +101,14 @@ return Def.ActorFrame{
 			:x(IsUsingWideScreen() and WideScale(130,28) or 30)
 			:maxwidth(40)
 			:zoom(0.9)
+			if not GAMESTATE:IsCourseMode() then
+				if GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerOneSide' then
+					self:settext("Single:")
+				else
+					self:settext("Double:")
+				end
+			
+			end
 		end,
 		UpdateTrailTextMessageCommand=function(self, params)
 			self:settext( THEME:GetString("ScreenSelectCourse", "SongNumber"):format(params.index) )
