@@ -136,8 +136,8 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							GSIcon:visible(true)
 							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 							if personalRank == 1 then
-								MESSAGEMAN:Broadcast("PlayRandomWRSound")
 								recordText:settext("World Record!")
+								MESSAGEMAN:Broadcast("PlayRandomWRSound")
 							else
 								recordText:settext("Personal Best!")
 							end
