@@ -154,14 +154,19 @@ local t = Def.ActorFrame{
 				end
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 				-- initial zoom before additional options are added
-				local InitialZoomY = 255
-				local InitialAddY = -25
+				local InitialZoomY = 230
+				local InitialAddY = -37.5
 				
 				if ThemePrefs.Get("AllowSongSearch") then
 					InitialZoomY = InitialZoomY + 25
 					InitialAddY = InitialAddY + 12.5
 				end
 				if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
+					InitialZoomY = InitialZoomY + 25
+					InitialAddY = InitialAddY + 12.5
+				end
+				
+				if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
 					InitialZoomY = InitialZoomY + 25
 					InitialAddY = InitialAddY + 12.5
 				end
@@ -196,14 +201,18 @@ local t = Def.ActorFrame{
 				
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 				-- initial zoom before additional options are added
-				local InitialZoomY = 250
-				local InitialAddY = -25
+				local InitialZoomY = 225
+				local InitialAddY = -37.5
 				
 				if ThemePrefs.Get("AllowSongSearch") then
 					InitialZoomY = InitialZoomY + 25
 					InitialAddY = InitialAddY + 12.5
 				end
 				if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
+					InitialZoomY = InitialZoomY + 25
+					InitialAddY = InitialAddY + 12.5
+				end
+				if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
 					InitialZoomY = InitialZoomY + 25
 					InitialAddY = InitialAddY + 12.5
 				end
@@ -595,7 +604,9 @@ if ThemePrefs.Get("AllowSongSearch") then
 	OtherLabel[#OtherLabel+1] = "SONG SEARCH"
 end
 -- OtherLabel[#OtherLabel+1] = "MARK AS FAVORITE"
-OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
+if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
+	OtherLabel[#OtherLabel+1] = switchStepsTypeLabel
+end
 OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
 local leaderboards_label_index = #OtherLabel
 OtherLabel[#OtherLabel+1] = "TEST INPUT"

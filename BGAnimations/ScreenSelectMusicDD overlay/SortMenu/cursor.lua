@@ -12,7 +12,11 @@ local function GetMaxCursorPosition()
 	end
 	
 	-- the minimum amount of items
-	local MaxCursorPosition = 12
+	local MaxCursorPosition = 11
+	
+	if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
+		MaxCursorPosition = MaxCursorPosition + 1
+	end
 	
 	if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
 		MaxCursorPosition = MaxCursorPosition + 1
