@@ -104,7 +104,7 @@ return Def.ActorFrame{
 			if not GAMESTATE:IsCourseMode() then
 				if GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerOneSide' or  GAMESTATE:GetCurrentStyle():GetStyleType() ==  'StyleType_TwoPlayersTwoSides' then
 					self:settext("Single:")
-				elseif GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerTwoSides'
+				elseif GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerTwoSides' then
 					self:settext("Double:")
 				else
 					self:settext("STEPS:")
