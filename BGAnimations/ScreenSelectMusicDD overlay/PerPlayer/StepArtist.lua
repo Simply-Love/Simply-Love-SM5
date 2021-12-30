@@ -102,10 +102,12 @@ return Def.ActorFrame{
 			:maxwidth(40)
 			:zoom(0.9)
 			if not GAMESTATE:IsCourseMode() then
-				if GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerOneSide' then
+				if GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerOneSide' or  GAMESTATE:GetCurrentStyle():GetStyleType() ==  'StyleType_TwoPlayersTwoSides' then
 					self:settext("Single:")
-				else
+				elseif GAMESTATE:GetCurrentStyle():GetStyleType() == 'StyleType_OnePlayerTwoSides'
 					self:settext("Double:")
+				else
+					self:settext("STEPS:")
 				end
 			
 			end
