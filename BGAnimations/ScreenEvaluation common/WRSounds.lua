@@ -12,7 +12,6 @@ PlayRandomWRSoundMessageCommand=function(self)
 	end
 	self:sleep(2)
 
-	SM(#Sounds)
 	-- don't try to play a sound if the folder is empty.
 	if #Sounds ~= 0 then
 		RandomSound = Sounds[math.random(#Sounds)]
