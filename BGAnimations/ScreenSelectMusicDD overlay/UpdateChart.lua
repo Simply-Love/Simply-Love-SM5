@@ -87,7 +87,7 @@ local function UpdateChart(playerNum, difficultyChange)
 				SetChart(playerNum, matchingSteps)
 				return
 			end
-		else	--- Remember the last difficulty manually selected by the player and pick that.
+		elseif DDStats.GetStat(playerNum, 'LastDifficulty') ~= nil then 	--- Remember the last difficulty manually selected by the player and pick that, but only if they have a profile already).
 			local targetDifficulty = DDStats.GetStat(playerNum, 'LastDifficulty')
 			local minDifficultyDifference = 999
 			local matchingSteps = nil
