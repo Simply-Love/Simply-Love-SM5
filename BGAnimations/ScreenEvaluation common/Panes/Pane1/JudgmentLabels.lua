@@ -22,14 +22,12 @@ TapNoteScores.Names = map(GetTNSStringFromTheme, TapNoteScores.Types)
 local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Holds'),
 	THEME:GetString("ScreenEvaluation", 'Mines'),
-	THEME:GetString("ScreenEvaluation", 'Hands'),
 	THEME:GetString("ScreenEvaluation", 'Rolls')
 }
 
 local EnglishRadarCategories = {
 	[THEME:GetString("ScreenEvaluation", 'Holds')] = "Holds",
 	[THEME:GetString("ScreenEvaluation", 'Mines')] = "Mines",
-	[THEME:GetString("ScreenEvaluation", 'Hands')] = "Hands",
 	[THEME:GetString("ScreenEvaluation", 'Rolls')] = "Rolls",
 }
 
@@ -65,7 +63,17 @@ for i=1, #TapNoteScores.Types do
 	end
 end
 
--- labels: holds, mines, hands, rolls
+t[#t+1] = LoadFont("Wendy/_wendy small")..{
+	Text="EX",
+	InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
+	BeginCommand=function(self)
+		self:x( (controller == PLAYER_1 and -160) or 90 )
+		self:y(38)
+		self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+	end
+}
+
+-- labels: holds, mines, rolls
 for index, label in ipairs(RadarCategories) do
 
 	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
@@ -76,7 +84,7 @@ for index, label in ipairs(RadarCategories) do
 		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( (controller == PLAYER_1 and -160) or 90 )
-			self:y((index-1)*28 + 41)
+			self:y(index*28 + 41)
 		end
 	}
 end

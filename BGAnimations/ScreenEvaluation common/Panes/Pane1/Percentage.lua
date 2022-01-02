@@ -15,9 +15,10 @@ return Def.ActorFrame{
 	-- dark background quad behind player percent score
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(color("#101519")):zoomto(158.5, 60)
+			self:diffuse(color("#101519")):zoomto(158.5, 88)
 			self:horizalign(controller==PLAYER_1 and left or right)
 			self:x(150 * (controller == PLAYER_1 and -1 or 1))
+			self:y(14)
 		end
 	},
 
