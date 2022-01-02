@@ -500,6 +500,16 @@ local Overrides = {
 		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideLookahead" },
 	},
 	-------------------------------------------------------------------------
+	ColumnCues = {
+		Values = {
+			"Off",
+			"0.5s", "0.6s", "0.7s", "0.8s", "0.9s",
+			"1.0s", "1.1s", "1.2s", "1.3s", "1.4s",
+			"1.5s", "1.6s", "1.7s", "1.8s", "1.9s",
+			"2.0s",
+		}
+	},
+	-------------------------------------------------------------------------
 	TimingWindows = {
 		Values = function()
 			return {

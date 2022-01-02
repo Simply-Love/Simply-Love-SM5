@@ -22,6 +22,7 @@ local PlayerDefaults = {
 				HideComboExplosions = false,
 
 				ColumnFlashOnMiss = false,
+				ColumnCues = "Off",
 				SubtractiveScoring = false,
 				MeasureCounter = "16th",
 				MeasureCounterLeft = false,

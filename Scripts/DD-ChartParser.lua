@@ -410,3 +410,62 @@ ParseChartInfo = function(steps, pn)
 		end
 	end
 end
+
+GetChartColumnTimes = function(steps, pn)
+	-- The filename for these steps in the StepMania cache 
+	local filename = steps:GetFilename()
+	-- StepsType, a string like "dance-single" or "pump-double"
+	local stepsType = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
+	-- Difficulty, a string like "Beginner" or "Challenge"
+	local difficulty = ToEnumShortString( steps:GetDifficulty() )
+	
+	-- An arbitary but unique string provided by the stepartist, needed here to identify Edit charts
+	local description = steps:GetDescription()
+
+	local simfileString, fileType = GetSimfileString( steps )
+	if simfileString == nil then return nil end
+
+	-- Parse out just the contents of the notes
+	local measuresString, BPMs = GetSimfileChartString(simfileString, stepsType, difficulty, description, fileType)
+	if measuresString == nil or BPMs == nil then return nil end
+
+	measuresString = measuresString .. ';'
+
+	local timingData = steps:GetTimingData()
+
+	local columnTimes = {}
+	local measureIndex = 0
+
+	local curMeasure = {}
+
+	for line in measuresString:gmatch("[^%s*\r\n]+") do
+		if(line:match("^[,;]%s*")) then
+			-- end of measure
+			for i, columns in ipairs(curMeasure) do
+				local beat = 4 * (measureIndex + (i-1) / #curMeasure)
+				local t = timingData:GetElapsedTimeFromBeat(beat)
+
+				for _, column in ipairs(columns) do
+					if columnTimes[column] == nil then
+						columnTimes[column] = {}
+					end
+					local times = columnTimes[column]
+					times[#times+1] = t
+				end
+			end
+			curMeasure = {}
+			measureIndex = measureIndex + 1
+		else
+			local columns = {}
+			local i = 0
+			while true do
+				i = line:find('[124]', i+1)
+				if i == nil then break end
+				columns[#columns+1] = i
+			end
+			curMeasure[#curMeasure+1] = columns
+		end
+	end
+	
+	return columnTimes
+end

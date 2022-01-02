@@ -34,6 +34,7 @@ local profile_whitelist = {
 	MeasureCounterLeft = "boolean",
 	MeasureCounterUp = "boolean",
 	HideLookahead = "boolean",
+	ColumnCues = "string",
 
 	ColumnFlashOnMiss = "boolean",
 	SubtractiveScoring = "boolean",
