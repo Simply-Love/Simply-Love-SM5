@@ -378,6 +378,21 @@ SL = {
 			InitialValue=0.5,
 		},
 	},
+	ExWeights = {
+		-- W0 is not necessarily a "real" window.
+		-- In ITG mode it is emulated based off the value of TimingWindowW1 defined
+		-- for FA+ mode.
+		W0=3.5,
+		W1=3,
+		W2=2,
+		W3=1,
+		W4=0,
+		W5=0,
+		Miss=0,
+		LetGo=0,
+		Held=3.5,  -- Should be same as W0 as that is how SM handles it internally.
+		HitMine=-1
+	},
 	-- Fields used to determine the existence of the launcher and the
 	-- available GrooveStats services.
 	GrooveStats = {

@@ -572,3 +572,83 @@ end
 IsAutoplay = function(player)
 	return GAMESTATE:GetPlayerState(player):GetPlayerController() ~= "PlayerController_Human"
 end
+
+
+-- -----------------------------------------------------------------------
+CalculateExScore = function(player)
+	local pn = ToEnumShortString(player)
+	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+
+	local total_points = 0
+	local total_possible = 0
+
+	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+
+	-- First get tap notes.
+	for index, window in ipairs(TNS) do
+		local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
+
+		-- The W0 window needs to be emulated in ITG mode.
+		-- We already track note offsets so use that to compute the W0 count.
+		-- TODO(teejusb): Explicitly track this value instead of computing the count here
+		-- as it will be useful to display the count during gameplay.
+		if window == "W1" and SL.Global.GameMode == "ITG" then
+			local offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
+
+			local W0_count = 0
+
+			for time_offset in ivalues(offsets) do
+				local offset = time_offset[2]
+
+				local W0 = SL.Preferences["FA+"]["TimingWindowSecondsW1"] + SL.Preferences["FA+"]["TimingWindowAdd"]
+
+				-- We found a judgment that fell within the W0 window (Fantastic+).
+				if offset ~= "Miss" then
+					offset = math.abs(offset)
+					if offset <= W0 then
+						W0_count = W0_count + 1
+					end
+				end
+			end
+			total_points = total_points + W0_count * SL.ExWeights["W0"]
+			total_possible = total_possible + W0_count * SL.ExWeights["W0"]
+
+			-- Subtract the W0 note count from the actual W1 count and then fall through below
+			number = number - W0_count
+		end
+
+		local adjusted_window = window
+		if window ~= "Miss" and SL.Global.GameMode == "FA+" then
+			-- In FA+ mode, we need to shift the windows up 1 so that the EX weight we're indexing is accurate.
+			-- E.g. W1 window becomes W0, W2 becomes W1, etc.
+			adjusted_window = "W"..(tonumber(window:sub(-1))-1)
+		end
+		
+		total_points = total_points + number * SL.ExWeights[adjusted_window]
+		total_possible = total_possible + number * SL.ExWeights["W0"]
+	end
+
+	local RadarCategory = { "Holds", "Mines", "Rolls" }
+	
+	-- Then handle the special note types.
+	for index, RCType in ipairs(RadarCategory) do
+		local number = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
+		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+
+		if RCType == "Holds" or RCType == "Rolls" then
+			total_points = total_points + number * SL.ExWeights["Held"]
+			total_points = total_points + (possible - number) * SL.ExWeights["LetGo"]
+
+			total_possible = total_possible + possible * SL.ExWeights["Held"]
+		end
+
+		if RCType == "Mines" then
+			-- For Mines, 'number' is the number of mines dodged and 'possible'
+			-- is the total number of mines.
+			-- EX score only cares about the number of mines hits.
+			total_points = total_points + (possible - number) * SL.ExWeights["HitMine"]
+		end
+	end
+
+	return math.floor(total_points/total_possible * 10000) / 100
+end
