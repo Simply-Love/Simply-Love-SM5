@@ -118,20 +118,32 @@ local t = Def.ActorFrame {
 						end
 					end
 					if params.Name == "SortList" or params.Name == "SortList2" then
-						isSortMenuVisible = true
-						SOUND:StopMusic()
-						SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
-						if params.PlayerNumber == 'PlayerNumber_P1' then
-							PlayerControllingSort = 'PlayerNumber_P1' 
-						else
-							PlayerControllingSort = 'PlayerNumber_P2'
+						local P1Enabled = GAMESTATE:IsPlayerEnabled(0)
+						local P2Enabled = GAMESTATE:IsPlayerEnabled(1)
+						local OpenSort = false
+						
+						if params.PlayerNumber == 'PlayerNumber_P1' and P1Enabled == true then
+							OpenSort = true
+						elseif params.PlayerNumber == 'PlayerNumber_P2' and P2Enabled == true then
+							OpenSort = true
 						end
-						if GAMESTATE:GetCurrentSong() ~= nil then
-							DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
+						
+						if OpenSort then
+							isSortMenuVisible = true
+							SOUND:StopMusic()
+							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "sort.ogg") )
+							if params.PlayerNumber == 'PlayerNumber_P1' then
+								PlayerControllingSort = 'PlayerNumber_P1' 
+							else
+								PlayerControllingSort = 'PlayerNumber_P2'
+							end
+							if GAMESTATE:GetCurrentSong() ~= nil then
+								DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
+							end
+							MESSAGEMAN:Broadcast("InitializeDDSortMenu")
+							MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
+							MESSAGEMAN:Broadcast("ToggleSortMenu")
 						end
-						MESSAGEMAN:Broadcast("InitializeDDSortMenu")
-						MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
-						MESSAGEMAN:Broadcast("ToggleSortMenu")
 					end
 				end
 			--- do this to close the sort menu for people using 3 button input
