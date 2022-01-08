@@ -1,7 +1,7 @@
 local max_length_group = '1:00:00+'
 local max_difficulty_group = '40+'
 local max_bpm_group = '400+'
-
+local NoSongs = false
 
 local song_lengths = {}
 for i=0,90-1,30 do
@@ -367,6 +367,10 @@ local UpdatePrunedSongs = function()
 					songs[#songs+1] = song
 				end
 				
+				if #songs == 0 then
+					NoSongs = true
+				end
+				
 			end
 		end
 		
@@ -624,10 +628,10 @@ UpdatePrunedSongs()
 -- prune the list of potential groups down to valid groups
 groups = PruneGroups(groups)
 
--- If there are STILL no valid groups, we aren't going to find any.
+-- If there are STILL no valid groups or songs, we aren't going to find any.
 -- return nil, which default.lua will interpret to mean the
 -- player needs to be informed that this machine has no suitable content...  D:
-if #groups == 0 then
+if #groups == 0 or NoSongs == true then
 	return nil
 end
 
