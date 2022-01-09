@@ -367,10 +367,6 @@ local UpdatePrunedSongs = function()
 					songs[#songs+1] = song
 				end
 				
-				if #songs == 0 then
-					NoSongs = true
-				end
-				
 			end
 		end
 		
@@ -402,6 +398,9 @@ local PruneSongsFromGroup = function(group)
 	local songs_copy = {}
 	for song in ivalues(songs) do
 		songs_copy[#songs_copy+1] = song
+		if #songs_copy == 0 then
+			NoSongs = true
+		end
 	end
 	songs = songs_copy
 
