@@ -398,12 +398,9 @@ local PruneSongsFromGroup = function(group)
 	local songs_copy = {}
 	for song in ivalues(songs) do
 		songs_copy[#songs_copy+1] = song
-		if #songs_copy == 0 then
-			NoSongs = true
-		end
 	end
 	songs = songs_copy
-
+	
 	local current_song = GAMESTATE:GetCurrentSong()
 	-- we need to retain the index of the current song so we can set the SongWheel to start on it
 	local index = 1
@@ -627,13 +624,6 @@ UpdatePrunedSongs()
 -- prune the list of potential groups down to valid groups
 groups = PruneGroups(groups)
 
--- If there are STILL no valid groups or songs, we aren't going to find any.
--- return nil, which default.lua will interpret to mean the
--- player needs to be informed that this machine has no suitable content...  D:
-if #groups == 0 or NoSongs == true then
-	return nil
-end
-
 -- there will be a current_song if we're on stage 2 or later
 current_song = GetDefaultSong(groups)
 GAMESTATE:SetCurrentSong(current_song)
@@ -676,6 +666,16 @@ if SongSearchSSMDD == false then
 			SongsAvailable[#SongsAvailable+1] = song
 		end
 	end
+	if #SongsAvailable == 0 then
+		NoSongs = true
+	end
+end
+
+-- If there are STILL no valid groups or songs, we aren't going to find any.
+-- return nil, which default.lua will interpret to mean the
+-- player needs to be informed that this machine has no suitable content...  D:
+if #groups == 0 or NoSongs == true then
+	return nil
 end
 
 group_index = FindInTable(NameOfGroup, groups) or 1
