@@ -2,135 +2,152 @@
 -- Returns an actor that can write a request, wait for its response, and then
 -- perform some action. This actor will only wait for one response at a time.
 -- If we make a new request while we are already waiting on a response, we
--- will ignore the response received from the previous request and wait for the
--- new response. 
+-- will cancel the current request and make a new one.
+--
+-- Args:
+--     x: The x position of the loading spinner.
+--     y: The y position of the loading spinner.
 --
 -- Usage:
--- af[#af+1] = RequestResponseActor("GetScores", 10)
+-- af[#af+1] = RequestResponseActor(100, 0)
 --
--- Which can then be triggered by:
+-- Which can then be triggered from within the OnCommand of the parent ActorFrame:
 --
--- af[#af+1] = Def.Actor{
---   OnCommand=function(self)
---     MESSAGEMAN:Broadcast("GetScores", {
---       data={..},
---       args={..},
---       callback=function(data, args)
---         SCREENMAN:SystemMessage(tostring(data)..tostring(args))
---       end
+-- af.OnCommand=function(self)
+--     self:playcommand("MakeGrooveStatsRequest", {
+--         endpoint="new-session.php?chartHashVersion="..SL.GrooveStats.ChartHashVersion,
+--         method="GET",
+--         timeout=10,
+--         callback=NewSessionRequestProcessor,
+--         args=self:GetParent()
 --     })
---   end
---  }
--- (The OnCommand can be concatenated to the returned actor itself.)
+-- end
+--
+-- (Alternatively, the OnCommand can be concatenated to the returned actor itself.)
 
--- The params in the MESSAGEMAN:Broadcast() call must have the following:
--- data: A table that can be converted to JSON that will contains the
---       information for the request
--- args: Arguments that will be made accesible to the callback function. This
---       can of any type as long as the callback knows what to do with it.
--- callback: A function that processes the response. It must take at least two
+-- The params table passed to the playcommand can have the following keys.
+-- All these fields are optional because there are some defaults in place.
+--
+-- endpoint: string, the endpoint at api.groovestats.com to send the request to.
+-- method: string, the type of request to make.
+--	       Valid values are GET, POST, PUT, PATCH, and DELETE.
+-- body: string, the body for the request.
+-- headers: table, a table containing key value pairs for the headers of the request.
+-- timeout: number, the amount of time to wait for the request to complete in seconds.
+-- callback: function, callback to process the response. It can take up to two
 --       parameters:
---           data: The JSON response which has been converted back to a lua table
---           args: The same args as listed above.
---       If data is nil then that means the request has timed out and can be
---       processed by the callback accordingly.
-
--- name: A name that will trigger the request for this actor.
---       It should generally be unique for each actor of this type.
--- timeout: A positive number in seconds between [1.0, 59.0] inclusive. It must
---       be less than 60 seconds as responses are expected to be cleaned up
---       by the launcher by then.
---    x: The x position of the loading spinner.
---    y: The y position of the loading spinner.
-RequestResponseActor = function(name, timeout, x, y)
-	-- Sanitize the timeout value.
-	local timeout = clamp(timeout, 1.0, 59.0)
-	local path_prefix = "/Save/GrooveStats/"
+--           res: The JSON response which has been converted back to a lua table
+--           args: The provided args passed as is.
+-- args: any, arguments that will be made accesible to the callback function. This
+--       can of any type as long as the callback knows what to do with it.
+RequestResponseActor = function(x, y)
+	local url_prefix = "https://api.groovestats.com/"
 
 	return Def.ActorFrame{
 		InitCommand=function(self)
-			self.request_id = nil
-			self.request_time = nil
-			self.args = nil
-			self.callback = nil
+			self.request_time = -1
+			self.timeout = -1
+			self.request_handler = nil
+			self.leaving_screen = false
 			self:xy(x, y)
 		end,
-		WaitCommand=function(self)
-			local Reset = function(self)
-				self.request_id = nil
-				self.request_time = nil
-				self.args = nil
-				self.callback = nil
-				self:GetChild("Spinner"):visible(false)
-			end
-			local now = GetTimeSinceStart()
-			local remaining_time = timeout - (now - self.request_time)
-			if self.request_id ~= "ping" then
-				-- Tell the spinner how much remaining time there is.
-				self:playcommand("UpdateSpinner", {time=remaining_time})
-			end
-
-			-- We're waiting on a response.
-			if self.request_id ~= nil then
-				local f = RageFileUtil.CreateRageFile()
-				-- Check to see if the response file was written.
-				if f:Open(path_prefix.."responses/"..self.request_id..".json", 1) then
-					local json_str = f:Read()
-					local data = {}
-					if #json_str ~= 0 then
-						data = JsonDecode(json_str)
-					end
-					self.callback(data, self.args)
-					f:Close()
-					Reset(self)
-				-- Have we timed out?
-				elseif remaining_time < 0 then
-					self.callback(nil, self.args)
-					Reset(self)
-				end
-				f:destroy()
-			end
-
-			-- If the id wasn't reset, then we're still waiting. Loop again.
-			if self.request_id ~= nil then
-				self:sleep(0.5):queuecommand('Wait')
+		CancelCommand=function(self)
+			self.leaving_screen = true
+			-- Cancel the request if we pressed back on the screen.
+			if self.request_handler then
+				self.request_handler:Cancel()
+				self.request_handler = nil
 			end
 		end,
-		[name .. "MessageCommand"]=function(self, params)
-			if not SL.GrooveStats.Launcher and params.data["action"] ~= "ping" then return end
-			local id = nil
-			-- We don't want to generate a bunch of files if they will never get processed.
-			-- Specifically for the ping action, we will use a predetermined id.
-			if params.data["action"] == "ping" then
-				id = "ping"
-			else
-				id = CRYPTMAN:GenerateRandomUUID()
+		OffCommand=function(self)
+			self.leaving_screen = true
+			-- Cancel the request if this actor will be destructed soon.
+			if self.request_handler then
+				self.request_handler:Cancel()
+				self.request_handler = nil
+			end
+		end,
+		MakeGrooveStatsRequestCommand=function(self, params)
+			self:stoptweening()
+			if not params then
+				Warn("No params specified for MakeGrooveStatsRequestCommand.")
+				return
 			end
 
-			local f = RageFileUtil:CreateRageFile()
-			if f:Open(path_prefix .. "requests/".. id .. ".json", 2) then
-				f:Write(JsonEncode(params.data, true))
-				f:Close()
-
-				self:stoptweening()
-				self.request_id = id
-				self.request_time = GetTimeSinceStart()
-				self.args = params.args
-				self.callback = params.callback
-
-				self:GetChild("Spinner"):visible(false)
-				self:sleep(0.1):queuecommand('Wait')
+			-- Cancel any existing requests if we're waiting on one at the moment.
+			if self.request_handler then
+				self.request_handler:Cancel()
+				self.request_handler = nil
 			end
-			f:destroy()
+			self:GetChild("Spinner"):visible(true)
+
+			local timeout = params.timeout or 60
+			local endpoint = params.endpoint or ""
+			local method = params.method
+			local body = params.body
+			local headers = params.headers
+
+			self.timeout = timeout
+
+			-- Attempt to make the request
+			self.request_handler = NETWORK:HttpRequest{
+				url=url_prefix..endpoint,
+				method=method,
+				body=body,
+				headers=headers,
+				connectTimeout=timeout/2,
+				transferTimeout=timeout/2,
+				onResponse=function(response)
+					self.request_handler = nil
+					-- If we get a permanent error, make sure we "disconnect" from
+					-- GrooveStats until we recheck on ScreenTitleMenu.
+					if response.statusCode then
+						local body = nil
+						local code = response.statusCode
+						if code == 200 then
+							body = JsonDecode(response.body)
+						end
+						if (code >= 400 and code < 499 and code ~= 429) or (code == 200 and body and body.error and #body.error) then
+							SL.GrooveStats.IsConnected = false
+						end
+					end
+
+					if self.leaving_screen then
+						return
+					end
+					
+					if params.callback then
+						if not response.error or ToEnumShortString(response.error) ~= "Cancelled" then
+							params.callback(response, params.args)
+						end
+					end
+
+					self:GetChild("Spinner"):visible(false)
+				end,
+			}
+			-- Keep track of when we started making the request
+			self.request_time = GetTimeSinceStart()
+			-- Start looping for the spinner.
+			self:queuecommand("GrooveStatsRequestLoop")
+		end,
+		GrooveStatsRequestLoopCommand=function(self)
+			local now = GetTimeSinceStart()
+			local remaining_time = self.timeout - (now - self.request_time)
+			self:playcommand("UpdateSpinner", {
+				timeout=self.timeout,
+				remaining_time=remaining_time
+			})
+			-- Only loop if the request is still ongoing.
+			-- The callback always resets the request_handler once its finished.
+			if self.request_handler then
+				self:sleep(0.5):queuecommand("GrooveStatsRequestLoop")
+			end
 		end,
 
 		Def.ActorFrame{
 			Name="Spinner",
 			InitCommand=function(self)
 				self:visible(false)
-			end,
-			UpdateSpinnerCommand=function(self)
-				self:visible(true)
 			end,
 			Def.Sprite{
 				Texture=THEME:GetPathG("", "LoadingSpinner 10x3.png"),
@@ -150,14 +167,14 @@ RequestResponseActor = function(name, timeout, x, y)
 					self:diffuse(DarkUI() and name ~= "Leaderboard" and Color.Black or Color.White)
 				end,
 				UpdateSpinnerCommand=function(self, params)
-				-- Only display the countdown after we've waiting for some amount of time.
-					if timeout - params.time > 2 then
+					-- Only display the countdown after we've waiting for some amount of time.
+					if params.timeout - params.remaining_time > 2 then
 						self:visible(true)
 					else
 						self:visible(false)
 					end
-					if params.time > 1 then
-						self:settext(math.floor(params.time))
+					if params.remaining_time > 1 then
+						self:settext(math.floor(params.remaining_time))
 					end
 				end
 			}
@@ -221,12 +238,14 @@ end
 -- -----------------------------------------------------------------------
 -- The common conditions required to use the GrooveStats services.
 -- Currently the conditions are:
+--  - We were successfully able to make a GrooveStats conenction previously.
 --  - We must be in the "dance" game mode (not "pump", etc)
 --  - We must be in either ITG or FA+ mode.
 --  - At least one Api Key must be available (this condition may be relaxed in the future)
 --  - We must not be in course mode.
 IsServiceAllowed = function(condition)
 	return (condition and
+		SL.GrooveStats.IsConnected and
 		GAMESTATE:GetCurrentGame():GetName()=="dance" and
 		(SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+") and
 		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= "") and
