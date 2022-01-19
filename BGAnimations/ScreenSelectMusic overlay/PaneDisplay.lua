@@ -67,19 +67,10 @@ local GetScoresRequestProcessor = function(res, master)
 	-- we don't run the RequestResponseActor in CourseMode.
 	if GAMESTATE:GetCurrentSong() == nil then return end
 
-	if res == nil then
-		for i=1,2 do
-			local paneDisplay = master:GetChild("PaneDisplayP"..i)
-			local loadingText = paneDisplay:GetChild("Loading")
-			loadingText:settext("Timed Out")
-		end
-
-		return
-	end
+	local data = res.statusCode == 200 and JsonDecode(res.body) or nil
 
 	for i=1,2 do
 		local paneDisplay = master:GetChild("PaneDisplayP"..i)
-
 		local machineScore = paneDisplay:GetChild("MachineHighScore")
 		local machineName = paneDisplay:GetChild("MachineHighScoreName")
 
@@ -92,7 +83,6 @@ local GetScoresRequestProcessor = function(res, master)
 		local rivalNum = 1
 		local worldRecordSet = false
 		local personalRecordSet = false
-		local data = res["status"] == "success" and res["data"] or nil
 
 		-- First check to see if the leaderboard even exists.
 		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] then
@@ -168,7 +158,14 @@ local GetScoresRequestProcessor = function(res, master)
 			rivalName:settext("----")
 		end
 
-		if res["status"] == "success" then
+		if res.error or res.statusCode ~= 200 then
+			local error = res.error and ToEnumShortString(res.error) or nil
+			if error == "Timeout" then
+				loadingText:settext("Timed Out")
+			elseif error or (res.statusCode ~= nil and res.statusCode ~= 200) then
+				loadingText:settext("Failed")
+			end
+		else
 			if data and data[playerStr] then
 				if data[playerStr]["isRanked"] then
 					loadingText:settext("Loaded")
@@ -179,10 +176,6 @@ local GetScoresRequestProcessor = function(res, master)
 				-- Just hide the text
 				loadingText:queuecommand("Set")
 			end
-		elseif res["status"] == "fail" then
-			loadingText:settext("Failed")
-		elseif res["status"] == "disabled" then
-			loadingText:settext("Disabled")
 		end
 	end
 end
@@ -218,7 +211,7 @@ local PaneItems = {
 -- -----------------------------------------------------------------------
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
-af[#af+1] = RequestResponseActor("GetScores", 10, 17, 50)..{
+af[#af+1] = RequestResponseActor(17, 50)..{
 	OnCommand=function(self)
 		-- Create variables for both players, even if they're not currently active.
 		self.IsParsing = {false, false}
@@ -237,24 +230,32 @@ af[#af+1] = RequestResponseActor("GetScores", 10, 17, 50)..{
 	ChartParsedCommand=function(self)
 		local master = self:GetParent()
 
-		if not IsServiceAllowed(SL.GrooveStats.GetScores) then return end
+		if not IsServiceAllowed(SL.GrooveStats.GetScores) then
+			if SL.GrooveStats.IsConnected then
+				-- loadingText is made visible when requests complete.
+				-- If we disable the service from a previous request, surface it to the user here.
+				for i=1,2 do
+					local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
+					loadingText:settext("Disabled")
+					loadingText:visible(true)
+				end
+			end
+			return
+		end
 
 		-- Make sure we're still not parsing either chart.
 		if self.IsParsing[1] or self.IsParsing[2] then return end
 
 		-- This makes sure that the Hash in the ChartInfo cache exists.
 		local sendRequest = false
-		local data = {
-			action="groovestats/player-scores",
-		}
+		local headers = {}
+		local query = {}
 
 		for i=1,2 do
 			local pn = "P"..i
 			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
-				data["player"..i] = {
-					chartHash=SL[pn].Streams.Hash,
-					apiKey=SL[pn].ApiKey
-				}
+				query["chartHashP"..i] = SL[pn].Streams.Hash
+				headers["x-api-key-player-"..i] = SL[pn].ApiKey
 				local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
 				loadingText:visible(true)
 				loadingText:settext("Loading ...")
@@ -264,10 +265,13 @@ af[#af+1] = RequestResponseActor("GetScores", 10, 17, 50)..{
 
 		-- Only send the request if it's applicable.
 		if sendRequest then
-			MESSAGEMAN:Broadcast("GetScores", {
-				data=data,
+			self:playcommand("MakeGrooveStatsRequest", {
+				endpoint="player-scores.php?"..NETWORK:EncodeQueryParameters(query),
+				method="GET",
+				headers=headers,
+				timeout=10,
+				callback=GetScoresRequestProcessor,
 				args=master,
-				callback=GetScoresRequestProcessor
 			})
 		end
 	end
