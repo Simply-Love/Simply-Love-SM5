@@ -203,8 +203,7 @@ local af = Def.ActorFrame {
 
 					if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
 						local percentDP = stats:GetPercentDancePoints()
-						local score = FormatPercentScore(percentDP)
-						score = tonumber(score:gsub("%%", "") * 100)
+						local score = tonumber(("%.0f"):format(percentDP * 10000))
 
 						local profileName = ""
 						if PROFILEMAN:IsPersistentProfile(player) and PROFILEMAN:GetProfile(player) then
