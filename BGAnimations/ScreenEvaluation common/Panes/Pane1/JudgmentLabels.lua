@@ -20,12 +20,14 @@ TapNoteScores.Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 TapNoteScores.Names = map(GetTNSStringFromTheme, TapNoteScores.Types)
 
 local RadarCategories = {
+	THEME:GetString("ScreenEvaluation", 'Hands'),
 	THEME:GetString("ScreenEvaluation", 'Holds'),
 	THEME:GetString("ScreenEvaluation", 'Mines'),
 	THEME:GetString("ScreenEvaluation", 'Rolls')
 }
 
 local EnglishRadarCategories = {
+	[THEME:GetString("ScreenEvaluation", 'Hands')] = "Hands",
 	[THEME:GetString("ScreenEvaluation", 'Holds')] = "Holds",
 	[THEME:GetString("ScreenEvaluation", 'Mines')] = "Mines",
 	[THEME:GetString("ScreenEvaluation", 'Rolls')] = "Rolls",
@@ -63,30 +65,32 @@ for i=1, #TapNoteScores.Types do
 	end
 end
 
-t[#t+1] = LoadFont("Wendy/_wendy small")..{
-	Text="EX",
-	InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
-	BeginCommand=function(self)
-		self:x( (controller == PLAYER_1 and -160) or 90 )
-		self:y(38)
-		self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
-	end
-}
-
--- labels: holds, mines, rolls
+-- labels: hands/ex, holds, mines, rolls
 for index, label in ipairs(RadarCategories) do
+	-- Replace hands with the EX score when not in Casual mode.
+	if index == 1 and SL.Global.GameMode ~= "Casual" then
+		t[#t+1] = LoadFont("Wendy/_wendy small")..{
+			Text="EX",
+			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
+			BeginCommand=function(self)
+				self:x( (controller == PLAYER_1 and -160) or 90 )
+				self:y(38)
+				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+			end
+		}
+	else
+		local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
+		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
-	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
-	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
-
-	t[#t+1] = LoadFont("Common Normal")..{
-		Text=label,
-		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
-		BeginCommand=function(self)
-			self:x( (controller == PLAYER_1 and -160) or 90 )
-			self:y(index*28 + 41)
-		end
-	}
+		t[#t+1] = LoadFont("Common Normal")..{
+			Text=label,
+			InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
+			BeginCommand=function(self)
+				self:x( (controller == PLAYER_1 and -160) or 90 )
+				self:y((index-1)*28 + 41)
+			end
+		}
+	end
 end
 
 return t
