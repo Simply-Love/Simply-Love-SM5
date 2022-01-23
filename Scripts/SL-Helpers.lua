@@ -576,11 +576,14 @@ end
 
 -- -----------------------------------------------------------------------
 CalculateExScore = function(player)
+	-- No EX scores in Casual mode, just return some dummy number early.
+	if SL.Global.GameMode == "Casual" then return 0 end
+
 	local pn = ToEnumShortString(player)
 	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 
 	local total_points = 0
-	local total_possible = 0
+	local total_possible = stats:GetRadarPossible():GetValue( "RadarCategory_TapsAndHolds" ) * SL.ExWeights["W0"]
 
 	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 
@@ -593,14 +596,16 @@ CalculateExScore = function(player)
 		-- TODO(teejusb): Explicitly track this value instead of computing the count here
 		-- as it will be useful to display the count during gameplay.
 		if window == "W1" and SL.Global.GameMode == "ITG" then
-			local offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
+			local offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 
 			local W0_count = 0
 
 			for time_offset in ivalues(offsets) do
 				local offset = time_offset[2]
 
-				local W0 = SL.Preferences["FA+"]["TimingWindowSecondsW1"] + SL.Preferences["FA+"]["TimingWindowAdd"]
+				local prefs = SL.Preferences["FA+"]
+				local scale = PREFSMAN:GetPreference("TimingWindowScale")
+				local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
 
 				-- We found a judgment that fell within the W0 window (Fantastic+).
 				if offset ~= "Miss" then
@@ -611,7 +616,6 @@ CalculateExScore = function(player)
 				end
 			end
 			total_points = total_points + W0_count * SL.ExWeights["W0"]
-			total_possible = total_possible + W0_count * SL.ExWeights["W0"]
 
 			-- Subtract the W0 note count from the actual W1 count and then fall through below
 			number = number - W0_count
@@ -625,7 +629,6 @@ CalculateExScore = function(player)
 		end
 		
 		total_points = total_points + number * SL.ExWeights[adjusted_window]
-		total_possible = total_possible + number * SL.ExWeights["W0"]
 	end
 
 	local RadarCategory = { "Holds", "Mines", "Rolls" }
