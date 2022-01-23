@@ -651,7 +651,7 @@ if not found_group then
 end
 
 -- Update group if we're sorted by difficulty.
-if GetMainSortPreference() == 6 then
+if GetMainSortPreference() == 6 and not SongSearchSSMDD then
 	local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber())
 	if steps ~= nil then
 		NameOfGroup = GetStepsDifficultyGroup(steps)
