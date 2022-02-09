@@ -559,6 +559,39 @@ local Overrides = {
 		Values = { "Standard", "Surround", "Vertical" },
 	},
 	-------------------------------------------------------------------------
+	-- Dancing Characters
+	-- maintain the OptionRow name as "Characters" to maintain localization compatibility with _fallback theme
+	Characters = {
+		ExportOnChange = true,
+		Choices = function()
+			local t = {THEME:GetString("OptionRowHandler", "Off")}
+			for char in ivalues(CHARMAN:GetAllCharacters()) do
+				table.insert(t, char:GetDisplayName())
+			end
+			return t
+		end,
+		Values = function()
+			local t = {""}
+			for char in ivalues(CHARMAN:GetAllCharacters()) do
+				table.insert(t, char:GetCharacterID())
+			end
+			return t
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			for i, val in ipairs(self.Values) do
+				if list[i] then
+					mods.Characters = val
+					GAMESTATE:SetCharacter(pn, val)
+					break
+				end
+			end
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Dancing Character preview
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="Characters", Value=mods.Characters})
+		end
+	},
+	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Values = function()
 			local choices = { "Gameplay", "Select Music", "Options2", "Options3"  }
