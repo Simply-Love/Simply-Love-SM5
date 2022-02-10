@@ -34,7 +34,7 @@ local YesButtonColor = "#222222"
 	end
 
 	return value
-end--]]
+end
 
 
 local function SetFavoriteFilter(value)
@@ -42,7 +42,7 @@ local function SetFavoriteFilter(value)
 		DDStats.SetStat(playerNum, 'FavoriteFilter', value)
 		DDStats.Save(playerNum)
 	end
-end
+end--]]
 
 ----- Groovestats filter settings ----- 
 local function GetGroovestatsFilter()
@@ -169,6 +169,10 @@ local t = Def.ActorFrame{
 				if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
 					InitialZoomY = InitialZoomY + 25
 					InitialAddY = InitialAddY + 12.5
+					if SongIsSelected then
+						InitialZoomY = InitialZoomY + 25
+						InitialAddY = InitialAddY + 12.5
+					end
 				end
 				
 				self:zoomy(InitialZoomY)
@@ -215,6 +219,10 @@ local t = Def.ActorFrame{
 				if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
 					InitialZoomY = InitialZoomY + 25
 					InitialAddY = InitialAddY + 12.5
+					if SongIsSelected then
+						InitialZoomY = InitialZoomY + 25
+						InitialAddY = InitialAddY + 12.5
+					end
 				end
 				
 				self:zoomy(InitialZoomY)
@@ -611,6 +619,9 @@ OtherLabel[#OtherLabel+1] = "LEADERBOARDS"
 local leaderboards_label_index = #OtherLabel
 OtherLabel[#OtherLabel+1] = "TEST INPUT"
 
+OtherLabel[#OtherLabel+1] = "PRACTICE SONG"
+local practice_label_index = #OtherLabel
+
 
 for i,OtherText in ipairs(OtherLabel) do
 	t[#t+1] = Def.BitmapText{
@@ -630,13 +641,22 @@ for i,OtherText in ipairs(OtherLabel) do
 			local curSong = GAMESTATE:GetCurrentSong()
 			local is_leaderboard_enabled = curSong ~= nil and IsServiceAllowed(SL.GrooveStats.Leaderboard)
 			local active_index = i
+			local IsPracticeAvailable = curSong~= nil and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides'
 
 			if not is_leaderboard_enabled and i >= leaderboards_label_index then
 				active_index = i - 1
 			end
+			if not IsPracticeAvailable and i >= practice_label_index then
+				active_index = i -1
+			end
+			
 			self:y(SCREEN_CENTER_Y + 5 + 25*active_index)
+			
 			if i == leaderboards_label_index then
 				self:visible(is_leaderboard_enabled)
+			end
+			if i == practice_label_index then
+				self:visible(IsPracticeAvailable)
 			end
 		end,
 	}

@@ -24,6 +24,9 @@ local function GetMaxCursorPosition()
 	if ThemePrefs.Get("AllowSongSearch") then
 		MaxCursorPosition = MaxCursorPosition + 1
 	end
+	if SongIsSelected and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
+		MaxCursorPosition = MaxCursorPosition + 1
+	end
 	return tonumber(MaxCursorPosition)
 end
 
@@ -195,6 +198,9 @@ local t = Def.ActorFrame{
 			elseif DDSortMenuCursorPosition == 14 then
 				self:zoomx(170)
 				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 130)
+			elseif DDSortMenuCursorPosition == 15 then
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 155)
 			end
 			self:queuecommand("FadeOut")
 			

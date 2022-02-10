@@ -312,8 +312,8 @@ t.Handler = function(event)
 						end
 						-- GS/RPG Leaderboards if GS Launcher is running (otherwise test input)
 						if DDSortMenuCursorPosition == 13 then
+							local curSong=GAMESTATE:GetCurrentSong()
 							if ThemePrefs.Get("AllowSongSearch") and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' and IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-								local curSong=GAMESTATE:GetCurrentSong()
 								if not curSong then
 									isSortMenuVisible = false
 									InputMenuHasFocus = true
@@ -325,6 +325,15 @@ t.Handler = function(event)
 									MESSAGEMAN:Broadcast("ToggleSortMenu")
 									MESSAGEMAN:Broadcast("ShowLeaderboard")
 								end
+							elseif GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' and IsServiceAllowed(SL.GrooveStats.Leaderboard) and not ThemePrefs.Get("AllowSongSearch") or 
+								   GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' and not IsServiceAllowed(SL.GrooveStats.Leaderboard) and ThemePrefs.Get("AllowSongSearch") then
+								isSortMenuVisible = false
+								InputMenuHasFocus = true
+								MESSAGEMAN:Broadcast("ShowTestInput")
+								MESSAGEMAN:Broadcast("ToggleSortMenu")
+							elseif curSong and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
+								SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPractice")
+								SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")	
 							else
 								isSortMenuVisible = false
 								InputMenuHasFocus = true
@@ -334,10 +343,22 @@ t.Handler = function(event)
 						end
 						-- Test Input
 						if DDSortMenuCursorPosition == 14 then
-							isSortMenuVisible = false
-							InputMenuHasFocus = true
-							MESSAGEMAN:Broadcast("ShowTestInput")
-							MESSAGEMAN:Broadcast("ToggleSortMenu")
+							local curSong=GAMESTATE:GetCurrentSong()
+							if ThemePrefs.Get("AllowSongSearch") and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' and IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+								if curSong then
+									isSortMenuVisible = false
+									InputMenuHasFocus = true
+									MESSAGEMAN:Broadcast("ShowTestInput")
+									MESSAGEMAN:Broadcast("ToggleSortMenu")
+								end
+							elseif curSong and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
+								SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPractice")
+								SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+							end
+						end
+						if DDSortMenuCursorPosition == 15 then
+							SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPractice")
+							SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 						end
 					end
 				end
