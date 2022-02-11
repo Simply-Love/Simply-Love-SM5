@@ -10,15 +10,15 @@ return Def.Sprite{
 		local label = "None"
 
 		-- force EditMode to use Love HoldJudgment for now
-		if SCREENMAN:GetTopScreen():GetName():match("ScreenEdit") or SCREENMAN:GetTopScreen():GetName():match("ScreenPractice") then
-			label = "Ice 1x2.png"
+		if SCREENMAN:GetTopScreen():GetName():match("ScreenEdit") then
+			label = "Love 1x2.png"
 
 		elseif self:GetParent() and self:GetParent():GetParent() then
 			-- self:GetParent():GetParent() will return the main Player ActorFrame
 			-- with a name like "PlayerP1" or "PlayerP2"
 			-- we can use the "P1" or "P2" part of the string to index the SL table
 			local pn = self:GetParent():GetParent():GetName():gsub("Player", "")
-			label = SL[pn].ActiveModifiers.HoldJudgment or "Ice 1x2.png"
+			label = SL[pn].ActiveModifiers.HoldJudgment or "None 1x2.png"
 		end
 
 		self:Load(THEME:GetPathG("", "_HoldJudgments/" .. label))
