@@ -18,6 +18,7 @@ t.OnCommand=function(self)
 	InputHandler = LoadActor("./InputHandler.lua", {self, NumPanes})
 	RpgInputHandler = LoadActor("./Shared/RpgInputHandler.lua")
 	SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
+	PROFILEMAN:SaveMachineProfile()
 end
 t.DirectInputToEngineCommand=function(self)
 	SCREENMAN:GetTopScreen():RemoveInputCallback(RpgInputHandler)
