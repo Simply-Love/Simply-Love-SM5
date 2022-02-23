@@ -23,29 +23,6 @@ LeadboardHasFocus = false
 local t = {}
 -----------------------------------------------------
 
-local function GetLastStyle()
-	local value
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		value = DDStats.GetStat(PLAYER_1, 'LastStyle')
-	else
-		value = DDStats.GetStat(PLAYER_2, 'LastStyle')
-	end
-
-	if value == nil then
-		value = "Single"
-	end
-
-	return value
-end
-
-
-local function SetLastStyle(value)
-	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
-		DDStats.SetStat(playerNum, 'LastStyle', value)
-		DDStats.Save(playerNum)
-	end
-end
-
 
 local SwitchInputFocus = function(button)
 	if button == "Start" then
@@ -181,60 +158,14 @@ t.Handler = function(event)
 						-- 
 						-- Reset the sorts/prefrences
 						if DDSortMenuCursorPosition == 10 then
-							----- Default preference values
-							local DefaultMainSort = 1
-							local DefaultSubSort = 2
-							local DefaultLowerDifficulty = 0
-							local DefaultUpperDifficulty = 0
-							local DefaultLowerBPM = 49
-							local DefaultUpperBPM = 49
-							local DefaultLowerLength = 0
-							local DefaultUpperLength = 0
-							local DefaultGroovestats = 'No'
-
-							if 
-							SongSearchWheelNeedsResetting == true or
-							SortMenuNeedsUpdating == true or
-							GetMainSortPreference() ~= DefaultMainSort or
-							GetSubSortPreference() ~= DefaultSubSort or
-							GetLowerDifficultyFilter() ~= DefaultLowerDifficulty or
-							GetUpperDifficultyFilter() ~= DefaultUpperDifficulty or
-							GetLowerBPMFilter() ~= DefaultLowerBPM or
-							GetUpperBPMFilter() ~= DefaultUpperBPM or
-							GetLowerLengthFilter() ~= DefaultLowerLength or
-							GetUpperLengthFilter() ~= DefaultUpperLength or
-							GetGroovestatsFilter() ~= DefaultGroovestats then
-								SetMainSortPreference(DefaultMainSort)
-								SetSubSortPreference(DefaultSubSort)
-								SetLowerDifficultyFilter(DefaultLowerDifficulty)
-								SetUpperDifficultyFilter(DefaultUpperDifficulty)
-								SetLowerBPMFilter(DefaultLowerBPM)
-								SetUpperBPMFilter(DefaultUpperBPM)
-								SetLowerLengthFilter(DefaultLowerLength)
-								SetUpperLengthFilter(DefaultUpperLength)
-								SetGroovestatsFilter(DefaultGroovestats)
-								SongSearchWheelNeedsResetting = false
-								SortMenuNeedsUpdating = false
-								MESSAGEMAN:Broadcast("ReloadSSMDD")
-							else
-								SM("Nothing to reset!")
-							end
+							MESSAGEMAN:Broadcast("DDResetSortsFilters")
 						end
-						-- Song search (or it's switch style if it's off, or leaderboards or test input)
+						-- Everything from here on is dynamic so it's not always the same for each position.
 						if DDSortMenuCursorPosition == 11 then
 							if ThemePrefs.Get("AllowSongSearch") then
 								MESSAGEMAN:Broadcast("SongSearchSSMDD")
 							elseif GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
-								local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
-								if current_style == "StyleType_OnePlayerOneSide" then
-									SetLastStyle("Double")
-									GAMESTATE:SetCurrentStyle("Double")
-								else
-									SetLastStyle("Single")
-									GAMESTATE:SetCurrentStyle("Single")
-								end
-								SongSearchWheelNeedsResetting = false
-								MESSAGEMAN:Broadcast("ReloadSSMDD")
+								MESSAGEMAN:Broadcast("DDSwitchStyles")
 							elseif IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 								local curSong=GAMESTATE:GetCurrentSong()
 								if not curSong then
@@ -255,20 +186,9 @@ t.Handler = function(event)
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
 							end
 						end
-						-- Switch between single/double (or leaderboards if song search is off, or test input if both are off)
 						if DDSortMenuCursorPosition == 12 then
-							-- switch styles if song search is enabled and not on 2 player
 							if ThemePrefs.Get("AllowSongSearch") and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
-								local current_style = GAMESTATE:GetCurrentStyle():GetStyleType()
-								if current_style == "StyleType_OnePlayerOneSide" then
-									SetLastStyle("Double")
-									GAMESTATE:SetCurrentStyle("Double")
-								else
-									SetLastStyle("Single")
-									GAMESTATE:SetCurrentStyle("Single")
-								end
-								SongSearchWheelNeedsResetting = false
-								MESSAGEMAN:Broadcast("ReloadSSMDD")
+								MESSAGEMAN:Broadcast("DDSwitchStyles")
 							elseif ThemePrefs.Get("AllowSongSearch") and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' and IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 									local curSong=GAMESTATE:GetCurrentSong()
 									if not curSong then
@@ -310,7 +230,6 @@ t.Handler = function(event)
 							end
 							
 						end
-						-- GS/RPG Leaderboards if GS Launcher is running (otherwise test input)
 						if DDSortMenuCursorPosition == 13 then
 							if ThemePrefs.Get("AllowSongSearch") and GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' and IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 								local curSong=GAMESTATE:GetCurrentSong()
@@ -332,7 +251,6 @@ t.Handler = function(event)
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
 							end
 						end
-						-- Test Input
 						if DDSortMenuCursorPosition == 14 then
 							isSortMenuVisible = false
 							InputMenuHasFocus = true

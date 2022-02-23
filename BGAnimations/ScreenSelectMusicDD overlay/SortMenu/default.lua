@@ -24,6 +24,8 @@ local t = Def.ActorFrame {
 	LoadActor("./Sorts-Filters.lua"),
 	-- Updates the music wheel only when needed
 	LoadActor("./UpdateSongWheel.lua"),
+	-- Runs tasks when selected in the sort menu.
+	LoadActor("./Menu-Functions.lua"),
 }
 
 return t
