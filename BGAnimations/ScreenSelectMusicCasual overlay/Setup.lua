@@ -179,7 +179,7 @@ local GetDefaultSong = function(groups)
 	for prelim_song in ivalues(preliminary_songs) do
 		-- parse the group out of the prelim_song string to verify this song
 		-- exists within a permitted group
-		local _group = prelim_song:gsub("/[%w%s]*", "")
+		local _group = prelim_song:gsub("/.*", "")
 
 		-- if this song exists and is part of a group returned by PruneGroups()
 		if SONGMAN:FindSong( prelim_song ) and FindInTable(_group, groups) then
