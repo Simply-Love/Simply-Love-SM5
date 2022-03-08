@@ -573,6 +573,35 @@ IsAutoplay = function(player)
 	return GAMESTATE:GetPlayerState(player):GetPlayerController() ~= "PlayerController_Human"
 end
 
+-- -----------------------------------------------------------------------
+GetW0Count = function(player)
+	-- If the top window is disabled, then so is the W0 window.
+	-- Return 0 and move on.
+	if not SL.Global.ActiveModifiers.TimingWindows[1] then
+		return 0
+	end
+
+	local pn = ToEnumShortString(player)
+	local offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
+	local W0_count = 0
+
+	for time_offset in ivalues(offsets) do
+		local offset = time_offset[2]
+
+		local prefs = SL.Preferences["FA+"]
+		local scale = PREFSMAN:GetPreference("TimingWindowScale")
+		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+
+		-- We found a judgment that fell within the W0 window (Fantastic+).
+		if offset ~= "Miss" then
+			offset = math.abs(offset)
+			if offset <= W0 then
+				W0_count = W0_count + 1
+			end
+		end
+	end
+	return W0_count
+end
 
 -- -----------------------------------------------------------------------
 CalculateExScore = function(player)
@@ -596,28 +625,11 @@ CalculateExScore = function(player)
 		-- TODO(teejusb): Explicitly track this value instead of computing the count here
 		-- as it will be useful to display the count during gameplay.
 		if window == "W1" and SL.Global.GameMode == "ITG" then
-			local offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
-
-			local W0_count = 0
-
-			for time_offset in ivalues(offsets) do
-				local offset = time_offset[2]
-
-				local prefs = SL.Preferences["FA+"]
-				local scale = PREFSMAN:GetPreference("TimingWindowScale")
-				local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-
-				-- We found a judgment that fell within the W0 window (Fantastic+).
-				if offset ~= "Miss" then
-					offset = math.abs(offset)
-					if offset <= W0 then
-						W0_count = W0_count + 1
-					end
-				end
-			end
+			local W0_count = GetW0Count(player)
 			total_points = total_points + W0_count * SL.ExWeights["W0"]
 
 			-- Subtract the W0 note count from the actual W1 count and then fall through below
+			-- If the window was disabled then W0_count will be 0 so this subtraction will be a no-op.
 			number = number - W0_count
 		end
 

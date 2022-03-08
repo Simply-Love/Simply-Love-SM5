@@ -66,8 +66,9 @@ end
 
 -- then handle hands/ex, holds, mines, rolls
 for index, RCType in ipairs(RadarCategories.Types) do
-	-- Replace hands with the EX score when not in Casual mode.
-	if index == 1 and SL.Global.GameMode ~= "Casual" then
+	-- Replace hands with the EX score only in FA+ mode.
+	-- We have a separate FA+ pane for ITG mode.
+	if index == 1 and SL.Global.GameMode == "FA+" then
 		t[#t+1] = LoadFont("Wendy/_wendy white")..{
 			Name="Percent",
 			Text=("%.2f"):format(CalculateExScore(player)),
