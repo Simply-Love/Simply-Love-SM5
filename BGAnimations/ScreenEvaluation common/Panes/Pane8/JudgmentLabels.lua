@@ -17,8 +17,8 @@ local TapNoteScores = {
 		THEME:GetString("TapNoteScoreFA+", "W2"),
 		THEME:GetString("TapNoteScoreFA+", "W3"),
 		THEME:GetString("TapNoteScoreFA+", "W4"),
-		THEME:GetString("TapNoteScoreFA+", "W5"), -- FA+ mode doesn't have a Way Off window. Extract color from the ITG mode.
-		THEME:GetString("TapNoteScore", "W5"),
+		THEME:GetString("TapNoteScoreFA+", "W5"),
+		THEME:GetString("TapNoteScore", "W5"), -- FA+ mode doesn't have a Way Off window. Extract name from the ITG mode.
 		THEME:GetString("TapNoteScoreFA+", "Miss"),
 	},
 	Colors = {
