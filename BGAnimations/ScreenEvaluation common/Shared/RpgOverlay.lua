@@ -298,7 +298,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	totalDelta = currentPointTotal - previousPointTotal
 
 	table.insert(paneTexts, string.format(
-		"Score: %.2f%% (%+.2f%%)\n"..
+		"EX Score: %.2f%% (%+.2f%%)\n"..
 		"Ranking: %d (%+d)\n"..
 		"Total: %d (%+d)\n\n",
 		score, scoreDelta,
