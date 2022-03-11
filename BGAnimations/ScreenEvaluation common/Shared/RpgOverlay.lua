@@ -312,7 +312,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 			SetItlStyle(eventAf)
 			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("International Timing League", "ITL"))
 			eventAf:GetChild("Leaderboard"):visible(false)
-			eventAf:GetChild("EX"):visible(false)
+			eventAf:GetChild("EX"):visible(true)
 			local bodyText = eventAf:GetChild("BodyText")
 
 			-- We don't want text to run out through the bottom.
