@@ -16,7 +16,7 @@ local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("HeaderBorder"):diffuse(RpgYellow)
 	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
 	eventAf:GetChild("Header"):diffuse(RpgYellow)
-	eventAf:GetChild("EX"):diffuse(RpgYellow):visible(false)
+	eventAf:GetChild("EX"):visible(false)
 	eventAf:GetChild("BodyText"):diffuse(Color.White)
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(RpgYellow)
 end
