@@ -16,7 +16,7 @@ if SL.Global.GameMode ~= "Casual" then
 	-- and the number of panes there are to InputHandler.lua
 	t.OnCommand=function(self)
 		InputHandler = LoadActor("./InputHandler.lua", {self, NumPanes})
-		EventOverlayInputHandler = LoadActor("./Shared/RpgInputHandler.lua")
+		EventOverlayInputHandler = LoadActor("./Shared/EventInputHandler.lua")
 		SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
 	end
 	t.DirectInputToEngineCommand=function(self)
