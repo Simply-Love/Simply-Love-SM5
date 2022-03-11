@@ -11,15 +11,15 @@ local function input(event)
 	local screen   = SCREENMAN:GetTopScreen()
 	local overlay  = screen:GetChild("Overlay"):GetChild("ScreenEval Common")
 
-	-- Broadcast event data using MESSAGEMAN for the RPG overlay to listen for.
+	-- Broadcast event data using MESSAGEMAN for the Event overlay to listen for.
 	if event.type ~= "InputEventType_Repeat" then
-		MESSAGEMAN:Broadcast("RpgInputEvent", event)
+		MESSAGEMAN:Broadcast("EventOverlayInputEvent", event)
 	end
 
 	-- Pressing Start or Back (typically Esc on a keyboard) will queue "DirectInputToEngine"
 	-- but only if the event.type is not a Release.
 	if (event.GameButton == "Start" or event.GameButton == "Back") and event.type ~= "InputEventType_Release" then
-        overlay:GetChild("AutoSubmitMaster"):GetChild("RpgOverlay"):visible(false)
+        overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):visible(false)
 		overlay:queuecommand("DirectInputToEngine")
 	end
 
