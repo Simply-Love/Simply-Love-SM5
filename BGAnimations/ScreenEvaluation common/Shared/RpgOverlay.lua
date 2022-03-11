@@ -9,28 +9,28 @@ local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or p
 local paneHeight = 360
 local borderWidth = 2
 
-local SetRpgStyle = function(overlay)
-	overlay:GetChild("MainBorder"):diffuse(RpgYellow)
-	overlay:GetChild("BackgroundImage"):visible(true)
-	overlay:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.3"))
-	overlay:GetChild("HeaderBorder"):diffuse(RpgYellow)
-	overlay:GetChild("HeaderBackground"):diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
-	overlay:GetChild("Header"):diffuse(RpgYellow)
-	overlay:GetChild("EX"):diffuse(RpgYellow):visible(false)
-	overlay:GetChild("BodyText"):diffuse(Color.White)
-	overlay:GetChild("PaneIcons"):GetChild("Text"):diffuse(RpgYellow)
+local SetRpgStyle = function(eventAf)
+	eventAf:GetChild("MainBorder"):diffuse(RpgYellow)
+	eventAf:GetChild("BackgroundImage"):visible(true)
+	eventAf:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.3"))
+	eventAf:GetChild("HeaderBorder"):diffuse(RpgYellow)
+	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
+	eventAf:GetChild("Header"):diffuse(RpgYellow)
+	eventAf:GetChild("EX"):diffuse(RpgYellow):visible(false)
+	eventAf:GetChild("BodyText"):diffuse(Color.White)
+	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(RpgYellow)
 end
 
-local SetItlStyle = function(overlay)
-	overlay:GetChild("MainBorder"):diffuse(ItlPink)
-	overlay:GetChild("BackgroundImage"):visible(false)
-	overlay:GetChild("BackgroundColor"):diffuse(Color.White):diffusealpha(1)
-	overlay:GetChild("HeaderBorder"):diffuse(ItlPink)
-	overlay:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
-	overlay:GetChild("Header"):diffuse(Color.White)
-	overlay:GetChild("EX"):diffuse(Color.White):visible(false)
-	overlay:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
-	overlay:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
+local SetItlStyle = function(eventAf)
+	eventAf:GetChild("MainBorder"):diffuse(ItlPink)
+	eventAf:GetChild("BackgroundImage"):visible(false)
+	eventAf:GetChild("BackgroundColor"):diffuse(Color.White):diffusealpha(1)
+	eventAf:GetChild("HeaderBorder"):diffuse(ItlPink)
+	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
+	eventAf:GetChild("Header"):diffuse(Color.White)
+	eventAf:GetChild("EX"):diffuse(Color.White):visible(false)
+	eventAf:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
+	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
 end
 
 local SetEntryText = function(rank, name, score, date, actor)
@@ -42,10 +42,10 @@ local SetEntryText = function(rank, name, score, date, actor)
 	actor:GetChild("Date"):settext(date)
 end
 
-local SetLeaderboardData = function(overlay, leaderboardData)
+local SetLeaderboardData = function(eventAf, leaderboardData)
 	local entryNum = 1
 	local rivalNum = 1
-	local leaderboard = overlay:GetChild("Leaderboard")
+	local leaderboard = eventAf:GetChild("Leaderboard")
 
 	-- Hide the rival and self highlights.
 	-- They will be unhidden and repositioned as needed below.
@@ -109,7 +109,7 @@ local SetLeaderboardData = function(overlay, leaderboardData)
 	end
 end
 
-local GetRpgPaneFunctions = function(overlay, rpgData, player)
+local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local score, scoreDelta, rate, rateDelta = 0, 0, 0, 0
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local paneTexts = {}
@@ -198,11 +198,11 @@ local GetRpgPaneFunctions = function(overlay, rpgData, player)
 	end
 
 	for text in ivalues(paneTexts) do
-		table.insert(paneFunctions, function(overlay)
-			SetRpgStyle(overlay)
-			overlay:GetChild("Header"):settext(rpgData["name"])
-			overlay:GetChild("Leaderboard"):visible(false)
-			local bodyText = overlay:GetChild("BodyText")
+		table.insert(paneFunctions, function(eventAf)
+			SetRpgStyle(eventAf)
+			eventAf:GetChild("Header"):settext(rpgData["name"])
+			eventAf:GetChild("Leaderboard"):visible(false)
+			local bodyText = eventAf:GetChild("BodyText")
 
 			-- We don't want text to run out through the bottom.
 			-- Incrementally adjust the zoom while adjust wrapwdithpixels until it fits.
@@ -270,18 +270,18 @@ local GetRpgPaneFunctions = function(overlay, rpgData, player)
 		end)
 	end
 
-	table.insert(paneFunctions, function(overlay)
-		SetRpgStyle(overlay)
-		overlay:GetChild("Header"):settext(rpgData["name"])
-		SetLeaderboardData(overlay, rpgData["rpgLeaderboard"])
-		overlay:GetChild("Leaderboard"):visible(true)
-		overlay:GetChild("BodyText"):visible(false)
+	table.insert(paneFunctions, function(eventAf)
+		SetRpgStyle(eventAf)
+		eventAf:GetChild("Header"):settext(rpgData["name"])
+		SetLeaderboardData(eventAf, rpgData["rpgLeaderboard"])
+		eventAf:GetChild("Leaderboard"):visible(true)
+		eventAf:GetChild("BodyText"):visible(false)
 	end)
 
 	return paneFunctions
 end
 
-local GetItlPaneFunctions = function(overlay, itlData, player)
+local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local score = pss:GetPercentDancePoints() * 100
 	local paneTexts = {}
@@ -308,12 +308,12 @@ local GetItlPaneFunctions = function(overlay, itlData, player)
 
 
 	for text in ivalues(paneTexts) do
-		table.insert(paneFunctions, function(overlay)
-			SetItlStyle(overlay)
-			overlay:GetChild("Header"):settext(itlData["name"]:gsub("International Timing League", "ITL"))
-			overlay:GetChild("Leaderboard"):visible(false)
-			overlay:GetChild("EX"):visible(false)
-			local bodyText = overlay:GetChild("BodyText")
+		table.insert(paneFunctions, function(eventAf)
+			SetItlStyle(eventAf)
+			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("International Timing League", "ITL"))
+			eventAf:GetChild("Leaderboard"):visible(false)
+			eventAf:GetChild("EX"):visible(false)
+			local bodyText = eventAf:GetChild("BodyText")
 
 			-- We don't want text to run out through the bottom.
 			-- Incrementally adjust the zoom while adjust wrapwdithpixels until it fits.
@@ -381,13 +381,13 @@ local GetItlPaneFunctions = function(overlay, itlData, player)
 		end)
 	end
 
-	table.insert(paneFunctions, function(overlay)
-		SetItlStyle(overlay)
-		SetLeaderboardData(overlay, itlData["itlLeaderboard"])
-		overlay:GetChild("Header"):settext(itlData["name"]:gsub("International Timing League", "ITL"))
-		overlay:GetChild("Leaderboard"):visible(true)
-		overlay:GetChild("EX"):visible(true)
-		overlay:GetChild("BodyText"):visible(false)
+	table.insert(paneFunctions, function(eventAf)
+		SetItlStyle(eventAf)
+		SetLeaderboardData(eventAf, itlData["itlLeaderboard"])
+		eventAf:GetChild("Header"):settext(itlData["name"]:gsub("International Timing League", "ITL"))
+		eventAf:GetChild("Leaderboard"):visible(true)
+		eventAf:GetChild("EX"):visible(true)
+		eventAf:GetChild("BodyText"):visible(false)
 	end)
 
 	return paneFunctions
