@@ -38,7 +38,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 	end
 
 	local panes = overlay:GetChild("Panes")
-	local hasRpgData = false
+	local shouldDisplayOverlay = false
 
 	if res["status"] == "fail" then
 		if P1SubmitText then P1SubmitText:queuecommand("SubmitFailed") end
@@ -119,11 +119,11 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 						end
 					end
 
-					-- Only display the RPG on the sides that are actually joined.
-					if ToEnumShortString("PLAYER_P"..i) == "P"..side and data[playerStr]["rpg"] then
-						local rpgAf = overlay:GetChild("AutoSubmitMaster"):GetChild("RpgOverlay"):GetChild("P"..i.."RpgAf")
-						rpgAf:playcommand("Show", {data=data[playerStr]["rpg"]})
-						hasRpgData = true
+					-- Only display the overlay on the sides that are actually joined.
+					if ToEnumShortString("PLAYER_P"..i) == "P"..side and (data[playerStr]["rpg"] or data[playerStr]["itl"]) then
+						local eventAf = overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):GetChild("P"..i.."EventAf")
+						eventAf:playcommand("Show", {data=data[playerStr]})
+						shouldDisplayOverlay = true
 					end
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
@@ -175,9 +175,9 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 		end
 	end
 
-	if hasRpgData then
-		overlay:GetChild("AutoSubmitMaster"):GetChild("RpgOverlay"):visible(true)
-		overlay:queuecommand("DirectInputToRpgHandler")
+	if shouldDisplayOverlay then
+		overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):visible(true)
+		overlay:queuecommand("DirectInputToEventOverlayHandler")
 	end
 end
 
@@ -201,7 +201,7 @@ local af = Def.ActorFrame {
 					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 					local submitForPlayer = false
 
-					if valid and not stats:GetFailed() and SL[pn].IsPadPlayer then
+					if valid and SL[pn].IsPadPlayer then
 						local percentDP = stats:GetPercentDancePoints()
 						local score = tonumber(("%.0f"):format(percentDP * 10000))
 
