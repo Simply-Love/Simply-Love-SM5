@@ -479,7 +479,7 @@ for player in ivalues(PlayerNumber) do
 		Def.Quad {
 			Name="MainBorder",
 			InitCommand=function(self)
-				self:diffuse(RpgYellow):zoomto(paneWidth + borderWidth, paneHeight + borderWidth + 1)
+				self:zoomto(paneWidth + borderWidth, paneHeight + borderWidth + 1)
 			end
 		},
 
@@ -496,7 +496,7 @@ for player in ivalues(PlayerNumber) do
 		Def.Quad {
 			Name="BackgroundColor",
 			InitCommand=function(self)
-				self:diffuse(color("0,0,0,0.3")):zoomto(paneWidth, paneHeight)
+				self:zoomto(paneWidth, paneHeight)
 			end
 		},
 
@@ -504,7 +504,7 @@ for player in ivalues(PlayerNumber) do
 		Def.Quad {
 			Name="HeaderBorder",
 			InitCommand=function(self)
-				self:diffuse(RpgYellow):zoomto(paneWidth + borderWidth, RowHeight + borderWidth + 1):y(-paneHeight/2 + RowHeight/2)
+				self:zoomto(paneWidth + borderWidth, RowHeight + borderWidth + 1):y(-paneHeight/2 + RowHeight/2)
 			end
 		},
 
@@ -512,8 +512,7 @@ for player in ivalues(PlayerNumber) do
 		Def.Quad {
 			Name="HeaderBackground",
 			InitCommand=function(self)
-				self:diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
-					:zoomto(paneWidth, RowHeight):y(-paneHeight/2 + RowHeight/2)
+				self:zoomto(paneWidth, RowHeight):y(-paneHeight/2 + RowHeight/2)
 			end
 		},
 
@@ -523,7 +522,6 @@ for player in ivalues(PlayerNumber) do
 			Text="Stamina RPG",
 			InitCommand=function(self)
 				self:zoom(0.5)
-				self:diffuse(RpgYellow)
 				self:y(-paneHeight/2 + 12)
 			end
 		},
@@ -534,7 +532,6 @@ for player in ivalues(PlayerNumber) do
 			Text="EX",
 			InitCommand=function(self)
 				self:zoom(0.5)
-				self:diffuse(RpgYellow)
 				self:y(-paneHeight/2 + 12)
 				self:x(paneWidth/2 - 18)
 				self:visible(false)
@@ -547,7 +544,6 @@ for player in ivalues(PlayerNumber) do
 			Text="",
 			InitCommand=function(self)
 				self:valign(0)
-				self:diffuse(Color.White)
 				self:wrapwidthpixels(paneWidth)
 				self:y(-paneHeight/2 + RowHeight * 3/2)
 			end,
@@ -583,7 +579,6 @@ for player in ivalues(PlayerNumber) do
 				Text="More Information",
 				InitCommand=function(self)
 					self:addy(-2)
-					self:diffuse(RpgYellow)
 				end,
 			},
 
