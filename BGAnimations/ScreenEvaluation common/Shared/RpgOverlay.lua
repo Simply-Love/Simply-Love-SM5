@@ -581,6 +581,7 @@ for player in ivalues(PlayerNumber) do
 				Name="Text",
 				Text="More Information",
 				InitCommand=function(self)
+					self:addy(-2)
 					self:diffuse(RpgYellow)
 				end,
 			},
