@@ -348,6 +348,6 @@ af[#af+1] = LoadFont("Common Bold")..{
 	end,
 }
 
-af[#af+1] = LoadActor("./RpgOverlay.lua")
+af[#af+1] = LoadActor("./EventOverlay.lua")
 
 return af
