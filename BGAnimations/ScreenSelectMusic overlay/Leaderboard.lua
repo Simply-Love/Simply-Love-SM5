@@ -23,6 +23,9 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 	end
 	leaderboard:GetChild("Self"):visible(false)
 
+	-- Hide/Unhide EX score display
+	leaderboard:GetChild("EX"):visible(leaderboardData["IsEX"])
+
 	if leaderboardData then
 		if leaderboardData["Name"] then
 			leaderboard:GetChild("Header"):settext(leaderboardData["Name"])
@@ -127,18 +130,23 @@ local LeaderboardRequestProcessor = function(res, master)
 				if data[playerStr]["gsLeaderboard"] then
 					leaderboardList[#leaderboardList + 1] = {
 						Name="GrooveStats",
-						Data=DeepCopy(data[playerStr]["gsLeaderboard"])
+						Data=DeepCopy(data[playerStr]["gsLeaderboard"]),
+						IsEX=false
 					}
 					master[pn]["LeaderboardIndex"] = 1
 				end
 
-				-- Then any additional leaderboards.
-				if data[playerStr]["rpg"] and data[playerStr]["rpg"]["rpgLeaderboard"] then
-					leaderboardList[#leaderboardList + 1] = {
-						Name=data[playerStr]["rpg"]["name"],
-						Data=DeepCopy(data[playerStr]["rpg"]["rpgLeaderboard"])
-					}
-					master[pn]["LeaderboardIndex"] = 1
+				-- Then any event leaderboards.
+				local events = {"rpg", "itl"}
+				for event in ivalues(events) do
+					if data[playerStr][event] and data[playerStr][event][event.."Leaderboard"] then
+						leaderboardList[#leaderboardList + 1] = {
+							Name=data[playerStr][event]["name"],
+							Data=DeepCopy(data[playerStr][event][event.."Leaderboard"]),
+							IsEX=(event == "itl")
+						}
+						master[pn]["LeaderboardIndex"] = 1
+					end
 				end
 
 				if #leaderboardList > 1 then
@@ -263,12 +271,12 @@ local af = Def.ActorFrame{
 	}
 }
 
-local paneWidth = 230
 local paneWidth1Player = 330
+local paneWidth2Player = 230
+local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or paneWidth2Player
 local paneHeight = 360
 local borderWidth = 2
 
--- TODO(teejusb): Handle the LeaderboardInputEventMessage to go through the different leaderboards.
 for player in ivalues( PlayerNumber ) do
 	af[#af+1] = Def.ActorFrame{
 		Name=ToEnumShortString(player).."Leaderboard",
@@ -285,11 +293,10 @@ for player in ivalues( PlayerNumber ) do
 
 			if GAMESTATE:GetNumSidesJoined() == 1 then
 				self:xy(_screen.cx, _screen.cy - 15)
-				self:SetWidth(paneWidth1Player)
 			else
 				self:xy(_screen.cx + 160 * (player==PLAYER_1 and -1 or 1), _screen.cy - 15)
-				self:SetWidth(paneWidth)
 			end
+			self:SetWidth(paneWidth)
 		end,
 
 		-- White border
@@ -343,6 +350,18 @@ for player in ivalues( PlayerNumber ) do
 			InitCommand=function(self)
 				self:zoom(0.5)
 				self:y(-paneHeight/2 + 12)
+			end
+		},
+
+		-- EX Text
+		LoadFont("Wendy/_wendy small").. {
+			Name="EX",
+			Text="EX",
+			InitCommand=function(self)
+				self:zoom(0.5)
+				self:y(-paneHeight/2 + 12)
+				self:x(paneWidth/2 - 16)
+				self:visible(false)
 			end
 		},
 
@@ -464,7 +483,7 @@ for player in ivalues( PlayerNumber ) do
 			end,
 			RefreshCommand=function(self)
 				local width = self:GetParent():GetWidth()
-				self:x(-(width-paneWidth)/2)
+				self:x(-(width-paneWidth2Player)/2)
 				self:GetChild("Date"):visible(GAMESTATE:GetNumSidesJoined() == 1)
 			end,
 
@@ -474,7 +493,7 @@ for player in ivalues( PlayerNumber ) do
 				InitCommand=function(self)
 					self:horizalign(right)
 					self:maxwidth(30)
-					self:x(-paneWidth/2 + 30 + borderWidth)
+					self:x(-paneWidth2Player/2 + 30 + borderWidth)
 					self:diffuse(Color.White)
 				end,
 				ResetEntryMessageCommand=function(self)
@@ -489,7 +508,7 @@ for player in ivalues( PlayerNumber ) do
 				InitCommand=function(self)
 					self:horizalign(center)
 					self:maxwidth(130)
-					self:x(-paneWidth/2 + 100)
+					self:x(-paneWidth2Player/2 + 100)
 					self:diffuse(Color.White)
 				end,
 				ResetEntryMessageCommand=function(self)
@@ -503,7 +522,7 @@ for player in ivalues( PlayerNumber ) do
 				Text="",
 				InitCommand=function(self)
 					self:horizalign(right)
-					self:x(paneWidth/2-borderWidth)
+					self:x(paneWidth2Player/2-borderWidth)
 					self:diffuse(Color.White)
 				end,
 				ResetEntryMessageCommand=function(self)
@@ -516,7 +535,7 @@ for player in ivalues( PlayerNumber ) do
 				Text="",
 				InitCommand=function(self)
 					self:horizalign(right)
-					self:x(paneWidth/2 + 100 - borderWidth)
+					self:x(paneWidth2Player/2 + 100 - borderWidth)
 					self:diffuse(Color.White)
 				end,
 				ResetEntryMessageCommand=function(self)
