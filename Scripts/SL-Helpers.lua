@@ -574,36 +574,6 @@ IsAutoplay = function(player)
 end
 
 -- -----------------------------------------------------------------------
-GetW0Count = function(player)
-	-- If the top window is disabled, then so is the W0 window.
-	-- Return 0 and move on.
-	if not SL.Global.ActiveModifiers.TimingWindows[1] then
-		return 0
-	end
-
-	local pn = ToEnumShortString(player)
-	local offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
-	local W0_count = 0
-
-	for time_offset in ivalues(offsets) do
-		local offset = time_offset[2]
-
-		local prefs = SL.Preferences["FA+"]
-		local scale = PREFSMAN:GetPreference("TimingWindowScale")
-		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-
-		-- We found a judgment that fell within the W0 window (Fantastic+).
-		if offset ~= "Miss" then
-			offset = math.abs(offset)
-			if offset <= W0 then
-				W0_count = W0_count + 1
-			end
-		end
-	end
-	return W0_count
-end
-
--- -----------------------------------------------------------------------
 CalculateExScore = function(player)
 	-- No EX scores in Casual mode, just return some dummy number early.
 	if SL.Global.GameMode == "Casual" then return 0 end
@@ -620,12 +590,9 @@ CalculateExScore = function(player)
 	for index, window in ipairs(TNS) do
 		local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
 
-		-- The W0 window needs to be emulated in ITG mode.
-		-- We already track note offsets so use that to compute the W0 count.
-		-- TODO(teejusb): Explicitly track this value instead of computing the count here
-		-- as it will be useful to display the count during gameplay.
+		-- The W0 window is emulated in ITG mode. Grab the value from stage stats.
 		if window == "W1" and SL.Global.GameMode == "ITG" then
-			local W0_count = GetW0Count(player)
+			local W0_count = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
 			total_points = total_points + W0_count * SL.ExWeights["W0"]
 
 			-- Subtract the W0 note count from the actual W1 count and then fall through below

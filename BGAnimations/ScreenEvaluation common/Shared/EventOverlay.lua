@@ -282,9 +282,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 end
 
 local GetItlPaneFunctions = function(eventAf, itlData, player)
-	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-	-- TODO(teejusb): THIS SHOULD BE EX SCORE NOT MACHINE SCORE
-	local score = pss:GetPercentDancePoints() * 100
+	local score = CalculateExScore(player) * 100
 	local paneTexts = {}
 	local paneFunctions = {}
 

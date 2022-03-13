@@ -24,9 +24,7 @@ local RadarCategories = {
 	x = { P1=-180, P2=218 }
 }
 
--- TODO(teejusb): Explicitly track this value instead of (re)computing the count here
--- as it will be useful to display the count during gameplay.
-local W0_count = GetW0Count(player)
+local W0_count = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
 
 local GetCount = function(window)
 	if window == 'W0' then
