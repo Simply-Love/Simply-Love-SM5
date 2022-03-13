@@ -390,7 +390,7 @@ SL = {
 		W5=0,
 		Miss=0,
 		LetGo=0,
-		Held=3.5,  -- Should be same as W0 as that is how SM handles it internally.
+		Held=1,
 		HitMine=-1
 	},
 	-- Fields used to determine the existence of the launcher and the
