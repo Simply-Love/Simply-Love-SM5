@@ -152,6 +152,17 @@ local NormalizeFloatDigits = function(param)
 end
 
 -- ----------------------------------------------------------------
+-- Takes a string and generates a case insensitive regex pattern.
+-- e.g. "BPMS" returns "[Bb][Pp][Mm][Ss]""
+local MixedCaseRegex = function(str)
+	local t = {}
+	for c in str:gmatch(".") do
+		t[#t+1] = "[" .. c:upper() .. c:lower() .. "]"
+	end
+	return table.concat(t, "")
+end
+
+-- ----------------------------------------------------------------
 -- ORIGINAL SOURCE: https://github.com/JonathanKnepp/SM5StreamParser
 
 -- GetSimfileChartString() accepts four arguments:
@@ -172,6 +183,13 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 	StepsType = StepsType:lower()
 	Difficulty = Difficulty:lower()
 
+	local BPMS = MixedCaseRegex("BPMS")
+	local NOTEDATA = MixedCaseRegex("NOTEDATA")
+	local NOTES = MixedCaseRegex("NOTES")
+	local STEPSTYPE = MixedCaseRegex("STEPSTYPE")
+	local DIFFICULTY = MixedCaseRegex("DIFFICULTY")
+	local DESCRIPTION = MixedCaseRegex("DESCRIPTION")
+
 	-- ----------------------------------------------------------------
 	-- StepMania uses each steps' "Description" attribute to uniquely
 	-- identify Edit charts. (This is important, because there can be more
@@ -182,10 +200,10 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 	-- ----------------------------------------------------------------
 
 	if Filetype == "ssc" then
-		local topLevelBpm = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
+		local topLevelBpm = NormalizeFloatDigits(SimfileString:match("#"..BPMS..":(.-);"):gsub("%s+", ""))
 		-- SSC File
 		-- Loop through each chart in the SSC file
-		for noteData in SimfileString:gmatch("#NOTEDATA.-#NOTES2?:[^;]*") do
+		for noteData in SimfileString:gmatch("#"..NOTEDATA..".-#"..NOTES.."2?:[^;]*") do
 			-- Normalize all the line endings to '\n'
 			local normalizedNoteData = noteData:gsub('\r\n?', '\n')
 
@@ -195,7 +213,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			-- TODO(teejsub): Double check the expected behavior even though it is
 			-- currently sufficient for all ranked charts on GrooveStats.
 			local stepsType = ''
-			for st in normalizedNoteData:gmatch("#STEPSTYPE:(.-);") do
+			for st in normalizedNoteData:gmatch("#"..STEPSTYPE..":(.-);") do
 				if stepsType == '' and st ~= '' then
 					stepsType = st
 					break
@@ -204,7 +222,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			stepsType = stepsType:gsub("%s+", ""):lower()
 
 			local difficulty = ''
-			for diff in normalizedNoteData:gmatch("#DIFFICULTY:(.-);") do
+			for diff in normalizedNoteData:gmatch("#"..DIFFICULTY..":(.-);") do
 				if difficulty == '' and diff ~= '' then
 					difficulty = diff
 					break
@@ -213,7 +231,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			difficulty = difficulty:gsub("%s+", ""):lower()
 
 			local description = ''
-			for desc in normalizedNoteData:gmatch("#DESCRIPTION:(.-);") do
+			for desc in normalizedNoteData:gmatch("#"..DESCRIPTION..":(.-);") do
 				if description == '' and desc ~= '' then
 					description = desc
 					break
@@ -223,10 +241,10 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			-- Find the chart that matches our difficulty and game type.
 			if (stepsType == StepsType and difficulty == Difficulty) then
 				-- Ensure that we've located the correct edit stepchart within the SSC file.
-				-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
+				-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCRIPTION tag
 				if (difficulty ~= "edit" or description == StepsDescription) then
 					-- Get chart specific BPMS (if any).
-					local splitBpm = normalizedNoteData:match("#BPMS:(.-);") or ''
+					local splitBpm = normalizedNoteData:match("#"..BPMS..":(.-);") or ''
 					splitBpm = splitBpm:gsub("%s+", "")
 
 					if #splitBpm == 0 then
@@ -235,7 +253,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 						BPMs = NormalizeFloatDigits(splitBpm)
 					end
 					-- Get the chart data, remove comments, and then get rid of all non-'\n' whitespace.
-					NoteDataString = normalizedNoteData:match("#NOTES2?:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
+					NoteDataString = normalizedNoteData:match("#"..NOTES.."2?:[\n]*([^;]*)\n?$"):gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 					NoteDataString = MinimizeChart(NoteDataString)
 					break
 				end
@@ -243,9 +261,9 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 		end
 	elseif Filetype == "sm" then
 		-- SM FILE
-		BPMs = NormalizeFloatDigits(SimfileString:match("#BPMS:(.-);"):gsub("%s+", ""))
+		BPMs = NormalizeFloatDigits(SimfileString:match("#"..BPMS..":(.-);"):gsub("%s+", ""))
 		-- Loop through each chart in the SM file
-		for noteData in SimfileString:gmatch("#NOTES2?[^;]*") do
+		for noteData in SimfileString:gmatch("#"..NOTES.."2?[^;]*") do
 			-- Normalize all the line endings to '\n'
 			local normalizedNoteData = noteData:gsub('\r\n?', '\n')
 			-- Split the entire chart string into pieces on ":"
@@ -268,7 +286,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 				-- Find the chart that matches our difficulty and game type.
 				if (stepsType == StepsType and difficulty == Difficulty) then
 					-- Ensure that we've located the correct edit stepchart within the SSC file.
-					-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
+					-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCRIPTION tag
 					if (difficulty ~= "edit" or description == StepsDescription) then
 						NoteDataString = parts[7]:gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 						NoteDataString = MinimizeChart(NoteDataString)
