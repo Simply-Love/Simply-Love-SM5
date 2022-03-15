@@ -258,6 +258,8 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			if #parts >= 7 then
 				local stepsType = parts[2]:gsub("[^%w-]", "")
 				local difficulty = parts[4]:gsub("[^%w]", "")
+				-- Normalize the parsed difficulty.
+				difficulty = ToEnumShortString(OldStyleStringToDifficulty(difficulty))
 				local description = parts[3]:gsub("^%s*(.-)", "")
 				-- Find the chart that matches our difficulty and game type.
 				if (stepsType == StepsType and difficulty == Difficulty) then
