@@ -7,20 +7,7 @@ local col = args[4]
 local Subtitle
 local CurrentStyle = GAMESTATE:GetCurrentStyle():GetStepsType()
 
-
---[[local function update_edit(self)
-	if self.song ~= nil and self.song ~= "CloseThisFolder" then
-		if self.song:GetOneSteps(CurrentStyle, 'Difficulty_Edit') ~= nil then
-			self.edit:visible(true)
-		else
-			self.edit:visible(false)
-		end
-	else
-		self.edit:visible(false)
-	end
-end--]]
-
---[[local function update_grade(self)
+local function update_grade(self)
 	--change the Grade sprite
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local pn = ToEnumShortString(player)
@@ -28,11 +15,11 @@ end--]]
 			local current_difficulty
 			local grade
 			local steps
-			if GAMESTATE:GetCurrentSteps(pn) then
-				current_difficulty = GAMESTATE:GetCurrentSteps(pn):GetDifficulty() --are we looking at steps?
+			if GAMESTATE:GetCurrentTrail(pn) then
+				current_difficulty = GAMESTATE:GetCurrentTrail(pn):GetDifficulty() --are we looking at steps?
 			end
-			if current_difficulty and self.song:GetOneSteps(GAMESTATE:GetCurrentSteps(pn):GetStepsType(),current_difficulty) then
-				steps = self.song:GetOneSteps(GAMESTATE:GetCurrentSteps(pn):GetStepsType(),current_difficulty)
+			if current_difficulty then
+				steps = GAMESTATE:GetCurrentTrail(pn)
 			end
 			if steps then
 				grade = GetTopGrade(player, self.song, steps)
@@ -47,7 +34,7 @@ end--]]
 			self[pn..'grade_sprite']:visible(false)
 		end
 	end
-end--]]
+end
 
 local song_mt = {
 	__index = {
@@ -98,7 +85,7 @@ local song_mt = {
 				SlideBackIntoGridCommand=function(subself) subself:linear(0.2) end,
 
 				CurrentStepsChangedMessageCommand=function(subself, params)
-					--update_grade(self)
+					update_grade(self)
 				end,
 
 				-- wrap the function that plays the preview music in its own Actor so that we can
@@ -169,24 +156,11 @@ local song_mt = {
 						subself:y(32):visible(true)
 					end,
 				},
-				-- Load an edit icon if the song has an edit chart(s).
-				--[[Def.Sprite{
-				Texture=THEME:GetPathG("", "usbicon.png"),
-				InitCommand=function(subself) 
-					subself:visible(false):zoom(0.1):xy(IsUsingWideScreen() and SCREEN_WIDTH/6 or SCREEN_WIDTH/4.8, 25):animate(0) self.edit = subself 
-				end,
-				SlideToTopCommand=function(subself)
-					subself:linear(.12):diffusealpha(0):xy(IsUsingWideScreen() and SCREEN_WIDTH/6 or SCREEN_WIDTH/4.8,75):zoom(0.1):linear(.12):diffusealpha(1)
-				end,
-				SlideBackIntoGridCommand=function(subself)
-					subself:linear(.12):diffusealpha(0):zoom(0.1):xy(IsUsingWideScreen() and SCREEN_WIDTH/6 or SCREEN_WIDTH/4.8,25):linear(.12):diffusealpha(1)
-				end,
-				},--]]
 
 			}
 			
 			--Things we need two of
-			--[[for pn in ivalues({'P1','P2'}) do
+			for pn in ivalues({'P1','P2'}) do
 				local side
 				if pn == 'PLAYER_1' then side = -1
 				else side = 1 end
@@ -212,7 +186,7 @@ local song_mt = {
 						end,
 					}
 				}
-			end--]]
+			end
 
 			return af
 		end,
@@ -277,8 +251,7 @@ local song_mt = {
 				self.title_bmt:valign(0.5)
 			end
 
-			--update_grade(self)
-			--update_edit(self)
+			update_grade(self)
 			
 		end
 	}

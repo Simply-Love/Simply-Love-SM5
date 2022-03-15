@@ -19,7 +19,6 @@ local group_info = setup.group_info
 
 local GroupWheel = setmetatable({}, sick_wheel_mt)
 local SongWheel = setmetatable({}, sick_wheel_mt)
-local SearchWheel = setmetatable({}, sick_wheel_mt)
 
 local row = setup.row
 local col = setup.col
