@@ -168,6 +168,10 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 	local NoteDataString = nil
 	local BPMs = nil
 
+	-- Support lowercased variants.
+	StepsType = StepsType:lower()
+	Difficulty = Difficulty:lower()
+
 	-- ----------------------------------------------------------------
 	-- StepMania uses each steps' "Description" attribute to uniquely
 	-- identify Edit charts. (This is important, because there can be more
@@ -197,7 +201,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 					break
 				end
 			end
-			stepsType = stepsType:gsub("%s+", "")
+			stepsType = stepsType:gsub("%s+", ""):lower()
 
 			local difficulty = ''
 			for diff in normalizedNoteData:gmatch("#DIFFICULTY:(.-);") do
@@ -206,7 +210,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 					break
 				end
 			end
-			difficulty = difficulty:gsub("%s+", "")
+			difficulty = difficulty:gsub("%s+", ""):lower()
 
 			local description = ''
 			for desc in normalizedNoteData:gmatch("#DESCRIPTION:(.-);") do
@@ -220,7 +224,7 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			if (stepsType == StepsType and difficulty == Difficulty) then
 				-- Ensure that we've located the correct edit stepchart within the SSC file.
 				-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
-				if (difficulty ~= "Edit" or description == StepsDescription) then
+				if (difficulty ~= "edit" or description == StepsDescription) then
 					-- Get chart specific BPMS (if any).
 					local splitBpm = normalizedNoteData:match("#BPMS:(.-);") or ''
 					splitBpm = splitBpm:gsub("%s+", "")
@@ -256,16 +260,16 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 			-- Index 4 will contain the difficulty (like "challenge")
 			-- Index 3 will contain the description for Edit charts
 			if #parts >= 7 then
-				local stepsType = parts[2]:gsub("[^%w-]", "")
+				local stepsType = parts[2]:gsub("[^%w-]", ""):lower()
+				-- Normalize the parsed difficulty (e.g. expert/oni should map to challenge).
 				local difficulty = parts[4]:gsub("[^%w]", "")
-				-- Normalize the parsed difficulty.
-				difficulty = ToEnumShortString(OldStyleStringToDifficulty(difficulty))
+				difficulty = ToEnumShortString(OldStyleStringToDifficulty(difficulty)):lower()
 				local description = parts[3]:gsub("^%s*(.-)", "")
 				-- Find the chart that matches our difficulty and game type.
 				if (stepsType == StepsType and difficulty == Difficulty) then
 					-- Ensure that we've located the correct edit stepchart within the SSC file.
 					-- There can be multiple Edit stepcharts but each is guaranteed to have a unique #DESCIPTION tag
-					if (difficulty ~= "Edit" or description == StepsDescription) then
+					if (difficulty ~= "edit" or description == StepsDescription) then
 						NoteDataString = parts[7]:gsub("//[^\n]*", ""):gsub('[\r\t\f\v ]+', '')
 						NoteDataString = MinimizeChart(NoteDataString)
 						break
