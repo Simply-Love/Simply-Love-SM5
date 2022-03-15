@@ -95,18 +95,20 @@ TotalGuestStepsP1 = 0
 TotalGuestStepsP2 = 0
 end
 
-if P1SongsInSet == 0 then
+if P1SongsInSet == 0 or P1SongsInSet == nil then
 P1SongsInSet = 0
 AverageDifficultyPlayer1 = 0
+AverageBPMPlayer1 = 0
 P1REALStepsPerSet = 0
 Player1StartingSteps = P1numTotalSteps
 ScoreP1 = 0
 TotalGuestStepsP1 = 0
 end
 
-if P2SongsInSet == 0 then
+if P2SongsInSet == 0 or P2SongsInSet == nil then
 P2SongsInSet = 0
 AverageDifficultyPlayer2 = 0
+AverageBPMPlayer2 = 0
 P2REALStepsPerSet = 0
 Player2StartingSteps = P2numTotalSteps
 ScoreP2 = 0

@@ -52,6 +52,11 @@ if P1 then
 			PlayerOneREALDifficulty = (PlayerOneDifficulty - (PlayerOneDifficulty/MusicRate)) + PlayerOneDifficulty
 		end
 	end
+-- not sure how this happens tbh
+if TotalBPMPlayer1 == nil or TotalDifficultyPlayer1 == nil then
+	TotalBPMPlayer1 = 0
+	TotalDifficultyPlayer1 = 0
+end
 
 P1SongsInSet = P1SongsInSet + 1
 TotalBPMPlayer1 = PlayerOneTrueBPM + TotalBPMPlayer1
@@ -76,6 +81,11 @@ if P2 then
 			PlayerTwoREALDifficulty = (PlayerTwoDifficulty - (PlayerTwoDifficulty/MusicRate)) + PlayerTwoDifficulty
 		end
 	end
+	
+if TotalBPMPlayer2 == nil or TotalDifficultyPlayer2 == nil then
+	TotalBPMPlayer2 = 0
+	TotalDifficultyPlayer2 = 0
+end
 P2SongsInSet = P2SongsInSet + 1
 TotalBPMPlayer2 = PlayerTwoTrueBPM + TotalBPMPlayer2
 AverageBPMPlayer2 = TotalBPMPlayer2 / P2SongsInSet
@@ -83,6 +93,7 @@ TotalDifficultyPlayer2 = PlayerTwoREALDifficulty + TotalDifficultyPlayer2
 AverageDifficultyPlayer2 = TotalDifficultyPlayer2 / P2SongsInSet
 end
 
+local song = GAMESTATE:GetCurrentSong()
 -- Update stats
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	DDStats.SetStat(PLAYER_1, 'LastSong', song:GetSongDir())

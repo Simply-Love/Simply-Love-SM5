@@ -43,14 +43,12 @@ t[#t+1] = Def.Banner{
 	Name="Banner",
 	InitCommand=function(self) self:y(-6) end,
 	DrawStageCommand=function(self)
-		if SongOrCourse then
-			if GAMESTATE:IsCourseMode() then
-				self:LoadFromCourse(SongOrCourse)
-			else
-				self:LoadFromSong(SongOrCourse)
-			end
-			self:setsize(418,164):zoom(0.333)
+		if string.match(tostring(SongOrCourse), "Course") then
+			self:LoadFromCourse(SongOrCourse)
+		else
+			self:LoadFromSong(SongOrCourse)
 		end
+		self:setsize(418,164):zoom(0.333)
 	end
 }
 
@@ -74,6 +72,12 @@ t[#t+1] = LoadFont("Common Normal")..{
 			local MusicRate = SL.Global.Stages.Stats[StageNum].MusicRate
 			local mpn = GAMESTATE:GetMasterPlayerNumber()
 			local StepsOrTrail = SL[ToEnumShortString(mpn)].Stages.Stats[StageNum].steps
+			if string.match(tostring(SongOrCourse), "Course") then
+				GAMESTATE:SetCurrentPlayMode(1)
+			else
+				GAMESTATE:SetCurrentPlayMode(0)
+			end
+			
 			local bpms = StringifyDisplayBPMs(mpn, StepsOrTrail, MusicRate)
 			if MusicRate ~= 1 then
 				-- format a string like "150 - 300 bpm (1.5x Music Rate)"

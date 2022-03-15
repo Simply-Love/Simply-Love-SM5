@@ -163,7 +163,7 @@ for i=1,NumStages do
 		InitCommand=cmd(xy, _screen.cx, 121.5),
 		OnCommand=function(self)
 			if SongOrCourse then
-				if GAMESTATE:IsCourseMode() then
+				if string.match(tostring(SongOrCourse), "Course") then
 					self:LoadFromCourse(SongOrCourse)
 				else
 					self:LoadFromSong(SongOrCourse)
