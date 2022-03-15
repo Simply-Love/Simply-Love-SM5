@@ -81,7 +81,6 @@ local song_mt = {
 					end
 				end,
 				HideCommand=function(subself)
-					stop_music()
 					subself:visible(false):diffusealpha(0)
 				end,
 				UnhideCommand=function(subself)
@@ -223,7 +222,6 @@ local song_mt = {
 			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()
 			self.container:finishtweening()
-			stop_music()
 
 			if item_index ~= 1 and item_index ~= num_items then
 				self.container:decelerate(0.1)
@@ -236,8 +234,6 @@ local song_mt = {
 					if GAMESTATE:GetCurrentCourse() ~= nil then
 						LastSeenCourse = GAMESTATE:GetCurrentCourse():GetCourseDir()
 					end
-					-- wait for the musicgrid to settle for at least 0.2 seconds before attempting to play preview music
-					self.preview_music:stoptweening():sleep(0.2):queuecommand("PlayMusicPreview")
 					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
 					self.container:x(_screen.cx)
 				elseif self.song == "CloseThisFolder" then

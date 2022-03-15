@@ -1,28 +1,40 @@
 -- ----------------------------------------------------------------------------------------
--- functions used by ScreenSelectMusicDD
+-- functions used by ScreenSelectMusicDD/ScreenSelectCourseDD
 
 -- used by ScreenSelectMusicDD to play preview music of the current song
 -- this is invoked each time the custom MusicWheel changes focus
+-- Also used by ScreenSelectCourseDD to play menu music
+-- this gets toggled on/off when the sort menu is opened/closed
 play_sample_music = function()
-	if GAMESTATE:IsCourseMode() then return end
-	local song = GAMESTATE:GetCurrentSong()
-
-	if song then
-		local songpath = song:GetMusicPath()
-		local sample_start = song:GetSampleStart()
-		local sample_len = song:GetSampleLength()
-
-		if songpath and sample_start and sample_len then
+	if GAMESTATE:IsCourseMode() then 
+		if isSortMenuVisible == false then
+			local musicpath = THEME:GetPathS("ScreenSelectMusic", "course music (loop).ogg")
+			local sample_start = 0
+			local sample_len = 32
 			SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"), math.huge)
-			SOUND:PlayMusicPart(songpath, sample_start,sample_len, 0.5, 1.5, false, true)
+			SOUND:PlayMusicPart(musicpath, sample_start, sample_len, 0,0, true, true)
 		else
 			stop_music()
 		end
-	else
-		stop_music()
+	else	
+		local song = GAMESTATE:GetCurrentSong()
+
+		if song then
+			local songpath = song:GetMusicPath()
+			local sample_start = song:GetSampleStart()
+			local sample_len = song:GetSampleLength()
+
+			if songpath and sample_start and sample_len then
+				SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"), math.huge)
+				SOUND:PlayMusicPart(songpath, sample_start,sample_len, 0.5, 1.5, false, true)
+			else
+				stop_music()
+			end
+		else
+			stop_music()
+		end
 	end
 end
-
 
 -- used by ScreenSelectMusicDD to stop playing preview music,
 -- this is invoked every time the custom MusicWheel changes focus

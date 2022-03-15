@@ -170,7 +170,6 @@ local item_mt = {
 			else
 				if has_focus then
 					GAMESTATE:SetCurrentCourse(nil)
-					SOUND:StopMusic()
 					self.container:playcommand("GainFocus")
 					MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=self.groupName})
 					NameOfGroup = self.groupName

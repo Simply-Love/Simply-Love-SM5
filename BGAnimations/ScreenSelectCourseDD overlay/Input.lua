@@ -107,6 +107,7 @@ t.Handler = function(event)
 				else
 					PlayerControllingSort = 'PlayerNumber_P2'
 				end
+				play_sample_music()
 				MESSAGEMAN:Broadcast("InitializeDDSortMenu")
 				MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
 			end
@@ -124,12 +125,13 @@ t.Handler = function(event)
 								SortMenuNeedsUpdating = false
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
 								MESSAGEMAN:Broadcast("ReloadSSCDD")
-								isSortMenuVisible = false
 								SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
-							elseif SortMenuNeedsUpdating == false then
 								isSortMenuVisible = false
+							elseif SortMenuNeedsUpdating == false then
 								SOUND:PlayOnce( THEME:GetPathS("ScreenPlayerOptions", "cancel all.ogg") )
 								MESSAGEMAN:Broadcast("ToggleSortMenu")
+								isSortMenuVisible = false
+								play_sample_music()
 							end
 						end
 					end
