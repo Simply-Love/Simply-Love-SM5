@@ -18,6 +18,7 @@ if SL.Global.GameMode ~= "Casual" then
 		InputHandler = LoadActor("./InputHandler.lua", {self, NumPanes})
 		EventOverlayInputHandler = LoadActor("./Shared/EventInputHandler.lua")
 		SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
+		PROFILEMAN:SaveMachineProfile()
 	end
 	t.DirectInputToEngineCommand=function(self)
 		SCREENMAN:GetTopScreen():RemoveInputCallback(EventOverlayInputHandler)
@@ -34,6 +35,10 @@ if SL.Global.GameMode ~= "Casual" then
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
+	end
+else
+	t.OnCommand=function(self)
+		PROFILEMAN:SaveMachineProfile()
 	end
 end
 
