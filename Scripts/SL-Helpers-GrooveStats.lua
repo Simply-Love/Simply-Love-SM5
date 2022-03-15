@@ -285,13 +285,14 @@ ValidForGrooveStats = function(player)
 	--
 	-- 4 (1, internally) is considered standard for ITG.
 	-- GrooveStats expects players to have both these set to 4 (1, internally).
+	-- We also allow people to use harder values as well.
 	--
 	-- People can probably use some combination of LifeDifficultyScale,
 	-- TimingWindowScale, and TimingWindowAdd to probably match up with ITG's windows, but that's a
 	-- bit cumbersome to handle so just requre TimingWindowScale and LifeDifficultyScale these to be set
 	-- to 4.
-	valid[5] = PREFSMAN:GetPreference("TimingWindowScale") == 1
-	valid[6] = PREFSMAN:GetPreference("LifeDifficultyScale") == 1
+	valid[5] = PREFSMAN:GetPreference("TimingWindowScale") <= 1
+	valid[6] = PREFSMAN:GetPreference("LifeDifficultyScale") <= 1
 
 	-- Validate all other metrics.
 	local ExpectedTWA = 0.0015
