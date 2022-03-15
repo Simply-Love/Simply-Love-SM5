@@ -12,18 +12,12 @@ local function GetMaxCursorPosition()
 	end
 	
 	-- the minimum amount of items
-	local MaxCursorPosition = 12
+	local MaxCursorPosition = 10
 	
 	if GAMESTATE:GetCurrentStyle():GetStyleType() ~= 'StyleType_TwoPlayersTwoSides' then
 		MaxCursorPosition = MaxCursorPosition + 1
 	end
 	
-	if IsServiceAllowed(SL.GrooveStats.Leaderboard) and SongIsSelected then
-		MaxCursorPosition = MaxCursorPosition + 1
-	end
-	if ThemePrefs.Get("AllowSongSearch") then
-		MaxCursorPosition = MaxCursorPosition + 1
-	end
 	return tonumber(MaxCursorPosition)
 end
 
@@ -130,76 +124,48 @@ local t = Def.ActorFrame{
 			if DDSortMenuCursorPosition == 1 then
 				self:xy(SCREEN_CENTER_X + 145,SCREEN_CENTER_Y - 135)
 				self:zoomx(190)
-			-- Sub Sort
-			elseif DDSortMenuCursorPosition == 2 then
-				self:xy(SCREEN_CENTER_X + 145,SCREEN_CENTER_Y - 110)
-				self:zoomx(190)
 			-- Lower Difficulty filter
+			elseif DDSortMenuCursorPosition == 2 then
+				self:zoomx(40)
+				self:xy(SCREEN_CENTER_X + 55,SCREEN_CENTER_Y - 110)
+			-- Upper Difficulty filter
 			elseif DDSortMenuCursorPosition == 3 then
 				self:zoomx(40)
-				self:xy(SCREEN_CENTER_X + 55,SCREEN_CENTER_Y - 85)
-			-- Upper Difficulty filter
+				self:xy(SCREEN_CENTER_X + 135,SCREEN_CENTER_Y - 110)
+			-- Lower Bpm Filter
 			elseif DDSortMenuCursorPosition == 4 then
 				self:zoomx(40)
-				self:xy(SCREEN_CENTER_X + 135,SCREEN_CENTER_Y - 85)
-			-- Lower Bpm Filter
+				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y - 85)
+			-- Upper Bpm Filter
 			elseif DDSortMenuCursorPosition == 5 then
 				self:zoomx(40)
-				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y - 60)
-			-- Upper Bpm Filter
-			elseif DDSortMenuCursorPosition == 6 then
-				self:zoomx(40)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y - 60)
+				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y - 85)
 			-- Lower Length Filter
+			elseif DDSortMenuCursorPosition == 6 then
+				self:zoomx(65)
+				self:xy(SCREEN_CENTER_X + 48.5,SCREEN_CENTER_Y - 60)
+			-- Upper Length Filter
 			elseif DDSortMenuCursorPosition == 7 then
 				self:zoomx(65)
-				self:xy(SCREEN_CENTER_X + 48.5,SCREEN_CENTER_Y - 35)
-			-- Upper Length Filter
-			elseif DDSortMenuCursorPosition == 8 then
-				self:zoomx(65)
-				self:xy(SCREEN_CENTER_X + 147.5,SCREEN_CENTER_Y - 35)
-				
-			--- Favorites toggle/filter (add this back later)
-			--[[elseif DDSortMenuCursorPosition == 9 then
-				self:zoomx(65)
-				self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y - 10)--]]
-			
-			-- Groovestats filter/toggle
-			elseif DDSortMenuCursorPosition == 9 then
-				self:zoomx(65)
-				self:xy(SCREEN_CENTER_X + 122,SCREEN_CENTER_Y - 10)
-			-------------- Bottom half of the sort menu --------------
+				self:xy(SCREEN_CENTER_X + 147.5,SCREEN_CENTER_Y - 60)
 			-- Reset sorts
+			elseif DDSortMenuCursorPosition == 8 then
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y - 20)
+				
+			-- Switch between Song/Course select
+			elseif DDSortMenuCursorPosition == 9 then
+				self:zoomx(170)
+				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 5)
+				
+			-- Song Search or Switch from single/double
 			elseif DDSortMenuCursorPosition == 10 then
 				self:zoomx(170)
 				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 30)
-				
-			-- Switch between Song/Course select
+			-- Switch from single/double or GS Leaderboards or test input
 			elseif DDSortMenuCursorPosition == 11 then
 				self:zoomx(170)
 				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 55)
-				
-			-- Mark/Unmark as favorite (add this back later)
-			--[[elseif DDSortMenuCursorPosition == 12 then
-				self:zoomx(160)
-				self:xy(SCREEN_CENTER_X + 80,SCREEN_CENTER_Y + 80)--]]
-				
-			-- Song Search or Switch from single/double
-			elseif DDSortMenuCursorPosition == 12 then
-				self:zoomx(170)
-				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 80)
-			-- Switch from single/double or GS Leaderboards or test input
-			elseif DDSortMenuCursorPosition == 13 then
-				self:zoomx(170)
-				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 105)
-			-- leaderboards or test input
-			elseif DDSortMenuCursorPosition == 14 then
-				self:zoomx(170)
-				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 130)
-			-- test input
-			elseif DDSortMenuCursorPosition == 15 then
-				self:zoomx(170)
-				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 155)
 			end
 			self:queuecommand("FadeOut")
 			

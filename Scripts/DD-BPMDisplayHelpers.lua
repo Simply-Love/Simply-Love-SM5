@@ -1,6 +1,5 @@
 local GetTrailBPMs = function(player, trail)
 	if not player then return false end
-	trail = trail or GAMESTATE:GetCurrentTrail(player)
 	if not trail then return false end
 
 	local lowest, highest
@@ -48,17 +47,16 @@ end
 
 GetDisplayBPMs = function(player, StepsOrTrail, MusicRate)
 	player       = player       or GAMESTATE:GetMasterPlayerNumber()
-	StepsOrTrail = StepsOrTrail or (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+	StepsOrTrail = StepsOrTrail or (GAMESTATE:GetPlayMode() == 1 and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 	MusicRate    = MusicRate    or SL.Global.ActiveModifiers.MusicRate
 
-	if not StepsOrTrail then return end
+	if StepsOrTrail == nil or not StepsOrTrail then return end
 
 	local bpms
 
 	-- if in CourseMode
 	if GAMESTATE:IsCourseMode() then
 		bpms = GetTrailBPMs(player, StepsOrTrail)
-
 	-- otherwise, we are not in CourseMode, i.e. in "normal" mode
 	else
 		bpms = StepsOrTrail:GetDisplayBpms()

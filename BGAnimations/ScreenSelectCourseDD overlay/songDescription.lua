@@ -10,11 +10,18 @@
 -- live-reloading a song on ScreenSelectMusic via Control R might cause the group duration
 -- to then be inaccurate, until the screen is reloaded.
 
-local group_durations = {}
+--[[local group_durations = {}
 local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
+local currentsong = GAMESTATE:GetCurrentSong()
+local HasCDTitle
+if GAMESTATE:GetCurrentSong() ~= nil then
+HasCDTitle = currentsong:HasCDTitle()
+end
+local blank = THEME:GetPathG("", "_blank.png")
+local CDTitlePath--]]
 
 
-for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
+--[[for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	group_durations[group_name] = 0
 
 	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
@@ -24,7 +31,7 @@ for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
 		end
 	end
-end
+end--]]
 
 -- ----------------------------------------
 local MusicWheel, SelectedType
@@ -58,6 +65,48 @@ af[#af+1] = Def.ActorFrame{
 	InitCommand=function(self) self:xy(-110,-6) end,
 	
 	
+	--- CDTitle
+	Def.Sprite{
+		Name="CDTitle",
+		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
+		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end,
+		GroupsHaveChangedMessageCommand=function(self) self:visible(false) end,
+		InitCommand=function(self) 
+			local Height = self:GetHeight()
+			local Width = self:GetWidth()
+			local dim1, dim2=math.max(Width, Height), math.min(Width, Height)
+			local ratio=math.max(dim1/dim2, 2)
+			local toScale = Width > Height and Width or Height
+			self:zoom(22/toScale * ratio)
+			self:horizalign(right)
+			self:xy(265,6)
+			self:diffusealpha(0)
+		end,
+		OnCommand=function(self) 
+			self:decelerate(0.4)
+			self:diffusealpha(0.9) 
+		end,
+		SetCommand=function(self)
+			self:stoptweening()
+			local Height = self:GetHeight()
+			local Width = self:GetWidth()
+			local dim1, dim2=math.max(Width, Height), math.min(Width, Height)
+			local ratio=math.max(dim1/dim2, 2)
+			local toScale = Width > Height and Width or Height	
+			
+			if GAMESTATE:GetCurrentSong() ~= nil then
+				if GAMESTATE:GetCurrentSong():HasCDTitle() == true then
+					CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
+					self:Load(CDTitlePath)
+				else
+					self:Load(blank)
+				end
+			end
+			self:zoom(22/toScale * ratio)
+			self:visible(true)
+		end
+	},
+	
 	-- ----------------------------------------
 	-- Artist Label
 	LoadFont("Common Normal")..{
@@ -78,7 +127,6 @@ af[#af+1] = Def.ActorFrame{
 		SetCommand=function(self)
 			local course = GAMESTATE:GetCurrentCourse()
 			self:settext( course and #course:GetCourseEntries() or "" )
-			SM(GAMESTATE:GetCurrentTrail(0):GetDifficulty())
 		end
 	},
 
@@ -105,13 +153,12 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self)
 			-- vertical align has to be middle for BPM value in case of split BPMs having a line break
 			self:align(IsUsingWideScreen() and 0 or -0.3, 0.5)
-			self:horizalign(left)
-			self:xy(IsUsingWideScreen() and -5 or 0,5):diffuse(1,1,1,1):vertspacing(-8)
+			self:xy(-5,5):diffuse(1,1,1,1):vertspacing(-8)
 		end,
 		SetCommand=function(self)
-			if GAMESTATE:GetCurrentSong() == nil then
+			if GAMESTATE:GetCurrentCourse() == nil then
 				self:settext("")
-			end
+			return end
 				
 			if MusicWheel then SelectedType = MusicWheel:GetSelectedType() end
 
@@ -138,21 +185,8 @@ af[#af+1] = Def.ActorFrame{
 				-- the "P1 " and "P2 " segments of the string should be grey
 				self:AddAttribute(0,             {Length=3, Diffuse={0.60,0.60,0.60,1}})
 				self:AddAttribute(3+p1bpm:len(), {Length=3, Diffuse={0.60,0.60,0.60,1}})
-
-				if GAMESTATE:IsCourseMode() then
-					-- P1 and P2's BPM text in CourseMode is white until I have time to figure CourseMode out
-					self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse={1,1,1,1}})
-					self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse={1,1,1,1}})
-
-				else
-					-- P1 and P2's BPM text is the color of their difficulty
-					if GAMESTATE:GetCurrentSteps(PLAYER_1) then
-						self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse=DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty())})
-					end
-					if GAMESTATE:GetCurrentSteps(PLAYER_2) then
-						self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse=DifficultyColor(GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty())})
-					end
-				end
+				self:AddAttribute(3,             {Length=p1bpm:len(), Diffuse={1,1,1,1}})
+				self:AddAttribute(7+p1bpm:len(), {Length=p2bpm:len(), Diffuse={1,1,1,1}})
 			end
 		end
 	},
@@ -172,17 +206,29 @@ af[#af+1] = Def.ActorFrame{
 		InitCommand=function(self) 
 			self
 			:align(IsUsingWideScreen() and 0 or -0.7,0)
-			:xy(IsUsingWideScreen() and _w-325 or _w-310, 14) 
-			:horizalign(left)
+			:xy(_w-330 + 5, 14) 
 			:zoom(0.8)
 			end,
 		SetCommand=function(self)
-			local seconds
-			local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber())
-			if trail then
-				seconds = TrailUtil.GetTotalSeconds(trail)
-			end
+			
 
+			local seconds
+
+			if SelectedType == "WheelItemDataType_Song" or "SwitchFocusToSingleSong" then
+				-- GAMESTATE:GetCurrentSong() can return nil here if we're in pay mode on round 2 (or later)
+				-- and we're returning to SSM to find that the song we'd just played is no longer available
+				-- because it exceeds the 2-round or 3-round time limit cutoff.
+				local song = GAMESTATE:GetCurrentCourse()
+				if song then
+					local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
+					seconds = song:GetTotalSeconds(steps_type)
+				end
+
+			elseif SelectedType == "WheelItemDataType_Section" then
+				-- MusicWheel:GetSelectedSection() will return a string for the text of the currently active WheelItem
+				-- use it here to look up the overall duration of this group from our precalculated table of group durations
+				seconds = group_durations[MusicWheel:GetSelectedSection()]
+			end
 
 			-- r21 lol
 			if seconds == 105.0 then self:settext(THEME:GetString("SongDescription", "r21")); return end
@@ -204,60 +250,4 @@ af[#af+1] = Def.ActorFrame{
 		end
 	}
 }
-
-if not GAMESTATE:IsEventMode() then
-
-	-- long/marathon version bubble graphic and text
-	af[#af+1] = Def.ActorFrame{
-		InitCommand=function(self)
-			self:x( IsUsingWideScreen() and 103.4 or 98.5 )
-		end,
-		SetCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong()
-			self:visible( song and (song:IsLong() or song:IsMarathon()) or false )
-		end,
-
-
-		Def.ActorMultiVertex{
-			InitCommand=function(self)
-				-- these coordinates aren't neat and tidy, but they do create three triangles
-				-- that fit together to approximate hurtpiggypig's original png asset
-				local verts = {
-				 	--   x   y  z    r,g,b,a
-				 	{{-113, 81, 0}, {1,1,1,1}},
-				 	{{ 113, 81, 0}, {1,1,1,1}},
-				 	{{ 113, 50, 0}, {1,1,1,1}},
-
-				 	{{ 113, 50, 0}, {1,1,1,1}},
-				 	{{-113, 50, 0}, {1,1,1,1}},
-				 	{{-113, 81, 0}, {1,1,1,1}},
-
-				 	{{ -98, 50, 0}, {1,1,1,1}},
-				 	{{ -78, 50, 0}, {1,1,1,1}},
-				 	{{ -88, 37, 0}, {1,1,1,1}},
-				}
-				self:SetDrawState({Mode="DrawMode_Triangles"}):SetVertices(verts)
-				self:diffuse(GetCurrentColor())
-				self:xy(0,0):zoom(0.5)
-			end
-		},
-
-		LoadFont("Common Normal")..{
-			InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8):y(33) end,
-			SetCommand=function(self)
-				local song = GAMESTATE:GetCurrentSong()
-				if not song then self:settext(""); return end
-
-				if song:IsMarathon() then
-					self:settext(THEME:GetString("SongDescription", "IsMarathon"))
-				elseif song:IsLong() then
-					self:settext(THEME:GetString("SongDescription", "IsLong"))
-				else
-					self:settext("")
-				end
-			end
-		}
-	}
-end
-
 return af

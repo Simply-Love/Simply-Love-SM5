@@ -29,6 +29,31 @@ function SetMainSortPreference(value)
 	end
 end
 
+----- COURSE SORT PROFILE PREFERNCE ----- 
+function GetMainCourseSortPreference()
+	local value
+	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+		value = DDStats.GetStat(PLAYER_1, 'MainCourseSortPreference')
+	else
+		value = DDStats.GetStat(PLAYER_2, 'MainCourseSortPreference')
+	end
+
+	if value == nil then
+		value = 1
+	end
+	
+	MainCourseSortIndex = tonumber(value)
+
+	return tonumber(value)
+end
+
+function SetMainCourseSortPreference(value)
+	for i,playerNum in ipairs(GAMESTATE:GetHumanPlayers()) do
+		DDStats.SetStat(playerNum, 'MainCourseSortPreference', value)
+		DDStats.Save(playerNum)
+	end
+end
+
 ----- SUB SORT PROFILE PREFERNCE -----
 function GetSubSortPreference()
 	local value

@@ -39,15 +39,73 @@ end
 
 if not Branch then Branch = {} end
 
-Branch.AfterScreenSelectProfile = function()
-local nsj = GAMESTATE:GetNumSidesJoined()
+Branch.AfterScreenProfileLoad = function()
+	SetGameModePreferences()
+	local nsj = GAMESTATE:GetNumSidesJoined()
+	local function GetLastStyle()
+		local value
+		if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+			value = DDStats.GetStat(PLAYER_1, 'LastStyle')
+		else
+			value = DDStats.GetStat(PLAYER_2, 'LastStyle')
+		end
+
+		if value == nil then
+			value = "Single"
+		end
+
+		return value
+	end
 	
-	if nsj == 1 and st ~= 2 then
-		GAMESTATE:SetCurrentStyle("Single")
-		return "ScreenSelectPlayMode2"
+	if nsj == 1 then
+		local yo = GetLastStyle()
+		local playerNum
+		local value = "Song"
+		GAMESTATE:SetCurrentStyle(yo)
+		
+		if GAMESTATE:IsPlayerEnabled(0) then
+			playerNum = PLAYER_1
+		else
+			playerNum = PLAYER_2
+		end
+		local CourseOrSong = DDStats.GetStat(playerNum, 'AreCourseOrSong')
+
+		if CourseOrSong == nil then
+			DDStats.SetStat(playerNum, 'AreCourseOrSong', value)
+			DDStats.Save(playerNum)
+			GAMESTATE:SetCurrentPlayMode(0)
+			return "ScreenSelectMusicDD"
+		elseif CourseOrSong == 'Song' then
+			GAMESTATE:SetCurrentPlayMode(0)
+			return "ScreenSelectMusicDD"
+		elseif CourseOrSong == 'Course' then
+			GAMESTATE:SetCurrentPlayMode(1)
+			return "ScreenSelectCourseDD"
+		end
 	elseif nsj == 2 then
 		GAMESTATE:SetCurrentStyle("Versus")
-		return "ScreenSelectPlayMode2"
+		local Player1CourseOrSong = DDStats.GetStat(PLAYER_1, 'AreCourseOrSong')
+		local Player2CourseOrSong = DDStats.GetStat(PLAYER_2, 'AreCourseOrSong')
+		local value = "Song"
+		-- If either player is set to Song go to song select.
+		if Player1CourseOrSong == nil or Player2CourseOrSong == nil then
+			DDStats.SetStat(PLAYER_1, 'AreCourseOrSong', value)
+			DDStats.SetStat(PLAYER_2, 'AreCourseOrSong', value)
+			DDStats.Save(PLAYER_1)
+			DDStats.Save(PLAYER_2)
+			GAMESTATE:SetCurrentPlayMode(0)
+			return "ScreenSelectMusicDD"
+		elseif Player1CourseOrSong == 'Song' or Player2CourseOrSong == 'Song' then
+			DDStats.SetStat(PLAYER_1, 'AreCourseOrSong', value)
+			DDStats.SetStat(PLAYER_2, 'AreCourseOrSong', value)
+			DDStats.Save(PLAYER_1)
+			DDStats.Save(PLAYER_2)
+			GAMESTATE:SetCurrentPlayMode(0)
+			return "ScreenSelectMusicDD"
+		else
+			GAMESTATE:SetCurrentPlayMode(1)
+			return "ScreenSelectCourseDD"
+		end
 	end
 end
 
@@ -57,7 +115,7 @@ end
 
 SelectMusicOrCourse = function()
 	if GAMESTATE:IsCourseMode() then
-		return "ScreenSelectCourse"
+		return "ScreenSelectCourseDD"
 	else
 		return "ScreenSelectMusicDD"
 	end

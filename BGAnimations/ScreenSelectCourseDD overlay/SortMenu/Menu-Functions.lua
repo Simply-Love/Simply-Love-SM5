@@ -28,8 +28,7 @@ local t = Def.ActorFrame{
 
 	DDResetSortsFiltersMessageCommand=function(self)
 		----- Default preference values
-		local DefaultMainSort = 1
-		local DefaultSubSort = 2
+		local DefaultMainCourseSort = 1
 		local DefaultLowerDifficulty = 0
 		local DefaultUpperDifficulty = 0
 		local DefaultLowerBPM = 49
@@ -41,8 +40,7 @@ local t = Def.ActorFrame{
 		if 
 		SongSearchWheelNeedsResetting == true or
 		SortMenuNeedsUpdating == true or
-		GetMainSortPreference() ~= DefaultMainSort or
-		GetSubSortPreference() ~= DefaultSubSort or
+		GetMainCourseSortPreference() ~= DefaultMainSort or
 		GetLowerDifficultyFilter() ~= DefaultLowerDifficulty or
 		GetUpperDifficultyFilter() ~= DefaultUpperDifficulty or
 		GetLowerBPMFilter() ~= DefaultLowerBPM or
@@ -50,7 +48,7 @@ local t = Def.ActorFrame{
 		GetLowerLengthFilter() ~= DefaultLowerLength or
 		GetUpperLengthFilter() ~= DefaultUpperLength or
 		GetGroovestatsFilter() ~= DefaultGroovestats then
-			SetMainSortPreference(DefaultMainSort)
+			SetMainCourseSortPreference(DefaultMainCourseSort)
 			SetSubSortPreference(DefaultSubSort)
 			SetLowerDifficultyFilter(DefaultLowerDifficulty)
 			SetUpperDifficultyFilter(DefaultUpperDifficulty)
@@ -61,7 +59,7 @@ local t = Def.ActorFrame{
 			SetGroovestatsFilter(DefaultGroovestats)
 			SongSearchWheelNeedsResetting = false
 			SortMenuNeedsUpdating = false
-			MESSAGEMAN:Broadcast("ReloadSSMDD")
+			MESSAGEMAN:Broadcast("ReloadSSCDD")
 		else
 			SM("Nothing to reset!")
 		end
@@ -78,7 +76,7 @@ local t = Def.ActorFrame{
 			GAMESTATE:SetCurrentStyle("Single")
 		end
 		SongSearchWheelNeedsResetting = false
-		MESSAGEMAN:Broadcast("ReloadSSMDD")
+		MESSAGEMAN:Broadcast("ReloadSSCDD")
 
 	end,
 	

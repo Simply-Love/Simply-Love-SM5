@@ -84,7 +84,6 @@ AverageDifficultyPlayer2 = TotalDifficultyPlayer2 / P2SongsInSet
 end
 
 -- Update stats
-local song = GAMESTATE:GetCurrentSong()
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	DDStats.SetStat(PLAYER_1, 'LastSong', song:GetSongDir())
 	DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())

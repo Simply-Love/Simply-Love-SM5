@@ -154,8 +154,8 @@ local t = Def.ActorFrame{
 				end
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 				-- initial zoom before additional options are added
-				local InitialZoomY = 230
-				local InitialAddY = -37.5
+				local InitialZoomY = 255
+				local InitialAddY = -25
 				
 				if ThemePrefs.Get("AllowSongSearch") then
 					InitialZoomY = InitialZoomY + 25
@@ -201,8 +201,8 @@ local t = Def.ActorFrame{
 				
 				self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
 				-- initial zoom before additional options are added
-				local InitialZoomY = 225
-				local InitialAddY = -37.5
+				local InitialZoomY = 250
+				local InitialAddY = -25
 				
 				if ThemePrefs.Get("AllowSongSearch") then
 					InitialZoomY = InitialZoomY + 25
@@ -556,6 +556,15 @@ else
 	switchStepsTypeLabel = 'SWITCH TO SINGLE'
 end
 
+--- When changing between Song/Course select show the correct mode to switch to.
+local currentPlayMode = GAMESTATE:GetPlayMode()
+switchCourseSongSelectLabel = ""
+
+if currentPlayMode == 'PlayMode_Regular' then
+	switchCourseSongSelectLabel = "GO TO COURSE MODE"
+else
+	switchCourseSongSelectLabel = "GO TO SONG SELECT"
+end
 
 SortLabel = {
 	"MAIN SORT:",
@@ -600,6 +609,7 @@ end
 
 OtherLabel = {}
 OtherLabel[#OtherLabel+1] = "RESET SORT/FILTERS"
+OtherLabel[#OtherLabel+1] = switchCourseSongSelectLabel
 if ThemePrefs.Get("AllowSongSearch") then
 	OtherLabel[#OtherLabel+1] = "SONG SEARCH"
 end

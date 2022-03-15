@@ -104,17 +104,30 @@ if not GAMESTATE:IsCourseMode() then
 
 		return isDone
 	end
-	
-	if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
-		DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())
-		DDStats.Save(PLAYER_1)
-	end
+		---- set last difficulty played
+	if not GAMESTATE:IsCourseMode() then
+		if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+			DDStats.SetStat(PLAYER_1, 'LastDifficulty', PlayerOneChart:GetDifficulty())
+			DDStats.Save(PLAYER_1)
+		end
 
-	if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-		DDStats.SetStat(PLAYER_2, 'LastDifficulty', PlayerTwoChart:GetDifficulty())
-		DDStats.Save(PLAYER_2)
-	end
+		if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+			DDStats.SetStat(PLAYER_2, 'LastDifficulty', PlayerTwoChart:GetDifficulty())
+			DDStats.Save(PLAYER_2)
+		end
+	else
+		if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
+			local PlayerOneCourse = GAMESTATE:GetCurrentTrail(0)
+			DDStats.SetStat(PLAYER_1, 'LastCourseDifficulty', PlayerOneCourse:GetDifficulty())
+			DDStats.Save(PLAYER_1)
+		end
 
+		if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
+			local PlayerTwoCourse = GAMESTATE:GetCurrentTrail(1)
+			DDStats.SetStat(PLAYER_2, 'LastCourseDifficulty', PlayerTwoCourse:GetDifficulty())
+			DDStats.Save(PLAYER_2)
+		end
+	end
 	local wtf = 0
 	local t = Def.ActorFrame {
 			OnCommand=function(self)
