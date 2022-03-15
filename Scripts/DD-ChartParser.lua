@@ -252,12 +252,8 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 				local stepsType = parts[2]:gsub("[^%w-]", "")
 				local difficulty = parts[4]:gsub("[^%w]", "")
 				local description = parts[3]:gsub("^%s*(.-)", "")
-				if difficulty:lower() == "expert" then
-					difficulty = "Challenge"
-				end
-				if difficulty:lower() == "heavy" then
-					difficulty = "Hard"
-				end
+				-- Normalize the parsed difficulty.
+				difficulty = ToEnumShortString(OldStyleStringToDifficulty(difficulty))
 				-- Find the chart that matches our difficulty and game type.
 				if (stepsType:lower() == StepsType:lower() and difficulty:lower() == Difficulty:lower()) then
 					-- Ensure that we've located the correct edit stepchart within the SSC file.
