@@ -48,81 +48,28 @@ local Encode = function(data)
 end
 
 
-local DataForSong = function(pn, stats)
-	-- TODO(teejusb): Have a helper function to get the appropriate judgment counts
-	-- so we don't have to duplicate this logic.
-	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
-	local RadarCategory = { "Holds", "Rolls", "Mines" }
-
-	local counts = {}
+local DataForSong = function(player)
+	local counts = GetExJudgmentCounts(player)
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Holds", "Rolls", "Mines" }
+	local values = {}
 	
-	if SL.Global.GameMode == "FA+" then
-		for window in ivalues(TNS) do
-			-- Get the count.
-			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
-			-- For the last window (Decent) in FA+ mode...
-			if window == "W5" then
-				-- If it's disabled, write an empty string.
-				if not SL.Global.ActiveModifiers.TimingWindows[5] then
-					counts[#counts+1] = ""
-				-- Otherwise write the count.
-				else
-					counts[#counts+1] = tostring(number)
-				end
-				-- For the non-existent way off window, write the empty string.
-				counts[#counts+1] = ""
-			-- All other windows just gets the counts themselves.
-			else
-				counts[#counts+1] = tostring(number)
-			end
-		end
-	elseif SL.Global.GameMode == "ITG" then
-		for window in ivalues(TNS) do
-			-- Get the count.
-			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
-			-- We need to get the W0 count in ITG mode.
-			if window == "W1" then
-				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
-				-- Subtract white count from blue count
-				number = number - faPlus
-				-- Write the two numbers.
-				counts[#counts+1] = tostring(faPlus)
-				counts[#counts+1] = tostring(number)
-			-- If a decent or way off window is disabled, write an empty string.
-			elseif ((window == "W4" and not SL.Global.ActiveModifiers.TimingWindows[4]) or
-					(window == "W5" and not SL.Global.ActiveModifiers.TimingWindows[5])) then
-				counts[#counts+1] = ""
-			-- All other cases, write the value itself.
-			else
-				counts[#counts+1] = tostring(number)
-			end
-		end
+	for key in ivalues(keys) do
+		values[#values+1] = counts[key] or ""
 	end
-
-	for RCType in ivalues(RadarCategory) do
-		local number = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
-
-		if RCType == "Mines" then
-			number = possible - number
-		end
-		counts[#counts+1] = tostring(number)
-	end
-
+	
+	local pn = ToEnumShortString(player)
 	local hash = SL[pn].Streams.Hash
 	local date = ("%04d-%02d-%02d"):format(year, month, day)
 	local usedCmod = tostring(
 		GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil
 	)
 
-	local line = ("%s,%s,%s,%s"):format(hash, table.concat(counts, ","), usedCmod, date)
+	local line = ("%s,%s,%s,%s"):format(hash, table.concat(values, ","), usedCmod, date)
 	return Encode(line).."\n"
 end
 
 local t = Def.ActorFrame {
 	OnCommand=function(self)
-		local pn = ToEnumShortString(player)
-
 		local profile_slot = {
 			[PLAYER_1] = "ProfileSlot_Player1",
 			[PLAYER_2] = "ProfileSlot_Player2"
@@ -156,7 +103,7 @@ local t = Def.ActorFrame {
 			end
 			-- Append the new score to the file.
 			if f:Open(path, 2) then
-				f:Write(existing..DataForSong(pn, stats))
+				f:Write(existing..DataForSong(player))
 			end
 			f:destroy()
 		end

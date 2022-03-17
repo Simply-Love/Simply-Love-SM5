@@ -24,17 +24,7 @@ local RadarCategories = {
 	x = { P1=-180, P2=218 }
 }
 
-local W0_count = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
-
-local GetCount = function(window)
-	if window == 'W0' then
-		return W0_count
-	elseif window == 'W1' then
-		return pss:GetTapNoteScores( "TapNoteScore_"..window ) - W0_count
-	else
-		return pss:GetTapNoteScores( "TapNoteScore_"..window )
-	end
-end
+local counts = GetExJudgmentCounts(player)
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)self:zoom(0.8):xy(90,_screen.cy-24) end,
@@ -56,7 +46,7 @@ end
 -- do "regular" TapNotes first
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
-	local number = GetCount(window)
+	local number = counts[window] or 0
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
@@ -103,8 +93,9 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		}
 	end
 
-	local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-	local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+	local possible = counts["total"..RCType]
+	-- Mines should be displayed as mines dodged, while counts show mines hit.
+	local performance = RCType == "Mines" and (possible - counts[RCType]) or counts[RCType] 
 	possible = clamp(possible, 0, 999)
 
 	-- player performance value

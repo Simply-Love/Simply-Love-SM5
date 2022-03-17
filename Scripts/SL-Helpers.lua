@@ -574,50 +574,129 @@ IsAutoplay = function(player)
 end
 
 -- -----------------------------------------------------------------------
+-- Gets the fully populated judgment counts for a player.
+-- This includes the FA+ window (W0). Decents/WayOffs (W4/W5) will only exist in the
+-- resultant table if the windows were active.
+--
+-- Should NOT be used in casual mode.
+--
+-- Returns a table with the following keys:
+-- {
+--             "W0" -> the fantasticPlus count
+--             "W1" -> the fantastic count
+--             "W2" -> the excellent count
+--             "W3" -> the great count
+--             "W4" -> the decent count (may not exist if window is disabled)
+--             "W5" -> the way off count (may not exist if window is disabled)
+--           "Miss" -> the miss count
+--     "totalSteps" -> the total number of steps in the chart (including hold heads)
+--          "Holds" -> total number of holds held
+--     "totalHolds" -> total number of holds in the chart
+--          "Mines" -> total number of mines hit
+--     "totalMines" -> total number of mines in the chart
+--          "Rolls" -> total number of rolls held
+--     "totalRolls" -> total number of rolls in the chart
+-- }
+GetExJudgmentCounts = function(player)
+	local pn = ToEnumShortString(player)
+	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+
+	local counts = {}
+
+	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+	
+	if SL.Global.GameMode == "FA+" then
+		for window in ivalues(TNS) do
+			adjusted_window = window
+			-- In FA+ mode, we need to shift the windows up 1 so that the key we're using is accurate.
+			-- E.g. W1 window becomes W0, W2 becomes W1, etc.
+			if window ~= "Miss" then
+				adjusted_window = "W"..(tonumber(window:sub(-1))-1)
+			end
+			
+			-- Get the count.
+			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
+			-- For the last window (Decent) in FA+ mode...
+			if window == "W5" then
+				-- Only populate if the window is still active.
+				if SL.Global.ActiveModifiers.TimingWindows[5] then
+					counts[adjusted_window] = number
+				end
+			else
+				counts[adjusted_window] = number
+			end
+		end
+	elseif SL.Global.GameMode == "ITG" then
+		for window in ivalues(TNS) do
+			-- Get the count.
+			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
+			-- We need to extract the W0 count in ITG mode.
+			if window == "W1" then
+				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
+				-- Subtract white count from blue count
+				number = number - faPlus
+				-- Populate the two numbers.
+				counts["W0"] = faPlus
+				counts["W1"] = number
+			else
+				if ((window ~= "W4" and window ~= "W5") or
+						-- Only populate decent and way off windows if they're active.
+						(window == "W4" and SL.Global.ActiveModifiers.TimingWindows[4]) or
+						(window == "W5" and SL.Global.ActiveModifiers.TimingWindows[5])) then
+					counts[window] = number
+				end
+			end
+		end
+	end
+	counts["totalSteps"] = stats:GetRadarPossible():GetValue( "RadarCategory_TapsAndHolds" )
+	
+	local RadarCategory = { "Holds", "Mines", "Rolls" }
+
+	for RCType in ivalues(RadarCategory) do
+		local number = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
+		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+
+		-- We want to keep track of mines hit.
+		if RCType == "Mines" then
+			number = possible - number
+		end
+		counts[RCType] = number
+		counts["total"..RCType] = possible
+	end
+
+	return counts
+end
+
+-- -----------------------------------------------------------------------
 CalculateExScore = function(player)
 	-- No EX scores in Casual mode, just return some dummy number early.
 	if SL.Global.GameMode == "Casual" then return 0 end
 
-	local pn = ToEnumShortString(player)
-	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+	local counts = GetExJudgmentCounts(player)
+
+	local totalSteps = counts["totalSteps"]
+	local totalHolds = counts["totalHolds"]
+	local totalRolls = counts["totalRolls"]
+
+	local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
 
 	local total_points = 0
-	local total_possible = stats:GetRadarPossible():GetValue( "RadarCategory_TapsAndHolds" ) * SL.ExWeights["W0"]
 
-	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+	local TNS = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss" }
 
-	-- First get tap notes.
-	for index, window in ipairs(TNS) do
-		local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
-
-		-- The W0 window is emulated in ITG mode. Grab the value from stage stats.
-		if window == "W1" and SL.Global.GameMode == "ITG" then
-			local W0_count = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
-			total_points = total_points + W0_count * SL.ExWeights["W0"]
-
-			-- Subtract the W0 note count from the actual W1 count and then fall through below
-			-- If the window was disabled then W0_count will be 0 so this subtraction will be a no-op.
-			number = number - W0_count
+	for window in ivalues(TNS) do
+		local number = counts[window]
+		if number ~= nil then		
+			total_points = total_points + number * SL.ExWeights[window]
 		end
-
-		local adjusted_window = window
-		if window ~= "Miss" and SL.Global.GameMode == "FA+" then
-			-- In FA+ mode, we need to shift the windows up 1 so that the EX weight we're indexing is accurate.
-			-- E.g. W1 window becomes W0, W2 becomes W1, etc.
-			adjusted_window = "W"..(tonumber(window:sub(-1))-1)
-		end
-		
-		total_points = total_points + number * SL.ExWeights[adjusted_window]
 	end
 
 	local RadarCategory = { "Holds", "Mines", "Rolls" }
 	
-	-- Then handle the special note types.
-	for index, RCType in ipairs(RadarCategory) do
-		local number = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
-
+	for RCType in ivalues(RadarCategory) do
+		local number = counts[RCType]
 		if RCType == "Holds" or RCType == "Rolls" then
+			local possible = counts["total"..RCType]
 			total_points = total_points + number * SL.ExWeights["Held"]
 			total_points = total_points + (possible - number) * SL.ExWeights["LetGo"]
 
@@ -625,10 +704,8 @@ CalculateExScore = function(player)
 		end
 
 		if RCType == "Mines" then
-			-- For Mines, 'number' is the number of mines dodged and 'possible'
-			-- is the total number of mines.
-			-- EX score only cares about the number of mines hits.
-			total_points = total_points + (possible - number) * SL.ExWeights["HitMine"]
+			-- For Mines, 'number' is the number of mines hit.
+			total_points = total_points + number * SL.ExWeights["HitMine"]
 		end
 	end
 
