@@ -67,6 +67,9 @@ local input = function(event)
 					-- Direct the input back to the engine, so that the ScreenTextEntry overlay
 					-- works correctly.
 					overlay:queuecommand("DirectInputToEngineForSongSearch")
+				elseif focus.new_overlay == "LoadNewSongs" then
+					overlay:playcommand("DirectInputToEngine")
+					SCREENMAN:SetNewScreen("ScreenReloadSongsSSM")
 				end
 			end
 
