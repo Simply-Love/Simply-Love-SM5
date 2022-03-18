@@ -28,6 +28,36 @@ local GetMachineTag = function(gsEntry)
 	return ""
 end
 
+local GetJudgmentCounts = function(player)
+	local counts = GetExJudgmentCounts(player)
+	local translation = {
+		["W0"] = "fantasticPlus",
+		["W1"] = "fantastic",
+		["W2"] = "excellent",
+		["W3"] = "great",
+		["W4"] = "decent",
+		["W5"] = "wayOff",
+		["Miss"] = "miss",
+		["totalSteps"] = "totalSteps",
+		["Holds"] = "holdsHeld",
+		["totalHolds"] = "totalHolds",
+		["Mines"] = "minesHit",
+		["totalMines"] = "totalMines",
+		["Rolls"] = "rollsHeld",
+		["totalRolls"] = "totalRolls"
+	}
+
+	local judgmentCounts = {}
+
+	for key, value in pairs(counts) do
+		if translation[key] ~= nil then
+			judgmentCounts[translation[key]] = value
+		end
+	end
+
+	return judgmentCounts
+end
+
 local AutoSubmitRequestProcessor = function(res, overlay)
 	local P1SubmitText = overlay:GetChild("AutoSubmitMaster"):GetChild("P1SubmitText")
 	local P2SubmitText = overlay:GetChild("AutoSubmitMaster"):GetChild("P2SubmitText")
@@ -216,6 +246,8 @@ local af = Def.ActorFrame {
 								apiKey=SL[pn].ApiKey,
 								rate=rate,
 								score=score,
+								judgmentCounts=GetJudgmentCounts(player),
+								usedCmod=(GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil),
 								comment=CreateCommentString(player),
 								profileName=profileName,
 							}
