@@ -311,12 +311,19 @@ local t = Def.ActorFrame {
 			if SL.Global.GameMode ~= "Casual"   then table.insert(wheel_options, {"ChangeMode", "Casual"}) end
 
 		end
-		-- allow players to switch to a TestInput overlay if the current game has visual assets to support it
-		-- and if we're in EventMode (public arcades probably don't want random players attempting to diagnose the pads...)
-		local game = GAMESTATE:GetCurrentGame():GetName()
-		if (game=="dance" or game=="pump" or game=="techno") and GAMESTATE:IsEventMode() then
-			table.insert(wheel_options, {"FeelingSalty", "TestInput"})
+
+		-- Add operator functions if in event mode. (Public arcades probably don't want random players
+		-- attempting to diagnose the pads or reload songs ...)
+		if GAMESTATE:IsEventMode() then
+			-- Allow players to switch to a TestInput overlay if the current game has visual assets to support it.
+			local game = GAMESTATE:GetCurrentGame():GetName()
+			if (game=="dance" or game=="pump" or game=="techno") then
+				table.insert(wheel_options, {"FeelingSalty", "TestInput"})
+			end
+
+			table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
 		end
+
 		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
 		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 			-- Also only add this if we're actually hovering over a song.
