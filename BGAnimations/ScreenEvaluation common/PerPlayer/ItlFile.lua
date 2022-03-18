@@ -139,11 +139,16 @@ local t = Def.ActorFrame {
 		local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
 		local rate = so:MusicRate()
 
+		-- We also require mines to be on.
+		local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
+		local mines_enabled = not po:NoMines()
+
 		-- We require an explicit profile to be loaded.
 		if (dir and #dir ~= 0 and
 				GAMESTATE:IsHumanPlayer(player) and
 				valid and
 				rate == 1.0 and
+				mines_enabled and
 				not stats:GetFailed()) then
 			local path = dir.. "itl2022.itl"
 			local f = RageFileUtil:CreateRageFile()
