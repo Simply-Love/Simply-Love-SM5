@@ -1,22 +1,21 @@
--- Pane2 displays per-columnm judgment counts.
--- In "dance" the columns are left, down, up, right.
--- In "pump" the columns are downleft, upleft, center, upright, downright
--- etc.
+-- Pane2 displays the FA+ centric score out of a possible 100.00
+-- aggregate judgment counts (overall W1, overall W2, overall miss, etc.)
+-- and judgment counts on holds, mines, rolls
 
-local player, controller = unpack(...)
+-- We only want to use this in ITG mode.
+-- In FA+ mode the data in this pane is handled by Pane 1
+-- We don't want this version in casual mode at all.
+if SL.Global.GameMode ~= "ITG" then
+	return
+end
 
 return Def.ActorFrame{
-	-- ExpandForDoubleCommand() does not do anything here, but we check for its presence in
-	-- this ActorFrame in ./InputHandler to determine which panes to expand the background for
-	ExpandForDoubleCommand=function() end,
-	InitCommand=function(self)
-		local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-		if style == "OnePlayerTwoSides" then
-			if controller == PLAYER_2 then self:x(-310) end
-		end
-	end,
+	-- score displayed as a percentage
+	LoadActor("./Percentage.lua", ...),
 
-	LoadActor("./Percentage.lua", player),
-	LoadActor("./JudgmentLabels.lua", player),
-	LoadActor("./Arrows.lua", player)
+	-- labels like "FANTASTIC", "MISS", "holds", "rolls", etc.
+	LoadActor("./JudgmentLabels.lua", ...),
+
+	-- numbers (How many Fantastics? How many Misses? etc.)
+	LoadActor("./JudgmentNumbers.lua", ...),
 }

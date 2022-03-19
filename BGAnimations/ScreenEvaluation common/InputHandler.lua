@@ -69,9 +69,9 @@ end
 
 -- -----------------------------------------------------------------------
 -- don't allow double to initialize into a configuration like
--- EvalPanePrimary=2
+-- EvalPanePrimary=3
 -- EvalPaneSecondary=4
--- because Pane2 is full-width in double and the other pane is supposed to be hidden when it is visible
+-- because Pane3 is full-width in double and the other pane is supposed to be hidden when it is visible
 
 if style == "OnePlayerTwoSides" then
 	local cn  = PlayerNumber:Reverse()[mpn] + 1
@@ -151,7 +151,7 @@ return function(event)
 
 			-- double
 			if style == "OnePlayerTwoSides" then
-				-- if this controller is switching to Pane2 or Pane5, both of which take over both pane widths
+				-- if this controller is switching to Pane3 or Pane6, both of which take over both pane widths
 				if panes[cn][active_pane[cn]]:GetChild(""):GetCommand("ExpandForDouble") then
 
 					-- hide all panes for both controllers
@@ -164,7 +164,7 @@ return function(event)
 					panes[cn][active_pane[cn]]:visible(true)
 
 
-				-- if this controller is switching panes while the OTHER controller was viewing Pane2 or Pane5
+				-- if this controller is switching panes while the OTHER controller was viewing Pane3 or Pane6
 				elseif panes[ocn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble") then
 					panes[ocn][active_pane[ocn]]:visible(false)
 					panes[cn][active_pane[cn]]:visible(true)

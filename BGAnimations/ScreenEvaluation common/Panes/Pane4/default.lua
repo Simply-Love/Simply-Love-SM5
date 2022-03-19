@@ -1,267 +1,96 @@
--- Pane4 displays an aggregate histogram of judgment offsets
--- as well as the mean timing error, median, and mode of those offsets.
+-- Pane4 displays a list of HighScores for the stepchart that was played.
 
-local player, _, ComputedData = unpack(...)
-local pn = ToEnumShortString(player)
-
--- table of offset values obtained during this song's playthrough
--- obtained via ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
-local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
-local pane_width, pane_height = 300, 180
-local topbar_height = 26
-local bottombar_height = 13
-
--- ---------------------------------------------
-
-local abbreviations = {
-	ITG = { "Fan", "Ex", "Gr", "Dec", "WO" },
-	["FA+"] = { "Fan", "Fan", "Ex", "Gr", "Dec" },
-}
-
-local colors = {}
-for w=NumJudgmentsAvailable(),1,-1 do
-	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
-		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
-	else
-		abbreviations[SL.Global.GameMode][w] = abbreviations[SL.Global.GameMode][w+1]
-		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
-	end
-end
-
--- ---------------------------------------------
--- if players have disabled W5 or W4+W5, there will be a smaller range
--- of judgments that could have possibly been earned
-local num_judgments_available = NumJudgmentsAvailable()
-local worst_window = GetTimingWindow(num_judgments_available)
-local windows = SL.Global.ActiveModifiers.TimingWindows
-
-for i=NumJudgmentsAvailable(),1,-1 do
-	if windows[i]==true then
-		num_judgments_available = i
-		worst_window = GetTimingWindow(i)
-		break
-	end
-end
-
-
--- ---------------------------------------------
--- sequential_offsets is a table of all timing offsets in the order they were earned.
--- The sequence is important for the Scatter Plot, but irrelevant here; we are only really
--- interested in how many +0.001 offsets were earned, how many -0.001, how many +0.002, etc.
--- So, we loop through sequential_offsets, and tally offset counts into a new offsets table.
-local offsets = {}
-local val
-
-for t in ivalues(sequential_offsets) do
-	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
-	-- the second value in t is the offset value or the string "Miss"
-	val = t[2]
-
-	if val ~= "Miss" then
-		val = (math.floor(val*1000))/1000
-
-		if not offsets[val] then
-			offsets[val] = 1
-		else
-			offsets[val] = offsets[val] + 1
-		end
-	end
-end
-
--- ---------------------------------------------
--- Actors
+local player = unpack(...)
 
 local pane = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(-pane_width*0.5, pane_height*1.95)
+		self:y(_screen.cy - 62):zoom(0.8)
 	end
 }
 
--- the line in the middle indicating where truly flawless timing (0ms offset) is
-pane[#pane+1] = Def.Quad{
-	InitCommand=function(self)
-		local x = pane_width/2
+-- -----------------------------------------------------------------------
 
-		self:vertalign(top)
-			:zoomto(1, pane_height - (topbar_height+bottombar_height) )
-			:vertalign(bottom):xy(x, 0)
-			:diffuse(1,1,1,0.666)
-	end,
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local NumHighScores = math.min(10, PREFSMAN:GetPreference("MaxHighScoresPerListForMachine"))
+
+local HighScoreIndex = {
+	-- Machine HighScoreIndex will always be -1 in EventMode and is effectively useless there
+	Machine =  pss:GetMachineHighScoreIndex(),
+	Personal = pss:GetPersonalHighScoreIndex()
 }
 
--- "Early" text
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Bold",
-	Text=ScreenString("Early"),
-	InitCommand=function(self)
-		self:addx(10):addy(-125)
-			:zoom(0.3)
-			:horizalign(left)
-	end,
-}
+-- -----------------------------------------------------------------------
+-- custom logic to (try to) assess if a MachineHighScore was achieved when in EventMode
 
--- "Late" text
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Bold",
-	Text=ScreenString("Late"),
-	InitCommand=function(self)
-		self:addx(pane_width-10):addy(-125)
-			:zoom(0.3)
-			:horizalign(right)
-	end,
-}
+local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+local MachineHighScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(SongOrCourse,StepsOrTrail):GetHighScores()
 
--- --------------------------------------------------------
-
--- darkened quad behind bottom judgment labels
-pane[#pane+1] = Def.Quad{
-	InitCommand=function(self)
-		self:vertalign(top)
-			:zoomto(pane_width, bottombar_height )
-			:xy(pane_width/2, 0)
-			:diffuse(color("#101519"))
-	end,
-}
-
--- centered text for W1
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
-	Text=abbreviations[SL.Global.GameMode][1],
-	InitCommand=function(self)
-		local x = pane_width/2
-
-		self:diffuse( colors[1] )
-			:addx(x):addy(7)
-			:zoom(0.65)
-	end,
-}
-
--- loop from W2 to the worst_window and add judgment text
--- underneath that portion of the histogram
-for i=2,num_judgments_available do
-
-	-- early (left) judgment text
-	pane[#pane+1] = Def.BitmapText{
-		Font="Common Normal",
-		Text=abbreviations[SL.Global.GameMode][i],
-		InitCommand=function(self)
-			local window = -1 * GetTimingWindow(i)
-			local better_window = -1 * GetTimingWindow(i - 1)
-
-			local x = scale(window, -worst_window, worst_window, 0, pane_width )
-			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
-			local x_avg = (x+x_better)/2
-
-			self:diffuse( colors[i] )
-				:addx(x_avg):addy(7)
-				:zoom(0.65)
-			-- Hide the text if it's the same as the previous window.
-			if abbreviations[SL.Global.GameMode][i] == abbreviations[SL.Global.GameMode][i-1] then
-				self:visible(false)
-			end
-		end,
-	}
-
-	-- late (right) judgment text
-	pane[#pane+1] = Def.BitmapText{
-		Font="Common Normal",
-		Text=abbreviations[SL.Global.GameMode][i],
-		InitCommand=function(self)
-			local window = GetTimingWindow(i)
-			local better_window = GetTimingWindow(i - 1)
-
-			local x = scale(window, -worst_window, worst_window, 0, pane_width )
-			local x_better = scale(better_window, -worst_window, worst_window, 0, pane_width)
-			local x_avg = (x+x_better)/2
-
-			self:diffuse( colors[i] )
-				:addx(x_avg):addy(7)
-				:zoom(0.65)
-			-- Hide the text if it's the same as the previous window.
-			if abbreviations[SL.Global.GameMode][i] == abbreviations[SL.Global.GameMode][i-1] then
-				self:visible(false)
-			end
-		end,
-	}
-
+local EarnedMachineHighScoreInEventMode = function()
+	-- if no DancePoints were earned, it's not a HighScore
+	if pss:GetPercentDancePoints() <= 0.01 then return false end
+	-- if DancePoints were earned, but no MachineHighScores exist at this point, it's a fail which was not considered a HighScore
+	if #MachineHighScores < 1 then return false end
+	-- otherwise, check if this score is better than the worst current HighScore retrieved from MachineProfile
+	return pss:GetHighScore():GetPercentDP() >= MachineHighScores[math.min(NumHighScores, #MachineHighScores)]:GetPercentDP()
 end
 
--- --------------------------------------------------------
--- TOPBAR feat. mean timing error, median, mode, and Ryu☆
+-- -----------------------------------------------------------------------
 
--- topbar background quad
-pane[#pane+1] = Def.Quad{
-	InitCommand=function(self)
-		self:vertalign(top)
-			:zoomto(pane_width, topbar_height )
-			:xy(pane_width/2, -pane_height + topbar_height/2)
-			:diffuse(color("#101519"))
-	end,
-}
+local EarnedMachineRecord = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or HighScoreIndex.Machine  >= 0
+local EarnedTop2Personal  = (HighScoreIndex.Personal >= 0 and HighScoreIndex.Personal < 2)
 
--- only bother crunching the numbers and adding extra BitmapText actors if there are
--- valid offset values to analyze; (MISS has no numerical offset and can't be analyzed)
-if next(offsets) ~= nil then
+-- -----------------------------------------------------------------------
 
-	local histogram
-	-- don't re-run the calculations if only one player is joined
-	-- and we've already run them for a previous pane
-	if ComputedData and ComputedData.Histogram then
-		histogram = ComputedData.Histogram
-	else
-		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
-		if ComputedData then ComputedData.Histogram = histogram end
-	end
+-- Novice players frequently improve their own score while struggling to
+-- break into an overall leaderboard.  The lack of *visible* leaderboard
+-- progress can be frustrating/demoralizing, so let's do what we can to
+-- alleviate that.
+--
+-- If this score is not high enough to be a machine record, but it *is*
+-- good enough to be a top-2 personal record, show two HighScore lists:
+-- 1-8 machine HighScores, then 1-2 personal HighScores
+--
+-- If the player isn't using a profile (local or USB), there won't be any
+-- personal HighScores to compare against.
+--
+-- Also, this 8+2 shouldn't show up on privately owned machines where only
+-- one person plays, which is a common scenario in 2020.
+--
+-- This idea of showing both machine and personal HighScores to help new players
+-- track progress is based on my experiences maintaining a heavily-used
+-- public SM5 machine for several years while away at school.
 
-	pane[#pane+1] = histogram
+
+-- 22px RowHeight by default, which works for displaying 10 machine HighScores
+local args = { Player=player, RoundsAgo=1, RowHeight=22}
+
+if (not EarnedMachineRecord and EarnedTop2Personal) then
+
+	-- less line spacing between HighScore rows to fit the horizontal line
+	args.RowHeight = 20.25
+
+	-- top 8 machine HighScores
+	args.NumHighScores = 8
+	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)
+
+	-- horizontal line visually separating machine HighScores from player HighScores
+	pane[#pane+1] = Def.Quad{ InitCommand=function(self) self:zoomto(100, 1):y(args.RowHeight*9):diffuse(1,1,1,0.33) end }
+
+	-- top 2 player HighScores
+	args.NumHighScores = 2
+	args.Profile = PROFILEMAN:GetProfile(player)
+	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)..{
+		InitCommand=function(self) self:y(args.RowHeight*9) end
+	}
+
+-- the player did not meet the conditions to show the 8+2 HighScores
+-- Just show top 10 machine HighScores
+-- We can also hijack the 10 rows of high scores to display those ones fetched from GrooveStats.
+else
+	-- top 10 machine HighScores
+	args.NumHighScores = 10
+	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)
 end
-
-local label = {}
-label.y = -pane_height+20
-label.zoom = 0.575
-label.padding = 3
-
--- Cleanly positioning the labels for "mean timing error", "median", and "mode"
--- can be tricky because some languages use very few characters to express these ideas
--- while other languages use many.  This max_width calculation works for now.
-label.max_width = ((pane_width/3)/label.zoom) - ((label.padding/label.zoom)*3)
-
--- avg_timing_error label
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
-	Text=ScreenString("MeanTimingError"),
-	InitCommand=function(self)
-		self:x(40):y(label.y)
-			:zoom(label.zoom):maxwidth(label.max_width)
-
-		if self:GetWidth() > label.max_width then
-			self:horizalign(left):x(label.padding)
-		end
-	end,
-}
-
--- median_offset label
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
-	Text=ScreenString("Median"),
-	InitCommand=function(self)
-		self:x(pane_width/2):y(label.y)
-			:zoom(label.zoom):maxwidth(label.max_width)
-	end,
-}
-
--- mode_offset label
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
-	Text=ScreenString("Mode"),
-	InitCommand=function(self)
-		self:x(pane_width-40):y(label.y)
-			:zoom(label.zoom):maxwidth(label.max_width)
-
-		if self:GetWidth() > label.max_width then
-			self:horizalign(right):x(pane_width - label.padding)
-		end
-	end,
-}
 
 return pane
