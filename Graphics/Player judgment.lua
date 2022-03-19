@@ -56,6 +56,20 @@ return Def.ActorFrame{
 		self:playcommand("Reset")
 
 		sprite:visible(true):setstate(frame)
+
+		if SL[ToEnumShortString(player)].ActiveModifiers.JudgmentTilt then
+			if param.TapNoteScore ~= "Miss" then
+				-- How much to rotate.
+				-- We cap it at 50ms (15px) since anything after likely to be too distracting.
+				local offset = math.min(math.abs(param.TapNoteOffset), 0.050) * 300
+				-- Which direction to rotate.
+				local direction = param.TapNoteOffset < 0 and -1 or 1
+				sprite:rotationz(direction * offset)
+			else
+				-- Reset rotations on misses so it doesn't use the previous note's offset.
+				sprite:rotationz(0)
+			end
+		end
 		-- this should match the custom JudgmentTween() from SL for 3.95
 		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 	end,
