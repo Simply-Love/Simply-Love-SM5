@@ -1,22 +1,30 @@
--- Pane8 displays the FA+ centric score out of a possible 100.00
--- aggregate judgment counts (overall W1, overall W2, overall miss, etc.)
--- and judgment counts on holds, mines, rolls
+-- Pane8 displays a list of High Scores obrained from GrooveStats for the stepchart that was played.
 
--- We only want to use this in ITG mode.
--- In FA+ mode this is handled by Pane 1
--- We don't want this version n casual mode at all.
-if SL.Global.GameMode ~= "ITG" then
-	return
-end
+if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then return end
 
-return Def.ActorFrame{
+local player = unpack(...)
 
-	-- score displayed as a percentage
-	LoadActor("./Percentage.lua", ...),
-
-	-- labels like "FANTASTIC", "MISS", "holds", "rolls", etc.
-	LoadActor("./JudgmentLabels.lua", ...),
-
-	-- numbers (How many Fantastics? How many Misses? etc.)
-	LoadActor("./JudgmentNumbers.lua", ...),
+local pane = Def.ActorFrame{
+	InitCommand=function(self)
+		self:y(_screen.cy - 62):zoom(0.8)
+	end
 }
+
+-- -----------------------------------------------------------------------
+
+-- 22px RowHeight by default, which works for displaying 10 machine HighScores
+local args = { Player=player, RowHeight=22, HideScores=true }
+
+args.NumHighScores = 10
+pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)
+
+pane[#pane+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","GrooveStats.png"),
+	Name="GrooveStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.3)
+		self:addx(165):addy(25)
+	end,
+}
+
+return pane
