@@ -1,4 +1,4 @@
---- Reload the music wheel whenever the song wheel has been updated.
+--- Reload the course wheel whenever the course wheel has been updated.
 local t = Def.ActorFrame {
 	InitCommand=function(self)
 		self:draworder(105)
@@ -6,6 +6,7 @@ local t = Def.ActorFrame {
 	
 	ReloadSSCDDMessageCommand = function(self)
 		if SortMenuNeedsUpdating == false then
+			-- these first 2 probably don't need to be set, but just to be safe.
 			SongSearchSSMDD = false
 			SongSearchAnswer = nil
 			SongSearchWheelNeedsResetting = false

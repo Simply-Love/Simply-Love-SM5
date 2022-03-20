@@ -320,7 +320,6 @@ for player in ivalues(PlayerNumber) do
 	af2.OnCommand=function(self)                                    self:playcommand("Set") end
 	af2.SLGameModeChangedMessageCommand=function(self)              self:playcommand("Set") end
 	af2.CurrentCourseChangedMessageCommand=function(self)			self:playcommand("Set") end
-	af2.CurrentSongChangedMessageCommand=function(self)				self:playcommand("Set") end
 	af2["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:playcommand("Set") end
 	af2["CurrentTrail"..pn.."ChangedMessageCommand"]=function(self) self:playcommand("Set") end
 

@@ -1,28 +1,28 @@
 local args = ...
 local GroupWheel = args[1]
-local SongWheel = args[2]
+local CourseWheel = args[2]
 local TransitionTime = args[3]
 local steps_type = args[4]
 local row = args[5]
 local col = args[6]
 local Input = args[7]
-local PruneSongsFromGroup = args[8]
+local PruneCoursesFromGroup = args[8]
 local starting_group = args[9]
 
 local max_chars = 64
 
-local switch_to_songs = function(group_name,event)
-	local songs, index = PruneSongsFromGroup(group_name)
-	songs[#songs+1] = "CloseThisFolder"
-	SongWheel:set_info_set(songs, index)
+local switch_to_courses = function(group_name,event)
+	local courses, index = PruneCoursesFromGroup(group_name)
+	courses[#courses+1] = "CloseThisFolder"
+	CourseWheel:set_info_set(courses, index)
 	
 end
 
-local switch_to_songs_from_group = function(group_name,event)
-	local songs, index = PruneSongsFromGroup(group_name)
-	songs[#songs+1] = "CloseThisFolder"
+local switch_to_courses_from_group = function(group_name,event)
+	local courses, index = PruneCoursesFromGroup(group_name)
+	courses[#courses+1] = "CloseThisFolder"
 	index = 0
-	SongWheel:set_info_set(songs,index)	
+	CourseWheel:set_info_set(courses,index)	
 end
 
 local item_mt = {
@@ -49,15 +49,15 @@ local item_mt = {
 							-- position this folder in the header
 							subself:zoom(0)
 
-							switch_to_songs(starting_group)
-							MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+							switch_to_courses(starting_group)
+							MESSAGEMAN:Broadcast("SwitchFocusToCourses")
 							MESSAGEMAN:Broadcast("CurrentGroupChanged", {group=starting_group})
 						end
 					end
 				end,
 				
 				CloseCurrentFolderMessageCommand=function(subself)
-					switch_to_songs_from_group(self.groupName)
+					switch_to_courses_from_group(self.groupName)
 				end,
 				
 				ReloadDDMusicWheelMessageCommand=function(subself)
@@ -70,7 +70,7 @@ local item_mt = {
 					if self.index == GroupWheel:get_actor_item_at_focus_pos().index then
 						-- slide the chosen Actor into place
 						subself:queuecommand("SlideToTop")
-						MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+						MESSAGEMAN:Broadcast("SwitchFocusToCourses")
 					else
 						-- hide everything else
 						subself:linear(0.2):diffusealpha(0)
@@ -98,8 +98,8 @@ local item_mt = {
 					subself:linear( 0.2 ):x( _screen.cx )
 					       :linear( 0.12 ):zoom(1):y( _screen.cy )
 				end,
-				---CloseCurrentFolderMessageCommand=function(subself) subself:sleep(0.5) switch_to_songs_from_group(self.groupName) end,--]]
-				SwitchCommand=function(subself) switch_to_songs_from_group(self.groupName) end,
+				---CloseCurrentFolderMessageCommand=function(subself) subself:sleep(0.5) switch_to_courses_from_group(self.groupName) end,--]]
+				SwitchCommand=function(subself) switch_to_courses_from_group(self.groupName) end,
 				
 				-- wrap the function that plays the preview music in its own Actor so that we can
 				-- call sleep() and queuecommand() and stoptweening() on it and not mess up other Actors
@@ -158,7 +158,7 @@ local item_mt = {
 			self.container:finishtweening()
 
 
-			-- if we are initializing the screen, the focus starts (should start) on the SongWheel
+			-- if we are initializing the screen, the focus starts (should start) on the CourseWheel
 			-- so we want to position all the folders "behind the scenes", and then call Init
 			-- on the group folder with focus so that it is positioned correctly at the top
 			if Input.WheelWithFocus ~= GroupWheel then

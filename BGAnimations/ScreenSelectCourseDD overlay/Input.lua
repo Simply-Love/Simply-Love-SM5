@@ -1,7 +1,7 @@
 local player = ...
 local args = ...
 local GroupWheel = args.GroupWheel
-local SongWheel = args.SongWheel
+local CourseWheel = args.CourseWheel
 local nsj = GAMESTATE:GetNumSidesJoined()
 
 local ChartUpdater = LoadActor("./UpdateChart.lua")
@@ -10,9 +10,7 @@ local screen = SCREENMAN:GetTopScreen()
 -- we'll update this later via latejoin if needed
 local Players = GAMESTATE:GetHumanPlayers()
 
-local ActiveOptionRow
-
-local didSelectSong = false
+local didSelectCourse = false
 local PressStartForOptions = false
 isSortMenuVisible = false
 InputMenuHasFocus = false
@@ -29,26 +27,26 @@ local SwitchInputFocus = function(button)
 
 		if t.WheelWithFocus == GroupWheel then
 			if NameOfGroup == "RANDOM-PORTAL" then
-				didSelectSong = true
+				didSelectCourseg = true
 				TransitionTime = 0
 				PressStartForOptions = true
 				SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 				MESSAGEMAN:Broadcast('ShowOptionsJawn')
-				t.WheelWithFocus = SongWheel
+				t.WheelWithFocus = CourseWheel
 			else
-				MESSAGEMAN:Broadcast("SwitchFocusToSongs")
-				t.WheelWithFocus = SongWheel
+				MESSAGEMAN:Broadcast("SwitchFocusToCourses")
+				t.WheelWithFocus = CourseWheel
 			end
 
-		elseif t.WheelWithFocus == SongWheel then
-			didSelectSong = true
+		elseif t.WheelWithFocus == CourseWheel then
+			didSelectCourse = true
 			TransitionTime = 0
 			PressStartForOptions = true
 			SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 			MESSAGEMAN:Broadcast('ShowOptionsJawn')
 		end
 	elseif button == "Select" or button == "Back" then
-		if t.WheelWithFocus == SongWheel then
+		if t.WheelWithFocus == CourseWheel then
 			t.WheelWithFocus = GroupWheel
 		end
 
@@ -85,8 +83,8 @@ t.Init = function()
 	-- false at initialization
 	t.Enabled = false
 	-- initialize which wheel gets focus to start based on whether or not
-	-- GAMESTATE has a CurrentSong (it always should at screen init)
-	t.WheelWithFocus = GAMESTATE:GetCurrentCourse() and SongWheel or GroupWheel
+	-- GAMESTATE has a CurrentCourse (it always should at screen init)
+	t.WheelWithFocus = GAMESTATE:GetCurrentCourse() and CourseWheel or GroupWheel
 	
 end
 
@@ -302,8 +300,8 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 	if event.type ~= "InputEventType_Release" then
 
 		if event.GameButton == "Back" and event.type == "InputEventType_FirstPress" then
-			if didSelectSong then
-				didSelectSong = false
+			if didSelectCourse then
+				didSelectCourse = false
 				PressStartForOptions = false
 				MESSAGEMAN:Broadcast('HideOptionsJawn')
 				return false
@@ -327,7 +325,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 		-- proceed to the next wheel
 		if event.GameButton == "Start" then
 			if event.type == "InputEventType_FirstPress" then
-				if didSelectSong then
+				if didSelectCourse then
 					SOUND:PlayOnce( THEME:GetPathS("Common", "start.ogg") )
 					SCREENMAN:SetNewScreen("ScreenPlayerOptions")
 					return false
@@ -349,7 +347,7 @@ if not GAMESTATE:IsSideJoined(event.PlayerNumber) then
 					t.WheelWithFocus.container:queuecommand("Unhide")
 				end
 			end
-		elseif didSelectSong then
+		elseif didSelectCourse then
 			return false
 		-- navigate the wheel left and right
 		elseif event.GameButton == "MenuRight" then

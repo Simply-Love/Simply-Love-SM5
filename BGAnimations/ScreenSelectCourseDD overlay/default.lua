@@ -18,7 +18,7 @@ local group_index = setup.group_index
 local group_info = setup.group_info
 
 local GroupWheel = setmetatable({}, sick_wheel_mt)
-local SongWheel = setmetatable({}, sick_wheel_mt)
+local CourseWheel = setmetatable({}, sick_wheel_mt)
 
 local row = setup.row
 local col = setup.col
@@ -29,15 +29,15 @@ local songwheel_y_offset = 16
 ---------------------------------------------------------------------------
 -- a table of params from this file that we pass into the InputHandler file
 -- so that the code there can work with them easily
-local params_for_input = { GroupWheel=GroupWheel, SongWheel=SongWheel, SortWheel=SortWheel }
+local params_for_input = { GroupWheel=GroupWheel, CourseWheel=CourseWheel }
 
 ---------------------------------------------------------------------------
 -- load the InputHandler and pass it the table of params
 local Input = LoadActor( "./Input.lua", params_for_input )
 
 -- metatables
-local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,SongWheel,TransitionTime,steps_type,row,col,Input,setup.PruneSongsFromGroup,Groups[group_index]})
-local song_mt = LoadActor("./SongMT.lua", {SongWheel,TransitionTime,row,col})
+local group_mt = LoadActor("./GroupMT.lua", {GroupWheel,CourseWheel,TransitionTime,steps_type,row,col,Input,setup.PruneCoursesFromGroup,Groups[group_index]})
+local course_mt = LoadActor("./CourseMT.lua", {CourseWheel,TransitionTime,row,col})
 
 ---------------------------------------------------------------------------
 
@@ -103,7 +103,7 @@ local t = Def.ActorFrame {
 						Input.CancelSongChoice()
 					end
 					if params.Name == "CloseCurrentFolder" or params.Name == "CloseCurrentFolder2" then
-						if Input.WheelWithFocus == SongWheel then
+						if Input.WheelWithFocus == CourseWheel then
 							SOUND:PlayOnce( THEME:GetPathS("MusicWheel", "expand.ogg") )
 							MESSAGEMAN:Broadcast("CloseCurrentFolder")
 							CloseCurrentFolder()
@@ -164,13 +164,13 @@ local t = Def.ActorFrame {
 	end,
 
 	-- a hackish solution to prevent users from button-spamming and breaking input :O
-	SwitchFocusToSongsMessageCommand=function(self)
+	SwitchFocusToCoursesMessageCommand=function(self)
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,
 	SwitchFocusToGroupsMessageCommand=function(self)
 		self:sleep(TransitionTime):queuecommand("EnableInput")
 	end,
-	SwitchFocusToSongsMessageCommand=function(self)
+	SwitchFocusToCoursesMessageCommand=function(self)
 		self:playcommand("DisableInput"):sleep(TransitionTime):queuecommand("EnableInput")
 	end,
 	CloseCurrentFolderMessageCommand=function(self)
@@ -184,7 +184,7 @@ local t = Def.ActorFrame {
 	end,
 	
 	-- #Wheels. Define how many items exist in the wheel here and how many songs it's offset by/the X/Y positioning btw.
-	SongWheel:create_actors( "SongWheel", IsUsingWideScreen() and 19, song_mt, IsUsingWideScreen() and (164 - SCREEN_CENTER_X) - 5 or 160, songwheel_y_offset, IsUsingWideScreen() and 6 or 10),
+	CourseWheel:create_actors( "CourseWheel", IsUsingWideScreen() and 19, course_mt, IsUsingWideScreen() and (164 - SCREEN_CENTER_X) - 5 or 160, songwheel_y_offset, IsUsingWideScreen() and 6 or 10),
 	GroupWheel:create_actors( "GroupWheel", IsUsingWideScreen() and 19, group_mt, IsUsingWideScreen() and (164 - SCREEN_CENTER_X) - 5 or 160, IsUsingWideScreen() and -47 or -98),
 	
 	-- The highlight for the current song/group

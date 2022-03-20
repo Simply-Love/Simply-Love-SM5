@@ -21,14 +21,14 @@ af[#af+1] = Def.ActorFrame{
 	SwitchFocusToGroupsMessageCommand=function(self) self:visible(true):sleep(0.4):linear(0.15):diffusealpha(1) end,
 	SwitchFocusToSongsMessageCommand=function(self) self:visible(false):diffusealpha(0) end,
 	SwitchFocusToSingleSongMessageCommand=function(self) self:visible(false):diffusealpha(0) end,
-	-- unique songs
+	-- unique courses
 	Def.BitmapText{
 		Font="Common Normal",
 		InitCommand=function(self)
 			self:zoom(0.8):diffuse(Color.White):xy(IsUsingWideScreen() and 150 or 310,IsUsingWideScreen() and -15 or -113):maxwidth(300):horizalign(right)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
-			if params.group ~= "RANDOM-PORTAL" and group_info[params.group] then
+			if group_info[params.group] then
 				self:settext(group_info[params.group].num_songs)
 			else
 				self:settext("")

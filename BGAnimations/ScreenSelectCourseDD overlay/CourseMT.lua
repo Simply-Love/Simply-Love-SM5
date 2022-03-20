@@ -1,5 +1,5 @@
 local args = ...
-local SongWheel = args[1]
+local CourseWheel = args[1]
 local TransitionTime = args[2]
 local row = args[3]
 local col = args[4]
@@ -11,7 +11,7 @@ local function update_grade(self)
 	--change the Grade sprite
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local pn = ToEnumShortString(player)
-		if self.song ~= "CloseThisFolder" then
+		if self.course ~= "CloseThisFolder" then
 			local current_difficulty
 			local grade
 			local steps
@@ -22,7 +22,7 @@ local function update_grade(self)
 				steps = GAMESTATE:GetCurrentTrail(pn)
 			end
 			if steps then
-				grade = GetTopGrade(player, self.song, steps)
+				grade = GetTopGrade(player, self.course, steps)
 			end
 			--if we have a grade then set the grade sprite
 			if grade then
@@ -58,9 +58,9 @@ local song_mt = {
 
 				StartCommand=function(subself)
 					-- slide the chosen Actor into place
-					if self.index == SongWheel:get_actor_item_at_focus_pos().index then
+					if self.index == CourseWheel:get_actor_item_at_focus_pos().index then
 						subself:queuecommand("SlideToTop")
-						MESSAGEMAN:Broadcast("SwitchFocusToSingleSong")
+						MESSAGEMAN:Broadcast("SwitchFocusToSingleCourse")
 
 					-- hide everything else
 					else
@@ -72,11 +72,11 @@ local song_mt = {
 				end,
 				UnhideCommand=function(subself)
 
-					-- we're going back to song selection
-					-- slide the chosen song ActorFrame back into grid position
-					if self.index == SongWheel:get_actor_item_at_focus_pos().index then
+					-- we're going back to course selection
+					-- slide the chosen course ActorFrame back into grid position
+					if self.index == CourseWheel:get_actor_item_at_focus_pos().index then
 						subself:playcommand("SlideBackIntoGrid")
-						MESSAGEMAN:Broadcast("SwitchFocusToSongs")
+						MESSAGEMAN:Broadcast("SwitchFocusToCourses")
 					end
 
 					subself:visible(true):sleep(0.3):linear(0.2):diffusealpha(1)
@@ -96,14 +96,14 @@ local song_mt = {
 				},
 				-- black background quad
 					Def.Quad{
-						Name="SongWheelBackground",
+						Name="CourseWheelBackground",
 						InitCommand=function(subself) 
 						self.QuadColor = subself
 						subself:zoomto(320,24):diffuse(color("#0a141b")):cropbottom(1):playcommand("Set")
 						end,
 						SwitchFocusToGroupsMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
-						SwitchFocusToSongsMessageCommand=function(subself) subself:smooth(0.3):cropright(0):playcommand("Set") end,
-						SwitchFocusToSingleSongMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
+						SwitchFocusToCoursesMessageCommand=function(subself) subself:smooth(0.3):cropright(0):playcommand("Set") end,
+						SwitchFocusToSingleCourseMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
 						SetCommand=function(subself)
 							subself:x(0)
 							subself:y(_screen.cy-215)
@@ -120,12 +120,12 @@ local song_mt = {
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75):y(25)
 					end,
 					GainFocusCommand=function(subself)
-						if not self.song == "CloseThisFolder" then
+						if not self.course == "CloseThisFolder" then
 							subself:visible(true):maxwidth(315):y(25)
 						end
 					end,
 					LoseFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
+						if self.course == "CloseThisFolder" then
 							subself:zoom(0.8):y(25)
 						else
 							subself:zoom(0.8):y(25)
@@ -142,14 +142,14 @@ local song_mt = {
 						subself:y(32)
 					end,
 					GainFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
+						if self.course == "CloseThisFolder" then
 							subself:zoom(0.5)
 						else
 							subself:visible(true)
 						end
 					end,
 					LoseFocusCommand=function(subself)
-						if self.song == "CloseThisFolder" then
+						if self.course == "CloseThisFolder" then
 							subself:zoom(0.5)
 						else
 						end
@@ -174,7 +174,7 @@ local song_mt = {
 					InitCommand=function(subself) 
 						subself:visible(true) 
 					end,
-					-- The grade shown to the left of the song name
+					-- The grade shown to the left of the course name
 					Def.Sprite{
 						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
 						InitCommand=function(subself) subself:visible(false):zoom(WideScale(.25,.22)):xy(side*grade_position, 25):animate(0) self[pn..'grade_sprite'] = subself end,
@@ -202,15 +202,15 @@ local song_mt = {
 			end
 
 			if has_focus then
-				if self.song ~= "CloseThisFolder" then
-					GAMESTATE:SetCurrentCourse(self.song)
-					MESSAGEMAN:Broadcast("CurrentSongChanged", {song=self.song})
+				if self.course ~= "CloseThisFolder" then
+					GAMESTATE:SetCurrentCourse(self.course)
+					MESSAGEMAN:Broadcast("CurrentCourseChanged", {course=self.course})
 					if GAMESTATE:GetCurrentCourse() ~= nil then
 						LastSeenCourse = GAMESTATE:GetCurrentCourse():GetCourseDir()
 					end
 					self.container:y(IsUsingWideScreen() and WideScale(((offset * col.w)/6.8 + _screen.cy ) - 33 , ((offset * col.w)/8.4 + _screen.cy ) - 33) or ((offset * col.w)/6.4 + _screen.cy ) - 190)
 					self.container:x(_screen.cx)
-				elseif self.song == "CloseThisFolder" then
+				elseif self.course == "CloseThisFolder" then
 					GAMESTATE:SetCurrentCourse(nil)
 					MESSAGEMAN:Broadcast("CloseThisFolderHasFocus")
 				end
@@ -224,29 +224,29 @@ local song_mt = {
 			end
 		end,
 		
-		set = function(self, song)
+		set = function(self, course)
 
-			if not song then return end
+			if not course then return end
 
 			self.img_path = ""
 			self.img_type = ""
 
 			-- this SongMT was passed the string "CloseThisFolder"
 			-- so this is a special case for song metatable items
-			if type(song) == "string" then
-				if song == "CloseThisFolder" then
-					self.song = song
+			if type(course) == "string" then
+				if course == "CloseThisFolder" then
+					self.course = course
 					self.title_bmt:settext(NameOfGroup):diffuse(color("#4ffff3")):shadowlength(1.1):horizalign(center):valign(0.5):x(0)
 					self.QuadColor:diffuse(color("#363d42"))
 					self.subtitle_bmt:settext("")
 				end
 			else
-				-- we are passed in a Song object as info
-				self.song = song
+				-- we are passed in a Course object as info
+				self.course = course
 				if GAMESTATE:GetCurrentCourse() ~= nil then
 					LastSeenCourse = GAMESTATE:GetCurrentCourse():GetCourseDir()
 				end
-				self.title_bmt:settext( self.song:GetDisplayFullTitle() ):maxwidth(300):diffuse(Color.White):horizalign(left):x(-100)
+				self.title_bmt:settext( self.course:GetDisplayFullTitle() ):maxwidth(300):diffuse(Color.White):horizalign(left):x(-100)
 				self.QuadColor:diffuse(color("#0a141b"))
 				self.title_bmt:valign(0.5)
 			end

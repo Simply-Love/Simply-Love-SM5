@@ -16,11 +16,10 @@ local t = Def.ActorFrame{
 	end,
 
 	Def.ActorFrame{
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:playcommand("Set") end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:playcommand("Set") end,
-		SwitchFocusToSongsMessageCommand=function(self) self:playcommand("Set") end,
+		SwitchFocusToCoursesMessageCommand=function(self) self:playcommand("Set") end,
 		GroupsHaveChangedMessageCommand=function(self) self:visible(true):playcommand("Set")
 		end,
 		SetCommand=function(self)
@@ -37,7 +36,6 @@ local t = Def.ActorFrame{
 
 	Def.Sprite{
 		Name="LoadFromSong",
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
 		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) 
 		end,
@@ -57,7 +55,6 @@ local t = Def.ActorFrame{
 	
 	Def.Banner{
 		Name="LoadFromGroup",
-		CurrentSongChangedMessageCommand=function(self) GroupScrollBanners = false GroupJawn = false self:playcommand("Set") end,
 		CurrentCourseChangedMessageCommand=function(self) GroupScrollBanners = false GroupJawn = false self:playcommand("Set") end,
 		GroupsHaveChangedMessageCommand=function(self) 
 			GroupScrollBanners = true
@@ -107,7 +104,7 @@ local t = Def.ActorFrame{
 	--- Add text on top of the fallback banner when Main Sort isn't set to Groups.
 	Def.ActorFrame{
 		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(GetMainCourseSortPreference() ~= 1):playcommand("Set") end,
-		CurrentSongChangedMessageCommand=function(self) self:visible(false) end,
+		CurrentCourseChangedMessageCommand=function(self) self:visible(false) end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:visible(GetMainCourseSortPreference() ~= 1):playcommand("Set") end,
 		GroupsHaveChangedMessageCommand=function(self) self:stoptweening():sleep(0.1):visible(GetMainCourseSortPreference() ~= 1):queuecommand("Set") end,
 		

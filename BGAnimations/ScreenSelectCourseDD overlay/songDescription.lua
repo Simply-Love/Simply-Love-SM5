@@ -36,7 +36,6 @@ local af = Def.ActorFrame{
 		self:xy(_screen.cx + (SCREEN_WIDTH/4),GAMESTATE:IsPlayerEnabled(1) and _screen.cy - 185 or _screen.cy - 167)
 	end,
 
-	CurrentSongChangedMessageCommand=function(self)    self:playcommand("Set") end,
 	CurrentCourseChangedMessageCommand=function(self)  self:playcommand("Set") end,
 	CurrentStepsP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
 	CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
@@ -175,7 +174,7 @@ af[#af+1] = Def.ActorFrame{
 
 			local seconds
 
-			if SelectedType == "WheelItemDataType_Song" or "SwitchFocusToSingleSong" then
+			if SelectedType == "WheelItemDataType_Song" or "SwitchFocusToSingleCourse" then
 				-- GAMESTATE:GetCurrentSong() can return nil here if we're in pay mode on round 2 (or later)
 				-- and we're returning to SSM to find that the song we'd just played is no longer available
 				-- because it exceeds the 2-round or 3-round time limit cutoff.
