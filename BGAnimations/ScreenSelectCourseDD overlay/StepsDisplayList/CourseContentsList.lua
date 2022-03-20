@@ -1,8 +1,10 @@
-local numItemsToDraw = 28
+local numItemsToDraw = 26
 local scrolling_down = true
+local song_course_index
+local nsj = GAMESTATE:GetNumSidesJoined()
 
 local transform_function = function(self,offsetFromCenter,itemIndex,numitems)
-	self:y( offsetFromCenter * 22)
+	self:y(offsetFromCenter * 22)
 end
 
 -- ccl is a reference to the CourseContentsList actor that this update function is called on
@@ -12,14 +14,14 @@ local update = function(ccl, dt)
 	-- while it's scrolling down or math.ceil() while it's scrolling up to do integer comparison.
 	--
 	-- if we've reached the bottom of the list and want the CCL to scroll up
-	if math.floor(ccl:GetCurrentItem()) == (ccl:GetNumItems() - (numItemsToDraw)) then
+	if math.floor(ccl:GetCurrentItem()) == (ccl:GetNumItems() - (numItemsToDraw/2)) then
 		scrolling_down = false
 		ccl:SetDestinationItem( 0 )
 
 	-- elseif we've reached the top of the list and want the CCL to scroll down
 	elseif math.ceil(ccl:GetCurrentItem()) == 0 then
 		scrolling_down = true
-		ccl:SetDestinationItem( math.max(0,ccl:GetNumItems() - numItemsToDraw) )
+		ccl:SetDestinationItem( math.max(0,ccl:GetNumItems() - numItemsToDraw/2) )
 	end
 end
 
@@ -27,8 +29,8 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:x(IsUsingWideScreen() and _screen.cx-268 or _screen.cx-150)
-		self:y(20)
+		self:x(IsUsingWideScreen() and SCREEN_CENTER_X + (SCREEN_CENTER_X/2) or _screen.cx-150)
+		self:y(GAMESTATE:IsPlayerEnabled(1) and  (SCREEN_CENTER_Y/2.6) - 23 or SCREEN_CENTER_Y/2.6)
 	end,
 
 	---------------------------------------------------------------------
@@ -42,11 +44,11 @@ local af = Def.ActorFrame{
 	-- entire "Display" ActorFrame of the CourseContentsList in the engine's code.
 
 	-- lower mask
-	--[[Def.Quad{
+	Def.Quad{
 		InitCommand=function(self)
-			self:xy(IsUsingWideScreen() and -44 or 0,98)
+			self:xy(IsUsingWideScreen() and -44 or 0,300)
 				:zoomto(_screen.w/2, 40)
-				--:MaskSource()
+				:MaskSource()
 		end
 	},
 
@@ -54,18 +56,18 @@ local af = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:vertalign(bottom)
-				:xy(IsUsingWideScreen() and -44 or 0,-18)
+				:xy(IsUsingWideScreen() and -44 or 0,-20)
 				:zoomto(_screen.w/2, 100)
-				--:MaskSource()
+				:MaskSource()
 		end
-	},--]]
+	},
 	---------------------------------------------------------------------
 
 	-- gray background Quad
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f")):zoomto(267, 330)
-				:xy(-26, 145)
+			self:diffuse(color("#1e282f")):zoomto(300, 300)
+				:xy(-42, 130)
 		end
 	},
 }
@@ -80,12 +82,26 @@ af[#af+1] = Def.CourseContentsList {
 
 	InitCommand=function(self)
 		self:xy(40,-4)
-			:SetUpdateFunction( update )
+		:SetUpdateFunction( update )
 		:playcommand("Set")
 	end,
 	CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end,
-	CurrentTrailP1ChangedMessageCommand=function(self) self:visible(true):playcommand("Set") end,
-	CurrentTrailP2ChangedMessageCommand=function(self) self:visible(true):playcommand("Set") end,
+	CurrentTrailP1ChangedMessageCommand=function(self)
+		if nsj == 1 then
+			song_course_index = 1
+		else
+			song_course_index = 0.5
+		end
+		self:visible(true):playcommand("Set")
+	end,
+	CurrentTrailP2ChangedMessageCommand=function(self)
+		if nsj == 1 then
+			song_course_index = 1
+		else
+			song_course_index = 0.5
+		end
+		self:visible(true):playcommand("Set")
+	end,
 	SetCommand=function(self)
 		-- I have a very flimsy understanding of what most of these methods do,
 		-- as they were all copied from the default theme's CourseContentsList, but
@@ -131,6 +147,27 @@ af[#af+1] = Def.CourseContentsList {
 					self:settext( params.Song:GetDisplayFullTitle() )
 				else
 					self:settext( "??????????" )
+				end
+			end
+		},
+		
+		-- Course Song Count
+		Def.BitmapText{
+			Font="Miso/_miso",
+			InitCommand=function(self)
+				if nsj == 1 then
+					song_course_index = 1
+				else
+					song_course_index = 0.5
+				end
+				self:xy(-210, 0):horizalign(right)
+			end,
+			SetSongCommand=function(self, params)
+				self:settext(song_course_index)
+				if nsj == 1 then
+					song_course_index = song_course_index + 1
+				else
+					song_course_index = song_course_index + 0.5
 				end
 			end
 		},

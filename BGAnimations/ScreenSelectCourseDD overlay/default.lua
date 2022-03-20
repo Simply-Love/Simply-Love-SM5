@@ -24,7 +24,7 @@ local row = setup.row
 local col = setup.col
 
 TransitionTime = 0.3
-local songwheel_y_offset = 13
+local songwheel_y_offset = 16
 
 ---------------------------------------------------------------------------
 -- a table of params from this file that we pass into the InputHandler file
@@ -184,8 +184,8 @@ local t = Def.ActorFrame {
 	end,
 	
 	-- #Wheels. Define how many items exist in the wheel here and how many songs it's offset by/the X/Y positioning btw.
-	SongWheel:create_actors( "SongWheel", IsUsingWideScreen() and 14 or 19, song_mt, IsUsingWideScreen() and 0 or 160, songwheel_y_offset, IsUsingWideScreen() and 6 or 10),
-	GroupWheel:create_actors( "GroupWheel", IsUsingWideScreen() and row.how_many * col.how_many or 19, group_mt, IsUsingWideScreen() and 0 or 160, IsUsingWideScreen() and 0 or -98),
+	SongWheel:create_actors( "SongWheel", IsUsingWideScreen() and 19, song_mt, IsUsingWideScreen() and (164 - SCREEN_CENTER_X) - 5 or 160, songwheel_y_offset, IsUsingWideScreen() and 6 or 10),
+	GroupWheel:create_actors( "GroupWheel", IsUsingWideScreen() and 19, group_mt, IsUsingWideScreen() and (164 - SCREEN_CENTER_X) - 5 or 160, IsUsingWideScreen() and -47 or -98),
 	
 	-- The highlight for the current song/group
 	LoadActor("./WheelHighlight.lua"),

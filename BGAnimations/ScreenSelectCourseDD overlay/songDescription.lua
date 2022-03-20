@@ -10,18 +10,12 @@
 -- live-reloading a song on ScreenSelectMusic via Control R might cause the group duration
 -- to then be inaccurate, until the screen is reloaded.
 
---[[local group_durations = {}
+--[[
+local group_durations = {}
 local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
-local currentsong = GAMESTATE:GetCurrentSong()
-local HasCDTitle
-if GAMESTATE:GetCurrentSong() ~= nil then
-HasCDTitle = currentsong:HasCDTitle()
-end
-local blank = THEME:GetPathG("", "_blank.png")
-local CDTitlePath--]]
 
 
---[[for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
+for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	group_durations[group_name] = 0
 
 	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
@@ -31,17 +25,15 @@ local CDTitlePath--]]
 			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
 		end
 	end
-end--]]
+end
+--]]
 
 -- ----------------------------------------
 local MusicWheel, SelectedType
 
--- width of background quad
-local _w = IsUsingWideScreen() and 320 or 310
-
 local af = Def.ActorFrame{
 	OnCommand=function(self)
-		self:xy(_screen.cx - (IsUsingWideScreen() and 0 or 165), _screen.cy - 92)
+		self:xy(_screen.cx + (SCREEN_WIDTH/4),GAMESTATE:IsPlayerEnabled(1) and _screen.cy - 190 or _screen.cy - 167)
 	end,
 
 	CurrentSongChangedMessageCommand=function(self)    self:playcommand("Set") end,
@@ -52,76 +44,46 @@ local af = Def.ActorFrame{
 	CurrentTrailP2ChangedMessageCommand=function(self) self:playcommand("Set") end,
 }
 
--- background Quad for Artist, BPM, and Song Length
+
+-- background Quad for both course description and course contents list
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
-		self:zoomto( IsUsingWideScreen() and 320 or 311, 48 )
+		self:zoomto(308, 334)
+		self:diffuse(color("#7f7f7f"))
+		self:addx(-42)
+		self:addy(136)
+	end
+}
+
+-- background Quad for Artist, BPM, and Song 2
+af[#af+1] = Def.Quad{
+	InitCommand=function(self)
+		self:zoomto(300, 22 )
 		self:diffuse(color("#1e282f"))
+		self:addx(-42)
+		self:addy(-16)
 	end
 }
 
 -- ActorFrame for Artist, BPM, Song length, and CDTitles because I'M GAY LOL
 af[#af+1] = Def.ActorFrame{
-	InitCommand=function(self) self:xy(-110,-6) end,
-	
-	
-	--- CDTitle
-	Def.Sprite{
-		Name="CDTitle",
-		CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
-		CloseThisFolderHasFocusMessageCommand=function(self) self:visible(false) end,
-		GroupsHaveChangedMessageCommand=function(self) self:visible(false) end,
-		InitCommand=function(self) 
-			local Height = self:GetHeight()
-			local Width = self:GetWidth()
-			local dim1, dim2=math.max(Width, Height), math.min(Width, Height)
-			local ratio=math.max(dim1/dim2, 2)
-			local toScale = Width > Height and Width or Height
-			self:zoom(22/toScale * ratio)
-			self:horizalign(right)
-			self:xy(265,6)
-			self:diffusealpha(0)
-		end,
-		OnCommand=function(self) 
-			self:decelerate(0.4)
-			self:diffusealpha(0.9) 
-		end,
-		SetCommand=function(self)
-			self:stoptweening()
-			local Height = self:GetHeight()
-			local Width = self:GetWidth()
-			local dim1, dim2=math.max(Width, Height), math.min(Width, Height)
-			local ratio=math.max(dim1/dim2, 2)
-			local toScale = Width > Height and Width or Height	
-			
-			if GAMESTATE:GetCurrentSong() ~= nil then
-				if GAMESTATE:GetCurrentSong():HasCDTitle() == true then
-					CDTitlePath = GAMESTATE:GetCurrentSong():GetCDTitlePath()
-					self:Load(CDTitlePath)
-				else
-					self:Load(blank)
-				end
-			end
-			self:zoom(22/toScale * ratio)
-			self:visible(true)
-		end
-	},
+	InitCommand=function(self) self:xy(-138, -6) end,
 	
 	-- ----------------------------------------
-	-- Artist Label
+	-- Song Count Label
 	LoadFont("Common Normal")..{
-		Text=THEME:GetString("SongDescription", GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"),
+		Text=THEME:GetString("SongDescription", "NumSongs")..":",
 		InitCommand=function(self) 
 			self
 				:zoom(0.8)
 				:horizalign(right)
 				:y(-10)
-				:x(IsUsingWideScreen() and -9 or -4)
+				:x(-9)
 				:maxwidth(44)
 				:diffuse(0.5,0.5,0.5,1) end,
 	},
 
-	-- Song Artist (or number of Songs in this Course, if CourseMode)
+	-- Number of Songs in this Course
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) self:zoom(0.8):horizalign(left):xy(IsUsingWideScreen() and -4 or 1,-10):maxwidth(WideScale(225,260)) end,
 		SetCommand=function(self)
@@ -133,13 +95,12 @@ af[#af+1] = Def.ActorFrame{
 	-- ----------------------------------------
 	-- BPM Label
 	LoadFont("Common Normal")..{
-		Text=THEME:GetString("SongDescription", "BPM"),
+		Text=THEME:GetString("SongDescription", "BPM")..":",
 		InitCommand=function(self)
 			self
 				:zoom(0.8)
-				:align(IsUsingWideScreen() and 1 or 1.75,0)
-				:y(-1)
-				:x(-10)
+				:y(-10)
+				:x(55)
 				:diffuse(0.5,0.5,0.5,1)
 				if IsUsingWideScreen() then
 					else
@@ -152,8 +113,7 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self)
 			-- vertical align has to be middle for BPM value in case of split BPMs having a line break
-			self:align(IsUsingWideScreen() and 0 or -0.3, 0.5)
-			self:xy(-5,5):diffuse(1,1,1,1):vertspacing(-8)
+			self:xy(98,-10):diffuse(1,1,1,1):vertspacing(-8)
 		end,
 		SetCommand=function(self)
 			if GAMESTATE:GetCurrentCourse() == nil then
@@ -194,10 +154,10 @@ af[#af+1] = Def.ActorFrame{
 	-- ----------------------------------------
 	-- Song Duration Label
 	LoadFont("Common Normal")..{
-		Text=THEME:GetString("SongDescription", "Length"),
+		Text=THEME:GetString("SongDescription", "Length")..":",
 		InitCommand=function(self)
-			self:align(IsUsingWideScreen() and 1 or 0.6,0):diffuse(0.5,0.5,0.5,1):zoom(0.8)
-			self:x(_w-330):y(14)
+			self:diffuse(0.5,0.5,0.5,1):zoom(0.8)
+			self:x(170):y(-10)
 		end
 	},
 
@@ -205,8 +165,7 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) 
 			self
-			:align(IsUsingWideScreen() and 0 or -0.7,0)
-			:xy(_w-330 + 5, 14) 
+			:xy(215, -10) 
 			:zoom(0.8)
 			end,
 		SetCommand=function(self)

@@ -6,7 +6,7 @@ local nsj = GAMESTATE:GetNumSidesJoined()
 local footer_height = 32
 
 -- height of the PaneDisplay in pixels
-local pane_height = 48
+local pane_height = -3
 
 local text_zoom = IsUsingWideScreen() and WideScale(0.8, 0.9) or 0.9
 
@@ -181,9 +181,9 @@ end
 local pos = {
 	col = { 
 	IsUsingWideScreen() and WideScale(-120,-155) or -90, 
-	IsUsingWideScreen() and WideScale(-36,-16) or 50, 
-	WideScale(54,76), 
-	WideScale(150, 190) },
+	IsUsingWideScreen() and WideScale(-106,-86) or 50, 
+	WideScale(24,46), 
+	WideScale(100, 140) },
 	
 	row = { 
 	IsUsingWideScreen() and -55 or -55, 
@@ -194,7 +194,7 @@ local pos = {
 	IsUsingWideScreen() and 35 or 35, }
 }
 
-local num_rows = 6
+local num_rows = 3
 local num_cols = 2
 
 -- HighScores handled as special cases for now until further refactoring
@@ -203,6 +203,7 @@ local PaneItems = {
 	{ name=THEME:GetString("RadarCategory","Taps"),  rc='RadarCategory_TapsAndHolds'},
 	{ name=THEME:GetString("RadarCategory","Holds"), rc='RadarCategory_Holds'},
 	{ name=THEME:GetString("RadarCategory","Rolls"), rc='RadarCategory_Rolls'},
+	
 	{ name=THEME:GetString("RadarCategory","Jumps"), rc='RadarCategory_Jumps'},
 	{ name=THEME:GetString("RadarCategory","Hands"), rc='RadarCategory_Hands'},
 	{ name=THEME:GetString("RadarCategory","Mines"), rc='RadarCategory_Mines'},
@@ -290,26 +291,10 @@ for player in ivalues(PlayerNumber) do
 	af2.InitCommand=function(self)
 		self:visible(GAMESTATE:IsHumanPlayer(player))
 		if player == PLAYER_1 then
-			self:x(IsUsingWideScreen() and _screen.w * 0.25 - 5 or 160)
-			self:y(IsUsingWideScreen() and 0 or 199)
-			self:align(0,IsUsingWideScreen() and 0 or 0)
-			if IsUsingWideScreen() then
-				elseif nsj == 1 then
-					self:align(0,0)
-			end
+			self:x(IsUsingWideScreen() and 0 + _screen.w /4 - 4 or 160)
 			
 		elseif player == PLAYER_2 then
-			self:x(IsUsingWideScreen() and _screen.w * 0.75 + 156 or SCREEN_RIGHT - 160)
-			self:align(0, IsUsingWideScreen() and 0 or 0)
-			if not IsUsingWideScreen()then
-				if nsj == 1 then
-					self:x(160)
-					self:align(0,0)
-				elseif nsj == 2 then
-					self:x(SCREEN_RIGHT - 160)
-					self:align(0,0)
-				end
-			end
+			self:x(IsUsingWideScreen() and SCREEN_RIGHT - (_screen.w /4.55) or 160)
 		end
 
 		self:y(_screen.h - footer_height - pane_height)
@@ -345,14 +330,11 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = Def.Quad{
 		Name="BackgroundQuad",
 		InitCommand=function(self)
-			self:zoomtowidth(IsUsingWideScreen() and _screen.w/2-160 or 310)
-			self:zoomtoheight(_screen.h/8+56)
-			self:y(-10)
-			self:x(IsUsingWideScreen() and -76.5 or -6)
-			if player == PLAYER_2 and not IsUsingWideScreen() and nsj == 2 then
-				self:zoomtowidth(320)
-				self:addx(5)
-			end
+			local quadwidth = IsUsingWideScreen() and _screen.w/2-30 or 310
+			self:zoomtowidth(quadwidth)
+			self:zoomtoheight(_screen.h/8+6)
+			self:y(-36)
+			self:x(IsUsingWideScreen() and -11 or -6)
 		end,
 		SetCommand=function(self)
 			local Course, Trail = GetSongAndSteps(player)
@@ -373,8 +355,8 @@ for player in ivalues(PlayerNumber) do
 
 	for i, item in ipairs(PaneItems) do
 
-		local col = 1
-		local row = math.floor((i-1)/1) + 1
+		local col = ((i-1)%num_cols) + 1
+		local row = math.floor((i-1)/num_cols) + 1
 
 		af2[#af2+1] = Def.ActorFrame{
 
@@ -419,7 +401,7 @@ for player in ivalues(PlayerNumber) do
 		Text="Local Best:",
 		InitCommand=function(self)
 			self:zoom(text_zoom-0.15):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[3]-15,pos.col[3]-25) or pos.col[3]-25)
 			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 	}
@@ -429,7 +411,7 @@ for player in ivalues(PlayerNumber) do
 		Name="MachineHighScoreName",
 		InitCommand=function(self)
 			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(center):maxwidth(80)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+40,pos.col[2]+48) or pos.col[3]+50)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[3]+40,pos.col[3]+48) or pos.col[3]+50)
 			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 		SetCommand=function(self)
@@ -454,7 +436,7 @@ for player in ivalues(PlayerNumber) do
 		Name="MachineHighScore",
 		InitCommand=function(self)
 			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.25,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+20,pos.col[2]+28) or pos.col[2]+28)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[3]+20,pos.col[3]+28) or pos.col[3]+28)
 			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 		SetCommand=function(self)
@@ -479,7 +461,7 @@ for player in ivalues(PlayerNumber) do
 		Text="PB:",
 		InitCommand=function(self)
 			self:zoom(text_zoom-0.15):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[3]-15,pos.col[3]-25) or pos.col[3]-25)
 			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 	}
@@ -489,7 +471,7 @@ for player in ivalues(PlayerNumber) do
 		Name="PlayerHighScoreName",
 		InitCommand=function(self)
 			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(center)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+40,pos.col[2]+48) or pos.col[3]+50)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[3]+40,pos.col[3]+48) or pos.col[3]+50)
 			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 		SetCommand=function(self)
@@ -517,7 +499,7 @@ for player in ivalues(PlayerNumber) do
 		Name="PlayerHighScore",
 		InitCommand=function(self)
 			self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.25,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(right)
-			self:x(IsUsingWideScreen() and WideScale(pos.col[2]+20,pos.col[2]+28) or pos.col[2]+28)
+			self:x(IsUsingWideScreen() and WideScale(pos.col[3]+20,pos.col[3]+28) or pos.col[3]+28)
 			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 		SetCommand=function(self)
@@ -546,7 +528,7 @@ for player in ivalues(PlayerNumber) do
 		Text="Loading ... ",
 		InitCommand=function(self)
 			self:zoom(text_zoom):diffuse(Color.Black)
-			self:x(pos.col[2]+6)
+			self:x(pos.col[3]+6)
 			self:y(pos.row[1])
 			self:visible(false)
 			self:horizalign(center)
@@ -567,7 +549,7 @@ for player in ivalues(PlayerNumber) do
 		Name="DifficultyMeter",
 		InitCommand=function(self)
 			self:horizalign(center):diffuse(Color.Black)
-			self:xy(pos.col[2]+10, pos.row[5])
+			self:xy(pos.col[4]+10, pos.row[2])
 			if not IsUsingWideScreen() then self:maxwidth(66) end
 			self:queuecommand("Set")
 		end,
