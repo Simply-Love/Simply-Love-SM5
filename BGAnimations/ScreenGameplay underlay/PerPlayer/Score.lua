@@ -4,6 +4,8 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NumPlayers = #GAMESTATE:GetHumanPlayers()
+local IsEX = SL[pn].ActiveModifiers.ShowEXScore
+
 -- -----------------------------------------------------------------------
 -- first, check for conditions where we might not draw the score actor at all
 
@@ -28,7 +30,6 @@ local pos = {
 	[PLAYER_2] = { x=(_screen.cx + clamp(_screen.w, 640, 854)/2.75), y=56 },
 }
 
-local dance_points, percent
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
@@ -58,6 +59,11 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 	InitCommand=function(self)
 		self:valign(1):horizalign(right)
 		self:zoom(0.5)
+		if IsEX then
+			-- If EX Score, let's diffuse it to be the same as the FA+ top window.
+			-- This will make it consistent with the EX Score Pane.
+			self:diffuse(SL.JudgmentColors["FA+"][1])
+		end
 	end,
 
 	BeginCommand=function(self)
@@ -83,7 +89,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 		if mods.NPSGraphAtTop and styletype ~= "OnePlayerTwoSides" then
 			-- if NPSGraphAtTop and Step Statistics and not double,
 			-- move the score down into the stepstats pane under
-			-- the jugdgment breakdown
+			-- the judgment breakdown
 			if mods.DataVisualizations=="Step Statistics" then
 				local step_stats = self:GetParent():GetChild("StepStatsPane"..pn)
 
@@ -123,10 +129,20 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 			end
 		end
 	end,
-	JudgmentMessageCommand=function(self) self:queuecommand("RedrawScore") end,
-	RedrawScoreCommand=function(self)
-		dance_points = pss:GetPercentDancePoints()
-		percent = FormatPercentScore( dance_points ):sub(1,-2)
-		self:settext(percent)
-	end
+	JudgmentMessageCommand=function(self, params)
+		if params.Player ~= player then return end
+
+		if not IsEX then
+			local dance_points = pss:GetPercentDancePoints()
+			local percent = FormatPercentScore( dance_points ):sub(1,-2)
+			self:settext(percent)
+		end
+	end,
+	ExCountsChangedMessageCommand=function(self, params)
+		if params.Player ~= player then return end
+
+		if IsEX then
+			self:settext(("%.02f"):format(params.ExScore))
+		end
+	end,
 }

@@ -282,6 +282,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 end
 
 local GetItlPaneFunctions = function(eventAf, itlData, player)
+	local pn = ToEnumShortString(player)
 	local score = CalculateExScore(player) * 100
 	local paneTexts = {}
 	local paneFunctions = {}

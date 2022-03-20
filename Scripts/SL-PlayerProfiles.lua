@@ -21,6 +21,8 @@ local permitted_profile_settings = {
 	ComboFont        = "string",
 	HoldJudgment     = "string",
 	BackgroundFilter = "string",
+	ShowFaPlusWindow = "boolean",
+	ShowEXScore      = "boolean",
 
 	----------------------------------
 	-- "Advanced Modifiers"

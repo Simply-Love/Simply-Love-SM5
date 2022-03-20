@@ -76,6 +76,9 @@ for player in ivalues(Players) do
 
         -- Add a score to Step Stats if it's hidden by the NPS graph.
         if SL[ToEnumShortString(player)].ActiveModifiers.NPSGraphAtTop then
+            local pn = ToEnumShortString(player)
+            local IsEX = SL[pn].ActiveModifiers.ShowEXScore
+
             af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
                 Text="0.00",
                 InitCommand=function(self)
@@ -86,15 +89,30 @@ for player in ivalues(Players) do
                     else
                         self:xy(65, -150)
                     end
+
+                    if IsEX then
+                        -- If EX Score, let's diffuse it to be the same as the FA+ top window.
+                        -- This will make it consistent with the EX Score Pane.
+                        self:diffuse(SL.JudgmentColors["FA+"][1])
+                    end
                 end,
                 JudgmentMessageCommand=function(self, params)
                     if params.Player ~= player then return end
-
-                    local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-                    dance_points = pss:GetPercentDancePoints()
-                    percent = FormatPercentScore( dance_points ):sub(1,-2)
-                    self:settext(percent)
-                end
+            
+                    if not IsEX then
+                        local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+                        local dance_points = pss:GetPercentDancePoints()
+                        local percent = FormatPercentScore( dance_points ):sub(1,-2)
+                        self:settext(percent)
+                    end
+                end,
+                ExCountsChangedMessageCommand=function(self, params)
+                    if params.Player ~= player then return end
+            
+                    if IsEX then
+                        self:settext(("%.02f"):format(params.ExScore))
+                    end
+                end,
             }
         end
     end
