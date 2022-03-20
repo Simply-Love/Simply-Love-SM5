@@ -472,23 +472,27 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt" }
+			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
-			-- remove the last three choices and show an additional OptionRow with just those three
+			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).
 			if not IsUsingWideScreen() then
-				table.remove(vals, 6)
 				table.remove(vals, 5)
 				table.remove(vals, 4)
 			end
 			return vals
 		end,
 	},
-
-	-- this is defined in metrics.ini to only appear when not IsUsingWideScreen()
 	GameplayExtrasB = {
 		SelectType = "SelectMultiple",
-		Values = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt" }
+		Values = function()
+			if IsUsingWideScreen() then
+				return { "JudgmentTilt" }
+			else
+				-- Add in the two removed options if not in WideScreen.
+				return { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt" }
+			end
+		end
 	},
 	ErrorBar = {
 		Values = { "None", "Colorful", "Monochrome", "Text" },
