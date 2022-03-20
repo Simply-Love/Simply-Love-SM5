@@ -25,7 +25,7 @@ af[#af+1] = Def.ActorFrame{
 	Def.BitmapText{
 		Font="Common Normal",
 		InitCommand=function(self)
-			self:zoom(0.8):diffuse(Color.White):xy(IsUsingWideScreen() and 150 or 310,IsUsingWideScreen() and -15 or -113):maxwidth(300):horizalign(right)
+			self:zoom(0.8):diffuse(Color.White):xy(IsUsingWideScreen() and -120 or 310,IsUsingWideScreen() and -62 or -113):maxwidth(300):horizalign(right)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
 			if params.group ~= "RANDOM-PORTAL" and group_info[params.group] then
