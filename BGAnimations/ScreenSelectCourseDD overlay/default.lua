@@ -197,9 +197,8 @@ local t = Def.ActorFrame {
 	LoadActor("./playerModifiers.lua"),
 	-- number of steps, jumps, holds, etc., and high scores associated with the current stepchart
 	LoadActor("./PaneDisplay.lua"),
-	-- grid of Difficulty Blocks (normal) or CourseContentsList (CourseMode)
-	LoadActor("./StepsDisplayList/default.lua"),
-	-- The GrooveStats leaderboard that can (maybe) be accessed from the SortMenu
+	-- CourseContentsList
+	LoadActor("./CourseContentsList.lua"),
 	-- This is only added in "dance" mode and if the service is available.
 	LoadActor("./Leaderboard.lua"),
 	-- included, but unused for now

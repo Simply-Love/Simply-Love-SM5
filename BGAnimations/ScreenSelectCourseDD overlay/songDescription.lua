@@ -33,7 +33,7 @@ local MusicWheel, SelectedType
 
 local af = Def.ActorFrame{
 	OnCommand=function(self)
-		self:xy(_screen.cx + (SCREEN_WIDTH/4),GAMESTATE:IsPlayerEnabled(1) and _screen.cy - 190 or _screen.cy - 167)
+		self:xy(_screen.cx + (SCREEN_WIDTH/4),GAMESTATE:IsPlayerEnabled(1) and _screen.cy - 185 or _screen.cy - 167)
 	end,
 
 	CurrentSongChangedMessageCommand=function(self)    self:playcommand("Set") end,
@@ -48,10 +48,12 @@ local af = Def.ActorFrame{
 -- background Quad for both course description and course contents list
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
-		self:zoomto(308, 334)
+		self:vertalign(top)
+		self:horizalign(left)
+		self:zoomto(308, 324)
 		self:diffuse(color("#7f7f7f"))
-		self:addx(-42)
-		self:addy(136)
+		self:addx(-196)
+		self:addy(-31)
 	end
 }
 
@@ -75,7 +77,7 @@ af[#af+1] = Def.ActorFrame{
 		Text=THEME:GetString("SongDescription", "NumSongs")..":",
 		InitCommand=function(self) 
 			self
-				:zoom(0.8)
+				:zoom(0.9)
 				:horizalign(right)
 				:y(-10)
 				:x(-9)
@@ -85,7 +87,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- Number of Songs in this Course
 	LoadFont("Common Normal")..{
-		InitCommand=function(self) self:zoom(0.8):horizalign(left):xy(IsUsingWideScreen() and -4 or 1,-10):maxwidth(WideScale(225,260)) end,
+		InitCommand=function(self) self:zoom(0.9):horizalign(left):xy(IsUsingWideScreen() and -4 or 1,-10):maxwidth(WideScale(225,260)) end,
 		SetCommand=function(self)
 			local course = GAMESTATE:GetCurrentCourse()
 			self:settext( course and #course:GetCourseEntries() or "" )
@@ -98,9 +100,9 @@ af[#af+1] = Def.ActorFrame{
 		Text=THEME:GetString("SongDescription", "BPM")..":",
 		InitCommand=function(self)
 			self
-				:zoom(0.8)
+				:zoom(0.9)
 				:y(-10)
-				:x(55)
+				:x(45)
 				:diffuse(0.5,0.5,0.5,1)
 				if IsUsingWideScreen() then
 					else
@@ -113,7 +115,7 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self)
 			-- vertical align has to be middle for BPM value in case of split BPMs having a line break
-			self:xy(98,-10):diffuse(1,1,1,1):vertspacing(-8)
+			self:xy(92,-10):diffuse(1,1,1,1):vertspacing(-8)
 		end,
 		SetCommand=function(self)
 			if GAMESTATE:GetCurrentCourse() == nil then
@@ -125,7 +127,7 @@ af[#af+1] = Def.ActorFrame{
 			-- if only one player is joined, stringify the DisplayBPMs and return early
 			if #GAMESTATE:GetHumanPlayers() == 1 then
 				-- StringifyDisplayBPMs() is defined in ./Scipts/SL-BPMDisplayHelpers.lua
-				self:settext(StringifyDisplayBPMs() or ""):zoom(0.8)
+				self:settext(StringifyDisplayBPMs() or ""):zoom(0.9)
 				return
 			end
 
@@ -136,7 +138,7 @@ af[#af+1] = Def.ActorFrame{
 			-- it's likely that BPM range is the same for both charts
 			-- no need to show BPM ranges for both players if so
 			if p1bpm == p2bpm then
-				self:settext(p1bpm):zoom(0.8)
+				self:settext(p1bpm):zoom(0.9)
 
 			-- different BPM ranges for the two players
 			else
@@ -156,8 +158,8 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Text=THEME:GetString("SongDescription", "Length")..":",
 		InitCommand=function(self)
-			self:diffuse(0.5,0.5,0.5,1):zoom(0.8)
-			self:x(170):y(-10)
+			self:diffuse(0.5,0.5,0.5,1):zoom(0.9)
+			self:x(160):y(-10)
 		end
 	},
 
@@ -165,8 +167,8 @@ af[#af+1] = Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self) 
 			self
-			:xy(215, -10) 
-			:zoom(0.8)
+			:xy(210, -10) 
+			:zoom(0.9)
 			end,
 		SetCommand=function(self)
 			

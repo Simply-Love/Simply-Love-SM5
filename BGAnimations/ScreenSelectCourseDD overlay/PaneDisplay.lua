@@ -181,7 +181,7 @@ end
 local pos = {
 	col = { 
 	IsUsingWideScreen() and WideScale(-120,-155) or -90, 
-	IsUsingWideScreen() and WideScale(-106,-86) or 50, 
+	IsUsingWideScreen() and WideScale(-106,-78) or 50, 
 	WideScale(24,46), 
 	WideScale(100, 140) },
 	

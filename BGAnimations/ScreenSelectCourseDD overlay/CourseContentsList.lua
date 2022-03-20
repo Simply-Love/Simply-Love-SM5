@@ -7,8 +7,6 @@ local transform_function = function(self,offsetFromCenter,itemIndex,numitems)
 	self:y(offsetFromCenter * 22)
 end
 
--- ccl is a reference to the CourseContentsList actor that this update function is called on
--- dt is "delta time" (time in seconds since the last frame); we don't need it here
 local update = function(ccl, dt)
 	-- CourseContentsList:GetCurrentItem() returns a float, so call math.floor() on it
 	-- while it's scrolling down or math.ceil() while it's scrolling up to do integer comparison.
@@ -25,12 +23,10 @@ local update = function(ccl, dt)
 	end
 end
 
-
-
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:x(IsUsingWideScreen() and SCREEN_CENTER_X + (SCREEN_CENTER_X/2) or _screen.cx-150)
-		self:y(GAMESTATE:IsPlayerEnabled(1) and  (SCREEN_CENTER_Y/2.6) - 23 or SCREEN_CENTER_Y/2.6)
+		self:x(IsUsingWideScreen() and SCREEN_CENTER_X + (SCREEN_CENTER_X/20) or _screen.cx-150)
+		self:y(GAMESTATE:IsPlayerEnabled(1) and  (SCREEN_CENTER_Y/3.33) - 18 or SCREEN_CENTER_Y/3.33)
 	end,
 
 	---------------------------------------------------------------------
@@ -46,9 +42,11 @@ local af = Def.ActorFrame{
 	-- lower mask
 	Def.Quad{
 		InitCommand=function(self)
-			self:xy(IsUsingWideScreen() and -44 or 0,300)
-				:zoomto(_screen.w/2, 40)
-				:MaskSource()
+			self:vertalign(top)
+			:horizalign(right)
+			:zoomto(300, 150)
+			:xy(300,290)
+			:MaskSource()
 		end
 	},
 
@@ -56,8 +54,8 @@ local af = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:vertalign(bottom)
-				:xy(IsUsingWideScreen() and -44 or 0,-20)
-				:zoomto(_screen.w/2, 100)
+				:horizalign(left)
+				:zoomto(300, 100)
 				:MaskSource()
 		end
 	},
@@ -66,8 +64,10 @@ local af = Def.ActorFrame{
 	-- gray background Quad
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f")):zoomto(300, 300)
-				:xy(-42, 130)
+			self:vertalign(top)
+			:horizalign(left)
+			:diffuse(color("#1e282f"))
+			:zoomto(300, 290)
 		end
 	},
 }
@@ -81,7 +81,8 @@ af[#af+1] = Def.CourseContentsList {
 	NumItemsToDraw=numItemsToDraw,
 
 	InitCommand=function(self)
-		self:xy(40,-4)
+		self:vertalign(top)
+		:horizalign(left)
 		:SetUpdateFunction( update )
 		:playcommand("Set")
 	end,
@@ -114,10 +115,10 @@ af[#af+1] = Def.CourseContentsList {
 
 			:SetLoop(false)
 			:SetPauseCountdownSeconds(1)
-			:SetSecondsPauseBetweenItems( 0.2 )
+			:SetSecondsPauseBetweenItems( 0.5 )
 
 		if scrolling_down then
-			self:SetDestinationItem( math.max(0,self:GetNumItems() - numItemsToDraw) )
+			self:SetPauseCountdownSeconds(3):SetDestinationItem( math.max(0,self:GetNumItems() - numItemsToDraw) )
 		else
 			self:SetDestinationItem( 0 )
 		end
@@ -134,23 +135,6 @@ af[#af+1] = Def.CourseContentsList {
 				:decelerate(0.1):zoom(0.875)
 		end,
 
-		-- song title
-		Def.BitmapText{
-			Font="Miso/_miso",
-			InitCommand=function(self)
-				self:xy(-160, 0)
-					:horizalign(left)
-					:maxwidth(170)
-			end,
-			SetSongCommand=function(self, params)
-				if params.Song then
-					self:settext( params.Song:GetDisplayFullTitle() )
-				else
-					self:settext( "??????????" )
-				end
-			end
-		},
-		
 		-- Course Song Count
 		Def.BitmapText{
 			Font="Miso/_miso",
@@ -160,7 +144,10 @@ af[#af+1] = Def.CourseContentsList {
 				else
 					song_course_index = 0.5
 				end
-				self:xy(-210, 0):horizalign(right)
+				self:horizalign(right)
+				:vertalign(top)
+				:xy(25, 5)
+				
 			end,
 			SetSongCommand=function(self, params)
 				self:settext(song_course_index)
@@ -171,12 +158,14 @@ af[#af+1] = Def.CourseContentsList {
 				end
 			end
 		},
-
+		
 		-- PLAYER_1 song difficulty
 		Def.BitmapText{
 			Font="Miso/_miso",
 			InitCommand=function(self)
-				self:xy(-180, 0):horizalign(right)
+				self:horizalign(right)
+				:vertalign(top)
+				:xy(60, 5)
 			end,
 			SetSongCommand=function(self, params)
 				if params.PlayerNumber ~= PLAYER_1 then return end
@@ -184,12 +173,32 @@ af[#af+1] = Def.CourseContentsList {
 				self:settext( params.Meter or "?" ):diffuse( CustomDifficultyToColor(params.Difficulty) )
 			end
 		},
+		
+		-- song title
+		Def.BitmapText{
+			Font="Miso/_miso",
+			InitCommand=function(self)
+				self:horizalign(left)
+				:vertalign(top)
+				:maxwidth(170)
+				:xy(75,5)
+			end,
+			SetSongCommand=function(self, params)
+				if params.Song then
+					self:settext( params.Song:GetDisplayFullTitle() )
+				else
+					self:settext( "??????????" )
+				end
+			end
+		},
 
 		-- PLAYER_2 song difficulty
 		Def.BitmapText{
 			Font="Miso/_miso",
 			InitCommand=function(self)
-				self:xy(62,0):horizalign(right)
+				self:horizalign(right)
+				:vertalign(top)
+				:xy(290,5)
 			end,
 			SetSongCommand=function(self, params)
 				if params.PlayerNumber ~= PLAYER_2 then return end
