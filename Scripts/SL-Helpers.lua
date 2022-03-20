@@ -574,6 +574,28 @@ IsAutoplay = function(player)
 end
 
 -- -----------------------------------------------------------------------
+-- Helper function to determine if a TNS falls within the W0 window.
+-- Params are the params received from the JudgmentMessageCommand.
+-- Returns true/false
+IsW0Judgment = function(params, player)
+	if params.Player ~= player then return false end
+	if params.HoldNoteScore then return false end
+	
+	-- Only check/update FA+ count if we received a TNS in the top window.
+	if params.TapNoteScore == "TapNoteScore_W1" and SL.Global.GameMode == "ITG"  then
+		local prefs = SL.Preferences["FA+"]
+		local scale = PREFSMAN:GetPreference("TimingWindowScale")
+		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+
+		local offset = math.abs(params.TapNoteOffset)
+		if offset <= W0 then
+			return true
+		end
+	end
+	return false
+end
+
+-- -----------------------------------------------------------------------
 -- Gets the fully populated judgment counts for a player.
 -- This includes the FA+ window (W0). Decents/WayOffs (W4/W5) will only exist in the
 -- resultant table if the windows were active.
@@ -600,6 +622,7 @@ end
 GetExJudgmentCounts = function(player)
 	local pn = ToEnumShortString(player)
 	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 
 	local counts = {}
 
@@ -632,7 +655,7 @@ GetExJudgmentCounts = function(player)
 			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
 			-- We need to extract the W0 count in ITG mode.
 			if window == "W1" then
-				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].W0_count
+				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total
 				-- Subtract white count from blue count
 				number = number - faPlus
 				-- Populate the two numbers.
@@ -648,13 +671,13 @@ GetExJudgmentCounts = function(player)
 			end
 		end
 	end
-	counts["totalSteps"] = stats:GetRadarPossible():GetValue( "RadarCategory_TapsAndHolds" )
+	counts["totalSteps"] = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_TapsAndHolds" )
 	
 	local RadarCategory = { "Holds", "Mines", "Rolls" }
 
 	for RCType in ivalues(RadarCategory) do
 		local number = stats:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+		local possible = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_"..RCType )
 
 		-- We want to keep track of mines hit.
 		if RCType == "Mines" then
@@ -668,44 +691,45 @@ GetExJudgmentCounts = function(player)
 end
 
 -- -----------------------------------------------------------------------
-CalculateExScore = function(player)
+-- Calculate the EX score given for a given player.
+--
+-- The counts are computed in BGAnimations/ScreenGameplay underlay/TrackExScoreJudgments.lua
+-- They are computed from the HoldNoteScore and TapNotScore from the JudgmentMessageCommands.
+-- We look for the following keys: 
+-- {
+--             "W0" -> the fantasticPlus count
+--             "W1" -> the fantastic count
+--             "W2" -> the excellent count
+--             "W3" -> the great count
+--             "W4" -> the decent count
+--             "W5" -> the way off count
+--           "Miss" -> the miss count
+--           "Held" -> the number of holds/rolds held
+--          "LetGo" -> the number of holds/rolds dropped
+--        "HitMine" -> total number of mines hit
+-- }
+CalculateExScore = function(player, counts)
 	-- No EX scores in Casual mode, just return some dummy number early.
 	if SL.Global.GameMode == "Casual" then return 0 end
+	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 
-	local counts = GetExJudgmentCounts(player)
-
-	local totalSteps = counts["totalSteps"]
-	local totalHolds = counts["totalHolds"]
-	local totalRolls = counts["totalRolls"]
+	local totalSteps = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_TapsAndHolds" )
+	local totalHolds = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Holds" )
+	local totalRolls = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Rolls" )
 
 	local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
 
 	local total_points = 0
 
-	local TNS = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss" }
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+	local counts = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
+	-- Just for validation, but shouldn't happen in normal gameplay.
+	if counts == nil then return 0 end
 
-	for window in ivalues(TNS) do
-		local number = counts[window]
-		if number ~= nil then		
-			total_points = total_points + number * SL.ExWeights[window]
-		end
-	end
-
-	local RadarCategory = { "Holds", "Mines", "Rolls" }
-	
-	for RCType in ivalues(RadarCategory) do
-		local number = counts[RCType]
-		if RCType == "Holds" or RCType == "Rolls" then
-			local possible = counts["total"..RCType]
-			total_points = total_points + number * SL.ExWeights["Held"]
-			total_points = total_points + (possible - number) * SL.ExWeights["LetGo"]
-
-			total_possible = total_possible + possible * SL.ExWeights["Held"]
-		end
-
-		if RCType == "Mines" then
-			-- For Mines, 'number' is the number of mines hit.
-			total_points = total_points + number * SL.ExWeights["HitMine"]
+	for key in ivalues(keys) do
+		local value = counts[key]
+		if value ~= nil then		
+			total_points = total_points + value * SL.ExWeights[key]
 		end
 	end
 

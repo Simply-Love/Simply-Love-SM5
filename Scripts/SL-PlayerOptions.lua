@@ -382,6 +382,37 @@ local Overrides = {
 			end
 		end
 	},
+	FaPlus = {
+		SelectType = "SelectMultiple",
+		Values = function()
+			if SL.Global.GameMode == "FA+" then
+				return { "ShowEXScore" }
+			end
+			return { "ShowFaPlusWindow", "ShowEXScore" }
+		end,
+		LoadSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			if SL.Global.GameMode == "FA+" then
+				list[1] = mods.ShowEXScore or false
+				return list
+			end
+
+			list[1] = mods.ShowFaPlusWindow or false
+			list[2] = mods.ShowEXScore or false
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			if SL.Global.GameMode == "FA+" then
+				 -- always disable in FA+ mode since it's handled engine side.
+				mods.ShowFaPlusWindow = false
+				mods.ShowEXScore   = list[1]
+				return
+			end
+			mods.ShowFaPlusWindow = list[1]
+			mods.ShowEXScore   = list[2]
+		end
+	},
 	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",

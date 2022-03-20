@@ -34,12 +34,11 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	--
 	-- Sadly, the full details of this Stages.Stats[stage_index] data structure
 	-- is not documented anywhere. :(
-	SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame+1] = {
-		W0_count = 0, -- Only really used to keep track of the FA Plus window in ITG mode.
-	}
+	SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame+1] = {}
 
 	af[#af+1] = LoadActor("./TrackTimeSpentInGameplay.lua", player)
 	af[#af+1] = LoadActor("./JudgmentOffsetTracking.lua", player)
+	af[#af+1] = LoadActor("./TrackExScoreJudgments.lua", player)
 
 	-- FIXME: refactor PerColumnJudgmentTracking to not be inside this loop
 	--        the Lua input callback logic shouldn't be duplicated for each player

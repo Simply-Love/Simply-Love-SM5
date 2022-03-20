@@ -37,6 +37,9 @@ local PlayerDefaults = {
 				ErrorBar = "None",
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
+
+				ShowFaPlusWindow = false,
+				ShowEXScore = false,
 			}
 			self.Streams = {
 				-- Chart identifiers for caching purposes.
