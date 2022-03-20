@@ -28,7 +28,7 @@ af[#af+1] = Def.ActorFrame{
 			self:zoom(0.8):diffuse(Color.White):xy(IsUsingWideScreen() and -120 or 310,IsUsingWideScreen() and -62 or -113):maxwidth(300):horizalign(right)
 		end,
 		CurrentGroupChangedMessageCommand=function(self, params)
-			if params.group ~= "RANDOM-PORTAL" and group_info[params.group] then
+			if group_info[params.group] then
 				self:settext(group_info[params.group].num_songs)
 			else
 				self:settext("")
