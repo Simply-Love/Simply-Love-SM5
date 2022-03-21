@@ -1,3 +1,6 @@
+--- Don't run this if not in normal gameplay mode.
+if GAMESTATE:GetPlayMode() ~= 'PlayMode_Regular' then return Def.ActorFrame{} end
+
 local player = ...
 
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
@@ -14,10 +17,41 @@ end
 local pn = ToEnumShortString(player)
 local steps = GAMESTATE:GetCurrentSteps(player)
 
-local columnTimes = GetChartColumnTimes(steps, pn)
+local noteTimes = GetChartNoteTimes(steps, pn)
+-- Find gaps of at least cue_time
 
+if noteTimes == nil then
+	return Def.ActorFrame {}
+end
 
 local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+local columnTimes = {}
+for i=1,NumColumns do
+	columnTimes[i] = {}
+end
+
+local prevTime = 0
+local cueStartTime = -1
+local cueEndTime = -1
+for _, noteTime in ipairs(noteTimes) do
+	if noteTime.time - prevTime >= cue_time then
+		cueStartTime = prevTime
+		cueEndTime = noteTime.time
+	end
+
+	if noteTime.time == cueEndTime then
+		if noteTime.type == '1' or noteTime.type == '2' or noteTime.type == '4' then
+			local times = columnTimes[noteTime.column]
+			times[#times+1] = {
+				start=cueStartTime,
+				duration=cueEndTime-cueStartTime,
+			}
+		end
+	end
+
+	prevTime = noteTime.time
+end
+
 local style = GAMESTATE:GetCurrentStyle(player)
 local width = style:GetWidth(player)
 
@@ -44,26 +78,26 @@ for ColumnIndex=1,NumColumns do
 			self:queuecommand('Run')
 		end,
 		RunCommand=function(self)
-			local now = GAMESTATE:GetCurMusicSeconds()
-			local flash = false
+			local now = GAMESTATE:GetCurMusicSeconds() / SL.Global.ActiveModifiers.MusicRate
+			local flashDuration = nil
 			while true do
 				local nextTime = columnTimes[ColumnIndex][timeIndex]
 				if nextTime == nil then break end
-				local waitTime = nextTime - now - cue_time
+				local waitTime = nextTime.start - now
 				if waitTime >= 0.017 then
 					self:sleep(waitTime)
 					self:queuecommand('Run')
 					break
 				end
 				timeIndex = timeIndex + 1
-				flash = true
+				flashDuration = nextTime.duration
 			end
 
-			if flash then
+			if flashDuration ~= nil then
 				quad:stoptweening()
 					:decelerate(fade_time)
 					:diffuse(0.3,1,1,0.12)
-					:sleep(cue_time - fade_time)
+					:sleep(flashDuration - 2*fade_time)
 					:accelerate(fade_time)
 					:diffuse(0,0,0,0)
 			end
