@@ -58,9 +58,11 @@ You can also refresh the music wheel/undo the song search by either closing the 
 
 # ---------- New Course Wheel and Sort Menu ----------
 ![CourseSelect](https://i.imgur.com/8RCKKYN.png)
+
 This is similar to the custom song wheel and contains a slightly dumbed down sort/filter menu.
 I'm still in disbelief that the engine doesn't have any sorting for courses and I still have no clue how it tries to sort them by default lol.
 Now that is no longer an issue as we now have full control of the course wheel : )
+
 ![CourseSort](https://i.imgur.com/HEt81CT.png)
 
 You can now use the sort menu to toggle between Course and Song select. 
