@@ -91,6 +91,8 @@ af[#af+1] = Def.ActorFrame{
 		self:GetChild("NPS"):visible(false)
 		self:GetChild("Breakdown"):GetChild("BreakdownText"):settext("")
 		self:GetChild("Breakdown"):visible(false)
+		self:GetChild("Total Measures"):GetChild("Total Measures Text"):settext("")
+		self:GetChild("Total Measures"):visible(false)
 		self:stoptweening()
 		self:sleep(0.4)
 		self:queuecommand("ParseChart")
@@ -109,6 +111,7 @@ af[#af+1] = Def.ActorFrame{
 			self:GetChild("DensityGraph"):visible(true)
 			self:GetChild("NPS"):visible(true)
 			self:GetChild("Breakdown"):visible(true)
+			self:GetChild("Total Measures"):visible(true)
 			self:queuecommand("Redraw")
 		end
 	end,
@@ -117,6 +120,7 @@ af[#af+1] = Def.ActorFrame{
 		self:GetChild("DensityGraph"):visible(false)
 		self:GetChild("NPS"):visible(false)
 		self:GetChild("Breakdown"):visible(false)
+		self:GetChild("Total Measures"):visible(false)
 	end,
 }
 
@@ -199,7 +203,7 @@ af2[#af2+1] = Def.ActorFrame{
 
 -- Total Measures Text
 af2[#af2+1] = Def.ActorFrame{
-	Name="Breakdown",
+	Name="Total Measures",
 	InitCommand=function(self)
 		self:x(-125)
 		self:addy(-40)
@@ -213,7 +217,7 @@ af2[#af2+1] = Def.ActorFrame{
 	
 	LoadFont("Miso/_miso")..{
 		Text="",
-		Name="BreakdownText",
+		Name="Total Measures Text",
 		InitCommand=function(self)
 			local textHeight = 17
 			local textZoom = 0.8
