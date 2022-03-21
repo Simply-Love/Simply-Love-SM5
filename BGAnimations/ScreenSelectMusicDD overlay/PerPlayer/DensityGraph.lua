@@ -197,4 +197,41 @@ af2[#af2+1] = Def.ActorFrame{
 	}
 }
 
+-- Total Measures Text
+af2[#af2+1] = Def.ActorFrame{
+	Name="Breakdown",
+	InitCommand=function(self)
+		self:x(-125)
+		self:addy(-40)
+		if player == PLAYER_1 then
+			self:horizalign(left)
+		elseif player == PLAYER_2 then
+			self:horizalign(right)
+			self:addx(255)
+		end
+	end,
+	
+	LoadFont("Miso/_miso")..{
+		Text="",
+		Name="BreakdownText",
+		InitCommand=function(self)
+			local textHeight = 17
+			local textZoom = 0.8
+			self:maxwidth(width/textZoom):zoom(textZoom)
+		end,
+		RedrawCommand=function(self)
+			local textZoom = 0.8
+			local SongMeasures = round( tonumber(GAMESTATE:GetCurrentSong(pn):GetLastBeat())/4, 0)
+			local StreamMeasures = GenerateBreakdownText(pn, 4)
+			local SongDensity = " (".. round( (StreamMeasures/SongMeasures)*100 ,2) .."%)"
+			if player == PLAYER_1 then
+				self:horizalign(left)
+			elseif player == PLAYER_2 then
+				self:horizalign(right)
+			end
+			self:settext(StreamMeasures == 0 and "" or "Total Measures: "..StreamMeasures..SongDensity)
+		end,
+	}
+}
+
 return af

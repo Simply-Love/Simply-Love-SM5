@@ -105,7 +105,13 @@ end
 -- minimization_level = 3  -> Aggregating total streams
 --    80 Total
 GenerateBreakdownText = function(pn, minimization_level)
-	if #SL[pn].Streams.NotesPerMeasure == 0 then return 'No Streams!' end
+	if #SL[pn].Streams.NotesPerMeasure == 0 then
+		if minimization_level == 4 then
+			return 0
+		else
+			return 'No Streams!'
+		end
+	end
 
 	-- Assume 16ths for the breakdown text
 	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
@@ -124,11 +130,11 @@ GenerateBreakdownText = function(pn, minimization_level)
 			if segment_sum ~= 0 then
 				if minimization_level == 2 then
 					text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
-				elseif minimization_level == 3 then
+				elseif minimization_level == 3 or minimization_level == 4 then
 					total_sum = total_sum + segment_sum
 				end
 			end
-			if minimization_level ~= 3 then
+			if minimization_level ~= 3 and minimization_level ~= 4 then
 				text_segments[#text_segments+1] = notation
 			end
 
@@ -162,7 +168,7 @@ GenerateBreakdownText = function(pn, minimization_level)
 		else
 			
 		
-			if minimization_level == 2 or minimization_level == 3 then
+			if minimization_level == 2 or minimization_level == 3 or minimization_level == 4 then
 			if i > 1 and not segments[i-1].isBreak then
 					-- Don't count this as a true "break"
 					is_broken = true
@@ -190,12 +196,13 @@ GenerateBreakdownText = function(pn, minimization_level)
 	if segment_sum ~= 0 then
 		if minimization_level == 2 then
 			text_segments[#text_segments+1] = tostring(segment_sum) .. (is_broken and "*" or "")
-		elseif minimization_level == 3 then
+		elseif minimization_level == 3 or  minimization_level == 4 then
 			total_sum = total_sum + segment_sum
 		end
 	end
-
-	if minimization_level == 3 then
+	if minimization_level == 4 then
+		return total_sum
+	elseif minimization_level == 3 then
 		return string.format("%d Total", total_sum)
 	elseif #text_segments == 0 then
 		return 'No Streams!'
