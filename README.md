@@ -56,7 +56,7 @@ Accessing the Sort Menu is the same as the default sort menu. To update any opti
 If your setup doesn't have a keyboard you can disable it from appearing in the sort menu in the Operator Menu under "Theme Options".
 You can also refresh the music wheel/undo the song search by either closing the folder of the search or resetting your sorts in the sort menu.
 
-# ------------- New Course Wheel and Sort Menu -------------
+# ---------- New Course Wheel and Sort Menu ----------
 ![CourseSelect](https://i.imgur.com/8RCKKYN.png)
 This is similar to the custom song wheel and contains a slightly dumbed down sort/filter menu.
 I'm still in disbelief that the engine doesn't have any sorting for courses and I still have no clue how it tries to sort them by default lol.
@@ -74,7 +74,7 @@ Alternatively if you want it to always play the same sound you can add just one 
 
 WARNING: Any sound played this way WILL NOT STOP PLAYING until it's done or if you close Stepmania. So ideally you'd use short sound effects and not whole songs.
 
-# ---------------- How to use a profile picture ----------------
+# ------------ How to use a profile picture ------------
 
 - Add a new image at the root of your save folder of your profile.
 - (Example: \Save\LocalProfiles\00000000\Profile Picture.png)
@@ -101,15 +101,10 @@ As noted in the "About" section this theme is intended for use with SM5 only.
 
 # -- General things to note --
 - Theme is intended for home use only.
-- Theme is only intended for event mode.
-- I am going to stop supporting 4:3 asepect ratio after this update (1.0.4)
 
 # ---------------- TO DO ----------------
 - Make the measure counter not be dependant on runs being measure aligned.
-- Make the Course Wheel accessible from the Music Wheel/sort menu.
-- Make a custom Course Wheel similar to that of the custom Music Wheel. (oof)
-- Add a slightly dumbed down Sort Menu for Course Mode. (HOW IS THERE STILL NO SORTING IN SM5 FOR COURSES)
-- Remove all calls/special cases for Event Mode (and the ability to toggle it) and force it on during init.
+- Always force Event Mode
 - Replace any graphics or sound assets from SL that still exist with new original ones.
 - Maybe add more player stats (highest difficulty passed?)
 - Add more sorts/filters?
