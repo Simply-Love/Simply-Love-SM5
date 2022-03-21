@@ -48,23 +48,6 @@ local SetNameAndScore = function(name, score, nameActor, scoreActor)
 	nameActor:settext(name)
 end
 
-local GetMachineTag = function(gsEntry)
-	if not gsEntry then return end
-	if gsEntry["machineTag"] then
-		-- Make sure we only use up to 4 characters for space concerns.
-		return gsEntry["machineTag"]:sub(1, 4):upper()
-	end
-
-	-- User doesn't have a machineTag set. We'll "make" one based off of
-	-- their name.
-	if gsEntry["name"] then
-		-- 4 Characters is the "intended" length.
-		return gsEntry["name"]:sub(1,4):upper()
-	end
-
-	return ""
-end
-
 local GetScoresRequestProcessor = function(res, master)
 	if master == nil then return end
 	-- If we're not hovering over a song when we get the request, then we don't
@@ -84,95 +67,12 @@ local GetScoresRequestProcessor = function(res, master)
 		local loadingText = paneDisplay:GetChild("Loading")
 		local WRorLBText = paneDisplay:GetChild("MachineTextLabel")
 
-		local playerStr = "player"..i
-		local rivalNum = 1
-		local worldRecordSet = false
-		local personalRecordSet = false
-		local data = res["status"] == "success" and res["data"] or nil
-
-		-- First check to see if the leaderboard even exists.
-		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] then
-			-- And then also ensure that the chart hash matches the currently parsed one.
-			-- It's better to just not display anything than display the wrong scores.
-			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
-				for gsEntry in ivalues(data[playerStr]["gsLeaderboard"]) do
-					if gsEntry["rank"] == 1 then
-						SetNameAndScore(
-							GetMachineTag(gsEntry),
-							string.format("%.2f%%", gsEntry["score"]/100),
-							machineName,
-							machineScore
-						)
-						worldRecordSet = true
-					end
-
-					if gsEntry["isSelf"] then
-						SetNameAndScore(
-							GetMachineTag(gsEntry),
-							string.format("%.2f%%", gsEntry["score"]/100),
-							playerName,
-							playerScore
-						)
-						personalRecordSet = true
-					end
-
-					if gsEntry["isRival"] then
-						local rivalScore = paneDisplay:GetChild("Rival"..rivalNum.."Score")
-						local rivalName = paneDisplay:GetChild("Rival"..rivalNum.."Name")
-						SetNameAndScore(
-							GetMachineTag(gsEntry),
-							string.format("%.2f%%", gsEntry["score"]/100),
-							rivalName,
-							rivalScore
-						)
-						rivalNum = rivalNum + 1
-					end
-				end
-			end
-		end
-
 		-- Fall back to to using the machine profile's record if we never set the world record.
 		-- This chart may not have been ranked, or there is no WR, or the request failed.
-		if not worldRecordSet then
-			machineName:queuecommand("SetDefault")
-			machineScore:queuecommand("SetDefault")
-		end
-
-		-- Fall back to to using the personal profile's record if we never set the record.
-		-- This chart may not have been ranked, or we don't have a score for it, or the request failed.
-		if not personalRecordSet then
-			playerName:queuecommand("SetDefault")
-			playerScore:queuecommand("SetDefault")
-		end
-
-		-- Iterate over any remaining rivals and hide them.
-		-- This also handles the failure case as rivalNum will never have been incremented.
-		for j=rivalNum,3 do
-			local rivalScore = paneDisplay:GetChild("Rival"..j.."Score")
-			local rivalName = paneDisplay:GetChild("Rival"..j.."Name")
-			rivalScore:settext("??.??%")
-			rivalName:settext("----")
-		end
-
-		if res["status"] == "success" then
-			if data and data[playerStr] then
-				if data[playerStr]["isRanked"] then
-					loadingText:settext("Loaded")
-					WRorLBText:settext("WR:")
-				else
-					loadingText:settext("Not Ranked")
-					WRorLBText:settext("Local Best:")
-				end
-			else
-				-- Just hide the text
-				loadingText:queuecommand("Set")
-				WRorLBText:settext("Local Best:")
-			end
-		elseif res["status"] == "fail" then
-			loadingText:settext("Failed")
-		elseif res["status"] == "disabled" then
-			loadingText:settext("Disabled")
-		end
+		machineName:queuecommand("SetDefault")
+		machineScore:queuecommand("SetDefault")
+		playerName:queuecommand("SetDefault")
+		playerScore:queuecommand("SetDefault")
 	end
 end
 
@@ -215,71 +115,6 @@ local PaneItems = {
 
 -- -----------------------------------------------------------------------
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
-
-af[#af+1] = RequestResponseActor("GetScores", 10)..{
-	OnCommand=function(self)
-		-- Create variables for both players, even if they're not currently active.
-		self.IsParsing = {false, false}
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			-- If a profile is joined for this player, try and fetch the API key.
-			-- A non-valid API key will have the field set to the empty string.
-			if PROFILEMAN:GetProfile(player) then
-				ParseGrooveStatsIni(player)
-			end
-		end
-	end,
-	PlayerJoinedMessageCommand=function(self, params)
-		if GAMESTATE:IsHumanPlayer(params.Player) and PROFILEMAN:GetProfile(params.Player) then
-			ParseGrooveStatsIni(params.Player)
-		end
-	end,
-	-- Broadcasted from ./PerPlayer/DensityGraph.lua
-	P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,
-	P2ChartParsingMessageCommand=function(self)	self.IsParsing[2] = true end,
-	P1ChartParsedMessageCommand=function(self)
-		self.IsParsing[1] = false
-		self:queuecommand("ChartParsed")
-	end,
-	P2ChartParsedMessageCommand=function(self)
-		self.IsParsing[2] = false
-		self:queuecommand("ChartParsed")
-	end,
-	ChartParsedCommand=function(self)
-		if not IsServiceAllowed(SL.GrooveStats.GetScores) then return end
-
-		-- Make sure we're still not parsing either chart.
-		if self.IsParsing[1] or self.IsParsing[2] then return end
-
-		-- This makes sure that the Hash in the ChartInfo cache exists.
-		local sendRequest = false
-		local data = {
-			action="groovestats/player-scores",
-		}
-
-		for i=1,2 do
-			local pn = "P"..i
-			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
-				data["player"..i] = {
-					chartHash=SL[pn].Streams.Hash,
-					apiKey=SL[pn].ApiKey
-				}
-				local loadingText = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"):GetChild("PaneDisplayP"..i):GetChild("Loading")
-				loadingText:visible(true)
-				loadingText:settext("Loading ...")
-				sendRequest = true
-			end
-		end
-
-		-- Only send the request if it's applicable.
-		if sendRequest then
-			MESSAGEMAN:Broadcast("GetScores", {
-				data=data,
-				args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"),
-				callback=GetScoresRequestProcessor
-			})
-		end
-	end
-}
 
 for player in ivalues(PlayerNumber) do
 	local pn = ToEnumShortString(player)
@@ -394,7 +229,7 @@ for player in ivalues(PlayerNumber) do
 		}
 	end
 
-	-- Machine/World Record Text Label
+	-- Machine Record Text Label
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="MachineTextLabel",
 		Text="Local Best:",
@@ -405,7 +240,7 @@ for player in ivalues(PlayerNumber) do
 		end,
 	}
 
-	-- Machine/World Record Machine Tag
+	-- Machine Record Tag
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="MachineHighScoreName",
 		InitCommand=function(self)
@@ -414,15 +249,6 @@ for player in ivalues(PlayerNumber) do
 			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 		SetCommand=function(self)
-			-- We overload this actor to work both for GrooveStats and also offline.
-			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("----")
-			else
-				self:queuecommand("SetDefault")
-			end
-		end,
-		SetDefaultCommand=function(self)
 			local Course, Trail = GetSongAndSteps(player)
 			local machine_score, machine_name = GetNameAndScore(machine_profile, Course, Trail)
 			self:settext(machine_name or ""):diffuse(Color.Black)
@@ -430,7 +256,7 @@ for player in ivalues(PlayerNumber) do
 		end
 	}
 
-	-- Machine/World Record HighScore
+	-- Machine HighScore
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="MachineHighScore",
 		InitCommand=function(self)
@@ -439,15 +265,6 @@ for player in ivalues(PlayerNumber) do
 			self:y(IsUsingWideScreen() and pos.row[2] or pos.row[2])
 		end,
 		SetCommand=function(self)
-			-- We overload this actor to work both for GrooveStats and also offline.
-			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("??.??%")
-			else
-				self:queuecommand("SetDefault")
-			end
-		end,
-		SetDefaultCommand=function(self)
 			local Course, Trail = GetSongAndSteps(player)
 			local machine_score, machine_name = GetNameAndScore(machine_profile, Course, Trail)
 			self:settext(machine_score or "")
@@ -465,7 +282,7 @@ for player in ivalues(PlayerNumber) do
 		end,
 	}
 
-	-- Player Profile/GrooveStats Machine Tag 
+	-- Player Profile Tag 
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="PlayerHighScoreName",
 		InitCommand=function(self)
@@ -474,15 +291,6 @@ for player in ivalues(PlayerNumber) do
 			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 		SetCommand=function(self)
-			-- We overload this actor to work both for GrooveStats and also offline.
-			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("----")
-			else
-				self:queuecommand("SetDefault")
-			end
-		end,
-		SetDefaultCommand=function(self)
 			local Course, Trail = GetSongAndSteps(player)
 			local player_score, player_name
 			if PROFILEMAN:IsPersistentProfile(player) then
@@ -493,7 +301,7 @@ for player in ivalues(PlayerNumber) do
 		end
 	}
 
-	-- Player Profile/GrooveStats HighScore
+	-- Player Profile HighScore
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="PlayerHighScore",
 		InitCommand=function(self)
@@ -502,15 +310,6 @@ for player in ivalues(PlayerNumber) do
 			self:y(IsUsingWideScreen() and pos.row[3] or pos.row[3])
 		end,
 		SetCommand=function(self)
-			-- We overload this actor to work both for GrooveStats and also offline.
-			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("??.??%")
-			else
-				self:queuecommand("SetDefault")
-			end
-		end,
-		SetDefaultCommand=function(self)
 			local Course, Trail = GetSongAndSteps(player)
 			local player_score, player_name
 			if PROFILEMAN:IsPersistentProfile(player) then
@@ -533,15 +332,10 @@ for player in ivalues(PlayerNumber) do
 			self:horizalign(center)
 		end,
 		SetCommand=function(self)
-			self:settext("Loading ...")
-			self:visible(false)
-			if not IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("SCORES")
-				self:visible(true)
-			end
+			self:settext("SCORES")
+			self:visible(true)
 		end
 	}
-	
 	
 	-- Chart Difficulty Meter
 	af2[#af2+1] = LoadFont("Wendy/_wendy small")..{
@@ -553,11 +347,6 @@ for player in ivalues(PlayerNumber) do
 			self:queuecommand("Set")
 		end,
 		SetCommand=function(self)
-			-- Hide the difficulty number if we're connected.
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:visible(false)
-			end
-
 			local Course, Trail = GetSongAndSteps(player)
 			if not Course then self:settext("") return end
 			local meter = Trail and Trail:GetMeter() or "?"
@@ -565,58 +354,6 @@ for player in ivalues(PlayerNumber) do
 			self:settext( meter )
 		end
 	}
-
-	-- Add actors for Rival score data. Hidden by default
-	-- We position relative to column 3 for spacing reasons.
-	for i=1,3 do
-		-- Rival Machine Tag
-		af2[#af2+1] = LoadFont("Common Normal")..{
-			Name="Rival"..i.."Name",
-			InitCommand=function(self)
-				self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):maxwidth(30):horizalign(center)
-				self:x(IsUsingWideScreen() and WideScale(pos.col[2]+40,pos.col[2]+48) or pos.col[3]+50)
-				self:y(pos.row[i]+55)
-			end,
-			OnCommand=function(self)
-				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
-			end,
-			SetCommand=function(self)
-				self:settext("----")
-			end
-		}
-
-		-- Rival HighScore
-		af2[#af2+1] = LoadFont("Common Normal")..{
-			Name="Rival"..i.."Score",
-			InitCommand=function(self)
-				self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.2,text_zoom) or text_zoom):diffuse(Color.Black):horizalign(right)
-				self:x(IsUsingWideScreen() and WideScale(pos.col[2]+20,pos.col[2]+28) or pos.col[2]+28)
-				self:y(pos.row[i]+55)
-			end,
-			OnCommand=function(self)
-				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
-			end,
-			SetCommand=function(self)
-				self:settext("??.??%")
-			end
-		}
-		
-		-- Rival label
-		af2[#af2+1] = LoadFont("Common Normal")..{
-			Name="Rival"..i.."Label",
-			Text="Rival"..i..":",
-			InitCommand=function(self)
-				self:zoom(IsUsingWideScreen() and WideScale(text_zoom-0.25,text_zoom-0.15) or text_zoom-0.15):diffuse(Color.Black):horizalign(right)
-				self:horizalign(right)
-				self:x(IsUsingWideScreen() and WideScale(pos.col[2]-15,pos.col[2]-25) or pos.col[2]-25)
-				self:y(pos.row[i]+55)
-			end,
-			OnCommand=function(self)
-				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
-			end,
-		}
-		
-	end
 end
 
 return af

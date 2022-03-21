@@ -133,7 +133,6 @@ local t = Def.ActorFrame {
 								DDStats.SetStat(PLAYER_1, 'LastSong', GAMESTATE:GetCurrentSong():GetSongDir())
 							end
 							MESSAGEMAN:Broadcast("InitializeDDSortMenu")
-							MESSAGEMAN:Broadcast("CheckForSongLeaderboard")
 							MESSAGEMAN:Broadcast("ToggleSortMenu")
 						end
 					end
@@ -199,8 +198,6 @@ local t = Def.ActorFrame {
 	LoadActor("./PaneDisplay.lua"),
 	-- CourseContentsList
 	LoadActor("./CourseContentsList.lua"),
-	-- This is only added in "dance" mode and if the service is available.
-	LoadActor("./Leaderboard.lua"),
 	-- included, but unused for now
 	LoadActor("./GroupWheelShared.lua", {row, col, group_info}),
 	-- Sort and Filter menu wow

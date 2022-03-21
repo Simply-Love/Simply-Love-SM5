@@ -350,9 +350,6 @@ for i,OtherText in ipairs(OtherLabel) do
 
 			active_index = i - 1
 			self:y(SCREEN_CENTER_Y - 20 + 25*active_index)
-			if i == leaderboards_label_index then
-				self:visible(is_leaderboard_enabled)
-			end
 		end,
 	}
 end

@@ -162,7 +162,7 @@ local t = Def.ActorFrame{
 			elseif DDSortMenuCursorPosition == 10 then
 				self:zoomx(170)
 				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 30)
-			-- Switch from single/double or GS Leaderboards or test input
+			-- Switch from single/double or test input
 			elseif DDSortMenuCursorPosition == 11 then
 				self:zoomx(170)
 				self:xy(SCREEN_CENTER_X + 85,SCREEN_CENTER_Y + 55)
