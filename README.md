@@ -1,24 +1,14 @@
-# Digital Dance v1.0.4
+# Digital Dance v1.0.5
 
-# ------------ Differences from 1.0.3 ------------
-- "Random" added to song wheel.
-- "Random" added to group wheel.
-- "Random" will work for all sorts/subsorts and filters.
-- Add usb icon to signify songs with edit charts.
-- You can now restart a song during gameplay by pressing "Ctrl + R".
-- A notification at the bottom corner of screen select music to notify if the player has filters active. (In case they forget!)
-- New original menu, game over and course music.
-- Last song played/seen are properly set now.
-- Small bug fixes involving music wheel input.
-- If sorted by difficulty with the Groovestats Filter enabled Beginner/Novice charts and Edits will now be hidden from their respective difficulty folders. (Only ranked charts will show up)
-- Partially fixed bug with density graph involving warps.
-- Allow Life and Judge difficulties that are harder than ITG's (greater than 4) for anyone that wants to suffer.
-- Small bug fixes applied to the chart parser to support older .SM files. (ie. Heavy and Expert for difficulty names)
-- Fixed input display on double when using the Player 2 side.
-- Fixed missing string bug that broke the GSL
-- Fixed the music wheel/sort to account for Additional Song Folders properly.
-- Fixed Song Search behaviour
-- Song wheel difficulty selection more resembles that of the original engine (remembering last difficulty picked while scrolling through the wheel).
+# ------------ Differences from 1.0.4 ------------
+- Custom Course Wheel/Screen added with the abilty to sort/filter.
+- After selecting a profile you are taken directly to either Song or Course select based on what you last played.
+- Added Total Measure count and Density % on song select.
+- Single & Double are now differentiated on ScreenSelectMusicDD
+- Random sounds added by the user will now play when a World Record is achieved.
+- Column Cues added in player options to show when an arrow is coming.
+- Save machine score after every song.
+- Dropping support for 4:3 displays in favor of not removing features because of screen real estate. (but also to incentivize people to stop playing on archaic hardware)
 
 
 # -------------- GrooveStats Integration --------------
@@ -42,8 +32,8 @@ Passed a new song? Got a new score? Your scores will be automatically uploaded t
 # ------------- New Song Wheel and Sort Menu -------------
 Thanks to Box for help getting the new Song Wheel in it's current state!
 
-I started working on this song wheel way back in like 2018? and it's based of Casual Mode in Simply Love (Thanks quietly-turning <3)
-I ended up giving up because it was well out of my abilities, but after picking it back up earlier this year I was determined to finish it. If it wasn't for Box though I don't think this would have ever seen the light of day. He helped me so much with a lot of sorting/filtering logic and I could not have done it without him. I learned a lot about coding and also how terrible Stepmania is while doing this. I definitely still have a lot more to learn too lol.
+I started working on this song wheel way back around 2018? and it's based of Casual Mode in Simply Love (Thanks quietly-turning <3)
+I ended up giving up because it was well out of my abilities, but after picking it back up in 2021 I was determined to finish it. If it wasn't for Box though I don't think this would have ever seen the light of day. He helped me so much with a lot of sorting/filtering logic and I could not have done it without him. I learned a lot about coding and also how terrible Stepmania is while doing this. I definitely still have a lot more to learn too lol.
 
 - A brand new songwheel with custom sorting and filtering options!
 
@@ -66,6 +56,23 @@ Accessing the Sort Menu is the same as the default sort menu. To update any opti
 If your setup doesn't have a keyboard you can disable it from appearing in the sort menu in the Operator Menu under "Theme Options".
 You can also refresh the music wheel/undo the song search by either closing the folder of the search or resetting your sorts in the sort menu.
 
+# ------------- New Course Wheel and Sort Menu -------------
+![CourseSelect](https://i.imgur.com/8RCKKYN.png)
+This is similar to the custom song wheel and contains a slightly dumbed down sort/filter menu.
+I'm still in disbelief that the engine doesn't have any sorting for courses and I still have no clue how it tries to sort them by default lol.
+Now that is no longer an issue as we now have full control of the course wheel : )
+![CourseSort](https://i.imgur.com/HEt81CT.png)
+
+You can now use the sort menu to toggle between Course and Song select. 
+The theme will also remember what you played last and take you directly into that mode after selecting your profile.
+
+# ---------------- World Record Sounds? ----------------
+There is now a folder at "Digital Dance/Sounds/WRSounds" where you can add any .ogg or .mp3 files.
+Upon achieving a World Record with the Groovestats Launcher enabled the theme will randomly select a sound to play from that folder.
+If no sounds are present nothing will play.
+Alternatively if you want it to always play the same sound you can add just one file.
+
+WARNING: Any sound played this way WILL NOT STOP PLAYING until it's done or if you close Stepmania. So ideally you'd use short sound effects and not whole songs.
 
 # ---------------- How to use a profile picture ----------------
 
@@ -82,7 +89,6 @@ The image must:
 
   * <strong>16:9</strong> (common)
   * <strong>16:10</strong> (Apple laptops, some LCD monitors)
-  * <strong>4:3</strong> (CRT arcade monitors, older TVs)
   
 The aspect ratio can be changed under *Graphics / Sound Options*.
 
