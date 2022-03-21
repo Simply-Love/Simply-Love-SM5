@@ -8,7 +8,7 @@
 - Random sounds added by the user will now play when a World Record is achieved.
 - Column Cues added in player options to show when an arrow is coming.
 - Save machine score after every song.
-- Dropping support for 4:3 displays in favor of not removing features because of screen real estate. (but also to incentivize people to stop playing on archaic hardware)
+- Dropping support for 4:3 displays in favor of not removing features due to screen real estate.
 
 
 # -------------- GrooveStats Integration --------------
