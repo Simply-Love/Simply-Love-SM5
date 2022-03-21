@@ -65,9 +65,8 @@ return Def.Actor{
 					count_updated = true
 				end
 			end
-		end
-
-		if params.TapNoteScore then
+		-- HNS also contain TNS. We don't want to double count so add an else if.
+		elseif params.TapNoteScore then
 			local TNS = ToEnumShortString(params.TapNoteScore)
 
 			if SL.Global.GameMode == "ITG" then
@@ -114,7 +113,7 @@ return Def.Actor{
 
 			if count_updated then
 				-- Broadcast so other elements on ScreenGameplay can process the updated count.
-				MESSAGEMAN:Broadcast("ExCountsChanged", { Player=player, ExScore=CalculateExScore(player) })
+				MESSAGEMAN:Broadcast("ExCountsChanged", { Player=player, ExCounts=storage.ex_counts, ExScore=CalculateExScore(player) })
 			end
 		end
 	end,
