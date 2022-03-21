@@ -65,9 +65,8 @@ return Def.Actor{
 					count_updated = true
 				end
 			end
-		end
-
-		if params.TapNoteScore then
+		-- HNS also contain TNS. We don't want to double count so add an else if.
+		elseif params.TapNoteScore then
 			local TNS = ToEnumShortString(params.TapNoteScore)
 
 			if SL.Global.GameMode == "ITG" then

@@ -693,7 +693,7 @@ end
 -- -----------------------------------------------------------------------
 -- Calculate the EX score given for a given player.
 --
--- The counts are computed in BGAnimations/ScreenGameplay underlay/TrackExScoreJudgments.lua
+-- The ex_counts default to those computed in BGAnimations/ScreenGameplay underlay/TrackExScoreJudgments.lua
 -- They are computed from the HoldNoteScore and TapNotScore from the JudgmentMessageCommands.
 -- We look for the following keys: 
 -- {
@@ -708,7 +708,7 @@ end
 --          "LetGo" -> the number of holds/rolds dropped
 --        "HitMine" -> total number of mines hit
 -- }
-CalculateExScore = function(player, counts)
+CalculateExScore = function(player, ex_counts)
 	-- No EX scores in Casual mode, just return some dummy number early.
 	if SL.Global.GameMode == "Casual" then return 0 end
 	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
@@ -722,7 +722,7 @@ CalculateExScore = function(player, counts)
 	local total_points = 0
 
 	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
-	local counts = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
+	local counts = ex_counts ~= nil and ex_counts or SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
 	-- Just for validation, but shouldn't happen in normal gameplay.
 	if counts == nil then return 0 end
 

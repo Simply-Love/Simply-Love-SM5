@@ -41,6 +41,39 @@ else
 end
 
 -- -----------------------------------------------------------------------
+local GetPossibleExScore = function()
+	local counts = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
+	-- Just for validation, but shouldn't happen in normal gameplay.
+	if counts == nil then return 0 end
+	local best_counts = {}
+	
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+
+	for key in ivalues(keys) do
+		local value = counts[key]
+		if value ~= nil then
+			-- Initialize the keys	
+			if best_counts[key] == nil then
+				best_counts[key] = 0
+			end
+
+			-- Upgrade dropped holds/rolls to held.
+			if key == "LetGo" or key == "Held" then
+				best_counts["Held"] = best_counts["Held"] + value
+			-- We never hit any mines.
+			elseif key == "HitMine" then
+				best_counts[key] = 0
+			-- Upgrade to FA+ window.
+			else
+				best_counts["W0"] = best_counts["W0"] + value
+			end
+		end
+	end
+
+	return CalculateExScore(player, best_counts)
+end
+
+-- -----------------------------------------------------------------------
 
 -- the BitmapText actor
 local bmt = LoadFont(font)
@@ -117,22 +150,31 @@ bmt.SetScoreCommand=function(self, params)
 	or (topscreen:GetLifeMeter(player):IsFailing()) then
 
 		received_judgment_lower_than_desired = true
+		local score = 0
 
-		-- FIXME: I really need to figure out what the calculations are doing and describe that here.  -quietly
+		if mods.ShowEXScore then
+			local actual = CalculateExScore(player)
+			score = GetPossibleExScore() - actual
+			
+			self:settext( ("-%.2f%%"):format(score) )
+		else
+			-- FIXME: I really need to figure out what the calculations are doing and describe that here.  -quietly
 
-		-- PossibleDancePoints and CurrentPossibleDancePoints change as the song progresses and judgments
-		-- are earned by the player; these values need to be continually fetched from the engine
-		local possible_dp = pss:GetPossibleDancePoints()
-		local current_possible_dp = pss:GetCurrentPossibleDancePoints()
+			-- PossibleDancePoints and CurrentPossibleDancePoints change as the song progresses and judgments
+			-- are earned by the player; these values need to be continually fetched from the engine
+			local possible_dp = pss:GetPossibleDancePoints()
+			local current_possible_dp = pss:GetCurrentPossibleDancePoints()
 
-		-- max to prevent subtractive scoring reading more than -100%
-		local actual_dp = math.max(pss:GetActualDancePoints(), 0)
+			-- max to prevent subtractive scoring reading more than -100%
+			local actual_dp = math.max(pss:GetActualDancePoints(), 0)
 
-		local score = current_possible_dp - actual_dp
-		score = math.floor(((possible_dp - score) / possible_dp) * 10000) / 100
+			score = current_possible_dp - actual_dp
+			score = math.floor(((possible_dp - score) / possible_dp) * 10000) / 100
 
-		-- specify percent away from 100%
-		self:settext( ("-%.2f%%"):format(100-score) )
+			-- specify percent away from 100%
+			self:settext( ("-%.2f%%"):format(100-score) )
+		end
+		
 	end
 end
 
