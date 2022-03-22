@@ -79,12 +79,32 @@ af[#af+1] = bar_af
 
 local lastx = 0
 
--- create two quads for each window.
+local windows = {
+    timing = {},
+    color = {},
+}
+
 for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
-    local x = GetTimingWindow(wi) * wscale
+    
+    if mods.ShowFaPlusWindow and wi == 1 then
+        -- Split the Fantastic window
+        windows.timing[#windows.timing + 1] = GetTimingWindow(1, "FA+")
+        windows.color[#windows.color + 1] = SL.JudgmentColors["FA+"][1]
+
+        windows.timing[#windows.timing + 1] = GetTimingWindow(2, "FA+")
+        windows.color[#windows.color + 1] = SL.JudgmentColors["FA+"][2]
+    else
+        windows.timing[#windows.timing + 1] = GetTimingWindow(wi)
+        windows.color[#windows.color + 1] = SL.JudgmentColors[SL.Global.GameMode][wi]
+    end 
+end
+
+-- create two quads for each window.
+for i, window in ipairs(windows.timing) do
+    local x = window * wscale
     local width = x - lastx
-    local judgmentColor = SL.JudgmentColors[SL.Global.GameMode][wi]
+    local judgmentColor = windows.color[i]
 
     bar_af[#bar_af+1] = Def.Quad{
         InitCommand = function(self)

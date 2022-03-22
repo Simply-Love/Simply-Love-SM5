@@ -70,8 +70,16 @@ local af = Def.ActorFrame{
 
             tick:finishtweening()
 
+
+            local color = judgmentColors[params.TapNoteScore] 
+
+            -- Check if we need to adjust the color for the white fantastic window.
+            if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and not IsW0Judgment(params, player) then
+                color = SL.JudgmentColors["FA+"][2]
+            end
+
             tick:diffusealpha(1)
-                :diffuse(judgmentColors[params.TapNoteScore])
+                :diffuse(color)
                 :x(params.TapNoteOffset * wscale)
 
             if numTicks > 1 then
@@ -140,9 +148,22 @@ local af = Def.ActorFrame{
     },
 }
 
-for i = 1, #enabledTimingWindows-1 do
+local timing = {}
+
+for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
-    local offset = GetTimingWindow(wi) * wscale
+    
+    if mods.ShowFaPlusWindow and wi == 1 then
+        -- Split the Fantastic window
+        timing[#timing + 1] = GetTimingWindow(1, "FA+")
+        timing[#timing + 1] = GetTimingWindow(2, "FA+")
+    else
+        timing[#timing + 1] = GetTimingWindow(wi)
+    end 
+end
+
+for window in ivalues(timing) do
+    local offset = window * wscale
 
     af[#af+1] = Def.Quad{
         InitCommand = function(self)

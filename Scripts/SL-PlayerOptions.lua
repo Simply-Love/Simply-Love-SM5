@@ -408,7 +408,6 @@ local Overrides = {
 				 -- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
 				mods.ShowEXScore   = list[1]
-				sl_pn.EvalPanePrimary = list[1] and 2 or 1
 				return
 			end
 			mods.ShowFaPlusWindow = list[1]
