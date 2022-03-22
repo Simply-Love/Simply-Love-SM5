@@ -56,9 +56,13 @@ end
 local leadingZeroAttr
 local row_height = ShowFaPlusWindow and 29 or 35
 
-local windows = SL.Global.ActiveModifiers.TimingWindows
+local windows = {}
 if ShowFaPlusWindow then
-	table.insert(windows, 1, windows[1])
+	windows[#windows + 1] = SL.Global.ActiveModifiers.TimingWindows[1]
+end
+
+for v in ivalues( SL.Global.ActiveModifiers.TimingWindows) do
+	windows[#windows + 1] = v
 end
 
 -- -----------------------------------------------------------------------
