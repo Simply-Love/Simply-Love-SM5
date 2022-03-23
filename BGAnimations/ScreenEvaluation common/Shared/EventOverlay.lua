@@ -283,7 +283,7 @@ end
 
 local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local pn = ToEnumShortString(player)
-	local score = CalculateExScore(player) * 100
+	local score = CalculateExScore(player)
 	local paneTexts = {}
 	local paneFunctions = {}
 
