@@ -110,11 +110,10 @@ return Def.Actor{
 					end
 				end
 			end
-
-			if count_updated then
-				-- Broadcast so other elements on ScreenGameplay can process the updated count.
-				MESSAGEMAN:Broadcast("ExCountsChanged", { Player=player, ExCounts=storage.ex_counts, ExScore=CalculateExScore(player) })
-			end
+		end
+		if count_updated then
+			-- Broadcast so other elements on ScreenGameplay can process the updated count.
+			MESSAGEMAN:Broadcast("ExCountsChanged", { Player=player, ExCounts=storage.ex_counts, ExScore=CalculateExScore(player) })
 		end
 	end,
 }
