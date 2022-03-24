@@ -14,6 +14,10 @@ local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local storage = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
 local valid_tns = {
+	-- Emulated, not a real TNS.
+	W0 = true,
+
+	-- Actual TNS's
 	W1 = true,
 	W2 = true,
 	W3 = true,
