@@ -1,3 +1,8 @@
+-- don't run this in course mode
+if GAMESTATE:IsCourseMode() then 
+return Def.ActorFrame{}
+end
+
 local af = Def.ActorFrame{}
 
 local holdingCtrl = false
