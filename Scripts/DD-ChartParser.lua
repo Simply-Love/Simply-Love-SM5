@@ -37,6 +37,14 @@ local Bin2Hex = function(s)
 	return table.concat(hex_bytes, '')
 end
 
+-- StepMania 5.1 has a BinaryToHex function, but an older version of it was
+-- broken and stopped when encountering a zero byte in the input. Let's detect
+-- if the function exists and if it works as intended before using it. If not
+-- useable we fall back to the lua implementation defined above.
+if type(BinaryToHex) == "function" and BinaryToHex("\0") == "00" then
+	Bin2Hex = BinaryToHex
+end
+
 -- Reduce the chart to it's smallest unique representable form.
 local MinimizeChart = function(ChartString)
 	local function MinimizeMeasure(measure)
