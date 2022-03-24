@@ -6,7 +6,11 @@ local grade = playerStats:GetGrade()
 -- only run in modified stepmania build
 if SYNCMAN and SYNCMAN:IsEnabled() then
 	-- Broadcast final score for each player, used by syncstart-web to save scores
-	SYNCMAN:BroadcastFinalScore(playerStats)
+	if GAMESTATE:IsCourseMode() then
+		SYNCMAN:BroadcastFinalCourseScore(playerStats)
+	else
+		SYNCMAN:BroadcastFinalScore(playerStats)
+	end
 end
 
 -- "I passd with a q though."
