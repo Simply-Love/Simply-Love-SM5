@@ -96,10 +96,12 @@ return Def.Actor{
 				end
 			else
 				adjusted_TNS = TNS
+				tier = string.match(TNS, "W(%d)")
+
 				-- In FA+ mode, we need to shift the windows up 1 so that the key we're using is accurate.
 				-- E.g. W1 window becomes W0, W2 becomes W1, etc.
-				if TNS ~= "Miss" then
-					adjusted_TNS = "W"..(tonumber(TNS:sub(-1))-1)
+				if tier ~= nil then
+					adjusted_TNS = "W"..(tonumber(tier)-1)
 				end
 				
 				-- Only track the TapNoteScores we care about
