@@ -9,7 +9,7 @@ local width = 162
 local height = 80
 
 local cur_style = 0
-local num_styles = 2
+local num_styles = 3
 
 local loop_seconds = 5
 local transition_seconds = 1
@@ -69,7 +69,8 @@ local LeaderboardRequestProcessor = function(res, master)
 		if data[playerStr]["isRanked"] then
 			SetScoreData(1, 1, "", "No Scores", "", false, false, false)
 		else
-			if not data[playerStr]["rpg"] or not data[playerStr]["rpg"]["rpgLeaderboard"] then
+			if (not (data[playerStr]["rpg"] and data[playerStr]["rpg"]["rpgLeaderboard"]) and
+					not (data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"])) then
 				SetScoreData(1, 1, "", "Chart Not Ranked", "", false, false, false)
 			end
 		end
@@ -106,8 +107,27 @@ local LeaderboardRequestProcessor = function(res, master)
 				end
 			end
 		end
+
+		if data[playerStr]["itl"] then
+			local numEntries = 0
+			SetScoreData(3, 1, "", "No Scores", "", false, false, false)
+
+			if data[playerStr]["itl"]["itlLeaderboard"] then
+				for entry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+					numEntries = numEntries + 1
+					SetScoreData(3, numEntries,
+									tostring(entry["rank"]),
+									entry["name"],
+									string.format("%.2f", entry["score"]/100),
+									entry["isSelf"],
+									entry["isRival"],
+									entry["isFail"]
+								)
+				end
+			end
+		end
  	end
-	 master:queuecommand("Check")
+	master:queuecommand("Check")
 end
 
 local af = Def.ActorFrame{
@@ -195,6 +215,8 @@ local af = Def.ActorFrame{
 				self:linear(transition_seconds):diffuse(color("#007b85"))
 			elseif cur_style == 1 then
 				self:linear(transition_seconds):diffuse(color("#aa886b"))
+			elseif cur_style == 2 then
+				self:linear(transition_seconds):diffuse(color("1,0.2,0.406,1"))
 			end
 		end
 	},
@@ -215,7 +237,7 @@ local af = Def.ActorFrame{
 		LoopCommand=function(self)
 			if cur_style == 0 then
 				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0.5)
-			elseif cur_style == 1 then
+			else
 				self:linear(transition_seconds/2):diffusealpha(0)
 			end
 		end
@@ -228,14 +250,28 @@ local af = Def.ActorFrame{
 			self:diffusealpha(0.4):zoom(0.32):addy(3):diffusealpha(0)
 		end,
 		LoopCommand=function(self)
-			if cur_style == 0 then
-				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0)
-			elseif cur_style == 1 then
+			if cur_style == 1 then
 				self:linear(transition_seconds/2):diffusealpha(0.5)
+			else
+				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0)
 			end
 		end
 	},
-
+	-- ITL Logo
+	Def.Sprite{
+		Texture=THEME:GetPathG("", "ITL.png"),
+		Name="ITLLogo",
+		InitCommand=function(self)
+			self:diffusealpha(0.2):zoom(0.45):diffusealpha(0)
+		end,
+		LoopCommand=function(self)
+			if cur_style == 2 then
+				self:linear(transition_seconds/2):diffusealpha(0.2)
+			else
+				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0)
+			end
+		end
+	},
 }
 
 for i=1,5 do
