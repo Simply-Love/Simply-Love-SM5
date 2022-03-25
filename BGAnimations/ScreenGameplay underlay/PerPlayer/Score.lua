@@ -103,9 +103,9 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 								padding = 37
 							end
 						else
-							padding = 67
+							padding = 62
 							if P1 then
-							padding = -125
+							padding = -118
 							end
 						end
 					end
