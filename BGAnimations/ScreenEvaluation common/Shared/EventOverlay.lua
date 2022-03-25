@@ -317,8 +317,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 	table.insert(paneTexts, string.format(
 		"EX Score: %.2f%% (%+.2f%%)\n"..
-		"Ranking: %d (%+d)\n"..
-		"Total: %d (%+d)\n\n",
+		"Ranking Points: %d (%+d)\n"..
+		"Total Points: %d (%+d)\n\n",
 		score, scoreDelta,
 		currentRankingPointTotal, rankingDelta,
 		currentPointTotal, totalDelta
