@@ -1,8 +1,5 @@
 local player = ...
 
-Player1MinesAvoided = 0
-Player2MinesAvoided = 0
-
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
