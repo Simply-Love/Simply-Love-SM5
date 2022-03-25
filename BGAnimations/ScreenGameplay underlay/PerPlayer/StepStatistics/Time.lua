@@ -8,6 +8,7 @@ local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)
 -- -----------------------------------------------------------------------
 -- reference to the BitmapText actor that will display elapsed time (current BitmapText)
 local curBMT
+local remBMT
 
 -- simple flag used in the Update function to stop updating curBMT once the player runs out of life
 local alive = true
@@ -110,10 +111,11 @@ local Update = function(af, delta)
 	-- don't show negative time; just use 0
 	if SongPosition:GetMusicSeconds() < 0 then
 		curBMT:settext(fmt(seconds_offset))
+		remBMT:settext(fmt(totalseconds))
 		return
 	end
-
 	curBMT:settext( fmt((SongPosition:GetMusicSeconds() / rate) +  seconds_offset) )
+	remBMT:settext( fmt(totalseconds - ( (SongPosition:GetMusicSeconds() / rate) +  seconds_offset) ) )
 end
 
 -- -----------------------------------------------------------------------
@@ -121,7 +123,7 @@ end
 local af = Def.ActorFrame{}
 af.InitCommand=function(self)
 	self:SetUpdateFunction(Update)
-	self:xy(-85,-50)
+	self:xy((GAMESTATE:IsSideJoined(0) and -220 or 80),0)
 end
 
 af.CurrentSongChangedMessageCommand=function(self,params)
@@ -177,13 +179,48 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end
 }
 
+-- remaining time label
+af[#af+1] = LoadFont("Common Normal")..{
+	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining") ),
+	InitCommand=function(self) self:horizalign(right):xy(-6, 20):zoom(0.833) 
+	if P1 then
+		self:x(180)
+	end
+	end
+	
+}
+
+
+-- remaining time number
+af[#af+1] = LoadFont("Common Normal")..{
+	InitCommand=function(self)
+		remBMT = self
+		self:horizalign(left):xy(0,20)
+		if P1 then
+			self:x(180)
+		end
+	end,
+
+	-- HealthStateChanged is going to be broadcast quite a bit by the engine.
+	-- Here, we're only really interested in detecting when the player has fully depleted
+	-- their lifemeter and run out of life, but I don't see anything specifically being
+	-- broadcast for that.  So, this.
+	HealthStateChangedMessageCommand=function(self, params)
+		-- color time red if the player reaches a HealthState of Dead
+		if params.PlayerNumber == player and params.HealthState == "HealthState_Dead" then
+			self:diffuse(color("#ff3030"))
+			alive = false
+		end
+	end
+}
+
 -- -----------------------------------------------------------------------
 -- total time label
 -- "song" in normal gameplay, "course" in CourseMode
 
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
-		self:horizalign(right):xy(-6, 20):zoom(0.833)
+		self:horizalign(right):xy(-6, 40):zoom(0.833)
 		if P1 then
 			self:x(180)
 		end
@@ -196,7 +233,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 -- song duration in normal gameplay, overall course duration in CourseMode
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
-		self:horizalign(left):xy(0,20)
+		self:horizalign(left):xy(0,40)
 		if P1 then
 			self:x(180)
 		end
