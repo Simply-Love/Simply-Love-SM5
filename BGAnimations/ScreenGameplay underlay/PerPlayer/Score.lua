@@ -129,9 +129,10 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 			end
 		end
 	end,
-	JudgmentMessageCommand=function(self, params)
-		if params.Player ~= player then return end
-
+	JudgmentMessageCommand=function(self)
+		self:queuecommand("RedrawScore")
+	end,
+	RedrawScoreCommand=function(self)
 		if not IsEX then
 			local dance_points = pss:GetPercentDancePoints()
 			local percent = FormatPercentScore( dance_points ):sub(1,-2)
