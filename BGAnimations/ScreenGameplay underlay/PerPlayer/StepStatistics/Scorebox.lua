@@ -133,10 +133,10 @@ end
 local af = Def.ActorFrame{
 	Name="ScoreBox"..pn,
 	InitCommand=function(self)
-		self:xy((player==PLAYER_1 and 106 or -70), -25)
+		self:xy((player==PLAYER_1 and 106 or -110), -15)
 		-- offset a bit more when NoteFieldIsCentered
 		if NoteFieldIsCentered and IsUsingWideScreen() then
-			self:addx( (player==PLAYER_1 and -25 or -5) )
+			self:addx( (player==PLAYER_1 and -34 or 38) )
 		end
 
 		-- ultrawide and both players joined

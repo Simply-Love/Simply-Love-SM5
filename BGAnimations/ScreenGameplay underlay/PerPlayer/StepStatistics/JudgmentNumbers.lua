@@ -1,4 +1,10 @@
 local player = ...
+local CurrentPlayer
+local nsj = GAMESTATE:GetNumSidesJoined()
+
+if nsj == 1 then
+	CurrentPlayer = GAMESTATE:IsPlayerEnabled(0) and "P1" or "P2"
+end
 
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
@@ -49,7 +55,7 @@ for index, window in ipairs(TapNoteScores) do
 			end
 		end,
 		BeginCommand=function(self)
-			self:x( 108 )
+			self:x(CurrentPlayer == "P1" and 108 or -108 )
 			self:y((index-1)*row_height - 282)
 
 			-- horizontally squishing the numbers isn't pretty, but I'm not sure what else to do
@@ -92,7 +98,7 @@ for index, RCType in ipairs(RadarCategories) do
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:y((index-1)*row_height - 178)
-			self:x( -54 )
+			self:x(CurrentPlayer == "P1" and -54 or 104)
 
 			leadingZeroAttr = { Length=2, Diffuse=color("#5A6166") }
 			self:AddAttribute(0, leadingZeroAttr )
@@ -124,7 +130,7 @@ for index, RCType in ipairs(RadarCategories) do
 		InitCommand=function(self) self:diffuse(color("#5A6166")):zoom(1.25):horizalign(right) end,
 		BeginCommand=function(self)
 			self:y((index-1)*row_height - 178)
-			self:x(-40)
+			self:x(CurrentPlayer == "P1" and -40 or 49)
 		end
 	}
 
@@ -144,7 +150,7 @@ for index, RCType in ipairs(RadarCategories) do
 			end
 
 			self:y((index-1)*row_height - 178)
-			self:x( 16 )
+			self:x( CurrentPlayer == "P1" and 16 or 36 )
 			self:settext( string.format("%03d", possible) )
 			local leadingZeroAttr = { Length=3-tonumber(tostring(possible):len()); Diffuse=color("#5A6166") }
 			self:AddAttribute(0, leadingZeroAttr )

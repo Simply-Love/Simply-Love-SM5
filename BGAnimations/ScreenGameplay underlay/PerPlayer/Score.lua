@@ -103,7 +103,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 								padding = 37
 							end
 						else
-							padding = 62
+							padding = 218
 							if P1 then
 							padding = -118
 							end
@@ -120,9 +120,9 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 
 						if NoteFieldIsCentered then
 							if P1 then
-								padding = WideScale(-99,-110)
+								padding = WideScale(-99,-117)
 							else
-								padding = clamp(padding, 0, WideScale(-12,43))
+								padding = WideScale(-12,253)
 							end
 							self:zoom( self:GetZoom() * zoom_factor )
 						end

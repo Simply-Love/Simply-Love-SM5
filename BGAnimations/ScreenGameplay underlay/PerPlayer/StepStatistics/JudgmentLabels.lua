@@ -1,6 +1,13 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
+local CurrentPlayer
+local nsj = GAMESTATE:GetNumSidesJoined()
+
+if nsj == 1 then
+	CurrentPlayer = GAMESTATE:IsPlayerEnabled(0) and "P1" or "P2"
+end
+
 local TapNoteScores = { Types={'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}, Names={} }
 local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="DD" and "")
 -- get TNS names appropriate for the current GameMode, localized to the current language
@@ -11,7 +18,7 @@ end
 local RadarCategories = {
 	THEME:GetString("ScreenEvaluation", 'Holds'),
 	THEME:GetString("ScreenEvaluation", 'Mines'),
-	THEME:GetString("ScreenEvaluation", 'Rolls')
+	THEME:GetString("ScreenEvaluation", 'Rolls'),
 }
 
 local row_height = 28
@@ -29,7 +36,7 @@ for i, label in ipairs(TapNoteScores.Names) do
 			Text=label:upper(),
 			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(72) end,
 			BeginCommand=function(self)
-				self:x(80):y((i-1)*row_height - 226)
+				self:x(CurrentPlayer == "P1" and 80 or -90):y((i-1)*row_height - 226)
 				    :diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 			end
 		}
@@ -42,7 +49,7 @@ for i, label in ipairs(RadarCategories) do
 		Text=label,
 		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)
-			self:x(-94):y((i-1)*row_height - 143)
+			self:x(CurrentPlayer == "P1" and -94 or 120):y((i-1)*row_height - 143)
 		end
 	}
 end
