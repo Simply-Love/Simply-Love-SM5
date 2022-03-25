@@ -114,8 +114,15 @@ local Update = function(af, delta)
 		remBMT:settext(fmt(totalseconds))
 		return
 	end
-	curBMT:settext( fmt((SongPosition:GetMusicSeconds() / rate) +  seconds_offset) )
-	remBMT:settext( fmt(totalseconds - ( (SongPosition:GetMusicSeconds() / rate) +  seconds_offset) ) )
+	
+	-- Don't let time remaining go negative and don't let elapsed time go beyond song length. (When not in course mode)
+	if not GAMESTATE:IsCourseMode() and SongPosition:GetMusicSeconds() >= totalseconds then
+		remBMT:settext("0:00")
+		curBMT:settext( fmt(totalseconds) )
+	else
+		curBMT:settext( fmt((SongPosition:GetMusicSeconds() / rate) +  seconds_offset) )
+		remBMT:settext( fmt(totalseconds - ( (SongPosition:GetMusicSeconds() / rate) +  seconds_offset) ) )
+	end
 end
 
 -- -----------------------------------------------------------------------
