@@ -617,6 +617,7 @@ af[#af+1] = RequestResponseActor("GetScores", 10, CirclePositionX, CirclePositio
 		self:queuecommand("ChartParsed")
 	end,
 	ChartParsedCommand=function(self)
+		local master = self:GetParent()
 		if not IsServiceAllowed(SL.GrooveStats.GetScores) then return end
 
 		-- Make sure we're still not parsing either chart.
@@ -635,7 +636,7 @@ af[#af+1] = RequestResponseActor("GetScores", 10, CirclePositionX, CirclePositio
 					chartHash=SL[pn].Streams.Hash,
 					apiKey=SL[pn].ApiKey
 				}
-				local loadingText = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PaneDisplayMaster"):GetChild("PaneDisplayP"..i):GetChild("Loading")
+				local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
 				loadingText:visible(true)
 				loadingText:settext("Loading ...")
 				sendRequest = true
