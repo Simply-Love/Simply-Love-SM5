@@ -457,20 +457,12 @@ SetGameModePreferences = function()
 	end
 
 	--------------------------------------------
-	-- If we're switching to Casual mode,
-	-- we want to reduce the number of judgments,
-	-- so turn Decents and WayOffs off now.
+	-- Always keep all judgements on.
 	SL.Global.ActiveModifiers.TimingWindows = {true,true,true,true,true}
 
 	--------------------------------------------
 	-- loop through human players and apply whatever mods need to be set now
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-		-- Now that we've set the SL table for TimingWindows appropriately,
-		-- use it to apply TimingWindows.
-		local TW_OptRow = CustomOptionRow( "TimingWindows" )
-		TW_OptRow:LoadSelections( TW_OptRow.Choices, player )
-
-
 		local player_modslevel = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
 
 		-- using PREFSMAN to set the preference for MinTNSToHideNotes apparently isn't

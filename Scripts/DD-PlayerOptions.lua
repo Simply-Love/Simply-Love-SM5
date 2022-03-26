@@ -510,54 +510,6 @@ local Overrides = {
 		}
 	},
 	-------------------------------------------------------------------------
-	TimingWindows = {
-		Values = function()
-			return {
-				{true,true,true,true,true},
-				{true,true,true,true,false},
-				{true,true,true,false,false},
-				{false,false,true,true,true},
-			}
-		end,
-		Choices = function()
-			local tns = "TapNoteScore" .. (SL.Global.GameMode=="DD" and "")
-			local t = {THEME:GetString("SLPlayerOptions","None")}
-			-- assume pluralization via terminal s
-			t[2] = THEME:GetString(tns,"W5").."s"
-			t[3] = THEME:GetString(tns,"W4").."s + "..t[2]
-			t[4] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
-			return t
-		end,
-		OneChoiceForAllPlayers = true,
-		LoadSelections = function(self, list, pn)
-			local windows = SL.Global.ActiveModifiers.TimingWindows
-			for i=1,#list do
-				local all_match = true
-				for w,window in ipairs(windows) do
-					if window ~= self.Values[i][w] then all_match = false; break end
-				end
-				if all_match then list[i] = true; break end
-			end
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			local gmods = SL.Global.ActiveModifiers
-			for i=1,#list do
-				if list[i] then
-					gmods.TimingWindows = self.Values[i]
-					for w=1,5 do
-						if self.Values[i][w] then
-							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..w])
-						else
-							local prev = (w > 1 and PREFSMAN:GetPreference("TimingWindowSecondsW"..(w-1)) or -math.abs(SL.Preferences[SL.Global.GameMode].TimingWindowAdd))
-							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, prev)
-						end
-					end
-				end
-			end
-		end
-	},
-	-------------------------------------------------------------------------
 	LifeMeterType = {
 		Values = { "Standard", "Surround", "Vertical" },
 	},
