@@ -60,8 +60,6 @@ for _, noteTime in ipairs(noteTimes) do
 	end
 end
 
-SM(holdCount)
-
 local style = GAMESTATE:GetCurrentStyle(player)
 local width = style:GetWidth(player)
 
