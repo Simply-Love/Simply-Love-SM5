@@ -60,10 +60,11 @@ local SetEntryText = function(rank, name, score, date, actor)
 	actor:GetChild("Date"):settext(date)
 end
 
-local SetLeaderboardData = function(eventAf, leaderboardData)
+local SetLeaderboardData = function(eventAf, leaderboardData, event)
 	local entryNum = 1
 	local rivalNum = 1
 	local leaderboard = eventAf:GetChild("Leaderboard")
+	local defaultTextColor = event == "itl" and Color.White or Color.Black
 
 	-- Hide the rival and self highlights.
 	-- They will be unhidden and repositioned as needed below.
@@ -103,7 +104,7 @@ local SetLeaderboardData = function(eventAf, leaderboardData)
 			end
 			leaderboard:GetChild("Self"):y(entry:GetY()):visible(true)
 		else
-			entry:diffuse(Color.White)
+			entry:diffuse(defaultTextColor)
 		end
 
 		-- Why does this work for normal entries but not for Rivals/Self where
@@ -291,7 +292,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	table.insert(paneFunctions, function(eventAf)
 		SetRpgStyle(eventAf)
 		eventAf:GetChild("Header"):settext(rpgData["name"])
-		SetLeaderboardData(eventAf, rpgData["rpgLeaderboard"])
+		SetLeaderboardData(eventAf, rpgData["rpgLeaderboard"], "rpg")
 		eventAf:GetChild("Leaderboard"):visible(true)
 		eventAf:GetChild("BodyText"):visible(false)
 	end)
@@ -401,7 +402,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 	table.insert(paneFunctions, function(eventAf)
 		SetItlStyle(eventAf)
-		SetLeaderboardData(eventAf, itlData["itlLeaderboard"])
+		SetLeaderboardData(eventAf, itlData["itlLeaderboard"], "itl")
 		eventAf:GetChild("Header"):settext(itlData["name"])
 		eventAf:GetChild("Leaderboard"):visible(true)
 		eventAf:GetChild("EX"):visible(true)
