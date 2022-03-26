@@ -1,6 +1,3 @@
---- Don't run this if not in normal gameplay mode.
-if GAMESTATE:GetPlayMode() ~= 'PlayMode_Regular' then return Def.ActorFrame{} end
-
 local player = ...
 
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
@@ -33,24 +30,37 @@ end
 local prevTime = 0
 local cueStartTime = -1
 local cueEndTime = -1
+local holdCount = 0
 for _, noteTime in ipairs(noteTimes) do
-	if noteTime.time - prevTime >= cue_time then
-		cueStartTime = prevTime
-		cueEndTime = noteTime.time
-	end
-
-	if noteTime.time == cueEndTime then
-		if noteTime.type == '1' or noteTime.type == '2' or noteTime.type == '4' then
-			local times = columnTimes[noteTime.column]
-			times[#times+1] = {
-				start=cueStartTime,
-				duration=cueEndTime-cueStartTime,
-			}
+	if noteTime.type:match('[1234]') then
+		if noteTime.time - prevTime >= cue_time then
+			cueStartTime = prevTime
+			cueEndTime = noteTime.time
 		end
-	end
 
-	prevTime = noteTime.time
+		if noteTime.time == cueEndTime and holdCount == 0 then
+			if noteTime.type == '1' or noteTime.type == '2' or noteTime.type == '4' then
+				local times = columnTimes[noteTime.column]
+				times[#times+1] = {
+					start=cueStartTime,
+					duration=cueEndTime-cueStartTime,
+				}
+			end
+		end
+
+		if noteTime.type == '2' or noteTime.type == '4' then
+			holdCount = holdCount + 1
+		end
+
+		if noteTime.type == '3' then
+			holdCount = holdCount - 1
+		end
+
+		prevTime = noteTime.time
+	end
 end
+
+SM(holdCount)
 
 local style = GAMESTATE:GetCurrentStyle(player)
 local width = style:GetWidth(player)

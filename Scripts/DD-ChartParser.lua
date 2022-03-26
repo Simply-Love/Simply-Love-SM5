@@ -467,7 +467,7 @@ GetChartNoteTimes = function(steps, pn)
 			local notes = {}
 			local i = 0
 			while true do
-				i = line:find('[1234]', i+1)
+				i = line:find('[^0]', i+1)
 				if i == nil then break end
 				notes[#notes+1] = {
 					column=i,
