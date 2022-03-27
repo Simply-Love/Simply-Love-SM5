@@ -58,7 +58,7 @@ Simply Love has support for:
   * Italiano
   * 日本語
   * Polski
-  * Português Brasileiro
+  * Português Brasileiro (incomplete, translator wanted)
 
 The current language can be changed in Simply Love under *System Options*.
 
