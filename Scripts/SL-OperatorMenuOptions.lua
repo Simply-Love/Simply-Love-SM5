@@ -184,7 +184,7 @@ OperatorMenuOptionRows.VideoRenderer = function()
 	-- platforms. The convention(?) there is to list both available
 	-- backends in Preferences.ini, but only use the first
 	local architecture = HOOKS:GetArchName():lower()
-	if IsSMVersion(5, 3) then
+	if IsOutFox() then
 		table.insert(choices, "glad")
 		values = { "opengl,glad", "glad,opengl" }
 	elseif architecture:match("windows") then
@@ -193,7 +193,7 @@ OperatorMenuOptionRows.VideoRenderer = function()
 	end
 
 	return {
-		Name = IsSMVersion(5, 3) and "VideoRendererSM5.3" or "VideoRenderer",
+		Name = IsOutFox() and "VideoRendererSM5.3" or "VideoRenderer",
 		Choices = choices,
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",

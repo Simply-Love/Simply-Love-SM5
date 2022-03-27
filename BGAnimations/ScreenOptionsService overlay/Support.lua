@@ -58,7 +58,7 @@ a.OffCommand=function(self)
 		end
 
 		if not StepManiaVersionIsSupported() then
-			SM( THEME:GetString("ScreenInit", "UnsupportedSMVersion"):format(ProductVersion()) )
+			SM( THEME:GetString("ScreenInit", "UnsupportedSMVersion"):format(ProductFamily(), ProductVersion()) )
 			SCREENMAN:SetNewScreen("ScreenSystemOptions")
 		end
 	end
