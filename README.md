@@ -20,7 +20,7 @@ Simply Love is compatible with current releases from the official StepMania proj
 **Compatible Releases**<br>
 ✅ [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12)<br>
 ✅ [StepMania 5.1-b2](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)<br>
-✅ [OutFox 5.3 alpha 4.12.0](https://projectoutfox.com/releases/5.3.0-alpha-4.12.0) (preliminary support)<br>
+✅ [OutFox 0.4.14.1](https://projectoutfox.com/releases/0.4.14.1) and newer (preliminary support). Versions prior to that are not supported.<br>
 
 For new installations we currently recommend installing StepMania 5.1. While
 5.0.12 is officially the latest stable release of StepMania, 5.1 is widely used

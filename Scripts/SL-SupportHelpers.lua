@@ -1,7 +1,9 @@
 -- -----------------------------------------------------------------------
 -- local helper function to transform a StepMania version string ("5.0.12") into a table of numbers { 5, 0, 12 }
 
-local getSMVersion = function()
+local getProductVersion = function()
+	if type(ProductVersion) ~= "function" then return {} end
+
 	-- get the version string, e.g. "5.0.11" or "5.1.0" or "5.2-git-96f9771" or etc.
 	local version = ProductVersion()
 	if type(version) ~= "string" then return {} end
@@ -20,21 +22,21 @@ local getSMVersion = function()
 	return v
 end
 
--- IsSMVersion() accepts multiple number arguments representing StepMania family, major, and minor releases
+-- IsProductVersion() accepts multiple number arguments representing StepMania family, major, and minor releases
 -- returns true if the user's StepMania engine version matches arguments
 -- returns false if not
 --
--- all arguments are optional and IsSMVersion() will only check the engine's version number
+-- all arguments are optional and IsProductVersion() will only check the engine's version number
 -- for as many arguments as are provided
 --
 -- for example, if the user's SM version is "5.0.12"
---   IsSMVersion(5, 0, 11) will return false
---   IsSMVersion(5, 0, 12) will return true
---   IsSMVersion(5, 0)     will return true
---   IsSMVersion(5, 1)     will return false
+--   IsProductVersion(5, 0, 11) will return false
+--   IsProductVersion(5, 0, 12) will return true
+--   IsProductVersion(5, 0)     will return true
+--   IsProductVersion(5, 1)     will return false
 
-function IsSMVersion(...)
-	local version = getSMVersion()
+function IsProductVersion(...)
+	local version = getProductVersion()
 
 	for i = 1, select('#', ...) do
 		if select(i, ...) ~= version[i] then
@@ -45,22 +47,47 @@ function IsSMVersion(...)
 	return true
 end
 
+function IsMinimumProductVersion(...)
+	local version = getProductVersion()
+
+	for i = 1, select('#', ...) do
+		if not version[i] or select(i, ...) < version[i] then
+			return false
+		end
+	end
+
+	return true
+end
+
+
+function IsStepMania()
+	if type(ProductFamily) ~= "function" then return false end
+	return ProductFamily() == "StepMania"
+end
+
+
+function IsOutFox()
+	if type(ProductFamily) ~= "function" then return false end
+	return ProductFamily() == "OutFox"
+end
+
 
 -- -----------------------------------------------------------------------
 -- use StepManiaVersionIsSupported() to check if Simply Love supports the version of SM5 in use
 
 StepManiaVersionIsSupported = function()
-	-- sanity checks to make sure we're running StepMania
-	if type(ProductFamily) ~= "function" or ProductFamily():lower() ~= "stepmania" then return false end
-	if type(ProductVersion) ~= "function" then return false end
-	if type(ProductVersion()) ~= "string" then return false end
-
 	-- SM5.0.12 is supported (latest stable release)
 	-- SM5.1.x is supported
 	-- SM5.2 is not supported because it saw significant
 	--       backwards-incompatible API changes and is now abandoned
-	-- SM5.3.x is supported (beta status because it's not open source yet)
-	return IsSMVersion(5, 0, 12) or IsSMVersion(5, 1) or IsSMVersion(5, 3)
+	if IsStepMania() then
+		return IsProductVersion(5, 0, 12) or IsProductVersion(5, 1)
+	end
+
+	-- OutFox >= 0.4 is supported (beta status because it's not open source yet)
+	if IsOutFox() then
+		return IsMinimumProductVersion(0, 4)
+	end
 end
 
 -- -----------------------------------------------------------------------

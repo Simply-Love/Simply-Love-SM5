@@ -142,8 +142,8 @@ local Overrides = {
 					}
 				}
 
-				-- additional SM 5.3 stock note skins
-				if IsSMVersion(5, 3) then
+				-- additional OutFox stock note skins
+				if IsOutFox() then
 					local stockOutfox = {
 						dance = {
 							"defaultsm5", "delta2019", "outfox-itg", "outfox-note",
