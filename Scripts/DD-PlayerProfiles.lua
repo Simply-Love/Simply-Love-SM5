@@ -41,6 +41,9 @@ local profile_whitelist = {
 	Pacemaker = "boolean",
 	MissBecauseHeld = "boolean",
 	NPSGraphAtTop = "boolean",
+	ErrorBar             = "string",
+	ErrorBarUp           = "boolean",
+	ErrorBarMultiTick    = "boolean",
 
 	ReceptorArrowsPosition = "string",
 

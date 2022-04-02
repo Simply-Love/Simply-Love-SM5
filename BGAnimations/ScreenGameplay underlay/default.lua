@@ -28,6 +28,7 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/ColumnFlashOnMiss.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/ColumnCues.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/MeasureCounter.lua", player, layout.MeasureCounter)
+	t[#t+1] = LoadActor("./PerPlayer/ErrorBar/default.lua", player, layout.ErrorBar)
 	t[#t+1] = LoadActor("./PerPlayer/TargetScore/default.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/SubtractiveScoring.lua", player, layout.SubtractiveScoring)
 end
