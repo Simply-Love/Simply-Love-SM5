@@ -110,16 +110,16 @@ local text = LoadFont("Common Normal")..{
 				self:x(52)
 			end
 		else
-			self:x(SL_WideScale(6,130))
+			self:x(SL_WideScale(6,55))
 			if NoteFieldIsCentered then
-				self:x(69)
+				self:x(26)
 			end
 			if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
 				self:x(180)
 			end
 		end
 
-		self:y( -self:GetHeight()/2 - 2 )
+		self:y( -self:GetHeight()/2 )
 		self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
 	end,
 }

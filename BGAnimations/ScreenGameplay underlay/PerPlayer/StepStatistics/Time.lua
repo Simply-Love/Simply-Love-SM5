@@ -4,6 +4,7 @@ local SongPosition = GAMESTATE:GetPlayerState(player):GetSongPosition()
 local rate = SL.Global.ActiveModifiers.MusicRate
 local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
 local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- -----------------------------------------------------------------------
 -- reference to the BitmapText actor that will display elapsed time (current BitmapText)
@@ -105,23 +106,25 @@ local seconds_offset = 0
 
 local Update = function(af, delta)
 	if not alive then return end
+	local elapsedtime
+	elapsedtime = (SongPosition:GetMusicSeconds() / rate) +  seconds_offset
 
 	-- SongPosition:GetMusicSeconds() can be negative for a bit at
 	-- the beginnging depending on how the stepartist set the offset
 	-- don't show negative time; just use 0
-	if SongPosition:GetMusicSeconds() < 0 then
+	if SongPosition:GetMusicSeconds() <= 0 then
 		curBMT:settext(fmt(seconds_offset))
 		remBMT:settext(fmt(totalseconds))
 		return
 	end
 	
 	-- Don't let time remaining go negative and don't let elapsed time go beyond song length. (When not in course mode)
-	if not GAMESTATE:IsCourseMode() and SongPosition:GetMusicSeconds() >= totalseconds then
+	if not GAMESTATE:IsCourseMode() and elapsedtime >= totalseconds then
 		remBMT:settext("0:00")
 		curBMT:settext( fmt(totalseconds) )
 	else
-		curBMT:settext( fmt((SongPosition:GetMusicSeconds() / rate) +  seconds_offset) )
-		remBMT:settext( fmt(totalseconds - ( (SongPosition:GetMusicSeconds() / rate) +  seconds_offset) ) )
+		curBMT:settext(fmt(elapsedtime))
+		remBMT:settext( fmt(totalseconds - elapsedtime) )
 	end
 end
 
@@ -130,7 +133,11 @@ end
 local af = Def.ActorFrame{}
 af.InitCommand=function(self)
 	self:SetUpdateFunction(Update)
-	self:xy((GAMESTATE:IsSideJoined(0) and -220 or 80),0)
+	self:xy((GAMESTATE:IsSideJoined(0) and -340 or 35),4)
+	if NoteFieldIsCentered then
+		self:x(GAMESTATE:IsSideJoined(0) and -275 or 55)
+		self:zoom(0.9)
+	end
 end
 
 af.CurrentSongChangedMessageCommand=function(self,params)
@@ -154,8 +161,8 @@ end
 -- current time label
 
 af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Elapsed") ),
-	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.833) 
+	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Elapsed")..":" ),
+	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.7) 
 	if P1 then
 		self:x(180)
 	end
@@ -168,6 +175,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		curBMT = self
 		self:horizalign(left):xy(0,0)
+		self:zoom(0.9)
 		if P1 then
 			self:x(180)
 		end
@@ -188,8 +196,8 @@ af[#af+1] = LoadFont("Common Normal")..{
 
 -- remaining time label
 af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining") ),
-	InitCommand=function(self) self:horizalign(right):xy(-6, 20):zoom(0.833) 
+	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining")..":"	),
+	InitCommand=function(self) self:horizalign(right):xy(-6, 18):zoom(0.7) 
 	if P1 then
 		self:x(180)
 	end
@@ -202,7 +210,8 @@ af[#af+1] = LoadFont("Common Normal")..{
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
 		remBMT = self
-		self:horizalign(left):xy(0,20)
+		self:horizalign(left):xy(0,18)
+		self:zoom(0.9)
 		if P1 then
 			self:x(180)
 		end
@@ -227,11 +236,11 @@ af[#af+1] = LoadFont("Common Normal")..{
 
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
-		self:horizalign(right):xy(-6, 40):zoom(0.833)
+		self:horizalign(right):xy(-6, 36):zoom(0.7)
 		if P1 then
 			self:x(180)
 		end
-		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course") or THEME:GetString("ScreenGameplay", "Song")
+		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course")..":" or THEME:GetString("ScreenGameplay", "Song")..":"
 		self:settext( ("%s "):format(s) )
 	end
 }
@@ -240,7 +249,8 @@ af[#af+1] = LoadFont("Common Normal")..{
 -- song duration in normal gameplay, overall course duration in CourseMode
 af[#af+1] = LoadFont("Common Normal")..{
 	InitCommand=function(self)
-		self:horizalign(left):xy(0,40)
+		self:horizalign(left):xy(0,36)
+		self:zoom(0.9)
 		if P1 then
 			self:x(180)
 		end

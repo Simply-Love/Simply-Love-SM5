@@ -10,6 +10,7 @@ local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local stylename = GAMESTATE:GetCurrentStyle():GetName()
 
 if (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
+or (not IsUltraWide and stylename == "versus")
 or (GetNotefieldWidth() > _screen.w/2)
 or (NoteFieldIsCentered and not IsUsingWideScreen())
 or (not IsUltraWide and stylename ~= "single")
@@ -86,9 +87,11 @@ af[#af+1] = Def.ActorFrame{
 	end,
 
 	LoadActor("./Banner.lua", player),
-	LoadActor("./JudgmentLabels.lua", player),
-	LoadActor("./JudgmentNumbers.lua", player),
+	LoadActor("./TapNoteJudgments.lua", {player, true}), -- second argument is if it has labels or not
+	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
+	LoadActor("./SongInformation.lua", player), -- Song title and artist (also #song in a course)
+	
 }
 
 if IsServiceAllowed(SL.GrooveStats.GetScores) and GAMESTATE:GetNumSidesJoined() == 1 then
