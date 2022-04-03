@@ -5,8 +5,9 @@
 - After selecting a profile you are taken directly to either Song or Course select based on what you last played.
 - Added Total Measure count and Density % on song select.
 - Single & Double are now differentiated on ScreenSelectMusicDD
-- Random sounds added by the user will now play when a World Record is achieved.
-- Column Cues added in player options to show when an arrow is coming.
+- Sounds added by the user will now be randomly selected to play when a World Record is achieved.
+- Column Cues added in player options to show where an arrow is coming.
+- Error Bar added in player options.
 - Save machine score after every song.
 - Dropping support for 4:3 displays in favor of not removing features due to screen real estate.
 
@@ -73,8 +74,6 @@ There is now a folder at "Digital Dance/Sounds/WRSounds" where you can add any .
 Upon achieving a World Record with the Groovestats Launcher enabled the theme will randomly select a sound to play from that folder.
 If no sounds are present nothing will play.
 Alternatively if you want it to always play the same sound you can add just one file.
-
-WARNING: Any sound played this way WILL NOT STOP PLAYING until it's done or if you close Stepmania. So ideally you'd use short sound effects and not whole songs.
 
 # ------------ How to use a profile picture ------------
 

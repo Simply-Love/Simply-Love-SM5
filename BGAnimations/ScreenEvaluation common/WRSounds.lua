@@ -17,12 +17,28 @@ PlayRandomWRSoundMessageCommand=function(self)
 		-- don't try to play a sound if the folder is empty.
 		if #Sounds ~= 0 then
 			RandomSound = Sounds[math.random(#Sounds)]
-			SOUND:PlayOnce(RandomSound)
+			self:playcommand("StartSound")
 		end
 		FirstPass = false
 	end
 end,
 
+Def.Sound{
+File=RandomSound,
+IsAction=false,
+
+StartSoundCommand=function(self)
+self:play()
+end,
+
+StopWRSoundMessageCommand=function(self)
+self:stop()
+end,
+
+},
+
+
 }
+
 
 return af
