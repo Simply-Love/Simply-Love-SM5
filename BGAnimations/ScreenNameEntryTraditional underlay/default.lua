@@ -151,8 +151,10 @@ for i=1,NumStages do
 		Name="SongName"..i,
 		InitCommand=cmd(xy, _screen.cx, 54; maxwidth, 294),
 		OnCommand=function(self)
-			if SongOrCourse then
-				self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
+			if string.match(tostring(SongOrCourse), "Course") then
+				self:settext(SongOrCourse:GetDisplayFullTitle() or "???")
+			else
+				self:settext(SongOrCourse:GetDisplayMainTitle())
 			end
 		end
 	}
