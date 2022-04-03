@@ -1,3 +1,6 @@
+-- don't run this in course mode (for now)
+if GAMESTATE:IsCourseMode() then return end
+
 local player = ...
 
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
