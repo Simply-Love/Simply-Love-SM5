@@ -19,6 +19,15 @@ local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("EX"):visible(false)
 	eventAf:GetChild("BodyText"):diffuse(Color.White)
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(RpgYellow)
+	
+	local leaderboard = eventAf:GetChild("Leaderboard")
+	for i=1, NumEntries do
+		local entry = leaderboard:GetChild("LeaderboardEntry"..i)
+		entry:GetChild("Rank"):diffuse(Color.White)
+		entry:GetChild("Name"):diffuse(Color.White)
+		entry:GetChild("Score"):diffuse(Color.White)
+		entry:GetChild("Date"):diffuse(Color.White)
+	end
 end
 
 local SetItlStyle = function(eventAf)
@@ -31,6 +40,15 @@ local SetItlStyle = function(eventAf)
 	eventAf:GetChild("EX"):diffuse(Color.White):visible(false)
 	eventAf:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
+	
+	local leaderboard = eventAf:GetChild("Leaderboard")
+	for i=1, NumEntries do
+		local entry = leaderboard:GetChild("LeaderboardEntry"..i)
+		entry:GetChild("Rank"):diffuse(Color.Black)
+		entry:GetChild("Name"):diffuse(Color.Black)
+		entry:GetChild("Score"):diffuse(Color.Black)
+		entry:GetChild("Date"):diffuse(Color.Black)
+	end
 end
 
 local SetEntryText = function(rank, name, score, date, actor)
@@ -639,7 +657,6 @@ for player in ivalues(PlayerNumber) do
 		af3[#af3+1] = Def.ActorFrame{
 			Name="LeaderboardEntry"..i,
 			InitCommand=function(self)
-				self:diffuse(Color.White)
 				self:x(-(paneWidth-paneWidth2Player)/2)
 				if NumEntries % 2 == 1 then
 					self:y(RowHeight*(i - (NumEntries+1)/2) )
@@ -652,7 +669,6 @@ for player in ivalues(PlayerNumber) do
 				Name="Rank",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(Color.White)
 					self:horizalign(right)
 					self:maxwidth(30)
 					self:x(-paneWidth2Player/2 + 30 + borderWidth)
@@ -663,7 +679,6 @@ for player in ivalues(PlayerNumber) do
 				Name="Name",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(Color.White)
 					self:horizalign(center)
 					self:maxwidth(130)
 					self:x(-paneWidth2Player/2 + 100)
@@ -674,7 +689,6 @@ for player in ivalues(PlayerNumber) do
 				Name="Score",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(Color.White)
 					self:horizalign(right)
 					self:x(paneWidth2Player/2-borderWidth)
 				end,
@@ -684,7 +698,6 @@ for player in ivalues(PlayerNumber) do
 				Name="Date",
 				Text="",
 				InitCommand=function(self)
-					self:diffuse(Color.White)
 					self:horizalign(right)
 					self:x(paneWidth2Player/2 + 100 - borderWidth)
 					self:visible(GAMESTATE:GetNumSidesJoined() == 1)
