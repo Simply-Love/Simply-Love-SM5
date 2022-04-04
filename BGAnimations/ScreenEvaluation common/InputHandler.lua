@@ -22,8 +22,8 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- FIXME: num_panes won't be accurate if any panes were nil,
 --        so this is more like "validation" than validation
 
-local primary_i   = 1
-local secondary_i = 2
+local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_panes)
+local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
 
 -- -----------------------------------------------------------------------
 -- initialize local tables (panes, active_pane) for the the input handling function to use
@@ -70,7 +70,7 @@ end
 -- -----------------------------------------------------------------------
 -- don't allow double to initialize into a configuration like
 -- EvalPanePrimary=2
--- EvalPaneSecondary=4
+-- EvalPaneSecondary=3
 -- because Pane2 is full-width in double and the other pane is supposed to be hidden when it is visible
 
 if style == "OnePlayerTwoSides" then
@@ -94,7 +94,7 @@ if style == "OnePlayerTwoSides" then
 
 		-- and show the next available pane that doesn't match primary and isn't also full-width
 		for i=1,#panes[ocn] do
-			active_pane[ocn] = (active_pane[ocn] % #panes[ocn]) + 1
+			active_pane[ocn] = (active_pane[ocn] % #panes[ocn]) + 2
 
 			if active_pane[ocn] ~= active_pane[cn]
 			and not panes[cn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble")
@@ -151,7 +151,7 @@ return function(event)
 
 			-- double
 			if style == "OnePlayerTwoSides" then
-				-- if this controller is switching to Pane2 or Pane5, both of which take over both pane widths
+				-- if this controller is switching to Pane3 or Pane6, both of which take over both pane widths
 				if panes[cn][active_pane[cn]]:GetChild(""):GetCommand("ExpandForDouble") then
 
 					-- hide all panes for both controllers
@@ -164,7 +164,7 @@ return function(event)
 					panes[cn][active_pane[cn]]:visible(true)
 
 
-				-- if this controller is switching panes while the OTHER controller was viewing Pane2 or Pane5
+				-- if this controller is switching panes while the OTHER controller was viewing Pane3 or Pane6
 				elseif panes[ocn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble") then
 					panes[ocn][active_pane[ocn]]:visible(false)
 					panes[cn][active_pane[cn]]:visible(true)

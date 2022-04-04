@@ -28,6 +28,36 @@ local GetMachineTag = function(gsEntry)
 	return ""
 end
 
+local GetJudgmentCounts = function(player)
+	local counts = GetExJudgmentCounts(player)
+	local translation = {
+		["W0"] = "fantasticPlus",
+		["W1"] = "fantastic",
+		["W2"] = "excellent",
+		["W3"] = "great",
+		["W4"] = "decent",
+		["W5"] = "wayOff",
+		["Miss"] = "miss",
+		["totalSteps"] = "totalSteps",
+		["Holds"] = "holdsHeld",
+		["totalHolds"] = "totalHolds",
+		["Mines"] = "minesHit",
+		["totalMines"] = "totalMines",
+		["Rolls"] = "rollsHeld",
+		["totalRolls"] = "totalRolls"
+	}
+
+	local judgmentCounts = {}
+
+	for key, value in pairs(counts) do
+		if translation[key] ~= nil then
+			judgmentCounts[translation[key]] = value
+		end
+	end
+
+	return judgmentCounts
+end
+
 local AutoSubmitRequestProcessor = function(res, overlay)
 	local P1SubmitText = overlay:GetChild("AutoSubmitMaster"):GetChild("P1SubmitText")
 	local P2SubmitText = overlay:GetChild("AutoSubmitMaster"):GetChild("P2SubmitText")
@@ -38,7 +68,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 	end
 	
 	local panes = overlay:GetChild("Panes")
-	local hasRpgData = false
+	local shouldDisplayOverlay = false
 
 	if res["status"] == "fail" then
 		if P1SubmitText then P1SubmitText:queuecommand("SubmitFailed") end
@@ -56,7 +86,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 			local entryNum = 1
 			local rivalNum = 1
 			local data = res["status"] == "success" and res["data"] or nil
-			-- Pane 7 is the groovestats highscores pane.
+			-- Pane 8 is the groovestats highscores pane.
 			local highScorePane = panes:GetChild("Pane7_SideP"..i):GetChild("")
 			local QRPane = panes:GetChild("Pane6_SideP"..i):GetChild("")
 
@@ -119,11 +149,11 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 						end
 					end
 					
-					-- Only display the RPG on the sides that are actually joined.
-					if ToEnumShortString("PLAYER_P"..i) == "P"..side and data[playerStr]["rpg"] then
-						local rpgAf = overlay:GetChild("AutoSubmitMaster"):GetChild("RpgOverlay"):GetChild("P"..i.."RpgAf")
-						rpgAf:playcommand("Show", {data=data[playerStr]["rpg"]})
-						hasRpgData = true
+					-- Only display the overlay on the sides that are actually joined.
+					if ToEnumShortString("PLAYER_P"..i) == "P"..side and (data[playerStr]["rpg"] or data[playerStr]["itl"]) then
+						local eventAf = overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):GetChild("P"..i.."EventAf")
+						eventAf:playcommand("Show", {data=data[playerStr]})
+						shouldDisplayOverlay = true
 					end
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
@@ -176,9 +206,9 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 		end
 	end
 
-	if hasRpgData then
-		overlay:GetChild("AutoSubmitMaster"):GetChild("RpgOverlay"):visible(true)
-		overlay:queuecommand("DirectInputToRpgHandler")
+	if shouldDisplayOverlay then
+		overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):visible(true)
+		overlay:queuecommand("DirectInputToEventOverlayHandler")
 	end
 end
 
@@ -217,6 +247,8 @@ local af = Def.ActorFrame {
 								apiKey=SL[pn].ApiKey,
 								rate=rate,
 								score=score,
+								judgmentCounts=GetJudgmentCounts(player),
+								usedCmod=(GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil),
 								comment=CreateCommentString(player),
 								profileName=profileName,
 							}
@@ -346,6 +378,6 @@ af[#af+1] = LoadFont("Common Bold")..{
 	end,
 }
 
-af[#af+1] = LoadActor("./RpgOverlay.lua")
+af[#af+1] = LoadActor("./EventOverlay.lua")
 
 return af

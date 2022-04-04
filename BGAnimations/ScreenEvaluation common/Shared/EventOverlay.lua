@@ -1,6 +1,7 @@
 local NumEntries = 13
 local RowHeight = 24
 local RpgYellow = color("0.902,0.765,0.529,1")
+local ItlPink = color("1,0.2,0.406,1")
 
 local paneWidth1Player = 330
 local paneWidth2Player = 230
@@ -8,6 +9,29 @@ local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or p
 local paneHeight = 360
 local borderWidth = 2
 
+local SetRpgStyle = function(eventAf)
+	eventAf:GetChild("MainBorder"):diffuse(RpgYellow)
+	eventAf:GetChild("BackgroundImage"):visible(true)
+	eventAf:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.3"))
+	eventAf:GetChild("HeaderBorder"):diffuse(RpgYellow)
+	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
+	eventAf:GetChild("Header"):diffuse(RpgYellow)
+	eventAf:GetChild("EX"):visible(false)
+	eventAf:GetChild("BodyText"):diffuse(Color.White)
+	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(RpgYellow)
+end
+
+local SetItlStyle = function(eventAf)
+	eventAf:GetChild("MainBorder"):diffuse(ItlPink)
+	eventAf:GetChild("BackgroundImage"):visible(false)
+	eventAf:GetChild("BackgroundColor"):diffuse(Color.White):diffusealpha(1)
+	eventAf:GetChild("HeaderBorder"):diffuse(ItlPink)
+	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
+	eventAf:GetChild("Header"):diffuse(Color.White)
+	eventAf:GetChild("EX"):diffuse(Color.White):visible(false)
+	eventAf:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
+	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
+end
 
 local SetEntryText = function(rank, name, score, date, actor)
 	if actor == nil then return end
@@ -18,10 +42,10 @@ local SetEntryText = function(rank, name, score, date, actor)
 	actor:GetChild("Date"):settext(date)
 end
 
-local SetLeaderboardData = function(rpgAf, rpgData)
+local SetLeaderboardData = function(eventAf, leaderboardData)
 	local entryNum = 1
 	local rivalNum = 1
-	local leaderboard = rpgAf:GetChild("Leaderboard")
+	local leaderboard = eventAf:GetChild("Leaderboard")
 	
 	-- Hide the rival and self highlights.
 	-- They will be unhidden and repositioned as needed below.
@@ -30,7 +54,7 @@ local SetLeaderboardData = function(rpgAf, rpgData)
 	end
 	leaderboard:GetChild("Self"):visible(false)
 
-	for gsEntry in ivalues(rpgData["rpgLeaderboard"]) do
+	for gsEntry in ivalues(leaderboardData) do
 		local entry = leaderboard:GetChild("LeaderboardEntry"..entryNum)
 		SetEntryText(
 			gsEntry["rank"]..".",
@@ -85,7 +109,7 @@ local SetLeaderboardData = function(rpgAf, rpgData)
 	end
 end
 
-local GetPaneFunctions = function(rpgAf, rpgData, player)
+local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local score, scoreDelta, rate, rateDelta = 0, 0, 0, 0
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local paneTexts = {}
@@ -174,9 +198,12 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 	end
 
 	for text in ivalues(paneTexts) do
-		table.insert(paneFunctions, function(rpgAf)
-			rpgAf:GetChild("Leaderboard"):visible(false)
-			local bodyText = rpgAf:GetChild("BodyText")
+		table.insert(paneFunctions, function(eventAf)
+			SetRpgStyle(eventAf)
+			eventAf:GetChild("Header"):settext(rpgData["name"])
+			eventAf:GetChild("Leaderboard"):visible(false)
+			local bodyText = eventAf:GetChild("BodyText")
+			
 			-- We don't want text to run out through the bottom.
 			-- Incrementally adjust the zoom while adjust wrapwdithpixels until it fits.
 			-- Not the prettiest solution but it works.
@@ -243,16 +270,131 @@ local GetPaneFunctions = function(rpgAf, rpgData, player)
 		end)
 	end
 
-	table.insert(paneFunctions, function(rpgAf)
-		rpgAf:GetChild("Leaderboard"):visible(true)
-		rpgAf:GetChild("BodyText"):visible(false)
+	table.insert(paneFunctions, function(eventAf)
+		SetRpgStyle(eventAf)
+		eventAf:GetChild("Header"):settext(rpgData["name"])
+		SetLeaderboardData(eventAf, rpgData["rpgLeaderboard"])
+		eventAf:GetChild("Leaderboard"):visible(true)
+		eventAf:GetChild("BodyText"):visible(false)
+	end)
+
+	return paneFunctions
+end
+
+local GetItlPaneFunctions = function(eventAf, itlData, player)
+	local pn = ToEnumShortString(player)
+	local score = CalculateExScore(player) * 100
+	local paneTexts = {}
+	local paneFunctions = {}
+
+	scoreDelta = itlData["scoreDelta"]/100.0
+
+	previousRankingPointTotal = itlData["previousRankingPointTotal"]
+	currentRankingPointTotal = itlData["currentRankingPointTotal"]
+	rankingDelta = currentRankingPointTotal - previousRankingPointTotal
+
+	previousPointTotal = itlData["previousPointTotal"]
+	currentPointTotal = itlData["currentPointTotal"]
+	totalDelta = currentPointTotal - previousPointTotal
+
+	table.insert(paneTexts, string.format(
+		"EX Score: %.2f%% (%+.2f%%)\n"..
+		"Ranking: %d (%+d)\n"..
+		"Total: %d (%+d)\n\n",
+		score, scoreDelta,
+		currentRankingPointTotal, rankingDelta,
+		currentPointTotal, totalDelta
+	))
+
+
+	for text in ivalues(paneTexts) do
+		table.insert(paneFunctions, function(eventAf)
+			SetItlStyle(eventAf)
+			eventAf:GetChild("Header"):settext(itlData["name"])
+			eventAf:GetChild("Leaderboard"):visible(false)
+			eventAf:GetChild("EX"):visible(true)
+			local bodyText = eventAf:GetChild("BodyText")
+
+			-- We don't want text to run out through the bottom.
+			-- Incrementally adjust the zoom while adjust wrapwdithpixels until it fits.
+			-- Not the prettiest solution but it works.
+			for zoomVal=1.0, 0.1, -0.05 do
+				bodyText:zoom(zoomVal)
+				bodyText:wrapwidthpixels(paneWidth/(zoomVal))
+				bodyText:settext(text):visible(true)
+				Trace(bodyText:GetHeight() * zoomVal)
+				if bodyText:GetHeight() * zoomVal <= paneHeight - RowHeight*1.5 then
+					break
+				end
+			end
+			local offset = 0
+
+			while offset <= #text do
+				-- Search for all numbers (decimals included).
+				-- They may include the +/- prefixes and also potentially %/x as suffixes.
+				local i, j = string.find(text, "[-+]?[%d]*%.?[%d]+[%%x]?", offset)
+				-- No more numbers found. Break out.
+				if i == nil then
+					break
+				end
+				-- Extract the actual numeric text.
+				local substring = string.sub(text, i, j)
+
+				-- Numbers should be a pinkish hue by default.
+				local clr = ItlPink
+
+				-- Except negatives should be red.
+				if substring:sub(1, 1) == "-" then
+					clr = Color.Red
+				-- And positives should be green.
+				elseif substring:sub(1, 1) == "+" then
+					clr = Color.Green
+				end
+
+				bodyText:AddAttribute(i-1, {
+					Length=#substring,
+					Diffuse=clr
+				})
+
+				offset = j + 1
+			end
+
+			offset = 0
+
+			while offset <= #text do
+				-- Search for all quoted strings.
+				local i, j = string.find(text, "\".-\"", offset)
+				-- No more found. Break out.
+				if i == nil then
+					break
+				end
+				-- Extract the actual numeric text.
+				local substring = string.sub(text, i, j)
+
+				bodyText:AddAttribute(i-1, {
+					Length=#substring,
+					Diffuse=Color.Green
+				})
+
+				offset = j + 1
+			end
+		end)
+	end
+
+	table.insert(paneFunctions, function(eventAf)
+		SetItlStyle(eventAf)
+		SetLeaderboardData(eventAf, itlData["itlLeaderboard"])
+		eventAf:GetChild("Header"):settext(itlData["name"])
+		eventAf:GetChild("Leaderboard"):visible(true)
+		eventAf:GetChild("EX"):visible(true)
+		eventAf:GetChild("BodyText"):visible(false)
 	end)
 
 	return paneFunctions
 end
 
 local af = Def.ActorFrame{
-	Name="RpgOverlay",
+	Name="EventOverlay",
 	InitCommand=function(self)
 		self:visible(false)
 	end,
@@ -270,7 +412,7 @@ local af = Def.ActorFrame{
 
 for player in ivalues(PlayerNumber) do
 	af[#af+1] = Def.ActorFrame{
-		Name=ToEnumShortString(player).."RpgAf",
+		Name=ToEnumShortString(player).."EventAf",
 		InitCommand=function(self)
 			self.PaneFunctions = {}
 			self:visible(false)
@@ -284,16 +426,29 @@ for player in ivalues(PlayerNumber) do
 			self:visible(GAMESTATE:IsSideJoined(player))
 		end,
 		ShowCommand=function(self, params)
-			self:GetChild("Header"):settext(params.data["name"])
-			SetLeaderboardData(self, params.data)
-			self.PaneFunctions = GetPaneFunctions(self, params.data, player)
+			self.PaneFunctions = {}
+
+			if params.data["rpg"] then
+				local rpgData = params.data["rpg"]
+				for func in ivalues(GetRpgPaneFunctions(self, rpgData, player)) do
+					self.PaneFunctions[#self.PaneFunctions+1] = func
+				end
+			end
+
+			if params.data["itl"] then
+				local itlData = params.data["itl"]
+				for func in ivalues(GetItlPaneFunctions(self, itlData, player)) do
+					self.PaneFunctions[#self.PaneFunctions+1] = func
+				end
+			end
+			
 			self.PaneIndex = 1
 			if #self.PaneFunctions > 0 then
 				self.PaneFunctions[self.PaneIndex](self)
 				self:visible(true)
 			end
 		end,
-		RpgInputEventMessageCommand=function(self, event)
+		EventOverlayInputEventMessageCommand=function(self, event)
 			if #self.PaneFunctions == 0 then return end
 
 			if event.PlayerNumber == player then
@@ -321,13 +476,15 @@ for player in ivalues(PlayerNumber) do
 		end,
 		-- White border
 		Def.Quad {
+			Name="MainBorder",
 			InitCommand=function(self)
-				self:diffuse(RpgYellow):zoomto(paneWidth + borderWidth, paneHeight + borderWidth + 1)
+				self:zoomto(paneWidth + borderWidth, paneHeight + borderWidth + 1)
 			end
 		},
 
 		-- Main Black cement background
 		Def.Sprite {
+			Name="BackgroundImage",
 			Texture=THEME:GetPathG("", "/SRPG5/Overlay-BG.png"),
 			InitCommand=function(self)
 				self:zoomto(paneWidth, paneHeight)
@@ -336,23 +493,25 @@ for player in ivalues(PlayerNumber) do
 
 		-- A quad that goes over the black cement background to try and lighten/darken it however we want.
 		Def.Quad {
+			Name="BackgroundColor",
 			InitCommand=function(self)
-				self:diffuse(color("0,0,0,0.3")):zoomto(paneWidth, paneHeight)
+				self:zoomto(paneWidth, paneHeight)
 			end
 		},
 
 		-- Header border
 		Def.Quad {
+			Name="HeaderBorder",
 			InitCommand=function(self)
-				self:diffuse(RpgYellow):zoomto(paneWidth + borderWidth, RowHeight + borderWidth + 1):y(-paneHeight/2 + RowHeight/2)
+				self:zoomto(paneWidth + borderWidth, RowHeight + borderWidth + 1):y(-paneHeight/2 + RowHeight/2)
 			end
 		},
 
 		-- Green Header
 		Def.Quad {
+			Name="HeaderBackground",
 			InitCommand=function(self)
-				self:diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
-					:zoomto(paneWidth, RowHeight):y(-paneHeight/2 + RowHeight/2)
+				self:zoomto(paneWidth, RowHeight):y(-paneHeight/2 + RowHeight/2)
 			end
 		},
 
@@ -362,18 +521,28 @@ for player in ivalues(PlayerNumber) do
 			Text="Stamina RPG",
 			InitCommand=function(self)
 				self:zoom(0.5)
-				self:diffuse(RpgYellow)
 				self:y(-paneHeight/2 + 12)
 			end
 		},
 
+		-- EX Score text (if applicable)
+		LoadFont("Wendy/_wendy small").. {
+			Name="EX",
+			Text="EX",
+			InitCommand=function(self)
+				self:zoom(0.5)
+				self:y(-paneHeight/2 + 12)
+				self:x(paneWidth/2 - 18)
+				self:visible(false)
+			end
+		},
+		
 		-- Main Body Text
 		LoadFont("Miso/_miso").. {
 			Name="BodyText",
 			Text="",
 			InitCommand=function(self)
 				self:valign(0)
-				self:diffuse(Color.White)
 				self:wrapwidthpixels(paneWidth)
 				self:y(-paneHeight/2 + RowHeight * 3/2)
 			end,
@@ -408,7 +577,7 @@ for player in ivalues(PlayerNumber) do
 				Name="Text",
 				Text="More Information",
 				InitCommand=function(self)
-					self:diffuse(RpgYellow)
+					self:addy(-2)
 				end,
 			},
 	

@@ -3,18 +3,29 @@ local player, controller = unpack(...)
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
+SM(SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total)
 local TapNoteScores = {
-	Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
+	Types = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
+	Colors = {
+		SL.JudgmentColors["FA+"][1],
+		SL.JudgmentColors["FA+"][2],
+		SL.JudgmentColors["DD"][2],
+		SL.JudgmentColors["DD"][3],
+		SL.JudgmentColors["DD"][4],
+		SL.JudgmentColors["DD"][5],
+		SL.JudgmentColors["DD"][6],
+	},
 	-- x values for P1 and P2
 	x = { P1=64, P2=94 }
 }
 
 local RadarCategories = {
-	Types = { 'Holds', 'Mines', 'Hands', 'Rolls' },
+	Types = { 'Holds', 'Mines', 'Rolls' },
 	-- x values for P1 and P2
 	x = { P1=-180, P2=218 }
 }
 
+local counts = GetExJudgmentCounts(player)
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)self:zoom(0.8):xy(90,_screen.cy-24) end,
@@ -26,45 +37,56 @@ local t = Def.ActorFrame{
 	end
 }
 
+-- The FA+ window shares the status as the FA window.
+-- If the FA window is disabled, then we consider the FA+ window disabled as well.
+local windows = {SL.Global.ActiveModifiers.TimingWindows[1]} 
+for v in ivalues( SL.Global.ActiveModifiers.TimingWindows) do
+	windows[#windows + 1] = v
+end
+
+
 -- do "regular" TapNotes first
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
-	local number = pss:GetTapNoteScores( "TapNoteScore_"..window )
-
+	local number = counts[window] or 0
+	
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
 		Font="Wendy/_ScreenEvaluation numbers",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
-			self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
-			-- if some TimingWindows were turned off, the leading 0s should not
-			-- be colored any differently than the (lack of) JudgmentNumber,
-			-- so load a unique Metric group.
-			local gmods = SL.Global.ActiveModifiers
-			if gmods.TimingWindows[i]==false and i ~= #TapNoteScores.Types then
-				self:Load("RollingNumbersEvaluationNoDecentsWayOffs")
-				self:diffuse(color("#444444"))
 
-			-- Otherwise, We want leading 0s to be dimmed, so load the Metrics
-			-- group "RollingNumberEvaluationA"	which does that for us.
-			else
-				self:Load("RollingNumbersEvaluationA")
-			end
+			self:diffuse( TapNoteScores.Colors[i] )
+
+			self:Load("RollingNumbersEvaluationA")
 		end,
 		BeginCommand=function(self)
 			self:x( TapNoteScores.x[ToEnumShortString(controller)] )
-			self:y((i-1)*35 -20)
+			self:y((i-1)*32 -24)
 			self:targetnumber(number)
 		end
 	}
 
 end
 
-
--- then handle holds, mines, hands, rolls
+-- then handle hands/ex, holds, mines, rolls
 for index, RCType in ipairs(RadarCategories.Types) do
-	local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-	local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+	if index == 1 then
+		t[#t+1] = LoadFont("Wendy/_wendy white")..{
+			Name="Percent",
+			Text=("%.2f"):format(CalculateExScore(player)),
+			InitCommand=function(self)
+				self:horizalign(right):zoom(0.4)
+				self:x( ((controller == PLAYER_1) and -114) or 286 )
+				self:y(47)
+				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+			end
+		}
+	end
+
+	local possible = counts["total"..RCType]
+	-- Mines should be displayed as mines dodged, while counts show mines hit.
+	local performance = RCType == "Mines" and (possible - counts[RCType]) or counts[RCType] 
 	possible = clamp(possible, 0, 999)
 
 	-- player performance value
@@ -74,7 +96,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
 		BeginCommand=function(self)
 			self:x( RadarCategories.x[ToEnumShortString(controller)] )
-			self:y((index-1)*35 + 53)
+			self:y((index)*35 + 53)
 			self:targetnumber(performance)
 		end
 	}
@@ -84,13 +106,12 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( ((controller == PLAYER_1) and -114) or 286 )
-			self:y((index-1)*35 + 53)
+			self:y(index*35 + 53)
 			self:settext(("/%03d"):format(possible))
 			local leadingZeroAttr = { Length=4-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
 			self:AddAttribute(0, leadingZeroAttr )
 		end
 	}
-
 end
 
 return t

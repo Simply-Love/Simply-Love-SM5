@@ -34,9 +34,12 @@ local PlayerDefaults = {
 				LifeMeterType = "Vertical",
 				MissBecauseHeld = true,
 				NPSGraphAtTop = false,
+				JudgmentTilt = false,
 				ErrorBar = "None",
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
+				ShowFaPlusWindow = false,
+				ShowEXScore = false,
 			}
 			self.Streams = {
 				SongDir = nil,
@@ -57,7 +60,7 @@ local PlayerDefaults = {
 			-- when only a single player is joined (single, double)
 			-- in versus (2 players joined) only EvalPanePrimary will be used
 			self.EvalPanePrimary   = 1 -- large score and judgment counts
-			self.EvalPaneSecondary = 4 -- offset histogram
+			self.EvalPaneSecondary = 2 -- Per-panel judgement breakdown
 			
 			-- The Groovestats API key loaded for this player
 			self.ApiKey = ""
@@ -160,6 +163,14 @@ SL = {
 			color("#c9855e"),	-- peach?
 			color("#ff3030")	-- red (slightly lightened)
 		},
+		["FA+"] = {
+			color("#21CCE8"),	-- blue
+			color("#ffffff"),	-- white
+			color("#e29c18"),	-- gold
+			color("#66c955"),	-- green
+			color("#b45cff"),	-- purple (greatly lightened)
+			color("#ff3030")	-- red (slightly lightened)
+		},
 	},
 	Preferences = {
 		DD = {
@@ -224,6 +235,21 @@ SL = {
 		},
 	},
 	
+	ExWeights = {
+		-- W0 is not necessarily a "real" window.
+		-- In ITG mode it is emulated based off the value of TimingWindowW1 defined
+		-- for FA+ mode.
+		W0=3.5,
+		W1=3,
+		W2=2,
+		W3=1,
+		W4=0,
+		W5=0,
+		Miss=0,
+		LetGo=0,
+		Held=1,
+		HitMine=-1
+	},
 	-- Fields used to determine the existence of the launcher and the
 	-- available GrooveStats services.
 	GrooveStats = {

@@ -65,20 +65,20 @@ for i=1, #TapNoteScores.Types do
 	end
 end
 
--- labels: holds, mines, hands, rolls
+-- labels: hands/ex, holds, mines, rolls
 for index, label in ipairs(RadarCategories) do
-
+	-- Replace hands with the EX score when not in Casual mode.
 	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
-
 	t[#t+1] = LoadFont("Common Normal")..{
-		Text=label,
-		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
-		BeginCommand=function(self)
-			self:x( (controller == PLAYER_1 and -160) or 90 )
-			self:y((index-1)*28 + 41)
-		end
+			Text=label,
+			InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
+			BeginCommand=function(self)
+				self:x( (controller == PLAYER_1 and -160) or 90 )
+				self:y((index-1)*28 + 41)
+			end
 	}
+
 end
 
 return t

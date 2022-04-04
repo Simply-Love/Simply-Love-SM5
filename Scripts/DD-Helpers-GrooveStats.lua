@@ -439,11 +439,12 @@ CreateCommentString = function(player)
 
 	local pn = ToEnumShortString(player)
 	-- If a player CModded, then add that as well.
-	if SL[pn].ActiveModifiers.SpeedModType == "C" then
+	local cmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod()
+	if cmod ~= nil then
 		if #comment ~= 0 then
 			comment = comment .. ", "
 		end
-		comment = comment.."C"..SL[pn].ActiveModifiers.SpeedMod
+		comment = comment.."C"..tostring(cmod)
 	end
 	
 	if #comment == 0 then
