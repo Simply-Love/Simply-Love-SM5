@@ -405,9 +405,12 @@ local Overrides = {
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
-			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			local sl_pn = SL[ToEnumShortString(pn)]
+			local mods = sl_pn.ActiveModifiers
 			mods.ShowFaPlusWindow = list[1]
 			mods.ShowEXScore   = list[2]
+			-- Default to FA+ pane if either options are active.
+			sl_pn.EvalPanePrimary = (list[1] or list[2]) and 8 or 1
 		end
 	},
 	-------------------------------------------------------------------------

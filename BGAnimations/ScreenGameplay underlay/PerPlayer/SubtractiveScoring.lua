@@ -107,7 +107,7 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 		local score = possible - actual
 
 		-- handle floating point equality.
-		if score <= 0.0001 then
+		if score >= 0.0001 then
 			self:settext( ("-%.2f%%"):format(score) )
 		end
 	end

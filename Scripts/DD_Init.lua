@@ -196,6 +196,35 @@ SL = {
 			TimingWindowSecondsMine=0.070000,
 			TimingWindowSecondsRoll=0.350000,
 		},
+		
+		["FA+"] = {
+			TimingWindowAdd=0.0015,
+			RegenComboAfterMiss=5,
+			MaxRegenComboAfterMiss=10,
+			MinTNSToHideNotes="TapNoteScore_W4",
+			HarshHotLifePenalty=true,
+
+			PercentageScoring=true,
+			AllowW1="AllowW1_Everywhere",
+			SubSortByNumSteps=true,
+
+			TimingWindowSecondsW1=0.013500,
+			TimingWindowSecondsW2=0.021500,
+			TimingWindowSecondsW3=0.043000,
+			TimingWindowSecondsW4=0.102000,
+			TimingWindowSecondsW5=0.135000,
+			TimingWindowSecondsHold=0.320000,
+			-- NOTE(teejusb): FA+ mode previously had mines set to
+			-- 65ms instead of the actual window size of 70ms. This
+			-- was to account for "SM5 Mines" but now with the patch here:
+			-- https://gist.github.com/DinsFire64/4a3f763cd3033afd55a176980b32a3b5
+			-- and the development in the thread here:
+			-- https://github.com/stepmania/stepmania/issues/1896
+			-- it's as good as "fixed" for the very very large majority of
+			-- cases so we can set this back to 70ms now.
+			TimingWindowSecondsMine=0.070000,
+			TimingWindowSecondsRoll=0.350000,
+		},
 	},
 	Metrics = {
 		DD = {
