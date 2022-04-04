@@ -4,14 +4,15 @@ local af = args.af
 local already_loaded = {}
 
 -- get a table like { "ITG", "DD" }
-local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."/Graphics/_judgments/", true, false)
+local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."Graphics/_judgments/", true, false)
 
 for profile in ivalues(args.profile_data) do
 	if profile.judgment ~= nil and profile.judgment ~= "" and not FindInTable(profile.judgment, already_loaded) then
 
 		for dir in ivalues(judgment_dirs) do
 
-			local path = ("/%s/Graphics/_judgments/%s/%s"):format(THEME:GetCurrentThemeDirectory(), dir, profile.judgment)
+			-- THEME:GetCurrentThemeDirectory() already has a trailing slash.
+			local path = ("/%sGraphics/_judgments/%s/%s"):format(THEME:GetCurrentThemeDirectory(), dir, profile.judgment)
 			if FILEMAN:DoesFileExist(path) then
 
 				af[#af+1] = Def.Sprite{
