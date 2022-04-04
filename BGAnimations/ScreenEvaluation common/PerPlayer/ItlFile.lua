@@ -8,8 +8,8 @@ local day = DayOfMonth()
 local IsEventActive = function()
 	-- The file is only written to while the event is active.
 	-- These are just placeholder dates.
-	local startTimestamp = 20220331
-	local endTimestamp = 20220330
+	local startTimestamp = 20220325
+	local endTimestamp = 20220624
 
 	local today = year * 10000 + month * 100 + day
 
