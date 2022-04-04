@@ -184,18 +184,26 @@ function Scrolling_NPS_Histogram(player, width, height, desaturation)
 				end
 			end
 
-			visible_verts = {unpack(verts, left_idx, right_idx)}
+			if left_idx == 1 and right_idx == #verts then
+				-- All vertices are visible.
+				-- This saves memory as the assignment here isn't a copy unlike unpack().
+				-- This is necessary for songs like "Blue (Da Ba Dee)" from Crapyard Scent.
+				visible_verts = verts
+			else
+				-- Pick ther vertices to display.
+				visible_verts = {unpack(verts, left_idx, right_idx)}
 
-			if left_idx > 1 then
-				local prev1, prev2, cur1, cur2 = unpack(verts, left_idx-2, left_idx+1)
-				table.insert(visible_verts, 1, interpolate_vert(prev1, cur1, left_offset))
-				table.insert(visible_verts, 2, interpolate_vert(prev2, cur2, left_offset))
-			end
+				if left_idx > 1 then
+					local prev1, prev2, cur1, cur2 = unpack(verts, left_idx-2, left_idx+1)
+					table.insert(visible_verts, 1, interpolate_vert(prev1, cur1, left_offset))
+					table.insert(visible_verts, 2, interpolate_vert(prev2, cur2, left_offset))
+				end
 
-			if right_idx < #verts then
-				local cur1, cur2, next1, next2 = unpack(verts, right_idx-1, right_idx+2)
-				table.insert(visible_verts, interpolate_vert(cur1, next1, right_offset))
-				table.insert(visible_verts, interpolate_vert(cur2, next2, right_offset))
+				if right_idx < #verts then
+					local cur1, cur2, next1, next2 = unpack(verts, right_idx-1, right_idx+2)
+					table.insert(visible_verts, interpolate_vert(cur1, next1, right_offset))
+					table.insert(visible_verts, interpolate_vert(cur2, next2, right_offset))
+				end
 			end
 		end
 	}

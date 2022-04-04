@@ -43,7 +43,11 @@ local af = Def.ActorFrame{
 		LifeMeter = SCREENMAN:GetTopScreen():GetChild("Life"..pn)
 	end,
 	UpdateCommand=function(self)
-		self:sleep(UpdateRate):queuecommand("Update")
+		if UpdateRate ~= nil then
+			self:sleep(UpdateRate):queuecommand("Update")
+		else
+			self:sleep(LifeBaseSampleRate):queuecommand("Update")
+		end
 	end
 }
 
