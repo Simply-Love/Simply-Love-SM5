@@ -48,8 +48,6 @@ local profile_whitelist = {
 	ErrorBarUp           = "boolean",
 	ErrorBarMultiTick    = "boolean",
 
-	ReceptorArrowsPosition = "string",
-
 	PlayerOptionsString = "string",
 }
 
