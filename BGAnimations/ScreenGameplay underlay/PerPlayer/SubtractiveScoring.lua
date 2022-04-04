@@ -33,6 +33,36 @@ else
 end
 
 -- -----------------------------------------------------------------------
+local GetPossibleExScore = function(counts)
+	local best_counts = {}
+
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+
+	for key in ivalues(keys) do
+		local value = counts[key]
+		if value ~= nil then
+			-- Initialize the keys	
+			if best_counts[key] == nil then
+				best_counts[key] = 0
+			end
+
+			-- Upgrade dropped holds/rolls to held.
+			if key == "LetGo" or key == "Held" then
+				best_counts["Held"] = best_counts["Held"] + value
+			-- We never hit any mines.
+			elseif key == "HitMine" then
+				best_counts[key] = 0
+			-- Upgrade to FA+ window.
+			else
+				best_counts["W0"] = best_counts["W0"] + value
+			end
+		end
+	end
+
+	return CalculateExScore(player, best_counts)
+end
+
+-- -----------------------------------------------------------------------
 
 -- the BitmapText actor
 local bmt = LoadFont(font)
@@ -63,13 +93,25 @@ bmt.InitCommand=function(self)
 end
 
 bmt.JudgmentMessageCommand=function(self, params)
-	if player == params.Player then
+	if player == params.Player and not mods.ShowEXScore then
 		tns = ToEnumShortString(params.TapNoteScore)
 		hns = params.HoldNoteScore and ToEnumShortString(params.HoldNoteScore)
 		self:queuecommand("SetScore")
 	end
 end
 
+bmt.ExCountsChangedMessageCommand=function(self, params)
+	if player == params.Player and mods.ShowEXScore then
+		local actual = params.ExScore
+		local possible = GetPossibleExScore(params.ExCounts)
+		local score = possible - actual
+
+		-- handle floating point equality.
+		if score <= 0.0001 then
+			self:settext( ("-%.2f%%"):format(score) )
+		end
+	end
+end
 
 -- This is a bit convoluted!
 -- If this is a W2/undesirable_judgment, then we want to count up to 10 with them,

@@ -3,7 +3,6 @@ local player, controller = unpack(...)
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-SM(SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total)
 local TapNoteScores = {
 	Types = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
 	Colors = {

@@ -44,10 +44,26 @@ return Def.ActorFrame{
 		local frame = TNSFrames[ param.TapNoteScore ]
 		if not frame then return end
 
-		-- most judgment sprite sheets have 12 frames; 6 for early judgments, 6 for late judgments
+		-- If the judgment font contains a graphic for the additional white fantastic window...
+		if sprite:GetNumStates() == 7 or sprite:GetNumStates() == 14 then
+			if ToEnumShortString(param.TapNoteScore) == "W1" then
+				if mods.ShowFaPlusWindow then
+					-- If this W1 judgment fell outside of the FA+ window, show the white window
+					if not IsW0Judgment(param, player) then
+						frame = 1
+					end
+				end
+				-- We don't need to adjust the top window otherwise.
+			else
+				-- Everything outside of W1 needs to be shifted down a row.
+				frame = frame + 1
+			end
+		end
+
+		-- most judgment sprite sheets have 12 or 14 frames; 6/7 for early judgments, 6/7 for late judgments
 		-- some (the original 3.9 judgment sprite sheet for example) do not visibly distinguish
-		-- early/late judgments, and thus only have 6 frames
-		if sprite:GetNumStates() == 12 then
+		-- early/late judgments, and thus only have 6/7 frames
+		if sprite:GetNumStates() == 12 or sprite:GetNumStates() == 14 then
 			frame = frame * 2
 			if not param.Early then frame = frame + 1 end
 		end
