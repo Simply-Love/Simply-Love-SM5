@@ -240,7 +240,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 		if P1 then
 			self:x(180)
 		end
-		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course")..":" or THEME:GetString("ScreenGameplay", "Song")..":"
+		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course")..":" or THEME:GetString("ScreenGameplay", "Length")..":"
 		self:settext( ("%s "):format(s) )
 	end
 }

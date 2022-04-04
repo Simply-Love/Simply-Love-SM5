@@ -23,7 +23,7 @@ end
 
 local af = Def.ActorFrame{}
 af.InitCommand=function(self)
-	self:xy((P1 and -340 or 35),-52)
+	self:xy((P1 and -340 or 35),-50)
 	if NoteFieldIsCentered then
 		self:x(P1 and -275 or 35)
 		self:y(-45)
