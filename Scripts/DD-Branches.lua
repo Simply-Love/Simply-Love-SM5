@@ -255,13 +255,6 @@ Branch.AfterProfileSave = function()
 		-- this style is more verbose but avoids obnoxious if statements
 
 		if setOver then
-			-- continues are only allowed in Pay mode
-			if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
-				if SL.Global.ContinuesRemaining > 0 and EnoughCreditsToContinue() then
-					return "ScreenPlayAgain"
-				end
-			end
-
 			return Branch.AllowScreenEvalSummary()
 		else
 			return SelectMusicOrCourse()
