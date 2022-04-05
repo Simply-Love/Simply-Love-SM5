@@ -411,6 +411,8 @@ local Overrides = {
 			mods.ShowEXScore   = list[2]
 			-- Default to FA+ pane if either options are active.
 			sl_pn.EvalPanePrimary = (list[1] or list[2]) and 8 or 1
+			-- Default to timing distribution pane if either are active.
+			sl_pn.EvalPaneSecondary = (list[1] or list[2]) and 4 or 2
 		end
 	},
 	-------------------------------------------------------------------------

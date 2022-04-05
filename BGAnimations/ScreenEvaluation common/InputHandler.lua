@@ -69,32 +69,23 @@ end
 
 -- -----------------------------------------------------------------------
 -- don't allow double to initialize into a configuration like
--- EvalPanePrimary=2
--- EvalPaneSecondary=3
--- because Pane2 is full-width in double and the other pane is supposed to be hidden when it is visible
+-- EvalPanePrimary=3
+-- EvalPaneSecondary=4
+-- because Pane3 is full-width in double and the other pane is supposed to be hidden when it is visible
 
 if style == "OnePlayerTwoSides" then
 	local cn  = PlayerNumber:Reverse()[mpn] + 1
 	local ocn = (cn % 2) + 1
 
-	-- if the player wanted their primary pane to be something that is full-width in double
-	if panes[cn][active_pane[cn]]:GetChild(""):GetCommand("ExpandForDouble") then
-		-- hide all panes for the other controller
-		for pane in ivalues(panes[ocn]) do
-			pane:visible(false)
-		end
-		-- and only show the one full-width pane
-		panes[cn][active_pane[cn]]:visible(true)
-	end
 
 	-- if the player wanted their secondary pane to be something that is full-width in double
 	if panes[cn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble") then
 		-- arbitrarily opt to hide the secondary pane
 		panes[ocn][active_pane[ocn]]:visible(false)
 
-		-- and show the next available pane that doesn't match primary and isn't also full-width
+		-- Always show the timing distribution pane as the secondary by default on double.
 		for i=1,#panes[ocn] do
-			active_pane[ocn] = (active_pane[ocn] % #panes[ocn]) + 2
+			active_pane[ocn] = 4
 
 			if active_pane[ocn] ~= active_pane[cn]
 			and not panes[cn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble")
