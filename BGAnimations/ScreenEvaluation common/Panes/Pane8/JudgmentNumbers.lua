@@ -84,8 +84,19 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	end
 
 	local possible = counts["total"..RCType]
-	-- Mines should be displayed as mines dodged, while counts show mines hit.
-	local performance = RCType == "Mines" and (possible - counts[RCType]) or counts[RCType] 
+	local performance = counts[RCType]
+	
+	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
+	if po:NoMines() then
+		-- No mines, performance should be 0.
+		-- "possible" would be 0 in counts so we don't want the subtraction below to result in
+		-- a negative number.
+		performance = 0
+	else
+		-- Mines should be displayed as mines dodged, while counts show mines hit.
+		performance = (possible - counts[RCType])
+	end
+	
 	possible = clamp(possible, 0, 999)
 
 	-- player performance value
