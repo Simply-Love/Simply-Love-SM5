@@ -2,6 +2,7 @@
 
 # ------------ Differences from 1.0.4 ------------
 - Custom Course Wheel/Screen added with the abilty to sort/filter courses.
+- You can now play songs and courses in the same session without starting a new one.
 - FA+ and EX Score tracking added to gameplay/evaluation.
 - ITL Support!
 - After selecting a profile you are taken directly to either Song or Course select based on what you last played.
