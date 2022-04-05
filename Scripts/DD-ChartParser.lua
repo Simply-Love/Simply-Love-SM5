@@ -395,7 +395,7 @@ ParseChartInfo = function(steps, pn)
 
 				-- Append the semi-colon at the end so it's easier for GetMeasureInfo to get the contents
 				-- of the last measure.
-				chartString = chartString .. ';'
+				chartString = chartString .. '\n;'
 				-- Which measures have enough notes to be considered as part of a stream?
 				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
 				local NotesPerMeasure, PeakNPS, NPSperMeasure = GetMeasureInfo(steps, chartString)
@@ -437,7 +437,7 @@ GetChartNoteTimes = function(steps, pn)
 		return nil
 	end
 
-	measuresString = measuresString .. ';'
+	measuresString = measuresString .. '\n;'
 
 	local timingData = steps:GetTimingData()
 
