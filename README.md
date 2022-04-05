@@ -1,14 +1,16 @@
 # Digital Dance v1.0.5
 
 # ------------ Differences from 1.0.4 ------------
-- Custom Course Wheel/Screen added with the abilty to sort/filter.
+- Custom Course Wheel/Screen added with the abilty to sort/filter courses.
+- FA+ and EX Score tracking added to gameplay/evaluation.
+- ITL Support!
 - After selecting a profile you are taken directly to either Song or Course select based on what you last played.
 - Added Total Measure count and Density % on song select.
-- Single & Double are now differentiated on ScreenSelectMusicDD
+- Single & Double are now differentiated on ScreenSelectMusicDD.
 - Sounds added by the user will now be randomly selected to play when a World Record is achieved.
-- Column Cues added in player options to show where an arrow is coming.
+- Column Cues added in player options to show where an arrow is coming after a break.
 - Error Bar added in player options.
-- Save machine score after every song.
+- Judgement Tilt added in player options.
 - Dropping support for 4:3 displays in favor of not removing features due to screen real estate.
 
 
@@ -106,11 +108,13 @@ As noted in the "About" section this theme is intended for use with SM5 only.
 # ---------------- TO DO ----------------
 - Make the measure counter not be dependant on runs being measure aligned.
 - Always force Event Mode
+- Add a way to select a profile for late join.
+- Add a way for a player to unjoin a session in 2 player mode.
 - Replace any graphics or sound assets from SL that still exist with new original ones.
 - Maybe add more player stats (highest difficulty passed?)
 - Add more sorts/filters?
-- Add "Favorites" and/or tags for songs/groups.
-- Create a hashcache so I can do sorts like NPS.
+- Create a tag system for songs/groups for custom profile sorts/filters.
+- Create a hashcache so we can do sorts like NPS.
 - Add some sort of basic mouse support ??? and utilize more of the keyboard/move away from "machine buttons".
 - Have the Groovestats filter use chart hash to filter rather than by pack directory.
 - Add a chart preview? This might be possible with HashCache, but we'll see in the future I guess.
