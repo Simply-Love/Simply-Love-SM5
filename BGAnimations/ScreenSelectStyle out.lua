@@ -1,1 +1,0 @@
-return Def.Actor{ OffCommand=function(self) self:sleep(0.45) end }
