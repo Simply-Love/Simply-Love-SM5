@@ -203,7 +203,7 @@ local song_mt = {
 					end,
 					-- The grade shown to the left of the song name
 					Def.Sprite{
-						Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x18.png"),
+						Texture=THEME:GetPathG("","_grades/assets/grades 1x18.png"),
 						InitCommand=function(subself) subself:visible(false):zoom(WideScale(.25,.22)):xy(side*grade_position, 25):animate(0) self[pn..'grade_sprite'] = subself end,
 						SlideToTopCommand=function(subself)
 							subself:linear(.12):diffusealpha(0):xy(side*-1*-55,75):zoom(1):linear(.12):diffusealpha(1)
