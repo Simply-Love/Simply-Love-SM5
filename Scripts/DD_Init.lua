@@ -96,14 +96,6 @@ local GlobalDefaults = {
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.GameMode = "DD"
 			self.ScreenshotTexture = nil
-			self.MenuTimer = {
-				ScreenSelectMusic = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),
-				ScreenSelectMusicDD = ThemePrefs.Get("ScreenSelectMusicMenuTimer"),
-				ScreenPlayerOptions = ThemePrefs.Get("ScreenPlayerOptionsMenuTimer"),
-				ScreenEvaluation = ThemePrefs.Get("ScreenEvaluationMenuTimer"),
-				ScreenEvaluationSummary = ThemePrefs.Get("ScreenEvaluationSummaryMenuTimer"),
-				ScreenNameEntry = ThemePrefs.Get("ScreenNameEntryMenuTimer"),
-			}
 			self.TimeAtSessionStart = nil
 
 			self.GameplayReloadCheck = false

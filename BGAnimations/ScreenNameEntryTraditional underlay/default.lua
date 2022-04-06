@@ -59,24 +59,6 @@ local t = Def.ActorFrame {
 			self:playcommand("Finish")
 		end
 	end,
-	MenuTimerExpiredCommand=function(self, param)
-
-		-- if the timer runs out, check if either player hasn't finished entering his/her name
-		-- if so, fade out that player's cursor and alphabetwheel and play the "start" sound
-		for player in ivalues(Players) do
-			local pn = ToEnumShortString(player)
-			if SL[pn].HighScores.EnteringName then
-				-- hide this player's cursor
-				self:GetChild("PlayerNameAndDecorations_"..pn):GetChild("Cursor"):queuecommand("Hide")
-				-- hide this player's AlphabetWheel
-				self:GetChild("AlphabetWheel_"..pn):queuecommand("Hide")
-				-- play the "enter" sound
-				self:GetChild("enter"):playforplayer(player)
-			end
-		end
-
-		self:playcommand("Finish")
-	end,
 	FinishCommand=function(self)
 		-- store the highscore name for this game
 		for player in ivalues(Players) do

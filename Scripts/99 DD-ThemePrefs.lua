@@ -48,38 +48,6 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values 	= { true, false }
 		},
-		-- - - - - - - - - - - - - - - - - - - -
-		-- MenuTimer values for various screens
-		ScreenSelectMusicMenuTimer =
-		{
-			Default = 300,
-			Choices = SecondsToMMSS_range(60, 450, 15),
-			Values = range(60, 450, 15),
-		},
-		ScreenPlayerOptionsMenuTimer =
-		{
-			Default = 90,
-			Choices = SecondsToMMSS_range(30, 450, 15),
-			Values = range(30, 450, 15),
-		},
-		ScreenEvaluationMenuTimer =
-		{
-			Default = 60,
-			Choices = SecondsToMMSS_range(15, 450, 15),
-			Values = range(15, 450, 15),
-		},
-		ScreenEvaluationSummaryMenuTimer =
-		{
-			Default = 60,
-			Choices = SecondsToMMSS_range(30, 450, 15),
-			Values = range(30, 450, 15),
-		},
-		ScreenNameEntryMenuTimer =
-		{
-			Default = 60,
-			Choices = SecondsToMMSS_range(15, 450, 15),
-			Values = range(15, 450, 15),
-		},
 		AllowScreenEvalSummary =
 		{
 			Default = true,

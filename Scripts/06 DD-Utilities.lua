@@ -119,7 +119,6 @@ end
 -- pass in a range of time values in seconds and get back a table of stringified
 -- values formatted as minutes and seconds.
 --
--- for example usage, see the MenuTimer OptionRows defined in ./Scripts/99 SL-ThemePrefs.lua
 function SecondsToMMSS_range(start, stop, step)
 	local ret = {}
 	local r = range(start, stop, step)

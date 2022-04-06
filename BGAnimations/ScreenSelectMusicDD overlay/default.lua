@@ -71,13 +71,6 @@ local t = Def.ActorFrame {
 
 		self:queuecommand("Capture")
 	end,
-	OnCommand=function(self)
-		if PREFSMAN:GetPreference("MenuTimer") then self:queuecommand("Listen") end
-	end,
-	ListenCommand=function(self)
-		local topscreen = SCREENMAN:GetTopScreen()
-		local seconds = topscreen:GetChild("Timer"):GetSeconds()
-	end,
 	CaptureCommand=function(self)
 
 		-- One element of the Input table is an internal function, Handler

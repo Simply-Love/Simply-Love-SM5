@@ -61,43 +61,8 @@ local t = Def.ActorFrame {
 		-- It's otherwise possible to enter the screen with MenuLeft/MenuRight already held and firing off events,
 		-- which causes the sick_wheel of profile names to not display.  I don't have time to debug it right now.
 		self:sleep(0.5):queuecommand("InitInput")
-
-		-- FIXME: I need to find time to look at how the engine actually handles MenuTimers because
-		-- including an Actor command that queues itself every 0.5 seconds to check the MenuTimer on custom
-		-- screens like this seems like it should be unnecessary.)
-		if PREFSMAN:GetPreference("MenuTimer") then
-			self:queuecommand("CheckMenuTimer")
-		end
 	end,
 	InitInputCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( LoadActor("./Input.lua", {af=self, Scrollers=scrollers, ProfileData=profile_data}) ) end,
-
-	CheckMenuTimerCommand=function(self)
-		-- if the MenuTimer has reached 0, it's time to queue the OffCommand and force a transition to the next screen
-		if SCREENMAN:GetTopScreen():GetChild("Timer"):GetSeconds() <= 0 then
-
-			-- It's possible that both players had the same local profile selected when the MenuTimer
-			-- reached 0.  Queueing the OffCommand like this would assign the same local profile to
-			-- both players.  Though engine permits this, it is unclear whether that is intentional
-			-- or oversight, and I've yet to meet anyone who has requested such a feature.
-			-- So, if the MenuTimer reaches 0 and both players are on the same non-GUEST profile
-			-- we'll set them both to GUEST before transitioning.
-
-			-- if both players have joined
-			if  #GAMESTATE:GetHumanPlayers() > 1
-			-- and both players are trying to choose the same profile
-			and scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index
-			-- and that profile they are both trying to choose isn't [GUEST]
-			and scrollers[PLAYER_1]:get_info_at_focus_pos().index ~= 0 then
-				scrollers[PLAYER_1]:scroll_by_amount( -scrollers[PLAYER_1]:get_info_at_focus_pos().index )
-				scrollers[PLAYER_2]:scroll_by_amount( -scrollers[PLAYER_2]:get_info_at_focus_pos().index )
-				self:sleep(0.3)
-			end
-
-			self:queuecommand("Off")
-		else
-			self:sleep(0.5):queuecommand("CheckMenuTimer")
-		end
-	end,
 
 	-- the OffCommand will have been queued, when it is appropriate, from ./Input.lua
 	-- sleep for 0.5 seconds to give the PlayerFrames time to tween out
