@@ -76,7 +76,6 @@ local t = Def.ActorFrame {
 	end
 }
 
-local banner_directory = { Hearts="Hearts", Arrows="Arrows" }
 -- Things that are constantly on the screen (fallback banner + masks)
 t[#t+1] = Def.ActorFrame {
 
