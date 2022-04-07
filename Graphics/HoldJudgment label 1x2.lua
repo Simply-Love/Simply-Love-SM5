@@ -9,9 +9,9 @@ return Def.Sprite{
 	BeginCommand=function(self)
 		local label = "None"
 
-		-- force EditMode to use Love HoldJudgment for now
+		-- force EditMode to use Ice HoldJudgment for now
 		if SCREENMAN:GetTopScreen():GetName():match("ScreenEdit") then
-			label = "Love 1x2.png"
+			label = "Ice 1x2.png"
 
 		elseif self:GetParent() and self:GetParent():GetParent() then
 			-- self:GetParent():GetParent() will return the main Player ActorFrame
