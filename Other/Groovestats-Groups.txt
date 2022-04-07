@@ -24,6 +24,7 @@ BemaniBeats 5
 BemaniBeats 6
 BemaniBeats Rev
 Betwixt & Between
+bigger waves
 Brule's Brute Breats
 Causality Violation
 Chicago Timing Authority
@@ -79,9 +80,12 @@ global namespace
 global namespace 2
 Gloryhammer
 Goreshit 2020
+Hardbass Madness 2
 Helblinde
 Helblinde 2016
 Helblinde PDTA
+Highflyer's Tech-nically Romantic
+Highflyer's Tech Trails
 Holiday Hoedown
 Hospitality
 I Have No Feet and I Must Stream
@@ -110,6 +114,7 @@ Kerpa's Simfiles Collab Pack
 Kerpa's Simfiles Playlist 2
 Koreyja
 Koreyja 2
+Kyypakkaus 2
 Lindsey Stirling
 Loak's Inferno
 Lolistyle GabberS
@@ -118,6 +123,7 @@ Lumi's Lighthouse
 Mango's Microrave Samplur
 Mojo's Bizarre Tablature
 Mojo_s Bizarre Tablature
+Mojo Brojo's Nefarious Streams
 Mootz Mix 3
 Mootz Mix 4
 Mudkyp 4th Gen
@@ -157,8 +163,12 @@ Rebuild of Sharpnel
 Resistance Device
 Rhapsody of Fire
 Rock Out!
+Saitama's Starter Weapon
+Saitama's Ultimate Weapon
 Scrapyard Kent
 Sefirot'S SimfileS
+Sefirot'S SimfileS 3
+Sefirot'S SimfileS 4
 selected yutsi works
 selected yutsi works vol. 2
 Sexuality Violation 2
@@ -167,10 +177,12 @@ Sharpnelstreamz
 SHARPNELSTREAMZ v2
 SHARPNELSTREAMZ v3 Part 1
 SHARPNELSTREAMZ v3 Part 2
+Short Snack Simfiles
 Shpadoinkle #7
 Shpadoinkle #8
 Shpadoinkle #9
 Shpadoinkle #10
+Sick Music
 Skittles Selection 5
 Skittles Selection 6
 Skittles Selection 7
@@ -204,6 +216,7 @@ TakTek
 the
 The Apocalypse Sampler
 The Joy of Streaming
+The Joy Of Streaming 2
 The Legend of Zim 3
 The Legend of Zim 4
 The Legend of Zim 5
@@ -215,6 +228,7 @@ Trails of Cold Stream III
 TranceMania
 TranceMania 2
 TranceMania 3
+Tuuc's Stam Snack Pack
 TYLR's Technical Difficulties
 untitled stream pack
 Valex Sims 2020
