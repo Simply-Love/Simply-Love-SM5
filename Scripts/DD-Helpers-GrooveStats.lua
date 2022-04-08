@@ -404,6 +404,25 @@ CreateCommentString = function(player)
 	end
 
 	-- Ignore the top window in all cases.
+	
+	--- First deal with FA+ white counts (if enabled)
+	local sl_pn = SL[ToEnumShortString(player)]
+	local mods = sl_pn.ActiveModifiers
+	
+	if mods.ShowFaPlusWindow or mods.ShowEXScore then
+		local FAsuffix = "w"
+		local counts =  GetExJudgmentCounts(player)
+		local number = counts["W1"]
+		
+		if number ~= 0 then
+			if #comment ~= 0 then
+				comment = comment .. ", "
+			end
+			comment = comment..number..FAsuffix
+		end
+	end
+	
+	--- for all other judgements
 	for i=2, 6 do
 		local idx = i
 		local suffix = i == 6 and "m" or suffixes[idx]
@@ -411,30 +430,12 @@ CreateCommentString = function(player)
 		
 		local number = pss:GetTapNoteScores(tns)
 
-		-- If the windows are disabled, then the number will be 0.
 		if number ~= 0 then
 			if #comment ~= 0 then
 				comment = comment .. ", "
 			end
 			comment = comment..number..suffix
 		end
-	end
-
-	local timingWindowOption = ""
-
-	if not SL.Global.ActiveModifiers.TimingWindows[4] and not SL.Global.ActiveModifiers.TimingWindows[5] then
-		timingWindowOption = "No Dec/WO"
-	elseif not SL.Global.ActiveModifiers.TimingWindows[5] then
-		timingWindowOption = "No WO"
-	elseif not SL.Global.ActiveModifiers.TimingWindows[1] and not SL.Global.ActiveModifiers.TimingWindows[2] then
-		timingWindowOption = "No Fan/Exc"
-	end
-
-	if #timingWindowOption ~= 0 then
-		if #comment ~= 0 then
-			comment = comment .. ", "
-		end
-		comment = comment..timingWindowOption
 	end
 
 	local pn = ToEnumShortString(player)
@@ -448,7 +449,11 @@ CreateCommentString = function(player)
 	end
 	
 	if #comment == 0 then
-		comment = "FFC"
+		if mods.ShowFaPlusWindow or mods.ShowEXScore then
+			comment = "QUINT"
+		else
+			comment = "FFC"
+		end
 	end
 
 	return comment
