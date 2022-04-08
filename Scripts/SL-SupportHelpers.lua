@@ -51,8 +51,11 @@ function IsMinimumProductVersion(...)
 	local version = getProductVersion()
 
 	for i = 1, select('#', ...) do
-		if not version[i] or select(i, ...) < version[i] then
+		local n = select(i, ...)
+		if not version[i] or n < version[i] then
 			return false
+		elseif version[i] > n then
+			return true
 		end
 	end
 
