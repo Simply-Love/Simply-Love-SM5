@@ -1,4 +1,4 @@
--- Pane4 displays a list of High Scores obrained from GrooveStats for the stepchart that was played.
+-- Pane7 displays a list of High Scores obrained from GrooveStats for the stepchart that was played.
 
 if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then return end
 
