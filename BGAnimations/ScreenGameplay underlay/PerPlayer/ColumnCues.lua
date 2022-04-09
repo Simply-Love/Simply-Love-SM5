@@ -33,26 +33,30 @@ end
 local prevTime = 0
 local holdCount = 0
 for _, noteTime in ipairs(noteTimes) do
-	if noteTime.type:match('[124]') then
-		if noteTime.time - prevTime >= cue_time and holdCount == 0 then
-			local times = columnTimes[noteTime.column]
-			times[#times+1] = {
-				start=prevTime,
-				duration=noteTime.time-prevTime,
-			}
+	if noteTime.time - prevTime >= cue_time and holdCount == 0 then
+		for _, note in ipairs(noteTime.notes) do
+			if note.type:match('[124]') then
+				local times = columnTimes[note.column]
+				times[#times+1] = {
+					start=prevTime,
+					duration=noteTime.time-prevTime,
+				}
+			end
 		end
 	end
 
-	if noteTime.type:match('[24]') then
-		holdCount = holdCount + 1
-	end
+	for _, note in ipairs(noteTime.notes) do
+		if note.type:match('[24]') then
+			holdCount = holdCount + 1
+		end
 
-	if noteTime.type == '3' then
-		holdCount = holdCount - 1
-	end
+		if note.type == '3' then
+			holdCount = holdCount - 1
+		end
 
-	if noteTime.type:match('[1234]') then
-		prevTime = noteTime.time
+		if note.type:match('[1234]') then
+			prevTime = noteTime.time
+		end
 	end
 end
 

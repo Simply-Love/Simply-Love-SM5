@@ -450,13 +450,12 @@ GetChartNoteTimes = function(steps, pn)
 		if(line:match("^[,;]%s*")) then
 			-- end of measure
 			for i, notes in ipairs(curMeasure) do
-				local beat = 4 * (measureIndex + (i-1) / #curMeasure)
-				local t = timingData:GetElapsedTimeFromBeat(beat) / SL.Global.ActiveModifiers.MusicRate
+				if #notes > 0 then
+					local beat = 4 * (measureIndex + (i-1) / #curMeasure)
+					local t = timingData:GetElapsedTimeFromBeat(beat) / SL.Global.ActiveModifiers.MusicRate
 
-				for _, note in ipairs(notes) do
 					noteTimes[#noteTimes+1] = {
-						column=note.column,
-						type=note.type,
+						notes=notes,
 						time=t,
 					}
 				end
