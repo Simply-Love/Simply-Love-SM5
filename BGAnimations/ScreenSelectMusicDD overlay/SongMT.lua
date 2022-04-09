@@ -81,7 +81,6 @@ local song_mt = {
 					end
 				end,
 				HideCommand=function(subself)
-					stop_music()
 					subself:visible(false):diffusealpha(0)
 				end,
 				UnhideCommand=function(subself)
@@ -220,7 +219,6 @@ local song_mt = {
 			local ry = offset > 0 and 25 or (offset < 0 and -25 or 0)
 			self.container:finishtweening()
 			self.container:finishtweening()
-			stop_music()
 
 			if item_index ~= 1 and item_index ~= num_items then
 				self.container:decelerate(0.1)
