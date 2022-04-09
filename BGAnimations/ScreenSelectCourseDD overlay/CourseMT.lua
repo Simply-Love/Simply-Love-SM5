@@ -103,7 +103,7 @@ local song_mt = {
 						end,
 						SwitchFocusToGroupsMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
 						SwitchFocusToCoursesMessageCommand=function(subself) subself:smooth(0.3):cropright(0):playcommand("Set") end,
-						SwitchFocusToSingleCourseMessageCommand=function(subself) subself:smooth(0.3):cropright(1):diffuse(color("#0a141b")):playcommand("Set") end,
+						SwitchFocusToSingleCourseMessageCommand=function(subself) subself:smooth(0.3):cropright(1):playcommand("Set") end,
 						SetCommand=function(subself)
 							subself:x(0)
 							subself:y(_screen.cy-215)
@@ -178,9 +178,6 @@ local song_mt = {
 					Def.Sprite{
 						Texture=THEME:GetPathG("","_grades/assets/grades 1x18.png"),
 						InitCommand=function(subself) subself:visible(false):zoom(WideScale(.25,.22)):xy(side*grade_position, 25):animate(0) self[pn..'grade_sprite'] = subself end,
-						SlideToTopCommand=function(subself)
-							subself:linear(.12):diffusealpha(0):xy(side*-1*-55,75):zoom(1):linear(.12):diffusealpha(1)
-						end,
 						SlideBackIntoGridCommand=function(subself)
 							subself:linear(.12):diffusealpha(0):zoom( WideScale(.25, 0.22)):xy(side*grade_position,25):linear(.12):diffusealpha(1)
 						end,
