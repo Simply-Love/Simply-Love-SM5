@@ -1,6 +1,7 @@
 local max_length_group = '1:00:00+'
 local max_difficulty_group = '40+'
 local max_bpm_group = '400+'
+IsUntiedWR = false
 
 local course_lengths = {}
 for i=0,90-1,30 do

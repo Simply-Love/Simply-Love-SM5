@@ -1,6 +1,7 @@
 local TextColor = Color.White
 LastSeenSong = nil
 LastSeenCourse = nil
+IsUntiedWR = false
 
 
 local SongStats = SONGMAN:GetNumSongs() .. " songs in "

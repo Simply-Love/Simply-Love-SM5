@@ -182,6 +182,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 							-- differentiate between an Untied WR vs a Tied WR
 							if personalRank == 1 then
+								IsUntiedWR = true
 								recordText:settext("Untied World Record!")
 								MESSAGEMAN:Broadcast("PlayRandomWRSound")
 							elseif isWr then

@@ -390,6 +390,8 @@ end
 
 CreateCommentString = function(player)
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+	local isQuint = false
+	local isQuad = false
 
 	local suffixes = {"w", "e", "g", "d", "wo"}
 
@@ -419,6 +421,8 @@ CreateCommentString = function(player)
 				comment = comment .. ", "
 			end
 			comment = comment..number..FAsuffix
+		elseif number == 0 then
+			IsQuint = true
 		end
 	end
 	
@@ -435,22 +439,56 @@ CreateCommentString = function(player)
 				comment = comment .. ", "
 			end
 			comment = comment..number..suffix
+		elseif number == 0 then
+			IsQuad = true
 		end
+	end
+	
+	--If the player got a quint, first of all nice, but let other people know here.
+	if IsQuint and IsQuad then
+		if #comment ~= 0 then
+			comment = comment .. ", "
+		end
+		comment = comment.."Quint!"
 	end
 
 	local pn = ToEnumShortString(player)
-	-- If a player CModded, then add that as well.
+	-- If a player CModded or MModded, then add that as well.
 	local cmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod()
+	local mmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod()
+	
 	if cmod ~= nil then
 		if #comment ~= 0 then
 			comment = comment .. ", "
 		end
 		comment = comment.."C"..tostring(cmod)
+	elseif mmod ~= nil then
+		if #comment ~= 0 then
+			comment = comment .. ", "
+		end
+		comment = comment.."M"..tostring(mmod)
+	end
+	
+	-- Show the EX Score if FA+ or EX Score tracking is enabled.
+	if mods.ShowFaPlusWindow or mods.ShowEXScore then
+		if #comment ~= 0 then
+			comment = comment .. ", "
+		end
+		local EXScore = ("%.2f"):format(CalculateExScore(player))
+		comment = comment.."EX Score: "..EXScore.."%"
+	end
+	
+	-- Show that the score was untied when set if personal rank is 1
+	if IsUntiedWR then
+		if #comment ~= 0 then
+			comment = comment .. ", "
+		end
+		comment = comment.."Untied WR when set."
 	end
 	
 	if #comment == 0 then
 		if mods.ShowFaPlusWindow or mods.ShowEXScore then
-			comment = "QUINT"
+			comment = "Quint!"
 		else
 			comment = "FFC"
 		end
