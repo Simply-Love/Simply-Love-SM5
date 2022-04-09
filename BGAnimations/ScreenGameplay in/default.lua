@@ -5,6 +5,15 @@ local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsL
 local text = ""
 local SongNumberInCourse = 0
 local SongsInCourse
+local nsj = GAMESTATE:GetNumSidesJoined()
+local isStepStats = false
+
+if nsj == 1 then
+	if SL.P1.ActiveModifiers.DataVisualizations == "Step Statistics" or 
+	SL.P2.ActiveModifiers.DataVisualizations == "Step Statistics" then
+		isStepStats = true
+	end
+end
 
 if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
@@ -26,8 +35,6 @@ af[#af+1] = Def.ActorFrame{
 			-- don't bother animating these visuals if ScreenGameplay was just reloaded by a mod chart
 			-- just jump directly to hiding this lead in
 			self:playcommand("Hide")
-		else
-			self:sleep(2):queuecommand("Hide")
 		end
 	end,
 	HideCommand=function(self)
@@ -65,8 +72,8 @@ af[#af+1] = LoadFont("Common Bold")..{
 		if not SL.Global.GameplayReloadCheck then
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
 		end
-		--- make the EVENT text disappear after Gameplay In. Don't do it for courses though.
-		if GAMESTATE:IsCourseMode() then
+		--- make the EVENT text disappear after Gameplay In. Only do it for courses if step statistics is enabled though.
+		if GAMESTATE:IsCourseMode() and not isStepStats then
 			self:zoom(0.4):y(_screen.h-30)
 		else
 			self:zoom(0):y(_screen.h-30)
