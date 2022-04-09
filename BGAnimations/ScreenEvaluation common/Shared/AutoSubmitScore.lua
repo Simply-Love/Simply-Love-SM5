@@ -107,7 +107,18 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 				-- It's better to just not display anything than display the wrong scores.
 				if SL["P"..side].Streams.Hash == data[playerStr]["chartHash"] then
 					local personalRank = nil
+					local wrScore = nil
+					local isWr = false
 					if not data[playerStr]["isRanked"] then
+						-- We still want to play a WR Sound if you get a quad on a chart not ranked
+						local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats("P".. i)
+						local PercentDP = stats:GetPercentDancePoints()
+						local percent = FormatPercentScore(PercentDP)
+						if percent == "100.00%" then
+							MESSAGEMAN:Broadcast("PlayRandomWRSound")
+						end
+						
+						
 						QRPane:GetChild("QRCode"):queuecommand("Hide")
 						QRPane:GetChild("HelpText"):settext("This chart is not ranked on GrooveStats.")
 						if i == 1 and P1SubmitText then
@@ -116,6 +127,9 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							P2SubmitText:queuecommand("ChartNotRanked")
 						end
 					elseif data[playerStr]["gsLeaderboard"] then
+						if #data[playerStr]["gsLeaderboard"] > 0 then
+							wrScore = data[playerStr]["gsLeaderboard"][1]["score"]
+						end
 						for gsEntry in ivalues(data[playerStr]["gsLeaderboard"]) do
 							local entry = highScorePane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..entryNum)
 							entry:stoptweening()
@@ -133,6 +147,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							elseif gsEntry["isSelf"] then
 								entry:diffuse(color("#A1FF94"))
 								personalRank = gsEntry["rank"]
+								isWr = gsEntry["score"] >= wrScore
 							end
 
 							if gsEntry["isFail"] then
@@ -165,7 +180,11 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							recordText:visible(true)
 							GSIcon:visible(true)
 							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
+							-- differentiate between an Untied WR vs a Tied WR
 							if personalRank == 1 then
+								recordText:settext("Untied World Record!")
+								MESSAGEMAN:Broadcast("PlayRandomWRSound")
+							elseif isWr then
 								recordText:settext("World Record!")
 								MESSAGEMAN:Broadcast("PlayRandomWRSound")
 							else
