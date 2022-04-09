@@ -50,23 +50,23 @@ if GAMESTATE:IsCourseMode() then
 
 -- Song # Label
 af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Song").." # "),
-	InitCommand=function(self) self:horizalign(right):xy(-6, 0):zoom(0.9) 
+	Text=("%s "):format( THEME:GetString("Stage", "Stage").." # "),
+	InitCommand=function(self) self:horizalign(right):xy(20, 0):zoom(1.2)
 		if P1 then
-			self:x(180)
+			self:x(206)
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
-		self:settext(("%s "):format( THEME:GetString("ScreenGameplay", "Song").." # "))
+		self:settext(("%s "):format( THEME:GetString("Stage", "Stage").."  # "))
 	end,
 }
 
 -- # song out of total songs in course
 af[#af+1] = LoadFont("Common Normal")..{
 	Text=("%s "):format( tonumber(course_index).." / " .. tonumber(TotalCourseSongs)),
-	InitCommand=function(self) self:horizalign(left):xy(0, 0):zoom(0.9) 
+	InitCommand=function(self) self:horizalign(left):xy(16, 0):zoom(1.2) 
 		if P1 then
-			self:x(180)
+			self:x(200)
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
