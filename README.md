@@ -78,6 +78,8 @@ Upon achieving a World Record with the Groovestats Launcher enabled the theme [w
 If no sounds are present nothing will play.
 Alternatively if you want it to always play the same sound you can add just one file.
 
+![wrsounds](https://i.imgur.com/L9fs22O.png)
+
 # ------------ How to use a profile picture ------------
 
 - Add a new image at the root of your save folder of your profile.
