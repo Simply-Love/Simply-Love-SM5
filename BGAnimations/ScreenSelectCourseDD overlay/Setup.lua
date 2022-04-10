@@ -212,12 +212,7 @@ local function GetStepCount(group, course)
 end
 
 local subsort_funcs = {
-	function(g, s) return s:GetGroupName() end,
 	function(g, s) return s:GetDisplayFullTitle():lower() end,
-	function(g, s) return s:MusicLengthSeconds() end,
-	function(g, s) return s:GetDisplayBpms()[2] end,
-	GetStepCount,
-	GetHighestDifficulty,
 }
 ---------------------------------------------------------------------------
 -- provided a group title as a string, prune out courses that don't have valid steps
@@ -360,7 +355,7 @@ local UpdatePrunedCourses = function()
 		"DIFFICULTY",
 		]]--
 
-		local sort_func = subsort_funcs[GetSubSortPreference()]
+		local sort_func = subsort_funcs[1]
 
 		table.sort(courses, function(a, b)
 			return sort_func(group, a) < sort_func(group, b)
