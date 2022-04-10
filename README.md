@@ -74,7 +74,7 @@ The theme will also remember what you played last and take you directly into tha
 
 # ---------------- World Record Sounds? ----------------
 There is now a folder at "Digital Dance/Sounds/WRSounds" where you can add any .ogg or .mp3 files.
-Upon achieving a World Record with the Groovestats Launcher enabled the theme [will randomly select a sound to play from that folder.](https://clips.twitch.tv/FuriousLongSnail4Head-xPkflHV6iE19dFg3)
+Upon achieving a World Record with the Groovestats Launcher enabled (or a quad on anything) [the theme will randomly select a sound to play from that folder.](https://clips.twitch.tv/FuriousLongSnail4Head-xPkflHV6iE19dFg3)
 If no sounds are present nothing will play.
 Alternatively if you want it to always play the same sound you can add just one file.
 
