@@ -102,23 +102,7 @@ The aspect ratio can be changed under *Graphics / Sound Options*.
 As noted in the "About" section this theme is intended for use with SM5 only.
 * <strong>SM5.1 Beta 2</strong> (This is what I have been using to make/test this theme.)
 * <strong>SM5.0.12</strong> (This should work in theory, but I haven't tested it extensively.)
-* <strong>SM5.3</strong> (Use at your own risk.)
 
 
 # -- General things to note --
 - Theme is intended for home use only.
-
-# ---------------- TO DO ----------------
-- Make the measure counter not be dependant on runs being measure aligned.
-- Always force Event Mode
-- Add a way to select a profile for late join.
-- Add a way for a player to unjoin a session in 2 player mode.
-- Replace any graphics or sound assets from SL that still exist with new original ones.
-- Maybe add more player stats (highest difficulty passed?)
-- Add more sorts/filters?
-- Create a tag system for songs/groups for custom profile sorts/filters.
-- Create a hashcache so we can do sorts like NPS.
-- Add some sort of basic mouse support ??? and utilize more of the keyboard/move away from "machine buttons".
-- Have the Groovestats filter use chart hash to filter rather than by pack directory.
-- Add a chart preview? This might be possible with HashCache, but we'll see in the future I guess.
-- Clean up my code, it could be better.
