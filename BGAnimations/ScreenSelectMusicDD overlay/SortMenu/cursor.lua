@@ -75,12 +75,10 @@ local t = Def.ActorFrame{
 			if IsSortMenuInputToggled == true then
 				self:stoptweening()
 				self:diffusealpha(0.5)
-				self:diffuse(color("#FFFFFF"))
+				self:diffuse(color("#FFFFFF")):diffusealpha(0.2)
 				self:queuecommand("FadeOut")
 			else
-				self:stoptweening()
-				self:linear(0.2):diffusealpha(0.5)
-				self:linear(0.2):diffuse(color("#59ff85"))
+				self:diffuse(color("#59ff85")):diffusealpha(0.2)
 				self:queuecommand("FadeOut")
 			end
 		end,
