@@ -85,7 +85,7 @@ for i=NumStages,1,-1 do
 						:x( (player == PLAYER_1 and _screen.cx-160) or (_screen.cx+160))
 						:y(_screen.cy+60)
 					--if this row represents the new highscore, highlight it
-					if (PREFSMAN:GetPreference("EventMode") and highscores[s] and pss:GetHighScore():GetPercentDP() == highscores[s]:GetPercentDP() )
+					if (highscores[s] and pss:GetHighScore():GetPercentDP() == highscores[s]:GetPercentDP() )
 					or s == index then
 						self:diffuseshift():effectperiod(durationPerSong/3)
 							:effectcolor1( PlayerColor(player) )

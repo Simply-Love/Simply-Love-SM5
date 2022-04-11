@@ -166,6 +166,10 @@ SL = {
 	},
 	Preferences = {
 		DD = {
+			-- always force Event Mode and set Coin Mode to home
+			EventMode=1,
+			CoinMode="Home",
+			
 			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
@@ -176,7 +180,7 @@ SL = {
 			PercentageScoring=true,
 			AllowW1="AllowW1_Everywhere",
 			SubSortByNumSteps=true,
-			-- idk if this will actually work without the mine fix? yolo
+			-- idk if this will actually do anything without the mine fix? yolo
 			PadStickSeconds=0.050000,
 
 			TimingWindowSecondsW1=0.021500,
@@ -190,6 +194,10 @@ SL = {
 		},
 		
 		["FA+"] = {
+			-- always force Event Mode and set Coin Mode to home
+			EventMode=1,
+			CoinMode="Home",
+			
 			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,

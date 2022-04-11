@@ -12,8 +12,8 @@ local pn = ToEnumShortString(player)
 -- (There's a lot. See the long note near the end, just above the pacemaker implementation.)
 local Pacemaker = SL[pn].ActiveModifiers.Pacemaker
 local WantsTargetGraph = SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph"
-local FailOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
-local RestartOnMissedTarget = PREFSMAN:GetPreference("EventMode") and SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
+local FailOnMissedTarget = SL[pn].ActiveModifiers.ActionOnMissedTarget == "Fail"
+local RestartOnMissedTarget = SL[pn].ActiveModifiers.ActionOnMissedTarget == "Restart"
 -- if none of them apply, bail now
 if not (Pacemaker or WantsTargetGraph or FailOnMissedTarget or RestartOnMissedTarget) then return end
 

@@ -13,16 +13,14 @@ end
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		if PREFSMAN:GetPreference("EventMode") then
-			-- TimeAtSessionStart will be reset to nil between game sesssions
-			-- thus, if it's currently nil, we're loading ScreenSelectMusicDD
-			-- for the first time this particular game session
-			if SL.Global.TimeAtSessionStart == nil then
-				SL.Global.TimeAtSessionStart = GetTimeSinceStart()
-			end
-
-			self:SetUpdateFunction( Update )
+		-- TimeAtSessionStart will be reset to nil between game sesssions
+		-- thus, if it's currently nil, we're loading ScreenSelectMusicDD
+		-- for the first time this particular game session
+		if SL.Global.TimeAtSessionStart == nil then
+			SL.Global.TimeAtSessionStart = GetTimeSinceStart()
 		end
+
+		self:SetUpdateFunction( Update )
 	end,
 	OffCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen()
@@ -39,21 +37,13 @@ local t = Def.ActorFrame{
 	LoadActor( THEME:GetPathG("", "_header.lua") ),
 
 	Def.BitmapText{
-		Font=PREFSMAN:GetPreference("EventMode") and "Wendy/_wendy monospace numbers" or "Wendy/_wendy small",
+		Font="Wendy/_wendy monospace numbers",
 		Name="Stage Number",
 		InitCommand=function(self)
 			bmt_actor = self
-			if PREFSMAN:GetPreference("EventMode") then
-				self:diffusealpha(0):zoom( WideScale(0.305,0.365) ):xy(_screen.cx, WideScale(10,9))
-			else
-				self:diffusealpha(0):zoom( WideScale(0.5,0.6) ):xy(_screen.cx, 15)
-			end
+			self:diffusealpha(0):zoom( WideScale(0.305,0.365) ):xy(_screen.cx, WideScale(10,9))
 		end,
 		OnCommand=function(self)
-			if not PREFSMAN:GetPreference("EventMode") then
-				self:settext( SSM_Header_StageText() )
-			end
-
 			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 		end,
 	},

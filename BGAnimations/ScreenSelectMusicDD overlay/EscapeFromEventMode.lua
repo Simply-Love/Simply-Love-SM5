@@ -1,5 +1,3 @@
-if not PREFSMAN:GetPreference("EventMode") then return end
-
 local text_width = 420
 local active_index = 0
 local choice_actors, sfx = {}, {}

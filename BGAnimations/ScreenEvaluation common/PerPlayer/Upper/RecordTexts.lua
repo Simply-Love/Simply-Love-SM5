@@ -56,13 +56,11 @@ local MachineHighScoreIndexInEventMode = function()
 	return index
 end
 
-if GAMESTATE:IsEventMode() then
-	HighScoreIndex.Machine = MachineHighScoreIndexInEventMode()
-end
+HighScoreIndex.Machine = MachineHighScoreIndexInEventMode()
 
 -- ---------------------------------------------
 
-local EarnedMachineRecord  = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or ((HighScoreIndex.Machine ~= -1) and pss:GetPercentDancePoints() >= 0.01)
+local EarnedMachineRecord  = EarnedMachineHighScoreInEventMode()
 local EarnedPersonalRecord = ( HighScoreIndex.Personal ~= -1 ) and pss:GetPercentDancePoints() >= 0.01
 
 -- ---------------------------------------------

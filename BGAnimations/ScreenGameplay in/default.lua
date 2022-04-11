@@ -19,7 +19,7 @@ if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
 	text = ("%s 1 / %d"):format(THEME:GetString("Stage", "Stage"), SongsInCourse)
 else
-	text = THEME:GetString("Stage", "Event")
+	text = ""
 end
 
 InitializeMeasureCounterAndModsLevel(SongNumberInCourse)
@@ -72,7 +72,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 		if not SL.Global.GameplayReloadCheck then
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
 		end
-		--- make the EVENT text disappear after Gameplay In. Only do it for courses if step statistics is enabled though.
+		--- make the text disappear after Gameplay In. Only do it for courses if step statistics is enabled though.
 		if GAMESTATE:IsCourseMode() and not isStepStats then
 			self:zoom(0.4):y(_screen.h-30)
 		else

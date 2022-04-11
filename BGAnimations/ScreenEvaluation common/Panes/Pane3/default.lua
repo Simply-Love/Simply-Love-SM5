@@ -37,7 +37,7 @@ end
 
 -- -----------------------------------------------------------------------
 
-local EarnedMachineRecord = GAMESTATE:IsEventMode() and EarnedMachineHighScoreInEventMode() or HighScoreIndex.Machine  >= 0
+local EarnedMachineRecord = EarnedMachineHighScoreInEventMode()
 local EarnedTop2Personal  = (HighScoreIndex.Personal >= 0 and HighScoreIndex.Personal < 2)
 
 -- -----------------------------------------------------------------------

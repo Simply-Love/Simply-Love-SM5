@@ -11,7 +11,15 @@
 -- to then be inaccurate, until the screen is reloaded.
 
 local group_durations = {}
-local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
+for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
+	group_durations[group_name] = 0
+
+	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
+		group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
+	end
+end
+
+--initialize variables for CDTitles
 local currentsong = GAMESTATE:GetCurrentSong()
 local HasCDTitle
 if GAMESTATE:GetCurrentSong() ~= nil then
@@ -19,19 +27,6 @@ HasCDTitle = currentsong:HasCDTitle()
 end
 local blank = THEME:GetPathG("", "_blank.png")
 local CDTitlePath
-
-
-for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
-	group_durations[group_name] = 0
-
-	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
-		local song_cost = song:IsMarathon() and 3 or song:IsLong() and 2 or 1
-
-		if GAMESTATE:IsEventMode() or song_cost <= stages_remaining then
-			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
-		end
-	end
-end
 
 -- ----------------------------------------
 local MusicWheel, SelectedType
@@ -267,60 +262,5 @@ af[#af+1] = Def.ActorFrame{
 		end
 	}
 }
-
-if not GAMESTATE:IsEventMode() then
-
-	-- long/marathon version bubble graphic and text
-	af[#af+1] = Def.ActorFrame{
-		InitCommand=function(self)
-			self:x( IsUsingWideScreen() and 103.4 or 98.5 )
-		end,
-		SetCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong()
-			self:visible( song and (song:IsLong() or song:IsMarathon()) or false )
-		end,
-
-
-		Def.ActorMultiVertex{
-			InitCommand=function(self)
-				-- these coordinates aren't neat and tidy, but they do create three triangles
-				-- that fit together to approximate hurtpiggypig's original png asset
-				local verts = {
-				 	--   x   y  z    r,g,b,a
-				 	{{-113, 81, 0}, {1,1,1,1}},
-				 	{{ 113, 81, 0}, {1,1,1,1}},
-				 	{{ 113, 50, 0}, {1,1,1,1}},
-
-				 	{{ 113, 50, 0}, {1,1,1,1}},
-				 	{{-113, 50, 0}, {1,1,1,1}},
-				 	{{-113, 81, 0}, {1,1,1,1}},
-
-				 	{{ -98, 50, 0}, {1,1,1,1}},
-				 	{{ -78, 50, 0}, {1,1,1,1}},
-				 	{{ -88, 37, 0}, {1,1,1,1}},
-				}
-				self:SetDrawState({Mode="DrawMode_Triangles"}):SetVertices(verts)
-				self:diffuse(GetCurrentColor())
-				self:xy(0,0):zoom(0.5)
-			end
-		},
-
-		LoadFont("Common Normal")..{
-			InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8):y(33) end,
-			SetCommand=function(self)
-				local song = GAMESTATE:GetCurrentSong()
-				if not song then self:settext(""); return end
-
-				if song:IsMarathon() then
-					self:settext(THEME:GetString("SongDescription", "IsMarathon"))
-				elseif song:IsLong() then
-					self:settext(THEME:GetString("SongDescription", "IsLong"))
-				else
-					self:settext("")
-				end
-			end
-		}
-	}
-end
 
 return af

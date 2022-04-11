@@ -10,23 +10,15 @@
 -- live-reloading a song on ScreenSelectMusic via Control R might cause the group duration
 -- to then be inaccurate, until the screen is reloaded.
 
---[[
-local group_durations = {}
-local stages_remaining = GAMESTATE:GetNumStagesLeft(GAMESTATE:GetMasterPlayerNumber())
 
-
+--[[[local group_durations = {}
 for _,group_name in ipairs(SONGMAN:GetSongGroupNames()) do
 	group_durations[group_name] = 0
-
 	for _,song in ipairs(SONGMAN:GetSongsInGroup(group_name)) do
-		local song_cost = song:IsMarathon() and 3 or song:IsLong() and 2 or 1
-
-		if GAMESTATE:IsEventMode() or song_cost <= stages_remaining then
-			group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
-		end
+		group_durations[group_name] = group_durations[group_name] + song:MusicLengthSeconds()
 	end
-end
---]]
+end--]]
+
 
 -- ----------------------------------------
 local MusicWheel, SelectedType

@@ -1,5 +1,3 @@
-if not GAMESTATE:IsEventMode() then return end
-
 local game = GAMESTATE:GetCurrentGame():GetName()
 if not (game=="dance" or game=="pump" or game=="techno") then return end
 
