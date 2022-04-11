@@ -3,7 +3,7 @@ local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
 local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)
 local CurSongName
 local ArtistName
-local course_index = 1
+local course_index
 local TotalCourseSongs
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local MaxWidth = NoteFieldIsCentered and 134 or 195
@@ -11,6 +11,7 @@ local count = 0
 
 -- initalize song/course info
 if GAMESTATE:IsCourseMode() then
+	course_index = 0
 	TotalCourseSongs = GAMESTATE:GetCurrentCourse():GetNumCourseEntries()
 	CurSongName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(0):GetSong():GetDisplayFullTitle() or "???"
 	ArtistName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(0):GetSong():GetDisplayArtist() or "???"	
@@ -27,20 +28,6 @@ af.InitCommand=function(self)
 		self:x(P1 and -275 or 35)
 		self:y(-45)
 		self:zoom(0.9)
-	end
-end
-
--- Update the course index and song/artist if in course mode
-if GAMESTATE:IsCourseMode() then
-	af.CurrentSongChangedMessageCommand=function(self,params)
-		if count == 0 then
-			course_index = 1
-			count = 1
-		else
-			course_index = course_index + 1
-		end
-		CurSongName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(course_index - 1):GetSong():GetDisplayFullTitle() or "???"
-		ArtistName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(course_index - 1):GetSong():GetDisplayArtist() or "???"
 	end
 end
 
@@ -70,6 +57,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
+		course_index = course_index + 1
+		CurSongName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(course_index - 1):GetSong():GetDisplayFullTitle() or "???"
+		ArtistName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(course_index - 1):GetSong():GetDisplayArtist() or "???"
 		self:settext(("%s "):format( tonumber(course_index).." / " .. tonumber(TotalCourseSongs)))
 	end,
 }
