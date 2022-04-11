@@ -200,30 +200,6 @@ local GroupCoursesBy = function(func)
 	return grouped_courses
 end
 
-
-local function GetHighestDifficulty(group, course)
-	local difficulty = 0
-	for steps in ivalues(course:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
-		difficulty = math.max(difficulty, steps:GetMeter())
-	end
-	return difficulty
-end
-
-local function GetStepCount(group, course)
-	local count = 0
-	local mpn = GAMESTATE:GetMasterPlayerNumber()
-
-	for steps in ivalues(course:GetStepsByStepsType(GAMESTATE:GetCurrentStyle():GetStepsType())) do
-		local steps_count = steps:GetRadarValues(mpn):GetValue('RadarCategory_TapsAndHolds')
-		if GetMainCourseSortPreference() ~= 6 or GetStepsDifficultyGroup(steps) == group then
-			return steps_count
-		end
-		count = math.max(count, steps_count)
-	end
-	
-	return count
-end
-
 local function fallback_sort(g, s)
 	return s:GetDisplayFullTitle():lower()
 end
