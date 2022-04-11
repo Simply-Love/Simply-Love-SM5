@@ -32,7 +32,7 @@ SL_CustomPrefs.Get = function()
 		},
 		AllowSongSearch =
 		{
-			Default = true,
+			Default = false,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values 	= { true, false }
 		},
@@ -41,12 +41,6 @@ SL_CustomPrefs.Get = function()
 			Default = false,
 			Choices = { THEME:GetString("ThemePrefs", "Show"), THEME:GetString("ThemePrefs", "Hide") },
 			Values 	= { false, true }
-		},
-		AllowDanceSolo =
-		{
-			Default = false,
-			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
-			Values 	= { true, false }
 		},
 		AllowScreenEvalSummary =
 		{
