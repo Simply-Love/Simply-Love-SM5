@@ -39,13 +39,21 @@ local function GetMaxIndexBelowOrEqual(values, exact_value)
 	return min_index
 end
 
-local GetCourseLengthGroup = function(course)
+local function GetCourseLength(course)
 	local steps_type = GAMESTATE:GetCurrentStyle():GetStepsType()
 	local exact_length = course:GetTotalSeconds(steps_type)
 	if exact_length == nil then
+		return nil
+	end
+	return math.floor(exact_length)
+end
+
+local GetCourseLengthGroup = function(course)
+	local exact_length = GetCourseLength(course)
+	if exact_length == nil then
 		return '???'
 	end
-	
+
 	local index = GetMaxIndexBelowOrEqual(course_lengths, exact_length)
 
 	if index == #course_lengths then
@@ -62,7 +70,7 @@ for i=0,400,10 do
 	course_bpms[#course_bpms+1] = i
 end
 
-local function GetCourseBpmGroup(course)
+local function GetCourseBpm(course)
 	local exact_bpm = 0
 	for trail in ivalues(course:GetAllTrails()) do
 		local mpn = GAMESTATE:GetMasterPlayerNumber()
@@ -75,6 +83,11 @@ local function GetCourseBpmGroup(course)
 		end
 		break
 	end
+	return exact_bpm
+end
+
+local function GetCourseBpmGroup(course)
+	local exact_bpm = GetCourseBpm(course)
 	local index = GetMaxIndexBelowOrEqual(course_bpms, exact_bpm)
 
 	if index == #course_bpms then
@@ -211,9 +224,27 @@ local function GetStepCount(group, course)
 	return count
 end
 
-local subsort_funcs = {
+local function fallback_sort(g, s)
+	return s:GetDisplayFullTitle():lower()
+end
+
+local main_sort_funcs = {
+	-- Group (only fallback)
+	function(g, s) return '' end,
+	-- Title
 	function(g, s) return s:GetDisplayFullTitle():lower() end,
+	-- Course Length
+	function(g, s)
+		local length = GetCourseLength(s)
+		if length == nil then return 0 end
+		return length
+	end,
+	-- Course BPM
+	function(g, s) return GetCourseBpm(s) end,
+	-- Difficulty (only fallback)
+	function(g, s) return '' end,
 }
+
 ---------------------------------------------------------------------------
 -- provided a group title as a string, prune out courses that don't have valid steps
 -- returns an indexed table of course objects
@@ -355,10 +386,16 @@ local UpdatePrunedCourses = function()
 		"DIFFICULTY",
 		]]--
 
-		local sort_func = subsort_funcs[1]
+		local main_sort_func = main_sort_funcs[GetMainCourseSortPreference()]
 
 		table.sort(courses, function(a, b)
-			return sort_func(group, a) < sort_func(group, b)
+			local main_a = main_sort_func(group, a)
+			local main_b = main_sort_func(group, b)
+			if main_a ~= main_b then
+				return main_a < main_b
+			end
+
+			return fallback_sort(group, a) < fallback_sort(group, b)
 		end)
 
 		pruned_courses_by_group[group] = courses

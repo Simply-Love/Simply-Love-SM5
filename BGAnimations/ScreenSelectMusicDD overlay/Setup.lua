@@ -225,6 +225,22 @@ local subsort_funcs = {
 	GetStepCount,
 	GetHighestDifficulty,
 }
+
+local main_sort_funcs = {
+	-- Group (only subsort)
+	function(g, s) return '' end,
+	-- Title
+	function(g, s) return s:GetDisplayMainTitle():lower() end,
+	-- Artist
+	function(g, s) return s:GetDisplayArtist():lower() end,
+	-- Song Length
+	function(g, s) return math.floor(s:MusicLengthSeconds()) end,
+	-- Song BPM
+	function(g, s) return s:GetDisplayBpms()[2] end,
+	-- Difficulty (only subsort)
+	function(g, s) return '' end,
+}
+
 ---------------------------------------------------------------------------
 -- provided a group title as a string, prune out songs that don't have valid steps
 -- returns an indexed table of song objects
@@ -381,10 +397,17 @@ local UpdatePrunedSongs = function()
 		"DIFFICULTY",
 		]]--
 
-		local sort_func = subsort_funcs[GetSubSortPreference()]
+		local main_sort_func = main_sort_funcs[GetMainSortPreference()]
+		local sub_sort_func = subsort_funcs[GetSubSortPreference()]
 
 		table.sort(songs, function(a, b)
-			return sort_func(group, a) < sort_func(group, b)
+			local main_a = main_sort_func(group, a)
+			local main_b = main_sort_func(group, b)
+			if main_a ~= main_b then
+				return main_a < main_b
+			end
+
+			return sub_sort_func(group, a) < sub_sort_func(group, b)
 		end)
 
 		pruned_songs_by_group[group] = songs
