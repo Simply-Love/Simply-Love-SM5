@@ -66,6 +66,9 @@ local af = Def.ActorFrame{
 		sfx.change:play()
 	end,
 	CancelCommand=function(self)
+		if GAMESTATE:IsCourseMode() then
+			play_sample_music()
+		end
 		local topscreen = SCREENMAN:GetTopScreen()
 		if topscreen then
 			-- play the start sound effect

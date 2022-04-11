@@ -183,11 +183,11 @@ local t = Def.ActorFrame {
 	LoadActor("./WheelHighlight.lua"),
 	-- Graphical Banner
 	LoadActor("./banner.lua"),
-	LoadActor("./footer.lua"),
+	LoadActor("../ScreenSelectMusicDD overlay/footer.lua"),
 	-- Song info like artist, bpm, and song length.
 	LoadActor("./songDescription.lua"),
 	LoadActor("./playerModifiers.lua"),
-	-- number of steps, jumps, holds, etc., and high scores associated with the current stepchart
+	-- number of steps, jumps, holds, etc., and high scores associated with the current course
 	LoadActor("./PaneDisplay.lua"),
 	-- CourseContentsList
 	LoadActor("./CourseContentsList.lua"),
@@ -196,9 +196,9 @@ local t = Def.ActorFrame {
 	-- Sort and Filter menu wow
 	LoadActor("./SortMenu/default.lua"),
 	-- a Test Input overlay can be accessed from the SortMenu
-	LoadActor("./TestInput.lua"),
+	LoadActor("../ScreenSelectMusicDD overlay/TestInput.lua"),
 	-- For backing out of SSMDD.
-	LoadActor('./EscapeFromEventMode.lua'),
+	LoadActor('../ScreenSelectMusicDD overlay/EscapeFromEventMode.lua'),
 	-- For transitioning to either gameplay or player options.
 	LoadActor('./OptionsMessage.lua'),
 }
