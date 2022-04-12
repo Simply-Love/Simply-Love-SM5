@@ -144,7 +144,8 @@ return Def.ActorFrame{
 			end
 
 			scroller.focus_pos = 5
-			scroller:set_info_set(scroller_data, 0)
+			scroller:set_info_set(scroller_data, 1)
+			scroller:scroll_by_amount(-1 )
 		end,
 
 		FrameBackground(PlayerColor(player), player, frame.w * 1.1),
@@ -164,7 +165,7 @@ return Def.ActorFrame{
 			InitCommand=function(self)
 				self:x(15.5)
 			end,
-			OnCommand=function(self) self:playcommand("Set", profile_data[1]) end,
+			OnCommand=function(self) self:playcommand("Set", profile_data[0]) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
@@ -338,7 +339,7 @@ return Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Name='SelectedProfileText',
 		InitCommand=function(self)
-			self:settext(profile_data[1] and profile_data[1].displayname or "")
+			self:settext(profile_data[0] and profile_data[0].displayname or "")
 			self:y(160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
 		end,
 		OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end
