@@ -757,3 +757,22 @@ CalculateExScore = function(player, ex_counts)
 
 	return math.max(0, math.floor(total_points/total_possible * 10000) / 100)
 end
+
+-- -----------------------------------------------------------------------
+WriteItlFile = function(dir, data)
+	local path = dir.. "itl2022.itl"
+	local f = RageFileUtil:CreateRageFile()
+	local existing = ""
+	if FILEMAN:DoesFileExist(path) then
+		-- Load the current contents of the file if it exists.
+		if f:Open(path, 1) then
+			existing = f:Read()
+		end
+	end
+
+	-- Append all the scores to the file.
+	if f:Open(path, 2) then
+		f:Write(existing..data)
+	end
+	f:destroy()
+end

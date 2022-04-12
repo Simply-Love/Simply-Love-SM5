@@ -97,20 +97,17 @@ local t = Def.ActorFrame {
 				rate == 1.0 and
 				mines_enabled and
 				not stats:GetFailed()) then
-			local path = dir.. "itl2022.itl"
-			local f = RageFileUtil:CreateRageFile()
-			-- Load the current contents of the file if it exists.
-			local existing = ""
-			if FILEMAN:DoesFileExist(path) then
-				if f:Open(path, 1) then
-					existing = f:Read()
-				end
+			local data = DataForSong(player)
+
+			-- Saving to memory cards won't work here as the USB won't be mounted.
+			-- Save the data in a temporary table so that it can later be saved within
+			-- Simply Love's SaveProfileCustom.
+			if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+				SL[pn].ITLData[#SL[pn].ITLData + 1] = data
+			-- For other profiles, we can just save after every song.
+			else
+				WriteItlFile(dir, data)
 			end
-			-- Append the new score to the file.
-			if f:Open(path, 2) then
-				f:Write(existing..DataForSong(player))
-			end
-			f:destroy()
 		end
 	end
 }
