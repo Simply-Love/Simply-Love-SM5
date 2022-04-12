@@ -13,7 +13,8 @@ return Def.ActorFrame{
 		InitCommand=function(self)
 			self:zoomto(30, 30)
 		end,
-		OnCommand=function(self)
+		CurrentSongChangedMessageCommand=function(self) self:queuecommand("Begin") end,
+		BeginCommand=function(self)
 			local currentSteps = GAMESTATE:GetCurrentSteps(player)
 			if currentSteps then
 				local currentDifficulty = currentSteps:GetDifficulty()
