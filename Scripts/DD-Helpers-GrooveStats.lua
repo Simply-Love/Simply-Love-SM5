@@ -449,9 +449,15 @@ CreateCommentString = function(player)
 		if #comment ~= 0 then
 			comment = comment .. ", "
 		end
-		comment = comment.."Quint!"
-	end
+		comment = comment.."Quint"
+	elseif IsQuad and not IsQuint then
+		if #comment ~= 0 then
+			comment = comment .. ", "
+		end
+		comment = comment.."FFC"
 
+	end
+	
 	local pn = ToEnumShortString(player)
 	-- If a player CModded or MModded, then add that as well.
 	local cmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod()
@@ -486,12 +492,9 @@ CreateCommentString = function(player)
 		comment = comment.."Untied WR when set."
 	end
 	
+	--Justin Case
 	if #comment == 0 then
-		if mods.ShowFaPlusWindow or mods.ShowEXScore then
-			comment = "Quint!"
-		else
-			comment = "FFC"
-		end
+		comment = "yea"
 	end
 
 	return comment
