@@ -455,7 +455,6 @@ CreateCommentString = function(player)
 			comment = comment .. ", "
 		end
 		comment = comment.."FFC"
-
 	end
 	
 	local pn = ToEnumShortString(player)
