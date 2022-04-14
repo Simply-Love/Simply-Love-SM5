@@ -5,6 +5,7 @@ local rate = SL.Global.ActiveModifiers.MusicRate
 local P1 = GAMESTATE:IsHumanPlayer(PLAYER_1)
 local P2 = GAMESTATE:IsHumanPlayer(PLAYER_2)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
+local elapsedtime
 
 -- -----------------------------------------------------------------------
 -- reference to the BitmapText actor that will display elapsed time (current BitmapText)
@@ -106,8 +107,7 @@ local seconds_offset = 0
 
 local Update = function(af, delta)
 	if not alive then return end
-	local elapsedtime
-	elapsedtime = (SongPosition:GetMusicSeconds() / rate) +  seconds_offset
+	elapsedtime = math.floor((SongPosition:GetMusicSeconds() / rate) +  seconds_offset)
 
 	-- SongPosition:GetMusicSeconds() can be negative for a bit at
 	-- the beginnging depending on how the stepartist set the offset
@@ -116,10 +116,8 @@ local Update = function(af, delta)
 		curBMT:settext(fmt(seconds_offset))
 		remBMT:settext(fmt(totalseconds))
 		return
-	end
-	
 	-- Don't let time remaining go negative and don't let elapsed time go beyond song length. (When not in course mode)
-	if not GAMESTATE:IsCourseMode() and elapsedtime >= totalseconds then
+	elseif not GAMESTATE:IsCourseMode() and elapsedtime >= totalseconds then
 		remBMT:settext("0:00")
 		curBMT:settext( fmt(totalseconds) )
 	else
