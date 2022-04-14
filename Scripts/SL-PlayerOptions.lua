@@ -521,10 +521,10 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			if IsUsingWideScreen() then
-				return { "JudgmentTilt" }
+				return { "JudgmentTilt", "ColumnCues" }
 			else
 				-- Add in the two removed options if not in WideScreen.
-				return { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt" }
+				return { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
 			end
 		end
 	},

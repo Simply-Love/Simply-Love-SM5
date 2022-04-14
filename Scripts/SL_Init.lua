@@ -34,6 +34,7 @@ local PlayerDefaults = {
 				MissBecauseHeld = false,
 				NPSGraphAtTop = false,
 				JudgmentTilt = false,
+				ColumnCues = false,
 				ErrorBar = "None",
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
@@ -41,6 +42,7 @@ local PlayerDefaults = {
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
 			}
+			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
 				-- Chart identifiers for caching purposes.
 				Filename = "",
@@ -52,6 +54,7 @@ local PlayerDefaults = {
 				NotesPerMeasure = {},
 				PeakNPS = 0,
 				NPSperMeasure = {},
+				columnCues = {},
 				Hash = '',
 
 				Crossovers = 0,
@@ -123,6 +126,8 @@ local GlobalDefaults = {
 			self.TimeAtSessionStart = nil
 
 			self.GameplayReloadCheck = false
+			-- How long to wait before displaying a "cue"
+			self.ColumnCueMinTime = 1.5
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,
