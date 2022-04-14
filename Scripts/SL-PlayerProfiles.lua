@@ -52,6 +52,7 @@ local permitted_profile_settings = {
 	MissBecauseHeld      = "boolean",
 	NPSGraphAtTop        = "boolean",
 	JudgmentTilt         = "boolean",
+	ColumnCues           = "boolean",
 	ErrorBar             = "string",
 	ErrorBarUp           = "boolean",
 	ErrorBarMultiTick    = "boolean",

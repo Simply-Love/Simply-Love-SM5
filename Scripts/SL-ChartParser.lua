@@ -307,12 +307,17 @@ local GetMeasureInfo = function(Steps, chartString)
 	-- Which measures are considered a stream?
 	local notesPerMeasure = {}
 	local measureCount = 1
-	local notesInMeasure = 0
+	local notesInMeasure = 0  -- The tap notes found in this measure
+	local rowsInMeasure = 0   -- The total rows in this measure
 
 	-- NPS and Density Graph Variables
 	local NPSperMeasure = {}
 	local NPSForThisMeasure, peakNPS = 0, 0
 	local timingData = Steps:GetTimingData()
+
+	-- Column Cues variables.
+	local columnCueAllData = {} 
+	local columnTimes = {}
 
 	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
 	for line in chartString:gmatch("[^%s*\r\n]+") do
@@ -320,6 +325,15 @@ local GetMeasureInfo = function(Steps, chartString)
 		if(line:match("^[,;]%s*")) then
 			-- Does the number of notes in this measure meet our threshold to be considered a stream?
 			table.insert(notesPerMeasure, notesInMeasure)
+
+			-- Column Cue calculation
+			for noteData in ivalues(columnCueAllData) do
+				local beat = 4 * ((measureCount-1) + (noteData.rowNum-1)/rowsInMeasure)
+				columnTimes[#columnTimes + 1] = {
+					columns=noteData.columns,
+					time=timingData:GetElapsedTimeFromBeat(beat)
+				}
+			end
 
 			-- NPS Calculation
 			durationOfMeasureInSeconds = timingData:GetElapsedTimeFromBeat(measureCount * 4) - timingData:GetElapsedTimeFromBeat((measureCount-1)*4)
@@ -352,16 +366,53 @@ local GetMeasureInfo = function(Steps, chartString)
 
 			-- Reset iterative variables
 			notesInMeasure = 0
+			rowsInMeasure = 0
 			measureCount = measureCount + 1
+			columnCueAllData = {}
 		else
+			rowsInMeasure = rowsInMeasure + 1
 			-- Is this a note? (Tap, Hold Head, Roll Head)
 			if(line:match("[124]")) then
 				notesInMeasure = notesInMeasure + 1
 			end
+
+			-- For column cues, also keep track of mines
+			if line:match("[124M]") then
+				-- Find all the columns where the tap notes/mines occur.
+				-- This is used for the ColumnCues.
+				local columns = {}
+				local i = 0
+				while true do
+					i = line:find("[124M]", i+1)
+					if i == nil then break end
+					columns[#columns+1] = {
+						colNum=i,
+						isMine=line:sub(i, i) == "M"
+					}
+				end
+				columnCueAllData[#columnCueAllData+1] = {
+					rowNum=rowsInMeasure,
+					columns=columns
+				}
+			end
 		end
 	end
 
-	return notesPerMeasure, peakNPS, NPSperMeasure
+	local columnCues = {}
+	local prevTime = 0
+	for columnTime in ivalues(columnTimes) do
+		local duration = columnTime.time - prevTime
+		if duration >= SL.Global.ColumnCueMinTime or (prevTime == 0 and duration ~= 0) then
+			columnCues[#columnCues + 1] = {
+				columns=columnTime.columns,
+				startTime=prevTime,
+				duration=duration
+			}
+		end
+		prevTime = columnTime.time
+	end
+
+	return notesPerMeasure, peakNPS, NPSperMeasure, columnCues
 end
 -- ----------------------------------------------------------------
 
@@ -702,6 +753,7 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		SL[pn].Streams.NotesPerMeasure = SL[opposite_player].Streams.NotesPerMeasure
 		SL[pn].Streams.PeakNPS = SL[opposite_player].Streams.PeakNPS
 		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
+		SL[pn].Streams.ColumnCues = SL[opposite_player].Streams.ColumnCues
 		SL[pn].Streams.Hash = SL[opposite_player].Streams.Hash
 
 		SL[pn].Streams.Crossovers = SL[opposite_player].Streams.Crossovers
@@ -756,12 +808,13 @@ ParseChartInfo = function(steps, pn)
 				chartString = chartString .. '\n;'
 				-- Which measures have enough notes to be considered as part of a stream?
 				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
-				local NotesPerMeasure, PeakNPS, NPSperMeasure = GetMeasureInfo(steps, chartString)
+				local NotesPerMeasure, PeakNPS, NPSperMeasure, ColumnCues = GetMeasureInfo(steps, chartString)
 
 				-- Which sequences of measures are considered a stream?
 				SL[pn].Streams.NotesPerMeasure = NotesPerMeasure
 				SL[pn].Streams.PeakNPS = PeakNPS
 				SL[pn].Streams.NPSperMeasure = NPSperMeasure
+				SL[pn].Streams.ColumnCues = ColumnCues
 				SL[pn].Streams.Hash = Hash
 
 				local Crossovers, Footswitches, Sideswitches, Jacks, Brackets = GetTechniques(chartString)
