@@ -8,6 +8,14 @@ local bmt_actor
 local hours, mins, secs
 local hmmss = "%d:%02d:%02d"
 
+local filter
+
+if GAMESTATE:IsCourseMode() then
+	filter = IsUsingCourseFilters()
+else
+	filter = IsUsingFilters()
+end
+
 -- prefer the engine's SecondsToHMMSS()
 -- but define it ourselves if it isn't provided by this version of SM5
 local SecondsToHMMSS = SecondsToHMMSS or function(s)
@@ -75,7 +83,7 @@ return Def.ActorFrame{
 		Name="Filter_Warning",
 		Text="",
 		InitCommand=function(self)
-			if IsUsingFilters() then
+			if filter then
 				self:settext("Filters Active!")
 			else
 				self:settext("")
@@ -110,7 +118,7 @@ return Def.ActorFrame{
 		Text="",
 		InitCommand=function(self)
 			if nsj == 2 then
-				if IsUsingFilters() then
+				if filter then
 					self:settext("Filters Active!")
 				else
 					self:settext("")
