@@ -185,8 +185,8 @@ local t = Def.ActorFrame {
 	LoadActor("./banner.lua"),
 	LoadActor("../ScreenSelectMusicDD overlay/footer.lua"),
 	-- Song info like artist, bpm, and song length.
-	LoadActor("./songDescription.lua"),
-	LoadActor("./playerModifiers.lua"),
+	LoadActor("./courseDescription.lua"),
+	LoadActor("../ScreenSelectMusicDD overlay/playerModifiers.lua"),
 	-- number of steps, jumps, holds, etc., and high scores associated with the current course
 	LoadActor("./PaneDisplay.lua"),
 	-- CourseContentsList
@@ -200,7 +200,7 @@ local t = Def.ActorFrame {
 	-- For backing out of SSMDD.
 	LoadActor('../ScreenSelectMusicDD overlay/EscapeFromEventMode.lua'),
 	-- For transitioning to either gameplay or player options.
-	LoadActor('./OptionsMessage.lua'),
+	LoadActor('../ScreenSelectMusicDD overlay/OptionsMessage.lua'),
 }
 
 return t
