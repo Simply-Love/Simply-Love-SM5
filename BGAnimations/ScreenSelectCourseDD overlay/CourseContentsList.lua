@@ -2,6 +2,7 @@ local numItemsToDraw = 26
 local scrolling_down = true
 local song_course_index
 local nsj = GAMESTATE:GetNumSidesJoined()
+local reached_top = false
 
 local transform_function = function(self,offsetFromCenter,itemIndex,numitems)
 	self:y(offsetFromCenter * 22)
@@ -17,9 +18,9 @@ local update = function(ccl, dt)
 		ccl:SetDestinationItem( 0 )
 
 	-- elseif we've reached the top of the list and want the CCL to scroll down
-	elseif math.ceil(ccl:GetCurrentItem()) == 0 then
-		scrolling_down = true
-		ccl:SetDestinationItem( math.max(0,ccl:GetNumItems() - numItemsToDraw/2) )
+	elseif not reached_top and math.ceil(ccl:GetCurrentItem()) == 0 then
+		reached_top = true
+		ccl:sleep(1):queuecommand('StartMovingDown')
 	end
 end
 
@@ -122,6 +123,11 @@ af[#af+1] = Def.CourseContentsList {
 		else
 			self:SetDestinationItem( 0 )
 		end
+	end,
+	StartMovingDownCommand=function(self)
+		scrolling_down = true
+		self:SetDestinationItem( math.max(0,self:GetNumItems() - numItemsToDraw/2) )
+		reached_top = false
 	end,
 
 	-- a generic row in the CourseContentsList
