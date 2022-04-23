@@ -53,6 +53,8 @@ local permitted_profile_settings = {
 	NPSGraphAtTop        = "boolean",
 	JudgmentTilt         = "boolean",
 	ColumnCues           = "boolean",
+	DisplayScorebox      = "boolean",
+
 	ErrorBar             = "string",
 	ErrorBarUp           = "boolean",
 	ErrorBarMultiTick    = "boolean",

@@ -520,12 +520,17 @@ local Overrides = {
 	GameplayExtrasB = {
 		SelectType = "SelectMultiple",
 		Values = function()
+			local vals = {}
 			if IsUsingWideScreen() then
-				return { "JudgmentTilt", "ColumnCues" }
+				vals = { "JudgmentTilt", "ColumnCues" }
 			else
 				-- Add in the two removed options if not in WideScreen.
-				return { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
+				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
 			end
+			if IsServiceAllowed(SL.GrooveStats.GetScores) then
+				vals[#vals+1] = "DisplayScorebox"
+			end
+			return vals
 		end
 	},
 	ErrorBar = {

@@ -1,5 +1,12 @@
 local player = ...
 local pn = ToEnumShortString(player)
+
+if (not SL[pn].ActiveModifiers.DisplayScorebox or
+		not IsServiceAllowed(SL.GrooveStats.GetScores) or
+		SL[pn].ApiKey == "") then
+	return
+end
+
 local n = player==PLAYER_1 and "1" or "2"
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
