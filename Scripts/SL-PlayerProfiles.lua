@@ -21,8 +21,6 @@ local permitted_profile_settings = {
 	ComboFont        = "string",
 	HoldJudgment     = "string",
 	BackgroundFilter = "string",
-	ShowFaPlusWindow = "boolean",
-	ShowEXScore      = "boolean",
 
 	----------------------------------
 	-- "Advanced Modifiers"
@@ -59,6 +57,9 @@ local permitted_profile_settings = {
 	ErrorBarUp           = "boolean",
 	ErrorBarMultiTick    = "boolean",
 
+	ShowFaPlusWindow = "boolean",
+	ShowEXScore      = "boolean",
+	HideFaPlusPane   = "boolean",
 
 	----------------------------------
 	-- Profile Settings without OptionRows
