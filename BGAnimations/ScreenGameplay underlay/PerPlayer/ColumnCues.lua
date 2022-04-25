@@ -14,17 +14,34 @@ local width = style:GetWidth(player)
 local yOffset = 80
 local fadeTime = 0.15
 local curIndex = 1
+local updatedFirstTime = false
 
 local Update = function(self, delta)
 	if curIndex <= #columnCues then
 		local curTime = playerState:GetSongPosition():GetMusicSecondsVisible()
 		local columnCue = columnCues[curIndex]
-		if columnCue.startTime <= curTime then
+		local startTime = columnCue.startTime
+		local duration = columnCue.duration
+		-- MusicSecondsVisible might be negative before the chart actually starts.
+		-- In addition, sometimes charts might start on beat 0, and we still want to
+		-- accurately display the first column cue. To do this, we just adjust the
+		-- duration and start times of the first cue to account for this negative
+		-- time.
+		-- We only have to do this for the first column cue as the others should
+		-- have accurate start times.
+		-- TODO(teejusb): The timing for this seems to be off by a little bit. It's
+		-- not toooo bad but see if we can make this more accurate.
+		if curIndex == 1 and not updatedFirstTime and curTime < 0 then
+			duration = duration - curTime
+			startTime = startTime + curTime
+			updatedFirstTime = true
+		end
+		if startTime <= curTime then
 			-- Get the current music rate.
 			-- Note that Lua files might change the rate mode so this might not be accurate.
 			-- It's hard to handle that case since we don't exactly know when a file will apply a rate mod.
 			local rate = SL.Global.ActiveModifiers.MusicRate
-			local scaledDuration = columnCue.duration / rate
+			local scaledDuration = duration / rate
 			-- Make sure there's still something to display after any potential scaling.
 			if scaledDuration > 2 * fadeTime then
 				for col_mine in ivalues(columnCue.columns) do

@@ -402,7 +402,7 @@ local GetMeasureInfo = function(Steps, chartString)
 	local prevTime = 0
 	for columnTime in ivalues(columnTimes) do
 		local duration = columnTime.time - prevTime
-		if duration >= SL.Global.ColumnCueMinTime or (prevTime == 0 and duration ~= 0) then
+		if duration >= SL.Global.ColumnCueMinTime or prevTime == 0 then
 			columnCues[#columnCues + 1] = {
 				columns=columnTime.columns,
 				startTime=prevTime,
