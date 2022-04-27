@@ -14,9 +14,29 @@ if type(ThemePrefs) ~= "table" or type(ThemePrefs.Get) ~= "function" then
 	}
 end
 
-
-
 SL_CustomPrefs.Get = function()
+	 -- emojis are our lingua franca for the 21st century
+	local visualStyleChoices = { "❤", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔" }
+	local visualStyleValues  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk" }
+
+	local year = Year()
+	local month = MonthOfYear()+1
+	local day = DayOfMonth()
+	local today = year * 10000 + month * 100 + day
+
+	if today >= 20220617 then
+		visualStyleChoices[#visualStyleChoices+1] = "💍"
+		visualStyleValues[#visualStyleValues+1] = "SRPG6"
+	else
+		local prefs = IniFile.ReadFile("/Save/ThemePrefs.ini")
+		local theme = PREFSMAN:GetPreference("Theme")
+		local lastActiveEvent = nil
+		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG6" then
+			visualStyleChoices[#visualStyleChoices+1] = "💍"
+			visualStyleValues[#visualStyleValues+1] = "SRPG6"
+		end
+	end
+
 	return {
 		AllowFailingOutOfSet =
 		{
@@ -30,8 +50,6 @@ SL_CustomPrefs.Get = function()
 			Choices = { 0,1,2,3,4,5,6,7,8,9 },
 			Values  = { 0,1,2,3,4,5,6,7,8,9 }
 		},
-
-
 		HideStockNoteSkins =
 		{
 			Default = false,
@@ -73,9 +91,8 @@ SL_CustomPrefs.Get = function()
 		VisualStyle =
 		{
 			Default = "Hearts",
-			 -- emojis are our lingua franca for the 21st century
-			Choices = { "♡", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔", "🗡" },
-			Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk", "SRPG5" },
+			Choices = visualStyleChoices,
+			Values  = visualStyleValues
 		},
 		RainbowMode = {
 			Default = false,
@@ -105,7 +122,6 @@ SL_CustomPrefs.Get = function()
 			Choices = { 1,2,3,4,5,6,7,8,9,10,11,12 },
 			Values  = { 1,2,3,4,5,6,7,8,9,10,11,12 }
 		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		-- Save the last seen song in Edit Mode to disk so that ScreenEditMenu
 		-- can load with it already selected, instead of the first song in the
@@ -126,7 +142,6 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = "",
 		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		-- MenuTimer values for various screens
 		ScreenSelectMusicMenuTimer =
@@ -198,7 +213,6 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values  = { true, false }
 		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		-- Casual GameMode Settings
 		CasualMaxMeter = {
@@ -206,7 +220,6 @@ SL_CustomPrefs.Get = function()
 			Choices = range(5, 15, 1),
 			Values  = range(5, 15, 1)
 		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		-- SM5.1's ImageCache System (used in CasualMode)
 		UseImageCache = {
@@ -214,7 +227,6 @@ SL_CustomPrefs.Get = function()
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values  = { true, false }
 		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		-- nice meme
 		-- 0 is off, 1 is visuals only, 2 is visuals and sound.
@@ -223,7 +235,6 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs","On"), THEME:GetString("ThemePrefs","OnWithSound") },
 			Values  = { 0, 1, 2 }
 		},
-
 		-- - - - - - - - - - - - - - - - - - - -
 		LastActiveEvent =
 		{
