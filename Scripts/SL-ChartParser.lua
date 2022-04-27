@@ -349,9 +349,9 @@ local GetMeasureInfo = function(Steps, chartString)
 			-- timed negative stop, but the engine reports them as having very small but positive durations
 			-- which erroneously inflates the notes per second calculation.
 			--
-			-- As a hold over for this case, we check that the duration is <= 0.02 (instead of 0), so this only
-			-- breaks for cases where charts are of 12,000 BPM (which are likely rarer than those with warps).
-			if durationOfMeasureInSeconds <= 0.02 then
+			-- As a hold over for this case, we check that the duration is <= 0.12 (instead of 0), so this only
+			-- breaks for cases where charts are of 2,000 BPM (which are likely rarer than those with warps).
+			if durationOfMeasureInSeconds <= 0.12 then
 				NPSForThisMeasure = 0
 			else
 				NPSForThisMeasure = notesInMeasure/durationOfMeasureInSeconds
