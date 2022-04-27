@@ -13,23 +13,13 @@ SL.SRPG6 = {
 		"#c32020",	-- red (Stamina Nation)
 		"#954f00",
 	},
-	TextColor = "#272024",
+	TextColor = "#ffffff",
 
 	-- internal flag
 	firstRun = false,
 
 	GetLogo = function()
-		local idx = SL.Global.ActiveColorIndex
-
-		if idx <= 3 then
-			return "logo_main (doubleres).png"
-		elseif idx <= 6 then
-			return "logo_dprt (doubleres).png"
-		elseif idx <= 9 then
-			return "logo_fe (doubleres).png"
-		else
-			return "logo_sn (doubleres).png"
-		end
+		return "logo_main (doubleres).png"
 	end,
 	GetFactionName = function(idx)
 		if idx <= 3 then
