@@ -8,7 +8,7 @@ local ColorSelected = false
 local NumHeartsToDraw = IsUsingWideScreen() and 11 or 7
 
 local style = ThemePrefs.Get("VisualStyle")
-local colorTable = (style == "SRPG5") and SL.SRPG5.Colors or SL.DecorativeColors
+local colorTable = (style == "SRPG6") and SL.SRPG6.Colors or SL.DecorativeColors
 local factionBmt
 
 local text
@@ -33,10 +33,12 @@ input = function(event)
 		if event.GameButton == "MenuRight" then
 			wheel:scroll_by_amount(1)
 			underlay:GetChild("change_sound"):play()
+			underlay:playcommand("Preview")
 
 		elseif event.GameButton == "MenuLeft" then
 			wheel:scroll_by_amount(-1)
 			underlay:GetChild("change_sound"):play()
+			underlay:playcommand("Preview")
 
 		elseif event.GameButton == "Start" then
 			ColorSelected = true
@@ -78,8 +80,9 @@ local wheel_item_mt = {
 					self.heart = subself
 					subself:diffusealpha(0)
 					subself:zoom(0.25)
-					if style == "SRPG5" then
-						subself:shadowlength(3)
+					if style == "SRPG6" then
+						subself:blend("BlendMode_Add")
+						subself:zoom(0.35)
 					end
 				end,
 				OnCommand=function(subself)
@@ -141,9 +144,9 @@ local wheel_item_mt = {
 				self.container:effectmagnitude(0,0,0)
 			end
 
-			if style == "SRPG5" and has_focus then
+			if style == "SRPG6" and has_focus then
 				local idx = self.color_index % #colorTable + 1
-				factionBmt:settext(SL.SRPG5.GetFactionName(idx))
+				factionBmt:settext(SL.SRPG6.GetFactionName(idx))
 			end
 		end,
 
@@ -183,30 +186,30 @@ local t = Def.ActorFrame{
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
-	FinishCommand=function(self)
-		self:GetChild("start_sound"):play()
-
+	PreviewCommand=function(self)
 		SL.Global.ActiveColorIndex = FindInTable(wheel:get_info_at_focus_pos(), colorTable)
 		SL.Global.ActiveColorIndex = (SL.Global.ActiveColorIndex % #colorTable) + 1
 		ThemePrefs.Set("SimplyLoveColor", SL.Global.ActiveColorIndex)
 		ThemePrefs.Save()
-
+		
 		MESSAGEMAN:Broadcast("ColorSelected")
-
+	end,
+	FinishCommand=function(self)
+		self:GetChild("start_sound"):play()
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
 	wheel:create_actors( "ColorWheel", NumHeartsToDraw, wheel_item_mt, _screen.cx, _screen.cy )
 }
 
-if style == "SRPG5" then
+if style == "SRPG6" then
 	t[#t+1] = Def.BitmapText{
 		Font="Common Normal",
 		Text="Choose your faction!",
 		InitCommand=function(self)
 			self:xy(_screen.cx, 80)
 			self:zoom(1.5)
-			self:diffuse(color(SL.SRPG5.TextColor))
+			self:diffuse(color(SL.SRPG6.TextColor))
 			self:shadowlength(0.5)
 		end
 	}
@@ -219,7 +222,7 @@ if style == "SRPG5" then
 
 			self:xy(_screen.cx, _screen.h - 110)
 			self:zoom(2.0)
-			self:diffuse(color(SL.SRPG5.TextColor))
+			self:diffuse(color(SL.SRPG6.TextColor))
 			self:shadowlength(0.5)
 			self:wrapwidthpixels(150)
 		end
