@@ -186,6 +186,11 @@ local af = Def.ActorFrame{
 		OnCommand=function(self)
 			self:queuecommand("MakeRequest")
 		end,
+		CurrentSongChangedMessageCommand=function(self)
+				if not self.isFirst then
+						self:queuecommand("MakeRequest")
+				end
+		end,
 		MakeRequestCommand=function(self)
 			local sendRequest = false
 			local data = {
