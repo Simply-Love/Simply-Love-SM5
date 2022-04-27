@@ -43,7 +43,7 @@ local sprite = Def.Sprite {
 		self:diffusealpha(0)
 
 		local style = ThemePrefs.Get("VisualStyle")
-		self:visible(style == "SRPG5")
+		self:visible(style == "SRPG6")
 		-- Used to prevent unnecessary self:Loads()
 		self.IsYellow = true
 	end,
@@ -51,7 +51,7 @@ local sprite = Def.Sprite {
 	ScreenChangedMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local style = ThemePrefs.Get("VisualStyle")
-		if style == "SRPG5" then
+		if style == "SRPG6" then
 			if screen and not yellowSrpg[screen:GetName()] and self.IsYellow then
 				self:Load(THEME:GetPathG("", "_VisualStyles/" .. style .. "/Overlay-BG.png"))
 				self.IsYellow = false
@@ -70,7 +70,7 @@ local sprite = Def.Sprite {
 		self:Load(new_file)
 		self:zoomto(_screen.w, _screen.h)
 
-		if style == "SRPG5" then
+		if style == "SRPG6" then
 			self:visible(true)
 		else
 			self:visible(false)

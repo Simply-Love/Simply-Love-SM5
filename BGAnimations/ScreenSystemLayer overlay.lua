@@ -3,8 +3,8 @@
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		-- In case we loaded the theme with SRPG5 and had Rainbow Mode enabled, disable it.
-		if ThemePrefs.Get("VisualStyle") == "SRPG5" and ThemePrefs.Get("RainbowMode") == true then
+		-- In case we loaded the theme with SRPG6 and had Rainbow Mode enabled, disable it.
+		if ThemePrefs.Get("VisualStyle") == "SRPG6" and ThemePrefs.Get("RainbowMode") == true then
 			ThemePrefs.Set("RainbowMode", false)
 			ThemePrefs.Save()
 		end
@@ -38,8 +38,8 @@ local function CreditsText( player )
 
 				local screenName = screen:GetName()
 				if screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo" then
-					if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-						textColor = color(SL.SRPG5.TextColor)
+					if ThemePrefs.Get("VisualStyle") == "SRPG6" then
+						textColor = color(SL.SRPG6.TextColor)
 						shadowLength = 0.4
 					end
 				elseif (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
@@ -171,8 +171,8 @@ t[#t+1] = LoadFont("Common Footer")..{
 		local textColor = Color.White
 		local screenName = screen:GetName()
 		if screen ~= nil and (screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo") then
-			if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-				textColor = color(SL.SRPG5.TextColor)
+			if ThemePrefs.Get("VisualStyle") == "SRPG6" then
+				textColor = color(SL.SRPG6.TextColor)
 			end
 		end
 		self:diffuse(textColor)
@@ -348,8 +348,8 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 		local last_active_event = ThemePrefs.Get("LastActiveEvent")
 
 		for event in ivalues(events) do
-			if event["shortName"] == "SRPG5" and last_active_event ~= "SRPG5" then
-				SL.SRPG5:ActivateVisualStyle()
+			if event["shortName"] == "SRPG6" and last_active_event ~= "SRPG6" then
+				SL.SRPG6:ActivateVisualStyle()
 				break
 			end
 		end
@@ -382,8 +382,8 @@ local function DiffuseText(bmt)
 	if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
 		textColor = Color.Black
 	end
-	if ThemePrefs.Get("VisualStyle") == "SRPG5" then
-		textColor = color(SL.SRPG5.TextColor)
+	if ThemePrefs.Get("VisualStyle") == "SRPG6" then
+		textColor = color(SL.SRPG6.TextColor)
 		shadowLength = 0.4
 	end
 
