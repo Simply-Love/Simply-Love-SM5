@@ -3,8 +3,8 @@
 
 local file = ...
 
--- We want the yellow BG to be used on the following screens.
-local yellowSrpg = {
+-- We want the Shared BG to be used on the following screens.
+local SharedBackground = {
 	["ScreenInit"] = true,
 	["ScreenLogo"] = true,
 	["ScreenTitleMenu"] = true,
@@ -36,6 +36,9 @@ local yellowSrpg = {
 	["ScreenThemeOptions"] = true,
 }
 
+local shared_alpha = 0.6
+local overlay_alpha = 1
+
 local sprite = Def.Sprite {
 	Texture=file,
 	InitCommand=function(self)
@@ -45,21 +48,25 @@ local sprite = Def.Sprite {
 		local style = ThemePrefs.Get("VisualStyle")
 		self:visible(style == "SRPG6")
 		-- Used to prevent unnecessary self:Loads()
-		self.IsYellow = true
+		self.IsShared = true
 	end,
-	OnCommand=function(self) self:accelerate(0.8):diffusealpha(1) end,
+	OnCommand=function(self)
+		self:accelerate(0.8):diffusealpha(self.IsShared and shared_alpha or overlay_alpha)
+	end,
 	ScreenChangedMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local style = ThemePrefs.Get("VisualStyle")
 		if style == "SRPG6" then
-			if screen and not yellowSrpg[screen:GetName()] and self.IsYellow then
+			if screen and not SharedBackground[screen:GetName()] and self.IsShared then
 				self:Load(THEME:GetPathG("", "_VisualStyles/" .. style .. "/Overlay-BG.png"))
-				self.IsYellow = false
+				self.IsShared = false
+				self:diffusealpha(overlay_alpha)
 			end
 
-			if screen and yellowSrpg[screen:GetName()] and not self.IsYellow then
+			if screen and SharedBackground[screen:GetName()] and not self.IsShared then
 				self:Load(THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png"))
-				self.IsYellow = true
+				self.IsShared = true
+				self:diffusealpha(shared_alpha)
 			end
 		end
 	end,
@@ -69,6 +76,7 @@ local sprite = Def.Sprite {
 		local new_file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
 		self:Load(new_file)
 		self:zoomto(_screen.w, _screen.h)
+		self:diffusealpha(shared_alpha)
 
 		if style == "SRPG6" then
 			self:visible(true)

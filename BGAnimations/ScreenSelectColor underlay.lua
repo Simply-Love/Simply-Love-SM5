@@ -33,10 +33,12 @@ input = function(event)
 		if event.GameButton == "MenuRight" then
 			wheel:scroll_by_amount(1)
 			underlay:GetChild("change_sound"):play()
+			underlay:playcommand("Preview")
 
 		elseif event.GameButton == "MenuLeft" then
 			wheel:scroll_by_amount(-1)
 			underlay:GetChild("change_sound"):play()
+			underlay:playcommand("Preview")
 
 		elseif event.GameButton == "Start" then
 			ColorSelected = true
@@ -79,7 +81,8 @@ local wheel_item_mt = {
 					subself:diffusealpha(0)
 					subself:zoom(0.25)
 					if style == "SRPG6" then
-						subself:shadowlength(3)
+						subself:blend("BlendMode_Add")
+						subself:zoom(0.35)
 					end
 				end,
 				OnCommand=function(subself)
@@ -183,7 +186,7 @@ local t = Def.ActorFrame{
 	CaptureCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
-	FinishCommand=function(self)
+	PreviewCommand=function(self)
 		self:GetChild("start_sound"):play()
 
 		SL.Global.ActiveColorIndex = FindInTable(wheel:get_info_at_focus_pos(), colorTable)
@@ -192,7 +195,8 @@ local t = Def.ActorFrame{
 		ThemePrefs.Save()
 
 		MESSAGEMAN:Broadcast("ColorSelected")
-
+	end,
+	FinishCommand=function(self)
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,

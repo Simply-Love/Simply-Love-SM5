@@ -32,7 +32,7 @@ af[#af+1] = Def.Sprite{
 		if ThemePrefs.Get("VisualStyle") == "SRPG6" then
 			self:Load(THEME:GetPathG("", "_VisualStyles/SRPG6/"..SL.SRPG6.GetLogo()))
 			self:zoom(0.55):vertalign(top)
-			self:y(-160):shadowlength(0)
+			self:y(-165):shadowlength(0)
 		else
 			local style = ThemePrefs.Get("VisualStyle")
 			local image = THEME:GetPathG("", "_VisualStyles/"..style.."/TitleMenu (doubleres).png")
