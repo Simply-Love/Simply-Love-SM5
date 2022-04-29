@@ -36,54 +36,73 @@ local SharedBackground = {
 	["ScreenThemeOptions"] = true,
 }
 
+local StaticBackgroundVideos = {
+	["Unaffiliated"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Fog.mp4"),
+	["Democratic People's Republic of Timing"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Ranni.mp4"),
+	["Footspeed Empire"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Malenia.mp4"),
+	["Stamina Nation"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Melina.mp4"),
+}
+
 local shared_alpha = 0.6
-local overlay_alpha = 1
+local static_alpha = 1
 
-local sprite = Def.Sprite {
-	Texture=file,
+local af = Def.ActorFrame {
 	InitCommand=function(self)
-		self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h)
 		self:diffusealpha(0)
-
 		local style = ThemePrefs.Get("VisualStyle")
 		self:visible(style == "SRPG6")
-		-- Used to prevent unnecessary self:Loads()
 		self.IsShared = true
 	end,
 	OnCommand=function(self)
-		self:accelerate(0.8):diffusealpha(self.IsShared and shared_alpha or overlay_alpha)
+		self:accelerate(0.8):diffusealpha(1)
 	end,
 	ScreenChangedMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local style = ThemePrefs.Get("VisualStyle")
-		if style == "SRPG6" then
-			if screen and not SharedBackground[screen:GetName()] and self.IsShared then
-				self:Load(THEME:GetPathG("", "_VisualStyles/" .. style .. "/Overlay-BG.png"))
-				self.IsShared = false
-				self:diffusealpha(overlay_alpha)
-			end
-
-			if screen and SharedBackground[screen:GetName()] and not self.IsShared then
-				self:Load(THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png"))
+		if screen and style == "SRPG6" then
+			local static = self:GetChild("Static")
+			local video = self:GetChild("Video")
+			if SharedBackground[screen:GetName()] and not self.IsShared then
+				static:visible(true)
+				video:Load(THEME:GetPathG("", "_VisualStyles/SRPG6/Fog.mp4"))
+				video:rotationx(180):blend("BlendMode_Add"):diffusealpha(shared_alpha):diffuse(color("#ffffff"))
 				self.IsShared = true
-				self:diffusealpha(shared_alpha)
+			end
+			if not SharedBackground[screen:GetName()] and self.IsShared then
+				local faction = SL.SRPG6.GetFactionName(SL.Global.ActiveColorIndex)
+				-- No need to change anything for Unaffiliated.
+				-- We want to keep using the SharedBackground.
+				if faction ~= "Unaffiliated" then
+					static:visible(false)
+					video:Load(StaticBackgroundVideos[faction])
+					video:rotationx(0):blend("BlendMode_Normal"):diffusealpha(static_alpha):diffuse(GetCurrentColor(true))
+					self.IsShared = false
+				end
 			end
 		end
 	end,
-	VisualStyleSelectedMessageCommand=function(self)
+	VisualStyleSelectedMessageCommand=function(Self)
 		local style = ThemePrefs.Get("VisualStyle")
-
-		local new_file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
-		self:Load(new_file)
-		self:zoomto(_screen.w, _screen.h)
-		self:diffusealpha(shared_alpha)
-
 		if style == "SRPG6" then
 			self:visible(true)
 		else
 			self:visible(false)
 		end
-	end
+	end,
+	Def.Sprite {
+		Name="Static",
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/SharedBackground.png"),
+		InitCommand=function(self)
+			self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h):diffusealpha(shared_alpha)
+		end,
+	},
+	Def.Sprite {
+		Name="Video",
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/Fog.mp4"),
+		InitCommand= function(self)
+			self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h):rotationx(180):blend("BlendMode_Add"):diffusealpha(shared_alpha)
+		end,
+	},
 }
 
-return sprite
+return af

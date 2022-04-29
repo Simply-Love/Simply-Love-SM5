@@ -187,16 +187,15 @@ local t = Def.ActorFrame{
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 	end,
 	PreviewCommand=function(self)
-		self:GetChild("start_sound"):play()
-
 		SL.Global.ActiveColorIndex = FindInTable(wheel:get_info_at_focus_pos(), colorTable)
 		SL.Global.ActiveColorIndex = (SL.Global.ActiveColorIndex % #colorTable) + 1
 		ThemePrefs.Set("SimplyLoveColor", SL.Global.ActiveColorIndex)
 		ThemePrefs.Save()
-
+		
 		MESSAGEMAN:Broadcast("ColorSelected")
 	end,
 	FinishCommand=function(self)
+		self:GetChild("start_sound"):play()
 		SCREENMAN:GetTopScreen():RemoveInputCallback(input)
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
