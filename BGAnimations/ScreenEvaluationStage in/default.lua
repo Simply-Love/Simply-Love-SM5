@@ -44,6 +44,7 @@ else
 			InitCommand=function(self) self:zoom(0.36):diffusealpha(0) end,
 			OnCommand=function(self)
 				self:linear(0.25):diffusealpha(1):linear(2):zoom(0.38):linear(0.25):diffusealpha(0):zoom(0.39)
+				SOUND:PlayOnce(THEME:GetPathS("", "SRPG6-YouDied.ogg"))
 			end
 		}
 	else
@@ -57,6 +58,7 @@ else
 			InitCommand=function(self) self:zoomx(0.4):zoomy(0.38):diffusealpha(0) end,
 			OnCommand=function(self)
 				self:linear(0.25):diffusealpha(0.15):decelerate(2):zoomx(0.44):linear(0.25):diffusealpha(0)
+				SOUND:PlayOnce(THEME:GetPathS("", "SRPG6-EnemyFelled.ogg"))
 			end
 		}
 
