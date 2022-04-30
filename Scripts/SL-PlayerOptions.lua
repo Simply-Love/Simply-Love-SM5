@@ -416,7 +416,7 @@ local Overrides = {
 			mods.ShowEXScore = list[2]
 			mods.HideFaPlusPane = list[3]
 			-- Default to FA+ pane if either options are active.
-			sl_pn.EvalPanePrimary = (list[1] or list[2]) and 2 or 1
+			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and not list[3]) and 2 or 1
 		end
 	},
 	-------------------------------------------------------------------------
