@@ -81,7 +81,7 @@ local af = Def.ActorFrame {
 			end
 		end
 	end,
-	VisualStyleSelectedMessageCommand=function(Self)
+	VisualStyleSelectedMessageCommand=function(self)
 		local style = ThemePrefs.Get("VisualStyle")
 		if style == "SRPG6" then
 			self:visible(true)

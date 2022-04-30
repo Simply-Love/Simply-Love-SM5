@@ -344,13 +344,24 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 	local events = data["activeEvents"]
 	local easter_eggs = PREFSMAN:GetPreference("EasterEggs")
 	local game = GAMESTATE:GetCurrentGame():GetName()
+	local style = ThemePrefs.Get("VisualStyle")
 	if events ~= nil and easter_eggs and game == "dance" then
 		local last_active_event = ThemePrefs.Get("LastActiveEvent")
 
 		for event in ivalues(events) do
-			if event["shortName"] == "SRPG6" and last_active_event ~= "SRPG6" then
-				SL.SRPG6:ActivateVisualStyle()
-				break
+			if event["shortName"] == "SRPG6" then
+				-- If we're already on the SRPG6 theme, then set the last_active_event
+				-- if it's not already set to SRPG so that we don't bring up the prompt.
+				if last_active_event ~= "SRPG6" and style == "SRPG6" then
+					ThemePrefs.Set("LastActiveEvent", "SRPG6")
+					last_active_event = "SRPG6"
+				end
+			
+				if last_active_event ~= "SRPG6" then
+					local top_screen = SCREENMAN:GetTopScreen()
+					top_screen:SetNextScreenName("ScreenPromptToSetSrpgVisualStyle"):StartTransitioningScreen("SM_GoToNextScreen")
+					break
+				end
 			end
 		end
 	end
