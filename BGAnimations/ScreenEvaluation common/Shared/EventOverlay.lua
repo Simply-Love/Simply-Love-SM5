@@ -12,7 +12,7 @@ local borderWidth = 2
 local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(RpgYellow)
 	eventAf:GetChild("BackgroundImage"):visible(true)
-	eventAf:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.3"))
+	eventAf:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.8"))
 	eventAf:GetChild("HeaderBorder"):diffuse(RpgYellow)
 	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
 	eventAf:GetChild("Header"):diffuse(RpgYellow)
