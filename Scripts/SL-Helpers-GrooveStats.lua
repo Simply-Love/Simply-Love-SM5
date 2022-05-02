@@ -562,3 +562,98 @@ ParseGroovestatsDate = function(date)
 
 	return monthMap[month].." "..tonumber(day)..", "..year
 end
+
+-- -----------------------------------------------------------------------
+-- Downloads an SRPG unlock and unzips it.
+-- 
+-- Args are:
+--   url: string, the file to download from the web.
+--   unlockName: string, an identifier for the download.
+--               Used to display on ScreenDownloads
+--   packName: string, The pack name to unlock the contents of the unlock to.
+DownloadSRPGUnlock = function(url, unlockName, packName)
+	-- Forward slash is not allowed in both Linux or Windows.
+	-- All others are not allowed in Windows.
+	local invalidChars = {
+			["/"]="",
+			["<"]="",
+			[">"]="",
+			[":"]="",
+			["\""]="",
+			["\\"]="",
+			["|"]="",
+			["?"]="",
+			["*"]=""
+	}
+	packName = string.gsub(packName, ".", invalidChars)
+
+	-- Reserved file names for Windows.
+	local invalidFilenames = {
+			["CON"]=true,
+			["PRN"]=true,
+			["AUX"]=true,
+			["NUL"]=true,
+			["COM1"]=true,
+			["COM2"]=true,
+			["COM3"]=true,
+			["COM4"]=true,
+			["COM5"]=true,
+			["COM6"]=true,
+			["COM7"]=true,
+			["COM8"]=true,
+			["COM9"]=true,
+			["LPT1"]=true,
+			["LPT2"]=true,
+			["LPT3"]=true,
+			["LPT4"]=true,
+			["LPT5"]=true,
+			["LPT6"]=true,
+			["LPT7"]=true,
+			["LPT8"]=true,
+			["LPT9"]=true
+	}
+	-- If the packName is invalid, just append something to it so it's not.
+	if invalidFilenames[packName] then
+		packName = packName.." Quest"
+	end
+
+	local uuid = CRYPTMAN:GenerateRandomUUID()
+	local downloadfile = uuid..".zip"
+
+	SL.Downloads[uuid] = {
+		Request=NETWORK:HttpRequest{
+			url=url,
+			downloadFile=downloadfile,
+			onProgress=function(currentBytes, totalBytes)
+				SL.Downloads[uuid].CurrentBytes = currentBytes
+				SL.Downloads[uuid].TotalBytes = totalBytes
+			end,
+			onResponse=function(response)
+				if response.error ~= nil then
+					SL.Downloads[uuid].Error = response.error
+					SL.Downloads[uuid].ErrorMessage = response.errorMessage
+					return
+				end
+
+				if response.statusCode == 200 then
+					if response.headers["Content-Type"] == "application/zip" then
+						-- Downloads are usually of the form:
+						--    /Downloads/<name>.zip/<hash>/<song_folders/
+						-- We want to strip out the <hash> after unzipping so we set
+						-- strip = 1.
+						if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
+							SL.Downloads[uuid].ErrorMessage = "Failed to Unzip"
+						end
+					end
+					-- Remove from downloads list.
+					SL.Downloads[uuid] = nil
+				else
+					SL.Downloads[uuid].ErrorMessage = "Network Error "..response.statusCode
+				end
+			end,
+		},
+		Name=unlockName,
+		CurrentBytes=0,
+		TotalBytes=0
+	}
+end
