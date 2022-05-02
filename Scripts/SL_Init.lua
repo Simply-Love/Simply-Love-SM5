@@ -430,7 +430,17 @@ SL = {
 		-- *   updated to properly consume this value.  *
 		-- **********************************************
 		ChartHashVersion = 3
-	}
+	},
+	-- Stores all active/failed downloads.
+	-- Each entry is keyed on a string UUID which maps to a table with the
+	-- following keys:
+	--    Request: HttpRequestFuture, the closure returned by NETWORK:HttpRequest
+	--    Name: string, an identifier for this download.
+	--    CurrentBytes: number, the bytes downloaded so far
+	--    TotalBytes: number, the total bytes of the file
+	-- If a request fails, there will be another key:
+	--    ErrorMessage: string, the reasoning for the failure.
+	Downloads = {} 
 }
 
 
