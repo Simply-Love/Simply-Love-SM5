@@ -322,7 +322,12 @@ local t = Def.ActorFrame {
 			end
 
 			table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
-			table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
+
+			-- Only display the View Downloads option if we're connected to
+			-- GrooveStats, and that Auto-Downloads are enabled.
+			if SL.GrooveStats.IsConnected and ThemePrefs.Get("AutoDownloadUnlocks") then
+				table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
+			end
 		end
 
 		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
