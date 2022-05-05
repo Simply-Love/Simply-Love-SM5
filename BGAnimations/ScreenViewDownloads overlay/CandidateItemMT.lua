@@ -147,6 +147,8 @@ return {
 				else
 					self.message:settext("Done!"):diffusealpha(1):diffuse(Color.Green)
 				end
+				self.swoosh:diffusealpha(0)
+				self.progress_bar:diffusealpha(1)
 			else
 				self.message:diffusealpha(0)
 			end
