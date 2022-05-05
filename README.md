@@ -31,7 +31,7 @@ The theme will also remember what you played last and take you directly into tha
 
 Players can now toggle whether or not they want to display the FA+ (15ms) window from the player options menu.
 
-All judgments support this emulation with the exception of GrooveNights at the moment.
+All judgments support this emulation.
 
 ![FA+ tracking](https://i.imgur.com/EXgS3Zn.png)
 
