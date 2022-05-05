@@ -62,13 +62,25 @@ local function UpdateChart(playerNum, difficultyChange)
 	-- try to keep the same meter
 	if difficultyChange == 0 then
 		if GetMainSortPreference() == 6 then
+			local targetDifficulty
 			local targetMeter = NameOfGroup
+			
+			if DDStats.GetStat(playerNum, 'LastDifficulty') ~= nil then
+				targetDifficulty = DDStats.GetStat(playerNum, 'LastDifficulty')
+			end
 
 			local oldDifficulty = difficulties[curDifficultyIndices[playerNum]];
 			local matchingSteps = nil
 			-- Check for meter AND difficulty match
 			for steps in ivalues(stepses) do
-				if GetStepsDifficultyGroup(steps) == targetMeter and steps:GetDifficulty() == oldDifficulty then
+				-- first check to see if the last selected difficulty is the correct meter.
+				if targetDifficulty ~= nil then
+					if GetStepsDifficultyGroup(steps) == targetMeter and steps:GetDifficulty() == targetDifficulty then
+						matchingSteps = steps
+						break
+					end
+				-- if it's not, default to the first chart in the index that matches.
+				elseif GetStepsDifficultyGroup(steps) == targetMeter and steps:GetDifficulty() == oldDifficulty then
 					matchingSteps = steps
 					break
 				end
