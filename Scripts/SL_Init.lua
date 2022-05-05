@@ -438,6 +438,8 @@ SL = {
 	--    Name: string, an identifier for this download.
 	--    CurrentBytes: number, the bytes downloaded so far
 	--    TotalBytes: number, the total bytes of the file
+	--    Complete: bool, whether or not the download has completed
+	--              (either success or failure).
 	-- If a request fails, there will be another key:
 	--    ErrorMessage: string, the reasoning for the failure.
 	Downloads = {} 

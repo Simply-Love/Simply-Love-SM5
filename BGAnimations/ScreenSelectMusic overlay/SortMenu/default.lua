@@ -322,6 +322,7 @@ local t = Def.ActorFrame {
 			end
 
 			table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
+			table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
 		end
 
 		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
