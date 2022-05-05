@@ -612,9 +612,9 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 			["LPT8"]=true,
 			["LPT9"]=true
 	}
-	-- If the packName is invalid, just append something to it so it's not.
+	-- If the packName is invalid, just append a space to it so it's not.
 	if invalidFilenames[packName] then
-		packName = packName.." Quest"
+		packName = " "..packName.." "
 	end
 
 	local uuid = CRYPTMAN:GenerateRandomUUID()
@@ -629,9 +629,11 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 				SL.Downloads[uuid].TotalBytes = totalBytes
 			end,
 			onResponse=function(response)
+				local downloadInfo = SL.Downloads[uuid]
+
+				downloadInfo.Complete = true
 				if response.error ~= nil then
-					SL.Downloads[uuid].Error = response.error
-					SL.Downloads[uuid].ErrorMessage = response.errorMessage
+					downloadInfo.ErrorMessage = response.errorMessage
 					return
 				end
 
@@ -642,18 +644,20 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 						-- We want to strip out the <hash> after unzipping so we set
 						-- strip = 1.
 						if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
-							SL.Downloads[uuid].ErrorMessage = "Failed to Unzip"
+							downloadInfo.ErrorMessage = "Failed to Unzip!"
 						end
+					else
+						downloadInfo.ErrorMessage = "Download is not a Zip!"
+						Warn("Attempted to download from \""..url.."\" which is not a zip!")
 					end
-					-- Remove from downloads list.
-					SL.Downloads[uuid] = nil
 				else
-					SL.Downloads[uuid].ErrorMessage = "Network Error "..response.statusCode
+					downloadInfo.ErrorMessage = "Network Error "..response.statusCode
 				end
 			end,
 		},
 		Name=unlockName,
 		CurrentBytes=0,
-		TotalBytes=0
+		TotalBytes=0,
+		Complete=false
 	}
 end
