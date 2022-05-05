@@ -417,11 +417,15 @@ t[#t+1] = Def.ActorFrame{
 		Name="GrooveStats",
 		Text="     GrooveStats",
 		InitCommand=function(self)
+			self:visible(ThemePrefs.Get("EnableGrooveStats"))
 			self:horizalign(left)
 			DiffuseText(self)
 		end,
 		VisualStyleSelectedMessageCommand=function(self) DiffuseText(self) end,
-		ResetCommand=function(self) self:settext("     GrooveStats") end
+		ResetCommand=function(self)
+			self:visible(ThemePrefs.Get("EnableGrooveStats"))
+			self:settext("     GrooveStats")
+		end
 	},
 
 	LoadFont("Common Normal")..{
@@ -459,18 +463,20 @@ t[#t+1] = Def.ActorFrame{
 
 	RequestResponseActor(5, 0)..{
 		SendRequestCommand=function(self)
-			-- These default to false, but may have changed throughout the game's lifetime.
-			-- Reset these variable before making a request.
-			SL.GrooveStats.GetScores = false
-			SL.GrooveStats.Leaderboard = false
-			SL.GrooveStats.AutoSubmit = false
-			self:playcommand("MakeGrooveStatsRequest", {
-				endpoint="new-session.php?chartHashVersion="..SL.GrooveStats.ChartHashVersion,
-				method="GET",
-				timeout=10,
-				callback=NewSessionRequestProcessor,
-				args=self:GetParent()
-			})
+			if ThemePrefs.Get("EnableGrooveStats") then
+				-- These default to false, but may have changed throughout the game's lifetime.
+				-- Reset these variable before making a request.
+				SL.GrooveStats.GetScores = false
+				SL.GrooveStats.Leaderboard = false
+				SL.GrooveStats.AutoSubmit = false
+				self:playcommand("MakeGrooveStatsRequest", {
+					endpoint="new-session.php?chartHashVersion="..SL.GrooveStats.ChartHashVersion,
+					method="GET",
+					timeout=10,
+					callback=NewSessionRequestProcessor,
+					args=self:GetParent()
+				})
+			end
 		end
 	}
 }
