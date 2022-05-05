@@ -73,7 +73,6 @@ local AttemptDownloads = function(res)
 	--   }
 	-- }
 	local allDownloads = {}
-	local entries = 0
 	local eventName = ""
 	for i=1,2 do
 		local playerStr = "player"..i
@@ -93,7 +92,7 @@ local AttemptDownloads = function(res)
 					-- ...and check for any unlocks.
 					if quest["songDownloadUrl"] then
 						local url = quest["songDownloadUrl"]
-						local title = quest["title"] and quest["title"] or ""
+						local title = quest["title"] or ""
 
 						-- Set up the unlock data.
 						if allDownloads[url] == nil then
@@ -101,12 +100,11 @@ local AttemptDownloads = function(res)
 								title=title,
 								players={}
 							}
-							entries = entries + 1
 						end
 
 						-- Keep track of profileName since we'll need it to separate unlocks
 						-- by player.
-						local profileName = ""
+						local profileName = "NoName"
 						local player = "PlayerNumber_P"..i
 						if (PROFILEMAN:IsPersistentProfile(player) and
 								PROFILEMAN:GetProfile(player)) then
@@ -121,15 +119,13 @@ local AttemptDownloads = function(res)
 		end
 	end
 
-	-- We can't use the # operator since allDownloads doesn't have integer keys.
-	if entries == 0 then return end
   -- Make sure we have an eventName set since the song pack name depends on it.
 	if #eventName == 0 then return end
 
 	-- DOWNLOAD ALL THE THINGS!
 	for url, data in pairs(allDownloads) do
 		-- TODO(teejusb): Separate unlocks by player once we've set up the option.
-		DownloadSRPGUnlock(url, data.title, eventName)
+		DownloadSRPGUnlock(url, data.title, eventName.." Unlocks")
 	end
 end
 
