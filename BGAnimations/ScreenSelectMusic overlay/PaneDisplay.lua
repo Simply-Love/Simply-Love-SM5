@@ -212,6 +212,7 @@ local PaneItems = {
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
 af[#af+1] = RequestResponseActor(17, 50)..{
+	Name="GetScoresRequester",
 	OnCommand=function(self)
 		-- Create variables for both players, even if they're not currently active.
 		self.IsParsing = {false, false}
