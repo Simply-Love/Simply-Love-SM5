@@ -124,8 +124,13 @@ local AttemptDownloads = function(res)
 
 	-- DOWNLOAD ALL THE THINGS!
 	for url, data in pairs(allDownloads) do
-		-- TODO(teejusb): Separate unlocks by player once we've set up the option.
-		DownloadSRPGUnlock(url, data.title, eventName.." Unlocks")
+		if ThemePrefs.Get("SeparateUnlocksByPlayer") then
+			for player in ivalues(data.players) do
+				DownloadSRPGUnlock(url, data.title.." - "..player, eventName.." Unlocks - "..player)
+			end
+		else
+			DownloadSRPGUnlock(url, data.title, eventName.." Unlocks")
+		end
 	end
 end
 
@@ -279,8 +284,10 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 		overlay:queuecommand("DirectInputToEventOverlayHandler")
 	end
 
-	-- This will only download if the expected data exists.
-	AttemptDownloads(res)
+	if ThemePrefs.Get("AutoDownloadUnlocks") then
+		-- This will only download if the expected data exists.
+		AttemptDownloads(res)
+	end
 end
 
 local af = Def.ActorFrame {
