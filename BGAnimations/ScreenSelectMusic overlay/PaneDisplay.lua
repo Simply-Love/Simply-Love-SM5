@@ -60,14 +60,23 @@ local GetMachineTag = function(gsEntry)
 	return ""
 end
 
-local GetScoresRequestProcessor = function(res, master)
+local GetScoresRequestProcessor = function(res, params)
+	local master = params.master
 	if master == nil then return end
 	-- If we're not hovering over a song when we get the request, then we don't
 	-- have to update anything. We don't have to worry about courses here since
 	-- we don't run the RequestResponseActor in CourseMode.
 	if GAMESTATE:GetCurrentSong() == nil then return end
-
+	
 	local data = res.statusCode == 200 and JsonDecode(res.body) or nil
+	local requestCacheKey = params.requestCacheKey
+	-- If we have data, and the requestCacheKey is not in the cache, cache it.
+	if data ~= nil and SL.GrooveStats.RequestCache[requestCacheKey] == nil then
+		SL.GrooveStats.RequestCache[requestCacheKey] = {
+			Response=res,
+			Timestamp=GetTimeSinceStart()
+		}
+	end
 
 	for i=1,2 do
 		local paneDisplay = master:GetChild("PaneDisplayP"..i)
@@ -251,12 +260,14 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 		local sendRequest = false
 		local headers = {}
 		local query = {}
+		local requestCacheKey = ""
 
 		for i=1,2 do
 			local pn = "P"..i
 			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
 				query["chartHashP"..i] = SL[pn].Streams.Hash
 				headers["x-api-key-player-"..i] = SL[pn].ApiKey
+				requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey
 				local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
 				loadingText:visible(true)
 				loadingText:settext("Loading ...")
@@ -266,14 +277,24 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 
 		-- Only send the request if it's applicable.
 		if sendRequest then
-			self:playcommand("MakeGrooveStatsRequest", {
-				endpoint="player-scores.php?"..NETWORK:EncodeQueryParameters(query),
-				method="GET",
-				headers=headers,
-				timeout=10,
-				callback=GetScoresRequestProcessor,
-				args=master,
-			})
+			requestCacheKey = CRYPTMAN:SHA256String(requestCacheKey.."-player-scores")
+			local params = {requestCacheKey=requestCacheKey, master=master}
+			RemoveStaleCachedRequests()
+			-- If the data is still in the cache, run the request processor directly
+			-- without making a request with the cached response.
+			if SL.GrooveStats.RequestCache[requestCacheKey] ~= nil then
+				local res = SL.GrooveStats.RequestCache[requestCacheKey].Response
+				GetScoresRequestProcessor(res, params)
+			else
+				self:playcommand("MakeGrooveStatsRequest", {
+					endpoint="player-scores.php?"..NETWORK:EncodeQueryParameters(query),
+					method="GET",
+					headers=headers,
+					timeout=10,
+					callback=GetScoresRequestProcessor,
+					args=params,
+				})
+			end
 		end
 	end
 }
