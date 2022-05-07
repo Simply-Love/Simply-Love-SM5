@@ -429,7 +429,15 @@ SL = {
 		-- *  and when GrooveStats backend is also      *
 		-- *   updated to properly consume this value.  *
 		-- **********************************************
-		ChartHashVersion = 3
+		ChartHashVersion = 3,
+
+		-- We want to cache the some of the results to prevent making the same
+		-- request multiple times in a small timeframe.
+		-- Each entry is keyed with some string hash which maps to a table with the
+		-- following keys:
+		--   Response: string, the JSON-ified response to cache
+		--   Timestamp: number, when the request was made
+		RequestCache = {},
 	},
 	-- Stores all active/failed downloads.
 	-- Each entry is keyed on a string UUID which maps to a table with the
