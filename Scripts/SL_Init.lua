@@ -431,19 +431,30 @@ SL = {
 		-- **********************************************
 		ChartHashVersion = 3,
 
-		-- We want to cache the some of the results to prevent making the same
-		-- request multiple times in a small timeframe.
+		-- We want to cache the some of the requests/responses to prevent making the
+		-- same request multiple times in a small timeframe.
 		-- Each entry is keyed with some string hash which maps to a table with the
 		-- following keys:
 		--   Response: string, the JSON-ified response to cache
 		--   Timestamp: number, when the request was made
 		RequestCache = {},
+
+		-- Used to prevent redundant downloads for SRPG unlocks.
+		-- Each entry is keyed on the URL of the download which maps to a table of
+		-- PackNames the unlock has been unpacked to.
+		-- To see if we have already downloaded an unlock, one can just key on
+		-- SL.UnlocksCache[url][packName]
+		-- LoadUnlocksCache() is defined in SL-Helpers-GrooveStats.lua so that must
+		-- be loaded before this file.
+		UnlocksCache = LoadUnlocksCache(),
 	},
 	-- Stores all active/failed downloads.
 	-- Each entry is keyed on a string UUID which maps to a table with the
 	-- following keys:
 	--    Request: HttpRequestFuture, the closure returned by NETWORK:HttpRequest
 	--    Name: string, an identifier for this download.
+	--    Url: string, The URL of the download.
+	--    Destination: string, where the download should be unpacked to.
 	--    CurrentBytes: number, the bytes downloaded so far
 	--    TotalBytes: number, the total bytes of the file
 	--    Complete: bool, whether or not the download has completed

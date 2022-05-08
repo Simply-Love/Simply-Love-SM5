@@ -267,7 +267,7 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
 				query["chartHashP"..i] = SL[pn].Streams.Hash
 				headers["x-api-key-player-"..i] = SL[pn].ApiKey
-				requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey
+				requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey .. pn
 				local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
 				loadingText:visible(true)
 				loadingText:settext("Loading ...")
