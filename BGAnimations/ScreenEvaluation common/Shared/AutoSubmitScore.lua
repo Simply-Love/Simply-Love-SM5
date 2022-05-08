@@ -59,30 +59,12 @@ local GetJudgmentCounts = function(player)
 end
 
 local AttemptDownloads = function(res)
-	-- Keep track of all downloads.
-	--
-	-- Each entry is keyed on the download URL.
-	-- The title is the name of the completed quest.
-	-- The players table contains the name of the players who completed the quest.
-	--
-	-- This structure looks like:
-	-- allDownloads = {
-	--   ["url"] = {
-	--     ["title"] = "quest name",
-	--     ["players"] = { "list", "of", "profile_names" }
-	--   }
-	-- }
-	local allDownloads = {}
-	local eventName = ""
+	local data = JsonDecode(res.body)
 	for i=1,2 do
 		local playerStr = "player"..i
 		if data and data[playerStr] and data[playerStr]["rpg"] then
 			local rpgData = data[playerStr]["rpg"]
-			-- We expect the eventName to be the same across both players so we just
-			-- set this once.
-			if #eventName == 0 and rpgData["name"] then
-				eventName = rpgData["name"]
-			end
+			local eventName = rpgData["name"] or "Unknown Event"
 		
 			-- See if any quests were completed.
 			if rpgData["progress"] and rpgData["progress"]["questsCompleted"] then
@@ -94,42 +76,21 @@ local AttemptDownloads = function(res)
 						local url = quest["songDownloadUrl"]
 						local title = quest["title"] or ""
 
-						-- Set up the unlock data.
-						if allDownloads[url] == nil then
-							allDownloads[url] = {
-								title=title,
-								players={}
-							}
+						if ThemePrefs.Get("SeparateUnlocksByPlayer") then
+							local profileName = "NoName"
+							local player = "PlayerNumber_P"..i
+							if (PROFILEMAN:IsPersistentProfile(player) and
+									PROFILEMAN:GetProfile(player)) then
+								profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+							end
+							title = title.." - "..profileName
+							DownloadSRPGUnlock(url, title, eventName.." Unlocks - "..profileName)
+						else
+							DownloadSRPGUnlock(url, title, eventName.." Unlocks")
 						end
-
-						-- Keep track of profileName since we'll need it to separate unlocks
-						-- by player.
-						local profileName = "NoName"
-						local player = "PlayerNumber_P"..i
-						if (PROFILEMAN:IsPersistentProfile(player) and
-								PROFILEMAN:GetProfile(player)) then
-							profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
-						end
-
-						local players = allDownloads[url].players
-						players[#players+1] = profileName
 					end
 				end
 			end
-		end
-	end
-
-  -- Make sure we have an eventName set since the song pack name depends on it.
-	if #eventName == 0 then return end
-
-	-- DOWNLOAD ALL THE THINGS!
-	for url, data in pairs(allDownloads) do
-		if ThemePrefs.Get("SeparateUnlocksByPlayer") then
-			for player in ivalues(data.players) do
-				DownloadSRPGUnlock(url, data.title.." - "..player, eventName.." Unlocks - "..player)
-			end
-		else
-			DownloadSRPGUnlock(url, data.title, eventName.." Unlocks")
 		end
 	end
 end
@@ -155,11 +116,11 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 	-- Hijack the leaderboard pane to display the GrooveStats leaderboards.
 	if panes then
+		local data = JsonDecode(res.body)
 		for i=1,2 do
 			local playerStr = "player"..i
 			local entryNum = 1
 			local rivalNum = 1
-			local data = JsonDecode(res.body)
 			-- Pane 8 is the groovestats highscores pane.
 			local highScorePane = panes:GetChild("Pane8_SideP"..i):GetChild("")
 			local QRPane = panes:GetChild("Pane7_SideP"..i):GetChild("")
