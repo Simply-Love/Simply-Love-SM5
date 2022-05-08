@@ -22,6 +22,9 @@ local af = Def.ActorFrame{
 				uuid=uuid
 			})
 		end
+
+		self:GetChild("NoDownloads"):visible(#candidates == 0)
+
 		candidatesScroller.disable_wrapping = true
 		candidatesScroller:set_info_set(candidates, 1)
 		self:playcommand("UpdateScrollbar",  {numCandidates = size})
@@ -61,6 +64,13 @@ af[#af+1] = Def.BitmapText{
 	InitCommand=function(self)
 		self:y(170)
 	end,
+}
+
+af[#af+1] = Def.BitmapText{
+	Name="NoDownloads",
+	Text="No Downloads to View",
+	Font="Common Normal",
+	InitCommand=function(self) self:visible(false):zoom(2) end,
 }
 
 af[#af+1] = Def.BitmapText{
