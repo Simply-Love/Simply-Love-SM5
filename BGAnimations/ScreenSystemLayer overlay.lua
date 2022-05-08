@@ -482,6 +482,10 @@ t[#t+1] = Def.ActorFrame{
 }
 
 -- -----------------------------------------------------------------------
+-- Loads the UnlocksCache from disk for SRPG unlocks.
+LoadUnlocksCache()
+
+-- -----------------------------------------------------------------------
 -- SystemMessage stuff.
 -- Put it on top of everything
 -- this is what appears when someone uses SCREENMAN:SystemMessage(text)
