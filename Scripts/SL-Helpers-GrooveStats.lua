@@ -564,7 +564,36 @@ ParseGroovestatsDate = function(date)
 end
 
 -- -----------------------------------------------------------------------
--- Downloads an SRPG unlock and unzips it.
+LoadUnlocksCache = function()
+	local cache_file = "/Songs/unlocks-cache.json"
+	if FILEMAN:DoesFileExist(cache_file) then
+		local f = RageFileUtil:CreateRageFile()
+		local cache = {}
+		if f:Open(cache_file, 1) then
+			local data = JsonDecode(f:Read())
+			if data ~= nil then
+				cache = data
+			end
+		end
+		f:destroy()
+		return cache
+	end
+	return {}
+end
+
+-- -----------------------------------------------------------------------
+WriteUnlocksCache = function()
+	local cache_file = "/Songs/unlocks-cache.json"
+	local f = RageFileUtil:CreateRageFile()
+	if f:Open(cache_file, 2) then
+		f:Write(JsonEncode(SL.GrooveStats.UnlocksCache))
+	end
+	f:destroy()
+end
+
+-- -----------------------------------------------------------------------
+-- Downloads an SRPG unlock and unzips it. If a download with the same URL and
+-- destination pack name exists, the download attempt is skipped.
 -- 
 -- Args are:
 --   url: string, the file to download from the web.
@@ -617,6 +646,22 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 		packName = " "..packName.." "
 	end
 
+	-- Check the download cache to see if we have already downloaded this unlock
+	-- successfully to the intended location.
+	-- Unlocks are placed in the cache whenever unlocks are bot successfully
+	-- downloaded and zipped.
+	if SL.GrooveStats.UnlocksCache[url] and SL.GrooveStats.UnlocksCache[url][packName] then
+		return
+	end
+
+	-- Then check that the same download isn't already active in the Downloads
+	-- table.
+	for _, downloadInfo in pairs(SL.Downloads) do
+		if downloadInfo.Url == url and downloadInfo.Destination == packName then
+			return
+		end
+	end
+
 	local uuid = CRYPTMAN:GenerateRandomUUID()
 	local downloadfile = uuid..".zip"
 
@@ -645,6 +690,13 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 						-- strip = 1.
 						if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
 							downloadInfo.ErrorMessage = "Failed to Unzip!"
+						else
+							if SL.GrooveStats.UnlocksCache[url] == nil then
+								SL.GrooveStats.UnlocksCache[url] = {}
+							end
+							SL.GrooveStats.UnlocksCache[url][packName] = true
+
+							WriteUnlocksCache()
 						end
 					else
 						downloadInfo.ErrorMessage = "Download is not a Zip!"
@@ -656,6 +708,8 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 			end,
 		},
 		Name=unlockName,
+		Url=url,
+		Destination=packName,
 		CurrentBytes=0,
 		TotalBytes=0,
 		Complete=false

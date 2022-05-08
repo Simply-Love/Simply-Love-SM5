@@ -324,7 +324,7 @@ local t = Def.ActorFrame {
 			table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
 
 			-- Only display the View Downloads option if we're connected to
-			-- GrooveStats, and that Auto-Downloads are enabled.
+			-- GrooveStats and Auto-Downloads are enabled.
 			if SL.GrooveStats.IsConnected and ThemePrefs.Get("AutoDownloadUnlocks") then
 				table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
 			end
