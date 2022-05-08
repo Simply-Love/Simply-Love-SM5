@@ -5,13 +5,13 @@ local barWidth = 350
 local separatorWidth = 480
 
 local bytesToSize = function(bytes)
-	local suffixes = { "bytes", "KB", "MB" }
+	local suffixes = { "bytes", "KiB", "MiB" }
 	local index = 1
 	local divisor = 1
 
-	while bytes >= 1000 and index < 3 do
-		bytes = math.floor(bytes / 1000)
-		divisor = divisor * 1000
+	while bytes >= 1024 and index < 3 do
+		bytes = math.floor(bytes / 1024)
+		divisor = divisor * 1024
 		index = index + 1
 	end
 	return suffixes[index], divisor
@@ -147,14 +147,12 @@ return {
 				else
 					self.message:settext("Done!"):diffusealpha(1):diffuse(Color.Green)
 				end
-				self.swoosh:diffusealpha(0)
-				self.progress_bar:diffusealpha(1)
 			else
 				self.message:diffusealpha(0)
 			end
 
-			self.progress_bar:zoomx(barWidth * percent / 100):diffusealpha(0.8)
-			self.swoosh:zoomtowidth(barWidth * percent / 100):diffusealpha(1)
+			self.progress_bar:zoomx(barWidth * percent / 100):diffusealpha(downloadInfo.Complete and 1 or 0.8)
+			self.swoosh:zoomtowidth(barWidth * percent / 100):diffusealpha(downloadInfo.Complete and 0 or 1)
 			self.separator:diffusealpha(1)
 			self.endpoint:diffusealpha(1)
 
