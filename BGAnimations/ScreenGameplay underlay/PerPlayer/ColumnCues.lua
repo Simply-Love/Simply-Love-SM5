@@ -2,7 +2,9 @@ local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
-if not mods.ColumnCues then return end
+if SL.Global.GameMode ~= "Casual" then
+	if not mods.ColumnCues then return end
+end
 
 local playerState = GAMESTATE:GetPlayerState(player)
 local columnCues = SL[pn].Streams.ColumnCues
