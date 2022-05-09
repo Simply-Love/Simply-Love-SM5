@@ -1,7 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-
+if SL.Global.GameMode == "Casual" then return end
 if not mods.ColumnCues then return end
 
 local playerState = GAMESTATE:GetPlayerState(player)
