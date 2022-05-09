@@ -87,6 +87,38 @@ af[#af+1] = Def.ActorFrame{
 		}
 	}
 }
+for player in ivalues( PlayerNumber ) do
+	local pn = ToEnumShortString(player)
+	af[#af+1] = Def.ActorFrame{
+		Name="ChartParser",
+		-- Hide when scrolling through the wheel. This also handles the case of
+		-- going from song -> folder. It will get unhidden after a chart is parsed
+		-- below.
+		CurrentSongChangedMessageCommand=function(self)
+			self:queuecommand("Hide")
+		end,
+		["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
+			self:queuecommand("Hide")
+			self:stoptweening()
+			self:sleep(0.4)
+			self:queuecommand("ParseChart")
+		end,
+		ParseChartCommand=function(self)
+			local steps = GAMESTATE:GetCurrentSteps(player)
+			if steps then
+				MESSAGEMAN:Broadcast(pn.."ChartParsing")
+				ParseChartInfo(steps, pn)
+				self:queuecommand("Show")
+			end
+		end,
+		ShowCommand=function(self)
+			if GAMESTATE:GetCurrentSong() and
+					GAMESTATE:GetCurrentSteps(player) then
+				MESSAGEMAN:Broadcast(pn.."ChartParsed")
+			end
+		end
+	}
+end
 -----------------------------------------------------------------
 -- text
 
