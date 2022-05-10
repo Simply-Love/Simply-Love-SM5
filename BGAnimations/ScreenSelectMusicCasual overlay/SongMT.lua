@@ -238,6 +238,7 @@ local song_mt = {
 			if type(song) == "string" then
 				self.song = song
 				self.title_bmt:settext( THEME:GetString("ScreenSelectMusicCasual", "CloseThisFolder") )
+				self.subtitle_bmt:settext( "" )
 				self.img_path = THEME:GetPathB("ScreenSelectMusicCasual", "overlay/img/CloseThisFolder.png")
 
 				if CloseFolderTexture ~= nil then
