@@ -17,6 +17,28 @@ end
 
 
 SL_CustomPrefs.Get = function()
+	 -- emojis are our lingua franca for the 21st century
+	local visualStyleChoices = { "❤", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔" }
+	local visualStyleValues  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk" }
+
+	local year = Year()
+	local month = MonthOfYear()+1
+	local day = DayOfMonth()
+	local today = year * 10000 + month * 100 + day
+
+	if today >= 20220701 then
+		visualStyleChoices[#visualStyleChoices+1] = "💍"
+		visualStyleValues[#visualStyleValues+1] = "SRPG6"
+	else
+		local prefs = IniFile.ReadFile("/Save/ThemePrefs.ini")
+		local theme = PREFSMAN:GetPreference("Theme")
+		local lastActiveEvent = nil
+		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG6" then
+			visualStyleChoices[#visualStyleChoices+1] = "💍"
+			visualStyleValues[#visualStyleValues+1] = "SRPG6"
+		end
+	end
+
 	return {
 		AllowFailingOutOfSet =
 		{
@@ -73,9 +95,8 @@ SL_CustomPrefs.Get = function()
 		VisualStyle =
 		{
 			Default = "Hearts",
-			 -- emojis are our lingua franca for the 21st century
-			Choices = { "♡", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔", "🗡" },
-			Values  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk", "SRPG6" },
+			Choices = visualStyleChoices,
+			Values  = visualStyleValues
 		},
 		RainbowMode = {
 			Default = false,
