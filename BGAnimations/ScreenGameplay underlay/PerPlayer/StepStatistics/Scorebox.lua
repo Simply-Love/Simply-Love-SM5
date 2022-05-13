@@ -1,5 +1,11 @@
 local player = ...
 local pn = ToEnumShortString(player)
+
+if (not IsServiceAllowed(SL.GrooveStats.GetScores) or
+		SL[pn].ApiKey == "") then
+	return
+end
+
 local n = player==PLAYER_1 and "1" or "2"
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
@@ -179,6 +185,11 @@ local af = Def.ActorFrame{
 		OnCommand=function(self)
 			self:queuecommand("MakeRequest")
 		end,
+		CurrentSongChangedMessageCommand=function(self)
+				if not self.isFirst then
+						self:queuecommand("MakeRequest")
+				end
+		end,
 		MakeRequestCommand=function(self)
 			local sendRequest = false
 			local data = {
@@ -305,11 +316,11 @@ for i=1,5 do
 			Text="",
 			InitCommand=function(self)
 				self:diffuse(Color.White):xy(-width/2 + 27, y):maxwidth(30):horizalign(right):zoom(zoom)
+				end,
+			LoopScoreboxCommand=function(self)
+				self:linear(transition_seconds/2):diffusealpha(0):queuecommand("SetScorebox")
 			end,
-			LoopCommand=function(self)
-				self:linear(transition_seconds/2):diffusealpha(0):queuecommand("Set")
-			end,
-			SetCommand=function(self)
+			SetScoreboxCommand=function(self)
 				local score = all_data[cur_style+1]["scores"][i]
 				local clr = Color.White
 				if score.isSelf then
@@ -340,9 +351,9 @@ for i=1,5 do
 			elseif score.isRival then
 				clr = color("#c29cff")
 			end
-			self:settext(score.name)
-			self:linear(transition_seconds/2):diffusealpha(1):diffuse(clr)
-		end
+				self:settext(score.name)
+				self:linear(transition_seconds/2):diffusealpha(1):diffuse(clr)
+			end
 	}
 
 	af[#af+1] = LoadFont("Common Normal")..{
