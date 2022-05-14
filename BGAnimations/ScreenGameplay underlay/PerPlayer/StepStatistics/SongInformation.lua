@@ -44,6 +44,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
+		self:sleep(0.2):queuecommand('UpdateJawn')
+	end,
+	UpdateJawnCommand=function(self)
 		self:settext(("%s "):format( THEME:GetString("Stage", "Stage").."  # "))
 	end,
 }
@@ -58,6 +61,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end,
 	CurrentSongChangedMessageCommand=function(self)
 		course_index = course_index + 1
+		self:sleep(0.2):queuecommand('UpdateJawn')
+	end,
+	UpdateJawnCommand=function(self)
 		CurSongName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(course_index - 1):GetSong():GetDisplayFullTitle() or "???"
 		ArtistName = GAMESTATE:GetCurrentCourse():AllSongsAreFixed() and GAMESTATE:GetCurrentCourse():GetCourseEntry(course_index - 1):GetSong():GetDisplayArtist() or "???"
 		self:settext(("%s "):format( tonumber(course_index).." / " .. tonumber(TotalCourseSongs)))
@@ -90,6 +96,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
+		self:sleep(0.2):queuecommand('UpdateJawn')
+	end,
+	UpdateJawnCommand=function(self)
 		self:settext(CurSongName)
 	end,
 }
@@ -122,6 +131,9 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end,
 	
 	CurrentSongChangedMessageCommand=function(self)
+		self:sleep(0.2):queuecommand('UpdateJawn')
+	end,
+	UpdateJawnCommand=function(self)
 		self:settext(ArtistName)
 	end,
 	
