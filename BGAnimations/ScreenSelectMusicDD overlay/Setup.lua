@@ -236,7 +236,7 @@ local main_sort_funcs = {
 	-- Song Length
 	function(g, s) return math.floor(s:MusicLengthSeconds()) end,
 	-- Song BPM
-	function(g, s) return s:GetDisplayBpms()[2] end,
+	function(g, s) return round(s:GetDisplayBpms()[2], 0) end,
 	-- Difficulty (only subsort)
 	function(g, s) return '' end,
 }
