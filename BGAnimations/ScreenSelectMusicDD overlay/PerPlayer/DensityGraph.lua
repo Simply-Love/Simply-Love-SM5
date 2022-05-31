@@ -29,7 +29,7 @@ local af = Def.ActorFrame{
 		end
 		self:horizalign(left)
 		self:x(SCREEN_LEFT + width/2)
-		self:y(IsUsingWideScreen() and _screen.cy-13 or _screen.cy+60)
+		self:y(IsUsingWideScreen() and _screen.cy-30 or _screen.cy+60)
 
 		if player == PLAYER_2 then
 			self:x(SCREEN_RIGHT - width/2)
@@ -66,7 +66,18 @@ local af = Def.ActorFrame{
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:diffuse(color("#1e282f")):zoomto(width, height)
-	end
+	end,
+	CloseThisFolderHasFocusMessageCommand=function(self)
+		self:stoptweening()
+		self:visible(false)
+	end,
+	GroupsHaveFocusMessageCommand=function(self)
+		self:stoptweening()
+		self:visible(false)
+	end,
+	ShowBGQuadMessageCommand=function(self)
+		self:visible(true)
+	end,
 }
 
 af[#af+1] = Def.ActorFrame{
@@ -108,6 +119,7 @@ af[#af+1] = Def.ActorFrame{
 	UnhideCommand=function(self)
 		if GAMESTATE:GetCurrentSteps(player) then
 			MESSAGEMAN:Broadcast(pn.."ChartParsed")
+			MESSAGEMAN:Broadcast("ShowBGQuad")
 			self:GetChild("DensityGraph"):visible(true)
 			self:GetChild("NPS"):visible(true)
 			self:GetChild("Breakdown"):visible(true)
@@ -142,18 +154,16 @@ af2[#af2+1] = LoadFont("Miso/_miso")..{
 	Name="NPS",
 	Text="Peak NPS: ",
 	InitCommand=function(self)
-		self:horizalign(left):zoom(0.8)
+		self:horizalign(left):zoom(0.8):addy(-41)
 		if player == PLAYER_1 then
-			self:addx(IsUsingWideScreen() and WideScale(1,54) or 74):addy(-41)
+			self:addx(IsUsingWideScreen() and WideScale(1,54) or 74)
 		elseif not IsUsingWideScreen() then
 			if player == PLAYER_2 and nsj == 2 then
-				self:addx(WideScale(-70,-131)):addy(-41)
+				self:addx(WideScale(-70,-131))
 			elseif nsj == 1 then
 				self:addx(74)
-				self:addy(-41)
 			end
 		elseif player == PLAYER_2 then
-			self:addy(-41)
 			self:addx(WideScale(-70,-131))
 		end
 		-- We want white text.
@@ -171,7 +181,7 @@ af2[#af2+1] = Def.ActorFrame{
 	Name="Breakdown",
 	InitCommand=function(self)
 		local actorHeight = 17
-		self:addy(height/2 - actorHeight/2)
+		self:addy(height/2 + actorHeight/2)
 	end,
 
 	Def.Quad{
