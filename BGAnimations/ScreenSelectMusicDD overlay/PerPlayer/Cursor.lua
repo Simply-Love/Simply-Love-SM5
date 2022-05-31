@@ -71,7 +71,11 @@ return Def.Sprite{
 	SetCommand=function(self)
 		local song = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse()) or GAMESTATE:GetCurrentSong()
 		if GAMESTATE:IsHumanPlayer(player) then
-			self:playcommand( "Appear" .. pn)
+			if song then
+				self:playcommand( "Appear" .. pn)
+			else
+				self:playcommand("Dissappear")
+			end
 		end
 		if song then
 			
