@@ -772,3 +772,25 @@ WriteItlFile = function(dir, data)
 	end
 	f:destroy()
 end
+
+-- -----------------------------------------------------------------------
+HasTurnMod = function(player)
+	local PlayerOptions = GAMESTATE:GetPlayerState(player):GetPlayerOptionsArray("ModsLevel_Preferred")
+	local turn_mods = {
+		["Mirror"] = true,
+		["Backwards"] = true,
+		["Left"] = true,
+		["Right"] = true,
+		["Shuffle"] = true,
+		["SoftShuffle"] = true,
+		["SuperShuffle"] = true,
+	}
+	
+	for mod in ivalues(PlayerOptions) do
+		if turn_mods[mod] ~= nil then
+			return true
+		end
+	end
+
+	return false
+end
