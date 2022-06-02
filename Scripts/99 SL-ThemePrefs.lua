@@ -26,7 +26,7 @@ SL_CustomPrefs.Get = function()
 	local day = DayOfMonth()
 	local today = year * 10000 + month * 100 + day
 
-	if today >= 20220701 then
+	if today >= 20220610 then
 		visualStyleChoices[#visualStyleChoices+1] = "💍"
 		visualStyleValues[#visualStyleValues+1] = "SRPG6"
 	else
