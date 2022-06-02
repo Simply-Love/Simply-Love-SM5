@@ -52,7 +52,7 @@ end
 
 DetermineTimingWindow = function(offset)
 	for i=1,NumJudgmentsAvailable() do
-		if math.abs(offset) < GetTimingWindow(i) then
+		if math.abs(offset) <= GetTimingWindow(i) then
 			return i
 		end
 	end
