@@ -58,7 +58,6 @@ return Def.Actor{
 	end,
 	JudgmentMessageCommand=function(self, params)
 		if params.Player ~= player then return end
-
 		if IsAutoplay(player) then return end
 		
 		local count_updated = false
