@@ -565,8 +565,13 @@ end
 
 
 -- -----------------------------------------------------------------------
+IsHumanPlayer = function(player)
+	return GAMESTATE:GetPlayerState(player):GetPlayerController() == "PlayerController_Human"
+end
+
+-- -----------------------------------------------------------------------
 IsAutoplay = function(player)
-	return GAMESTATE:GetPlayerState(player):GetPlayerController() ~= "PlayerController_Human"
+	return GAMESTATE:GetPlayerState(player):GetPlayerController() == "PlayerController_Autoplay"
 end
 
 -- -----------------------------------------------------------------------

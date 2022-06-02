@@ -111,6 +111,7 @@ for index, window in ipairs(TNS.Types) do
 			if params.Player ~= player then return end
 			if params.HoldNoteScore then return end
 			if not params.TapNoteScore then return end
+			if IsAutoplay(player) then return end
 
 			local incremented = false
 
