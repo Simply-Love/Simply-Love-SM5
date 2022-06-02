@@ -60,8 +60,12 @@ return Def.ActorFrame{
 				end
 				-- We don't need to adjust the top window otherwise.
 			else
-				-- Everything outside of W1 needs to be shifted down a row.
-				frame = frame + 1
+				-- Everything outside of W1 needs to be shifted down a row if not in FA+ mode.
+				-- Some people might be using 2x7s in FA+ mode (by copying ITG graphics to FA+).
+				-- Don't need to shift in that case.
+				if mode ~= "FA+" then
+					frame = frame + 1
+				end
 			end
 		end
 
