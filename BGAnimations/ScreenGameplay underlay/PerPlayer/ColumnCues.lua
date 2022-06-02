@@ -1,8 +1,12 @@
 local player = ...
 local pn = ToEnumShortString(player)
+
 local mods = SL[pn].ActiveModifiers
 if SL.Global.GameMode == "Casual" then return end
 if not mods.ColumnCues then return end
+
+-- Disable column cues if a turn mod is active.
+if HasTurnMod(player) then return end
 
 local playerState = GAMESTATE:GetPlayerState(player)
 local columnCues = SL[pn].Streams.ColumnCues
