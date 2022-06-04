@@ -59,7 +59,7 @@ local permitted_profile_settings = {
 
 	ShowFaPlusWindow = "boolean",
 	ShowEXScore      = "boolean",
-	HideFaPlusPane   = "boolean",
+	ShowFaPlusPane   = "boolean",
 
 	----------------------------------
 	-- Profile Settings without OptionRows

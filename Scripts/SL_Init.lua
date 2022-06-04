@@ -43,7 +43,7 @@ local PlayerDefaults = {
 
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
-				HideFaPlusPane = false,
+				ShowFaPlusPane = true,
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
