@@ -124,6 +124,7 @@ local Overrides = {
 				local game = GAMESTATE:GetCurrentGame():GetName()
 
 				-- Apologies, midiman. :(
+				-- Most of these are StepMania 5 stock note skins
 				local stock = {
 					dance = {
 						"default", "delta", "easyv2", "exactv2", "lambda", "midi-note",
