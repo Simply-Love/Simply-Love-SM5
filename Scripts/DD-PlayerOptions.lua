@@ -546,6 +546,15 @@ local Overrides = {
 		}
 	},
 	-------------------------------------------------------------------------
+	ColumnCueExtras = {
+		SelectType = "SelectMultiple",
+		Values = {
+			"CueMines",
+			"IgnoreHoldsRolls",
+			"IgnoreNotes",
+		}
+	},
+	-------------------------------------------------------------------------
 	LifeMeterType = {
 		Values = { "Standard", "Surround", "Vertical" },
 	},
