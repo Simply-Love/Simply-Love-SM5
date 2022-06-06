@@ -37,7 +37,9 @@ local profile_whitelist = {
 	MeasureCounterUp = "boolean",
 	HideLookahead = "boolean",
 	ColumnCues = "string",
-	ColumnCueExtras = "string",
+	CueMines = "boolean",
+	IgnoreHoldsRolls = "boolean",
+	IgnoreNotes = "boolean",
 
 	ColumnFlashOnMiss = "boolean",
 	SubtractiveScoring = "boolean",

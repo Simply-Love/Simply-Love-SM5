@@ -548,11 +548,24 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ColumnCueExtras = {
 		SelectType = "SelectMultiple",
-		Values = {
-			"CueMines",
-			"IgnoreHoldsRolls",
-			"IgnoreNotes",
-		}
+		Values = function()
+			return {"CueMines", "IgnoreHoldsRolls", "IgnoreNotes",}
+		end,
+		LoadSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+
+			list[1] = mods.CueMines or false
+			list[2] = mods.IgnoreHoldsRolls or false
+			list[3] = mods.IgnoreNotes or false
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			local sl_pn = SL[ToEnumShortString(pn)]
+			local mods = sl_pn.ActiveModifiers
+			mods.CueMines = list[1]
+			mods.IgnoreHoldsRolls = list[2]
+			mods.IgnoreNotes = list[3]
+		end
 	},
 	-------------------------------------------------------------------------
 	LifeMeterType = {
