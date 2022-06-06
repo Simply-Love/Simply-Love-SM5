@@ -62,7 +62,27 @@ local FrameBackground = function(c, player, w)
 		Def.Quad{
 			InitCommand=function(self)
 				self:cropbottom(1):zoomto(w, frame.h):diffuse(c):diffusetopedge(LightenColor(c))
-			end
+			end,
+			P1ProfileReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P1" then
+					self:diffuse(color("#000000"))
+				end
+			end,
+			P1ProfileUnReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P1" then
+					self:diffuse(c):diffusetopedge(LightenColor(c))
+				end
+			end,
+			P2ProfileReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P2" then
+					self:diffuse(color("#000000"))
+				end
+			end,
+			P2ProfileUnReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P2" then
+					self:diffuse(c):diffusetopedge(LightenColor(c))
+				end
+			end,
 		},
 	}
 end
@@ -150,7 +170,28 @@ return Def.ActorFrame{
 		},
 
 		-- sick_wheel scroller containing local profiles as choices
-		scroller:create_actors( "Scroller", 9, scroller_item_mt, scroller.x, scroller.y ),
+		scroller:create_actors( "Scroller", 9, scroller_item_mt, scroller.x, scroller.y ) .. {
+			P1ProfileReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P1" then
+					self:visible(false)
+				end
+			end,
+			P1ProfileUnReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P1" then
+					self:visible(true)
+				end
+			end,
+			P2ProfileReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P2" then
+					self:visible(false)
+				end
+			end,
+			P2ProfileUnReadyMessageCommand=function(self)
+				if player == "PlayerNumber_P2" then
+					self:visible(true)
+				end
+			end,
+		},
 
 		-- player profile data
 		Def.ActorFrame{
@@ -160,7 +201,7 @@ return Def.ActorFrame{
 				self:x(15.5)
 			end,
 			OnCommand=function(self) self:playcommand("Set", profile_data[1]) end,
-
+			
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
 				InitCommand=function(self)
@@ -179,6 +220,31 @@ return Def.ActorFrame{
 				-- Avatar ActorFrame
 				Def.ActorFrame{
 					InitCommand=function(self) self:xy(info.padding*1.125,-103.5) end,
+					
+					P1ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:linear(0.2)
+							self:addx(-62)
+						end
+					end,
+					P1ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:linear(0.2)
+							self:addx(62)
+						end
+					end,
+					P2ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:linear(0.2)
+							self:addx(-62)
+						end
+					end,
+					P2ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:linear(0.2)
+							self:addx(62)
+						end
+					end,
 
 					---------------------------------------
 					-- fallback avatar
@@ -191,7 +257,7 @@ return Def.ActorFrame{
 								self:visible(true)
 							end
 						end,
-
+						
 						Def.Quad{
 							InitCommand=function(self)
 								self:align(0,0):zoomto(avatar_dim,avatar_dim):diffuse(color("#283239aa"))
@@ -249,7 +315,27 @@ return Def.ActorFrame{
 						else
 							self:visible(false):settext("")
 						end
-					end
+					end,
+					P1ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(false)
+						end
+					end,
+					P1ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(true)
+						end
+					end,
+					P2ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(false)
+						end
+					end,
+					P2ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(true)
+						end
+					end,
 				},
 
 				-- NoteSkin preview
@@ -268,7 +354,27 @@ return Def.ActorFrame{
 						else
 							self:visible(false)
 						end
-					end
+					end,
+					P1ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(false)
+						end
+					end,
+					P1ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(true)
+						end
+					end,
+					P2ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(false)
+						end
+					end,
+					P2ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(true)
+						end
+					end,
 				},
 
 				-- JudgmentGraphic preview
@@ -287,7 +393,27 @@ return Def.ActorFrame{
 						else
 							self:SetTarget(underlay:GetChild("JudgmentGraphic_None"))
 						end
-					end
+					end,
+					P1ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(false)
+						end
+					end,
+					P1ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(true)
+						end
+					end,
+					P2ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(false)
+						end
+					end,
+					P2ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(true)
+						end
+					end,
 				},
 
 				-- (some of) the modifiers saved to this player's UserPrefs.ini file
@@ -307,7 +433,27 @@ return Def.ActorFrame{
 						else
 							self:visible(false):settext("")
 						end
-					end
+					end,
+					P1ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(false)
+						end
+					end,
+					P1ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P1" then
+							self:visible(true)
+						end
+					end,
+					P2ProfileReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(false)
+						end
+					end,
+					P2ProfileUnReadyMessageCommand=function(self)
+						if player == "PlayerNumber_P2" then
+							self:visible(true)
+						end
+					end,
 				},
 			},
 
@@ -317,6 +463,26 @@ return Def.ActorFrame{
 					self:zoomto(info.w-info.padding*2.5,1):align(0,0):xy(info.padding*1.25,18):diffusealpha(0)
 				end,
 				OnCommand=function(self) self:sleep(0.45):linear(0.1):diffusealpha(0.5) end,
+				P1ProfileReadyMessageCommand=function(self)
+					if player == "PlayerNumber_P1" then
+						self:visible(false)
+					end
+				end,
+				P1ProfileUnReadyMessageCommand=function(self)
+					if player == "PlayerNumber_P1" then
+						self:visible(true)
+					end
+				end,
+				P2ProfileReadyMessageCommand=function(self)
+					if player == "PlayerNumber_P2" then
+						self:visible(false)
+					end
+				end,
+				P2ProfileUnReadyMessageCommand=function(self)
+					if player == "PlayerNumber_P2" then
+						self:visible(true)
+					end
+				end,
 			},
 		}
 	},
@@ -329,7 +495,7 @@ return Def.ActorFrame{
 				:effectperiod(1.5):effectcolor1(1,1,1,1):effectcolor2(1,1,1,0.5)
 		end
 	},
-
+	-- profile name text at bottom
 	LoadFont("Common Normal")..{
 		Name='SelectedProfileText',
 		InitCommand=function(self)
@@ -337,5 +503,35 @@ return Def.ActorFrame{
 			self:y(160):zoom(1.35):shadowlength(0):cropright(1)
 		end,
 		OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end
-	}
+	},
+	-- ready text
+	LoadFont("Common Normal")..{
+		Name='ReadyText',
+		InitCommand=function(self)
+			self:settext(profile_data[1] and profile_data[1].displayname.."\nREADY" or "READY")
+			self:y(45):zoom(1.35):shadowlength(0):cropright(1):maxwidth(195)
+			self:visible(false)
+		end,
+		OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end,
+		P1ProfileReadyMessageCommand=function(self)
+			if player == "PlayerNumber_P1" then
+				self:visible(true)
+			end
+		end,
+		P1ProfileUnReadyMessageCommand=function(self)
+			if player == "PlayerNumber_P1" then
+				self:visible(false)
+			end
+		end,
+		P2ProfileReadyMessageCommand=function(self)
+			if player == "PlayerNumber_P2" then
+				self:visible(true)
+			end
+		end,
+		P2ProfileUnReadyMessageCommand=function(self)
+			if player == "PlayerNumber_P2" then
+				self:visible(false)
+			end
+		end,
+	},
 }
