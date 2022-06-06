@@ -57,11 +57,15 @@ Handle.Start = function(event)
 		elseif nsj == 2 then
 			if event.PlayerNumber == "PlayerNumber_P1" and IsP1Ready == false then
 				IsP1Ready = true
-				MESSAGEMAN:Broadcast("StartButton")
+				if not IsP2Ready then
+					MESSAGEMAN:Broadcast("StartButton")
+				end
 				MESSAGEMAN:Broadcast("P1ProfileReady")
 			elseif  event.PlayerNumber == "PlayerNumber_P2" and IsP2Ready == false then
 				IsP2Ready = true
-				MESSAGEMAN:Broadcast("StartButton")
+				if not IsP1Ready then
+					MESSAGEMAN:Broadcast("StartButton")
+				end
 				MESSAGEMAN:Broadcast("P2ProfileReady")
 			end
 			if IsP1Ready and IsP2Ready then
