@@ -73,6 +73,7 @@ for player in ivalues(PlayerNumber) do
 		ScreenChangedMessageCommand=function(self)   self:queuecommand("Update") end,
 		PlayerJoinedMessageCommand=function(self, params)   if params.Player==player then self:queuecommand("Update") end end,
 		PlayerUnjoinedMessageCommand=function(self, params) if params.Player==player then self:queuecommand("Update") end end,
+		PlayerProfileSetMessageCommand=function(self, params) if params.Player==player then self:queuecommand("Update") end end,
 
 		UpdateCommand=function(self)
 			local path = GetPlayerAvatarPath(player)

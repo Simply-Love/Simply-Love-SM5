@@ -13,6 +13,13 @@ local af = Def.ActorFrame{
 		songOptions:MusicRate(SL.Global.ActiveModifiers.MusicRate)
 	end,
 
+	PlayerProfileSetMessageCommand=function(self, params)
+		if not PROFILEMAN:IsPersistentProfile(params.Player) then
+			GAMESTATE:ResetPlayerOptions(params.Player)
+			SL[ToEnumShortString(params.Player)]:initialize()
+		end
+	end,
+
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 

@@ -118,13 +118,31 @@ Handle.DownRight = Handle.MenuRight
 
 Handle.Back = function(event)
 	if GAMESTATE:GetNumPlayersEnabled()==0 then
-		SCREENMAN:GetTopScreen():Cancel()
+		if SL.Global.FastProfileSwitchInProgress then
+			-- Going back to the song wheel without any players connected doesn't
+			-- make much sense; disallow dismissing the ScreenSelectProfile
+			-- top screen until at least one player has joined in
+			MESSAGEMAN:Broadcast("PreventEscape")
+		else
+			-- On the other hand, dismissing the regular ScreenSelectProfile
+			-- (not in fast switch mode) is perfectly fine since we can just go
+			-- back to the previous screen
+			SCREENMAN:GetTopScreen():Cancel()
+		end
 	else
 		MESSAGEMAN:Broadcast("BackButton")
 		-- ScreenSelectProfile:SetProfileIndex() will interpret -2 as
 		-- "Unjoin this player and unmount their USB stick if there is one"
 		-- see ScreenSelectProfile.cpp for details
 		SCREENMAN:GetTopScreen():SetProfileIndex(event.PlayerNumber, -2)
+
+		-- CurrentStyle has to be explicitly set to single in order to be able to
+		-- unjoin a player from a 2-player setup
+		if SL.Global.FastProfileSwitchInProgress and GAMESTATE:GetNumSidesJoined() == 1 then
+			GAMESTATE:SetCurrentStyle("single")
+			SCREENMAN:GetTopScreen():playcommand("Update")
+		end
+
 	end
 end
 
