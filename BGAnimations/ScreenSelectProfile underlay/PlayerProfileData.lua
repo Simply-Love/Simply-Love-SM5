@@ -116,12 +116,13 @@ for i=1, PROFILEMAN:GetNumLocalProfiles() do
 
 	local data = {
 		index = i,
-		dir=dir,
+		dir = dir,
 		displayname = profile:GetDisplayName(),
 		totalsongs = TotalSongs(profile:GetNumTotalSongsPlayed()),
 		mods = mods,
 		noteskin = noteskin,
 		judgment = judgment,
+		guid = profile:GetGUID(),
 	}
 
 	table.insert(profile_data, data)
