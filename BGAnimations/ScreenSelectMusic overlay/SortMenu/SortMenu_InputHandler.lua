@@ -82,6 +82,16 @@ local input = function(event)
 					overlay:GetChild("PaneDisplayMaster"):GetChild("GetScoresRequester"):playcommand("Cancel")
 					overlay:playcommand("DirectInputToEngine")
 					SCREENMAN:SetNewScreen("ScreenViewDownloads")
+				elseif focus.new_overlay == "SwitchProfile" then
+					SL.Global.FastProfileSwitchInProgress = true
+
+					-- Make sure we save any currently active profiles before potentially switching
+					-- to different ones.
+					GAMESTATE:SaveProfiles()
+					PROFILEMAN:SaveMachineProfile()
+
+					SCREENMAN:AddNewScreenToTop("ScreenSelectProfile")
+					overlay:queuecommand("DirectInputToEngine")
 				end
 			end
 

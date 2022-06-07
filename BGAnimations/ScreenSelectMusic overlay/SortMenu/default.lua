@@ -345,6 +345,10 @@ local t = Def.ActorFrame {
 			end
 		end
 
+		if ThemePrefs.Get("AllowScreenSelectProfile") then
+			table.insert(wheel_options, {"NextPlease", "SwitchProfile"})
+		end
+
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
