@@ -95,6 +95,7 @@ LoadProfileCustom = function(profile, dir)
 	end
 
 	if pn then
+		SL[pn]:initialize()
 		ParseGrooveStatsIni(player)
 		ReadItlFile(player)
 	end
