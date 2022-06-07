@@ -10,7 +10,6 @@ local SharedBackground = {
 	["ScreenTitleMenu"] = true,
 	["ScreenTitleJoin"] = true,
 	["ScreenSelectProfile"] = true,
-	["ScreenAfterSelectProfile"] = true, -- hidden screen
 	["ScreenSelectColor"] = true,
 	["ScreenSelectStyle"] = true,
 	["ScreenSelectPlayMode"] = true,

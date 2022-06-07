@@ -327,12 +327,19 @@ for player in ivalues(PlayerNumber) do
 				:playcommand("Update")
 		end
 	end
-	-- player unjoining is not currently possible in SL, but maybe someday
+
 	af2.PlayerUnjoinedMessageCommand=function(self, params)
 		if player==params.Player then
 			self:accelerate(0.3):croptop(1):sleep(0.01):zoom(0):queuecommand("Hide")
 		end
 	end
+
+	af2.PlayerProfileSetMessageCommand=function(self, params)
+		if player == params.Player then
+			self:playcommand("Set")
+		end
+	end
+
 	af2.HideCommand=function(self) self:visible(false) end
 
 	af2.OnCommand=function(self)                                    self:playcommand("Set") end
@@ -464,7 +471,7 @@ for player in ivalues(PlayerNumber) do
 		end
 	}
 
-	-- Player Profile/GrooveStats Machine Tag 
+	-- Player Profile/GrooveStats Machine Tag
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="PlayerHighScoreName",
 		InitCommand=function(self)
