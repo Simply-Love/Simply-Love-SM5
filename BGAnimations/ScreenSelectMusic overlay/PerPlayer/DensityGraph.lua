@@ -32,6 +32,11 @@ local af = Def.ActorFrame{
 			self:visible(false)
 		end
 	end,
+	PlayerProfileSetMessageCommand=function(self, params)
+		if params.Player == player then
+			self:queuecommand("Redraw")
+		end
+	end,
 }
 
 -- Background quad for the density graph
