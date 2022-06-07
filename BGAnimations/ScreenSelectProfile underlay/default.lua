@@ -112,11 +112,6 @@ local t = Def.ActorFrame {
 		self:sleep(0.5):queuecommand("Finish")
 	end,
 	FinishCommand=function(self)
-		-- If either/both human players want to *not* use a local profile
-		-- (that is, they've chosen the first option, "[Guest]"), ScreenSelectProfile
-		-- will not let us leave.  The screen's Finish() method expects all human players
-		-- to have local profiles they want to use.  So, this gets tricky.
-		--
 		-- Loop through the enum for PlayerNumber that the engine has exposed to Lua.
 		for player in ivalues( PlayerNumber ) do
 			-- check if this player is joined in
@@ -132,6 +127,7 @@ local t = Def.ActorFrame {
 				--   0: use the USB memory card associated with this player
 				--  -1: join the player and play the theme's start sound effect
 				--  -2: unjoin the player, unlock their memorycard, and unmount their memorycard
+				--  -3: allow the user to play without a profile (USB or local)
 
 				-- check for and handle USB memorycards first
 				if MEMCARDMAN:GetCardState(player) ~= 'MemoryCardState_none' then
@@ -145,27 +141,21 @@ local t = Def.ActorFrame {
 				-- In this case, 0 is the index of the choice in the scroller.  It should not be confused the 0 passed to
 				-- SetProfileIndex() to use a USB memorycard which is a different stupid hardcoded number defined by the engine. D:
 				elseif index == 0 then
-					-- Passing a -2 to SetProfileIndex() will unjoin the player.
-					-- Temporarily unjoining this player is necessary to get us past this screen onto the next
-					-- because ScreenSelectProfile needs all human players to have profiles assigned to them.
-					SCREENMAN:GetTopScreen():SetProfileIndex(player, -2)
+					-- ScreenSelectProfile's Finish() method is hardcoded to assign DefaultProfileIDs
+					-- which will interfere with SL's notion of NOT requiring all players to use profiles.
+					-- If the player went out of their way to enable ScreenSelectProfile, they presumably want
+					-- to be able to pick, and picking (to me) means having an option for not-using-a-profile.
+					PREFSMAN:SetPreference("DefaultLocalProfileIDP1", "")
+					PREFSMAN:SetPreference("DefaultLocalProfileIDP2", "")
 
-					-- The engine considers this player to be unjoined, but the human person playing StepMania
-					-- just wanted to not use a profile.  Save this player object in the SL table.  We'll rejoin
-					-- the player without a profile at the Init of the next screen (ScreenAfterSelectProfile).
-					if SL.Global.PlayersToRejoin == nil then SL.Global.PlayersToRejoin = {} end
-					table.insert(SL.Global.PlayersToRejoin, player)
+					-- Passing -3 to SetProfileIndex() will allow the player to play without a profile
+					SCREENMAN:GetTopScreen():SetProfileIndex(player, -3)
 				end
 			end
 		end
 
-		-- if no available human players wanted to use a local profile, they will have been unjoined by now
-		-- and we won't be able to Finish() the screen without any joined players. If this happens, don't bother
-		-- trying to Finish(), just force StepMania to the next screen.
-		if type(SL.Global.PlayersToRejoin) == "table" then
-			if (#SL.Global.PlayersToRejoin == 1 and #GAMESTATE:GetHumanPlayers() == 0) or (#SL.Global.PlayersToRejoin == 2) then
-				SCREENMAN:SetNewScreen("ScreenAfterSelectProfile")
-			end
+		if SL.Global.FastProfileSwitchInProgress then
+			SL.Global.FastProfileSwitchInProgress = false
 		end
 		SCREENMAN:GetTopScreen():Finish()
 	end,
@@ -253,6 +243,15 @@ for profile in ivalues(profile_data) do
 	if profile.dir and profile.displayname then
 		avatars[profile.index] = GetAvatarPath(profile.dir, profile.displayname)
 	end
+end
+
+-- if we're fast profile switching, dim the song wheel in the background
+if SL.Global.FastProfileSwitchInProgress then
+	t[#t+1] = Def.Quad {
+		InitCommand=function(self)
+			self:FullScreen():diffuse(Color.Black):diffusealpha(0.8)
+		end
+	}
 end
 
 -- load PlayerFrames for both
