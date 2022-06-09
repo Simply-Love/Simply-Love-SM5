@@ -99,7 +99,7 @@ StepManiaVersionIsSupported = function()
 	end
 
 	-- ITGmania >= 0.5.1
-	if IsITGmania then
+	if IsITGmania() then
 		return IsMinimumProductVersion(0, 5, 1)
 	end
 
