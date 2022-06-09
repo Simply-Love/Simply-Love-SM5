@@ -35,7 +35,7 @@ local PlayerDefaults = {
 				NPSGraphAtTop = false,
 				JudgmentTilt = false,
 				ColumnCues = false,
-				DisplayScorebox = false,
+				DisplayScorebox = true,
 
 				ErrorBar = "None",
 				ErrorBarUp = false,
