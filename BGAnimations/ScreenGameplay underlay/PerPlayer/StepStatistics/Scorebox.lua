@@ -65,8 +65,17 @@ local SetScoreData = function(data_idx, score_idx, rank, name, score, isSelf, is
 end
 
 local LeaderboardRequestProcessor = function(res, master)
-	if res == nil then
-		SetScoreData(1, 1, "", "Timed Out", "", false, false)
+	if res == nil or res["status"] == "disabled" or res["status"] == "fail" then
+		local text = "Timed Out"
+		if res ~= nil then
+			if res["status"] == "disabled" then
+				text = "Leaderboard Disabled"
+			end
+			if res["status"] == "fail" then
+				text = "Failed to Load 😞"
+			end
+		end
+		SetScoreData(1, 1, "", text, "", false, false)
 		master:queuecommand("CheckScorebox")
 		return
 	end
@@ -163,21 +172,22 @@ local af = Def.ActorFrame{
 		local start = cur_style
 
 		cur_style = (cur_style + 1) % num_styles
-		while cur_style ~= start or self.isFirst do
+		if cur_style ~= start or self.isFirst then
 			-- Make sure we have the next set of data.
-
-			if HasData(cur_style) then
-				-- If this is the first time we're looping, update the start variable
-				-- since it may be different than the default
-				if self.isFirst then
-					start = cur_style
-					self.isFirst = false
-					-- Continue looping to figure out the next style.
-				else
-					break
+			while cur_style ~= start do
+				if HasData(cur_style) then
+					-- If this is the first time we're looping, update the start variable
+					-- since it may be different than the default
+					if self.isFirst then
+						start = cur_style
+						self.isFirst = false
+						-- Continue looping to figure out the next style.
+					else
+						break
+					end
 				end
+				cur_style = (cur_style + 1) % num_styles
 			end
-			cur_style = (cur_style + 1) % num_styles
 		end
 
 		-- Loop only if there's something new to loop to.
