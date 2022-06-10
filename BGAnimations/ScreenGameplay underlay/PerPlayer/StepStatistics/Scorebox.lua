@@ -18,6 +18,19 @@ local height = 80
 local cur_style = 0
 local num_styles = 3
 
+local GrooveStatsBlue = color("#007b85")
+local RpgYellow = color("1,0.972,0.792,1")
+local ItlPink = color("1,0.2,0.406,1")
+
+local style_color = {
+	[0] = GrooveStatsBlue,
+	[1] = RpgYellow,
+	[2] = ItlPink,
+}
+
+local self_color = color("#a1ff94")
+local rival_color = color("#c29cff")
+
 local loop_seconds = 5
 local transition_seconds = 1
 
@@ -238,16 +251,10 @@ local af = Def.ActorFrame{
 	Def.Quad{
 		Name="Outline",
 		InitCommand=function(self)
-			self:diffuse(color("#007b85")):setsize(width + border, height + border)
+			self:diffuse(GrooveStatsBlue):setsize(width + border, height + border)
 		end,
 		LoopScoreboxCommand=function(self)
-			if cur_style == 0 then
-				self:linear(transition_seconds):diffuse(color("#007b85"))
-			elseif cur_style == 1 then
-				self:linear(transition_seconds):diffuse(color("#aa886b"))
-			elseif cur_style == 2 then
-				self:linear(transition_seconds):diffuse(color("1,0.2,0.406,1"))
-			end
+			self:linear(transition_seconds):diffuse(style_color[cur_style])
 		end
 	},
 	-- Main body
@@ -277,7 +284,7 @@ local af = Def.ActorFrame{
 		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/logo_main (doubleres).png"),
 		Name="SRPG6Logo",
 		InitCommand=function(self)
-			self:diffusealpha(0.4):zoom(0.05):addy(3):diffusealpha(0)
+			self:diffusealpha(0.4):zoom(0.18):diffusealpha(0)
 		end,
 		LoopScoreboxCommand=function(self)
 			if cur_style == 1 then
@@ -340,9 +347,9 @@ for i=1,5 do
 				local score = all_data[cur_style+1]["scores"][i]
 				local clr = Color.White
 				if score.isSelf then
-					clr = color("#a1ff94")
+					clr = self_color
 				elseif score.isRival then
-					clr = color("#c29cff")
+					clr = rival_color
 				end
 				self:settext(score.rank)
 				self:linear(transition_seconds/2):diffusealpha(1):diffuse(clr)
@@ -363,9 +370,9 @@ for i=1,5 do
 			local score = all_data[cur_style+1]["scores"][i]
 			local clr = Color.White
 			if score.isSelf then
-				clr = color("#a1ff94")
+				clr = self_color
 			elseif score.isRival then
-				clr = color("#c29cff")
+				clr = rival_color
 			end
 			self:settext(score.name)
 			self:linear(transition_seconds/2):diffusealpha(1):diffuse(clr)
@@ -387,9 +394,9 @@ for i=1,5 do
 			if score.isFail then
 				clr = Color.Red
 			elseif score.isSelf then
-				clr = color("#a1ff94")
+				clr = self_color
 			elseif score.isRival then
-				clr = color("#c29cff")
+				clr = rival_color
 			end
 			self:settext(score.score)
 			self:linear(transition_seconds/2):diffusealpha(1):diffuse(clr)

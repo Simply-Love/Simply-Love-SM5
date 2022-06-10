@@ -1,6 +1,7 @@
 local NumEntries = 13
 local RowHeight = 24
-local RpgYellow = color("0.902,0.765,0.529,1")
+local RpgYellow = color("1,0.972,0.792,1")
+local RpgTextYellow = color("1,0.945,0.557,1")
 local ItlPink = color("1,0.2,0.406,1")
 
 local paneWidth1Player = 330
@@ -12,10 +13,11 @@ local borderWidth = 2
 local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(RpgYellow)
 	eventAf:GetChild("BackgroundImage"):visible(true)
-	eventAf:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.8"))
+	eventAf:GetChild("BackgroundColor"):diffuse(color("0,0,0,0.7"))
+	eventAf:GetChild("BackgroundColor2"):diffuse(color("1,0.972,0.792,0.2")):faderight(0.1):fadeleft(0.1)
 	eventAf:GetChild("HeaderBorder"):diffuse(RpgYellow)
-	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.275,0.510,0.298,1")):diffusebottomedge(color("0.235,0.345,0.184,1"))
-	eventAf:GetChild("Header"):diffuse(RpgYellow)
+	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.5,0.5,0.5,1")):diffusebottomedge(color("0.239,0.239,0.239,1"))
+	eventAf:GetChild("Header"):diffuse(Color.White)
 	eventAf:GetChild("EX"):visible(false)
 	eventAf:GetChild("BodyText"):diffuse(Color.White)
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(RpgYellow)
@@ -34,6 +36,7 @@ local SetItlStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(ItlPink)
 	eventAf:GetChild("BackgroundImage"):visible(false)
 	eventAf:GetChild("BackgroundColor"):diffuse(Color.White):diffusealpha(1)
+	eventAf:GetChild("BackgroundColor2"):visible(false)
 	eventAf:GetChild("HeaderBorder"):diffuse(ItlPink)
 	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
 	eventAf:GetChild("Header"):diffuse(Color.White)
@@ -248,8 +251,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				-- Extract the actual numeric text.
 				local substring = string.sub(text, i, j)
 
-				-- Numbers should be a blueish hue by default.
-				local clr = color("0,1,1,1")
+				local clr = RpgTextYellow
 
 				-- Except negatives should be red.
 				if substring:sub(1, 1) == "-" then
@@ -281,7 +283,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 
 				bodyText:AddAttribute(i-1, {
 					Length=#substring,
-					Diffuse=Color.Green
+					Diffuse=RpgTextYellow
 				})
 
 				offset = j + 1
@@ -510,7 +512,7 @@ for player in ivalues(PlayerNumber) do
 			end
 		},
 
-		-- A quad that goes over the black cement background to try and lighten/darken it however we want.
+		-- A quad that goes over the BackgroundImage to try and lighten/darken it however we want.
 		Def.Quad {
 			Name="BackgroundColor",
 			InitCommand=function(self)
@@ -518,6 +520,14 @@ for player in ivalues(PlayerNumber) do
 			end
 		},
 
+		-- Yet another quad that goes over all the background assets.
+		Def.Quad {
+			Name="BackgroundColor2",
+			InitCommand=function(self)
+				self:zoomto(paneWidth, paneHeight)
+			end
+		},
+		
 		-- Header border
 		Def.Quad {
 			Name="HeaderBorder",
