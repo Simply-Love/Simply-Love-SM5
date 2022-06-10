@@ -322,11 +322,18 @@ t[#t+1] = Def.ActorFrame{
 
 	RequestResponseActor("NewSession", 10, 0, 0, 1)..{
 		NewSessionRequestMessageCommand=function(self)
-			MESSAGEMAN:Broadcast("NewSession", {
-					data={action="groovestats/new-session", ChartHashVersion=SL.GrooveStats.ChartHashVersion},
-					args=self:GetParent(),
-					callback=NewSessionRequestProcessor,
-				})
+			if SL.GrooveStats.Launcher then
+				-- These default to false, but may have changed throughout the game's lifetime.
+				-- Reset these variable before making a request.
+				SL.GrooveStats.GetScores = false
+				SL.GrooveStats.Leaderboard = false
+				SL.GrooveStats.AutoSubmit = false
+				MESSAGEMAN:Broadcast("NewSession", {
+						data={action="groovestats/new-session", ChartHashVersion=SL.GrooveStats.ChartHashVersion},
+						args=self:GetParent(),
+						callback=NewSessionRequestProcessor,
+					})
+			end
 		end
 	}
 }
