@@ -49,7 +49,38 @@ else
 		}
 	else
 		local image = THEME:GetPathG("", "_VisualStyles/SRPG6/EnemyFelled.png")
-		if not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong():GetLastSecond() > 16 * 60 then
+
+		local bosses = {
+			["e25513cb3c801604"]="LegendFelled.png",
+			["be1811d125b4b9d5"]="LegendFelled.png",
+			["945ec467c0b8fd94"]="LegendFelled.png",
+			["e410d5bf872d5f37"]="LegendFelled.png",
+			["e61476eec77277ca"]="LegendFelled.png",
+			["21a111709f4416b3"]="LegendFelled.png",
+			["ccb5ff37f938b057"]="LegendFelled.png",
+			["65910d53c611f328"]="LegendFelled.png",
+			["12031d8f99c8b88c"]="LegendFelled.png",
+			["24a05523a0131b20"]="LegendFelled.png",
+			["24a05523a0131b20"]="LegendFelled.png",
+
+			["2184afe998acc7a5"]="GodSlain.png",
+			["bd80236dc1de432f"]="GodSlain.png",
+			["f56588cee23985ed"]="GodSlain.png",
+			["eb20a2c5f6674882"]="GodSlain.png",
+		}
+
+		local found_boss = false
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local pn = ToEnumShortString(player)
+			local chartHash = SL[pn].Streams.Hash
+			if bosses[chartHash] ~= nil then
+				image = THEME:GetPathG("", "_VisualStyles/SRPG6/"..bosses[chartHash])
+				found_boss = true
+				break
+			end
+		end
+
+		if not found_boss and not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong():GetLastSecond() > 16 * 60 then
 			image = THEME:GetPathG("", "_VisualStyles/SRPG6/GreatEnemyFelled.png")
 		end
 
