@@ -182,7 +182,6 @@ local af = Def.ActorFrame{
 		cur_style = (cur_style + 1) % num_styles
 		if cur_style ~= start or self.isFirst then
 			-- Make sure we have the next set of data.
-
 			while cur_style ~= start do
 				if HasData(cur_style) then
 					-- If this is the first time we're looping, update the start variable
@@ -195,8 +194,8 @@ local af = Def.ActorFrame{
 						break
 					end
 				end
+				cur_style = (cur_style + 1) % num_styles
 			end
-			cur_style = (cur_style + 1) % num_styles
 		end
 
 		-- Loop only if there's something new to loop to.
