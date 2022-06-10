@@ -32,6 +32,9 @@ if IgnoreNotes and not CueMines then return end
 -- Also don't run this if on shuffle, blender, backwards or inserting notes
 if shuffle or insert or backwards then return end
 
+-- Don't run this if flip AND invert are on because it breaks the column spacing.
+if flip and invert then return end
+
 -- Don't run this if notes are removed from the chart.
 if notes_removed then return end
 
