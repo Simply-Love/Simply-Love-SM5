@@ -1,18 +1,4 @@
 -- ----------------------------------------------------
--- local tables containing NoteSkins and JudgmentGraphics available to SL
--- We'll compare values from profiles against these "master" tables as it
--- seems to be disconcertingly possible for user data to contain errata, typos, etc.
-
-local noteskins = NOTESKIN:GetNoteSkinNames()
-local judgment_graphics = {}
-
--- get a table like { "ITG", "FA+" }
-local judgment_dirs = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."Graphics/_judgments/", true, false)
-for dir in ivalues(judgment_dirs) do
-	judgment_graphics[dir] = GetJudgmentGraphics(dir)
-end
-
--- ----------------------------------------------------
 -- some local functions that will help process profile data into presentable strings
 
 local RecentMods = function(mods)

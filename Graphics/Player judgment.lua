@@ -4,12 +4,10 @@ local mods = SL[pn].ActiveModifiers
 local sprite
 
 ------------------------------------------------------------
--- A profile might ask for a judgment graphic that doesn't exist in the current GameMode
+-- A profile might ask for a judgment graphic that doesn't exist
 -- If so, use the first available Judgment graphic
 -- If that fails too, fail gracefully and do nothing
-local mode = SL.Global.GameMode
-if mode == "Casual" then mode = "ITG" end
-local available_judgments = GetJudgmentGraphics(SL.Global.GameMode)
+local available_judgments = GetJudgmentGraphics()
 
 local file_to_load = (FindInTable(mods.JudgmentGraphic, available_judgments) ~= nil and mods.JudgmentGraphic or available_judgments[1]) or "None"
 
@@ -110,10 +108,10 @@ return Def.ActorFrame{
 			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.
 			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
-				self:Load( THEME:GetPathG("", "_judgments/ITG/Love") )
+				self:Load( THEME:GetPathG("", "_judgments/Love") )
 
 			else
-				self:Load( THEME:GetPathG("", "_judgments/" .. mode .. "/" .. file_to_load) )
+				self:Load( THEME:GetPathG("", "_judgments/" .. file_to_load) )
 			end
 		end,
 		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
