@@ -1,8 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
-if (not IsServiceAllowed(SL.GrooveStats.GetScores) or
-		SL[pn].ApiKey == "") then
+if SL[pn].ApiKey == "" then
 	return
 end
 
@@ -35,25 +34,29 @@ local transition_seconds = 1
 
 local all_data = {}
 
--- Initialize the all_data object.
-for i=1,num_styles do
-	local data = {
-		["has_data"]=false,
-		["scores"]={}
-	}
-	local scores = data["scores"]
-	for i=1,5 do
-		scores[#scores+1] = {
-			["rank"]="",
-			["name"]="",
-			["score"]="",
-			["isSelf"]=false,
-			["isRival"]=false,
-			["isFail"]=false
+local ResetAllData = function()
+	for i=1,num_styles do
+		local data = {
+			["has_data"]=false,
+			["scores"]={}
 		}
+		local scores = data["scores"]
+		for i=1,5 do
+			scores[#scores+1] = {
+				["rank"]="",
+				["name"]="",
+				["score"]="",
+				["isSelf"]=false,
+				["isRival"]=false,
+				["isFail"]=false
+			}
+		end
+		all_data[#all_data + 1] = data
 	end
-	all_data[#all_data + 1] = data
 end
+
+-- Initialize the all_data object.
+ResetAllData()
 
 -- Checks to see if any data is available.
 local HasData = function(idx)
@@ -209,9 +212,10 @@ local af = Def.ActorFrame{
 			self:queuecommand("MakeRequest")
 		end,
 		CurrentSongChangedMessageCommand=function(self)
-				if not self.isFirst then
-						self:queuecommand("MakeRequest")
-				end
+			if not self.isFirst then
+				ResetAllData()
+				self:queuecommand("MakeRequest")
+			end
 		end,
 		MakeRequestCommand=function(self)
 			local sendRequest = false
