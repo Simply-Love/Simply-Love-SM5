@@ -155,7 +155,7 @@ function WriteScores()
 		end
 
 		-- Don't store scores for guest profiles or autoplay
-		if PROFILEMAN:IsPersistentProfile(player) and GAMESTATE:IsSideJoined(player) and not IsAutoplay(player) then
+		if PROFILEMAN:IsPersistentProfile(player) and GAMESTATE:IsSideJoined(player) and IsHumanPlayer(player) then
 			local profileSlot = {
 				[PLAYER_1] = "ProfileSlot_Player1",
 				[PLAYER_2] = "ProfileSlot_Player2"

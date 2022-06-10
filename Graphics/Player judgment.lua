@@ -49,7 +49,10 @@ return Def.ActorFrame{
 			if ToEnumShortString(param.TapNoteScore) == "W1" then
 				if mods.ShowFaPlusWindow then
 					-- If this W1 judgment fell outside of the FA+ window, show the white window
-					if not IsW0Judgment(param, player) then
+					-- Treat Autoplay specially. The TNS might be out of the range, but
+					-- it's a nicer experience to always just display the top window graphic regardless.
+					-- This technically causes a discrepency on the histogram, but it's likely okay.
+					if not IsW0Judgment(param, player) and not IsAutoplay(player) then
 						frame = 1
 					end
 				end
