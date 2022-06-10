@@ -1,5 +1,7 @@
 -- don't run this in course mode (for now)
 if GAMESTATE:IsCourseMode() then return end
+-- Don't run this outside of 4-panel
+if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
 
 local player = ...
 
@@ -13,6 +15,12 @@ local shuffle = po:Shuffle() or po:SuperShuffle() or po:SoftShuffle()
 local flip = po:Flip() > 0
 local invert = po:Invert() > 0
 local insert = po:Wide() or po:Big() or po:Quick() or po:BMRize() or po:Skippy() or po:Echo() or po:Stomp()
+-- this isn't even a selectable mod on this theme, but sure.
+local backwards = po:Backwards()
+
+local notes_removed = (po:Little()  or po:NoHolds() or po:NoStretch() or
+                       po:NoHands() or po:NoJumps() or po:NoFakes() or 
+                       po:NoLifts() or po:NoQuads() or po:NoRolls())
 
 local CueMines = mods.CueMines
 local IgnoreHoldsRolls = mods.IgnoreHoldsRolls
@@ -21,8 +29,11 @@ local IgnoreNotes = mods.IgnoreNotes
 -- Don't run this if mines AND notes are not being cued lol
 if IgnoreNotes and not CueMines then return end
 
--- Also don't run this if on shuffle or blender or inserting notes
-if shuffle or insert then return end
+-- Also don't run this if on shuffle, blender, backwards or inserting notes
+if shuffle or insert or backwards then return end
+
+-- Don't run this if notes are removed from the chart.
+if notes_removed then return end
 
 local noteMapping = {1, 2, 3, 4}
 
@@ -74,12 +85,16 @@ if NumColumns == 8 then
 		noteMapping[4+i] = noteMapping[i] + 4
 	end
 	
-	if flip then
+	-- Flip and mirror cancel each other out so only move the column cues around if it's one or the other.
+	if flip and mirror then
+	
+	elseif flip or mirror then
 		for i=1,4 do
 			noteMapping[i] = noteMapping[i] + 4
 			noteMapping[i+4] = noteMapping[i+4] - 4
 		end
 	end
+	
 elseif NumColumns ~= 4 then
 	return
 end
