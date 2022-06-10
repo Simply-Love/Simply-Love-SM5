@@ -608,8 +608,8 @@ function StripSpriteHints(filename)
 	return filename:gsub(" %d+x%d+", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
 end
 
-function GetJudgmentGraphics(mode)
-	local path = THEME:GetPathG('', '_judgments/' .. mode)
+GetJudgmentGraphics = function()
+	local path = THEME:GetPathG('', '_judgments')
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}
 

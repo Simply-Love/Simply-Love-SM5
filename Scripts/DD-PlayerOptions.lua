@@ -173,8 +173,8 @@ local Overrides = {
 	JudgmentGraphic = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,
-		Choices = function() return map(StripSpriteHints, GetJudgmentGraphics(SL.Global.GameMode)) end,
-		Values = function() return GetJudgmentGraphics(SL.Global.GameMode) end,
+		Choices = function() return map(StripSpriteHints, GetJudgmentGraphics()) end,
+		Values = function() return GetJudgmentGraphics() end,
 		SaveSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			for i, val in ipairs(self.Values) do
