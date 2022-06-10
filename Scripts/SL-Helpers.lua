@@ -469,9 +469,8 @@ StripSpriteHints = function(filename)
 	return filename:gsub(" %d+x%d+", ""):gsub(" %(doubleres%)", ""):gsub(".png", "")
 end
 
-GetJudgmentGraphics = function(mode)
-	if mode == 'Casual' then mode = 'ITG' end
-	local path = THEME:GetPathG('', '_judgments/' .. mode)
+GetJudgmentGraphics = function()
+	local path = THEME:GetPathG('', '_judgments')
 	local files = FILEMAN:GetDirListing(path .. '/')
 	local judgment_graphics = {}
 
