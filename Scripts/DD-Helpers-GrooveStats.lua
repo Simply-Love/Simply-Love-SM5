@@ -414,14 +414,14 @@ CreateCommentString = function(player)
 	if mods.ShowFaPlusWindow or mods.ShowEXScore then
 		local FAsuffix = "w"
 		local counts =  GetExJudgmentCounts(player)
-		local number = counts["W1"]
+		local WNumber = counts["W1"]
 		
-		if number ~= 0 then
+		if WNumber ~= 0 then
 			if #comment ~= 0 then
 				comment = comment .. ", "
 			end
-			comment = comment..number..FAsuffix
-		elseif number == 0 then
+			comment = comment..WNumber..FAsuffix
+		elseif WNumber == 0 then
 			IsQuint = true
 		end
 	end
