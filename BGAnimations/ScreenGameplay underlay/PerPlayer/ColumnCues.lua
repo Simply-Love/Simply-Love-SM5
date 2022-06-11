@@ -1,10 +1,9 @@
--- don't run this in course mode (for now)
-if GAMESTATE:IsCourseMode() then return end
--- Don't run this outside of 4-panel
-if GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
+-- don't run this in course mode (for now) or outside of 4-panel
+if GAMESTATE:IsCourseMode() or GAMESTATE:GetCurrentGame():GetName() ~= "dance" then return end
 
 local player = ...
 
+--- A list of potential mods the player will have active.
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
 local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions('ModsLevel_Current')
 
@@ -17,7 +16,6 @@ local invert = po:Invert() > 0
 local insert = po:Wide() or po:Big() or po:Quick() or po:BMRize() or po:Skippy() or po:Echo() or po:Stomp()
 -- this isn't even a selectable mod on this theme, but sure.
 local backwards = po:Backwards()
-
 local notes_removed = (po:Little()  or po:NoHolds() or po:NoStretch() or
                        po:NoHands() or po:NoJumps() or po:NoFakes() or 
                        po:NoLifts() or po:NoQuads() or po:NoRolls())
@@ -29,14 +27,11 @@ local IgnoreNotes = mods.IgnoreNotes
 -- Don't run this if mines AND notes are not being cued lol
 if IgnoreNotes and not CueMines then return end
 
--- Also don't run this if on shuffle, blender, backwards or inserting notes
-if shuffle or insert or backwards then return end
+-- Don't run this if on shuffle, blender, backwards or inserting/removing notes
+if shuffle or backwards or insert or notes_removed then return end
 
 -- Don't run this if flip AND invert are on because it breaks the column spacing.
 if flip and invert then return end
-
--- Don't run this if notes are removed from the chart.
-if notes_removed then return end
 
 local noteMapping = {1, 2, 3, 4}
 
