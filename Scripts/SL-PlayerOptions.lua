@@ -145,13 +145,8 @@ local Overrides = {
 					}
 				}
 
-				-- update default note skins for ITGmania and OutFox
-				if IsITGmania() then
-					stock.dance = {
-						"cel", "cyber", "ddr-note", "ddr-rainbow", "ddr-vivid",
-						"default", "enchantment", "lambda", "metal",
-					}
-				elseif IsOutFox() then
+				-- additional OutFox stock note skins
+				if IsOutFox() then
 					local stockOutfox = {
 						dance = {
 							"defaultsm5", "delta2019", "outfox-itg", "outfox-note",
