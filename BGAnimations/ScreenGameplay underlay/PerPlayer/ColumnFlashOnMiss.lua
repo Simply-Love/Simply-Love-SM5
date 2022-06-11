@@ -5,8 +5,41 @@ local player = ...
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
 
 if mods.ColumnFlashOnMiss then
+	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions('ModsLevel_Preferred')
+	-- Existing logic already accounts for turn mods but not flip or invert.
+	-- Manually try and account for it ourselves here.
+	local flip = po:Flip() > 0
+	local invert = po:Invert() > 0
+	
+	if flip and invert then return end
 
 	local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+
+	-- Only support flip/invert in modes with 4 or 8 columns.
+	if NumColumns ~= 4 and NumColumns ~= 8 and (flip or invert) then return end
+
+	local column_mapping = range((NumColumns==4 or NumColumns==8) and 4 or NumColumns)
+	if flip then
+		column_mapping = {column_mapping[4], column_mapping[3], column_mapping[2], column_mapping[1]}
+	end
+	
+	if invert then
+		column_mapping = {column_mapping[2], column_mapping[1], column_mapping[4], column_mapping[3]}
+	end
+
+	if NumColumns == 8 then
+		for i=1,4 do
+			column_mapping[4+i] = column_mapping[i] + 4
+		end
+
+		if flip then
+			for i=1,4 do
+				column_mapping[i] = column_mapping[i] + 4
+				column_mapping[i+4] = column_mapping[i+4] - 4
+			end
+		end
+	end
+
 	local columns = {}
 	local style = GAMESTATE:GetCurrentStyle(player)
 	local width = style:GetWidth(player)
@@ -30,7 +63,7 @@ if mods.ColumnFlashOnMiss then
 				for i,col in pairs(params.Notes or params.Holds) do
 					local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)
 					if tns == "Miss" or tns == "MissedHold" then
-						columns[i]:playcommand("Flash")
+						columns[column_mapping[i]]:playcommand("Flash")
 					end
 				end
 			end
