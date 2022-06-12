@@ -90,8 +90,7 @@ local input = function(event)
 					GAMESTATE:SaveProfiles()
 					PROFILEMAN:SaveMachineProfile()
 
-					SCREENMAN:AddNewScreenToTop("ScreenSelectProfile")
-					overlay:queuecommand("DirectInputToEngine")
+					overlay:queuecommand("DirectInputToEngineForSelectProfile")
 				end
 			end
 
