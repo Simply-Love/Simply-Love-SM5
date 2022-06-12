@@ -668,57 +668,60 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 	local downloadfile = uuid..".zip"
 
 	SL.Downloads[uuid] = {
-		Request=NETWORK:HttpRequest{
-			url=url,
-			downloadFile=downloadfile,
-			onProgress=function(currentBytes, totalBytes)
-				local downloadInfo = SL.Downloads[uuid]
-				if downloadInfo == nil then return end
-
-				downloadInfo.CurrentBytes = currentBytes
-				downloadInfo.TotalBytes = totalBytes
-			end,
-			onResponse=function(response)
-				local downloadInfo = SL.Downloads[uuid]
-				if downloadInfo == nil then return end
-				
-				downloadInfo.Complete = true
-				if response.error ~= nil then
-					downloadInfo.ErrorMessage = response.errorMessage
-					return
-				end
-
-				if response.statusCode == 200 then
-					if response.headers["Content-Type"] == "application/zip" then
-						-- Downloads are usually of the form:
-						--    /Downloads/<name>.zip/<hash>/<song_folders/
-						-- We want to strip out the <hash> after unzipping so we set
-						-- strip = 1.
-						if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
-							downloadInfo.ErrorMessage = "Failed to Unzip!"
-						else
-							if SL.GrooveStats.UnlocksCache[url] == nil then
-								SL.GrooveStats.UnlocksCache[url] = {}
-							end
-							SL.GrooveStats.UnlocksCache[url][packName] = true
-
-							WriteUnlocksCache()
-						end
-					else
-						downloadInfo.ErrorMessage = "Download is not a Zip!"
-						Warn("Attempted to download from \""..url.."\" which is not a zip!")
-					end
-				else
-					downloadInfo.ErrorMessage = "Network Error "..response.statusCode
-				end
-			end,
-		},
 		Name=unlockName,
 		Url=url,
 		Destination=packName,
 		CurrentBytes=0,
 		TotalBytes=0,
 		Complete=false
+	}
+
+	-- Create the request separately. If the host is blocked it's possible that
+	-- the SL.Downloads[uuid] table is assigned.
+	SL.Downloads[uuid].Request = NETWORK:HttpRequest{
+		url=url,
+		downloadFile=downloadfile,
+		onProgress=function(currentBytes, totalBytes)
+			local downloadInfo = SL.Downloads[uuid]
+			if downloadInfo == nil then return end
+
+			downloadInfo.CurrentBytes = currentBytes
+			downloadInfo.TotalBytes = totalBytes
+		end,
+		onResponse=function(response)
+			local downloadInfo = SL.Downloads[uuid]
+			if downloadInfo == nil then return end
+			
+			downloadInfo.Complete = true
+			if response.error ~= nil then
+				downloadInfo.ErrorMessage = response.errorMessage
+				return
+			end
+
+			if response.statusCode == 200 then
+				if response.headers["Content-Type"] == "application/zip" then
+					-- Downloads are usually of the form:
+					--    /Downloads/<name>.zip/<hash>/<song_folders/
+					-- We want to strip out the <hash> after unzipping so we set
+					-- strip = 1.
+					if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
+						downloadInfo.ErrorMessage = "Failed to Unzip!"
+					else
+						if SL.GrooveStats.UnlocksCache[url] == nil then
+							SL.GrooveStats.UnlocksCache[url] = {}
+						end
+						SL.GrooveStats.UnlocksCache[url][packName] = true
+
+						WriteUnlocksCache()
+					end
+				else
+					downloadInfo.ErrorMessage = "Download is not a Zip!"
+					Warn("Attempted to download from \""..url.."\" which is not a zip!")
+				end
+			else
+				downloadInfo.ErrorMessage = "Network Error "..response.statusCode
+			end
+		end,
 	}
 end
 
