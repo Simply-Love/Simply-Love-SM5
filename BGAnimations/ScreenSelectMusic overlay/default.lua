@@ -20,6 +20,13 @@ local af = Def.ActorFrame{
 		end
 	end,
 
+	PlayerJoinedMessageCommand=function(self, params)
+		if not PROFILEMAN:IsPersistentProfile(params.Player) then
+			GAMESTATE:ResetPlayerOptions(params.Player)
+			SL[ToEnumShortString(params.Player)]:initialize()
+		end
+	end,
+
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
