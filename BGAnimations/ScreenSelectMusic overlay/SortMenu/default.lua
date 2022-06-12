@@ -149,6 +149,24 @@ local SongSearchSettings = {
 	end,
 }
 
+-- General purpose function to redirect input back to the engine.
+-- "self" here should refer to the SortMenu ActorFrame.
+local DirectInputToEngine = function(self)
+	local screen = SCREENMAN:GetTopScreen()
+	local overlay = self:GetParent()
+
+	screen:RemoveInputCallback(sortmenu_input)
+	screen:RemoveInputCallback(testinput_input)
+	screen:RemoveInputCallback(leaderboard_input)
+
+	for player in ivalues(PlayerNumber) do
+		SCREENMAN:set_input_redirected(player, false)
+	end
+	self:playcommand("HideSortMenu")
+	overlay:playcommand("HideTestInput")
+	overlay:playcommand("HideLeaderboard")
+end
+
 ------------------------------------------------------------
 
 local t = Def.ActorFrame {
@@ -213,32 +231,10 @@ local t = Def.ActorFrame {
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
 	DirectInputToEngineCommand=function(self)
-		local screen = SCREENMAN:GetTopScreen()
-		local overlay = self:GetParent()
-		screen:RemoveInputCallback(sortmenu_input)
-		screen:RemoveInputCallback(testinput_input)
-		screen:RemoveInputCallback(leaderboard_input)
-		for player in ivalues(PlayerNumber) do
-			SCREENMAN:set_input_redirected(player, false)
-		end
-		self:playcommand("HideSortMenu")
-		overlay:playcommand("HideTestInput")
-		overlay:playcommand("HideLeaderboard")
+		DirectInputToEngine(self)
 	end,
 	DirectInputToEngineForSongSearchCommand=function(self)
-		local screen = SCREENMAN:GetTopScreen()
-		local overlay = self:GetParent()
-
-		screen:RemoveInputCallback(sortmenu_input)
-		screen:RemoveInputCallback(testinput_input)
-		screen:RemoveInputCallback(leaderboard_input)
-
-		for player in ivalues(PlayerNumber) do
-			SCREENMAN:set_input_redirected(player, false)
-		end
-		self:playcommand("HideSortMenu")
-		overlay:playcommand("HideTestInput")
-		overlay:playcommand("HideLeaderboard")
+		DirectInputToEngine(self)
 
 		-- Then add the ScreenTextEntry on top.
 		SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
