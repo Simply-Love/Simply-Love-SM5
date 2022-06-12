@@ -240,6 +240,12 @@ local t = Def.ActorFrame {
 		SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
 		SCREENMAN:GetTopScreen():Load(SongSearchSettings)
 	end,
+	DirectInputToEngineForSelectProfileCommand=function(self)
+		DirectInputToEngine(self)
+
+		-- Then add the ScreenSelectProfile on top.
+		SCREENMAN:AddNewScreenToTop("ScreenSelectProfile")
+	end,
 
 	AssessAvailableChoicesCommand=function(self)
 		-- normally I would give variables like these file scope, and not declare
