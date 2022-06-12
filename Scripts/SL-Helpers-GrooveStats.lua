@@ -672,12 +672,16 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 			url=url,
 			downloadFile=downloadfile,
 			onProgress=function(currentBytes, totalBytes)
-				SL.Downloads[uuid].CurrentBytes = currentBytes
-				SL.Downloads[uuid].TotalBytes = totalBytes
+				local downloadInfo = SL.Downloads[uuid]
+				if downloadInfo == nil then return end
+
+				downloadInfo.CurrentBytes = currentBytes
+				downloadInfo.TotalBytes = totalBytes
 			end,
 			onResponse=function(response)
 				local downloadInfo = SL.Downloads[uuid]
-
+				if downloadInfo == nil then return end
+				
 				downloadInfo.Complete = true
 				if response.error ~= nil then
 					downloadInfo.ErrorMessage = response.errorMessage
