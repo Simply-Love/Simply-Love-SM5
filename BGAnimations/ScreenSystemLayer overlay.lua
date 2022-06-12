@@ -199,11 +199,13 @@ local function LoadModules()
 			if loaded_module then
 				local status, ret = pcall(loaded_module)
 				if status then
-					for screenName, actor in pairs(ret) do
-						if modules[screenName] == nil then
-							modules[screenName] = {}
+					if ret ~= nil then
+						for screenName, actor in pairs(ret) do
+							if modules[screenName] == nil then
+								modules[screenName] = {}
+							end
+							modules[screenName][#modules[screenName]+1] = actor
 						end
-						modules[screenName][#modules[screenName]+1] = actor
 					end
 				else
 					lua.ReportScriptError("Error executing module: "..full_path.." with error:\n    "..ret)
