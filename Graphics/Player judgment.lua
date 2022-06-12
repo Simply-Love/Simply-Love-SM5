@@ -42,10 +42,11 @@ return Def.ActorFrame{
 		-- an early W1 judgment would be frame 0, a late W2 judgment would be frame 3, and so on
 		local frame = TNSFrames[ param.TapNoteScore ]
 		if not frame then return end
+		local tns = ToEnumShortString(param.TapNoteScore)
 
 		-- If the judgment font contains a graphic for the additional white fantastic window...
 		if sprite:GetNumStates() == 7 or sprite:GetNumStates() == 14 then
-			if ToEnumShortString(param.TapNoteScore) == "W1" then
+			if tns == "W1" then
 				if mods.ShowFaPlusWindow then
 					-- If this W1 judgment fell outside of the FA+ window, show the white window
 					--
@@ -60,8 +61,8 @@ return Def.ActorFrame{
 			else
 				-- Everything outside of W1 needs to be shifted down a row if not in FA+ mode.
 				-- Some people might be using 2x7s in FA+ mode (by copying ITG graphics to FA+).
-				-- Don't need to shift in that case.
-				if mode ~= "FA+" then
+				-- In that case, we need to shift the Way Off down to a Miss
+				if SL.Global.GameMode ~= "FA+" or tns == "Miss" then
 					frame = frame + 1
 				end
 			end
@@ -80,8 +81,8 @@ return Def.ActorFrame{
 
 		sprite:visible(true):setstate(frame)
 
-		if SL[ToEnumShortString(player)].ActiveModifiers.JudgmentTilt then
-			if param.TapNoteScore ~= "Miss" then
+		if mods.JudgmentTilt then
+			if tns ~= "Miss" then
 				-- How much to rotate.
 				-- We cap it at 50ms (15px) since anything after likely to be too distracting.
 				local offset = math.min(math.abs(param.TapNoteOffset), 0.050) * 300
