@@ -238,6 +238,7 @@ end
 -- -----------------------------------------------------------------------
 -- The common conditions required to use the GrooveStats services.
 -- Currently the conditions are:
+--  - GrooveStats is enabled in the operator menu.
 --  - We were successfully able to make a GrooveStats conenction previously.
 --  - We must be in the "dance" game mode (not "pump", etc)
 --  - We must be in either ITG or FA+ mode.
@@ -245,6 +246,7 @@ end
 --  - We must not be in course mode.
 IsServiceAllowed = function(condition)
 	return (condition and
+		ThemePrefs.Get("EnableGrooveStats") and
 		SL.GrooveStats.IsConnected and
 		GAMESTATE:GetCurrentGame():GetName()=="dance" and
 		(SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+") and
