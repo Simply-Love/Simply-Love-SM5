@@ -391,7 +391,7 @@ end
 CreateCommentString = function(player)
 	local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 	local isQuint = false
-	local isQuad = false
+	local isQuad = true
 
 	local suffixes = {"w", "e", "g", "d", "wo"}
 
@@ -438,9 +438,8 @@ CreateCommentString = function(player)
 			if #comment ~= 0 then
 				comment = comment .. ", "
 			end
+			IsQuad = false
 			comment = comment..number..suffix
-		elseif number == 0 then
-			IsQuad = true
 		end
 	end
 	
