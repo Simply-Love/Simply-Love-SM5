@@ -91,10 +91,13 @@ af[#af+1] = Def.ActorFrame{
 	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
 	LoadActor("./SongInformation.lua", player), -- Song title and artist (also #song in a course)
-	LoadActor("./Scorebox.lua", player),
 	
 }
 
 af[#af+1] = LoadActor("./DensityGraph.lua", {player, sidepane_width})
+
+if (IsServiceAllowed(SL.GrooveStats.GetScores) and GAMESTATE:GetNumSidesJoined() == 1) or (GAMESTATE:GetNumSidesJoined() == 1 and GAMESTATE:IsCourseMode()) then
+	af[#af+1] = LoadActor("./Scorebox.lua", player)
+end
 
 return af
