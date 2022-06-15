@@ -9,6 +9,7 @@
 - Added Total Measure count and Density % on song select.
 - Sounds added by the user will now be randomly selected to play when a World Record is achieved.
 - Column Cues added in player options to show where an arrow is coming after a break.
+- Column Cues can be toggled to show cues for mines and/or notes as well as whether or not to ignore hold/roll tails.
 - Error Bar added in player options.
 - Judgement Tilt added in player options.
 - Fix lead in time on ScreenGameplay to account for rate mods.
