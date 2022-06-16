@@ -83,8 +83,8 @@ for player in ivalues(PlayerNumber) do
 				return
 			end
 
-			-- only read from disk if not currently set
-			if self:GetTexture() == nil then
+			-- only read from disk if not currently set or if the path has changed
+			if self:GetTexture() == nil or path ~= self:GetTexture():GetPath() then
 				self:Load(path):finishtweening():linear(0.075):diffusealpha(1)
 
 				local dim = 32
