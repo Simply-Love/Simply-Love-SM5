@@ -10,6 +10,46 @@ local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or p
 local paneHeight = 360
 local borderWidth = 2
 
+local returnBannerAndSong = function(x,y,zoom)
+	-- Putting the banner on, but it loads multiple times, pretty messy
+	-- heh, beenis
+	local bns = Def.ActorFrame{ 
+			Name="bns",
+			InitCommand=function(self) 
+				self:xy(x,y):zoom(zoom):vertalign("top") 
+			end,
+			ResetCommand=function(self)
+				self:visible(false)
+			end
+		}
+
+	bns[#bns+1] = Def.Banner{
+			Name="Banner",
+			InitCommand=function(self)
+				local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+				if SongOrCourse and SongOrCourse:HasBanner() then
+						--song or course banner, if there is one
+					if GAMESTATE:IsCourseMode() then
+						self:LoadFromCourse( GAMESTATE:GetCurrentCourse() )
+					else
+						self:LoadFromSong( GAMESTATE:GetCurrentSong() )
+					end
+				end
+				self:setsize(418,164)
+			end
+		}
+	bns[#bns+1] = LoadFont("Common Normal")..{
+		Name="SongName",
+		InitCommand=function(self)
+			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+			if songtitle then self:settext(songtitle):zoom(1.5):maxwidth(500)
+							:vertalign("top"):y(90) end
+		end
+	}
+	
+	return bns
+end
+
 local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(RpgYellow)
 	eventAf:GetChild("BackgroundImage"):visible(true)
@@ -35,22 +75,22 @@ end
 local SetItlStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(ItlPink)
 	eventAf:GetChild("BackgroundImage"):visible(false)
-	eventAf:GetChild("BackgroundColor"):diffuse(Color.White):diffusealpha(1)
+	eventAf:GetChild("BackgroundColor"):diffuse(Color.Black):diffusealpha(1)
 	eventAf:GetChild("BackgroundColor2"):visible(false)
 	eventAf:GetChild("HeaderBorder"):diffuse(ItlPink)
 	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
 	eventAf:GetChild("Header"):diffuse(Color.White)
 	eventAf:GetChild("EX"):diffuse(Color.White):visible(false)
-	eventAf:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
+	eventAf:GetChild("BodyText"):diffuse(Color.White)
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
 
 	local leaderboard = eventAf:GetChild("Leaderboard")
 	for i=1, NumEntries do
 		local entry = leaderboard:GetChild("LeaderboardEntry"..i)
-		entry:GetChild("Rank"):diffuse(Color.Black)
-		entry:GetChild("Name"):diffuse(Color.Black)
-		entry:GetChild("Score"):diffuse(Color.Black)
-		entry:GetChild("Date"):diffuse(Color.Black)
+		entry:GetChild("Rank"):diffuse(Color.White)
+		entry:GetChild("Name"):diffuse(Color.White)
+		entry:GetChild("Score"):diffuse(Color.White)
+		entry:GetChild("Date"):diffuse(Color.White)
 	end
 end
 
@@ -660,6 +700,7 @@ for player in ivalues(PlayerNumber) do
 				self:diffuse(color("#A1FF94")):zoomto(paneWidth, RowHeight)
 			end,
 		},
+		returnBannerAndSong(0,112,0.34),
 	}
 
 	local af3 = af2[#af2]
