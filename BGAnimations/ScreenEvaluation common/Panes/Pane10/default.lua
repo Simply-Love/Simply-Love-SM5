@@ -1,4 +1,4 @@
--- Pane8 displays a list of High Scores obrained from GrooveStats for the stepchart that was played.
+-- Pane8 displays a list of High Scores obrained from GrooveStats from the ITL array for the stepchart that was played.
 
 if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then return end
 
@@ -18,12 +18,12 @@ local args = { Player=player, RowHeight=22, HideScores=true }
 args.NumHighScores = 10
 
 pane[#pane+1] = Def.Sprite{
-	Texture=THEME:GetPathG("","GrooveStats.png"),
-	Name="GrooveStats_Logo",
+	Texture=THEME:GetPathG("","ITL.png"),
+	Name="ITL_Logo",
 	InitCommand=function(self)
-		self:zoom(1.5)
-		self:addx(0):addy(100)
-		self:diffusealpha(0.5)
+		self:zoom(1)
+		self:addx(0):addy(120)
+		self:diffusealpha(0.15)
 	end,
 }
 

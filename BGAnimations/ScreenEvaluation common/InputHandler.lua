@@ -116,6 +116,7 @@ local OtherController = {
 
 return function(event)
 
+
 	if not (event and event.PlayerNumber and event.button) then return false end
 
 	-- get a "controller number" and an "other controller number"
@@ -127,7 +128,6 @@ return function(event)
 	local  cn = tonumber(ToEnumShortString(event.controller))
 	local ocn = tonumber(ToEnumShortString(OtherController[event.controller]))
 
-
 	if event.type == "InputEventType_FirstPress" and panes[cn] then
 
 		if event.GameButton == "MenuRight" or event.GameButton == "MenuLeft" then
@@ -135,16 +135,146 @@ return function(event)
 				active_pane[cn] = (active_pane[cn] % #panes[cn]) + 1
 				-- don't allow duplicate panes to show in single/double
 				-- if the above change would result in duplicate panes, increment again
+				
+				-- Skip QR code pane if it has already been submitted
+				-- Is there any other instances we want to skip?
+				QRPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HelpText")
+				if QRPane ~= nil and QRPane:GetText() == "Score has already been submitted :)" then
+					active_pane[cn] = ((active_pane[cn]) % #panes[cn]) + 1
+				end
+
+				-- Only show the leaderboard panes (GS/RPG/ITL) if they contain any entries.
+				-- Can't check the results when the screen loads because of response times,
+				-- so we have to check when we change panes.
+
+				-- Originally I made it to remove the actor if it doesn't return results
+				-- but the only way I could get that to work was using global variables.
+				-- This seems to work for now, until the pane system is revamped.
+
+				-- Check if the next pane is a leaderboard pane
+				-- I don't know why the pane numbers are different to the actor names but this works
+				local checkskip = false
+				if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") ~= nil then checkskip = true end
+
+				while checkskip do
+					local leaderboardPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList"):GetChild("HighScoreEntry1"):GetChild("Name")
+					-- If there are no results, the first place name would not have changed from "----"
+					if leaderboardPane:GetText() == "----" then 
+						active_pane[cn] = (active_pane[cn] % #panes[cn]) + 1 
+					else
+						-- If the text has changed, that means there is results. Don't skip this pane. Exit loop.
+						checkskip = false
+					end
+					-- If the next pane is not a high score pane, also exit loop
+					if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") == nil then checkskip = false end
+				end
+				
 				if #players==1 and active_pane[cn] == active_pane[ocn] then
 					active_pane[cn] = (active_pane[cn] % #panes[cn]) + 1
+
+					
+					-- Skip QR code pane if it has already been submitted
+					-- Is there any other instances we want to skip?
+					QRPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HelpText")
+					if QRPane ~= nil and QRPane:GetText() == "Score has already been submitted :)" then
+						active_pane[cn] = ((active_pane[cn]) % #panes[cn]) + 1
+					end
+
+					-- Only show the leaderboard panes (GS/RPG/ITL) if they contain any entries.
+					-- Can't check the results when the screen loads because of response times,
+					-- so we have to check when we change panes.
+
+					-- Originally I made it to remove the actor if it doesn't return results
+					-- but the only way I could get that to work was using global variables.
+					-- This seems to work for now, until the pane system is revamped.
+
+					-- Check if the next pane is a leaderboard pane
+					-- I don't know why the pane numbers are different to the actor names but this works
+					local checkskip = false
+					if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") ~= nil then checkskip = true end
+
+					while checkskip do
+						local leaderboardPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList"):GetChild("HighScoreEntry1"):GetChild("Name")
+						-- If there are no results, the first place name would not have changed from "----"
+						if leaderboardPane:GetText() == "----" then 
+							active_pane[cn] = (active_pane[cn] % #panes[cn]) + 1 
+						else
+							-- If the text has changed, that means there is results. Don't skip this pane. Exit loop.
+							checkskip = false
+						end
+						-- If the next pane is not a high score pane, also exit loop
+						if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") == nil then checkskip = false end
+					end
+
 				end
 
 			elseif event.GameButton == "MenuLeft" then
 				active_pane[cn] = ((active_pane[cn] - 2) % #panes[cn]) + 1
 				-- don't allow duplicate panes to show in single/double
 				-- if the above change would result in duplicate panes, decrement again
+
+				-- Only show the leaderboard panes (GS/RPG/ITL) if they contain any entries.
+				-- Can't check the results when the screen loads because of response times,
+				-- so we have to check when we change panes.
+
+				-- Originally I made it to remove the actor if it doesn't return results
+				-- but the only way I could get that to work was using global variables.
+				-- This seems to work for now, until the pane system is revamped.
+
+				-- Check if the next pane is a leaderboard pane
+				-- I don't know why the pane numbers are different to the actor names but this works
+				local checkskip = false
+				if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") ~= nil then checkskip = true end
+
+				while checkskip do
+					local leaderboardPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList"):GetChild("HighScoreEntry1"):GetChild("Name")
+					-- If there are no results, the first place name would not have changed from "----"
+					if leaderboardPane:GetText() == "----" then 
+						active_pane[cn] = (active_pane[cn] -2 % #panes[cn]) + 1 
+					else
+						-- If the text has changed, that means there is results. Don't skip this pane. Exit loop.
+						checkskip = false
+					end
+					-- If the next pane is not a high score pane, also exit loop
+					if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") == nil then checkskip = false end
+				end
+				
+				-- Skip QR code pane if it has already been submitted
+				-- Is there any other instances we want to skip?
+				QRPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HelpText")
+				if QRPane ~= nil and QRPane:GetText() == "Score has already been submitted :)" then
+					active_pane[cn] = ((active_pane[cn] - 2) % #panes[cn]) + 1
+				end
+					
 				if #players==1 and active_pane[cn] == active_pane[ocn] then
 					active_pane[cn] = ((active_pane[cn] - 2) % #panes[cn]) + 1
+
+					-- Check if the next pane is a leaderboard pane
+					-- I don't know why the pane numbers are different to the actor names but this works
+					local checkskip = false
+					if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") ~= nil then checkskip = true end
+
+					while checkskip do
+						local leaderboardPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList"):GetChild("HighScoreEntry1"):GetChild("Name")
+						-- If there are no results, the first place name would not have changed from "----"
+						if leaderboardPane:GetText() == "----" then 
+							active_pane[cn] = (active_pane[cn] -2 % #panes[cn]) + 1 
+						else
+							-- If the text has changed, that means there is results. Don't skip this pane. Exit loop.
+							checkskip = false
+						end
+						-- If the next pane is not a high score pane, also exit loop
+						if panes[cn][active_pane[cn]]:GetChild(""):GetChild("HighScoreList") == nil then checkskip = false end
+					end
+					
+					-- Skip QR code pane if it has already been submitted
+					-- Is there any other instances we want to skip?
+					QRPane = panes[cn][active_pane[cn]]:GetChild(""):GetChild("HelpText")
+					if QRPane ~= nil and QRPane:GetText() == "Score has already been submitted :)" then
+						active_pane[cn] = ((active_pane[cn] - 2) % #panes[cn]) + 1
+					end
+
+
 				end
 			end
 

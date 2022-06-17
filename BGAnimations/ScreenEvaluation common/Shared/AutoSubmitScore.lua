@@ -12,18 +12,19 @@ local SetEntryText = function(rank, name, score, date, actor)
 end
 
 local GetMachineTag = function(gsEntry)
-	if not gsEntry then return end
+	if not gsEntry then return end	
+	-- Groovestats username.
+	if gsEntry["name"] then
+		-- 4 Characters is the "intended" length.
+		return gsEntry["name"]
+	end
+
 	if gsEntry["machineTag"] then
-		-- Make sure we only use up to 4 characters for space concerns.
+		-- User doesn't have a username (?).
 		return gsEntry["machineTag"]:sub(1, 4):upper()
 	end
 
-	-- User doesn't have a machineTag set. We'll "make" one based off of
-	-- their name.
-	if gsEntry["name"] then
-		-- 4 Characters is the "intended" length.
-		return gsEntry["name"]:sub(1,4):upper()
-	end
+
 
 	return ""
 end
@@ -125,6 +126,9 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 			local highScorePane = panes:GetChild("Pane8_SideP"..i):GetChild("")
 			local QRPane = panes:GetChild("Pane7_SideP"..i):GetChild("")
 
+			local RPGPane = panes:GetChild("Pane9_SideP"..i):GetChild("")
+			local ITLPane = panes:GetChild("Pane10_SideP"..i):GetChild("")
+
 			-- If only one player is joined, we then need to update both panes with only
 			-- one players' data.
 			local side = i
@@ -181,6 +185,64 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							P1SubmitText:queuecommand("Submit")
 						elseif i == 2 and P2SubmitText then
 							P2SubmitText:queuecommand("Submit")
+						end
+					end
+
+					if data[playerStr]["rpg"] then
+						local rpgEntry = 1
+						local rpgRival = 1
+						for gsEntry in ivalues(data[playerStr]["rpg"]["rpgLeaderboard"]) do
+							local entry = RPGPane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..rpgEntry)
+							entry:stoptweening()
+							entry:diffuse(Color.White)
+							SetEntryText(
+								gsEntry["rank"]..".",
+								GetMachineTag(gsEntry),
+								string.format("%.2f%%", gsEntry["score"]/100),
+								ParseGroovestatsDate(gsEntry["date"]),
+								entry
+							)
+							if gsEntry["isRival"] then
+								entry:diffuse(color("#BD94FF"))
+								rpgRival = rpgRival + 1
+							elseif gsEntry["isSelf"] then
+								entry:diffuse(color("#A1FF94"))
+								personalRank = gsEntry["rank"]
+							end
+
+							if gsEntry["isFail"] then
+								entry:GetChild("Score"):diffuse(Color.Red)
+							end
+							rpgEntry = rpgEntry + 1
+						end
+					end
+
+					if data[playerStr]["itl"] then
+						local itlEntry = 1
+						local itlRival = 1
+						for gsEntry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+							local entry = ITLPane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..itlEntry)
+							entry:stoptweening()
+							entry:diffuse(Color.White)
+							SetEntryText(
+								gsEntry["rank"]..".",
+								GetMachineTag(gsEntry),
+								string.format("%.2f%%", gsEntry["score"]/100),
+								ParseGroovestatsDate(gsEntry["date"]),
+								entry
+							)
+							if gsEntry["isRival"] then
+								entry:diffuse(color("#BD94FF"))
+								itlRival = itlRival + 1
+							elseif gsEntry["isSelf"] then
+								entry:diffuse(color("#A1FF94"))
+								personalRank = gsEntry["rank"]
+							end
+
+							if gsEntry["isFail"] then
+								entry:GetChild("Score"):diffuse(Color.Red)
+							end
+							itlEntry = itlEntry + 1
 						end
 					end
 
