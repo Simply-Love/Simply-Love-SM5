@@ -89,7 +89,8 @@ af[#af+1] = Def.ActorFrame{
 	LoadActor("./TapNoteJudgments.lua", {player, true}), -- second argument is if it has labels or not
 	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
-	LoadActor("./Scorebox.lua", player)
+	LoadActor("./Scorebox.lua", player),
+	LoadActor("./StepsInfo.lua", player)
 }
 
 af[#af+1] = LoadActor("./DensityGraph.lua", {player, sidepane_width})
