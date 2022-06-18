@@ -16,11 +16,12 @@ local invert = po:Invert() > 0
 local insert = po:Wide() or po:Big() or po:Quick() or po:BMRize() or po:Skippy() or po:Echo() or po:Stomp()
 -- this isn't even a selectable mod on this theme, but sure.
 local backwards = po:Backwards()
+local NoMines = po:NoMines()
 local notes_removed = (po:Little()  or po:NoHolds() or po:NoStretch() or
                        po:NoHands() or po:NoJumps() or po:NoFakes() or 
                        po:NoLifts() or po:NoQuads() or po:NoRolls())
 
-local CueMines = mods.CueMines
+local CueMines = mods.CueMines and not NoMines
 local IgnoreHoldsRolls = mods.IgnoreHoldsRolls
 local IgnoreNotes = mods.IgnoreNotes
 
