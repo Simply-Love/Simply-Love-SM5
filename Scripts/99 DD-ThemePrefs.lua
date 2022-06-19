@@ -20,7 +20,7 @@ SL_CustomPrefs.Get = function()
 	return {
 		AllowFailingOutOfSet =
 		{
-			Default = true,
+			Default = false,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values 	= { true, false }
 		},
@@ -32,7 +32,7 @@ SL_CustomPrefs.Get = function()
 		},
 		AllowSongSearch =
 		{
-			Default = false,
+			Default = true,
 			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values 	= { true, false }
 		},
