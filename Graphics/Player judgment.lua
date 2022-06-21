@@ -9,10 +9,12 @@ local sprite
 -- If that fails too, fail gracefully and do nothing
 local available_judgments = GetJudgmentGraphics()
 
-local file_to_load = (FindInTable(mods.JudgmentGraphic, available_judgments) ~= nil and mods.JudgmentGraphic or available_judgments[1]) or "None"
+local file_to_load = (
+	FindInTable(mods.JudgmentGraphic, available_judgments) ~= nil and mods.JudgmentGraphic or available_judgments[1]) or
+	"None"
 
 if file_to_load == "None" then
-	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
+	return Def.Actor { InitCommand = function(self) self:visible(false) end }
 end
 
 ------------------------------------------------------------
@@ -26,13 +28,13 @@ local TNSFrames = {
 	TapNoteScore_Miss = 5
 }
 
-return Def.ActorFrame{
-	Name="Player Judgment",
-	InitCommand=function(self)
+return Def.ActorFrame {
+	Name = "Player Judgment",
+	InitCommand = function(self)
 		local kids = self:GetChildren()
 		sprite = kids.JudgmentWithOffsets
 	end,
-	JudgmentMessageCommand=function(self, param)
+	JudgmentMessageCommand = function(self, param)
 		if param.Player ~= player then return end
 		if not param.TapNoteScore then return end
 		if param.HoldNoteScore then return end
@@ -40,14 +42,14 @@ return Def.ActorFrame{
 		-- "frame" is the number we'll use to display the proper portion of the judgment sprite sheet
 		-- Sprite actors expect frames to be 0-indexed when using setstate() (not 1-indexed as is more common in Lua)
 		-- an early W1 judgment would be frame 0, a late W2 judgment would be frame 3, and so on
-		local frame = TNSFrames[ param.TapNoteScore ]
+		local frame = TNSFrames[param.TapNoteScore]
 		if not frame then return end
 		local tns = ToEnumShortString(param.TapNoteScore)
 
 		-- If the judgment font contains a graphic for the additional white fantastic window...
 		if sprite:GetNumStates() == 7 or sprite:GetNumStates() == 14 then
 			if tns == "W1" then
-				if mods.ShowFaPlusWindow then
+				if mods.ShowFaPlusWindow and SL.Global.GameMode == "ITG" then
 					-- If this W1 judgment fell outside of the FA+ window, show the white window
 					--
 					-- Treat Autoplay specially. The TNS might be out of the range, but
@@ -98,9 +100,9 @@ return Def.ActorFrame{
 		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 	end,
 
-	Def.Sprite{
-		Name="JudgmentWithOffsets",
-		InitCommand=function(self)
+	Def.Sprite {
+		Name = "JudgmentWithOffsets",
+		InitCommand = function(self)
 			-- animate(false) is needed so that this Sprite does not automatically
 			-- animate its way through all available frames; we want to control which
 			-- frame displays based on what judgment the player earns
@@ -109,12 +111,12 @@ return Def.ActorFrame{
 			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.
 			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
-				self:Load( THEME:GetPathG("", "_judgments/Love") )
+				self:Load(THEME:GetPathG("", "_judgments/Love"))
 
 			else
-				self:Load( THEME:GetPathG("", "_judgments/" .. file_to_load) )
+				self:Load(THEME:GetPathG("", "_judgments/" .. file_to_load))
 			end
 		end,
-		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
+		ResetCommand = function(self) self:finishtweening():stopeffect():visible(false) end
 	}
 }
