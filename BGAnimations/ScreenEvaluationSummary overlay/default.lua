@@ -30,6 +30,20 @@ local page_text = THEME:GetString("ScreenEvaluationSummary", "Page")
 
 -- -----------------------------------------------------------------------
 
+
+-- Utility function to collect the names of all unique profiles that played at least one song
+-- as player pn this session.
+uniqueProfilesUsedForPlayer = function(pn)
+	local extractProfile = function(stats)
+		return stats.profile
+	end
+	local profilesUsed = map(extractProfile, SL[pn].Stages.Stats)
+	return deduplicate(profilesUsed)
+end
+
+
+-- -----------------------------------------------------------------------
+
 local t = Def.ActorFrame{
 	-- this CodeMessage is defined in metrics.ini under [ScreenEvaluationSummary]
 	-- it handles both page navigation and screenshot requests
