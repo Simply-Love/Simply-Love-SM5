@@ -73,6 +73,7 @@ for i=1,#TapNoteScores.Types do
 			self:x( TapNoteScores.x[ToEnumShortString(controller)] )
 			self:y((i-1)*32 -24)
 			self:targetnumber(number)
+			self:maxwidth(144)
 		end
 	}
 
@@ -101,7 +102,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		performance = possible - performance
 	end
 
-	possible = clamp(possible, 0, 999)
+	--possible = clamp(possible, 0, 999)
 
 	-- player performance value
 	-- use a RollingNumber to animate the count tallying up for visual effect
@@ -112,18 +113,30 @@ for index, RCType in ipairs(RadarCategories.Types) do
 			self:x( RadarCategories.x[ToEnumShortString(controller)] )
 			self:y((index)*35 + 53)
 			self:targetnumber(performance)
+			self:maxwidth(108)
 		end
 	}
 
-	-- slash and possible value
+	-- slash
+	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+		InitCommand=function(self) self:zoom(0.5) end,
+		BeginCommand=function(self)
+			self:x( ((controller == PLAYER_1) and -172) or 227 )
+			self:y((index)*35 + 53)
+			self:settext("/")
+		end
+	}
+
+	-- possible value
 	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( ((controller == PLAYER_1) and -114) or 286 )
 			self:y(index*35 + 53)
-			self:settext(("/%03d"):format(possible))
+			self:settext(("%03d"):format(possible))
 			local leadingZeroAttr = { Length=4-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
 			self:AddAttribute(0, leadingZeroAttr )
+			self:maxwidth(108)
 		end
 	}
 end
