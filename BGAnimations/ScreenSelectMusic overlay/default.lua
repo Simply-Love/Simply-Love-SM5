@@ -18,6 +18,7 @@ local af = Def.ActorFrame{
 			GAMESTATE:ResetPlayerOptions(params.Player)
 			SL[ToEnumShortString(params.Player)]:initialize()
 		end
+		ApplyMods(params.Player)
 	end,
 
 	PlayerJoinedMessageCommand=function(self, params)
@@ -25,6 +26,7 @@ local af = Def.ActorFrame{
 			GAMESTATE:ResetPlayerOptions(params.Player)
 			SL[ToEnumShortString(params.Player)]:initialize()
 		end
+		ApplyMods(params.Player)
 	end,
 
 	-- ---------------------------------------------------
