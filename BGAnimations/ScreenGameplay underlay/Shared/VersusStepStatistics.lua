@@ -98,7 +98,9 @@ for player in ivalues(Players) do
                 end,
                 JudgmentMessageCommand=function(self, params)
                     if params.Player ~= player then return end
-            
+                    self:queuecommand("RedrawScore")
+                end,
+                RedrawScoreCommand=function(self)
                     if not IsEX then
                         local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
                         local dance_points = pss:GetPercentDancePoints()
