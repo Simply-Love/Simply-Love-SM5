@@ -195,6 +195,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local statImprovements = {}
 	local skillImprovements = {}
 	local quests = {}
+	local questsabbr = {}
 	local progress = rpgData["progress"]
 	if progress then
 		if progress["statImprovements"] then
@@ -211,9 +212,10 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 		if progress["skillImprovements"] then
 			skillImprovements = progress["skillImprovements"]
 		end
-
+		
 		if progress["questsCompleted"] then
 			for quest in ivalues(progress["questsCompleted"]) do
+				table.insert(questsabbr,quest["title"])
 				local questStrings = {}
 				table.insert(questStrings, string.format(
 					"Completed \"%s\"!\n",
@@ -239,6 +241,10 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				end
 
 				table.insert(quests, table.concat(questStrings, "\n"))
+			end
+			QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
+			if #GAMESTATE:GetHumanPlayers() == 1 then
+				QuestPane:playcommand("RpgQuests",{ questsabbr=questsabbr })
 			end
 		end
 	end
