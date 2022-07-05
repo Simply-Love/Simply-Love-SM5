@@ -243,7 +243,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
 			QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
-			if #GAMESTATE:GetHumanPlayers() == 1 then
+			if #GAMESTATE:GetHumanPlayers() == 1 and #questsabbr > 0 then
 				QuestPane:playcommand("RpgQuests",{ questsabbr=questsabbr })
 			end
 		end
