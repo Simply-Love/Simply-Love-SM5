@@ -51,10 +51,10 @@ af[#af+1] = LoadFont("Common Normal")..{
 		--self:valign(1)
 	end,
 	RpgQuestsCommand=function(self,params)
-		text = "Quests Completed"
+		text = params.questsabbr[1]
 		-- There's probably a better way to do this
-		for i in ivalues(params.questsabbr) do
-			text = text .. "\n" .. i
+		for i=2,#params.questsabbr do
+			text = text .. "\n" .. params.questsabbr[i]
 		end
 		self:settext(text)		
 		self:maxwidth(180)
