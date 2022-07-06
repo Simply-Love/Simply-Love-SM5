@@ -211,29 +211,9 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 
 		if progress["skillImprovements"] then
 			skillImprovements = progress["skillImprovements"]
-			for i in ivalues(skillImprovements) do
-				
-				-- Make string into array so we can find out what kind of skill improvement we made
-				local words = {}
-				for word in (i.." "):gmatch("(.-)".." ") do
-					table.insert(words, word)
-				end
-				
-				if words[4] == "Skill" then
-					local sp_level = words[6]
-					local sp_bpm = words[8]
-					local sp_text = sp_bpm .. " BPM Lvl " .. sp_level
-					table.insert(questsabbr,sp_text)	
-				elseif words[4] == "Life" then
-					local life_level = words[6]:sub(1,string.len(words[6])-1)
-					local life_text = "Life Lvl " .. life_level
-					table.insert(questsabbr,life_text)	
-				end
-			end
 		end
 		
 		if progress["questsCompleted"] then
-			if #progress["questsCompleted"] > 0 then table.insert(questsabbr,"Quests completed:") end
 			for quest in ivalues(progress["questsCompleted"]) do
 				table.insert(questsabbr,quest["title"])
 				local questStrings = {}
