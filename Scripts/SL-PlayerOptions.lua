@@ -412,7 +412,7 @@ local Overrides = {
 			if SL.Global.GameMode == "FA+" then
 				 -- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
-				mods.ShowEXScore = list[1]
+				mods.ShowEXScore = list[2]
 				mods.ShowFaPlusPane = list[3]
 				return
 			end
@@ -420,7 +420,7 @@ local Overrides = {
 			mods.ShowEXScore = list[2]
 			mods.ShowFaPlusPane = list[3]
 			-- Default to FA+ pane if either options are active.
-			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and not list[3]) and 2 or 1
+			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and list[3]) and 2 or 1
 		end
 	},
 	-------------------------------------------------------------------------

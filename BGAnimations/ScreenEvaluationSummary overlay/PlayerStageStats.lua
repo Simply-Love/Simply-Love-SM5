@@ -1,4 +1,4 @@
-local player = ...
+local player, displayProfileNames = unpack(...)
 
 local LetterGradesAF
 local playerStats
@@ -17,7 +17,7 @@ elseif player == PLAYER_2 then
 	col1x = 90
 	col2x = _screen.w/2.5
 	gradex = _screen.w/3.33
-	align1= left
+	align1 = left
 	align2 = right
 end
 
@@ -30,6 +30,7 @@ local af = Def.ActorFrame{
 		playerStats = SL[ToEnumShortString(player)].Stages.Stats[params.StageNum]
 
 		if playerStats then
+			profile = playerStats.profile
 			steps = playerStats.steps
 	 		meter = playerStats.meter
 	 		difficulty = playerStats.difficulty
@@ -40,7 +41,21 @@ local af = Def.ActorFrame{
 	end
 }
 
---percent score
+-- profile name (only if there were any profile switches happening this session)
+if displayProfileNames then
+	af[#af+1] = LoadFont("Common Normal")..{
+		InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-43) end,
+		DrawStageCommand=function(self)
+			if playerStats and profile then
+				self:settext(profile)
+			else
+				self:settext("")
+			end
+		end
+	}
+end
+
+-- percent score
 af[#af+1] = LoadFont("Common Bold")..{
 	InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-24) end,
 	DrawStageCommand=function(self)
