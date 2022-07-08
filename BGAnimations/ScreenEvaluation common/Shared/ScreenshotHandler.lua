@@ -24,8 +24,8 @@ spr.CodeMessageCommand=function(self, params)
 
 		-- song titles can be very long, and the engine's SaveScreenshot() function
 		-- is already hardcoded to make the filename long via DateTime::GetNowDateTime()
-		-- so, let's use only the first 10 characters of the title in the screenshot filename
-		title = title:utf8sub(1,10)
+		-- so, let's use only the first 25 characters of the title in the screenshot filename
+		title = title:utf8sub(1,25)
 
 		-- some song titles have slashes in them, which is interpreted as a folder in the path as
 		-- screenshot is saved. we'll substitute those slashes with underscores to prevent this.
@@ -35,7 +35,9 @@ spr.CodeMessageCommand=function(self, params)
 		--      ./Screenshots/Simply_Love/2020/04-April/DVNO-2020-04-22_175951.png
 		-- note that the engine's SaveScreenshot() function will convert whitespace
 		-- characters to underscores, so we might as well just use underscores here
-		local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/" .. title .. "_"
+		local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/"
+		local suffix = "_" .. title
+		local success, path = SaveScreenshot(params.PlayerNumber, false, false , prefix, suffix)
 
 		-- attempt to write a screenshot to disk
 		-- arg1 is playernumber that requsted the screenshot; if they are using a profile, the screenshot will be saved there
@@ -49,7 +51,6 @@ spr.CodeMessageCommand=function(self, params)
 		-- second return value is
 		--     (directory + filename) if write to disk was successful
 		--     (filename)             if write to disk failed
-		local success, path = SaveScreenshot(params.PlayerNumber, false, false , prefix)
 
 		if success then
 			player = params.PlayerNumber
