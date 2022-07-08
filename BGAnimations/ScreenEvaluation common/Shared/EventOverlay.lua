@@ -177,6 +177,8 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local paneTexts = {}
 	local paneFunctions = {}
 
+
+
 	if rpgData["result"] == "score-added" then
 		score = pss:GetPercentDancePoints() * 100
 		scoreDelta = score
@@ -195,7 +197,13 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local statImprovements = {}
 	local skillImprovements = {}
 	local quests = {}
-	local questsabbr = {}
+
+	
+	local box_quests = {}
+	local box_progress = {}
+	local box_stats = {}
+	local box_score = {scoreDelta,rateDelta}
+
 	local progress = rpgData["progress"]
 	if progress then
 		if progress["statImprovements"] then
@@ -205,6 +213,12 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 						statImprovements,
 						string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
 					)
+
+					table.insert(
+						box_stats,
+						string.format("%d %s", improvement["gained"], string.upper(improvement["name"]))
+					)
+
 				end
 			end
 		end
@@ -223,19 +237,19 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 					local sp_level = words[6]
 					local sp_bpm = words[8]
 					local sp_text = sp_bpm .. " BPM Lvl " .. sp_level
-					table.insert(questsabbr,sp_text)	
+					table.insert(box_progress,sp_text)	
 				elseif words[4] == "Life" then
 					local life_level = words[6]:sub(1,string.len(words[6])-1)
 					local life_text = "Life Lvl " .. life_level
-					table.insert(questsabbr,life_text)	
+					table.insert(box_progress,life_text)
 				end
 			end
 		end
 		
 		if progress["questsCompleted"] then
-			if #progress["questsCompleted"] > 0 then table.insert(questsabbr,"Quests completed:") end
+			--if #progress["questsCompleted"] > 0 then table.insert(box_quests,"Quests completed:") end
 			for quest in ivalues(progress["questsCompleted"]) do
-				table.insert(questsabbr,quest["title"])
+				table.insert(box_quests,quest["title"])
 				local questStrings = {}
 				table.insert(questStrings, string.format(
 					"Completed \"%s\"!\n",
@@ -263,9 +277,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
 			QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
-			if #GAMESTATE:GetHumanPlayers() == 1 and #questsabbr > 0 then
-				QuestPane:playcommand("RpgQuests",{ questsabbr=questsabbr })
-			end
+			QuestPane:playcommand("RpgQuests",{ box_score=box_score, box_progress=box_progress, box_stats=box_stats, box_quests=box_quests })
 		end
 	end
 

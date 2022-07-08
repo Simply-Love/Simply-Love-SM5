@@ -27,6 +27,6 @@ return Def.ActorFrame{
 	-- Record Texts (Machine and/or Personal)
 	LoadActor("./RecordTexts.lua", player),
 
-	-- SRPG6 Quests
-	LoadActor("./RPGQuests.lua", player)
+	-- SRPG6 Rewards
+	LoadActor("./RPGProgress.lua", player)
 }
