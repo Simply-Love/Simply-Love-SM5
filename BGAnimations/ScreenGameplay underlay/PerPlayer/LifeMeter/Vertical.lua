@@ -4,6 +4,7 @@ local pn = ToEnumShortString(player)
 local width = 16
 local height = 250
 local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(302, 400)
+local oldlife = 0
 
 -- if double
 if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides"
@@ -42,6 +43,74 @@ local meter = Def.ActorFrame{
 	end,
 
 	-- frame
+	Def.Quad {
+		InitCommand=function(self) self:zoomto(44, 18):diffuse(PlayerColor(player,true)):horizalign("left"):x(_x+10) end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:zoomto(52, 18)
+					self:accelerate(1)
+					self:diffusealpha(0)
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:zoomto(44, 18):finishtweening():diffusealpha(1)
+				end
+			end
+		end,
+		-- check life (LifeMeterBar)
+		LifeChangedMessageCommand=function(self,params)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * 100
+				self:finishtweening()
+				self:bouncebegin(0.1):y(height/2-(life*2.5))
+			end
+		end,
+	},
+	Def.Quad {
+		InitCommand=function(self) self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left"):x(_x+11) end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:zoomto(50, 16)
+					self:accelerate(1)
+					self:diffusealpha(0)
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:zoomto(42, 16):finishtweening():diffusealpha(1)
+				end
+			end
+		end,
+		-- check life (LifeMeterBar)
+		LifeChangedMessageCommand=function(self,params)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * 100
+				self:finishtweening()
+				self:bouncebegin(0.1):y(height/2-(life*2.5))
+			end
+		end,
+	},
+	Def.BitmapText {
+		Font="Common Normal",
+		InitCommand=function(self) self:diffuse(PlayerColor(player,true)):horizalign("left"):x(_x+12) end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:accelerate(1):diffusealpha(0)
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:finishtweening():diffusealpha(1)
+				end
+			end
+		end,
+		-- check life (LifeMeterBar)
+		LifeChangedMessageCommand=function(self,params)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * 100
+				self:finishtweening()
+				self:bouncebegin(0.1):settext(("%.1f%%"):format(life)):y(height/2-(life*2.5))
+			end
+		end,
+	},
 	Def.Quad{ InitCommand=function(self) self:zoomto(width+2, height+2):x(_x) end },
 	Def.Quad{ InitCommand=function(self) self:zoomto(width, height):x(_x):diffuse(0,0,0,1) end },
 
@@ -49,6 +118,21 @@ local meter = Def.ActorFrame{
 		Name="MeterFill",
 		InitCommand=function(self) self:zoomto(width,0):diffuse(PlayerColor(player,true)):align(0,1) end,
 		OnCommand=function(self) self:xy( _x - width/2, height/2) end,
+		
+		-- check whether the player's LifeMeter is "Hot"
+		-- in LifeMeterBar.cpp, the engine says a LifeMeter is Hot if the current
+		-- LifePercentage is greater than or equal to the HOT_VALUE, which is
+		-- defined in Metrics.ini under [LifeMeterBar] like HotValue=1.0
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:rainbow()
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:stopeffect():diffuse( PlayerColor(player,true) )
+				end
+			end
+		end,
 
 		-- check life (LifeMeterBar)
 		LifeChangedMessageCommand=function(self,params)
@@ -78,6 +162,15 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if(params.Player == player) then
 				local life = params.LifeMeter:GetLife() * height
+				
+				if(life > oldlife) then
+					self:accelerate(0.5):diffusealpha(1)
+				else
+					self:accelerate(0.5):diffusealpha(0.2)
+				end
+				
+				oldlife = life
+				
 				self:finishtweening()
 				self:bouncebegin(0.1):zoomto( life, width )
 			end
