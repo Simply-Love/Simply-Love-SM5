@@ -55,9 +55,15 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end,
 	RpgQuestsCommand=function(self,params)
 		local score = params.box_score[1]
-		local score_text = (score < 0) and "-" or "+" ..  string.format("%.2f%%",score)
+		local score_text = (score < 0 and "-" or "+") ..  string.format("%.2f%%",score)
 		self:settext(score_text)
-		if score < 0 then self:diffuse(Color.Red) else self:diffuse(Color.Green) end
+		if score < 0 then 
+				self:diffuse(Color.Red) 
+		elseif score == 0 then 
+			self:diffuse(Color.Blue) 
+		else 
+			self:diffuse(Color.Green) 
+		end
 		self:xy(-30,-60)		
 	end
 }
@@ -70,9 +76,15 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end,
 	RpgQuestsCommand=function(self,params)
 		local rate = params.box_score[2]
-		local rate_text = (rate < 0) and "-" or "+" ..  string.format("%.2f",rate) .. "x"
+		local rate_text = (rate < 0 and "-" or "+") ..  string.format("%.2f",rate) .. "x"
 		self:settext(rate_text)
-		if rate < 0 then self:diffuse(Color.Red) else self:diffuse(Color.Green) end
+		if rate < 0 then 
+			self:diffuse(Color.Red) 
+		elseif rate == 0 then 
+			self:diffuse(Color.Blue) 
+		else 
+			self:diffuse(Color.Green) 
+		end
 		self:xy(30,-60)		
 	end
 }
@@ -100,7 +112,6 @@ af[#af+1] = LoadFont("Common Normal")..{
 		self:zoom(0.8)
 	end,
 	RpgQuestsCommand=function(self,params)
-		-- Count how many SP upgrades you got
 		-- 2 per row
 		if #params.box_stats > 0 then
 			local rows = math.ceil(#params.box_stats/2)
@@ -130,9 +141,8 @@ af[#af+1] = LoadFont("Common Normal")..{
 		self:zoom(0.8)
 	end,
 	RpgQuestsCommand=function(self,params)
-		-- Count how many SP upgrades you got
 		-- 2 per row
-		if #params.box_stats > 0 then
+		if #params.box_stats > 1 then
 			local rows = math.ceil(#params.box_stats/2)
 			local sp_text = params.box_stats[2]
 			-- There's probably a better way to do this
@@ -160,7 +170,6 @@ af[#af+1] = LoadFont("Common Normal")..{
 		--self:valign(1)
 	end,
 	RpgQuestsCommand=function(self,params)
-		--SM(params)
 		if #params.box_quests > 0 then
 			text = params.box_quests[1]
 			-- There's probably a better way to do this

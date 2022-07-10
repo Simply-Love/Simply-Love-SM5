@@ -276,9 +276,9 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
-			QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
-			QuestPane:playcommand("RpgQuests",{ box_score=box_score, box_progress=box_progress, box_stats=box_stats, box_quests=box_quests })
 		end
+		QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
+		QuestPane:playcommand("RpgQuests",{ box_score=box_score, box_progress=box_progress, box_stats=box_stats, box_quests=box_quests })
 	end
 
 	table.insert(paneTexts, string.format(
