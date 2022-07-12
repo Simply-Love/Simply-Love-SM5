@@ -412,7 +412,7 @@ local Overrides = {
 			if SL.Global.GameMode == "FA+" then
 				 -- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
-				mods.ShowEXScore = list[1]
+				mods.ShowEXScore = list[2]
 				mods.ShowFaPlusPane = list[3]
 				return
 			end
@@ -420,7 +420,7 @@ local Overrides = {
 			mods.ShowEXScore = list[2]
 			mods.ShowFaPlusPane = list[3]
 			-- Default to FA+ pane if either options are active.
-			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and not list[3]) and 2 or 1
+			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and list[3]) and 2 or 1
 		end
 	},
 	-------------------------------------------------------------------------
@@ -509,11 +509,19 @@ local Overrides = {
 		Values = { "Nothing", "Fail", "Restart" },
 	},
 	-------------------------------------------------------------------------
+	MiniIndicator = {
+		Values = { "None", "SubtractiveScoring", "PredictiveScoring", "PaceScoring", "RivalScoring", "Pacemaker" },
+	},
+	-------------------------------------------------------------------------
+	MiniIndicatorColor = {
+		Values = { "Default", "Red", "Blue", "Yellow", "Green", "Magenta", "White" },
+	},
+	-------------------------------------------------------------------------
 	GameplayExtras = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop" }
+			local vals = { "ColumnFlashOnMiss", "Pacemaker", "MissBecauseHeld", "NPSGraphAtTop" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
 			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).
@@ -559,13 +567,26 @@ local Overrides = {
 		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
 	},
 	-------------------------------------------------------------------------
+	RainbowComboOptions = {
+		Values = { "RainbowNever", "RainbowAlways", "Rainbow100", "Rainbow500", "Rainbow1000" },
+	},
+	-------------------------------------------------------------------------
+	FunOptions = {
+		SelectType = "SelectMultiple",
+		Values = { "Waterfall", "FadeFantastic", "NoBar" },
+	},
+	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Values = { "None", "8th", "12th", "16th", "24th", "32nd" },
 	},
 	-------------------------------------------------------------------------
+	MeasureCounterLookahead = {
+		Values = { 0, 1, 2, 3, 4 },
+	},
+	-------------------------------------------------------------------------
 	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideLookahead" },
+		Values = { "MeasureCounterLeft", "MeasureCounterUp"},
 	},
 	-------------------------------------------------------------------------
 	VisualDelay = {

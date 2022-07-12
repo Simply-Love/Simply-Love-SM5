@@ -1,6 +1,7 @@
 local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
+local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
 
 -- don't allow MeasureCounter to appear in Casual gamemode via profile settings
 if SL.Global.GameMode == "Casual"
@@ -17,7 +18,7 @@ local streams, prevMeasure, streamIndex
 local bmt = {}
 
 -- How many streams to "look ahead"
-local lookAhead = mods.MeasureCounterLookahead
+local lookAhead = 0
 -- If you want to see more than 2 counts in advance, change the 2 to a larger value.
 -- Making the value very large will likely impact fps. -quietly
 
@@ -47,6 +48,49 @@ local IsEndOfStream = function(currMeasure, Measures, streamIndex)
 	local currCount = math.floor(currMeasure - segmentStart) + 1
 
 	return currCount > currStreamLength
+end
+
+local GetTimeRemaining = function(currBeat, Measures, streamIndex)
+	if Measures[streamIndex] == nil then return false end
+
+	MusicRate = so:MusicRate()
+
+	-- a "segment" can be either stream or rest
+	local measureSeconds = 4 / (PlayerState:GetSongPosition():GetCurBPS() * MusicRate)
+	local segmentStart = Measures[streamIndex].streamStart 
+	local segmentEnd   = Measures[streamIndex].streamEnd
+	
+	local currTime = currBeat / (PlayerState:GetSongPosition():GetCurBPS() * MusicRate)
+
+	local currStreamLength = math.floor((segmentEnd - segmentStart) * measureSeconds)
+	local showTotal = "0." .. currStreamLength
+	if currStreamLength < 10 then
+		showTotal = "0.0" .. currStreamLength
+	elseif currStreamLength > 60 then
+		local minutes = math.floor(currStreamLength / 60)
+		local seconds = currStreamLength % 60
+		if seconds < 10 then
+			seconds = "0" .. seconds
+		end
+		showTotal = minutes .. "." .. seconds
+	end
+	local currRemaining = math.max(math.floor(segmentEnd * measureSeconds - currTime), 0)
+	local showRemaining = "0." .. currRemaining
+	if currRemaining < 10 then
+		showRemaining = "0.0" .. currRemaining
+	elseif currRemaining > 59 then
+		local minutes = math.floor(currRemaining / 60)
+		local seconds = currRemaining % 60
+		if seconds < 10 then
+			seconds = "0" .. seconds
+		end
+		showRemaining = minutes .. "." .. seconds
+	end
+
+	if currRemaining > currStreamLength then
+		return showTotal
+	end
+	return (showRemaining) .. " "
 end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
@@ -109,6 +153,8 @@ local Update = function(self, delta)
 	-- 1. Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
 	-- 2. This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
 	local currMeasure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
+	local currBeat = PlayerState:GetSongPosition():GetSongBeat()
+	
 
 	-- If a new measure has occurred
 	if currMeasure > prevMeasure then
@@ -120,12 +166,13 @@ local Update = function(self, delta)
 		end
 
 		for i=1,lookAhead+1 do
+			local remaining = GetTimeRemaining(currBeat, streams.Measures, streamIndex)
 			-- Only the first one is the main counter, the other ones are lookaheads.
 			local isLookAhead = i ~= 1
 			-- We're looping forwards, but the BMTs are indexed in the opposite direction.
 			-- Adjust indices accordingly.
 			local adjustedIndex = lookAhead+2-i
-			local text = GetTextForMeasure(currMeasure, streams.Measures, streamIndex + i - 1, isLookAhead)
+			local text = remaining
 			bmt[adjustedIndex]:settext(text)
 			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
 			if streams.Measures[streamIndex + i - 1] == nil then
@@ -135,23 +182,23 @@ local Update = function(self, delta)
 			elseif streams.Measures[streamIndex + i - 1].isBreak then
 				-- Make rest lookaheads be lighter than active rests.
 				if not isLookAhead then
-					bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
+					bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,0)
 				else
-					bmt[adjustedIndex]:diffuse(0.4, 0.4, 0.4 ,1)
+					bmt[adjustedIndex]:diffuse(0.4, 0.4, 0.4 ,0)
 				end
 
 			-- stream count
 			else
 				-- Make stream lookaheads be lighter than active streams.
 				if not isLookAhead then
-					if string.find(text, "/") then
+					if string.find(text, " ") then
 						bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
 					else
 						-- If this is a mini-break, make it lighter.
 						bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
 					end
 				else
-					bmt[adjustedIndex]:diffuse(0.45, 0.45, 0.45 ,1)
+					bmt[adjustedIndex]:diffuse(0.45, 0.45, 0.45 , 1)
 				end
 			end
 		end
@@ -173,7 +220,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(GetNotefieldX(player), layout.y)
+		self:xy(GetNotefieldX(player), layout.y-60)
 		self:queuecommand("SetUpdate")
 	end,
 	SetUpdateCommand=function(self) self:SetUpdateFunction( Update ) end,

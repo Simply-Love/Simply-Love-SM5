@@ -129,7 +129,7 @@ local meter = Def.ActorFrame{
 					self:rainbow()
 				else
 					-- ~~man's~~ lifebar's not hot
-					self:stopeffect():diffuse( PlayerColor(player,true) )
+					self:stopeffect()
 				end
 			end
 		end,
@@ -138,6 +138,14 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * height
+				local absLife = params.LifeMeter:GetLife()
+				if absLife >= 0.9 then
+					self:diffuse(0, 1, (absLife - 0.9) * 10, 1)
+				elseif absLife >= 0.5 then
+					self:diffuse((0.9 - absLife) * 10 / 4, 1, 0, 1)
+				else
+					self:diffuse(1, (absLife - 0.2) * 10 / 3, 0, 1)
+				end
 				self:finishtweening()
 				self:bouncebegin(0.1):zoomy( life )
 			end

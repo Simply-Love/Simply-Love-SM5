@@ -120,5 +120,23 @@ if IsCranked() then
 	}
 end
 
+local pn = ToEnumShortString(player)
+if SL[pn].ActiveModifiers.NoBar then
+	af[#af+1] = LoadActor(THEME:GetPathG("","nobar.png"))..{
+		InitCommand=function(self)
+			self:xy(40, _screen.cy-134)
+		end,
+		OnCommand=function(self)
+
+			self:y(_screen.cy-94)
+			self:zoom(0.15)
+
+			if player == PLAYER_1 then
+				self:x( self:GetX() * -1 )
+			end
+		end
+	}
+end
+
 
 return af

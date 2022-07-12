@@ -37,10 +37,10 @@ local GetScoreForPlayer = function(player)
 end
 
 -- -----------------------------------------------------------------------
-local SetNameAndScore = function(name, score, nameActor, scoreActor)
+local SetNameAndScore = function(name, score, nameActor, scoreActor, textColor)
 	if not scoreActor or not nameActor then return end
-	scoreActor:settext(score)
-	nameActor:settext(name)
+	scoreActor:settext(score):diffuse(color(textColor))
+	nameActor:settext(name):diffuse(color(textColor))
 end
 
 local GetMachineTag = function(gsEntry)
@@ -92,6 +92,24 @@ local GetScoresRequestProcessor = function(res, params)
 		local rivalNum = 1
 		local worldRecordSet = false
 		local personalRecordSet = false
+		
+		local itlScore = nil
+		local isItlSong = false
+		
+		if data and data[playerStr] and data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"] then
+		-- And then also ensure that the chart hash matches the currently parsed one.
+			-- It's better to just not display anything than display the wrong scores.
+			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
+				isItlSong = true
+				for gsEntry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+					if gsEntry["isSelf"] then
+						-- GS's score entry is a value like 9823, so we need to divide it by 100 to get 98.23
+						itlScore = string.format("%.2f%%", gsEntry["score"]/100)
+						itlRaw = gsEntry["score"]/100
+					end
+				end
+			end
+		end
 
 		-- First check to see if the leaderboard even exists.
 		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] then
@@ -104,7 +122,8 @@ local GetScoresRequestProcessor = function(res, params)
 							GetMachineTag(gsEntry),
 							string.format("%.2f%%", gsEntry["score"]/100),
 							machineName,
-							machineScore
+							machineScore,
+							"#000000"
 						)
 						worldRecordSet = true
 					end
@@ -123,7 +142,8 @@ local GetScoresRequestProcessor = function(res, params)
 								GetMachineTag(gsEntry),
 								string.format("%.2f%%", gsScore),
 								playerName,
-								playerScore
+								playerScore,
+								"#000000"
 							)
 							personalRecordSet = true
 						end
@@ -136,7 +156,38 @@ local GetScoresRequestProcessor = function(res, params)
 							GetMachineTag(gsEntry),
 							string.format("%.2f%%", gsEntry["score"]/100),
 							rivalName,
-							rivalScore
+							rivalScore,
+							"#000000"
+						)
+						rivalNum = rivalNum + 1
+					end
+				end
+			end
+		elseif data and data[playerStr] and data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"] then
+			-- And then also ensure that the chart hash matches the currently parsed one.
+			-- It's better to just not display anything than display the wrong scores.
+			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
+				for gsEntry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+					if gsEntry["rank"] == 1 then
+						SetNameAndScore(
+							GetMachineTag(gsEntry),
+							string.format("%.2f%%", gsEntry["score"]/100),
+							machineName,
+							machineScore,
+							"#21CCE8"
+						)
+						worldRecordSet = true
+					end
+
+					if gsEntry["isRival"] then
+						local rivalScore = paneDisplay:GetChild("Rival"..rivalNum.."Score")
+						local rivalName = paneDisplay:GetChild("Rival"..rivalNum.."Name")
+						SetNameAndScore(
+							GetMachineTag(gsEntry),
+							string.format("%.2f%%", gsEntry["score"]/100),
+							rivalName,
+							rivalScore,
+							"#21CCE8"
 						)
 						rivalNum = rivalNum + 1
 					end
@@ -176,10 +227,22 @@ local GetScoresRequestProcessor = function(res, params)
 			end
 		else
 			if data and data[playerStr] then
-				if data[playerStr]["isRanked"] then
-					loadingText:settext("Loaded")
+				if itlScore ~= nil then
+					loadingText:settext("ITL   "..itlScore):diffuse(color("#21CCE8"))
+					SL["P"..i].itlScore = itlRaw
+					local stepartist = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("StepArtistAF_P"..i)
+
+					if stepartist ~= nil then
+					  stepartist:queuecommand("ITL")
+					end
+					-- SCREENMAN:GetTopScreen():GetChild("StepArtistAF_"..i):queuecommand("Reset")
+				elseif isItlSong and itlScore == nil then
+					loadingText:settext("No ITL Score"):diffuse(color("#21CCE8"))
+					SL["P"..i].itlScore = 0
+				elseif data[playerStr]["isRanked"] then
+					loadingText:settext("Loaded"):diffuse(Color.Black)
 				else
-					loadingText:settext("Not Ranked")
+					loadingText:settext("Not Ranked"):diffuse(Color.Black)
 				end
 			else
 				-- Just hide the text
@@ -270,7 +333,7 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 				requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey .. pn
 				local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
 				loadingText:visible(true)
-				loadingText:settext("Loading ...")
+				loadingText:settext("Loading ..."):diffuse(Color.Black)
 				sendRequest = true
 			end
 		end
@@ -430,7 +493,7 @@ for player in ivalues(PlayerNumber) do
 			-- We overload this actor to work both for GrooveStats and also offline.
 			-- If we're connected, we let the ResponseProcessor set the text
 			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("----")
+				self:settext("----"):diffuse(Color.Black)
 			else
 				self:queuecommand("SetDefault")
 			end
@@ -438,7 +501,7 @@ for player in ivalues(PlayerNumber) do
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
 			local machineScore = GetScoreFromProfile(machine_profile, SongOrCourse, StepsOrTrail)
-			self:settext(machineScore and machineScore:GetName() or "----")
+			self:settext(machineScore and machineScore:GetName() or "----"):diffuse(Color.Black)
 			DiffuseEmojis(self:ClearAttributes())
 		end
 	}
@@ -455,7 +518,7 @@ for player in ivalues(PlayerNumber) do
 			-- We overload this actor to work both for GrooveStats and also offline.
 			-- If we're connected, we let the ResponseProcessor set the text
 			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("??.??%")
+				self:settext("??.??%"):diffuse(Color.Black)
 			else
 				self:queuecommand("SetDefault")
 			end
@@ -464,9 +527,9 @@ for player in ivalues(PlayerNumber) do
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
 			local machineScore = GetScoreFromProfile(machine_profile, SongOrCourse, StepsOrTrail)
 			if machineScore ~= nil then
-				self:settext(FormatPercentScore(machineScore:GetPercentDP()))
+				self:settext(FormatPercentScore(machineScore:GetPercentDP())):diffuse(Color.Black)
 			else
-				self:settext("??.??%")
+				self:settext("??.??%"):diffuse(Color.Black)
 			end
 		end
 	}
@@ -490,7 +553,7 @@ for player in ivalues(PlayerNumber) do
 		end,
 		SetDefaultCommand=function(self)
 			local playerScore = GetScoreForPlayer(player)
-			self:settext(playerScore and playerScore:GetName() or "----")
+			self:settext(playerScore and playerScore:GetName() or "----"):diffuse(Color.Black)
 			DiffuseEmojis(self:ClearAttributes())
 		end
 	}
@@ -515,9 +578,59 @@ for player in ivalues(PlayerNumber) do
 		SetDefaultCommand=function(self)
 			local playerScore = GetScoreForPlayer(player)
 			if playerScore ~= nil then
-				self:settext(FormatPercentScore(playerScore:GetPercentDP()))
+				self:settext(FormatPercentScore(playerScore:GetPercentDP())):diffuse(Color.Black)
 			else
-				self:settext("??.??%")
+				self:settext("??.??%"):diffuse(Color.Black)
+			end
+		end
+	}
+	
+	-- Player Profile Combo Check
+	af2[#af2+1] = LoadFont("Common Normal")..{
+		Name="PlayerCombo",
+		InitCommand=function(self)
+			self:zoom(text_zoom+0.2):horizalign(right):rotationz(-30)
+			self:x(pos.col[3]+30*text_zoom)
+			self:y(pos.row[2]-3)
+		end,
+		SetCommand=function(self)
+			self:queuecommand("SetDefault")
+		end,
+		SetDefaultCommand=function(self)
+			local playerScore = GetScoreForPlayer(player)
+			
+			local playerNum = ToEnumShortString(player)
+			SL[playerNum].comboBonus = 0
+			
+			if playerScore ~= nil then
+				if playerScore:GetTapNoteScore('TapNoteScore_W4') + playerScore:GetTapNoteScore('TapNoteScore_W5') + playerScore:GetTapNoteScore('TapNoteScore_Miss') == 0 then
+					if playerScore:GetTapNoteScore('TapNoteScore_W3') + playerScore:GetTapNoteScore('TapNoteScore_W2') == 0 then
+						self:settext("****"):diffuse(color("#21CCE8")):visible(true)
+						SL[playerNum].comboBonus = 400
+					elseif playerScore:GetTapNoteScore('TapNoteScore_W3') == 0 then
+						self:settext("FEC"):diffuse(Color.Yellow):visible(true)
+						if playerScore:GetTapNoteScore('TapNoteScore_W2') <= 10 then
+							self:settext(playerScore:GetTapNoteScore('TapNoteScore_W2').."E")
+						end
+						SL[playerNum].comboBonus = 200
+					else
+						self:settext("FC"):diffuse(color("#00FF00")):visible(true)
+						if playerScore:GetTapNoteScore('TapNoteScore_W3') <= 10 then
+							self:settext(playerScore:GetTapNoteScore('TapNoteScore_W3').."G")
+						end
+						SL[playerNum].comboBonus = 100
+					end
+				else
+					SL[playerNum].comboBonus = 0
+					if playerScore:GetTapNoteScore('TapNoteScore_Miss') == 1 then
+						self:settext("1M"):diffuse(color("#FF0000")):visible(true)
+					else
+						self:visible(false)
+					end
+				end
+			else
+				self:visible(false)
+				SL[playerNum].comboBonus = 0
 			end
 		end
 	}
@@ -575,7 +688,7 @@ for player in ivalues(PlayerNumber) do
 				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
 			end,
 			SetCommand=function(self)
-				self:settext("----")
+				self:settext("----"):diffuse(Color.Black)
 			end
 		}
 
@@ -591,7 +704,7 @@ for player in ivalues(PlayerNumber) do
 				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
 			end,
 			SetCommand=function(self)
-				self:settext("??.??%")
+				self:settext("??.??%"):diffuse(Color.Black)
 			end
 		}
 	end

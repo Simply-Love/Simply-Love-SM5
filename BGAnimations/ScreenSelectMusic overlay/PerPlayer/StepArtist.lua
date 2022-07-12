@@ -63,18 +63,107 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=function(self) self:zoomto(175, _screen.h/28):x(113):diffuse(color("#000000")) end,
+		InitCommand=function(self) self:zoomto(190, _screen.h/8):x(120):y(18):diffuse(color("#000000")) end,
 		ResetCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
 			if StepsOrTrail then
 				local difficulty = StepsOrTrail:GetDifficulty()
 				self:diffuse( DifficultyColor(difficulty) )
+				text_table = GetStepsCredit(player)
+				if #text_table == 3 then
+					self:fadebottom(0)
+				elseif #text_table == 2 then
+					self:fadebottom(0.5)
+				elseif #text_table == 1 then
+					self:fadebottom(0.8)
+				end
 			else
 				self:diffuse( PlayerColor(player) )
 			end
 		end
 	},
+	
+	-- ITL display
+	Def.Quad{
+		InitCommand=function(self)
+			self:zoomto(95, _screen.h/14):x(265):y(15):diffuse(color("#000000"))
+			if player == PLAYER_2 then
+				self:addx(-300)
+			end
+			if SL[pn].itlRP == nil then
+				self:visible(false)
+			end
+		end,
+		ResetCommand=function(self)
+			self:diffusealpha(ThemePrefs.Get("RainbowMode") and 0.7 or 0)
+		end
+	},
+	Def.Sprite{
+		Texture=THEME:GetPathG("","ITL.png"),
+		Name="ITL_Logo",
+		InitCommand=function(self)
+			self:zoom(0.25)
+			self:x(265):y(15)
+			if player == PLAYER_2 then
+				self:addx(-300)
+			end
+			if SL[pn].itlRP then
+				self:diffusealpha(0.3)
+			else
+				self:visible(false)
+			end
+		end,
+	},
+	LoadFont("Common Normal")..{
+		Text=GAMESTATE:IsCourseMode() and "" or "Rank Pts:",
+		InitCommand=function(self)
+			self:diffuse(color("#73ffff")):horizalign(left):x(220):y(5):zoom(0.7)
+			if player == PLAYER_2 then
+				self:addx(-300)
+			end
+			if SL[pn].itlRP == nil then
+				self:visible(false)
+			end
+		end
+	},
+	LoadFont("Common Normal")..{
+		Text=SL[pn].itlRP or "N/A",
+		InitCommand=function(self)
+			self:diffuse(color("#73ffff")):horizalign(left):x(265):y(5):zoom(0.7)
+			if player == PLAYER_2 then
+				self:addx(-300)
+			end
+			if SL[pn].itlRP == nil then
+				self:visible(false)
+			end
+		end
+	},
+	LoadFont("Common Normal")..{
+		Text=GAMESTATE:IsCourseMode() and "" or "Total Pts:",
+		InitCommand=function(self)
+			self:diffuse(color("#73ffff")):horizalign(left):x(220):y(23):zoom(0.7)
+			if player == PLAYER_2 then
+				self:addx(-300)
+			end
+			if SL[pn].itlRP == nil then
+				self:visible(false)
+			end
+		end
+	},
+	LoadFont("Common Normal")..{
+		Text=SL[pn].itlTP or "N/A",
+		InitCommand=function(self)
+			self:diffuse(color("#73ffff")):horizalign(left):x(265):y(23):zoom(0.7)
+			if player == PLAYER_2 then
+				self:addx(-300)
+			end
+			if SL[pn].itlRP == nil then
+				self:visible(false)
+			end
+		end
+	},
+	
 
 	--STEPS label
 	LoadFont("Common Normal")..{
@@ -95,7 +184,7 @@ return Def.ActorFrame{
 			if GAMESTATE:IsCourseMode() then
 				self:x(60):maxwidth(138)
 			else
-				self:x(75):maxwidth(124):diffuse(color("#000000"))
+				self:x(75):maxwidth(160):diffuse(color("#000000"))
 			end
 		end,
 		ResetCommand=function(self)
@@ -117,7 +206,70 @@ return Def.ActorFrame{
 				if not GAMESTATE:IsCourseMode() then
 					-- only queue a Marquee if there are things in the text_table to display
 					if #text_table > 0 then
-						self:queuecommand("Marquee")
+						-- self:queuecommand("Marquee")
+						local fulldesc = ""
+						for i=1,#text_table do
+							local curText = text_table[i]
+							fulldesc = fulldesc .. curText .. "\n"
+						end
+						self:vertalign("VertAlign_Top"):settext(fulldesc):y(-6)
+					else
+						-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
+						self:settext("")
+					end
+				end
+			else
+				-- there wasn't a song/course or a steps object, so the MusicWheel is probably hovering
+				-- on a group title, which means we want to set the stepartist text to an empty string for now
+				self:settext("")
+			end
+		end,
+		ITLCommand=function(self)
+
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+
+			-- always stop tweening when steps change in case a MarqueeCommand is queued
+			self:stoptweening()
+
+			if SongOrCourse and StepsOrTrail then
+
+				text_table = GetStepsCredit(player)
+				marquee_index = 0
+
+				-- don't queue a Marquee in CourseMode
+				-- each TrailEntry text change will be broadcast from CourseContentsList.lua
+				-- to ensure it stays synced with the scrolling list of songs
+				if not GAMESTATE:IsCourseMode() then
+					-- only queue a Marquee if there are things in the text_table to display
+					if #text_table > 0 then
+						-- self:queuecommand("Marquee")
+						local fulldesc = ""
+						for i=1,#text_table do
+							local curText = text_table[i]
+							if i == 3 and string.sub(curText, string.len(curText) - 3, string.len(curText)) == " pts" then
+								local max_points = string.sub(curText, 1, string.len(curText) - 4)
+								local exscore = tonumber(SL[pn].itlScore)
+								local max_point_multiplier = 0
+								if exscore then
+									if exscore <= 75 then
+										max_point_multiplier = math.log(math.min(exscore, 75)+1) / math.log(1.0638215) / 100
+									else
+										max_point_multiplier = (math.exp(math.log(31) * ((math.max(0, exscore-75)/25))) + 69) / 100 -- nice
+									end
+
+									local points = max_point_multiplier * max_points
+									points = math.floor(points)
+									if SL[pn].comboBonus ~= nil then
+										points = points + SL[pn].comboBonus
+									end
+									local pointsPercent = string.format("%.2f%%", points / max_points * 100)
+									curText = points .. "/" .. curText .. " ("..pointsPercent..")"
+								end
+							end
+							fulldesc = fulldesc .. curText .. "\n"
+						end
+						self:vertalign("VertAlign_Top"):settext(fulldesc):y(-6)
 					else
 						-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
 						self:settext("")

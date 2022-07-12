@@ -1,3 +1,18 @@
+GrooveStatsURL = function()
+	-- For test GrooveStats responses, create a file called GrooveStats_UAT.txt
+	-- in your theme's Other directory. To toggle between live and UAT, delete/rename this file.
+	-- Requires gsapi-mock and adding 127.0.0.1 to HttpAllowHosts in Preferences.ini
+	local url_prefix
+	local dir = THEME:GetCurrentThemeDirectory() .. "Other/"
+	local uat = dir .. "GrooveStats_UAT.txt"
+	if not FILEMAN:DoesFileExist(uat) then 
+		url_prefix = "https://api.groovestats.com/" 
+	else
+		url_prefix = "http://127.0.0.1:5000/"
+	end
+	return url_prefix
+end
+
 -- -----------------------------------------------------------------------
 -- Returns an actor that can write a request, wait for its response, and then
 -- perform some action. This actor will only wait for one response at a time.
@@ -41,8 +56,6 @@
 -- args: any, arguments that will be made accesible to the callback function. This
 --       can of any type as long as the callback knows what to do with it.
 RequestResponseActor = function(x, y)
-	local url_prefix = "https://api.groovestats.com/"
-
 	return Def.ActorFrame{
 		InitCommand=function(self)
 			self.request_time = -1
@@ -68,11 +81,14 @@ RequestResponseActor = function(x, y)
 			end
 		end,
 		MakeGrooveStatsRequestCommand=function(self, params)
+			Trace(TableToString(params))
 			self:stoptweening()
 			if not params then
 				Warn("No params specified for MakeGrooveStatsRequestCommand.")
 				return
 			end
+
+			local url_prefix = GrooveStatsURL()
 
 			-- Cancel any existing requests if we're waiting on one at the moment.
 			if self.request_handler then
@@ -101,6 +117,7 @@ RequestResponseActor = function(x, y)
 					self.request_handler = nil
 					-- If we get a permanent error, make sure we "disconnect" from
 					-- GrooveStats until we recheck on ScreenTitleMenu.
+					Trace(TableToString(response))
 					if response.statusCode then
 						local body = nil
 						local code = response.statusCode

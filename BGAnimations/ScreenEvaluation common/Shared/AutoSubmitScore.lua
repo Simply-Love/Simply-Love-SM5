@@ -24,8 +24,6 @@ local GetMachineTag = function(gsEntry)
 		return gsEntry["machineTag"]:sub(1, 4):upper()
 	end
 
-
-
 	return ""
 end
 
@@ -262,10 +260,15 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							recordText:visible(true)
 							GSIcon:visible(true)
 							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
+							local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/"
 							if personalRank == 1 then
 								recordText:settext("World Record!")
+								local audio_file = soundDir .. "WR.ogg"
+								if FILEMAN:DoesFileExist(audio_file) then SOUND:PlayOnce(audio_file) end
 							else
 								recordText:settext("Personal Best!")
+								local audio_file = soundDir .. "PB.ogg"
+								if FILEMAN:DoesFileExist(audio_file) then SOUND:PlayOnce(audio_file) end
 							end
 							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
 							local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()

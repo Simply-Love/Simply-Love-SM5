@@ -69,6 +69,14 @@ for t in ivalues(sequential_offsets) do
 
 		-- get the appropriate color from the global SL table
 		c = colors[TimingWindow]
+		
+		-- check if color should be adjusted for FA+ window
+		local prefs = SL.Preferences["FA+"]
+		local scale = PREFSMAN:GetPreference("TimingWindowScale")
+		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow and math.abs(Offset) > W0 then
+			c = DeepCopy(SL.JudgmentColors["FA+"][2])
+		end
 		-- get the red, green, and blue values from that color
 		r = c[1]
 		g = c[2]

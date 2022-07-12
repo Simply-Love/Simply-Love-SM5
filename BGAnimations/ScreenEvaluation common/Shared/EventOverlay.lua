@@ -177,8 +177,6 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local paneTexts = {}
 	local paneFunctions = {}
 
-
-
 	if rpgData["result"] == "score-added" then
 		score = pss:GetPercentDancePoints() * 100
 		scoreDelta = score
@@ -565,6 +563,8 @@ for player in ivalues(PlayerNumber) do
 							-- Wrap around if we incremented past #Leaderboards
 							self.PaneIndex = 1
 						end
+					elseif event.GameButton == "Select" then
+						MESSAGEMAN:Broadcast("Code", { Name="Screenshot", PlayerNumber=player })
 					end
 
 					if event.GameButton == "MenuLeft" or event.GameButton == "MenuRight" then

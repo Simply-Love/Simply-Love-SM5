@@ -90,7 +90,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 			-- if NPSGraphAtTop and Step Statistics and not double,
 			-- move the score down into the stepstats pane under
 			-- the judgment breakdown
-			if mods.DataVisualizations=="Step Statistics" then
+			if mods.DataVisualizations=="Step Statistics" and false then
 				local step_stats = self:GetParent():GetChild("StepStatsPane"..pn)
 
 				-- Step Statistics might be true in the SL table from a previous game session

@@ -3,6 +3,9 @@ local pn = ToEnumShortString(player)
 local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 
 local TapNoteScores = { Types={'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}, Names={} }
+if SL[pn].ActiveModifiers.ShowFaPlusWindow then
+	TapNoteScores = { Types={'W1', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}, Names={} }
+end
 local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 -- get TNS names appropriate for the current GameMode, localized to the current language
 for i, judgment in ipairs(TapNoteScores.Types) do
@@ -23,7 +26,7 @@ local windows = SL[pn].ActiveModifiers.TimingWindows
 --  labels: W1 ---> Miss
 for i=1, #TapNoteScores.Types do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
-	if windows[i] or i==#TapNoteScores.Types then
+	if windows[i] or i==#TapNoteScores.Types or (SL[pn].ActiveModifiers.ShowFaPlusWindow and windows[i-1]) then
 
 		local window = TapNoteScores.Types[i]
 		local label = TapNoteScores.Names[i]
@@ -34,8 +37,14 @@ for i=1, #TapNoteScores.Types do
 				self:zoom(0.8):horizalign(right):maxwidth(65/self:GetZoom())
 					:x( (player == PLAYER_1 and -130) or -28 )
 					:y( i * row_height )
-					:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
-
+				if SL[pn].ActiveModifiers.ShowFaPlusWindow and i <= 5 then
+					self:diffuse(SL.JudgmentColors["FA+"][i])
+				elseif SL[pn].ActiveModifiers.ShowFaPlusWindow then
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i-1] )
+				else
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+				end
+				
 				if i == #TapNoteScores.Types then miss_bmt = self end
 			end
 		}

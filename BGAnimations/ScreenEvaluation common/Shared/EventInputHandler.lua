@@ -23,15 +23,6 @@ local function input(event)
 		overlay:queuecommand("DirectInputToEngine")
 	end
 
-	if (event.GameButton == "Start" or event.GameButton == "Back") and event.type ~= "InputEventType_Release" then
-        overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):visible(false)
-		overlay:queuecommand("DirectInputToEngine")
-	end
-
-	if event.GameButton == "Select" and event.type == "InputEventType_FirstPress" then
-        MESSAGEMAN:Broadcast("Code", { Name="Screenshot", PlayerNumber=event.PlayerNumber })
-	end
-
 	return false
 end
 

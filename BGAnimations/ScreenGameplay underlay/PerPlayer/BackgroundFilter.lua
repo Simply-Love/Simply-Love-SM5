@@ -16,7 +16,8 @@ return Def.Quad{
 		self:xy(GetNotefieldX(player), _screen.cy )
 			:diffuse(Color.Black)
 			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
-			:zoomto( GetNotefieldWidth(), _screen.h )
+			:zoomto( GetNotefieldWidth() + 80, _screen.h )
+			:fadeleft(0.1):faderight(0.1)
 	end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
