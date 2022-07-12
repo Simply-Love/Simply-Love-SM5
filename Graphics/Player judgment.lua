@@ -26,15 +26,6 @@ local TNSFrames = {
 	TapNoteScore_Miss = 5
 }
 
-local enabledTimingWindows = {}
-for i = 1, 3 do
-    if mods.TimingWindows[i] then
-        enabledTimingWindows[#enabledTimingWindows+1] = i
-    end
-end
-
-local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
-
 return Def.ActorFrame{
 	Name="Player Judgment",
 	InitCommand=function(self)
@@ -93,8 +84,8 @@ return Def.ActorFrame{
 		if mods.JudgmentTilt then
 			if tns ~= "Miss" then
 				-- How much to rotate.
-				-- We cap it at Great since anything after likely to be too distracting.
-				local offset = math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300
+				-- We cap it at 50ms (15px) since anything after likely to be too distracting.
+				local offset = math.min(math.abs(param.TapNoteOffset), 0.050) * 300
 				-- Which direction to rotate.
 				local direction = param.TapNoteOffset < 0 and -1 or 1
 				sprite:rotationz(direction * offset)

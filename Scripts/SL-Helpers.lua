@@ -418,9 +418,9 @@ GetStepsCredit = function(player)
 		-- credit
 		if steps:GetAuthorCredit() ~= "" then t[#t+1] = steps:GetAuthorCredit() end
 		-- description
-		if steps:GetDescription() ~= "" and steps:GetDescription() ~= steps:GetAuthorCredit() then t[#t+1] = steps:GetDescription() end
+		if steps:GetDescription() ~= "" then t[#t+1] = steps:GetDescription() end
 		-- chart name
-		if steps:GetChartName() ~= "" and steps:GetChartName() ~= steps:GetAuthorCredit() and steps:GetChartName() ~= steps:GetDescription() then t[#t+1] = steps:GetChartName() end
+		if steps:GetChartName() ~= "" then t[#t+1] = steps:GetChartName() end
 	end
 
 	return t

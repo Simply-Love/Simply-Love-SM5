@@ -29,5 +29,4 @@ return Def.ActorFrame{
 
 	-- SRPG6 Rewards
 	LoadActor("./RPGProgress.lua", player)
-
 }

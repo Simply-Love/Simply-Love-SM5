@@ -37,6 +37,7 @@ spr.CodeMessageCommand=function(self, params)
 		-- characters to underscores, so we might as well just use underscores here
 		local prefix = "Simply_Love/" .. Year() .. "/" .. month .. "/"
 		local suffix = "_" .. title
+		local success, path = SaveScreenshot(params.PlayerNumber, false, false , prefix, suffix)
 
 		-- attempt to write a screenshot to disk
 		-- arg1 is playernumber that requsted the screenshot; if they are using a profile, the screenshot will be saved there
@@ -50,7 +51,6 @@ spr.CodeMessageCommand=function(self, params)
 		-- second return value is
 		--     (directory + filename) if write to disk was successful
 		--     (filename)             if write to disk failed
-		local success, path = SaveScreenshot(params.PlayerNumber, false, false , prefix, suffix)
 
 		if success then
 			player = params.PlayerNumber

@@ -209,7 +209,7 @@ if next(offsets) ~= nil then
 	if ComputedData and ComputedData.Histogram then
 		histogram = ComputedData.Histogram
 	else
-		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors, pn})
+		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors})
 		if ComputedData then ComputedData.Histogram = histogram end
 	end
 
