@@ -1,12 +1,11 @@
 local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
 
 -- don't allow MeasureCounter to appear in Casual gamemode via profile settings
 if SL.Global.GameMode == "Casual"
 or not mods.MeasureCounter
-or not mods.RunTimer
+or not mods.BrokenRun
 or mods.MeasureCounter == "None" then
 	return
 end
@@ -20,6 +19,7 @@ local bmt = {}
 
 -- How many streams to "look ahead"
 local lookAhead = 0
+local isBroken = false
 -- If you want to see more than 2 counts in advance, change the 2 to a larger value.
 -- Making the value very large will likely impact fps. -quietly
 
@@ -30,6 +30,7 @@ local InitializeMeasureCounter = function()
 	-- in ./ScreenGameplay in/MeasureCounterAndModsLevel.lua
 	streams = SL[pn].Streams
 	streamIndex = 1
+	brokenStreamIndex = 1
 	prevMeasure = -1
 
 	for actor in ivalues(bmt) do
@@ -51,47 +52,38 @@ local IsEndOfStream = function(currMeasure, Measures, streamIndex)
 	return currCount > currStreamLength
 end
 
-local GetTimeRemaining = function(currBeat, Measures, streamIndex)
-	if Measures[streamIndex] == nil then return "" end
-
-	MusicRate = so:MusicRate()
+-- Returns whether or not we've reached the end of this broken stream segment.
+local IsEndOfBrokenStream = function(currMeasure, Measures, streamIndex)
+	if Measures[streamIndex] == nil then return false end
 
 	-- a "segment" can be either stream or rest
-	local measureSeconds = 4 / (PlayerState:GetSongPosition():GetCurBPS() * MusicRate)
-	local segmentStart = Measures[streamIndex].streamStart 
+	local segmentStart = Measures[streamIndex].streamStart
 	local segmentEnd   = Measures[streamIndex].streamEnd
 	
-	local currTime = currBeat / (PlayerState:GetSongPosition():GetCurBPS() * MusicRate)
-
-	local currStreamLength = math.floor((segmentEnd - segmentStart) * measureSeconds)
-	local showTotal = "0." .. currStreamLength
-	if currStreamLength < 10 then
-		showTotal = "0.0" .. currStreamLength
-	elseif currStreamLength > 60 then
-		local minutes = math.floor(currStreamLength / 60)
-		local seconds = currStreamLength % 60
-		if seconds < 10 then
-			seconds = "0" .. seconds
+	if not Measures[streamIndex].isBreak then
+		for i=1,#Measures-streamIndex-1 do
+			local continueStart = Measures[streamIndex+i].streamStart
+			local continueEnd = Measures[streamIndex+i].streamEnd
+			local continueMeasures = continueEnd - continueStart
+			if Measures[streamIndex+i].isBreak then
+				if continueMeasures < 4 then
+					segmentEnd = segmentEnd + continueMeasures
+				else
+					break
+				end
+			else
+				segmentEnd = segmentEnd + continueMeasures
+				if not Measures[streamIndex+i-1].isBreak then
+					segmentEnd = segmentEnd + 1
+				end
+			end
 		end
-		showTotal = minutes .. "." .. seconds
-	end
-	local currRemaining = math.max(math.floor(segmentEnd * measureSeconds - currTime), 0)
-	local showRemaining = "0." .. currRemaining
-	if currRemaining < 10 then
-		showRemaining = "0.0" .. currRemaining
-	elseif currRemaining > 59 then
-		local minutes = math.floor(currRemaining / 60)
-		local seconds = currRemaining % 60
-		if seconds < 10 then
-			seconds = "0" .. seconds
-		end
-		showRemaining = minutes .. "." .. seconds
 	end
 
-	if currRemaining > currStreamLength then
-		return showTotal
-	end
-	return (showRemaining) .. " "
+	local currStreamLength = segmentEnd - segmentStart
+	local currCount = math.floor(currMeasure - segmentStart) + 1
+
+	return currCount > currStreamLength
 end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
@@ -120,22 +112,33 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 	-- A "segment" can be either stream or rest
 	local segmentStart = Measures[streamIndex].streamStart
 	local segmentEnd   = Measures[streamIndex].streamEnd
+	isBroken = false
+	for i=1,#Measures-streamIndex-1 do
+		local continueStart = Measures[streamIndex+i].streamStart
+		local continueEnd = Measures[streamIndex+i].streamEnd
+		local continueMeasures = continueEnd - continueStart
+		if Measures[streamIndex+i].isBreak then
+			if continueMeasures < 4 then
+				segmentEnd = segmentEnd + continueMeasures
+				isBroken = true
+			else
+				break
+			end
+		else
+			isBroken = true
+			segmentEnd = segmentEnd + continueMeasures
+			if not Measures[streamIndex+i-1].isBreak then
+				segmentEnd = segmentEnd + 1
+			end
+		end
+	end				
 
 	local currStreamLength = segmentEnd - segmentStart
 	local currCount = math.floor(currMeasure - segmentStart) + 1
 
 	local text = ""
 	if Measures[streamIndex].isBreak then
-		if mods.MeasureCounterLookahead > 0 then
-			if not isLookAhead then
-				local remainingRest = currStreamLength - currCount + 1
-
-				-- Ensure that the rest count is in range of the total length.
-				text = "(" .. remainingRest .. ")"
-			else
-				text = "(" .. currStreamLength .. ")"
-			end
-		end
+		return ""
 	else
 		if not isLookAhead and currCount ~= 0 then
 			text = tostring(currCount .. "/" .. currStreamLength)
@@ -154,8 +157,6 @@ local Update = function(self, delta)
 	-- 1. Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
 	-- 2. This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
 	local currMeasure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
-	local currBeat = PlayerState:GetSongPosition():GetSongBeat()
-	
 
 	-- If a new measure has occurred
 	if currMeasure > prevMeasure then
@@ -165,43 +166,35 @@ local Update = function(self, delta)
 		if IsEndOfStream(currMeasure, streams.Measures, streamIndex) then
 			streamIndex = streamIndex + 1
 		end
+		if IsEndOfBrokenStream(currMeasure, streams.Measures, brokenStreamIndex) then
+			brokenStreamIndex = streamIndex
+		end
 
-		for i=1,lookAhead+1 do
-			local remaining = GetTimeRemaining(currBeat, streams.Measures, streamIndex)
-			-- Only the first one is the main counter, the other ones are lookaheads.
-			local isLookAhead = i ~= 1
-			-- We're looping forwards, but the BMTs are indexed in the opposite direction.
-			-- Adjust indices accordingly.
-			local adjustedIndex = lookAhead+2-i
-			local text = remaining
-			bmt[adjustedIndex]:settext(text)
-			
-			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
-			if streams.Measures[streamIndex + i - 1] == nil then
-				bmt[adjustedIndex]:visible(false)
+		-- We're looping forwards, but the BMTs are indexed in the opposite direction.
+		-- Adjust indices accordingly.
+		local adjustedIndex = 1
+		local text = GetTextForMeasure(currMeasure, streams.Measures, brokenStreamIndex, isLookAhead)
+		bmt[adjustedIndex]:settext(text)
+		-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
+		if streams.Measures[brokenStreamIndex] == nil then
+			bmt[adjustedIndex]:visible(false)
 
-			-- rest count
-			elseif streams.Measures[streamIndex + i - 1].isBreak then
-				-- Make rest lookaheads be lighter than active rests.
-				if not isLookAhead then
+		-- rest count
+		elseif streams.Measures[brokenStreamIndex].isBreak then
+			bmt[adjustedIndex]:diffuse(0.4, 0.4, 0.4 ,0)
+
+		-- stream count
+		else
+			-- Make stream lookaheads be lighter than active streams.
+			if isBroken then
+				if string.find(text, "/") then
+					bmt[adjustedIndex]:diffuse(1, 1, 1, 0.7)
+				else
+					-- If this is a mini-break, make it lighter.
 					bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,0)
-				else
-					bmt[adjustedIndex]:diffuse(0.4, 0.4, 0.4 ,0)
 				end
-
-			-- stream count
 			else
-				-- Make stream lookaheads be lighter than active streams.
-				if not isLookAhead then
-					if string.find(text, " ") then
-						bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
-					else
-						-- If this is a mini-break, make it lighter.
-						bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
-					end
-				else
-					bmt[adjustedIndex]:diffuse(0.45, 0.45, 0.45 , 1)
-				end
+				bmt[adjustedIndex]:diffuse(0.7, 0.7, 0.7,0)
 			end
 		end
 	end
@@ -222,7 +215,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(GetNotefieldX(player), layout.y-60)
+		self:xy(GetNotefieldX(player), layout.y+15)
 		self:queuecommand("SetUpdate")
 	end,
 	SetUpdateCommand=function(self) self:SetUpdateFunction( Update ) end,
