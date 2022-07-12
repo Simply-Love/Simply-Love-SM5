@@ -48,7 +48,7 @@ function GetGameplayLayout(player, reverse)
         end
     end
 
-    if mods.SubtractiveScoring then
+    if mods.MiniIndicator ~= "None" then
         if mods.MeasureCounter ~= "None" and mods.MeasureCounterUp and mods.HideLookahead then
             layout.SubtractiveScoring = { y = layout.MeasureCounter.y }
         elseif mods.MeasureCounter ~= "None" and  mods.MeasureCounterUp then

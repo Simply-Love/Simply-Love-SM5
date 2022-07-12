@@ -1,4 +1,6 @@
-local t = Def.ActorFrame{}
+local t = Def.ActorFrame{
+	Name="PerPlayer"
+}
 
 -- Always add these elements for both players, even if only one is joined right now
 -- If the other player suddenly latejoins, we can't dynamically add more actors to the screen

@@ -15,14 +15,16 @@ local af = Def.ActorFrame{
 
 	PlayerProfileSetMessageCommand=function(self, params)
 		if not PROFILEMAN:IsPersistentProfile(params.Player) then
-			LoadGuest(params.Player)
+			GAMESTATE:ResetPlayerOptions(params.Player)
+			SL[ToEnumShortString(params.Player)]:initialize()
 		end
 		ApplyMods(params.Player)
 	end,
 
 	PlayerJoinedMessageCommand=function(self, params)
 		if not PROFILEMAN:IsPersistentProfile(params.Player) then
-			LoadGuest(params.Player)
+			GAMESTATE:ResetPlayerOptions(params.Player)
+			SL[ToEnumShortString(params.Player)]:initialize()
 		end
 		ApplyMods(params.Player)
 	end,

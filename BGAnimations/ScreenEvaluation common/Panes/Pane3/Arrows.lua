@@ -16,6 +16,9 @@ local style_name = style:GetName()
 local num_columns = style:ColumnsPerPlayer()
 
 local rows = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+if SL[pn].ActiveModifiers.ShowFaPlusWindow then
+	rows = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
+end
 local cols = {}
 
 -- loop num_columns number of time to fill the cols table with
@@ -69,7 +72,7 @@ for i, column in ipairs( cols ) do
 	-- for each possible judgment
 	for j, judgment in ipairs(rows) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
-		if SL[pn].ActiveModifiers.TimingWindows[j] or j==#rows then
+		if SL[pn].ActiveModifiers.TimingWindows[j] or j==#rows or (SL[pn].ActiveModifiers.ShowFaPlusWindow and SL[pn].ActiveModifiers.TimingWindows[j-1]) then
 			-- add a BitmapText actor to be the number for this column
 			af[#af+1] = LoadFont("Common Normal")..{
 				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],

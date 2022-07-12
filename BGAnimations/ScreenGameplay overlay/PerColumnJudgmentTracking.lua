@@ -21,10 +21,11 @@
 if SL.Global.GameMode == "Casual" then return end
 
 local player = ...
+local pn = ToEnumShortString(player)
 
 local judgments = {}
 for i=1,GAMESTATE:GetCurrentStyle():ColumnsPerPlayer() do
-	judgments[#judgments+1] = { W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0 }
+	judgments[#judgments+1] = { W0=0, W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0 }
 end
 
 return Def.Actor{
@@ -43,7 +44,11 @@ return Def.Actor{
 				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
 				if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
 					local tns = ToEnumShortString(params.TapNoteScore)
-					judgments[col][tns] = judgments[col][tns] + 1
+					if tns == "W1" and SL[pn].ActiveModifiers.ShowFaPlusWindow and IsW0Judgment(params, player) then
+						judgments[col].W0 = judgments[col].W0 + 1
+					else
+						judgments[col][tns] = judgments[col][tns] + 1
+					end
 
 					if tnt ~= "Lift" and tns == "Miss" and tapnote:GetTapNoteResult():GetHeld() then
 						judgments[col].MissBecauseHeld = judgments[col].MissBecauseHeld + 1

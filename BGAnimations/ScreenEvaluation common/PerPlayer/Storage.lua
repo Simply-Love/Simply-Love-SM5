@@ -20,15 +20,9 @@ return Def.Actor{
 		-- so that we can more easily display it on ScreenEvaluationSummary when this game cycle ends.
 		local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
-		-- a PlayerStageStats object from the engine
+		-- a PLayerStageStats object from the engine
 		-- see: http://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Actors-PlayerStageStats
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-
-		if PROFILEMAN:IsPersistentProfile(pn) then
-			storage.profile = PROFILEMAN:GetProfile(player):GetDisplayName()
-		else
-			storage.profile = '[GUEST]'
-		end
 
 		storage.grade = pss:GetGrade()
 		storage.score = pss:GetPercentDancePoints()
@@ -53,6 +47,6 @@ return Def.Actor{
 			storage.stepartist = pss:GetPlayedSteps()[1]:GetAuthorCredit()
 		end
 
-		storage.timingwindows = SL[pn].ActiveModifiers.TimingWindows
+		storage.timingwindows =SL[pn].ActiveModifiers.TimingWindows
 	end
 }

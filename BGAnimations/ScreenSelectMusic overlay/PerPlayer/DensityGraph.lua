@@ -12,7 +12,7 @@ local width = IsUsingWideScreen() and 286 or 276
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:xy(_screen.cx-182, _screen.cy+23)
+		self:xy(_screen.cx-182, _screen.cy+62)
 
 		if player == PLAYER_2 then
 			self:addy(height+24)
@@ -176,9 +176,9 @@ af2[#af2+1] = Def.ActorFrame{
 	Name="PatternInfo",
 	InitCommand=function(self)
 		if player == PLAYER_1 then
-			self:addy(64 + 24)
+			self:addy(38 + 24)
 		else
-			self:addy(-64 - 24)
+			self:addy(-38 - 80)
 		end
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
 	end,
@@ -193,7 +193,7 @@ af2[#af2+1] = Def.ActorFrame{
 	-- Only shown in 1 Player mode
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f")):zoomto(width, height)
+			self:addy(-4):diffuse(color("#1e282f")):zoomto(width, height-10)
 		end,
 	}
 }
@@ -207,7 +207,7 @@ local layout = {
 }
 
 local colSpacing = 150
-local rowSpacing = 20
+local rowSpacing = 17
 
 for i, row in ipairs(layout) do
 	for j, col in pairs(row) do
@@ -216,7 +216,7 @@ for i, row in ipairs(layout) do
 			Name=col .. "Value",
 			InitCommand=function(self)
 				local textHeight = 17
-				local textZoom = 0.8
+				local textZoom = 0.7
 				self:zoom(textZoom):horizalign(right)
 				if col == "Total Stream" then
 					self:maxwidth(100)

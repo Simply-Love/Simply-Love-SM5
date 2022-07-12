@@ -55,7 +55,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end,
 	RpgQuestsCommand=function(self,params)
 		local score = params.box_score[1]
-		local score_text = (score < 0 and "-" or "+") ..  string.format("%.2f%%",score)
+		local score_text = (score < 0 and "" or "+") ..  string.format("%.2f%%",score)
 		self:settext(score_text)
 		if score < 0 then 
 				self:diffuse(Color.Red) 
@@ -76,7 +76,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end,
 	RpgQuestsCommand=function(self,params)
 		local rate = params.box_score[2]
-		local rate_text = (rate < 0 and "-" or "+") ..  string.format("%.2f",rate) .. "x"
+		local rate_text = (rate < 0 and "" or "+") ..  string.format("%.2f",rate) .. "x"
 		self:settext(rate_text)
 		if rate < 0 then 
 			self:diffuse(Color.Red) 

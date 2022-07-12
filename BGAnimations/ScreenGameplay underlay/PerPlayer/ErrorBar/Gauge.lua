@@ -77,10 +77,19 @@ local af = Def.ActorFrame{
             if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and not IsW0Judgment(params, player) then
                 color = SL.JudgmentColors["FA+"][2]
             end
+			
+			local offset = params.TapNoteOffset
+			if math.abs(params.TapNoteOffset) > maxTimingOffset then
+				if params.TapNoteOffset > 0 then
+					offset = maxTimingOffset
+				else
+					offset = -maxTimingOffset
+				end
+			end
 
             tick:diffusealpha(1)
                 :diffuse(color)
-                :rotationz(params.TapNoteOffset * wscale)
+                :rotationz(offset * wscale)
 
             if numTicks > 1 then
                 tick:sleep(0.03):linear(tickDuration - 0.03)

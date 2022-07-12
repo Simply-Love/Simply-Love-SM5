@@ -17,7 +17,7 @@ local streams, prevMeasure, streamIndex
 local bmt = {}
 
 -- How many streams to "look ahead"
-local lookAhead = mods.HideLookahead and 0 or 2
+local lookAhead = mods.MeasureCounterLookahead
 -- If you want to see more than 2 counts in advance, change the 2 to a larger value.
 -- Making the value very large will likely impact fps. -quietly
 
@@ -81,13 +81,15 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 
 	local text = ""
 	if Measures[streamIndex].isBreak then
-		if not isLookAhead then
-			local remainingRest = currStreamLength - currCount + 1
+		if mods.MeasureCounterLookahead > 0 then
+			if not isLookAhead then
+				local remainingRest = currStreamLength - currCount + 1
 
-			-- Ensure that the rest count is in range of the total length.
-			text = "(" .. remainingRest .. ")"
-		else
-			text = "(" .. currStreamLength .. ")"
+				-- Ensure that the rest count is in range of the total length.
+				text = "(" .. remainingRest .. ")"
+			else
+				text = "(" .. currStreamLength .. ")"
+			end
 		end
 	else
 		if not isLookAhead and currCount ~= 0 then
