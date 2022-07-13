@@ -61,12 +61,12 @@ local IsEndOfBrokenStream = function(currMeasure, Measures, streamIndex)
 	local segmentEnd   = Measures[streamIndex].streamEnd
 	
 	if not Measures[streamIndex].isBreak then
-		for i=1,#Measures-streamIndex-1 do
+		for i=1,#Measures-streamIndex do
 			local continueStart = Measures[streamIndex+i].streamStart
 			local continueEnd = Measures[streamIndex+i].streamEnd
 			local continueMeasures = continueEnd - continueStart
 			if Measures[streamIndex+i].isBreak then
-				if continueMeasures < 4 then
+				if continueMeasures < 4 and #Measures ~= streamIndex+i then
 					segmentEnd = segmentEnd + continueMeasures
 				else
 					break
@@ -113,12 +113,12 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 	local segmentStart = Measures[streamIndex].streamStart
 	local segmentEnd   = Measures[streamIndex].streamEnd
 	isBroken = false
-	for i=1,#Measures-streamIndex-1 do
+	for i=1,#Measures-streamIndex do
 		local continueStart = Measures[streamIndex+i].streamStart
 		local continueEnd = Measures[streamIndex+i].streamEnd
 		local continueMeasures = continueEnd - continueStart
 		if Measures[streamIndex+i].isBreak then
-			if continueMeasures < 4 then
+			if continueMeasures < 4 and #Measures ~= streamIndex+i then
 				segmentEnd = segmentEnd + continueMeasures
 				isBroken = true
 			else
