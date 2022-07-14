@@ -586,7 +586,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = { "MeasureCounterLeft", "MeasureCounterUp"},
+		Values = { "MeasureCounterLeft", "MeasureCounterUp", "BrokenRun", "RunTimer"},
 	},
 	-------------------------------------------------------------------------
 	VisualDelay = {
