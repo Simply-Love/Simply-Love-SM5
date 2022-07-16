@@ -49,11 +49,6 @@ WriteRpgFile = function(dir, song, rate)
 			existing = f:Read()
 			-- Check if the song record already exists
 			-- remove some annoying characters that break lua string function for some reason???
-			
-			--local annoyingcharacters = { "%[", "%]", "%/", "%(", "%)", "%-" }
-			--for i,v in ipairs(annoyingcharacters) do
-			--	song = string.gsub(song,v, "")
-			--end
 			song = song:gsub("%W","_")
 
 			songposition = string.find(existing,song)
@@ -102,30 +97,32 @@ end
 
 local t = Def.ActorFrame {
 	OnCommand=function(self)
-		local profile_slot = {
-			[PLAYER_1] = "ProfileSlot_Player1",
-			[PLAYER_2] = "ProfileSlot_Player2"
-		}
-		local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
-		local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+		if isRpgFolder() then 
+			local profile_slot = {
+				[PLAYER_1] = "ProfileSlot_Player1",
+				[PLAYER_2] = "ProfileSlot_Player2"
+			}
+			local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
+			local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-		local song = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
-		-- Do the same validation as GrooveStats.
-		-- This checks important things like timing windows, addition/removal of arrows, etc.
-		local _, valid = ValidForGrooveStats(player)
+			local song = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+			-- Do the same validation as GrooveStats.
+			-- This checks important things like timing windows, addition/removal of arrows, etc.
+			local _, valid = ValidForGrooveStats(player)
 
-		-- Get the rate mod
-		local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
-		local rate = so:MusicRate()
+			-- Get the rate mod
+			local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
+			local rate = so:MusicRate()
 
-		-- We require an explicit profile to be loaded.
-		if (dir and #dir ~= 0 and
-			GAMESTATE:IsHumanPlayer(player) and
-			valid and
-			rate >= 1.0 and
-			not stats:GetFailed()) then
-		
-			WriteRpgFile(dir, song, rate)
+			-- We require an explicit profile to be loaded.
+			if (dir and #dir ~= 0 and
+				GAMESTATE:IsHumanPlayer(player) and
+				valid and
+				rate >= 1.0 and
+				not stats:GetFailed()) then
+			
+				WriteRpgFile(dir, song, rate)
+			end
 		end
 	end
 }
