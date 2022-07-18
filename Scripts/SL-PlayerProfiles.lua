@@ -42,7 +42,12 @@ local permitted_profile_settings = {
 	MeasureCounter       = "string",
 	MeasureCounterLeft   = "boolean",
 	MeasureCounterUp     = "boolean",
+	BrokenRun            = "boolean",
+	RunTimer             = "boolean",
 	MeasureCounterLookahead = "number",
+	
+	RainbowMax           = "boolean",
+	ResponsiveColors     = "boolean",
 	
 	MiniIndicator		 = "string",
 	MiniIndicatorColor	 = "string",

@@ -602,6 +602,11 @@ local Overrides = {
 		Values = { "MeasureCounterLeft", "MeasureCounterUp", "BrokenRun", "RunTimer"},
 	},
 	-------------------------------------------------------------------------
+	LifeBarOptions = {
+		SelectType = "SelectMultiple",
+		Values = { "RainbowMax", "ResponsiveColors"},
+	},
+	-------------------------------------------------------------------------
 	VisualDelay = {
 		Choices = function()
 			local first	= -100
