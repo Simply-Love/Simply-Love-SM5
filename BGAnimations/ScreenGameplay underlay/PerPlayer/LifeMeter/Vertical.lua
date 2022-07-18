@@ -66,6 +66,8 @@ local meter = Def.ActorFrame{
 			end
 		end,
 	},
+	
+	-- percent
 	Def.Quad {
 		InitCommand=function(self) self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left"):x(_x+11) end,
 		HealthStateChangedMessageCommand=function(self,params)
@@ -126,10 +128,18 @@ local meter = Def.ActorFrame{
 		HealthStateChangedMessageCommand=function(self,params)
 			if params.PlayerNumber == player then
 				if params.HealthState == 'HealthState_Hot' then
-					self:rainbow()
+					if SL[pn].ActiveModifiers.RainbowMax then
+						self:rainbow()
+					else
+						self:diffuse(1,1,1,1)
+					end
 				else
 					-- ~~man's~~ lifebar's not hot
-					self:stopeffect()
+					if SL[pn].ActiveModifiers.RainbowMax then
+						self:stopeffect()
+					elseif not SL[pn].ActiveModifiers.ResponsiveColors then
+						self:diffuse( PlayerColor(player,true) )
+					end
 				end
 			end
 		end,
@@ -139,12 +149,14 @@ local meter = Def.ActorFrame{
 			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * height
 				local absLife = params.LifeMeter:GetLife()
-				if absLife >= 0.9 then
-					self:diffuse(0, 1, (absLife - 0.9) * 10, 1)
-				elseif absLife >= 0.5 then
-					self:diffuse((0.9 - absLife) * 10 / 4, 1, 0, 1)
-				else
-					self:diffuse(1, (absLife - 0.2) * 10 / 3, 0, 1)
+				if SL[pn].ActiveModifiers.ResponsiveColors then
+					if absLife >= 0.9 then
+						self:diffuse(0, 1, (absLife - 0.9) * 10, 1)
+					elseif absLife >= 0.5 then
+						self:diffuse((0.9 - absLife) * 10 / 4, 1, 0, 1)
+					else
+						self:diffuse(1, (absLife - 0.2) * 10 / 3, 0, 1)
+					end
 				end
 				self:finishtweening()
 				self:bouncebegin(0.1):zoomy( life )
@@ -170,8 +182,9 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if(params.Player == player) then
 				local life = params.LifeMeter:GetLife() * height
+				local absLife = params.LifeMeter:GetLife()
 				
-				if(life > oldlife) then
+				if (life > oldlife) or absLife == 1 then
 					self:accelerate(0.5):diffusealpha(1)
 				else
 					self:accelerate(0.5):diffusealpha(0.2)

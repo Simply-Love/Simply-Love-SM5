@@ -1,8 +1,10 @@
 local player = ...
+local pn = ToEnumShortString(player)
 
 local w = 136
 local h = 18
 local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(238, 288)
+local oldlife = 0
 
 -- get SongPosition specific to this player so that
 -- split BPMs are handled if there are any
@@ -24,6 +26,76 @@ local meter = Def.ActorFrame{
 	-- frame
 	Def.Quad{ InitCommand=function(self) self:x(_x):zoomto(w+4, h+4) end },
 	Def.Quad{ InitCommand=function(self) self:x(_x):zoomto(w, h):diffuse(0,0,0,1) end },
+	
+	-- percent
+	Def.Quad {
+		InitCommand=function(self) self:zoomto(44, 18):diffuse(PlayerColor(player,true)):horizalign("left"):x(_x-126) end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:zoomto(52, 18)
+					self:accelerate(1)
+					self:diffusealpha(0)
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:zoomto(44, 18):finishtweening():diffusealpha(1)
+				end
+			end
+		end,
+		-- check life (LifeMeterBar)
+		LifeChangedMessageCommand=function(self,params)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * 100
+				self:finishtweening()
+				self:bouncebegin(0.1)
+			end
+		end,
+	},
+	Def.Quad {
+		InitCommand=function(self) self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left"):x(_x-125) end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:zoomto(50, 16)
+					self:accelerate(1)
+					self:diffusealpha(0)
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:zoomto(42, 16):finishtweening():diffusealpha(1)
+				end
+			end
+		end,
+		-- check life (LifeMeterBar)
+		LifeChangedMessageCommand=function(self,params)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * 100
+				self:finishtweening()
+				self:bouncebegin(0.1)
+			end
+		end,
+	},
+	Def.BitmapText {
+		Font="Common Normal",
+		InitCommand=function(self) self:diffuse(PlayerColor(player,true)):horizalign("left"):x(_x-124) end,
+		HealthStateChangedMessageCommand=function(self,params)
+			if params.PlayerNumber == player then
+				if params.HealthState == 'HealthState_Hot' then
+					self:accelerate(1):diffusealpha(0)
+				else
+					-- ~~man's~~ lifebar's not hot
+					self:finishtweening():diffusealpha(1)
+				end
+			end
+		end,
+		-- check life (LifeMeterBar)
+		LifeChangedMessageCommand=function(self,params)
+			if params.Player == player then
+				local life = params.LifeMeter:GetLife() * 100
+				self:finishtweening()
+				self:bouncebegin(0.1):settext(("%.1f%%"):format(life))
+			end
+		end,
+	},
 
 	-- the Quad that changes width/color depending on current Life
 	Def.Quad{
@@ -38,10 +110,18 @@ local meter = Def.ActorFrame{
 		HealthStateChangedMessageCommand=function(self,params)
 			if params.PlayerNumber == player then
 				if params.HealthState == 'HealthState_Hot' then
-					self:diffuse(1,1,1,1)
+					if SL[pn].ActiveModifiers.RainbowMax then
+						self:rainbow()
+					else
+						self:diffuse(1,1,1,1)
+					end
 				else
 					-- ~~man's~~ lifebar's not hot
-					self:diffuse( PlayerColor(player,true) )
+					if SL[pn].ActiveModifiers.RainbowMax then
+						self:stopeffect()
+					elseif not SL[pn].ActiveModifiers.ResponsiveColors then
+						self:diffuse( PlayerColor(player,true) )
+					end
 				end
 			end
 		end,
@@ -51,6 +131,16 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * w
+				local absLife = params.LifeMeter:GetLife()
+				if SL[pn].ActiveModifiers.ResponsiveColors then
+					if absLife >= 0.9 then
+						self:diffuse(0, 1, (absLife - 0.9) * 10, 1)
+					elseif absLife >= 0.5 then
+						self:diffuse((0.9 - absLife) * 10 / 4, 1, 0, 1)
+					else
+						self:diffuse(1, (absLife - 0.2) * 10 / 3, 0, 1)
+					end
+				end
 				self:finishtweening()
 				self:bouncebegin(0.1):zoomx( life )
 			end
