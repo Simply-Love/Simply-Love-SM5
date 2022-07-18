@@ -59,6 +59,7 @@ local permitted_profile_settings = {
 	ErrorBar             = "string",
 	ErrorBarUp           = "boolean",
 	ErrorBarMultiTick    = "boolean",
+	ErrorBarCap    		 = "number",
 
 	ShowFaPlusWindow = "boolean",
 	ShowEXScore      = "boolean",

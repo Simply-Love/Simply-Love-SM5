@@ -41,8 +41,11 @@ local tickDuration = 0.75
 local numTicks = mods.ErrorBarMultiTick and 15 or 1
 local currentTick = 1
 
+-- Find out maximum timing window for error bar
+local maxError = mods.ErrorBarCap < NumJudgmentsAvailable() and mods.ErrorBarCap or NumJudgmentsAvailable()
+
 local enabledTimingWindows = {}
-for i = 1, NumJudgmentsAvailable() do
+for i = 1, maxError do
     if mods.TimingWindows[i] then
         enabledTimingWindows[#enabledTimingWindows+1] = i
     end

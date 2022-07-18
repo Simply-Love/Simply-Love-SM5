@@ -40,8 +40,11 @@ local tickDuration = 0.75
 local numTicks = mods.ErrorBarMultiTick and 15 or 1
 local currentTick = 1
 
+-- Find out maximum timing window for error bar
+local maxError = mods.ErrorBarCap < NumJudgmentsAvailable() and mods.ErrorBarCap or NumJudgmentsAvailable()
+
 local enabledTimingWindows = {}
-for i = 1, NumJudgmentsAvailable() do
+for i = 1, maxError do
     if mods.TimingWindows[i] then
         enabledTimingWindows[#enabledTimingWindows+1] = i
     end
@@ -69,6 +72,10 @@ local af = Def.ActorFrame{
 
             tick:finishtweening()
 
+            local xpos = params.TapNoteOffset * wscale
+            if tonumber(params.TapNoteScore:sub(-1)) > maxError then
+                xpos = maxTimingOffset * wscale * (params.TapNoteOffset < 0 and -1 or 1)
+            end
 
             local color = judgmentColors[params.TapNoteScore] 
 
@@ -79,7 +86,7 @@ local af = Def.ActorFrame{
 
             tick:diffusealpha(1)
                 :diffuse(color)
-                :x(params.TapNoteOffset * wscale)
+                :x(xpos)
 
             if numTicks > 1 then
                 tick:sleep(0.03):linear(tickDuration - 0.03)

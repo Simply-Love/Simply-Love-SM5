@@ -567,6 +567,19 @@ local Overrides = {
 		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
 	},
 	-------------------------------------------------------------------------
+	ErrorBarCap = {
+		Values = { 5, 1, 2, 3 },
+		Choices = function()
+			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
+			local t = {THEME:GetString("SLPlayerOptions","None")}
+			-- assume pluralization via terminal s
+			t[2] = THEME:GetString(tns,"W1")
+			t[3] = THEME:GetString(tns,"W2")
+			t[4] = THEME:GetString(tns,"W3")
+			return t
+		end,
+	},
+	-------------------------------------------------------------------------
 	RainbowComboOptions = {
 		Values = { "RainbowNever", "RainbowAlways", "Rainbow100", "Rainbow500", "Rainbow1000" },
 	},

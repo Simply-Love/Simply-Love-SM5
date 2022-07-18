@@ -13,7 +13,11 @@ local numTicks = mods.ErrorBarMultiTick and 10 or 1
 local currentTick = 1
 
 local enabledTimingWindows = {}
-for i = 1, NumJudgmentsAvailable() do
+
+-- Find out maximum timing window for error bar
+local maxError = mods.ErrorBarCap < NumJudgmentsAvailable() and mods.ErrorBarCap or NumJudgmentsAvailable()
+
+for i = 1, maxError do
     if mods.TimingWindows[i] then
         enabledTimingWindows[#enabledTimingWindows+1] = i
     end
@@ -46,15 +50,22 @@ local af = Def.ActorFrame{
             bar:finishtweening()
             bar:zoom(1)
 
+            local xpos = params.TapNoteOffset * wscale
+            if tonumber(score:sub(-1)) > maxError then
+                xpos = maxTimingOffset * wscale * (params.TapNoteOffset < 0 and -1 or 1)
+            end
+
             if numTicks > 1 then
                 tick:diffusealpha(1)
-                    :x(params.TapNoteOffset * wscale)
+                    :x(xpos)
                     :sleep(0.03):linear(tickDuration - 0.03)
                     :diffusealpha(0)
+                
             else
                 tick:diffusealpha(1)
-                    :x(params.TapNoteOffset * wscale)
+                    :x(xpos)
                     :sleep(tickDuration):diffusealpha(0)
+
             end
 
             bar:sleep(tickDuration)
