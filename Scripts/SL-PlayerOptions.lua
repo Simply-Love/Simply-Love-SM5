@@ -404,7 +404,7 @@ local Overrides = {
 
 			list[1] = mods.ShowFaPlusWindow or false
 			list[2] = mods.ShowEXScore or false
-			list[3] = mods.ShowFaPlusPane or true
+			list[3] = mods.ShowFaPlusPane or false
 			list[4] = mods.SmallerWhite or false
 			return list
 		end,

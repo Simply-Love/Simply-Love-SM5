@@ -74,6 +74,10 @@ for t in ivalues(sequential_offsets) do
 		local prefs = SL.Preferences["FA+"]
 		local scale = PREFSMAN:GetPreference("TimingWindowScale")
 		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+		if SL[pn].ActiveModifiers.SmallerWhite then
+			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
+		end
+		
 		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow and math.abs(Offset) > W0 then
 			c = DeepCopy(SL.JudgmentColors["FA+"][2])
 		end
