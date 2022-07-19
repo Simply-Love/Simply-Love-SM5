@@ -123,7 +123,7 @@ local af = Def.ActorFrame{
     -- Centerpiece
     Def.Quad{
         InitCommand = function(self)
-            self:vertalign('VertAlign_Bottom'):zoomto(2, barHeight*10)
+            self:vertalign('VertAlign_Bottom'):zoomto(2, math.min(barHeight*10, 100))
                 :diffuse(color(.5, .5, .5, 1))
         end
     },
@@ -167,7 +167,7 @@ for i = 1, #enabledTimingWindows do
     
     if mods.ShowFaPlusWindow and wi == 1 then
         -- Split the Fantastic window
-        timing[#timing + 1] = GetTimingWindow(1, "FA+")
+        timing[#timing + 1] = GetTimingWindow(1, "FA+", mods.SmallerWhite)
         timing[#timing + 1] = GetTimingWindow(2, "FA+")
     else
         timing[#timing + 1] = GetTimingWindow(wi)
@@ -181,7 +181,7 @@ for window in ivalues(timing) do
         InitCommand = function(self)
             self:vertalign('VertAlign_Bottom')
 				:rotationz(-offset)
-                :zoomto(1, barHeight*10)
+                :zoomto(1, math.min(barHeight*10, 100))
                 :diffuse(color(1, 1, 1, 1))
                 :diffusealpha(0)
                 :sleep(2.5):smooth(.5)
@@ -192,7 +192,7 @@ for window in ivalues(timing) do
         InitCommand = function(self)
             self:vertalign('VertAlign_Bottom')
 				:rotationz(offset)
-                :zoomto(1, barHeight*10)
+                :zoomto(1, math.min(barHeight*10, 100))
                 :diffuse(color(1, 1, 1, 1))
                 :diffusealpha(0)
                 :sleep(2.5):smooth(.5)
@@ -206,7 +206,7 @@ for i = 1, numTicks do
     af[#af+1] = Def.Quad{
         Name = "Tick" .. i,
         InitCommand = function(self)
-            self:zoomto(tickWidth*2, barHeight*10):diffusealpha(0):vertalign('VertAlign_Bottom')
+            self:zoomto(tickWidth*2, math.min(barHeight*10, 100)):diffusealpha(0):vertalign('VertAlign_Bottom')
         end,
     }
 end

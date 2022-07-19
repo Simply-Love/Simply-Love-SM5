@@ -69,6 +69,7 @@ local permitted_profile_settings = {
 	ShowFaPlusWindow = "boolean",
 	ShowEXScore      = "boolean",
 	ShowFaPlusPane   = "boolean",
+	SmallerWhite     = "boolean",
 
 	VisualDelay          = "string",
 
