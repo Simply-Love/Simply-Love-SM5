@@ -115,7 +115,7 @@ local text = LoadFont("Common Normal")..{
 				self:x(52)
 			end
 		else
-			self:x(SL_WideScale(6,130))
+			self:x(_screen.w*0.5 - SL_WideScale(6,75))
 			if NoteFieldIsCentered then
 				self:x(69)
 			end
