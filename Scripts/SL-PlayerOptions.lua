@@ -392,18 +392,20 @@ local Overrides = {
 			if SL.Global.GameMode == "FA+" then
 				return { "ShowEXScore" }
 			end
-			return { "ShowFaPlusWindow", "ShowEXScore", "ShowFaPlusPane" }
+			return { "ShowFaPlusWindow", "ShowEXScore", "ShowFaPlusPane", "SmallerWhite" }
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			if SL.Global.GameMode == "FA+" then
 				list[1] = mods.ShowEXScore or false
+				list[4] = false
 				return list
 			end
 
 			list[1] = mods.ShowFaPlusWindow or false
 			list[2] = mods.ShowEXScore or false
 			list[3] = mods.ShowFaPlusPane or true
+			list[4] = mods.SmallerWhite or false
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
@@ -414,11 +416,13 @@ local Overrides = {
 				mods.ShowFaPlusWindow = false
 				mods.ShowEXScore = list[2]
 				mods.ShowFaPlusPane = list[3]
+				mods.SmallerWhite = false
 				return
 			end
 			mods.ShowFaPlusWindow = list[1]
 			mods.ShowEXScore = list[2]
 			mods.ShowFaPlusPane = list[3]
+			mods.SmallerWhite = list[4]
 			-- Default to FA+ pane if either options are active.
 			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and list[3]) and 2 or 1
 		end
