@@ -1,7 +1,6 @@
 if SL.Global.GameMode == "Casual" then return end
 
 local player = ...
-local pn = ToEnumShortString(player)
 local NumPlayers = #GAMESTATE:GetHumanPlayers()
 
 local GraphWidth  = THEME:GetMetric("GraphDisplay", "BodyWidth")
@@ -74,8 +73,8 @@ af[#af+1] = Def.GraphDisplay{
 
 		local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local stageStats = STATSMAN:GetCurStageStats()
-
 		self:Set(stageStats, playerStageStats)
+
 		if GAMESTATE:IsCourseMode() then
 			-- hide the GraphDisplay's stroke ("Line")
 			self:GetChild("Line"):visible(false)
@@ -86,67 +85,5 @@ af[#af+1] = Def.GraphDisplay{
 		end
 	end
 }
-
-local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
-
-if storage.DeathSecond ~= nil then
-	local seconds = storage.Seconds
-	local deathSecond = storage.DeathSecond
-	local deathMeasures = storage.DeathMeasures
-	
-	local alivepercent = deathSecond/seconds
-
-	-- If the player failed, check how much time was remaining
-	af[#af+1] = Def.ActorFrame {
-		InitCommand=function(self)
-			-- Start at the start of the graph
-			self:addx(-GraphWidth/2):addy(GraphHeight-10)
-			-- Move to where the player failed and a little bit more 
-			self:addx(GraphWidth*alivepercent+25)
-		end,
-		Def.ActorFrame {
-			Name="BGQuad",
-			SetSizeCommand=function(self,params)
-				if params.lines == 2 then self:addy(-10) end
-			end,
-			Def.Quad {
-				InitCommand=function(self)
-					self:diffuse(Color.Red)
-				end,
-				SetSizeCommand=function(self,params)
-					self:zoomto(params.width+1,10*params.lines+1)
-				end
-			},
-			Def.Quad {
-				InitCommand=function(self)
-					self:diffuse(Color.Black)
-				end,
-				SetSizeCommand=function(self,params)
-					self:zoomto(params.width,10*params.lines)
-				end
-			},
-		},
-		LoadFont("Common Normal")..{
-			InitCommand=function(self)
-				self:zoom(0.5)
-				self:diffuse(Color.Red)
-				local text
-				-- fail time formatting
-				if deathSecond > 3600 then
-					-- format to display as H:MM:SS
-					text = math.floor(deathSecond/3600) .. ":" .. SecondsToMMSS(deathSecond%3600)
-				else
-					-- format to display as M:SS
-					text = SecondsToMSS(deathSecond)
-				end	
-				if deathMeasures then text = text .. "\n" .. deathMeasures self:addy(-10) end
-				self:settext(text)
-				local quad = self:GetParent():GetChild("BGQuad")
-				quad:playcommand("SetSize",{ width=self:GetWidth(), lines=(deathMeasures ~= nil and 2 or 1) })
-			end
-		}	
-	}
-end
 
 return af
