@@ -130,6 +130,23 @@ af[#af+1] = LoadFont("Common Normal")..{
 		end
 		
 		self:settext(("%.1fms"):format(median_offset*1000))
+	end,
+	
+	OnCommand=function(self)
+		if player==PLAYER_1 then
+			self:x( 250 + (total_width-28))
+		else
+			self:x(-122 - (total_width-28))
+		end
+
+		-- flip offset when ultrawide and both players
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			if player==PLAYER_1 then
+				self:x(-186 - (total_width-28))
+			else
+				self:x( 186 + (total_width-28))
+			end
+		end
 	end
 }
 
@@ -151,7 +168,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 		if player==PLAYER_1 then
 			self:x( 132 + (total_width-28))
 		else
-			self:x(-132 - (total_width-28))
+			self:x(-192 - (total_width-28))
 		end
 
 		-- flip offset when ultrawide and both players
@@ -196,6 +213,23 @@ af[#af+1] = LoadFont("Common Normal")..{
 		avg_timing_error = sum_timing_error / math.min(64, mean_taps) * 1000
 		
 		self:settext(("%.1fms"):format(avg_timing_error))
+	end,
+	
+	OnCommand=function(self)
+		if player==PLAYER_1 then
+			self:x( 250 + (total_width-28))
+		else
+			self:x(-122 - (total_width-28))
+		end
+
+		-- flip offset when ultrawide and both players
+		if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+			if player==PLAYER_1 then
+				self:x(-186 - (total_width-28))
+			else
+				self:x( 186 + (total_width-28))
+			end
+		end
 	end
 }
 
@@ -214,7 +248,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 		if player==PLAYER_1 then
 			self:x(132 + (total_width-28))
 		else
-			self:x(-132 - (total_width-28))
+			self:x(-192 - (total_width-28))
 		end
 		self:y(20)
 

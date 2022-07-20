@@ -29,7 +29,14 @@ local meter = Def.ActorFrame{
 	
 	-- percent
 	Def.Quad {
-		InitCommand=function(self) self:zoomto(44, 18):diffuse(PlayerColor(player,true)):horizalign("left"):x(_x-126) end,
+		InitCommand=function(self)
+		    self:zoomto(44, 18):diffuse(PlayerColor(player,true)):horizalign("left")
+			if player==PLAYER_1 then
+				self:x(_x-126)
+			else
+				self:x(_x+76)
+			end
+		end,
 		HealthStateChangedMessageCommand=function(self,params)
 			if params.PlayerNumber == player then
 				if params.HealthState == 'HealthState_Hot' then
@@ -52,7 +59,14 @@ local meter = Def.ActorFrame{
 		end,
 	},
 	Def.Quad {
-		InitCommand=function(self) self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left"):x(_x-125) end,
+		InitCommand=function(self)
+			self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left")
+			if player==PLAYER_1 then
+				self:x(_x-125)
+			else
+				self:x(_x+77)
+			end
+		end,
 		HealthStateChangedMessageCommand=function(self,params)
 			if params.PlayerNumber == player then
 				if params.HealthState == 'HealthState_Hot' then
@@ -76,7 +90,14 @@ local meter = Def.ActorFrame{
 	},
 	Def.BitmapText {
 		Font="Common Normal",
-		InitCommand=function(self) self:diffuse(PlayerColor(player,true)):horizalign("left"):x(_x-124) end,
+		InitCommand=function(self)
+			self:diffuse(PlayerColor(player,true)):horizalign("left")
+			if player==PLAYER_1 then
+				self:x(_x-124)
+			else
+				self:x(_x+78)
+			end
+		end,
 		HealthStateChangedMessageCommand=function(self,params)
 			if params.PlayerNumber == player then
 				if params.HealthState == 'HealthState_Hot' then
