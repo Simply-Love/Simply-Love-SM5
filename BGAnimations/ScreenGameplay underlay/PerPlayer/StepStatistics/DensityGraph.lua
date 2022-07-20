@@ -106,7 +106,7 @@ local text = LoadFont("Common Normal")..{
 		end
 
 		if player == PLAYER_1 then
-			self:x(_screen.w*0.5 - SL_WideScale(6,360))
+			self:x(_screen.w*0.5 - SL_WideScale(6,329))
 
 			if NoteFieldIsCentered then
 				self:x(_screen.w*0.5 - 134)
@@ -115,7 +115,7 @@ local text = LoadFont("Common Normal")..{
 				self:x(52)
 			end
 		else
-			self:x(_screen.w*0.5 - SL_WideScale(6,75))
+			self:x(_screen.w*0.5 - SL_WideScale(6,98))
 			if NoteFieldIsCentered then
 				self:x(69)
 			end
@@ -125,7 +125,8 @@ local text = LoadFont("Common Normal")..{
 		end
 
 		self:y( -self:GetHeight()/2 + 5 )
-		self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
+		self:settext( ("%s/%s: %g/%g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"),THEME:GetString("ScreenGameplay", "eBPM"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2),round(my_peak *15* SL.Global.ActiveModifiers.MusicRate,0)) )
+		self:maxwidth(190)
 	end,
 }
 
