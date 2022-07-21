@@ -21,6 +21,14 @@ local yOffset = 80
 local fadeTime = 0.15
 local curIndex = 1
 local updatedFirstTime = false
+local breakTime = 0
+
+local font = mods.ComboFont
+if font == "Wendy" or font == "Wendy (Cursed)" then
+	font = "Wendy/_wendy small"
+else
+	font = "_Combo Fonts/" .. font .. "/"
+end
 
 local Update = function(self, delta)
 	if curIndex <= #columnCues then
@@ -53,7 +61,7 @@ local Update = function(self, delta)
 				for col_mine in ivalues(columnCue.columns) do
 					local col = column_mapping[col_mine.colNum]
 					local isMine = col_mine.isMine
-					self:GetChild("Column"..col):playcommand("Flash", {
+					self:GetChild("Column"..col):GetChild("ColumnFlash"):playcommand("Flash", {
 						duration=scaledDuration,
 						isMine=isMine
 					})
@@ -77,25 +85,67 @@ local af = Def.ActorFrame{
 }
 
 for columnIndex=1,numColumns do
-	af[#af+1] = Def.Quad {
+	af[#af+1] = Def.ActorFrame {
 		Name="Column"..columnIndex,
-		InitCommand=function(self)
-			self:diffuse(0,0,0,0)
-				:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
-				:vertalign(top)
-				:setsize(width/numColumns, _screen.h - yOffset)
-				:fadebottom(0.333)
-		end,
-		FlashCommand=function(self, params)
-			local flashDuration = params.duration
-			local clr = params.isMine and color("1,0,0,0.12") or color("0.3,1,1,0.12")
-			self:stoptweening()
-				:decelerate(fadeTime)
-				:diffuse(clr)
-				:sleep(flashDuration - 2*fadeTime)
-				:accelerate(fadeTime)
-				:diffuse(0,0,0,0)
-		end
+		Def.Quad {
+			Name="ColumnFlash",
+			InitCommand=function(self)
+				self:diffuse(0,0,0,0)
+					:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
+					:vertalign(top)
+					:setsize(width/numColumns, _screen.h - yOffset)
+					:fadebottom(0.333)
+			end,
+			FlashCommand=function(self, params)
+				local flashDuration = params.duration
+				local clr = params.isMine and color("1,0,0,0.12") or color("0.3,1,1,0.12")
+				self:stoptweening()
+					:decelerate(fadeTime)
+					:diffuse(clr)
+					:sleep(flashDuration - 2*fadeTime)
+					:accelerate(fadeTime)
+					:diffuse(0,0,0,0)
+				
+				if flashDuration >= 5 then
+					breakTime = flashDuration
+					text:stoptweening()
+						:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
+						:decelerate(fadeTime)
+						:diffuse(Color.White)
+						:settext(round(flashDuration,1))
+						:playcommand("UpdateBreak")
+				end
+			end
+		},
+		Def.BitmapText {
+			Name="ColumnText",
+			Font=font,
+			Text="",
+			InitCommand=function(self)
+				self:zoom(0.5)
+					:diffuse(0,0,0,0)
+					:horizalign(center)
+					:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
+					:y(80)
+				text = self
+			end,
+			UpdateBreakCommand=function(self)
+				-- if BreakTime == nil then BreakTime = 0 end
+				if breakTime > 0.5 then
+					breakTime = breakTime - 0.1
+					if breakTime > 0.5 then
+						self:sleep(0.1)
+							:settext(round(breakTime))
+							:queuecommand("UpdateBreak")
+					else
+						self:diffuse(0,0,0,0)
+					end
+				else
+					self:diffuse(0,0,0,0)
+				end
+				
+			end,
+		}
 	}
 end
 
