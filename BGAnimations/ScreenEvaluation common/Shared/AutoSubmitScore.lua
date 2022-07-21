@@ -263,12 +263,21 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/"
 							if personalRank == 1 then
 								recordText:settext("World Record!")
-								local audio_file = soundDir .. "WR.ogg"
-								if FILEMAN:DoesFileExist(audio_file) then SOUND:PlayOnce(audio_file) end
+								-- Play random sound in Sounds/Evaluation WR/
+								soundDir = soundDir .. "Evaluation WR/"
+								audio_files = findFiles(soundDir,"ogg")
+								if #audio_files > 0 then
+									SOUND:PlayOnce(audio_files[math.random(1,#audio_files)])
+								end
 							else
 								recordText:settext("Personal Best!")
-								local audio_file = soundDir .. "PB.ogg"
-								if FILEMAN:DoesFileExist(audio_file) then SOUND:PlayOnce(audio_file) end
+
+								-- Play random sound in Sounds/Evaluation PB/
+								soundDir = soundDir .. "Evaluation PB/"
+								audio_files = findFiles(soundDir,"ogg")
+								if #audio_files > 0 then
+									SOUND:PlayOnce(audio_files[math.random(1,#audio_files)])
+								end
 							end
 							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
 							local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()

@@ -1,0 +1,7 @@
+Place ogg files in here in numeric order to play a random file
+
+e.g.
+1.ogg
+2.ogg
+3.ogg
+etc
