@@ -18,5 +18,5 @@ end
 
 local evaluation_sounds = findFiles(dir,ext)
 if #evaluation_sounds > 0 then
-    return evaluation_sounds[math.random(1,#evaluation_sounds)]
+    return evaluation_sounds[math.random(#evaluation_sounds)]
 end

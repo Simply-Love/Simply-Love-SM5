@@ -267,7 +267,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								soundDir = soundDir .. "Evaluation WR/"
 								audio_files = findFiles(soundDir,"ogg")
 								if #audio_files > 0 then
-									SOUND:PlayOnce(audio_files[math.random(1,#audio_files)])
+									SOUND:PlayOnce(audio_files[math.random(#audio_files)])
 								end
 							else
 								recordText:settext("Personal Best!")
@@ -276,7 +276,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								soundDir = soundDir .. "Evaluation PB/"
 								audio_files = findFiles(soundDir,"ogg")
 								if #audio_files > 0 then
-									SOUND:PlayOnce(audio_files[math.random(1,#audio_files)])
+									SOUND:PlayOnce(audio_files[math.random(#audio_files)])
 								end
 							end
 							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
