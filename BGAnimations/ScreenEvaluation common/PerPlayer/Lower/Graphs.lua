@@ -91,20 +91,19 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
 if storage.DeathSecond ~= nil then
-	local seconds = storage.Seconds
+	local seconds = storage.TotalSeconds
 	local deathSecond = storage.DeathSecond
 	local deathMeasures = storage.DeathMeasures
-	
-	local alivePercent = deathSecond/seconds
+	local graphPercentage = storage.GraphPercentage
+	local graphLabel = storage.GraphLabel
 	local secondsLeft = seconds-deathSecond
-
 	-- If the player failed, check how much time was remaining
 	af[#af+1] = Def.ActorFrame {
 		InitCommand=function(self)
 			-- Start at the start of the graph
 			self:addx(-GraphWidth/2):addy(GraphHeight-10)
-			-- Move to where the player failed and a little bit more 
-			self:addx(GraphWidth*alivePercent+25)
+			-- Move to where the player failed
+			self:addx(GraphWidth*graphPercentage)
 		end,
 		Def.ActorFrame {
 			Name="BGQuad",
@@ -117,6 +116,7 @@ if storage.DeathSecond ~= nil then
 				end,
 				SetSizeCommand=function(self,params)
 					self:zoomto(params.width+1,10*params.lines+1)
+					self:addx(params.addx)
 				end
 			},
 			Def.Quad {
@@ -125,6 +125,7 @@ if storage.DeathSecond ~= nil then
 				end,
 				SetSizeCommand=function(self,params)
 					self:zoomto(params.width,10*params.lines)
+					self:addx(params.addx)
 				end
 			},
 		},
@@ -143,8 +144,12 @@ if storage.DeathSecond ~= nil then
 				end	
 				if deathMeasures then text = text .. "\n" .. deathMeasures self:addy(-10) end
 				self:settext(text)
+				local width = self:GetWidth()*0.65
+				local addx = width*0.8
+				addx = (addx > 10) and addx or 10
 				local quad = self:GetParent():GetChild("BGQuad")
-				quad:playcommand("SetSize",{ width=self:GetWidth(), lines=(deathMeasures ~= nil and 2 or 1) })
+				quad:playcommand("SetSize",{ width=width, addx=addx, lines=(deathMeasures ~= nil and 2 or 1) })
+				self:addx(addx)
 			end
 		}	
 	}

@@ -1,4 +1,4 @@
--- This file will maybe be used for new functions created by Zarzob/Zankoku's fork of Simply Love
+-- This file will maybe be used for new functions created for Zarzob/Zankoku's fork of Simply Love
 
 -- Returns an array of files named <number>.<extension> in <directory>
 -- Created to play random audio files for song pass/fail/pb/wr
@@ -55,4 +55,83 @@ getAuthorTable = function(steps)
 	if name ~= "" and (not FindInTable(name, author_table)) then author_table[#author_table+1] = name end
 
 	return author_table
+end
+
+-- Return an array of cumulative_seconds for each song in a course, which used by Step Statistics Time.lua
+courseLengthBySong=function(player)
+    local cumulative_seconds = {}
+    if GAMESTATE:IsCourseMode() then
+        local rate = SL.Global.ActiveModifiers.MusicRate
+        local seconds = 0
+        local trail = GAMESTATE:GetCurrentTrail(player)
+    
+        if trail then
+            local entries = trail:GetTrailEntries()
+            for i, entry in ipairs(entries) do
+                seconds = seconds + (entry:GetSong():MusicLengthSeconds() / rate)
+                table.insert(cumulative_seconds, seconds)
+            end
+        end
+        return cumulative_seconds
+    end
+end
+
+-- Return the total length of the current song or course, in seconds
+totalLengthSongOrCourse=function(player)
+    local totalseconds = 0
+    if GAMESTATE:IsCourseMode() then
+        local trail = GAMESTATE:GetCurrentTrail(player)
+        if trail then
+            totalseconds = trail:GetLengthSeconds()
+        end
+    else
+        local song = GAMESTATE:GetCurrentSong()
+        if song then
+            totalseconds = song:GetLastSecond()
+        end
+    end
+
+    -- totalseconds is initilialzed in the engine as -1
+    -- https://github.com/stepmania/stepmania/blob/6a645b4710/src/Song.cpp#L80
+    -- and might not have ever been set to anything meaningful in edge cases
+    -- e.g. ogg file is 5 seconds, ssc file has 1 tapnote occuring at beat 0
+    if totalseconds < 0 then totalseconds = 0 end
+
+    local rate = SL.Global.ActiveModifiers.MusicRate
+    totalseconds = totalseconds / rate
+
+    return totalseconds
+end
+
+
+
+
+-- Return the current time of the course or song, in seconds
+currentTimeSongOrCourse=function(player)
+    local playerState = GAMESTATE:GetPlayerState(player)	
+    local seconds = 0
+    local rate = SL.Global.ActiveModifiers.MusicRate
+
+    -- This doesn't work for course mode yet, it isn't called
+    if GAMESTATE:IsCourseMode() then
+        -- Find out what song in the course
+        local course_index = GAMESTATE:GetCourseSongIndex()
+
+        -- cumulative song length array
+        local cumulative_seconds = courseLengthBySong(player)
+
+        -- Add up all the previous songs
+        for i=1,course_index do
+            seconds = seconds + cumulative_seconds[course_index]
+        end
+
+        -- Now add on the current song's timer
+        local currentSongTimer = playerState:GetSongPosition():GetMusicSecondsVisible()
+        currentSongTimer = currentSongTimer / rate
+        seconds = seconds + currentSongTimer
+    else
+        seconds = playerState:GetSongPosition():GetMusicSecondsVisible()  / rate
+    end
+
+    return seconds
 end
