@@ -17,3 +17,42 @@ findFiles=function(dir,extension)
     end
     return files
 end
+
+-- Returns current song and steps for player
+-- Moving out of Step Statistics StepsInfo.lua
+GetSongAndSteps = function(player) 
+	-- Return song ID and step data ID
+	local song
+	local steps
+	
+	if GAMESTATE:IsCourseMode() then
+		local songindex = GAMESTATE:GetCourseSongIndex()
+		local trail = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[songindex+1]
+		steps = trail:GetSteps()
+		song = trail:GetSong()
+	else
+		song = GAMESTATE:GetCurrentSong()
+		steps = GAMESTATE:GetCurrentSteps(player)			
+	end
+	
+	return song, steps
+end
+
+-- Returns array of step artist info
+-- Moving out of Step Statistics StepsInfo.lua
+getAuthorTable = function(steps)
+	-- Returns a table of max 3 rows of step data
+	-- like step author, chart artist, tech notation, stream breakdown,  meme quotes
+	local desc = steps:GetDescription()
+	local author_table = {}
+	
+	if desc ~= "" then author_table[#author_table+1] = desc end
+
+	local cred = steps:GetAuthorCredit()
+	if cred ~= "" and (not FindInTable(cred, author_table)) then author_table[#author_table+1] = cred end
+
+	local name = steps:GetChartName()
+	if name ~= "" and (not FindInTable(name, author_table)) then author_table[#author_table+1] = name end
+
+	return author_table
+end

@@ -50,41 +50,6 @@ local af = Def.ActorFrame {
 local s
 local sd
 
-local GetSongAndSteps = function(player) 
-	-- Return song ID and step data ID
-	local song
-	local steps
-	
-	if GAMESTATE:IsCourseMode() then
-		local songindex = GAMESTATE:GetCourseSongIndex()
-		local trail = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[songindex+1]
-		steps = trail:GetSteps()
-		song = GAMESTATE:GetCurrentCourse():GetCourseEntry(songindex):GetSong()
-	else
-		song = GAMESTATE:GetCurrentSong()
-		steps = GAMESTATE:GetCurrentSteps(player)			
-	end
-	
-	return song, steps
-end
-
-local getAuthorTable = function(steps)
-	-- Returns a table of max 3 rows of step data
-	-- like step author, chart artist, tech notation, stream breakdown,  meme quotes
-	local desc = steps:GetDescription()
-	local author_table = {}
-	
-	if desc ~= "" then author_table[#author_table+1] = desc end
-
-	local cred = steps:GetAuthorCredit()
-	if cred ~= "" and (not FindInTable(cred, author_table)) then author_table[#author_table+1] = cred end
-
-	local name = steps:GetChartName()
-	if name ~= "" and (not FindInTable(name, author_table)) then author_table[#author_table+1] = name end
-
-	return author_table
-end
-
 -- Labels
 local labels = { "Song", "Artist", "Pack", "Desc" }
 if not c and ar > 1.5 then -- only display labels if using widescreen and not using center 1 player
@@ -189,20 +154,20 @@ af[#af+1] = Def.ActorFrame {
 			else
 				self:settext("")
 			end
-			if #author_table > 1 then
-				self:queuecommand("Marquee")
-			end
 			
 		end,
 		MarqueeCommand=function(self)
-			marquee_index = (marquee_index % #author_table) + 1
-			local text = author_table[marquee_index]
-			self:settext(text)
-			DiffuseEmojis(self,text)
-			if marquee_index == #author_table then
-				marquee_index = 0
+			-- Check author table (for course mode)
+			if #author_table > 0 then
+				marquee_index = (marquee_index % #author_table) + 1
+				local text = author_table[marquee_index]
+				self:settext(text)
+				DiffuseEmojis(self,text)
+				if marquee_index == #author_table then
+					marquee_index = 0
+				end
+				self:sleep(2):queuecommand("Marquee")
 			end
-			self:sleep(2):queuecommand("Marquee")
 		end,
 	}
 }
