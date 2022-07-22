@@ -103,9 +103,6 @@ totalLengthSongOrCourse=function(player)
     return totalseconds
 end
 
-
-
-
 -- Return the current time of the course or song, in seconds
 currentTimeSongOrCourse=function(player)
     local playerState = GAMESTATE:GetPlayerState(player)	
@@ -134,4 +131,16 @@ currentTimeSongOrCourse=function(player)
     end
 
     return seconds
+end
+
+-- Formatting time from seconds
+-- Function not currently provided by ITGmania
+SecondsToHMMSS = function(s)
+    local hours, mins, secs
+    local hmmss = "%d:%02d:%02d"
+	-- native floor division sounds nice but isn't available in Lua 5.1
+	hours = math.floor(s/3600)
+	mins  = math.floor((s % 3600) / 60)
+	secs  = s - (hours * 3600) - (mins * 60)
+	return hmmss:format(hours, mins, secs)
 end
