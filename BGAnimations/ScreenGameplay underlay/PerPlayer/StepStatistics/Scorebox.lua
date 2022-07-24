@@ -229,7 +229,7 @@ local af = Def.ActorFrame{
 				maxLeaderboardResults=NumEntries,
 			}
 
-			if SL[pn].ApiKey ~= "" then
+			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
 				query["chartHashP"..n] = SL[pn].Streams.Hash
 				headers["x-api-key-player-"..n] = SL[pn].ApiKey
 				sendRequest = true
