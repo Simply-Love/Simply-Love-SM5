@@ -5,7 +5,7 @@
 local GetModsAndPlayerOptions = function(player)
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
 	local topscreen = SCREENMAN:GetTopScreen():GetName()
-	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
+	local modslevel = topscreen == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
 	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
 
 	return mods, playeroptions
@@ -20,9 +20,9 @@ local GetPlayableTrails = function(course)
 	if not (course and course.GetAllTrails) then return nil end
 
 	local trails = {}
-	for _,trail in ipairs(course:GetAllTrails()) do
+	for _, trail in ipairs(course:GetAllTrails()) do
 		local playable = true
-		for _,entry in ipairs(trail:GetTrailEntries()) do
+		for _, entry in ipairs(trail:GetTrailEntries()) do
 			if not SongUtil.IsStepsTypePlayable(entry:GetSong(), entry:GetSteps():GetStepsType()) then
 				playable = false
 				break
@@ -90,11 +90,12 @@ local Overrides = {
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
-			for i=1,#list do
+			for i = 1, #list do
 				if list[i] then
 					-- Broadcast a message that ./BGAnimations/ScreenPlayerOptions overlay.lua will be listening for
 					-- so it can hackishly modify the single BitmapText actor used in the SpeedMod optionrow
-					MESSAGEMAN:Broadcast('SpeedModType'..ToEnumShortString(pn)..'Set', {SpeedModType=self.Values[i], Player=pn})
+					MESSAGEMAN:Broadcast('SpeedModType' .. ToEnumShortString(pn) .. 'Set',
+						{ SpeedModType = self.Values[i], Player = pn })
 				end
 			end
 		end
@@ -106,10 +107,10 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local type  = mods.SpeedModType or "X"
-			local speed = mods.SpeedMod or 1.00
+			local type                = mods.SpeedModType or "X"
+			local speed               = mods.SpeedMod or 1.00
 
-			playeroptions[type.."Mod"](playeroptions, speed)
+			playeroptions[type .. "Mod"](playeroptions, speed)
 		end
 	},
 	-------------------------------------------------------------------------
@@ -175,7 +176,7 @@ local Overrides = {
 
 				if stock[game] then
 					for stock_noteskin in ivalues(stock[game]) do
-						for i=1,#all do
+						for i = 1, #all do
 							if stock_noteskin == all[i] then
 								table.remove(all, i)
 								break
@@ -197,8 +198,8 @@ local Overrides = {
 				if list[i] then mods.NoteSkin = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
-			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkin", Value=mods.NoteSkin})
-			playeroptions:NoteSkin( mods.NoteSkin )
+			MESSAGEMAN:Broadcast("RefreshActorProxy", { Player = pn, Name = "NoteSkin", Value = mods.NoteSkin })
+			playeroptions:NoteSkin(mods.NoteSkin)
 		end
 	},
 	-------------------------------------------------------------------------
@@ -213,7 +214,8 @@ local Overrides = {
 				if list[i] then mods.JudgmentGraphic = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the Judgment preview
-			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="JudgmentGraphic", Value=StripSpriteHints(mods.JudgmentGraphic)})
+			MESSAGEMAN:Broadcast("RefreshActorProxy",
+				{ Player = pn, Name = "JudgmentGraphic", Value = StripSpriteHints(mods.JudgmentGraphic) })
 		end
 	},
 	-------------------------------------------------------------------------
@@ -228,7 +230,8 @@ local Overrides = {
 				if list[i] then mods.HoldJudgment = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the HoldJudgment preview
-			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="HoldJudgment", Value=StripSpriteHints(mods.HoldJudgment)})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", { Player = pn, Name = "HoldJudgment",
+				Value = StripSpriteHints(mods.HoldJudgment) })
 		end
 	},
 	-------------------------------------------------------------------------
@@ -242,26 +245,26 @@ local Overrides = {
 				if list[i] then mods.ComboFont = val; break end
 			end
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the ComboFont preview
-			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="ComboFont", Value=mods.ComboFont})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", { Player = pn, Name = "ComboFont", Value = mods.ComboFont })
 		end
 	},
 	-------------------------------------------------------------------------
 	BackgroundFilter = {
-		Values = { 'Off','Dark','Darker','Darkest' },
+		Values = { 'Off', 'Dark', 'Darker', 'Darkest' },
 	},
 	-------------------------------------------------------------------------
 	Mini = {
 		Choices = function()
-			local first	= -100
-			local last 	= 150
-			local step 	= 1
+			local first = -100
+			local last  = 150
+			local step  = 1
 
-			return stringify( range(first, last, step), "%g%%")
+			return stringify(range(first, last, step), "%g%%")
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
-			for i=1,#self.Choices do
+			for i = 1, #self.Choices do
 				if list[i] then
 					mods.Mini = self.Choices[i]
 				end
@@ -269,22 +272,22 @@ local Overrides = {
 
 			-- to make the arrows smaller, pass Mini() a value between 0 and 1
 			-- (to make the arrows bigger, pass Mini() a value larger than 1)
-			playeroptions:Mini( mods.Mini:gsub("%%","")/100 )
+			playeroptions:Mini(mods.Mini:gsub("%%", "") / 100)
 		end
 	},
 	-------------------------------------------------------------------------
 	MusicRate = {
 		Choices = function()
-			local first	= 0.05
-			local last 	= 3
-			local step 	= 0.01
+			local first = 0.05
+			local last  = 3
+			local step  = 0.01
 
-			return stringify( range(first, last, step), "%g")
+			return stringify(range(first, last, step), "%g")
 		end,
 		ExportOnChange = true,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
-			local rate = ("%g"):format( SL.Global.ActiveModifiers.MusicRate )
+			local rate = ("%g"):format(SL.Global.ActiveModifiers.MusicRate)
 			local i = FindInTable(rate, self.Choices) or 1
 			list[i] = true
 			return list
@@ -293,9 +296,9 @@ local Overrides = {
 
 			local mods = SL.Global.ActiveModifiers
 
-			for i=1,#self.Choices do
+			for i = 1, #self.Choices do
 				if list[i] then
-					mods.MusicRate = tonumber( self.Choices[i] )
+					mods.MusicRate = tonumber(self.Choices[i])
 				end
 			end
 
@@ -308,15 +311,15 @@ local Overrides = {
 			-- not the desired behavior in EditMode, so when users change between different songs in EditMode,
 			-- always reset the musicrate mod.  See: ./BGAnimations/ScreenEditMeny underlay.lua
 			if topscreen == "ScreenEditOptions" then
-				GAMESTATE:ApplyGameCommand("mod," .. mods.MusicRate .."xmusic")
+				GAMESTATE:ApplyGameCommand("mod," .. mods.MusicRate .. "xmusic")
 			else
-				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate( mods.MusicRate )
+				GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred"):MusicRate(mods.MusicRate)
 			end
 
 			MESSAGEMAN:Broadcast("MusicRateChanged")
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can update ActorProxies
 			-- in the MusicRate OptionRow for split BPMs if needed
-			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="MusicRate", Value=""})
+			MESSAGEMAN:Broadcast("RefreshActorProxy", { Player = pn, Name = "MusicRate", Value = "" })
 		end
 	},
 	-------------------------------------------------------------------------
@@ -328,19 +331,21 @@ local Overrides = {
 			if not GAMESTATE:IsCourseMode() then
 				local song = GAMESTATE:GetCurrentSong()
 				if song then
-					for steps in ivalues( SongUtil.GetPlayableSteps(song) ) do
+					for steps in ivalues(SongUtil.GetPlayableSteps(song)) do
 						if steps:IsAnEdit() then
-							choices[#choices+1] = ("%s %i"):format(steps:GetDescription(), steps:GetMeter())
+							choices[#choices + 1] = ("%s %i"):format(steps:GetDescription(), steps:GetMeter())
 						else
-							choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())), steps:GetMeter())
+							choices[#choices + 1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())),
+								steps:GetMeter())
 						end
 					end
 				end
 			else
 				local course = GAMESTATE:GetCurrentCourse()
 				if course then
-					for _,trail in ipairs(GetPlayableTrails(course)) do
-						choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(trail:GetDifficulty())), trail:GetMeter())
+					for _, trail in ipairs(GetPlayableTrails(course)) do
+						choices[#choices + 1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(trail:GetDifficulty())),
+							trail:GetMeter())
 					end
 				end
 			end
@@ -365,7 +370,7 @@ local Overrides = {
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
-			for i,v in ipairs(self.Values) do
+			for i, v in ipairs(self.Values) do
 				if list[i] then
 					-- GAMESTATE keeps track of what the "preferred difficulty" is and this is used by
 					-- the engine's SelectMusic class.  SL is using the engine's SelectMusic for now.
@@ -375,10 +380,10 @@ local Overrides = {
 
 					if GAMESTATE:IsCourseMode() then
 						GAMESTATE:SetCurrentTrail(pn, v)
-						MESSAGEMAN:Broadcast("CurrentTrail"..ToEnumShortString(pn).."Changed")
+						MESSAGEMAN:Broadcast("CurrentTrail" .. ToEnumShortString(pn) .. "Changed")
 					else
 						GAMESTATE:SetCurrentSteps(pn, v)
-						MESSAGEMAN:Broadcast("CurrentSteps"..ToEnumShortString(pn).."Changed")
+						MESSAGEMAN:Broadcast("CurrentSteps" .. ToEnumShortString(pn) .. "Changed")
 					end
 					break
 				end
@@ -409,7 +414,7 @@ local Overrides = {
 			local sl_pn = SL[ToEnumShortString(pn)]
 			local mods = sl_pn.ActiveModifiers
 			if SL.Global.GameMode == "FA+" then
-				 -- always disable in FA+ mode since it's handled engine side.
+				-- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
 				mods.ShowEXScore = list[2]
 				mods.ShowFaPlusPane = list[3]
@@ -429,23 +434,23 @@ local Overrides = {
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			list[1] = mods.HideTargets or false
-			list[2] = mods.HideSongBG  or false
-			list[3] = mods.HideCombo   or false
+			list[2] = mods.HideSongBG or false
+			list[3] = mods.HideCombo or false
 			list[4] = mods.HideLifebar or false
-			list[5] = mods.HideScore   or false
-			list[6] = mods.HideDanger  or false
+			list[5] = mods.HideScore or false
+			list[6] = mods.HideDanger or false
 			list[7] = mods.HideComboExplosions or false
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			mods.HideTargets = list[1]
-			mods.HideSongBG  = list[2]
-			mods.HideCombo   = list[3]
-			mods.HideLifebar = list[4]
-			mods.HideScore   = list[5]
-			mods.HideDanger  = list[6]
-			mods.HideComboExplosions = list[7]
+			mods.HideTargets          = list[1]
+			mods.HideSongBG           = list[2]
+			mods.HideCombo            = list[3]
+			mods.HideLifebar          = list[4]
+			mods.HideScore            = list[5]
+			mods.HideDanger           = list[6]
+			mods.HideComboExplosions  = list[7]
 
 			playeroptions:Dark(mods.HideTargets and 1 or 0)
 			playeroptions:Cover(mods.HideSongBG and 1 or 0)
@@ -462,17 +467,17 @@ local Overrides = {
 			-- notefield width already uses more than half the screen width
 			local style = GAMESTATE:GetCurrentStyle()
 			local notefieldwidth = GetNotefieldWidth()
-			local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+			local IsUltraWide = (GetScreenAspectRatio() > 21 / 9)
 			local mpn = GAMESTATE:GetMasterPlayerNumber()
 
 			-- Never available in double
 			if style and style:GetName() == "double"
-			-- In 4:3 versus mode
-			or (not IsUsingWideScreen() and style and style:GetName() == "versus")
-			-- if the notefield takes up more than half the screen width
-			or (notefieldwidth and notefieldwidth > _screen.w/2)
-			-- if the notefield is centered with 4:3 aspect ratio
-			or (mpn and GetNotefieldX(mpn) == _screen.cx and not IsUsingWideScreen())
+				-- In 4:3 versus mode
+				or (not IsUsingWideScreen() and style and style:GetName() == "versus")
+				-- if the notefield takes up more than half the screen width
+				or (notefieldwidth and notefieldwidth > _screen.w / 2)
+				-- if the notefield is centered with 4:3 aspect ratio
+				or (mpn and GetNotefieldX(mpn) == _screen.cx and not IsUsingWideScreen())
 			then
 				table.remove(choices, 3)
 			end
@@ -485,7 +490,7 @@ local Overrides = {
 		Values = function()
 			local t = {}
 			-- "GradeTier16" to "GradeTier01"
-			for i=16,1,-1 do
+			for i = 16, 1, -1 do
 				table.insert(t, ("GradeTier%02d"):format(i))
 			end
 			table.insert(t, "Machine best")
@@ -498,7 +503,7 @@ local Overrides = {
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
-			for i,v in ipairs(self.Values) do
+			for i, v in ipairs(self.Values) do
 				if list[i] then SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore = i; break end
 			end
 		end
@@ -530,7 +535,7 @@ local Overrides = {
 			if IsUsingWideScreen() then
 				vals = { "JudgmentTilt", "ColumnCues" }
 				if IsServiceAllowed(SL.GrooveStats.GetScores) then
-					vals[#vals+1] = "DisplayScorebox"
+					vals[#vals + 1] = "DisplayScorebox"
 				end
 			else
 				-- Add in the two removed options if not in WideScreen.
@@ -557,6 +562,35 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
 	},
+	ErrorBarDisableJudgment = {
+		SelectType = "SelectMultiple",
+		Choices = function()
+			local tns = "TapNoteScore" .. (SL.Global.GameMode == "ITG" and "" or SL.Global.GameMode)
+			local t = {}
+
+			t[1] = THEME:GetString(tns, "W5")
+			t[2] = THEME:GetString(tns, "W4")
+
+			if SL.Global.GameMode == "ITG" then
+				t[3] = THEME:GetString(tns, "W3")
+			end
+
+			return t
+		end,
+		LoadSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			list[1] = mods.ErrorBarDisableW5 or false
+			list[2] = mods.ErrorBarDisableW4 or false
+			list[3] = mods.ErrorBarDisableW3 or false
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			local mods = GetModsAndPlayerOptions(pn)
+			mods.ErrorBarDisableW5 = list[1]
+			mods.ErrorBarDisableW4 = list[2]
+			mods.ErrorBarDisableW3 = list[3]
+		end
+	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Values = { "None", "8th", "12th", "16th", "24th", "32nd" },
@@ -570,27 +604,27 @@ local Overrides = {
 	TimingWindows = {
 		Values = function()
 			return {
-				{true,true,true,true,true},
-				{true,true,true,true,false},
-				{true,true,true,false,false},
-				{false,false,true,true,true},
+				{ true, true, true, true, true },
+				{ true, true, true, true, false },
+				{ true, true, true, false, false },
+				{ false, false, true, true, true },
 			}
 		end,
 		Choices = function()
-			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
-			local t = {THEME:GetString("SLPlayerOptions","None")}
+			local tns = "TapNoteScore" .. (SL.Global.GameMode == "ITG" and "" or SL.Global.GameMode)
+			local t = { THEME:GetString("SLPlayerOptions", "None") }
 			-- assume pluralization via terminal s
-			t[2] = THEME:GetString(tns,"W5").."s"
-			t[3] = THEME:GetString(tns,"W4").."s + "..t[2]
-			t[4] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
+			t[2] = THEME:GetString(tns, "W5") .. "s"
+			t[3] = THEME:GetString(tns, "W4") .. "s + " .. t[2]
+			t[4] = THEME:GetString(tns, "W1") .. "s + " .. THEME:GetString(tns, "W2") .. "s"
 			return t
 		end,
 		OneChoiceForAllPlayers = true,
 		LoadSelections = function(self, list, pn)
 			local windows = SL.Global.ActiveModifiers.TimingWindows
-			for i=1,#list do
+			for i = 1, #list do
 				local all_match = true
-				for w,window in ipairs(windows) do
+				for w, window in ipairs(windows) do
 					if window ~= self.Values[i][w] then all_match = false; break end
 				end
 				if all_match then list[i] = true; break end
@@ -599,15 +633,19 @@ local Overrides = {
 		end,
 		SaveSelections = function(self, list, pn)
 			local gmods = SL.Global.ActiveModifiers
-			for i=1,#list do
+			for i = 1, #list do
 				if list[i] then
 					gmods.TimingWindows = self.Values[i]
-					for w=1,NumJudgmentsAvailable() do
+					for w = 1, NumJudgmentsAvailable() do
 						if self.Values[i][w] then
-							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW"..w])
+							PREFSMAN:SetPreference("TimingWindowSecondsW" .. w,
+								SL.Preferences[SL.Global.GameMode]["TimingWindowSecondsW" .. w
+								])
 						else
-							local prev = (w > 1 and PREFSMAN:GetPreference("TimingWindowSecondsW"..(w-1)) or -math.abs(SL.Preferences[SL.Global.GameMode].TimingWindowAdd))
-							PREFSMAN:SetPreference("TimingWindowSecondsW"..w, prev)
+							local prev = (
+								w > 1 and PREFSMAN:GetPreference("TimingWindowSecondsW" .. (w - 1)) or
+									-math.abs(SL.Preferences[SL.Global.GameMode].TimingWindowAdd))
+							PREFSMAN:SetPreference("TimingWindowSecondsW" .. w, prev)
 						end
 					end
 				end
@@ -621,7 +659,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Values = function()
-			local choices = { "Gameplay", "Select Music", "Options2", "Options3"  }
+			local choices = { "Gameplay", "Select Music", "Options2", "Options3" }
 			if SL.Global.MenuTimer.ScreenSelectMusic < 1 then table.remove(choices, 2) end
 			return choices
 		end,
@@ -642,7 +680,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions2 = {
 		Values = function()
-			local choices = { "Gameplay", "Select Music", "Options1", "Options3"  }
+			local choices = { "Gameplay", "Select Music", "Options1", "Options3" }
 			if SL.Global.MenuTimer.ScreenSelectMusic < 1 then table.remove(choices, 2) end
 			return choices
 		end,
@@ -664,7 +702,7 @@ local Overrides = {
 	-- this is so dumb; I need to find time to completely rewrite ScreenPlayerOptions :(
 	ScreenAfterPlayerOptions3 = {
 		Values = function()
-			local choices = { "Gameplay", "Select Music", "Options1", "Options2"  }
+			local choices = { "Gameplay", "Select Music", "Options1", "Options2" }
 			if SL.Global.MenuTimer.ScreenSelectMusic < 1 then table.remove(choices, 2) end
 			return choices
 		end,
@@ -699,16 +737,17 @@ local OptionRowDefault = {
 			-- FIXME: add inline comments explaining the intent/purpose of All This Code
 			if Overrides[name].Values then
 				if Overrides[name].Choices then
-					self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
+					self.Choices = type(Overrides[name].Choices) == "function" and Overrides[name].Choices() or Overrides[name].Choices
 				else
 					self.Choices = {}
-					for i, v in ipairs( (type(Overrides[name].Values)=="function" and Overrides[name].Values() or Overrides[name].Values) ) do
+					for i, v in ipairs((type(Overrides[name].Values) == "function" and Overrides[name].Values() or
+						Overrides[name].Values)) do
 						self.Choices[i] = THEME:GetString("SLPlayerOptions", v)
 					end
 				end
-				self.Values = type(Overrides[name].Values)=="function" and Overrides[name].Values() or Overrides[name].Values
+				self.Values = type(Overrides[name].Values) == "function" and Overrides[name].Values() or Overrides[name].Values
 			else
-				self.Choices = type(Overrides[name].Choices)=="function" and Overrides[name].Choices() or Overrides[name].Choices
+				self.Choices = type(Overrides[name].Choices) == "function" and Overrides[name].Choices() or Overrides[name].Choices
 			end
 
 			-- define fallback values to use here if an override isn't specified
@@ -772,16 +811,15 @@ local OptionRowDefault = {
 -- For example, ./ScreenPlayerOptions overlay/NoteSkinPreviews.lua uses it to get a list of NoteSkins
 -- so it can load preview NoteSkin actors into the overlay's ActorFrame ahead of time.
 
-function CustomOptionRow( name )
-	if not (type(name)=="string" and Overrides[name]) then return false end
+function CustomOptionRow(name)
+	if not (type(name) == "string" and Overrides[name]) then return false end
 
 	-- assign the properties of the generic OptionRowDefault to OptRow
-	local OptRow = setmetatable( {}, OptionRowDefault )
+	local OptRow = setmetatable({}, OptionRowDefault)
 
 	-- now that OptRow has the method available, run its initialize() method
-	return OptRow:initialize( name )
+	return OptRow:initialize(name)
 end
-
 
 -- -----------------------------------------------------------------------
 -- Mods are applied in their respective SaveSelections() functions when
@@ -796,8 +834,8 @@ end
 -- the former handles "normally" joined players, and the latter handles latejoin
 
 function ApplyMods(player)
-	for name,value in pairs(Overrides) do
-		OptRow = CustomOptionRow( name )
+	for name, value in pairs(Overrides) do
+		OptRow = CustomOptionRow(name)
 
 		-- LoadSelections() and SaveSelections() expect two arguments in addition to self (the OptionRow)
 		-- first, a table of true/false values corresponding to the OptionRow's Choices table
@@ -810,10 +848,10 @@ function ApplyMods(player)
 		-- SaveSelections() expects the same sort of arguments, but it expects the true/false table to be already set appropriately
 		-- thus, we pass in the list that was returned from LoadSelections()
 		local list = {}
-		for i=1, #OptRow.Choices do
+		for i = 1, #OptRow.Choices do
 			list[i] = false
 		end
-		list = OptRow:LoadSelections( list, player )
-		OptRow:SaveSelections( list, player )
+		list = OptRow:LoadSelections(list, player)
+		OptRow:SaveSelections(list, player)
 	end
 end

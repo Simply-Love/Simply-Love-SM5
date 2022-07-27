@@ -26,36 +26,39 @@ local permitted_profile_settings = {
 	-- "Advanced Modifiers"
 	-- OptionRows that appear in SL's second page of PlayerOptions
 
-	HideTargets          = "boolean",
-	HideSongBG           = "boolean",
-	HideCombo            = "boolean",
-	HideLifebar          = "boolean",
-	HideScore            = "boolean",
-	HideDanger           = "boolean",
-	HideComboExplosions  = "boolean",
+	HideTargets         = "boolean",
+	HideSongBG          = "boolean",
+	HideCombo           = "boolean",
+	HideLifebar         = "boolean",
+	HideScore           = "boolean",
+	HideDanger          = "boolean",
+	HideComboExplosions = "boolean",
 
 	LifeMeterType        = "string",
 	DataVisualizations   = "string",
 	TargetScore          = "number",
 	ActionOnMissedTarget = "string",
 
-	MeasureCounter       = "string",
-	MeasureCounterLeft   = "boolean",
-	MeasureCounterUp     = "boolean",
-	HideLookahead        = "boolean",
+	MeasureCounter     = "string",
+	MeasureCounterLeft = "boolean",
+	MeasureCounterUp   = "boolean",
+	HideLookahead      = "boolean",
 
-	ColumnFlashOnMiss    = "boolean",
-	SubtractiveScoring   = "boolean",
-	Pacemaker            = "boolean",
-	MissBecauseHeld      = "boolean",
-	NPSGraphAtTop        = "boolean",
-	JudgmentTilt         = "boolean",
-	ColumnCues           = "boolean",
-	DisplayScorebox      = "boolean",
+	ColumnFlashOnMiss  = "boolean",
+	SubtractiveScoring = "boolean",
+	Pacemaker          = "boolean",
+	MissBecauseHeld    = "boolean",
+	NPSGraphAtTop      = "boolean",
+	JudgmentTilt       = "boolean",
+	ColumnCues         = "boolean",
+	DisplayScorebox    = "boolean",
 
-	ErrorBar             = "string",
-	ErrorBarUp           = "boolean",
-	ErrorBarMultiTick    = "boolean",
+	ErrorBar          = "string",
+	ErrorBarUp        = "boolean",
+	ErrorBarMultiTick = "boolean",
+	ErrorBarDisableW5 = "boolean",
+	ErrorBarDisableW4 = "boolean",
+	ErrorBarDisableW3 = "boolean",
 
 	ShowFaPlusWindow = "boolean",
 	ShowEXScore      = "boolean",
@@ -72,17 +75,17 @@ local permitted_profile_settings = {
 -- -----------------------------------------------------------------------
 
 local theme_name = THEME:GetThemeDisplayName()
-local filename =  theme_name .. " UserPrefs.ini"
+local filename = theme_name .. " UserPrefs.ini"
 
 -- function assigned to "CustomLoadFunction" under [Profile] in metrics.ini
 LoadProfileCustom = function(profile, dir)
 
-	local path =  dir .. filename
+	local path = dir .. filename
 	local player, pn, filecontents
 
 	-- we've been passed a profile object as the variable "profile"
 	-- see if it matches against anything returned by PROFILEMAN:GetProfile(player)
-	for p in ivalues( GAMESTATE:GetHumanPlayers() ) do
+	for p in ivalues(GAMESTATE:GetHumanPlayers()) do
 		if profile == PROFILEMAN:GetProfile(p) then
 			player = p
 			pn = ToEnumShortString(p)
@@ -98,16 +101,17 @@ LoadProfileCustom = function(profile, dir)
 		filecontents = IniFile.ReadFile(path)[theme_name]
 
 		-- for each key/value pair read in from the player's profile
-		for k,v in pairs(filecontents) do
+		for k, v in pairs(filecontents) do
 			-- ensure that the key has a corresponding key in permitted_profile_settings
 			if permitted_profile_settings[k]
-			--  ensure that the datatype of the value matches the datatype specified in permitted_profile_settings
-			and type(v)==permitted_profile_settings[k] then
+				--  ensure that the datatype of the value matches the datatype specified in permitted_profile_settings
+				and type(v) == permitted_profile_settings[k] then
 				-- if the datatype is string and this key corresponds with an OptionRow in ScreenPlayerOptions
 				-- ensure that the string read in from the player's profile
 				-- is a valid value (or choice) for the corresponding OptionRow
-				if type(v) == "string" and CustomOptionRow(k) and FindInTable(v, CustomOptionRow(k).Values or CustomOptionRow(k).Choices)
-				or type(v) ~= "string" then
+				if type(v) == "string" and CustomOptionRow(k) and
+					FindInTable(v, CustomOptionRow(k).Values or CustomOptionRow(k).Choices)
+					or type(v) ~= "string" then
 					SL[pn].ActiveModifiers[k] = v
 				end
 
@@ -115,7 +119,7 @@ LoadProfileCustom = function(profile, dir)
 				-- it is saved to and read from profile as a string, but doesn't have a corresponding
 				-- OptionRow in ScreenPlayerOptions, so it will fail validation above
 				-- we want engine-defined mods (e.g. dizzy) to be applied as well, not just SL-defined mods
-				if k=="PlayerOptionsString" and type(v)=="string" then
+				if k == "PlayerOptionsString" and type(v) == "string" then
 					-- v here is the comma-delimited set of modifiers the engine's PlayerOptions interface understands
 
 					-- update the SL table so that this PlayerOptionsString value is easily accessible throughout the theme
@@ -129,7 +133,7 @@ LoadProfileCustom = function(profile, dir)
 					-- machine operators specify a default FailType at a global/machine level, so use this opportunity to
 					-- use the PlayerOptions interface to set FailSetting() using the default FailType setting from
 					-- the operator menu's Advanced Options
-					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
+					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting(GetDefaultFailType())
 				end
 			end
 		end
@@ -141,14 +145,14 @@ end
 -- function assigned to "CustomSaveFunction" under [Profile] in metrics.ini
 SaveProfileCustom = function(profile, dir)
 
-	local path =  dir .. filename
+	local path = dir .. filename
 
-	for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		if profile == PROFILEMAN:GetProfile(player) then
 			local pn = ToEnumShortString(player)
 			local output = {}
-			for k,v in pairs(SL[pn].ActiveModifiers) do
-				if permitted_profile_settings[k] and type(v)==permitted_profile_settings[k] then
+			for k, v in pairs(SL[pn].ActiveModifiers) do
+				if permitted_profile_settings[k] and type(v) == permitted_profile_settings[k] then
 					output[k] = v
 				end
 			end
@@ -157,7 +161,7 @@ SaveProfileCustom = function(profile, dir)
 			-- and thus won't be handled in the loop above
 			output.PlayerOptionsString = SL[pn].PlayerOptionsString
 
-			IniFile.WriteFile( path, {[theme_name]=output} )
+			IniFile.WriteFile(path, { [theme_name] = output })
 
 			-- Write to the ITL file if we need to.
 			-- The ITLData table will only contain data for memory cards.
@@ -202,7 +206,7 @@ GetAvatarPath = function(profileDirectory, displayName)
 			local avatar_path = ("%s.%s"):format(path, extension)
 
 			if FILEMAN:DoesFileExist(avatar_path)
-			and ActorUtil.GetFileType(avatar_path) == "FileType_Bitmap"
+				and ActorUtil.GetFileType(avatar_path) == "FileType_Bitmap"
 			then
 				-- return the first valid avatar path that is found
 				return avatar_path

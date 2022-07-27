@@ -26,6 +26,11 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local gmods = SL.Global.ActiveModifiers
 
+local disabledJudgement = {
+    TapNoteScore_W3 = mods.ErrorBarDisableW3,
+    TapNoteScore_W4 = mods.ErrorBarDisableW4,
+    TapNoteScore_W5 = mods.ErrorBarDisableW5
+}
 local judgmentColors = {
     TapNoteScore_W1 = SL.JudgmentColors[SL.Global.GameMode][1],
     TapNoteScore_W2 = SL.JudgmentColors[SL.Global.GameMode][2],
@@ -44,14 +49,16 @@ local currentTick = 1
 local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
     if gmods.TimingWindows[i] then
-        enabledTimingWindows[#enabledTimingWindows+1] = i
+        if not disabledJudgement["TapNoteScore_W" .. tostring(i)] then
+            enabledTimingWindows[#enabledTimingWindows + 1] = i
+        end
     end
 end
 
 local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
 local wscale = barWidth / 2 / maxTimingOffset
 
-local af = Def.ActorFrame{
+local af = Def.ActorFrame {
     InitCommand = function(self)
         self:xy(GetNotefieldX(player), layout.y)
     end,
@@ -63,6 +70,9 @@ local af = Def.ActorFrame{
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
         if not judgmentColors[params.TapNoteScore] then return end
+        if disabledJudgement[params.TapNoteScore] then
+            return
+        end
 
         if params.TapNoteOffset then
             local tick = self:GetChild("Tick" .. currentTick)
@@ -71,10 +81,11 @@ local af = Def.ActorFrame{
             tick:finishtweening()
 
 
-            local color = judgmentColors[params.TapNoteScore] 
+            local color = judgmentColors[params.TapNoteScore]
 
             -- Check if we need to adjust the color for the white fantastic window.
-            if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and not IsW0Judgment(params, player) then
+            if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and
+                not IsW0Judgment(params, player) then
                 color = SL.JudgmentColors["FA+"][2]
             end
 
@@ -93,9 +104,9 @@ local af = Def.ActorFrame{
     end,
 
     -- Background
-    Def.Quad{
+    Def.Quad {
         InitCommand = function(self)
-            self:zoomto(barWidth + 2, barHeight+2)
+            self:zoomto(barWidth + 2, barHeight + 2)
                 :diffuse(color("#000000"))
                 :diffusealpha(.5)
 
@@ -109,7 +120,7 @@ local af = Def.ActorFrame{
     },
 
     -- Centerpiece
-    Def.Quad{
+    Def.Quad {
         InitCommand = function(self)
             self:zoomto(2, barHeight)
                 :diffuse(color(.5, .5, .5, 1))
@@ -152,20 +163,20 @@ local timing = {}
 
 for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
-    
+
     if mods.ShowFaPlusWindow and wi == 1 then
         -- Split the Fantastic window
         timing[#timing + 1] = GetTimingWindow(1, "FA+")
         timing[#timing + 1] = GetTimingWindow(2, "FA+")
     else
         timing[#timing + 1] = GetTimingWindow(wi)
-    end 
+    end
 end
 
 for window in ivalues(timing) do
     local offset = window * wscale
 
-    af[#af+1] = Def.Quad{
+    af[#af + 1] = Def.Quad {
         InitCommand = function(self)
             self:x(-offset)
                 :zoomto(1, barHeight)
@@ -175,7 +186,7 @@ for window in ivalues(timing) do
                 :diffusealpha(.3)
         end,
     }
-    af[#af+1] = Def.Quad{
+    af[#af + 1] = Def.Quad {
         InitCommand = function(self)
             self:x(offset)
                 :zoomto(1, barHeight)
@@ -189,7 +200,7 @@ end
 
 -- Ticks
 for i = 1, numTicks do
-    af[#af+1] = Def.Quad{
+    af[#af + 1] = Def.Quad {
         Name = "Tick" .. i,
         InitCommand = function(self)
             self:zoomto(tickWidth, barHeight):diffusealpha(0)

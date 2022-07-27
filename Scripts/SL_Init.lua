@@ -40,6 +40,9 @@ local PlayerDefaults = {
 				ErrorBar = "None",
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
+				ErrorBarDisableW5 = false,
+				ErrorBarDisableW4 = false,
+				ErrorBarDisableW3 = false,
 
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
@@ -102,7 +105,7 @@ local GlobalDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
-				TimingWindows = {true, true, true, true, true},
+				TimingWindows = { true, true, true, true, true },
 			}
 			self.Stages = {
 				PlayedThisGame = 0,
@@ -110,7 +113,7 @@ local GlobalDefaults = {
 				Stats = {}
 			}
 			self.ScreenAfter = {
-				PlayAgain = "ScreenEvaluationSummary",
+				PlayAgain      = "ScreenEvaluationSummary",
 				PlayerOptions  = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay",
 				PlayerOptions3 = "ScreenGameplay",
@@ -142,9 +145,9 @@ local GlobalDefaults = {
 -- "SL" is a general-purpose table that can be accessed from anywhere
 -- within the theme and stores info that needs to be passed between screens
 SL = {
-	P1 = setmetatable( {}, PlayerDefaults),
-	P2 = setmetatable( {}, PlayerDefaults),
-	Global = setmetatable( {}, GlobalDefaults),
+	P1 = setmetatable({}, PlayerDefaults),
+	P2 = setmetatable({}, PlayerDefaults),
+	Global = setmetatable({}, GlobalDefaults),
 
 	-- Colors that Simply Love's background can be
 	-- These colors are used for text on dark backgrounds and backgrounds containing dark text:
@@ -180,88 +183,88 @@ SL = {
 	-- These judgment colors are used for text & numbers on dark backgrounds:
 	JudgmentColors = {
 		Casual = {
-			color("#21CCE8"),	-- blue
-			color("#e29c18"),	-- gold
-			color("#66c955"),	-- green
-			color("#b45cff"),	-- purple (greatly lightened)
-			color("#c9855e"),	-- peach?
-			color("#ff3030")	-- red (slightly lightened)
+			color("#21CCE8"), -- blue
+			color("#e29c18"), -- gold
+			color("#66c955"), -- green
+			color("#b45cff"), -- purple (greatly lightened)
+			color("#c9855e"), -- peach?
+			color("#ff3030") -- red (slightly lightened)
 		},
 		ITG = {
-			color("#21CCE8"),	-- blue
-			color("#e29c18"),	-- gold
-			color("#66c955"),	-- green
-			color("#b45cff"),	-- purple (greatly lightened)
-			color("#c9855e"),	-- peach?
-			color("#ff3030")	-- red (slightly lightened)
+			color("#21CCE8"), -- blue
+			color("#e29c18"), -- gold
+			color("#66c955"), -- green
+			color("#b45cff"), -- purple (greatly lightened)
+			color("#c9855e"), -- peach?
+			color("#ff3030") -- red (slightly lightened)
 		},
 		["FA+"] = {
-			color("#21CCE8"),	-- blue
-			color("#ffffff"),	-- white
-			color("#e29c18"),	-- gold
-			color("#66c955"),	-- green
-			color("#b45cff"),	-- purple (greatly lightened)
-			color("#ff3030")	-- red (slightly lightened)
+			color("#21CCE8"), -- blue
+			color("#ffffff"), -- white
+			color("#e29c18"), -- gold
+			color("#66c955"), -- green
+			color("#b45cff"), -- purple (greatly lightened)
+			color("#ff3030") -- red (slightly lightened)
 		},
 	},
 	Preferences = {
 		Casual = {
-			TimingWindowAdd=0.0015,
-			RegenComboAfterMiss=0,
-			MaxRegenComboAfterMiss=0,
-			MinTNSToHideNotes="TapNoteScore_W3",
-			HarshHotLifePenalty=true,
+			TimingWindowAdd = 0.0015,
+			RegenComboAfterMiss = 0,
+			MaxRegenComboAfterMiss = 0,
+			MinTNSToHideNotes = "TapNoteScore_W3",
+			HarshHotLifePenalty = true,
 
-			PercentageScoring=true,
-			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=true,
+			PercentageScoring = true,
+			AllowW1 = "AllowW1_Everywhere",
+			SubSortByNumSteps = true,
 
-			TimingWindowSecondsW1=0.021500,
-			TimingWindowSecondsW2=0.043000,
-			TimingWindowSecondsW3=0.102000,
-			TimingWindowSecondsW4=0.102000,
-			TimingWindowSecondsW5=0.102000,
-			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
+			TimingWindowSecondsW1 = 0.021500,
+			TimingWindowSecondsW2 = 0.043000,
+			TimingWindowSecondsW3 = 0.102000,
+			TimingWindowSecondsW4 = 0.102000,
+			TimingWindowSecondsW5 = 0.102000,
+			TimingWindowSecondsHold = 0.320000,
+			TimingWindowSecondsMine = 0.070000,
+			TimingWindowSecondsRoll = 0.350000,
 		},
 		ITG = {
-			TimingWindowAdd=0.0015,
-			RegenComboAfterMiss=5,
-			MaxRegenComboAfterMiss=10,
-			MinTNSToHideNotes="TapNoteScore_W3",
-			HarshHotLifePenalty=true,
+			TimingWindowAdd = 0.0015,
+			RegenComboAfterMiss = 5,
+			MaxRegenComboAfterMiss = 10,
+			MinTNSToHideNotes = "TapNoteScore_W3",
+			HarshHotLifePenalty = true,
 
-			PercentageScoring=true,
-			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=true,
+			PercentageScoring = true,
+			AllowW1 = "AllowW1_Everywhere",
+			SubSortByNumSteps = true,
 
-			TimingWindowSecondsW1=0.021500,
-			TimingWindowSecondsW2=0.043000,
-			TimingWindowSecondsW3=0.102000,
-			TimingWindowSecondsW4=0.135000,
-			TimingWindowSecondsW5=0.180000,
-			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
+			TimingWindowSecondsW1 = 0.021500,
+			TimingWindowSecondsW2 = 0.043000,
+			TimingWindowSecondsW3 = 0.102000,
+			TimingWindowSecondsW4 = 0.135000,
+			TimingWindowSecondsW5 = 0.180000,
+			TimingWindowSecondsHold = 0.320000,
+			TimingWindowSecondsMine = 0.070000,
+			TimingWindowSecondsRoll = 0.350000,
 		},
 		["FA+"] = {
-			TimingWindowAdd=0.0015,
-			RegenComboAfterMiss=5,
-			MaxRegenComboAfterMiss=10,
-			MinTNSToHideNotes="TapNoteScore_W4",
-			HarshHotLifePenalty=true,
+			TimingWindowAdd = 0.0015,
+			RegenComboAfterMiss = 5,
+			MaxRegenComboAfterMiss = 10,
+			MinTNSToHideNotes = "TapNoteScore_W4",
+			HarshHotLifePenalty = true,
 
-			PercentageScoring=true,
-			AllowW1="AllowW1_Everywhere",
-			SubSortByNumSteps=true,
+			PercentageScoring = true,
+			AllowW1 = "AllowW1_Everywhere",
+			SubSortByNumSteps = true,
 
-			TimingWindowSecondsW1=0.013500,
-			TimingWindowSecondsW2=0.021500,
-			TimingWindowSecondsW3=0.043000,
-			TimingWindowSecondsW4=0.102000,
-			TimingWindowSecondsW5=0.135000,
-			TimingWindowSecondsHold=0.320000,
+			TimingWindowSecondsW1 = 0.013500,
+			TimingWindowSecondsW2 = 0.021500,
+			TimingWindowSecondsW3 = 0.043000,
+			TimingWindowSecondsW4 = 0.102000,
+			TimingWindowSecondsW5 = 0.135000,
+			TimingWindowSecondsHold = 0.320000,
 			-- NOTE(teejusb): FA+ mode previously had mines set to
 			-- 65ms instead of the actual window size of 70ms. This
 			-- was to account for "SM5 Mines" but now with the patch here:
@@ -270,8 +273,8 @@ SL = {
 			-- https://github.com/stepmania/stepmania/issues/1896
 			-- it's as good as "fixed" for the very very large majority of
 			-- cases so we can set this back to 70ms now.
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
+			TimingWindowSecondsMine = 0.070000,
+			TimingWindowSecondsRoll = 0.350000,
 		},
 	},
 	Metrics = {
@@ -286,125 +289,125 @@ SL = {
 		--    only penalizes missed checkpoints.
 
 		Casual = {
-			PercentScoreWeightW1=3,
-			PercentScoreWeightW2=2,
-			PercentScoreWeightW3=1,
-			PercentScoreWeightW4=0,
-			PercentScoreWeightW5=0,
-			PercentScoreWeightMiss=0,
-			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=IsGame("pump") and 0 or 3,
-			PercentScoreWeightHitMine=-1,
-			PercentScoreWeightCheckpointHit=0,
+			PercentScoreWeightW1 = 3,
+			PercentScoreWeightW2 = 2,
+			PercentScoreWeightW3 = 1,
+			PercentScoreWeightW4 = 0,
+			PercentScoreWeightW5 = 0,
+			PercentScoreWeightMiss = 0,
+			PercentScoreWeightLetGo = 0,
+			PercentScoreWeightHeld = IsGame("pump") and 0 or 3,
+			PercentScoreWeightHitMine = -1,
+			PercentScoreWeightCheckpointHit = 0,
 
-			GradeWeightW1=3,
-			GradeWeightW2=2,
-			GradeWeightW3=1,
-			GradeWeightW4=0,
-			GradeWeightW5=0,
-			GradeWeightMiss=0,
-			GradeWeightLetGo=0,
-			GradeWeightHeld=IsGame("pump") and 0 or 3,
-			GradeWeightHitMine=-1,
-			GradeWeightCheckpointHit=0,
+			GradeWeightW1 = 3,
+			GradeWeightW2 = 2,
+			GradeWeightW3 = 1,
+			GradeWeightW4 = 0,
+			GradeWeightW5 = 0,
+			GradeWeightMiss = 0,
+			GradeWeightLetGo = 0,
+			GradeWeightHeld = IsGame("pump") and 0 or 3,
+			GradeWeightHitMine = -1,
+			GradeWeightCheckpointHit = 0,
 
-			LifePercentChangeW1=0,
-			LifePercentChangeW2=0,
-			LifePercentChangeW3=0,
-			LifePercentChangeW4=0,
-			LifePercentChangeW5=0,
-			LifePercentChangeMiss=0,
-			LifePercentChangeLetGo=0,
-			LifePercentChangeHeld=0,
-			LifePercentChangeHitMine=0,
+			LifePercentChangeW1 = 0,
+			LifePercentChangeW2 = 0,
+			LifePercentChangeW3 = 0,
+			LifePercentChangeW4 = 0,
+			LifePercentChangeW5 = 0,
+			LifePercentChangeMiss = 0,
+			LifePercentChangeLetGo = 0,
+			LifePercentChangeHeld = 0,
+			LifePercentChangeHitMine = 0,
 
-			InitialValue=0.5,
+			InitialValue = 0.5,
 		},
 		ITG = {
-			PercentScoreWeightW1=5,
-			PercentScoreWeightW2=4,
-			PercentScoreWeightW3=2,
-			PercentScoreWeightW4=0,
-			PercentScoreWeightW5=-6,
-			PercentScoreWeightMiss=-12,
-			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=IsGame("pump") and 0 or 5,
-			PercentScoreWeightHitMine=-6,
-			PercentScoreWeightCheckpointHit=0,
+			PercentScoreWeightW1 = 5,
+			PercentScoreWeightW2 = 4,
+			PercentScoreWeightW3 = 2,
+			PercentScoreWeightW4 = 0,
+			PercentScoreWeightW5 = -6,
+			PercentScoreWeightMiss = -12,
+			PercentScoreWeightLetGo = 0,
+			PercentScoreWeightHeld = IsGame("pump") and 0 or 5,
+			PercentScoreWeightHitMine = -6,
+			PercentScoreWeightCheckpointHit = 0,
 
-			GradeWeightW1=5,
-			GradeWeightW2=4,
-			GradeWeightW3=2,
-			GradeWeightW4=0,
-			GradeWeightW5=-6,
-			GradeWeightMiss=-12,
-			GradeWeightLetGo=0,
-			GradeWeightHeld=IsGame("pump") and 0 or 5,
-			GradeWeightHitMine=-6,
-			GradeWeightCheckpointHit=0,
+			GradeWeightW1 = 5,
+			GradeWeightW2 = 4,
+			GradeWeightW3 = 2,
+			GradeWeightW4 = 0,
+			GradeWeightW5 = -6,
+			GradeWeightMiss = -12,
+			GradeWeightLetGo = 0,
+			GradeWeightHeld = IsGame("pump") and 0 or 5,
+			GradeWeightHitMine = -6,
+			GradeWeightCheckpointHit = 0,
 
-			LifePercentChangeW1=0.008,
-			LifePercentChangeW2=0.008,
-			LifePercentChangeW3=0.004,
-			LifePercentChangeW4=0.000,
-			LifePercentChangeW5=-0.050,
-			LifePercentChangeMiss=-0.100,
-			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
-			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
-			LifePercentChangeHitMine=-0.050,
+			LifePercentChangeW1 = 0.008,
+			LifePercentChangeW2 = 0.008,
+			LifePercentChangeW3 = 0.004,
+			LifePercentChangeW4 = 0.000,
+			LifePercentChangeW5 = -0.050,
+			LifePercentChangeMiss = -0.100,
+			LifePercentChangeLetGo = IsGame("pump") and 0.000 or -0.080,
+			LifePercentChangeHeld = IsGame("pump") and 0.000 or 0.008,
+			LifePercentChangeHitMine = -0.050,
 
-			InitialValue=0.5,
+			InitialValue = 0.5,
 		},
 		["FA+"] = {
-			PercentScoreWeightW1=5,
-			PercentScoreWeightW2=5,
-			PercentScoreWeightW3=4,
-			PercentScoreWeightW4=2,
-			PercentScoreWeightW5=0,
-			PercentScoreWeightMiss=-12,
-			PercentScoreWeightLetGo=0,
-			PercentScoreWeightHeld=IsGame("pump") and 0 or 5,
-			PercentScoreWeightHitMine=-6,
-			PercentScoreWeightCheckpointHit=0,
+			PercentScoreWeightW1 = 5,
+			PercentScoreWeightW2 = 5,
+			PercentScoreWeightW3 = 4,
+			PercentScoreWeightW4 = 2,
+			PercentScoreWeightW5 = 0,
+			PercentScoreWeightMiss = -12,
+			PercentScoreWeightLetGo = 0,
+			PercentScoreWeightHeld = IsGame("pump") and 0 or 5,
+			PercentScoreWeightHitMine = -6,
+			PercentScoreWeightCheckpointHit = 0,
 
-			GradeWeightW1=5,
-			GradeWeightW2=5,
-			GradeWeightW3=4,
-			GradeWeightW4=2,
-			GradeWeightW5=0,
-			GradeWeightMiss=-12,
-			GradeWeightLetGo=0,
-			GradeWeightHeld=IsGame("pump") and 0 or 5,
-			GradeWeightHitMine=-6,
-			GradeWeightCheckpointHit=0,
+			GradeWeightW1 = 5,
+			GradeWeightW2 = 5,
+			GradeWeightW3 = 4,
+			GradeWeightW4 = 2,
+			GradeWeightW5 = 0,
+			GradeWeightMiss = -12,
+			GradeWeightLetGo = 0,
+			GradeWeightHeld = IsGame("pump") and 0 or 5,
+			GradeWeightHitMine = -6,
+			GradeWeightCheckpointHit = 0,
 
-			LifePercentChangeW1=0.008,
-			LifePercentChangeW2=0.008,
-			LifePercentChangeW3=0.008,
-			LifePercentChangeW4=0.004,
-			LifePercentChangeW5=0,
-			LifePercentChangeMiss=-0.1,
-			LifePercentChangeLetGo=IsGame("pump") and 0.000 or -0.080,
-			LifePercentChangeHeld=IsGame("pump") and 0.000 or 0.008,
-			LifePercentChangeHitMine=-0.05,
+			LifePercentChangeW1 = 0.008,
+			LifePercentChangeW2 = 0.008,
+			LifePercentChangeW3 = 0.008,
+			LifePercentChangeW4 = 0.004,
+			LifePercentChangeW5 = 0,
+			LifePercentChangeMiss = -0.1,
+			LifePercentChangeLetGo = IsGame("pump") and 0.000 or -0.080,
+			LifePercentChangeHeld = IsGame("pump") and 0.000 or 0.008,
+			LifePercentChangeHitMine = -0.05,
 
-			InitialValue=0.5,
+			InitialValue = 0.5,
 		},
 	},
 	ExWeights = {
 		-- W0 is not necessarily a "real" window.
 		-- In ITG mode it is emulated based off the value of TimingWindowW1 defined
 		-- for FA+ mode.
-		W0=3.5,
-		W1=3,
-		W2=2,
-		W3=1,
-		W4=0,
-		W5=0,
-		Miss=0,
-		LetGo=0,
-		Held=1,
-		HitMine=-1
+		W0      = 3.5,
+		W1      = 3,
+		W2      = 2,
+		W3      = 1,
+		W4      = 0,
+		W5      = 0,
+		Miss    = 0,
+		LetGo   = 0,
+		Held    = 1,
+		HitMine = -1
 	},
 	-- Fields used to determine the existence of the launcher and the
 	-- available GrooveStats services.

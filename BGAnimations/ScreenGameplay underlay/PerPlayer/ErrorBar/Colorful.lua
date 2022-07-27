@@ -6,6 +6,11 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local gmods = SL.Global.ActiveModifiers
 
+local disabledJudgement = {
+    TapNoteScore_W3 = mods.ErrorBarDisableW3,
+    TapNoteScore_W4 = mods.ErrorBarDisableW4,
+    TapNoteScore_W5 = mods.ErrorBarDisableW5
+}
 local barWidth = 160
 local barHeight = 10
 local tickWidth = 2
@@ -16,7 +21,9 @@ local currentTick = 1
 local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
     if gmods.TimingWindows[i] then
-        enabledTimingWindows[#enabledTimingWindows+1] = i
+        if not disabledJudgement["TapNoteScore_W" .. tostring(i)] then
+            enabledTimingWindows[#enabledTimingWindows + 1] = i
+        end
     end
 end
 
@@ -27,7 +34,7 @@ local wscale = barWidth / 2 / maxTimingOffset
 -- front, with the full width of the corresponding window. this would look bad
 -- if we want to alpha blend them though, so i'm drawing the segments
 -- individually so that there is no overlap.
-local af = Def.ActorFrame{
+local af = Def.ActorFrame {
     InitCommand = function(self)
         self:xy(GetNotefieldX(player), layout.y)
         self:GetChild("Bar"):zoom(0)
@@ -35,6 +42,9 @@ local af = Def.ActorFrame{
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
+        if disabledJudgement[params.TapNoteScore] then
+            return
+        end
 
         local score = ToEnumShortString(params.TapNoteScore)
         if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
@@ -64,18 +74,18 @@ local af = Def.ActorFrame{
     end,
 }
 
-local bar_af = Def.ActorFrame{
+local bar_af = Def.ActorFrame {
     Name = "Bar",
 
     -- Background
-    Def.Quad{
+    Def.Quad {
         InitCommand = function(self)
             self:zoomto(barWidth + 4, barHeight + 4)
                 :diffuse(color("#000000"))
         end
     },
 }
-af[#af+1] = bar_af
+af[#af + 1] = bar_af
 
 local lastx = 0
 
@@ -86,7 +96,7 @@ local windows = {
 
 for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
-    
+
     if mods.ShowFaPlusWindow and wi == 1 then
         -- Split the Fantastic window
         windows.timing[#windows.timing + 1] = GetTimingWindow(1, "FA+")
@@ -97,7 +107,7 @@ for i = 1, #enabledTimingWindows do
     else
         windows.timing[#windows.timing + 1] = GetTimingWindow(wi)
         windows.color[#windows.color + 1] = SL.JudgmentColors[SL.Global.GameMode][wi]
-    end 
+    end
 end
 
 -- create two quads for each window.
@@ -106,12 +116,12 @@ for i, window in ipairs(windows.timing) do
     local width = x - lastx
     local judgmentColor = windows.color[i]
 
-    bar_af[#bar_af+1] = Def.Quad{
+    bar_af[#bar_af + 1] = Def.Quad {
         InitCommand = function(self)
             self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor)
         end
     }
-    bar_af[#bar_af+1] = Def.Quad{
+    bar_af[#bar_af + 1] = Def.Quad {
         InitCommand = function(self)
             self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor)
         end
@@ -122,7 +132,7 @@ end
 
 -- Ticks
 for i = 1, numTicks do
-    af[#af+1] = Def.Quad{
+    af[#af + 1] = Def.Quad {
         Name = "Tick" .. i,
         InitCommand = function(self)
             self:zoomto(tickWidth, barHeight + 4)
