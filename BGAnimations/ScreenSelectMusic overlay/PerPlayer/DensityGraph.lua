@@ -104,25 +104,26 @@ af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 -- The Peak NPS text
 af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="NPS",
-	Text="Peak NPS: ",
+	Text="Peak NPS: \nPeak eBPM: ",
 	InitCommand=function(self)
 		self:horizalign(left):zoom(0.8)
 		if player == PLAYER_1 then
-			self:addx(60):addy(-41)
+			self:addx(60):addy(-50)
 		else
-			self:addx(-136):addy(-41)
+			self:addx(-136):addy(-50)
 		end
 
 		-- We want black text in Rainbow mode, white otherwise.
 		self:diffuse(ThemePrefs.Get("RainbowMode") and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
 	HideCommand=function(self)
-		self:settext("Peak NPS: ")
+		self:settext("Peak NPS: \nPeak eBPM: ")
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
 		if SL[pn].Streams.PeakNPS ~= 0 then
-			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
+			local nps = SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate
+			self:settext(("Peak NPS: %.1f\nPeak eBPM: %.0f"):format(nps,nps*15))
 			self:visible(true)
 		end
 	end,
