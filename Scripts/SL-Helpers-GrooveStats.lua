@@ -81,7 +81,6 @@ RequestResponseActor = function(x, y)
 			end
 		end,
 		MakeGrooveStatsRequestCommand=function(self, params)
-			Trace(TableToString(params))
 			self:stoptweening()
 			if not params then
 				Warn("No params specified for MakeGrooveStatsRequestCommand.")
