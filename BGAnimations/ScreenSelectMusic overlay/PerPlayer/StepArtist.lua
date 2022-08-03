@@ -29,7 +29,7 @@ return Def.ActorFrame{
 
 	-- depending on the value of pn, this will either become
 	-- an AppearP1Command or an AppearP2Command when the screen initializes
-	["Appear"..pn.."Command"]=function(self) self:visible(true):ease(0.5, 275):addy(scale(p,0,1,-1,1) * 30) end,
+	["Appear"..pn.."Command"]=function(self) self:visible(true):ease(0.5, 275):addy(scale(p,0,1,-1,1) * 30):diffusealpha(100) end,
 
 	InitCommand=function(self)
 		self:visible( false ):halign( p )
@@ -50,7 +50,7 @@ return Def.ActorFrame{
 				self:x( _screen.cx - 210)
 				self:y(_screen.cy + 85)
 			else
-				self:x( _screen.cx - 244)
+				self:x( _screen.cx - 260)
 				self:y(_screen.cy + 40)
 			end
 		end
@@ -184,7 +184,7 @@ return Def.ActorFrame{
 			if GAMESTATE:IsCourseMode() then
 				self:x(60):maxwidth(138)
 			else
-				self:x(75):maxwidth(160):diffuse(color("#000000"))
+				self:x(75):maxwidth(170):diffuse(color("#000000"))
 			end
 		end,
 		ResetCommand=function(self)
