@@ -72,7 +72,8 @@ af2.BuildSongLampArrayCommand=function(self)
 				Grade_Tier01 = 0,
 				Grade_Tier02 = 0,
 				Grade_Tier03 = 0,
-				Grade_Tier04 = 0
+				Grade_Tier04 = 0,
+				Passes = 0
 			}
 			local countSongs = 0
 			local folderName = SCREENMAN:GetTopScreen():GetMusicWheel():GetSelectedSection()
@@ -94,8 +95,11 @@ af2.BuildSongLampArrayCommand=function(self)
 								-- Get highest score
 								if #HighScores > 0 then
 									local grade = HighScores[1]:GetGrade()
-									if grades[grade] < 4 then
-										scores[grade] = scores[grade] + 1
+									if grade ~= "Grade_Failed" then
+										scores["Passes"] = scores["Passes"] + 1
+										if grades[grade] < 4 then
+											scores[grade] = scores[grade] + 1
+										end
 									end
 								end
 							end
@@ -176,7 +180,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="TotalSongs",
 	Text="",
 	FolderSummaryCommand=function(self,params)
-		local text = "Total " .. difficultyNames[params.difficulty] .. ": " .. params.countSongs
+		local text = "Total " .. difficultyNames[params.difficulty] .. ": " .. params.scores["Passes"] .. "/" .. params.countSongs
 		self:settext(text)
 		self:y(15)
 		self:zoom(1.25)
