@@ -29,7 +29,7 @@ return Def.ActorFrame{
 
 	-- depending on the value of pn, this will either become
 	-- an AppearP1Command or an AppearP2Command when the screen initializes
-	["Appear"..pn.."Command"]=function(self) self:visible(true):ease(0.5, 275):addy(scale(p,0,1,-1,1) * 30) end,
+	["Appear"..pn.."Command"]=function(self) self:visible(true):ease(0.5, 275):addy(scale(p,0,1,-1,1) * 30):diffusealpha(1) end,
 
 	InitCommand=function(self)
 		self:visible( false ):halign( p )
@@ -50,7 +50,7 @@ return Def.ActorFrame{
 				self:x( _screen.cx - 210)
 				self:y(_screen.cy + 85)
 			else
-				self:x( _screen.cx - 244)
+				self:x( _screen.cx - 260)
 				self:y(_screen.cy + 40)
 			end
 		end
@@ -63,20 +63,35 @@ return Def.ActorFrame{
 	-- colored background quad
 	Def.Quad{
 		Name="BackgroundQuad",
-		InitCommand=function(self) self:zoomto(190, _screen.h/8):x(120):y(18):diffuse(color("#000000")) end,
+		InitCommand=function(self) 
+			self:diffuse(color("#000000"))
+			if #GAMESTATE:GetHumanPlayers() == 1 then
+				self:zoomto(190, _screen.h/8):x(120):y(18)
+			else
+				self:zoomto(175, _screen.h/28):x(113):y(0)
+			end
+		end,
 		ResetCommand=function(self)
 			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
-
+			if #GAMESTATE:GetHumanPlayers() == 1 then
+				self:zoomto(190, _screen.h/8):x(120):y(18)
+			else
+				self:zoomto(175, _screen.h/28):x(113):y(0)
+			end
 			if StepsOrTrail then
 				local difficulty = StepsOrTrail:GetDifficulty()
 				self:diffuse( DifficultyColor(difficulty) )
 				text_table = GetStepsCredit(player)
-				if #text_table == 3 then
+				if #GAMESTATE:GetHumanPlayers() == 1 then 
+					if #text_table == 3 then
+						self:fadebottom(0)
+					elseif #text_table == 2 then
+						self:fadebottom(0.5)
+					elseif #text_table == 1 then
+						self:fadebottom(0.8)
+					end
+				else 
 					self:fadebottom(0)
-				elseif #text_table == 2 then
-					self:fadebottom(0.5)
-				elseif #text_table == 1 then
-					self:fadebottom(0.8)
 				end
 			else
 				self:diffuse( PlayerColor(player) )
@@ -180,11 +195,15 @@ return Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		InitCommand=function(self)
 			self:diffuse(color("#1e282f")):horizalign(left):zoom(0.8)
-
 			if GAMESTATE:IsCourseMode() then
 				self:x(60):maxwidth(138)
 			else
-				self:x(75):maxwidth(160):diffuse(color("#000000"))
+				self:x(70):diffuse(color("#000000"))
+				if #GAMESTATE:GetHumanPlayers() == 1 then 
+					self:maxwidth(175)
+				else
+					self:maxwidth(160)
+				end
 			end
 		end,
 		ResetCommand=function(self)
@@ -205,8 +224,15 @@ return Def.ActorFrame{
 				-- to ensure it stays synced with the scrolling list of songs
 				if not GAMESTATE:IsCourseMode() then
 					-- only queue a Marquee if there are things in the text_table to display
+					self:x(70):diffuse(color("#000000"))
+					if #GAMESTATE:GetHumanPlayers() == 1 then 
+						self:maxwidth(175)
+					else
+						self:maxwidth(160)
+					end
+
 					if #text_table > 0 then
-						-- self:queuecommand("Marquee")
+						if #GAMESTATE:GetHumanPlayers() > 1 then self:queuecommand("Marquee") end
 						local fulldesc = ""
 						for i=1,#text_table do
 							local curText = text_table[i]

@@ -2,6 +2,7 @@
 -- Disable the functionality.
 if GAMESTATE:IsCourseMode() then return end
 
+
 local player = ...
 local pn = ToEnumShortString(player)
 
@@ -9,10 +10,18 @@ local pn = ToEnumShortString(player)
 local height = 64
 local width = IsUsingWideScreen() and 286 or 276
 
+local marquee_index
+local text_table = {}
+
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:xy(_screen.cx-182, _screen.cy+62)
+		self:x(_screen.cx-182)
+		if #GAMESTATE:GetHumanPlayers() == 1 then 
+			self:y(_screen.cy+62)
+		else
+			self:y(_screen.cy+23)
+		end
 
 		if player == PLAYER_2 then
 			self:addy(height+24)
@@ -23,11 +32,34 @@ local af = Def.ActorFrame{
 		end
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
+		self:x(_screen.cx-182)
+		if #GAMESTATE:GetHumanPlayers() == 1 then 
+			self:y(_screen.cy+62)
+
+		else
+			self:y(_screen.cy+23)
+		end
+		if player == PLAYER_2 then
+			self:addy(height+24)
+		end
+
+		if IsUsingWideScreen() then
+			self:addx(-5)
+		end
 		if params.Player == player then
 			self:visible(true)
 		end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
+		self:x(_screen.cx-182)
+		self:y(_screen.cy+62)
+		if player == PLAYER_2 then
+			self:addy(height+24)
+		end
+
+		if IsUsingWideScreen() then
+			self:addx(-5)
+		end
 		if params.Player == player then
 			self:visible(false)
 		end
@@ -104,27 +136,74 @@ af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 -- The Peak NPS text
 af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="NPS",
-	Text="Peak NPS: \nPeak eBPM: ",
+	Text="",
 	InitCommand=function(self)
-		self:horizalign(left):zoom(0.8)
-		if player == PLAYER_1 then
-			self:addx(60):addy(-50)
+		self:zoom(0.8)
+		if #GAMESTATE:GetHumanPlayers() == 1 then 
+			self:settext("Peak NPS: \nPeak eBPM: ")
+			self:horizalign(left)
+			self:y(-50)
+			if player == PLAYER_1 then
+				self:x(60)
+			else					
+				self:x(-136)
+			end
 		else
-			self:addx(-136):addy(-50)
+			self:horizalign("right")
+			self:y(-40)
+			if player == PLAYER_1 then 
+				self:x(140)
+			else
+				self:x(-55)
+			end
+			self:settext("Peak NPS: ")		
 		end
 
 		-- We want black text in Rainbow mode, white otherwise.
 		self:diffuse(ThemePrefs.Get("RainbowMode") and {0, 0, 0, 1} or {1, 1, 1, 1})
 	end,
 	HideCommand=function(self)
-		self:settext("Peak NPS: \nPeak eBPM: ")
+		if #GAMESTATE:GetHumanPlayers() == 1 then 
+			self:settext("Peak NPS: \nPeak eBPM: ")
+		else
+			self:settext("Peak NPS: ")
+		end
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
 		if SL[pn].Streams.PeakNPS ~= 0 then
 			local nps = SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate
-			self:settext(("Peak NPS: %.1f\nPeak eBPM: %.0f"):format(nps,nps*15))
+			if #GAMESTATE:GetHumanPlayers() == 1 then 
+				self:horizalign("left")
+				self:y(-50)
+				if player == PLAYER_1 then
+					self:x(60)
+				else					
+					self:x(-136)
+				end
+				self:settext(("Peak NPS: %.1f\nPeak eBPM: %.0f"):format(nps,nps*15))
+			else
+				self:horizalign("right")
+				self:y(-40)
+				if player == PLAYER_1 then 
+					self:x(140)
+				else
+					self:x(-55)
+				end
+				marquee_index = 0
+				text_table = {}
+				table.insert(text_table,("Peak NPS: %.1f"):format(nps))
+				table.insert(text_table,("Peak eBPM: %.1f"):format(nps*15))
+				self:playcommand("Marquee",{text_table=text_table})
+			end
 			self:visible(true)
+		end
+	end,
+	MarqueeCommand=function(self)
+		marquee_index = (marquee_index % #text_table) + 1
+		if #GAMESTATE:GetHumanPlayers() > 1 then 
+			self:settext(text_table[marquee_index])
+			self:sleep(1):queuecommand("Marquee")
 		end
 	end,
 }
