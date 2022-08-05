@@ -194,7 +194,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 				text_table = {}
 				table.insert(text_table,("Peak NPS: %.1f"):format(nps))
 				table.insert(text_table,("Peak eBPM: %.1f"):format(nps*15))
-				self:playcommand("Marquee",{text_table=text_table})
+				self:finishtweening():playcommand("Marquee",{text_table=text_table})
 			end
 			self:visible(true)
 		end
@@ -203,7 +203,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		marquee_index = (marquee_index % #text_table) + 1
 		if #GAMESTATE:GetHumanPlayers() > 1 then 
 			self:settext(text_table[marquee_index])
-			self:sleep(1):queuecommand("Marquee")
+			self:sleep(2):queuecommand("Marquee")
 		end
 	end,
 }
