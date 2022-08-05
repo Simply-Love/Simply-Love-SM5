@@ -100,6 +100,7 @@ if storage.DeathSecond ~= nil then
 	-- If the player failed, check how much time was remaining
 	af[#af+1] = Def.ActorFrame {
 		InitCommand=function(self)
+			self:zoom(1.25)
 			-- Start at the start of the graph
 			self:addx(-GraphWidth/2):addy(GraphHeight-10)
 			-- Move to where the player failed
