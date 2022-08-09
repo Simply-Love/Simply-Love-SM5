@@ -2,6 +2,8 @@ local player = ...
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 local hasUniqueBanner = true
+local finalOffset = -160
+local finalSize = 0.25
 
 return Def.Banner{
 	CurrentSongChangedMessageCommand=function(self)
@@ -24,9 +26,14 @@ return Def.Banner{
 			self:x(self:GetX() * -1)
 		end
 		
+		if NoteFieldIsCentered then
+			finalOffset = -115
+			finalSize = 0.2
+		end
+		
 		self:sleep(5)
 		if hasUniqueBanner then
-			self:decelerate(1):diffusealpha(0.25):glow(1,1,1,0.5):xy(-160 * (player==PLAYER_1 and 1 or -1), 20):zoom(0.25):rotationz(-720 * (player==PLAYER_1 and 1 or -1))
+			self:decelerate(1):diffusealpha(0.25):glow(1,1,1,0.5):xy(finalOffset * (player==PLAYER_1 and 1 or -1), 20):zoom(finalSize):rotationz(-720 * (player==PLAYER_1 and 1 or -1))
 			self:linear(1):diffusealpha(1):glow(0,0,0,0)
 			self:linear(0):rotationz(0)
 		end
