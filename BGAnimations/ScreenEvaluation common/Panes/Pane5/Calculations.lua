@@ -69,6 +69,11 @@ local sum_timing_error = 0
 -- to get the mean timing error
 local avg_timing_error = 0
 
+-- extra stats for parity with Waterfall - mean offset and max error.
+local sum_timing_offset = 0
+local avg_offset = 0
+local max_error = 0
+
 -- ---------------------------------------------
 -- OKAY, TIME TO CALCULATE MEDIAN, MODE, and AVG TIMING ERROR
 
@@ -81,6 +86,12 @@ for k,v in pairs(offsets) do
 	if v > highest_offset_count then
 		highest_offset_count = v
 		mode_offset = round(k,3)
+	end
+	
+	-- check if this is the highest error amount
+	-- if higher, it's the new max
+	if math.abs(k) > max_error then
+		max_error = math.abs(k)
 	end
 end
 
@@ -118,6 +129,7 @@ if #list > 0 then
 	-- take the absolute value (because this offset could be negative)
 	-- and add it to the running measure of total timing error
 	for i=1,#list do
+		sum_timing_offset = sum_timing_offset + list[i]
 		sum_timing_error = sum_timing_error + math.abs(list[i])
 	end
 
@@ -125,6 +137,11 @@ if #list > 0 then
 	avg_timing_error = sum_timing_error / #list
 	-- convert seconds to ms
 	avg_timing_error = avg_timing_error * 1000
+	
+	-- calculate the mean timing offset
+	avg_offset = sum_timing_offset / #list
+	-- convert seconds to ms
+	avg_offset = avg_offset * 1000
 
 	-- round ms value to 1 decimal place
 	-- we'll string.format() this value before handing it off to the BitmapText so that
@@ -142,6 +159,7 @@ if #list > 0 then
 	--    2. format it to 1 decimal place so that it displays as "10.0ms"
 
 	avg_timing_error = round(avg_timing_error, 1)
+	avg_offset = round(avg_offset, 1)
 
 end
 -- ---------------------------------------------
@@ -232,6 +250,15 @@ bmts[#bmts+1] = Def.BitmapText{
 	end,
 }
 
+-- avg_offset value with "ms" label
+bmts[#bmts+1] = Def.BitmapText{
+	Font="Common Normal",
+	Text=(math.abs(avg_offset) < 10 and "%.1fms" or "%dms"):format(avg_offset),
+	InitCommand=function(self)
+		self:x(pane_width/3):zoom(0.8)
+	end,
+}
+
 -- median_offset value with "ms" label
 bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
@@ -245,6 +272,15 @@ bmts[#bmts+1] = Def.BitmapText{
 bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=(mode_offset*1000).."ms",
+	InitCommand=function(self)
+		self:x(pane_width*2/3):zoom(0.8)
+	end,
+}
+
+-- max_error value with "ms" label
+bmts[#bmts+1] = Def.BitmapText{
+	Font="Common Normal",
+	Text=(max_error*1000).."ms",
 	InitCommand=function(self)
 		self:x(pane_width-40):zoom(0.8)
 	end,
