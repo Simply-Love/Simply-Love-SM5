@@ -29,7 +29,7 @@ spr.CodeMessageCommand=function(self, params)
 
 		-- some song titles have slashes in them, which is interpreted as a folder in the path as
 		-- screenshot is saved. we'll substitute those slashes with underscores to prevent this.
-		title = title:gsub("/", "_")
+		title = title:gsub("%W", "_")
 
 		-- organize screenshots Love into directories, like...
 		--      ./Screenshots/Simply_Love/2020/04-April/DVNO-2020-04-22_175951.png
