@@ -1,6 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
+local track_earlyjudgments = SL[pn].ActiveModifiers.TrackEarlyJudgments
 
 -- a string representing the NoteSkin the player was using
 local noteskin = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():NoteSkin()
@@ -68,6 +69,7 @@ for i, column in ipairs( cols ) do
 	}
 
 	local miss_bmt = nil
+	local judge_bmt = {}
 
 	-- for each possible judgment
 	for j, judgment in ipairs(rows) do
@@ -79,9 +81,24 @@ for i, column in ipairs( cols ) do
 				InitCommand=function(self)
 					self:xy(_x, j*row_height + 4)
 						:zoom(0.9)
-					if j == #rows then miss_bmt = self end
+					if j == #rows then miss_bmt = self else judge_bmt[j] = self end
 				end
 			}
+			
+			if track_earlyjudgments and j ~= 1 then
+				-- the number of early judgments for this column
+				af[#af+1] = LoadFont("Common Normal")..{
+					Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment .. "early"],
+					InitCommand=function(self)
+						self:xy(_x - 1, j*row_height):zoom(0.65):halign(1)
+					end,
+					OnCommand=function(self)
+						if judge_bmt[j] ~= nil then
+							self:x( self:GetX() - judge_bmt[j]:GetWidth()/2 )
+						end
+					end
+				}
+			end
 		end
 	end
 

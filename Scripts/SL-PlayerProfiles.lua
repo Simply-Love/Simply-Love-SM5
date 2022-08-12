@@ -56,6 +56,7 @@ local permitted_profile_settings = {
 	SubtractiveScoring   = "boolean",
 	Pacemaker            = "boolean",
 	MissBecauseHeld      = "boolean",
+	TrackEarlyJudgments  = "boolean",
 	NPSGraphAtTop        = "boolean",
 	JudgmentTilt         = "boolean",
 	ColumnCues           = "boolean",
