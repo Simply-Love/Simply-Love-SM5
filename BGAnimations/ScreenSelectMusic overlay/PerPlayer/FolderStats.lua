@@ -64,7 +64,7 @@ af2.BuildSongLampArrayCommand=function(self)
 	if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectMusic" then
 		local profile = PROFILEMAN:GetProfile(player)
 		local profileName = profile:GetDisplayName()
-		if (not GAMESTATE:IsPlayerEnabled(player)) or profileName == "" then 
+		if (not GAMESTATE:IsPlayerEnabled(player)) or profileName == "" or GAMESTATE:GetSortOrder() ~= 'SortOrder_Group' then 
 			self:visible(false)
 		else
 			self:visible(true)
