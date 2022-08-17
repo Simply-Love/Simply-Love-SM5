@@ -1,4 +1,4 @@
-local player, layout = ...
+local player, ssY, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")
@@ -222,7 +222,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(GetNotefieldX(player), layout.y-60)
+		self:xy(GetNotefieldX(player), ssY)
 		self:queuecommand("SetUpdate")
 	end,
 	SetUpdateCommand=function(self) self:SetUpdateFunction( Update ) end,

@@ -21,7 +21,7 @@ end
 local meter = Def.ActorFrame{
 
 	InitCommand=function(self) self:y(20):SetUpdateFunction(Update):visible(false) end,
-	OnCommand=function(self) self:visible(true) end,
+	OnCommand=function(self) self:finishtweening():visible(true) end,
 
 	-- frame
 	Def.Quad{ InitCommand=function(self) self:x(_x):zoomto(w+4, h+4) end },
