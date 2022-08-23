@@ -265,16 +265,15 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								recordText:settext("World Record!")
 								-- Play random sound in Sounds/Evaluation WR/
 								soundDir = soundDir .. "Evaluation WR/"
-								audio_files = findFiles(soundDir,"ogg")
+								audio_files = findFiles(soundDir)
 								if #audio_files > 0 then
 									SOUND:PlayOnce(audio_files[math.random(#audio_files)])
 								end
 							else
 								recordText:settext("Personal Best!")
-
 								-- Play random sound in Sounds/Evaluation PB/
 								soundDir = soundDir .. "Evaluation PB/"
-								audio_files = findFiles(soundDir,"ogg")
+								audio_files = findFiles(soundDir)
 								if #audio_files > 0 then
 									SOUND:PlayOnce(audio_files[math.random(#audio_files)])
 								end

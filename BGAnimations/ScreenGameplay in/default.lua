@@ -96,4 +96,12 @@ af[#af+1] = LoadFont("Common Bold")..{
 	end
 }
 
+
+-- Play random sound in Sounds/Song Start/
+local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/Song Start/"
+audio_files = findFiles(soundDir)
+if #audio_files > 0 then
+	SOUND:PlayOnce(audio_files[math.random(#audio_files)])
+end
+
 return af

@@ -6,7 +6,6 @@
 -- findFiles function in Scripts/Z-NewFunctions.lua
 
 local dir = THEME:GetCurrentThemeDirectory() .. "Sounds/Evaluation Fail/"
-local ext = "ogg"
 
 local players = GAMESTATE:GetHumanPlayers()
 for player in ivalues(players) do
@@ -16,7 +15,7 @@ for player in ivalues(players) do
     if stats:GetGrade() ~= "Grade_Failed" then dir = THEME:GetCurrentThemeDirectory() .. "Sounds/Evaluation Pass/" end
 end
 
-local evaluation_sounds = findFiles(dir,ext)
+local evaluation_sounds = findFiles(dir)
 if #evaluation_sounds > 0 then
     return evaluation_sounds[math.random(#evaluation_sounds)]
 end

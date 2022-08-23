@@ -1,20 +1,15 @@
 -- This file will maybe be used for new functions created for Zarzob/Zankoku's fork of Simply Love
 
--- Returns an array of files named <number>.<extension> in <directory>
+-- Returns an array of files in <directory> of <extension> (defaulting to ogg)
 -- Created to play random audio files for song pass/fail/pb/wr
-findFiles=function(dir,extension)
-    local iterate = true
-    local i = 1
-    local files = {}
-    while iterate do
-        local file = dir .. i .. "." .. extension
-        if FILEMAN:DoesFileExist(file) then 
-            table.insert(files,file)
-        else
-            iterate = false
-        end
-        i = i + 1
-    end
+findFiles=function(dir,ext)
+	local rawFiles = FILEMAN:GetDirListing(dir,false,true)
+	local files = {}
+    local ext = ext or "ogg"
+	for file in ivalues(rawFiles) do
+		local filetype = file:match("[^.]+$"):lower()
+		if filetype == ext then table.insert(files,file) end
+	end
     return files
 end
 
