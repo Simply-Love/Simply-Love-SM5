@@ -106,6 +106,31 @@ local LeaderboardRequestProcessor = function(res, master)
 			if (not (data[playerStr]["rpg"] and data[playerStr]["rpg"]["rpgLeaderboard"]) and
 					not (data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"])) then
 				SetScoreData(1, 1, "", "Chart Not Ranked", "", false, false, false)
+				
+				-- Chart isn't ranked, so populate the scorebox with local record
+				local SongOrCourse, StepsOrTrail, scorelist
+
+				if GAMESTATE:IsCourseMode() then
+					SongOrCourse = GAMESTATE:GetCurrentCourse()
+					StepsOrTrail = GAMESTATE:GetCurrentTrail(player)
+				else
+					SongOrCourse = GAMESTATE:GetCurrentSong()
+					StepsOrTrail = GAMESTATE:GetCurrentSteps(player)
+				end
+
+				scorelist = PROFILEMAN:GetProfile(player):GetHighScoreList(SongOrCourse,StepsOrTrail)
+
+				if scorelist then
+					local topscore = scorelist:GetHighScores()[1]
+					if topscore then
+						local scoredate = topscore:GetDate()
+						local scorepct = topscore:GetPercentDP()
+						local isFail = topscore:GetGrade() == "Grade_Failed" and true or false
+						
+						SetScoreData(1, 4, "", "Personal Best", ("%.2f%%"):format(scorepct * 100), true, false, isFail)
+						SetScoreData(1, 5, "", string.sub(scoredate, 1, string.find(scoredate, " ")), "", false, true, false)
+					end
+				end
 			end
 		end
 
