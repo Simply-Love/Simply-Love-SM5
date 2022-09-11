@@ -486,6 +486,10 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
+	StepStatsExtra = {
+		Values = { "None", "ErrorStats", "CatJAM", "CrabPls", "Dancing Duck", "Nyan Cat", "Snoop", "Sonic"}
+	},
+	-------------------------------------------------------------------------
 	TargetScore = {
 		Values = function()
 			local t = {}

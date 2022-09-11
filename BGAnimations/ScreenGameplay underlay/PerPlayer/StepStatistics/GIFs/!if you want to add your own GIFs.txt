@@ -1,0 +1,3 @@
+It's probably easier to replace one of these instead of making a new lua. 
+The menu options aren't dynamic, I had to add it as an option.
+Maybe I'll revisit it at some point (probably never)

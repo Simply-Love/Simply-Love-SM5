@@ -1,6 +1,9 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
+local mods = SL[pn].ActiveModifiers
+if (mods.StepStatsExtra ~= "ErrorStats") then return end
+
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 

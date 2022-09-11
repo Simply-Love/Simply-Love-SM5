@@ -87,6 +87,7 @@ af[#af+1] = Def.ActorFrame{
 
 	LoadActor("./Banner.lua", player),
 	LoadActor("./Banner2.lua", player),
+	LoadActor("./GIF.lua", player),
 	LoadActor("./TapNoteJudgments.lua", {player, true}), -- second argument is if it has labels or not
 	LoadActor("./HoldsMinesRolls.lua", player),
 	LoadActor("./Time.lua", player),
