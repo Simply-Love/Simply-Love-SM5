@@ -116,6 +116,7 @@ local GlobalDefaults = {
 			}
 			self.Stages = {
 				PlayedThisGame = 0,
+				Restarts = 0,
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay"),
 				Stats = {}
 			}

@@ -1,0 +1,2 @@
+Place ogg files numbered upward to play them on restart (eg 1.ogg, 2.ogg)
+Place the ogg file "restart.ogg" for any case where the number of restarts is greater than how many numbered ogg files you have
