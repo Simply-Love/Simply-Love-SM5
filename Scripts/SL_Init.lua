@@ -28,6 +28,7 @@ local PlayerDefaults = {
 				MeasureCounterLeft = true,
 				MeasureCounterUp = false,
 				DataVisualizations = "None",
+				StepStatsExtra = "None",
 				TargetScore = 11,
 				ActionOnMissedTarget = "Nothing",
 				Pacemaker = false,
@@ -116,6 +117,7 @@ local GlobalDefaults = {
 				PlayerOptions  = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay",
 				PlayerOptions3 = "ScreenGameplay",
+				PlayerOptions4 = "ScreenGameplay",
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "ITG"
