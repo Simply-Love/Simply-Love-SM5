@@ -492,7 +492,7 @@ local Overrides = {
 			local GIFdir = THEME:GetCurrentThemeDirectory() .. "BGAnimations/ScreenGameplay underlay/PerPlayer/StepStatistics/GIFs/"
 			local GIFs = findFiles(GIFdir, "lua")
 			for i=1, #GIFs do
-				GIFname = GIFs[i]:gsub("/" .. THEME:GetCurrentThemeDirectory() .. "BGAnimations/ScreenGameplay underlay/PerPlayer/StepStatistics/GIFs/", ""):gsub(".lua", "")
+				GIFname = cleanGSub(cleanGSub(GIFs[i], "/" .. GIFdir, ""), ".lua", "")
 				table.insert(choices, GIFname)
 			end
 			
