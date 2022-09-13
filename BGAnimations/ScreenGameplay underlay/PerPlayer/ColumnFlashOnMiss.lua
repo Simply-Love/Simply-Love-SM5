@@ -62,8 +62,18 @@ if mods.ColumnFlashOnMiss then
 			if params.Player == player and (params.Notes or params.Holds) then
 				for i,col in pairs(params.Notes or params.Holds) do
 					local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)
-					if tns == "Miss" or tns == "MissedHold" then
-						columns[column_mapping[i]]:playcommand("Flash")
+					if (tns == "Miss" or tns == "MissedHold") and mods.FlashMiss then
+						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+					elseif tns == "W5" and mods.FlashWayOff then
+						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+					elseif tns == "W4" and mods.FlashDecent then
+						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+					elseif tns == "W3" and mods.FlashGreat then
+						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+					elseif tns == "W2" and mods.FlashExcellent then
+						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+					elseif tns == "W1" and mods.FlashFantastic then
+						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
 					end
 				end
 			end
@@ -81,9 +91,22 @@ if mods.ColumnFlashOnMiss then
 					:setsize(width/NumColumns, _screen.h - y_offset)
 					:fadebottom(0.333)
 	        end,
-			FlashCommand=function(self)
-				self:diffuse(1,0,0,0.66)
-					:accelerate(0.165):diffuse(0,0,0,0)
+			FlashCommand=function(self, params)
+				if params.tns == "Miss" or tns == "MissedHold" then
+					self:diffuse(1,0,0,0.66)
+				elseif params.tns == "W5" then
+					self:diffuse(0.78, 0.52, 0.36, 0.66)
+				elseif params.tns == "W4" then
+					self:diffuse(0.70, 0.36, 1.00, 0.66)
+				elseif params.tns == "W3" then
+					self:diffuse(0.40, 0.79, 0.33, 0.66)
+				elseif params.tns == "W2" then
+					self:diffuse(0.88, 0.61, 0.09, 0.66)
+				elseif params.tns == "W1" then
+					self:diffuse(0.13, 0.80, 0.91, 0.66)
+				end
+				
+				self:accelerate(0.33):diffuse(0,0,0,0)
 			end
 		}
 	end
