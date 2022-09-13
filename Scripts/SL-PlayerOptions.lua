@@ -487,7 +487,17 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	StepStatsExtra = {
-		Values = { "None", "ErrorStats", "CatJAM", "CrabPls", "Dancing Duck", "Nyan Cat", "Snoop", "Sonic"}
+		Choices = function()
+			local choices = { "None", "ErrorStats" }
+			local GIFdir = THEME:GetCurrentThemeDirectory() .. "BGAnimations/ScreenGameplay underlay/PerPlayer/StepStatistics/GIFs/"
+			local GIFs = findFiles(GIFdir, "lua")
+			for i=1, #GIFs do
+				GIFname = GIFs[i]:gsub("/" .. THEME:GetCurrentThemeDirectory() .. "BGAnimations/ScreenGameplay underlay/PerPlayer/StepStatistics/GIFs/", ""):gsub(".lua", "")
+				table.insert(choices, GIFname)
+			end
+			
+			return choices
+		end,
 	},
 	-------------------------------------------------------------------------
 	TargetScore = {
