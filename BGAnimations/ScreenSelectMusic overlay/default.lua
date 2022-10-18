@@ -46,12 +46,12 @@ local af = Def.ActorFrame{
 	-- number of steps, jumps, holds, etc., and high scores associated with the current stepchart
 	LoadActor("./PaneDisplay.lua"),
 
+	-- The grid for the difficulty picker (normal) or CourseContentsList (CourseMode)
+	LoadActor("./StepsDisplayList/default.lua"),
 	-- elements we need two of (one for each player) that draw underneath the StepsDisplayList
 	-- this includes the stepartist boxes, the density graph, and the cursors.
 	LoadActor("./PerPlayer/default.lua"),
-	-- The grid for the difficulty picker (normal) or CourseContentsList (CourseMode)
-	LoadActor("./StepsDisplayList/default.lua"),
-
+	
 	-- Banner Art
 	LoadActor("./Banner.lua"),
 	-- Song's Musical Artist, BPM, Duration
