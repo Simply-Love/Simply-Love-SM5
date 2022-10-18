@@ -88,6 +88,11 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "none", "single", "versus", "double" }
 		},
+		SelectMusicDisplayStyle =
+		{
+			Default = "Classic",
+			Choices = { "Classic", "ITG+" }
+		},
 		VisualStyle =
 		{
 			Default = "Hearts",

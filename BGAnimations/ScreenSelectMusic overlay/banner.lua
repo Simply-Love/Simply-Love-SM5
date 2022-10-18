@@ -5,13 +5,18 @@ local SongOrCourse, banner
 
 local t = Def.ActorFrame{
 	OnCommand=function(self)
-		if IsUsingWideScreen() then
-			self:zoom(0.7655)
-			self:xy(_screen.cx - 170, 96)
+		if ThemePrefs.Get("SelectMusicDisplayStyle") == "ITG+" and GAMESTATE:GetCurrentGame():GetName() ~= "dance"  then
+			if IsUsingWideScreen() then
+				self:zoom(0.7655)
+				self:xy(_screen.cx - 170, 96)
+			end
 		else
-			self:zoom(0.75)
-			self:xy(_screen.cx - 166, 96)
+			if IsUsingWideScreen() then
+				self:zoom(0.75)
+				self:xy(_screen.cx - 166, 112)
+			end
 		end
+
 	end
 }
 
