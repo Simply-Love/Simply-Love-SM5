@@ -6,7 +6,7 @@ local _w = IsUsingWideScreen() and 320 or 310
 
 local af = Def.ActorFrame{
 	OnCommand=function(self)
-		if ThemePrefs.Get("SelectMusicDisplayStyle") == "ITG+" and GAMESTATE:GetCurrentGame():GetName() == "dance" then
+		if ThemePrefs.Get("SelectMusicDisplayStyle") == "ITG+" and GAMESTATE:GetCurrentGame():GetName() == "dance" and not GAMESTATE:IsCourseMode() then
 			self:xy(_screen.cx - (IsUsingWideScreen() and 170 or 165), _screen.cy - 55)
 		else
 			self:xy(_screen.cx - (IsUsingWideScreen() and 170 or 165), _screen.cy - 28)

@@ -5,7 +5,7 @@ local t = Def.ActorFrame{}
 -- We can only unhide hidden actors that were there all along
 for player in ivalues( PlayerNumber ) do
 	-- Density Graph is only loaded when DisplayStyle is set to ITG+
-	if ThemePrefs.Get("SelectMusicDisplayStyle") == "ITG+" and GAMESTATE:GetCurrentGame():GetName() == "dance"  then
+	if ThemePrefs.Get("SelectMusicDisplayStyle") == "ITG+" and GAMESTATE:GetCurrentGame():GetName() == "dance" and not GAMESTATE:IsCourseMode() then
 		t[#t+1] = LoadActor("./DensityGraph.lua", player)
 		-- AuthorCredit, Description, and ChartName associated with the current stepchart
 		t[#t+1] = LoadActor("./StepArtist.lua", player)
