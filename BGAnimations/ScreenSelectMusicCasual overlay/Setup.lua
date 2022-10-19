@@ -4,8 +4,9 @@
 -- The idea is basically to just throw setup-related stuff
 -- in here that we don't want cluttering up default.lua
 ---------------------------------------------------------------------------
+
 -- because no one wants "Invalid PlayMode 7"
-GAMESTATE:SetCurrentPlayMode(0)
+GAMESTATE:SetCurrentPlayMode('PlayMode_Regular')
 
 ---------------------------------------------------------------------------
 -- local junk
@@ -112,7 +113,10 @@ local PruneSongsFromGroup = function(group)
 		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(steps_type)
 		-- respect StepMania's cutoff for 1-round songs
-		and song:MusicLengthSeconds() < PREFSMAN:GetPreference("LongVerSongSeconds") then
+		and song:MusicLengthSeconds() < PREFSMAN:GetPreference("LongVerSongSeconds")
+		-- respect the #SELECTABLE tag in this song's simfile
+		and UNLOCKMAN:IsSongLocked(song) == 0
+		then
 			-- ensure that at least one stepchart has a meter ≤ CasualMaxMeter (10, by default)
 			for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
 				if steps:GetMeter() <= ThemePrefs.Get("CasualMaxMeter") then
