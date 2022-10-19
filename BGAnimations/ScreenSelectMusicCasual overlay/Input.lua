@@ -204,7 +204,7 @@ t.Handler = function(event)
 
 		--------------------------------------------------------------
 		--------------------------------------------------------------
-		-- handle SSMCasual's custom PlayerPptions menu input
+		-- handle SSMCasual's custom PlayerOptions menu input
 
 		else
 			-- get the index of the active optionrow for this player
