@@ -36,6 +36,7 @@ local permitted_profile_settings = {
 
 	LifeMeterType        = "string",
 	DataVisualizations   = "string",
+	StepStatsExtra       = "string",
 	TargetScore          = "number",
 	ActionOnMissedTarget = "string",
 
@@ -73,6 +74,13 @@ local permitted_profile_settings = {
 	SmallerWhite     = "boolean",
 
 	VisualDelay          = "string",
+	
+	FlashMiss            = "boolean",
+	FlashWayOff          = "boolean",
+	FlashDecent          = "boolean",
+	FlashGreat           = "boolean",
+	FlashExcellent       = "boolean",
+	FlashFantastic       = "boolean",
 
 	GrowCombo			 = "boolean",
 	SpinCombo			 = "boolean",

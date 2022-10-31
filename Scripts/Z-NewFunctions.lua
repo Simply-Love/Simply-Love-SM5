@@ -13,6 +13,12 @@ findFiles=function(dir,ext)
     return files
 end
 
+cleanGSub=function(str, what, with)
+	what = what:gsub("[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
+	with = with:gsub("[%%]", "%%%%") -- escape replacement
+	return str:gsub(what, with)
+end
+
 -- Returns current song and steps for player
 -- Moving out of Step Statistics StepsInfo.lua
 GetSongAndSteps = function(player) 
