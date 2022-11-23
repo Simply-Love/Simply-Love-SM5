@@ -19,20 +19,17 @@ end
 if not SL.Global.GameplayReloadCheck then
 	SL.Global.Stages.Restarts = 0
 end
+
 if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
 	text = ("%s 1 / %d"):format(THEME:GetString("Stage", "Stage"), SongsInCourse)
 elseif SL.Global.GameplayReloadCheck then
 	SL.Global.Stages.Restarts = SL.Global.Stages.Restarts + 1
 	text = "RESTART " .. tostring(SL.Global.Stages.Restarts)
-end
-
 elseif string.find(string.upper(GAMESTATE:GetCurrentSong():GetGroupName()), "STAMINA RPG 6") then
 	text = "Stamina RPG 6"
-
 elseif not PREFSMAN:GetPreference("EventMode") then
 	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
-
 else
 	text = THEME:GetString("Stage", "Event")
 end
@@ -110,11 +107,11 @@ af[#af+1] = LoadFont("Common Bold")..{
 -- Play random sound in Sounds/Song Start/
 local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/Song Start/"
 audio_files = findFiles(soundDir)
-local restart_file = soundDir .. "Restart/" SL.Global.Stages.Restarts .. ".ogg"
+local restart_file = soundDir .. "Restart/" .. SL.Global.Stages.Restarts .. ".ogg"
 local restart_nocount_file = soundDir .. "Restart/restart.ogg"
 if SL.Global.GameplayReloadCheck then
 	if FILEMAN:DoesFileExist(restart_file) then SOUND:PlayOnce(restart_file)
-	elseif FILEMAN:DoesFileExist(restart_nocount_file) SOUND:PlayOnce(restart_nocount_file) end
+	elseif FILEMAN:DoesFileExist(restart_nocount_file) then SOUND:PlayOnce(restart_nocount_file) end
 elseif #audio_files > 0 then
 	SOUND:PlayOnce(audio_files[math.random(#audio_files)])
 end

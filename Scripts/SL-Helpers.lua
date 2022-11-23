@@ -602,6 +602,25 @@ IsW0Judgment = function(params, player)
 	return false
 end
 
+IsW015Judgment = function(params, player)
+	if params.Player ~= player then return false end
+	if params.HoldNoteScore then return false end
+	
+	-- Only check/update FA+ count if we received a TNS in the top window.
+	if params.TapNoteScore == "TapNoteScore_W1" and SL.Global.GameMode == "ITG"  then
+		local prefs = SL.Preferences["FA+"]
+		local scale = PREFSMAN:GetPreference("TimingWindowScale")
+		local pn = ToEnumShortString(player)
+		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+
+		local offset = math.abs(params.TapNoteOffset)
+		if offset <= W0 then
+			return true
+		end
+	end
+	return false
+end
+
 -- -----------------------------------------------------------------------
 -- Gets the fully populated judgment counts for a player.
 -- This includes the FA+ window (W0). Decents/WayOffs (W4/W5) will only exist in the
@@ -750,15 +769,20 @@ CalculateExScore = function(player, ex_counts)
 		total_points = total_points + totalMines * SL.ExWeights["HitMine"];
 	end
 
-	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+	-- Use W015 instead of W0, to always calculate EX score based on 15ms blue fantastic window
+	local keys = { "W015", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
 	local counts = ex_counts or SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
 	-- Just for validation, but shouldn't happen in normal gameplay.
 	if counts == nil then return 0 end
 
 	for key in ivalues(keys) do
 		local value = counts[key]
-		if value ~= nil then		
-			total_points = total_points + value * SL.ExWeights[key]
+		if value ~= nil then
+			if key == "W015" then
+				total_points = total_points + value * SL.ExWeights["W0"]
+			else
+				total_points = total_points + value * SL.ExWeights[key]
+			end
 		end
 	end
 
