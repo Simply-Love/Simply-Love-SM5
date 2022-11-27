@@ -3,6 +3,9 @@ if SL.Global.GameMode == "Casual" then return end
 
 local player = ...
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
+local metrics = SL.Metrics[SL.Global.GameMode]
+-- a flag to determine if we are using a GameMode that utilizes FA+ timing windows
+local FAplus = (metrics.PercentScoreWeightW1 == metrics.PercentScoreWeightW2)
 
 if mods.ColumnFlashOnMiss then
 	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions('ModsLevel_Preferred')
@@ -64,15 +67,15 @@ if mods.ColumnFlashOnMiss then
 					local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)
 					if (tns == "Miss" or tns == "MissedHold") and mods.FlashMiss then
 						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif tns == "W5" and mods.FlashWayOff then
+					elseif not FAplus and tns == "W5" and mods.FlashWayOff then
 						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif tns == "W4" and mods.FlashDecent then
+					elseif (FAplus and tns == "W5" and mods.FlashDecent) or (not FAplus and tns == "W4" and mods.FlashDecent) then
 						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif tns == "W3" and mods.FlashGreat then
+					elseif (FAplus and tns == "W4" and mods.FlashGreat) or (not FAplus and tns == "W3" and mods.FlashGreat) then
 						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif tns == "W2" and mods.FlashExcellent then
+					elseif (FAplus and tns == "W3" and mods.FlashExcellent) or (not FAplus and tns == "W2" and mods.FlashExcellent) then
 						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif tns == "W1" and mods.FlashFantastic then
+					elseif (FAplus and tns == "W2" and mods.FlashFantastic) or (tns == "W1" and mods.FlashFantastic) then
 						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
 					end
 				end
@@ -94,19 +97,23 @@ if mods.ColumnFlashOnMiss then
 			FlashCommand=function(self, params)
 				if params.tns == "Miss" or tns == "MissedHold" then
 					self:diffuse(1,0,0,0.66)
-				elseif params.tns == "W5" then
+				elseif not FAplus and params.tns == "W5" then
 					self:diffuse(0.78, 0.52, 0.36, 0.66)
-				elseif params.tns == "W4" then
+				elseif (FAplus and params.tns == "W5") or (not FAplus and params.tns == "W4") then
 					self:diffuse(0.70, 0.36, 1.00, 0.66)
-				elseif params.tns == "W3" then
+				elseif (FAplus and params.tns == "W4") or (not FAplus and params.tns == "W3") then
 					self:diffuse(0.40, 0.79, 0.33, 0.66)
-				elseif params.tns == "W2" then
+				elseif (FAplus and params.tns == "W3") or (not FAplus and params.tns == "W2") then
 					self:diffuse(0.88, 0.61, 0.09, 0.66)
-				elseif params.tns == "W1" then
+				elseif (FAplus and params.tns == "W2") or params.tns == "W1" then
 					self:diffuse(0.13, 0.80, 0.91, 0.66)
 				end
 				
-				self:accelerate(0.33):diffuse(0,0,0,0)
+				if params.tns == "Miss" or tns == "MissedHold" then
+					self:accelerate(0.16):diffuse(0,0,0,0)
+				else
+					self:accelerate(0.33):diffuse(0,0,0,0)
+				end
 			end
 		}
 	end

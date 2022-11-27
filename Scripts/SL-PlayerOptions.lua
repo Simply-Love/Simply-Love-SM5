@@ -414,8 +414,8 @@ local Overrides = {
 			if SL.Global.GameMode == "FA+" then
 				 -- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
-				mods.ShowEXScore = list[2]
-				mods.ShowFaPlusPane = list[3]
+				mods.ShowEXScore = list[1]
+				-- mods.ShowFaPlusPane = list[3]
 				mods.SmallerWhite = false
 				return
 			end
@@ -721,7 +721,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	JudgmentFlash = {
 		SelectType = "SelectMultiple",
-		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" },
+		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" }
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {

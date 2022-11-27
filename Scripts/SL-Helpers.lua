@@ -770,7 +770,8 @@ CalculateExScore = function(player, ex_counts)
 	end
 
 	-- Use W015 instead of W0, to always calculate EX score based on 15ms blue fantastic window
-	local keys = { "W015", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+	local FAplus = (SL.Metrics[SL.Global.GameMode].PercentScoreWeightW1 == SL.Metrics[SL.Global.GameMode].PercentScoreWeightW2)
+	local keys = FAplus and { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" } or { "W015", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
 	local counts = ex_counts or SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
 	-- Just for validation, but shouldn't happen in normal gameplay.
 	if counts == nil then return 0 end
