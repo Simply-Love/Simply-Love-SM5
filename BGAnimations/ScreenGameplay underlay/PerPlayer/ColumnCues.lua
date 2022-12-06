@@ -106,7 +106,7 @@ for columnIndex=1,numColumns do
 					:accelerate(fadeTime)
 					:diffuse(0,0,0,0)
 				
-				if flashDuration >= 5 then
+				if flashDuration >= 5 and mods.ColumnCountdown then
 					breakTime = flashDuration
 					text:stoptweening()
 						:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
@@ -126,7 +126,7 @@ for columnIndex=1,numColumns do
 					:diffuse(0,0,0,0)
 					:horizalign(center)
 					:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
-					:y(80)
+					:y(80+mods.NotefieldShift)
 				text = self
 			end,
 			UpdateBreakCommand=function(self)

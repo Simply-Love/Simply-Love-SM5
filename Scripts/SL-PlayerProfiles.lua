@@ -74,6 +74,7 @@ local permitted_profile_settings = {
 	SmallerWhite     = "boolean",
 
 	VisualDelay          = "string",
+	NotefieldShift       = "string",
 	
 	FlashMiss            = "boolean",
 	FlashWayOff          = "boolean",

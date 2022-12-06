@@ -555,13 +555,13 @@ local Overrides = {
 		Values = function()
 			local vals = {}
 			if IsUsingWideScreen() then
-				vals = { "JudgmentTilt", "ColumnCues" }
+				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown" }
 				if IsServiceAllowed(SL.GrooveStats.GetScores) then
 					vals[#vals+1] = "DisplayScorebox"
 				end
 			else
 				-- Add in the two removed options if not in WideScreen.
-				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
+				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues", "ColumnCountdown" }
 			end
 			return vals
 		end
@@ -643,6 +643,26 @@ local Overrides = {
 				end
 			end
 			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
+		end
+	},
+	-------------------------------------------------------------------------
+	NotefieldShift = {
+		Choices = function()
+			local first = -100
+			local last = 100
+			local step = 1
+			return stringify( range(first, last, step), "%g")
+		end,
+		ExportOnChange = true,
+		LayoutType = "ShowOneInRow",
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.NotefieldShift = self.Choices[i]
+				end
+			end
 		end
 	},
 	-------------------------------------------------------------------------

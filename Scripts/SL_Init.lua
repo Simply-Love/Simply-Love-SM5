@@ -13,6 +13,7 @@ local PlayerDefaults = {
 				Mini = "0%",
 				BackgroundFilter = "Off",
 				VisualDelay = "0ms",
+				NotefieldShift = "0",
 
 				HideTargets = false,
 				HideSongBG = false,
