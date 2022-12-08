@@ -61,6 +61,7 @@ local permitted_profile_settings = {
 	NPSGraphAtTop        = "boolean",
 	JudgmentTilt         = "boolean",
 	ColumnCues           = "boolean",
+	ColumnCountdown      = "boolean",
 	DisplayScorebox      = "boolean",
 
 	ErrorBar             = "string",
