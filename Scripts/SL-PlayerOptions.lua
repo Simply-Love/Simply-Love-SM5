@@ -744,6 +744,10 @@ local Overrides = {
 		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" }
 	},
 	-------------------------------------------------------------------------
+	BeatBars = {
+		Choices = { "None", "Measures", "Beats" },
+	},
+	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {
 		Values = function()
 			local choices = { "Gameplay", "Select Music", "Options2", "Options3", "Options4"  }

@@ -83,6 +83,8 @@ local permitted_profile_settings = {
 	FlashGreat           = "boolean",
 	FlashExcellent       = "boolean",
 	FlashFantastic       = "boolean",
+	
+	BeatBars			 = "string",
 
 	GrowCombo			 = "boolean",
 	SpinCombo			 = "boolean",
