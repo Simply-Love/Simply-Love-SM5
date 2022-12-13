@@ -206,7 +206,6 @@ SL = {
 	},
 	Preferences = {
 		Casual = {
-			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=0,
 			MaxRegenComboAfterMiss=0,
 			MinTNSToHideNotes="TapNoteScore_W3",
@@ -216,17 +215,16 @@ SL = {
 			AllowW1="AllowW1_Everywhere",
 			SubSortByNumSteps=true,
 
-			TimingWindowSecondsW1=0.021500,
-			TimingWindowSecondsW2=0.043000,
-			TimingWindowSecondsW3=0.102000,
-			TimingWindowSecondsW4=0.102000,
-			TimingWindowSecondsW5=0.102000,
-			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
+			TimingWindowSecondsW1=0.023000,
+			TimingWindowSecondsW2=0.044500,
+			TimingWindowSecondsW3=0.103500,
+			TimingWindowSecondsW4=0.103500,
+			TimingWindowSecondsW5=0.103500,
+			TimingWindowSecondsHold=0.321500,
+			TimingWindowSecondsMine=0.071500,
+			TimingWindowSecondsRoll=0.351500,
 		},
 		ITG = {
-			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",
@@ -236,17 +234,16 @@ SL = {
 			AllowW1="AllowW1_Everywhere",
 			SubSortByNumSteps=true,
 
-			TimingWindowSecondsW1=0.021500,
-			TimingWindowSecondsW2=0.043000,
-			TimingWindowSecondsW3=0.102000,
-			TimingWindowSecondsW4=0.135000,
-			TimingWindowSecondsW5=0.180000,
-			TimingWindowSecondsHold=0.320000,
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
+			TimingWindowSecondsW1=0.023000,
+			TimingWindowSecondsW2=0.044500,
+			TimingWindowSecondsW3=0.103500,
+			TimingWindowSecondsW4=0.136500,
+			TimingWindowSecondsW5=0.181500,
+			TimingWindowSecondsHold=0.321500,
+			TimingWindowSecondsMine=0.071500,
+			TimingWindowSecondsRoll=0.351500,
 		},
 		["FA+"] = {
-			TimingWindowAdd=0.0015,
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
@@ -256,22 +253,22 @@ SL = {
 			AllowW1="AllowW1_Everywhere",
 			SubSortByNumSteps=true,
 
-			TimingWindowSecondsW1=0.013500,
-			TimingWindowSecondsW2=0.021500,
-			TimingWindowSecondsW3=0.043000,
-			TimingWindowSecondsW4=0.102000,
-			TimingWindowSecondsW5=0.135000,
-			TimingWindowSecondsHold=0.320000,
+			TimingWindowSecondsW1=0.015000,
+			TimingWindowSecondsW2=0.023000,
+			TimingWindowSecondsW3=0.044500,
+			TimingWindowSecondsW4=0.103500,
+			TimingWindowSecondsW5=0.136500,
+			TimingWindowSecondsHold=0.321500,
 			-- NOTE(teejusb): FA+ mode previously had mines set to
-			-- 65ms instead of the actual window size of 70ms. This
+			-- 66.5ms instead of the actual window size of 71.5ms. This
 			-- was to account for "SM5 Mines" but now with the patch here:
 			-- https://gist.github.com/DinsFire64/4a3f763cd3033afd55a176980b32a3b5
 			-- and the development in the thread here:
 			-- https://github.com/stepmania/stepmania/issues/1896
 			-- it's as good as "fixed" for the very very large majority of
-			-- cases so we can set this back to 70ms now.
-			TimingWindowSecondsMine=0.070000,
-			TimingWindowSecondsRoll=0.350000,
+			-- cases so we can set this back to 71.5ms now.
+			TimingWindowSecondsMine=0.071500,
+			TimingWindowSecondsRoll=0.351500,
 		},
 	},
 	Metrics = {
