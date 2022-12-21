@@ -555,13 +555,13 @@ local Overrides = {
 		Values = function()
 			local vals = {}
 			if IsUsingWideScreen() then
-				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown" }
+				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
 				if IsServiceAllowed(SL.GrooveStats.GetScores) then
 					vals[#vals+1] = "DisplayScorebox"
 				end
 			else
 				-- Add in the two removed options if not in WideScreen.
-				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues", "ColumnCountdown" }
+				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
 			end
 			return vals
 		end
@@ -651,7 +651,7 @@ local Overrides = {
 			local first = -100
 			local last = 100
 			local step = 1
-			return stringify( range(first, last, step), "%g")
+			return range(first, last, step)
 		end,
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",

@@ -13,7 +13,7 @@ local PlayerDefaults = {
 				Mini = "0%",
 				BackgroundFilter = "Off",
 				VisualDelay = "0ms",
-				NotefieldShift = "0",
+				NotefieldShift = 0,
 
 				HideTargets = false,
 				HideSongBG = false,
@@ -38,6 +38,8 @@ local PlayerDefaults = {
 				NPSGraphAtTop = false,
 				JudgmentTilt = false,
 				ColumnCues = false,
+				ColumnCountdown = false,
+				ShowHeldMiss = false,
 				DisplayScorebox = true,
 
 				ErrorBar = "None",

@@ -62,6 +62,7 @@ local permitted_profile_settings = {
 	JudgmentTilt         = "boolean",
 	ColumnCues           = "boolean",
 	ColumnCountdown      = "boolean",
+	ShowHeldMiss         = "boolean",
 	DisplayScorebox      = "boolean",
 
 	ErrorBar             = "string",
@@ -75,7 +76,7 @@ local permitted_profile_settings = {
 	SmallerWhite     = "boolean",
 
 	VisualDelay          = "string",
-	NotefieldShift       = "string",
+	NotefieldShift       = "number",
 	
 	FlashMiss            = "boolean",
 	FlashWayOff          = "boolean",

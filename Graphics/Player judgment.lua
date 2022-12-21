@@ -35,6 +35,13 @@ end
 
 local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
 
+local font = mods.ComboFont
+if font == "Wendy" or font == "Wendy (Cursed)" then
+	font = "Wendy/_wendy small"
+else
+	font = "_Combo Fonts/" .. font .. "/"
+end
+
 return Def.ActorFrame{
 	Name="Player Judgment",
 	InitCommand=function(self)
@@ -125,5 +132,40 @@ return Def.ActorFrame{
 			end
 		end,
 		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
-	}
+	},
+	
+	LoadFont(font)..{
+        Text = "",
+        InitCommand = function(self)
+            self:zoom(1):shadowlength(1):y(-35)
+        end,
+        JudgmentMessageCommand = function(self, params)
+            if params.Player ~= player then return end
+            if params.HoldNoteScore then return end
+			if not mods.ShowHeldMiss then return end
+
+			local isHeld = false
+			for col,tapnote in pairs(params.Notes) do
+				local tnt = ToEnumShortString(tapnote:GetTapNoteType())
+				if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
+					local tns = ToEnumShortString(params.TapNoteScore)
+					if tnt ~= "Lift" and tns == "Miss" and tapnote:GetTapNoteResult():GetHeld() then
+						isHeld = true
+					end
+				end
+			end
+			
+			if isHeld then
+				self:finishtweening()
+				self:diffusealpha(1)
+					:settext("HELD")
+					:diffuse(color("#ff0000"))
+					:sleep(0.5)
+					:diffusealpha(0)
+			else
+				self:finishtweening()
+				self:diffusealpha(0)
+			end
+        end
+    },
 }
