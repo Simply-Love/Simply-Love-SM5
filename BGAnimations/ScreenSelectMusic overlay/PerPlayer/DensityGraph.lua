@@ -5,6 +5,9 @@ if GAMESTATE:IsCourseMode() then return end
 local player = ...
 local pn = ToEnumShortString(player)
 
+-- In 2-players mode, whether the DensityGraph or PatternInfo is shown
+-- Can be toggled by the code "ToggleChartInfo" in metrics.ini
+local showPatternInfo = false
 -- Height and width of the density graph.
 local height = 64
 local width = IsUsingWideScreen() and 286 or 276
@@ -30,6 +33,24 @@ local af = Def.ActorFrame{
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if params.Player == player then
 			self:visible(false)
+		end
+	end,
+	PlayerProfileSetMessageCommand=function(self, params)
+		if params.Player == player then
+			self:queuecommand("Redraw")
+		end
+	end,
+	CodeMessageCommand=function(self, params)
+		-- Toggle between the density graph and the pattern info
+		if params.Name == "ToggleChartInfo" and params.PlayerNumber == player then
+			-- Only do so if there are 2 players joined
+			if GAMESTATE:GetNumSidesJoined() ~= 1 then
+				if showPatternInfo then
+					self:queuecommand("ShowInfo")
+				else
+					self:queuecommand("HideInfo")
+				end
+			end
 		end
 	end,
 }
@@ -90,6 +111,14 @@ af2[#af2+1] = NPS_Histogram(player, width, height)..{
 	end,
 	RedrawCommand=function(self)
 		self:visible(true)
+	end,
+	ShowInfoCommand=function(self)
+		self:queuecommand("Hide")
+		showPatternInfo = false
+	end,
+	HideInfoCommand=function(self)
+		self:queuecommand("Redraw")
+		showPatternInfo = true
 	end
 }
 -- Don't let the density graph parse the chart.
@@ -121,6 +150,12 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:visible(true)
 		end
 	end,
+	ShowInfoCommand=function(self)
+		self:queuecommand("Hide")
+	end,
+	HideInfoCommand=function(self)
+		self:queuecommand("Redraw")
+	end
 }
 
 -- Breakdown
@@ -136,7 +171,12 @@ af2[#af2+1] = Def.ActorFrame{
 	RedrawCommand=function(self)
 		self:visible(true)
 	end,
-
+	ShowInfoCommand=function(self)
+		self:queuecommand("Hide")
+	end,
+	HideInfoCommand=function(self)
+		self:queuecommand("Redraw")
+	end,
 	Def.Quad{
 		InitCommand=function(self)
 			local bgHeight = 17
@@ -170,20 +210,36 @@ af2[#af2+1] = Def.ActorFrame{
 af2[#af2+1] = Def.ActorFrame{
 	Name="PatternInfo",
 	InitCommand=function(self)
-		if player == PLAYER_1 then
-			self:addy(64 + 24)
+		if GAMESTATE:GetNumSidesJoined() ~= 1 then
+			self:y(0)
 		else
-			self:addy(-64 - 24)
+			self:y(88)
 		end
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
+		if GAMESTATE:GetNumSidesJoined() ~= 1 then
+			self:y(0)
+		else
+			self:y(88)
+		end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
+		if GAMESTATE:GetNumSidesJoined() ~= 1 then
+			self:y(0)
+		else
+			self:y(88)
+		end
 	end,
-
+	ShowInfoCommand=function(self)
+		self:visible(true)
+	end,
+	HideInfoCommand=function(self)
+		self:visible(false)
+	end,
+	
 	-- Background for the additional chart info.
 	-- Only shown in 1 Player mode
 	Def.Quad{
