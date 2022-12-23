@@ -8,7 +8,7 @@ local footer_height = 32
 -- height of the PaneDisplay in pixels
 local pane_height = 60
 
-local text_zoom = WideScale(0.8, 0.9)
+local text_zoom = IsUsingWideScreen() and WideScale(0.8, 0.9) or WideScale(0.7, 0.8)
 
 -- -----------------------------------------------------------------------
 -- Convenience function to return the SongOrCourse and StepsOrTrail for a
@@ -189,12 +189,20 @@ end
 
 -- -----------------------------------------------------------------------
 -- define the x positions of four columns, and the y positions of three rows of PaneItems
-local pos = {
-	col = { WideScale(-104,-133), WideScale(-36,-38), WideScale(54,76), WideScale(150, 190) },
-	row = { 13, 31, 49 }
-}
 
-local num_rows = 3
+local pos = {}
+pos.row = { 13, 31, 49 }
+
+if IsUsingWideScreen() then
+	-- five columns
+	pos.col = { WideScale(-104,-133), WideScale(-36,-38), WideScale(54,76), WideScale(150, 190) }
+
+else
+	-- four columns
+	pos.col = { WideScale(-104,-133), WideScale(-36,-38), WideScale(54,76), WideScale(150, 190)   }
+end
+
+
 local num_cols = 2
 
 -- HighScores handled as special cases for now until further refactoring
@@ -218,7 +226,7 @@ local PaneItems = {
 -- -----------------------------------------------------------------------
 local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
-af[#af+1] = RequestResponseActor("GetScores", 10, 17, 50)..{
+af[#af+1] = RequestResponseActor("GetScores", 10, IsUsingWideScreen() and 17 or _screen.cx+10, 50)..{
 	OnCommand=function(self)
 		-- Create variables for both players, even if they're not currently active.
 		self.IsParsing = {false, false}

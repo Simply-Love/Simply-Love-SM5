@@ -7,12 +7,12 @@ local pn = ToEnumShortString(player)
 
 -- Height and width of the density graph.
 local height = 64
-local width = IsUsingWideScreen() and 286 or 276
+local width = IsUsingWideScreen() and 286 or 268
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:xy(_screen.cx-182, _screen.cy+23)
+		self:visible(GAMESTATE:IsHumanPlayer(player))
+		self:xy(IsUsingWideScreen() and  _screen.cx-182 or  _screen.cx-176, _screen.cy+23)
 
 		if player == PLAYER_2 then
 			self:addy(height+24)
@@ -30,6 +30,7 @@ local af = Def.ActorFrame{
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if params.Player == player then
 			self:visible(false)
+
 		end
 	end,
 }
@@ -211,7 +212,7 @@ for i, row in ipairs(layout) do
 			Name=col .. "Value",
 			InitCommand=function(self)
 				local textHeight = 17
-				local textZoom = 0.8
+				local textZoom = IsUsingWideScreen() and 0.8 or 0.75 
 				self:zoom(textZoom):horizalign(right)
 				if col == "Total Stream" then
 					self:maxwidth(100)
@@ -247,7 +248,7 @@ for i, row in ipairs(layout) do
 			Name=col,
 			InitCommand=function(self)
 				local textHeight = 17
-				local textZoom = 0.8
+				local textZoom = IsUsingWideScreen() and 0.8 or 0.75 
 				self:maxwidth(width/textZoom):zoom(textZoom):horizalign(left)
 				self:xy(-width/2 + 50, -height/2 + 10)
 				self:addx((j-1)*colSpacing)

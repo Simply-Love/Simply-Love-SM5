@@ -9,8 +9,8 @@ local t = Def.ActorFrame{
 			self:zoom(0.7655)
 			self:xy(_screen.cx - 170, 96)
 		else
-			self:zoom(0.75)
-			self:xy(_screen.cx - 166, 96)
+			self:zoom(0.72)
+			self:xy(_screen.cx - 160, 96)
 		end
 	end
 }

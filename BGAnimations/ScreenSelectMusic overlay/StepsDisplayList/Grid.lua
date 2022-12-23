@@ -7,7 +7,7 @@ local GetStepsToDisplay = LoadActor("./StepsToDisplay.lua")
 
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
-	InitCommand=function(self) self:xy(_screen.cx-26, _screen.cy + 67) end,
+	InitCommand=function(self) self:xy(IsUsingWideScreen() and _screen.cx-26 or _screen.cx-24 , _screen.cy + 67) end,
 
 	OnCommand=function(self)                           self:queuecommand("RedrawStepsDisplay") end,
 	CurrentSongChangedMessageCommand=function(self)    self:queuecommand("RedrawStepsDisplay") end,
