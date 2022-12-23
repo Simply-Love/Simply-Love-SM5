@@ -37,7 +37,6 @@ if song_str ~= "" then
 
 			-- transform a StepsType string like "StepsType_Dance_Single" into "single"
 			local style = stepstype_str:gsub("%w+_%w+_", ""):lower()
-
 			-- ensure string values retrieved from ThemePrefs are valid
 			for _style in ivalues(GAMEMAN:GetStylesForGame(GAMESTATE:GetCurrentGame():GetName())) do
 				-- style corresponds to an C++ object; ensure its name matches that of a valid style for this game
@@ -58,9 +57,7 @@ if song_str ~= "" then
 					GAMESTATE:JoinPlayer(PLAYER_1)
 
 					-- but some styles (couple, routine) need both players joined
-					if StyleType:Reverse()[styletype_str] == 1 -- TwoPlayersTwoSides (couple)
-					or StyleType:Reverse()[styletype_str] == 3 -- TwoPlayersSharedSides (routine)
-					then
+					if style == "couple" or style == "routine" then
 						GAMESTATE:JoinPlayer(PLAYER_2)
 					end
 					----------------------------------------------------------------------
