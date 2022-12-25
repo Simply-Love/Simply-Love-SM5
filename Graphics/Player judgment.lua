@@ -141,7 +141,7 @@ return Def.ActorFrame{
         end,
         JudgmentMessageCommand = function(self, params)
             if params.Player ~= player then return end
-            if params.HoldNoteScore then return end
+            if not params.Notes then return end
 			if not mods.ShowHeldMiss then return end
 
 			local isHeld = false
