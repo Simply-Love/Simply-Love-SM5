@@ -53,7 +53,9 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * 100
-				self:finishtweening()
+				if life < 100 then
+					self:finishtweening()
+				end
 				self:bouncebegin(0.1)
 			end
 		end,
@@ -83,7 +85,9 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * 100
-				self:finishtweening()
+				if life < 100 then
+					self:finishtweening()
+				end
 				self:bouncebegin(0.1)
 			end
 		end,
@@ -112,7 +116,9 @@ local meter = Def.ActorFrame{
 		LifeChangedMessageCommand=function(self,params)
 			if params.Player == player then
 				local life = params.LifeMeter:GetLife() * 100
-				self:finishtweening()
+				if life < 100 then
+					self:finishtweening()
+				end
 				self:bouncebegin(0.1):settext(("%.1f%%"):format(life))
 			end
 		end,
