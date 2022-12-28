@@ -271,7 +271,7 @@ for i, row in ipairs(layout) do
 				if col == "Total Stream" then
 					self:maxwidth(100)
 				end
-				self:xy(-width/2 + 40, -height/2 + 10)
+				self:xy(-width/2 + 40, -height/2 + 13)
 				self:addx((j-1)*colSpacing)
 				self:addy((i-1)*rowSpacing)
 			end,
@@ -304,7 +304,7 @@ for i, row in ipairs(layout) do
 				local textHeight = 17
 				local textZoom = 0.8
 				self:maxwidth(width/textZoom):zoom(textZoom):horizalign(left)
-				self:xy(-width/2 + 50, -height/2 + 10)
+				self:xy(-width/2 + 50, -height/2 + 13)
 				self:addx((j-1)*colSpacing)
 				self:addy((i-1)*rowSpacing)
 			end,
