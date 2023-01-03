@@ -92,6 +92,25 @@ return Def.ActorFrame{
 			frame = frame * 2
 			if not param.Early then frame = frame + 1 end
 		end
+		
+		-- support for "held miss" sprite on the "early miss" column
+		-- currently only a few judgment fonts do this... not sure if I should write a toggle
+		-- option in the future since turning it on for a judgment without the distinction
+		-- would accomplish nothing
+		if tns == "Miss" then
+			local isHeld = false
+			for col,tapnote in pairs(param.Notes) do
+				local tnt = ToEnumShortString(tapnote:GetTapNoteType())
+				if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
+					local tns = ToEnumShortString(param.TapNoteScore)
+					if tnt ~= "Lift" and tns == "Miss" and tapnote:GetTapNoteResult():GetHeld() then
+						isHeld = true
+					end
+				end
+			end
+			
+			if isHeld then frame = frame - 1 end
+		end
 
 		self:playcommand("Reset")
 
