@@ -11,7 +11,7 @@ local FilterAlpha = {
 
 return Def.Quad{
 	InitCommand=function(self)
-		self:diffuse(0, 0, 0, 0):setsize(width+100, _screen.h):y(-header_height):diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
+		self:diffuse(0, 0, 0, 0):setsize(width+100, _screen.h):y(-header_height):diffusealpha( mods.BackgroundFilter / 100 )
 		if NoteFieldIsCentered then
 			self:setsize(width, _screen.h)
 		else

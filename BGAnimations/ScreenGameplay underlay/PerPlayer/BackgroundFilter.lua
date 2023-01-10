@@ -4,7 +4,7 @@ local mods = SL[pn].ActiveModifiers
 local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- if no BackgroundFilter is necessary, it's safe to bail now
-if mods.BackgroundFilter == "Off" then return end
+if mods.BackgroundFilter == 0 then return end
 
 local FilterAlpha = {
 	Dark = 0.5,
@@ -16,7 +16,7 @@ return Def.Quad{
 	InitCommand=function(self)
 		self:xy(GetNotefieldX(player), _screen.cy )
 			:diffuse(Color.Black)
-			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
+			:diffusealpha( mods.BackgroundFilter / 100 )
 			:zoomto( GetNotefieldWidth() + 80, _screen.h )
 			:fadeleft(0.1):faderight(0.1)
 		if NoteFieldIsCentered and SL[pn].ActiveModifiers.DataVisualizations ~= "None" then

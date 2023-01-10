@@ -20,7 +20,7 @@ local permitted_profile_settings = {
 	JudgmentGraphic  = "string",
 	ComboFont        = "string",
 	HoldJudgment     = "string",
-	BackgroundFilter = "string",
+	BackgroundFilter = "number",
 
 	----------------------------------
 	-- "Advanced Modifiers"
