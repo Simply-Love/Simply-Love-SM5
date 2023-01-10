@@ -100,11 +100,6 @@ Check out this imgur album for more screenshots: [http://imgur.com/a/56wDq](http
 
 [Profile Avatars](./Other/Documentation/ProfileAvatars-README.md)
 
-### Player Options Menu
-
-Guide by Rob Nichols:
-[Player Options Menu](https://robnicholsgames.com/2020/04/13/how-to-setup-stepmania-for-modern-dance-gaming/#menus)
-
 ### Custom Songs from USB
 
 [Custom Songs from USB](./Other/Documentation/CustomSongsFromUSB-README.md)
