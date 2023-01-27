@@ -109,7 +109,7 @@ return Def.ActorFrame{
 				end
 			end
 			
-			if isHeld then frame = frame - 1 end
+			if isHeld and (sprite:GetNumStates() == 12 or sprite:GetNumStates() == 14) then frame = frame - 1 end
 		end
 
 		self:playcommand("Reset")

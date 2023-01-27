@@ -145,19 +145,28 @@ GenerateBreakdownText = function(pn, minimization_level)
 	for i, segment in ipairs(segments) do
 		local segment_size = segment.streamEnd - segment.streamStart
 		if segment.isBreak then
-			-- Never include leading and trailing breaks.
-			if i ~= 1 and i ~= #segments then
-				-- Break segments of size 1 aren't handled here as they don't show up.
-				-- Instead we handle them below when we see two stream sequences in succession.
-				if segment_size <= 4 then
-					segment_sum, is_broken, total_sum = AddNotationForSegment(
-						"-", segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
-				elseif segment_size < 32 then
-					segment_sum, is_broken, total_sum = AddNotationForSegment(
-						"/",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
-				else
-					segment_sum, is_broken, total_sum = AddNotationForSegment(
-						" | ",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+			if i ~= 1 and i ~= #segments and segment_size <= 3 and (minimization_level == 2 or minimization_level == 3) then
+				-- Don't count this as a true "break"
+				is_broken = true
+				-- For * notation, we want to add short breaks as part of the number.
+				if minimization_level == 2 then
+					segment_sum = segment_sum + segment_size
+				end
+			else
+				-- Never include leading and trailing breaks.
+				if i ~= 1 and i ~= #segments then
+					-- Break segments of size 1 aren't handled here as they don't show up.
+					-- Instead we handle them below when we see two stream sequences in succession.
+					if segment_size <= 4 then
+						segment_sum, is_broken, total_sum = AddNotationForSegment(
+							"-", segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+					elseif segment_size < 32 then
+						segment_sum, is_broken, total_sum = AddNotationForSegment(
+							"/",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+					else
+						segment_sum, is_broken, total_sum = AddNotationForSegment(
+							" | ",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+					end
 				end
 			end
 		else
@@ -207,16 +216,23 @@ end
 -- Returns the total amount of stream and break measures in a chart.
 GetTotalStreamAndBreakMeasures = function(pn)
 	local totalStream, totalBreak = 0, 0
+	local edgeBreak = 0
 
 	-- Assume 16ths for the breakdown text
 	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
 	for i, segment in ipairs(segments) do
 		local segment_size = segment.streamEnd - segment.streamStart
-		if segment.isBreak then
+		if segment.isBreak and i < #segments and i ~= 1 then
 			totalBreak = totalBreak + segment_size
+		elseif segment.isBreak then
+			edgeBreak = edgeBreak + segment_size
 		else
 			totalStream = totalStream + segment_size
 		end
+	end
+	
+	if totalStream + totalBreak < 10 or totalStream + totalBreak < edgeBreak then
+		totalBreak = totalBreak + edgeBreak
 	end
 
 	return totalStream, totalBreak
