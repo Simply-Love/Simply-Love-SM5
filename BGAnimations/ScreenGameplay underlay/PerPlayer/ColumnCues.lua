@@ -73,6 +73,11 @@ local af = Def.ActorFrame{
 	end,
 	SetUpdateCommand=function(self)
 		self:SetUpdateFunction(Update)
+	end,
+	CurrentSongChangedMessageCommand=function(self)
+		columnCues = SL[pn].Streams.ColumnCues
+		curIndex = 1
+		updatedFirstTime = false
 	end
 }
 
