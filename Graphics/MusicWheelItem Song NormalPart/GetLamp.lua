@@ -4,28 +4,16 @@ local pn = args[1]
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 
 local AwardMap = {
-	["ITG"] = {
-		["StageAward_FullComboW1"] = 1,
-		["StageAward_FullComboW2"] = 2,
-		["StageAward_SingleDigitW2"] = 2,
-		["StageAward_OneW2"] = 2,
-		["StageAward_FullComboW3"] = 3,
-		["StageAward_SingleDigitW3"] = 3,
-		["StageAward_OneW3"] = 3,
-		["StageAward_100PercentW3"] = 3,
-	},
-	["FA+"] = {
-		["StageAward_FullComboW1"] = 1,
-		["StageAward_FullComboW2"] = 2,
-		["StageAward_SingleDigitW2"] = 2,
-		["StageAward_OneW2"] = 2,
-		["StageAward_FullComboW3"] = 3,
-		["StageAward_SingleDigitW3"] = 3,
-		["StageAward_OneW3"] = 3,
-		["StageAward_100PercentW3"] = 3,
-		-- FullComboW4 technically doesn't exist, but we create it on the fly below.
-		["StageAward_FullComboW4"] = 4,
-	}
+	["StageAward_FullComboW1"] = 1,
+	["StageAward_FullComboW2"] = 2,
+	["StageAward_SingleDigitW2"] = 2,
+	["StageAward_OneW2"] = 2,
+	["StageAward_FullComboW3"] = 3,
+	["StageAward_SingleDigitW3"] = 3,
+	["StageAward_OneW3"] = 3,
+	["StageAward_100PercentW3"] = 3,
+	-- FullComboW4 technically doesn't exist, but we create it on the fly below.
+	["StageAward_FullComboW4"] = 4,
 }
 
 local function GetLamp(song)
@@ -42,12 +30,6 @@ local function GetLamp(song)
 		return nil
 	end
 
-	local game_mode = SL.Global.GameMode
-	-- Default to ITG mode tiers if we use a game mode not defined in the AwardMap
-	if AwardMap[game_mode] == nil then
-		game_mode = "ITG"
-	end
-	
 	local best_lamp = nil
 
 	for score in ivalues(high_score_list:GetHighScores()) do
@@ -63,8 +45,8 @@ local function GetLamp(song)
 			end
 		end
 
-		if AwardMap[game_mode][award] ~= nil then
-			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[game_mode][award])
+		if AwardMap[award] ~= nil then
+			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[award])
 		end
 	end
 
