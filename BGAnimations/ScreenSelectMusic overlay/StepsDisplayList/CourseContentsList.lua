@@ -36,7 +36,7 @@ end
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
-		self:xy(_screen.cx-170, _screen.cy + 28)
+		self:xy(_screen.cx- (IsUsingWideScreen() and 170 or 160), _screen.cy + 28)
 	end,
 
 	---------------------------------------------------------------------
@@ -52,7 +52,7 @@ local af = Def.ActorFrame{
 	-- lower mask
 	Def.Quad{
 		InitCommand=function(self)
-			self:xy(IsUsingWideScreen() and -44 or 0,98)
+			self:xy(IsUsingWideScreen() and -44 or 90,98)
 				:zoomto(_screen.w/2, 40)
 				:MaskSource()
 		end
@@ -72,7 +72,8 @@ local af = Def.ActorFrame{
 	-- gray background Quad
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(color("#1e282f")):zoomto(320, 96)
+			
+			self:diffuse(color("#1e282f")):zoomto(IsUsingWideScreen() and 320 or 303, 96)
 				:xy(0, 30)
 
 			if ThemePrefs.Get("RainbowMode") then
@@ -91,8 +92,8 @@ af[#af+1] = Def.CourseContentsList {
 	NumItemsToDraw=numItemsToDraw,
 
 	InitCommand=function(self)
-		self:xy(40,-4)
-			:SetUpdateFunction( update )
+		self:xy(IsUsingWideScreen() and 40 or 40,-4)
+			:SetUpdateFunction( update ):zoom(IsUsingWideScreen() and 1 or 0.95)
 	end,
 
 	CurrentTrailP1ChangedMessageCommand=function(self) self:playcommand("Set") end,
