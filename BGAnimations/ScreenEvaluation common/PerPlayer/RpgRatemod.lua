@@ -9,7 +9,7 @@ local IsEventActive = function()
 	-- The file is only written to while the event is active.
 	-- These are just placeholder dates.
 	local startTimestamp = 20220615
-	local endTimestamp = 20221101
+	local endTimestamp = 20231101
 
 	local today = year * 10000 + month * 100 + day
 
@@ -21,7 +21,7 @@ local game = GAMESTATE:GetCurrentGame()
 
 if (SL.Global.GameMode == "Casual" or
 		GAMESTATE:IsCourseMode() or
-		not IsEventActive() or
+		--not IsEventActive() or -- This event lasts forever it seems, lol
 		game:GetName() ~= "dance" or
 		(style:GetName() ~= "single" and style:GetName() ~= "versus")) then
 	return
