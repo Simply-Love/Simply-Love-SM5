@@ -534,7 +534,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	MiniIndicator = {
-		Values = { "None", "SubtractiveScoring", "PredictiveScoring", "PaceScoring", "RivalScoring", "Pacemaker" },
+		Values = { "None", "SubtractiveScoring", "PredictiveScoring", "PaceScoring", "RivalScoring", "Pacemaker", "StreamProg" },
 	},
 	-------------------------------------------------------------------------
 	MiniIndicatorColor = {
@@ -752,6 +752,11 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	BeatBars = {
 		Choices = { "None", "Measures", "Beats" },
+	},
+	-------------------------------------------------------------------------
+	Experimental = {
+		SelectType = "SelectMultiple",
+		Choices = { "FAPlusGradual", "JudgmentBack" },
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {

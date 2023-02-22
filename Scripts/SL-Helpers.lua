@@ -682,11 +682,17 @@ GetExJudgmentCounts = function(player)
 			-- We need to extract the W0 count in ITG mode.
 			if window == "W1" then
 				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total
+				local faPlus15 = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W015_total
 				-- Subtract white count from blue count
+				local number15 = number - faPlus15
 				number = number - faPlus
+				
 				-- Populate the two numbers.
 				counts["W0"] = faPlus
+				counts["W015"] = faPlus15
 				counts["W1"] = number
+				counts["W115"] = number15
+				
 			else
 				if ((window ~= "W4" and window ~= "W5") or
 						-- Only populate decent and way off windows if they're active.

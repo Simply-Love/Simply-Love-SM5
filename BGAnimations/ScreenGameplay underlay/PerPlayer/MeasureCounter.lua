@@ -26,6 +26,7 @@ local lookAhead = mods.MeasureCounterLookahead
 local InitializeMeasureCounter = function()
 	-- SL[pn].Streams is initially set (and updated in CourseMode)
 	-- in ./ScreenGameplay in/MeasureCounterAndModsLevel.lua
+	SL[pn].MeasuresCompleted = 0
 	streams = SL[pn].Streams
 	streamIndex = 1
 	prevMeasure = -1
@@ -146,6 +147,9 @@ local Update = function(self, delta)
 				if not isLookAhead then
 					if string.find(text, "/") then
 						bmt[adjustedIndex]:diffuse(1, 1, 1, 1)
+						-- if streams.Measures[streamIndex] and not streams.Measures[streamIndex].isBreak then
+						SL[pn].MeasuresCompleted = SL[pn].MeasuresCompleted + 0.25
+						-- end
 					else
 						-- If this is a mini-break, make it lighter.
 						bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)
