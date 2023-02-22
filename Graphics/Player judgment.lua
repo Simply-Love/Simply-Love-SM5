@@ -3,6 +3,10 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local sprite
 
+if mods.JudgmentBack then
+	return Def.ActorFrame{Name="Player Judgment"}
+end
+
 ------------------------------------------------------------
 -- A profile might ask for a judgment graphic that doesn't exist
 -- If so, use the first available Judgment graphic
@@ -47,6 +51,7 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 		local kids = self:GetChildren()
 		sprite = kids.JudgmentWithOffsets
+		sprite2 = kids.JudgmentDouble
 	end,
 	JudgmentMessageCommand=function(self, param)
 		if param.Player ~= player then return end
@@ -72,6 +77,11 @@ return Def.ActorFrame{
 					if not IsW0Judgment(param, player) and not IsAutoplay(player) then
 						frame = 1
 					end
+					
+					if mods.FAPlusGradual and mods.SmallerWhite and IsW015Judgment(param,player) then
+						frame = 0
+					end
+					
 				end
 				-- We don't need to adjust the top window otherwise.
 			else
@@ -131,6 +141,27 @@ return Def.ActorFrame{
 		end
 		-- this should match the custom JudgmentTween() from SL for 3.95
 		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		
+		if mods.FAPlusGradual and IsW0Judgment(param, player) then
+			local grade = (math.abs(param.TapNoteOffset) - 0.005) * 100
+			sprite2:visible(true):diffusealpha(grade):setstate(frame+2)
+			
+			if mods.JudgmentTilt then
+				if tns ~= "Miss" then
+					-- How much to rotate.
+					-- We cap it at Great since anything after likely to be too distracting.
+					local offset = math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300
+					-- Which direction to rotate.
+					local direction = param.TapNoteOffset < 0 and -1 or 1
+					sprite2:rotationz(direction * offset)
+				else
+					-- Reset rotations on misses so it doesn't use the previous note's offset.
+					sprite2:rotationz(0)
+				end
+			end
+			-- this should match the custom JudgmentTween() from SL for 3.95
+			sprite2:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		end
 	end,
 
 	Def.Sprite{
@@ -153,10 +184,33 @@ return Def.ActorFrame{
 		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
 	},
 	
+	Def.Sprite{
+		Name="JudgmentDouble",
+		InitCommand=function(self)
+			-- animate(false) is needed so that this Sprite does not automatically
+			-- animate its way through all available frames; we want to control which
+			-- frame displays based on what judgment the player earns
+			self:animate(false):visible(false)
+
+			-- if we are on ScreenEdit, judgment graphic is always "Love"
+			-- because ScreenEdit is a mess and not worth bothering with.
+			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
+				self:Load( THEME:GetPathG("", "_judgments/Love") )
+
+			else
+				self:Load( THEME:GetPathG("", "_judgments/" .. file_to_load) )
+			end
+		end,
+		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
+	},
+	
 	LoadFont(font)..{
         Text = "",
         InitCommand = function(self)
             self:zoom(1):shadowlength(1):y(-35)
+			if font == "Wendy" or font == "Wendy Cursed" then
+				self:zoom(0.5)
+			end
         end,
         JudgmentMessageCommand = function(self, params)
             if params.Player ~= player then return end
