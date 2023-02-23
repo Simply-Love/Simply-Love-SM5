@@ -242,13 +242,26 @@ af2[#af2+1] = Def.ActorFrame{
 		end,
 		RedrawCommand=function(self)
 			local textZoom = 0.8
+			breakdown_table = {}
+			marquee_index = 0
 			self:settext(GenerateBreakdownText(pn, 0))
+			breakdown_table[1] = GenerateBreakdownText(pn, 0)
 			local minimization_level = 1
-			while self:GetWidth() > (width/textZoom) and minimization_level < 4 do
+			while self:GetWidth() > (width/textZoom*(1+minimization_level*0.1)) and minimization_level < 4 do
+				if self:GetWidth() < (width/textZoom*(1.7)) then
+					breakdown_table[2] = GenerateBreakdownText(pn, minimization_level-1)
+				end
 				self:settext(GenerateBreakdownText(pn, minimization_level))
+				breakdown_table[1] = GenerateBreakdownText(pn, minimization_level)
 				minimization_level = minimization_level + 1
 			end
+			self:finishtweening():playcommand("Marquee",{breakdown_table=breakdown_table})
 		end,
+		MarqueeCommand=function(self)
+			marquee_index = (marquee_index % #breakdown_table) + 1
+			self:settext(breakdown_table[marquee_index])
+			self:sleep(5):queuecommand("Marquee")
+		end
 	}
 }
 
@@ -321,7 +334,7 @@ for i, row in ipairs(layout) do
 					if streamMeasures == 0 then
 						self:settext("None (0.0%)")
 					else
-						self:settext(string.format("%d/%d (%0.1f%%)", streamMeasures, totalMeasures, streamMeasures/totalMeasures*100))
+						self:settext(string.format("%d/%d (%0.2f%%)", streamMeasures, totalMeasures, streamMeasures/totalMeasures*100))
 					end
 				end
 			end
