@@ -124,5 +124,15 @@ af[#af+1] = Def.Banner{
 		self:setsize(418,164):zoom(0.3):addy(70)
     end
 }
+af[#af+1] = Def.Banner{
+    CurrentSongChangedMessageCommand=function(self)
+		if GAMESTATE:IsCourseMode() then
+			self:LoadFromCourse( GAMESTATE:GetCurrentCourse() )
+		else
+			self:LoadFromSongGroup( GAMESTATE:GetCurrentSong():GetGroupName() )
+		end
+		self:setsize(418,164):zoom(0.25):addy(125)
+    end
+}
 
 return af

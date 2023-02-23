@@ -22,6 +22,7 @@ local fadeTime = 0.15
 local curIndex = 1
 local updatedFirstTime = false
 local breakTime = 0
+local text
 
 local font = mods.ComboFont
 if font == "Wendy" or font == "Wendy (Cursed)" then
@@ -31,7 +32,7 @@ else
 end
 
 local Update = function(self, delta)
-	if curIndex <= #columnCues then
+	if columnCues ~= nil and curIndex <= #columnCues then
 		local curTime = playerState:GetSongPosition():GetMusicSecondsVisible()
 		local columnCue = columnCues[curIndex]
 		local startTime = columnCue.startTime

@@ -49,7 +49,7 @@ local meter = Def.ActorFrame{
 			if player==PLAYER_1 then
 				self:x(_x+10)
 			else
-				self:x(_x-55)
+				self:x(_x-11):horizalign("right")
 			end
 		end,
 		HealthStateChangedMessageCommand=function(self,params)
@@ -83,7 +83,7 @@ local meter = Def.ActorFrame{
 			if player==PLAYER_1 then
 				self:x(_x+11)
 			else
-				self:x(_x-54)
+				self:x(_x-12):horizalign("right")
 			end
 		end,
 		HealthStateChangedMessageCommand=function(self,params)
@@ -116,7 +116,7 @@ local meter = Def.ActorFrame{
 			if player==PLAYER_1 then
 				self:x(_x+12)
 			else
-				self:x(_x-53)
+				self:x(_x-13):horizalign("right")
 			end
 		end,
 		HealthStateChangedMessageCommand=function(self,params)

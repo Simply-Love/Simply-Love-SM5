@@ -4,6 +4,8 @@ if GAMESTATE:IsCourseMode() then return end
 local player = ...
 local pn = ToEnumShortString(player)
 
+local IsNotWide = (GetScreenAspectRatio() < 16/9)
+
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:y(_screen.cy*0.3)
@@ -115,8 +117,8 @@ af2.BuildSongLampArrayCommand=function(self)
 end
 
 -- Banner size
-local height = 418
-local width = 164
+local height = IsNotWide and 314 or 418
+local width = IsNotWide and 123 or 164
 
 local style = ThemePrefs.Get("VisualStyle")
 local colorTable = (style == "SRPG6") and SL.SRPG6.Colors or SL.DecorativeColors
@@ -160,6 +162,11 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:y(-60)
 		self:zoom(2)
 		self:maxwidth(200)
+		
+		if IsNotWide then
+			self:zoom(1.5)
+			self:y(-50)
+		end
 	end
 }
 
@@ -172,6 +179,9 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:y(-20)
 		self:zoom(2)
 		self:maxwidth(200)
+		if IsNotWide then
+			self:zoom(1.5)
+		end
 	end
 }
 
@@ -184,11 +194,14 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:settext(text)
 		self:y(15)
 		self:zoom(1.25)
+		if IsNotWide then
+			self:zoom(0.94)
+		end
 	end
 }
 
 -- Grades and grade count
-local columnWidth = 100
+local columnWidth = IsNotWide and 75 or 100
 for i=1,4 do
 	af2[#af2+1] = LoadFont("Common Normal")..{
 		Name="Grade" ..i,
@@ -199,6 +212,11 @@ for i=1,4 do
 			self:x(-220+columnWidth*i)
 			self:y(52)
 			self:zoom(1.4)
+			if IsNotWide then
+				self:zoom(1.05)
+				self:x(-170+columnWidth*i)
+				self:y(45)
+			end
 		end
 	}
 	af2[#af2+1] = Def.Sprite{
@@ -209,6 +227,11 @@ for i=1,4 do
 			self:x(-270+columnWidth*i)
 			self:y(52)
 			self:zoom(0.5)
+			if IsNotWide then
+				self:zoom(0.38)
+				self:x(-200+columnWidth*i)
+				self:y(45)
+			end
 		end
 	}
 end

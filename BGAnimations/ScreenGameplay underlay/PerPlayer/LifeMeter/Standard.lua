@@ -5,6 +5,7 @@ local w = 136
 local h = 18
 local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(238, 288)
 local oldlife = 0
+local IsNotWide = (GetScreenAspectRatio() < 16/9)
 
 -- get SongPosition specific to this player so that
 -- split BPMs are handled if there are any
@@ -30,9 +31,10 @@ local meter = Def.ActorFrame{
 	-- percent
 	Def.Quad {
 		InitCommand=function(self)
+			self:visible(not IsNotWide)
 		    self:zoomto(44, 18):diffuse(PlayerColor(player,true)):horizalign("left")
 			if player==PLAYER_1 then
-				self:x(_x-126)
+				self:x(_x-76):horizalign("right")
 			else
 				self:x(_x+76)
 			end
@@ -62,9 +64,10 @@ local meter = Def.ActorFrame{
 	},
 	Def.Quad {
 		InitCommand=function(self)
+			self:visible(not IsNotWide)
 			self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left")
 			if player==PLAYER_1 then
-				self:x(_x-125)
+				self:x(_x-77):horizalign("right")
 			else
 				self:x(_x+77)
 			end
@@ -95,9 +98,10 @@ local meter = Def.ActorFrame{
 	Def.BitmapText {
 		Font="Common Normal",
 		InitCommand=function(self)
+			self:visible(not IsNotWide)
 			self:diffuse(PlayerColor(player,true)):horizalign("left")
 			if player==PLAYER_1 then
-				self:x(_x-124)
+				self:x(_x-77):horizalign("right")
 			else
 				self:x(_x+78)
 			end

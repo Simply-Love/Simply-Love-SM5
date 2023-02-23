@@ -316,6 +316,21 @@ bmt.SetScoreCommand=function(self, params)
 			else
 				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
 			end
+		elseif mods.MiniIndicator == "StreamProg" then
+			local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(pn)
+			if streamMeasures == 0 then return end
+			local measuresCompleted = SL[pn].MeasuresCompleted
+			local completion = measuresCompleted / streamMeasures
+			if mods.MiniIndicatorColor == "Default" then
+				if completion >= 0.9 then
+					self:diffuse(0, 1, (completion - 0.9) * 10, 1)
+				elseif completion >= 0.5 then
+					self:diffuse((0.9 - completion) * 10 / 4, 1, 0, 1)
+				else
+					self:diffuse(1, (completion - 0.2) * 10 / 3, 0, 1)
+				end
+			end
+			self:settext( ("%.2f%%"):format(completion * 100) )
 		end
 	end
 end
