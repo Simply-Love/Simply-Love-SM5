@@ -206,6 +206,9 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:sleep(2):queuecommand("Marquee")
 		end
 	end,
+	OffCommand=function(self)
+		self:stoptweening()
+	end,
 }
 
 -- Breakdown
@@ -261,7 +264,10 @@ af2[#af2+1] = Def.ActorFrame{
 			marquee_index = (marquee_index % #breakdown_table) + 1
 			self:settext(breakdown_table[marquee_index])
 			self:sleep(5):queuecommand("Marquee")
-		end
+		end,
+		OffCommand=function(self)
+			self:stoptweening()
+		end,
 	}
 }
 
