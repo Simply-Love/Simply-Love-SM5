@@ -2,6 +2,7 @@ local player = ...
 local pn = ToEnumShortString(player)
 local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 local track_earlyjudgments = SL[pn].ActiveModifiers.TrackEarlyJudgments
+local ArrowColors = { Color.Red, Color.Blue, Color.Green, Color.Yellow }
 
 -- a string representing the NoteSkin the player was using
 local noteskin = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():NoteSkin()
@@ -15,6 +16,7 @@ local game  = GAMESTATE:GetCurrentGame():GetName()
 local style = GAMESTATE:GetCurrentStyle()
 local style_name = style:GetName()
 local num_columns = style:ColumnsPerPlayer()
+local activeGraph = 1
 
 local rows = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 if SL[pn].ActiveModifiers.ShowFaPlusWindow then
@@ -46,6 +48,10 @@ local row_height = box_height/#rows
 
 local af = Def.ActorFrame{}
 af.InitCommand=function(self) self:xy(-104, _screen.cy-40) end
+af.GraphCommand=function(self, params)
+	activeGraph = params.graph
+	self:playcommand("Update")
+end
 
 
 for i, column in ipairs( cols ) do
@@ -65,6 +71,13 @@ for i, column in ipairs( cols ) do
 	af[#af+1] = LoadActor(THEME:GetPathB("","_modules/NoteSkinPreview.lua"), {noteskin_name=noteskin, column=column.Name})..{
 		OnCommand=function(self)
 			self:x( _x ):zoom(0.4):visible(true)
+		end,
+		UpdateCommand=function(self)
+			if activeGraph ~= 2 then
+				self:stoptweening():stopeffect()
+			else
+				self:glowshift():effectcolor1(ArrowColors[i]):effectcolor2(ArrowColors[i])
+			end
 		end
 	}
 

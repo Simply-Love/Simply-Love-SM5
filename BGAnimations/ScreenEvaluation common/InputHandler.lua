@@ -9,7 +9,7 @@ end
 -- -----------------------------------------------------------------------
 -- local variables
 
-local panes, active_pane = {}, {}
+local panes, active_pane, active_graph = {}, {}, {}
 
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 local players = GAMESTATE:GetHumanPlayers()
@@ -31,6 +31,7 @@ local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_p
 for controller=1,2 do
 
 	panes[controller] = {}
+	active_graph[controller] = 1
 
 	-- Iterate through all potential panes, and only add the non-nil ones to the
 	-- list of panes we want to consider.
@@ -130,6 +131,31 @@ return function(event)
 
 	if event.type == "InputEventType_FirstPress" and panes[cn] then
 
+		if event.GameButton == "MenuUp" or event.GameButton == "MenuDown" then
+			if event.GameButton == "MenuUp" then
+				active_graph[cn] = (active_graph[cn] - 1) % 3
+				if active_graph[cn] == 0 then active_graph[cn] = 3 end
+			else
+				active_graph[cn] = (active_graph[cn] % 3) + 1
+			end
+			
+			if #players==1 then
+				af:GetChild(ToEnumShortString(mpn) .. "_AF_Lower"):GetChild("JudgeGraph"):visible(active_graph[cn] == 1)
+				af:GetChild(ToEnumShortString(mpn) .. "_AF_Lower"):GetChild("ArrowGraph"):visible(active_graph[cn] > 1)
+				af:GetChild(ToEnumShortString(mpn) .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("ArrowPlot"):visible(active_graph[cn] == 2)
+				af:GetChild(ToEnumShortString(mpn) .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("FootPlot"):visible(active_graph[cn] == 3)
+				af:GetChild(ToEnumShortString(mpn) .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("Feet"):visible(active_graph[cn] == 3)
+				panes[ocn][3]:playcommand("Graph", {graph=active_graph[cn]})
+			else
+				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("JudgeGraph"):visible(active_graph[cn] == 1)
+				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("ArrowGraph"):visible(active_graph[cn] > 1)
+				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("ArrowPlot"):visible(active_graph[cn] == 2)
+				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("FootPlot"):visible(active_graph[cn] == 3)
+				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("Feet"):visible(active_graph[cn] == 3)
+			end
+			panes[cn][3]:playcommand("Graph", {graph=active_graph[cn]})
+		end
+		
 		if event.GameButton == "MenuRight" or event.GameButton == "MenuLeft" then
 			if event.GameButton == "MenuRight" then
 				active_pane[cn] = (active_pane[cn] % #panes[cn]) + 1

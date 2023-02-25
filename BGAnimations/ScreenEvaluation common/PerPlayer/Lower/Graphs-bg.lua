@@ -8,7 +8,7 @@ local GraphWidth  = THEME:GetMetric("GraphDisplay", "BodyWidth")
 local GraphHeight = THEME:GetMetric("GraphDisplay", "BodyHeight")
 
 local af = Def.ActorFrame{
-	Name="JudgeGraph",
+	Name="ArrowGraph",
 	InitCommand=function(self)
 		self:y(_screen.cy + 124)
 		if NumPlayers == 1 then
@@ -16,6 +16,7 @@ local af = Def.ActorFrame{
 			-- that would normally be between the left and right panes
 			self:addx(GraphWidth * 0.2541)
 		end
+		self:visible(false)
 	end,
 
 	-- Draw a Quad behind the GraphDisplay (lifebar graph) and Judgment ScatterPlot
@@ -41,7 +42,54 @@ if not GAMESTATE:IsCourseMode() then
 	}
 end
 
-af[#af+1] = LoadActor("./ScatterPlot.lua", {player=player, GraphWidth=GraphWidth, GraphHeight=GraphHeight} )
+local worst_window = GetTimingWindow(SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].worst_window)
+local worst_judge = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].worst_window
+local colors = {}
+for w=NumJudgmentsAvailable(),1,-1 do
+	if SL[pn].ActiveModifiers.TimingWindows[w]==true then
+		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
+	else
+		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
+	end
+end
+
+for i=1,worst_judge do
+	local endpoint = 0
+	if i > 1 then
+		endpoint = GetTimingWindow(i-1)
+	end
+	af[#af+1] = Def.Quad{
+		Name="Judge_"..i.."top",
+		InitCommand=function(self)
+			self:vertalign('VertAlign_Bottom')
+			self:zoomto(GraphWidth,(GetTimingWindow(i)-endpoint)/worst_window*GraphHeight/2)
+			self:y((1-endpoint/worst_window)*GraphHeight/2)
+			self:diffuse(colors[i])
+			self:diffusealpha(0.2)
+		end
+	}
+	
+	af[#af+1] = Def.Quad{
+		Name="Judge_"..i.."bottom",
+		InitCommand=function(self)
+			self:vertalign('VertAlign_Top')
+			self:zoomto(GraphWidth,(GetTimingWindow(i)-endpoint)/worst_window*GraphHeight/2)
+			self:y((endpoint/worst_window)*GraphHeight/2+GraphHeight/2)
+			self:diffuse(colors[i])
+			self:diffusealpha(0.2)
+		end
+	}
+end
+
+af[#af+1] = LoadActor("./ScatterPlotDirection.lua", {player=player, GraphWidth=GraphWidth, GraphHeight=GraphHeight} )
+af[#af+1] = LoadActor("./ScatterPlotFoot.lua", {player=player, GraphWidth=GraphWidth, GraphHeight=GraphHeight} )
+af[#af+1] = Def.Sprite{
+				Texture=THEME:GetPathG("", "feet-diagram.png"),
+				Name="Feet",
+				InitCommand=function(self)
+					self:diffusealpha(0.2):zoom(0.45):y(GraphHeight/2)
+				end,
+			}
 
 -- The GraphDisplay provided by the engine provides us a solid color histogram detailing
 -- the player's lifemeter during gameplay capped by a white line.
@@ -107,6 +155,7 @@ if storage.DeathSecond ~= nil then
 	local graphPercentage = storage.GraphPercentage
 	local graphLabel = storage.GraphLabel
 	local secondsLeft = seconds-deathSecond
+
 	-- If the player failed, check how much time was remaining
 	af[#af+1] = Def.ActorFrame {
 		InitCommand=function(self)
