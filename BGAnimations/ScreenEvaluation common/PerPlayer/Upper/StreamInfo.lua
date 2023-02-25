@@ -34,7 +34,7 @@ return Def.ActorFrame {
 		InitCommand=function(self) self:zoom(0.7):xy(148,_screen.cy-97):vertalign("VertAlign_Bottom") end,
 		OnCommand=function(self)
 			local textColor = Color.White
-			local shadowLength = 1
+			local shadowLength = 0
 			self:maxwidth(SCREEN_WIDTH * 26 / 100)
 			if not GAMESTATE:IsCourseMode() then
 				local mini = 1
