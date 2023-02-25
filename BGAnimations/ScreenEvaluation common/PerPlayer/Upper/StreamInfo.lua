@@ -25,7 +25,7 @@ return Def.ActorFrame {
 
 			self:diffuse( Color.Black )
 			if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
-				textColor = Color.White
+				self:diffuse( Color.White )
 			end
 			self:diffusealpha(0.7)
 		end

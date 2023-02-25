@@ -12,6 +12,7 @@ local pn = ToEnumShortString(player)
 
 -- sequential_offsets gathered in ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
+local death_second = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].DeathSecond
 
 -- a table to store the AMV's vertices
 local verts= {}
@@ -88,16 +89,30 @@ for t in ivalues(sequential_offsets) do
 
 		-- insert four datapoints into the verts tables, effectively generating a single quadrilateral
 		-- top left,  top right,  bottom right,  bottom left
-		table.insert( verts, {{x,y,0}, {r,g,b,0.666}} )
-		table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.666}} )
-		table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.666}} )
-		table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.666}} )
+		if death_second ~= nil and CurrentSecond > death_second then
+			table.insert( verts, {{x,y,0}, {r,g,b,0.333}} )
+			table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.333}} )
+			table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.333}} )
+			table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.333}} )
+		else
+			table.insert( verts, {{x,y,0}, {r,g,b,0.666}} )
+			table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.666}} )
+			table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.666}} )
+			table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.666}} )
+		end
 	else
 		-- else, a miss should be a quadrilateral that is the height of the entire graph and red
-		table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
-		table.insert( verts, {{x+1, 0, 0}, color("#ff000077")} )
-		table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000077")} )
-		table.insert( verts, {{x, GraphHeight, 0}, color("#ff000077")} )
+		if death_second ~= nil and CurrentSecond > death_second then
+			table.insert( verts, {{x, 0, 0}, color("#ff000033")} )
+			table.insert( verts, {{x+1, 0, 0}, color("#ff000033")} )
+			table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000033")} )
+			table.insert( verts, {{x, GraphHeight, 0}, color("#ff000033")} )
+		else
+			table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
+			table.insert( verts, {{x+1, 0, 0}, color("#ff000077")} )
+			table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000077")} )
+			table.insert( verts, {{x, GraphHeight, 0}, color("#ff000077")} )
+		end
 	end
 end
 
