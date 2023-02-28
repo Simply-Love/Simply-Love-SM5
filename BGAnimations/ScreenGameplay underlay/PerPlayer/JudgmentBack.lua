@@ -56,6 +56,9 @@ return Def.ActorFrame{
 		local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 		local judgmentY = _screen.cy + (opts:Reverse() ~= 0 and 30 or -30)
 		self:xy(GetNotefieldX(player), judgmentY)
+		local mini = mods.Mini:gsub("%%","")/100
+		self:zoom(math.min(math.max((2 - mini)/2, 0.35),1))
+		-- SM(self:GetZoom())
 	end,
 	JudgmentMessageCommand=function(self, param)
 		if param.Player ~= player then return end
@@ -72,7 +75,7 @@ return Def.ActorFrame{
 		-- If the judgment font contains a graphic for the additional white fantastic window...
 		if sprite:GetNumStates() == 7 or sprite:GetNumStates() == 14 then
 			if tns == "W1" then
-				if mods.ShowFaPlusWindow then
+				if mods.ShowFaPlusWindow or mods.FAPlusGradual then
 					-- If this W1 judgment fell outside of the FA+ window, show the white window
 					--
 					-- Treat Autoplay specially. The TNS might be out of the range, but
