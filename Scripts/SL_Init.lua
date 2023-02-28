@@ -41,6 +41,7 @@ local PlayerDefaults = {
 				ErrorBar = "None",
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
+				ErrorBarTrim = false,
 
 				TimingWindows = {true, true, true, true, true},
 				ShowFaPlusWindow = false,

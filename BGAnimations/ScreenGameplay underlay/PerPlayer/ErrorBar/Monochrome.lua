@@ -24,6 +24,7 @@
 local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
+local gmods = SL.Global.ActiveModifiers
 
 local judgmentColors = {
     TapNoteScore_W1 = SL.JudgmentColors[SL.Global.GameMode][1],
@@ -39,11 +40,18 @@ local tickWidth = 2
 local tickDuration = 0.75
 local numTicks = mods.ErrorBarMultiTick and 15 or 1
 local currentTick = 1
+local judgmentToTrim = {
+    TapNoteScore_W3 = mods.ErrorBarTrim and SL.Global.GameMode == "ITG",
+    TapNoteScore_W4 = mods.ErrorBarTrim,
+    TapNoteScore_W5 = mods.ErrorBarTrim
+}
 
 local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
     if mods.TimingWindows[i] then
-        enabledTimingWindows[#enabledTimingWindows+1] = i
+        if not judgmentToTrim["TapNoteScore_W" .. tostring(i)] then
+            enabledTimingWindows[#enabledTimingWindows + 1] = i
+        end
     end
 end
 
@@ -62,6 +70,7 @@ local af = Def.ActorFrame{
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
         if not judgmentColors[params.TapNoteScore] then return end
+        if judgmentToTrim[params.TapNoteScore] then return end
 
         if params.TapNoteOffset then
             local tick = self:GetChild("Tick" .. currentTick)
