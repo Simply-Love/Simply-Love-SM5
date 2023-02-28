@@ -40,6 +40,7 @@ local PlayerDefaults = {
 				ErrorBar = "None",
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
+				ErrorBarTrim = false,
 
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
