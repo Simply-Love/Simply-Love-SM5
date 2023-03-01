@@ -461,6 +461,15 @@ for player in ivalues(PlayerNumber) do
 				for func in ivalues(GetItlPaneFunctions(self, itlData, player)) do
 					self.PaneFunctions[#self.PaneFunctions+1] = func
 				end
+
+				-- If the ITL song was played outside of the pack for the first time,
+				-- write the ITL data for it.
+				-- All other cases should be handled by normal ItlFile.lua write.
+				local song = param.Song
+				local song_dir = song:GetSongDir()
+				if SL[pn].ITLData["pathMap"][song_dir] == nil then
+					UpdateItlData(player)
+				end
 			end
 
 			self.PaneIndex = 1
