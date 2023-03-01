@@ -35,22 +35,22 @@ end
 local SetItlStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(ItlPink)
 	eventAf:GetChild("BackgroundImage"):visible(false)
-	eventAf:GetChild("BackgroundColor"):diffuse(Color.White):diffusealpha(1)
+	eventAf:GetChild("BackgroundColor"):diffuse(Color.Black):diffusealpha(1)
 	eventAf:GetChild("BackgroundColor2"):visible(false)
 	eventAf:GetChild("HeaderBorder"):diffuse(ItlPink)
 	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
-	eventAf:GetChild("Header"):diffuse(Color.White)
-	eventAf:GetChild("EX"):diffuse(Color.White):visible(false)
+	eventAf:GetChild("Header"):diffuse(Color.Black)
+	eventAf:GetChild("EX"):diffuse(Color.Black):visible(false)
 	eventAf:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
 
 	local leaderboard = eventAf:GetChild("Leaderboard")
 	for i=1, NumEntries do
 		local entry = leaderboard:GetChild("LeaderboardEntry"..i)
-		entry:GetChild("Rank"):diffuse(Color.Black)
-		entry:GetChild("Name"):diffuse(Color.Black)
-		entry:GetChild("Score"):diffuse(Color.Black)
-		entry:GetChild("Date"):diffuse(Color.Black)
+		entry:GetChild("Rank"):diffuse(Color.White)
+		entry:GetChild("Name"):diffuse(Color.White)
+		entry:GetChild("Score"):diffuse(Color.White)
+		entry:GetChild("Date"):diffuse(Color.White)
 	end
 end
 
