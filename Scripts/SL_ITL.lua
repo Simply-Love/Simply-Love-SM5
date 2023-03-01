@@ -1,8 +1,10 @@
 -- -----------------------------------------------------------------------
-IsItlFolder = function()
+IsItlSong = function(player)
 	local song = GAMESTATE:GetCurrentSong()
+	local song_dir = song:GetSongDir()
 	local group = string.lower(song:GetGroupName())
-	return string.find(group, "itl online 2023") or string.find(group, "itl 2023")
+	local pn = ToEnumShortString(player)
+	return string.find(group, "itl online 2023") or string.find(group, "itl 2023") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
 end
 
 
@@ -33,11 +35,12 @@ end
 --    }
 -- }
 --
--- The pathMap maps a song directory that corresponds to an ITL chart to its song hash
+-- The pathMap maps a song directory corresponding to an ITL chart to its song hash
 -- The hashMap is a mapping from that hash to the relevant data stored for the event.
 --
 -- This set up lets us display song wheel grades for ITL both from playing within the
 -- ITL pack and also outside of it.
+-- Note that songs resynced for ITL but played outside of the pack will not be covered in the pathMap.
 local itlFilePath = "itl2023.json"
 
 
