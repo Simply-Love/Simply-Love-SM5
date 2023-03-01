@@ -28,6 +28,8 @@ local AwardMap = {
 	}
 }
 
+local ClearLamp = { color("#0000CC"), color("#990000") }
+
 local function GetLamp(song)
 	if not song then return nil end
 
@@ -66,12 +68,27 @@ local function GetLamp(song)
 		if AwardMap[game_mode][award] ~= nil then
 			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[game_mode][award])
 		end
+		
+		if best_lamp == nil then
+			if score:GetGrade() == "Grade_Failed" then best_lamp = 52
+			else best_lamp = 51 end
+		end
 	end
 
 	return best_lamp
 end
 
 return Def.ActorFrame{
+	PlayerJoinedMessageCommand=function(self, params)
+		if not PROFILEMAN:IsPersistentProfile(params.Player) then
+			GAMESTATE:ResetPlayerOptions(params.Player)
+			SL[ToEnumShortString(params.Player)]:initialize()
+		end
+		if pn == nil then
+			player = params.Player
+			pn = ToEnumShortString(player)
+		end
+	end,
 	Def.Quad{
 		SetCommand=function(self, param)
 			self:scaletoclipped(SL_WideScale(5, 6), 31)
@@ -82,10 +99,14 @@ return Def.ActorFrame{
 				self:visible(false)
 			else
 				self:visible(true)
-				self:diffuseshift():effectperiod(0.8)
-				self:effectcolor1(SL.JudgmentColors[SL.Global.GameMode][lamp])
-				self:effectcolor2(lerp_color(
-					0.70, color("#ffffff"), SL.JudgmentColors[SL.Global.GameMode][lamp]))
+				if lamp > 50 then
+					self:diffuse(ClearLamp[lamp - 50])
+				else
+					self:diffuseshift():effectperiod(0.8)
+					self:effectcolor1(SL.JudgmentColors[SL.Global.GameMode][lamp])
+					self:effectcolor2(lerp_color(
+						0.70, color("#ffffff"), SL.JudgmentColors[SL.Global.GameMode][lamp]))
+				end
 			end
 			
 			-- Align P2's lamps to the right of the grade if both players are joined.

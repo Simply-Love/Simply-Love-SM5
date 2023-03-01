@@ -23,6 +23,7 @@ for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
 	-- Only use lamps if a profile is found
 	if PROFILEMAN:IsPersistentProfile(pn) then
 		af[#af+1] = LoadActor("GetLamp.lua", pn)..{}
+		af[#af+1] = LoadActor("Favorites.lua",pn)..{}
 	end
 end
 

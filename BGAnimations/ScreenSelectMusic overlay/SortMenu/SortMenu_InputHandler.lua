@@ -1,4 +1,6 @@
 local sort_wheel = ...
+
+local favesLoaded = false
 -- this handles user input while in the SortMenu
 local input = function(event)
 	if not (event and event.PlayerNumber and event.button) then
@@ -88,6 +90,73 @@ local input = function(event)
 					PROFILEMAN:SaveMachineProfile()
 
 					overlay:queuecommand("DirectInputToEngineForSelectProfile")
+				elseif focus.new_overlay == "AddFavorite" then
+					overlay:queuecommand("DirectInputToEngine")
+					if GAMESTATE:GetCurrentSong() ~= nil then
+						local playerName = PROFILEMAN:GetPlayerName(event.PlayerNumber)
+						
+						local dir = THEME:GetCurrentThemeDirectory() .. "Other/"
+						local path = dir.. "SongManager " .. playerName .. "-favorites.txt"
+						local f = RageFileUtil:CreateRageFile()
+						local songPath = GAMESTATE:GetCurrentSong():GetSongDir():gsub("/Songs/", "")
+						local songName = GAMESTATE:GetCurrentSong():GetMainTitle()
+						
+						if not FILEMAN:DoesFileExist(path) then
+							if f:Open(path, 2) then
+								f:Write(songPath)
+								SM("Added " .. songName .. " to favorites!")
+							end		
+						else
+							if f:Open(path, 1) then
+								faves = f:Read()
+								f:Close()
+								
+								local exists = false 
+								local updated = ""
+								for line in faves:gmatch('[^\r\n]+') do
+									if string.len(line) > 0 then
+										if line:find(songPath,1,true) ~= nil then
+											exists = true
+										else
+											updated = updated .. line .. "\n"
+										end
+									end
+								end
+								if not exists then
+									if f:Open(path, 2) then
+										f:Write(updated .. songPath .. "\n")
+										SM("Added " .. songName .. " to favorites!")
+									end
+								else
+									if f:Open(path, 2) then
+										f:Write(updated)
+										SM("Removed " .. songName .. " from favorites")
+									end
+								end
+							end
+						end
+						
+						screen:GetMusicWheel():Move(1)
+						screen:GetMusicWheel():Move(-1)
+						screen:GetMusicWheel():Move(0)
+						
+						f:Close()
+						f:destroy()
+					else
+						SM("Only songs can be favorited!")
+					end
+				elseif focus.new_overlay == "Favorites" then
+					overlay:queuecommand("DirectInputToEngine")
+					
+					if GAMESTATE:GetSortOrder() == "SortOrder_Preferred" then favesLoaded = true end
+					
+					local playerName = PROFILEMAN:GetPlayerName(event.PlayerNumber)
+					SONGMAN:SetPreferredSongs(playerName .. "-favorites.txt")
+					screen:GetMusicWheel():ChangeSort("SortOrder_Preferred")
+					if not favesLoaded then favesLoaded = true else
+						screen:SetNextScreenName("ScreenSelectMusic")
+						screen:StartTransitioningScreen("SM_GoToNextScreen")
+					end
 				end
 			end
 

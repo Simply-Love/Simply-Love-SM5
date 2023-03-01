@@ -45,14 +45,6 @@ for player in ivalues(players) do
 				self:queuecommand("SetFolder")
 			end
 		end,
-		--SetCommand=function(self,params)
-		--				-- Set blank first
-		--				self:visible(false)
-		--	local wheeltype = self:GetParent():GetParent():GetParent():GetSelectedType()
-		--	if wheeltype == "WheelItemDataType_Section" then
-		--		self:queuecommand("SetFolder")
-		--	end
-		--end,
 		SetFolderCommand=function(self,params)
 			-- Get all songs in group
 			local group = self:GetParent():GetParent():GetText()
@@ -107,48 +99,7 @@ for player in ivalues(players) do
 							--SM("All songs have not been passed")
 							self:visible(false)
 						end
-					end
-
-					--			--SM("-  " .. song:GetDisplayFullTitle())
-					--			 table.insert(songarray,{ song,steps }) end
-					--	end
-					--end
-					-- Go through all the songs to find the 
-					-- Start worst grade as a quad variable to compare to
-
-					--local songarray = {}
-					--for song in ivalues(songs) do
-					--	local allsteps = song:GetAllSteps()
-					--	for steps in ivalues(allsteps) do
-					--		-- Add to array if the song has a chart for the current difficulty
-					--		local stepsdiff = steps:GetDifficulty()
-					--		if difficulty == stepsdiff then
-					--			--SM("-  " .. song:GetDisplayFullTitle())
-					--			 table.insert(songarray,{ song,steps }) end
-					--	end
-					--end
-					-- Go through all the songs to find the 
-					-- Start worst grade as a quad variable to compare to
-
-					--local grades 
-					--local numsongs = #songarray
-					--for i=1,#songarray do
-					--	local song = songarray[i][1]
-					--	local steps = songarray[i][2]
-					--	local score = profile:GetHighScoreListIfExists(song,steps)
-					--	if score ~= nil then
-					--		
-					--			-- Find out the worst grade
-					--			local grade = score:GetHighScores()[1]:GetGrade()
-					--			local grade = grades[grade]
-					--		else
-					--			allsongspassed = false
-					--		end
-					--		if allsongspassed then 
-					--			self:visible(true):setstate(worstgrade) 
-					--		end
-					--	end
-					--end				
+					end			
 				end
 			end
 		end,

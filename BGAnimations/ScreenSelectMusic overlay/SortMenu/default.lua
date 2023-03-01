@@ -256,7 +256,9 @@ local t = Def.ActorFrame {
 		-- and the style is "single8", "double8", etc.
 		local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
 		local wheel_options = {
+			{"ImLovinIt","AddFavorite"},
 			{"SortBy", "Group"},
+			{"MixTape","Favorites"},
 			{"SortBy", "Title"},
 			{"SortBy", "Artist"},
 			{"SortBy", "Genre"},
