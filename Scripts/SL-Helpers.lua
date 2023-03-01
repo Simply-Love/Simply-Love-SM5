@@ -759,25 +759,6 @@ CalculateExScore = function(player, ex_counts)
 end
 
 -- -----------------------------------------------------------------------
-WriteItlFile = function(dir, data)
-	local path = dir.. "itl2022.itl"
-	local f = RageFileUtil:CreateRageFile()
-	local existing = ""
-	if FILEMAN:DoesFileExist(path) then
-		-- Load the current contents of the file if it exists.
-		if f:Open(path, 1) then
-			existing = f:Read()
-		end
-	end
-
-	-- Append all the scores to the file.
-	if f:Open(path, 2) then
-		f:Write(existing..data)
-	end
-	f:destroy()
-end
-
--- -----------------------------------------------------------------------
 -- Generates the column mapping in case of any turn mods.
 -- Returns a table containing the column swaps.
 -- Returns nil if we can't compute it

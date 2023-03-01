@@ -93,6 +93,7 @@ LoadProfileCustom = function(profile, dir)
 
 	if pn then
 		ParseGrooveStatsIni(player)
+		ReadItlFile(player)
 	end
 
 	if pn and FILEMAN:DoesFileExist(path) then
