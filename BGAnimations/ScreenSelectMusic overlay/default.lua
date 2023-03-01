@@ -38,10 +38,10 @@ local af = Def.ActorFrame{
 	-- The grid for the difficulty picker (normal) or CourseContentsList (CourseMode)
 	LoadActor("./StepsDisplayList/default.lua"),
 
-	-- Banner Art
-	LoadActor("./Banner.lua"),
 	-- Song's Musical Artist, BPM, Duration
 	LoadActor("./SongDescription/SongDescription.lua"),
+	-- Banner Art
+	LoadActor("./Banner.lua"),
 
 	-- ---------------------------------------------------
 	-- finally, load the overlay used for sorting the MusicWheel (and more), hidden by default
