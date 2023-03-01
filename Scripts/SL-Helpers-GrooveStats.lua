@@ -183,7 +183,7 @@ ParseGrooveStatsIni = function(player)
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return "" end
 
-	local path = dir.. "GrooveStats.ini"
+	local path = dir .. "GrooveStats.ini"
 
 	if not FILEMAN:DoesFileExist(path) then
 		-- The file doesn't exist. We will create it for this profile, and then just return.
