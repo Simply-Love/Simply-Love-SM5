@@ -6,6 +6,7 @@ local game = GAMESTATE:GetCurrentGame()
 if (SL.Global.GameMode == "Casual" or
 		GAMESTATE:IsCourseMode() or
 		not IsItlActive() or
+		not IsItlSong(player) or
 		game:GetName() ~= "dance" or
 		(style:GetName() ~= "single" and style:GetName() ~= "versus")) then
 	return
