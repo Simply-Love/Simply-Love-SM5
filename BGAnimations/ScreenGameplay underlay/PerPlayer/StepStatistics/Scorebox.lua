@@ -265,6 +265,20 @@ local af = Def.ActorFrame{
 			-- Should be fine though.
 			if sendRequest then
 				self:GetParent():GetChild("Name1"):settext("Loading...")
+				self:GetParent():GetChild("Name2"):settext("")
+				self:GetParent():GetChild("Name3"):settext("")
+				self:GetParent():GetChild("Name4"):settext("")
+				self:GetParent():GetChild("Name5"):settext("")
+				self:GetParent():GetChild("Score1"):settext("")
+				self:GetParent():GetChild("Score2"):settext("")
+				self:GetParent():GetChild("Score3"):settext("")
+				self:GetParent():GetChild("Score4"):settext("")
+				self:GetParent():GetChild("Score5"):settext("")
+				self:GetParent():GetChild("Rank1"):diffusealpha(0)
+				self:GetParent():GetChild("Rank2"):settext("")
+				self:GetParent():GetChild("Rank3"):settext("")
+				self:GetParent():GetChild("Rank4"):settext("")
+				self:GetParent():GetChild("Rank5"):settext("")
 				self:playcommand("MakeGrooveStatsRequest", {
 					endpoint="player-leaderboards.php?"..NETWORK:EncodeQueryParameters(query),
 					method="GET",
