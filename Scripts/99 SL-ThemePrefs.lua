@@ -63,7 +63,7 @@ SL_CustomPrefs.Get = function()
 		},
 		MusicWheelGS =
 		{
-			Default = "Pane",
+			Default = "Scorebox",
 			Choices = { "Scorebox", "Pane", "Off" }
 		},
 		AllowDanceSolo =
