@@ -14,9 +14,9 @@ IsItlActive = function()
 	local startTimestamp = 20230301
 	local endTimestamp = 20230601
 
-    local year = Year()
-    local month = MonthOfYear()+1
-    local day = DayOfMonth()
+	local year = Year()
+	local month = MonthOfYear()+1
+	local day = DayOfMonth()
 	local today = year * 10000 + month * 100 + day
 
 	return startTimestamp <= today and today <= endTimestamp
@@ -47,11 +47,11 @@ local itlFilePath = "itl2023.json"
 -- Takes the ITLData loaded in memory and writes it to the local profile.
 WriteItlFile = function(player)
 	local profile_slot = {
-        [PLAYER_1] = "ProfileSlot_Player1",
-        [PLAYER_2] = "ProfileSlot_Player2"
-    }
-    
-    local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
+		[PLAYER_1] = "ProfileSlot_Player1",
+		[PLAYER_2] = "ProfileSlot_Player2"
+	}
+	
+	local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
 	local pn = ToEnumShortString(player)
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return end
@@ -69,12 +69,12 @@ end
 -- Generally to be called only once when a profile is loaded.
 -- This parses the ITL data file and stores it in memory for the song wheel to reference.
 ReadItlFile = function(player)
-    local profile_slot = {
-        [PLAYER_1] = "ProfileSlot_Player1",
-        [PLAYER_2] = "ProfileSlot_Player2"
-    }
-    
-    local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
+	local profile_slot = {
+		[PLAYER_1] = "ProfileSlot_Player1",
+		[PLAYER_2] = "ProfileSlot_Player2"
+	}
+	
+	local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
 	local pn = ToEnumShortString(player)
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return end
@@ -149,8 +149,8 @@ local DataForSong = function(player)
 	end
 
 	local year = Year()
-    local month = MonthOfYear()+1
-    local day = DayOfMonth()
+	local month = MonthOfYear()+1
+	local day = DayOfMonth()
 
 	local judgments = GetExJudgmentCounts(player)
 	local ex = CalculateExScore(player, judgments)
@@ -190,7 +190,7 @@ UpdateItlData = function(player)
 	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
 	local minesEnabled = not po:NoMines()
 
-    if (GAMESTATE:IsHumanPlayer(player) and
+	if (GAMESTATE:IsHumanPlayer(player) and
 				valid and
 				rate == 1.0 and
 				minesEnabled and
@@ -267,5 +267,5 @@ UpdateItlData = function(player)
 		if updated then
 			WriteItlFile(player)
 		end
-    end
+	end
 end
