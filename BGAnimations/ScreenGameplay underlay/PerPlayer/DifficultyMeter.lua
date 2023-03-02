@@ -58,7 +58,8 @@ return Def.ActorFrame{
 			-- self:y(_screen.cy-61)
 			-- self:x(129.5 * (player==PLAYER_1 and -1 or 1))
 			-- self:halign(0.5):zoom(0.5)
-
+		end,
+		BeginCommand=function(self)
 			local textColor = Color.Black
 			local shadowLength = 0
 			if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
