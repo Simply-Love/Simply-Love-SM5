@@ -61,6 +61,11 @@ SL_CustomPrefs.Get = function()
 			Default = "ITG",
 			Choices = { "ITG", "IIDX" }
 		},
+		MusicWheelGS =
+		{
+			Default = "Pane",
+			Choices = { "Scorebox", "Pane", "Off" }
+		},
 		AllowDanceSolo =
 		{
 			Default = false,

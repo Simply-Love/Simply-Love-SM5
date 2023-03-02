@@ -1,6 +1,9 @@
 -- No need to get GS scores for courses
 if GAMESTATE:IsCourseMode() then return end
 
+-- Don't display if Music Wheel GS integration isn't set to Scorebox.
+if ThemePrefs.Get("MusicWheelGS") ~= "Scorebox" then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 

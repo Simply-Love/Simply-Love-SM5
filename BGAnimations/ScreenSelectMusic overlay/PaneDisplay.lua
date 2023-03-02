@@ -325,6 +325,21 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 		local query = {}
 		local requestCacheKey = ""
 
+		if ThemePrefs.Get("MusicWheelGS") == "Pane" then
+			for i=1,2 do
+				local pn = "P"..i
+				if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
+					query["chartHashP"..i] = SL[pn].Streams.Hash
+					headers["x-api-key-player-"..i] = SL[pn].ApiKey
+					requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey .. pn
+					local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
+					loadingText:visible(true)
+					loadingText:settext("Loading ..."):diffuse(Color.Black)
+					sendRequest = true
+				end
+			end
+		end
+
 		-- Only send the request if it's applicable.
 		if sendRequest then
 			requestCacheKey = CRYPTMAN:SHA256String(requestCacheKey.."-player-scores")
@@ -477,7 +492,13 @@ for player in ivalues(PlayerNumber) do
 			self:y(pos.row[1])
 		end,
 		SetCommand=function(self)
-			self:queuecommand("SetDefault")
+			-- We overload this actor to work both for GrooveStats and also offline.
+			-- If we're connected, we let the ResponseProcessor set the text
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
+				self:settext("----"):diffuse(Color.Black)
+			else
+				self:queuecommand("SetDefault")
+			end
 		end,
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
@@ -496,7 +517,13 @@ for player in ivalues(PlayerNumber) do
 			self:y(pos.row[1])
 		end,
 		SetCommand=function(self)
-			self:queuecommand("SetDefault")
+			-- We overload this actor to work both for GrooveStats and also offline.
+			-- If we're connected, we let the ResponseProcessor set the text
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
+				self:settext("??.??%"):diffuse(Color.Black)
+			else
+				self:queuecommand("SetDefault")
+			end
 		end,
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
@@ -518,7 +545,13 @@ for player in ivalues(PlayerNumber) do
 			self:y(pos.row[2])
 		end,
 		SetCommand=function(self)
-			self:queuecommand("SetDefault")
+			-- We overload this actor to work both for GrooveStats and also offline.
+			-- If we're connected, we let the ResponseProcessor set the text
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
+				self:settext("----")
+			else
+				self:queuecommand("SetDefault")
+			end
 		end,
 		SetDefaultCommand=function(self)
 			local playerScore = GetScoreForPlayer(player)
@@ -536,7 +569,13 @@ for player in ivalues(PlayerNumber) do
 			self:y(pos.row[2])
 		end,
 		SetCommand=function(self)
-			self:queuecommand("SetDefault")
+			-- We overload this actor to work both for GrooveStats and also offline.
+			-- If we're connected, we let the ResponseProcessor set the text
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
+				self:settext("??.??%")
+			else
+				self:queuecommand("SetDefault")
+			end
 		end,
 		SetDefaultCommand=function(self)
 			local playerScore = GetScoreForPlayer(player)
@@ -635,6 +674,44 @@ for player in ivalues(PlayerNumber) do
 			self:settext( meter )
 		end
 	}
+
+	-- Add actors for Rival score data. Hidden by default
+	-- We position relative to column 3 for spacing reasons.
+	if ThemePrefs.Get("MusicWheelGS") == "Pane" then
+		for i=1,3 do
+			-- Rival Machine Tag
+			af2[#af2+1] = LoadFont("Common Normal")..{
+				Name="Rival"..i.."Name",
+				InitCommand=function(self)
+					self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
+					self:x(pos.col[3]+50*text_zoom)
+					self:y(pos.row[i])
+				end,
+				OnCommand=function(self)
+					self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
+				end,
+				SetCommand=function(self)
+					self:settext("----"):diffuse(Color.Black)
+				end
+			}
+	
+			-- Rival HighScore
+			af2[#af2+1] = LoadFont("Common Normal")..{
+				Name="Rival"..i.."Score",
+				InitCommand=function(self)
+					self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
+					self:x(pos.col[3]+125*text_zoom)
+					self:y(pos.row[i])
+				end,
+				OnCommand=function(self)
+					self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
+				end,
+				SetCommand=function(self)
+					self:settext("??.??%"):diffuse(Color.Black)
+				end
+			}
+		end
+	end
 end
 
 return af
