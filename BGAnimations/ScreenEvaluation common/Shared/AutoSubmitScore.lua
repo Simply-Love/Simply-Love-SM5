@@ -1,4 +1,4 @@
-if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) then return end
+if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) or GAMESTATE:IsCourseMode() then return end
 
 local NumEntries = 10
 

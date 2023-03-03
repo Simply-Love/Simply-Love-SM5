@@ -224,13 +224,12 @@ end
 --  - We must be in the "dance" game mode (not "pump", etc)
 --  - We must be in either ITG or FA+ mode.
 --  - At least one Api Key must be available (this condition may be relaxed in the future)
---  - We must not be in course mode.
+--  - We must not be in course mode (ZANKOKU: moving this specific check to autosubmitscore instead, since otherwise it blocks scorebox when playing course mode).
 IsServiceAllowed = function(condition)
 	return (condition and
 		GAMESTATE:GetCurrentGame():GetName()=="dance" and
 		(SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+") and
-		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= "") and
-		not GAMESTATE:IsCourseMode())
+		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= ""))
 end
 
 -- -----------------------------------------------------------------------
