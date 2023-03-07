@@ -628,7 +628,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	LifeBarOptions = {
 		SelectType = "SelectMultiple",
-		Values = { "RainbowMax", "ResponsiveColors"},
+		Values = { "RainbowMax", "ResponsiveColors", "ShowLifePercent"},
 	},
 	-------------------------------------------------------------------------
 	VisualDelay = {

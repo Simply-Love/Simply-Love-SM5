@@ -49,6 +49,7 @@ local permitted_profile_settings = {
 	
 	RainbowMax           = "boolean",
 	ResponsiveColors     = "boolean",
+	ShowLifePercent      = "boolean",
 	
 	MiniIndicator		 = "string",
 	MiniIndicatorColor	 = "string",

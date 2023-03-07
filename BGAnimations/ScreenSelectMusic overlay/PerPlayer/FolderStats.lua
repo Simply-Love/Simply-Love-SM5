@@ -1,6 +1,9 @@
 -- No folders in course mode to get stats
 if GAMESTATE:IsCourseMode() then return end
 
+-- Don't show folder stats if disabled in operator menu
+if not ThemePrefs.Get("FolderStats") then return end
+
 local player = ...
 local pn = ToEnumShortString(player)
 

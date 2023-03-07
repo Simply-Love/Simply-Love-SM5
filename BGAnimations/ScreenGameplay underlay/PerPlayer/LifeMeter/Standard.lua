@@ -31,7 +31,7 @@ local meter = Def.ActorFrame{
 	-- percent
 	Def.Quad {
 		InitCommand=function(self)
-			self:visible(not IsNotWide)
+			self:visible(not IsNotWide and SL[pn].ActiveModifiers.ShowLifePercent)
 		    self:zoomto(44, 18):diffuse(PlayerColor(player,true)):horizalign("left")
 			if player==PLAYER_1 then
 				self:x(_x-76):horizalign("right")
@@ -64,7 +64,7 @@ local meter = Def.ActorFrame{
 	},
 	Def.Quad {
 		InitCommand=function(self)
-			self:visible(not IsNotWide)
+			self:visible(not IsNotWide and SL[pn].ActiveModifiers.ShowLifePercent)
 			self:zoomto(42, 16):diffuse(0,0,0,1):horizalign("left")
 			if player==PLAYER_1 then
 				self:x(_x-77):horizalign("right")
@@ -98,7 +98,7 @@ local meter = Def.ActorFrame{
 	Def.BitmapText {
 		Font="Common Normal",
 		InitCommand=function(self)
-			self:visible(not IsNotWide)
+			self:visible(not IsNotWide and SL[pn].ActiveModifiers.ShowLifePercent)
 			self:diffuse(PlayerColor(player,true)):horizalign("left")
 			if player==PLAYER_1 then
 				self:x(_x-77):horizalign("right")
