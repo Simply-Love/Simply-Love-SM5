@@ -5,9 +5,6 @@ if GAMESTATE:IsCourseMode() then return end
 local player = ...
 local pn = ToEnumShortString(player)
 
--- In 2-players mode, whether the DensityGraph or PatternInfo is shown
--- Can be toggled by the code "ToggleChartInfo" in metrics.ini
-local showPatternInfo = false
 -- Height and width of the density graph.
 local height = 64
 local width = IsUsingWideScreen() and 286 or 276
@@ -42,14 +39,11 @@ local af = Def.ActorFrame{
 	end,
 	CodeMessageCommand=function(self, params)
 		-- Toggle between the density graph and the pattern info
-		if params.Name == "ToggleChartInfo" and params.PlayerNumber == player then
-			-- Only do so if there are 2 players joined
-			if GAMESTATE:GetNumSidesJoined() ~= 1 then
-				if showPatternInfo then
-					self:queuecommand("ShowInfo")
-				else
-					self:queuecommand("HideInfo")
-				end
+		if params.Name == "TogglePatternInfo" and params.PlayerNumber == player then
+			-- Only need to toggle in versus since in single player modes, both
+			-- panes are already displayed.
+			if GAMESTATE:GetNumSidesJoined() == 2 then
+				self:queuecommand("TogglePatternInfo")
 			end
 		end
 	end,
@@ -112,13 +106,8 @@ af2[#af2+1] = NPS_Histogram(player, width, height)..{
 	RedrawCommand=function(self)
 		self:visible(true)
 	end,
-	ShowInfoCommand=function(self)
-		self:queuecommand("Hide")
-		showPatternInfo = false
-	end,
-	HideInfoCommand=function(self)
-		self:queuecommand("Redraw")
-		showPatternInfo = true
+	TogglePatternInfoCommand=function(self)
+		self:visible(not self:GetVisible())
 	end
 }
 -- Don't let the density graph parse the chart.
@@ -150,11 +139,8 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:visible(true)
 		end
 	end,
-	ShowInfoCommand=function(self)
-		self:queuecommand("Hide")
-	end,
-	HideInfoCommand=function(self)
-		self:queuecommand("Redraw")
+	TogglePatternInfoCommand=function(self)
+		self:visible(not self:GetVisible())
 	end
 }
 
@@ -171,11 +157,8 @@ af2[#af2+1] = Def.ActorFrame{
 	RedrawCommand=function(self)
 		self:visible(true)
 	end,
-	ShowInfoCommand=function(self)
-		self:queuecommand("Hide")
-	end,
-	HideInfoCommand=function(self)
-		self:queuecommand("Redraw")
+	TogglePatternInfoCommand=function(self)
+		self:visible(not self:GetVisible())
 	end,
 	Def.Quad{
 		InitCommand=function(self)
@@ -210,7 +193,7 @@ af2[#af2+1] = Def.ActorFrame{
 af2[#af2+1] = Def.ActorFrame{
 	Name="PatternInfo",
 	InitCommand=function(self)
-		if GAMESTATE:GetNumSidesJoined() ~= 1 then
+		if GAMESTATE:GetNumSidesJoined() == 2 then
 			self:y(0)
 		else
 			self:y(88)
@@ -219,7 +202,7 @@ af2[#af2+1] = Def.ActorFrame{
 	end,
 	PlayerJoinedMessageCommand=function(self, params)
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
-		if GAMESTATE:GetNumSidesJoined() ~= 1 then
+		if GAMESTATE:GetNumSidesJoined() == 2 then
 			self:y(0)
 		else
 			self:y(88)
@@ -227,17 +210,14 @@ af2[#af2+1] = Def.ActorFrame{
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
-		if GAMESTATE:GetNumSidesJoined() ~= 1 then
+		if GAMESTATE:GetNumSidesJoined() == 2 then
 			self:y(0)
 		else
 			self:y(88)
 		end
 	end,
-	ShowInfoCommand=function(self)
-		self:visible(true)
-	end,
-	HideInfoCommand=function(self)
-		self:visible(false)
+	TogglePatternInfoCommand=function(self)
+		self:visible(not self:GetVisible())
 	end,
 	
 	-- Background for the additional chart info.
