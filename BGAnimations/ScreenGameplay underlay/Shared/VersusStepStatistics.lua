@@ -3,7 +3,8 @@ local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 
 local ShouldDisplayStatsForPlayer = function(player)
     local pn = ToEnumShortString(player)
-    return SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
+    if SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics" or ThemePrefs.Get("TournamentMode") ~= "Off" then         
+    return true else return false end
 end
 
 local ShouldDisplayStats = function()
@@ -75,9 +76,10 @@ for player in ivalues(Players) do
         af[#af+1] = judgments
 
         -- Add a score to Step Stats if it's hidden by the NPS graph.
-        if SL[ToEnumShortString(player)].ActiveModifiers.NPSGraphAtTop then
+        if SL[ToEnumShortString(player)].ActiveModifiers.NPSGraphAtTop or ThemePrefs.Get("TournamentMode") ~= "Off" then
             local pn = ToEnumShortString(player)
             local IsEX = SL[pn].ActiveModifiers.ShowEXScore
+            if ThemePrefs.Get("TournamentMode") ~= "Off" then IsEX = ThemePrefs.Get("TournamentMode") == "EX" and true or false end
 
             af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
                 Text="0.00",
