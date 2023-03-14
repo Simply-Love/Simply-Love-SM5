@@ -327,12 +327,12 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				if improvement["gained"] > 0 then
 					if improvement["name"] == "clearType" then
 						local clearTypeMap = {
-							0 = "No Play",
-							1 = "Clear",
-							2 = "Full Combo",
-							3 = "Full Excellent Combo",
-							4 = "Quad",
-							5 = "Quint",
+							[0] = "No Play",
+							[1] = "Clear",
+							[2] = "Full Combo",
+							[3] = "Full Excellent Combo",
+							[4] = "Quad",
+							[5] = "Quint",
 						}
 						local curr = improvement["current"]
 						local prev = current - improvement["gained"]
