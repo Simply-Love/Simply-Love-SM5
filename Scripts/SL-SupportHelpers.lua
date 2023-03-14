@@ -52,7 +52,7 @@ function IsMinimumProductVersion(...)
 
 	for i = 1, select('#', ...) do
 		local n = select(i, ...)
-		if not version[i] or n < version[i] then
+		if not version[i] or version[i] < n then
 			return false
 		elseif version[i] > n then
 			return true
