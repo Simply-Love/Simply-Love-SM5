@@ -318,6 +318,70 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	currentPointTotal = itlData["currentPointTotal"]
 	totalDelta = currentPointTotal - previousPointTotal
 
+	local statImprovements = {}
+	local quests = {}
+	local progress = itlData["progress"]
+	if progress then
+		if progress["statImprovements"] then
+			for improvement in ivalues(progress["statImprovements"]) do
+				if improvement["gained"] > 0 then
+					if improvement["name"] == "clearType" then
+						local clearTypeMap = {
+							0 = "No Play",
+							1 = "Clear",
+							2 = "Full Combo",
+							3 = "Full Excellent Combo",
+							4 = "Quad",
+							5 = "Quint",
+						}
+						local curr = improvement["current"]
+						local prev = current - improvement["gained"]
+
+						table.insert(
+							statImprovements,
+							string.format("\"%s\" ➤➤➤ \"%s\"", clearTypeMap[prev], clearTypeMap[curr]))
+					else
+						local name = improvement["name"]:gsub("Level", ""):gsub("^%l", string.upper)
+						table.insert(
+							statImprovements,
+							string.format("%s Lvl: %d (+%d)", name, improvement["current"], improvement["gained"])
+						)
+					end
+				end
+			end
+		end
+
+		if progress["questsCompleted"] then
+			for quest in ivalues(progress["questsCompleted"]) do
+				local questStrings = {}
+				table.insert(questStrings, string.format(
+					"Completed \"%s\"!\n",
+					quest["title"]
+				))
+
+				-- Group all the rewards by type.
+				local allRewards = {}
+				for reward in ivalues(quest["rewards"]) do
+					if allRewards[reward["type"]] == nil then
+						allRewards[reward["type"]] = {}
+					end
+					table.insert(allRewards[reward["type"]], reward["description"])
+				end
+
+				for rewardType, rewardDescriptions in pairs(allRewards) do
+					table.insert(questStrings, string.format(
+						"%s"..
+						"%s\n",
+						rewardType == "ad-hoc" and "" or string.upper(rewardType)..":\n",
+						table.concat(rewardDescriptions, "\n")
+					))
+				end
+
+				table.insert(quests, table.concat(questStrings, "\n"))
+			end
+		end
+	end
+
 	table.insert(paneTexts, string.format(
 		"EX Score: %.2f%% (%+.2f%%)\n"..
 		"Ranking Points: %d (%+d)\n"..
@@ -327,6 +391,9 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 		currentPointTotal, totalDelta
 	))
 
+	for quest in ivalues(quests) do
+		table.insert(paneTexts, quest)
+	end
 
 	for text in ivalues(paneTexts) do
 		table.insert(paneFunctions, function(eventAf)
