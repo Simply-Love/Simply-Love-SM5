@@ -170,7 +170,6 @@ af2[#af2+1] = Def.ActorFrame{
 		Text="",
 		Name="BreakdownText",
 		InitCommand=function(self)
-			local textHeight = 17
 			local textZoom = 0.8
 			self:maxwidth(width/textZoom):zoom(textZoom)
 		end,
