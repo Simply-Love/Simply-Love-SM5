@@ -39,9 +39,9 @@ local SetItlStyle = function(eventAf)
 	eventAf:GetChild("BackgroundColor2"):visible(false)
 	eventAf:GetChild("HeaderBorder"):diffuse(ItlPink)
 	eventAf:GetChild("HeaderBackground"):diffusetopedge(color("0.3,0.3,0.3,1")):diffusebottomedge(color("0.157,0.157,0.165,1"))
-	eventAf:GetChild("Header"):diffuse(Color.Black)
-	eventAf:GetChild("EX"):diffuse(Color.Black):visible(false)
-	eventAf:GetChild("BodyText"):diffuse(color("0.157,0.157,0.165,1"))
+	eventAf:GetChild("Header"):diffuse(Color.White)
+	eventAf:GetChild("EX"):diffuse(Color.White):visible(false)
+	eventAf:GetChild("BodyText"):diffuse(Color.White)
 	eventAf:GetChild("PaneIcons"):GetChild("Text"):diffuse(ItlPink)
 
 	local leaderboard = eventAf:GetChild("Leaderboard")
@@ -335,16 +335,16 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 							[5] = "Quint",
 						}
 						local curr = improvement["current"]
-						local prev = current - improvement["gained"]
+						local prev = curr - improvement["gained"]
 
 						table.insert(
 							statImprovements,
-							string.format("\"%s\" ➤➤➤ \"%s\"", clearTypeMap[prev], clearTypeMap[curr]))
+							string.format("Clear Type: %s >>> %s", clearTypeMap[prev], clearTypeMap[curr]))
 					else
-						local name = improvement["name"]:gsub("Level", ""):gsub("^%l", string.upper)
+						local statName = improvement["name"]:gsub("Level", ""):gsub("^%l", string.upper)
 						table.insert(
 							statImprovements,
-							string.format("%s Lvl: %d (+%d)", name, improvement["current"], improvement["gained"])
+							string.format("%s Lvl: %d (+%d)", statName, improvement["current"], improvement["gained"])
 						)
 					end
 				end
@@ -385,10 +385,12 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	table.insert(paneTexts, string.format(
 		"EX Score: %.2f%% (%+.2f%%)\n"..
 		"Ranking Points: %d (%+d)\n"..
-		"Total Points: %d (%+d)\n\n",
+		"Total Points: %d (%+d)\n\n"..
+		"%s",
 		score, scoreDelta,
 		currentRankingPointTotal, rankingDelta,
-		currentPointTotal, totalDelta
+		currentPointTotal, totalDelta,
+		#statImprovements == 0 and "" or table.concat(statImprovements, "\n").."\n\n"
 	))
 
 	for quest in ivalues(quests) do
@@ -532,8 +534,9 @@ for player in ivalues(PlayerNumber) do
 				-- If the ITL song was played outside of the pack for the first time,
 				-- write the ITL data for it.
 				-- All other cases should be handled by normal ItlFile.lua write.
-				local song = param.Song
+				local song = GAMESTATE:GetCurrentSong()
 				local song_dir = song:GetSongDir()
+				local pn = ToEnumShortString(player)
 				if SL[pn].ITLData["pathMap"][song_dir] == nil then
 					UpdateItlData(player)
 				end
