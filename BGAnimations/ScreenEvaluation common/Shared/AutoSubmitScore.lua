@@ -62,31 +62,35 @@ local AttemptDownloads = function(res)
 	local data = JsonDecode(res.body)
 	for i=1,2 do
 		local playerStr = "player"..i
-		if data and data[playerStr] and data[playerStr]["rpg"] then
-			local rpgData = data[playerStr]["rpg"]
-			local eventName = rpgData["name"] or "Unknown Event"
-		
-			-- See if any quests were completed.
-			if rpgData["progress"] and rpgData["progress"]["questsCompleted"] then
-				local quests = rpgData["progress"]["questsCompleted"]
-				-- Iterate through the quests...
-				for quest in ivalues(quests) do
-					-- ...and check for any unlocks.
-					if quest["songDownloadUrl"] then
-						local url = quest["songDownloadUrl"]
-						local title = quest["title"] or ""
+		local events = {"rpg", "itl"}
 
-						if ThemePrefs.Get("SeparateUnlocksByPlayer") then
-							local profileName = "NoName"
-							local player = "PlayerNumber_P"..i
-							if (PROFILEMAN:IsPersistentProfile(player) and
-									PROFILEMAN:GetProfile(player)) then
-								profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+		for event in ivalues(events) do
+			if data and data[playerStr] and data[playerStr][event] then
+				local eventData = data[playerStr][event]
+				local eventName = eventData["name"] or "Unknown Event"
+			
+				-- See if any quests were completed.
+				if eventData["progress"] and eventData["progress"]["questsCompleted"] then
+					local quests = eventData["progress"]["questsCompleted"]
+					-- Iterate through the quests...
+					for quest in ivalues(quests) do
+						-- ...and check for any unlocks.
+						if quest["songDownloadUrl"] then
+							local url = quest["songDownloadUrl"]
+							local title = quest["title"] or ""
+
+							if ThemePrefs.Get("SeparateUnlocksByPlayer") then
+								local profileName = "NoName"
+								local player = "PlayerNumber_P"..i
+								if (PROFILEMAN:IsPersistentProfile(player) and
+										PROFILEMAN:GetProfile(player)) then
+									profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+								end
+								title = title.." - "..profileName
+								DownloadEventUnlock(url, "["..eventName.."] "..title, eventName.." Unlocks - "..profileName)
+							else
+								DownloadEventUnlock(url, "["..eventName.."] "..title, eventName.." Unlocks")
 							end
-							title = title.." - "..profileName
-							DownloadSRPGUnlock(url, title, eventName.." Unlocks - "..profileName)
-						else
-							DownloadSRPGUnlock(url, title, eventName.." Unlocks")
 						end
 					end
 				end
