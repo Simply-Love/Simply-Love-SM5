@@ -1,6 +1,7 @@
 if SL.Global.GameMode == "Casual" then return end
 
 local player = ...
+local pn = ToEnumShortString(player)
 local NumPlayers = #GAMESTATE:GetHumanPlayers()
 
 local GraphWidth  = THEME:GetMetric("GraphDisplay", "BodyWidth")
@@ -94,5 +95,73 @@ af[#af+1] = Def.Quad{
 		self:diffusealpha(0.1)
 	end
 }
+
+local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
+
+if storage.DeathSecond ~= nil then
+	local seconds = storage.TotalSeconds
+	local deathSecond = storage.DeathSecond
+	local deathMeasures = storage.DeathMeasures
+	local graphPercentage = storage.GraphPercentage
+	local graphLabel = storage.GraphLabel
+	local secondsLeft = seconds - deathSecond
+
+	-- If the player failed, check how much time was remaining
+	af[#af+1] = Def.ActorFrame {
+		InitCommand=function(self)
+			self:zoom(1.25)
+			-- Start at the start of the graph
+			self:addx(-GraphWidth / 2):addy(GraphHeight - 10)
+			-- Move to where the player failed
+			self:addx(GraphWidth * graphPercentage)
+		end,
+		Def.ActorFrame {
+			Name="BGQuad",
+			SetSizeCommand=function(self, params)
+				if params.lines == 2 then self:addy(-10) end
+			end,
+			Def.Quad {
+				InitCommand=function(self)
+					self:diffuse(Color.Red)
+				end,
+				SetSizeCommand=function(self, params)
+					self:zoomto(params.width + 1, 10 * params.lines + 1)
+					self:addx(params.addx)
+				end
+			},
+			Def.Quad {
+				InitCommand=function(self)
+					self:diffuse(Color.Black)
+				end,
+				SetSizeCommand=function(self, params)
+					self:zoomto(params.width,10 * params.lines)
+					self:addx(params.addx)
+				end
+			},
+		},
+		LoadFont("Common Normal")..{
+			InitCommand=function(self)
+				self:zoom(0.5)
+				self:diffuse(Color.Red)
+				local text
+				-- fail time formatting
+				if secondsLeft > 3600 then
+					-- format to display as H:MM:SS
+					text = math.floor(secondsLeft / 3600) .. ":" .. SecondsToMMSS(secondsLeft % 3600)
+				else
+					-- format to display as M:SS
+					text = SecondsToMSS(secondsLeft)
+				end	
+				if deathMeasures then text = text .. "\n" .. deathMeasures self:addy(-10) end
+				self:settext(text)
+				local width = self:GetWidth() * 0.65
+				local addx = math.max(width * 0.8, 10)
+				local quad = self:GetParent():GetChild("BGQuad")
+				quad:playcommand("SetSize", { width=width, addx=addx, lines=(deathMeasures ~= nil and 2 or 1) })
+				self:addx(addx)
+			end
+		}	
+	}
+end
 
 return af
