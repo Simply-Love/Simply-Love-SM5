@@ -240,20 +240,34 @@ pane[#pane+1] = Def.BitmapText{
 	end,
 }
 
--- median_offset label
+-- avg_timing_error label
 pane[#pane+1] = Def.BitmapText{
 	Font="Common Normal",
-	Text=ScreenString("Median"),
+	Text=ScreenString("MeanOffset"),
 	InitCommand=function(self)
-		self:x(pane_width/2):y(label.y)
+		self:x(40 + (pane_width-80)/3):y(label.y)
+			:zoom(label.zoom):maxwidth(label.max_width)
+
+		if self:GetWidth() > label.max_width then
+			self:horizalign(left):x(label.padding)
+		end
+	end,
+}
+
+-- std_dev label
+pane[#pane+1] = Def.BitmapText{
+	Font="Common Normal",
+	Text=ScreenString("StdDev"),
+	InitCommand=function(self)
+		self:x(40 + (pane_width-80)/3 * 2):y(label.y)
 			:zoom(label.zoom):maxwidth(label.max_width)
 	end,
 }
 
--- mode_offset label
+-- max_error label
 pane[#pane+1] = Def.BitmapText{
 	Font="Common Normal",
-	Text=ScreenString("Mode"),
+	Text=ScreenString("MaxError"),
 	InitCommand=function(self)
 		self:x(pane_width-40):y(label.y)
 			:zoom(label.zoom):maxwidth(label.max_width)
