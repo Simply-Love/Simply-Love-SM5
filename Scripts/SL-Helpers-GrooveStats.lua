@@ -593,7 +593,7 @@ WriteUnlocksCache = function()
 end
 
 -- -----------------------------------------------------------------------
--- Downloads an SRPG unlock and unzips it. If a download with the same URL and
+-- Downloads an Event unlock and unzips it. If a download with the same URL and
 -- destination pack name exists, the download attempt is skipped.
 -- 
 -- Args are:
@@ -601,7 +601,7 @@ end
 --   unlockName: string, an identifier for the download.
 --               Used to display on ScreenDownloads
 --   packName: string, The pack name to unlock the contents of the unlock to.
-DownloadSRPGUnlock = function(url, unlockName, packName)
+DownloadEventUnlock = function(url, unlockName, packName)
 	-- Forward slash is not allowed in both Linux or Windows.
 	-- All others are not allowed in Windows.
 	local invalidChars = {
@@ -700,10 +700,8 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 			if response.statusCode == 200 then
 				if response.headers["Content-Type"] == "application/zip" then
 					-- Downloads are usually of the form:
-					--    /Downloads/<name>.zip/<hash>/<song_folders/
-					-- We want to strip out the <hash> after unzipping so we set
-					-- strip = 1.
-					if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
+					--    /Downloads/<name>.zip/<song_folders/
+					if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/") then
 						downloadInfo.ErrorMessage = "Failed to Unzip!"
 					else
 						if SL.GrooveStats.UnlocksCache[url] == nil then
