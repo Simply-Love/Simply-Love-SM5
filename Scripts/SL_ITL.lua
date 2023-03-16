@@ -195,7 +195,7 @@ local DataForSong = function(player)
 	local judgments = GetExJudgmentCounts(player)
 	local ex = CalculateExScore(player, judgments)
 	local clearType = GetClearType(judgments)
-	local points = GetPointsForSong(maxPoints, exScore)
+	local points = GetPointsForSong(maxPoints, ex)
 	local hash = SL[pn].Streams.Hash
 	local usedCmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil
 	local date = ("%04d-%02d-%02d"):format(year, month, day)
