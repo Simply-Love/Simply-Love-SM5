@@ -483,7 +483,6 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 				local search = "No Play Clear FC FEC Quad Quint"
 				for a=1,2 do
-					i, j = string.find(text, "No Play|Clear|FC|FEC|Quad|Quint", offset)
 					for ct in search:gmatch("%S+") do 
 						i, j = string.find(s, ct, offset)
 						if i ~= nil then
