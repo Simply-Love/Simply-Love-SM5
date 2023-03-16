@@ -115,7 +115,16 @@ local DataForSong = function(player)
 			return 1
 		end
 
-		local totalTaps = judgments["Miss"] + judgments["W5"] + judgments["W4"]
+		local totalTaps = judgments["Miss"]
+
+		if judgments["W5"] ~= nil then
+			totalTaps = totalTaps + judgments["W5"]
+		end
+
+		if judgments["W4"] ~= nil then
+			totalTaps = totalTaps + judgments["W4"]
+		end
+
 		if totalTaps == 0 then clearType = 2 end
 
 		totalTaps = totalTaps + judgments["W3"]
