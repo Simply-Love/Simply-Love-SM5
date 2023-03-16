@@ -481,15 +481,21 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 					["Quint"] = ItlPink,
 				}
 
+				local search = "No Play Clear FC FEC Quad Quint"
 				for a=1,2 do
 					i, j = string.find(text, "No Play|Clear|FC|FEC|Quad|Quint", offset)
-					-- Extract the actual clear type.
-					local substring = string.sub(text, i, j)
-					bodyText:AddAttribute(i-1, {
-						Length=#substring,
-						Diffuse=(clearTypeMap[substring] and clearTypeMap[substring] or Color.White)
-					})
-					offset = j + 1
+					for ct in search:gmatch("%S+") do 
+						i, j = string.find(s, ct, offset)
+						if i ~= nil then
+							-- Extract the actual clear type.
+							local substring = string.sub(text, i, j)
+							bodyText:AddAttribute(i-1, {
+								Length=#substring,
+								Diffuse=(clearTypeMap[substring] and clearTypeMap[substring] or Color.White)
+							})
+							offset = j + 1
+						end
+					end
 				end
 			end
 		end)
