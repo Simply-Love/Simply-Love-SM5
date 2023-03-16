@@ -28,7 +28,8 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 
 	if leaderboardData then
 		if leaderboardData["Name"] then
-			leaderboard:GetChild("Header"):settext(leaderboardData["Name"])
+			local name = leaderboardData["Name"]:gsub("ITL Online", "ITL")
+			leaderboard:GetChild("Header"):settext(name)
 		end
 
 		if leaderboardData["Data"] then

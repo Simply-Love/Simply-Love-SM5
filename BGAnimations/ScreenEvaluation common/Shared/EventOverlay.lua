@@ -400,7 +400,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	for text in ivalues(paneTexts) do
 		table.insert(paneFunctions, function(eventAf)
 			SetItlStyle(eventAf)
-			eventAf:GetChild("Header"):settext(itlData["name"])
+			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL"))
 			eventAf:GetChild("Leaderboard"):visible(false)
 			eventAf:GetChild("EX"):visible(true)
 			local bodyText = eventAf:GetChild("BodyText")
