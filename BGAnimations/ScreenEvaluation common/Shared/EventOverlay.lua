@@ -329,8 +329,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 						local clearTypeMap = {
 							[0] = "No Play",
 							[1] = "Clear",
-							[2] = "Full Combo",
-							[3] = "Full Excellent Combo",
+							[2] = "FC",
+							[3] = "FEC",
 							[4] = "Quad",
 							[5] = "Quint",
 						}
@@ -467,6 +467,30 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				})
 
 				offset = j + 1
+			end
+
+			-- Colorize the clearType improvements
+			offset = 0
+			local i, j = string.find(text, "Clear Type: ", offset)
+			if i ~= nil then
+				offset = j + 1
+				local clearTypeMap = {
+					["FC"] = SL.JudgmentColors["ITG"][3],
+					["FEC"] = SL.JudgmentColors["ITG"][2],
+					["Quad"] = SL.JudgmentColors["ITG"][1],
+					["Quint"] = ItlPink,
+				}
+
+				for a=1,2 do
+					i, j = string.find(text, "No Play|Clear|FC|FEC|Quad|Quint", offset)
+					-- Extract the actual clear type.
+					local substring = string.sub(text, i, j)
+					bodyText:AddAttribute(i-1, {
+						Length=#substring,
+						Diffuse=(clearTypeMap[substring] and clearTypeMap[substring] or Color.White)
+					})
+					offset = j + 1
+				end
 			end
 		end)
 	end
