@@ -588,7 +588,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ErrorBarOptions = {
 		SelectType = "SelectMultiple",
-		Values = { "ErrorBarUp", "ErrorBarMultiTick", "ErrorBarTrim" },
+		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
 	},
 	-------------------------------------------------------------------------
 	ErrorBarCap = {
@@ -623,33 +623,12 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MeasureCounterOptions = {
 		SelectType = "SelectMultiple",
-		Values = { "MeasureCounterLeft", "MeasureCounterUp", "BrokenRun", "RunTimer"},
+		Values = { "MeasureCounterLeft", "MeasureCounterUp", "MeasureCounterVert", "BrokenRun", "RunTimer"},
 	},
 	-------------------------------------------------------------------------
 	LifeBarOptions = {
 		SelectType = "SelectMultiple",
 		Values = { "RainbowMax", "ResponsiveColors", "ShowLifePercent"},
-	},
-	-------------------------------------------------------------------------
-	VisualDelay = {
-		Choices = function()
-			local first	= -100
-			local last 	= 100
-			local step 	= 1
-			return stringify( range(first, last, step), "%gms")
-		end,
-		ExportOnChange = true,
-		LayoutType = "ShowOneInRow",
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.VisualDelay = self.Choices[i]
-				end
-			end
-			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
-		end
 	},
 	-------------------------------------------------------------------------
 	NotefieldShift = {
@@ -669,27 +648,6 @@ local Overrides = {
 					mods.NotefieldShift = self.Choices[i]
 				end
 			end
-		end
-	},
-	-------------------------------------------------------------------------
-	VisualDelay = {
-		Choices = function()
-			local first	= -100
-			local last 	= 100
-			local step 	= 1
-			return stringify( range(first, last, step), "%gms")
-		end,
-		ExportOnChange = true,
-		LayoutType = "ShowOneInRow",
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.VisualDelay = self.Choices[i]
-				end
-			end
-			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
 		end
 	},
 	-------------------------------------------------------------------------
@@ -794,6 +752,10 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	BeatBars = {
 		Choices = { "None", "Measures", "Beats" },
+	},
+	-------------------------------------------------------------------------
+	TiltMultiplier = {
+		Choices = { 0.25, 0.5, 1, 1.5, 2, 2.5, 3 },
 	},
 	-------------------------------------------------------------------------
 	Experimental = {

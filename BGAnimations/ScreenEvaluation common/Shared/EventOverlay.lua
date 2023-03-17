@@ -245,7 +245,6 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 		end
 		
 		if progress["questsCompleted"] then
-			--if #progress["questsCompleted"] > 0 then table.insert(box_quests,"Quests completed:") end
 			for quest in ivalues(progress["questsCompleted"]) do
 				table.insert(box_quests,quest["title"])
 				local questStrings = {}

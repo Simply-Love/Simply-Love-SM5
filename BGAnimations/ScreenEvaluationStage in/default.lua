@@ -1,5 +1,6 @@
 -- assume that all human players failed
 local failed = true
+SL.Global.Restarts = 0
 
 -- loop through all available human players
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do

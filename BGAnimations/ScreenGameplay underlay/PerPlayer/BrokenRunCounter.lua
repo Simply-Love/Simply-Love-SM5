@@ -236,10 +236,15 @@ for i=lookAhead+1,1,-1 do
 			local width = GetNotefieldWidth()
 			local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 			local columnWidth = width/NumColumns
+			if mods.MeasureCounterLeft then
+				columnWidth = columnWidth*4/3
+			end
 
 			-- Have descending zoom sizes for each new BMT we add.
 			self:zoom(0.35 - 0.05 * (i-1)):shadowlength(1):horizalign(center)
-			self:x(columnWidth * (0.7 * (i-1)))
+			if mods.MeasureCounterVert then
+				self:addy(-15):addx(columnWidth*4/3)
+			end
 
 			if mods.MeasureCounterLeft then
 				self:addx(-columnWidth)

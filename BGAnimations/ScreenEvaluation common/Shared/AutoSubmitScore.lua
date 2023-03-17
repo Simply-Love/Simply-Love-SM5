@@ -209,7 +209,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								rpgRival = rpgRival + 1
 							elseif gsEntry["isSelf"] then
 								entry:diffuse(color("#A1FF94"))
-								personalRank = gsEntry["rank"]
+								-- personalRank = gsEntry["rank"]
 							end
 
 							if gsEntry["isFail"] then
@@ -238,7 +238,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								itlRival = itlRival + 1
 							elseif gsEntry["isSelf"] then
 								entry:diffuse(color("#A1FF94"))
-								personalRank = gsEntry["rank"]
+								-- personalRank = gsEntry["rank"]
 							end
 
 							if gsEntry["isFail"] then

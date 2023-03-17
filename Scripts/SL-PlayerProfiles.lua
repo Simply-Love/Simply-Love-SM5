@@ -43,6 +43,7 @@ local permitted_profile_settings = {
 	MeasureCounter       = "string",
 	MeasureCounterLeft   = "boolean",
 	MeasureCounterUp     = "boolean",
+	MeasureCounterVert   = "boolean",
 	BrokenRun            = "boolean",
 	RunTimer             = "boolean",
 	MeasureCounterLookahead = "number",
@@ -87,6 +88,7 @@ local permitted_profile_settings = {
 	FlashFantastic       = "boolean",
 	
 	BeatBars			 = "string",
+	TiltMultiplier       = "number",
 
 	GrowCombo			 = "boolean",
 	SpinCombo			 = "boolean",
@@ -98,11 +100,6 @@ local permitted_profile_settings = {
 	NoBar				 = "boolean",
 
 	VisualDelay          = "string",
-
-
-	VisualDelay          = "string",
-
-
 	----------------------------------
 	-- Profile Settings without OptionRows
 	-- these settings are saved per-profile, but are transparently managed by the theme

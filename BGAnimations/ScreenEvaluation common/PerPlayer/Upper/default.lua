@@ -24,9 +24,6 @@ return Def.ActorFrame{
 	-- stepartist
 	LoadActor("./StepArtist.lua", player),
 
-	-- stream breakdown
-	-- LoadActor("./StreamBreakdown.lua", player),
-
 	-- difficulty text and meter
 	LoadActor("./Difficulty.lua", player),
 

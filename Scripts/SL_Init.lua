@@ -58,6 +58,8 @@ local PlayerDefaults = {
 				FlashGreat = false,
 				FlashExcellent = false,
 				FlashFantastic = false,
+				
+				TiltMultiplier = 1,
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {

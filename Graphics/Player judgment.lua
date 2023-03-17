@@ -130,7 +130,7 @@ return Def.ActorFrame{
 			if tns ~= "Miss" then
 				-- How much to rotate.
 				-- We cap it at Great since anything after likely to be too distracting.
-				local offset = math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300
+				local offset = math.min(math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300 * mods.TiltMultiplier, 180)
 				-- Which direction to rotate.
 				local direction = param.TapNoteOffset < 0 and -1 or 1
 				sprite:rotationz(direction * offset)
@@ -150,7 +150,7 @@ return Def.ActorFrame{
 				if tns ~= "Miss" then
 					-- How much to rotate.
 					-- We cap it at Great since anything after likely to be too distracting.
-					local offset = math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300
+					local offset = math.min(math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300 * mods.TiltMultiplier, 180)
 					-- Which direction to rotate.
 					local direction = param.TapNoteOffset < 0 and -1 or 1
 					sprite2:rotationz(direction * offset)
