@@ -461,6 +461,10 @@ SL = {
 		-- be loaded before this file.
 		UnlocksCache = LoadUnlocksCache(),
 	},
+	-- Bar measure display
+	ShowBeatBars = false,
+	BarMeasureAlpha = 0.50,
+	Bar4thAlpha=0.25,
 	-- Stores all active/failed downloads.
 	-- Each entry is keyed on a string UUID which maps to a table with the
 	-- following keys:
@@ -473,12 +477,8 @@ SL = {
 	--    Complete: bool, whether or not the download has completed
 	--              (either success or failure).
 	-- If a request fails, there will be another key:
-	--    ErrorMessage: string, the reasoning for the failure
-	Downloads = {},
-	-- Bar measure display
-	ShowBeatBars = false,
-	BarMeasureAlpha = 0.50,
-	Bar4thAlpha=0.25
+	--    ErrorMessage: string, the reasoning for the failure.
+	Downloads = {}
 }
 
 

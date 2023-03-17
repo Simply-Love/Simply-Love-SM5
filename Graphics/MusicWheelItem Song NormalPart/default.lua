@@ -36,7 +36,7 @@ for player in ivalues(PlayerNumber) do
 			self:diffuse(SL.JudgmentColors["FA+"][1])
 		end,
 		PlayerJoinedMessageCommand=function(self)
-				self:visible(GAMESTATE:IsPlayerEnabled(player))
+			self:visible(GAMESTATE:IsPlayerEnabled(player))
 		end,
 		PlayerUnjoinedMessageCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(player))

@@ -120,7 +120,7 @@ return Def.ActorFrame{
 				self:visible(false)
 				return
 			end
-			
+
 			self:scaletoclipped(SL_WideScale(5, 6), 31)
 			self:horizalign(right)
 
