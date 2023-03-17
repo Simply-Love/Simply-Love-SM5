@@ -1,7 +1,10 @@
 local path = "/"..THEME:GetCurrentThemeDirectory().."Graphics/_FallbackBanners/"..ThemePrefs.Get("VisualStyle")
 local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("","_FallbackBanners/Arrows")
 
-local SongOrCourse, banner
+local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+
+local bannerWidth = 418
+local bannerHeight = 164
 
 local t = Def.ActorFrame{
 	OnCommand=function(self)
@@ -19,7 +22,7 @@ local t = Def.ActorFrame{
 t[#t+1] = Def.Sprite{
 	Name="FallbackBanner",
 	Texture=banner_directory.."/banner"..SL.Global.ActiveColorIndex.." (doubleres).png",
-	InitCommand=function(self) self:setsize(418,164) end,
+	InitCommand=function(self) self:setsize(bannerWidth, bannerHeight) end,
 
 	CurrentSongChangedMessageCommand=function(self) self:playcommand("Set") end,
 	CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set") end,
@@ -29,7 +32,6 @@ t[#t+1] = Def.Sprite{
 		-- don't bother assessing whether to draw or not draw
 		if PREFSMAN:GetPreference("ShowBanners") == false then return end
 
-		SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
 		if SongOrCourse and SongOrCourse:HasBanner() then
 			self:visible(false)
 		else
@@ -42,7 +44,7 @@ if PREFSMAN:GetPreference("ShowBanners") then
 	t[#t+1] = Def.ActorProxy{
 		Name="BannerProxy",
 		BeginCommand=function(self)
-			banner = SCREENMAN:GetTopScreen():GetChild('Banner')
+			local banner = SCREENMAN:GetTopScreen():GetChild('Banner')
 			self:SetTarget(banner)
 		end
 	}
@@ -67,5 +69,35 @@ t[#t+1] = Def.ActorFrame{
 		end
 	}
 }
+
+if not GAMESTATE:IsCourseMode() then
+	t[#t+1] = Def.Sprite {
+		OnCommand=function(self)
+			self:draworder(101)
+			self:playcommand("SetCD")
+		end,
+		OffCommand=function(self)
+			self:bouncebegin(0.15)
+		end,
+		CurrentSongChangedMessageCommand=function(self) self:playcommand("SetCD") end,
+		SwitchFocusToGroupsMessageCommand=function(self) self:GetChild("CdTitle"):visible(false) end,
+		SetCDCommand=function(self)
+			SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			if SongOrCourse and SongOrCourse:HasCDTitle() then
+				self:visible(true)
+				self:Load( GAMESTATE:GetCurrentSong():GetCDTitlePath() )
+				local dim1, dim2 = math.max(self:GetWidth(), self:GetHeight()), math.min(self:GetWidth(), self:GetHeight())
+				local ratio = math.max(dim1 / dim2, 2.5)
+
+				local toScale = self:GetWidth() > self:GetHeight() and self:GetWidth() or self:GetHeight()
+				self:xy((bannerWidth - 30) / 2, (bannerHeight - 30)/ 2)
+				self:zoom(22 / toScale * ratio)
+				self:finishtweening():addrotationy(0):linear(.5):addrotationy(360)
+			else
+				self:visible(false)
+			end
+		end
+	}
+end
 
 return t

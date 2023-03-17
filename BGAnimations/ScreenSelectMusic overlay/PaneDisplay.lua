@@ -334,9 +334,8 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 					requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey .. pn
 					local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
 					loadingText:visible(true)
-					loadingText:settext("Loading ..."):diffuse(Color.Black)
+					loadingText:settext("Loading ...")
 					sendRequest = true
-				end
 			end
 		end
 

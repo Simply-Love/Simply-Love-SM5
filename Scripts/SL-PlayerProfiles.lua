@@ -97,6 +97,9 @@ local permitted_profile_settings = {
 	FadeFantastic		 = "boolean",
 	NoBar				 = "boolean",
 
+	VisualDelay          = "string",
+
+
 	----------------------------------
 	-- Profile Settings without OptionRows
 	-- these settings are saved per-profile, but are transparently managed by the theme
@@ -109,6 +112,22 @@ local permitted_profile_settings = {
 
 local theme_name = THEME:GetThemeDisplayName()
 local filename =  theme_name .. " UserPrefs.ini"
+
+
+-- Function called when a [GUEST] joins during SSM, either by late joining or via the fast
+-- profile switcher. It does two things:
+-- 1) properly reset profile state (e.g. modifiers), and
+-- 2) persist any state that should survive a profile switch (e.g., session history
+--    in SL[pn].Stages with songs played for displaying on ScreenEvaluationSummary).
+-- LoadProfileCustom takes care of this for persistent profiles.
+LoadGuest = function(player)
+	GAMESTATE:ResetPlayerOptions(player)
+	local pn = ToEnumShortString(player)
+	local stages = SL[pn].Stages
+	SL[pn]:initialize()
+	SL[pn].Stages = stages
+end
+
 
 -- function assigned to "CustomLoadFunction" under [Profile] in metrics.ini
 LoadProfileCustom = function(profile, dir)
@@ -127,8 +146,14 @@ LoadProfileCustom = function(profile, dir)
 	end
 
 	if pn then
+		-- Remember and persist stats about songs played across profile switches
+		local stages = SL[pn].Stages
+
 		SL[pn]:initialize()
 		ParseGrooveStatsIni(player)
+		ReadItlFile(player)
+
+		SL[pn].Stages = stages
 	end
 
 	if pn and FILEMAN:DoesFileExist(path) then

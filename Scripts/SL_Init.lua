@@ -92,7 +92,10 @@ local PlayerDefaults = {
 				Stats = {}
 			}
 			self.PlayerOptionsString = nil
-			self.ITLData = {}
+			self.ITLData = {
+				["pathMap"] = {},
+				["hashMap"] = {},
+			}
 
 			-- default panes to intialize ScreenEvaluation to
 			-- when only a single player is joined (single, double)
@@ -470,7 +473,7 @@ SL = {
 	--    Complete: bool, whether or not the download has completed
 	--              (either success or failure).
 	-- If a request fails, there will be another key:
-	--    ErrorMessage: string, the reasoning for the failure.
+	--    ErrorMessage: string, the reasoning for the failure
 	Downloads = {},
 	-- Bar measure display
 	ShowBeatBars = false,

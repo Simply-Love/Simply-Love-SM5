@@ -56,6 +56,8 @@ end
 -- args: any, arguments that will be made accesible to the callback function. This
 --       can of any type as long as the callback knows what to do with it.
 RequestResponseActor = function(x, y)
+	local url_prefix = "https://api.groovestats.com/"
+
 	return Def.ActorFrame{
 		InitCommand=function(self)
 			self.request_time = -1
@@ -87,8 +89,6 @@ RequestResponseActor = function(x, y)
 				return
 			end
 
-			local url_prefix = GrooveStatsURL()
-
 			-- Cancel any existing requests if we're waiting on one at the moment.
 			if self.request_handler then
 				self.request_handler:Cancel()
@@ -116,7 +116,6 @@ RequestResponseActor = function(x, y)
 					self.request_handler = nil
 					-- If we get a permanent error, make sure we "disconnect" from
 					-- GrooveStats until we recheck on ScreenTitleMenu.
-					Trace(TableToString(response))
 					if response.statusCode then
 						local body = nil
 						local code = response.statusCode
@@ -216,7 +215,7 @@ ParseGrooveStatsIni = function(player)
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return "" end
 
-	local path = dir.. "GrooveStats.ini"
+	local path = dir .. "GrooveStats.ini"
 
 	if not FILEMAN:DoesFileExist(path) then
 		-- The file doesn't exist. We will create it for this profile, and then just return.
@@ -611,7 +610,7 @@ WriteUnlocksCache = function()
 end
 
 -- -----------------------------------------------------------------------
--- Downloads an SRPG unlock and unzips it. If a download with the same URL and
+-- Downloads an Event unlock and unzips it. If a download with the same URL and
 -- destination pack name exists, the download attempt is skipped.
 -- 
 -- Args are:
@@ -619,7 +618,7 @@ end
 --   unlockName: string, an identifier for the download.
 --               Used to display on ScreenDownloads
 --   packName: string, The pack name to unlock the contents of the unlock to.
-DownloadSRPGUnlock = function(url, unlockName, packName)
+DownloadEventUnlock = function(url, unlockName, packName)
 	-- Forward slash is not allowed in both Linux or Windows.
 	-- All others are not allowed in Windows.
 	local invalidChars = {
@@ -718,10 +717,8 @@ DownloadSRPGUnlock = function(url, unlockName, packName)
 			if response.statusCode == 200 then
 				if response.headers["Content-Type"] == "application/zip" then
 					-- Downloads are usually of the form:
-					--    /Downloads/<name>.zip/<hash>/<song_folders/
-					-- We want to strip out the <hash> after unzipping so we set
-					-- strip = 1.
-					if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/", 1) then
+					--    /Downloads/<name>.zip/<song_folders/
+					if not FILEMAN:Unzip("/Downloads/"..downloadfile, "/Songs/"..packName.."/") then
 						downloadInfo.ErrorMessage = "Failed to Unzip!"
 					else
 						if SL.GrooveStats.UnlocksCache[url] == nil then

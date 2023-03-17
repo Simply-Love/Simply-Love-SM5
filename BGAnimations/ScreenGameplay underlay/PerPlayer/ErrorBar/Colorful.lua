@@ -11,6 +11,11 @@ local tickWidth = 2
 local tickDuration = 0.5
 local numTicks = mods.ErrorBarMultiTick and 10 or 1
 local currentTick = 1
+local judgmentToTrim = {
+    TapNoteScore_W3 = mods.ErrorBarTrim and SL.Global.GameMode == "ITG",
+    TapNoteScore_W4 = mods.ErrorBarTrim,
+    TapNoteScore_W5 = mods.ErrorBarTrim
+}
 
 local enabledTimingWindows = {}
 
@@ -38,6 +43,7 @@ local af = Def.ActorFrame{
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
+        if judgmentToTrim[params.TapNoteScore] then return end
 
         local score = ToEnumShortString(params.TapNoteScore)
         if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then

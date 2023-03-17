@@ -51,8 +51,9 @@ t[#t+1] = LoadActor("./Shared/ScreenshotHandler.lua")
 -- the title of the song and its graphical banner, if there is one
 t[#t+1] = LoadActor("./Shared/TitleAndBanner.lua")
 
--- text to display BPM range (and ratemod if ~= 1.0) immediately under the banner
-t[#t+1] = LoadActor("./Shared/BPM_RateMod.lua")
+-- text to display BPM range (and ratemod if ~= 1.0) and song length immediately
+-- under the banner
+t[#t+1] = LoadActor("./Shared/SongFeatures.lua")
 
 -- text to display Song or Course Length
 t[#t+1] = LoadActor("./Shared/SongLength.lua")

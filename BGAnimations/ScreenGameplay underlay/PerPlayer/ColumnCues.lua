@@ -22,7 +22,7 @@ local fadeTime = 0.15
 local curIndex = 1
 local updatedFirstTime = false
 local breakTime = 0
-local text
+local text = nil
 
 local font = mods.ComboFont
 if font == "Wendy" or font == "Wendy (Cursed)" then
@@ -91,9 +91,9 @@ local af = Def.ActorFrame{
 }
 
 for columnIndex=1,numColumns do
-	af[#af+1] = Def.ActorFrame {
+	af[#af+1] = Def.ActorFrame{
 		Name="Column"..columnIndex,
-		Def.Quad {
+		Def.Quad{
 			Name="ColumnFlash",
 			InitCommand=function(self)
 				self:diffuse(0,0,0,0)
@@ -111,15 +111,16 @@ for columnIndex=1,numColumns do
 					:sleep(flashDuration - 2*fadeTime)
 					:accelerate(fadeTime)
 					:diffuse(0,0,0,0)
-				
 				if flashDuration >= 5 and mods.ColumnCountdown then
 					breakTime = flashDuration
-					text:stoptweening()
-						:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
-						:decelerate(fadeTime)
-						:diffuse(Color.White)
-						:settext(round(flashDuration,1))
-						:playcommand("UpdateBreak")
+					if text ~= nil then
+						text:stoptweening()
+							:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
+							:decelerate(fadeTime)
+							:diffuse(Color.White)
+							:settext(round(flashDuration, 1))
+							:playcommand("UpdateBreak")
+					end
 				end
 			end
 		},
@@ -128,11 +129,13 @@ for columnIndex=1,numColumns do
 			Font=font,
 			Text="",
 			InitCommand=function(self)
+				local zoom_factor = 1 - scale( mods.Mini:gsub("%%","")/100, 0, 2, 0, 1)
 				self:zoom(0.5)
+					:zoomx(0.5/zoom_factor)
 					:diffuse(0,0,0,0)
 					:horizalign(center)
 					:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
-					:y(80+mods.NotefieldShift)
+					:y(80)
 				text = self
 			end,
 			UpdateBreakCommand=function(self)
@@ -149,7 +152,6 @@ for columnIndex=1,numColumns do
 				else
 					self:diffuse(0,0,0,0)
 				end
-				
 			end,
 		}
 	}
