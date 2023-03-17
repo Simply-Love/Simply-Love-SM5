@@ -72,7 +72,9 @@ local meter = Def.ActorFrame{
 				if life < 100 then
 					self:finishtweening()
 				end
-				self:bouncebegin(0.1):y(height/2-(life*2.5))
+				if oldlife ~= 250 or life ~= 100 then
+					self:bouncebegin(0.1):y(height/2-(life*2.5))
+				end
 			end
 		end,
 	},
@@ -107,7 +109,9 @@ local meter = Def.ActorFrame{
 				if life < 100 then
 					self:finishtweening()
 				end
-				self:bouncebegin(0.1):y(height/2-(life*2.5))
+				if oldlife ~= 250 or life ~= 100 then
+					self:bouncebegin(0.1):y(height/2-(life*2.5))
+				end
 			end
 		end,
 	},
@@ -139,7 +143,9 @@ local meter = Def.ActorFrame{
 				if life < 100 then
 					self:finishtweening()
 				end
-				self:bouncebegin(0.1):settext(("%.1f%%"):format(life)):y(height/2-(life*2.5))
+				if oldlife ~= 250 or life ~= 100 then
+					self:bouncebegin(0.1):settext(("%.1f%%"):format(life)):y(height/2-(life*2.5))
+				end
 			end
 		end,
 	},
