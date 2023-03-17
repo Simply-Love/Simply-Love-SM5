@@ -40,12 +40,11 @@ for player in ivalues(PlayerNumber) do
 			self:visible(GAMESTATE:IsPlayerEnabled(player))
 		end,
 		SetCommand=function(self, params)
-			if not GAMESTATE:IsPlayerEnabled(player) then
+			-- Only display EX score if a profile is found for an enabled player.
+			if not GAMESTATE:IsPlayerEnabled(player) or not PROFILEMAN:IsPersistentProfile(player) then
 				self:visible(false)
 				return
 			end
-			-- Only use lamps if a profile is found
-			if not PROFILEMAN:IsPersistentProfile(player) then return end
 
 			if GAMESTATE:GetNumSidesJoined() == 2 then
 				if player == PLAYER_1 then

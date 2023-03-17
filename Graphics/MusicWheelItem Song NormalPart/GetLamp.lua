@@ -108,12 +108,11 @@ return Def.ActorFrame{
 			self:visible(GAMESTATE:IsPlayerEnabled(player))
 		end,
 		SetCommand=function(self, param)
-			if not GAMESTATE:IsPlayerEnabled(player) then
+			-- Only use lamps if a profile is found for an enabled player.
+			if not GAMESTATE:IsPlayerEnabled(player) or not PROFILEMAN:IsPersistentProfile(player) then
 				self:visible(false)
 				return
 			end
-			-- Only use lamps if a profile is found
-			if not PROFILEMAN:IsPersistentProfile(player) then return end
 
 			self:scaletoclipped(SL_WideScale(5, 6), 31)
 			self:horizalign(right)
