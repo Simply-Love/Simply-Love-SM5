@@ -308,10 +308,10 @@ af2[#af2+1] = Def.ActorFrame{
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
-		if GAMESTATE:GetNumSidesJoined() == 2 then
-			self:y(0)
+		if player == PLAYER_1 then
+			self:y(38 + 24)
 		else
-			self:y(88 * (player == PLAYER_1 and 1 or -1))
+			self:y(-38 - 80)
 		end
 	end,
 	TogglePatternInfoCommand=function(self)

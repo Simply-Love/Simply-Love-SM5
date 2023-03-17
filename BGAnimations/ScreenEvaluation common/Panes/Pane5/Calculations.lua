@@ -177,7 +177,18 @@ for offset=-worst_window, worst_window, 0.001 do
 	if math.abs(offset) <= worst_offset then
 		-- scale the highest point on the histogram to be 0.75 times as high as the pane
 		y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-		c = colors[DetermineTimingWindow(offset)]
+		local TimingWindow = DetermineTimingWindow(offset)
+		c = colors[TimingWindow]
+		local prefs = SL.Preferences["FA+"]
+		local scale = PREFSMAN:GetPreference("TimingWindowScale")
+		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+		if SL[pn].ActiveModifiers.SmallerWhite then
+			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
+		end
+		
+		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow and math.abs(offset) > W0 then
+			c = DeepCopy(SL.JudgmentColors["FA+"][2])
+		end
 
 		-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
 		-- each vertex is a table of two tables:

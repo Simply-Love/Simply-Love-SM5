@@ -108,11 +108,19 @@ return Def.ActorFrame{
 			if player ~= PLAYER_2 then return end
 			MaybeSetLampForUnmarkedItlSong(self, player)
 		end,
+		PlayerJoinedMessageCommand=function(self)
+			self:visible(GAMESTATE:IsPlayerEnabled(player))
+		end,
+		PlayerUnjoinedMessageCommand=function(self)
+			self:visible(GAMESTATE:IsPlayerEnabled(player))
+		end,
 		SetCommand=function(self, param)
-			if not GAMESTATE:IsPlayerEnabled(player) then
+			-- Only use lamps if a profile is found for an enabled player.
+			if not GAMESTATE:IsPlayerEnabled(player) or not PROFILEMAN:IsPersistentProfile(player) then
 				self:visible(false)
 				return
 			end
+			
 			self:scaletoclipped(SL_WideScale(5, 6), 31)
 			self:horizalign(right)
 

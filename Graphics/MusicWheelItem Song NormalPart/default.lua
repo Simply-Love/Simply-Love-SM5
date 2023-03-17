@@ -33,35 +33,29 @@ for player in ivalues(PlayerNumber) do
 			self:visible(false)
 			self:zoom(0.2)
 			self:x( _screen.w/(WideScale(2.15, 2.14)) - self:GetWidth()*self:GetZoom() - 40 )
-			if GAMESTATE:GetNumSidesJoined() == 2 then
-				if player == PLAYER_1 then
-					self:addy(-11)
-				else
-					self:addy(4)
-				end
-			else
-				self:addy(-4)
-			end
 			self:diffuse(SL.JudgmentColors["FA+"][1])
 		end,
 		PlayerJoinedMessageCommand=function(self)
-				self:visible(true)
+				self:visible(GAMESTATE:IsPlayerEnabled(player))
+		end,
+		PlayerUnjoinedMessageCommand=function(self)
+			self:visible(GAMESTATE:IsPlayerEnabled(player))
+		end,
+		SetCommand=function(self, params)
+			-- Only display EX score if a profile is found for an enabled player.
+			if not GAMESTATE:IsPlayerEnabled(player) or not PROFILEMAN:IsPersistentProfile(player) then
+				self:visible(false)
+				return
+			end
+
+			if GAMESTATE:GetNumSidesJoined() == 2 then
 				if player == PLAYER_1 then
 					self:y(-11)
 				else
 					self:y(4)
 				end
-		end,
-		PlayerUnjoinedMessageCommand=function(self)
-			self:y(-4)
-			if not GAMESTATE:IsPlayerEnabled(player) then
-				self:visible(false)
-			end
-		end,
-		SetCommand=function(self, params)
-			if not GAMESTATE:IsPlayerEnabled(player) then
-				self:visible(false)
-				return
+			else
+				self:y(-4)
 			end
 			local pn = ToEnumShortString(player)
 			if params.Song ~= nil then
