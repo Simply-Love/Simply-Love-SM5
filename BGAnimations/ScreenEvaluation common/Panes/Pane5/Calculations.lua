@@ -60,10 +60,6 @@ local sum_timing_error = 0
 -- to get the mean timing error
 local avg_timing_error = 0
 
--- extra stats for parity with Waterfall - mean offset and max error.
-local sum_timing_offset = 0
-local avg_offset = 0
-
 -- sum_timing_offset will be used in a loop to sum the total timing offset
 -- accumulated over the entire stepchart during gameplay
 local sum_timing_offset = 0
@@ -88,12 +84,6 @@ for k,v in pairs(offsets) do
 		highest_offset_count = v
 	end
 
-	-- check if this is the highest error amount
-	-- if higher, it's the new max
-	if math.abs(k) > max_error then
-		max_error = math.abs(k)
-	end
-	
 	-- check if this is the highest error amount
 	-- if higher, it's the new max
 	if math.abs(k) > max_error then
@@ -148,30 +138,6 @@ if #list > 0 then
 
 	-- convert seconds to ms
 	avg_timing_error = avg_timing_error * 1000
-	
-	-- calculate the mean timing offset
-	avg_offset = sum_timing_offset / #list
-	-- convert seconds to ms
-	avg_offset = avg_offset * 1000
-
-	-- round ms value to 1 decimal place
-	-- we'll string.format() this value before handing it off to the BitmapText so that
-	-- an avg_timing_error >= 10 displays with no decimal precision
-	-- and avg_timing_error < 10 displays to 1 decimal place
-	--
-	-- But! round() here first to handle values very-close-to-but-less than 10
-	-- for example, with an avg_timing_error of 9.99999, we want to
-	--    1. rounded to 10.0,
-	--    2. determine 10.0 to be >= 10
-	--    3. format 10.0 to display as "10ms"
-	--
-	-- this^ approach avoids a formatting edge case where we might
-	--    1. determine that 9.99999 is < 10
-	--    2. format it to 1 decimal place so that it displays as "10.0ms"
-
-	avg_timing_error = round(avg_timing_error, 1)
-	avg_offset = round(avg_offset, 1)
-
 	avg_offset = avg_offset * 1000
 	std_dev = std_dev * 1000
 	max_error = max_error * 1000
@@ -211,18 +177,7 @@ for offset=-worst_window, worst_window, 0.001 do
 	if math.abs(offset) <= worst_offset then
 		-- scale the highest point on the histogram to be 0.75 times as high as the pane
 		y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-		local TimingWindow = DetermineTimingWindow(offset)
-		c = colors[TimingWindow]
-		local prefs = SL.Preferences["FA+"]
-		local scale = PREFSMAN:GetPreference("TimingWindowScale")
-		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-		if SL[pn].ActiveModifiers.SmallerWhite then
-			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
-		end
-		
-		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow and math.abs(offset) > W0 then
-			c = DeepCopy(SL.JudgmentColors["FA+"][2])
-		end
+		c = colors[DetermineTimingWindow(offset)]
 
 		-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
 		-- each vertex is a table of two tables:
@@ -266,15 +221,6 @@ bmts[#bmts+1] = Def.BitmapText{
 }
 
 -- avg_offset value with "ms" label
-bmts[#bmts+1] = Def.BitmapText{
-	Font="Common Normal",
-	Text=(math.abs(avg_offset) < 10 and "%.1fms" or "%dms"):format(avg_offset),
-	InitCommand=function(self)
-		self:x(pane_width/3):zoom(0.8)
-	end,
-}
-
--- median_offset value with "ms" label
 bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=("%.1fms"):format(avg_offset),

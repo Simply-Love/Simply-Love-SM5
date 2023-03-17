@@ -47,12 +47,12 @@ local function GetLamp(song)
 				award = "StageAward_FullComboW4"
 			end
 		end
-
-		if AwardMap[game_mode][award] ~= nil then
-			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[game_mode][award])
+		
+		if AwardMap[award] ~= nil then
+			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[award])
 		end
 		
-		if best_lamp == nil then
+		if best_lamp == 4 then
 			if score:GetGrade() == "Grade_Failed" then best_lamp = 52
 			else best_lamp = 51 end
 		end
@@ -109,6 +109,10 @@ return Def.ActorFrame{
 			MaybeSetLampForUnmarkedItlSong(self, player)
 		end,
 		SetCommand=function(self, param)
+			if not GAMESTATE:IsPlayerEnabled(player) then
+				self:visible(false)
+				return
+			end
 			self:scaletoclipped(SL_WideScale(5, 6), 31)
 			self:horizalign(right)
 
@@ -129,10 +133,7 @@ return Def.ActorFrame{
 
 			if itl_lamp ~= nil then
 				-- Disable for normal clear types. The wheel grade should cover it.
-				local lamp = GetLamp(param.Song)
-				if lamp > 50 then
-					self:diffuse(ClearLamp[lamp - 50])
-				elseif itl_lamp == 5 then
+				if itl_lamp == 5 then
 					self:visible(false)
 				else
 					self:visible(true)
@@ -144,6 +145,9 @@ return Def.ActorFrame{
 				local lamp = GetLamp(param.Song)
 				if lamp == nil then
 					self:visible(false)
+				elseif lamp > 50 then
+					self:visible(true)
+					self:diffuse(ClearLamp[lamp - 50])
 				else
 					self:visible(true)
 					self:diffuseshift():effectperiod(0.8)

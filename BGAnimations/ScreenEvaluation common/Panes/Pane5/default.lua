@@ -269,20 +269,6 @@ pane[#pane+1] = Def.BitmapText{
 	Font="Common Normal",
 	Text=ScreenString("MaxError"),
 	InitCommand=function(self)
-		self:x(pane_width*2/3):y(label.y)
-			:zoom(label.zoom):maxwidth(label.max_width)
-
-		if self:GetWidth() > label.max_width then
-			self:horizalign(right):x(pane_width - label.padding)
-		end
-	end,
-}
-
--- max_error label
-pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
-	Text=ScreenString("MaxError"),
-	InitCommand=function(self)
 		self:x(pane_width-40):y(label.y)
 			:zoom(label.zoom):maxwidth(label.max_width)
 
