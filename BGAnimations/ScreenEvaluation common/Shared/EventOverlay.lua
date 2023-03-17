@@ -484,7 +484,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				local search = "No Play Clear FC FEC Quad Quint"
 				for a=1,2 do
 					for ct in search:gmatch("%S+") do 
-						i, j = string.find(s, ct, offset)
+						i, j = string.find(text, ct, offset)
 						if i ~= nil then
 							-- Extract the actual clear type.
 							local substring = string.sub(text, i, j)
