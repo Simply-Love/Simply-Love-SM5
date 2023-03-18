@@ -56,7 +56,9 @@ difficultyNames = {
 	Difficulty_Easy = "Easy",
 	Difficulty_Medium = "Medium",
 	Difficulty_Hard = "Hard",
-	Difficulty_Challenge = "Expert"
+	Difficulty_Challenge = "Expert",
+	Difficulty_Edit = "Edit"
+
 }
 
 af2 = Def.ActorFrame {
