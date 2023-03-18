@@ -144,8 +144,9 @@ local meter = Def.ActorFrame{
 					self:finishtweening()
 				end
 				if oldlife ~= 250 or life ~= 100 then
-					self:bouncebegin(0.1):settext(("%.1f%%"):format(life)):y(height/2-(life*2.5))
+					self:bouncebegin(0.1):y(height/2-(life*2.5))
 				end
+				self:settext(("%.1f%%"):format(life))
 			end
 		end,
 	},
