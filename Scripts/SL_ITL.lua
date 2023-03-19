@@ -196,7 +196,7 @@ local DataForSong = function(player)
 	local day = DayOfMonth()
 
 	local judgments = GetExJudgmentCounts(player)
-	local ex = CalculateExScore(player, judgments)
+	local ex = CalculateExScore(player)
 	local clearType = GetClearType(judgments)
 	local points = GetPointsForSong(maxPoints, ex)
 	local hash = SL[pn].Streams.Hash
