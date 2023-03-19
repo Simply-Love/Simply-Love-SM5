@@ -234,6 +234,8 @@ local af = Def.ActorFrame{
 		end
 		self.isFirst = true
 	end,
+	ResetCommand=function(self) self:stoptweening() end,
+	OffCommand=function(self) self:stoptweening() end,
 	PlayerJoinedMessageCommand=function(self, params)
 		if pn == "P1" then
 			self:zoom(0.65):x(_screen.cx - 65):y(_screen.cy + 178)
@@ -427,7 +429,9 @@ local af = Def.ActorFrame{
 		end,
 		LoopScoreboxCommand=function(self)
 			self:linear(transition_seconds):diffuse(style_color[cur_style])
-		end
+		end,
+		ResetCommand=function(self) self:stoptweening() end,
+		OffCommand=function(self) self:stoptweening() end
 	},
 	-- Main body
 	Def.Quad{
