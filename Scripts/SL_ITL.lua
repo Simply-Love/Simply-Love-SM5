@@ -186,6 +186,9 @@ local DataForSong = function(player)
 		maxPoints = 0
 	else
 		maxPoints = tonumber(maxPoints)
+		if maxPoints == nil then
+			maxPoints = 0
+		end
 	end
 
 	local year = Year()
