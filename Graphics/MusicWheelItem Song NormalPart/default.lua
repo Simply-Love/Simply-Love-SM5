@@ -63,7 +63,8 @@ for player in ivalues(PlayerNumber) do
 					if SL[pn].ITLData["pathMap"][song_dir] ~= nil then
 						local hash = SL[pn].ITLData["pathMap"][song_dir]
 						if SL[pn].ITLData["hashMap"][hash] ~= nil then
-							self:settext(tostring(SL[pn].ITLData["hashMap"][hash]["ex"] / 100))
+							local ex = SL[pn].ITLData["hashMap"][hash]["ex"] / 100
+							self:settext(("%.2f"):format(ex))
 							self:visible(true)
 							return
 						end
