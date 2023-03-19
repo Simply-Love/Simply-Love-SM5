@@ -94,6 +94,67 @@ ReadItlFile = function(player)
 		f:destroy()
 		itlData = json.decode(existing)
 	end
+	-- SL 5.2.0 had a bug where the EX scores weren't calculated correctly.
+	-- If that's the case, then recalculate the scores the first time the v5.2.1 theme
+	-- is loaded. Use this variable called "fixedEx" to determine if the EX scores
+	-- have been fixed. Luckily we can use the judgment counts, which have all the info,
+	-- in order to calculate the values.
+	--
+	-- Judgment spread has the following keys:
+	--
+	-- "judgments" : {
+	--             "W0" -> the fantasticPlus count
+	--             "W1" -> the fantastic count
+	--             "W2" -> the excellent count
+	--             "W3" -> the great count
+	--             "W4" -> the decent count (may not exist if window is disabled)
+	--             "W5" -> the way off count (may not exist if window is disabled)
+	--           "Miss" -> the miss count
+	--     "totalSteps" -> the total number of steps in the chart (including hold heads)
+	--          "Holds" -> total number of holds held
+	--     "totalHolds" -> total number of holds in the chart
+	--          "Mines" -> total number of mines hit
+	--     "totalMines" -> total number of mines in the chart
+	--          "Rolls" -> total number of rolls held
+	--     "totalRolls" -> total number of rolls in the chart
+	--  },
+	if itlData["fixedEx"] == nil then
+		local hashMap = itlData["hashMap"]
+		local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss" }
+
+		if hashMap ~= nil then
+			for hash, data in pairs(hashMap) do
+				local counts = data["judgments"]
+				local totalSteps = counts["totalSteps"]
+				local totalHolds = counts["totalHolds"]
+				local totalRolls = counts["totalRolls"]
+
+				local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
+				local total_points = 0
+
+				for key in ivalues(keys) do
+					local value = counts[key]
+					if value ~= nil then		
+						total_points = total_points + value * SL.ExWeights[key]
+					end
+				end
+
+				local held = counts["Holds"] + counts["Rolls"]
+				total_points = total_points + held * SL.ExWeights["Held"]
+
+				local letGo = (totalHolds - counts["Holds"]) + (totalRolls - counts["Rolls"])
+				total_points = total_points + letGo * SL.ExWeights["LetGo"]
+
+				local hitMine = counts["Mines"]
+				total_points = total_points + hitMine * SL.ExWeights["HitMine"]
+
+				data["ex"] = math.max(0, math.floor(total_points/total_possible * 10000))
+			end
+		end
+
+		itlData["fixedEx"] = true
+	end
+
 	SL[pn].ITLData = itlData
 end
 
@@ -181,6 +242,9 @@ local DataForSong = function(player)
 	local steps = GAMESTATE:GetCurrentSteps(player)
 	local chartName = steps:GetChartName()
 
+	-- Note that playing OUTSIDE of the ITL pack will result in 0 points for all upscores.
+	-- Technically this number isn't displayed, but players can opt to swap the EX score in the
+	-- wheel with this value instead if they prefer.
 	local maxPoints = chartName:gsub(" pts", "")
 	if #maxPoints == 0 then
 		maxPoints = 0

@@ -619,6 +619,9 @@ end
 --          "Rolls" -> total number of rolls held
 --     "totalRolls" -> total number of rolls in the chart
 -- }
+--
+-- Note: The returned table can't be used directly into CalculateExScore because the keys
+-- "HitMine", "Held", and "LetGo" aren't calculated here.
 GetExJudgmentCounts = function(player)
 	local pn = ToEnumShortString(player)
 	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
