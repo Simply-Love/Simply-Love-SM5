@@ -52,7 +52,7 @@ local function GetLamp(song)
 			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[award])
 		end
 		
-		if best_lamp == 4 then
+		if best_lamp == nil then
 			if score:GetGrade() == "Grade_Failed" then best_lamp = 52
 			else best_lamp = 51 end
 		end
@@ -142,7 +142,8 @@ return Def.ActorFrame{
 			if itl_lamp ~= nil then
 				-- Disable for normal clear types. The wheel grade should cover it.
 				if itl_lamp == 5 then
-					self:visible(false)
+					self:visible(true)
+					self:diffuse(ClearLamp[1])
 				else
 					self:visible(true)
 					self:diffuseshift():effectperiod(0.8)
