@@ -160,7 +160,7 @@ end
 
 -- Helper function used within UpdateItlData() below.
 -- Curates all the ITL data to be written to the ITL file for the played song.
-local DataForSong = function(player)
+local DataForSong = function(player, prevData)
 	local GetClearType = function(judgments)
 		-- 1 = Pass
 		-- 2 = FGC
@@ -247,14 +247,42 @@ local DataForSong = function(player)
 	-- wheel with this value instead if they prefer.
 	local maxPoints = chartName:gsub(" pts", "")
 	if #maxPoints == 0 then
-		maxPoints = 0
+		maxPoints = nil
 	else
 		maxPoints = tonumber(maxPoints)
-		if maxPoints == nil then
+	end
+
+	if maxPoints == nil then
+		--  See if we already have these points stored if we failed to parse it.
+		if prevData ~= nil and prevData["maxPoints"] ~= nil then
+			maxPoints = prevData["maxPoints"]
+		-- Otherwise we don't know how many points this chart is. Default to 0.
+		else
 			maxPoints = 0
 		end
 	end
+	
+	
+	-- Assume C-Mod is okay by default.
+	local noCmod = false
 
+	if prevData == nil or prevData["noCmod"] == nil then
+		-- If we have no prior play data data for this ITL song, or the noCmod bit hasn't been
+		-- calculated, parse the subtitle to see if this chart explicitly calls for noCmod.
+		local song = GAMESTATE:GetCurrentSong()
+		local subtitle = song:GetDisplaySubTitle():lower()
+		if string.find(subtitle, "no cmod") then
+			noCmod = true
+		end
+	else
+		-- If the bit exists then read it from the previous data.
+		-- My boy De Morgan says the below condition is the exact same as the else but my
+		-- computer brain is tired and I just want to make sure.
+		if prevData ~= nil and prevData["noCmod"] ~= nil then
+			noCmod = prevData["noCmod"]
+		end
+	end
+	
 	local year = Year()
 	local month = MonthOfYear()+1
 	local day = DayOfMonth()
@@ -263,7 +291,6 @@ local DataForSong = function(player)
 	local ex = CalculateExScore(player)
 	local clearType = GetClearType(judgments)
 	local points = GetPointsForSong(maxPoints, ex)
-	local hash = SL[pn].Streams.Hash
 	local usedCmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil
 	local date = ("%04d-%02d-%02d"):format(year, month, day)
 	
@@ -272,9 +299,10 @@ local DataForSong = function(player)
 		["ex"] = ex * 100,
 		["clearType"] = clearType,
 		["points"] = points,
-		["hash"] = hash,
 		["usedCmod"] = usedCmod,
 		["date"] = date,
+		["noCmod"] = noCmod,
+		["maxPoints"] = maxPoints,
 	}
 end
 
@@ -302,8 +330,19 @@ UpdateItlData = function(player)
 				rate == 1.0 and
 				minesEnabled and
 				not stats:GetFailed()) then
-		local data = DataForSong(player)
-		local hash = data["hash"]
+		local hash = SL[pn].Streams.Hash
+		local hashMap = SL[pn].ITLData["hashMap"]
+
+		local prevData = nil
+		if hashMap ~= nil and hashMap[hash] ~= nil then
+			prevData = hashMap[hash]
+		end
+
+		local data = DataForSong(player, prevData)
+		-- C-Modded a No CMOD chart. Don't save this score.
+		if data["noCmod"] and data["usedCmod"] then
+			return
+		end
 
 		-- Update the pathMap as needed.
 		local song = GAMESTATE:GetCurrentSong()
@@ -314,9 +353,7 @@ UpdateItlData = function(player)
 		end
 		
 		-- Then maybe update the hashMap.
-		local hashMap = SL[pn].ITLData["hashMap"]
 		local updated = false
-	
 		if hashMap[hash] == nil then
 			-- New score, just copy things over.
 			hashMap[hash] = {
@@ -326,11 +363,11 @@ UpdateItlData = function(player)
 				["points"] = data["points"],
 				["usedCmod"] = data["usedCmod"],
 				["date"] = data["date"],
+				["maxPoints"] = data["maxPoints"],
+				["noCmod"] = data["noCmod"],
 			}
 			updated = true
 		else
-			-- TODO: Check if CMod is allowed for this song?
-
 			if data["ex"] >= hashMap[hash]["ex"] then
 				hashMap[hash]["ex"] = data["ex"]
 				hashMap[hash]["points"] = data["points"]
@@ -347,6 +384,8 @@ UpdateItlData = function(player)
 					for key in ivalues(keys) do
 						local prev = hashMap[hash]["judgments"][key]
 						local cur = data["judgments"][key]
+						-- If both windows are defined, take the greater one.
+						-- If current is defined but previous is not, then current is better.
 						if (cur ~= nil and prev ~= nil and cur > prev) or (cur ~= nil and prev == nil) then
 							better = true
 							break
@@ -368,6 +407,8 @@ UpdateItlData = function(player)
 			if updated then
 				hashMap[hash]["usedCmod"] = data["usedCmod"]
 				hashMap[hash]["date"] = data["date"]
+				hashMap[hash]["noCmod"] = data["noCmod"]
+				hashMap[hash]["maxPoints"] = data["maxPoints"]
 			end
 		end
 
