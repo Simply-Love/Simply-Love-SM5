@@ -30,8 +30,8 @@ end
 local GetJudgmentCounts = function(player)
 	local counts = GetExJudgmentCounts(player)
 	local translation = {
-		["W0"] = "fantasticPlus",
-		["W1"] = "fantastic",
+		["W015"] = "fantasticPlus",
+		["W115"] = "fantastic",
 		["W2"] = "excellent",
 		["W3"] = "great",
 		["W4"] = "decent",
