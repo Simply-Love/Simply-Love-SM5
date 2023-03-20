@@ -74,7 +74,7 @@ WriteItlFile = function(player)
 	local f = RageFileUtil:CreateRageFile()
 
 	if f:Open(path, 2) then
-		f:Write(json.encode(SL[pn].ITLData))
+		f:Write(JsonEncode(SL[pn].ITLData))
 		f:Close()
 	end
 	f:destroy()
@@ -106,7 +106,7 @@ ReadItlFile = function(player)
 			f:Close()
 		end
 		f:destroy()
-		itlData = json.decode(existing)
+		itlData = JsonDecode(existing)
 	end
 	-- SL 5.2.0 had a bug where the EX scores weren't calculated correctly.
 	-- If that's the case, then recalculate the scores the first time the v5.2.1 theme
