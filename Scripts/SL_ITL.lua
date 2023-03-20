@@ -394,8 +394,8 @@ UpdateItlData = function(player)
 
 					if better then
 						hashMap[hash]["judgments"] = DeepCopy(data["judgments"])
+						updated = true
 					end
-					updated = true
 				end
 			end	
 
