@@ -50,6 +50,9 @@ t[#t+1] = Def.Quad{
 		if ThemePrefs.Get("RainbowMode") then
 			self:diffusealpha(0.9)
 		end
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end
 }
 

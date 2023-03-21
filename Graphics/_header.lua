@@ -12,6 +12,8 @@ return Def.ActorFrame{
 				self:diffuse(GetCurrentColor(true))
 			elseif DarkUI() then
 				self:diffuse(dark)
+			elseif ThemePrefs.Get("VisualStyle") == "Technique" then
+				self:diffusealpha(0)
 			else
 				self:diffuse(light)
 			end
@@ -24,11 +26,23 @@ return Def.ActorFrame{
 			if ThemePrefs.Get("VisualStyle") == "SRPG6" then
 				self:diffuse(GetCurrentColor(true))
 			end
+			if ThemePrefs.Get("VisualStyle") == "Technique" then
+				if topscreen == "ScreenSelectMusic" then
+					self:diffuse(0, 0, 0, 0.5)
+				else
+					self:diffusealpha(0)
+				end
+			end
 			self:visible(topscreen ~= "ScreenCRTTestPatterns")
 		end,
 		ColorSelectedMessageCommand=function(self)
 			if ThemePrefs.Get("VisualStyle") == "SRPG6" then
 				self:diffuse(GetCurrentColor(true))
+			end
+		end,
+		VisualStyleSelectedMessageCommand=function(self)
+			if ThemePrefs.Get("VisualStyle") == "Technique" then
+				self:diffusealpha(0)
 			end
 		end,
 	},

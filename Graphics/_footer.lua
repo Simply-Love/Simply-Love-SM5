@@ -10,21 +10,36 @@ return Def.Quad{
 			self:diffuse(GetCurrentColor(true))
 		elseif DarkUI() then
 			self:diffuse(dark)
+		elseif ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0)
 		else
 			self:diffuse(light)
 		end
 	end,
 	ScreenChangedMessageCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen():GetName()
 		if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectMusicCasual" then
 			self:diffuse(dark)
 		end
 		if ThemePrefs.Get("VisualStyle") == "SRPG6" then
 			self:diffuse(GetCurrentColor(true))
 		end
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			if topscreen == "ScreenSelectMusic" then
+				self:diffuse(0, 0, 0, 0.5)
+			else
+				self:diffusealpha(0)
+			end
+		end
 	end,
 	ColorSelectedMessageCommand=function(self)
 		if ThemePrefs.Get("VisualStyle") == "SRPG6" then
 			self:diffuse(GetCurrentColor(true))
+		end
+	end,
+	VisualStyleSelectedMessageCommand=function(self)
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0)
 		end
 	end,
 }

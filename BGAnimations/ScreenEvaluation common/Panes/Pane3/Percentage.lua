@@ -19,6 +19,9 @@ return Def.ActorFrame{
 			self:diffuse( color("#101519") )
 				:y(-2)
 				:zoomto(70, 28)
+			if ThemePrefs.Get("VisualStyle") == "Technique" then
+				self:diffusealpha(0.5)
+			end
 		end
 	},
 

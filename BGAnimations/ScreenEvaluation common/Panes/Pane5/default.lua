@@ -120,6 +120,9 @@ pane[#pane+1] = Def.Quad{
 			:zoomto(pane_width, bottombar_height )
 			:xy(pane_width/2, 0)
 			:diffuse(color("#101519"))
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end,
 }
 
@@ -196,6 +199,9 @@ pane[#pane+1] = Def.Quad{
 			:zoomto(pane_width, topbar_height )
 			:xy(pane_width/2, -pane_height + topbar_height/2)
 			:diffuse(color("#101519"))
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end,
 }
 

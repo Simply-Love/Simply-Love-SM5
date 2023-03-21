@@ -22,6 +22,9 @@ local af = Def.ActorFrame{
 	Def.Quad{
 		InitCommand=function(self)
 			self:zoomto(GraphWidth, GraphHeight):diffuse(color("#101519")):vertalign(top)
+			if ThemePrefs.Get("VisualStyle") == "Technique" then
+				self:diffusealpha(0.75)
+			end
 		end
 	},
 }

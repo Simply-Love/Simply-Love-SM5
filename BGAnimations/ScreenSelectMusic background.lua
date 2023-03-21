@@ -1,4 +1,4 @@
-if not ThemePrefs.Get("RainbowMode") and ThemePrefs.Get("VisualStyle") ~= "SRPG6" then return Def.Actor{ InitCommand=function(self) self:visible(false) end } end
+if not ThemePrefs.Get("RainbowMode") and ThemePrefs.Get("VisualStyle") ~= "SRPG6" and ThemePrefs.Get("VisualStyle") ~= "Technique" then return Def.Actor{ InitCommand=function(self) self:visible(false) end } end
 
 return Def.ActorFrame{
 	Def.Quad{
@@ -9,7 +9,7 @@ return Def.ActorFrame{
 
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(ThemePrefs.Get("VisualStyle") == "SRPG6" and Color.Black or Color.White):Center():FullScreen()
+			self:diffuse((ThemePrefs.Get("VisualStyle") == "SRPG6" or ThemePrefs.Get("VisualStyle" == "Technique")) and Color.Black or Color.White):Center():FullScreen()
 				:sleep(0.6):linear(0.5):diffusealpha(0)
 				:queuecommand("Hide")
 		end,

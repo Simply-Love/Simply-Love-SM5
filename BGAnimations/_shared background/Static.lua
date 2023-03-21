@@ -14,7 +14,11 @@ local SharedBackground = {
 	["ScreenSelectStyle"] = true,
 	["ScreenSelectPlayMode"] = true,
 	["ScreenSelectPlayMode2"] = true,
-	["ScreenProfileLoad"] = true, -- hidden screen
+	["ScreenProfileLoad"] = true, -- hidden screen	
+
+	-- false until Technique is selected
+	["ScreenSelectMusic"] = false,
+	["ScreenEvaluation"] = false,
 
 	-- Operator Menu screens and sub screens.
 	["ScreenOptionsService"] = true,
@@ -41,6 +45,12 @@ local StaticBackgroundVideos = {
 	["Footspeed Empire"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Malenia.mp4"),
 	["Stamina Nation"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Melina.mp4"),
 }
+
+-- Show shared background on more screens if Technique visual style is selected
+if ThemePrefs.Get("VisualStyle") == "Technique" then
+	SharedBackground["ScreenSelectMusic"] = true
+	SharedBackground["ScreenEvaluation"] = true
+end
 
 local shared_alpha = 0.6
 local static_alpha = 1
