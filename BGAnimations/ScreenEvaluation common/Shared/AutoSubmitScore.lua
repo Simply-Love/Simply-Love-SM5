@@ -32,8 +32,6 @@ local GetJudgmentCounts = function(player)
 	local translation = {
 		["W0"] = "fantasticPlus",
 		["W1"] = "fantastic",
-		["W015"] = "fantasticPlus",
-		["W115"] = "fantastic",
 		["W2"] = "excellent",
 		["W3"] = "great",
 		["W4"] = "decent",
@@ -47,12 +45,21 @@ local GetJudgmentCounts = function(player)
 		["Rolls"] = "rollsHeld",
 		["totalRolls"] = "totalRolls"
 	}
+	local translation15 = {
+		["W015"] = "fantasticPlus",
+		["W115"] = "fantastic"
+	}
 
 	local judgmentCounts = {}
 
 	for key, value in pairs(counts) do
 		if translation[key] ~= nil then
 			judgmentCounts[translation[key]] = value
+		end
+	end
+	for key, value in pairs(counts) do
+		if translation15[key] ~= nil then
+			judgmentCounts[translation15[key]] = value
 		end
 	end
 
