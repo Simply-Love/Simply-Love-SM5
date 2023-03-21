@@ -126,7 +126,7 @@ return Def.ActorFrame{
 					if SL[pn].ITLData["pathMap"][song_dir] ~= nil then
 						local hash = SL[pn].ITLData["pathMap"][song_dir]
 						if SL[pn].ITLData["hashMap"][hash] ~= nil then
-							itl_lamp = 6 - SL[pn].ITLData["hashMap"][hash]["clearType"]
+							itl_lamp = 5 - SL[pn].ITLData["hashMap"][hash]["clearType"]
 						end
 					end
 				end
@@ -134,13 +134,20 @@ return Def.ActorFrame{
 
 			if itl_lamp ~= nil then
 				-- Disable for normal clear types. The wheel grade should cover it.
-				if itl_lamp == 5 then
+				if itl_lamp <= 4 then
 					self:visible(false)
 				else
 					self:visible(true)
 					self:diffuseshift():effectperiod(0.8)
-					self:effectcolor1(SL.JudgmentColors["FA+"][itl_lamp])
-					self:effectcolor2(lerp_color(0.70, color("#ffffff"), SL.JudgmentColors["FA+"][itl_lamp]))
+					if itl_lamp == 0 then
+						-- Quinted, use a special color
+						local ItlPink = color("1,0.2,0.406,1")
+						self:effectcolor1(ItlPink)
+						self:effectcolor2(lerp_color(0.70, color("#ffffff"), ItlPink))
+					else
+						self:effectcolor1(SL.JudgmentColors["ITG"][itl_lamp])
+						self:effectcolor2(lerp_color(0.70, color("#ffffff"), SL.JudgmentColors["ITG"][itl_lamp]))
+					end
 				end
 			else
 				local lamp = GetLamp(param.Song)
