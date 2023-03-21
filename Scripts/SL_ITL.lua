@@ -43,16 +43,30 @@ end
 -- Note that songs resynced for ITL but played outside of the pack will not be covered in the pathMap.
 local itlFilePath = "itl2023.json"
 
+local TableContainsData = function(t)
+	if t == nil then return false end
+
+	for _, _ in pairs(t) do
+			return true
+	end
+	return false
+end
 
 -- Takes the ITLData loaded in memory and writes it to the local profile.
 WriteItlFile = function(player)
+	local pn = ToEnumShortString(player)
+	-- No data to write, return early.
+	if (not TableContainsData(SL[pn].ITLData["pathMap"]) and
+			not TableContainsData(SL[pn].ITLData["hashMap"])) then
+		return
+	end
+
 	local profile_slot = {
 		[PLAYER_1] = "ProfileSlot_Player1",
 		[PLAYER_2] = "ProfileSlot_Player2"
 	}
 	
 	local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
-	local pn = ToEnumShortString(player)
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return end
 
