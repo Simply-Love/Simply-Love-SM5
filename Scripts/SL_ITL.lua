@@ -93,7 +93,7 @@ ReadItlFile = function(player)
 		end
 		f:destroy()
 		itlData = JsonDecode(existing)
-	end
+	end	
 	SL[pn].ITLData = itlData
 end
 
@@ -212,6 +212,39 @@ local DataForSong = function(player)
 end
 
 
+-- Calculate Song Ranks
+CalculateITLSongRanks = function(player)
+	local pn = ToEnumShortString(player)
+	
+	-- Grab data from memory
+	itlData = SL[pn].ITLData
+	local songHashes = itlData["hashMap"]
+
+	-- Create and populate tables to rank each hash score
+	local points = {}
+	local songPoints = {}
+	for key in pairs(songHashes) do
+		songPoints[key] = songHashes[key]["points"]
+		table.insert(points,songHashes[key]["points"])
+	end		 
+	-- Reverse sort points values
+	table.sort(points,function(a,b) return a > b end)
+
+	for key in pairs(songPoints) do
+		local point = songPoints[key]
+		-- search for the point value in the list
+		for k, v in pairs(points) do
+			if v == point then
+				songHashes[key]["rank"] = k
+				break
+			end
+		end		 	
+	end
+	itlData["hashMap"] = songHashes
+	-- Rewrite the data in memory
+	SL[pn].ITLData = itlData
+end
+
 -- Should be called during ScreenEvaluation to update the ITL data loaded.
 -- Will also write the contents to the file.
 UpdateItlData = function(player)
@@ -305,6 +338,7 @@ UpdateItlData = function(player)
 		end
 
 		if updated then
+			CalculateITLSongRanks(player)
 			WriteItlFile(player)
 		end
 	end
