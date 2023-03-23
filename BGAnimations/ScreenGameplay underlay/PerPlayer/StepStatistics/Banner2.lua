@@ -5,6 +5,9 @@ local hasUniqueBanner = true
 local finalOffset = -160
 local finalSize = 0.25
 
+local pn = ToEnumShortString(player)
+if not SL[pn].ActiveModifiers.PackBanner then return end
+
 return Def.Banner{
 	CurrentSongChangedMessageCommand=function(self)
 		if GAMESTATE:IsCourseMode() then

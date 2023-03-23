@@ -141,8 +141,8 @@ return Def.ActorFrame{
 
 			if itl_lamp ~= nil then
 				-- Disable for normal clear types. The wheel grade should cover it.
-				if itl_lamp >= 5 then
-					self:visible(true)
+				if itl_lamp >= 4 then
+					self:visible(true):stopeffect()
 					self:diffuse(ClearLamp[1])
 				else
 					self:visible(true)

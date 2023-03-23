@@ -146,6 +146,18 @@ local LeaderboardRequestProcessor = function(res, master)
 								entry["isRival"],
 								entry["isFail"])
 			end
+			entryCount = entryCount + 1
+			if entryCount > 1 then
+				for i=entryCount,5,1 do
+					SetScoreData(1, i,
+									"",
+									"",
+									"",
+									false,
+									false,
+									false)
+				end
+			end
 		end
 
 		if data[playerStr]["rpg"] then
@@ -163,6 +175,16 @@ local LeaderboardRequestProcessor = function(res, master)
 									entry["isRival"],
 									entry["isFail"]
 								)
+				end
+				entryCount = entryCount + 1
+				for i=entryCount,5,1 do
+					SetScoreData(2, i,
+									"",
+									"",
+									"",
+									false,
+									false,
+									false)
 				end
 			end
 		end
@@ -182,6 +204,16 @@ local LeaderboardRequestProcessor = function(res, master)
 									entry["isRival"],
 									entry["isFail"]
 								)
+				end
+				numEntries = numEntries + 1
+				for i=numEntries,5,1 do
+					SetScoreData(3, i,
+									"",
+									"",
+									"",
+									false,
+									false,
+									false)
 				end
 			end
 		end

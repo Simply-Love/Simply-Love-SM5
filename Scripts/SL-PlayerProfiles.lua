@@ -65,7 +65,6 @@ local permitted_profile_settings = {
 	ColumnCues           = "boolean",
 	ColumnCountdown      = "boolean",
 	ShowHeldMiss         = "boolean",
-	DisplayScorebox      = "boolean",
 
 	ErrorBar             = "string",
 	ErrorBarUp           = "boolean",
@@ -79,6 +78,10 @@ local permitted_profile_settings = {
 
 	VisualDelay          = "string",
 	NotefieldShift       = "number",
+	
+	PackBanner           = "boolean",
+	StepInfo             = "boolean",
+	DisplayScorebox      = "boolean",
 	
 	FlashMiss            = "boolean",
 	FlashWayOff          = "boolean",

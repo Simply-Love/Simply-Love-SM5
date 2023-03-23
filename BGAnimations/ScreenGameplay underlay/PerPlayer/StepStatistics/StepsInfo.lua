@@ -2,6 +2,8 @@ local player = ...
 local pn = ToEnumShortString(player)
 local pnum = tonumber(player:sub(-1))
 
+if not SL[pn].ActiveModifiers.StepInfo then return end
+
 -- Positioning
 local c = PREFSMAN:GetPreference("Center1Player")
 local ar = GetScreenAspectRatio()

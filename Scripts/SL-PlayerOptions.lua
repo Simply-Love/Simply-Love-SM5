@@ -492,6 +492,17 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
+	StepStatsInfo = {
+		SelectType = "SelectMultiple",
+		Values = function()
+			values = { "PackBanner", "StepInfo" }
+			if IsServiceAllowed(SL.GrooveStats.GetScores) then
+				table.insert(values, "DisplayScorebox")
+			end
+			return values
+		end,
+	},
+	-------------------------------------------------------------------------
 	StepStatsExtra = {
 		Choices = function()
 			local choices = { "None", "ErrorStats" }
@@ -562,12 +573,9 @@ local Overrides = {
 			local vals = {}
 			if IsUsingWideScreen() then
 				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
-				if IsServiceAllowed(SL.GrooveStats.GetScores) then
-					vals[#vals+1] = "DisplayScorebox"
-				end
 			else
 				-- Add in the two removed options if not in WideScreen.
-				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
+				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
 			end
 			return vals
 		end
@@ -576,8 +584,8 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			local vals = {}
-			if not IsUsingWideScreen() and IsServiceAllowed(SL.GrooveStats.GetScores) then
-				vals = { "DisplayScorebox" }
+			if not IsUsingWideScreen() then
+				vals = { "ColumnCountdown", "ShowHeldMiss" }
 			end
 			return vals
 		end
@@ -648,27 +656,6 @@ local Overrides = {
 					mods.NotefieldShift = self.Choices[i]
 				end
 			end
-		end
-	},
-	-------------------------------------------------------------------------
-	VisualDelay = {
-		Choices = function()
-			local first	= -100
-			local last 	= 100
-			local step 	= 1
-			return stringify( range(first, last, step), "%gms")
-		end,
-		ExportOnChange = true,
-		LayoutType = "ShowOneInRow",
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.VisualDelay = self.Choices[i]
-				end
-			end
-			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
 		end
 	},
 	-------------------------------------------------------------------------
