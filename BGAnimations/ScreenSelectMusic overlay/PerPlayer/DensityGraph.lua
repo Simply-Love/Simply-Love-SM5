@@ -291,10 +291,14 @@ af2[#af2+1] = Def.ActorFrame{
 af2[#af2+1] = Def.ActorFrame{
 	Name="PatternInfo",
 	InitCommand=function(self)
-		if player == PLAYER_1 then
-			self:addy(38 + 24)
+		if GAMESTATE:GetNumSidesJoined() == 2 then
+			self:y(0)
 		else
-			self:addy(-38 - 80)
+			if player == PLAYER_1 then
+				self:y(38 + 24)
+			else
+				self:y(-38 - 80)
+			end
 		end
 		self:visible(GAMESTATE:GetNumSidesJoined() == 1)
 	end,
@@ -303,7 +307,11 @@ af2[#af2+1] = Def.ActorFrame{
 		if GAMESTATE:GetNumSidesJoined() == 2 then
 			self:y(0)
 		else
-			self:y(88 * (player == PLAYER_1 and 1 or -1))
+			if player == PLAYER_1 then
+				self:y(38 + 24)
+			else
+				self:y(-38 - 80)
+			end
 		end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
