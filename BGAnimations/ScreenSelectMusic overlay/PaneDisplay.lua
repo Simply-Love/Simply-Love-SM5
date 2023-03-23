@@ -103,6 +103,7 @@ local GetScoresRequestProcessor = function(res, params)
 				isItlSong = true
 				for gsEntry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
 					if gsEntry["isSelf"] then
+						UpdateItlExScore(PlayerNumber[i], SL["P"..i].Streams.Hash, gsEntry["score"])
 						-- GS's score entry is a value like 9823, so we need to divide it by 100 to get 98.23
 						itlScore = string.format("%.2f%%", gsEntry["score"]/100)
 						itlRaw = gsEntry["score"]/100
@@ -112,7 +113,7 @@ local GetScoresRequestProcessor = function(res, params)
 		end
 
 		-- First check to see if the leaderboard even exists.
-		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] then
+		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] and #data[playerStr]["gsLeaderboard"] > 0 then
 			-- And then also ensure that the chart hash matches the currently parsed one.
 			-- It's better to just not display anything than display the wrong scores.
 			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
@@ -164,6 +165,7 @@ local GetScoresRequestProcessor = function(res, params)
 				end
 			end
 		elseif data and data[playerStr] and data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"] then
+			
 			-- And then also ensure that the chart hash matches the currently parsed one.
 			-- It's better to just not display anything than display the wrong scores.
 			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
@@ -322,7 +324,9 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 		-- This makes sure that the Hash in the ChartInfo cache exists.
 		local sendRequest = false
 		local headers = {}
-		local query = {}
+		local query = {
+			maxLeaderboardResults=NumEntries,
+		}
 		local requestCacheKey = ""
 
 		if ThemePrefs.Get("MusicWheelGS") == "Pane" then
@@ -352,7 +356,7 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 				GetScoresRequestProcessor(res, params)
 			else
 				self:playcommand("MakeGrooveStatsRequest", {
-					endpoint="player-scores.php?"..NETWORK:EncodeQueryParameters(query),
+					endpoint="player-leaderboards.php?"..NETWORK:EncodeQueryParameters(query),
 					method="GET",
 					headers=headers,
 					timeout=10,

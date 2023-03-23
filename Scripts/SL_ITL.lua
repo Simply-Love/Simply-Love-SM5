@@ -172,6 +172,43 @@ ReadItlFile = function(player)
 	SL[pn].ITLData = itlData
 end
 
+-- EX score is a number like 92.67
+local GetPointsForSong = function(maxPoints, exScore)
+	local thresholdEx = 50.0
+	local percentPoints = 40.0
+
+	-- Helper function to take the logarithm with a specific base.
+	local logn = function(x, y)
+		return math.log(x) / math.log(y)
+	end
+
+	-- The first half (logarithmic portion) of the scoring curve.
+	local first = logn(
+		math.min(exScore, thresholdEx) + 1,
+		math.pow(thresholdEx + 1, 1 / percentPoints)
+	)
+
+	-- The seconf half (exponential portion) of the scoring curve.
+	local second = math.pow(
+		100 - percentPoints + 1,
+		math.max(0, exScore - thresholdEx) / (100 - thresholdEx)
+	) - 1
+
+	-- Helper function to round to a specific number of decimal places.
+	-- We want 100% EX to actually grant 100% of the points.
+	-- We don't want to  lose out on any single points if possible. E.g. If
+	-- 100% EX returns a number like 0.9999999999999997 and the chart points is
+	-- 6500, then 6500 * 0.9999999999999997 = 6499.99999999999805, where
+	-- flooring would give us 6499 which is wrong.
+	local roundPlaces = function(x, places)
+		local factor = 10 ^ places
+		return math.floor(x * factor + 0.5) / factor
+	end
+
+	local percent = roundPlaces((first + second) / 100.0, 6)
+	return math.floor(maxPoints * percent)
+end
+
 -- Helper function used within UpdateItlData() below.
 -- Curates all the ITL data to be written to the ITL file for the played song.
 local DataForSong = function(player, prevData)
@@ -212,43 +249,6 @@ local DataForSong = function(player, prevData)
 		if totalTaps == 0 then clearType = 5 end
 
 		return clearType
-	end
-
-	-- EX score is a number like 92.67
-	local GetPointsForSong = function(maxPoints, exScore)
-		local thresholdEx = 50.0
-		local percentPoints = 40.0
-
-		-- Helper function to take the logarithm with a specific base.
-		local logn = function(x, y)
-			return math.log(x) / math.log(y)
-		end
-
-		-- The first half (logarithmic portion) of the scoring curve.
-		local first = logn(
-			math.min(exScore, thresholdEx) + 1,
-			math.pow(thresholdEx + 1, 1 / percentPoints)
-		)
-
-		-- The seconf half (exponential portion) of the scoring curve.
-		local second = math.pow(
-			100 - percentPoints + 1,
-			math.max(0, exScore - thresholdEx) / (100 - thresholdEx)
-		) - 1
-
-		-- Helper function to round to a specific number of decimal places.
-		-- We want 100% EX to actually grant 100% of the points.
-		-- We don't want to  lose out on any single points if possible. E.g. If
-		-- 100% EX returns a number like 0.9999999999999997 and the chart points is
-		-- 6500, then 6500 * 0.9999999999999997 = 6499.99999999999805, where
-		-- flooring would give us 6499 which is wrong.
-		local roundPlaces = function(x, places)
-			local factor = 10 ^ places
-			return math.floor(x * factor + 0.5) / factor
-		end
-
-		local percent = roundPlaces((first + second) / 100.0, 6)
-		return math.floor(maxPoints * percent)
 	end
 
 	local pn = ToEnumShortString(player)
@@ -352,6 +352,65 @@ CalculateITLSongRanks = function(player)
 	itlData["hashMap"] = songHashes
 	-- Rewrite the data in memory
 	SL[pn].ITLData = itlData
+end
+
+-- Quick function that overwrites EX score entry if the score found is higher than what is found locally
+UpdateItlExScore = function(player, hash, exscore)
+	local pn = ToEnumShortString(player)
+	local hashMap = SL[pn].ITLData["hashMap"]
+	if hashMap[hash] == nil then
+		-- New score, just copy things over.
+		hashMap[hash] = {
+			["judgments"] = {},
+			["ex"] = 0,
+			["clearType"] = 1,
+			["points"] = "",
+			["usedCmod"] = "",
+			["date"] = "",
+			["maxPoints"] = 0,
+			["noCmod"] = false,
+		}
+		
+		updated = true
+	end
+	-- Update the pathMap as needed.
+	local song = GAMESTATE:GetCurrentSong()
+	local song_dir = song:GetSongDir()
+	if song_dir ~= nil and #song_dir ~= 0 then
+		local pathMap = SL[pn].ITLData["pathMap"]
+		pathMap[song_dir] = hash
+	end
+	
+	if exscore > hashMap[hash]["ex"] or hashMap[hash]["points"] == 0 then
+		hashMap[hash]["ex"] = exscore
+		
+		local steps = GAMESTATE:GetCurrentSteps(player)
+		local chartName = steps:GetChartName()
+
+		local maxPoints = chartName:gsub(" pts", "")
+		if #maxPoints == 0 then
+			maxPoints = nil
+		else
+			maxPoints = tonumber(maxPoints)
+		end
+
+		if maxPoints == nil then
+			--  See if we already have these points stored if we failed to parse it.
+			if prevData ~= nil and prevData["maxPoints"] ~= nil then
+				maxPoints = prevData["maxPoints"]
+			-- Otherwise we don't know how many points this chart is. Default to 0.
+			else
+				maxPoints = 0
+			end
+		end
+		hashMap[hash]["points"] = GetPointsForSong(maxPoints, exscore/100)
+		updated = true
+		
+		if updated then
+			CalculateITLSongRanks(player)
+			WriteItlFile(player)
+		end
+	end
 end
 
 -- Should be called during ScreenEvaluation to update the ITL data loaded.

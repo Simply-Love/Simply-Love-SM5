@@ -185,6 +185,9 @@ local LeaderboardRequestProcessor = function(res, master)
 
 			if data[playerStr]["itl"]["itlLeaderboard"] then
 				for entry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+					if entry["isSelf"] then
+						UpdateItlExScore(player, SL[pn].Streams.Hash, entry["score"])
+					end
 					numEntries = numEntries + 1
 					SetScoreData(3, numEntries,
 									tostring(entry["rank"]),
