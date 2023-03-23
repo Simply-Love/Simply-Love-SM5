@@ -98,8 +98,7 @@ local permitted_profile_settings = {
 	Waterfall			 = "boolean",
 	FadeFantastic		 = "boolean",
 	NoBar				 = "boolean",
-
-	VisualDelay          = "string",
+	
 	----------------------------------
 	-- Profile Settings without OptionRows
 	-- these settings are saved per-profile, but are transparently managed by the theme
@@ -222,11 +221,8 @@ SaveProfileCustom = function(profile, dir)
 			IniFile.WriteFile( path, {[theme_name]=output} )
 
 			-- Write to the ITL file if we need to.
-			-- The ITLData table will only contain data for memory cards.
-			if #SL[pn].ITLData ~= 0 then
-				WriteItlFile(dir, table.concat(SL[pn].ITLData, ""))
-			end
-
+			-- This is relevant for memory cards.
+			WriteItlFile(player)
 			break
 		end
 	end

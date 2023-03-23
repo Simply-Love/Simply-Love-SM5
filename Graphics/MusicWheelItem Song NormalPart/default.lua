@@ -139,7 +139,6 @@ for player in ivalues(PlayerNumber) do
 									end
 								end
 							end
-
 							self:visible(true)
 							return
 						end

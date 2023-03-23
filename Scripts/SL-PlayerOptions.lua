@@ -672,6 +672,27 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	VisualDelay = {
+		Choices = function()
+			local first	= -100
+			local last 	= 100
+			local step 	= 1
+			return stringify( range(first, last, step), "%gms")
+		end,
+		ExportOnChange = true,
+		LayoutType = "ShowOneInRow",
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.VisualDelay = self.Choices[i]
+				end
+			end
+			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
+		end
+	},
+	-------------------------------------------------------------------------
 	TimingWindows = {
 		Values = function()
 			return {
@@ -685,9 +706,14 @@ local Overrides = {
 			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 			local t = {THEME:GetString("SLPlayerOptions","None")}
 			-- assume pluralization via terminal s
-			t[2] = THEME:GetString(tns,"W5").."s"
-			t[3] = THEME:GetString(tns,"W4").."s + "..t[2]
-			t[4] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
+			local idx = 2
+			t[idx] = THEME:GetString(tns,"W5").."s"
+			idx = idx + 1
+			if SL.Global.GameMode=="ITG" then
+				t[idx] = THEME:GetString(tns,"W4").."s + "..t[idx-1]
+				idx = idx + 1
+			end
+			t[idx] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
 			return t
 		end,
 		LoadSelections = function(self, list, pn)
