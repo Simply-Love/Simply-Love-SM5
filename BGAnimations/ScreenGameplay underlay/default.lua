@@ -63,6 +63,7 @@ for player in ivalues(Players) do
 	t[#t+1] = LoadActor("./PerPlayer/RunTimer.lua", player, layout.SubtractiveScoring.y, layout.MeasureCounter)
 	t[#t+1] = LoadActor("./PerPlayer/BrokenRunCounter.lua", player, layout.MeasureCounter)
 	t[#t+1] = LoadActor("./PerPlayer/JudgmentBack.lua", player)
+	t[#t+1] = LoadActor("./PerPlayer/CModWarning.lua", player)
 end
 
 -- add to the ActorFrame last; overlapped by StepStatistics otherwise
