@@ -1,6 +1,7 @@
 -- mostly adapted from normal.lua so this is kind of a freaking mess, not gonna lie
 
 local file = ...
+local randomindex = math.random(1, 12)
 
 local anim_data = {
 	color_add = {-0.75,0,0,-0.75,-0.75,-0.75,0,-0.75,0,-0.75},
@@ -24,6 +25,11 @@ local t = Def.ActorFrame {
 		else
 			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
 		end
+	end,
+
+	LoopCommand=function(self)
+		index = index + 1
+		self:queuecommand("NewColor"):sleep(delay):queuecommand("Loop")
 	end
 }
 
@@ -37,6 +43,9 @@ end
 t[#t+1] = Def.Quad {
 	InitCommand=function(self)
 		self:diffuse(20/255, 20/255, 20/255, 1):zoomto(SCREEN_WIDTH, SCREEN_HEIGHT):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
+		if ThemePrefs.Get("RainbowMode") then -- rainbow mode has removed 5 years off my lifespan
+			self:diffusealpha(0)
+		end
 	end
 }
 
@@ -47,6 +56,9 @@ t[#t+1] = Def.Sprite {
 		self:zoom(20):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		:customtexturerect(0,0,60,60):texcoordvelocity(0.05, 0.07)
 		:diffusealpha(0.1)
+		if ThemePrefs.Get("RainbowMode") then
+			self:diffusealpha(0.15)
+		end
 	end
 }
 t[#t+1] = Def.Sprite {
@@ -55,6 +67,9 @@ t[#t+1] = Def.Sprite {
 		self:zoom(20):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		:customtexturerect(0,0,60,60):texcoordvelocity(0.04, 0.02)
 		:diffusealpha(0.05)
+		if ThemePrefs.Get("RainbowMode") then
+			self:diffusealpha(0.2)
+		end
 	end
 }
 t[#t+1] = Def.Sprite {
@@ -63,6 +78,9 @@ t[#t+1] = Def.Sprite {
 		self:zoom(20):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		:customtexturerect(0,0,60,60):texcoordvelocity(0.02, 0.015)
 		:diffusealpha(0.025)
+		if ThemePrefs.Get("RainbowMode") then
+			self:diffusealpha(0.25)
+		end
 	end
 }
 
@@ -74,6 +92,11 @@ for i=1,10 do
 			self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true)):baserotationz(randomXD(i) * 100):baserotationx(-60):baserotationy(20)
 			:SetTextureFiltering(true)
 			:diffusealpha(randomXD(i))
+
+			if ThemePrefs.Get("RainbowMode") then
+				self:diffuse(GetHexColor(randomindex+anim_data.color_add[i], true))
+				self:diffusealpha(self:GetDiffuseAlpha() / 2)
+			end
 		end,
 		OnCommand=function(self)
 			self:zoom((randomXD(i*1.5) + 0.5)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (1 / self:GetZoom()) * 850)
@@ -114,6 +137,11 @@ t[#t+1] = Def.Sprite {
 		:baserotationz(20)
 		:SetTextureFiltering(true)
 		:diffusealpha(0.7)
+
+		if ThemePrefs.Get("RainbowMode") then
+			self:diffuse(GetHexColor(randomindex, true))
+			self:diffusealpha(0.4)
+		end
 	end,
 	OnCommand=function(self)
 		self:zoom(1.3):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)

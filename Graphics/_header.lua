@@ -27,7 +27,7 @@ return Def.ActorFrame{
 				self:diffuse(GetCurrentColor(true))
 			end
 			if ThemePrefs.Get("VisualStyle") == "Technique" then
-				if topscreen == "ScreenSelectMusic" then
+				if topscreen == "ScreenSelectMusic" and not ThemePrefs.Get("RainbowMode") then
 					self:diffuse(0, 0, 0, 0.5)
 				else
 					self:diffusealpha(0)
