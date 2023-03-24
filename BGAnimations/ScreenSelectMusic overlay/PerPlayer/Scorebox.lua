@@ -399,6 +399,10 @@ local af = Def.ActorFrame{
 				self:GetParent():GetChild("Outline"):diffusealpha(0):visible(false)
 				self:GetParent():GetChild("Background"):diffusealpha(0):visible(false)
 				
+				if IsItlSong(player) then
+					UpdatePathMap(player, SL[pn].Streams.Hash)
+				end
+				
 				self:playcommand("MakeGrooveStatsRequest", {
 					endpoint="player-leaderboards.php?"..NETWORK:EncodeQueryParameters(query),
 					method="GET",

@@ -332,6 +332,9 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 		if ThemePrefs.Get("MusicWheelGS") == "Pane" then
 			for i=1,2 do
 				local pn = "P"..i
+				if IsItlSong(PlayerNumber[i]) then
+					UpdatePathMap(PlayerNumber[i], SL[pn].Streams.Hash)
+				end
 				if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
 					query["chartHashP"..i] = SL[pn].Streams.Hash
 					headers["x-api-key-player-"..i] = SL[pn].ApiKey
