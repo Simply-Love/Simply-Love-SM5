@@ -2,7 +2,7 @@ local player = ...
 local pn = ToEnumShortString(player)
 
 local mods = SL[pn].ActiveModifiers
-if SL.Global.GameMode == "Casual" then return end
+if SL.Global.GameMode == "Casual" or GAMESTATE:IsCourseMode() then return end
 
 local style = GAMESTATE:GetCurrentStyle(player)
 local width = style:GetWidth(player)
