@@ -409,10 +409,11 @@ local Overrides = {
 			local sl_pn = SL[ToEnumShortString(pn)]
 			local mods = sl_pn.ActiveModifiers
 			if SL.Global.GameMode == "FA+" then
-				 -- always disable in FA+ mode since it's handled engine side.
+				-- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
-				mods.ShowEXScore = list[2]
-				mods.ShowFaPlusPane = list[3]
+				mods.ShowEXScore = list[1]
+				-- the main score pane is already the FA+ pane
+				mods.ShowFaPlusPane = false
 				return
 			end
 			mods.ShowFaPlusWindow = list[1]
