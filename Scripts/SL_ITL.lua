@@ -7,6 +7,16 @@ IsItlSong = function(player)
 	return string.find(group, "itl online 2023") or string.find(group, "itl 2023") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
 end
 
+UpdatePathMap = function(player, hash)
+	local song = GAMESTATE:GetCurrentSong()
+	local song_dir = song:GetSongDir()
+	if song_dir ~= nil and #song_dir ~= 0 then
+		local pn = ToEnumShortString(player)
+		local pathMap = SL[pn].ITLData["pathMap"]
+		pathMap[song_dir] = hash
+	end
+end
+
 
 IsItlActive = function()
 	-- The file is only written to while the event is active.
@@ -372,13 +382,6 @@ UpdateItlExScore = function(player, hash, exscore)
 		}
 		
 		updated = true
-	end
-	-- Update the pathMap as needed.
-	local song = GAMESTATE:GetCurrentSong()
-	local song_dir = song:GetSongDir()
-	if song_dir ~= nil and #song_dir ~= 0 then
-		local pathMap = SL[pn].ITLData["pathMap"]
-		pathMap[song_dir] = hash
 	end
 	
 	if exscore > hashMap[hash]["ex"] or hashMap[hash]["points"] == 0 then
