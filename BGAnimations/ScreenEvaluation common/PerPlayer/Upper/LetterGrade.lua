@@ -8,6 +8,10 @@ local hasStream = false
 local title = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 if title == "D" then grade = "Grade_Tier99" end
 
+-- QUINT
+local ex = CalculateExScore(player)
+if ex == 100 then grade = "Grade_Tier00" end
+
 if not GAMESTATE:IsCourseMode() then
 	streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(ToEnumShortString(player))
 	totalMeasures = streamMeasures + breakMeasures
