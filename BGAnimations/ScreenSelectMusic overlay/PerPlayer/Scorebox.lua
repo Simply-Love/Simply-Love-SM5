@@ -187,6 +187,11 @@ local LeaderboardRequestProcessor = function(res, master)
 				for entry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
 					if entry["isSelf"] then
 						UpdateItlExScore(player, SL[pn].Streams.Hash, entry["score"])
+						SL["P"..n].itlScore = entry["score"]
+						local stepartist = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("StepArtistAF_P"..n)
+						if stepartist ~= nil then
+						  stepartist:queuecommand("ITL")
+						end
 					end
 					numEntries = numEntries + 1
 					SetScoreData(3, numEntries,

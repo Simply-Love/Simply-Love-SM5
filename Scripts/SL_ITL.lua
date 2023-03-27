@@ -93,6 +93,43 @@ WriteItlFile = function(player)
 	f:destroy()
 end
 
+-- EX score is a number like 92.67
+local GetPointsForSong = function(maxPoints, exScore)
+	local thresholdEx = 50.0
+	local percentPoints = 40.0
+
+	-- Helper function to take the logarithm with a specific base.
+	local logn = function(x, y)
+		return math.log(x) / math.log(y)
+	end
+
+	-- The first half (logarithmic portion) of the scoring curve.
+	local first = logn(
+		math.min(exScore, thresholdEx) + 1,
+		math.pow(thresholdEx + 1, 1 / percentPoints)
+	)
+
+	-- The seconf half (exponential portion) of the scoring curve.
+	local second = math.pow(
+		100 - percentPoints + 1,
+		math.max(0, exScore - thresholdEx) / (100 - thresholdEx)
+	) - 1
+
+	-- Helper function to round to a specific number of decimal places.
+	-- We want 100% EX to actually grant 100% of the points.
+	-- We don't want to  lose out on any single points if possible. E.g. If
+	-- 100% EX returns a number like 0.9999999999999997 and the chart points is
+	-- 6500, then 6500 * 0.9999999999999997 = 6499.99999999999805, where
+	-- flooring would give us 6499 which is wrong.
+	local roundPlaces = function(x, places)
+		local factor = 10 ^ places
+		return math.floor(x * factor + 0.5) / factor
+	end
+
+	local percent = roundPlaces((first + second) / 100.0, 6)
+	return math.floor(maxPoints * percent)
+end
+
 -- Generally to be called only once when a profile is loaded.
 -- This parses the ITL data file and stores it in memory for the song wheel to reference.
 ReadItlFile = function(player)
@@ -152,30 +189,35 @@ ReadItlFile = function(player)
 		if hashMap ~= nil then
 			for hash, data in pairs(hashMap) do
 				local counts = data["judgments"]
-				local totalSteps = counts["totalSteps"]
-				local totalHolds = counts["totalHolds"]
-				local totalRolls = counts["totalRolls"]
+				if counts ~= nil and counts["W0"] ~= nil then
+					local totalSteps = counts["totalSteps"]
+					local totalHolds = counts["totalHolds"]
+					local totalRolls = counts["totalRolls"]
 
-				local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
-				local total_points = 0
+					local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
+					local total_points = 0
 
-				for key in ivalues(keys) do
-					local value = counts[key]
-					if value ~= nil then		
-						total_points = total_points + value * SL.ExWeights[key]
+					for key in ivalues(keys) do
+						local value = counts[key]
+						if value ~= nil then		
+							total_points = total_points + value * SL.ExWeights[key]
+						end
+					end
+
+					local held = counts["Holds"] + counts["Rolls"]
+					total_points = total_points + held * SL.ExWeights["Held"]
+
+					local letGo = (totalHolds - counts["Holds"]) + (totalRolls - counts["Rolls"])
+					total_points = total_points + letGo * SL.ExWeights["LetGo"]
+
+					local hitMine = counts["Mines"]
+					total_points = total_points + hitMine * SL.ExWeights["HitMine"]
+
+					data["ex"] = math.max(0, math.floor(total_points/total_possible * 10000))
+					if data["maxPoints"] ~= nil and data["maxPoints"] > 0 then
+						data["points"] = GetPointsForSong(data["maxPoints"], data["ex"]/100)					
 					end
 				end
-
-				local held = counts["Holds"] + counts["Rolls"]
-				total_points = total_points + held * SL.ExWeights["Held"]
-
-				local letGo = (totalHolds - counts["Holds"]) + (totalRolls - counts["Rolls"])
-				total_points = total_points + letGo * SL.ExWeights["LetGo"]
-
-				local hitMine = counts["Mines"]
-				total_points = total_points + hitMine * SL.ExWeights["HitMine"]
-
-				data["ex"] = math.max(0, math.floor(total_points/total_possible * 10000))
 			end
 		end
 
@@ -183,43 +225,6 @@ ReadItlFile = function(player)
 	end
 
 	SL[pn].ITLData = itlData
-end
-
--- EX score is a number like 92.67
-local GetPointsForSong = function(maxPoints, exScore)
-	local thresholdEx = 50.0
-	local percentPoints = 40.0
-
-	-- Helper function to take the logarithm with a specific base.
-	local logn = function(x, y)
-		return math.log(x) / math.log(y)
-	end
-
-	-- The first half (logarithmic portion) of the scoring curve.
-	local first = logn(
-		math.min(exScore, thresholdEx) + 1,
-		math.pow(thresholdEx + 1, 1 / percentPoints)
-	)
-
-	-- The seconf half (exponential portion) of the scoring curve.
-	local second = math.pow(
-		100 - percentPoints + 1,
-		math.max(0, exScore - thresholdEx) / (100 - thresholdEx)
-	) - 1
-
-	-- Helper function to round to a specific number of decimal places.
-	-- We want 100% EX to actually grant 100% of the points.
-	-- We don't want to  lose out on any single points if possible. E.g. If
-	-- 100% EX returns a number like 0.9999999999999997 and the chart points is
-	-- 6500, then 6500 * 0.9999999999999997 = 6499.99999999999805, where
-	-- flooring would give us 6499 which is wrong.
-	local roundPlaces = function(x, places)
-		local factor = 10 ^ places
-		return math.floor(x * factor + 0.5) / factor
-	end
-
-	local percent = roundPlaces((first + second) / 100.0, 6)
-	return math.floor(maxPoints * percent)
 end
 
 -- Helper function used within UpdateItlData() below.
@@ -387,17 +392,21 @@ UpdateItlExScore = function(player, hash, exscore)
 		updated = true
 	end
 	
-	if exscore > hashMap[hash]["ex"] or hashMap[hash]["points"] == 0 then
+	if exscore >= hashMap[hash]["ex"] or hashMap[hash]["points"] == 0 then
 		hashMap[hash]["ex"] = exscore
 		
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		local chartName = steps:GetChartName()
 
-		local maxPoints = chartName:gsub(" pts", "")
-		if #maxPoints == 0 then
-			maxPoints = nil
-		else
-			maxPoints = tonumber(maxPoints)
+		local maxPoints = nil
+		if steps:GetDescription() == SL[pn].Streams.Description then
+			maxPoints = chartName:gsub(" pts", "")
+			if #maxPoints == 0 then
+				maxPoints = nil
+			else
+				maxPoints = tonumber(maxPoints)
+				hashMap[hash]["maxPoints"] = maxPoints
+			end
 		end
 
 		if maxPoints == nil then
@@ -409,7 +418,12 @@ UpdateItlExScore = function(player, hash, exscore)
 				maxPoints = 0
 			end
 		end
-		hashMap[hash]["points"] = GetPointsForSong(maxPoints, exscore/100)
+		
+		-- Do not recalculate points if maxPoints is 0
+		if maxPoints > 0 then
+			hashMap[hash]["points"] = GetPointsForSong(maxPoints, exscore/100)
+		end
+		
 		updated = true
 		
 		if updated then

@@ -4,6 +4,43 @@ local p = PlayerNumber:Reverse()[player]
 
 local text_table, marquee_index
 
+-- EX score is a number like 92.67
+local GetPointsForSong = function(maxPoints, exScore)
+	local thresholdEx = 50.0
+	local percentPoints = 40.0
+
+	-- Helper function to take the logarithm with a specific base.
+	local logn = function(x, y)
+		return math.log(x) / math.log(y)
+	end
+
+	-- The first half (logarithmic portion) of the scoring curve.
+	local first = logn(
+		math.min(exScore, thresholdEx) + 1,
+		math.pow(thresholdEx + 1, 1 / percentPoints)
+	)
+
+	-- The seconf half (exponential portion) of the scoring curve.
+	local second = math.pow(
+		100 - percentPoints + 1,
+		math.max(0, exScore - thresholdEx) / (100 - thresholdEx)
+	) - 1
+
+	-- Helper function to round to a specific number of decimal places.
+	-- We want 100% EX to actually grant 100% of the points.
+	-- We don't want to  lose out on any single points if possible. E.g. If
+	-- 100% EX returns a number like 0.9999999999999997 and the chart points is
+	-- 6500, then 6500 * 0.9999999999999997 = 6499.99999999999805, where
+	-- flooring would give us 6499 which is wrong.
+	local roundPlaces = function(x, places)
+		local factor = 10 ^ places
+		return math.floor(x * factor + 0.5) / factor
+	end
+
+	local percent = roundPlaces((first + second) / 100.0, 6)
+	return math.floor(maxPoints * percent)
+end
+
 return Def.ActorFrame{
 	Name="StepArtistAF_" .. pn,
 
@@ -273,22 +310,12 @@ return Def.ActorFrame{
 						local fulldesc = ""
 						for i=1,#text_table do
 							local curText = text_table[i]
-							if i == 3 and string.sub(curText, string.len(curText) - 3, string.len(curText)) == " pts" then
+							if string.sub(curText, string.len(curText) - 3, string.len(curText)) == " pts" then
 								local max_points = string.sub(curText, 1, string.len(curText) - 4)
-								local exscore = tonumber(SL[pn].itlScore)
+								local exscore = tonumber(SL[pn].itlScore)/100
 								local max_point_multiplier = 0
 								if exscore then
-									if exscore <= 75 then
-										max_point_multiplier = math.log(math.min(exscore, 75)+1) / math.log(1.0638215) / 100
-									else
-										max_point_multiplier = (math.exp(math.log(31) * ((math.max(0, exscore-75)/25))) + 69) / 100 -- nice
-									end
-
-									local points = max_point_multiplier * max_points
-									points = math.floor(points)
-									if SL[pn].comboBonus ~= nil then
-										points = points + SL[pn].comboBonus
-									end
+									local points = GetPointsForSong(max_points, exscore)
 									local pointsPercent = string.format("%.2f%%", points / max_points * 100)
 									curText = points .. "/" .. curText .. " ("..pointsPercent..")"
 								end
