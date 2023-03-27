@@ -13,7 +13,10 @@ UpdatePathMap = function(player, hash)
 	if song_dir ~= nil and #song_dir ~= 0 then
 		local pn = ToEnumShortString(player)
 		local pathMap = SL[pn].ITLData["pathMap"]
-		pathMap[song_dir] = hash
+		if pathMap[song_dir] == nil or pathMap[song_dir] ~= hash then
+			pathMap[song_dir] = hash
+			WriteItlFile(player)
+		end
 	end
 end
 
