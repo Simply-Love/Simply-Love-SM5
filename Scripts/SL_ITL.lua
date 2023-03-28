@@ -338,6 +338,29 @@ local DataForSong = function(player, prevData)
 	}
 end
 
+-- Calculate ITL Stats
+-- Returns TP, RP, and songs played
+CalculateITLStats = function(player)
+    local pn = ToEnumShortString(player)
+    
+    -- Grab data from memory
+    itlData = SL[pn].ITLData
+    local songHashes = itlData["hashMap"]
+    local tp = 0
+    local rp = 0
+    local played = 0
+
+    for key in pairs(songHashes) do
+        tp = tp + songHashes[key]["points"]
+        local rank = songHashes[key]["rank"]
+        if rank ~= nil then
+            if rank <= 75 then rp = rp + songHashes[key]["points"] end
+        end
+        played = played + 1 
+    end         
+
+    return tp, rp, played
+end      
 
 -- Calculate Song Ranks
 CalculateITLSongRanks = function(player)

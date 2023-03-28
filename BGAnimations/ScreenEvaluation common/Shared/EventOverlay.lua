@@ -274,8 +274,9 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
 		end
-		QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
-		QuestPane:playcommand("RpgQuests",{ box_score=box_score, box_progress=box_progress, box_stats=box_stats, box_quests=box_quests })
+		-- RPG progress box currently disabled
+		--QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("RPGQuest"..ToEnumShortString(player))
+		--QuestPane:playcommand("RpgQuests",{ box_score=box_score, box_progress=box_progress, box_stats=box_stats, box_quests=box_quests })
 	end
 
 	table.insert(paneTexts, string.format(
@@ -395,6 +396,13 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 	local statImprovements = {}
 	local quests = {}
+
+	local box_quests = {}
+	local box_rp = {prev=previousRankingPointTotal,curr=currentRankingPointTotal,delta=rankingDelta}
+	local box_tp = {prev=previousPointTotal,curr=currentPointTotal,delta=totalDelta}
+	local box_score = {score=score,delta=scoreDelta}
+	local box_clearType = {}
+
 	local progress = itlData["progress"]
 	if progress then
 		if progress["statImprovements"] then
@@ -411,6 +419,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 						}
 						local curr = improvement["current"]
 						local prev = curr - improvement["gained"]
+						
+						table.insert(box_clearType,prev,curr)
 
 						table.insert(
 							statImprovements,
@@ -428,6 +438,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 		if progress["questsCompleted"] then
 			for quest in ivalues(progress["questsCompleted"]) do
+				table.insert(box_quests,quest["title"])
 				local questStrings = {}
 				table.insert(questStrings, string.format(
 					"Completed \"%s\"!\n",
@@ -455,6 +466,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
 		end
+		ItlPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("ItlProgress"..ToEnumShortString(player))
+		ItlPane:playcommand("ItlBox",{ box_score=box_score, box_rp=box_rp, box_tp=box_tp, box_clearType=box_clearType, box_quests=box_quests })
 	end
 
 	table.insert(paneTexts, string.format(
