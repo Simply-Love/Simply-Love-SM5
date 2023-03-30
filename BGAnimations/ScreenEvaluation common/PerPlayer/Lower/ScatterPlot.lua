@@ -79,9 +79,14 @@ for t in ivalues(sequential_offsets) do
 			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
 		end
 		
-		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow and math.abs(Offset) > W0 then
-			c = DeepCopy(SL.JudgmentColors["FA+"][2])
+		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow then
+			if math.abs(Offset) > W0 then
+				c = DeepCopy(SL.JudgmentColors["FA+"][2])
+			else
+				c = DeepCopy(SL.JudgmentColors["FA+"][1])
+			end
 		end
+		
 		-- get the red, green, and blue values from that color
 		r = c[1]
 		g = c[2]

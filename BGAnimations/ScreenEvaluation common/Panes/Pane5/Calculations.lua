@@ -186,8 +186,12 @@ for offset=-worst_window, worst_window, 0.001 do
 			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
 		end
 		
-		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow and math.abs(offset) > W0 then
-			c = DeepCopy(SL.JudgmentColors["FA+"][2])
+		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow then
+			if math.abs(offset) > W0 then
+				c = DeepCopy(SL.JudgmentColors["FA+"][2])
+			else
+				c = DeepCopy(SL.JudgmentColors["FA+"][1])
+			end
 		end
 
 		-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
