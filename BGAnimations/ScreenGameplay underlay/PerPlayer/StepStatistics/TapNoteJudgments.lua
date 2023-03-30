@@ -181,7 +181,7 @@ for index, window in ipairs(TNS.Types) do
 				end,
 			}
 			
-			if index == 1 and SL[pn].ActiveModifiers.SmallerWhite then
+			if index == 1 and SL[pn].ActiveModifiers.SmallerWhite and (ShowFaPlusWindow or SL.Global.GameMode == "FA+") then
 				af[#af+1] = LoadFont("Common Normal")..{
 					Text="(10ms)",
 					InitCommand=function(self)
