@@ -79,6 +79,37 @@ for i=1, #TapNoteScores.Types do
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 			end
 		}
+		if i==1 and SL[pn].ActiveModifiers.SmallerWhite and SL.Global.GameMode == "FA+" then
+			local show15 = false
+			t[#t+1] = LoadFont("Common Normal")..{
+				Text="10ms",
+				InitCommand=function(self) self:zoom(0.6):horizalign(right):maxwidth(76) end,
+				BeginCommand=function(self)
+					self:x( (controller == PLAYER_1 and 28) or -28 )
+					if maxCount > 9999 then
+						length = math.floor(math.log10(maxCount)+1)
+						finalPos = 28 - 11*(length-4)
+						finalZoom = 0.6 - 0.1*(length-4)
+						self:x( (controller == PLAYER_1 and finalPos) or -finalPos ):zoom(finalZoom)
+					end
+					self:y(i*26-30)
+					-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+					self:playcommand("Marquee")
+				end,
+				MarqueeCommand=function(self)
+					if show15 then
+						self:settext("15ms")
+						show15 = false
+					else
+						self:settext("10ms")
+						show15 = true
+					end
+					
+					self:sleep(2):queuecommand("Marquee")
+				end
+			}
+		end
 	end
 end
 

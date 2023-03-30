@@ -186,7 +186,7 @@ for offset=-worst_window, worst_window, 0.001 do
 			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
 		end
 		
-		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow then
+		if TimingWindow == 1 and (SL[pn].ActiveModifiers.ShowFaPlusWindow or SL[pn].ActiveModifiers.SmallerWhite) then
 			if math.abs(offset) > W0 then
 				c = DeepCopy(SL.JudgmentColors["FA+"][2])
 			else

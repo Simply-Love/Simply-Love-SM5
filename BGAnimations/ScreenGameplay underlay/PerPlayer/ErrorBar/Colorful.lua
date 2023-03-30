@@ -97,7 +97,7 @@ local windows = {
 for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
     
-    if mods.ShowFaPlusWindow and wi == 1 then
+    if (mods.ShowFaPlusWindow or (mods.SmallerWhite and SL.Global.GameMode == "FA+")) and wi == 1 then
         -- Split the Fantastic window
         windows.timing[#windows.timing + 1] = GetTimingWindow(1, "FA+", mods.SmallerWhite)
         windows.color[#windows.color + 1] = SL.JudgmentColors["FA+"][1]

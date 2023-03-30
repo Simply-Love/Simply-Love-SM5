@@ -396,7 +396,7 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			if SL.Global.GameMode == "FA+" then
-				return { "ShowEXScore" }
+				return { "ShowEXScore", "SmallerWhite" }
 			end
 			return { "ShowFaPlusWindow", "ShowEXScore", "ShowFaPlusPane", "SmallerWhite" }
 		end,
@@ -404,7 +404,7 @@ local Overrides = {
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
 			if SL.Global.GameMode == "FA+" then
 				list[1] = mods.ShowEXScore or false
-				list[4] = false
+				list[2] = mods.SmallerWhite or false
 				return list
 			end
 
@@ -422,7 +422,7 @@ local Overrides = {
 				mods.ShowFaPlusWindow = false
 				mods.ShowEXScore = list[1]
 				-- mods.ShowFaPlusPane = list[3]
-				mods.SmallerWhite = false
+				mods.SmallerWhite = list[2]
 				return
 			end
 			mods.ShowFaPlusWindow = list[1]

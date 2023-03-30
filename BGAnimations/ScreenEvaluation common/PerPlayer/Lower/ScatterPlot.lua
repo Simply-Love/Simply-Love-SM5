@@ -79,7 +79,7 @@ for t in ivalues(sequential_offsets) do
 			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
 		end
 		
-		if TimingWindow == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow then
+		if TimingWindow == 1 and (SL[pn].ActiveModifiers.ShowFaPlusWindow or (SL.Global.GameMode == "FA+" and SL[pn].ActiveModifiers.SmallerWhite)) then
 			if math.abs(Offset) > W0 then
 				c = DeepCopy(SL.JudgmentColors["FA+"][2])
 			else

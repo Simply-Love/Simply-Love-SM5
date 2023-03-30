@@ -68,7 +68,7 @@ return Def.ActorFrame{
 		-- If the judgment font contains a graphic for the additional white fantastic window...
 		if sprite:GetNumStates() == 7 or sprite:GetNumStates() == 14 then
 			if tns == "W1" then
-				if mods.ShowFaPlusWindow or mods.FAPlusGradual then
+				if mods.ShowFaPlusWindow or mods.FAPlusGradual or (SL.Global.GameMode == "FA+" and mods.SmallerWhite) then
 					-- If this W1 judgment fell outside of the FA+ window, show the white window
 					--
 					-- Treat Autoplay specially. The TNS might be out of the range, but

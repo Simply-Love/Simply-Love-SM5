@@ -7,8 +7,8 @@ local mods = SL[ToEnumShortString(player)].ActiveModifiers
 local threshold = nil
 for i = 1, NumJudgmentsAvailable() do
     if mods.TimingWindows[i] then
-        if i == 1 and mods.ShowFaPlusWindow then
-            threshold = GetTimingWindow(1, "FA+")
+        if i == 1 and (mods.ShowFaPlusWindow or (mods.SmallerWhite and SL.Global.GameMode == "FA+")) then
+            threshold = GetTimingWindow(1, "FA+", mods.SmallerWhite)
         else
             threshold = GetTimingWindow(i)
         end

@@ -80,7 +80,7 @@ local af = Def.ActorFrame{
             local color = judgmentColors[params.TapNoteScore] 
 
             -- Check if we need to adjust the color for the white fantastic window.
-            if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and
+            if (mods.ShowFaPlusWindow or (mods.SmallerWhite and SL.Global.GameMode == "FA+")) and ToEnumShortString(params.TapNoteScore) == "W1" and
                 not IsW0Judgment(params, player) then
                 color = SL.JudgmentColors["FA+"][2]
             end
@@ -160,7 +160,7 @@ local timing = {}
 for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
     
-    if mods.ShowFaPlusWindow and wi == 1 then
+    if (mods.ShowFaPlusWindow or (mods.SmallerWhite and SL.Global.GameMode == "FA+")) and wi == 1 then
         -- Split the Fantastic window
         timing[#timing + 1] = GetTimingWindow(1, "FA+", mods.SmallerWhite)
         timing[#timing + 1] = GetTimingWindow(2, "FA+")

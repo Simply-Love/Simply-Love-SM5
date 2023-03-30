@@ -15,6 +15,7 @@ local RadarCategories = {
 	x = { P1=-180, P2=218 }
 }
 
+local counts = GetExJudgmentCounts(player)
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)self:zoom(0.8):xy(90,_screen.cy-24) end,
@@ -30,6 +31,17 @@ local t = Def.ActorFrame{
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
 	local number = pss:GetTapNoteScores( "TapNoteScore_"..window )
+	local number15 = number
+	local display15 = false
+	if SL.Global.GameMode == "FA+" then	
+		if i == 1 then
+			number = counts["W0"]
+			number15 = counts["W015"]
+		elseif i == 2 then
+			number = counts["W1"]
+			number15 = counts["W115"]
+		end
+	end
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
@@ -56,6 +68,19 @@ for i=1,#TapNoteScores.Types do
 			self:x( TapNoteScores.x[ToEnumShortString(controller)] )
 			self:y((i-1)*35 -20)
 			self:targetnumber(number)
+			if SL[pn].ActiveModifiers.SmallerWhite and SL.Global.GameMode == "FA+" then
+				self:playcommand("Marquee")
+			end
+		end,
+		MarqueeCommand=function(self)
+			if display15 then
+				self:settext(("%04.0f"):format(number15))
+				display15 = false
+			else
+				self:settext(("%04.0f"):format(number))
+				display15 = true
+			end
+			self:sleep(2):queuecommand("Marquee")
 		end
 	}
 
