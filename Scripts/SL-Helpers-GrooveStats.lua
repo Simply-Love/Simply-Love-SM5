@@ -484,7 +484,12 @@ CreateCommentString = function(player)
 
 	local suffixes = {"w", "e", "g", "d", "wo"}
 
-	local comment = SL.Global.GameMode == "FA+" and "FA+" or ""
+	local comment = (SL.Global.GameMode == "FA+" or SL[pn].ActiveModifiers.ShowFaPlusWindow) and "FA+" or ""
+	
+	-- Show EX score for FA+ play
+	if SL.Global.GameMode == "FA+" or (SL.Global.GameMode == "ITG" and SL[pn].ActiveModifiers.ShowFaPlusWindow) then
+		comment = comment .. ", " .. ("%.2f"):format(CalculateExScore(player)) .. "EX"
+	end
 
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	if rate ~= 1 then
@@ -494,20 +499,43 @@ CreateCommentString = function(player)
 		comment = comment..("%gx Rate"):format(rate)
 	end
 
-	-- Ignore the top window in all cases.
-	for i=2, 6 do
-		local idx = SL.Global.GameMode == "FA+" and i-1 or i
-		local suffix = i == 6 and "m" or suffixes[idx]
-		local tns = i == 6 and "TapNoteScore_Miss" or "TapNoteScore_W"..i
+	-- Get EX judgment counts if playing with FA+ windows enabled in ITG mode
+	if SL.Global.GameMode == "ITG" and SL[pn].ActiveModifiers.ShowFaPlusWindow then
+		local counts = GetExJudgmentCounts(player)
+		local types = { 'W1', 'W2', 'W3', 'W4', 'W5' }
 		
-		local number = pss:GetTapNoteScores(tns)
-
-		-- If the windows are disabled, then the number will be 0.
-		if number ~= 0 then
-			if #comment ~= 0 then
-				comment = comment .. ", "
+		for i=1,6 do
+			local window = types[i]
+			local number = counts[window] or 0
+			local suffix = i == 6 and "m" or suffixes[i]
+			
+			if i == 1 then
+				number = counts["W115"]
 			end
-			comment = comment..number..suffix
+			
+			if number ~= 0 then
+				if #comment ~= 0 then
+					comment = comment .. ", "
+				end
+				comment = comment..number..suffix
+			end
+		end
+	else
+		-- Ignore the top window in all cases.
+		for i=2, 6 do
+			local idx = SL.Global.GameMode == "FA+" and i-1 or i
+			local suffix = i == 6 and "m" or suffixes[idx]
+			local tns = i == 6 and "TapNoteScore_Miss" or "TapNoteScore_W"..i
+			
+			local number = pss:GetTapNoteScores(tns)
+
+			-- If the windows are disabled, then the number will be 0.
+			if number ~= 0 then
+				if #comment ~= 0 then
+					comment = comment .. ", "
+				end
+				comment = comment..number..suffix
+			end
 		end
 	end
 
