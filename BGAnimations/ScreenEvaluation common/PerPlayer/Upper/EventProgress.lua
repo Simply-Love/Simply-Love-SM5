@@ -263,7 +263,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:settext(tostring(("%.2f"):format(params.songScore / 100)).. "%")
 	end,
 	ItlStatsOnlineCommand=function(self,params)
-		self:settext(string.format("%.2f%%",params.box_score["score"]) .. "%" .. " (" .. string.format("%+.2f%%",params.box_score["delta"]) ..  ")")
+		self:settext(string.format("%.2f%%",params.box_score["score"]) .. " (" .. string.format("%+.2f%%",params.box_score["delta"]) ..  ")")
 		if params.box_score["delta"] > 0 then self:diffuse(Color.Green)
 		elseif params.box_score["delta"] < 0 then self:diffuse(Color.Red)
 		end
