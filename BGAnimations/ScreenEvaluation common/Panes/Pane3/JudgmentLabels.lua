@@ -32,6 +32,10 @@ for i=1, #TapNoteScores.Types do
 
 		local window = TapNoteScores.Types[i]
 		local label = TapNoteScores.Names[i]
+		
+		if i == 1 and SL[pn].ActiveModifiers.ShowFaPlusWindow then
+			label = THEME:GetString("TapNoteScoreFA+", "W1")
+		end
 
 		t[#t+1] = LoadFont("Common Normal")..{
 			Text=label:upper(),
