@@ -21,13 +21,29 @@ local profile_slot = {
 
 local isFavorite = function(songPath)
 	local playerName = PROFILEMAN:GetPlayerName(pn)
-					
-	local dir = THEME:GetCurrentThemeDirectory() .. "Other/"
-	local path = dir.. "SongManager " .. playerName .. "-favorites.txt"
+	
+	local profileDir  = PROFILEMAN:GetProfileDir(profile_slot[player])
+	local path = profileDir .. "favorites.txt"
+	
+	local oldDir = THEME:GetCurrentThemeDirectory() .. "Other/"
+	local oldPath = oldDir.. "SongManager " .. playerName .. "-favorites.txt"
+	
 	local f = RageFileUtil:CreateRageFile()
 	
 	local isFave = false
 	if f:Open(path, 1) then
+		faves = f:Read()
+		f:Close()
+
+		for line in faves:gmatch('[^\r\n]+') do
+			if string.len(line) > 0 then
+				if line:find(songPath,1,true) ~= nil then
+					isFave = true
+					break
+				end
+			end
+		end
+	elseif f:Open(oldPath, 1) then
 		faves = f:Read()
 		f:Close()
 

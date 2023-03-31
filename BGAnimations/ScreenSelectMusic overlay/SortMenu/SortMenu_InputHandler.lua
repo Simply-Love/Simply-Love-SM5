@@ -96,19 +96,58 @@ local input = function(event)
 				elseif focus.new_overlay == "AddFavorite" then
 					overlay:queuecommand("DirectInputToEngine")
 					if GAMESTATE:GetCurrentSong() ~= nil then
-						local playerName = PROFILEMAN:GetPlayerName(event.PlayerNumber)
+						local profileSlot = {
+							["PlayerNumber_P1"] = "ProfileSlot_Player1",
+							["PlayerNumber_P2"] = "ProfileSlot_Player2"
+						}
+						local profileDir  = PROFILEMAN:GetProfileDir(profileSlot[event.PlayerNumber])
+						local path = profileDir .. "favorites.txt"
 						
-						local dir = THEME:GetCurrentThemeDirectory() .. "Other/"
-						local path = dir.. "SongManager " .. playerName .. "-favorites.txt"
+						local playerName = PROFILEMAN:GetPlayerName(event.PlayerNumber)
+						local oldDir = THEME:GetCurrentThemeDirectory() .. "Other/"
+						local oldPath = oldDir.. "SongManager " .. playerName .. "-favorites.txt"
+						
 						local f = RageFileUtil:CreateRageFile()
 						local songPath = GAMESTATE:GetCurrentSong():GetSongDir():gsub("/Songs/", "")
 						local songName = GAMESTATE:GetCurrentSong():GetMainTitle()
 						
 						if not FILEMAN:DoesFileExist(path) then
-							if f:Open(path, 2) then
-								f:Write(songPath)
-								SM("Added " .. songName .. " to favorites!")
-							end		
+							-- old path required theme directory instead of local profile
+							-- let's try grabbing from there first							
+							if not FILEMAN:DoesFileExist(oldPath) then						
+								if f:Open(path, 2) then
+									f:Write(songPath)
+									SM("Added " .. songName .. " to favorites!")
+								end
+							else
+								if f:Open(oldPath, 1) then
+									faves = f:Read()
+									f:Close()
+									
+									local exists = false 
+									local updated = ""
+									for line in faves:gmatch('[^\r\n]+') do
+										if string.len(line) > 0 then
+											if line:find(songPath,1,true) ~= nil then
+												exists = true
+											else
+												updated = updated .. line .. "\n"
+											end
+										end
+									end
+									if not exists then
+										if f:Open(path, 2) then
+											f:Write(updated .. songPath .. "\n")
+											SM("Added " .. songName .. " to favorites!")
+										end
+									else
+										if f:Open(path, 2) then
+											f:Write(updated)
+											SM("Removed " .. songName .. " from favorites")
+										end
+									end
+								end
+							end
 						else
 							if f:Open(path, 1) then
 								faves = f:Read()
@@ -151,10 +190,28 @@ local input = function(event)
 				elseif focus.new_overlay == "Favorites" then
 					overlay:queuecommand("DirectInputToEngine")
 					
+					local profileSlot = {
+						["PlayerNumber_P1"] = "ProfileSlot_Player1",
+						["PlayerNumber_P2"] = "ProfileSlot_Player2"
+					}
+					local profileDir  = PROFILEMAN:GetProfileDir(profileSlot[event.PlayerNumber])
+					local path = profileDir .. "favorites.txt"
+					
+					local playerName = PROFILEMAN:GetPlayerName(event.PlayerNumber)
+					local oldDir = THEME:GetCurrentThemeDirectory() .. "Other/"
+					local oldPath = oldDir.. "SongManager " .. playerName .. "-favorites.txt"
+					
 					if GAMESTATE:GetSortOrder() == "SortOrder_Preferred" then favesLoaded = true end
 					
 					local playerName = PROFILEMAN:GetPlayerName(event.PlayerNumber)
-					SONGMAN:SetPreferredSongs(playerName .. "-favorites.txt")
+					if FILEMAN:DoesFileExist(path) then
+						SONGMAN:SetPreferredSongs(path, true)
+					elseif FILEMAN:DoesFileExist(oldPath) then
+						SONGMAN:SetPreferredSongs(playerName .. "-favorites.txt")
+					else
+						SM("You have no favorites!")
+						return
+					end
 					screen:GetMusicWheel():ChangeSort("SortOrder_Preferred")
 					if not favesLoaded then favesLoaded = true else
 						screen:SetNextScreenName("ScreenSelectMusic")
