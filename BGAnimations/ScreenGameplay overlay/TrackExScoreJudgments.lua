@@ -124,8 +124,24 @@ return Def.Actor{
 				-- Only track the TapNoteScores we care about
 				if valid_tns[adjusted_TNS] then
 					if not stats:GetFailed() then
-						storage.ex_counts[adjusted_TNS] = storage.ex_counts[adjusted_TNS] + 1
-						count_updated = true
+						-- 10ms logic for FA+ mode
+						if adjusted_TNS == "W0" and SL[ToEnumShortString(player)].ActiveModifiers.SmallerWhite then
+							local is_W0 = IsW0Judgment(params, player)
+							if is_W0 then
+								storage.ex_counts["W0"] = storage.ex_counts["W0"] + 1
+								storage.ex_counts["W015"] = storage.ex_counts["W015"] + 1
+							else
+								storage.ex_counts["W1"] = storage.ex_counts["W1"] + 1
+								storage.ex_counts["W015"] = storage.ex_counts["W015"] + 1
+							end
+							count_updated = true
+						else
+							storage.ex_counts[adjusted_TNS] = storage.ex_counts[adjusted_TNS] + 1
+							if adjusted_TNS == "W0" then
+								storage.ex_counts["W015"] = storage.ex_counts["W015"] + 1
+							end
+							count_updated = true
+						end
 					end
 				end
 			end
