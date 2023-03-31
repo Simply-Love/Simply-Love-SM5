@@ -1,4 +1,6 @@
 local sort_wheel = ...
+
+local favesLoaded = false
 -- this handles user input while in the SortMenu
 local input = function(event)
 	if not (event and event.PlayerNumber and event.button) then
@@ -91,6 +93,21 @@ local input = function(event)
 					PROFILEMAN:SaveMachineProfile()
 
 					overlay:queuecommand("DirectInputToEngineForSelectProfile")
+				elseif focus.new_overlay == "Preferred" then
+					SONGMAN:SetPreferredSongs(getFavoritesPath(event.PlayerNumber), true);
+
+					if SONGMAN:GetPreferredSortSongs() then
+
+						SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort("SortOrder_Preferred", true)
+
+						-- finally, reload the screen if a different player is checking their favorites
+						-- i'd like to do this a better way, but i'm not sure how right now -crash
+						if not favesLoaded then favesLoaded = true else
+							screen:SetNextScreenName("ScreenSelectMusic")
+							screen:StartTransitioningScreen("SM_GoToNextScreen")
+						end
+
+					end
 				end
 			end
 

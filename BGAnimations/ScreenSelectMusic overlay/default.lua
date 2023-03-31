@@ -5,6 +5,7 @@ local af = Def.ActorFrame{
 	-- time ScreenGameplay loads, it should have a properly animated entrance.
 	InitCommand=function(self)
 		SL.Global.GameplayReloadCheck = false
+		generateFavoritesForMusicWheel()
 
 		-- While other SM versions don't need this, Outfox resets the
 		-- the music rate to 1 between songs, but we want to be using
@@ -25,6 +26,11 @@ local af = Def.ActorFrame{
 			LoadGuest(params.Player)
 		end
 		ApplyMods(params.Player)
+	end,
+	CodeMessageCommand=function(self, params)
+		if params.Name == "Favorite1" or params.Name == "Favorite2" then
+			addOrRemoveFavorite(params.PlayerNumber)
+		end
 	end,
 
 	-- ---------------------------------------------------
