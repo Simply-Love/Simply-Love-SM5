@@ -231,7 +231,7 @@ local GetScoresRequestProcessor = function(res, params)
 			if data and data[playerStr] then
 				if itlScore ~= nil then
 					loadingText:settext("ITL   "..itlScore):diffuse(color("#21CCE8"))
-					SL["P"..i].itlScore = itlRaw
+					SL["P"..i].itlScore = itlRaw*100
 					local stepartist = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("StepArtistAF_P"..i)
 
 					if stepartist ~= nil then
