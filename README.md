@@ -53,7 +53,7 @@ And more!
 
 This fork is worked on by Zarzob and Zankoku.
 
-Contact us on Discord at Zarzob#0001 or Zankoku#4444. Alternatively you can join my [discord server](https://discord.gg/zarzob)
+Contact us on Discord at `Zarzob#0001` or `Zankoku#4444`. Alternatively you can join my [discord server](https://discord.gg/zarzob)
 
 # Additional Contributors
 
