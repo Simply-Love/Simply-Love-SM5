@@ -467,7 +467,9 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 			end
 		end
 		ItlPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("ItlProgress"..ToEnumShortString(player))
-		ItlPane:playcommand("ItlBox",{ box_score=box_score, box_rp=box_rp, box_tp=box_tp, box_clearType=box_clearType, box_quests=box_quests })
+		if ItlPane ~= nil then
+			ItlPane:playcommand("ItlBox",{ box_score=box_score, box_rp=box_rp, box_tp=box_tp, box_clearType=box_clearType, box_quests=box_quests })
+		end
 	end
 
 	table.insert(paneTexts, string.format(
