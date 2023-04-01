@@ -18,6 +18,7 @@ local af = Def.ActorFrame{
 		if not PROFILEMAN:IsPersistentProfile(params.Player) then
 			LoadGuest(params.Player)
 		end
+		generateFavoritesForMusicWheel()
 		ApplyMods(params.Player)
 	end,
 

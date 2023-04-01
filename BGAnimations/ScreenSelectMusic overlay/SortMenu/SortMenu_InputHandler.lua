@@ -1,6 +1,6 @@
 local sort_wheel = ...
 
-local favesLoaded = false
+local currFavorites = nil
 -- this handles user input while in the SortMenu
 local input = function(event)
 	if not (event and event.PlayerNumber and event.button) then
@@ -94,17 +94,24 @@ local input = function(event)
 
 					overlay:queuecommand("DirectInputToEngineForSelectProfile")
 				elseif focus.new_overlay == "Preferred" then
-					SONGMAN:SetPreferredSongs(getFavoritesPath(event.PlayerNumber), true);
-
+					-- ITGMania supports pulling favorites straight from the profile directory
+					if IsITGmania() then
+						SONGMAN:SetPreferredSongs(getFavoritesPath(event.PlayerNumber), true);
+					else
+						-- Otherwise load what's in the Theme/Other directory
+						SONGMAN:SetPreferredSongs(ToEnumShortString(event.PlayerNumber).."_Favorites");
+					end
 					if SONGMAN:GetPreferredSortSongs() then
+						overlay:queuecommand("DirectInputToEngine")
 
-						SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort("SortOrder_Preferred", true)
+						SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort("SortOrder_Preferred")
 
 						-- finally, reload the screen if a different player is checking their favorites
 						-- i'd like to do this a better way, but i'm not sure how right now -crash
-						if not favesLoaded then favesLoaded = true else
+						if event.PlayerNumber ~= ThemePrefs.Get("SortPlayer") then
 							screen:SetNextScreenName("ScreenSelectMusic")
 							screen:StartTransitioningScreen("SM_GoToNextScreen")
+							ThemePrefs.Set("SortPlayer", event.PlayerNumber)
 						end
 
 					end
