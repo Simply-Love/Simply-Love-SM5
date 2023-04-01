@@ -6,13 +6,13 @@ Only for itgmania. Please use the Default branch itgmania:release
 
 ## List of features that are available in this fork:
 
-  * Event specific (ITL/SRPG) progress box on Evaluation Screen
+  * Event specific (ITL/SRPG) progress box on Evaluation Screen (1 player mode only)
   * Event specific (ITL/SRPG) leaderboards as a pane on Evaluation Screen
+  * Extra Event specific (ITL/SRPG) info on the Song Wheel
   * Hiding Evaluation Screen panes that have no information in it (e.g. QR code pane when it has been submitted online)
   * More information on Step Statistics
   * GIFs on Step Statistics
   * 10ms FA+ support
-  * More event specific (ITL/SRPG) info on the Song Wheel
   * Random sound support for Evaluation Screen and song start
   * Better Screenshot naming convention
   * Aesthetic options for lifebars
@@ -20,7 +20,7 @@ Only for itgmania. Please use the Default branch itgmania:release
   * Broken run measure counter
   * Measure counter in mm:ss
   * Three line information showing at all times in 1 player mode on the Song Wheel
-  * Profile stats for the current folder on 
+  * Profile stats for the current folder on the song wheel
   * Folder lamps
   * Tracking number of early judgments
   * Groovestats leaderboard box on the songwheel option
@@ -32,7 +32,7 @@ Only for itgmania. Please use the Default branch itgmania:release
   * GS Scorebox in Course Mode
   * Tournament mode
   * Updating local ITL stats file with responses from Groovestats
-  * CMod on warning for No CMOD songs
+  * CMod on warning for No CMOD songs (e.g. ITL)
   * Quint support
 
 ## Features that are now in mainline Simply Love
