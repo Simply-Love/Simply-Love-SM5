@@ -49,16 +49,6 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 		local kids = self:GetChildren()
 		sprite = kids.JudgmentWithOffsets
-		sprite2 = kids.JudgmentDouble
-		
-		local opts = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions()
-		local width = GetNotefieldWidth()
-		local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
-		local judgmentY = _screen.cy + (opts:Reverse() ~= 0 and 30 or -30)
-		self:xy(GetNotefieldX(player), judgmentY)
-		local mini = mods.Mini:gsub("%%","")/100
-		self:zoom(math.min(math.max((2 - mini)/2, 0.35),1))
-		-- SM(self:GetZoom())
 	end,
 	JudgmentMessageCommand=function(self, param)
 		if param.Player ~= player then return end
@@ -75,7 +65,7 @@ return Def.ActorFrame{
 		-- If the judgment font contains a graphic for the additional white fantastic window...
 		if sprite:GetNumStates() == 7 or sprite:GetNumStates() == 14 then
 			if tns == "W1" then
-				if mods.ShowFaPlusWindow or mods.FAPlusGradual then
+				if mods.ShowFaPlusWindow or (SL.Global.GameMode == "FA+" and mods.SmallerWhite) then
 					-- If this W1 judgment fell outside of the FA+ window, show the white window
 					--
 					-- Treat Autoplay specially. The TNS might be out of the range, but
@@ -83,12 +73,7 @@ return Def.ActorFrame{
 					-- This technically causes a discrepency on the histogram, but it's likely okay.
 					if not IsW0Judgment(param, player) and not IsAutoplay(player) then
 						frame = 1
-					end
-					
-					if mods.FAPlusGradual and mods.SmallerWhite and IsW015Judgment(param,player) then
-						frame = 0
-					end
-					
+					end					
 				end
 				-- We don't need to adjust the top window otherwise.
 			else
@@ -148,51 +133,10 @@ return Def.ActorFrame{
 		end
 		-- this should match the custom JudgmentTween() from SL for 3.95
 		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
-		
-		if mods.FAPlusGradual and IsW0Judgment(param, player) then
-			local grade = (math.abs(param.TapNoteOffset) - 0.005) * 100
-			sprite2:visible(true):diffusealpha(grade):setstate(frame+2)
-			
-			if mods.JudgmentTilt then
-				if tns ~= "Miss" then
-					-- How much to rotate.
-					-- We cap it at Great since anything after likely to be too distracting.
-					local offset = math.min(math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300 * mods.TiltMultiplier, 180)
-					-- Which direction to rotate.
-					local direction = param.TapNoteOffset < 0 and -1 or 1
-					sprite2:rotationz(direction * offset)
-				else
-					-- Reset rotations on misses so it doesn't use the previous note's offset.
-					sprite2:rotationz(0)
-				end
-			end
-			-- this should match the custom JudgmentTween() from SL for 3.95
-			sprite2:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
-		end
 	end,
 
 	Def.Sprite{
 		Name="JudgmentWithOffsets",
-		InitCommand=function(self)
-			-- animate(false) is needed so that this Sprite does not automatically
-			-- animate its way through all available frames; we want to control which
-			-- frame displays based on what judgment the player earns
-			self:animate(false):visible(false)
-
-			-- if we are on ScreenEdit, judgment graphic is always "Love"
-			-- because ScreenEdit is a mess and not worth bothering with.
-			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
-				self:Load( THEME:GetPathG("", "_judgments/Love") )
-
-			else
-				self:Load( THEME:GetPathG("", "_judgments/" .. file_to_load) )
-			end
-		end,
-		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
-	},
-	
-	Def.Sprite{
-		Name="JudgmentDouble",
 		InitCommand=function(self)
 			-- animate(false) is needed so that this Sprite does not automatically
 			-- animate its way through all available frames; we want to control which

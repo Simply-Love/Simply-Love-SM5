@@ -92,6 +92,9 @@ local permitted_profile_settings = {
 	
 	BeatBars			 = "string",
 	TiltMultiplier       = "number",
+	
+	JudgmentBack         = "boolean",
+	ErrorMSDisplay       = "boolean",
 
 	GrowCombo			 = "boolean",
 	SpinCombo			 = "boolean",

@@ -771,9 +771,9 @@ local Overrides = {
 		Choices = { 0.25, 0.5, 1, 1.5, 2, 2.5, 3 },
 	},
 	-------------------------------------------------------------------------
-	Experimental = {
+	ExtraAesthetics = {
 		SelectType = "SelectMultiple",
-		Choices = { "FAPlusGradual", "JudgmentBack" },
+		Values = { "JudgmentBack", "ErrorMSDisplay" }
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {

@@ -23,7 +23,7 @@ end
 return Def.ActorFrame{
 	--top middle
 	LoadActor("star.lua", pss)..{
-		OnCommand=function(self) self:x(0):y(-54):zoom(0.35):pulse():effectmagnitude(1,0.9,0):sleep(60):queuecommand("Spin") end,
+		OnCommand=function(self) self:x(0):y(-54):zoom(0.35):pulse():effectmagnitude(1,0.9,0):sleep(5):queuecommand("Spin") end,
 		SpinCommand=function(self) Spin(self) end
 	},
 
