@@ -34,6 +34,8 @@ Only for itgmania. Please use the Default branch itgmania:release
   * Updating local ITL stats file with responses from Groovestats
   * CMod on warning for No CMOD songs (e.g. ITL)
   * Quint support
+  * Display judgment behind arrows
+  * Display error in ms under judgment
 
 ## Features that are now in mainline Simply Love
 
