@@ -202,10 +202,10 @@ for player in ivalues(Players) do
 end
 
 -- ActorSounds
-t[#t+1] = LoadActor( THEME:GetPathS("", "_change value"))..{ Name="delete", SupportPan = true }
-t[#t+1] = LoadActor( THEME:GetPathS("Common", "start"))..{ Name="enter", SupportPan = true }
-t[#t+1] = LoadActor( THEME:GetPathS("MusicWheel", "change"))..{ Name="move", SupportPan = true }
-t[#t+1] = LoadActor( THEME:GetPathS("common", "invalid"))..{ Name="invalid", SupportPan = true }
+t[#t+1] = LoadActor( THEME:GetPathS("", "_change value"))..{    Name="delete",  IsAction=true, SupportPan=true }
+t[#t+1] = LoadActor( THEME:GetPathS("Common", "start"))..{      Name="enter",   IsAction=true, SupportPan=true }
+t[#t+1] = LoadActor( THEME:GetPathS("MusicWheel", "change"))..{ Name="move",    IsAction=true, SupportPan=true }
+t[#t+1] = LoadActor( THEME:GetPathS("common", "invalid"))..{    Name="invalid", IsAction=true, SupportPan=true }
 
 --
 return t
