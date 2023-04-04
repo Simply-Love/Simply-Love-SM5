@@ -306,7 +306,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:y(-60+rowheight*2)
 	end,
 	ItlStatsLocalCommand=function(self,params)
-		self:settext("RP: " .. params.tp)		
+		self:settext("RP: " .. params.rp)		
 	end,
 	ItlStatsOnlineCommand=function(self,params)
 		self:settext("RP: " ..params.box_rp["curr"] .. " (+" .. params.box_rp["delta"] ..  ")")
