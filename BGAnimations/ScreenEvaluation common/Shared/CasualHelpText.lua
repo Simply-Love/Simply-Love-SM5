@@ -1,7 +1,7 @@
 if SL.Global.GameMode ~= "Casual" then return end
 
 return Def.BitmapText{
-	Font="Common Bold",
+	Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 	Text=THEME:GetString("ScreenEvaluation", "PressStartToContinue"),
 	InitCommand=function(self)
 		self:xy(_screen.cx, _screen.cy + 170):zoom(0.55)

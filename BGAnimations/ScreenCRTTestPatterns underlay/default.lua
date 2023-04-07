@@ -55,7 +55,7 @@ return Def.ActorFrame{
 			end
 		},
 
-		LoadFont("Common Bold")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 			InitCommand=function(self)
 				self:diffuse(Color.White)
 				self:xy(_screen.cx, _screen.cy - 15)

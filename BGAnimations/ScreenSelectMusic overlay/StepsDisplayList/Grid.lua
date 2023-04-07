@@ -74,7 +74,7 @@ for RowNumber=-2, 2 do
 		end
 	}
 
-	Grid[#Grid+1] = LoadFont("Common Bold")..{
+	Grid[#Grid+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Name="Meter_"..(RowNumber + 3),
 		InitCommand=function(self)
 			local height = 28

@@ -36,6 +36,7 @@ Only for itgmania. Please use the Default branch itgmania:release
   * Quint support
   * Display judgment behind arrows
   * Display error in ms under judgment
+  * Configure font used for various theme elements
 
 ## Features that are now in mainline Simply Love
 

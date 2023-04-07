@@ -60,7 +60,7 @@ t[#t+1] = LoadFont("Wendy/_wendy white")..{
 	end
 }
 
-t[#t+1] = LoadFont("Common Bold")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Text=ScreenString("OutOfRanking"),
 	OnCommand=function(self) self:zoom(0.7):diffuse(PlayerColor(Player)):y(58):visible(not CanEnterName) end
 }

@@ -19,7 +19,7 @@ return Def.ActorFrame{
 	},
 
 	-- numerical difficulty meter
-	LoadFont("Common Bold")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		InitCommand=function(self)
 			self:diffuse(Color.Black):zoom( 0.55 )
 			self:y( _screen.cy-71 )

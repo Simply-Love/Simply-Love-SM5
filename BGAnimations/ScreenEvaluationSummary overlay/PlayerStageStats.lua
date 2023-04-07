@@ -56,7 +56,7 @@ if displayProfileNames then
 end
 
 -- percent score
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-24) end,
 	DrawStageCommand=function(self)
 		if playerStats and score then
@@ -110,7 +110,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 }
 
 -- difficulty meter
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	InitCommand=function(self) self:zoom(0.4):horizalign(align1):x(col1x):y(-1) end,
 	DrawStageCommand=function(self)
 		if playerStats and meter then
@@ -151,7 +151,7 @@ af[#af+1] = Def.ActorProxy{
 -- numbers
 for i=1,#TNSTypes do
 
-	af[#af+1] = LoadFont("Common Bold")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		InitCommand=function(self)
 			self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 50)
 				:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )

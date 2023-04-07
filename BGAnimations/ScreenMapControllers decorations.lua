@@ -60,7 +60,7 @@ for i,player in ipairs( PlayerNumber ) do
 		end
 	}
 
-	af[#af+1] = LoadFont("Common Header")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Header")..{
 		Text=("%s %i"):format(THEME:GetString("ScreenTestInput", "Player"), PlayerNumber:Reverse()[player]+1),
 		InitCommand=function(self)
 			self:halign(PlayerNumber:Reverse()[OtherPlayer[player]])

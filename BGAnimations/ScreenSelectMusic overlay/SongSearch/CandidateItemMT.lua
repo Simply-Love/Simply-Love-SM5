@@ -32,7 +32,7 @@ return {
 
 			-- Song Name
 			af[#af+1] = Def.BitmapText{
-				Font="Common Bold",
+				Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 				Name="Exit",
 				Text="Exit",
 				InitCommand=function(subself)

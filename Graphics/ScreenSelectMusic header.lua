@@ -74,7 +74,7 @@ if PREFSMAN:GetPreference("EventMode") then
 -- stage number when not EventMode
 else
 
-	af[#af+1] = LoadFont("Common Header")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Header")..{
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
@@ -90,7 +90,7 @@ else
 end
 
 -- "ITG" or "FA+"; aligned to right of screen
-af[#af+1] = LoadFont("Common Header")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Header")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
 	InitCommand=function(self)

@@ -91,7 +91,7 @@ pane[#pane+1] = Def.Quad{
 
 -- "Early" text
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Bold",
+	Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 	Text=ScreenString("Early"),
 	InitCommand=function(self)
 		self:addx(10):addy(-125)
@@ -102,7 +102,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- "Late" text
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Bold",
+	Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 	Text=ScreenString("Late"),
 	InitCommand=function(self)
 		self:addx(pane_width-10):addy(-125)

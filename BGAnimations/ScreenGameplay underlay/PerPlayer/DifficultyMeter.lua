@@ -24,7 +24,7 @@ return Def.ActorFrame{
 	},
 
 	-- player's chart's difficulty meter
-	LoadFont("Common Bold")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		InitCommand=function(self)
 			self:diffuse( Color.Black )
 			self:zoom( 0.4 )

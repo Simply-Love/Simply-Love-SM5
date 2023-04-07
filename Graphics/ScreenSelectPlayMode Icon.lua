@@ -3,7 +3,7 @@ local index = gc:GetIndex()
 local text = gc:GetName()
 
 -- text description of each mode ("Casual", "ITG", "FA+")
-return LoadFont("Common Bold")..{
+return LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="ModeName"..index,
 	Text=ScreenString(text),
 

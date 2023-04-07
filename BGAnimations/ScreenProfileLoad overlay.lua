@@ -41,7 +41,7 @@ return Def.ActorFrame{
 	},
 
 	Def.BitmapText{
-		Font="Common Bold",
+		Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 		Text=THEME:GetString("ScreenProfileLoad","Loading Profiles..."),
 		InitCommand=function(self)
 			self:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ):zoom(0.6)

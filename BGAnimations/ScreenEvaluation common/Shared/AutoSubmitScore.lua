@@ -477,7 +477,7 @@ af[#af+1] = Def.Sprite{
 	end,
 }
 
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="P1RecordText",
 	InitCommand=function(self)
 		local x = _screen.cx - 225
@@ -496,7 +496,7 @@ af[#af+1] = Def.Sprite{
 	end,
 }
 
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="P2RecordText",
 	InitCommand=function(self)
 		local x = _screen.cx + 225

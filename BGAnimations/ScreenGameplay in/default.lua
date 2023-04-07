@@ -82,7 +82,7 @@ af[#af+1] = Def.ActorFrame{
 	}
 }
 
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Text=text,
 	InitCommand=function(self) self:Center():diffusealpha(0):shadowlength(1) end,
 	OnCommand=function(self)

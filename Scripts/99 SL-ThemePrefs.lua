@@ -270,6 +270,11 @@ SL_CustomPrefs.Get = function()
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values  = { true, false }
 		},
+		ThemeFont = {
+			Default = "Common",
+			Choices = { THEME:GetString("ThemePrefs","Wendy"), THEME:GetString("ThemePrefs", "Mega") },
+			Values = { "Common", "Mega" }
+		},
 		TournamentMode = {
 			Default = "Off",
 			Choices = { THEME:GetString("ThemePrefs","Off"), THEME:GetString("ThemePrefs", "EX"), THEME:GetString("ThemePrefs", "ITG") },
