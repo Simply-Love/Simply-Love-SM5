@@ -30,8 +30,6 @@ local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
 local wheel_item_mt = LoadActor("WheelItemMT.lua")
 local sortmenu = { w=210, h=160 }
 
-local hasSong = GAMESTATE:GetCurrentSong() and true or false
-
 local FilterTable = function(arr, func)
 	local new_index = 1
 	local size_orig = #arr
@@ -177,19 +175,6 @@ local t = Def.ActorFrame {
 	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 	-- Figure out which choices to put in the SortWheel based on various current conditions.
 	OnCommand=function(self) self:playcommand("AssessAvailableChoices") end,
-	-- We'll want to (re)assess available choices in the SortMenu if a player late-joins
-	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
-	-- We'll also (re)asses if we want to display the leaderboard depending on if we're actually hovering over a song.
-	CurrentSongChangedMessageCommand=function(self)
-		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-			local curSong = GAMESTATE:GetCurrentSong()
-			-- Only reasses if we go from song->group or group->song
-			if (curSong and not hasSong) or (not curSong and hasSong) then
-				self:queuecommand("AssessAvailableChoices")
-			end
-			hasSong = curSong and true or false
-		end
-	end,
 	ShowSortMenuCommand=function(self) self:visible(true) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
 	DirectInputToSortMenuCommand=function(self)
@@ -201,7 +186,7 @@ local t = Def.ActorFrame {
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
-		self:playcommand("ShowSortMenu")
+		self:queuecommand("AssessAvailableChoices"):queuecommand("ShowSortMenu")
 		overlay:playcommand("HideTestInput")
 		overlay:playcommand("HideLeaderboard")
 	end,
