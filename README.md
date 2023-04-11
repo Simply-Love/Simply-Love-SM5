@@ -6,7 +6,7 @@ Only for itgmania. Please use the Default branch itgmania:release
 
 ## List of features that are available in this fork:
 
-  * Event specific (ITL/SRPG) progress box on Evaluation Screen (1 player mode only)
+  * Event specific (ITL/SRPG) progress box on Evaluation Screen (does not appear in certain configurations)
   * Event specific (ITL/SRPG) leaderboards as a pane on Evaluation Screen
   * Extra Event specific (ITL/SRPG) info on the Song Wheel
   * Hiding Evaluation Screen panes that have no information in it (e.g. QR code pane when it has been submitted online)
