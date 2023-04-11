@@ -165,7 +165,7 @@ for i=lower,upper do
 	row[#row+1] = LoadFont(Font)..{
 		Name="Date",
 		Text=date,
-		InitCommand=function(self) self:horizalign(left):xy(90, row_index*row_height) end,
+		InitCommand=function(self) self:horizalign(left):xy(72, row_index*row_height) end,
 	}
 
 	af[#af+1] = row

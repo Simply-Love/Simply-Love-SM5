@@ -134,88 +134,7 @@ return Def.ActorFrame{
 				self:diffuse( PlayerColor(player) )
 			end
 		end
-	},
-	
-	-- ITL display
-	Def.Quad{
-		InitCommand=function(self)
-			self:zoomto(95, _screen.h/14):x(265):y(15):diffuse(color("#000000"))
-			if player == PLAYER_2 then
-				self:addx(-300)
-			end
-			if SL[pn].itlRP == nil then
-				self:visible(false)
-			end
-		end,
-		ResetCommand=function(self)
-			self:diffusealpha(ThemePrefs.Get("RainbowMode") and 0.7 or 0)
-		end
-	},
-	Def.Sprite{
-		Texture=THEME:GetPathG("","ITL.png"),
-		Name="ITL_Logo",
-		InitCommand=function(self)
-			self:zoom(0.25)
-			self:x(265):y(15)
-			if player == PLAYER_2 then
-				self:addx(-300)
-			end
-			if SL[pn].itlRP then
-				self:diffusealpha(0.3)
-			else
-				self:visible(false)
-			end
-		end,
-	},
-	LoadFont("Common Normal")..{
-		Text=GAMESTATE:IsCourseMode() and "" or "Rank Pts:",
-		InitCommand=function(self)
-			self:diffuse(color("#73ffff")):horizalign(left):x(220):y(5):zoom(0.7)
-			if player == PLAYER_2 then
-				self:addx(-300)
-			end
-			if SL[pn].itlRP == nil then
-				self:visible(false)
-			end
-		end
-	},
-	LoadFont("Common Normal")..{
-		Text=SL[pn].itlRP or "N/A",
-		InitCommand=function(self)
-			self:diffuse(color("#73ffff")):horizalign(left):x(265):y(5):zoom(0.7)
-			if player == PLAYER_2 then
-				self:addx(-300)
-			end
-			if SL[pn].itlRP == nil then
-				self:visible(false)
-			end
-		end
-	},
-	LoadFont("Common Normal")..{
-		Text=GAMESTATE:IsCourseMode() and "" or "Total Pts:",
-		InitCommand=function(self)
-			self:diffuse(color("#73ffff")):horizalign(left):x(220):y(23):zoom(0.7)
-			if player == PLAYER_2 then
-				self:addx(-300)
-			end
-			if SL[pn].itlRP == nil then
-				self:visible(false)
-			end
-		end
-	},
-	LoadFont("Common Normal")..{
-		Text=SL[pn].itlTP or "N/A",
-		InitCommand=function(self)
-			self:diffuse(color("#73ffff")):horizalign(left):x(265):y(23):zoom(0.7)
-			if player == PLAYER_2 then
-				self:addx(-300)
-			end
-			if SL[pn].itlRP == nil then
-				self:visible(false)
-			end
-		end
-	},
-	
+	},	
 
 	--STEPS label
 	LoadFont("Common Normal")..{
@@ -288,50 +207,51 @@ return Def.ActorFrame{
 			end
 		end,
 		ITLCommand=function(self)
+			if #GAMESTATE:GetHumanPlayers() == 1 then
+				local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+				local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
 
-			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-			local StepsOrTrail = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)
+				-- always stop tweening when steps change in case a MarqueeCommand is queued
+				self:stoptweening()
 
-			-- always stop tweening when steps change in case a MarqueeCommand is queued
-			self:stoptweening()
+				if SongOrCourse and StepsOrTrail then
 
-			if SongOrCourse and StepsOrTrail then
+					text_table = GetStepsCredit(player)
+					marquee_index = 0
 
-				text_table = GetStepsCredit(player)
-				marquee_index = 0
-
-				-- don't queue a Marquee in CourseMode
-				-- each TrailEntry text change will be broadcast from CourseContentsList.lua
-				-- to ensure it stays synced with the scrolling list of songs
-				if not GAMESTATE:IsCourseMode() then
-					-- only queue a Marquee if there are things in the text_table to display
-					if #text_table > 0 then
-						-- self:queuecommand("Marquee")
-						local fulldesc = ""
-						for i=1,#text_table do
-							local curText = text_table[i]
-							if string.sub(curText, string.len(curText) - 3, string.len(curText)) == " pts" then
-								local max_points = string.sub(curText, 1, string.len(curText) - 4)
-								local exscore = tonumber(SL[pn].itlScore)/100
-								local max_point_multiplier = 0
-								if exscore then
-									local points = GetPointsForSong(max_points, exscore)
-									local pointsPercent = string.format("%.2f%%", points / max_points * 100)
-									curText = points .. "/" .. curText .. " ("..pointsPercent..")"
+					-- don't queue a Marquee in CourseMode
+					-- each TrailEntry text change will be broadcast from CourseContentsList.lua
+					-- to ensure it stays synced with the scrolling list of songs
+					if not GAMESTATE:IsCourseMode() then
+						-- only queue a Marquee if there are things in the text_table to display
+						if #text_table > 0 then
+							-- self:queuecommand("Marquee")
+							local fulldesc = ""
+							for i=1,#text_table do
+								local curText = text_table[i]
+								if string.sub(curText, string.len(curText) - 3, string.len(curText)) == " pts" then
+									local max_points = string.sub(curText, 1, string.len(curText) - 4)
+									local exscore = tonumber(SL[pn].itlScore)/100
+									local max_point_multiplier = 0
+									if exscore then
+										local points = GetPointsForSong(max_points, exscore)
+										local pointsPercent = string.format("%.2f%%", points / max_points * 100)
+										curText = points .. "/" .. curText .. " ("..pointsPercent..")"
+									end
 								end
+								fulldesc = fulldesc .. curText .. "\n"
 							end
-							fulldesc = fulldesc .. curText .. "\n"
+							self:vertalign("VertAlign_Top"):settext(fulldesc):y(-6)
+						else
+							-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
+							self:settext("")
 						end
-						self:vertalign("VertAlign_Top"):settext(fulldesc):y(-6)
-					else
-						-- no credit information was specified in the simfile for this stepchart, so just set to an empty string
-						self:settext("")
 					end
+				else
+					-- there wasn't a song/course or a steps object, so the MusicWheel is probably hovering
+					-- on a group title, which means we want to set the stepartist text to an empty string for now
+					self:settext("")
 				end
-			else
-				-- there wasn't a song/course or a steps object, so the MusicWheel is probably hovering
-				-- on a group title, which means we want to set the stepartist text to an empty string for now
-				self:settext("")
 			end
 		end,
 		MarqueeCommand=function(self)
