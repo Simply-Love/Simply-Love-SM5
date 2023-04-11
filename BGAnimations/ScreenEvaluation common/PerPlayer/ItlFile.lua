@@ -11,8 +11,6 @@ end
 local t = Def.ActorFrame {
 	OnCommand=function(self)
 		UpdateItlData(player)
-		-- This doesn't need to be a global message
-		if SCREENMAN:GetTopScreen():GetName() == "ScreenEvaluationStage" then MESSAGEMAN:Broadcast("ItlDataReady") end
 	end
 }
 

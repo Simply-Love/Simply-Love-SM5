@@ -569,5 +569,7 @@ UpdateItlData = function(player)
 			CalculateITLSongRanks(player)
 			WriteItlFile(player)
 		end
+		-- This probably doesn't need to be a global message
+		if SCREENMAN:GetTopScreen():GetName() == "ScreenEvaluationStage" then MESSAGEMAN:Broadcast("ItlDataReady",{player=player}) end
 	end
 end

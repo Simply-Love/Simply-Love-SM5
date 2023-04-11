@@ -1,11 +1,40 @@
 -- File to handle Event specific (ITL/RPG) progress such as song scores, ranking points, quest completions, etc.
--- We only want to show this info if there's space (there won't be space in 2 player mode)
-if #GAMESTATE:GetHumanPlayers() ~= 1 then return end
+
+-- Unsure if it's possible to detect whether the chat module pane is active, so check that the file exists
+local chatModule = FILEMAN:DoesFileExist(THEME:GetCurrentThemeDirectory() .. "Modules/TwitchChat.lua")
+
+-- If there is no space for the ITL box, don't show it
+if not IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() ~= 1) then return end
 
 local player = ...
 local pn = ToEnumShortString(player)
 
 local panes = 0
+
+-- Default position is on the other player's upper area where the grade should be
+local boxStart = {}
+local box = {}
+local logo = {}
+boxStart["x"] = 381 * (player == PLAYER_1 and 1 or -1)
+boxStart["y"] = 109
+box["x"] = 157
+box["y"] = 143
+logo["y"] = 40
+logo["zoom"] = 0.15
+local width = 180
+local starty = -60
+
+-- If that is taken by a player or the twitch chat module, put it to the side in widescreen mode
+if IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() > 1) then
+	boxStart["x"] = 210 * (player == PLAYER_1 and -1 or 1)
+	boxStart["y"] = 274
+	box["x"] = 120
+	box["y"] = 180
+	logo["y"] = 40
+	logo["zoom"] = 0.25
+	width = 140
+	starty = -80
+end
 
 -- RPG
 -- Display RPG progress such as song score, rate mod, skill points, quests, etc
@@ -15,8 +44,7 @@ local af = Def.ActorFrame{
 	Name="RPGQuest"..pn,
 	InitCommand=function(self)
 		self:visible(false)
-		self:y(109)
-		self:x(381 * (player == PLAYER_1 and 1 or -1))
+		self:xy(boxStart["x"],boxStart["y"])
 	end,
 	RpgQuestsCommand=function(self,params)
 		panes = panes + 1
@@ -28,7 +56,7 @@ local af = Def.ActorFrame{
 -- Draw border Quad
 af[#af+1] = Def.Quad {
 	InitCommand=function(self)
-		self:zoomto(157,143)
+		self:zoomto(box["x"],box["y"])
 		self:diffuse(color("1,0.972,0.792,1"))
 	end
 }
@@ -36,7 +64,7 @@ af[#af+1] = Def.Quad {
 -- Draw background Quad
 af[#af+1] = Def.Quad {
 	InitCommand=function(self)
-		self:zoomto(155,141)
+		self:zoomto(box["x"]-2,box["y"]-2)
 		self:diffuse(Color.Black)
 	end
 }
@@ -69,7 +97,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 		else 
 			self:diffuse(Color.Green) 
 		end
-		self:xy(-30,-60)		
+		self:xy(-30,starty)		
 	end
 }
 
@@ -90,7 +118,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 		else 
 			self:diffuse(Color.Green) 
 		end
-		self:xy(30,-60)		
+		self:xy(30,starty)		
 	end
 }
 
@@ -105,7 +133,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 			local progress_text = params.box_progress[1]
 			if #params.box_progress == 2 then progress_text = progress_text .. "    " .. params.box_progress[2] end
 			self:settext(progress_text)
-			self:y(-60+rowheight)
+			self:y(starty+rowheight)
 		end
 	end
 }
@@ -130,7 +158,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 			self:settext(sp_text)
 			self:vertspacing(-5)
 			self:vertalign('VertAlign_Top')
-			self:maxwidth(180)
+			self:maxwidth(width)
 			startrow = #params.box_progress > 0 and 2 or 1
 			self:xy(-40,-65+rowheight*startrow)
 			self:diffuse(color("0.501,0.501,0.501"))
@@ -186,7 +214,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 			self:vertspacing(-5)
 			startrow = (#params.box_progress > 0 and 2 or 1) + math.ceil(#params.box_stats/2)
 			self:y(-65+rowheight*startrow)
-			self:maxwidth(180)
+			self:maxwidth(width)
 		end
 	end
 } 
@@ -197,21 +225,21 @@ af[#af+1] = LoadFont("Common Normal")..{
 local af2 = Def.ActorFrame{
 	Name="ItlProgress"..pn,
 	InitCommand=function(self)
-		self:y(109)
-		self:x(381 * (player == PLAYER_1 and 1 or -1))
+		self:xy(boxStart["x"],boxStart["y"])
 		self:visible(false)
 	end,
-	ItlDataReadyMessageCommand=function(self)
+	ItlDataReadyMessageCommand=function(self,params)
 		-- Local stats first, this *should* happen after the currently played song is written to file, and before the api response is returned.
-		if PROFILEMAN:IsPersistentProfile(player) and IsItlSong(player) then
+		if PROFILEMAN:IsPersistentProfile(player) and IsItlSong(player) and params.player == player then
 			self:visible(true)
+
 			local profile = PROFILEMAN:GetProfile(player)
 			local profileName = profile:GetDisplayName()		
 			tp, rp, played = CalculateITLStats(player)
 			
 			hash = SL[pn].Streams.Hash
 			ItlData = SL[pn].ITLData
-
+		
 			songPoints = ItlData["hashMap"][hash]["points"]
 			songRank = ItlData["hashMap"][hash]["rank"]			
 			songScore = ItlData["hashMap"][hash]["ex"]
@@ -229,7 +257,7 @@ local af2 = Def.ActorFrame{
 -- Draw border Quad
 af2[#af2+1] = Def.Quad {
 	InitCommand=function(self)
-		self:zoomto(157,143)
+		self:zoomto(box["x"],box["y"])
 		self:diffuse(color("1,0.972,0.792,1"))
 	end
 }
@@ -237,18 +265,24 @@ af2[#af2+1] = Def.Quad {
 -- Draw background Quad
 af2[#af2+1] = Def.Quad {
 	InitCommand=function(self)
-		self:zoomto(155,141)
+		self:zoomto(box["x"]-2,box["y"]-2)
 		self:diffuse(Color.Black)
 	end
 }
 
--- ITC logo
--- TODO change to the ITL 2023 logo
+-- Use random logo to spice things up
+local itlLogoDir = THEME:GetCurrentThemeDirectory() .. "Graphics/ITL Online 2023/"
+logoFiles = findFiles(itlLogoDir,"png")
+if #logoFiles > 0 then
+	logoImage = logoFiles[math.random(#logoFiles)]
+end
+
 af2[#af2+1] = Def.Sprite {
-	Texture=THEME:GetPathG("", "itl2023.png"),
+	Texture=logoImage,
 	InitCommand=function(self)
-		self:zoom(0.25)
+		self:zoom(logo["zoom"])
 		self:diffusealpha(0.2)
+		self:y(logo["y"])
 	end
 }
 
@@ -257,7 +291,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="Score",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:xy(0,-60)
+		self:xy(0,starty)
 	end,
 	ItlStatsLocalCommand=function(self,params)
 		self:settext(tostring(("%.2f"):format(params.songScore / 100)).. "%")
@@ -275,7 +309,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="Points",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:xy(-30,-60+rowheight)
+		self:xy(-30,starty+rowheight)
 	end,
 	ItlStatsLocalCommand=function(self,params)
 		-- API response doesn't return the song points value. Use local score only
@@ -289,7 +323,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="Rank",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:xy(30,-60+rowheight)
+		self:xy(30,starty+rowheight)
 	end,
 	ItlStatsLocalCommand=function(self,params)
 		-- API response doesn't return the song rank. Use local calculated rank only
@@ -303,7 +337,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="RP",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:y(-60+rowheight*2)
+		self:y(starty+rowheight*2)
 	end,
 	ItlStatsLocalCommand=function(self,params)
 		self:settext("RP: " .. params.rp)		
@@ -319,7 +353,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="TP",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:y(-60+rowheight*3)
+		self:y(starty+rowheight*3)
 	end,
 	ItlStatsLocalCommand=function(self,params)
 		self:settext("TP: " .. params.tp)
@@ -335,7 +369,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="Songs",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:y(-60+rowheight*4)
+		self:y(starty+rowheight*4)
 	end,
 	ItlStatsLocalCommand=function(self,params)
 		self:settext("Songs played: " .. params.played)
@@ -346,7 +380,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="QuestText",
 	InitCommand=function(self)
 		self:zoom(0.8)
-		self:y(-65+rowheight*5)
+		self:y(starty-10+rowheight*6)
 	end,
 	ItlStatsOnlineCommand=function(self,params)
 		if #params.box_quests > 0 then
@@ -359,7 +393,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:settext(text)
 			self:vertalign('VertAlign_Top')
 			self:vertspacing(-5)
-			self:maxwidth(180)
+			self:maxwidth(width)
 		end
 	end
 } 
