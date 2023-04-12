@@ -350,21 +350,21 @@ CalculateITLStats = function(player)
     -- Grab data from memory
     itlData = SL[pn].ITLData
     local songHashes = itlData["hashMap"]
+	local points = itlData["points"]
     local tp = 0
     local rp = 0
     local played = 0
 
-    for key in pairs(songHashes) do
-        tp = tp + songHashes[key]["points"]
-        local rank = songHashes[key]["rank"]
-        if rank ~= nil then
-            if rank <= 75 then rp = rp + songHashes[key]["points"] end
-        end
-        played = played + 1 
-    end         
+	for i=1,#points do
+		played = played + 1
+		tp = tp + points[i]
+		if i <= 75 then
+			rp = rp + points[i]
+		end		
+	end
 
     return tp, rp, played
-end      
+end
 
 -- Calculate Song Ranks
 CalculateITLSongRanks = function(player)
@@ -395,6 +395,10 @@ CalculateITLSongRanks = function(player)
 		end		 	
 	end
 	itlData["hashMap"] = songHashes
+
+	-- Write song scores sorted by point value descending into json
+	itlData["points"] = points
+
 	-- Rewrite the data in memory
 	SL[pn].ITLData = itlData
 end
