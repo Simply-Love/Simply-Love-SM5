@@ -349,7 +349,6 @@ CalculateITLStats = function(player)
     
     -- Grab data from memory
     itlData = SL[pn].ITLData
-    local songHashes = itlData["hashMap"]
 	local points = itlData["points"]
     local tp = 0
     local rp = 0
