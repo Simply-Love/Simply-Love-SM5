@@ -81,7 +81,7 @@ for player in ivalues(Players) do
             local IsEX = SL[pn].ActiveModifiers.ShowEXScore
             if ThemePrefs.Get("TournamentMode") ~= "Off" then IsEX = ThemePrefs.Get("TournamentMode") == "EX" and true or false end
 
-            af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
+            af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " numbers")..{
                 Text="0.00",
                 InitCommand=function(self)
                     self:valign(1):horizalign(right)

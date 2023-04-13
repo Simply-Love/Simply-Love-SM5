@@ -29,7 +29,7 @@ local af = Def.ActorFrame{
 -- Stage Number
 if not PREFSMAN:GetPreference("EventMode") then
 	af[#af+1] = Def.BitmapText{
-		Font=PREFSMAN:GetPreference("EventMode") and "Wendy/_wendy monospace numbers" or ThemePrefs.Get("ThemeFont") .. " Header",
+		Font=PREFSMAN:GetPreference("EventMode") and ThemePrefs.Get("ThemeFont") .. " numbers" or ThemePrefs.Get("ThemeFont") .. " Header",
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)

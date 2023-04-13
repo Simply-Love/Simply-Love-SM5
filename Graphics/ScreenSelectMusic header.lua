@@ -58,7 +58,7 @@ af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
 -- session timer in EventMode
 if PREFSMAN:GetPreference("EventMode") then
 
-	af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " numbers")..{
 		Name="Session Timer",
 		InitCommand=function(self)
 			bmt_actor = self

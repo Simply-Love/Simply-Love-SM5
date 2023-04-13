@@ -152,7 +152,7 @@ local t = Def.ActorFrame{
 
 	-- Score
 	Def.BitmapText{
-		Font="Wendy/_wendy monospace numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " numbers",
 		InitCommand=function(self)
 			self:zoom(0.225):xy(124,-68):diffusealpha(0)
 		end,

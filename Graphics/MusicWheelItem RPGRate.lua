@@ -112,7 +112,7 @@ af[#af+1] = Def.Quad {
 	end
 }
 
-af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " numbers")..{
 	InitCommand=function(self)
 		self:visible(false)
 	end,
