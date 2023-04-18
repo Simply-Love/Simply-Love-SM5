@@ -358,7 +358,9 @@ local af = Def.ActorFrame{
 			end
 		end,
 		ChartParsedCommand=function(self)
-			self:queuecommand("MakeRequest")
+			if not self.leaving_screen then
+				self:queuecommand("MakeRequest")
+			end
 		end,
 		MakeRequestCommand=function(self)				
 			local sendRequest = false
@@ -480,7 +482,7 @@ local af = Def.ActorFrame{
 			end
 		end,
 		ResetCommand=function(self) self:stoptweening() end,
-		OffCommand=function(self) self:stoptweening() end
+		OffCommand=function(self) self:stoptweening():stopeffect() end
 	},
 	-- SRPG Logo
 	Def.Sprite{

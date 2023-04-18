@@ -12,6 +12,7 @@ local width = IsUsingWideScreen() and 286 or 276
 
 local marquee_index
 local text_table = {}
+local leaving_screen = false
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
@@ -186,6 +187,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
+		if leaving_screen then return end
 		if SL[pn].Streams.PeakNPS ~= 0 then
 			local nps = SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate
 			if #GAMESTATE:GetHumanPlayers() == 1 then 
@@ -222,6 +224,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		end
 	end,
 	OffCommand=function(self)
+		leaving_screen = true
 		self:stoptweening()
 	end,
 	TogglePatternInfoCommand=function(self)
@@ -264,6 +267,7 @@ af2[#af2+1] = Def.ActorFrame{
 			self:settext("")
 		end,
 		RedrawCommand=function(self)
+			if leaving_screen then return end
 			local textZoom = 0.8
 			breakdown_table = {}
 			marquee_index = 0
