@@ -122,7 +122,7 @@ for i, category in ipairs(RadarCategories) do
 	}
 
 	-- player performance value / possible value
-	af[#af+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " ScreenEval")..{
 		Name=("%s_Values"):format(category),
 		InitCommand=function(self)
 			self:zoom(0.4):horizalign( right )

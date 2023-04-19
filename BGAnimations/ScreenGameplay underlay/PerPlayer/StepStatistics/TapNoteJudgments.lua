@@ -87,7 +87,7 @@ for index, window in ipairs(TNS.Types) do
 
 	-- TNS value
 	-- i.e. how many W1s the player has earned so far, how many W2s, etc.
-	af[#af+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " ScreenEval")..{
 		Text=(pattern):format(0),
 		InitCommand=function(self)
 			self:zoom(0.5)

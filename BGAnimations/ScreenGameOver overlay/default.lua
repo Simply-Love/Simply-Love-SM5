@@ -1,15 +1,15 @@
 local Players = GAMESTATE:GetHumanPlayers();
 
 local t = Def.ActorFrame{
-	LoadFont("Wendy/_wendy white")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy white" or "Mega/_mega font")..{
 		Text="GAME",
-		InitCommand=function(self) self:xy(_screen.cx,_screen.cy-40):croptop(1):fadetop(1):zoom(1.2):shadowlength(1) end,
+		InitCommand=function(self) self:xy(_screen.cx,_screen.cy-40):croptop(1):fadetop(1):zoom(ThemePrefs.Get("ThemeFont") == "Common" and 1.2 or 1.95):shadowlength(1) end,
 		OnCommand=function(self) self:decelerate(0.5):croptop(0):fadetop(0):glow(1,1,1,1):decelerate(1):glow(1,1,1,1) end,
 		OffCommand=function(self) self:accelerate(0.5):fadeleft(1):cropleft(1) end
 	},
-	LoadFont("Wendy/_wendy white")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy white" or "Mega/_mega font")..{
 		Text="OVER",
-		InitCommand=function(self) self:xy(_screen.cx,_screen.cy+40):croptop(1):fadetop(1):zoom(1.2):shadowlength(1) end,
+		InitCommand=function(self) self:xy(_screen.cx,_screen.cy+40):croptop(1):fadetop(1):zoom(ThemePrefs.Get("ThemeFont") == "Common" and 1.2 or 1.95):shadowlength(1) end,
 		OnCommand=function(self) self:decelerate(0.5):croptop(0):fadetop(0):glow(1,1,1,1):decelerate(1):glow(1,1,1,1) end,
 		OffCommand=function(self) self:accelerate(0.5):fadeleft(1):cropleft(1) end
 	},
