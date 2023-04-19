@@ -25,9 +25,9 @@ return Def.ActorFrame{
 		end
 	},
 
-	LoadFont("Wendy/_wendy white")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Text=percent,
 		Name="Percent",
-		InitCommand=function(self) self:horizalign(right):zoom(0.25):xy( 30, -2) end,
+		InitCommand=function(self) self:horizalign(right):zoom(0.406):xy( 30, -2) end,
 	}
 }

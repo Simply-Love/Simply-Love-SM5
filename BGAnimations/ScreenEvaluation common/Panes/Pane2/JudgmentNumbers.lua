@@ -58,7 +58,7 @@ for i=1,#TapNoteScores.Types do
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
-		Font="Wendy/_ScreenEvaluation numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " ScreenEval",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
 
@@ -102,11 +102,11 @@ end
 -- then handle hands/ex, holds, mines, rolls
 for index, RCType in ipairs(RadarCategories.Types) do
 	if index == 1 then
-		t[#t+1] = LoadFont("Wendy/_wendy white")..{
+		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 			Name="Percent",
 			Text=("%.2f"):format(CalculateExScore(player)),
 			InitCommand=function(self)
-				self:horizalign(right):zoom(0.4)
+				self:horizalign(right):zoom(0.65)
 				self:x( ((controller == PLAYER_1) and -114) or 286 )
 				self:y(47)
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
@@ -127,7 +127,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	-- player performance value
 	-- use a RollingNumber to animate the count tallying up for visual effect
 	t[#t+1] = Def.RollingNumbers{
-		Font="Wendy/_ScreenEvaluation numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " ScreenEval",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
 		BeginCommand=function(self)
 			self:x( RadarCategories.x[ToEnumShortString(controller)] )
@@ -137,7 +137,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	}
 
 	-- slash and possible value
-	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " ScreenEval")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( ((controller == PLAYER_1) and -114) or 286 )

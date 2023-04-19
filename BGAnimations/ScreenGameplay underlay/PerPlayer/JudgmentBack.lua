@@ -167,7 +167,7 @@ return Def.ActorFrame{
         Text = "",
         InitCommand = function(self)
             self:zoom(1):shadowlength(1):y(-35)
-			if font == "Wendy" or font == "Wendy Cursed" then
+			if mods.ComboFont == "Wendy" or mods.ComboFont == "Wendy Cursed" then
 				self:zoom(0.5)
 			end
         end,

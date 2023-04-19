@@ -126,7 +126,7 @@ end
 -- labels: hands/ex, holds, mines, rolls
 for index, label in ipairs(RadarCategories) do
 	if index == 1 then
-		t[#t+1] = LoadFont("Wendy/_wendy small")..{
+		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small" or "Mega/_mega font")..{
 			Text="EX",
 			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 			BeginCommand=function(self)
