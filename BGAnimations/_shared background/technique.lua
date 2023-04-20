@@ -86,10 +86,12 @@ t[#t+1] = Def.Sprite {
 
 -- main stuff (rings, arrow)
 for i=1,10 do
-	t[#t+1] = Def.Sprite {
-		Texture="./circlefrag (doubleres).png",
+	t[#t+1] = Def.Model {
+	Meshes="circlefrag_model.txt";
+	Materials="circlefrag_model.txt";
+	Bones="circlefrag_model.txt";
 		InitCommand=function(self)
-			self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true)):baserotationz(randomXD(i) * 100):baserotationx(-60):baserotationy(20)
+			self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true)):baserotationz(randomXD(i) * 400):baserotationx(-60):baserotationy(20)
 			:SetTextureFiltering(true)
 			:diffusealpha(randomXD(i))
 
@@ -99,38 +101,44 @@ for i=1,10 do
 			end
 		end,
 		OnCommand=function(self)
-			self:zoom((randomXD(i*1.5) + 0.5)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (1 / self:GetZoom()) * 850)
-			self:spin():effectmagnitude(0, 0, randomXD(i*3) * 14):effectoffset(i * 20)
+			self:zoom((randomXD(i*1.6) + 0.35)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (1 / self:GetZoom()) * 850)
+			self:spin():effectmagnitude(0, 0, randomXD(i*3.4) * 14):effectoffset(randomXD(i*1.2) * 400)
 		end
 	}
 end
 
-t[#t+1] = Def.Sprite {
-	Texture = "./ring.png",
+t[#t+1] = Def.Model {
+	Meshes="ring_model.txt";
+	Materials="ring_model.txt";
+	Bones="ring_model.txt";
 	InitCommand=function(self)
 		self:diffuse(1, 1, 1, 0.8):baserotationz(50):baserotationx(-60):baserotationy(20)
 		:SetTextureFiltering(true)
 	end,
 	OnCommand=function(self)
-		self:zoom(1.65):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z(0)
+		self:zoom(1.75):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z(0)
 		self:spin():effectmagnitude(0, 0, 10):effectoffset(20)
 	end
 }
 
-t[#t+1] = Def.Sprite {
-	Texture = "./ring.png",
+t[#t+1] = Def.Model {
+	Meshes="ring_model.txt";
+	Materials="ring_model.txt";
+	Bones="ring_model.txt";
 	InitCommand=function(self)
 		self:diffuse(1, 1, 1, 0.8):baserotationz(50):baserotationx(-60):baserotationy(20)
 		:SetTextureFiltering(true)
 	end,
 	OnCommand=function(self)
-		self:zoom(0.55):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z(0)
+		self:zoom(0.75):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z(0)
 		self:spin():effectmagnitude(0, 0, 4):effectoffset(20)
 	end
 }
 
-t[#t+1] = Def.Sprite {
-	Texture = "./arrow.png",
+t[#t+1] = Def.Model {
+	Meshes="arrow_model.txt";
+	Materials="arrow_model.txt";
+	Bones="arrow_model.txt";
 	InitCommand=function(self)
 		self
 		:diffuse(GetHexColor(SL.Global.ActiveColorIndex, true))
@@ -144,21 +152,23 @@ t[#t+1] = Def.Sprite {
 		end
 	end,
 	OnCommand=function(self)
-		self:zoom(1.3):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
+		self:zoom(1.2):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		self:spin():effectmagnitude(0, 10, 0)
 	end
 }
 
 for i=11,18 do
-	t[#t+1] = Def.Sprite {
-		Texture="./circlefrag (doubleres).png",
+	t[#t+1] = Def.Model {
+	Meshes="circlefrag_model.txt";
+	Materials="circlefrag_model.txt";
+	Bones="circlefrag_model.txt";
 		InitCommand=function(self)
-			self:diffuse(1, 1, 1, randomXD(i / 1.6)):baserotationz(randomXD(i) * 100):baserotationx(-60):baserotationy(20)
+			self:diffuse(1, 1, 1, randomXD(i / 1.6)):baserotationz(randomXD(i) * 2000):baserotationx(-60):baserotationy(20)
 			:SetTextureFiltering(true)
 		end,
 		OnCommand=function(self)
-			self:zoom((randomXD(i*1.5) + 0.5)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (1 / self:GetZoom()) * 850)
-			self:spin():effectmagnitude(0, 0, randomXD(i*3) * 14):effectoffset(i * 20)
+			self:zoom((randomXD(i*2.8) + 0.35)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (2 / self:GetZoom()) * 850)
+			self:spin():effectmagnitude(0, 0, randomXD(i*3.6) * 14):effectoffset(i * 2000)
 		end
 	}
 end
