@@ -17,14 +17,49 @@ local function CreditsText( player )
 	return LoadFont("Common Normal") .. {
 		InitCommand=function(self)
 			self:visible(false)
+			self:maxwidth(325)
 			self:name("Credits" .. PlayerNumberToString(player))
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
 		end,
 		VisualStyleSelectedMessageCommand=function(self) self:playcommand("UpdateVisible") end,
 		UpdateTextCommand=function(self)
 			-- this feels like a holdover from SM3.9 that just never got updated
+			local screen = SCREENMAN:GetTopScreen()
 			local str = ScreenSystemLayerHelpers.GetCreditsMessage(player)
-			self:settext(str)
+			local stats = SessionDataForStatistics(player)
+			if not IsUsingWideScreen() then 
+				self:settext(str)
+			else 
+				if stats.hours < 10 then
+					stats.hours = 0 .. stats.hours
+				end
+				if stats.minutes < 10 then
+					stats.minutes = 0 .. stats.minutes
+				end
+				if stats.notesHitThisGame > 9999 then
+					stats.notesHitThisGame = tonumber(string.format("%.1f", stats.notesHitThisGame/1000)) .. "k"
+				end
+				if (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
+					self:settext(str)
+				elseif player == PLAYER_1 and stats.songsPlayedThisGame > 0 then
+					self:settext(("%s - 💿 %s | ⏱%s:%s | 👟 %s "):format(
+						str,
+						stats.songsPlayedThisGame,	
+						stats.hours,
+						stats.minutes,
+						stats.notesHitThisGame))
+				elseif player == PLAYER_2 and stats.songsPlayedThisGame > 0 then
+					self:settext((" %s 👟 | %s:%s⏱ | %s 💿 - %s"):format(
+						stats.notesHitThisGame,
+						stats.hours,
+						stats.minutes,
+						stats.songsPlayedThisGame,
+						str))
+				else
+					self:settext(str)
+				end
+			end
+			
 		end,
 		UpdateVisibleCommand=function(self)
 			local screen = SCREENMAN:GetTopScreen()
