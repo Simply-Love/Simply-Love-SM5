@@ -102,6 +102,7 @@ end
 local CalculatePerspectiveSpeed = function(player)
 	player   = player or GAMESTATE:GetMasterPlayerNumber()
 	local pn = ToEnumShortString(player)
+	local ScreenOptions = SCREENMAN:GetTopScreen()
 
 	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 	local MusicRate    = SL.Global.ActiveModifiers.MusicRate or 1
@@ -109,12 +110,25 @@ local CalculatePerspectiveSpeed = function(player)
 	local SpeedModType = SL[pn].ActiveModifiers.SpeedModType
 	local SpeedMod     = SL[pn].ActiveModifiers.SpeedMod
 	
-	local ScreenOptions = SCREENMAN:GetTopScreen()
+	local PerspectiveRowIndex = FindOptionRowIndex(ScreenOptions,"Perspective")
+	local Perspective         = ScreenOptions:GetOptionRow(PerspectiveRowIndex):GetChoiceInRowWithFocus(pn)
+	local PersMult            = 1
+	
 	local MiniModRowIndex = FindOptionRowIndex(ScreenOptions,"Mini")
 	local Mini            = SL[pn].ActiveModifiers.Mini:gsub("%%","")
+	
+	if Perspective == 1 then
+		PersMult = 0.75
+	elseif Perspective == 2 then
+		PersMult = 33 / 39
+	elseif Perspective == 3 then
+		PersMult = 33 / 43
+	elseif Perspective == 4 then
+		PersMult = 0.825
+	end
 
 	if MiniModRowIndex then
-		-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
+		-- The BitmapText actors for P1 and P2 mini mod are both named "Item", so we need to provide a 1 or 2 to index
 		Mini = ScreenOptions:GetOptionRow(MiniModRowIndex):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]:GetText():gsub("%%","")
 	end
 
@@ -134,8 +148,8 @@ local CalculatePerspectiveSpeed = function(player)
 		bpms[2] = SpeedMod
 	end
 	
-	bpms[1] = bpms[1] * (200 - Mini) / 200
-	bpms[2] = bpms[2] * (200 - Mini) / 200
+	bpms[1] = bpms[1] * (200 - Mini) / 200 * PersMult
+	bpms[2] = bpms[2] * (200 - Mini) / 200 * PersMult
 
 	-- format as strings
 	bpms[1] = ("%.0f"):format(bpms[1])
@@ -294,7 +308,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			if row_index == FindOptionRowIndex(topscreen, "SpeedMod") then
 				ChangeSpeedMod( pn, -1 )
 				self:queuecommand("Set"..pn)
-			elseif row_index == FindOptionRowIndex(topscreen, "Mini") then
+			elseif row_index == FindOptionRowIndex(topscreen, "Mini") or row_index == FindOptionRowIndex(topscreen, "Perspective") then
 				self:queuecommand("Set"..pn)
 			end
 		end,
@@ -305,7 +319,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			if row_index == FindOptionRowIndex(topscreen, "SpeedMod") then
 				ChangeSpeedMod( pn, 1 )
 				self:queuecommand("Set"..pn)
-			elseif row_index == FindOptionRowIndex(topscreen, "Mini") then
+			elseif row_index == FindOptionRowIndex(topscreen, "Mini") or row_index == FindOptionRowIndex(topscreen, "Perspective") then
 				self:queuecommand("Set"..pn)
 			end
 		end
