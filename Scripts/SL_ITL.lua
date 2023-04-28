@@ -227,6 +227,24 @@ ReadItlFile = function(player)
 
 		itlData["fixedEx"] = true
 	end
+	
+	-- Fix points that got default-stored as empty strings in an earlier
+	-- version of my remote ITL score pull code to 0. If the data is already
+	-- fixed, then skip this step. -Zankoku
+	if itlData["fixedPoints"] == nil then
+		local hashMap = itlData["hashMap"]
+		
+		if hashMap ~= nil then
+			for hash, data in pairs(hashMap) do
+				if data["points"] == "" then
+					data["points"] = 0
+				end
+				local counts = data["judgments"]
+			end
+		end
+		
+		itlData["fixedPoints"] = true
+	end
 
 	SL[pn].ITLData = itlData
 end
