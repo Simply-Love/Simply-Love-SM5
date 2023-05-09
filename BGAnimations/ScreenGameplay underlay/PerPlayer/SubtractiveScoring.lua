@@ -170,6 +170,10 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 			end
 			self:settext( ("%.2f%%"):format(pace) )
 		elseif mods.MiniIndicator == "RivalScoring" then
+			local actual_dp = math.max(pss:GetActualDancePoints(), 0)
+			local possible_dp = pss:GetPossibleDancePoints()
+			local current_possible_dp = pss:GetCurrentPossibleDancePoints()
+		
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
 			local rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL.Global.Rival) / 10000
 			if mods.MiniIndicatorColor == "Default" then self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1) end
@@ -179,6 +183,10 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
 			end
 		elseif mods.MiniIndicator == "Pacemaker" then
+			local actual_dp = math.max(pss:GetActualDancePoints(), 0)
+			local possible_dp = pss:GetPossibleDancePoints()
+			local current_possible_dp = pss:GetCurrentPossibleDancePoints()
+			
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
 			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 10000
 			if mods.MiniIndicatorColor == "Default" then self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1) end
