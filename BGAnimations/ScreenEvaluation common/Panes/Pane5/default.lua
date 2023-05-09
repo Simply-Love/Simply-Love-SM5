@@ -52,12 +52,16 @@ end
 local offsets = {}
 local val
 
+local max_error = 0 -- Temporary fix for non rounded max error until mainline SL fixes it
+
 for t in ivalues(sequential_offsets) do
 	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
 	-- the second value in t is the offset value or the string "Miss"
 	val = t[2]
 
 	if val ~= "Miss" then
+		if math.abs(val) > max_error then max_error = math.abs(val) end  -- Temporary fix for non rounded max error until mainline SL fixes it
+
 		val = (math.floor(val*1000))/1000
 
 		if not offsets[val] then
@@ -215,7 +219,7 @@ if next(offsets) ~= nil then
 	if ComputedData and ComputedData.Histogram then
 		histogram = ComputedData.Histogram
 	else
-		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors, pn})
+		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors, pn, max_error})
 		if ComputedData then ComputedData.Histogram = histogram end
 	end
 

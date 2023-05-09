@@ -1,6 +1,6 @@
 local offsets, worst_window,
       pane_width, pane_height,
-		colors, pn = unpack(...)
+		colors, pn, max_error = unpack(...)
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0
@@ -69,8 +69,8 @@ local avg_offset = 0
 local std_dev = 0
 
 -- the max error that the a player encountered on any step.
-local max_error = 0
-
+--local max_error = 0
+max_error = (math.floor(max_error*100000))/100
 -- ---------------------------------------------
 -- OKAY, TIME TO CALCULATE MEDIAN, MODE, and AVG TIMING ERROR
 
@@ -86,9 +86,9 @@ for k,v in pairs(offsets) do
 
 	-- check if this is the highest error amount
 	-- if higher, it's the new max
-	if math.abs(k) > max_error then
-		max_error = math.abs(k)
-	end
+	-- if math.abs(k) > max_error then
+	-- 	max_error = math.abs(k)
+	-- end
 end
 
 -- transform a key=value table in the format of offset_value=count
