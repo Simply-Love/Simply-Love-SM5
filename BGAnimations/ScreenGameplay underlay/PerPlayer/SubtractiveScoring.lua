@@ -73,8 +73,8 @@ local GetPossibleExScore = function(counts)
 			end
 		end
 	end
-
-	return CalculateExScore(player, best_counts)
+	local possible_ex_score, possible_total = CalculateExScore(player, best_counts)
+	return possible_ex_score, possible_total
 end
 
 -- -----------------------------------------------------------------------
@@ -119,9 +119,14 @@ end
 
 bmt.ExCountsChangedMessageCommand=function(self, params)
 	if player == params.Player and mods.ShowEXScore then
-		local actual = params.ExScore
-		local possible = GetPossibleExScore(params.ExCounts)
-		local score = possible - actual
+		local possible_ex_score, current_possible = GetPossibleExScore(params.ExCounts)
+
+		local total_possible = params.actual_possible
+		local current_points = params.actual_points
+
+		local dp_lost = current_possible - current_points
+
+		local score = 100-(total_possible-dp_lost)/total_possible*100
 		
 		if mods.MiniIndicator == "SubtractiveScoring" then
 			if mods.MiniIndicatorColor == "Default" then
@@ -154,6 +159,8 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 			end
 			self:settext( ("%.2f%%"):format(100-score) )
 		elseif mods.MiniIndicator == "PaceScoring" then
+			local actual = params.ExScore
+			local possible = GetPossibleExScore(params.ExCounts)
 			local pace = math.floor((actual / possible) * 10000) / 100
 			if mods.MiniIndicatorColor == "Default" then
 				if pace >= 96 then
