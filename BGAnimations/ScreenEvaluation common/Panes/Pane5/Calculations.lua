@@ -70,7 +70,7 @@ local std_dev = 0
 
 -- the max error that the a player encountered on any step.
 --local max_error = 0
-max_error = (math.floor(max_error*100000))/100
+max_error = (math.floor(max_error*100000))/100000
 -- ---------------------------------------------
 -- OKAY, TIME TO CALCULATE MEDIAN, MODE, and AVG TIMING ERROR
 
