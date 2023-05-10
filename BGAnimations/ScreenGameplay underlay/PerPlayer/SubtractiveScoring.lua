@@ -125,8 +125,8 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 		local current_points = params.actual_points
 
 		local dp_lost = current_possible - current_points
-
-		local score = 100-(total_possible-dp_lost)/total_possible*100
+		
+		local score = 100-math.floor((total_possible-dp_lost)/total_possible*10000)/100
 		
 		if mods.MiniIndicator == "SubtractiveScoring" then
 			if mods.MiniIndicatorColor == "Default" then
