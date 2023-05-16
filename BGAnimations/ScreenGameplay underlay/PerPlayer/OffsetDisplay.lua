@@ -23,7 +23,7 @@ local af = Def.ActorFrame{
         self:xy(GetNotefieldX(player), _screen.cy)
     end,
 
-    LoadFont("Wendy/_wendy small")..{
+    LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small" or "Mega/_mega font")..{
         Text = "",
         InitCommand = function(self)
             self:zoom(0.25):shadowlength(1)

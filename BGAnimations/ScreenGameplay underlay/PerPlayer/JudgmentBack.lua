@@ -36,6 +36,7 @@ for i = 1, 3 do
 end
 
 local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
+local capTimingOffset = GetTimingWindow(mods.ErrorBarCap < NumJudgmentsAvailable() and mods.ErrorBarCap or NumJudgmentsAvailable())
 
 local font = mods.ComboFont
 if font == "Wendy" or font == "Wendy (Cursed)" then
@@ -129,8 +130,9 @@ return Def.ActorFrame{
 		if mods.JudgmentTilt then
 			if tns ~= "Miss" then
 				-- How much to rotate.
-				-- We cap it at Great since anything after likely to be too distracting.
-				local offset = math.min(math.min(math.abs(param.TapNoteOffset), maxTimingOffset) * 300 * mods.TiltMultiplier, 180)
+				-- This is soft capped to the error bar max timing window and hard capped to 180 degrees
+				local extraOffset = (math.abs(param.TapNoteOffset) > capTimingOffset and math.abs(param.TapNoteOffset) - capTimingOffset or 0) * 300 * mods.TiltMultiplier
+				local offset = math.min(math.abs(param.TapNoteOffset), capTimingOffset) * 300 * mods.TiltMultiplier
 				-- Which direction to rotate.
 				local direction = param.TapNoteOffset < 0 and -1 or 1
 				sprite:rotationz(direction * offset)
