@@ -1,6 +1,6 @@
-local offsets, worst_window,
-      pane_width, pane_height,
-		colors = unpack(...)
+local offsets, worst_window, pane_width, pane_height, colors,
+		sum_timing_error, avg_timing_error,
+		sum_timing_offset, avg_offset, std_dev, max_error = unpack(...)
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0
@@ -53,24 +53,6 @@ end
 -- we'll use it to scale the histogram to be an appropriate height
 local highest_offset_count = 0
 
--- sum_timing_error will be used in a loop to sum the total timing error
--- (absolute value) accumulated over the entire stepchart during gameplay
-local sum_timing_error = 0
--- we'll divide sum_timing_error by the number of judgments that occured
--- to get the mean timing error
-local avg_timing_error = 0
-
--- sum_timing_offset will be used in a loop to sum the total timing offset
--- accumulated over the entire stepchart during gameplay
-local sum_timing_offset = 0
--- the average that a player was shifted by the true 0
-local avg_offset = 0
--- the standard deviation of the curve
-local std_dev = 0
-
--- the max error that the a player encountered on any step.
-local max_error = 0
-
 -- ---------------------------------------------
 -- OKAY, TIME TO CALCULATE MEDIAN, MODE, and AVG TIMING ERROR
 
@@ -82,12 +64,6 @@ for k,v in pairs(offsets) do
 	-- if higher, it's the new mode
 	if v > highest_offset_count then
 		highest_offset_count = v
-	end
-
-	-- check if this is the highest error amount
-	-- if higher, it's the new max
-	if math.abs(k) > max_error then
-		max_error = math.abs(k)
 	end
 end
 
@@ -112,36 +88,6 @@ for offset=-worst_window, worst_window, 0.001 do
 	end
 end
 
-if #list > 0 then
-	-- loop through all offsets collected
-	-- take the absolute value (because this offset could be negative)
-	-- and add it to the running measure of total timing error
-	for i=1,#list do
-		sum_timing_offset = sum_timing_offset + list[i]
-		sum_timing_error = sum_timing_error + math.abs(list[i])
-	end
-
-	-- calculate the mean timing error
-	avg_timing_error = sum_timing_error / #list
-
-	-- calculate the mean timing offset
-	avg_offset = sum_timing_offset / #list
-
-	-- standard deviation needs at least two values otherwise we'd divide by 0
-	if #list > 1 then
-		local sum_diff_squared = 0
-		for i=1,#list do
-			sum_diff_squared = sum_diff_squared + math.pow((list[i] - avg_offset), 2)
-		end
-		std_dev = math.sqrt(sum_diff_squared / (#list - 1))
-	end
-
-	-- convert seconds to ms
-	avg_timing_error = avg_timing_error * 1000
-	avg_offset = avg_offset * 1000
-	std_dev = std_dev * 1000
-	max_error = max_error * 1000
-end
 -- ---------------------------------------------
 
 -- ---------------------------------------------
