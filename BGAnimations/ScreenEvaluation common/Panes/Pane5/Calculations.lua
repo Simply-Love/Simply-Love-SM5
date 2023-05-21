@@ -178,7 +178,7 @@ bmts[#bmts+1] = Def.BitmapText{
 -- std_dev value with "ms" label
 bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
-	Text=("%.1fms"):format(std_dev),
+	Text=("%.1fms"):format(std_dev * 3),
 	InitCommand=function(self)
 		self:x(pad + (pane_width-2*pad)/3 * 2):zoom(0.8)
 	end,
