@@ -1,6 +1,5 @@
 local player = ...
 local pn = ToEnumShortString(player)
-local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 
 local TapNoteScores = { Types={'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}, Names={} }
 local tns_string = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
@@ -42,17 +41,15 @@ for i=1, #TapNoteScores.Types do
 	end
 end
 
-if track_missbcheld then
-	t[#t+1] = LoadFont("Common Normal")..{
-		Text=ScreenString("Held"),
-		InitCommand=function(self)
-			self:y(140):zoom(0.6):halign(1)
-				:diffuse( SL.JudgmentColors[SL.Global.GameMode][6] )
-		end,
-		OnCommand=function(self)
-			self:x( miss_bmt:GetX() - miss_bmt:GetWidth()/1.15 )
-		end
-	}
-end
+t[#t+1] = LoadFont("Common Normal")..{
+	Text=ScreenString("Held"),
+	InitCommand=function(self)
+		self:y(140):zoom(0.6):halign(1)
+			:diffuse( SL.JudgmentColors[SL.Global.GameMode][6] )
+	end,
+	OnCommand=function(self)
+		self:x( miss_bmt:GetX() - miss_bmt:GetWidth()/1.15 )
+	end
+}
 
 return t

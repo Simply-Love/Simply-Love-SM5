@@ -1,6 +1,5 @@
 local player = ...
 local pn = ToEnumShortString(player)
-local track_missbcheld = SL[pn].ActiveModifiers.MissBecauseHeld
 
 -- a string representing the NoteSkin the player was using
 local noteskin = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():NoteSkin()
@@ -84,18 +83,16 @@ for i, column in ipairs( cols ) do
 		end
 	end
 
-	if track_missbcheld then
-		-- the number of MissBecauseHeld judgments for this column
-		af[#af+1] = LoadFont("Common Normal")..{
-			Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i].MissBecauseHeld,
-			InitCommand=function(self)
-				self:xy(_x - 1, 144):zoom(0.65):halign(1)
-			end,
-			OnCommand=function(self)
-				self:x( self:GetX() - miss_bmt:GetWidth()/2 )
-			end
-		}
-	end
+	-- the number of MissBecauseHeld judgments for this column
+	af[#af+1] = LoadFont("Common Normal")..{
+		Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i].MissBecauseHeld,
+		InitCommand=function(self)
+			self:xy(_x - 1, 144):zoom(0.65):halign(1)
+		end,
+		OnCommand=function(self)
+			self:x( self:GetX() - miss_bmt:GetWidth()/2 )
+		end
+	}
 end
 
 return af
