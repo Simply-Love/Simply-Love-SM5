@@ -67,7 +67,8 @@ local GetPossibleExScore = function(counts)
 		end
 	end
 
-	return CalculateExScore(player, best_counts)
+	local possible_ex_score, possible_total = CalculateExScore(player, best_counts)
+	return possible_ex_score, possible_total
 end
 
 -- -----------------------------------------------------------------------
@@ -105,9 +106,11 @@ end
 
 bmt.ExCountsChangedMessageCommand=function(self, params)
 	if player == params.Player and mods.ShowEXScore then
-		local actual = params.ExScore
-		local possible = GetPossibleExScore(params.ExCounts)
-		local score = possible - actual
+		local possible_ex_score, current_possible = GetPossibleExScore(params.ExCounts)
+		local total_possible = params.ActualPossible
+		local current_points = params.ActualPoints
+		local dp_lost = current_possible - current_points
+		local score = 100 - math.floor((total_possible-dp_lost) / total_possible * 10000) / 100
 		
 		-- handle floating point equality.
 		if score >= 0.0001 then
