@@ -21,6 +21,8 @@ local permitted_profile_settings = {
 	ComboFont        = "string",
 	HoldJudgment     = "string",
 	BackgroundFilter = "string",
+	NoteFieldOffsetX = "number",
+	NoteFieldOffsetY = "number",
 
 	----------------------------------
 	-- "Advanced Modifiers"
@@ -57,12 +59,9 @@ local permitted_profile_settings = {
 	ErrorBarMultiTick    = "boolean",
 	ErrorBarTrim         = "boolean",
 
-	ShowFaPlusWindow = "boolean",
-	ShowEXScore      = "boolean",
-	ShowFaPlusPane   = "boolean",
-
-	NoteFieldOffsetX = "number",
-	NoteFieldOffsetY = "number",
+	ShowFaPlusWindow     = "boolean",
+	ShowEXScore          = "boolean",
+	ShowFaPlusPane       = "boolean",
 
 	----------------------------------
 	-- Profile Settings without OptionRows
