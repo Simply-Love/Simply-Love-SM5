@@ -61,6 +61,9 @@ local permitted_profile_settings = {
 	ShowEXScore      = "boolean",
 	ShowFaPlusPane   = "boolean",
 
+	NoteFieldOffsetX = "number",
+	NoteFieldOffsetY = "number",
+
 	----------------------------------
 	-- Profile Settings without OptionRows
 	-- these settings are saved per-profile, but are transparently managed by the theme

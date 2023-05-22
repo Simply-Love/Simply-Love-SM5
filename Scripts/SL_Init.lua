@@ -44,6 +44,9 @@ local PlayerDefaults = {
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
 				ShowFaPlusPane = true,
+
+				NoteFieldOffsetX = 0,
+				NoteFieldOffsetY = 0,
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
