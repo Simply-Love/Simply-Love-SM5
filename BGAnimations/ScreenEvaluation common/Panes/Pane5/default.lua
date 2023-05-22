@@ -251,6 +251,7 @@ if next(offsets) ~= nil then
 		histogram = LoadActor(
 				"./Calculations.lua",
 				{
+					pn,
 					offsets,
 					worst_window,
 					pane_width,

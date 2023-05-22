@@ -1,6 +1,7 @@
-local offsets, worst_window, pane_width, pane_height, colors,
+local pn, offsets, worst_window, pane_width, pane_height, colors,
 		sum_timing_error, avg_timing_error,
 		sum_timing_offset, avg_offset, std_dev, max_error = unpack(...)
+local mods = SL[pn].ActiveModifiers
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0
@@ -123,7 +124,15 @@ for offset=-worst_window, worst_window, 0.001 do
 	if math.abs(offset) <= worst_offset then
 		-- scale the highest point on the histogram to be 0.75 times as high as the pane
 		y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
+
 		c = colors[DetermineTimingWindow(offset)]
+
+		if mods.ShowFaPlusPane then
+			abs_offset = math.abs(offset)
+			if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
+				c = SL.JudgmentColors["FA+"][2]
+			end
+		end
 
 		-- the ActorMultiVertex is in "QuadStrip" drawmode, like a series of quads placed next to one another
 		-- each vertex is a table of two tables:

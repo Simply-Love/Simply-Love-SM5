@@ -5,8 +5,10 @@ if GAMESTATE:IsCourseMode() then return end
 -- arguments passed in from Graphs.lua
 local args = ...
 local player = args.player
+local pn = ToEnumShortString(player)
 local GraphWidth = args.GraphWidth
 local GraphHeight = args.GraphHeight
+local mods = SL[pn].ActiveModifiers
 
 -- sequential_offsets gathered in ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
@@ -67,6 +69,14 @@ for t in ivalues(sequential_offsets) do
 
 		-- get the appropriate color from the global SL table
 		c = colors[TimingWindow]
+
+		if mods.ShowFaPlusPane then
+			abs_offset = math.abs(Offset)
+			if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
+				c = SL.JudgmentColors["FA+"][2]
+			end
+		end
+
 		-- get the red, green, and blue values from that color
 		r = c[1]
 		g = c[2]

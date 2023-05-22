@@ -402,7 +402,7 @@ local Overrides = {
 
 			list[1] = mods.ShowFaPlusWindow or false
 			list[2] = mods.ShowEXScore or false
-			list[3] = mods.ShowFaPlusPane or true
+			list[3] = mods.ShowFaPlusPane and true
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
