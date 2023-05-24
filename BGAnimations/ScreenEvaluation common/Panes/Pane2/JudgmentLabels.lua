@@ -80,7 +80,8 @@ for i=1, #TapNoteScores.Types do
 				self:x( (controller == PLAYER_1 and 28) or -28 )
 				if maxCount > 9999 then
 					length = math.floor(math.log10(maxCount)+1)
-					finalPos = 28 - 11*(length-4)
+					modifier = controller == PLAYER_1 and -11*(length-4) or 11*(length-4)
+					finalPos = 28 + modifier
 					finalZoom = 0.833 - 0.1*(length-4)
 					self:x( (controller == PLAYER_1 and finalPos) or -finalPos ):zoom(finalZoom)
 				end
@@ -98,7 +99,8 @@ for i=1, #TapNoteScores.Types do
 					self:x( (controller == PLAYER_1 and 28) or -28 )
 					if maxCount > 9999 then
 						length = math.floor(math.log10(maxCount)+1)
-						finalPos = 28 - 11*(length-4)
+						modifier = controller == PLAYER_1 and -11*(length-4) or 11*(length-4)
+						finalPos = 28 + modifier
 						finalZoom = 0.6 - 0.1*(length-4)
 						self:x( (controller == PLAYER_1 and finalPos) or -finalPos ):zoom(finalZoom)
 					end
