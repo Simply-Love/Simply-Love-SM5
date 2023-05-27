@@ -771,6 +771,14 @@ local Overrides = {
 		Choices = { 0.25, 0.5, 1, 1.5, 2, 2.5, 3 },
 	},
 	-------------------------------------------------------------------------
+	ComboColors = {
+		Choices = { "Glow", "Solid", "Rainbow", "RainbowScroll", "None" }
+	},
+	-------------------------------------------------------------------------
+	ComboMode = {
+		Values = { "FullCombo", "CurrentCombo" }
+	},
+	-------------------------------------------------------------------------
 	ExtraAesthetics = {
 		SelectType = "SelectMultiple",
 		Values = { "JudgmentBack", "ErrorMSDisplay" }

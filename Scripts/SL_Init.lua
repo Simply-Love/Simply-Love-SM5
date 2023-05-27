@@ -60,6 +60,8 @@ local PlayerDefaults = {
 				FlashFantastic = false,
 				
 				TiltMultiplier = 1,
+				ComboColors = "Glow",
+				ComboMode = "FullCombo",
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {

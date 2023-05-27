@@ -5,6 +5,9 @@ local mods = SL[pn].ActiveModifiers
 local available_fonts = GetComboFonts()
 local combo_font = (FindInTable(mods.ComboFont, available_fonts) ~= nil and mods.ComboFont) or available_fonts[1] or nil
 
+local worst_judgment = 1
+local combo_active = false
+
 if mods.HideCombo or combo_font == nil then
 	return Def.Actor{ InitCommand=function(self) self:visible(false) end }
 end
@@ -57,7 +60,24 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	end,
 	ComboCommand=function(self, params)
 		self:settext( params.Combo or params.Misses or "" )
-		self:diffuseshift():effectperiod(0.8):playcommand("Color", params)
+		self:playcommand("Color", params)
+	end,
+	JudgmentMessageCommand=function(self, params)
+		if params.Player ~= player then return end
+		if not params.TapNoteScore then return end
+		if params.HoldNoteScore then return end
+		
+		local tns = ToEnumShortString(params.TapNoteScore)
+		if tns == "AvoidMine" then return end
+		
+		if tns == "Miss" then
+			worst_judgment = 1
+		else
+			worst_judgment = math.max(worst_judgment, string.sub(tns,2,2))
+			if worst_judgment >= 4 then
+				worst_judgment = 1
+			end
+		end
 	end,
 	ColorCommand=function(self, params)
 		-- Though this if/else chain may seem strange (why not reduce it to a single table for quick lookup?)
@@ -78,24 +98,105 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 		-- And so on. While the information is technically true (a FullComboW2 does imply a FullComboW3), the
 		-- explicit presence of all those parameters makes checking truthiness here in the theme a little
 		-- awkward.  We need to explicitly check for W1 first, then W2, then W3, and so on...
+		
+		if mods.ComboColors == "None" then
+			if params.Combo then
+				self:stopeffect():diffuse( Color.White )
+			elseif params.Misses then
+				self:stopeffect():diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
+			end
+		elseif mods.ComboMode == "FullCombo" then
+			if mods.ComboColors == "Rainbow" and not combo_active and params.Combo then
+				combo_active = true
+				if params.FullComboW1 or params.FullComboW2 or params.FullComboW3 then
+					self:rainbow()
+				else
+					self:diffuse(Color.White)
+				end
+			elseif mods.ComboColors == "RainbowScroll" and not combo_active and params.Combo then
+				combo_active = true
+				if params.FullComboW1 or params.FullComboW2 or params.FullComboW3 then
+					self:rainbowscroll(true)
+				else
+					self:diffuse(Color.White):rainbowscroll(false)
+				end
+			elseif mods.ComboColors ~= "Rainbow" and mods.ComboColors ~= "RainbowScroll" then
+				self:diffuseshift():effectperiod(0.8)
+				if params.FullComboW1 then
+					if mods.ComboColors == "Glow" then
+						self:effectcolor1(colors.FullComboW1[1]):effectcolor2(colors.FullComboW1[2])
+					elseif mods.ComboColors == "Solid" then
+						self:stopeffect():diffuse(colors.FullComboW1[2])
+					end
 
-		if params.FullComboW1 then
-			self:effectcolor1(colors.FullComboW1[1]):effectcolor2(colors.FullComboW1[2])
+				elseif params.FullComboW2 then
+					if mods.ComboColors == "Glow" then
+						self:effectcolor1(colors.FullComboW2[1]):effectcolor2(colors.FullComboW2[2])
+					elseif mods.ComboColors == "Solid" then
+						self:stopeffect():diffuse(colors.FullComboW2[2])
+					end
 
-		elseif params.FullComboW2 then
-			self:effectcolor1(colors.FullComboW2[1]):effectcolor2(colors.FullComboW2[2])
+				elseif params.FullComboW3 then
+					if mods.ComboColors == "Glow" then
+						self:effectcolor1(colors.FullComboW3[1]):effectcolor2(colors.FullComboW3[2])
+					elseif mods.ComboColors == "Solid" then
+						self:stopeffect():diffuse(colors.FullComboW3[2])
+					end
 
-		elseif params.FullComboW3 then
-			self:effectcolor1(colors.FullComboW3[1]):effectcolor2(colors.FullComboW3[2])
+				elseif params.FullComboW4 then
+					if mods.ComboColors == "Glow" then
+						self:effectcolor1(colors.FullComboW4[1]):effectcolor2(colors.FullComboW4[2])
+					elseif mods.ComboColors == "Solid" then
+						self:stopeffect():diffuse(colors.FullComboW4[2])
+					end
 
-		elseif params.FullComboW4 then
-			self:effectcolor1(colors.FullComboW4[1]):effectcolor2(colors.FullComboW4[2])
+				elseif params.Combo then
+					self:stopeffect():diffuse( Color.White ) -- not a full combo; no effect, always just #ffffff
 
-		elseif params.Combo then
-			self:stopeffect():diffuse( Color.White ) -- not a full combo; no effect, always just #ffffff
-
-		elseif params.Misses then
-			self:stopeffect():diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
+				elseif not params.Combo then
+					self:stopeffect():rainbowscroll(false):diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
+				end
+			elseif params.Misses then
+				combo_active = false
+				self:stopeffect():diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
+			end
+		elseif mods.ComboMode == "CurrentCombo" then
+			if mods.ComboColors == "Rainbow" and not combo_active and params.Combo then
+				combo_active = true
+				self:rainbow()
+			elseif mods.ComboColors == "RainbowScroll" and not combo_active and params.Combo then
+				combo_active = true
+				self:rainbowscroll(true)
+			elseif mods.ComboColors ~= "Rainbow" and mods.ComboColors ~= "RainbowScroll" then
+				self:diffuseshift():effectperiod(0.8)
+				if not params.Misses then
+					if worst_judgment == 1 then
+						if mods.ComboColors == "Glow" then
+							self:effectcolor1(colors.FullComboW1[1]):effectcolor2(colors.FullComboW1[2])
+						elseif mods.ComboColors == "Solid" then
+							self:stopeffect():diffuse(colors.FullComboW1[2])
+						end
+					elseif worst_judgment == 2 then
+						if mods.ComboColors == "Glow" then
+							self:effectcolor1(colors.FullComboW2[1]):effectcolor2(colors.FullComboW2[2])
+						elseif mods.ComboColors == "Solid" then
+							self:stopeffect():diffuse(colors.FullComboW2[2])
+						end
+					elseif worst_judgment == 3 then
+						if mods.ComboColors == "Glow" then
+							self:effectcolor1(colors.FullComboW3[1]):effectcolor2(colors.FullComboW3[2])
+						elseif mods.ComboColors == "Solid" then
+							self:stopeffect():diffuse(colors.FullComboW3[2])
+						end
+					end
+				else
+					self:stopeffect():diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
+				end
+			elseif not params.Combo then
+				combo_active = false
+				self:stopeffect():rainbowscroll(false):diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000
+			end
+			
 		end
 	end
 }

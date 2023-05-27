@@ -93,6 +93,9 @@ local permitted_profile_settings = {
 	BeatBars			 = "string",
 	TiltMultiplier       = "number",
 	
+	ComboColors			 = "string",
+	ComboMode			 = "string",
+	
 	JudgmentBack         = "boolean",
 	ErrorMSDisplay       = "boolean",
 
