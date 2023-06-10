@@ -27,9 +27,8 @@ spr.CodeMessageCommand=function(self, params)
 		-- so, let's use only the first 10 characters of the title in the screenshot filename
 		title = title:utf8sub(1,10)
 
-		-- some song titles have slashes in them, which is interpreted as a folder in the path as
-		-- screenshot is saved. we'll substitute those slashes with underscores to prevent this.
-		title = title:gsub("/", "_")
+		-- substitute all symbols with underscores to avoid file name conflicts
+		title = title:gsub("%W", "_")
 
 		-- organize screenshots Love into directories, like...
 		--      ./Screenshots/Simply_Love/2020/04-April/DVNO-2020-04-22_175951.png
