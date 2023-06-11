@@ -67,6 +67,23 @@ NumJudgmentsAvailable = function()
 end
 
 -- -----------------------------------------------------------------------
+-- get worst timing judgment hit for a song
+
+GetWorstJudgment = function(offsets)
+	local worst_judgment = 1
+	for i in ivalues(offsets) do
+		if i[2] ~= "Miss" then
+			local judgment = DetermineTimingWindow(i[2])
+			if worst_judgment < judgment then
+				worst_judgment = judgment
+			end
+		end
+	end
+	
+	return worst_judgment
+end
+
+-- -----------------------------------------------------------------------
 -- some common information needed by ScreenSystemOverlay's credit display,
 -- as well as ScreenTitleJoin overlay and ./Scripts/SL-Branches.lua regarding coin credits
 

@@ -25,16 +25,10 @@ local LastSecond = GAMESTATE:GetCurrentSong():GetLastSecond()
 local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 
 -- ---------------------------------------------
--- if players have disabled W4 or W4+W5, there will be a smaller pool
--- of judgments that could have possibly been earned
-local worst_window = GetTimingWindow(NumJudgmentsAvailable())
-local windows = SL.Global.ActiveModifiers.TimingWindows
-for i=NumJudgmentsAvailable(),1,-1 do
-	if windows[i] then
-		worst_window = GetTimingWindow(i)
-		break
-	end
-end
+-- scale worst_window to the worst judgment hit in the song
+-- start at Excellent window as the worst window since most quads are
+-- hard to make sense of visually
+local worst_window = GetTimingWindow(math.max(2, GetWorstJudgment(sequential_offsets)))
 
 -- ---------------------------------------------
 
@@ -70,7 +64,7 @@ for t in ivalues(sequential_offsets) do
 		-- get the appropriate color from the global SL table
 		c = colors[TimingWindow]
 
-		if mods.ShowFaPlusPane then
+		if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
 			abs_offset = math.abs(Offset)
 			if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
 				c = SL.JudgmentColors["FA+"][2]

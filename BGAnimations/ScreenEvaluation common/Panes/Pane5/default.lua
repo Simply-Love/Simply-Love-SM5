@@ -11,6 +11,10 @@ local pane_width, pane_height = 300, 180
 local topbar_height = 26
 local bottombar_height = 13
 
+-- Determine timing windows that need to be covered in the histogram based on worst judgment hit during gameplay
+local num_judgments_available = math.max(3, GetWorstJudgment(sequential_offsets))
+local worst_window = GetTimingWindow(num_judgments_available)
+
 -- ---------------------------------------------
 
 local abbreviations = {
@@ -19,7 +23,7 @@ local abbreviations = {
 }
 
 local colors = {}
-for w=NumJudgmentsAvailable(),1,-1 do
+for w=num_judgments_available,1,-1 do
 	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
@@ -27,22 +31,6 @@ for w=NumJudgmentsAvailable(),1,-1 do
 		colors[w] = DeepCopy(colors[w+1] or SL.JudgmentColors[SL.Global.GameMode][w+1])
 	end
 end
-
--- ---------------------------------------------
--- if players have disabled W5 or W4+W5, there will be a smaller range
--- of judgments that could have possibly been earned
-local num_judgments_available = NumJudgmentsAvailable()
-local worst_window = GetTimingWindow(num_judgments_available)
-local windows = SL.Global.ActiveModifiers.TimingWindows
-
-for i=NumJudgmentsAvailable(),1,-1 do
-	if windows[i]==true then
-		num_judgments_available = i
-		worst_window = GetTimingWindow(i)
-		break
-	end
-end
-
 
 -- ---------------------------------------------
 -- sequential_offsets is a table of all timing offsets in the order they were earned.
