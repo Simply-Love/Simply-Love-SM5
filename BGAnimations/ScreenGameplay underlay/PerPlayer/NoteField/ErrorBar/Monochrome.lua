@@ -41,9 +41,9 @@ local tickDuration = 0.75
 local numTicks = mods.ErrorBarMultiTick and 15 or 1
 local currentTick = 1
 local judgmentToTrim = {
-    TapNoteScore_W3 = mods.ErrorBarTrim and SL.Global.GameMode == "ITG",
-    TapNoteScore_W4 = mods.ErrorBarTrim,
-    TapNoteScore_W5 = mods.ErrorBarTrim
+    TapNoteScore_W3 = mods.ErrorBarTrim == "Excellent" and SL.Global.GameMode == "ITG",
+    TapNoteScore_W4 = (mods.ErrorBarTrim ~= "Off" and SL.Global.GameMode == "ITG") or (mods.ErrorBarTrim == "Excellent" and SL.Global.GameMode == "FA+"),
+    TapNoteScore_W5 = mods.ErrorBarTrim ~= "Off"
 }
 
 local enabledTimingWindows = {}

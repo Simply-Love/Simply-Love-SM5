@@ -551,11 +551,19 @@ local Overrides = {
 	},
 	ErrorBar = {
 		Values = { "None", "Colorful", "Monochrome", "Text" },
+	},-------------------------------------------------------------------------
+	ErrorBarTrim = {
+		Values = { "Off", "Great", "Excellent" },
+		Choices = function()
+			local tns = "TapNoteScore"
+			local t = {THEME:GetString("SLPlayerOptions","Off"), THEME:GetString(tns,"W3"), THEME:GetString(tns,"W2")}
+			return t
+		end,
 	},
 	-------------------------------------------------------------------------
 	ErrorBarOptions = {
 		SelectType = "SelectMultiple",
-		Values = { "ErrorBarUp", "ErrorBarMultiTick", "ErrorBarTrim" },
+		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
