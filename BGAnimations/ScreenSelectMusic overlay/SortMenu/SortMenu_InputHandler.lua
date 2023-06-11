@@ -1,4 +1,7 @@
 local sort_wheel = ...
+
+-- local favorites_set = false
+
 -- this handles user input while in the SortMenu
 local input = function(event)
 	if not (event and event.PlayerNumber and event.button) then
@@ -20,6 +23,7 @@ local input = function(event)
 			local focus = sort_wheel:get_actor_item_at_focus_pos()
 			if focus.kind == "SortBy" then
 				MESSAGEMAN:Broadcast('Sort', { order = focus.sort_by })
+				MESSAGEMAN:Broadcast('ResetHeaderText')
 				overlay:queuecommand("DirectInputToEngine")
 
 				-- the player wants to change modes, for example from ITG to FA+
@@ -91,6 +95,142 @@ local input = function(event)
 					PROFILEMAN:SaveMachineProfile()
 
 					overlay:queuecommand("DirectInputToEngineForSelectProfile")
+				elseif focus.new_overlay == "AddFavorite" then
+					overlay:queuecommand("DirectInputToEngine")
+					if GAMESTATE:GetCurrentSong() ~= nil then
+						local profileSlot = {
+							["PlayerNumber_P1"] = "ProfileSlot_Player1",
+							["PlayerNumber_P2"] = "ProfileSlot_Player2"
+						}
+						local profileDir = PROFILEMAN:GetProfileDir(profileSlot[event.PlayerNumber])
+						local path = profileDir .. "favorites.txt"
+
+						local f = RageFileUtil:CreateRageFile()
+						local songPath = GAMESTATE:GetCurrentSong():GetSongDir():gsub("/Songs/", ""):sub(1, -2)
+						local songTitle = GAMESTATE:GetCurrentSong():GetDisplayMainTitle()
+						local exists = false
+
+						if not FILEMAN:DoesFileExist(path) then
+							if f:Open(path, 2) then
+								f:Write(songPath)
+							end
+						else
+							title_to_path = {}
+							titles = {}
+
+							not_found_paths = {}
+
+							if f:Open(path, 1) then
+								favorites_str = f:Read()
+								f:Close()
+								for foundPath in favorites_str:gmatch("[^\r\n]+") do
+									if #foundPath > 0 then
+										if foundPath == songPath then
+											-- Path already exists in favorites, that means we are
+											-- instead removing it from favorites.
+											exists = true
+										else
+											local song = SONGMAN:FindSong(foundPath)
+											if song ~= nil then
+												foundTitle = song:GetDisplayMainTitle()
+												table.insert(titles, foundTitle)
+												if title_to_path[foundTitle] == nil then
+													title_to_path[foundTitle] = {}
+												end
+												table.insert(title_to_path[foundTitle], foundPath)
+											else
+												-- Still keep track of the paths not found. It's
+												-- possible someone is playing with a USB on a different
+												-- machine which might not have all the content.
+												table.insert(not_found_paths, foundPath)
+											end
+										end
+									end
+								end
+
+								-- If the song path was not found in the favorites, then we are
+								-- adding it.
+								if not exists then
+									table.insert(titles, songTitle)
+									if title_to_path[songTitle] == nil then
+										title_to_path[songTitle] = {}
+									end
+									table.insert(title_to_path[songTitle], songPath)
+								end
+
+								-- Sort the titles and paths so that we always write the
+								-- favorites in a deterministic order.
+								table.sort(titles)
+								for k,v in pairs(title_to_path) do
+									table.sort(v)
+								end
+							end
+
+							local contents = ""
+							for title in ivalues(titles) do
+								for path in ivalues(title_to_path[title]) do
+									if #contents > 0 then
+										contents = contents .. "\n"
+									end
+									contents = contents .. path
+								end
+							end
+
+							for path in ivalues(not_found_paths) do
+								if #contents > 0 then
+									contents = contents .. "\n"
+								end
+								contents = contents .. path
+							end
+
+							if f:Open(path, 2) then
+								f:Write(contents)
+							end
+							MESSAGEMAN:Broadcast("FavoritesChanged", {Player=event.PlayerNumber, SongPath=songPath, Remove=exists} )
+						end
+
+						-- Nudge the wheel a bit so that that the icon is correctly updated.
+						screen:GetMusicWheel():Move(1)
+						screen:GetMusicWheel():Move(-1)
+						screen:GetMusicWheel():Move(0)
+
+						f:Close()
+						f:destroy()
+					end
+				elseif focus.new_overlay == "Favorites" then
+					local profileSlot = {
+						["PlayerNumber_P1"] = "ProfileSlot_Player1",
+						["PlayerNumber_P2"] = "ProfileSlot_Player2"
+					}
+					local profileDir = PROFILEMAN:GetProfileDir(profileSlot[event.PlayerNumber])
+					local pn = ToEnumShortString(event.PlayerNumber)
+					local path = profileDir .. "favorites.txt"
+
+					local favorites_set = false
+					if FILEMAN:DoesFileExist(path) then
+						-- The 2nd argument, isAbsolute, is ITGmania 0.6.0 specific. It
+						-- allows absolute paths to be used for the favorites file which is
+						-- how it works to load from the profile directory.
+						SONGMAN:SetPreferredSongs(path, --[[isAbsolute=]]true)
+						favorites_set = true
+					else
+						SM(ToEnumShortString(event.PlayerNumber).." has no favorites!")
+					end
+
+					if favorites_set then
+						MESSAGEMAN:Broadcast("SetHeaderText", { Text = pn.."  Favorites" })
+						-- Ideally the below should just work, but because of some engine bug,
+						-- we need to reload the screen for the favorites to be correctly
+						-- loaded consistently.
+						-- TODO(teejusb): Fix this in the engine.
+						-- MESSAGEMAN:Broadcast("Sort", { order = "Preferred" })
+						
+						screen:GetMusicWheel():ChangeSort("SortOrder_Preferred")
+						screen:SetNextScreenName("ScreenSelectMusic")
+						screen:StartTransitioningScreen("SM_GoToNextScreen")
+
+					end
+					overlay:queuecommand("DirectInputToEngine")
 				end
 			end
 
