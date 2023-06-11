@@ -29,6 +29,34 @@ end
 local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
 local wscale = barWidth / 2 / maxTimingOffset
 
+local function DisplayTick(self, params)
+    local score = ToEnumShortString(params.TapNoteScore)
+    if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
+        local tick = self:GetChild("Tick" .. currentTick)
+        local bar = self:GetChild("Bar")
+
+        currentTick = currentTick % numTicks + 1
+
+        tick:finishtweening()
+        bar:finishtweening()
+        bar:zoom(1)
+
+        if numTicks > 1 then
+            tick:diffusealpha(1)
+                :x(params.TapNoteOffset * wscale)
+                :sleep(0.03):linear(tickDuration - 0.03)
+                :diffusealpha(0)
+        else
+            tick:diffusealpha(1)
+                :x(params.TapNoteOffset * wscale)
+                :sleep(tickDuration):diffusealpha(0)
+        end
+
+        bar:sleep(tickDuration)
+            :zoom(0)
+    end
+end
+
 -- one way of drawing these quads would be to just draw them centered, back to
 -- front, with the full width of the corresponding window. this would look bad
 -- if we want to alpha blend them though, so i'm drawing the segments
@@ -38,36 +66,35 @@ local af = Def.ActorFrame{
         self:xy(GetNotefieldX(player), layout.y)
         self:GetChild("Bar"):zoom(0)
     end,
+    EarlyHitMessageCommand=function(self, params)
+        if params.Player ~= player then return end
+        if judgmentToTrim[params.TapNoteScore] then return end
+
+        DisplayTick(self, params)
+    end,
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
         if judgmentToTrim[params.TapNoteScore] then return end
 
-        local score = ToEnumShortString(params.TapNoteScore)
-        if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
-            local tick = self:GetChild("Tick" .. currentTick)
-            local bar = self:GetChild("Bar")
+        if params.EarlyTapNoteScore ~= nil then
+            local tns = ToEnumShortString(params.TapNoteScore)
+            local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
 
-            currentTick = currentTick % numTicks + 1
-
-            tick:finishtweening()
-            bar:finishtweening()
-            bar:zoom(1)
-
-            if numTicks > 1 then
-                tick:diffusealpha(1)
-                    :x(params.TapNoteOffset * wscale)
-                    :sleep(0.03):linear(tickDuration - 0.03)
-                    :diffusealpha(0)
-            else
-                tick:diffusealpha(1)
-                    :x(params.TapNoteOffset * wscale)
-                    :sleep(tickDuration):diffusealpha(0)
+            if earlyTns ~= "None" then
+                if SL.Global.GameMode == "FA+" then
+                    if tns == "W5" then
+                        return
+                    end
+                else
+                    if tns == "W4" or tns == "W5" then
+                        return
+                    end
+                end
             end
-
-            bar:sleep(tickDuration)
-                :zoom(0)
         end
+
+        DisplayTick(self, params)
     end,
 }
 
