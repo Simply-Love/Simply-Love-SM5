@@ -90,10 +90,33 @@ local af = Def.ActorFrame{
         self:xy(GetNotefieldX(player), layout.y)
         self:GetChild("Bar"):zoom(0)
     end,
+    EarlyHitMessageCommand=function(self, params)
+        if params.Player ~= player then return end
+        if judgmentToTrim[params.TapNoteScore] then return end
+
+        DisplayTick(self, params)
+    end,
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
         if judgmentToTrim[params.TapNoteScore] then return end
+
+        if params.EarlyTapNoteScore ~= nil then
+            local tns = ToEnumShortString(params.TapNoteScore)
+            local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
+
+            if earlyTns ~= "None" then
+                if SL.Global.GameMode == "FA+" then
+                    if tns == "W5" then
+                        return
+                    end
+                else
+                    if tns == "W4" or tns == "W5" then
+                        return
+                    end
+                end
+            end
+        end
 
         DisplayTick(self, params)
     end,
