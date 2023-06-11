@@ -42,6 +42,9 @@ local PlayerDefaults = {
 				ErrorBarMultiTick = false,
 				ErrorBarTrim = "Off",
 
+				HideEarlyDecentWayOffJudgments = false,
+				HideEarlyDecentWayOffFlash = false,
+
 				TimingWindows = {true, true, true, true, true},
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,

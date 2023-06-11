@@ -82,6 +82,18 @@ for i, column in ipairs( cols ) do
 					if j == #rows then miss_bmt = self end
 				end
 			}
+
+			if judgment == "W4" or judgment == "W5" then
+				af[#af+1] = LoadFont("Common Normal")..{
+					Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i]["Early"][judgment],
+					InitCommand=function(self)
+						self:xy(_x - 1, j*row_height - 6):zoom(0.65):halign(1)
+					end,
+					OnCommand=function(self)
+						self:x( self:GetX() - miss_bmt:GetWidth()/2 )
+					end
+				}
+			end
 		end
 	end
 
