@@ -1,5 +1,6 @@
 local player = ...
 local pn = ToEnumShortString(player)
+local mods = SL[pn].ActiveModifiers
 
 -- a string representing the NoteSkin the player was using
 local noteskin = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():NoteSkin()
@@ -17,6 +18,9 @@ local style_name = style:GetName()
 local num_columns = style:ColumnsPerPlayer()
 
 local rows = { "W1", "W2", "W3", "W4", "W5", "Miss" }
+if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
+	rows = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss" }
+end
 local cols = {}
 
 -- loop num_columns number of time to fill the cols table with
@@ -70,7 +74,8 @@ for i, column in ipairs( cols ) do
 	-- for each possible judgment
 	for j, judgment in ipairs(rows) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
-		if gmods.TimingWindows[j] or j==#rows then
+		-- (GMODS Timing Windows) - Zankoku
+		if gmods.TimingWindows[j] or j==#rows or (mods.ShowFaPlusWindow and mods.ShowFaPlusPane and gmods.TimingWindows[j-1]) then
 			-- add a BitmapText actor to be the number for this column
 			af[#af+1] = LoadFont("Common Normal")..{
 				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
