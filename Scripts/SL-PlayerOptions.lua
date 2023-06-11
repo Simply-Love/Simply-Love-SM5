@@ -597,6 +597,11 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	TimingWindowOptions = {
+		SelectType = "SelectMultiple",
+		Values = { "HideEarlyDecentWayOffJudgments", "HideEarlyDecentWayOffFlash" }
+	},
+	-------------------------------------------------------------------------
 	TimingWindows = {
 		Values = function()
 			return {

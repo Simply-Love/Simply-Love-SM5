@@ -64,6 +64,9 @@ local permitted_profile_settings = {
 	ShowEXScore          = "boolean",
 	ShowFaPlusPane       = "boolean",
 
+	HideEarlyDecentWayOffJudgments = "boolean",
+	HideEarlyDecentWayOffFlash     = "boolean",
+
 	----------------------------------
 	-- Profile Settings without OptionRows
 	-- these settings are saved per-profile, but are transparently managed by the theme
