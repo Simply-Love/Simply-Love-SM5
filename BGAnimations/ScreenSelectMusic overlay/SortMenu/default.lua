@@ -340,6 +340,28 @@ local t = Def.ActorFrame {
 			table.insert(wheel_options, {"NextPlease", "SwitchProfile"})
 		end
 
+		if GAMESTATE:GetCurrentSong() ~= nil then
+			table.insert(wheel_options, {"ImLovinIt", "AddFavorite"})
+		end
+
+		local any_player_has_favorites = false
+		local profileSlot = {
+			["PlayerNumber_P1"] = "ProfileSlot_Player1",
+			["PlayerNumber_P2"] = "ProfileSlot_Player2"
+		}
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local profileDir = PROFILEMAN:GetProfileDir(profileSlot["PlayerNumber_"..ToEnumShortString(player)])
+			local path = profileDir .. "favorites.txt"
+			if FILEMAN:DoesFileExist(path) then
+				any_player_has_favorites = true
+				break
+			end
+		end
+
+		if any_player_has_favorites then
+			table.insert(wheel_options, {"MixTape", "Favorites"})
+		end
+
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
