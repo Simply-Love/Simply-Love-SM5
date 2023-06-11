@@ -17,7 +17,7 @@ local streams, prevMeasure, streamIndex
 local bmt = {}
 
 -- How many streams to "look ahead"
-local lookAhead = mods.HideLookahead and 0 or 2
+local lookAhead = mods.HideLookahead and 0 or 3
 -- If you want to see more than 2 counts in advance, change the 2 to a larger value.
 -- Making the value very large will likely impact fps. -quietly
 
