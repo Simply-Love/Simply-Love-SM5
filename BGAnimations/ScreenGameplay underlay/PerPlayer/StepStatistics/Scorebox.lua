@@ -281,8 +281,8 @@ local af = Def.ActorFrame{
 	},
 	-- SRPG Logo
 	Def.Sprite{
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/logo_main (doubleres).png"),
-		Name="SRPG6Logo",
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/logo_main (doubleres).png"),
+		Name="SRPG7Logo",
 		InitCommand=function(self)
 			self:diffusealpha(0.4):zoom(0.18):diffusealpha(0)
 		end,

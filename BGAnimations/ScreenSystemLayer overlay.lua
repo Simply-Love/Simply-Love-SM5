@@ -3,8 +3,8 @@
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)
-		-- In case we loaded the theme with SRPG6 and had Rainbow Mode enabled, disable it.
-		if ThemePrefs.Get("VisualStyle") == "SRPG6" and ThemePrefs.Get("RainbowMode") == true then
+		-- In case we loaded the theme with SRPG7 and had Rainbow Mode enabled, disable it.
+		if ThemePrefs.Get("VisualStyle") == "SRPG7" and ThemePrefs.Get("RainbowMode") == true then
 			ThemePrefs.Set("RainbowMode", false)
 			ThemePrefs.Save()
 		end
@@ -38,8 +38,8 @@ local function CreditsText( player )
 
 				local screenName = screen:GetName()
 				if screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo" then
-					if ThemePrefs.Get("VisualStyle") == "SRPG6" then
-						textColor = color(SL.SRPG6.TextColor)
+					if ThemePrefs.Get("VisualStyle") == "SRPG7" then
+						textColor = color(SL.SRPG7.TextColor)
 						shadowLength = 0.4
 					end
 				elseif (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
@@ -171,8 +171,8 @@ t[#t+1] = LoadFont("Common Footer")..{
 		local textColor = Color.White
 		local screenName = screen:GetName()
 		if screen ~= nil and (screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo") then
-			if ThemePrefs.Get("VisualStyle") == "SRPG6" then
-				textColor = color(SL.SRPG6.TextColor)
+			if ThemePrefs.Get("VisualStyle") == "SRPG7" then
+				textColor = color(SL.SRPG7.TextColor)
 			end
 		end
 		self:diffuse(textColor)
@@ -351,15 +351,15 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 		local last_active_event = ThemePrefs.Get("LastActiveEvent")
 
 		for event in ivalues(events) do
-			if event["shortName"] == "SRPG6" then
-				-- If we're already on the SRPG6 theme, then set the last_active_event
+			if event["shortName"] == "SRPG7" then
+				-- If we're already on the SRPG7 theme, then set the last_active_event
 				-- if it's not already set to SRPG so that we don't bring up the prompt.
-				if last_active_event ~= "SRPG6" and style == "SRPG6" then
-					ThemePrefs.Set("LastActiveEvent", "SRPG6")
-					last_active_event = "SRPG6"
+				if last_active_event ~= "SRPG7" and style == "SRPG7" then
+					ThemePrefs.Set("LastActiveEvent", "SRPG7")
+					last_active_event = "SRPG7"
 				end
 			
-				if last_active_event ~= "SRPG6" then
+				if last_active_event ~= "SRPG7" then
 					local top_screen = SCREENMAN:GetTopScreen()
 					top_screen:SetNextScreenName("ScreenPromptToSetSrpgVisualStyle"):StartTransitioningScreen("SM_GoToNextScreen")
 					break
@@ -395,8 +395,8 @@ local function DiffuseText(bmt)
 	if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
 		textColor = Color.Black
 	end
-	if ThemePrefs.Get("VisualStyle") == "SRPG6" then
-		textColor = color(SL.SRPG6.TextColor)
+	if ThemePrefs.Get("VisualStyle") == "SRPG7" then
+		textColor = color(SL.SRPG7.TextColor)
 		shadowLength = 0.4
 	end
 

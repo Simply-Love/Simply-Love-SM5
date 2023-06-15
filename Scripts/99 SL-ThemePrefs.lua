@@ -26,14 +26,14 @@ SL_CustomPrefs.Get = function()
 
 	if today >= 20220617 then
 		visualStyleChoices[#visualStyleChoices+1] = "💍"
-		visualStyleValues[#visualStyleValues+1] = "SRPG6"
+		visualStyleValues[#visualStyleValues+1] = "SRPG7"
 	else
 		local prefs = IniFile.ReadFile("/Save/ThemePrefs.ini")
 		local theme = PREFSMAN:GetPreference("Theme")
 		local lastActiveEvent = nil
-		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG6" then
+		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG7" then
 			visualStyleChoices[#visualStyleChoices+1] = "💍"
-			visualStyleValues[#visualStyleValues+1] = "SRPG6"
+			visualStyleValues[#visualStyleValues+1] = "SRPG7"
 		end
 	end
 

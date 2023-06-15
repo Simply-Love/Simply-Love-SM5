@@ -37,10 +37,10 @@ local SharedBackground = {
 }
 
 local StaticBackgroundVideos = {
-	["Unaffiliated"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Fog.mp4"),
-	["Democratic People's Republic of Timing"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Ranni.mp4"),
-	["Footspeed Empire"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Malenia.mp4"),
-	["Stamina Nation"] = THEME:GetPathG("", "_VisualStyles/SRPG6/Melina.mp4"),
+	["Unaffiliated"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Fog.mp4"),
+	["Democratic People's Republic of Timing"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Ranni.mp4"),
+	["Footspeed Empire"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Malenia.mp4"),
+	["Stamina Nation"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Melina.mp4"),
 }
 
 local shared_alpha = 0.6
@@ -50,7 +50,7 @@ local af = Def.ActorFrame {
 	InitCommand=function(self)
 		self:diffusealpha(0)
 		local style = ThemePrefs.Get("VisualStyle")
-		self:visible(style == "SRPG6")
+		self:visible(style == "SRPG7")
 		self.IsShared = true
 	end,
 	OnCommand=function(self)
@@ -59,17 +59,17 @@ local af = Def.ActorFrame {
 	ScreenChangedMessageCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
 		local style = ThemePrefs.Get("VisualStyle")
-		if screen and style == "SRPG6" then
+		if screen and style == "SRPG7" then
 			local static = self:GetChild("Static")
 			local video = self:GetChild("Video")
 			if SharedBackground[screen:GetName()] and not self.IsShared then
 				static:visible(true)
-				video:Load(THEME:GetPathG("", "_VisualStyles/SRPG6/Fog.mp4"))
+				video:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/Fog.mp4"))
 				video:rotationx(180):blend("BlendMode_Add"):diffusealpha(shared_alpha):diffuse(color("#ffffff"))
 				self.IsShared = true
 			end
 			if not SharedBackground[screen:GetName()] and self.IsShared then
-				local faction = SL.SRPG6.GetFactionName(SL.Global.ActiveColorIndex)
+				local faction = SL.SRPG7.GetFactionName(SL.Global.ActiveColorIndex)
 				-- No need to change anything for Unaffiliated.
 				-- We want to keep using the SharedBackground.
 				if faction ~= "Unaffiliated" then
@@ -83,7 +83,7 @@ local af = Def.ActorFrame {
 	end,
 	VisualStyleSelectedMessageCommand=function(self)
 		local style = ThemePrefs.Get("VisualStyle")
-		if style == "SRPG6" then
+		if style == "SRPG7" then
 			self:visible(true)
 		else
 			self:visible(false)
@@ -91,14 +91,14 @@ local af = Def.ActorFrame {
 	end,
 	Def.Sprite {
 		Name="Static",
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/SharedBackground.png"),
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/SharedBackground.png"),
 		InitCommand=function(self)
 			self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h):diffusealpha(shared_alpha)
 		end,
 	},
 	Def.Sprite {
 		Name="Video",
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/Fog.mp4"),
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/Fog.mp4"),
 		InitCommand= function(self)
 			self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h):rotationx(180):blend("BlendMode_Add"):diffusealpha(shared_alpha)
 		end,

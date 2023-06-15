@@ -9,7 +9,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	end
 end
 
-if ThemePrefs.Get("VisualStyle") ~= "SRPG6" then
+if ThemePrefs.Get("VisualStyle") ~= "SRPG7" then
 	local img = failed and "failed text.png" or "cleared text.png"
 
 	return Def.ActorFrame {
@@ -40,15 +40,15 @@ else
 
 	if failed then
 		af[#af+1] = Def.Sprite {
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/YouDied.png"),
+			Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/YouDied.png"),
 			InitCommand=function(self) self:zoom(0.36):diffusealpha(0) end,
 			OnCommand=function(self)
 				self:linear(0.25):diffusealpha(1):linear(2):zoom(0.38):linear(0.25):diffusealpha(0):zoom(0.39)
-				SOUND:PlayOnce(THEME:GetPathS("", "SRPG6-YouDied.ogg"))
+				SOUND:PlayOnce(THEME:GetPathS("", "SRPG7-YouDied.ogg"))
 			end
 		}
 	else
-		local image = THEME:GetPathG("", "_VisualStyles/SRPG6/EnemyFelled.png")
+		local image = THEME:GetPathG("", "_VisualStyles/SRPG7/EnemyFelled.png")
 
 		local bosses = {
 			["e25513cb3c801604"]="LegendFelled.png",
@@ -74,14 +74,14 @@ else
 			local pn = ToEnumShortString(player)
 			local chartHash = SL[pn].Streams.Hash
 			if bosses[chartHash] ~= nil then
-				image = THEME:GetPathG("", "_VisualStyles/SRPG6/"..bosses[chartHash])
+				image = THEME:GetPathG("", "_VisualStyles/SRPG7/"..bosses[chartHash])
 				found_boss = true
 				break
 			end
 		end
 
 		if not found_boss and not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong():GetLastSecond() > 16 * 60 then
-			image = THEME:GetPathG("", "_VisualStyles/SRPG6/GreatEnemyFelled.png")
+			image = THEME:GetPathG("", "_VisualStyles/SRPG7/GreatEnemyFelled.png")
 		end
 
 		af[#af+1] = Def.Sprite {
@@ -89,7 +89,7 @@ else
 			InitCommand=function(self) self:zoomx(0.4):zoomy(0.38):diffusealpha(0) end,
 			OnCommand=function(self)
 				self:linear(0.25):diffusealpha(0.15):decelerate(2):zoomx(0.44):linear(0.25):diffusealpha(0)
-				SOUND:PlayOnce(THEME:GetPathS("", "SRPG6-EnemyFelled.ogg"))
+				SOUND:PlayOnce(THEME:GetPathS("", "SRPG7-EnemyFelled.ogg"))
 			end
 		}
 

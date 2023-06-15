@@ -1,4 +1,4 @@
-SL.SRPG6 = {
+SL.SRPG7 = {
 	Colors = {
 		"#666000",
 		"#3d6526",	-- green (main)
@@ -33,9 +33,9 @@ SL.SRPG6 = {
 		end
 	end,
 	ActivateVisualStyle = function(self)
-		ThemePrefs.Set("VisualStyle", "SRPG6")
+		ThemePrefs.Set("VisualStyle", "SRPG7")
 		ThemePrefs.Set("RainbowMode", false)
-		ThemePrefs.Set("LastActiveEvent", "SRPG6")
+		ThemePrefs.Set("LastActiveEvent", "SRPG7")
 		ThemePrefs.Save()
 
 		MESSAGEMAN:Broadcast("VisualStyleSelected")
