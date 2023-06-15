@@ -94,6 +94,14 @@ SL_CustomPrefs.Get = function()
 			Choices = visualStyleChoices,
 			Values  = visualStyleValues
 		},
+		AllowThemeVideos = {
+			Default = true,
+			Choices = {
+				THEME:GetString("ThemePrefs", "Yes"),
+				THEME:GetString("ThemePrefs", "No")
+			},
+			Values = { true, false }
+		},
 		RainbowMode = {
 			Default = false,
 			Choices = {

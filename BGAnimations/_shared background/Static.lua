@@ -3,83 +3,15 @@
 
 local file = ...
 
--- We want the Shared BG to be used on the following screens.
-local SharedBackground = {
-	["ScreenInit"] = true,
-	["ScreenLogo"] = true,
-	["ScreenTitleMenu"] = true,
-	["ScreenTitleJoin"] = true,
-	["ScreenSelectProfile"] = true,
-	["ScreenAfterSelectProfile"] = true, -- hidden screen
-	["ScreenSelectColor"] = true,
-	["ScreenSelectStyle"] = true,
-	["ScreenSelectPlayMode"] = true,
-	["ScreenSelectPlayMode2"] = true,
-	["ScreenProfileLoad"] = true, -- hidden screen
-
-	-- Operator Menu screens and sub screens.
-	["ScreenOptionsService"] = true,
-	["ScreenSystemOptions"] = true,
-	["ScreenMapControllers"] = true,
-	["ScreenTestInput"] = true,
-	["ScreenInputOptions"] = true,
-	["ScreenGraphicsSoundOptions"] = true,
-	["ScreenVisualOptions"] = true,
-	["ScreenAppearanceOptions"] = true,
-	["ScreenSetBGFit"] = true,
-	["ScreenOverscanConfig"] = true,
-	["ScreenArcadeOptions"] = true,
-	["ScreenAdvancedOptions"] = true,
-	["ScreenMenuTimerOptions"] = true,
-	["ScreenUSBProfileOptions"] = true,
-	["ScreenOptionsManageProfiles"] = true,
-	["ScreenThemeOptions"] = true,
-}
-
-local StaticBackgroundVideos = {
-	["Unaffiliated"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Fog.mp4"),
-	["Democratic People's Republic of Timing"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Ranni.mp4"),
-	["Footspeed Empire"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Malenia.mp4"),
-	["Stamina Nation"] = THEME:GetPathG("", "_VisualStyles/SRPG7/Melina.mp4"),
-}
-
-local shared_alpha = 0.6
-local static_alpha = 1
+local style = ThemePrefs.Get("VisualStyle")
 
 local af = Def.ActorFrame {
 	InitCommand=function(self)
 		self:diffusealpha(0)
-		local style = ThemePrefs.Get("VisualStyle")
 		self:visible(style == "SRPG7")
-		self.IsShared = true
 	end,
 	OnCommand=function(self)
 		self:accelerate(0.8):diffusealpha(1)
-	end,
-	ScreenChangedMessageCommand=function(self)
-		local screen = SCREENMAN:GetTopScreen()
-		local style = ThemePrefs.Get("VisualStyle")
-		if screen and style == "SRPG7" then
-			local static = self:GetChild("Static")
-			local video = self:GetChild("Video")
-			if SharedBackground[screen:GetName()] and not self.IsShared then
-				static:visible(true)
-				video:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/Fog.mp4"))
-				video:rotationx(180):blend("BlendMode_Add"):diffusealpha(shared_alpha):diffuse(color("#ffffff"))
-				self.IsShared = true
-			end
-			if not SharedBackground[screen:GetName()] and self.IsShared then
-				local faction = SL.SRPG7.GetFactionName(SL.Global.ActiveColorIndex)
-				-- No need to change anything for Unaffiliated.
-				-- We want to keep using the SharedBackground.
-				if faction ~= "Unaffiliated" then
-					static:visible(false)
-					video:Load(StaticBackgroundVideos[faction])
-					video:rotationx(0):blend("BlendMode_Normal"):diffusealpha(static_alpha):diffuse(GetCurrentColor(true))
-					self.IsShared = false
-				end
-			end
-		end
 	end,
 	VisualStyleSelectedMessageCommand=function(self)
 		local style = ThemePrefs.Get("VisualStyle")
@@ -90,19 +22,38 @@ local af = Def.ActorFrame {
 		end
 	end,
 	Def.Sprite {
-		Name="Static",
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/SharedBackground.png"),
-		InitCommand=function(self)
-			self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h):diffusealpha(shared_alpha)
-		end,
-	},
-	Def.Sprite {
-		Name="Video",
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/Fog.mp4"),
+		Name="Background",
 		InitCommand= function(self)
-			self:xy(_screen.cx, _screen.cy):zoomto(_screen.w, _screen.h):rotationx(180):blend("BlendMode_Add"):diffusealpha(shared_alpha)
+			local video_allowed = ThemePrefs.Get("AllowThemeVideos")
+			if video_allowed then
+				self:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/BackgroundVideo.mp4"))
+			else
+				self:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/SharedBackground.png"))
+			end
+			self:xy(_screen.cx, _screen.cy)
+			    :zoomto(_screen.h * 16 / 9, _screen.h)
+					:blend("BlendMode_Add")
+					:diffusealpha(0.8)
+					:diffuse(GetCurrentColor(true))
+			self:visible(style == "SRPG7")
 		end,
-	},
+		ColorSelectedMessageCommand=function(self)
+			self:diffuse(GetCurrentColor(true))
+		end,
+		AllowThemeVideoChangedMessageCommand=function(self)
+			local video_allowed = ThemePrefs.Get("AllowThemeVideos")
+			if video_allowed then
+				self:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/BackgroundVideo.mp4"))
+			else
+				self:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/SharedBackground.png"))
+			end
+			self:xy(_screen.cx, _screen.cy)
+			    :zoomto(_screen.h * 16 / 9, _screen.h)
+					:blend("BlendMode_Add")
+					:diffusealpha(0.8)
+					:diffuse(GetCurrentColor(true))
+		end,
+	}
 }
 
 return af

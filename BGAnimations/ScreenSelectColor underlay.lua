@@ -81,7 +81,7 @@ local wheel_item_mt = {
 					subself:diffusealpha(0)
 					subself:zoom(0.25)
 					if style == "SRPG7" then
-						subself:blend("BlendMode_Add")
+						-- subself:blend("BlendMode_Add")
 						subself:zoom(0.35)
 					end
 				end,
