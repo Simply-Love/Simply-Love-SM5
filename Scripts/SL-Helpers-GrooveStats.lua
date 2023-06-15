@@ -447,6 +447,21 @@ ValidForGrooveStats = function(player)
 	-- AutoPlay/AutoplayCPU is not allowed
 	valid[12] = IsHumanPlayer(player)
 
+	local minTNSToScoreNores = ToEnumShortString(PREFSMAN:GetPreference("MinTNSToScoreNotes"))
+
+	if SL.Global.GameMode == "ITG" then
+		-- The cut off for rehits is only allowed to be set to Greats (W3) or worse.
+		-- Anything else is not allowed for GrooveStats submission.
+		-- "invalid" options (like HitMine or something), resolve to TNS_None.
+		valid[13] = minTNSToScoreNores ~= "W1" and minTNSToScoreNores ~= "W2"
+	elseif SL.Global.GameMode == "FA+" then
+		-- In FA+ mode, Greats are set to W4.
+		valid[13] = minTNSToScoreNores ~= "W1" and minTNSToScoreNores ~= "W2" and minTNSToScoreNores ~= "W3"
+	else
+		-- Other game modes are not supported.
+		valid[13] = false
+	end
+
 	-- ------------------------------------------
 	-- return the entire table so that we can let the player know which settings,
 	-- if any, prevented their score from being valid for GrooveStats
