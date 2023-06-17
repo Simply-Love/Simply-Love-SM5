@@ -50,3 +50,4 @@ return ("HTTPS://GROOVESTATS.COM/QR/%s/T%xG%xH%xI%xJ%xK%sL%sM%xH%xT%xR%xT%xM%xT%
         hash, total_steps, fantastic_plus, fantastic, excellent, great, decent, wayOff, miss,
         holds_held, total_holds, rolls_held, total_rolls, mines_hit, total_mines,
         failed, rate, used_cmod, hash_version):upper()
+

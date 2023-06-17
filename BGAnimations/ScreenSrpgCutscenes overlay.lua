@@ -94,8 +94,7 @@ if FILEMAN:DoesFileExist(path) then
   local f = RageFileUtil:CreateRageFile()
   if f:Open(path, 1) then
     local str = f:Read()
-    -- (ITGmania File IO) - Zankoku
-    data = json.decode(str)
+    data = JsonDecode(str)
 
     for faction, t in pairs(data) do
       for video, attr in pairs(t) do
@@ -189,8 +188,7 @@ local af = Def.ActorFrame{
   OffCommand=function(self)
     local f = RageFileUtil.CreateRageFile()
     if f:Open(path, 2) then
-      -- (ITGmania File IO) - Zankoku
-      f:Write(json.encode(data))
+      f:Write(JsonEncode(data))
     end
     f:destroy()
   end,
