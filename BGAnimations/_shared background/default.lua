@@ -28,10 +28,6 @@ af[#af+1] = Def.Quad{
 
 af[#af+1] = LoadActor("./Normal.lua", file)
 af[#af+1] = LoadActor("./RainbowMode.lua", file)
-
-local style = ThemePrefs.Get("VisualStyle")
-if style == "SRPG7" then
-	af[#af+1] = LoadActor("./Static.lua", file)
-end
+af[#af+1] = LoadActor("./Static.lua", file)
 
 return af
