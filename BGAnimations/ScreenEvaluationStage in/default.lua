@@ -164,7 +164,7 @@ else
 			end,
 		}
 	else
-		local image = THEME:GetPathG("", "_VisualStyles/SRPG7/DemigodVanquished.png")
+		local image = THEME:GetPathG("", "_VisualStyles/SRPG7/MonsterVanquished.png")
 
 		local bosses = {
 			["e52ab3c368462981"]="RaidBossVanquished.png",
@@ -197,7 +197,7 @@ else
 		end
 
 		if not found_boss and not GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentSong():GetLastSecond() > 16 * 60 then
-			image = THEME:GetPathG("", "_VisualStyles/SRPG7/DemigodVanquished.png")
+			image = THEME:GetPathG("", "_VisualStyles/SRPG7/HorrorVanquished.png")
 		end
 
 		af[#af+1] = Def.Sprite{
