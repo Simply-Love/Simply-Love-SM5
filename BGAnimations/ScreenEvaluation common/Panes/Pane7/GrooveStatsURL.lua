@@ -19,8 +19,7 @@ local hash_version = SL.GrooveStats.ChartHashVersion
 
 local dec_wo_enabled = (SL.Global.GameMode == "ITG")
 for i = 1, NumJudgmentsAvailable() do
-  -- (GMODS Timing Windows) - Zankoku
-  dec_wo_enabled = dec_wo_enabled and SL.Global.ActiveModifiers.TimingWindows[i]
+  dec_wo_enabled = dec_wo_enabled and SL[pn].ActiveModifiers.TimingWindows[i]
 end
 dec_wo_enabled = dec_wo_enabled and "1" or "0"
 
