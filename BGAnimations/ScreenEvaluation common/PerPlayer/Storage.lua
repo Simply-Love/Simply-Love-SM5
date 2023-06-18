@@ -1,5 +1,6 @@
 local player = ...
 local pn = ToEnumShortString(player)
+local mods = SL[pn].ActiveModifiers
 
 local TNSTypes = {
 	'TapNoteScore_W1',
@@ -32,6 +33,7 @@ return Def.Actor{
 
 		storage.grade = pss:GetGrade()
 		storage.score = pss:GetPercentDancePoints()
+		storage.exscore = CalculateExScore(player)
 		storage.judgments = {
 			W1 = pss:GetTapNoteScores(TNSTypes[1]),
 			W2 = pss:GetTapNoteScores(TNSTypes[2]),
@@ -40,6 +42,12 @@ return Def.Actor{
 			W5 = pss:GetTapNoteScores(TNSTypes[5]),
 			Miss = pss:GetTapNoteScores(TNSTypes[6])
 		}
+		
+		if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
+			local counts = GetExJudgmentCounts(player)
+			storage.judgments.W0 = counts.W0
+			storage.judgments.W1 = counts.W1
+		end
 
 		if GAMESTATE:IsCourseMode() then
 			storage.steps      = GAMESTATE:GetCurrentTrail(player)

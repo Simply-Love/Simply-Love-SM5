@@ -112,9 +112,16 @@ Branch.AfterEvaluationStage = function()
 end
 
 Branch.AfterSelectPlayMode = function()
-	return SelectMusicOrCourse()
+	-- 1/4th chance of playing a cutscene.
+	local rand = math.random(1, 4)
+	if PREFSMAN:GetPreference("EasterEggs") and rand == 1 and
+			ThemePrefs.Get("VisualStyle") == "SRPG7"
+			and SL.Global.GameMode == "ITG" and not GAMESTATE:IsCourseMode() then
+		return "ScreenSrpgCutscenes"
+	else
+		return SelectMusicOrCourse()
+	end
 end
-
 
 Branch.AfterGameplay = function()
 	if THEME:GetMetric("ScreenHeartEntry", "HeartEntryEnabled") then

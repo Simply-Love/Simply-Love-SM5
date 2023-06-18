@@ -8,7 +8,7 @@ local ColorSelected = false
 local NumHeartsToDraw = IsUsingWideScreen() and 11 or 7
 
 local style = ThemePrefs.Get("VisualStyle")
-local colorTable = (style == "SRPG6") and SL.SRPG6.Colors or SL.DecorativeColors
+local colorTable = (style == "SRPG7") and SL.SRPG7.Colors or SL.DecorativeColors
 local factionBmt
 
 local text
@@ -80,8 +80,8 @@ local wheel_item_mt = {
 					self.heart = subself
 					subself:diffusealpha(0)
 					subself:zoom(0.25)
-					if style == "SRPG6" then
-						subself:blend("BlendMode_Add")
+					if style == "SRPG7" then
+						-- subself:blend("BlendMode_Add")
 						subself:zoom(0.35)
 					end
 				end,
@@ -144,9 +144,9 @@ local wheel_item_mt = {
 				self.container:effectmagnitude(0,0,0)
 			end
 
-			if style == "SRPG6" and has_focus then
+			if style == "SRPG7" and has_focus then
 				local idx = self.color_index % #colorTable + 1
-				factionBmt:settext(SL.SRPG6.GetFactionName(idx))
+				factionBmt:settext(SL.SRPG7.GetFactionName(idx))
 			end
 		end,
 
@@ -202,14 +202,14 @@ local t = Def.ActorFrame{
 	wheel:create_actors( "ColorWheel", NumHeartsToDraw, wheel_item_mt, _screen.cx, _screen.cy )
 }
 
-if style == "SRPG6" then
+if style == "SRPG7" then
 	t[#t+1] = Def.BitmapText{
 		Font="Common Normal",
 		Text="Choose your faction!",
 		InitCommand=function(self)
 			self:xy(_screen.cx, 80)
 			self:zoom(1.5)
-			self:diffuse(color(SL.SRPG6.TextColor))
+			self:diffuse(color(SL.SRPG7.TextColor))
 			self:shadowlength(0.5)
 		end
 	}
@@ -222,14 +222,14 @@ if style == "SRPG6" then
 
 			self:xy(_screen.cx, _screen.h - 110)
 			self:zoom(2.0)
-			self:diffuse(color(SL.SRPG6.TextColor))
+			self:diffuse(color(SL.SRPG7.TextColor))
 			self:shadowlength(0.5)
 			self:wrapwidthpixels(150)
 		end
 	}
 end
 
-t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
-t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }
+t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", IsAction=true, SupportPan=false }
+t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", IsAction=true, SupportPan=false }
 
 return t

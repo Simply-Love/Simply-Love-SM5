@@ -21,8 +21,8 @@ local a = Def.Actor{}
 
 a.OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( InputHandler ) end
 a.BeginCommand=function(self)
-	-- In case we switched into SRPG6 and had Rainbow Mode enabled, disable it.
-	if ThemePrefs.Get("VisualStyle") == "SRPG6" and ThemePrefs.Get("RainbowMode") == true then
+	-- In case we switched into SRPG7 and had Rainbow Mode enabled, disable it.
+	if ThemePrefs.Get("VisualStyle") == "SRPG7" and ThemePrefs.Get("RainbowMode") == true then
 		ThemePrefs.Set("RainbowMode", false)
 	end
 	
@@ -41,6 +41,7 @@ a.BeginCommand=function(self)
 	-- Broadcast a message for "./BGAnimations/_shared background/" to listen for in case VisualStyle has changed.
 	-- This compensates for ThemePrefsRows' current lack of support for ExportOnChange() and SaveSelections().
 	MESSAGEMAN:Broadcast("VisualStyleSelected")
+	MESSAGEMAN:Broadcast("AllowThemeVideoChanged")
 end
 
 -- OffCommand() will be called if the player tries to leave the operator menu by choosing an OptionRow

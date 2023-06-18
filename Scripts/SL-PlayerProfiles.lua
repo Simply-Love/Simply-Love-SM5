@@ -21,6 +21,9 @@ local permitted_profile_settings = {
 	ComboFont        = "string",
 	HoldJudgment     = "string",
 	BackgroundFilter = "number",
+	NoteFieldOffsetX = "number",
+	NoteFieldOffsetY = "number",
+	VisualDelay      = "string",
 
 	----------------------------------
 	-- "Advanced Modifiers"
@@ -58,7 +61,6 @@ local permitted_profile_settings = {
 	ColumnFlashOnMiss    = "boolean",
 	SubtractiveScoring   = "boolean",
 	Pacemaker            = "boolean",
-	MissBecauseHeld      = "boolean",
 	TrackEarlyJudgments  = "boolean",
 	NPSGraphAtTop        = "boolean",
 	JudgmentTilt         = "boolean",
@@ -71,13 +73,15 @@ local permitted_profile_settings = {
 	ErrorBarMultiTick    = "boolean",
 	ErrorBarCap    		 = "number",
 
-	ShowFaPlusWindow = "boolean",
-	ShowEXScore      = "boolean",
-	ShowFaPlusPane   = "boolean",
+	ShowFaPlusWindow     = "boolean",
+	ShowEXScore          = "boolean",
+	ShowFaPlusPane       = "boolean",
 	SmallerWhite     = "boolean",
 
+	HideEarlyDecentWayOffJudgments = "boolean",
+	HideEarlyDecentWayOffFlash     = "boolean",
+
 	VisualDelay          = "string",
-	NotefieldShift       = "number",
 	
 	PackBanner           = "boolean",
 	StepInfo             = "boolean",

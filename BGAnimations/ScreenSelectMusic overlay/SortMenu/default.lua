@@ -30,8 +30,6 @@ local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
 local wheel_item_mt = LoadActor("WheelItemMT.lua")
 local sortmenu = { w=210, h=160 }
 
-local hasSong = GAMESTATE:GetCurrentSong() and true or false
-
 local FilterTable = function(arr, func)
 	local new_index = 1
 	local size_orig = #arr
@@ -177,19 +175,6 @@ local t = Def.ActorFrame {
 	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 	-- Figure out which choices to put in the SortWheel based on various current conditions.
 	OnCommand=function(self) self:playcommand("AssessAvailableChoices") end,
-	-- We'll want to (re)assess available choices in the SortMenu if a player late-joins
-	PlayerJoinedMessageCommand=function(self, params) self:queuecommand("AssessAvailableChoices") end,
-	-- We'll also (re)asses if we want to display the leaderboard depending on if we're actually hovering over a song.
-	CurrentSongChangedMessageCommand=function(self)
-		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-			local curSong = GAMESTATE:GetCurrentSong()
-			-- Only reasses if we go from song->group or group->song
-			if (curSong and not hasSong) or (not curSong and hasSong) then
-				self:queuecommand("AssessAvailableChoices")
-			end
-			hasSong = curSong and true or false
-		end
-	end,
 	ShowSortMenuCommand=function(self) self:visible(true) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
 	DirectInputToSortMenuCommand=function(self)
@@ -201,7 +186,7 @@ local t = Def.ActorFrame {
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
-		self:playcommand("ShowSortMenu")
+		self:queuecommand("AssessAvailableChoices"):queuecommand("ShowSortMenu")
 		overlay:playcommand("HideTestInput")
 		overlay:playcommand("HideLeaderboard")
 	end,
@@ -357,6 +342,34 @@ local t = Def.ActorFrame {
 			table.insert(wheel_options, {"NextPlease", "SwitchProfile"})
 		end
 
+		local any_player_has_favorites = false
+		local profileSlot = {
+			["PlayerNumber_P1"] = "ProfileSlot_Player1",
+			["PlayerNumber_P2"] = "ProfileSlot_Player2"
+		}
+		local all_local = true
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local profileDir = PROFILEMAN:GetProfileDir(profileSlot["PlayerNumber_"..ToEnumShortString(player)])
+			local path = profileDir .. "favorites.txt"
+			if FILEMAN:DoesFileExist(path) then
+				any_player_has_favorites = true
+			end
+			if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+				all_local = false
+			end
+		end
+
+		-- TODO(teejusb): Allow players to add favorites for USBs.
+		if all_local then
+			if GAMESTATE:GetCurrentSong() ~= nil then
+				table.insert(wheel_options, {"ImLovinIt", "AddFavorite"})
+			end
+
+			if any_player_has_favorites then
+				table.insert(wheel_options, {"MixTape", "Favorites"})
+			end
+		end
+
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
@@ -427,6 +440,6 @@ local t = Def.ActorFrame {
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
 	sort_wheel:create_actors( "Sort Menu", 7, wheel_item_mt, _screen.cx, _screen.cy )
 }
-t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", SupportPan = false }
-t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", SupportPan = false }
+t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", IsAction=true, SupportPan=false }
+t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", IsAction=true, SupportPan=false }
 return t

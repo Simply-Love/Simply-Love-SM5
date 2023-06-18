@@ -13,7 +13,6 @@ local PlayerDefaults = {
 				Mini = "0%",
 				BackgroundFilter = 0,
 				VisualDelay = "0ms",
-				NotefieldShift = 0,
 
 				HideTargets = false,
 				HideSongBG = false,
@@ -34,7 +33,6 @@ local PlayerDefaults = {
 				ActionOnMissedTarget = "Nothing",
 				Pacemaker = false,
 				LifeMeterType = "Standard",
-				MissBecauseHeld = false,
 				NPSGraphAtTop = false,
 				JudgmentTilt = false,
 				ColumnCues = false,
@@ -46,6 +44,9 @@ local PlayerDefaults = {
 				ErrorBarUp = false,
 				ErrorBarMultiTick = false,
 				ErrorBarCap = 5,
+
+				HideEarlyDecentWayOffJudgments = false,
+				HideEarlyDecentWayOffFlash = false,
 
 				TimingWindows = {true, true, true, true, true},
 				ShowFaPlusWindow = false,
@@ -62,6 +63,9 @@ local PlayerDefaults = {
 				TiltMultiplier = 1,
 				ComboColors = "Glow",
 				ComboMode = "FullCombo",
+
+				NoteFieldOffsetX = 0,
+				NoteFieldOffsetY = 0,
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
@@ -252,6 +256,7 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",
+			MinTNSToScoreNotes=ThemePrefs.Get("RescoreEarlyHits") and "TapNoteScore_W3" or "TapNoteScore_None",
 			HarshHotLifePenalty=true,
 
 			PercentageScoring=true,
@@ -272,6 +277,7 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
+			MinTNSToScoreNotes=ThemePrefs.Get("RescoreEarlyHits") and "TapNoteScore_W4" or "TapNoteScore_None",
 			HarshHotLifePenalty=true,
 
 			PercentageScoring=true,

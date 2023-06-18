@@ -3,7 +3,16 @@ local player, displayProfileNames = unpack(...)
 local LetterGradesAF
 local playerStats
 local steps, meter, difficulty, stepartist, grade, score
-local TNSTypes = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
+local TNSTypes = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
+local Colors = {
+			SL.JudgmentColors["FA+"][1],
+			SL.JudgmentColors["FA+"][2],
+			SL.JudgmentColors["FA+"][3],
+			SL.JudgmentColors["FA+"][4],
+			SL.JudgmentColors["FA+"][5],
+			SL.JudgmentColors["ITG"][5], -- FA+ mode doesn't have a Way Off window. Extract color from the ITG mode.
+			SL.JudgmentColors["FA+"][6],
+		}
 
 -- variables for positioning and horizalign, dependent on playernumber
 local col1x, col2x, gradex, align1, align2
@@ -60,6 +69,10 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-24) end,
 	DrawStageCommand=function(self)
 		if playerStats and score then
+		
+			if playerStats.judgments and playerStats.judgments.W0 then
+				self:zoom(0.48):y(-32)
+			end
 
 			-- trim off the % symbol
 			local score = string.sub(FormatPercentScore(score),1,-2)
@@ -72,6 +85,18 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 			if grade and grade == "Grade_Failed" then
 				self:diffuse(Color.Red)
 			end
+		else
+			self:settext("")
+		end
+	end
+}
+
+--ex score
+af[#af+1] = LoadFont("Common Bold")..{
+	InitCommand=function(self) self:zoom(0.38):horizalign(align1):x(col1x):y(-12) end,
+	DrawStageCommand=function(self)
+		if playerStats and playerStats.judgments and playerStats.judgments.W0 then
+			self:settext(playerStats.exscore):diffuse(Colors[1])
 		else
 			self:settext("")
 		end
@@ -115,6 +140,9 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	DrawStageCommand=function(self)
 		if playerStats and meter then
 			self:diffuse(DifficultyColor(difficulty)):settext(meter)
+			if playerStats.judgments and playerStats.judgments.W0 then
+				self:zoom(0.3):y(5)
+			end
 		else
 			self:settext("")
 		end
@@ -149,19 +177,28 @@ af[#af+1] = Def.ActorProxy{
 
 
 -- numbers
+
 for i=1,#TNSTypes do
 
 	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		InitCommand=function(self)
 			self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 50)
-				:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+				:diffuse( Colors[i] )
 		end,
 		DrawStageCommand=function(self, params)
 			if playerStats and playerStats.judgments then
+				if playerStats.judgments.W0 then
+					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 58):diffuse( Colors[i] )
+				else
+					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 63):diffuse( Colors[i] )
+					if i == 2 then
+						self:diffuse( Colors[1] )
+					end
+				end
 				local val = playerStats.judgments[TNSTypes[i]]
 				if val then self:settext(val) end
 
-				self:visible( playerStats.timingwindows[i] or i==#TNSTypes )
+				self:visible( (i == 1 and playerStats.timingwindows[1]) or playerStats.timingwindows[i-1] or i==#TNSTypes )
 			else
 				self:settext("")
 			end

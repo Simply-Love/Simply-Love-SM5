@@ -11,6 +11,10 @@ local pane_width, pane_height = 300, 180
 local topbar_height = 26
 local bottombar_height = 13
 
+-- Determine timing windows that need to be covered in the histogram based on worst judgment hit during gameplay
+local num_judgments_available = math.max(3, GetWorstJudgment(sequential_offsets))
+local worst_window = GetTimingWindow(num_judgments_available)
+
 -- ---------------------------------------------
 
 local abbreviations = {
@@ -19,7 +23,7 @@ local abbreviations = {
 }
 
 local colors = {}
-for w=NumJudgmentsAvailable(),1,-1 do
+for w=num_judgments_available,1,-1 do
 	if SL[pn].ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
@@ -29,38 +33,37 @@ for w=NumJudgmentsAvailable(),1,-1 do
 end
 
 -- ---------------------------------------------
--- if players have disabled W5 or W4+W5, there will be a smaller range
--- of judgments that could have possibly been earned
-local num_judgments_available = NumJudgmentsAvailable()
-local worst_window = GetTimingWindow(num_judgments_available)
-local windows = SL[pn].ActiveModifiers.TimingWindows
-
-for i=NumJudgmentsAvailable(),1,-1 do
-	if windows[i]==true then
-		num_judgments_available = i
-		worst_window = GetTimingWindow(i)
-		break
-	end
-end
-
-
--- ---------------------------------------------
 -- sequential_offsets is a table of all timing offsets in the order they were earned.
 -- The sequence is important for the Scatter Plot, but irrelevant here; we are only really
 -- interested in how many +0.001 offsets were earned, how many -0.001, how many +0.002, etc.
 -- So, we loop through sequential_offsets, and tally offset counts into a new offsets table.
 local offsets = {}
-local val
+local sum_timing_error = 0
+local avg_timing_error = 0
+local sum_timing_offset = 0
+local avg_offset = 0
+local std_dev = 0
+local max_error = 0
+local count = 0
 
 local max_error = 0 -- Temporary fix for non rounded max error until mainline SL fixes it
 
 for t in ivalues(sequential_offsets) do
 	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
 	-- the second value in t is the offset value or the string "Miss"
-	val = t[2]
+	local val = t[2]
 
 	if val ~= "Miss" then
-		if math.abs(val) > max_error then max_error = math.abs(val) end  -- Temporary fix for non rounded max error until mainline SL fixes it
+		count = count + 1
+
+		-- check if this is the highest error amount
+		-- if higher, it's the new max
+		if math.abs(val) > max_error then
+			max_error = math.abs(val)
+		end
+
+		sum_timing_offset = sum_timing_offset + val
+		sum_timing_error = sum_timing_error + math.abs(val)
 
 		val = (math.floor(val*1000))/1000
 
@@ -70,6 +73,28 @@ for t in ivalues(sequential_offsets) do
 			offsets[val] = offsets[val] + 1
 		end
 	end
+end
+
+if count > 0 then
+	avg_timing_error = sum_timing_error / count
+	avg_offset = sum_timing_offset / count
+	-- standard deviation needs at least two values otherwise we'd divide by 0
+	if count > 1 then
+		local sum_diff_squared = 0
+		for t in ivalues(sequential_offsets) do
+			local val = t[2]
+			if val ~= "Miss" then
+				sum_diff_squared = sum_diff_squared + math.pow((val - avg_offset), 2)
+			end
+		end
+		std_dev = math.sqrt(sum_diff_squared / (count - 1))
+	end
+
+	-- convert seconds to ms
+	avg_timing_error = avg_timing_error * 1000
+	avg_offset = avg_offset * 1000
+	std_dev = std_dev * 1000
+	max_error = max_error * 1000
 end
 
 -- ---------------------------------------------
@@ -219,7 +244,22 @@ if next(offsets) ~= nil then
 	if ComputedData and ComputedData.Histogram then
 		histogram = ComputedData.Histogram
 	else
-		histogram = LoadActor("./Calculations.lua", {offsets, worst_window, pane_width, pane_height, colors, pn, max_error})
+		histogram = LoadActor(
+				"./Calculations.lua",
+				{
+					pn,
+					offsets,
+					worst_window,
+					pane_width,
+					pane_height,
+					colors,
+					sum_timing_error,
+					avg_timing_error,
+					sum_timing_offset,
+					avg_offset,
+					std_dev,
+					max_error
+				})
 		if ComputedData then ComputedData.Histogram = histogram end
 	end
 

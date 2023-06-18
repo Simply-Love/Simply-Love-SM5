@@ -15,6 +15,12 @@ local steps = GAMESTATE:GetCurrentSteps(player)
 ParseChartInfo(steps, pn)
 local hash = SL[pn].Streams.Hash
 
-local qr_version = SL.GrooveStats.ChartHashVersion
+local hash_version = SL.GrooveStats.ChartHashVersion
 
-return ("https://groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s&v=%d"):format(hash, score, failed, rate, qr_version)
+local dec_wo_enabled = (SL.Global.GameMode == "ITG")
+for i = 1, NumJudgmentsAvailable() do
+  dec_wo_enabled = dec_wo_enabled and SL[pn].ActiveModifiers.TimingWindows[i]
+end
+dec_wo_enabled = dec_wo_enabled and "1" or "0"
+
+return ("https://groovestats.com/qr.php?h=%s&s=%s&f=%s&r=%s&v=%d&b=%s"):format(hash, score, failed, rate, hash_version, dec_wo_enabled)

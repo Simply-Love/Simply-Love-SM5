@@ -1,6 +1,7 @@
-local offsets, worst_window,
-      pane_width, pane_height,
-		colors, pn, max_error = unpack(...)
+local pn, offsets, worst_window, pane_width, pane_height, colors,
+		sum_timing_error, avg_timing_error,
+		sum_timing_offset, avg_offset, std_dev, max_error = unpack(...)
+local mods = SL[pn].ActiveModifiers
 
 -- determine which offset was furthest from flawless prior to smoothing
 local worst_offset = 0
@@ -53,24 +54,6 @@ end
 -- we'll use it to scale the histogram to be an appropriate height
 local highest_offset_count = 0
 
--- sum_timing_error will be used in a loop to sum the total timing error
--- (absolute value) accumulated over the entire stepchart during gameplay
-local sum_timing_error = 0
--- we'll divide sum_timing_error by the number of judgments that occured
--- to get the mean timing error
-local avg_timing_error = 0
-
--- sum_timing_offset will be used in a loop to sum the total timing offset
--- accumulated over the entire stepchart during gameplay
-local sum_timing_offset = 0
--- the average that a player was shifted by the true 0
-local avg_offset = 0
--- the standard deviation of the curve
-local std_dev = 0
-
--- the max error that the a player encountered on any step.
---local max_error = 0
-max_error = (math.floor(max_error*100000))/100000
 -- ---------------------------------------------
 -- OKAY, TIME TO CALCULATE MEDIAN, MODE, and AVG TIMING ERROR
 
@@ -83,12 +66,6 @@ for k,v in pairs(offsets) do
 	if v > highest_offset_count then
 		highest_offset_count = v
 	end
-
-	-- check if this is the highest error amount
-	-- if higher, it's the new max
-	-- if math.abs(k) > max_error then
-	-- 	max_error = math.abs(k)
-	-- end
 end
 
 -- transform a key=value table in the format of offset_value=count
@@ -112,36 +89,6 @@ for offset=-worst_window, worst_window, 0.001 do
 	end
 end
 
-if #list > 0 then
-	-- loop through all offsets collected
-	-- take the absolute value (because this offset could be negative)
-	-- and add it to the running measure of total timing error
-	for i=1,#list do
-		sum_timing_offset = sum_timing_offset + list[i]
-		sum_timing_error = sum_timing_error + math.abs(list[i])
-	end
-
-	-- calculate the mean timing error
-	avg_timing_error = sum_timing_error / #list
-
-	-- calculate the mean timing offset
-	avg_offset = sum_timing_offset / #list
-
-	-- standard deviation needs at least two values otherwise we'd divide by 0
-	if #list > 1 then
-		local sum_diff_squared = 0
-		for i=1,#list do
-			sum_diff_squared = sum_diff_squared + math.pow((list[i] - avg_offset), 2)
-		end
-		std_dev = math.sqrt(sum_diff_squared / (#list - 1))
-	end
-
-	-- convert seconds to ms
-	avg_timing_error = avg_timing_error * 1000
-	avg_offset = avg_offset * 1000
-	std_dev = std_dev * 1000
-	max_error = max_error * 1000
-end
 -- ---------------------------------------------
 
 -- ---------------------------------------------
@@ -177,20 +124,13 @@ for offset=-worst_window, worst_window, 0.001 do
 	if math.abs(offset) <= worst_offset then
 		-- scale the highest point on the histogram to be 0.75 times as high as the pane
 		y = -1 * scale(y, 0, highest_offset_count, 0, pane_height*0.75)
-		local TimingWindow = DetermineTimingWindow(offset)
-		c = colors[TimingWindow]
-		local prefs = SL.Preferences["FA+"]
-		local scale = PREFSMAN:GetPreference("TimingWindowScale")
-		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-		if SL[pn].ActiveModifiers.SmallerWhite then
-			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
-		end
-		
-		if TimingWindow == 1 and (SL[pn].ActiveModifiers.ShowFaPlusWindow or SL[pn].ActiveModifiers.SmallerWhite) then
-			if math.abs(offset) > W0 then
-				c = DeepCopy(SL.JudgmentColors["FA+"][2])
-			else
-				c = DeepCopy(SL.JudgmentColors["FA+"][1])
+
+		c = colors[DetermineTimingWindow(offset)]
+
+		if mods.ShowFaPlusPane then
+			abs_offset = math.abs(offset)
+			if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
+				c = SL.JudgmentColors["FA+"][2]
 			end
 		end
 
@@ -247,7 +187,7 @@ bmts[#bmts+1] = Def.BitmapText{
 -- std_dev value with "ms" label
 bmts[#bmts+1] = Def.BitmapText{
 	Font="Common Normal",
-	Text=("%.2fms"):format(std_dev),
+	Text=("%.2fms"):format(std_dev * 3),
 	InitCommand=function(self)
 		self:x(pad + (pane_width-2*pad)/3 * 2):zoom(0.8)
 	end,

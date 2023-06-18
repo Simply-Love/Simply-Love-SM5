@@ -229,21 +229,25 @@ local t = Def.ActorFrame {
 
 	-- sounds
 	LoadActor( THEME:GetPathS("Common", "start") )..{
+		IsAction=true,
 		StartButtonMessageCommand=function(self) self:play() end
 	},
 	LoadActor( THEME:GetPathS("ScreenSelectMusic", "select down") )..{
+		IsAction=true,
 		BackButtonMessageCommand=function(self) self:play() end
 	},
 	LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{
+		IsAction=true,
 		DirectionButtonMessageCommand=function(self)
 			self:play()
 			if invalid_count then invalid_count = 0 end
 		end
 	},
 	LoadActor( THEME:GetPathS("Common", "invalid") )..{
+		IsAction=true,
 		InvalidChoiceMessageCommand=function(self)
 			self:play()
-			if invalid_count then
+			if PREFSMAN:GetPreference("EasterEggs") and invalid_count then
 				invalid_count = invalid_count + 1
 				if invalid_count >= 10 then MESSAGEMAN:Broadcast("What"); invalid_count = nil end
 			end

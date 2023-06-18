@@ -34,8 +34,6 @@ af[#af+1] = LoadActor("./RainbowMode.lua", file)
 if style == "Technique" then
 	af[#af+1] = LoadActor("./technique.lua", file)
 end
-if style == "SRPG6" then
-	af[#af+1] = LoadActor("./Static.lua", file)
-end
+af[#af+1] = LoadActor("./Static.lua", file)
 
 return af

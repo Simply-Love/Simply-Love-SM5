@@ -1,108 +1,78 @@
--- This is used for tracking ITL points on the songwheel
--- TODO: 
--- Maybe load all points at screen load instead of every time the MusicWheelItem loads?
--- Screen needs to reload when new players join or else the layout is messed up
--- Doesn't display anything until you scroll the musicwheel at once
-
--- Notes
--- Works for 16:9, 16:10, 4:3 on 1,2 player and versus mode
--- I'm unsure whether it is readable on a 4:3 CRT
--- Design in 2 player mode could probably be improved
-
 local player = ...
 local pn = ToEnumShortString(player)
 
-local ar = GetScreenAspectRatio()
-
-local profile_slot = {
+local profileSlot = {
 	[PLAYER_1] = "ProfileSlot_Player1",
 	[PLAYER_2] = "ProfileSlot_Player2"
 }
 
-local isFavorite = function(songPath)
-	local playerName = PROFILEMAN:GetPlayerName(pn)
-	
-	local profileDir  = PROFILEMAN:GetProfileDir(profile_slot[player])
+local allFavorites = {}
+
+local LoadFavorites = function()
+  local playerName = PROFILEMAN:GetPlayerName(pn)
+  local profileDir  = PROFILEMAN:GetProfileDir(profileSlot[player])
 	local path = profileDir .. "favorites.txt"
-	
-	local oldDir = THEME:GetCurrentThemeDirectory() .. "Other/"
-	local oldPath = oldDir.. "SongManager " .. playerName .. "-favorites.txt"
-	
+
 	local f = RageFileUtil:CreateRageFile()
-	
-	local isFave = false
+
 	if f:Open(path, 1) then
-		faves = f:Read()
+		favoritesStr = f:Read()
 		f:Close()
+	  f:destroy()
 
-		for line in faves:gmatch('[^\r\n]+') do
+		for line in favoritesStr:gmatch("[^\r\n]+") do
 			if string.len(line) > 0 then
-				if line:find(songPath,1,true) ~= nil then
-					isFave = true
-					break
-				end
-			end
-		end
-	elseif f:Open(oldPath, 1) then
-		faves = f:Read()
-		f:Close()
-
-		for line in faves:gmatch('[^\r\n]+') do
-			if string.len(line) > 0 then
-				if line:find(songPath,1,true) ~= nil then
-					isFave = true
-					break
-				end
+        allFavorites[line] = true
 			end
 		end
 	end
-
-	f:Close()
-	f:destroy()
-
-	return isFave
 end
 
+LoadFavorites()
+
 local af = Def.ActorFrame {
-	InitCommand=function(self)
-	end,
 	PlayerJoinedMessageCommand=function(self, params)
 		if not PROFILEMAN:IsPersistentProfile(params.Player) then
 			GAMESTATE:ResetPlayerOptions(params.Player)
 			SL[ToEnumShortString(params.Player)]:initialize()
 		end
+
 		if pn == nil then
 			player = params.Player
 			pn = ToEnumShortString(player)
 		end
 	end,
-	SetCommand=function(self,params)
+  FavoritesChangedMessageCommand=function(self, params)
+    if params.Player == player then
+      if params.Remove then
+        if allFavorites[params.SongPath] then
+          allFavorites[params.SongPath] = nil
+        end
+      else
+        allFavorites[params.SongPath] = true
+      end
+      
+      self:playcommand("Set", {Song = GAMESTATE:GetCurrentSong(), Type = "Song"})
+    end
+  end,
+	SetCommand=function(self, params)
 		if params.Type == "Song" then
 			local song = params.Song
-			local favorite = isFavorite(song:GetSongDir():gsub("/Songs/", ""))
-			if favorite then
-				self:playcommand("Favorite",{favorite=favorite})
-			else
-				local song = ""
-				if params.Song then song = params.Song:GetDisplayFullTitle() end
-				--SM("Unsetting top " .. pn .. " " .. params.Type .. " " .. params.Text .. " " .. song)
-				self:playcommand("Unset") 
-			end
-		else
-			local song = ""
-			if params.Song then song = params.Song:GetDisplayFullTitle() end
-			--SM("Unsetting bottom " .. pn .. " " .. params.Type .. " " .. params.Text .. " " .. song)
-			self:playcommand("Unset") 
+      local song_path = song:GetSongDir():gsub("/Songs/", ""):sub(1, -2)
+      local isFavorite = allFavorites[song_path] == true
+      self:playcommand("Favorite", {isFavorite = isFavorite})
 		end
 	end
 }
 
 af[#af+1] = Def.Sprite{
 	InitCommand=function(self)
-		self:animate(false):visible(false)
+		self:animate(false):visible(false):x(-20)
 		self:Load( THEME:GetPathG("", "fave-icon.png") )
 	end,
-	FavoriteCommand=function(self,params)
+	FavoriteCommand=function(self, params)
+    self:visible(params.isFavorite)
+
 		self:diffuseshift():effectperiod(0.8)
 		if pn == "P1" then
 			self:effectcolor1(Color.Blue)
@@ -113,8 +83,7 @@ af[#af+1] = Def.Sprite{
 			self:effectcolor2(lerp_color(
 				0.70, color("#ffffff"), color("#ff7777")))
 		end
-		self:visible(params.favorite)
-		self:x(-20)
+
 		if #GAMESTATE:GetHumanPlayers() > 1 then
 			self:zoomto(15,15)
 			self:y(pn == "P1" and -8 or 8)
@@ -122,9 +91,6 @@ af[#af+1] = Def.Sprite{
 			self:zoomto(20,20):y(0)
 		end
 	end,
-	UnsetCommand=function(self)
-		self:visible(false)
-	end
 }
 
 return af

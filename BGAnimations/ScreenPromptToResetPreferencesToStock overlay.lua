@@ -113,6 +113,7 @@ t[#t+1] = choices_af
 
 -- sound effect
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{
+	IsAction=true,
 	DirectionButtonCommand=function(self) self:play() end
 }
 

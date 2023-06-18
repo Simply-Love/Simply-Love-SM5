@@ -556,12 +556,11 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "Pacemaker", "MissBecauseHeld", "TrackEarlyJudgments", "NPSGraphAtTop" }
+			local vals = { "ColumnFlashOnMiss", "Pacemaker", "TrackEarlyJudgments", "NPSGraphAtTop" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
 			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).
 			if not IsUsingWideScreen() then
-				table.remove(vals, 5)
 				table.remove(vals, 4)
 			end
 			return vals
@@ -575,7 +574,7 @@ local Overrides = {
 				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
 			else
 				-- Add in the two removed options if not in WideScreen.
-				vals = { "MissBecauseHeld", "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
+				vals = { "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
 			end
 			return vals
 		end
@@ -591,7 +590,7 @@ local Overrides = {
 		end
 	},
 	ErrorBar = {
-		Values = { "None", "Colorful", "Monochrome", "Text", "Gauge" },
+		Values = { "None", "Colorful", "Monochrome", "Text" },
 	},
 	-------------------------------------------------------------------------
 	ErrorBarOptions = {
@@ -680,6 +679,32 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	VisualDelay = {
+		Choices = function()
+			local first	= -100
+			local last 	= 100
+			local step 	= 1
+			return stringify( range(first, last, step), "%gms")
+		end,
+		ExportOnChange = true,
+		LayoutType = "ShowOneInRow",
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+
+			for i=1,#self.Choices do
+				if list[i] then
+					mods.VisualDelay = self.Choices[i]
+				end
+			end
+			playeroptions:VisualDelay( mods.VisualDelay:gsub("ms","")/1000 )
+		end
+	},
+	-------------------------------------------------------------------------
+	TimingWindowOptions = {
+		SelectType = "SelectMultiple",
+		Values = { "HideEarlyDecentWayOffJudgments", "HideEarlyDecentWayOffFlash" }
+	},
+	-------------------------------------------------------------------------
 	TimingWindows = {
 		Values = function()
 			return {
@@ -749,6 +774,66 @@ local Overrides = {
 							playeroptions:DisableTimingWindow("TimingWindow_W"..i)
 						end
 					end
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
+	NoteFieldOffsetX = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
+		Choices = function()
+			local first	= -50
+			local last 	= 50
+			local step 	= 1
+
+			return range(first, last, step)
+		end,
+		LoadSelections = function(self, list, pn)
+			local val = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetX) or 0
+			for i,v in ipairs(self.Choices) do
+				if v == val then
+					list[i] = true
+					break
+				end
+			end
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			for i,v in ipairs(self.Choices) do
+				if list[i] then
+					SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetX = v
+					break
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
+	NoteFieldOffsetY = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
+		Choices = function()
+			local first	= -50
+			local last 	= 50
+			local step 	= 1
+
+			return range(first, last, step)
+		end,
+		LoadSelections = function(self, list, pn)
+			local val = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetY) or 0
+			for i,v in ipairs(self.Choices) do
+				if v == val then
+					list[i] = true
+					break
+				end
+			end
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			for i,v in ipairs(self.Choices) do
+				if list[i] then
+					SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetY = v
+					break
 				end
 			end
 		end

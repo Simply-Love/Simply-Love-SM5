@@ -24,6 +24,7 @@ local RadarCategories = {
 	x = { P1=-180, P2=218 }
 }
 
+-- TODO(Zankoku) - EX judgments are in storage now, so we shouldn't have to calculate this all over again
 local counts = GetExJudgmentCounts(player)
 
 local t = Def.ActorFrame{

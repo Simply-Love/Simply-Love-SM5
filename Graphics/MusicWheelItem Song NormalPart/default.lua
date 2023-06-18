@@ -21,11 +21,10 @@ af[#af+1] = Def.Sprite{
 	end
 }
 
-for player in ivalues(PlayerNumber) do
-	-- Only use lamps if a profile is found
-	af[#af+1] = LoadActor("GetLamp.lua", player)..{}
-	af[#af+1] = LoadActor("Favorites.lua",player)..{}
-	
+for player in ivalues(PlayerNumber) d
+	af[#af+1] = LoadActor("GetLamp.lua", player)
+	af[#af+1] = LoadActor("Favorites.lua", player)
+
 	-- Add ITL EX scores to the song wheel as well.
 	-- It will be centered to the item if only one player is enabled, and stacked otherwise.
 	af[#af+1] = Def.BitmapText{

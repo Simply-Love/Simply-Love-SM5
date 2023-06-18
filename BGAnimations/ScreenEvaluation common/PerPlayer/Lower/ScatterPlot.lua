@@ -5,8 +5,12 @@ if GAMESTATE:IsCourseMode() then return end
 -- arguments passed in from Graphs.lua
 local args = ...
 local player = args.player
+local pn = ToEnumShortString(player)
 local GraphWidth = args.GraphWidth
 local GraphHeight = args.GraphHeight
+local mods = SL[pn].ActiveModifiers
+
+local pn = ToEnumShortString(player)
 
 local pn = ToEnumShortString(player)
 
@@ -26,16 +30,10 @@ local LastSecond = GAMESTATE:GetCurrentSong():GetLastSecond()
 local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 
 -- ---------------------------------------------
--- if players have disabled W4 or W4+W5, there will be a smaller pool
--- of judgments that could have possibly been earned
-local worst_window = GetTimingWindow(SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].worst_window)
--- local windows = SL[pn].ActiveModifiers.TimingWindows
--- for i=NumJudgmentsAvailable(),1,-1 do
--- 	if windows[i] then
---		worst_window = GetTimingWindow(i)
---		break
---	end
--- end
+-- scale worst_window to the worst judgment hit in the song
+-- start at Excellent window as the worst window since most quads are
+-- hard to make sense of visually
+local worst_window = GetTimingWindow(math.max(2, GetWorstJudgment(sequential_offsets)))
 
 -- ---------------------------------------------
 
@@ -70,23 +68,14 @@ for t in ivalues(sequential_offsets) do
 
 		-- get the appropriate color from the global SL table
 		c = colors[TimingWindow]
-		
-		-- check if color should be adjusted for FA+ window
-		local prefs = SL.Preferences["FA+"]
-		local scale = PREFSMAN:GetPreference("TimingWindowScale")
-		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-		if SL[pn].ActiveModifiers.SmallerWhite then
-			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
-		end
-		
-		if TimingWindow == 1 and (SL[pn].ActiveModifiers.ShowFaPlusWindow or (SL.Global.GameMode == "FA+" and SL[pn].ActiveModifiers.SmallerWhite)) then
-			if math.abs(Offset) > W0 then
-				c = DeepCopy(SL.JudgmentColors["FA+"][2])
-			else
-				c = DeepCopy(SL.JudgmentColors["FA+"][1])
+
+		if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
+			abs_offset = math.abs(Offset)
+			if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
+				c = SL.JudgmentColors["FA+"][2]
 			end
 		end
-		
+
 		-- get the red, green, and blue values from that color
 		r = c[1]
 		g = c[2]
