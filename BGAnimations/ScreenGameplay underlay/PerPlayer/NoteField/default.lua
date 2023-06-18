@@ -27,4 +27,10 @@ af[#af+1] = LoadActor("SubtractiveScoring.lua", player, layout.SubtractiveScorin
 af[#af+1] = LoadActor("ColumnCues.lua", player)
 af[#af+1] = LoadActor("NoteFieldOffset.lua", player)
 
+-- zmod specific elements
+af[#af+1] = LoadActor("./PerPlayer/RunTimer.lua", player, layout.SubtractiveScoring.y, layout.MeasureCounter)
+af[#af+1] = LoadActor("./PerPlayer/BrokenRunCounter.lua", player, layout.MeasureCounter)
+af[#af+1] = LoadActor("./PerPlayer/OffsetDisplay.lua", player)
+af[#af+1] = LoadActor("./PerPlayer/JudgmentBack.lua", player)
+
 return af
