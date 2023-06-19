@@ -179,9 +179,9 @@ for columnIndex=1,numColumns do
 					:x((columnIndex - (numColumns/2 + 0.5)) * (width/numColumns))
 				
 				if IsReversedColumn(player, columnIndex) then
-					self:y(260+mods.NoteFieldOffsetY)
+					self:y(260)
 				else
-					self:y(80+mods.NoteFieldOffsetY)
+					self:y(80)
 				end
 					
 				text = self
