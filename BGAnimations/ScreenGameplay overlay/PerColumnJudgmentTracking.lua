@@ -56,7 +56,7 @@ return Def.Actor{
 					if params.TapNoteOffset < 0 then
 						if tns == "W1" and SL[pn].ActiveModifiers.ShowFaPlusWindow and not IsW0Judgment(params, player) then
 							judgments[col].W1early = judgments[col].W1early + 1
-						elseif tns ~= "W1" then
+						elseif tns ~= "W1" and tns ~= "W0" then
 							judgments[col][tns .. "early"] = judgments[col][tns .. "early"] + 1
 						end
 					end

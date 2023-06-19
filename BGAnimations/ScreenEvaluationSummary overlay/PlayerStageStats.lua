@@ -3,7 +3,7 @@ local player, displayProfileNames = unpack(...)
 local LetterGradesAF
 local playerStats
 local steps, meter, difficulty, stepartist, grade, score
-local TNSTypes = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
+local TNSTypes = { 'W015', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 local Colors = {
 			SL.JudgmentColors["FA+"][1],
 			SL.JudgmentColors["FA+"][2],
@@ -186,8 +186,8 @@ for i=1,#TNSTypes do
 				:diffuse( Colors[i] )
 		end,
 		DrawStageCommand=function(self, params)
-			if playerStats and playerStats.judgments then
-				if playerStats.judgments.W0 then
+			if playerStats and playerStats.ex_counts then
+				if playerStats.ex_counts.W015 then
 					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 58):diffuse( Colors[i] )
 				else
 					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 63):diffuse( Colors[i] )
@@ -195,7 +195,7 @@ for i=1,#TNSTypes do
 						self:diffuse( Colors[1] )
 					end
 				end
-				local val = playerStats.judgments[TNSTypes[i]]
+				local val = playerStats.ex_counts[TNSTypes[i]]
 				if val then self:settext(val) end
 
 				self:visible( (i == 1 and playerStats.timingwindows[1]) or playerStats.timingwindows[i-1] or i==#TNSTypes )

@@ -71,7 +71,7 @@ af[#af+1] = Def.Quad {
 
 -- SRPG logo
 af[#af+1] = Def.Sprite {
-	Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/logo_main (doubleres).png"),
+	Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/logo_main (doubleres).png"),
 	InitCommand=function(self)
 		self:zoom(0.25)
 		self:diffusealpha(0.2)

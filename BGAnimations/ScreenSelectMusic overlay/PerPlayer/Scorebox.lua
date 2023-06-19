@@ -304,7 +304,7 @@ local af = Def.ActorFrame{
 		self:GetChild("Rank4"):visible(true)
 		self:GetChild("Rank5"):visible(true)
 		self:GetChild("GrooveStatsLogo"):stopeffect()
-		self:GetChild("SRPG6Logo"):visible(true)
+		self:GetChild("SRPG7Logo"):visible(true)
 		self:GetChild("ITLLogo"):visible(true)
 		self:GetChild("Outline"):visible(true)
 		self:GetChild("Background"):linear(transition_seconds/2):diffusealpha(1):visible(true)
@@ -486,8 +486,8 @@ local af = Def.ActorFrame{
 	},
 	-- SRPG Logo
 	Def.Sprite{
-		Texture=THEME:GetPathG("", "_VisualStyles/SRPG6/logo_main (doubleres).png"),
-		Name="SRPG6Logo",
+		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/logo_main (doubleres).png"),
+		Name="SRPG7Logo",
 		InitCommand=function(self)
 			self:diffusealpha(0.4):zoom(0.18):diffusealpha(0)
 		end,

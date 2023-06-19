@@ -111,6 +111,9 @@ for i, column in ipairs( cols ) do
 						if judge_bmt[j] ~= nil then
 							self:x( self:GetX() - judge_bmt[j]:GetWidth()/2 )
 						end
+					end,
+				}
+			end
 
 			if judgment == "W4" or judgment == "W5" then
 				af[#af+1] = LoadFont("Common Normal")..{
