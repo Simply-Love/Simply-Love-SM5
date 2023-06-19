@@ -61,6 +61,12 @@ local function DisplayTick(self, params)
         tick:finishtweening()
 
         local color = judgmentColors[params.TapNoteScore] 
+		
+		local offset = params.TapNoteOffset
+		if math.abs(offset) > maxError then
+			if offset < 0 then offset = -maxError
+			else offset = maxError end
+		end
 
         -- Check if we need to adjust the color for the white fantastic window.
         if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and
@@ -70,7 +76,7 @@ local function DisplayTick(self, params)
 
         tick:diffusealpha(1)
             :diffuse(color)
-            :x(params.TapNoteOffset * wscale)
+            :x(offset * wscale)
 
         if numTicks > 1 then
             tick:sleep(0.03):linear(tickDuration - 0.03)
@@ -92,7 +98,6 @@ local af = Def.ActorFrame{
     end,
     EarlyHitMessageCommand=function(self, params)
         if params.Player ~= player then return end
-        if judgmentToTrim[params.TapNoteScore] then return end
 
         DisplayTick(self, params)
     end,

@@ -48,6 +48,27 @@ if mods.ColumnFlashOnMiss then
 	local width = style:GetWidth(player)
 
 	local y_offset = 80
+	
+	FlashColumn=function(self, params)
+		if params.Player == player and (params.Notes or params.Holds) then
+			for i,col in pairs(params.Notes or params.Holds) do
+				local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)
+				if (tns == "Miss" or tns == "MissedHold") and mods.FlashMiss then
+					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+				elseif not FAplus and tns == "W5" and mods.FlashWayOff then
+					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+				elseif (FAplus and tns == "W5" and mods.FlashDecent) or (not FAplus and tns == "W4" and mods.FlashDecent) then
+					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+				elseif (FAplus and tns == "W4" and mods.FlashGreat) or (not FAplus and tns == "W3" and mods.FlashGreat) then
+					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+				elseif (FAplus and tns == "W3" and mods.FlashExcellent) or (not FAplus and tns == "W2" and mods.FlashExcellent) then
+					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+				elseif (FAplus and tns == "W2" and mods.FlashFantastic) or (tns == "W1" and mods.FlashFantastic) then
+					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
+				end
+			end
+		end
+	end
 
 	local af = Def.ActorFrame{
 		InitCommand=function(self)
@@ -61,25 +82,13 @@ if mods.ColumnFlashOnMiss then
 			local zoom_factor = 1 - scale( mods.Mini:gsub("%%","")/100, 0, 2, 0, 1)
 			self:zoomx( zoom_factor )
 		end,
-		JudgmentMessageCommand=function(self, params)
-			if params.Player == player and (params.Notes or params.Holds) then
-				for i,col in pairs(params.Notes or params.Holds) do
-					local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)
-					if (tns == "Miss" or tns == "MissedHold") and mods.FlashMiss then
-						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif not FAplus and tns == "W5" and mods.FlashWayOff then
-						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif (FAplus and tns == "W5" and mods.FlashDecent) or (not FAplus and tns == "W4" and mods.FlashDecent) then
-						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif (FAplus and tns == "W4" and mods.FlashGreat) or (not FAplus and tns == "W3" and mods.FlashGreat) then
-						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif (FAplus and tns == "W3" and mods.FlashExcellent) or (not FAplus and tns == "W2" and mods.FlashExcellent) then
-						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					elseif (FAplus and tns == "W2" and mods.FlashFantastic) or (tns == "W1" and mods.FlashFantastic) then
-						columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
-					end
-				end
+		EarlyHitMessageCommand=function(self, params)
+			if not mods.HideEarlyDecentWayOffFlash then
+				FlashColumn(self, params)
 			end
+		end,
+		JudgmentMessageCommand=function(self, params)
+			FlashColumn(self, params)
 		end
 	}
 

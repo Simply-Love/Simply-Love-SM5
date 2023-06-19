@@ -33,6 +33,12 @@ local function DisplayTick(self, params)
         local bar = self:GetChild("Bar")
 
         currentTick = currentTick % numTicks + 1
+		
+		local offset = params.TapNoteOffset
+		if math.abs(offset) > maxError then
+			if offset < 0 then offset = -maxError
+			else offset = maxError end
+		end
 
         tick:finishtweening()
         bar:finishtweening()
@@ -40,12 +46,12 @@ local function DisplayTick(self, params)
 
         if numTicks > 1 then
             tick:diffusealpha(1)
-                :x(params.TapNoteOffset * wscale)
+                :x(offset * wscale)
                 :sleep(0.03):linear(tickDuration - 0.03)
                 :diffusealpha(0)
         else
             tick:diffusealpha(1)
-                :x(params.TapNoteOffset * wscale)
+                :x(offset * wscale)
                 :sleep(tickDuration):diffusealpha(0)
         end
 
@@ -65,7 +71,6 @@ local af = Def.ActorFrame{
     end,
     EarlyHitMessageCommand=function(self, params)
         if params.Player ~= player then return end
-        if judgmentToTrim[params.TapNoteScore] then return end
 
         DisplayTick(self, params)
     end,
