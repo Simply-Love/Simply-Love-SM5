@@ -163,27 +163,23 @@ t[#t+1] = Def.BitmapText{
 						credits.Credits
 					)
 				end
-
-		local textColor = Color.White
-		local screenName = screen:GetName()
-		if screen ~= nil and (screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo") then
-			if ThemePrefs.Get("VisualStyle") == "SRPG7" then
-				textColor = color(SL.SRPG7.TextColor)
 			end
 
 			local textColor = Color.White
 			local screenName = screen:GetName()
 			if screen ~= nil and (screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo") then
-				if ThemePrefs.Get("VisualStyle") == "SRPG6" then
-					textColor = color(SL.SRPG6.TextColor)
+				if ThemePrefs.Get("VisualStyle") == "SRPG7" then
+					textColor = color(SL.SRPG7.TextColor)
 				end
+
+				self:diffuse(textColor)
 			end
-			self:diffuse(textColor)
 		end
 	end
 }
+
 t[#t+1] = Def.BitmapText{
-	Font=ThemePrefs.Get("ThemeFont") .. " Footer",
+	Font="Common Footer",
 	InitCommand=function(self)
 		self:xy(_screen.cx, _screen.h-16):zoom(0.5):horizalign(center)
 	end,
@@ -226,24 +222,17 @@ t[#t+1] = Def.BitmapText{
 						credits.Credits
 					)
 				end
-
-				self:settext(text)
-
-			elseif GAMESTATE:GetCoinMode() == "CoinMode_Free" then
-				self:settext( THEME:GetString("ScreenSystemLayer", "FreePlay") )
-
-			elseif GAMESTATE:GetCoinMode() == "CoinMode_Home" then
-				self:settext('')
 			end
 
 			local textColor = Color.White
 			local screenName = screen:GetName()
 			if screen ~= nil and (screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo") then
-				if ThemePrefs.Get("VisualStyle") == "SRPG6" then
-					textColor = color(SL.SRPG6.TextColor)
+				if ThemePrefs.Get("VisualStyle") == "SRPG7" then
+					textColor = color(SL.SRPG7.TextColor)
 				end
+
+				self:diffuse(textColor)
 			end
-			self:diffuse(textColor)
 		end
 	end
 }

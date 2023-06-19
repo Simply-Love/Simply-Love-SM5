@@ -71,7 +71,7 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 		if params.HoldNoteScore then return end
 		
 		local tns = ToEnumShortString(params.TapNoteScore)
-		if tns == "AvoidMine" then return end
+		if tns == "AvoidMine" or tns == "HitMine" then return end
 		
 		if tns == "Miss" then
 			worst_judgment = 1

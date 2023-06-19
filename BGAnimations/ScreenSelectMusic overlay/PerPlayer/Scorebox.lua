@@ -401,7 +401,7 @@ local af = Def.ActorFrame{
 				self:GetParent():GetChild("Rank4"):settext(""):visible(false)
 				self:GetParent():GetChild("Rank5"):settext(""):visible(false)
 				self:GetParent():GetChild("GrooveStatsLogo"):diffusealpha(0.5):glowshift({color("#C8FFFF"), color("#6BF0FF")})
-				self:GetParent():GetChild("SRPG6Logo"):diffusealpha(0):visible(false)
+				self:GetParent():GetChild("SRPG7Logo"):diffusealpha(0):visible(false)
 				self:GetParent():GetChild("ITLLogo"):diffusealpha(0):visible(false)
 				self:GetParent():GetChild("Outline"):diffusealpha(0):visible(false)
 				self:GetParent():GetChild("Background"):diffusealpha(0):visible(false)
