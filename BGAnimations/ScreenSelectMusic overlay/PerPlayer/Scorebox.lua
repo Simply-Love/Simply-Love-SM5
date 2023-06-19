@@ -489,7 +489,7 @@ local af = Def.ActorFrame{
 		Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/logo_main (doubleres).png"),
 		Name="SRPG7Logo",
 		InitCommand=function(self)
-			self:diffusealpha(0.4):zoom(0.18):diffusealpha(0)
+			self:diffusealpha(0.4):zoom(0.03):diffusealpha(0)
 		end,
 		LoopScoreboxCommand=function(self)
 			if cur_style == 1 then

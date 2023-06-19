@@ -108,7 +108,7 @@ local SetLeaderboardData = function(eventAf, leaderboardData, event)
 	local entryNum = 1
 	local rivalNum = 1
 	local leaderboard = eventAf:GetChild("Leaderboard")
-	local defaultTextColor = event == "itl" and Color.White or Color.Black
+	local defaultTextColor = event == "itl" and Color.White or Color.White
 
 	-- Hide the rival and self highlights.
 	-- They will be unhidden and repositioned as needed below.
