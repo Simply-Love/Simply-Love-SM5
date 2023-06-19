@@ -6,7 +6,6 @@ local mods = SL[pn].ActiveModifiers
 
 return Def.Actor{
 	OnCommand=function(self)
-		SCREENMAN:GetTopScreen():GetChild("Player"..pn):GetChild("NoteField"):addy(mods.NotefieldShift)
 		if mods.BeatBars == "None" then
 			SL.Metrics["ShowBeatBars"] = false
 		elseif mods.BeatBars == "Measures" then

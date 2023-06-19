@@ -21,7 +21,7 @@ af[#af+1] = Def.Sprite{
 	end
 }
 
-for player in ivalues(PlayerNumber) d
+for player in ivalues(PlayerNumber) do
 	af[#af+1] = LoadActor("GetLamp.lua", player)
 	af[#af+1] = LoadActor("Favorites.lua", player)
 
