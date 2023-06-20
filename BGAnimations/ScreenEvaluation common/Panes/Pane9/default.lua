@@ -20,7 +20,7 @@ pane[#pane+1] = Def.Sprite{
 	Texture=THEME:GetPathG("","_VisualStyles/SRPG7/logo_main (doubleres).png"),
 	Name="SRPG_Logo",
 	InitCommand=function(self)
-		self:zoom(0.5)
+		self:zoom(0.08)
 		self:addx(0):addy(120)
 		self:diffusealpha(0.3)
 	end,
