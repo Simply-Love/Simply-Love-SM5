@@ -73,7 +73,7 @@ af[#af+1] = Def.Quad {
 af[#af+1] = Def.Sprite {
 	Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/logo_main (doubleres).png"),
 	InitCommand=function(self)
-		self:zoom(0.25)
+		self:zoom(0.05)
 		self:diffusealpha(0.2)
 	end
 }
@@ -398,4 +398,4 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	end
 } 
 
-return af2
+return af
