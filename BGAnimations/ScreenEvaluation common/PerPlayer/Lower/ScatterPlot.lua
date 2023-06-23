@@ -17,9 +17,11 @@ local pn = ToEnumShortString(player)
 -- sequential_offsets gathered in ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local death_second = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].DeathSecond
+local MusicRate = SL.Global.ActiveModifiers.MusicRate
 
 -- a table to store the AMV's vertices
-local verts= {}
+-- this will be a table of tables, to get around ActorMultiVertex limitations on D3D renderer
+local vertsTable= {}
 local Steps = GAMESTATE:GetCurrentSteps(player)
 local TimingData = Steps:GetTimingData()
 -- FirstSecond and LastSecond are used in scaling the x-coordinates of the AMV's vertices
@@ -48,7 +50,16 @@ end
 
 -- ---------------------------------------------
 
+vertsTable[#vertsTable+1] = {}
+local stepCount = 0
 for t in ivalues(sequential_offsets) do
+	stepCount = stepCount + 1
+	if stepCount >= 16384 then
+		stepCount = 0
+		vertsTable[#vertsTable+1] = {}
+	end
+	local verts = vertsTable[#vertsTable]
+
 	CurrentSecond = t[1]
 	Offset = t[2]
 
@@ -83,7 +94,7 @@ for t in ivalues(sequential_offsets) do
 
 		-- insert four datapoints into the verts tables, effectively generating a single quadrilateral
 		-- top left,  top right,  bottom right,  bottom left
-		if death_second ~= nil and CurrentSecond > death_second then
+		if death_second ~= nil and CurrentSecond / MusicRate > death_second then
 			table.insert( verts, {{x,y,0}, {r,g,b,0.333}} )
 			table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.333}} )
 			table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.333}} )
@@ -96,7 +107,7 @@ for t in ivalues(sequential_offsets) do
 		end
 	else
 		-- else, a miss should be a quadrilateral that is the height of the entire graph and red
-		if death_second ~= nil and CurrentSecond > death_second then
+		if death_second ~= nil and CurrentSecond / MusicRate > death_second then
 			table.insert( verts, {{x, 0, 0}, color("#ff000033")} )
 			table.insert( verts, {{x+1, 0, 0}, color("#ff000033")} )
 			table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000033")} )
@@ -113,12 +124,17 @@ end
 -- the scatter plot will use an ActorMultiVertex in "Quads" mode
 -- this is more efficient than drawing n Def.Quads (one for each judgment)
 -- because the entire AMV will be a single Actor rather than n Actors with n unique Draw() calls.
-local amv = Def.ActorMultiVertex{
-	InitCommand=function(self) self:x(-GraphWidth/2) end,
-	OnCommand=function(self)
-		self:SetDrawState({Mode="DrawMode_Quads"})
-			:SetVertices(verts)
-	end,
-}
+local af = Def.ActorFrame{}
 
-return amv
+for verts in ivalues(vertsTable) do
+	local amv = Def.ActorMultiVertex{
+		InitCommand=function(self) self:x(-GraphWidth/2) end,
+		OnCommand=function(self)
+			self:SetDrawState({Mode="DrawMode_Quads"})
+				:SetVertices(verts)
+		end,
+	}
+	af[#af+1] = amv
+end
+
+return af
