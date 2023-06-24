@@ -125,7 +125,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 	DrawStageCommand=function(self)
 		if playerStats and meter then
 			self:diffuse(DifficultyColor(difficulty)):settext(meter)
-			if playerStats.judgments and playerStats.judgments.W0 then
+			if playerStats.judgments and playerStats.faplus then
 				self:zoom(0.3):y(5)
 			end
 		else
@@ -172,7 +172,7 @@ for i=1,#TNSTypes do
 		end,
 		DrawStageCommand=function(self, params)
 			if playerStats and playerStats.judgments then
-				if playerStats.judgments.W0 then
+				if playerStats.faplus then
 					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 58):diffuse( Colors[i] )
 				else
 					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 63):diffuse( Colors[i] )
