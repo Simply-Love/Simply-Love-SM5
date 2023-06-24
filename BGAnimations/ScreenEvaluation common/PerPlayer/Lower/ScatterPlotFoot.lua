@@ -126,7 +126,7 @@ end
 -- the scatter plot will use an ActorMultiVertex in "Quads" mode
 -- this is more efficient than drawing n Def.Quads (one for each judgment)
 -- because the entire AMV will be a single Actor rather than n Actors with n unique Draw() calls.
-local af = Def.ActorFrame{}
+local af = Def.ActorFrame{Name="FootPlot"}
 
 for verts in ivalues(vertsTable) do
 	local amv = Def.ActorMultiVertex{
