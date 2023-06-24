@@ -45,8 +45,11 @@ return Def.Actor{
 		
 		if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
 			local counts = GetExJudgmentCounts(player)
-			storage.judgments.W0 = counts.W0
-			storage.judgments.W1 = counts.W1
+			storage.judgments.W0 = counts.W015
+			storage.judgments.W1 = counts.W115
+			storage.faplus = true
+		else
+			storage.faplus = false
 		end
 
 		if GAMESTATE:IsCourseMode() then

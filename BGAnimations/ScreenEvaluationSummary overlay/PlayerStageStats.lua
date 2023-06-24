@@ -3,7 +3,7 @@ local player, displayProfileNames = unpack(...)
 local LetterGradesAF
 local playerStats
 local steps, meter, difficulty, stepartist, grade, score
-local TNSTypes = { 'W015', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
+local TNSTypes = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 local Colors = {
 			SL.JudgmentColors["FA+"][1],
 			SL.JudgmentColors["FA+"][2],
@@ -70,7 +70,7 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	DrawStageCommand=function(self)
 		if playerStats and score then
 		
-			if playerStats.judgments and playerStats.judgments.W0 then
+			if playerStats.faplus then
 				self:zoom(0.48):y(-32)
 			end
 
@@ -95,7 +95,7 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 af[#af+1] = LoadFont("Common Bold")..{
 	InitCommand=function(self) self:zoom(0.38):horizalign(align1):x(col1x):y(-12) end,
 	DrawStageCommand=function(self)
-		if playerStats and playerStats.judgments and playerStats.judgments.W0 then
+		if playerStats and playerStats.faplus then
 			self:settext(playerStats.exscore):diffuse(Colors[1])
 		else
 			self:settext("")
@@ -186,8 +186,8 @@ for i=1,#TNSTypes do
 				:diffuse( Colors[i] )
 		end,
 		DrawStageCommand=function(self, params)
-			if playerStats and playerStats.ex_counts then
-				if playerStats.ex_counts.W015 then
+			if playerStats and playerStats.judgments then
+				if playerStats.faplus then
 					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 58):diffuse( Colors[i] )
 				else
 					self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 63):diffuse( Colors[i] )
@@ -195,8 +195,10 @@ for i=1,#TNSTypes do
 						self:diffuse( Colors[1] )
 					end
 				end
-				local val = playerStats.ex_counts[TNSTypes[i]]
-				if val then self:settext(val) end
+				if i ~= 1 or playerStats.faplus then
+					local val = playerStats.judgments[TNSTypes[i]]
+					if val then self:settext(val) end
+				end
 
 				self:visible( (i == 1 and playerStats.timingwindows[1]) or playerStats.timingwindows[i-1] or i==#TNSTypes )
 			else
