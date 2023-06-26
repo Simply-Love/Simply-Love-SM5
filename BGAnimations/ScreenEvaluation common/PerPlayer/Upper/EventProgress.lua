@@ -138,63 +138,94 @@ af[#af+1] = LoadFont("Common Normal")..{
 	end
 }
 
--- Column 1
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="SkillPointsCol1",
-	InitCommand=function(self)
-		self:zoom(0.8)
-	end,
-	RpgQuestsCommand=function(self,params)
-		-- 2 per row
-		if #params.box_stats > 0 then
-			local rows = math.ceil(#params.box_stats/2)
-			local sp_text = params.box_stats[1]
-			-- There's probably a better way to do this
-			for i=2,rows do
-				if params.box_stats[i*2-1] ~= nil then 
-					sp_text = sp_text .. "\n" .. params.box_stats[i*2-1]
+if not chatModule then
+	-- Column 1
+	af[#af+1] = LoadFont("Common Normal")..{
+		Name="SkillPointsCol1",
+		InitCommand=function(self)
+			self:zoom(0.8)
+		end,
+		RpgQuestsCommand=function(self,params)
+			-- 2 per row
+			if #params.box_stats > 0 then
+				local rows = math.ceil(#params.box_stats/2)
+				local sp_text = params.box_stats[1]
+				-- There's probably a better way to do this
+				for i=2,rows do
+					if params.box_stats[i*2-1] ~= nil then 
+						sp_text = sp_text .. "\n" .. params.box_stats[i*2-1]
+					end
 				end
+				self:settext(sp_text)
+				self:vertspacing(-5)
+				self:vertalign('VertAlign_Top')
+				self:maxwidth(width)
+				startrow = #params.box_progress > 0 and 2 or 1
+				self:xy(chatModule and -20 or -40,-65+rowheight*startrow)
+				self:diffuse(color("0.501,0.501,0.501"))
+
 			end
-			self:settext(sp_text)
-			self:vertspacing(-5)
-			self:vertalign('VertAlign_Top')
-			self:maxwidth(width)
-			startrow = #params.box_progress > 0 and 2 or 1
-			self:xy(-40,-65+rowheight*startrow)
-			self:diffuse(color("0.501,0.501,0.501"))
-
 		end
-	end
-} 
+	} 
 
--- Column 2
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="SkillPointsCol1",
-	InitCommand=function(self)
-		self:zoom(0.8)
-	end,
-	RpgQuestsCommand=function(self,params)
-		-- 2 per row
-		if #params.box_stats > 1 then
-			local rows = math.ceil(#params.box_stats/2)
-			local sp_text = params.box_stats[2]
-			-- There's probably a better way to do this
-			for i=2,rows do
-				if params.box_stats[i*2] ~= nil then 
-					sp_text = sp_text .. "\n" .. params.box_stats[i*2]
+	-- Column 2
+	af[#af+1] = LoadFont("Common Normal")..{
+		Name="SkillPointsCol1",
+		InitCommand=function(self)
+			self:zoom(0.8)
+		end,
+		RpgQuestsCommand=function(self,params)
+			-- 2 per row
+			if #params.box_stats > 1 then
+				local rows = math.ceil(#params.box_stats/2)
+				local sp_text = params.box_stats[2]
+				-- There's probably a better way to do this
+				for i=2,rows do
+					if params.box_stats[i*2] ~= nil then 
+						sp_text = sp_text .. "\n" .. params.box_stats[i*2]
+					end
 				end
+				self:settext(sp_text)
+				self:vertspacing(-5)
+				self:vertalign('VertAlign_Top')
+				startrow = #params.box_progress > 0 and 2 or 1
+				self:xy(chatModule and 20 or 40,-65+rowheight*startrow)
+				self:diffuse(color("0.501,0.501,0.501"))
+
 			end
-			self:settext(sp_text)
-			self:vertspacing(-5)
-			self:vertalign('VertAlign_Top')
-			startrow = #params.box_progress > 0 and 2 or 1
-			self:xy(40,-65+rowheight*startrow)
-			self:diffuse(color("0.501,0.501,0.501"))
-
 		end
-	end
-} 
+	} 	
 
+else
+	-- all in one column since the box is larger. please don't get literally every single stat and multiple quests in one song lol
+	af[#af+1] = LoadFont("Common Normal")..{
+		Name="SkillPointsCol1",
+		InitCommand=function(self)
+			self:zoom(0.8)
+		end,
+		RpgQuestsCommand=function(self,params)
+			if #params.box_stats > 0 then
+				local rows = math.ceil(#params.box_stats)
+				local sp_text = params.box_stats[1]
+				-- There's probably a better way to do this
+				for i=2,rows do
+					if params.box_stats[i] ~= nil then 
+						sp_text = sp_text .. "\n" .. params.box_stats[i]
+					end
+				end
+				self:settext(sp_text)
+				self:vertspacing(-5)
+				self:vertalign('VertAlign_Top')
+				self:maxwidth(width)
+				startrow = #params.box_progress > 0 and 2 or 1
+				self:xy(0,-65+rowheight*startrow)
+				self:diffuse(color("0.501,0.501,0.501"))
+
+			end
+		end
+	} 
+
+end
 
 af[#af+1] = LoadFont("Common Normal")..{
 	Name="QuestText",
@@ -212,7 +243,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 			self:settext(text)
 			self:vertalign('VertAlign_Top')
 			self:vertspacing(-5)
-			startrow = (#params.box_progress > 0 and 2 or 1) + math.ceil(#params.box_stats/2)
+			startrow = (#params.box_progress > 0 and 2 or 1) + (chatModule and math.ceil(#params.box_stats) or math.ceil(#params.box_stats/2))
 			self:y(-65+rowheight*startrow)
 			self:maxwidth(width)
 		end
