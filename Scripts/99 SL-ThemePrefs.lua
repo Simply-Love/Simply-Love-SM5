@@ -61,6 +61,12 @@ SL_CustomPrefs.Get = function()
 			Default = "ITG",
 			Choices = { "ITG", "IIDX" }
 		},
+		SampleMusicLoop =
+		{
+			Default = true,
+			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values  = { true, false }
+		},
 		MusicWheelGS =
 		{
 			Default = "Scorebox",
