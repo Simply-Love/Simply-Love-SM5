@@ -451,13 +451,13 @@ ValidForGrooveStats = function(player)
 	local minTNSToScoreNores = ToEnumShortString(PREFSMAN:GetPreference("MinTNSToScoreNotes"))
 
 	if SL.Global.GameMode == "ITG" then
-		-- The cut off for rehits is only allowed to be set to Greats (W3) or worse.
+		-- The cut off for rehits is only allowed to be set to Decents (W4) or worse.
 		-- Anything else is not allowed for GrooveStats submission.
 		-- "invalid" options (like HitMine or something), resolve to TNS_None.
-		valid[13] = minTNSToScoreNores ~= "W1" and minTNSToScoreNores ~= "W2"
-	elseif SL.Global.GameMode == "FA+" then
-		-- In FA+ mode, Greats are set to W4.
 		valid[13] = minTNSToScoreNores ~= "W1" and minTNSToScoreNores ~= "W2" and minTNSToScoreNores ~= "W3"
+	elseif SL.Global.GameMode == "FA+" then
+		-- In FA+ mode, Decents are set to W5.
+		valid[13] = minTNSToScoreNores ~= "W1" and minTNSToScoreNores ~= "W2" and minTNSToScoreNores ~= "W3" and minTNSToScoreNores ~= "W4"
 	else
 		-- Other game modes are not supported.
 		valid[13] = false
