@@ -18,9 +18,7 @@ local args = {
 				--   https://github.com/stepmania/stepmania/blob/1c869edab5/Docs/Themerdocs/ScreenMessages.txt
 				local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 				pss:FailPlayer()
-				if #GAMESTATE:GetEnabledPlayers() == 1 then
-					SCREENMAN:GetTopScreen():PostScreenMessage("SM_BeginFailed", 0)
-				end
+				SCREENMAN:GetTopScreen():PostScreenMessage("SM_BeginFailed", 0)
 
 			elseif RestartOnMissedTarget then
 				-- EventMode is assumed (i.e. not CoinMode_Pay), so no need to fuss with managing stage counts for SL or SM
