@@ -107,9 +107,36 @@ end
 --    80 Total
 GenerateBreakdownText = function(pn, minimization_level)
 	if #SL[pn].Streams.NotesPerMeasure == 0 then return 'Not available!' end
+	
+	local segments = {}
+	local multiplier = 2
+	
+	local GetDensity = function(segments)
+		local total_stream = 0
+		local total_measures = 0
+		for i, segment in ipairs(segments) do
+			local segment_size = math.floor((segment.streamEnd - segment.streamStart) * multiplier)
+			if not segment.isBreak then total_stream = total_stream + segment_size end
+			total_measures = total_measures + segment_size
+		end
+		return (total_stream / total_measures)
+	end
+	
+	-- Experimental by Zankoku - See if a reasonable breakdown can be generated from 32nds or 24ths
+	segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 32)
+	
+	if #segments == 0 or GetDensity(segments) < 0.2 then
+		multiplier = 1.5
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 24)
+	end
+	
+	if #segments == 0 or GetDensity(segments) < 0.2 then
+		multiplier = 1
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	end
 
 	-- Assume 16ths for the breakdown text
-	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	-- segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
 	local text_segments = {}
 
 	-- The following is used for level 2 and 3 minimization levels.
@@ -143,7 +170,7 @@ GenerateBreakdownText = function(pn, minimization_level)
 	end
 
 	for i, segment in ipairs(segments) do
-		local segment_size = segment.streamEnd - segment.streamStart
+		local segment_size = math.floor((segment.streamEnd - segment.streamStart) * multiplier)
 		if segment.isBreak then
 			if i ~= 1 and i ~= #segments and segment_size <= 3 and (minimization_level == 2 or minimization_level == 3) then
 				-- Don't count this as a true "break"
@@ -202,13 +229,16 @@ GenerateBreakdownText = function(pn, minimization_level)
 			total_sum = total_sum + segment_sum
 		end
 	end
+	
+	local displaybpm = StringifyDisplayBPMs(pn)
+	local endbpm = (multiplier == 1 and "") or " @ " .. (displaybpm * multiplier)
 
 	if minimization_level == 3 then
-		return string.format("%d Total", total_sum)
+		return string.format("%d Total" .. endbpm, total_sum)
 	elseif #text_segments == 0 then
 		return 'No Streams!'
 	else
-		return table.concat(text_segments, '')
+		return table.concat(text_segments, '') .. endbpm
 	end
 end
 

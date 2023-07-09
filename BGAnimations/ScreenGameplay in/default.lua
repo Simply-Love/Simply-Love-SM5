@@ -26,8 +26,8 @@ if GAMESTATE:IsCourseMode() then
 elseif SL.Global.GameplayReloadCheck then
 	SL.Global.Stages.Restarts = SL.Global.Stages.Restarts + 1
 	text = "RESTART " .. tostring(SL.Global.Stages.Restarts)
-elseif string.find(string.upper(GAMESTATE:GetCurrentSong():GetGroupName()), "STAMINA RPG 6") then
-	text = "Stamina RPG 6"
+elseif string.find(string.upper(GAMESTATE:GetCurrentSong():GetGroupName()), "STAMINA RPG 7") then
+	text = "Stamina RPG 7"
 	
 elseif string.find(string.upper(GAMESTATE:GetCurrentSong():GetGroupName()), "ITL ONLINE 2023") then
 	text = "ITL Online 2023"
@@ -90,12 +90,14 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		-- if not SL.Global.GameplayReloadCheck then
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
 		-- end
-		self:zoom(0.4):y(_screen.h-30):diffusealpha(1):sleep(2)
+		
 
 		-- offset "stage i" text to the left or right if only one player is joined, and that player's notefield is centered
 		if #GAMESTATE:GetHumanPlayers() == 1 and GetNotefieldX( GAMESTATE:GetMasterPlayerNumber() ) == _screen.cx then
 			local player = GAMESTATE:GetHumanPlayers()[1]
-			self:x(_screen.cx + (GetNotefieldWidth()*0.5 + self:GetWidth()*0.25) * (player==PLAYER_1 and -1 or 1))
+			self:x(_screen.cx + (GetNotefieldWidth()*0.5 + self:GetWidth()*0.25) * (player==PLAYER_1 and -1 or 1)):zoom(0.4):y(_screen.h-30):diffusealpha(1):sleep(2)
+		else
+			self:zoom(0.4):y(_screen.h-30):diffusealpha(1):sleep(2)
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
