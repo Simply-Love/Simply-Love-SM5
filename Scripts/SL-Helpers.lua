@@ -81,6 +81,12 @@ GetWorstJudgment = function(offsets)
 				worst_judgment = judgment
 			end
 		end
+		if i[6] then
+			local judgment = DetermineTimingWindow(i[7])
+			if worst_judgment < judgment then
+				worst_judgment = judgment
+			end
+		end
 	end
 	
 	return worst_judgment

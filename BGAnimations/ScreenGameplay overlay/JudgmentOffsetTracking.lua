@@ -84,6 +84,7 @@ return Def.Actor{
 			-- Also store the CurMusicSeconds for Evaluation's scatter plot.
 			sequential_offsets[#sequential_offsets+1] = { GAMESTATE:GetCurMusicSeconds(), offset, arrow, isStream, foot, hitEarly, earlyOffset }
 			hitEarly = false
+			earlyOffset = 0
 		end
 	end,
 	OffCommand=function(self)
