@@ -82,6 +82,7 @@ for i=1, #TapNoteScores.Types do
 		t[#t+1] = LoadFont("Common Normal")..{
 			Text=label:upper(),
 			InitCommand=function(self)
+				judge_bmt[i] = self
 				self:zoom(0.8):horizalign(right):maxwidth(65/self:GetZoom())
 					:x( (player == PLAYER_1 and -130) or -28 )
 					:y( i * row_height )
@@ -110,6 +111,24 @@ for i=1, #TapNoteScores.Types do
 					self:x( math.max(-180, judge_bmt[i]:GetX() - judge_bmt[i]:GetWidth()/1.15) )
 				end
 			}
+			
+			if TapNoteScores.Types[i] == 'W4' or TapNoteScores.Types[i] == 'W5' then
+				t[#t+1] = LoadFont("Common Normal")..{
+					Text="(All)",
+					InitCommand=function(self)
+						self:y(140):zoom(0.6):halign(1)
+							:x( (player == PLAYER_1 and -130) or -28 )
+							:y( i * row_height - 10 )
+						if SL[pn].ActiveModifiers.ShowFaPlusWindow and i <= 5 then
+							self:diffuse(SL.JudgmentColors["FA+"][i])
+						elseif SL[pn].ActiveModifiers.ShowFaPlusWindow then
+							self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i-1] )
+						else
+							self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
+						end
+					end
+				}
+			end
 		end
 	end
 end

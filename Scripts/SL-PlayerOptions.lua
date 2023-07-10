@@ -556,7 +556,7 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "Pacemaker", "TrackEarlyJudgments", "NPSGraphAtTop" }
+			local vals = { "ColumnFlashOnMiss", "Pacemaker", "TrackEarlyJudgments", "TrackRecalc", "NPSGraphAtTop" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
 			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).

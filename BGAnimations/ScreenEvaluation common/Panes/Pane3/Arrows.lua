@@ -123,7 +123,7 @@ for i, column in ipairs( cols ) do
 					end,
 					OnCommand=function(self)
 						if track_earlyjudgments then
-							self:x( self:GetX() + miss_bmt:GetWidth()/2 )
+							self:halign(-1):x( self:GetX() )
 						else
 							self:x( self:GetX() - miss_bmt:GetWidth()/2 )
 						end

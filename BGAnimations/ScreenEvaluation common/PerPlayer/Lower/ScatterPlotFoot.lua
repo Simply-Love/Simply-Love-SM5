@@ -67,6 +67,9 @@ for t in ivalues(sequential_offsets) do
 	Offset = t[2]
 	IsStream = t[4]
 	Foot = t[5]
+	
+	EarlyHit = t[6]
+	EarlyOffset = t[7]
 
 	if Offset ~= "Miss" then
 		CurrentSecond = CurrentSecond - Offset
@@ -106,6 +109,27 @@ for t in ivalues(sequential_offsets) do
 			table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.666}} )
 			table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.666}} )
 			table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.666}} )
+		end
+		
+		-- Plot early hits if they are being tracked, at lower opacity
+		if EarlyHit then
+			-- DetermineTimingWindow() is defined in ./Scripts/SL-Helpers.lua
+			TimingWindow = DetermineTimingWindow(EarlyOffset)
+			y = scale(EarlyOffset, worst_window, -worst_window, 0, GraphHeight)
+
+			-- insert four datapoints into the verts tables, effectively generating a single quadrilateral
+			-- top left,  top right,  bottom right,  bottom left
+			if death_second ~= nil and CurrentSecond / MusicRate > death_second then
+				table.insert( verts, {{x,y,0}, {r,g,b,0.15}} )
+				table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.15}} )
+				table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.15}} )
+				table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.15}} )
+			else
+				table.insert( verts, {{x,y,0}, {r,g,b,0.3}} )
+				table.insert( verts, {{x+1.5,y,0}, {r,g,b,0.3}} )
+				table.insert( verts, {{x+1.5,y+1.5,0}, {r,g,b,0.3}} )
+				table.insert( verts, {{x,y+1.5,0}, {r,g,b,0.3}} )
+			end
 		end
 	else
 		-- else, a miss should be a quadrilateral that is the height of the entire graph and red
