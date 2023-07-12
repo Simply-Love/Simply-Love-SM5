@@ -19,6 +19,7 @@ local permitted_profile_settings = {
 	NoteSkin         = "string",
 	JudgmentGraphic  = "string",
 	ComboFont        = "string",
+	HeldGraphic      = "string",
 	HoldJudgment     = "string",
 	BackgroundFilter = "number",
 	NoteFieldOffsetX = "number",

@@ -541,6 +541,19 @@ GetHoldJudgments = function()
 	return hold_graphics
 end
 
+GetHeldMissGraphics = function()
+	local path = THEME:GetCurrentThemeDirectory().."Graphics/_HeldMiss/"
+	local files = FILEMAN:GetDirListing(path)
+	local held_miss = {}
+
+	for i,filename in ipairs(files) do
+			table.insert(held_miss, filename)
+	end
+	held_miss[#held_miss+1] = "None"
+
+	return held_miss
+end
+
 
 -- -----------------------------------------------------------------------
 -- GetComboFonts returns a table of strings that match valid ComboFonts for use in Gameplay

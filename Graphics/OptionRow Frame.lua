@@ -114,7 +114,7 @@ t[#t+1] = Def.Quad {
 -- in the hours to implement a proper fix and the community will surely be better for it. :)
 -- -----------------------------------------------------------------------
 
-local rows_with_proxies = { "NoteSkin", "JudgmentGraphic", "ComboFont", "HoldJudgment", "MusicRate" }
+local rows_with_proxies = { "NoteSkin", "JudgmentGraphic", "HeldGraphic", "ComboFont", "HoldJudgment", "MusicRate" }
 
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)

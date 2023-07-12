@@ -232,6 +232,7 @@ local t = Def.ActorFrame{
 -- and referred to as needed via ActorProxy in ./Graphics/OptionRow Frame.lua
 LoadActor("./OptionRowPreviews/NoteSkin.lua", t)
 LoadActor("./OptionRowPreviews/JudgmentGraphic.lua", t)
+LoadActor("./OptionRowPreviews/HeldGraphic.lua", t)
 LoadActor("./OptionRowPreviews/ComboFont.lua", t)
 LoadActor("./OptionRowPreviews/HoldJudgment.lua", t)
 LoadActor("./OptionRowPreviews/MusicRate.lua", t)
