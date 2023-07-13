@@ -54,7 +54,7 @@ vertsTable[#vertsTable+1] = {}
 local stepCount = 0
 for t in ivalues(sequential_offsets) do
 	stepCount = stepCount + 1
-	if stepCount >= 16384 then
+	if stepCount >= 8192 then
 		stepCount = 0
 		vertsTable[#vertsTable+1] = {}
 	end
