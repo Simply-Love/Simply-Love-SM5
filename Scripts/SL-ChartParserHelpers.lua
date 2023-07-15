@@ -123,11 +123,13 @@ GenerateBreakdownText = function(pn, minimization_level)
 	end
 	
 	-- Experimental by Zankoku - See if a reasonable breakdown can be generated from 32nds or 24ths
-	segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 32)
-	
-	if #segments == 0 or GetDensity(segments) < 0.2 then
-		multiplier = 1.5
-		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 24)
+	if GetDisplayBPMs(pn)[1] == GetDisplayBPMs(pn)[2] then
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 32)
+		
+		if #segments == 0 or GetDensity(segments) < 0.2 then
+			multiplier = 1.5
+			segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 24)
+		end
 	end
 	
 	if #segments == 0 or GetDensity(segments) < 0.2 then
@@ -230,8 +232,8 @@ GenerateBreakdownText = function(pn, minimization_level)
 		end
 	end
 	
-	local displaybpm = StringifyDisplayBPMs(pn)
-	local endbpm = (multiplier == 1 and "") or " @ " .. (displaybpm * multiplier)
+	local displaybpm = GetDisplayBPMs(pn)[1]
+	local endbpm = (multiplier == 1 and "") or " @ " .. math.floor(displaybpm * multiplier)
 
 	if minimization_level == 3 then
 		return string.format("%d Total" .. endbpm, total_sum)
