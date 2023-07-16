@@ -108,8 +108,7 @@ if FILEMAN:DoesFileExist(path) then
   f:destroy()
 end
 
-local idx = (SL.Global.ActiveColorIndex % #SL.SRPG7.Colors) + 1
-local factionName = SL.SRPG7.GetFactionName(idx)
+local factionName = SL.SRPG7.GetFactionName(SL.Global.ActiveColorIndex)
 
 -- Select a random cutscene that hasn't previously been shown.
 local cutscenes = {}
