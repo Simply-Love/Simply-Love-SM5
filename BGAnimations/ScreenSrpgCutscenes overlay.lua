@@ -72,7 +72,7 @@ local data = {
     },
     ["Before"] = {
       shown = false,
-      time = 9,
+      time = 16,
     },
     ["Begone"] = {
       shown = false,
@@ -80,11 +80,11 @@ local data = {
     },
     ["Heyman"] = {
       shown = false,
-      time = 13,
+      time = 7,
     },
     ["Neutral"] = {
       shown = false,
-      time = 16,
+      time = 13,
     },
   }
 }
