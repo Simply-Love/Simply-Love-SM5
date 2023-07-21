@@ -153,6 +153,7 @@ return function(event)
 				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("FootPlot"):visible(active_graph[cn] == 3)
 				af:GetChild("P" .. cn .. "_AF_Lower"):GetChild("ArrowGraph"):GetChild("Feet"):visible(active_graph[cn] == 3)
 			end
+			panes[cn][2]:playcommand("Graph", {graph=active_graph[cn]})
 			panes[cn][3]:playcommand("Graph", {graph=active_graph[cn]})
 		end
 		
