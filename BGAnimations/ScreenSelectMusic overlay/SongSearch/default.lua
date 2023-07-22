@@ -131,6 +131,7 @@ local songDetails = {
 	{ "Pack", function(song) return song:GetGroupName() end },
 	{ "Song", function(song) return song:GetDisplayMainTitle() end },
 	{ "Subtitle", function(song) return song:GetDisplaySubTitle() end },
+	{ "Artist", function(song) return song:GetDisplayArtist() end },
 	{ "BPMs", function(song)
 		local bpms = song:GetDisplayBpms()
 		if bpms[2]-bpms[1] == 0 then

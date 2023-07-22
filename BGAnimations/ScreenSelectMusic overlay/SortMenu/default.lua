@@ -103,7 +103,10 @@ local SongSearchSettings = {
 		if songName then
 			FilterTable(candidates, function(song)
 				return (song:GetDisplayFullTitle():lower():find(songName) ~= nil or
-						song:GetTranslitFullTitle():lower():find(songName) ~= nil)
+						song:GetTranslitFullTitle():lower():find(songName) ~= nil or
+						song:GetDisplayArtist():lower():find(songName) ~= nil or
+						song:GetTranslitArtist():lower():find(songName) ~= nil
+					)
 			end)
 		end
 
@@ -199,7 +202,7 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
-		
+
 		overlay:playcommand("ShowTestInput")
 	end,
 	DirectInputToLeaderboardCommand=function(self)
@@ -211,7 +214,7 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
-		
+
 		overlay:playcommand("ShowLeaderboard")
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
