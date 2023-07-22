@@ -37,6 +37,7 @@ Only for itgmania. Please use the Default branch itgmania:release
   * Display judgment behind arrows
   * Display error in ms under judgment
   * Configure font used for various theme elements
+  * BoogieStats integration - Every song has an online leaderboard!
 
 ## Features that are now in mainline Simply Love
 
@@ -56,9 +57,10 @@ And more!
 
 This fork is worked on by Zarzob and Zankoku.
 
-Contact us on Discord at `Zarzob#0001` or `Zankoku#4444`. Alternatively you can join my [discord server](https://discord.gg/zarzob)
+Contact us on Discord at `zarzob` or `zankoku`. Alternatively you can join my [discord server](https://discord.gg/zarzob)
 
 # Additional Contributors
 
   * sorae
   * MegaSphere
+  * @andrzej
