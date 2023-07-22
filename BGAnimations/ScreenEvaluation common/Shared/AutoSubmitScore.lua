@@ -129,6 +129,8 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 	-- Hijack the leaderboard pane to display the GrooveStats leaderboards.
 	if panes then
 		local data = JsonDecode(res.body)
+		local headers = res.headers
+	
 		for i=1,2 do
 			local playerStr = "player"..i
 			local entryNum = 1
@@ -140,6 +142,12 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 			local RPGPane = panes:GetChild("Pane9_SideP"..i):GetChild("")
 			local ITLPane = panes:GetChild("Pane10_SideP"..i):GetChild("")
 
+			local boogie = false
+			if headers["bs-leaderboard-player-" .. i] == "BS" then
+				boogie = true 
+				MESSAGEMAN:Broadcast("BoogieLogo",{ player = i })
+			end
+		
 			-- If only one player is joined, we then need to update both panes with only
 			-- one players' data.
 			local side = i
@@ -266,12 +274,13 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
 					if upperPane then
-						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
+						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved"  or boogie then
 							local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
 							local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
-
+							local BSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."BoogieStats_Logo")
+							
 							recordText:visible(true)
-							GSIcon:visible(true)
+							if boogie then BSIcon:visible(true) else GSIcon:visible(true) end
 							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 							local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/"
 							if personalRank == 1 then
@@ -293,8 +302,10 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							end
 							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
 							local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()
+							local BSIconWidth = BSIcon:GetWidth()*BSIcon:GetZoom()
 							-- This will automatically adjust based on the length of the recordText length.
 							GSIcon:xy(recordTextXStart - GSIconWidth/2, recordText:GetY())
+							BSIcon:xy(recordTextXStart - BSIconWidth/2, recordText:GetY())
 						end
 					end
 				end
@@ -477,6 +488,15 @@ af[#af+1] = Def.Sprite{
 	end,
 }
 
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","BoogieStats.png"),
+	Name="P1BoogieStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.2)
+		self:visible(false)
+	end,
+}
+
 af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="P1RecordText",
 	InitCommand=function(self)
@@ -488,8 +508,8 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 }
 
 af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathG("","GrooveStats.png"),
-	Name="P2GrooveStats_Logo",
+	Texture=THEME:GetPathG("","BoogieStats.png"),
+	Name="P2BoogieStats_Logo",
 	InitCommand=function(self)
 		self:zoom(0.2)
 		self:visible(false)

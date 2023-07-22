@@ -5,8 +5,10 @@ GrooveStatsURL = function()
 	local url_prefix
 	local dir = THEME:GetCurrentThemeDirectory() .. "Other/"
 	local uat = dir .. "GrooveStats_UAT.txt"
+	local boogie = ThemePrefs.Get("EnableBoogieStats")
 	if not FILEMAN:DoesFileExist(uat) then 
-		url_prefix = "https://api.groovestats.com/" 
+		if boogie then url_prefix = "https://boogiestats.andr.host/" 
+		else url_prefix = "https://api.groovestats.com/" end
 	else
 		url_prefix = "http://127.0.0.1:5000/"
 	end
