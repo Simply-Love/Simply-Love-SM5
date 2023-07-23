@@ -274,7 +274,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
 					if upperPane then
-						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved"  or boogie then
+						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
 							local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
 							local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
 							local BSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."BoogieStats_Logo")
