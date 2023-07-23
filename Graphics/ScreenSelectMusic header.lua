@@ -20,7 +20,7 @@ local UpdateTimer = function(af, dt)
 	local seconds = GetTimeSinceStart() - SL.Global.TimeAtSessionStart
 	local totalTime = 0
 	local anyPlayer = "P1"
-	if SL["P1"].Stages.Stats == nil then anyPlayer = "P2" end
+	if #SL["P1"].Stages.Stats == 0 then anyPlayer = "P2" end
 	for i,stats in pairs( SL[anyPlayer].Stages.Stats ) do
 		totalTime = totalTime + (stats and stats.duration or 0)
 	end
