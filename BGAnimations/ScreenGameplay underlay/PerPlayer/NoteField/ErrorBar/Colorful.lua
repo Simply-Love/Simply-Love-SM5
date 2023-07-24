@@ -35,9 +35,9 @@ local function DisplayTick(self, params)
         currentTick = currentTick % numTicks + 1
 		
 		local offset = params.TapNoteOffset
-		if math.abs(offset) > maxError then
-			if offset < 0 then offset = -maxError
-			else offset = maxError end
+		if math.abs(offset) > maxTimingOffset then
+			if offset < 0 then offset = -maxTimingOffset
+			else offset = maxTimingOffset end
 		end
 
         tick:finishtweening()

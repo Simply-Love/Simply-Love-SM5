@@ -63,9 +63,9 @@ local function DisplayTick(self, params)
         local color = judgmentColors[params.TapNoteScore] 
 		
 		local offset = params.TapNoteOffset
-		if math.abs(offset) > maxError then
-			if offset < 0 then offset = -maxError
-			else offset = maxError end
+		if math.abs(offset) > maxTimingOffset then
+			if offset < 0 then offset = -maxTimingOffset
+			else offset = maxTimingOffset end
 		end
 
         -- Check if we need to adjust the color for the white fantastic window.
