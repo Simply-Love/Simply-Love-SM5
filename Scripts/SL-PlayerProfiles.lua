@@ -41,7 +41,8 @@ local permitted_profile_settings = {
 	LifeMeterType        = "string",
 	DataVisualizations   = "string",
 	StepStatsExtra       = "string",
-	TargetScore          = "number",
+	TargetScore          = "string",
+	TargetScoreNumber    = "number",
 	ActionOnMissedTarget = "string",
 
 	MeasureCounter       = "string",

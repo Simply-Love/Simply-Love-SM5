@@ -35,22 +35,22 @@ end
 -- { 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'S-', 'S', 'S+', '☆', '☆☆', '☆☆☆', '☆☆☆☆', 'Machine best', 'Personal best' }
 
 -- the index of the target score chosen in the PlayerOptions menu
-local target_grade_index = tonumber(SL[pn].ActiveModifiers.TargetScore)
+local target_score_option = SL[pn].ActiveModifiers.TargetScore
 
 -- the score that corresponds to the chosen target grade by the player
 local target_grade_score = 0
 
-if (target_grade_index == 17) then
+if (target_score_option == "Machine best") then
 	-- player set TargetGrade as Machine best
 	target_grade_score = GetTopScore("Machine")
 
-elseif (target_grade_index == 18) then
+elseif (target_score_option == "Personal best") then
 	-- player set TargetGrade as Personal best
 	target_grade_score = GetTopScore("Personal")
 else
-	-- player set TargetGrade as a particular letter grade
-	-- anything from C- to ☆☆☆☆
-	target_grade_score = THEME:GetMetric("PlayerStageStats", "GradePercentTier" .. string.format("%02d", 17 - target_grade_index))
+	-- player set TargetGrade as a particular score
+	-- pull from that option
+	target_grade_score = tonumber(SL[pn].ActiveModifiers.TargetScoreNumber) / 100
 end
 
 -- if there is no personal/machine score, default to S as target

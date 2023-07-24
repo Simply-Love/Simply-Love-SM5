@@ -197,7 +197,11 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 			
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
 			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 10000
-			if mods.MiniIndicatorColor == "Default" then self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1) end
+			if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) then self:diffusealpha(0.65) end
+			if mods.MiniIndicatorColor == "Default" then
+				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
+			end
+			end
 			if pace < rivalPace then
 				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
 			else
@@ -326,7 +330,10 @@ bmt.SetScoreCommand=function(self, params)
 		elseif mods.MiniIndicator == "Pacemaker" then
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
 			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 10000
-			if mods.MiniIndicatorColor == "Default" then self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1) end
+			if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) then self:diffusealpha(0.65) end
+			if mods.MiniIndicatorColor == "Default" then
+				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
+			end
 			if pace < rivalPace then
 				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
 			else

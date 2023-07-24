@@ -533,25 +533,16 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	TargetScore = {
-		Values = function()
-			local t = {}
-			-- "GradeTier16" to "GradeTier01"
-			for i=16,1,-1 do
-				table.insert(t, ("GradeTier%02d"):format(i))
-			end
-			table.insert(t, "Machine best")
-			table.insert(t, "Personal best")
-			return t
-		end,
-		LoadSelections = function(self, list, pn)
-			local i = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore) or 11
-			list[i] = true
-			return list
-		end,
-		SaveSelections = function(self, list, pn)
-			for i,v in ipairs(self.Values) do
-				if list[i] then SL[ToEnumShortString(pn)].ActiveModifiers.TargetScore = i; break end
-			end
+		Values = { "SpecifiedValue", "Machine best", "Personal best" }
+	},
+	-------------------------------------------------------------------------
+	TargetScoreNumber = {
+		Choices = function()
+			local first = 0
+			local last = 100
+			local step = 1
+			
+			return range(first,last,step)
 		end
 	},
 	-------------------------------------------------------------------------
