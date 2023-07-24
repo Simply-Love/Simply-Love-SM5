@@ -201,7 +201,6 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 			if mods.MiniIndicatorColor == "Default" then
 				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
 			end
-			end
 			if pace < rivalPace then
 				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
 			else
