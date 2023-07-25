@@ -1,4 +1,4 @@
-local player, pss, isTwoPlayers, pos_data, target_score, use_smaller_graph = unpack(...)
+local player, pss, isTwoPlayers, pos_data, target_score, personal_best, use_smaller_graph = unpack(...)
 local pn = ToEnumShortString(player)
 
 -- ---------------------------------------------------------------
@@ -62,7 +62,7 @@ local af = Def.ActorFrame{
 }
 
 if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
-	local args = { player, pss, isTwoPlayers, bothWantBars, pos_data, target_score, percentToYCoordinate, GetCurMaxPercentDancePoints}
+	local args = { player, pss, isTwoPlayers, bothWantBars, pos_data, target_score, personal_best, percentToYCoordinate, GetCurMaxPercentDancePoints}
 
 	if use_smaller_graph then
 		-- condensed graph for versus and when the notefield is centered

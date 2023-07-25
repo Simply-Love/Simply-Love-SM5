@@ -1,5 +1,5 @@
 local player, pss, isTwoPlayers, bothWantBars, pos_data,
-      target_score, percentToYCoordinate, GetCurMaxPercentDancePoints = unpack(...)
+      target_score, personal_best, percentToYCoordinate, GetCurMaxPercentDancePoints = unpack(...)
 
 local pn = ToEnumShortString(player)
 
@@ -43,7 +43,7 @@ local af = Def.ActorFrame {
 			self:diffuse(Color.Green)
 		end,
 		UpdateCommand = function(self)
-			local currentDP = target_score * GetCurMaxPercentDancePoints()
+			local currentDP = personal_best * GetCurMaxPercentDancePoints()
 			self:zoomy(-percentToYCoordinate(currentDP))
 		end,
 	},
@@ -65,9 +65,9 @@ local af = Def.ActorFrame {
 	},
 
 	-- Personal Best Border
-	Border(pos_data.bar.w+4, -percentToYCoordinate(target_score)+3, pos_data.BorderWidth)..{
+	Border(pos_data.bar.w+4, -percentToYCoordinate(personal_best)+3, pos_data.BorderWidth)..{
 		InitCommand=function(self)
-			self:xy(pos_data.bar.offset + (pos_data.bar.spacing * 2) + (pos_data.bar.w/2) + pos_data.bar.w * 1, percentToYCoordinate(target_score)/2)
+			self:xy(pos_data.bar.offset + (pos_data.bar.spacing * 2) + (pos_data.bar.w/2) + pos_data.bar.w * 1, percentToYCoordinate(personal_best)/2)
 		end,
 	},
 
