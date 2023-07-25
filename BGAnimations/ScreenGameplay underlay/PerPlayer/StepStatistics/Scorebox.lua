@@ -39,6 +39,12 @@ local transition_seconds = 1
 local all_data = {}
 
 local ResetAllData = function()
+	SL[pn].Rival = {}
+	SL[pn].Rival.Score = 0
+	SL[pn].Rival.EXScore = 0
+	SL[pn].Rival.WRScore = 0
+	SL[pn].Rival.WREXScore = 0
+	
 	for i=1,num_styles do
 		local data = {
 			["has_data"]=false,
@@ -77,6 +83,28 @@ local SetScoreData = function(data_idx, score_idx, rank, name, score, isSelf, is
 	score_data.isSelf = isSelf
 	score_data.isRival = isRival
 	score_data.isFail = isFail
+	
+	if not isFail and (isRival or isSelf) then
+		if data_idx == 3 then
+			if tonumber(score) > SL[pn].Rival.EXScore then
+				SL[pn].Rival.EXScore = tonumber(score)
+			end
+		else
+			if tonumber(score) > SL[pn].Rival.Score then
+				SL[pn].Rival.Score = tonumber(score)
+			end
+		end
+	end
+	
+	if score_data.rank == 1 then
+		if data_idx == 3 then
+			SL[pn].Rival.WREXScore = tonumber(score)
+		else
+			if tonumber(score) > SL[pn].Rival.WRScore then
+				SL[pn].Rival.WRScore = tonumber(score)
+			end
+		end
+	end
 end
 
 local LeaderboardRequestProcessor = function(res, master)

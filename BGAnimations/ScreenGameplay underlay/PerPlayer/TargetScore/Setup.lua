@@ -24,7 +24,24 @@ local GetTopScore = function(kind)
 
 	if scorelist then
 		local topscore = scorelist:GetHighScores()[1]
-		if topscore then return topscore:GetPercentDP() end
+		if topscore then
+			if SL[pn].ActiveModifiers.ShowEXScore then
+				local counts = {}
+				counts["W015"] = topscore:GetTapNoteScore("TapNoteScore_W1") - topscore:GetScore()
+				counts["W1"] = topscore:GetScore()
+				counts["W2"] = topscore:GetTapNoteScore("TapNoteScore_W2")
+				counts["W3"] = topscore:GetTapNoteScore("TapNoteScore_W3")
+				counts["W4"] = topscore:GetTapNoteScore("TapNoteScore_W4")
+				counts["W5"] = topscore:GetTapNoteScore("TapNoteScore_W5")
+				counts["Miss"] = topscore:GetTapNoteScore("TapNoteScore_Miss")
+				counts["HitMine"] = topscore:GetTapNoteScore("TapNoteScore_HitMine")
+				counts["Held"] = topscore:GetHoldNoteScore("HoldNoteScore_Held")
+				ex_score, ex_points, ex_possible = CalculateExScore(player, counts)
+				return (ex_score/100)
+			else
+				return topscore:GetPercentDP()
+			end
+		end
 	end
 
 	return 0
@@ -125,4 +142,4 @@ end
 
 -- ---------------------------------------------------------------
 
-return target_grade_score, pos_data
+return target_grade_score, pos_data, GetTopScore("Personal")

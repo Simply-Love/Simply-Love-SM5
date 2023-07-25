@@ -41,7 +41,7 @@ local target_score, pos_data = LoadActor("./Setup.lua", {player, use_smaller_gra
 local af = Def.ActorFrame{}
 
 if WantsTargetGraph then
-	af[#af+1] = LoadActor("./Graph-Common.lua", {player, pss, isTwoPlayers, pos_data, target_score, use_smaller_graph})
+	af[#af+1] = LoadActor("./Graph-Common.lua", {player, pss, isTwoPlayers, pos_data, target_score, personal_best, use_smaller_graph})
 end
 
 

@@ -1,4 +1,4 @@
-local player, pss, isTwoPlayers, pos_data, target_score, use_smaller_graph = unpack(...)
+local player, pss, isTwoPlayers, pos_data, target_score, personal_best, use_smaller_graph = unpack(...)
 local pn = ToEnumShortString(player)
 
 -- ---------------------------------------------------------------
@@ -10,8 +10,11 @@ local bothWantBars =   isTwoPlayers
 -- some helper functions local to this file
 
 -- Ported from PSS.cpp, can be removed if that gets exported to Lua
-local GetCurMaxPercentDancePoints = function()
-	local possible = pss:GetPossibleDancePoints()
+local GetCurMaxPercentDancePoints = function(ex_possible, ex_max)
+	if SL[pn].ActiveModifiers.ShowEXScore then
+		return ex_possible / ex_max
+	end
+	local possible = pss:GetPossibleDancePoints()		
 	if possible == 0 then
 		return 0
 	end
@@ -62,7 +65,7 @@ local af = Def.ActorFrame{
 }
 
 if SL[pn].ActiveModifiers.DataVisualizations == "Target Score Graph" then
-	local args = { player, pss, isTwoPlayers, bothWantBars, pos_data, target_score, percentToYCoordinate, GetCurMaxPercentDancePoints}
+	local args = { player, pss, isTwoPlayers, bothWantBars, pos_data, target_score, personal_best, percentToYCoordinate, GetCurMaxPercentDancePoints}
 
 	if use_smaller_graph then
 		-- condensed graph for versus and when the notefield is centered

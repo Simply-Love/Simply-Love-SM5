@@ -27,8 +27,6 @@ local tns, hns
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
-SL.Global.Rival = 100
-
 -- get target score for pacemaker mode
 local target_score = LoadActor("./GetTargetScore.lua", player)
 
@@ -183,30 +181,41 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 			local current_possible_dp = pss:GetCurrentPossibleDancePoints()
 		
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
-			local rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL.Global.Rival) / 10000
+			local rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL[pn].Rival.Score) / 10000
+			if SL[pn].Rival.Score == 0 then
+				rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL[pn].Rival.WRScore) / 10000
+			end
+			if SL[pn].Rival.EXScore > 0 or SL[pn].Rival.WREXScore > 0 then
+				pace = math.floor((current_points / total_possible) * 10000) / 100
+				rivalPace = math.floor((current_possible / total_possible) * 1000000 * SL[pn].Rival.EXScore) / 10000
+				if SL[pn].Rival.EXScore == 0 then
+					rivalPace = math.floor((current_possible / total_possible) * 1000000 * SL[pn].Rival.WREXScore) / 10000
+				end
+			end
+			
 			if mods.MiniIndicatorColor == "Default" then self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1) end
 			if pace < rivalPace then
 				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
 			else
 				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
 			end
-		elseif mods.MiniIndicator == "Pacemaker" then
-			local actual_dp = math.max(pss:GetActualDancePoints(), 0)
-			local possible_dp = pss:GetPossibleDancePoints()
-			local current_possible_dp = pss:GetCurrentPossibleDancePoints()
-			
-			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
-			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 10000
-			if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) then self:diffusealpha(0.65) end
+		elseif mods.MiniIndicator == "Pacemaker" then			
+			local pace = math.floor((current_points / total_possible) * 10000) / 100
+			local rivalPace = math.floor((current_possible / total_possible) * 1000000 * target_score) / 10000
+
 			if mods.MiniIndicatorColor == "Default" then
 				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
 			end
+
 			if pace < rivalPace then
 				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
 			else
 				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
 			end
 		end
+		
+		-- Dim mini-indicator if target score can no longer be met.
+		if ((current_possible - current_points) > (total_possible * (1 - target_score))) then self:diffusealpha(0.65) end
 	end
 end
 
@@ -319,7 +328,10 @@ bmt.SetScoreCommand=function(self, params)
 			self:settext( ("%.2f%%"):format(pace) )
 		elseif mods.MiniIndicator == "RivalScoring" then
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
-			local rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL.Global.Rival) / 10000
+			local rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL[pn].Rival.Score) / 10000
+			if SL[pn].Rival.Score == 0 then
+				rivalPace = math.floor((current_possible_dp / possible_dp) * 10000 * SL[pn].Rival.WRScore) / 10000
+			end
 			if mods.MiniIndicatorColor == "Default" then self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1) end
 			if pace < rivalPace then
 				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
@@ -329,7 +341,6 @@ bmt.SetScoreCommand=function(self, params)
 		elseif mods.MiniIndicator == "Pacemaker" then
 			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
 			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 10000
-			if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) then self:diffusealpha(0.65) end
 			if mods.MiniIndicatorColor == "Default" then
 				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
 			end
@@ -354,6 +365,9 @@ bmt.SetScoreCommand=function(self, params)
 			end
 			self:settext( ("%.2f%%"):format(completion * 100) )
 		end
+		
+		-- Dim mini-indicator if target score can no longer be met.
+		if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) then self:diffusealpha(0.65) end
 	end
 end
 
