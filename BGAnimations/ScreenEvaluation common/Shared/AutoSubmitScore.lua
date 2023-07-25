@@ -156,24 +156,27 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 						shouldDisplayOverlay = true
 					end
 
-					local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
-					if upperPane then
-						if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
-							local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
-							local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
+					-- Only update PB/WR messages on the side that is joined
+					if ToEnumShortString("PLAYER_P"..i) == "P"..side then
+						local upperPane = overlay:GetChild("P"..side.."_AF_Upper")
+						if upperPane then
+							if data[playerStr]["result"] == "score-added" or data[playerStr]["result"] == "improved" then
+								local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
+								local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
 
-							recordText:visible(true)
-							GSIcon:visible(true)
-							recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
-							if personalRank == 1 then
-								recordText:settext("World Record!")
-							else
-								recordText:settext("Personal Best!")
+								recordText:visible(true)
+								GSIcon:visible(true)
+								recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
+								if personalRank == 1 then
+									recordText:settext("World Record!")
+								else
+									recordText:settext("Personal Best!")
+								end
+								local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
+								local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()
+								-- This will automatically adjust based on the length of the recordText length.
+								GSIcon:xy(recordTextXStart - GSIconWidth/2, recordText:GetY())
 							end
-							local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
-							local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()
-							-- This will automatically adjust based on the length of the recordText length.
-							GSIcon:xy(recordTextXStart - GSIconWidth/2, recordText:GetY())
 						end
 					end
 				end
