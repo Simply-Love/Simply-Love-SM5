@@ -125,4 +125,4 @@ end
 
 -- ---------------------------------------------------------------
 
-return target_grade_score, pos_data
+return target_grade_score, pos_data, GetTopScore("Personal")

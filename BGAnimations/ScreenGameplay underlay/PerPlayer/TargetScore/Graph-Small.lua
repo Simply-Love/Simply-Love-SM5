@@ -1,5 +1,5 @@
 local player, pss, isTwoPlayers, bothWantBars, pos_data,
-      target_score, percentToYCoordinate, GetCurMaxPercentDancePoints = unpack(...)
+      target_score, personal_best, percentToYCoordinate, GetCurMaxPercentDancePoints = unpack(...)
 
 
 return Def.ActorFrame {

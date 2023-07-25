@@ -34,14 +34,14 @@ local isTwoPlayers = (GAMESTATE:IsPlayerEnabled(PLAYER_1) and GAMESTATE:IsPlayer
 local notefield_is_centered = (GetNotefieldX(player) == _screen.cx)
 local use_smaller_graph = isTwoPlayers or notefield_is_centered
 
-local target_score, pos_data = LoadActor("./Setup.lua", {player, use_smaller_graph, notefield_is_centered})
+local target_score, pos_data, personal_best = LoadActor("./Setup.lua", {player, use_smaller_graph, notefield_is_centered})
 
 -- ---------------------------------------------------------------
 -- add actors to the ActorFrame as needed
 local af = Def.ActorFrame{}
 
 if WantsTargetGraph then
-	af[#af+1] = LoadActor("./Graph-Common.lua", {player, pss, isTwoPlayers, pos_data, target_score, use_smaller_graph})
+	af[#af+1] = LoadActor("./Graph-Common.lua", {player, pss, isTwoPlayers, pos_data, target_score, personal_best, use_smaller_graph})
 end
 
 
