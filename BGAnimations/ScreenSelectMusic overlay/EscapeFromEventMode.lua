@@ -29,7 +29,7 @@ local af = Def.ActorFrame{
 
 	-- the SM5 engine has broadcast that the player input a Metrics-based button code
 	CodeMessageCommand=function(self, params)
-		if params.Name == "EscapeFromEventMode" then
+		if params.Name == "EscapeFromEventMode" or params.Name == "EscapeFromEventMode2" then
 			self:queuecommand("Show")
 		end
 	end,
