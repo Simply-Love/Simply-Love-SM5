@@ -132,24 +132,21 @@ local LeaderboardRequestProcessor = function(res, master)
 	if data and data[playerStr] then
 		if SL[pn].Streams.Hash ~= data[playerStr]["chartHash"] then return end
 		-- These will get overwritten if we have any entries in the leaderboard below.
+		SetScoreData(1, 1, "", "No Scores", "", false, false, false)
 		if data[playerStr]["isRanked"] then
 			isRanked = true
 			cur_style = 0
-			SetScoreData(1, 1, "", "No Scores", "", false, false, false)
 		else
 			isRanked = true
-			all_data[1].has_data = false
 			cur_style = 1
 			if (not (data[playerStr]["rpg"] and data[playerStr]["rpg"]["rpgLeaderboard"]) and
 					not (data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"])) then
-				SetScoreData(1, 1, "", "Chart Not Ranked", "", false, false, false)
 				all_data[2].has_data = false
 				all_data[3].has_data = false
-				isRanked = false
 			end
 		end
 
-		if data[playerStr]["isRanked"] and data[playerStr]["gsLeaderboard"] then
+		if data[playerStr]["gsLeaderboard"] then
 			local entryCount = 0
 			for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
 				entryCount = entryCount + 1
