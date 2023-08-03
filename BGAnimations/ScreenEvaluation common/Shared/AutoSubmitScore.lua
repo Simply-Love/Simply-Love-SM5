@@ -173,7 +173,9 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 						elseif i == 2 and P2SubmitText then
 							P2SubmitText:queuecommand("ChartNotRanked")
 						end
-					elseif data[playerStr]["gsLeaderboard"] then
+					end
+					
+					if data[playerStr]["gsLeaderboard"] then
 						for gsEntry in ivalues(data[playerStr]["gsLeaderboard"]) do
 							local entry = highScorePane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..entryNum)
 							entry:stoptweening()
