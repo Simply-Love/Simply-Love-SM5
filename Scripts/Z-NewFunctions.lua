@@ -145,3 +145,125 @@ SecondsToHMMSS = function(s)
 	secs  = s - (hours * 3600) - (mins * 60)
 	return hmmss:format(hours, mins, secs)
 end
+
+-----------------------------------------------
+-- Creating a rectangle with rounded corners --
+-----------------------------------------------
+
+-- Using ActorMultiVertex, we are able to create quads with rounded corners
+-- By using math.sin and math.cos we can determine the points of the circle based the angle from one point to the other to create a rounded corner.
+-- Example usage here
+--
+-- af[#af+1] = Def.ActorMultiVertex{
+-- 	OnCommand=function(self)
+-- 		self:SetDrawState({Mode="DrawMode_Fan"})
+--      local width = 200
+--      local height = 200
+--      local color = Color.Red
+--      local intensity = 0.5
+-- 		self:SetVertices(createRoundedQuad(width,height, color, intensity))
+-- 	end
+-- 	}
+
+-- These two functions can help replace a quad to have rounded corners
+
+createRoundedCorner=function(x,y,r,w,h,corner,color) -- Returns a set of points for a rounded corner for a specified corner
+
+	-- x,y is the offset in x,y value
+	-- r is the radius of the circle i.e. how rounded you want it to be
+	-- w,h is the width and height of the quad
+	-- circle will start/end at width/height minus radius 
+	
+	local steps = 100 -- more steps means smoother circles. I guess if this becomes too resource intensive we reduce this number?
+	corner = string.upper(corner)	
+
+	local verts = {}
+		for i=1,steps do
+			if corner == "TL" then 
+				table.insert(verts, {{ ((w-r)+(r*math.cos(math.rad(-90/steps*(steps-i)))))*-1, ((h-r)-(r*math.sin(math.rad(-90/steps*(steps-i)))))*-1, 0 }, color })
+			elseif corner == "TR" then
+				table.insert(verts, {{ (w-r)+(r*math.cos(math.rad(90/steps*i))), (-h+r)-(r*math.sin(math.rad(90/steps*i))), 0 }, color })
+			elseif corner == "BR" then
+				table.insert(verts, {{ (w-r)+(r*math.cos(math.rad(-90/steps*(steps-i)))), (h-r)-(r*math.sin(math.rad(-90/steps*(steps-i)))), 0 }, color })
+			elseif corner == "BL" then
+				table.insert(verts, {{ ((w-r)+(r*math.cos(math.rad(-90/steps*i))))*-1, ((h-r)-(r*math.sin(math.rad(-90/steps*i)))), 0 }, color })
+			end
+		end
+	return verts
+end
+
+-- using createRoundedCorner, this creates a full quad of specified width/height
+createRoundedQuad=function(width,height, color, intensity, tr,br,bl,tl)
+
+    -- color can use a hex code color("#FF0000") or SL's helper function Color.Red
+    
+    -- intensity is how rounded you want the quad to be between 0 (square) and 1 (circle). The intensity is based on the shorter line.
+    -- If both lines are the same length, intensity 1 will be a circle
+    -- order is top right -> bottom right -> Bottom left -> top left
+
+    
+    -- Optionally you can set specific corners to not be rounded by adding something into the last four variables.
+	if tr == nil then tr = true end
+	if br == nil then br = true end
+	if bl == nil then bl = true end
+	if tl == nil then tl = true end
+
+    -- Set circle radius based on intensity
+    if intensity < 0 then intensity = 0 end
+    if intensity > 1 then intensity = 1 end
+	local radius = (width > height and height or width)*intensity
+
+	local points = {}
+
+	-- All points take away the radius of the rounded corner if it is set to be curved
+
+	-- Start at top left, minus the curved corner if it is curved
+	table.insert(points, { { -width+(tl and radius or 0), -height, 0 }, color })
+	
+	-- Move to the top right
+	table.insert(points, { { width-(tr and radius or 0), -height, 0 }, color })
+	
+    -- build top right curve
+	if tr then
+		local rounded = createRoundedCorner(width-radius,-height+radius,radius,width,height,"TR",color)
+		for i=1,#rounded do
+			table.insert(points,rounded[#rounded+1-i])
+		end
+	end
+
+	-- move to bottom right
+	table.insert(points, { { width, height-(br and radius or 0), 0 }, color })
+
+	if br then 
+		-- build bottom right curve
+		local rounded = createRoundedCorner(width-radius,height-radius,radius,width,height,"BR",color)
+		for i=1,#rounded do
+			table.insert(points,rounded[#rounded-i])
+		end
+	end
+
+	-- move to bottom left
+	table.insert(points, { { -width+(bl and radius or 0), height, 0 }, color })
+	
+	if bl then
+		-- build bottom left curve 
+		local rounded = createRoundedCorner(width-radius,height-radius,radius,width,height,"BL",color)
+		for i=1,#rounded do
+			table.insert(points,rounded[#rounded-i])
+		end
+	end
+
+	-- move to top left
+	table.insert(points, { { -width, -height+(tl and radius or 0), 0 }, color})
+
+	if tl then
+		-- build top left curve
+		local rounded = createRoundedCorner(-width,-height+radius,radius,width,height,"TL",color)
+		for i=1,#rounded do
+			table.insert(points,rounded[#rounded-i])
+		end
+	end
+
+	return points
+	
+end
