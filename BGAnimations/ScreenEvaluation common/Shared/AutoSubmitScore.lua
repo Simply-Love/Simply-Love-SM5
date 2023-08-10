@@ -143,9 +143,13 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 			local ITLPane = panes:GetChild("Pane10_SideP"..i):GetChild("")
 
 			local boogie = false
+			local boogie_ex = false
 			if headers["bs-leaderboard-player-" .. i] == "BS" then
-				boogie = true 
+				boogie = true
 				MESSAGEMAN:Broadcast("BoogieLogo",{ player = i })
+			elseif headers["bs-leaderboard-player-" .. i] == "BS-EX" then
+				boogie_ex = true
+				MESSAGEMAN:Broadcast("BoogieEXLogo",{ player = i })
 			end
 		
 			-- If only one player is joined, we then need to update both panes with only
@@ -282,9 +286,14 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								local recordText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."RecordText")
 								local GSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."GrooveStats_Logo")
 								local BSIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."BoogieStats_Logo")
-								
+								local BSEXIcon = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."BoogieStatsEX_Logo")
+
 								recordText:visible(true)
-								if boogie then BSIcon:visible(true) else GSIcon:visible(true) end
+
+								if boogie then BSIcon:visible(true)
+								elseif boogie_ex then BSEXIcon:visible(true)
+								else GSIcon:visible(true) end
+
 								recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 								local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/"
 								if personalRank == 1 then
@@ -502,6 +511,15 @@ af[#af+1] = Def.Sprite{
 	end,
 }
 
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","BoogieStatsEX.png"),
+	Name="P1BoogieStatsEX_Logo",
+	InitCommand=function(self)
+		self:zoom(0.2)
+		self:visible(false)
+	end,
+}
+
 af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="P1RecordText",
 	InitCommand=function(self)
@@ -524,6 +542,15 @@ af[#af+1] = Def.Sprite{
 af[#af+1] = Def.Sprite{
 	Texture=THEME:GetPathG("","BoogieStats.png"),
 	Name="P2BoogieStats_Logo",
+	InitCommand=function(self)
+		self:zoom(0.2)
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","BoogieStatsEX.png"),
+	Name="P2BoogieStatsEX_Logo",
 	InitCommand=function(self)
 		self:zoom(0.2)
 		self:visible(false)

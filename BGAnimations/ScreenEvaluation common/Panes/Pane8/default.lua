@@ -42,7 +42,22 @@ pane[#pane+1] = Def.Sprite{
 		self:diffusealpha(0.5)
 	end,
 	BoogieLogoMessageCommand=function(self,params)
-		if (params.player-p) == 0 then 
+		if (params.player-p) == 0 then
+			self:visible(true)
+		end
+	end
+}
+pane[#pane+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","BoogieStatsEX.png"),
+	Name="BoogieStatsEX_Logo",
+	InitCommand=function(self)
+		self:visible(false)
+		self:zoom(1.5)
+		self:addx(0):addy(100)
+		self:diffusealpha(0.5)
+	end,
+	BoogieEXLogoMessageCommand=function(self,params)
+		if (params.player-p) == 0 then
 			self:visible(true)
 		end
 	end

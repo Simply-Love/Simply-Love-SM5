@@ -131,13 +131,19 @@ local LeaderboardRequestProcessor = function(res, master)
 	-- If it is unranked, alter groovestats logo and the box border color to the BoogieStats theme
 	local headers = res.headers
 	local boogie = false
+	local boogie_ex = false
 	if headers["bs-leaderboard-player-" .. n] == "BS" then
-		boogie = true 
+		boogie = true
+	elseif headers["bs-leaderboard-player-" .. n] == "BS-EX" then
+		boogie_ex = true
 	end
-	local gsBox = SCREENMAN:GetTopScreen():GetChild("Underlay"):GetChild("StepStatsPane" .. pn):GetChild("BannerAndData"):GetChild("ScoreBox" .. pn)	
-	if boogie then 
-		style_color[0] = BoogieStatsPurple 
+	local gsBox = SCREENMAN:GetTopScreen():GetChild("Underlay"):GetChild("StepStatsPane" .. pn):GetChild("BannerAndData"):GetChild("ScoreBox" .. pn)
+	if boogie then
+		style_color[0] = BoogieStatsPurple
 		gsBox:queuecommand("BoogieStats")
+	elseif boogie_ex then
+		style_color[0] = BoogieStatsPurple
+		gsBox:queuecommand("BoogieStatsEX")
 	end
 
 	-- First check to see if the leaderboard even exists.
@@ -360,6 +366,9 @@ local af = Def.ActorFrame{
 		end,
 		BoogieStatsCommand=function(self)
 			self:Load(THEME:GetPathG("", "BoogieStats.png"))
+		end,
+		BoogieStatsEXCommand=function(self)
+			self:Load(THEME:GetPathG("", "BoogieStatsEX.png"))
 		end,
 		LoopScoreboxCommand=function(self)
 			if cur_style == 0 then

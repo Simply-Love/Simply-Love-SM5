@@ -111,20 +111,31 @@ local LeaderboardRequestProcessor = function(res, master)
 	
 	local headers = res.headers
 	local boogie = false
+	local boogie_ex = false
 	if headers["bs-leaderboard-player-" .. n] == "BS" then
-		boogie = true 
+		boogie = true
+	elseif headers["bs-leaderboard-player-" .. n] == "BS-EX" then
+		boogie_ex = true
 	end
 	local gsBox = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("ScoreBox" .. pn):GetChild("GrooveStatsLogo")
 	local bsBox = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("ScoreBox" .. pn):GetChild("BoogieStatsLogo")
+	local bsExBox = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("ScoreBox" .. pn):GetChild("BoogieStatsEXLogo")
 
-	if boogie then 
-			style_color[0] = BoogieStatsPurple 
-			bsBox:visible(true)
-			gsBox:visible(false)
-	else 
-			style_color[0] = GrooveStatsBlue 
-			bsBox:visible(false)
-			gsBox:visible(true)
+	if boogie then
+		style_color[0] = BoogieStatsPurple
+		bsBox:visible(true)
+		bsExBox:visible(false)
+		gsBox:visible(false)
+	elseif boogie_ex then
+		style_color[0] = BoogieStatsPurple
+		bsBox:visible(false)
+		bsExBox:visible(true)
+		gsBox:visible(false)
+	else
+		style_color[0] = GrooveStatsBlue
+		bsBox:visible(false)
+		bsExBox:visible(false)
+		gsBox:visible(true)
 	end
 	
 
@@ -327,6 +338,7 @@ local af = Def.ActorFrame{
 		self:GetChild("Rank5"):visible(true)
 		self:GetChild("GrooveStatsLogo"):stopeffect()
 		self:GetChild("BoogieStatsLogo"):stopeffect()
+		self:GetChild("BoogieStatsEXLogo"):stopeffect()
 		self:GetChild("SRPG7Logo"):visible(true)
 		self:GetChild("ITLLogo"):visible(true)
 		self:GetChild("Outline"):visible(true)
@@ -425,6 +437,7 @@ local af = Def.ActorFrame{
 				self:GetParent():GetChild("Rank5"):settext(""):visible(false)
 				self:GetParent():GetChild("GrooveStatsLogo"):visible(true):diffusealpha(0.5):glowshift({color("#C8FFFF"), color("#6BF0FF")})
 				self:GetParent():GetChild("BoogieStatsLogo"):visible(false)
+				self:GetParent():GetChild("BoogieStatsEXLogo"):visible(false)
 				self:GetParent():GetChild("SRPG7Logo"):diffusealpha(0):visible(false)
 				self:GetParent():GetChild("ITLLogo"):diffusealpha(0):visible(false)
 				self:GetParent():GetChild("Outline"):diffusealpha(0):visible(false)
@@ -512,6 +525,23 @@ local af = Def.ActorFrame{
 	Def.Sprite{
 		Texture=THEME:GetPathG("", "BoogieStats.png"),
 		Name="BoogieStatsLogo",
+		InitCommand=function(self)
+			self:zoom(0.8):diffusealpha(0.5)
+		end,
+		LoopScoreboxCommand=function(self)
+			if cur_style == 0 then
+				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0.5)
+			else
+				self:linear(transition_seconds/2):diffusealpha(0)
+			end
+		end,
+		ResetCommand=function(self) self:stoptweening() end,
+		OffCommand=function(self) self:stoptweening():stopeffect() end
+	},
+	-- BoogieStats EX Logo
+	Def.Sprite{
+		Texture=THEME:GetPathG("", "BoogieStatsEX.png"),
+		Name="BoogieStatsEXLogo",
 		InitCommand=function(self)
 			self:zoom(0.8):diffusealpha(0.5)
 		end,
