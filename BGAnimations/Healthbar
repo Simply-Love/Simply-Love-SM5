@@ -1,0 +1,33 @@
+-- Replace this function with your actual health recovery check logic
+function CheckHealthRecovery(character)
+    -- Your health recovery logic here
+    return character.health > previousHealth
+end
+
+-- Replace this with your actual sound playing logic
+function PlayAnnouncerSound()
+    SOUND:PlayAnnouncer("gameplay comment recover")
+end
+
+-- Replace this with your character object
+local character = {
+    health = 100, -- replace with actual health value
+}
+
+-- Call the functions based on health recovery check
+function OnHealthChange()
+    local isRecovering = CheckHealthRecovery(character)
+    if isRecovering then
+        PlayAnnouncerSound()
+    end
+end
+
+-- Call OnHealthChange whenever the health changes
+function OnHealthUpdate(newHealth)
+    local previousHealth = character.health
+    character.health = newHealth
+    OnHealthChange()
+end
+
+-- Simulate a change in health (replace this with actual health update logic)
+OnHealthUpdate(110)
