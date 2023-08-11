@@ -154,13 +154,6 @@ for i, column in ipairs( cols ) do
 						InitCommand=function(self)
 							self:xy(_x + 1, j*row_height + 6):zoom(0.65):halign(-1):diffuse(Color.Blue)
 						end,
-						OnCommand=function(self)
-							if judge_bmt[j] ~= nil then
-								self:x( self:GetX() + judge_bmt[j]:GetWidth()/2 )
-							else
-								self:x( self:GetX() + miss_bmt:GetWidth()/2 )
-							end
-						end
 					}
 				end
 			end
