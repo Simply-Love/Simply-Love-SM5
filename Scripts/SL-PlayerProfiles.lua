@@ -70,6 +70,7 @@ local permitted_profile_settings = {
 	ColumnCues           = "boolean",
 	ColumnCountdown      = "boolean",
 	ShowHeldMiss         = "boolean",
+	TrackFoot            = "boolean",
 
 	ErrorBar             = "string",
 	ErrorBarUp           = "boolean",

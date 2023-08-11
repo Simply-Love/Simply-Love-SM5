@@ -4,6 +4,7 @@ local mods = SL[pn].ActiveModifiers
 
 local track_missbcheld = mods.MissBecauseHeld
 local track_earlyjudgments = mods.TrackEarlyJudgments
+local track_foot = mods.TrackFoot
 local ArrowColors = { Color.Red, Color.Blue, Color.Green, Color.Yellow }
 
 -- a string representing the NoteSkin the player was using
@@ -125,10 +126,43 @@ for i, column in ipairs( cols ) do
 						if track_earlyjudgments then
 							self:halign(-1):x( self:GetX() )
 						else
-							self:x( self:GetX() - miss_bmt:GetWidth()/2 )
+							if judge_bmt[j] ~= nil then
+								self:x( self:GetX() - judge_bmt[j]:GetWidth()/2 )
+							end
 						end
 					end
 				}
+			end
+			
+			if track_foot and (i == 2 or i == 3) then
+				if judgment == "W4" or judgment == "W5" or judgment == "Miss" then
+					af[#af+1] = LoadFont("Common Normal")..{
+						Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment.."lf"],
+						InitCommand=function(self)
+							self:xy(_x - 1, j*row_height + 6):zoom(0.65):halign(1):diffuse(Color.Red)
+						end,
+						OnCommand=function(self)
+							if judge_bmt[j] ~= nil then
+								self:x( self:GetX() - judge_bmt[j]:GetWidth()/2 )
+							else
+								self:x( self:GetX() - miss_bmt:GetWidth()/2 )
+							end
+						end
+					}
+					af[#af+1] = LoadFont("Common Normal")..{
+						Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment.."rf"],
+						InitCommand=function(self)
+							self:xy(_x + 1, j*row_height + 6):zoom(0.65):halign(-1):diffuse(Color.Blue)
+						end,
+						OnCommand=function(self)
+							if judge_bmt[j] ~= nil then
+								self:x( self:GetX() + judge_bmt[j]:GetWidth()/2 )
+							else
+								self:x( self:GetX() + miss_bmt:GetWidth()/2 )
+							end
+						end
+					}
+				end
 			end
 		end
 	end

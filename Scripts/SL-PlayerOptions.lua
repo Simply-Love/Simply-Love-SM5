@@ -577,7 +577,7 @@ local Overrides = {
 		Values = function()
 			local vals = {}
 			if IsUsingWideScreen() then
-				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
+				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss", "TrackFoot" }
 			else
 				-- Add in the two removed options if not in WideScreen.
 				vals = { "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
