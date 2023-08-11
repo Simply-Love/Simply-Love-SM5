@@ -547,7 +547,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ActionOnMissedTarget = {
-		Values = { "Nothing", "Fail", "Restart" },
+		Values = { "Nothing", "DimSScore", "Fail", "Restart" },
 	},
 	-------------------------------------------------------------------------
 	MiniIndicator = {

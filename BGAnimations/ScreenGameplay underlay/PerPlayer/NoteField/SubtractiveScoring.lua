@@ -215,7 +215,7 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 		end
 		
 		-- Dim mini-indicator if target score can no longer be met.
-		if ((current_possible - current_points) > (total_possible * (1 - target_score))) then self:diffusealpha(0.65) end
+		if ((current_possible - current_points) > (total_possible * (1 - target_score))) and mods.ActionOnMissedTarget == "DimSScore" then self:diffusealpha(0.65) end
 	end
 end
 
@@ -367,7 +367,7 @@ bmt.SetScoreCommand=function(self, params)
 		end
 		
 		-- Dim mini-indicator if target score can no longer be met.
-		if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) then self:diffusealpha(0.65) end
+		if ((current_possible_dp - actual_dp) > (possible_dp * (1 - target_score))) and mods.ActionOnMissedTarget == "DimSScore" then self:diffusealpha(0.65) end
 	end
 end
 
