@@ -1,12 +1,15 @@
 ------------------------------------------------------------
 -- global functions related to colors in Simply Love
 
-function GetHexColor( n, decorative )
+function GetHexColor( n, decorative, ITGdiff )
 	-- if we were passed nil or a non-number, return white
 	if n == nil or type(n) ~= "number" then return Color.White end
 
 	local style = ThemePrefs.Get("VisualStyle")
 	local colorTable = SL.Colors
+	if ITGdiff then 
+		colorTable = SL.ITGDiffColors
+	end
 	if decorative then
 		colorTable = SL.DecorativeColors
 	end
@@ -41,12 +44,16 @@ end
 
 function DifficultyColor( difficulty, decorative )
 	if (difficulty == nil or difficulty == "Difficulty_Edit") then return color("#B4B7BA") end
+	local useITGcolors = ThemePrefs.Get("ITGDiffColors")
 
 	-- use the reverse lookup functionality available to all SM enums
 	-- to map a difficulty string to a number
 	-- SM's enums are 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
 	local clr = SL.Global.ActiveColorIndex + (Difficulty:Reverse()[difficulty] - 4)
-	return GetHexColor(clr, decorative)
+	if useITGcolors then
+		clr = Difficulty:Reverse()[difficulty] - 4
+	end
+	return GetHexColor(clr, decorative, useITGcolors)
 end
 
 function LightenColor(c)

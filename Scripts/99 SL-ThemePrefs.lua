@@ -312,6 +312,12 @@ SL_CustomPrefs.Get = function()
 			Choices = { THEME:GetString("ThemePrefs", "Show"), THEME:GetString("ThemePrefs", "Hide") },
 			Values  = { true, false }
 		},
+		ITGDiffColors =
+		{
+			Default = false,
+			Choices = { THEME:GetString("ThemePrefs", "On"), THEME:GetString("ThemePrefs", "Off") },
+			Values  = { true, false }
+		},
 	}
 end
 
