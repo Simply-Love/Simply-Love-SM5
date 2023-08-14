@@ -200,17 +200,17 @@ bmt.ExCountsChangedMessageCommand=function(self, params)
 				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
 			end
 		elseif mods.MiniIndicator == "Pacemaker" then			
-			local pace = math.floor((current_points / total_possible) * 10000) / 100
-			local rivalPace = math.floor((current_possible / total_possible) * 1000000 * target_score) / 10000
+			local pace = math.floor((current_points / total_possible) * 10000)
+			local rivalPace = math.floor((current_possible / total_possible) * 1000000 * target_score) / 100
 
 			if mods.MiniIndicatorColor == "Default" then
-				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
+				self:diffuse(1-(pace-rivalPace)/100, 0.5-(rivalPace-pace)/100, 1-(rivalPace-pace)/100, 1)
 			end
 
 			if pace < rivalPace then
-				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
+				self:settext( ("-%.2f%%"):format(math.floor(rivalPace - pace)/100) )
 			else
-				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
+				self:settext( ("+%.2f%%"):format(math.floor(pace - rivalPace)/100) )
 			end
 		end
 		
@@ -339,15 +339,15 @@ bmt.SetScoreCommand=function(self, params)
 				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
 			end
 		elseif mods.MiniIndicator == "Pacemaker" then
-			local pace = math.floor((actual_dp / possible_dp) * 10000) / 100
-			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 10000
+			local pace = math.floor((actual_dp / possible_dp) * 10000)
+			local rivalPace = math.floor((current_possible_dp / possible_dp) * 1000000 * target_score) / 100
 			if mods.MiniIndicatorColor == "Default" then
-				self:diffuse(1-(pace-rivalPace), 0.5-(rivalPace-pace), 1-(rivalPace-pace), 1)
+				self:diffuse(1-(pace-rivalPace)/100, 0.5-(rivalPace-pace)/100, 1-(rivalPace-pace)/100, 1)
 			end
 			if pace < rivalPace then
-				self:settext( ("-%.2f%%"):format(rivalPace - pace) )
+				self:settext( ("-%.2f%%"):format(math.floor(rivalPace - pace) / 100) )
 			else
-				self:settext( ("+%.2f%%"):format(pace - rivalPace) )
+				self:settext( ("+%.2f%%"):format(math.floor(pace - rivalPace) / 100) )
 			end
 		elseif mods.MiniIndicator == "StreamProg" then
 			local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(pn)
