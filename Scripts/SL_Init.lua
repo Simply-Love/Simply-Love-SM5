@@ -198,6 +198,7 @@ SL = {
 		"#d6db41", --medium
 		"#ba3049",
 		"#2691c5",
+		"#F7F7F7", --edit
 	},
 	-- These are the original SL colors. They're used for decorative (non-text) elements, like the background hearts:
 	DecorativeColors = {

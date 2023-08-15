@@ -45,13 +45,28 @@ end
 function DifficultyColor( difficulty, decorative )
 	if (difficulty == nil or difficulty == "Difficulty_Edit") then return color("#B4B7BA") end
 	local useITGcolors = ThemePrefs.Get("ITGDiffColors")
+	
+	local currentSong = GAMESTATE:GetCurrentSong()
+	if currentSong then
+		if string.find(string.upper(currentSong:GetMainTitle()), "%(NOVICE%)") then
+			difficulty = 0
+		elseif string.find(string.upper(currentSong:GetMainTitle()), "%(EASY%)") then
+			difficulty = 1
+		elseif string.find(string.upper(currentSong:GetMainTitle()), "%(MEDIUM%)") then
+			difficulty = 2
+		elseif string.find(string.upper(currentSong:GetMainTitle()), "%(HARD%)") then
+			difficulty = 3
+		elseif string.find(string.upper(currentSong:GetMainTitle()), "%(EDIT%)") then
+			difficulty = 5
+		end
+	end
 
 	-- use the reverse lookup functionality available to all SM enums
 	-- to map a difficulty string to a number
 	-- SM's enums are 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
 	local clr = SL.Global.ActiveColorIndex + (Difficulty:Reverse()[difficulty] - 4)
 	if useITGcolors then
-		clr = Difficulty:Reverse()[difficulty] - 4
+		clr = Difficulty:Reverse()[difficulty] - 5
 	end
 	return GetHexColor(clr, decorative, useITGcolors)
 end

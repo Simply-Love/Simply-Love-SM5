@@ -69,10 +69,22 @@ return Def.ActorFrame{
 			self:shadowlength(shadowLength)
 
 			local steps = GAMESTATE:GetCurrentSteps(player)
+			local song = GAMESTATE:GetCurrentSong()
 			-- GetDifficulty() returns a value from the Difficulty Enum such as "Difficulty_Hard"
 			-- ToEnumShortString() removes the characters up to and including the
 			-- underscore, transforming a string like "Difficulty_Hard" into "Hard"
 			local difficulty = ToEnumShortString( steps:GetDifficulty() )
+			if string.find(string.upper(song:GetMainTitle()), "%(NOVICE%)") then
+				difficulty = ToEnumShortString("Difficulty_Beginner")
+			elseif string.find(string.upper(song:GetMainTitle()), "%(EASY%)") then
+				difficulty = ToEnumShortString("Difficulty_Easy")
+			elseif string.find(string.upper(song:GetMainTitle()), "%(MEDIUM%)") then
+				difficulty = ToEnumShortString("Difficulty_Medium")
+			elseif string.find(string.upper(song:GetMainTitle()), "%(HARD%)") then
+				difficulty = ToEnumShortString("Difficulty_Hard")
+			elseif string.find(string.upper(song:GetMainTitle()), "%(EDIT%)") then
+				difficulty = ToEnumShortString("Difficulty_Edit")
+			end
 			difficulty = THEME:GetString("Difficulty", difficulty)
 			--if difficulty == "Challenge" or difficulty == "Expert" then difficulty = "X"
 			--else difficulty = difficulty:sub(1,1) end
