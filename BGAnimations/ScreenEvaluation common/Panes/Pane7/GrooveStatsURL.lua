@@ -2,12 +2,6 @@ local player = ...
 local pn = ToEnumShortString(player)
 
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-local percent_dp = stats:GetPercentDancePoints()
-
-local score = FormatPercentScore(percent_dp)
-score = tostring(tonumber(score:gsub("%%", "") * 100)):gsub("%.", "")
-local ex_score = CalculateExScore(player)
-ex_score = tostring(tonumber(ex_score:gsub("%%", "") * 100)):gsub("%.", "")
 
 local judgmentCounts = GetExJudgmentCounts(player)
 
