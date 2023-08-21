@@ -562,7 +562,7 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "Pacemaker", "TrackEarlyJudgments", "TrackRecalc", "NPSGraphAtTop" }
+			local vals = { "ColumnFlashOnMiss", "Pacemaker", "NPSGraphAtTop", "ShowHeldMiss" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
 			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).
@@ -577,24 +577,22 @@ local Overrides = {
 		Values = function()
 			local vals = {}
 			if IsUsingWideScreen() then
-				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss", "TrackFoot" }
+				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown" }
 			else
-				-- Add in the two removed options if not in WideScreen.
-				vals = { "NPSGraphAtTop", "JudgmentTilt", "ColumnCues" }
+				vals = { "JudgmentTilt", "ColumnCues", "ColumnCountdown", "ShowHeldMiss" }
 			end
 			return vals
 		end
 	},
-	GameplayExtrasC = {
+	-------------------------------------------------------------------------
+	ResultsExtras = {
 		SelectType = "SelectMultiple",
 		Values = function()
-			local vals = {}
-			if not IsUsingWideScreen() then
-				vals = { "ColumnCountdown", "ShowHeldMiss" }
-			end
+			local vals = {  "TrackEarlyJudgments", "TrackRecalc", "TrackFoot" }
 			return vals
 		end
 	},
+	-------------------------------------------------------------------------
 	ErrorBar = {
 		Values = { "None", "Colorful", "Monochrome", "Text", "Highlight" },
 	},
