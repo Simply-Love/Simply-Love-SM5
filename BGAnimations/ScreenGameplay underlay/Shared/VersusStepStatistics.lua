@@ -126,6 +126,7 @@ af[#af+1] = Def.Banner{
     CurrentSongChangedMessageCommand=function(self)
 		self:LoadFromSong( GAMESTATE:GetCurrentSong() )
 		self:setsize(418,164):zoom(0.3):addy(70)
+		self:SetDecodeMovie(ThemePrefs.Get("AnimateBanners"))
     end
 }
 af[#af+1] = Def.Banner{
