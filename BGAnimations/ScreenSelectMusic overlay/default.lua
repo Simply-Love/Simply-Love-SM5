@@ -30,8 +30,8 @@ local af = Def.ActorFrame{
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
-	-- MenuTimer code for preserving SSM's timer value when going
-	-- from SSM to Player Options and then back to SSM
+	-- MenuTimer code for preserving SSM's timer value when going 
+	-- from SSM to a different screen and back to SSM (i.e. returning from PlayerOptions).
 	LoadActor("./PreserveMenuTimer.lua"),
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),
