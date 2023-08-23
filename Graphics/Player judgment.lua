@@ -46,7 +46,6 @@ local GetPlayerAF = function(pn)
 
 	return playerAF
 end
-
 ------------------------------------------------------------
 -- A profile might ask for a judgment graphic that doesn't exist
 -- If so, use the first available Judgment graphic
@@ -76,10 +75,7 @@ if file_to_load == "None" then
 			if param.Player ~= player then return end
 	
 			if not mods.HideEarlyDecentWayOffFlash then
-				SCREENMAN:GetTopScreen()
-								 :GetChild("Player"..pn)
-								 :GetChild("NoteField")
-								 :did_tap_note(param.Column + 1, param.TapNoteScore, --[[bright]] false)
+				GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(param.Column + 1, param.TapNoteScore, --[[bright]] false)
 			end
 		end
 	}
@@ -109,10 +105,7 @@ return Def.ActorFrame{
 		if not frame then return end
 
 		if not mods.HideEarlyDecentWayOffFlash then
-			SCREENMAN:GetTopScreen()
-							 :GetChild("Player"..pn)
-							 :GetChild("NoteField")
-							 :did_tap_note(param.Column + 1, param.TapNoteScore, --[[bright]] false)
+			GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(param.Column + 1, param.TapNoteScore, --[[bright]] false)
 		end
 
 		if not mods.HideEarlyDecentWayOffJudgments then
