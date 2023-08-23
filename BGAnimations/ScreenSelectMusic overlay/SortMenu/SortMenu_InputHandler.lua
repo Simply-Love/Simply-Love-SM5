@@ -47,8 +47,9 @@ local input = function(event)
 				end
 				-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
-				-- If the MenuTimer is in effect, make sure to grab its current
-				-- value before reloading the screen.
+				-- If the MenuTimer is in effect, we need to make sure the current number of seconds
+				-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions
+				-- will save the current number of seconds before transitioning to the next screen.
 				if PREFSMAN:GetPreference("MenuTimer") then
 					overlay:playcommand("ShowPressStartForOptions")
 				end
@@ -224,7 +225,13 @@ local input = function(event)
 						-- loaded consistently.
 						-- TODO(teejusb): Fix this in the engine.
 						-- MESSAGEMAN:Broadcast("Sort", { order = "Preferred" })
-						
+							
+						-- If the MenuTimer is in effect, we need to make sure the current number of seconds
+						-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions
+						-- will save the current number of seconds before transitioning to the next screen.
+						if PREFSMAN:GetPreference("MenuTimer") then
+							overlay:playcommand("ShowPressStartForOptions")
+						end
 						screen:GetMusicWheel():ChangeSort("SortOrder_Preferred")
 						screen:SetNextScreenName("ScreenSelectMusic")
 						screen:StartTransitioningScreen("SM_GoToNextScreen")
