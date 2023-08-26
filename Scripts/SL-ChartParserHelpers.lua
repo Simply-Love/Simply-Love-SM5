@@ -249,6 +249,7 @@ end
 GetTotalStreamAndBreakMeasures = function(pn)
 	local totalStream, totalBreak = 0, 0
 	local edgeBreak = 0
+	local lastSegmentWasStream = false
 
 	-- Assume 16ths for the breakdown text
 	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
@@ -256,10 +257,16 @@ GetTotalStreamAndBreakMeasures = function(pn)
 		local segment_size = segment.streamEnd - segment.streamStart
 		if segment.isBreak and i < #segments and i ~= 1 then
 			totalBreak = totalBreak + segment_size
+			lastSegmentWasStream = false
 		elseif segment.isBreak then
 			edgeBreak = edgeBreak + segment_size
+			lastSegmentWasStream = false
 		else
+			if lastSegmentWasStream then
+				totalBreak = totalBreak + 1
+			end
 			totalStream = totalStream + segment_size
+			lastSegmentWasStream = true
 		end
 	end
 	
