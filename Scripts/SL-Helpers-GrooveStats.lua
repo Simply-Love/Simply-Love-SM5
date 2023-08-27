@@ -519,7 +519,7 @@ CreateCommentString = function(player)
 	-- Get EX judgment counts if playing with FA+ windows enabled in ITG mode
 	if SL.Global.GameMode == "ITG" then
 		local counts = GetExJudgmentCounts(player)
-		local types = { 'W1', 'W2', 'W3', 'W4', 'W5' }
+		local types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 		
 		for i=1,6 do
 			local window = types[i]
