@@ -854,6 +854,8 @@ CalculateExScore = function(player, ex_counts)
 		if value ~= nil then
 			if key == "W015" then
 				total_points = total_points + value * SL.ExWeights["W0"]
+			elseif key == "W115" then
+				total_points = total_points + value * SL.ExWeights["W1"]
 			else
 				total_points = total_points + value * SL.ExWeights[key]
 			end
