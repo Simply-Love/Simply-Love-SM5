@@ -7,14 +7,16 @@ function GetHexColor( n, decorative, ITGdiff )
 
 	local style = ThemePrefs.Get("VisualStyle")
 	local colorTable = SL.Colors
-	if ITGdiff then 
-		colorTable = SL.ITGDiffColors
-	end
+	
 	if decorative then
 		colorTable = SL.DecorativeColors
 	end
 	if style == "SRPG7" then
 		colorTable = SL.SRPG7.Colors
+	end
+	
+	if ITGdiff then 
+		colorTable = SL.ITGDiffColors
 	end
 
 	-- use the number passed in to lookup a color in the corresponding color table
@@ -22,7 +24,7 @@ function GetHexColor( n, decorative, ITGdiff )
 	local clr = ((n - 1) % #colorTable) + 1
 	if colorTable[clr] then
 		local c = color(colorTable[clr])
-		if style == "SRPG7" and not decorative then
+		if (style == "SRPG7" or ITGdiff) and not decorative then
 			c = LightenColor(c)
 		end
 		return c

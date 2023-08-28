@@ -27,6 +27,19 @@ if SL.Global.GameMode == "FA+" then
 	colors.FullComboW4 = {color("#C9FFC9"), color("#94FEC1")} -- green combo
 end
 
+local solidColors = {}
+solidColors.FullComboW1 = color("#21CCE8")
+solidColors.FullComboW2 = color("#e29c18")
+solidColors.FullComboW3 = color("#66c955")
+solidColors.FullComboW4 = color("#ffffff")
+
+if SL.Global.GameMode == "FA+" then
+	solidColors.FullComboW1 = color("1,0.2,0.406,1")
+	solidColors.FullComboW2 = color("#21CCE8")
+	solidColors.FullComboW3 = color("#e29c18")
+	solidColors.FullComboW4 = color("#66c955")
+end
+
 
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 
@@ -129,28 +142,28 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 					if mods.ComboColors == "Glow" then
 						self:effectcolor1(colors.FullComboW1[1]):effectcolor2(colors.FullComboW1[2])
 					elseif mods.ComboColors == "Solid" then
-						self:stopeffect():diffuse(colors.FullComboW1[2])
+						self:stopeffect():diffuse(solidColors.FullComboW1)
 					end
 
 				elseif params.FullComboW2 then
 					if mods.ComboColors == "Glow" then
 						self:effectcolor1(colors.FullComboW2[1]):effectcolor2(colors.FullComboW2[2])
 					elseif mods.ComboColors == "Solid" then
-						self:stopeffect():diffuse(colors.FullComboW2[2])
+						self:stopeffect():diffuse(solidColors.FullComboW2)
 					end
 
 				elseif params.FullComboW3 then
 					if mods.ComboColors == "Glow" then
 						self:effectcolor1(colors.FullComboW3[1]):effectcolor2(colors.FullComboW3[2])
 					elseif mods.ComboColors == "Solid" then
-						self:stopeffect():diffuse(colors.FullComboW3[2])
+						self:stopeffect():diffuse(solidColors.FullComboW3)
 					end
 
 				elseif params.FullComboW4 then
 					if mods.ComboColors == "Glow" then
 						self:effectcolor1(colors.FullComboW4[1]):effectcolor2(colors.FullComboW4[2])
 					elseif mods.ComboColors == "Solid" then
-						self:stopeffect():diffuse(colors.FullComboW4[2])
+						self:stopeffect():diffuse(solidColors.FullComboW4)
 					end
 
 				elseif params.Combo then
@@ -177,19 +190,19 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 						if mods.ComboColors == "Glow" then
 							self:effectcolor1(colors.FullComboW1[1]):effectcolor2(colors.FullComboW1[2])
 						elseif mods.ComboColors == "Solid" then
-							self:stopeffect():diffuse(colors.FullComboW1[2])
+							self:stopeffect():diffuse(solidColors.FullComboW1)
 						end
 					elseif worst_judgment == 2 then
 						if mods.ComboColors == "Glow" then
 							self:effectcolor1(colors.FullComboW2[1]):effectcolor2(colors.FullComboW2[2])
 						elseif mods.ComboColors == "Solid" then
-							self:stopeffect():diffuse(colors.FullComboW2[2])
+							self:stopeffect():diffuse(solidColors.FullComboW2)
 						end
 					elseif worst_judgment == 3 then
 						if mods.ComboColors == "Glow" then
 							self:effectcolor1(colors.FullComboW3[1]):effectcolor2(colors.FullComboW3[2])
 						elseif mods.ComboColors == "Solid" then
-							self:stopeffect():diffuse(colors.FullComboW3[2])
+							self:stopeffect():diffuse(solidColors.FullComboW3)
 						end
 					end
 				else
