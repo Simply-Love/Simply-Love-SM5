@@ -11,6 +11,9 @@ local pn = ToEnumShortString(player)
 
 local panes = 0
 
+local isRpg = false
+local isItl = false
+
 -- Default position is on the other player's upper area where the grade should be
 local boxStart = {}
 local box = {}
@@ -36,10 +39,13 @@ if IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() > 1) then
 	starty = -80
 end
 
+local afFinal = Def.ActorFrame{
+	Name="Events"..pn
+}
+
 -- RPG
 -- Display RPG progress such as song score, rate mod, skill points, quests, etc
 
--- Currently disabled to get ITL functionality out. Will work on it for RPG7
 local af = Def.ActorFrame{
 	Name="RPGQuest"..pn,
 	InitCommand=function(self)
@@ -47,6 +53,7 @@ local af = Def.ActorFrame{
 		self:xy(boxStart["x"],boxStart["y"])
 	end,
 	RpgQuestsCommand=function(self,params)
+		isRpg = true
 		panes = panes + 1
 		self:visible(true)
 		self:GetChild("QuestText"):playcommand("Set",params)
@@ -262,8 +269,6 @@ local af2 = Def.ActorFrame{
 	ItlDataReadyMessageCommand=function(self,params)
 		-- Local stats first, this *should* happen after the currently played song is written to file, and before the api response is returned.
 		if PROFILEMAN:IsPersistentProfile(player) and IsItlSong(player) and params.player == player then
-			self:visible(true)
-
 			local profile = PROFILEMAN:GetProfile(player)
 			local profileName = profile:GetDisplayName()		
 			tp, rp, played = CalculateITLStats(player)
@@ -282,6 +287,14 @@ local af2 = Def.ActorFrame{
 		-- If connected to GrooveStats, it will show the stats from the api
 		self:visible(true)
 		self:playcommand("ItlStatsOnline", params)
+		isItl = true
+		
+		if isItl and isRpg then
+			self:queuecommand("Marquee")
+		end
+	end,
+	MarqueeCommand=function(self)
+		self:linear(1):diffusealpha(1):sleep(5):linear(1):diffusealpha(0):sleep(5):queuecommand("Marquee")
 	end
 }
 
@@ -427,6 +440,9 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:maxwidth(width)
 		end
 	end
-} 
+}
 
-return af
+afFinal[#afFinal+1] = af
+afFinal[#afFinal+1] = af2
+
+return afFinal
