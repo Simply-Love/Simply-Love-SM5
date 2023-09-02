@@ -21,9 +21,22 @@ local ClearLamp = { color("#0000CC"), color("#990000") }
 
 local function GetLamp(song)
 	if not song then return nil end
-
-	local steps = GAMESTATE:GetCurrentSteps(player)
-	if not steps then return nil end
+	
+	if not GAMESTATE:GetCurrentSteps(pn) then return nil end
+	
+	local diff = GAMESTATE:GetCurrentSteps(pn):GetDifficulty()
+	
+	local stepsList = song:GetAllSteps()
+	local steps = nil
+	
+	for check in ivalues(stepsList) do
+		if check:GetDifficulty() == diff then
+			steps = check
+			break
+		end
+	end
+	
+	if steps == nil then return nil end
 	
 	local profile = PROFILEMAN:GetProfile(player)
 	local high_score_list = profile:GetHighScoreListIfExists(song, steps)
@@ -48,7 +61,7 @@ local function GetLamp(song)
 			end
 		end
 		
-		if AwardMap[award] ~= nil then
+		if award and AwardMap[award] ~= nil then
 			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[award])
 		end
 		
@@ -163,6 +176,7 @@ return Def.ActorFrame{
 					self:visible(false)
 				elseif lamp > 50 then
 					self:visible(true)
+					self:stopeffect()
 					self:diffuse(ClearLamp[lamp - 50])
 				else
 					self:visible(true)
