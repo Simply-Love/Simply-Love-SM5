@@ -64,9 +64,9 @@ return Def.Actor{
 						end
 					end
 					
-					if arrow == 1 then
+					if col == 1 then
 						foot=true
-					elseif arrow == 4 then
+					elseif col == 4 then
 						foot=false
 					else
 						foot = not foot
@@ -88,7 +88,7 @@ return Def.Actor{
 							end
 							
 							if isStream then
-								local fs = foot and "rf" or "lf"
+								local fs = foot and "lf" or "rf"
 								judgments[col][tns .. fs] = judgments[col][tns .. fs] + 1
 							end
 						end
