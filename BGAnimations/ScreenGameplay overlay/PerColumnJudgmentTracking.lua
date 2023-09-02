@@ -88,7 +88,7 @@ return Def.Actor{
 							end
 							
 							if isStream then
-								local fs = foot and "lf" or "rf"
+								local fs = foot and "rf" or "lf"
 								judgments[col][tns .. fs] = judgments[col][tns .. fs] + 1
 							end
 						end
