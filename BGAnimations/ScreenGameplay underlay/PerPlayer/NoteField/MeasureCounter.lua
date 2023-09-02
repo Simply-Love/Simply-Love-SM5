@@ -9,6 +9,10 @@ or mods.MeasureCounter == "None" then
 	return
 end
 
+local multiplier = 1
+if mods.MeasureCounter == "24th" then multiplier = 1.5 end
+if mods.MeasureCounter == "32nd" then multiplier = 2 end
+
 -- -----------------------------------------------------------------------
 
 local PlayerState = GAMESTATE:GetPlayerState(player)
@@ -50,19 +54,19 @@ local IsEndOfStream = function(currMeasure, Measures, streamIndex)
 	return currCount > currStreamLength
 end
 
-local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
+local GetTextForMeasure = function(currBeat, currMeasure, Measures, streamIndex, isLookAhead)
 	if currMeasure < 0 then
 		if not isLookAhead then
 			-- Measures[1] is guaranteed to exist as we check for non-empty tables at the start of Update() below.
 			if not Measures[1].isBreak then
 				-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
-				return "(" .. math.floor(currMeasure * -1) + 1 .. ")"
+				return "(" .. math.floor((currBeat/4 * -1) + 1)*multiplier .. ")"
 			else
 				-- If the first thing is a break, then add the negative space to the existing break count
 				local segmentStart = Measures[1].streamStart
 				local segmentEnd   = Measures[1].streamEnd
 				local currStreamLength = segmentEnd - segmentStart
-				return "(" .. math.floor(currMeasure * -1) + 1 + currStreamLength .. ")"
+				return "(" .. math.floor((math.floor(currBeat/4 * -1) + 1 + currStreamLength) * multiplier) .. ")"
 			end
 		else
 			if not Measures[1].isBreak then
@@ -77,8 +81,8 @@ local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhe
 	local segmentStart = Measures[streamIndex].streamStart
 	local segmentEnd   = Measures[streamIndex].streamEnd
 
-	local currStreamLength = segmentEnd - segmentStart
-	local currCount = math.floor(currMeasure - segmentStart) + 1
+	local currStreamLength = (segmentEnd - segmentStart) * multiplier
+	local currCount = math.floor((currBeat/4 - segmentStart) * multiplier) + 1
 
 	local text = ""
 	if Measures[streamIndex].isBreak then
@@ -110,6 +114,7 @@ local Update = function(self, delta)
 	-- 1. Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
 	-- 2. This assumes each measure is comprised of exactly 4 beats.  Is it safe to assume this?
 	local currMeasure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
+	local currBeat = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))
 
 	-- If a new measure has occurred
 	if currMeasure > prevMeasure then
@@ -126,7 +131,7 @@ local Update = function(self, delta)
 			-- We're looping forwards, but the BMTs are indexed in the opposite direction.
 			-- Adjust indices accordingly.
 			local adjustedIndex = lookAhead+2-i
-			local text = GetTextForMeasure(currMeasure, streams.Measures, streamIndex + i - 1, isLookAhead)
+			local text = GetTextForMeasure(currBeat, currMeasure, streams.Measures, streamIndex + i - 1, isLookAhead)
 			bmt[adjustedIndex]:settext(text)
 			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
 			if streams.Measures[streamIndex + i - 1] == nil then
