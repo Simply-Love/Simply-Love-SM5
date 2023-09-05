@@ -72,6 +72,8 @@ af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		
 			if playerStats.faplus then
 				self:zoom(0.48):y(-32)
+			else
+				self:zoom(0.5):y(-24)
 			end
 
 			-- trim off the % symbol
@@ -204,7 +206,7 @@ for i=1,#TNSTypes do
 					if val then self:settext(val) end
 				end
 
-				self:visible( (i == 1 and playerStats.timingwindows[1]) or playerStats.timingwindows[i-1] or i==#TNSTypes )
+				self:visible( (i == 1 and playerStats.faplus) or playerStats.timingwindows[i-1] or i==#TNSTypes )
 			else
 				self:settext("")
 			end
