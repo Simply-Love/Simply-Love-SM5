@@ -42,6 +42,9 @@ function GetGameplayLayout(player, reverse)
         if mods.MeasureCounterUp then
             layout.MeasureCounter = { y = topY - 8 }
             topY = topY - 20
+			if mods.BrokenRun then
+				layout.MeasureCounter.y = layout.MeasureCounter.y - 16
+			end
         else
             layout.MeasureCounter = { y = bottomY + 8 }
             bottomY = bottomY + 21

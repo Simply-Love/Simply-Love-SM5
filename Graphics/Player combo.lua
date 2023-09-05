@@ -73,6 +73,13 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 		self:addx((mods.NoteFieldOffsetX * (1 + mini)) * 2)
 		self:addy((mods.NoteFieldOffsetY * (1 + mini)) * 2)
 		self:shadowlength(1):vertalign(middle):zoom(0.75)
+		
+		-- Combo count re-positioning if using vertical lookahead
+		if mods.MeasureCounterVert and not mods.MeasureCounterUp and not mods.MeasureCounterLeft then
+			self:addy(mods.MeasureCounterLookahead * 20)
+		elseif mods.BrokenRun and not mods.MeasureCounterUp and not mods.MeasureCounterLeft then
+			self:addy(16)
+		end
 	end,
 	ComboCommand=function(self, params)
 		self:settext( params.Combo or params.Misses or "" )
