@@ -93,7 +93,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	if index == 1 and SL.Global.GameMode == "FA+" then
 		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 			Name="Percent",
-			Text=("%.2f"):format(CalculateExScore(player)),
+			Text=("%.2f"):format(CalculateExScore(player, counts)),
 			InitCommand=function(self)
 				self:horizalign(right):zoom(0.65)
 				self:x( ((controller == PLAYER_1) and -114) or 286 )
