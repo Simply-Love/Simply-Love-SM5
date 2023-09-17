@@ -103,6 +103,7 @@ local permitted_profile_settings = {
 	
 	ComboColors			 = "string",
 	ComboMode			 = "string",
+	TimerMode            = "string",
 	
 	JudgmentBack         = "boolean",
 	ErrorMSDisplay       = "boolean",

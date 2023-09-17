@@ -65,6 +65,7 @@ local PlayerDefaults = {
 				TiltMultiplier = 1,
 				ComboColors = "Glow",
 				ComboMode = "FullCombo",
+				TimerMode = "Time",
 
 				NoteFieldOffsetX = 0,
 				NoteFieldOffsetY = 0,
