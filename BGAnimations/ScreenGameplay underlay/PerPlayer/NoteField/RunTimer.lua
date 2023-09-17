@@ -61,37 +61,49 @@ local GetTimeRemaining = function(currBeat, Measures, streamIndex)
 	local segmentStart = Measures[streamIndex].streamStart 
 	local segmentEnd   = Measures[streamIndex].streamEnd
 	
-	local currTime = currBeat / (PlayerState:GetSongPosition():GetCurBPS() * MusicRate)
+	if mods.TimerMode == "Time" then
+		local currTime = currBeat / (PlayerState:GetSongPosition():GetCurBPS() * MusicRate)
 
-	local currStreamLength = math.floor((segmentEnd - segmentStart) * measureSeconds)
-	local showTotal = "0." .. currStreamLength
-	if currStreamLength < 10 then
-		showTotal = "0.0" .. currStreamLength
-	elseif currStreamLength > 60 then
-		local minutes = math.floor(currStreamLength / 60)
-		local seconds = currStreamLength % 60
-		if seconds < 10 then
-			seconds = "0" .. seconds
+		local currStreamLength = math.floor((segmentEnd - segmentStart) * measureSeconds + 1)
+		local showTotal = "0." .. currStreamLength
+		if currStreamLength < 10 then
+			showTotal = "0.0" .. currStreamLength
+		elseif currStreamLength > 60 then
+			local minutes = math.floor(currStreamLength / 60)
+			local seconds = currStreamLength % 60
+			if seconds < 10 then
+				seconds = "0" .. seconds
+			end
+			showTotal = minutes .. "." .. seconds
 		end
-		showTotal = minutes .. "." .. seconds
-	end
-	local currRemaining = math.max(math.floor(segmentEnd * measureSeconds - currTime), 0)
-	local showRemaining = "0." .. currRemaining
-	if currRemaining < 10 then
-		showRemaining = "0.0" .. currRemaining
-	elseif currRemaining > 59 then
-		local minutes = math.floor(currRemaining / 60)
-		local seconds = currRemaining % 60
-		if seconds < 10 then
-			seconds = "0" .. seconds
+		local currRemaining = math.max(math.floor(segmentEnd * measureSeconds - currTime + 1), 0)
+		local showRemaining = "0." .. currRemaining
+		if currRemaining < 10 then
+			showRemaining = "0.0" .. currRemaining
+		elseif currRemaining > 59 then
+			local minutes = math.floor(currRemaining / 60)
+			local seconds = currRemaining % 60
+			if seconds < 10 then
+				seconds = "0" .. seconds
+			end
+			showRemaining = minutes .. "." .. seconds
 		end
-		showRemaining = minutes .. "." .. seconds
-	end
 
-	if currRemaining > currStreamLength then
-		return showTotal
+		if currRemaining > currStreamLength then
+			return showTotal
+		end
+		
+		return (showRemaining) .. " "
+	elseif mods.TimerMode == "Measures" then
+		local currStreamLength = math.floor(segmentEnd - segmentStart + 1)
+		local currRemaining = math.max(math.floor(segmentEnd - currBeat / 4 + 1), 0)
+		
+		if currRemaining > currStreamLength then
+			return currStreamLength
+		end
+		return currRemaining .. " "
 	end
-	return (showRemaining) .. " "
+	
 end
 
 local GetTextForMeasure = function(currMeasure, Measures, streamIndex, isLookAhead)
@@ -173,7 +185,7 @@ local Update = function(self, delta)
 			-- We're looping forwards, but the BMTs are indexed in the opposite direction.
 			-- Adjust indices accordingly.
 			local adjustedIndex = lookAhead+2-i
-			local text = remaining
+			local text = remaining and remaining or ""
 			bmt[adjustedIndex]:settext(text)
 			
 			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.

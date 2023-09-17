@@ -868,6 +868,10 @@ local Overrides = {
 		Values = { "FullCombo", "CurrentCombo" }
 	},
 	-------------------------------------------------------------------------
+	TimerMode = {
+		Values = { "Time", "Measures" }
+	},
+	-------------------------------------------------------------------------
 	ExtraAesthetics = {
 		SelectType = "SelectMultiple",
 		Values = { "JudgmentBack", "ErrorMSDisplay" }
