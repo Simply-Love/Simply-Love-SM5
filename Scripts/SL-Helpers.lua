@@ -861,6 +861,12 @@ CalculateExScore = function(player, ex_counts)
 			end
 		end
 	end
+	
+	-- Run calculation for ex_counts custom keys
+	if ex_counts then
+		total_points = total_points + ((counts["Holds"] + counts["Rolls"]) * SL.ExWeights["Held"])
+		total_points = total_points + (counts["Mines"] * SL.ExWeights["HitMine"])
+	end
 
 	return math.max(0, math.floor(total_points/total_possible * 10000) / 100), total_points, total_possible
 end
