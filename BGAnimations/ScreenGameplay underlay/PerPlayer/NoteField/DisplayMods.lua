@@ -23,6 +23,12 @@ local round = function(number)
 	return str	
 end
 
+local life = GetLifeDifficulty()
+local LifeDiff = nil
+if life ~= 4 then
+	LifeDiff = "Life " .. life
+end
+
 local Perspective 
 if options:Overhead() 	then Perspective = "Overhead" 	end
 if options:Hallway() 	then Perspective = "Hallway" 	end
@@ -62,6 +68,9 @@ end
 
 local values = {}
 
+if LifeDiff then
+	table.insert(values,LifeDiff)
+end
 table.insert(values,SpeedMod)
 table.insert(values,mods.Mini .. " Mini")
 table.insert(values,turnMod)

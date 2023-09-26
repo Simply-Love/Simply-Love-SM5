@@ -8,10 +8,16 @@ local PlayerOptions = GAMESTATE:GetPlayerState(player):GetPlayerOptionsArray("Mo
 -- start with an empty string...
 local optionslist = ""
 
+-- if life difficulty is not default, add it to the list.
+local life = GetLifeDifficulty()
+if life ~= 4 then
+	optionslist = "Life " .. life
+end
+
 -- if the player used an XMod of 1x, it won't be in PlayerOptions list
 -- so check here, and add it in manually if necessary
 if SL[pn].ActiveModifiers.SpeedModType == "X" and SL[pn].ActiveModifiers.SpeedMod == 1 then
-	optionslist = "1x, "
+	optionslist = optionslist .. "1x"
 end
 
 --  ...and append options to that string as needed
