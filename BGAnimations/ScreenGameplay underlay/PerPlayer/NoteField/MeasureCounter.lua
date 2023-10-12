@@ -60,7 +60,7 @@ local GetTextForMeasure = function(currBeat, currMeasure, Measures, streamIndex,
 			-- Measures[1] is guaranteed to exist as we check for non-empty tables at the start of Update() below.
 			if not Measures[1].isBreak then
 				-- currMeasure can be negative. If the first thing is a stream, then denote that "negative space" as a rest.
-				return "(" .. math.floor((currBeat/4 * -1) + 1)*multiplier .. ")"
+				return "(" .. math.floor((currBeat/4 * -1) + 1*multiplier) .. ")"
 			else
 				-- If the first thing is a break, then add the negative space to the existing break count
 				local segmentStart = Measures[1].streamStart
@@ -81,7 +81,7 @@ local GetTextForMeasure = function(currBeat, currMeasure, Measures, streamIndex,
 	local segmentStart = Measures[streamIndex].streamStart
 	local segmentEnd   = Measures[streamIndex].streamEnd
 
-	local currStreamLength = (segmentEnd - segmentStart) * multiplier
+	local currStreamLength = math.floor((segmentEnd - segmentStart) * multiplier)
 	local currCount = math.floor((currBeat/4 - segmentStart) * multiplier) + 1
 
 	local text = ""
