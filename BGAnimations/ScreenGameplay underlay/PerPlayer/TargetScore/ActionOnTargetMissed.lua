@@ -16,6 +16,12 @@ local args = {
 				-- For more on SM_xxx messages:
 				--   https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Screens-Screen-PostScreenMessage
 				--   https://github.com/stepmania/stepmania/blob/1c869edab5/Docs/Themerdocs/ScreenMessages.txt
+
+				-- Force fail the player on this stage, since for some reason it treats the score as a pass
+				-- (and submits to GrooveStats!!) otherwise.
+				local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+				pss:FailPlayer()
+				
 				SCREENMAN:GetTopScreen():PostScreenMessage("SM_BeginFailed", 0)
 
 			elseif RestartOnMissedTarget then
