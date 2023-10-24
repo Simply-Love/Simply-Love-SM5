@@ -23,6 +23,22 @@ local af = Def.ActorFrame{
 	end }
 }
 
+if ThemePrefs.Get("SongSelectBG") ~= "Off" then
+	af[#af+1] = Def.Banner{
+		InitCommand=function(self)
+			self:horizalign(left):zoom(0.5):scaletoclipped(item_width, _screen.h/num_visible_items):visible(true)
+			self:diffusealpha(0.5):fadeleft(0.1):SetDecodeMovie(false)
+		end,
+		SetCommand=function(self, params)
+			group = params.Text
+			if group then
+				self:LoadFromSongGroup(group):visible(true)
+			else
+				self:visible(false)
+			end
+		end,
+	}
+end
 
 -- Folder Lamps
 

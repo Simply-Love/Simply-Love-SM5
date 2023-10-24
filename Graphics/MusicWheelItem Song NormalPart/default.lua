@@ -1,3 +1,10 @@
+local num_items = THEME:GetMetric("MusicWheel", "NumWheelItems")
+-- subtract 2 from the total number of MusicWheelItems
+-- one MusicWheelItem will be offsceen above, one will be offscreen below
+local num_visible_items = num_items - 2
+
+local item_width = _screen.w / 2.125
+
 -- the MusicWheelItem for CourseMode contains the basic colored Quads
 -- use that as a common base, and add in a Sprite for "Has Edit"
 local af = LoadActor("../MusicWheelItem Course NormalPart.lua")
@@ -5,6 +12,54 @@ local af = LoadActor("../MusicWheelItem Course NormalPart.lua")
 local stepstype = GAMESTATE:GetCurrentStyle():GetStepsType()
 
 local IsNotWide = (GetScreenAspectRatio() < 16/9)
+
+if ThemePrefs.Get("SongSelectBG") ~= "Off" then
+	af[#af+1] = Def.Sprite{
+		InitCommand=function(self)
+			self:horizalign(right):addx(item_width):scaletoclipped(item_width-50, _screen.h/num_visible_items-2):visible(true)
+			self:diffusealpha(0.25):fadeleft(1):SetDecodeMovie(false)
+		end,
+		SetCommand=function(self, params)
+			local Song = params.Song
+			local Course = params.Course
+			local Path = nil
+			
+			if Song then
+				if Song:GetBackgroundPath() ~= nil then
+					Path = Song:GetBackgroundPath()
+				end
+				if Song:GetBannerPath() ~= nil then
+					if Path == nil or ThemePrefs.Get("SongSelectBG") == "Banner" then
+						Path = Song:GetBannerPath()
+					end
+				end
+					
+				if Path ~= nil then
+					self:Load( Path ):visible(true)
+				else
+					self:visible(false)
+				end
+			elseif Course then
+				if Course:GetBackgroundPath() ~= nil then
+					Path = Course:GetBackgroundPath()
+				end
+				if Course:GetBannerPath() ~= nil then
+					if Path == nil or ThemePrefs.Get("SongSelectBG") == "Banner" then
+						Path = Course:GetBannerPath()
+					end
+				end
+					
+				if Path ~= nil then
+					self:Load( Path ):visible(true)
+				else
+					self:visible(false)
+				end
+			else
+				self:visible(false)
+			end
+		end,
+	}
+end
 
 -- using a png in a Sprite ties the visual to a specific rasterized font (currently Miso),
 -- but Sprites are cheaper than BitmapTexts, so we should use them where dynamic text is not needed
