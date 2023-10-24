@@ -14,7 +14,9 @@ local mods = SL[pn].ActiveModifiers
 local sequential_offsets = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 
 -- a table to store the AMV's vertices
-local verts= {}
+-- this will be a table of tables, to get around ActorMultiVertex limitations on D3D renderer
+local vertsTable= {}
+
 local Steps = GAMESTATE:GetCurrentSteps(player)
 local TimingData = Steps:GetTimingData()
 -- FirstSecond and LastSecond are used in scaling the x-coordinates of the AMV's vertices
@@ -43,7 +45,19 @@ end
 
 -- ---------------------------------------------
 
+-- Initialize vertices table of tables and start the stepcount
+vertsTable[#vertsTable+1] = {}
+local stepCount = 0
+
 for t in ivalues(sequential_offsets) do
+	stepCount = stepCount + 1
+	-- If the step-count exceeds the threshold, start a new table within the table.
+	if stepCount >= 16000 then
+		stepCount = 0
+		vertsTable[#vertsTable+1] = {}
+	end
+	local verts = vertsTable[#vertsTable]
+	
 	CurrentSecond = t[1]
 	Offset = t[2]
 
@@ -94,12 +108,19 @@ end
 -- the scatter plot will use an ActorMultiVertex in "Quads" mode
 -- this is more efficient than drawing n Def.Quads (one for each judgment)
 -- because the entire AMV will be a single Actor rather than n Actors with n unique Draw() calls.
-local amv = Def.ActorMultiVertex{
-	InitCommand=function(self) self:x(-GraphWidth/2) end,
-	OnCommand=function(self)
-		self:SetDrawState({Mode="DrawMode_Quads"})
-			:SetVertices(verts)
-	end,
-}
 
-return amv
+-- Since we've now split the table into multiples, create an ActorMultiVertex for each table and store them into one ActorFrame.
+local af = Def.ActorFrame{}
+
+for verts in ivalues(vertsTable) do
+	local amv = Def.ActorMultiVertex{
+		InitCommand=function(self) self:x(-GraphWidth/2) end,
+		OnCommand=function(self)
+			self:SetDrawState({Mode="DrawMode_Quads"})
+				:SetVertices(verts)
+		end,
+	}
+	af[#af+1] = amv
+end
+
+return af
