@@ -67,6 +67,21 @@ if mods.ColumnFlashOnMiss then
 					columns[column_mapping[i]]:playcommand("Flash", {tns=tns})
 				end
 			end
+		elseif params.Player == player and params.TapNoteScore and params.Column then
+			local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)
+			if (tns == "Miss" or tns == "MissedHold") and mods.FlashMiss then
+				columns[params.Column+1]:playcommand("Flash", {tns=tns})
+			elseif not FAplus and tns == "W5" and mods.FlashWayOff then
+				columns[params.Column+1]:playcommand("Flash", {tns=tns})
+			elseif (FAplus and tns == "W5" and mods.FlashDecent) or (not FAplus and tns == "W4" and mods.FlashDecent) then
+				columns[params.Column+1]:playcommand("Flash", {tns=tns})
+			elseif (FAplus and tns == "W4" and mods.FlashGreat) or (not FAplus and tns == "W3" and mods.FlashGreat) then
+				columns[params.Column+1]:playcommand("Flash", {tns=tns})
+			elseif (FAplus and tns == "W3" and mods.FlashExcellent) or (not FAplus and tns == "W2" and mods.FlashExcellent) then
+				columns[params.Column+1]:playcommand("Flash", {tns=tns})
+			elseif (FAplus and tns == "W2" and mods.FlashFantastic) or (tns == "W1" and mods.FlashFantastic) then
+				columns[params.Column+1]:playcommand("Flash", {tns=tns})
+			end
 		end
 	end
 
