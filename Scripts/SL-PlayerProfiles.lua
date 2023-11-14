@@ -71,6 +71,7 @@ local permitted_profile_settings = {
 	ColumnCountdown      = "boolean",
 	ShowHeldMiss         = "boolean",
 	TrackFoot            = "boolean",
+	ScaleGraph           = "boolean",
 
 	ErrorBar             = "string",
 	ErrorBarUp           = "boolean",
@@ -107,6 +108,8 @@ local permitted_profile_settings = {
 	
 	JudgmentBack         = "boolean",
 	ErrorMSDisplay       = "boolean",
+	GhostTilt            = "boolean",
+	BreakUI              = "boolean",
 
 	GrowCombo			 = "boolean",
 	SpinCombo			 = "boolean",

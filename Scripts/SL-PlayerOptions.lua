@@ -588,7 +588,7 @@ local Overrides = {
 	ResultsExtras = {
 		SelectType = "SelectMultiple",
 		Values = function()
-			local vals = {  "TrackEarlyJudgments", "TrackRecalc", "TrackFoot" }
+			local vals = {  "TrackEarlyJudgments", "TrackRecalc", "TrackFoot", "ScaleGraph" }
 			return vals
 		end
 	},
@@ -874,7 +874,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ExtraAesthetics = {
 		SelectType = "SelectMultiple",
-		Values = { "JudgmentBack", "ErrorMSDisplay" }
+		Values = { "JudgmentBack", "ErrorMSDisplay", "GhostTilt", "BreakUI" }
 	},
 	-------------------------------------------------------------------------
 	ScreenAfterPlayerOptions = {

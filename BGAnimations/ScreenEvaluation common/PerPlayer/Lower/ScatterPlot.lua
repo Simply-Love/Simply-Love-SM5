@@ -37,6 +37,11 @@ local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
 -- hard to make sense of visually
 local worst_window = GetTimingWindow(math.max(2, GetWorstJudgment(sequential_offsets)))
 
+-- cap worst_window to Great if selected by the player
+if mods.ScaleGraph then
+	worst_window = math.min(worst_window, GetTimingWindow(3))
+end
+
 -- ---------------------------------------------
 
 local colors = {}
@@ -75,7 +80,7 @@ for t in ivalues(sequential_offsets) do
 	-- pad the right end because the time measured seems to lag a little...
 	x = scale(CurrentSecond, FirstSecond, LastSecond + 0.05, 0, GraphWidth)
 
-	if Offset ~= "Miss" then
+	if Offset ~= "Miss" and (math.abs(Offset) <= worst_window or not mods.ScaleGraph) then
 		-- DetermineTimingWindow() is defined in ./Scripts/SL-Helpers.lua
 		TimingWindow = DetermineTimingWindow(Offset)
 		y = scale(Offset, worst_window, -worst_window, 0, GraphHeight)
@@ -145,17 +150,43 @@ for t in ivalues(sequential_offsets) do
 			end
 		end
 	else
+		local col = color("#ff000077")
+		if Offset ~= "Miss" and mods.ScaleGraph then
+			TimingWindow = DetermineTimingWindow(Offset)
+			y = scale(Offset, worst_window, -worst_window, 0, GraphHeight)
+			
+			-- get the appropriate color from the global SL table
+			c = colors[TimingWindow]
+
+			if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
+				abs_offset = math.abs(EarlyOffset)
+				if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
+					c = SL.JudgmentColors["FA+"][2]
+				end
+			end
+
+			-- get the red, green, and blue values from that color
+			r = c[1]
+			g = c[2]
+			b = c[3]
+		else
+			r = 1
+			g = 0
+			b = 0
+		end
 		-- else, a miss should be a quadrilateral that is the height of the entire graph and red
 		if death_second ~= nil and CurrentSecond / MusicRate > death_second then
-			table.insert( verts, {{x, 0, 0}, color("#ff000033")} )
-			table.insert( verts, {{x+1, 0, 0}, color("#ff000033")} )
-			table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000033")} )
-			table.insert( verts, {{x, GraphHeight, 0}, color("#ff000033")} )
+			col = {r,g,b,0.15}
+			table.insert( verts, {{x, 0, 0}, col} )
+			table.insert( verts, {{x+1, 0, 0}, col} )
+			table.insert( verts, {{x+1, GraphHeight, 0}, col} )
+			table.insert( verts, {{x, GraphHeight, 0}, col} )
 		else
-			table.insert( verts, {{x, 0, 0}, color("#ff000077")} )
-			table.insert( verts, {{x+1, 0, 0}, color("#ff000077")} )
-			table.insert( verts, {{x+1, GraphHeight, 0}, color("#ff000077")} )
-			table.insert( verts, {{x, GraphHeight, 0}, color("#ff000077")} )
+			col = {r,g,b,0.3}
+			table.insert( verts, {{x, 0, 0}, col} )
+			table.insert( verts, {{x+1, 0, 0}, col} )
+			table.insert( verts, {{x+1, GraphHeight, 0}, col} )
+			table.insert( verts, {{x, GraphHeight, 0}, col} )
 		end
 	end
 end

@@ -221,7 +221,11 @@ GenerateBreakdownText = function(pn, minimization_level)
 				-- If we find two streams in sequence, then there's an implicit (1) in between.
 				-- Make sure we still account for that for minimization levels 0 and 1.
 				if i > 1 and not segments[i-1].isBreak then
-					text_segments[#text_segments+1] = "-"
+					if minimization_level == 0 then
+						text_segments[#text_segments+1] = "-"
+					else
+						text_segments[#text_segments+1] = "'"
+					end
 				end
 				text_segments[#text_segments+1] = tostring(segment_size)
 			end

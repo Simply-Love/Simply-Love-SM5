@@ -1,7 +1,7 @@
 local player = Var "Player"
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-local sprite
+local sprite, spriteGhost
 
 if mods.JudgmentBack then
 	return Def.ActorFrame{Name="Player Judgment"}
@@ -64,6 +64,7 @@ return Def.ActorFrame{
 	InitCommand=function(self)
 		local kids = self:GetChildren()
 		sprite = kids.JudgmentWithOffsets
+		spriteGhost = kids.GhostJudgment
 	end,
 	EarlyHitMessageCommand=function(self, param)
 		if param.Player ~= player then return end
@@ -227,7 +228,39 @@ return Def.ActorFrame{
 		end
 		-- this should match the custom JudgmentTween() from SL for 3.95
 		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+		
+		if tns == "W1" and mods.GhostTilt then
+			if not mods.ShowFaPlusWindow or IsW0Judgment(param, player) then
+				spriteGhost:visible(true):setstate(frame)
+				spriteGhost:diffusealpha(math.max(1,math.abs(param.TapNoteOffset)/0.015)*0.5)
+				spriteGhost:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+			end
+		end
 	end,
+	
+	Def.Sprite{
+		Name="GhostJudgment",
+		InitCommand=function(self)
+			-- animate(false) is needed so that this Sprite does not automatically
+			-- animate its way through all available frames; we want to control which
+			-- frame displays based on what judgment the player earns
+			self:animate(false):visible(false)
+
+			local mini = mods.Mini:gsub("%%","") / 100
+			self:addx((mods.NoteFieldOffsetX * (1 + mini)) * 2)
+			self:addy((mods.NoteFieldOffsetY * (1 + mini)) * 2)
+			
+			-- if we are on ScreenEdit, judgment graphic is always "Love"
+			-- because ScreenEdit is a mess and not worth bothering with.
+			if string.match(tostring(SCREENMAN:GetTopScreen()), "ScreenEdit") then
+				self:Load( THEME:GetPathG("", "_judgments/Love") )
+
+			else
+				self:Load( THEME:GetPathG("", "_judgments/" .. file_to_load) )
+			end
+		end,
+		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
+	},
 
 	Def.Sprite{
 		Name="JudgmentWithOffsets",
