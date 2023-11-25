@@ -9,30 +9,45 @@ local scroller_y = 0
 local first_row_y = 66
 
 local af = Def.ActorFrame{
-	-- a Quad to move around the screen as the focus of the scroller changes
-	Def.Quad{
-		InitCommand=function(self) self:zoomto(74,20):diffuse(1,0,0,0.5):xy(157, first_row_y) end,
+		-- a gray Quad to highlight which specific button/row the player is hovering on
+		Def.Quad{
+			InitCommand=function(self) self:zoomto(_screen.w-WideScale(24,240),20):diffuse(1,1,1,0.2):xy(_screen.cx, first_row_y) end,
+			MapControllersFocusChangedMessageCommand=function(self, params)
+				local y = first_row_y
+				if num_buttons and params.bmt:GetParent().ItemIndex > num_buttons-10 then
+					y = (params.bmt:GetParent().ItemIndex - (num_buttons-10)) * 24 + scroller_y
+				end
 
-		-- I'm having MapControllersFocusChanged and MapControllersFocusLost broadcast
-		-- via MESSAGEMAN in Metrics.ini in the [ScreenMapControllers] section.
-		MapControllersFocusChangedMessageCommand=function(self, params)
-			local y = first_row_y
+				self:visible(true):y(y)
+			end,
+			MapControllersFocusLostMessageCommand=function(self)
+				self:visible(false)
+			end,
+		},
 
-			-- As the player moves down the list of buttons, all the rows move in unison for a while
-			-- so that the item with focus remains near the top.
-			-- As the end of the list approaches, the rows stop moving.
-			-- We want our Quad to do the opposite so that it stays with the y of the currently active BitmapText.
-			if num_buttons and params.bmt:GetParent().ItemIndex > num_buttons-10 then
-				y = (params.bmt:GetParent().ItemIndex - (num_buttons-10)) * 24 + scroller_y
-			end
+		-- a red Quad to highlight which specific column within a specific button the player is hovering on
+		Def.Quad{
+			InitCommand=function(self) self:zoomto(74,20):diffuse(1,0,0,0.5):xy(157, first_row_y) end,
+			-- I'm having MapControllersFocusChanged and MapControllersFocusLost broadcast
+			-- via MESSAGEMAN in Metrics.ini in the [ScreenMapControllers] section.
+			MapControllersFocusChangedMessageCommand=function(self, params)
+				local y = first_row_y
 
-			local x = params.bmt:GetX()
-			self:visible(true):xy(x,y)
-		end,
-		MapControllersFocusLostMessageCommand=function(self)
-			self:visible(false)
-		end
-	},
+				-- As the player moves down the list of buttons, all the rows move in unison for a while
+				-- so that the item with focus remains near the top.
+				-- As the end of the list approaches, the rows stop moving.
+				-- We want our Quad to do the opposite so that it stays with the y of the currently active BitmapText.
+				if num_buttons and params.bmt:GetParent().ItemIndex > num_buttons-10 then
+					y = (params.bmt:GetParent().ItemIndex - (num_buttons-10)) * 24 + scroller_y
+				end
+
+				local x = params.bmt:GetX()
+				self:visible(true):xy(x,y)
+			end,
+			MapControllersFocusLostMessageCommand=function(self)
+				self:visible(false)
+			end,
+		},
 
 	Def.ActorProxy{
 		Name="Scroller",
