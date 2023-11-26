@@ -7,11 +7,10 @@ local layout = GetGameplayLayout(player, opts:Reverse() ~= 0)
 local af = Def.ActorFrame{
   Name="NoteFieldContainer"..pn,
   OnCommand=function(self)
-    -- We multiply by 2 here because most child actors use the center of the
-    -- playfield as the anchor point, and we want to move the playfield as a whole.
-    self:addx(mods.NoteFieldOffsetX * 2)
-    self:addy(mods.NoteFieldOffsetY * 2)
-    SCREENMAN:GetTopScreen():GetChild("Player"..pn):GetChild("NoteField"):addx(mods.NoteFieldOffsetX)
+    local adjusted_offset_x = mods.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
+
+    self:addy(mods.NoteFieldOffsetY)
+    SCREENMAN:GetTopScreen():GetChild("Player"..pn):GetChild("NoteField"):addx(adjusted_offset_x)
     SCREENMAN:GetTopScreen():GetChild("Player"..pn):GetChild("NoteField"):addy(mods.NoteFieldOffsetY)
   end,
 }
@@ -25,6 +24,5 @@ af[#af+1] = LoadActor("ErrorBar/default.lua", player, layout.ErrorBar)
 af[#af+1] = LoadActor("MeasureCounter.lua", player, layout.MeasureCounter)
 af[#af+1] = LoadActor("SubtractiveScoring.lua", player, layout.SubtractiveScoring)
 af[#af+1] = LoadActor("ColumnCues.lua", player)
-af[#af+1] = LoadActor("NoteFieldOffset.lua", player)
 
 return af

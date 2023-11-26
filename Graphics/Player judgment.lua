@@ -107,8 +107,9 @@ return Def.ActorFrame{
 			self:animate(false):visible(false)
 
 			local mini = mods.Mini:gsub("%%","") / 100
-			self:addx((mods.NoteFieldOffsetX * (1 + mini)) * 2)
-			self:addy((mods.NoteFieldOffsetY * (1 + mini)) * 2)
+			local adjusted_offset_x = mods.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
+			self:addx((adjusted_offset_x * (1 + mini)))
+			self:addy((mods.NoteFieldOffsetY * (1 + mini)))
 			
 			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.

@@ -121,8 +121,10 @@ GetNotefieldX = function( player )
 	-- double is always centered
 	if style:GetStyleType() == "StyleType_OnePlayerTwoSides" then return _screen.cx end
 
+	local PlayerOffset = SL[p].ActiveModifiers.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
+
 	local NumPlayersAndSides = ToEnumShortString( style:GetStyleType() )
-	return THEME:GetMetric("ScreenGameplay","Player".. p .. NumPlayersAndSides .."X")
+	return THEME:GetMetric("ScreenGameplay","Player".. p .. NumPlayersAndSides .."X") + PlayerOffset
 end
 
 -- -----------------------------------------------------------------------

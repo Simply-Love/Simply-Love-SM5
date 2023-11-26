@@ -632,7 +632,7 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,
 		Choices = function()
-			local first	= -50
+			local first	= 0
 			local last 	= 50
 			local step 	= 1
 
