@@ -53,10 +53,6 @@ end
 local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	Name="Number",
 	OnCommand=function(self)
-		local mini = mods.Mini:gsub("%%","") / 100
-		local adjusted_offset_x = mods.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
-		self:addx((adjusted_offset_x * (1 + mini)))
-		self:addy((mods.NoteFieldOffsetY * (1 + mini)))
 		self:shadowlength(1):vertalign(middle):zoom(0.75)
 	end,
 	ComboCommand=function(self, params)

@@ -105,11 +105,6 @@ return Def.ActorFrame{
 			-- animate its way through all available frames; we want to control which
 			-- frame displays based on what judgment the player earns
 			self:animate(false):visible(false)
-
-			local mini = mods.Mini:gsub("%%","") / 100
-			local adjusted_offset_x = mods.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
-			self:addx((adjusted_offset_x * (1 + mini)))
-			self:addy((mods.NoteFieldOffsetY * (1 + mini)))
 			
 			-- if we are on ScreenEdit, judgment graphic is always "Love"
 			-- because ScreenEdit is a mess and not worth bothering with.
