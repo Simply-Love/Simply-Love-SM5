@@ -4,6 +4,49 @@ if SL.Global.GameMode == "Casual" then return end
 local player = ...
 local mods = SL[ToEnumShortString(player)].ActiveModifiers
 
+local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
+local IsReversedColumn = function(player, columnIndex)
+	local columns = {}
+	for i=1, NumColumns do
+		columns[#columns + 1] = false
+	end
+
+	local opts = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions()
+	if opts:Reverse() == 1 then
+		for column,val in ipairs(columns) do
+			columns[column] = not val
+		end
+	end
+
+	if opts:Alternate() == 1 then
+		for column,val in ipairs(columns) do
+			if column % 2 == 0 then
+				columns[column] = not val
+			end
+		end
+	end
+
+	if opts:Split() == 1 then
+		for column,val in ipairs(columns) do
+			if column > NumColumns / 2 then
+				columns[column] = not val
+			end
+		end
+	end
+
+	if opts:Cross() == 1 then
+		local firstChunk = NumColumns / 4
+		local lastChunk = NumColumns - firstChunk
+		for column,val in ipairs(columns) do
+			if column > firstChunk and column <= lastChunk then
+				columns[column] = not val
+			end
+		end
+	end
+
+	return columns[columnIndex]
+end
+
 if mods.ColumnFlashOnMiss then
 	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions('ModsLevel_Preferred')
 	-- Existing logic already accounts for turn mods but not flip or invert.
@@ -12,8 +55,6 @@ if mods.ColumnFlashOnMiss then
 	local invert = po:Invert() > 0
 	
 	if flip and invert then return end
-
-	local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 
 	-- Only support flip/invert in modes with 4 or 8 columns.
 	if NumColumns ~= 4 and NumColumns ~= 8 and (flip or invert) then return end
@@ -45,6 +86,7 @@ if mods.ColumnFlashOnMiss then
 	local width = style:GetWidth(player)
 
 	local y_offset = 80
+	local reverseOffset = THEME:GetMetric("Player", "ReceptorArrowsYReverse")
 
 	local af = Def.ActorFrame{
 		InitCommand=function(self)
@@ -80,6 +122,11 @@ if mods.ColumnFlashOnMiss then
 					:vertalign(top)
 					:setsize(width/NumColumns, _screen.h - y_offset)
 					:fadebottom(0.333)
+
+				if IsReversedColumn(player, ColumnIndex) then
+					self:rotationz(180)
+					self:y(y_offset * 2 + reverseOffset + (width/NumColumns)/2)
+				end
 	        end,
 			FlashCommand=function(self)
 				self:diffuse(1,0,0,0.66)
