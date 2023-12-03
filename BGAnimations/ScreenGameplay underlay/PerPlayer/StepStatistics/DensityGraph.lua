@@ -21,7 +21,7 @@ and SL.P2.ActiveModifiers.DataVisualizations == "Step Statistics")
 
 -- max_seconds is how many seconds of a stepchart we want visualized on-screen at once.
 -- For very long songs (longer than, say, 10 minutes) the density graph becomes too
--- horizontally compressed (squeezed in, so to speak) and it's dificult get any useful
+-- horizontally compressed (squeezed in, so to speak) and it's dificult to get any useful
 -- information out of it, visually.  And there are a lot of Very Long Songs™.
 --
 -- So, we hardcode it to 4 minutes here. If the song is longer than 4 minutes, the density
@@ -149,16 +149,15 @@ local graph_and_lifeline = Def.ActorFrame{
 
 		UpdateRate = LifeBaseSampleRate
 
-		-- FIXME: add inline comments explaining what a 'simple' BPM is -quietly
-		-- FIXME: add inline comments explaining what "quantize the timing [...] to avoid jaggies" means
-		--            because I have no idea what it means -quietly
-
-		-- if the song has a 'simple' BPM, then quantize the timing
-		-- to the nearest multiple of 8ths to avoid jaggies
+		-- round up UpdateRate and quantize it to an 8th note interval
+		-- for streams, this means each update interval contains a consistent number of notes,
+		-- so that when one keeps combo, the total life gained between updates will be similar,
+		-- which makes the similar slope optimization below more likely to take place
+		-- but if we have BPM changes, then a single interval doesn't work
 		if not TimingData:HasBPMChanges() then
 			local bpm = TimingData:GetBPMs()[1]
-			if bpm >= 60 and bpm <= 300 then
-				-- make sure that the BPM makes sense
+			-- also avoid this for low BPMs because that might make the interval too long to be useful
+			if bpm >= 60 then
 				local Interval8th = (60 / bpm) / 2
 				UpdateRate = Interval8th * math.ceil(UpdateRate / Interval8th)
 			end
@@ -207,8 +206,8 @@ local graph_and_lifeline = Def.ActorFrame{
 				local x = scale( seconds, first_second, last_second, 0, scaled_width )
 				local y = scale( LifeMeter:GetLife(), 1, 0, 0, height )
 
-				-- if the slopes of the newest line segment is similar
-				-- to the previous segment, just extend the old one.
+				-- if the slope of the newest line segment is similar
+				-- to the slope of the previous segment, extend the old one.
 				local condense = false
 				if (#life_verts >= 2) then
 					local slope_original = SlopeAngle(life_verts[#life_verts-1][1], life_verts[#life_verts][1])
