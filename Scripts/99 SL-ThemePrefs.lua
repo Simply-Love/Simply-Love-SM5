@@ -329,6 +329,12 @@ SL_CustomPrefs.Get = function()
 			Default = "Off",
 			Choices = { THEME:GetString("ThemePrefs", "Off"), THEME:GetString("ThemePrefs", "Banner"), THEME:GetString("ThemePrefs", "BG") },
 			Values = { "Off", "Banner", "BG" }
+		},
+		ResultsBG =
+		{
+			Default = false,
+			Choices = { THEME:GetString("ThemePrefs", "On"), THEME:GetString("ThemePrefs", "Off") },
+			Values = { true, false }
 		}
 	}
 end

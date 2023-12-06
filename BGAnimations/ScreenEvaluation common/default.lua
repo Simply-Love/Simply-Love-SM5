@@ -48,6 +48,9 @@ end
 -- code for triggering a screenshot and animating a "screenshot" texture
 t[#t+1] = LoadActor("./Shared/ScreenshotHandler.lua")
 
+-- song background
+t[#t+1] = LoadActor("./Shared/Background.lua")
+
 -- the title of the song and its graphical banner, if there is one
 t[#t+1] = LoadActor("./Shared/TitleAndBanner.lua")
 
