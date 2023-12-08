@@ -8,11 +8,11 @@ if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
 	TapNoteScores.Types = {'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}
 	Colors = {
 		SL.JudgmentColors["FA+"][1],
+		SL.JudgmentColors["FA+"][1],
 		SL.JudgmentColors["FA+"][2],
 		SL.JudgmentColors["FA+"][3],
 		SL.JudgmentColors["FA+"][4],
-		SL.JudgmentColors["FA+"][5],
-		SL.JudgmentColors["ITG"][5], -- FA+ mode doesn't have a Way Off window. Extract color from the ITG mode.
+		SL.JudgmentColors["FA+"][5], -- FA+ mode doesn't have a Way Off window. Extract color from the ITG mode.
 		SL.JudgmentColors["FA+"][6],
 	}
 	-- get all TNS names

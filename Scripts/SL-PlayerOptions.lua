@@ -321,6 +321,36 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	DeviceOffset = {
+		Choices = { 'Headphones', 'Speakers', 'Bluetooth' },
+		OneChoiceForAllPlayers = true,
+		LoadSelections = function(self, list, pn)
+			local currentDevice = SL.Global.ActiveModifiers.DeviceOffset
+			local i = FindInTable(currentDevice, self.Choices) or 1
+			list[i] = true
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			local globalOffset = ""
+			local mods = SL.Global.ActiveModifiers
+
+			local choiceToOffset = {
+				Headphones = '-0.013000',
+				Speakers = '-0.013000',
+				Bluetooth = '-0.350000',
+			}
+			
+			for i, choice in ipairs(self.Choices) do
+				if list[i] then
+					mods.DeviceOffset = choice
+					globalOffset = choiceToOffset[choice]
+					break
+				end
+			end
+			PREFSMAN:SetPreference("GlobalOffsetSeconds", globalOffset)
+		end
+	},
+	-------------------------------------------------------------------------
 	Stepchart = {
 		ExportOnChange = true,
 		Choices = function()
