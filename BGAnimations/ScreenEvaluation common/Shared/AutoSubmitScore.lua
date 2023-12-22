@@ -84,7 +84,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 		for i=1,2 do
 			local playerStr = "player"..i
 			local entryNum = 1
-			local rivalNum = 1
+			local rivalNum = 1	
 			local data = res["status"] == "success" and res["data"] or nil
 			-- Pane 8 is the groovestats highscores pane.
 			local highScorePane = panes:GetChild("Pane8_SideP"..i):GetChild("")
@@ -107,16 +107,17 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 				-- It's better to just not display anything than display the wrong scores.
 				if SL["P"..side].Streams.Hash == data[playerStr]["chartHash"] then
 					local personalRank = nil
-					if not data[playerStr]["isRanked"] then
-						QRPane:GetChild("QRCode"):queuecommand("Hide")
-						QRPane:GetChild("HelpText"):settext("This chart is not ranked on GrooveStats.")
-						if i == 1 and P1SubmitText then
-							P1SubmitText:queuecommand("ChartNotRanked")
-						elseif i == 2 and P2SubmitText then
-							P2SubmitText:queuecommand("ChartNotRanked")
-						end
-					elseif data[playerStr]["gsLeaderboard"] then
-						for gsEntry in ivalues(data[playerStr]["gsLeaderboard"]) do
+					local showExScore = SL["P"..side].ActiveModifiers.ShowEXScore and data[playerStr]["exLeaderboard"]
+
+					local leaderboardData = nil
+					if showExScore then
+						leaderboardData = data[playerStr]["exLeaderboard"]
+					elseif data[playerStr]["leaderboard"] then
+						leaderboardData = data[playerStr]["gsLeaderboard"]
+					end
+
+					if leaderboardData then
+						for gsEntry in ivalues(leaderboardData) do
 							local entry = highScorePane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..entryNum)
 							entry:stoptweening()
 							entry:diffuse(Color.White)
@@ -127,6 +128,15 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								ParseGroovestatsDate(gsEntry["date"]),
 								entry
 							)
+
+							-- TODO(teejusb): Determine how we want to easily display EX scores.
+							-- For now just highlight blue because it's simple.
+							if showExScore then
+								entry:GetChild("Score"):diffuse(SL.JudgmentColors["FA+"][1])
+							else
+								entry:GetChild("Score"):diffuse(Color.White)
+							end
+
 							if gsEntry["isRival"] then
 								entry:diffuse(color("#BD94FF"))
 								rivalNum = rivalNum + 1
@@ -140,6 +150,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							end
 							entryNum = entryNum + 1
 						end
+
 						QRPane:GetChild("QRCode"):queuecommand("Hide")
 						QRPane:GetChild("HelpText"):settext("Score has already been submitted :)")
 						if i == 1 and P1SubmitText then
@@ -147,6 +158,14 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 						elseif i == 2 and P2SubmitText then
 							P2SubmitText:queuecommand("Submit")
 						end
+					elseif not data[playerStr]["isRanked"] then
+						QRPane:GetChild("QRCode"):queuecommand("Hide")
+						QRPane:GetChild("HelpText"):settext("This chart is not ranked on GrooveStats.")
+						if i == 1 and P1SubmitText then
+							P1SubmitText:queuecommand("ChartNotRanked")
+						elseif i == 2 and P2SubmitText then
+							P2SubmitText:queuecommand("ChartNotRanked")
+						end	
 					end
 
 					-- Only display the overlay on the sides that are actually joined.
