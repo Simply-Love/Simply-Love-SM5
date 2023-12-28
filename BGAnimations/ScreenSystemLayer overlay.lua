@@ -1,8 +1,6 @@
 -- This is mostly copy/pasted directly from SM5's _fallback theme with
 -- very minor modifications.
 
-local maxWidth = ((GetScreenAspectRatio() > 21/9) and 420 or 320)
-
 local t = Def.ActorFrame{
 	InitCommand=function(self)
 		-- In case we loaded the theme with SRPG7 and had Rainbow Mode enabled, disable it.
@@ -19,7 +17,7 @@ local function CreditsText( player )
 	return LoadFont("Common Normal") .. {
 		InitCommand=function(self)
 			self:visible(false)
-			self:maxwidth(maxWidth)
+			self:maxwidth(325)
 			self:name("Credits" .. PlayerNumberToString(player))
 			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
 		end,
