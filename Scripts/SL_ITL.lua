@@ -12,7 +12,7 @@ IsItlActive = function()
 	-- The file is only written to while the event is active.
 	-- These are just placeholder dates.
 	local startTimestamp = 20230317
-	local endTimestamp = 20230619
+	local endTimestamp = 20240420
 
 	local year = Year()
 	local month = MonthOfYear()+1
