@@ -36,7 +36,12 @@ end
 
 -- quad behind the song/course title text
 af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:diffuse(color("#1E282F")):setsize(banner.width,25):zoom(banner.zoom) end,
+	InitCommand=function(self) 
+		self:diffuse(color("#1E282F")):setsize(banner.width,25):zoom(banner.zoom)
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
+	end,
 }
 
 -- song/course title text

@@ -12,6 +12,7 @@ local style = ThemePrefs.Get("VisualStyle")
 -- if the player chooses a different VisualStyle during runtime, MESSAGEMAN will broadcast
 -- "VisualStyleSelected" which we can use in Normal.lua and RainbowMode.lua to Load() the
 -- newly-appropriate texture from disk into each Sprite; see also: ./BGAnimations/ScreenOptionsService overlay.lua
+local style = ThemePrefs.Get("VisualStyle")
 local file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
 
 local af = Def.ActorFrame{}
@@ -29,5 +30,9 @@ af[#af+1] = Def.Quad{
 af[#af+1] = LoadActor("./Normal.lua", file)
 af[#af+1] = LoadActor("./RainbowMode.lua", file)
 af[#af+1] = LoadActor("./Static.lua", file)
+
+if style == "Technique" then
+	af[#af+1] = LoadActor("./Technique.lua", file)
+end
 
 return af

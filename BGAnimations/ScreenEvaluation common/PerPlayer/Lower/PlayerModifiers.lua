@@ -56,6 +56,9 @@ return Def.ActorFrame{
 				-- that would normally be between the left and right panes
 				self:addx(width*0.2541)
 			end
+			if ThemePrefs.Get("VisualStyle") == "Technique" then
+				self:diffusealpha(0.75)
+			end
 		end
 	},
 

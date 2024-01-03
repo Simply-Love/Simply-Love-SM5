@@ -124,6 +124,9 @@ pane[#pane+1] = Def.BitmapText{
 		self:addx(10):addy(-125)
 			:zoom(0.3)
 			:horizalign(left)
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end,
 }
 
@@ -223,6 +226,9 @@ pane[#pane+1] = Def.Quad{
 			:zoomto(pane_width, topbar_height )
 			:xy(pane_width/2, -pane_height + topbar_height/2)
 			:diffuse(color("#101519"))
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end,
 }
 
