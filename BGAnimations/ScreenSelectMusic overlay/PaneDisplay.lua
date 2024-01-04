@@ -93,18 +93,22 @@ local GetScoresRequestProcessor = function(res, master)
 		local worldRecordSet = false
 		local personalRecordSet = false
 		local data = res["status"] == "success" and res["data"] or nil
+		local foundLeaderboard = false
 
 		-- First check to see if the leaderboard even exists.
-		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] then
-			local showExScore = SL["P"..i].ActiveModifiers.ShowEXScore and data[playerStr]["exLeaderboard"]
+		if data and data[playerStr] then
+			local showExScore = SL["P"..i].ActiveModifiers.ShowEXScore and data[playerStr]["exLeaderboard"] ~= nil
 
 			local leaderboardData = nil
 			if showExScore then
 				leaderboardData = data[playerStr]["exLeaderboard"]
-			elseif data[playerStr]["leaderboard"] then
+			elseif data[playerStr]["gsLeaderboard"] then
 				leaderboardData = data[playerStr]["gsLeaderboard"]
 			end
 
+			if leaderboardData then
+				foundLeaderboard = true
+			end
 
 			-- And then also ensure that the chart hash matches the currently parsed one.
 			-- It's better to just not display anything than display the wrong scores.
@@ -192,10 +196,18 @@ local GetScoresRequestProcessor = function(res, master)
 
 		if res["status"] == "success" then
 			if data and data[playerStr] then
-				if data[playerStr]["isRanked"] then
-					loadingText:settext("Loaded")
+				if foundLeaderboard then
+					if SL["P"..i].ActiveModifiers.ShowEXScore then
+						loadingText:settext("EX Score")
+					else
+						loadingText:settext("GrooveStats")
+					end
 				else
-					loadingText:settext("Not Ranked")
+					if SL["P"..i].ActiveModifiers.ShowEXScore then
+						loadingText:settext("No EX Data")
+					else
+						loadingText:settext("No Data")
+					end
 				end
 			else
 				-- Just hide the text

@@ -84,11 +84,7 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 		local entry = leaderboard:GetChild("LeaderboardEntry"..i)
 		-- We didn't get any scores if i is still == 1.
 		if i == 1 then
-			if isRanked then
-				SetEntryText("", "No Scores", "", "", entry)
-			else
-				SetEntryText("", "Chart Not Ranked", "", "", entry)
-			end
+			SetEntryText("", "No Scores", "", "", entry)
 		else
 			-- Empty out the remaining rows.
 			SetEntryText("", "", "", "", entry)
@@ -127,23 +123,44 @@ local LeaderboardRequestProcessor = function(res, master)
 			if data[playerStr] then
 				master[pn].isRanked = data[playerStr]["isRanked"]
 
-				-- First add the main GrooveStats leaderboard.
-				if data[playerStr]["gsLeaderboard"] then
-					leaderboardList[#leaderboardList + 1] = {
-						Name="GrooveStats",
-						Data=DeepCopy(data[playerStr]["gsLeaderboard"]),
-						IsEX=false
-					}
-					master[pn]["LeaderboardIndex"] = 1
-				end
-
-				if data[playerStr]["exLeaderboard"] then
-					leaderboardList[#leaderboardList + 1] = {
-						Name="GrooveStats",
-						Data=DeepCopy(data[playerStr]["exLeaderboard"]),
-						IsEX=true
-					}
-					master[pn]["LeaderboardIndex"] = 1
+				if SL["P"..i].ActiveModifiers.ShowEXScore then
+					-- If the player is using EX scoring, then we want to display the EX leaderboard first.
+					if data[playerStr]["exLeaderboard"] then
+						leaderboardList[#leaderboardList + 1] = {
+							Name="GrooveStats",
+							Data=DeepCopy(data[playerStr]["exLeaderboard"]),
+							IsEX=true
+						}
+						master[pn]["LeaderboardIndex"] = 1
+					end
+	
+					if data[playerStr]["gsLeaderboard"] then
+						leaderboardList[#leaderboardList + 1] = {
+							Name="GrooveStats",
+							Data=DeepCopy(data[playerStr]["gsLeaderboard"]),
+							IsEX=false
+						}
+						master[pn]["LeaderboardIndex"] = 1
+					end
+				else
+					-- Display the main GrooveStats leaderboard first if player is not using EX scoring.
+					if data[playerStr]["gsLeaderboard"] then
+						leaderboardList[#leaderboardList + 1] = {
+							Name="GrooveStats",
+							Data=DeepCopy(data[playerStr]["gsLeaderboard"]),
+							IsEX=false
+						}
+						master[pn]["LeaderboardIndex"] = 1
+					end
+	
+					if data[playerStr]["exLeaderboard"] then
+						leaderboardList[#leaderboardList + 1] = {
+							Name="GrooveStats",
+							Data=DeepCopy(data[playerStr]["exLeaderboard"]),
+							IsEX=true
+						}
+						master[pn]["LeaderboardIndex"] = 1
+					end
 				end
 
 				-- Then any event leaderboards.

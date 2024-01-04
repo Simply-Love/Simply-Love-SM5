@@ -158,14 +158,6 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 						elseif i == 2 and P2SubmitText then
 							P2SubmitText:queuecommand("Submit")
 						end
-					elseif not data[playerStr]["isRanked"] then
-						QRPane:GetChild("QRCode"):queuecommand("Hide")
-						QRPane:GetChild("HelpText"):settext("This chart is not ranked on GrooveStats.")
-						if i == 1 and P1SubmitText then
-							P1SubmitText:queuecommand("ChartNotRanked")
-						elseif i == 2 and P2SubmitText then
-							P2SubmitText:queuecommand("ChartNotRanked")
-						end	
 					end
 
 					-- Only display the overlay on the sides that are actually joined.
@@ -187,7 +179,11 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								GSIcon:visible(true)
 								recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 								if personalRank == 1 then
-									recordText:settext("World Record!")
+									local worldRecordText "World Record!"
+									if showExScore then
+										worldRecordText = worldRecordText .. " (EX)"
+									end
+									recordText:settext(worldRecordText)
 								else
 									recordText:settext("Personal Best!")
 								end
@@ -209,15 +205,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 					entry:stoptweening()
 					-- We didn't get any scores if i is still == 1.
 					if j == 1 then
-						if data and data[playerStr] then
-							if data[playerStr]["isRanked"] then
-								SetEntryText("", "No Scores", "", "", entry)
-							else
-								SetEntryText("", "Chart Not Ranked", "", "", entry)
-							end
-						else
-							SetEntryText("", "No Scores", "", "", entry)
-						end
+						SetEntryText("", "No Scores", "", "", entry)
 					else
 						-- Empty out the remaining rows.
 						SetEntryText("---", "----", "------", "----------", entry)
@@ -318,9 +306,6 @@ af[#af+1] = LoadFont("Common Normal").. {
 		self:zoom(0.8)
 		self:visible(GAMESTATE:IsSideJoined(PLAYER_1))
 	end,
-	ChartNotRankedCommand=function(self)
-		self:settext("Chart Not Ranked")
-	end,
 	SubmitCommand=function(self)
 		self:settext("Submitted!")
 	end,
@@ -345,9 +330,6 @@ af[#af+1] = LoadFont("Common Normal").. {
 		self:shadowlength(shadowLength)
 		self:zoom(0.8)
 		self:visible(GAMESTATE:IsSideJoined(PLAYER_2))
-	end,
-	ChartNotRankedCommand=function(self)
-		self:settext("Chart Not Ranked")
 	end,
 	SubmitCommand=function(self)
 		self:settext("Submitted!")
