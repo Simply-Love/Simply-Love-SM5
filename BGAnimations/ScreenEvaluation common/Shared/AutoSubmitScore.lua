@@ -179,7 +179,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								GSIcon:visible(true)
 								recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 								if personalRank == 1 then
-									local worldRecordText "World Record!"
+									local worldRecordText = "World Record!"
 									if showExScore then
 										worldRecordText = worldRecordText .. " (EX)"
 									end
