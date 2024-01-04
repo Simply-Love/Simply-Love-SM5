@@ -9,8 +9,6 @@ for k, file in ipairs(dirFiles) do
   end
 end
 
-SM(soundFiles)
-
 if #soundFiles > 0 then
   return soundFiles[math.random(#soundFiles)]
 end
