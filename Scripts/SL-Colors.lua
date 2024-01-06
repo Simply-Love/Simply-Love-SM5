@@ -15,8 +15,12 @@ function GetHexColor( n, decorative, ITGdiff )
 		colorTable = SL.SRPG7.Colors
 	end
 	
-	if ITGdiff then 
+	if ITGdiff == "ITG" then 
 		colorTable = SL.ITGDiffColors
+	end
+
+	if ITGdiff == "DDR" then 
+		colorTable = SL.DDRDiffColors
 	end
 
 	-- use the number passed in to lookup a color in the corresponding color table
@@ -67,7 +71,7 @@ function DifficultyColor( difficulty, decorative )
 	-- to map a difficulty string to a number
 	-- SM's enums are 0 indexed, so Beginner is 0, Challenge is 4, and Edit is 5
 	local clr = SL.Global.ActiveColorIndex + (Difficulty:Reverse()[difficulty] - 4)
-	if useITGcolors then
+	if useITGcolors == "ITG" or "DDR" then
 		clr = Difficulty:Reverse()[difficulty] - 5
 	end
 	return GetHexColor(clr, decorative, useITGcolors)

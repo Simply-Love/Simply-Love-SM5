@@ -204,6 +204,14 @@ SL = {
 		"#2691c5",
 		"#F7F7F7", --edit
 	},
+	DDRDiffColors = {
+		"#2dccef", --beginner
+		"#eaa910", --basic
+		"#ff344d", --difficult
+		"#30d81e", --expert
+		"#e900ff", --challenge
+		"#F7F7F7", --edit
+	},
 	-- These are the original SL colors. They're used for decorative (non-text) elements, like the background hearts:
 	DecorativeColors = {
 		"#FF3C23",

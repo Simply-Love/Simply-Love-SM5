@@ -326,9 +326,8 @@ SL_CustomPrefs.Get = function()
 		},
 		ITGDiffColors =
 		{
-			Default = false,
-			Choices = { THEME:GetString("ThemePrefs", "On"), THEME:GetString("ThemePrefs", "Off") },
-			Values  = { true, false }
+			Default = "Simply Love",
+			Choices = { "Simply Love", "ITG", "DDR" }
 		},
 		AnimateBanners =
 		{
