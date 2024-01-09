@@ -59,13 +59,15 @@ if file_to_load == "None" then
 	return Def.Actor{
 		InitCommand=function(self) self:visible(false) end,
 		JudgmentMessageCommand=function(self,param)
-			if not IsW0Judgment(param, player) and not IsAutoplay(player) then
-				frame = 1
-				
-				for col,tapnote in pairs(param.Notes) do
-					local tnt = ToEnumShortString(tapnote:GetTapNoteType())
-					if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
-						GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_CheckpointHit", --[[bright]] true)
+			if ToEnumShortString(param.TapNoteScore) == "W1" and mods.ShowFaPlusWindow then
+				if not IsW0Judgment(param, player) and not IsAutoplay(player) then
+					frame = 1
+					
+					for col,tapnote in pairs(param.Notes) do
+						local tnt = ToEnumShortString(tapnote:GetTapNoteType())
+						if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
+							GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_CheckpointHit", --[[bright]] true)
+						end
 					end
 				end
 			end
