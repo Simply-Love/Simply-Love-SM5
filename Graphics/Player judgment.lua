@@ -112,9 +112,7 @@ return Def.ActorFrame{
 			if sprite:GetNumStates() == 12 or sprite:GetNumStates() == 14 then
 				frame = frame * 2
 			end
-
-			sprite:visible(true):setstate(frame)
-
+			
 			if SL[ToEnumShortString(player)].ActiveModifiers.JudgmentTilt then
 				-- How much to rotate.
 				-- We cap it at 50ms (15px) since anything after likely to be too distracting.
@@ -122,9 +120,20 @@ return Def.ActorFrame{
 				-- Which direction to rotate.
 				local direction = param.TapNoteOffset < 0 and -1 or 1
 				sprite:rotationz(direction * offset)
+				spriteGhost:rotationz(direction * offset)
 			end
-			-- this should match the custom JudgmentTween() from SL for 3.95
-			sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+			
+			if mods.GhostFault then
+				self:playcommand("ResetFault")
+				spriteGhost:visible(true):setstate(frame)
+				spriteGhost:diffusealpha(0.5)
+				spriteGhost:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+			else
+				sprite:visible(true):setstate(frame)
+
+				-- this should match the custom JudgmentTween() from SL for 3.95
+				sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
+			end
 		end
 	end,
 	JudgmentMessageCommand=function(self, param)
@@ -133,7 +142,8 @@ return Def.ActorFrame{
 		if param.HoldNoteScore then return end
 
 		local tns = ToEnumShortString(param.TapNoteScore)
-		if param.EarlyTapNoteScore ~= nil then
+		if param.EarlyTapNoteScore ~= "TapNoteScore_None" then
+			self:playcommand("ResetFault")
 			local earlyTns = ToEnumShortString(param.EarlyTapNoteScore)
 
 			if earlyTns ~= "None" then
@@ -221,20 +231,21 @@ return Def.ActorFrame{
 				-- Which direction to rotate.
 				local direction = param.TapNoteOffset < 0 and -1 or 1
 				sprite:rotationz(direction * offset)
+				spriteGhost:rotationz(direction * offset)
 			else
 				-- Reset rotations on misses so it doesn't use the previous note's offset.
 				sprite:rotationz(0)
+				spriteGhost:rotationz(0)
 			end
 		end
 		-- this should match the custom JudgmentTween() from SL for 3.95
 		sprite:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 		
-		if tns == "W1" and mods.GhostTilt then
-			if not mods.ShowFaPlusWindow or IsW0Judgment(param, player) then
-				spriteGhost:visible(true):setstate(frame)
-				spriteGhost:diffusealpha(math.max(1,math.abs(param.TapNoteOffset)/0.015)*0.5)
-				spriteGhost:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
-			end
+		if (tns == "W4" or tns == "W5") and mods.GhostFault then
+			self:playcommand("ResetFault")
+			spriteGhost:visible(true):setstate(frame)
+			spriteGhost:diffusealpha(0.5)
+			spriteGhost:zoom(0.8):decelerate(0.1):zoom(0.75):sleep(0.6):accelerate(0.2):zoom(0)
 		end
 	end,
 	
@@ -259,7 +270,7 @@ return Def.ActorFrame{
 				self:Load( THEME:GetPathG("", "_judgments/" .. file_to_load) )
 			end
 		end,
-		ResetCommand=function(self) self:finishtweening():stopeffect():visible(false) end
+		ResetFaultCommand=function(self) self:finishtweening():stopeffect():visible(false) end
 	},
 
 	Def.Sprite{
