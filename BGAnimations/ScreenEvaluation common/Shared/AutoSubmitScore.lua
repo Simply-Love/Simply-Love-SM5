@@ -316,7 +316,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								local recordTextXStart = recordText:GetX() - recordText:GetWidth()*recordText:GetZoom()/2
 								local GSIconWidth = GSIcon:GetWidth()*GSIcon:GetZoom()
 								local BSIconWidth = BSIcon:GetWidth()*BSIcon:GetZoom()
-								local BSEXIconWidth = BSEXIcon:GetWidth()*BSIcon:GetZoom()
+								local BSEXIconWidth = BSEXIcon:GetWidth()*BSEXIcon:GetZoom()
 								-- This will automatically adjust based on the length of the recordText length.
 								GSIcon:xy(recordTextXStart - GSIconWidth/2, recordText:GetY())
 								BSIcon:xy(recordTextXStart - BSIconWidth/2, recordText:GetY())
