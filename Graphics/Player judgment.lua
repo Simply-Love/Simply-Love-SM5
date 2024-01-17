@@ -142,7 +142,7 @@ return Def.ActorFrame{
 		if param.HoldNoteScore then return end
 
 		local tns = ToEnumShortString(param.TapNoteScore)
-		if param.EarlyTapNoteScore ~= "TapNoteScore_None" then
+		if param.EarlyTapNoteScore ~= nil and param.EarlyTapNoteScore ~= "TapNoteScore_None" then
 			self:playcommand("ResetFault")
 			local earlyTns = ToEnumShortString(param.EarlyTapNoteScore)
 
