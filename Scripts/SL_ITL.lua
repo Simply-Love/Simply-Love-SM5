@@ -342,7 +342,7 @@ local DataForSong = function(player, prevData)
 	local day = DayOfMonth()
 
 	local judgments = GetExJudgmentCounts(player)
-	local ex = CalculateExScore(player)
+	local ex = CalculateExScore(player, judgments)
 	local clearType = GetClearType(judgments)
 	local points = GetPointsForSong(maxPoints, ex)
 	local usedCmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil

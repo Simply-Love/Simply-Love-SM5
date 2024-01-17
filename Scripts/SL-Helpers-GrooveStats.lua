@@ -505,7 +505,7 @@ CreateCommentString = function(player)
 	
 	-- Show EX score for FA+ play
 	if SL.Global.GameMode == "FA+" or (SL.Global.GameMode == "ITG" and SL[pn].ActiveModifiers.ShowFaPlusWindow) then
-		comment = comment .. ", " .. ("%.2f"):format(CalculateExScore(player)) .. "EX"
+		comment = comment .. ", " .. ("%.2f"):format(CalculateExScore(player, GetExJudgmentCounts(player))) .. "EX"
 	end
 
 	local rate = SL.Global.ActiveModifiers.MusicRate
