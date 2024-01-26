@@ -459,21 +459,19 @@ local Overrides = {
 
 			-- None and Target Score Graph should always be available to players
 			-- but Step Statistics needs a lot of space and isn't always possible
-			-- remove it as an available option if we aren't in single or if the current
-			-- notefield width already uses more than half the screen width
+			-- remove it as an available option if it wouldn't fit
+			-- Note: These conditions should be kept in sync with those in "BGAnimations/ScreenGameplay underlay/default.lua"
 			local style = GAMESTATE:GetCurrentStyle()
-			local notefieldwidth = GetNotefieldWidth()
 			local IsUltraWide = (GetScreenAspectRatio() > 21/9)
 			local mpn = GAMESTATE:GetMasterPlayerNumber()
+			local NoteFieldIsCentered = mpn and GetNotefieldX(mpn) == _screen.cx
 
-			-- Never available in double
-			if style and style:GetName() == "double"
-			-- In 4:3 versus mode
-			or (not IsUsingWideScreen() and style and style:GetName() == "versus")
-			-- if the notefield takes up more than half the screen width
-			or (notefieldwidth and notefieldwidth > _screen.w/2)
-			-- if the notefield is centered with 4:3 aspect ratio
-			or (mpn and GetNotefieldX(mpn) == _screen.cx and not IsUsingWideScreen())
+			-- No step statistics in Casual
+			if (SL.Global.GameMode == "Casual")
+			-- There's not enough space in non-ultra-wide for more than a single notefield
+			or (not IsUltraWide and style and style:GetName() ~= "single")
+			-- Even in "single", if you center the playfield but don't have a wide screen then there's not enough space
+			or (NoteFieldIsCentered and not IsUsingWideScreen())
 			then
 				table.remove(choices, 3)
 			end
