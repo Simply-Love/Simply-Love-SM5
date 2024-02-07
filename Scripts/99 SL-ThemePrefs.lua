@@ -90,7 +90,7 @@ SL_CustomPrefs.Get = function()
 		},
 		VisualStyle =
 		{
-			Default = "Hearts",
+			Default = "Technique",
 			Choices = visualStyleChoices,
 			Values  = visualStyleValues
 		},
