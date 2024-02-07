@@ -92,7 +92,6 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		percent = CalculateExScore(player)
 	end
 
-
 	if index == 1 then
 		t[#t+1] = LoadFont("Wendy/_wendy white")..{
 			Name="Percent",

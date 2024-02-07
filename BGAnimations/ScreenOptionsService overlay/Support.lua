@@ -25,6 +25,12 @@ a.BeginCommand=function(self)
 	if ThemePrefs.Get("VisualStyle") == "SRPG7" and ThemePrefs.Get("RainbowMode") == true then
 		ThemePrefs.Set("RainbowMode", false)
 	end
+
+	if ThemePrefs.Get("FantasticPlusWindowWeight") == "Same" then
+		SL.ExWeights["W0"] = 3
+	else
+		SL.ExWeights["W0"] = 3.5
+	end
 	
 	-- we might have just backed out of ScreenThemeOptions ("Simply Love Options")
 	-- in which case we'll want to call ThemePrefs.Save() now

@@ -742,7 +742,10 @@ end
 --          "LetGo" -> the number of holds/rolds dropped
 --        "HitMine" -> total number of mines hit
 -- }
-CalculateExScore = function(player, ex_counts)
+--
+-- The W0 weight may have been modified for Tournament mode purposes.
+-- Use the optional boolean argument use_actual_w0_weight to choose to fallback to the proper W0 weight.
+CalculateExScore = function(player, ex_counts, use_actual_w0_weight)
 	-- No EX scores in Casual mode, just return some dummy number early.
 	if SL.Global.GameMode == "Casual" then return 0 end
 	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
@@ -751,7 +754,8 @@ CalculateExScore = function(player, ex_counts)
 	local totalHolds = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Holds" )
 	local totalRolls = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Rolls" )
 
-	local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
+	local W0Weight = use_actual_w0_weight and 3.5 and SL.ExWeights["W0"]
+	local total_possible = totalSteps * W0Weight + (totalHolds + totalRolls) * SL.ExWeights["Held"]
 
 	local total_points = 0
 

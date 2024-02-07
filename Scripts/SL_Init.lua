@@ -402,6 +402,11 @@ SL = {
 		-- W0 is not necessarily a "real" window.
 		-- In ITG mode it is emulated based off the value of TimingWindowW1 defined
 		-- for FA+ mode.
+		--
+		-- NOTE(teejusb): W0 can get set to 3 if FantasticPlusWindowWeight is set to "Same"
+		-- during tournament mode.
+		-- This happens in BGAnimations/ScreenOptionsService overlay/Support.lua
+		-- Make sure to not use this EX score value for any record keeping (e.g. GrooveStats comment field).
 		W0=3.5,
 		W1=3,
 		W2=2,

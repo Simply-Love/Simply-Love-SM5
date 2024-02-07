@@ -55,6 +55,9 @@ for player in ivalues(Players) do
 
 	-- All NoteField specific actors are contained in this file.
 	t[#t+1] = LoadActor("./PerPlayer/NoteField/default.lua", player)
+
+	-- Tournament Mode modifications.
+	t[#t+1] = LoadActor("./PerPlayer/TournamentMode.lua", player)
 end
 
 -- add to the ActorFrame last; overlapped by StepStatistics otherwise

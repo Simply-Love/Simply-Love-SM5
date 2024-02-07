@@ -86,7 +86,34 @@ local Overrides = {
 
 	-------------------------------------------------------------------------
 	SpeedModType = {
-		Values = { "X", "C", "M" },
+		Values = function()
+			-- if ThemePrefs.Get("EnableTournamentMode") and ThemePrefs.Get("EnforceNoCmod") then
+			-- 	local song = GAMESTATE:GetCurrentSong()
+			-- 	if song then
+			-- 		if (song:GetDisplayFullTitle():lower():match("no cmod") or
+			-- 			song:GetTranslitFullTitle():lower():match("no cmod")) then
+			-- 				-- Put "M" first so that the CMods will automatically change into MMods instead of XMods.
+			-- 				-- NOTE(teejusb): This only gets applied if the player goes into the options menu.
+			-- 				-- We also enforce this in screen gameplay.
+			-- 				return { "M", "X" }
+			-- 		end
+			-- 	end
+			-- end
+
+			-- NOTE(teejusb): We could remove "C" as an option in Tournament mode + Enforce No Cmod (like above),
+			-- but consider the following:
+			-- 
+			-- 1. Player has a CMod set
+			-- 2. Player plays a No CMod song where it auto converts to MMod.
+			--
+			-- It would be nice for the it to automatically go back to CMod if possible.
+			-- Removing "C" as an option makes it so the player will need to explicitly set it back if they had
+			-- previously entered the options menu.
+			--
+			-- Keeping the option, while making it the functionality more opaque, I think is better QOL where players
+			-- in a tournament can keep everything on CMod and it'll auto-convert to MMod as needed.
+			return { "X", "C", "M" }
+		end,
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		SaveSelections = function(self, list, pn)
@@ -388,17 +415,33 @@ local Overrides = {
 	FaPlus = {
 		SelectType = "SelectMultiple",
 		Values = function()
+			-- 1. Still allow the player to toggle the FA+ window during gameplay in Tournament Mode since
+			--    some might find it distracting. We should still display it in step stats if it's enabled
+			--    though.
+			-- 2. EX score/ITG score is forced in Tournament Mode so remove the option.
+			-- 3. FA Plus Pane should always be shown in Tournament Mode to prevent issues with
+			--    potentially crucial information.
+			if ThemePrefs.Get("EnableTournamentMode") then
+				return { "ShowFaPlusWindow" }
+			end
+
 			if SL.Global.GameMode == "FA+" then
 				return { "ShowEXScore" }
 			end
+
 			return { "ShowFaPlusWindow", "ShowEXScore", "ShowFaPlusPane" }
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			if ThemePrefs.Get("EnableTournamentMode") then
+				list[1] = mods.ShowFaPlusWindow or false
+				return list
+			end
+
 			if SL.Global.GameMode == "FA+" then
 				list[1] = mods.ShowEXScore or false
 				return list
-			end
+			end		
 
 			list[1] = mods.ShowFaPlusWindow or false
 			list[2] = mods.ShowEXScore or false
@@ -408,6 +451,16 @@ local Overrides = {
 		SaveSelections = function(self, list, pn)
 			local sl_pn = SL[ToEnumShortString(pn)]
 			local mods = sl_pn.ActiveModifiers
+
+			if ThemePrefs.Get("EnableTournamentMode") then
+				mods.ShowFaPlusWindow = list[1]
+				mods.ShowEXScore = ThemePrefs.Get("ScoringSystem") == "EX"
+				mods.ShowFaPlusPane = true
+				-- Default to FA+ pane in Tournament Mode
+				sl_pn.EvalPanePrimary = 2
+				return
+			end
+
 			if SL.Global.GameMode == "FA+" then
 				-- always disable in FA+ mode since it's handled engine side.
 				mods.ShowFaPlusWindow = false
@@ -416,6 +469,7 @@ local Overrides = {
 				mods.ShowFaPlusPane = false
 				return
 			end
+
 			mods.ShowFaPlusWindow = list[1]
 			mods.ShowEXScore = list[2]
 			mods.ShowFaPlusPane = list[3]
@@ -474,6 +528,8 @@ local Overrides = {
 			or (notefieldwidth and notefieldwidth > _screen.w/2)
 			-- if the notefield is centered with 4:3 aspect ratio
 			or (mpn and GetNotefieldX(mpn) == _screen.cx and not IsUsingWideScreen())
+			-- Tournament Mode always enforces whether to display/hide step stats so remove that as an option.
+			or ThemePrefs.Get("EnableTournamentMode")
 			then
 				table.remove(choices, 3)
 			end

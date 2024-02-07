@@ -254,6 +254,34 @@ SL_CustomPrefs.Get = function()
 		{
 			Default = "",
 		},
+		-- - - - - - - - - - - - - - - - - - - -
+		EnableTournamentMode = {
+			Default = false,
+			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values  = { true, false }
+		},
+
+		ScoringSystem = {
+			Default = "EX",
+			Choices  = { "EX", "ITG" }
+		},
+
+		FantasticPlusWindowWeight = {
+			Default = "Default",
+			Choices =  { "Default", "Same as Fantastic" },
+			Values =  { "Default", "Same" },
+		},
+
+		StepStats = {
+			Default = "Show",
+			Choices =  { "Show", "Hide" },
+		},
+
+		EnforceNoCmod = {
+			Default = true,
+			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values  = { true, false }
+		},
 	}
 end
 
