@@ -311,14 +311,14 @@ local t = Def.ActorFrame {
 			if (game=="dance" or game=="pump" or game=="techno") then
 				table.insert(wheel_options, {"FeelingSalty", "TestInput"})
 			end
+		end
 
-			table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
+		table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
 
-			-- Only display the View Downloads option if we're connected to
-			-- GrooveStats and Auto-Downloads are enabled.
-			if SL.GrooveStats.IsConnected and ThemePrefs.Get("AutoDownloadUnlocks") then
-				table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
-			end
+		-- Only display the View Downloads option if we're connected to
+		-- GrooveStats and Auto-Downloads are enabled.
+		if SL.GrooveStats.IsConnected and ThemePrefs.Get("AutoDownloadUnlocks") then
+			table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
 		end
 
 		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
