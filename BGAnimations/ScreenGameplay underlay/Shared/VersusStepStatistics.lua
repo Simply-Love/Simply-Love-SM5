@@ -116,7 +116,7 @@ for player in ivalues(Players) do
                     if params.Player ~= player then return end
             
                     if IsEX then
-                        self:settext(("%.02f"):format(params.ExScore)..SameW0Weight and "*" or "")
+                        self:settext(("%.02f"):format(params.ExScore)..(SameW0Weight and "*" or ""))
                     end
                 end,
             }
