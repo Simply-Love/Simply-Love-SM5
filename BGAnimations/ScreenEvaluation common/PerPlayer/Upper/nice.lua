@@ -106,7 +106,7 @@ if IsNice() then
 				-- it just plays the file you pass it at 100%; this can be jarring
 				-- use SOUND:DimMusic() as a way to set the volume to match SoundVolume preference
 				-- for 1.3 seconds, the duration of nice.ogg
-				SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
+				-- SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
 				SOUND:PlayOnce(THEME:GetPathS("", "nice.ogg"))
 			end
 		end
