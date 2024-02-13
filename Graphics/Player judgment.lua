@@ -66,7 +66,7 @@ if file_to_load == "None" then
 					for col,tapnote in pairs(param.Notes) do
 						local tnt = ToEnumShortString(tapnote:GetTapNoteType())
 						if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
-							GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_CheckpointHit", --[[bright]] true)
+							GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_W1", --[[bright]] true)
 						end
 					end
 				end
@@ -119,7 +119,7 @@ return Def.ActorFrame{
 						for col,tapnote in pairs(param.Notes) do
 							local tnt = ToEnumShortString(tapnote:GetTapNoteType())
 							if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
-								GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_CheckpointHit", --[[bright]] true)
+								GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_W1", --[[bright]] true)
 							end
 						end
 					end
