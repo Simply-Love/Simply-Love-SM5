@@ -10,6 +10,7 @@ if title == "D" then grade = "Grade_Tier99" end
 -- QUINT
 local ex = CalculateExScore(player, GetExJudgmentCounts(player))
 if ex == 100 then grade = "Grade_Tier00" end
+
 local t = Def.ActorFrame{}
 
 t[#t+1] = LoadActor(THEME:GetPathG("", "_grades/"..grade..".lua"), playerStats)..{
