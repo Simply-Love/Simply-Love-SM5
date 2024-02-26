@@ -153,7 +153,7 @@ af[#af+1] = Def.ActorProxy{
 	end,
 	DrawStageCommand=function(self)
 		if playerStats and grade then
-			if playerStats.faplus and playerStats.exscore == 100 then
+			if playerStats.judgments.W0 and playerStats.exscore == 100 then
 				self:SetTarget( LetterGradesAF:GetChild("Grade_Tier00") ):visible(true)
 			else
 				self:SetTarget( LetterGradesAF:GetChild(grade) ):visible(true)
