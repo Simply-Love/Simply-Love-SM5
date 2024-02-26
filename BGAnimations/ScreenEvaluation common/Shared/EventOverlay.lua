@@ -156,6 +156,13 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local statImprovements = {}
 	local skillImprovements = {}
 	local quests = {}
+
+	
+	local box_quests = {}
+	local box_progress = {}
+	local box_stats = {}
+	local box_score = {scoreDelta,rateDelta}
+
 	local progress = rpgData["progress"]
 	if progress then
 		if progress["statImprovements"] then
@@ -165,16 +172,42 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 						statImprovements,
 						string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
 					)
+
+					table.insert(
+						box_stats,
+						string.format("%d %s", improvement["gained"], string.upper(improvement["name"]))
+					)
+
 				end
 			end
 		end
 
 		if progress["skillImprovements"] then
 			skillImprovements = progress["skillImprovements"]
+			for i in ivalues(skillImprovements) do
+				
+				-- Make string into array so we can find out what kind of skill improvement we made
+				local words = {}
+				for word in (i.." "):gmatch("(.-)".." ") do
+					table.insert(words, word)
+				end
+				
+				if words[4] == "Skill" then
+					local sp_level = words[6]
+					local sp_bpm = words[8]
+					local sp_text = sp_bpm .. " BPM Lvl " .. sp_level
+					table.insert(box_progress,sp_text)	
+				elseif words[4] == "Life" then
+					local life_level = words[6]:sub(1,string.len(words[6])-1)
+					local life_text = "Life Lvl " .. life_level
+					table.insert(box_progress,life_text)
+				end
+			end
 		end
-
+		
 		if progress["questsCompleted"] then
 			for quest in ivalues(progress["questsCompleted"]) do
+				table.insert(box_quests,quest["title"])
 				local questStrings = {}
 				table.insert(questStrings, string.format(
 					"Completed \"%s\"!\n",
@@ -202,6 +235,8 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
 		end
+		QuestPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("Events"..ToEnumShortString(player)):GetChild("RPGQuest"..ToEnumShortString(player))
+		QuestPane:playcommand("RpgQuests",{ box_score=box_score, box_progress=box_progress, box_stats=box_stats, box_quests=box_quests })
 	end
 
 	table.insert(paneTexts, string.format(
@@ -321,6 +356,13 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 	local statImprovements = {}
 	local quests = {}
+
+	local box_quests = {}
+	local box_rp = {prev=previousRankingPointTotal,curr=currentRankingPointTotal,delta=rankingDelta}
+	local box_tp = {prev=previousPointTotal,curr=currentPointTotal,delta=totalDelta}
+	local box_score = {score=score,delta=scoreDelta}
+	local box_clearType = {}
+
 	local progress = itlData["progress"]
 	if progress then
 		if progress["statImprovements"] then
@@ -337,6 +379,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 						}
 						local curr = improvement["current"]
 						local prev = curr - improvement["gained"]
+						
+						table.insert(box_clearType,prev,curr)
 
 						table.insert(
 							statImprovements,
@@ -354,6 +398,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 		if progress["questsCompleted"] then
 			for quest in ivalues(progress["questsCompleted"]) do
+				table.insert(box_quests,quest["title"])
 				local questStrings = {}
 				table.insert(questStrings, string.format(
 					"Completed \"%s\"!\n",
@@ -380,6 +425,10 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 				table.insert(quests, table.concat(questStrings, "\n"))
 			end
+		end
+		ItlPane = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"):GetChild(ToEnumShortString(player).."_AF_Upper"):GetChild("Events"..ToEnumShortString(player)):GetChild("ItlProgress"..ToEnumShortString(player))
+		if ItlPane ~= nil then
+			ItlPane:playcommand("ItlBox",{ box_score=box_score, box_rp=box_rp, box_tp=box_tp, box_clearType=box_clearType, box_quests=box_quests })
 		end
 	end
 
