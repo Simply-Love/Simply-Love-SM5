@@ -11,6 +11,45 @@ local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or p
 local paneHeight = 360
 local borderWidth = 2
 
+-- Returns an actoframe that contains both the banner and the song title to
+-- be used in the event overlay.
+local BannerAndSong = function(x, y, zoom)
+	local af = Def.ActorFrame{ 
+		Name="BannerAndSong",
+		InitCommand=function(self) 
+			self:xy(x, y):zoom(zoom):vertalign("top") 
+		end,
+		ResetCommand=function(self)
+			self:visible(false)
+		end
+	}
+
+	af[#af+1] = Def.Banner{
+		Name="Banner",
+		InitCommand=function(self)
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			if SongOrCourse and SongOrCourse:HasBanner() then
+					--song or course banner, if there is one
+				if GAMESTATE:IsCourseMode() then
+					self:LoadFromCourse( GAMESTATE:GetCurrentCourse() )
+				else
+					self:LoadFromSong( GAMESTATE:GetCurrentSong() )
+				end
+			end
+			self:setsize(418, 164)
+		end
+	}
+	af[#af+1] = LoadFont("Common Normal")..{
+		Name="SongName",
+		InitCommand=function(self)
+			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+			if songtitle then self:settext(songtitle):zoom(1.5):maxwidth(500):vertalign("top"):y(90) end
+		end
+	}
+	
+	return af
+end
+
 local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(RpgGreen)
 	eventAf:GetChild("BackgroundImage"):visible(true)
@@ -596,6 +635,8 @@ for player in ivalues(PlayerNumber) do
 							-- Wrap around if we incremented past #Leaderboards
 							self.PaneIndex = 1
 						end
+					elseif event.GameButton == "Select" then
+						MESSAGEMAN:Broadcast("Code", { Name="Screenshot", PlayerNumber=player })
 					end
 
 					if event.GameButton == "MenuLeft" or event.GameButton == "MenuRight" then
@@ -769,6 +810,7 @@ for player in ivalues(PlayerNumber) do
 				self:diffuse(color("#A1FF94")):zoomto(paneWidth, RowHeight)
 			end,
 		},
+		BannerAndSong(0, 112, 0.34),
 	}
 
 	local af3 = af2[#af2]
