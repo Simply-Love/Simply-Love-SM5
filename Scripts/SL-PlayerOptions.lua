@@ -550,7 +550,7 @@ local Overrides = {
 		end
 	},
 	ErrorBar = {
-		Values = { "None", "Colorful", "Monochrome", "Text" },
+		Values = { "None", "Colorful", "Monochrome", "Text", "Highlight" },
 	},-------------------------------------------------------------------------
 	ErrorBarTrim = {
 		Values = { "Off", "Great", "Excellent" },
