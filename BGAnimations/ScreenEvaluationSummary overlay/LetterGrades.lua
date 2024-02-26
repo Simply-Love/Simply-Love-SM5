@@ -11,7 +11,7 @@ local num_grade_tiers = THEME:GetMetric("PlayerStageStats", "NumGradeTiersUsed")
 -- We won't show these Actors directly; we may not need them all, or we may need some repeatedly.
 -- Instead, we'll have an ActorProxy for each player in each StageStats row that will refer to the
 -- appropriate letter grade Actor as needed.
-for i=1,num_grade_tiers do
+for i=0,num_grade_tiers do
 	local tier_string = "Grade_Tier"..string.format("%02d",i)
 	af[#af+1] = LoadActor( THEME:GetPathG("", "_grades/"..tier_string..".lua"))..{ Name=tier_string }
 end
