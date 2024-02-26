@@ -18,7 +18,16 @@ local finished = false
 local readyPlayers = {
 	["P1"] = false,
 	["P2"] = false,
-  }
+}
+
+-- If a player is not joined, we'll set their readyPlayers flag to true
+-- to bypass that side
+if not GAMESTATE:IsSideJoined(PLAYER_1) then
+	readyPlayers["P1"] = true
+end
+if not GAMESTATE:IsSideJoined(PLAYER_2) then
+	readyPlayers["P2"] = true
+end
 
 -- we need to calculate how many dummy rows the scroller was "padded" with
 -- (to achieve the desired transform behavior since I am not mathematically
@@ -37,6 +46,9 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 local Handle = {}
 
 Handle.Start = function(event)
+	-- Nothing to do if the player has already selected a profile
+	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) and readyPlayers[ToEnumShortString(event.PlayerNumber)] then return end
+
 	local topscreen = SCREENMAN:GetTopScreen()
 
 	-- if the input event came from a side that is not currently registered as a human player, we'll either
@@ -53,50 +65,53 @@ Handle.Start = function(event)
 			return
 		end
 
+		-- unset the readyPlayers flag for this player since they now
+		-- have to make a selection
+		readyPlayers[ToEnumShortString(event.PlayerNumber)] = false
+
 		-- otherwise, pass -1 to SetProfileIndex() to join that player
 		-- see ScreenSelectProfile.cpp for details
 		topscreen:SetProfileIndex(event.PlayerNumber, -1)
 	else
+
+		local other_player = event.PlayerNumber == PLAYER_1 and PLAYER_2 or PLAYER_1
 
 		-- we only bother checking scrollers to see if both players are
 		-- trying to choose the same profile if there are scrollers because
 		-- there are local profiles.  If there are no local profiles, there are
 		-- no scrollers to compare.
 		if PROFILEMAN:GetNumLocalProfiles() > 0
-		-- and if both players have joined and neither is using a memorycard
-		and #GAMESTATE:GetHumanPlayers() > 1 and not GAMESTATE:IsAnyHumanPlayerUsingMemoryCard() then
-			-- and both players are trying to choose the same profile
-			if scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index
+			-- and if both players have joined and neither is using a memorycard
+			and #GAMESTATE:GetHumanPlayers() > 1 and not GAMESTATE:IsAnyHumanPlayerUsingMemoryCard()
+			-- and if a player is trying to select a profile the other has already selected
+			and readyPlayers[ToEnumShortString(other_player)] == true
+			and scrollers[PLAYER_1]:get_info_at_focus_pos().index == scrollers[PLAYER_2]:get_info_at_focus_pos().index
 			-- and that profile they are both trying to choose isn't [GUEST]
 			and scrollers[PLAYER_1]:get_info_at_focus_pos().index ~= 0 then
-				-- broadcast an InvalidChoice message to play the "Common invalid" sound
-				-- and "shake" the playerframe for the player that just pressed start
-				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
-				return
-			end
+			-- broadcast an InvalidChoice message to play the "Common invalid" sound
+			-- and "shake" the playerframe for the player that just pressed start
+			MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
+			return
 		end
 		readyPlayers[ToEnumShortString(event.PlayerNumber)] = true
-		MESSAGEMAN:Broadcast("Cursor", {PlayerNumber=event.PlayerNumber})
-		-- if both players have selected a profile, we're ready to move on
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			-- if at least one player hasn't selected a profile, we're not ready to move on
-			if not readyPlayers[ToEnumShortString(player)] then
-				MESSAGEMAN:Broadcast("InvalidChoice", {PlayerNumber=event.PlayerNumber})
-				return
-			end
+		MESSAGEMAN:Broadcast("SelectedProfile", {PlayerNumber=event.PlayerNumber})
+
+		if readyPlayers["P1"] and readyPlayers["P2"] then
+			-- if we're here, both players have selected a profile
+			-- play the StartButton sound
+			MESSAGEMAN:Broadcast("StartButton")
+			-- and queue the OffCommand for the entire screen
+			topscreen:queuecommand("Off"):sleep(0.4)
 		end
-		-- if we're here, both players have selected a profile
-		finished = true
-		-- otherwise, play the StartButton sound
-		MESSAGEMAN:Broadcast("StartButton")
-		-- and queue the OffCommand for the entire screen
-		topscreen:queuecommand("Off"):sleep(0.4)
 	end
 end
 Handle.Center = Handle.Start
 
 
 Handle.MenuLeft = function(event)
+	-- Nothing to do if the player has already selected a profile
+	if readyPlayers[ToEnumShortString(event.PlayerNumber)] then return end
+
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) and MEMCARDMAN:GetCardState(event.PlayerNumber) == 'MemoryCardState_none' then
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		local index = type(info)=="table" and info.index or 0
@@ -116,6 +131,9 @@ Handle.MenuUp = Handle.MenuLeft
 Handle.DownLeft = Handle.MenuLeft
 
 Handle.MenuRight = function(event)
+	-- Nothing to do if the player has already selected a profile
+	if readyPlayers[ToEnumShortString(event.PlayerNumber)] then return end
+
 	if GAMESTATE:IsHumanPlayer(event.PlayerNumber) and MEMCARDMAN:GetCardState(event.PlayerNumber) == 'MemoryCardState_none' then
 		local info = scrollers[event.PlayerNumber]:get_info_at_focus_pos()
 		local index = type(info)=="table" and info.index or 0
@@ -138,17 +156,29 @@ Handle.Back = function(event)
 	if GAMESTATE:GetNumPlayersEnabled()==0 then
 		SCREENMAN:GetTopScreen():Cancel()
 	else
-		MESSAGEMAN:Broadcast("BackButton", {PlayerNumber=event.PlayerNumber})
-		if (readyPlayers[ToEnumShortString(event.PlayerNumber)]) then
+		-- If the player is joined, has selected a profile but then pressed back, we
+		-- need to unset the readyPlayers flag and go back to the profile scoller.
+		if GAMESTATE:IsHumanPlayer(event.PlayerNumber) and 
+				readyPlayers[ToEnumShortString(event.PlayerNumber)] then
 			readyPlayers[ToEnumShortString(event.PlayerNumber)] = false
+			MESSAGEMAN:Broadcast("BackButton", {PlayerNumber=event.PlayerNumber})
+			MESSAGEMAN:Broadcast("UnselectedProfile", {PlayerNumber=event.PlayerNumber})
 			return
 		end
+		
+		-- Otherwise they are unjoining.
+		MESSAGEMAN:Broadcast("BackButton", {PlayerNumber=event.PlayerNumber})
+		-- set the readyPlayers flag for this player since they no longer
+		-- need to make a selection
+		readyPlayers[ToEnumShortString(event.PlayerNumber)] = true
+
 		-- ScreenSelectProfile:SetProfileIndex() will interpret -2 as
 		-- "Unjoin this player and unmount their USB stick if there is one"
 		-- see ScreenSelectProfile.cpp for details
 		SCREENMAN:GetTopScreen():SetProfileIndex(event.PlayerNumber, -2)
 	end
 end
+Handle.Select = Handle.Back
 
 
 local InputHandler = function(event)

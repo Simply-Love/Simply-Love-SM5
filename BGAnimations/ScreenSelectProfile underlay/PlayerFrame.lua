@@ -104,17 +104,29 @@ return Def.ActorFrame{
 
 		LoadFont("Common Normal")..{
 			InitCommand=function(self)
+				self:diffuseshift():effectcolor1(1,1,1,1):effectcolor2(0.5,0.5,0.5,1)
+				self:diffusealpha(0):maxwidth(180)
+				self:queuecommand("ResetText")
+			end,
+			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
+			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+			ResetTextCommand=function(self)
 				if IsArcade() and not GAMESTATE:EnoughCreditsToJoin() then
 					self:settext( THEME:GetString("ScreenSelectProfile", "EnterCreditsToJoin") )
 				else
 					self:settext( THEME:GetString("ScreenSelectProfile", "PressStartToJoin") )
 				end
-
-				self:diffuseshift():effectcolor1(1,1,1,1):effectcolor2(0.5,0.5,0.5,1)
-				self:diffusealpha(0):maxwidth(180)
 			end,
-			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
-			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+			UnselectedProfileMessageCommand=function(self, params)
+				if params.PlayerNumber ~= player then return end
+
+				self:queuecommand("ResetText")
+			end,
+			SelectedProfileMessageCommand=function(self, params)
+				if params.PlayerNumber ~= player then return end
+
+				self:settext("Waiting...")
+			end,
 			CoinsChangedMessageCommand=function(self)
 				if IsArcade() and GAMESTATE:EnoughCreditsToJoin() then
 					self:settext(THEME:GetString("ScreenSelectProfile", "PressStartToJoin"))
