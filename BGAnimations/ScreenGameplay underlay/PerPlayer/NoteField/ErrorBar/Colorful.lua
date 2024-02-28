@@ -46,14 +46,38 @@ local af = Def.ActorFrame{
 
         local score = ToEnumShortString(params.TapNoteScore)
         if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
+            local window = score
+            local isTopWindow = score == "W1"
+            if mods.ShowFaPlusWindow then
+                if IsW0Judgment(params, player) then
+                    window = "W0"
+                else
+                    isTopWindow = false
+                end
+            end
+            
             local tick = self:GetChild("Tick" .. currentTick)
             local bar = self:GetChild("Bar")
-
+            local earlysubbar = bar:GetChild("Early"..window)
+            local latesubbar = bar:GetChild("Late"..window)
+            
             currentTick = currentTick % numTicks + 1
-
+            
             tick:finishtweening()
             bar:finishtweening()
             bar:zoom(1)
+            
+            if isTopWindow then
+                earlysubbar:finishtweening()
+                latesubbar:finishtweening()
+                earlysubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
+                latesubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
+            else
+                local offset = params.TapNoteOffset and "Early" or "Late"
+                local subbar = offset == "Early" and earlysubbar or latesubbar
+                subbar:finishtweening()
+                subbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
+            end
 
             if numTicks > 1 then
                 tick:diffusealpha(1)
@@ -114,14 +138,18 @@ for i, window in ipairs(windows.timing) do
     local width = x - lastx
     local judgmentColor = windows.color[i]
 
+    local windowNum = mods.ShowFaPlusWindow and i - 1 or i
+
     bar_af[#bar_af+1] = Def.Quad{
+        Name="EarlyW" .. windowNum,
         InitCommand = function(self)
-            self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor)
+            self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(0.3)
         end
     }
     bar_af[#bar_af+1] = Def.Quad{
+        Name="LateW" .. windowNum,
         InitCommand = function(self)
-            self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor)
+            self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(0.3)
         end
     }
 
