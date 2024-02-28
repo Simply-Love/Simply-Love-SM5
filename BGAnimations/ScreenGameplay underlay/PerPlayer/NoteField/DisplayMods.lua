@@ -48,12 +48,8 @@ end
 local NoMines = options:NoMines()
 
 local FAPlus = SL.Global.GameMode == "FA+" and "FA+" or "ITG"
-if SL.Global.GameMode == "ITG" then 
-	if mods.ShowFaPlusWindow then
-		if mods.SmallerWhite then FAPlus = "FA+ (10ms)" else FAPlus = "FA+ (15ms)" end
-	end
-else 
-	if mods.SmallerWhite then FAPlus = FAPlus .. " (10ms)" else FAPlus = FAPlus .. " (15ms)" end
+if SL.Global.GameMode == "ITG" and mods.ShowFaPlusWindow then
+	FAPlus = "FA+"
 end
 
 local disabledWindows = options:GetDisabledTimingWindows()
