@@ -349,11 +349,20 @@ UpdateItlData = function(player)
 	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
 	local minesEnabled = not po:NoMines()
 
+	-- We also require all the windows to be enabled.
+	-- ITG mode is the only mode that has all the windows enabled by default.
+	local allWindowsEnabled = SL.Global.GameMode == "ITG"
+	-- TODO(teejusb): Update for ITGmania
+	for enabled in ivalues(SL.Global.ActiveModifiers.TimingWindows) do
+		allWindowsEnabled = allWindowsEnabled and enabled
+	end
+
 	if (GAMESTATE:IsHumanPlayer(player) and
 				valid and
 				rate == 1.0 and
 				minesEnabled and
-				not stats:GetFailed()) then
+				not stats:GetFailed() and
+				allWindowsEnabled) then
 		local hash = SL[pn].Streams.Hash
 		local hashMap = SL[pn].ITLData["hashMap"]
 
