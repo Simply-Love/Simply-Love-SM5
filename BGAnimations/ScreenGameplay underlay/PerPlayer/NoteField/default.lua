@@ -21,5 +21,6 @@ af[#af+1] = LoadActor("ErrorBar/default.lua", player, layout.ErrorBar)
 af[#af+1] = LoadActor("MeasureCounter.lua", player, layout.MeasureCounter)
 af[#af+1] = LoadActor("SubtractiveScoring.lua", player, layout.SubtractiveScoring)
 af[#af+1] = LoadActor("ColumnCues.lua", player)
+af[#af+1] = LoadActor("DisplayMods.lua", player)
 
 return af

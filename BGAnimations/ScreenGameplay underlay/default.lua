@@ -47,6 +47,10 @@ t[#t+1] = LoadActor("./Shared/SongInfoBar.lua") -- song title and progress bar
 
 -- per-player UI elements
 for player in ivalues(Players) do
+	-- Tournament Mode modifications. Put this before everything as it sets
+	-- player mods and other actors below might depend on it.
+	t[#t+1] = LoadActor("./PerPlayer/TournamentMode.lua", player)
+
 	t[#t+1] = LoadActor("./PerPlayer/UpperNPSGraph.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/Score.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/DifficultyMeter.lua", player)
@@ -56,8 +60,6 @@ for player in ivalues(Players) do
 	-- All NoteField specific actors are contained in this file.
 	t[#t+1] = LoadActor("./PerPlayer/NoteField/default.lua", player)
 
-	-- Tournament Mode modifications.
-	t[#t+1] = LoadActor("./PerPlayer/TournamentMode.lua", player)
 end
 
 -- add to the ActorFrame last; overlapped by StepStatistics otherwise
