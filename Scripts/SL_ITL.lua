@@ -4,22 +4,25 @@ IsItlSong = function(player)
 	local song_dir = song:GetSongDir()
 	local group = string.lower(song:GetGroupName())
 	local pn = ToEnumShortString(player)
-	return string.find(group, "itl online 2023") or string.find(group, "itl 2023") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
+	return string.find(group, "itl online 2024") or string.find(group, "itl 2024") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
 end
 
 
 IsItlActive = function()
 	-- The file is only written to while the event is active.
 	-- These are just placeholder dates.
-	local startTimestamp = 20230317
-	local endTimestamp = 20240420
+	-- local startTimestamp = 20230317
+	-- local endTimestamp = 20240420
 
-	local year = Year()
-	local month = MonthOfYear()+1
-	local day = DayOfMonth()
-	local today = year * 10000 + month * 100 + day
+	-- local year = Year()
+	-- local month = MonthOfYear()+1
+	-- local day = DayOfMonth()
+	-- local today = year * 10000 + month * 100 + day
 
-	return startTimestamp <= today and today <= endTimestamp
+	-- return startTimestamp <= today and today <= endTimestamp
+
+	-- Assume ITL is always active. This helps when we close and reopen the event.
+	return true
 end
 
 
@@ -41,7 +44,7 @@ end
 -- This set up lets us display song wheel grades for ITL both from playing within the
 -- ITL pack and also outside of it.
 -- Note that songs resynced for ITL but played outside of the pack will not be covered in the pathMap.
-local itlFilePath = "itl2023.json"
+local itlFilePath = "itl2024.json"
 
 local TableContainsData = function(t)
 	if t == nil then return false end
@@ -186,8 +189,8 @@ local DataForSong = function(player, prevData)
 		-- 1 = Pass
 		-- 2 = FGC
 		-- 3 = FEC
-		-- 4 = Quad
-		-- 5 = Quint
+		-- 4 = FFC
+		-- 5 = FFPC
 		local clearType = 1
 
 		-- Dropping a hold or roll will always be a Pass
