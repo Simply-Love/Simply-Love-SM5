@@ -58,6 +58,36 @@ local GetJudgmentCounts = function(player)
 	return judgmentCounts
 end
 
+local GetRescoredJudgmentCounts = function(player)
+	local pn = ToEnumShortString(player)
+
+	local translation = {
+		["W0"] = "fantasticPlus",
+		["W1"] = "fantastic",
+		["W2"] = "excellent",
+		["W3"] = "great",
+		["W4"] = "decent",
+		["W5"] = "wayOff",
+	}
+
+	local rescored = {
+		["fantasticPlus"] = 0,
+		["fantastic"] = 0,
+		["excellent"] = 0,
+		["great"] = 0,
+		["decent"] = 0,
+		["wayOff"] = 0
+	}
+	
+	for i=1,GAMESTATE:GetCurrentStyle():ColumnsPerPlayer() do
+		for window, name in pairs(translation) do
+			rescored[name] = rescored[name] + SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i]["Early"][window]
+		end
+	end
+
+	return rescored
+end
+
 local AttemptDownloads = function(res)
 	local data = JsonDecode(res.body)
 	for i=1,2 do
@@ -303,6 +333,7 @@ local af = Def.ActorFrame {
 								rate=rate,
 								score=score,
 								judgmentCounts=GetJudgmentCounts(player),
+								rescoreCounts=GetRescoredJudgmentCounts(player),
 								usedCmod=(GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil),
 								comment=CreateCommentString(player),
 							}
