@@ -60,5 +60,14 @@ return Def.ActorFrame{
 				self:settext("")
 			end
 		end
+	},
+
+	-- text for Artist
+	LoadFont("Common Normal")..{
+		InitCommand=function(self) self:zoom(0.6):maxwidth(418/0.875):x(-145):horizalign("left") end,
+		OnCommand = function(self)
+			local artist = (not GAMESTATE:IsCourseMode()) and GAMESTATE:GetCurrentSong():GetDisplayArtist()
+			if artist then self:settext(artist) end
+		end
 	}
 }
