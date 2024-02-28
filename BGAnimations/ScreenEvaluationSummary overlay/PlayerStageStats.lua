@@ -81,7 +81,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 	InitCommand=function(self) self:zoom(0.38):horizalign(align1):x(col1x):y(-12) end,
 	DrawStageCommand=function(self)
 		if playerStats and playerStats.judgments and playerStats.judgments.W0 then
-			self:settext(playerStats.exscore):diffuse(Colors[1])
+			self:settext(("%.2f"):format(playerStats.exscore)):diffuse(Colors[1])
 		else
 			self:settext("")
 		end
