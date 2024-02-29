@@ -247,26 +247,16 @@ local t = Def.ActorFrame {
 			{"SortBy", "Genre"},
 			{"SortBy", "BPM"},
 			{"SortBy", "Length"},
+			{"SortBy", "Meter"},
 		}
-		-- the engine's MusicWheel has distinct items in the SortOrder enum for double
-		if style == "double" then
-			table.insert(wheel_options, {"SortBy", "DoubleChallengeMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleHardMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleMediumMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleEasyMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleBeginnerMeter"})
-		-- Otherwise... use the SortOrders that don't specify double.
-		-- Does this imply that difficulty sorting in more uncommon styles
-		-- (solo, routine, etc.) probably doesn't work?
-		else
-			table.insert(wheel_options, {"SortBy", "ChallengeMeter"})
-			table.insert(wheel_options, {"SortBy", "HardMeter"})
-			table.insert(wheel_options, {"SortBy", "MediumMeter"})
-			table.insert(wheel_options, {"SortBy", "EasyMeter"})
-			table.insert(wheel_options, {"SortBy", "BeginnerMeter"})
-		end
 		table.insert(wheel_options, {"SortBy", "Popularity"})
 		table.insert(wheel_options, {"SortBy", "Recent"})
+		-- Loop through players and add their TopGrades to the wheel options if they've a profile
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			if (PROFILEMAN:IsPersistentProfile(player)) then
+				table.insert(wheel_options, {"SortBy", "Top".. ToEnumShortString(player).."Grades" })
+			end
+		end
 		-- Allow players to switch from single to double and from double to single
 		-- but only present these options if Joint Double or Joint Premium is enabled
 		if not (PREFSMAN:GetPreference("Premium") == "Premium_Off" and GAMESTATE:GetCoinMode() == "CoinMode_Pay") then
