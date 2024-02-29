@@ -340,34 +340,17 @@ local t = Def.ActorFrame {
 			table.insert(wheel_options, {"NextPlease", "SwitchProfile"})
 		end
 
-		local any_player_has_favorites = false
-		local profileSlot = {
-			["PlayerNumber_P1"] = "ProfileSlot_Player1",
-			["PlayerNumber_P2"] = "ProfileSlot_Player2"
-		}
-		local all_local = true
+		if GAMESTATE:GetCurrentSong() ~= nil then
+			table.insert(wheel_options, {"ImLovinIt", "AddFavorite"})
+		end
+
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			local profileDir = PROFILEMAN:GetProfileDir(profileSlot["PlayerNumber_"..ToEnumShortString(player)])
-			local path = profileDir .. "favorites.txt"
+			local path = getFavoritesPath(player)
 			if FILEMAN:DoesFileExist(path) then
-				any_player_has_favorites = true
-			end
-			if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
-				all_local = false
+				table.insert(wheel_options, {"MixTape", "Preferred"})
+				break
 			end
 		end
-
-		-- TODO(teejusb): Allow players to add favorites for USBs.
-		if all_local then
-			if GAMESTATE:GetCurrentSong() ~= nil then
-				table.insert(wheel_options, {"ImLovinIt", "AddFavorite"})
-			end
-
-			if any_player_has_favorites then
-				table.insert(wheel_options, {"MixTape", "Favorites"})
-			end
-		end
-
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
