@@ -13,6 +13,7 @@ local width = IsUsingWideScreen() and 286 or 276
 local marquee_index
 local text_table = {}
 local leaving_screen = false
+local breakdown_table = {}
 
 local af = Def.ActorFrame{
 	InitCommand=function(self)
