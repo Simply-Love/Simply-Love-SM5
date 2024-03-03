@@ -1,12 +1,16 @@
 -- Check if the player gave up before the song properly ended.
 
+local usedAutoplay = {
+	[PLAYER_1] = false,
+	[PLAYER_2] = false
+}
+
 local af = Def.ActorFrame{
 	JudgmentMessageCommand=function(self, params)
 		if params.Player == nil then return end
 		
 		if IsAutoplay(params.Player) then
-			local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player)
-			pss:FailPlayer()
+			usedAutoplay[params.Player] = true
 		end
 	end,
 	OffCommand=function(self)
@@ -34,9 +38,8 @@ local af = Def.ActorFrame{
 		end
 
 		-- We have to fail both players as we stopped the song early.
-		if fail then
-			-- Let's fail the bots as well.
-			for player in ivalues( GAMESTATE:GetEnabledPlayers() ) do
+		for player in ivalues( GAMESTATE:GetEnabledPlayers() ) do
+			if fail or usedAutoplay[player] then
 				local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 				pss:FailPlayer()
 			end
