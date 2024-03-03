@@ -64,7 +64,12 @@ return Def.ActorFrame{
 
 	-- text for Artist
 	LoadFont("Common Normal")..{
-		InitCommand=function(self) self:zoom(0.6):maxwidth(418/0.875):x(-145):horizalign("left") end,
+		InitCommand=function(self)
+			self:zoom(0.6):maxwidth(418/2.3):x(-145):horizalign("left")
+			if SL.Global.ActiveModifiers.MusicRate ~= 1 then
+				self:maxwidth(418/3.5)
+			end
+		end,
 		OnCommand = function(self)
 			local artist = (not GAMESTATE:IsCourseMode()) and GAMESTATE:GetCurrentSong():GetDisplayArtist()
 			if artist then self:settext(artist) end

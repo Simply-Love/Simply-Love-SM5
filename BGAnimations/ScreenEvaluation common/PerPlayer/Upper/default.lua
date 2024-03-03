@@ -28,5 +28,8 @@ return Def.ActorFrame{
 	LoadActor("./Difficulty.lua", player),
 
 	-- Record Texts (Machine and/or Personal)
-	LoadActor("./RecordTexts.lua", player)
+	LoadActor("./RecordTexts.lua", player),
+
+	-- Event Progress Box
+	LoadActor("./EventProgress.lua", player)
 }
