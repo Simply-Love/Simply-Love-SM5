@@ -344,19 +344,44 @@ end
 
 local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local pn = ToEnumShortString(player)
-	local score = CalculateExScore(player, nil, true)
 	local paneTexts = {}
 	local paneFunctions = {}
+	
+	local score = CalculateExScore(player, nil, true)
+	local scoreDelta = itlData["scoreDelta"]/100.0
 
-	scoreDelta = itlData["scoreDelta"]/100.0
+	local steps = GAMESTATE:GetCurrentSteps(player)
+	local chartName = steps:GetChartName()
 
-	previousRankingPointTotal = itlData["previousRankingPointTotal"]
-	currentRankingPointTotal = itlData["currentRankingPointTotal"]
-	rankingDelta = currentRankingPointTotal - previousRankingPointTotal
+	-- Note that playing OUTSIDE of the ITL pack will result in 0 points for all upscores.
+	-- Technically this number isn't displayed, but players can opt to swap the EX score in the
+	-- wheel with this value instead if they prefer.
+	local maxPoints = chartName:gsub(" pts", "")
+	if #maxPoints == 0 then
+		maxPoints = 0
+	else
+		maxPoints = tonumber(maxPoints)
+	end
 
-	previousPointTotal = itlData["previousPointTotal"]
-	currentPointTotal = itlData["currentPointTotal"]
-	totalDelta = currentPointTotal - previousPointTotal
+	local currentPoints = GetITLPointsForSong(maxPoints, score)
+	local previousPoints = itlData["topScorePoints"]
+	local pointDelta = currentPoints - previousPoints
+
+	local currentPointTotal = itlData["currentPointTotal"]
+	local previousPointTotal = itlData["previousPointTotal"]
+	local totalDelta = currentPointTotal - previousPointTotal
+
+	local currentRankingPointTotal = itlData["currentRankingPointTotal"]
+	local previousRankingPointTotal = itlData["previousRankingPointTotal"]
+	local rankingDelta = currentRankingPointTotal - previousRankingPointTotal
+
+	local currentExPointTotal = itlData["currentExPointTotal"]
+	local previousExPointTotal = itlData["previousExPointTotal"]
+	local totalExDelta = currentExPointTotal - previousExPointTotal
+
+	local currentSongPointTotal = itlData["currentSongPointTotal"]
+	local previousSongPointTotal = itlData["previousSongPointTotal"]
+	local totalSongDelta = currentSongPointTotal - previousSongPointTotal
 
 	local statImprovements = {}
 	local quests = {}
@@ -371,8 +396,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 							[1] = "Clear",
 							[2] = "FC",
 							[3] = "FEC",
-							[4] = "Quad",
-							[5] = "Quint",
+							[4] = "FFC",
+							[5] = "FBFC",
 						}
 						local curr = improvement["current"]
 						local prev = curr - improvement["gained"]
@@ -380,6 +405,22 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 						table.insert(
 							statImprovements,
 							string.format("Clear Type: %s >>> %s", clearTypeMap[prev], clearTypeMap[curr]))
+					elseif improvement["name"] == "grade" then
+						local curr = improvement["current"]
+						local prev = curr - improvement["gained"]
+
+						local gradeMap = {
+							[0] = "Other",
+							[1] = "Quad",
+							[2] = "Quint",
+						}
+
+						if curr ~= 0 and prev ~= current then
+							table.insert(
+								statImprovements,
+								string.format("New %s!", gradeMap[curr])
+							)
+						end
 					else
 						local statName = improvement["name"]:gsub("Level", ""):gsub("^%l", string.upper)
 						table.insert(
@@ -423,12 +464,16 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	end
 
 	table.insert(paneTexts, string.format(
-		"EX Score: %.2f%% (%+.2f%%)\n"..
+		"EX Score / Points: %.2f%% (%+.2f%%) / %d (%+d)\n"..
 		"Ranking Points: %d (%+d)\n"..
+		"Song Points: %d (%+d)\n"..
+		"EX Points: %d (%+d)\n"..
 		"Total Points: %d (%+d)\n\n"..
 		"%s",
-		score, scoreDelta,
+		score, scoreDelta, points, pointDelta,
 		currentRankingPointTotal, rankingDelta,
+		currentSongPointTotal, totalSongDelta,
+		currentExPointTotal, totalExDelta,
 		currentPointTotal, totalDelta,
 		#statImprovements == 0 and "" or table.concat(statImprovements, "\n").."\n\n"
 	))
@@ -517,11 +562,11 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				local clearTypeMap = {
 					["FC"] = SL.JudgmentColors["ITG"][3],
 					["FEC"] = SL.JudgmentColors["ITG"][2],
-					["Quad"] = SL.JudgmentColors["ITG"][1],
-					["Quint"] = ItlPink,
+					["FFC"] = SL.JudgmentColors["ITG"][1],
+					["FBFC"] = ItlPink,
 				}
 
-				local search = "No Play Clear FC FEC Quad Quint"
+				local search = "No Play Clear FC FEC FFC FBFC"
 				for a=1,2 do
 					for ct in search:gmatch("%S+") do 
 						i, j = string.find(text, ct, offset)
@@ -531,6 +576,33 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 							bodyText:AddAttribute(i-1, {
 								Length=#substring,
 								Diffuse=(clearTypeMap[substring] and clearTypeMap[substring] or Color.White)
+							})
+							offset = j + 1
+						end
+					end
+				end
+			end
+
+			-- Colorize the grade improvements
+			offset = 0
+			local i, j = string.find(text, "New ", offset)
+			if i ~= nil then
+				offset = j + 1
+				local gradeMap = {
+					["Quad"] = SL.JudgmentColors["ITG"][1],
+					["Quint"] = ItlPink,
+				}
+
+				local search = "Quad Quint"
+				for a=1,2 do
+					for grade in search:gmatch("%S+") do 
+						i, j = string.find(text, grade, offset)
+						if i ~= nil then
+							-- Extract the actual clear type.
+							local substring = string.sub(text, i, j)
+							bodyText:AddAttribute(i-1, {
+								Length=#substring,
+								Diffuse=(gradeMap[substring] and gradeMap[substring] or Color.White)
 							})
 							offset = j + 1
 						end
