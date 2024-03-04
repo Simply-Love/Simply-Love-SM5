@@ -174,7 +174,8 @@ local af = Def.ActorFrame{
 				self:GetChild("BodyText"),
 				itlString,
 				paneHeight - borderWidth,
-				RowHeight - borderWidth,
+				paneWidth - borderWidth,
+				RowHeight,
 				ItlPink)
 
 			self:GetChild("Header"):settext(params.itlData["name"]:gsub("ITL Online", "ITL"))

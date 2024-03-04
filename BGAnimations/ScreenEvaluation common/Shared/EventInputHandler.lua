@@ -20,6 +20,7 @@ local function input(event)
 	-- but only if the event.type is not a Release.
 	if (event.GameButton == "Start" or event.GameButton == "Back") and event.type ~= "InputEventType_Release" then
         overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):visible(false)
+		local pn = ToEnumShortString(event.PlayerNumber)
 		local progressBox = SCREENMAN:GetTopScreen()
 				:GetChild("Overlay")
 				:GetChild("ScreenEval Common")
