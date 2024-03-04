@@ -10,8 +10,25 @@ local af = Def.ActorFrame{
     local adjusted_offset_x = mods.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
 
     self:addy(mods.NoteFieldOffsetY)
-    SCREENMAN:GetTopScreen():GetChild("Player"..pn):addx(adjusted_offset_x)
-    SCREENMAN:GetTopScreen():GetChild("Player"..pn):addy(mods.NoteFieldOffsetY)
+    local player = SCREENMAN:GetTopScreen():GetChild("Player"..pn)
+    player:addx(adjusted_offset_x)
+    player:addy(mods.NoteFieldOffsetY)
+
+    local notefield = player:GetChild("NoteField")
+    if mods.MeasureLines == "Off" then
+      notefield:SetBeatBars(false)
+      notefield:SetBeatBarsAlpha(0, 0, 0, 0)
+    else
+      notefield:SetBeatBars(true)
+
+      if mods.MeasureLines == "Measure" then
+        notefield:SetBeatBarsAlpha(0.5, 0, 0, 0)
+      elseif mods.MeasureLines == "Quarter" then
+        notefield:SetBeatBarsAlpha(0.5, 0.25, 0, 0)
+      elseif mods.MeasureLines == "Eighth" then
+        notefield:SetBeatBarsAlpha(0.5, 0.25, 0.1, 0)
+      end
+    end
   end,
 }
 

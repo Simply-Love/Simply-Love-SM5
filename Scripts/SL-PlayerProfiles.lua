@@ -47,6 +47,8 @@ local permitted_profile_settings = {
 	MeasureCounterUp     = "boolean",
 	HideLookahead        = "boolean",
 
+	MeasureLines         = "string",
+
 	ColumnFlashOnMiss    = "boolean",
 	SubtractiveScoring   = "boolean",
 	Pacemaker            = "boolean",
