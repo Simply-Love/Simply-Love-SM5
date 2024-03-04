@@ -345,7 +345,7 @@ UpdateItlData = function(player)
 	-- We also require all the windows to be enabled.
 	-- ITG mode is the only mode that has all the windows enabled by default.
 	local allWindowsEnabled = SL.Global.GameMode == "ITG"
-	for enabled in ivalues(SL.Global.ActiveModifiers.TimingWindows) do
+	for enabled in ivalues(SL[pn].ActiveModifiers.TimingWindows) do
 		allWindowsEnabled = allWindowsEnabled and enabled
 	end
 
