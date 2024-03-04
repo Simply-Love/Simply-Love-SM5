@@ -146,6 +146,8 @@ local borderWidth = 2
 
 local RowHeight = 25
 
+local hasData = false
+
 -- If that space is taken by a player or the twitch chat module,
 -- put it to the side in widescreen mode.
 if IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() > 1) then
@@ -165,7 +167,6 @@ local af = Def.ActorFrame{
 	end,
 
 	SetDataCommand=function(self, params)
-		local hasData = false
 		if params.itlData then
 			hasData = true
 			local itlString = CreateITLBody(params.itlData)
@@ -178,7 +179,9 @@ local af = Def.ActorFrame{
 
 			self:GetChild("Header"):settext(params.itlData["name"]:gsub("ITL Online", "ITL"))
 		end
+	end,
 
+	MaybeShowCommand=function(self)
 		self:visible(hasData)
 	end,
 
