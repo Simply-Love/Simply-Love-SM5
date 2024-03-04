@@ -30,6 +30,58 @@ end
 local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
 local wscale = barWidth / 2 / maxTimingOffset
 
+local function DisplayTick(self, params)
+    local score = ToEnumShortString(params.TapNoteScore)
+    if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
+        local window = score
+        local isTopWindow = score == "W1"
+        if mods.ShowFaPlusWindow then
+            if IsW0Judgment(params, player) then
+                window = "W0"
+            else
+                isTopWindow = false
+            end
+        end
+        
+        local tick = self:GetChild("Tick" .. currentTick)
+        local bar = self:GetChild("Bar")
+        local earlysubbar = bar:GetChild("Early"..window)
+        local latesubbar = bar:GetChild("Late"..window)
+        
+        currentTick = currentTick % numTicks + 1
+        
+        tick:finishtweening()
+        bar:finishtweening()
+        bar:zoom(1)
+        
+        if isTopWindow then
+            earlysubbar:finishtweening()
+            latesubbar:finishtweening()
+            earlysubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
+            latesubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
+        else
+            local offset = params.TapNoteOffset and "Early" or "Late"
+            local subbar = offset == "Early" and earlysubbar or latesubbar
+            subbar:finishtweening()
+            subbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
+        end
+
+        if numTicks > 1 then
+            tick:diffusealpha(1)
+                :x(params.TapNoteOffset * wscale)
+                :sleep(0.03):linear(tickDuration - 0.03)
+                :diffusealpha(0)
+        else
+            tick:diffusealpha(1)
+                :x(params.TapNoteOffset * wscale)
+                :sleep(tickDuration):diffusealpha(0)
+        end
+
+        bar:sleep(tickDuration)
+            :zoom(0)
+    end
+end
+
 -- one way of drawing these quads would be to just draw them centered, back to
 -- front, with the full width of the corresponding window. this would look bad
 -- if we want to alpha blend them though, so i'm drawing the segments
@@ -44,55 +96,7 @@ local af = Def.ActorFrame{
         if params.HoldNoteScore then return end
         if judgmentToTrim[params.TapNoteScore] then return end
 
-        local score = ToEnumShortString(params.TapNoteScore)
-        if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
-            local window = score
-            local isTopWindow = score == "W1"
-            if mods.ShowFaPlusWindow then
-                if IsW0Judgment(params, player) then
-                    window = "W0"
-                else
-                    isTopWindow = false
-                end
-            end
-            
-            local tick = self:GetChild("Tick" .. currentTick)
-            local bar = self:GetChild("Bar")
-            local earlysubbar = bar:GetChild("Early"..window)
-            local latesubbar = bar:GetChild("Late"..window)
-            
-            currentTick = currentTick % numTicks + 1
-            
-            tick:finishtweening()
-            bar:finishtweening()
-            bar:zoom(1)
-            
-            if isTopWindow then
-                earlysubbar:finishtweening()
-                latesubbar:finishtweening()
-                earlysubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
-                latesubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
-            else
-                local offset = params.TapNoteOffset and "Early" or "Late"
-                local subbar = offset == "Early" and earlysubbar or latesubbar
-                subbar:finishtweening()
-                subbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
-            end
-
-            if numTicks > 1 then
-                tick:diffusealpha(1)
-                    :x(params.TapNoteOffset * wscale)
-                    :sleep(0.03):linear(tickDuration - 0.03)
-                    :diffusealpha(0)
-            else
-                tick:diffusealpha(1)
-                    :x(params.TapNoteOffset * wscale)
-                    :sleep(tickDuration):diffusealpha(0)
-            end
-
-            bar:sleep(tickDuration)
-                :zoom(0)
-        end
+        DisplayTick(self, params)
     end,
 }
 
