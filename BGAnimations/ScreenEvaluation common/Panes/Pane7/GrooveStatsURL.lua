@@ -44,7 +44,7 @@ local steps = GAMESTATE:GetCurrentSteps(player)
 -- ParseChartInfo will do no work if the data already exists in the SL.Streams Cache.
 ParseChartInfo(steps, pn)
 local hash = SL[pn].Streams.Hash
-local hash_version = SL.GrooveStats.ChartHashVersion
+local hash_version = 4 -- This is technically the QR version and not the hash version.
 
 return ("HTTPS://GROOVESTATS.COM/QR/%s/T%xG%xH%xI%xJ%xK%sL%sM%xH%xT%xR%xT%xM%xT%x/F%sR%xC%sV%x"):format(
         hash, total_steps, fantastic_plus, fantastic, excellent, great, decent, wayOff, miss,

@@ -437,7 +437,7 @@ SL = {
 		-- *  and when GrooveStats backend is also      *
 		-- *   updated to properly consume this value.  *
 		-- **********************************************
-		ChartHashVersion = 4
+		ChartHashVersion = 3,
 	}
 }
 
