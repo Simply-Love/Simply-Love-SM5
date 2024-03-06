@@ -10,7 +10,8 @@ local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 local stylename = GAMESTATE:GetCurrentStyle():GetName()
 
 if (not IsUltraWide and stylename == "versus")
-	or (SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
+	or (not ThemePrefs.Get("EnableTournamentMode") and
+	    SL[pn].ActiveModifiers.DataVisualizations ~= "Step Statistics")
 	or (ThemePrefs.Get("EnableTournamentMode") and ThemePrefs.Get("StepStats") == "Hide")
 	or (SL.Global.GameMode == "Casual")
 	or (GetNotefieldWidth() > _screen.w/2)
