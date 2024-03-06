@@ -357,7 +357,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local hash = SL[pn].Streams.Hash
 	if itlData["maxPoints"] ~= nil then
 		-- First try and fetch the maxPoints from the response.
-		maxPoints = itlData["maxPoints"][chartName]
+		maxPoints = itlData["maxPoints"]
 	elseif SL[pn].ITLData["hashMap"][hash] ~= nil then
 		-- Then if it doesn't exist, try and parse it from ITL hashMap
 		maxPoints = SL[pn].ITLData["hashMap"][hash]["maxPoints"]
@@ -403,6 +403,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	if progressBox ~= nil then
 		progressBox:playcommand("SetData",{
 			itlData = {
+				["name"] = itlData["name"],
 				["score"] = score,
 				["scoreDelta"] = scoreDelta,
 				["currentPoints"] = currentPoints,
