@@ -13,41 +13,18 @@ local pn = ToEnumShortString(player)
 -- TODO: Create RPG body.
 
 local CreateITLBody = function(itlData)
-	local score = CalculateExScore(player)
-	local scoreDelta = itlData["scoreDelta"]/100.0
-
-	local steps = GAMESTATE:GetCurrentSteps(player)
-	local chartName = steps:GetChartName()
-
-	-- Note that playing OUTSIDE of the ITL pack will result in 0 points for all upscores.
-	-- Technically this number isn't displayed, but players can opt to swap the EX score in the
-	-- wheel with this value instead if they prefer.
-	local maxPoints = chartName:gsub(" pts", "")
-	if #maxPoints == 0 then
-		maxPoints = 0
-	else
-		maxPoints = tonumber(maxPoints)
-	end
-
-	local currentPoints = GetITLPointsForSong(maxPoints, score)
-	local previousPoints = itlData["topScorePoints"]
-	local pointDelta = currentPoints - previousPoints
-
-	local currentPointTotal = itlData["currentPointTotal"]
-	local previousPointTotal = itlData["previousPointTotal"]
-	local totalDelta = currentPointTotal - previousPointTotal
-
+	local score = itlData["score"]
+	local scoreDelta = itlData["scoreDelta"]
+	local currentPoints = itlData["currentPoints"]
+	local pointDelta = itlData["pointDelta"]
 	local currentRankingPointTotal = itlData["currentRankingPointTotal"]
-	local previousRankingPointTotal = itlData["previousRankingPointTotal"]
-	local rankingDelta = currentRankingPointTotal - previousRankingPointTotal
-
-	local currentExPointTotal = itlData["currentExPointTotal"]
-	local previousExPointTotal = itlData["previousExPointTotal"]
-	local totalExDelta = currentExPointTotal - previousExPointTotal
-
+	local rankingDelta = itlData["rankingDelta"]
 	local currentSongPointTotal = itlData["currentSongPointTotal"]
-	local previousSongPointTotal = itlData["previousSongPointTotal"]
-	local totalSongDelta = currentSongPointTotal - previousSongPointTotal
+	local totalSongDelta = itlData["totalSongDelta"]
+	local currentExPointTotal = itlData["currentExPointTotal"]
+	local totalExDelta = itlData["totalExDelta"]
+	local currentPointTotal = itlData["currentPointTotal"]
+	local totalDelta = itlData["totalDelta"]
 
 	return string.format(
 		"EX Score: %.2f%% (%+.2f%%)\n"..

@@ -353,35 +353,72 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local steps = GAMESTATE:GetCurrentSteps(player)
 	local chartName = steps:GetChartName()
 
-	-- Note that playing OUTSIDE of the ITL pack will result in 0 points for all upscores.
-	-- Technically this number isn't displayed, but players can opt to swap the EX score in the
-	-- wheel with this value instead if they prefer.
-	local maxPoints = chartName:gsub(" pts", "")
-	if #maxPoints == 0 then
-		maxPoints = 0
+	local maxPoints = 0
+	local hash = SL[pn].Streams.Hash
+	if itlData["maxPoints"] ~= nil then
+		-- First try and fetch the maxPoints from the response.
+		maxPoints = itlData["maxPoints"][chartName]
+	elseif SL[pn].ITLData["hashMap"][hash] ~= nil then
+		-- Then if it doesn't exist, try and parse it from ITL hashMap
+		maxPoints = SL[pn].ITLData["hashMap"][hash]["maxPoints"]
 	else
-		maxPoints = tonumber(maxPoints)
+		-- Then if it still doesn't exist, try and parse it from the chartName.
+
+		-- Note that playing OUTSIDE of the ITL pack will result in 0 points for all
+		-- upscores since it won't have the relevant points data.
+		local pointsStr = chartName:gsub(" pts", "")
+		maxPoints = tonumber(pointsStr)
+	end
+
+	if maxPoints == nil then
+		maxPoints = 0
 	end
 
 	local currentPoints = GetITLPointsForSong(maxPoints, score)
 	local previousPoints = itlData["topScorePoints"]
 	local pointDelta = currentPoints - previousPoints
 
-	local currentPointTotal = itlData["currentPointTotal"]
-	local previousPointTotal = itlData["previousPointTotal"]
-	local totalDelta = currentPointTotal - previousPointTotal
-
 	local currentRankingPointTotal = itlData["currentRankingPointTotal"]
 	local previousRankingPointTotal = itlData["previousRankingPointTotal"]
 	local rankingDelta = currentRankingPointTotal - previousRankingPointTotal
+
+	local currentSongPointTotal = itlData["currentSongPointTotal"]
+	local previousSongPointTotal = itlData["previousSongPointTotal"]
+	local totalSongDelta = currentSongPointTotal - previousSongPointTotal
 
 	local currentExPointTotal = itlData["currentExPointTotal"]
 	local previousExPointTotal = itlData["previousExPointTotal"]
 	local totalExDelta = currentExPointTotal - previousExPointTotal
 
-	local currentSongPointTotal = itlData["currentSongPointTotal"]
-	local previousSongPointTotal = itlData["previousSongPointTotal"]
-	local totalSongDelta = currentSongPointTotal - previousSongPointTotal
+	local currentPointTotal = itlData["currentPointTotal"]
+	local previousPointTotal = itlData["previousPointTotal"]
+	local totalDelta = currentPointTotal - previousPointTotal
+
+	-- Also pass the response data to the progress box.
+	local progressBox = SCREENMAN:GetTopScreen()
+			:GetChild("Overlay")
+			:GetChild("ScreenEval Common")
+			:GetChild(pn.."_AF_Upper")
+			:GetChild("EventProgress"..pn)
+	if progressBox ~= nil then
+		progressBox:playcommand("SetData",{
+			itlData = {
+				["score"] = score,
+				["scoreDelta"] = scoreDelta,
+				["currentPoints"] = currentPoints,
+				["pointDelta"] = pointDelta,
+				["currentRankingPointTotal"] = currentRankingPointTotal,
+				["rankingDelta"] = rankingDelta,
+				["currentSongPointTotal"] = currentSongPointTotal,
+				["totalSongDelta"] = totalSongDelta,
+				["currentExPointTotal"] = currentExPointTotal,
+				["totalExDelta"] = totalExDelta,
+				["currentPointTotal"] = currentPointTotal,
+				["totalDelta"] = totalDelta
+			},
+		})
+	end
+
 
 	local statImprovements = {}
 	local quests = {}
@@ -682,18 +719,6 @@ for player in ivalues(PlayerNumber) do
 				if SL[pn].ITLData["pathMap"][song_dir] == nil then
 					UpdateItlData(player)
 				end
-			end
-
-			-- Also pass the response data to the progress box.
-			local progressBox = SCREENMAN:GetTopScreen()
-					:GetChild("Overlay")
-					:GetChild("ScreenEval Common")
-					:GetChild(pn.."_AF_Upper")
-					:GetChild("EventProgress"..pn)
-			if progressBox ~= nil then
-				progressBox:playcommand("SetData",{
-					itlData = params.data["itl"],
-				})
 			end
 
 			self.PaneIndex = 1
