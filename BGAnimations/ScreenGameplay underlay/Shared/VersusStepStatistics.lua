@@ -79,12 +79,9 @@ for player in ivalues(Players) do
         if SL[ToEnumShortString(player)].ActiveModifiers.NPSGraphAtTop or ThemePrefs.Get("EnableTournamentMode") then
             local pn = ToEnumShortString(player)
             local IsEX = SL[pn].ActiveModifiers.ShowEXScore
-            local SameW0Weight = (ThemePrefs.Get("EnableTournamentMode") and
-                                    ThemePrefs.Get("ScoringSystem") == "EX" and
-                                    ThemePrefs.Get("FantasticPlusWindowWeight") == "Same")
 
             af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
-                Text="0.00"..(SameW0Weight and "*" or ""),
+                Text="0.00",
                 InitCommand=function(self)
                     self:valign(1):horizalign(right)
                     self:zoom(0.25)
@@ -116,7 +113,7 @@ for player in ivalues(Players) do
                     if params.Player ~= player then return end
             
                     if IsEX then
-                        self:settext(("%.02f"):format(params.ExScore)..(SameW0Weight and "*" or ""))
+                        self:settext(("%.02f"):format(params.ExScore))
                     end
                 end,
             }

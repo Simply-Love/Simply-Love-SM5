@@ -146,14 +146,7 @@ ReadItlFile = function(player)
 				local totalHolds = counts["totalHolds"]
 				local totalRolls = counts["totalRolls"]
 
-				-- SL.ExWeights["W0"] may have been modified for tournament mode.
-				-- Try and set a fallback (3.5) so that things are still calculated correctly.
-				local SameW0Weight = (ThemePrefs.Get("EnableTournamentMode") and
-										ThemePrefs.Get("ScoringSystem") == "EX" and
-										ThemePrefs.Get("FantasticPlusWindowWeight") == "Same")
-				W0Weight = SameW0Weight and 3.5 or SL.ExWeights["W0"]
-
-				local total_possible = totalSteps * W0Weight + (totalHolds + totalRolls) * SL.ExWeights["Held"]
+				local total_possible = totalSteps * SL.ExWeights["W0"] + (totalHolds + totalRolls) * SL.ExWeights["Held"]
 				local total_points = 0
 
 				for key in ivalues(keys) do

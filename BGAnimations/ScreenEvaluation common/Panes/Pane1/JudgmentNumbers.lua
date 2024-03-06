@@ -67,13 +67,9 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	-- Replace hands with the EX score only in FA+ mode.
 	-- We have a separate FA+ pane for ITG mode.
 	if index == 1 and SL.Global.GameMode == "FA+" then
-		local SameW0Weight = (ThemePrefs.Get("EnableTournamentMode") and
-								ThemePrefs.Get("ScoringSystem") == "EX" and
-								ThemePrefs.Get("FantasticPlusWindowWeight") == "Same")
-
 		t[#t+1] = LoadFont("Wendy/_wendy white")..{
 			Name="Percent",
-			Text=("%.2f"):format(CalculateExScore(player))..(SameW0Weight and "*" or ""),
+			Text=("%.2f"):format(CalculateExScore(player)),
 			InitCommand=function(self)
 				self:horizalign(right):zoom(0.4)
 				self:x( ((controller == PLAYER_1) and -114) or 286 )

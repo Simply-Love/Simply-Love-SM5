@@ -265,12 +265,6 @@ SL_CustomPrefs.Get = function()
 			Choices  = { "EX", "ITG" }
 		},
 
-		FantasticPlusWindowWeight = {
-			Default = "Default",
-			Choices =  { "Default", "Same as Fantastic" },
-			Values =  { "Default", "Same" },
-		},
-
 		StepStats = {
 			Default = "Show",
 			Choices =  { "Show", "Hide" },

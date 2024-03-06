@@ -50,14 +50,10 @@ local ar_scale = {
 }
 local zoom_factor = clamp(scale(GetScreenAspectRatio(), 16/10, 16/9, ar_scale.sixteen_ten, ar_scale.sixteen_nine), 0, 1.125)
 
-local SameW0Weight = (ThemePrefs.Get("EnableTournamentMode") and
-						ThemePrefs.Get("ScoringSystem") == "EX" and
-						ThemePrefs.Get("FantasticPlusWindowWeight") == "Same")
-
 -- -----------------------------------------------------------------------
 
 return LoadFont("Wendy/_wendy monospace numbers")..{
-	Text="0.00"..(SameW0Weight and "*" or ""),
+	Text="0.00",
 	Name=pn.."Score",
 	InitCommand=function(self)
 		self:valign(1):horizalign(right)
@@ -146,7 +142,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 		if params.Player ~= player then return end
 
 		if IsEX then
-			self:settext(("%.02f"):format(params.ExScore)..(SameW0Weight and "*" or ""))
+			self:settext(("%.02f"):format(params.ExScore))
 		end
 	end,
 }

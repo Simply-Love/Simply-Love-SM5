@@ -15,11 +15,6 @@ else
 	diffuse = Color.White
 end
 
-local SameW0Weight = (ThemePrefs.Get("EnableTournamentMode") and
-						ThemePrefs.Get("ScoringSystem") == "EX" and
-						ThemePrefs.Get("FantasticPlusWindowWeight") == "Same")
-
-
 return Def.ActorFrame{
 	Name="PercentageContainer"..ToEnumShortString(player),
 	OnCommand=function(self)
@@ -41,11 +36,10 @@ return Def.ActorFrame{
 		end
 	},
 
-	-- NOTE(teejusb): If SameW0Weight is set, then that means EX score is also set so it's always the
-	-- "primary" displayed score.
+
 	LoadFont("Wendy/_wendy white")..{
 		Name="Percent",
-		Text=("%.2f"):format(percent)..(SameW0Weight and "'" or ""),
+		Text=("%.2f"):format(percent),
 		InitCommand=function(self)
 			self:horizalign(right):zoom(0.585)
 			self:x( (controller == PLAYER_1 and 1.5 or 141))
