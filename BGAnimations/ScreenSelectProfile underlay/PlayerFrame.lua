@@ -156,8 +156,24 @@ return Def.ActorFrame{
 			end
 
 			scroller.focus_pos = 5
-			scroller:set_info_set(scroller_data, 1)
-			scroller:scroll_by_amount(-1 )
+
+			local pn = ToEnumShortString(player)
+			if PREFSMAN:GetPreference("DefaultLocalProfileID"..pn) ~= "" then
+				local default_profile_id = PREFSMAN:GetPreference("DefaultLocalProfileID"..pn)
+				local profile_dir = PROFILEMAN:LocalProfileIDToDir(default_profile_id)
+				
+				for i, profile_item in ipairs(scroller_data) do
+					if profile_item.dir == profile_dir then
+						scroller:set_info_set(scroller_data, 1)
+						scroller:scroll_by_amount(i-5)
+						break
+					end
+				end
+			else
+				scroller:set_info_set(scroller_data, 1)
+				scroller:scroll_by_amount(-1)
+			end
+
 		end,
 
 		FrameBackground(PlayerColor(player), player, frame.w * 1.1),
