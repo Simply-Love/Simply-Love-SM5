@@ -394,6 +394,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local previousPointTotal = itlData["previousPointTotal"]
 	local totalDelta = currentPointTotal - previousPointTotal
 
+	local isDoubles = itlData["isDoubles"]
+
 	-- Also pass the response data to the progress box.
 	local progressBox = SCREENMAN:GetTopScreen()
 			:GetChild("Overlay")
@@ -403,7 +405,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	if progressBox ~= nil then
 		progressBox:playcommand("SetData",{
 			itlData = {
-				["name"] = itlData["name"],
+				["name"] = itlData["name"]..(isDoubles and " Doubles" or ""),
 				["score"] = score,
 				["scoreDelta"] = scoreDelta,
 				["currentPoints"] = currentPoints,
@@ -525,7 +527,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	for text in ivalues(paneTexts) do
 		table.insert(paneFunctions, function(eventAf)
 			SetItlStyle(eventAf)
-			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL"))
+			local isDoubles = itlData["isDoubles"]
+			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL")..(isDoubles and " Doubles" or ""))
 			eventAf:GetChild("Leaderboard"):visible(false)
 			eventAf:GetChild("EX"):visible(true)
 			local bodyText = eventAf:GetChild("BodyText")
