@@ -528,7 +528,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 		table.insert(paneFunctions, function(eventAf)
 			SetItlStyle(eventAf)
 			local isDoubles = itlData["isDoubles"]
-			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL")..(isDoubles and " Doubles" or ""))
+			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL")..(isDoubles and "  Doubles" or ""))
 			eventAf:GetChild("Leaderboard"):visible(false)
 			eventAf:GetChild("EX"):visible(true)
 			local bodyText = eventAf:GetChild("BodyText")

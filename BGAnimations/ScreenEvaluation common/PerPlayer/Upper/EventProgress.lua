@@ -156,6 +156,15 @@ local af = Def.ActorFrame{
 				ItlPink)
 
 			self:GetChild("Header"):settext(params.itlData["name"]:gsub("ITL Online", "ITL"))
+
+			-- Ensure the header text fits within the box.
+			for zoomVal=0.5, 0.1, -0.05 do
+				self:GetChild("Header"):zoom(zoomVal)
+				self:GetChild("Header"):wrapwidthpixels((paneWidth-6)/(zoomVal))
+				if self:GetChild("Header"):GetHeight() * zoomVal <= RowHeight*2 then
+					break
+				end
+			end
 		end
 	end,
 
