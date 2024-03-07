@@ -42,7 +42,7 @@ local function CreditsText( player )
 						textColor = color(SL.SRPG7.TextColor)
 						shadowLength = 0.4
 					end
-				elseif (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") then
+				elseif (screen:GetName() == "ScreenEvaluationStage") or (screen:GetName() == "ScreenEvaluationNonstop") or (screen:GetName() == "ScreenGameplay") then
 					-- ignore ShowCreditDisplay metric for ScreenEval
 					-- only show this BitmapText actor on Evaluation if the player is joined
 					bShow = GAMESTATE:IsHumanPlayer(player)

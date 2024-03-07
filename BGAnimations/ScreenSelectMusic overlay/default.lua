@@ -5,6 +5,7 @@ local af = Def.ActorFrame{
 	-- time ScreenGameplay loads, it should have a properly animated entrance.
 	InitCommand=function(self)
 		SL.Global.GameplayReloadCheck = false
+		generateFavoritesForMusicWheel()
 
 		-- While other SM versions don't need this, Outfox resets the
 		-- the music rate to 1 between songs, but we want to be using
@@ -17,6 +18,7 @@ local af = Def.ActorFrame{
 		if not PROFILEMAN:IsPersistentProfile(params.Player) then
 			LoadGuest(params.Player)
 		end
+		generateFavoritesForMusicWheel()
 		ApplyMods(params.Player)
 	end,
 
@@ -30,8 +32,8 @@ local af = Def.ActorFrame{
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
-	-- MenuTimer code for preserving SSM's timer value when going
-	-- from SSM to Player Options and then back to SSM
+	-- MenuTimer code for preserving SSM's timer value when going 
+	-- from SSM to a different screen and back to SSM (i.e. returning from PlayerOptions).
 	LoadActor("./PreserveMenuTimer.lua"),
 	-- Apply player modifiers from profile
 	LoadActor("./PlayerModifiers.lua"),

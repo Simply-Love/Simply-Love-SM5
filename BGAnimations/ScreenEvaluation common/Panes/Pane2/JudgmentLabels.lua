@@ -128,13 +128,26 @@ end
 -- labels: hands/ex, holds, mines, rolls
 for index, label in ipairs(RadarCategories) do
 	if index == 1 then
-		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small" or "Mega/_mega font")..{
-			Text="EX",
+		text = nil
+		if SL[pn].ActiveModifiers.ShowEXScore then
+			text = "ITG"
+		else
+			text = "EX"
+		end
+
+
+		t[#t+1] = LoadFont("Wendy/_wendy small")..{
+			Text=text,
 			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 			BeginCommand=function(self)
 				self:x( (controller == PLAYER_1 and -160) or 90 )
 				self:y(38)
-				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+
+				if SL[pn].ActiveModifiers.ShowEXScore then
+					self:diffuse(Color.White)
+				else
+					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+				end
 			end
 		}
 	end

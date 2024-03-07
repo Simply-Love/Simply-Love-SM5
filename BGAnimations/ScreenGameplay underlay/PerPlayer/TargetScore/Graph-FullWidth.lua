@@ -83,10 +83,8 @@ local af = Def.ActorFrame {
 			self:diffuse(Color.Green)
 		end,
 		UpdateCommand = function(self)
-			if not SL[pn].ActiveModifiers.ShowEXScore then
-				local currentDP = personal_best * GetCurMaxPercentDancePoints()
-				self:zoomy(-percentToYCoordinate(currentDP))
-			end
+			local currentDP = personal_best * GetCurMaxPercentDancePoints()
+			self:zoomy(-percentToYCoordinate(currentDP))
 		end,
 		ExCountsChangedMessageCommand=function(self, params)
 			if SL[pn].ActiveModifiers.ShowEXScore then

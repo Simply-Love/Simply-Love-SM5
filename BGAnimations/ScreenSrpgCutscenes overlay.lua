@@ -72,7 +72,7 @@ local data = {
     },
     ["Before"] = {
       shown = false,
-      time = 9,
+      time = 16,
     },
     ["Begone"] = {
       shown = false,
@@ -80,11 +80,11 @@ local data = {
     },
     ["Heyman"] = {
       shown = false,
-      time = 13,
+      time = 7,
     },
     ["Neutral"] = {
       shown = false,
-      time = 16,
+      time = 13,
     },
   }
 }
@@ -107,8 +107,7 @@ if FILEMAN:DoesFileExist(path) then
   f:destroy()
 end
 
-local idx = (SL.Global.ActiveColorIndex % #SL.SRPG7.Colors) + 1
-local factionName = SL.SRPG7.GetFactionName(idx)
+local factionName = SL.SRPG7.GetFactionName(SL.Global.ActiveColorIndex)
 
 -- Select a random cutscene that hasn't previously been shown.
 local cutscenes = {}

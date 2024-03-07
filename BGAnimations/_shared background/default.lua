@@ -35,5 +35,6 @@ if style == "Technique" then
 	af[#af+1] = LoadActor("./technique.lua", file)
 end
 af[#af+1] = LoadActor("./Static.lua", file)
+af[#af+1] = LoadActor("./Technique.lua", file)
 
 return af

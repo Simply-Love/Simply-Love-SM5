@@ -4,7 +4,7 @@ IsItlSong = function(player)
 	local song_dir = song:GetSongDir()
 	local group = string.lower(song:GetGroupName())
 	local pn = ToEnumShortString(player)
-	return string.find(group, "itl online 2023") or string.find(group, "itl 2023") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
+	return string.find(group, "itl online 2024") or string.find(group, "itl 2024") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
 end
 
 UpdatePathMap = function(player, hash)
@@ -24,15 +24,18 @@ end
 IsItlActive = function()
 	-- The file is only written to while the event is active.
 	-- These are just placeholder dates.
-	local startTimestamp = 20230317
-	local endTimestamp = 20240215
+	-- local startTimestamp = 20230317
+	-- local endTimestamp = 20240420
 
-	local year = Year()
-	local month = MonthOfYear()+1
-	local day = DayOfMonth()
-	local today = year * 10000 + month * 100 + day
+	-- local year = Year()
+	-- local month = MonthOfYear()+1
+	-- local day = DayOfMonth()
+	-- local today = year * 10000 + month * 100 + day
 
-	return startTimestamp <= today and today <= endTimestamp
+	-- return startTimestamp <= today and today <= endTimestamp
+
+	-- Assume ITL is always active. This helps when we close and reopen the event.
+	return true
 end
 
 
@@ -54,7 +57,7 @@ end
 -- This set up lets us display song wheel grades for ITL both from playing within the
 -- ITL pack and also outside of it.
 -- Note that songs resynced for ITL but played outside of the pack will not be covered in the pathMap.
-local itlFilePath = "itl2023.json"
+local itlFilePath = "itl2024.json"
 
 local TableContainsData = function(t)
 	if t == nil then return false end
@@ -249,6 +252,43 @@ ReadItlFile = function(player)
 	SL[pn].ITLData = itlData
 end
 
+-- EX score is a number like 92.67
+GetITLPointsForSong = function(maxPoints, exScore)
+	local thresholdEx = 50.0
+	local percentPoints = 40.0
+
+	-- Helper function to take the logarithm with a specific base.
+	local logn = function(x, y)
+		return math.log(x) / math.log(y)
+	end
+
+	-- The first half (logarithmic portion) of the scoring curve.
+	local first = logn(
+		math.min(exScore, thresholdEx) + 1,
+		math.pow(thresholdEx + 1, 1 / percentPoints)
+	)
+
+	-- The seconf half (exponential portion) of the scoring curve.
+	local second = math.pow(
+		100 - percentPoints + 1,
+		math.max(0, exScore - thresholdEx) / (100 - thresholdEx)
+	) - 1
+
+	-- Helper function to round to a specific number of decimal places.
+	-- We want 100% EX to actually grant 100% of the points.
+	-- We don't want to  lose out on any single points if possible. E.g. If
+	-- 100% EX returns a number like 0.9999999999999997 and the chart points is
+	-- 6500, then 6500 * 0.9999999999999997 = 6499.99999999999805, where
+	-- flooring would give us 6499 which is wrong.
+	local roundPlaces = function(x, places)
+		local factor = 10 ^ places
+		return math.floor(x * factor + 0.5) / factor
+	end
+
+	local percent = roundPlaces((first + second) / 100.0, 6)
+	return math.floor(maxPoints * percent)
+end
+
 -- Helper function used within UpdateItlData() below.
 -- Curates all the ITL data to be written to the ITL file for the played song.
 local DataForSong = function(player, prevData)
@@ -256,8 +296,8 @@ local DataForSong = function(player, prevData)
 		-- 1 = Pass
 		-- 2 = FGC
 		-- 3 = FEC
-		-- 4 = Quad
-		-- 5 = Quint
+		-- 4 = FFC
+		-- 5 = FFPC
 		local clearType = 1
 
 		-- Dropping a hold or roll will always be a Pass
@@ -344,7 +384,7 @@ local DataForSong = function(player, prevData)
 	local judgments = GetExJudgmentCounts(player)
 	local ex = CalculateExScore(player, judgments)
 	local clearType = GetClearType(judgments)
-	local points = GetPointsForSong(maxPoints, ex)
+	local points = GetITLPointsForSong(maxPoints, ex)
 	local usedCmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil
 	local date = ("%04d-%02d-%02d"):format(year, month, day)
 	
@@ -499,11 +539,19 @@ UpdateItlData = function(player)
 	local po = GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred")
 	local minesEnabled = not po:NoMines()
 
+	-- We also require all the windows to be enabled.
+	-- ITG mode is the only mode that has all the windows enabled by default.
+	local allWindowsEnabled = SL.Global.GameMode == "ITG"
+	for enabled in ivalues(SL[pn].ActiveModifiers.TimingWindows) do
+		allWindowsEnabled = allWindowsEnabled and enabled
+	end
+
 	if (GAMESTATE:IsHumanPlayer(player) and
 				valid and
 				rate == 1.0 and
 				minesEnabled and
-				not stats:GetFailed()) then
+				not stats:GetFailed() and
+				allWindowsEnabled) then
 		local hash = SL[pn].Streams.Hash
 		local hashMap = SL[pn].ITLData["hashMap"]
 

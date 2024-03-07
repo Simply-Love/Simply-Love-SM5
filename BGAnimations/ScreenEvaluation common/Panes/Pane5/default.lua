@@ -126,6 +126,9 @@ pane[#pane+1] = Def.BitmapText{
 		self:addx(10):addy(-125)
 			:zoom(0.3)
 			:horizalign(left)
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end,
 }
 

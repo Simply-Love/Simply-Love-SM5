@@ -81,6 +81,7 @@ local af = Def.ActorFrame{
         if params.EarlyTapNoteScore ~= nil then
             local tns = ToEnumShortString(params.TapNoteScore)
             local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
+
             if earlyTns ~= "None" then
                 if SL.Global.GameMode == "FA+" then
                     if tns == "W5" then
@@ -140,14 +141,18 @@ for i, window in ipairs(windows.timing) do
     local width = x - lastx
     local judgmentColor = windows.color[i]
 
+    local windowNum = mods.ShowFaPlusWindow and i - 1 or i
+
     bar_af[#bar_af+1] = Def.Quad{
+        Name="EarlyW" .. windowNum,
         InitCommand = function(self)
-            self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor)
+            self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(0.3)
         end
     }
     bar_af[#bar_af+1] = Def.Quad{
+        Name="LateW" .. windowNum,
         InitCommand = function(self)
-            self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor)
+            self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(0.3)
         end
     }
 

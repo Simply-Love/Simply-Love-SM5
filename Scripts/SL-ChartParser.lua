@@ -284,13 +284,15 @@ end
 
 -- ----------------------------------------------------------------
 -- Figure out which measures are considered a stream of notes
+-- The chartString is expected to be minimized.
 local GetMeasureInfo = function(Steps, chartString)
 	-- Stream Measures Variables
 	-- Which measures are considered a stream?
 	local notesPerMeasure = {}
+	local equallySpacedPerMeasure = {}
 	local measureCount = 1
 	local notesInMeasure = 0  -- The tap notes found in this measure
-	local rowsInMeasure = 0   -- The total rows in this measure
+	local rowsInMeasure = 0   -- The total rows in this measure (can be just 1 if measure is empty).
 
 	-- NPS and Density Graph Variables
 	local NPSperMeasure = {}
@@ -307,6 +309,7 @@ local GetMeasureInfo = function(Steps, chartString)
 		if(line:match("^[,;]%s*")) then
 			-- Does the number of notes in this measure meet our threshold to be considered a stream?
 			table.insert(notesPerMeasure, notesInMeasure)
+			table.insert(equallySpacedPerMeasure, notesInMeasure == rowsInMeasure)
 
 			-- Column Cue calculation
 			for noteData in ivalues(columnCueAllData) do
@@ -394,7 +397,7 @@ local GetMeasureInfo = function(Steps, chartString)
 		prevTime = columnTime.time
 	end
 
-	return notesPerMeasure, peakNPS, NPSperMeasure, columnCues
+	return notesPerMeasure, peakNPS, NPSperMeasure, columnCues, equallySpacedPerMeasure
 end
 -- ----------------------------------------------------------------
 
@@ -733,6 +736,7 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 			SL[opposite_player].Streams.Description == description) then
 		-- If so then just copy everything over.
 		SL[pn].Streams.NotesPerMeasure = SL[opposite_player].Streams.NotesPerMeasure
+		SL[pn].Streams.EquallySpacedPerMeasure = SL[opposite_player].Streams.EquallySpacedPerMeasure
 		SL[pn].Streams.PeakNPS = SL[opposite_player].Streams.PeakNPS
 		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
 		SL[pn].Streams.ColumnCues = SL[opposite_player].Streams.ColumnCues
@@ -790,10 +794,12 @@ ParseChartInfo = function(steps, pn)
 				chartString = chartString .. '\n;'
 				-- Which measures have enough notes to be considered as part of a stream?
 				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
-				local NotesPerMeasure, PeakNPS, NPSperMeasure, ColumnCues = GetMeasureInfo(steps, chartString)
+				-- The chart string is minimized at this point (via GetSimfileChartString).
+				local NotesPerMeasure, PeakNPS, NPSperMeasure, ColumnCues, EquallySpacedPerMeasure = GetMeasureInfo(steps, chartString)
 
 				-- Which sequences of measures are considered a stream?
 				SL[pn].Streams.NotesPerMeasure = NotesPerMeasure
+				SL[pn].Streams.EquallySpacedPerMeasure = EquallySpacedPerMeasure
 				SL[pn].Streams.PeakNPS = PeakNPS
 				SL[pn].Streams.NPSperMeasure = NPSperMeasure
 				SL[pn].Streams.ColumnCues = ColumnCues
@@ -818,6 +824,7 @@ ParseChartInfo = function(steps, pn)
 		-- Clear stream data if we can't parse the chart
 		if not parsed then
 			SL[pn].Streams.NotesPerMeasure = {}
+			SL[pn].Streams.EquallySpacedPerMeasure = {}
 			SL[pn].Streams.PeakNPS = 0
 			SL[pn].Streams.NPSperMeasure = {}
 			SL[pn].Streams.Hash = ''

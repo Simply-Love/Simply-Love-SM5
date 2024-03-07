@@ -28,7 +28,9 @@ local PlayerState = GAMESTATE:GetPlayerState(player)
 local streams = SL[ToEnumShortString(player)].Streams
 local foot
 for i=1,GAMESTATE:GetCurrentStyle():ColumnsPerPlayer() do
-	judgments[#judgments+1] = { W0=0, W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0, W1early=0, W2early=0, W3early=0, W4early=0, W5early=0, Early={ W1=0, W2=0, W3=0, W4=0, W5=0 }, W4lf=0, W4rf=0, W5lf=0, W5rf=0, Misslf=0, Missrf=0 }
+	-- W4 and W5 are the early decent/way offs itself.
+	-- W0-W3 are for indicating what the early hits were rescored to.
+	judgments[#judgments+1] = { W0=0, W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0, Early={ W0=0, W1=0, W2=0, W3=0, W4=0, W5=0 }, W1early=0, W2early=0, W3early=0, W4early=0, W5early=0, W4lf=0, W4rf=0, W5lf=0, W5rf=0, Misslf=0, Missrf=0 }
 end
 
 return Def.Actor{
@@ -47,6 +49,24 @@ return Def.Actor{
 				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
 				if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
 					local tns = ToEnumShortString(params.TapNoteScore)
+					
+					-- This was a rescored hit. Track what it was rescored to.
+					if params.EarlyTapNoteScore ~= nil then
+						local etns = ToEnumShortString(params.EarlyTapNoteScore)
+						
+						if etns ~= "None" then
+							if IsW0Judgment(params, player) then
+								judgments[col]["Early"]["W0"] = judgments[col]["Early"]["W0"] + 1
+							elseif tns ~= "W4" and tns ~= "W5" and tns ~= "Miss" then
+								judgments[col]["Early"][tns] = judgments[col]["Early"][tns] + 1
+							end
+
+							-- What was it rescored from?
+							-- Note that jumps are not rescored, so we don't need to worry about double counting them.
+							judgments[col]["Early"][etns] = judgments[col]["Early"][etns] + 1
+						end
+					end
+					
 					if mods.ShowFaPlusWindow and mods.ShowFaPlusPane and IsW0Judgment(params, player) then
 						tns = "W0"
 					end

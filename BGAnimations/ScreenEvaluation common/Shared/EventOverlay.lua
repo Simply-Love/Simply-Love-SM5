@@ -11,46 +11,6 @@ local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or p
 local paneHeight = 360
 local borderWidth = 2
 
-local returnBannerAndSong = function(x,y,zoom)
-	-- Putting the banner on, but it loads multiple times, pretty messy
-	-- heh, beenis
-	local bns = Def.ActorFrame{ 
-			Name="bns",
-			InitCommand=function(self) 
-				self:xy(x,y):zoom(zoom):vertalign("top") 
-			end,
-			ResetCommand=function(self)
-				self:visible(false)
-			end
-		}
-
-	bns[#bns+1] = Def.Banner{
-			Name="Banner",
-			InitCommand=function(self)
-				local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
-				if SongOrCourse and SongOrCourse:HasBanner() then
-						--song or course banner, if there is one
-					if GAMESTATE:IsCourseMode() then
-						self:LoadFromCourse( GAMESTATE:GetCurrentCourse() )
-					else
-						self:LoadFromSong( GAMESTATE:GetCurrentSong() )
-					end
-				end
-				self:setsize(418,164)
-			end
-		}
-	bns[#bns+1] = LoadFont("Common Normal")..{
-		Name="SongName",
-		InitCommand=function(self)
-			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
-			if songtitle then self:settext(songtitle):zoom(1.5):maxwidth(500)
-							:vertalign("top"):y(90) end
-		end
-	}
-	
-	return bns
-end
-
 local SetRpgStyle = function(eventAf)
 	eventAf:GetChild("MainBorder"):diffuse(RpgGreen)
 	eventAf:GetChild("BackgroundImage"):visible(true)
@@ -93,6 +53,45 @@ local SetItlStyle = function(eventAf)
 		entry:GetChild("Score"):diffuse(Color.White)
 		entry:GetChild("Date"):diffuse(Color.White)
 	end
+end
+
+-- Returns an actorframe that contains both the banner and the song title to
+-- be used in the event overlay.
+local BannerAndSong = function(x, y, zoom)
+	local af = Def.ActorFrame{ 
+		Name="BannerAndSong",
+		InitCommand=function(self) 
+			self:xy(x, y):zoom(zoom):vertalign("top") 
+		end,
+		ResetCommand=function(self)
+			self:visible(false)
+		end
+	}
+
+	af[#af+1] = Def.Banner{
+		Name="Banner",
+		InitCommand=function(self)
+			local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong()
+			if SongOrCourse and SongOrCourse:HasBanner() then
+					--song or course banner, if there is one
+				if GAMESTATE:IsCourseMode() then
+					self:LoadFromCourse( GAMESTATE:GetCurrentCourse() )
+				else
+					self:LoadFromSong( GAMESTATE:GetCurrentSong() )
+				end
+			end
+			self:setsize(418, 164)
+		end
+	}
+	af[#af+1] = LoadFont("Common Normal")..{
+		Name="SongName",
+		InitCommand=function(self)
+			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+			if songtitle then self:settext(songtitle):zoom(1.5):maxwidth(500):vertalign("top"):y(90) end
+		end
+	}
+	
+	return af
 end
 
 local SetEntryText = function(rank, name, score, date, actor)
@@ -381,18 +380,85 @@ end
 local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local pn = ToEnumShortString(player)
 	local score = CalculateExScore(player, GetExJudgmentCounts(player))
+
 	local paneTexts = {}
 	local paneFunctions = {}
+	
+	local score = CalculateExScore(player)
+	local scoreDelta = itlData["scoreDelta"]/100.0
 
-	scoreDelta = itlData["scoreDelta"]/100.0
+	local steps = GAMESTATE:GetCurrentSteps(player)
+	local chartName = steps:GetChartName()
 
-	previousRankingPointTotal = itlData["previousRankingPointTotal"]
-	currentRankingPointTotal = itlData["currentRankingPointTotal"]
-	rankingDelta = currentRankingPointTotal - previousRankingPointTotal
+	local maxPoints = 0
+	local hash = SL[pn].Streams.Hash
+	if itlData["maxPoints"] ~= nil then
+		-- First try and fetch the maxPoints from the response.
+		maxPoints = itlData["maxPoints"]
+	elseif SL[pn].ITLData["hashMap"][hash] ~= nil then
+		-- Then if it doesn't exist, try and parse it from ITL hashMap
+		maxPoints = SL[pn].ITLData["hashMap"][hash]["maxPoints"]
+	else
+		-- Then if it still doesn't exist, try and parse it from the chartName.
 
-	previousPointTotal = itlData["previousPointTotal"]
-	currentPointTotal = itlData["currentPointTotal"]
-	totalDelta = currentPointTotal - previousPointTotal
+		-- Note that playing OUTSIDE of the ITL pack will result in 0 points for all
+		-- upscores since it won't have the relevant points data.
+		local pointsStr = chartName:gsub(" pts", "")
+		maxPoints = tonumber(pointsStr)
+	end
+
+	if maxPoints == nil then
+		maxPoints = 0
+	end
+
+	local currentPoints = GetITLPointsForSong(maxPoints, score)
+	local previousPoints = itlData["topScorePoints"]
+	local pointDelta = currentPoints - previousPoints
+
+	local currentRankingPointTotal = itlData["currentRankingPointTotal"]
+	local previousRankingPointTotal = itlData["previousRankingPointTotal"]
+	local rankingDelta = currentRankingPointTotal - previousRankingPointTotal
+
+	local currentSongPointTotal = itlData["currentSongPointTotal"]
+	local previousSongPointTotal = itlData["previousSongPointTotal"]
+	local totalSongDelta = currentSongPointTotal - previousSongPointTotal
+
+	local currentExPointTotal = itlData["currentExPointTotal"]
+	local previousExPointTotal = itlData["previousExPointTotal"]
+	local totalExDelta = currentExPointTotal - previousExPointTotal
+
+	local currentPointTotal = itlData["currentPointTotal"]
+	local previousPointTotal = itlData["previousPointTotal"]
+	local totalDelta = currentPointTotal - previousPointTotal
+
+	local isDoubles = itlData["isDoubles"]
+
+	-- Also pass the response data to the progress box.
+	local progressBox = SCREENMAN:GetTopScreen()
+			:GetChild("Overlay")
+			:GetChild("ScreenEval Common")
+			:GetChild(pn.."_AF_Upper")
+			:GetChild("EventProgress"..pn)
+	if progressBox ~= nil then
+		progressBox:playcommand("SetData",{
+			itlData = {
+				["name"] = itlData["name"]..(isDoubles and " Doubles" or ""),
+				["score"] = score,
+				["scoreDelta"] = scoreDelta,
+				["currentPoints"] = currentPoints,
+				["pointDelta"] = pointDelta,
+				["currentRankingPointTotal"] = currentRankingPointTotal,
+				["rankingDelta"] = rankingDelta,
+				["currentSongPointTotal"] = currentSongPointTotal,
+				["totalSongDelta"] = totalSongDelta,
+				["currentExPointTotal"] = currentExPointTotal,
+				["totalExDelta"] = totalExDelta,
+				["currentPointTotal"] = currentPointTotal,
+				["totalDelta"] = totalDelta
+			},
+		})
+	end
+
 
 	local statImprovements = {}
 	local quests = {}
@@ -414,8 +480,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 							[1] = "Clear",
 							[2] = "FC",
 							[3] = "FEC",
-							[4] = "Quad",
-							[5] = "Quint",
+							[4] = "FFC",
+							[5] = "FBFC",
 						}
 						local curr = improvement["current"]
 						local prev = curr - improvement["gained"]
@@ -425,6 +491,22 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 						table.insert(
 							statImprovements,
 							string.format("Clear Type: %s >>> %s", clearTypeMap[prev], clearTypeMap[curr]))
+					elseif improvement["name"] == "grade" then
+						local curr = improvement["current"]
+						local prev = curr - improvement["gained"]
+
+						local gradeMap = {
+							[0] = "Other",
+							[1] = "Quad",
+							[2] = "Quint",
+						}
+
+						if curr ~= 0 and prev ~= current then
+							table.insert(
+								statImprovements,
+								string.format("New %s!", gradeMap[curr])
+							)
+						end
 					else
 						local statName = improvement["name"]:gsub("Level", ""):gsub("^%l", string.upper)
 						table.insert(
@@ -474,11 +556,17 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 
 	table.insert(paneTexts, string.format(
 		"EX Score: %.2f%% (%+.2f%%)\n"..
+		"Points: %d (%+d)\n\n"..
 		"Ranking Points: %d (%+d)\n"..
+		"Song Points: %d (%+d)\n"..
+		"EX Points: %d (%+d)\n"..
 		"Total Points: %d (%+d)\n\n"..
 		"%s",
 		score, scoreDelta,
+		currentPoints, pointDelta,
 		currentRankingPointTotal, rankingDelta,
+		currentSongPointTotal, totalSongDelta,
+		currentExPointTotal, totalExDelta,
 		currentPointTotal, totalDelta,
 		#statImprovements == 0 and "" or table.concat(statImprovements, "\n").."\n\n"
 	))
@@ -490,7 +578,8 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 	for text in ivalues(paneTexts) do
 		table.insert(paneFunctions, function(eventAf)
 			SetItlStyle(eventAf)
-			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL"))
+			local isDoubles = itlData["isDoubles"]
+			eventAf:GetChild("Header"):settext(itlData["name"]:gsub("ITL Online", "ITL")..(isDoubles and "  Doubles" or ""))
 			eventAf:GetChild("Leaderboard"):visible(false)
 			eventAf:GetChild("EX"):visible(true)
 			local bodyText = eventAf:GetChild("BodyText")
@@ -502,7 +591,6 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				bodyText:zoom(zoomVal)
 				bodyText:wrapwidthpixels(paneWidth/(zoomVal))
 				bodyText:settext(text):visible(true)
-				Trace(bodyText:GetHeight() * zoomVal)
 				if bodyText:GetHeight() * zoomVal <= paneHeight - RowHeight*1.5 then
 					break
 				end
@@ -548,7 +636,7 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				if i == nil then
 					break
 				end
-				-- Extract the actual numeric text.
+				-- Extract the actual quoted text.
 				local substring = string.sub(text, i, j)
 
 				bodyText:AddAttribute(i-1, {
@@ -567,11 +655,11 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 				local clearTypeMap = {
 					["FC"] = SL.JudgmentColors["ITG"][3],
 					["FEC"] = SL.JudgmentColors["ITG"][2],
-					["Quad"] = SL.JudgmentColors["ITG"][1],
-					["Quint"] = ItlPink,
+					["FFC"] = SL.JudgmentColors["ITG"][1],
+					["FBFC"] = ItlPink,
 				}
 
-				local search = "No Play Clear FC FEC Quad Quint"
+				local search = "No Play Clear FC FEC FFC FBFC"
 				for a=1,2 do
 					for ct in search:gmatch("%S+") do 
 						i, j = string.find(text, ct, offset)
@@ -581,6 +669,33 @@ local GetItlPaneFunctions = function(eventAf, itlData, player)
 							bodyText:AddAttribute(i-1, {
 								Length=#substring,
 								Diffuse=(clearTypeMap[substring] and clearTypeMap[substring] or Color.White)
+							})
+							offset = j + 1
+						end
+					end
+				end
+			end
+
+			-- Colorize the grade improvements
+			offset = 0
+			local i, j = string.find(text, "New ", offset)
+			if i ~= nil then
+				offset = j + 1
+				local gradeMap = {
+					["Quad"] = SL.JudgmentColors["ITG"][1],
+					["Quint"] = ItlPink,
+				}
+
+				local search = "Quad Quint"
+				for a=1,2 do
+					for grade in search:gmatch("%S+") do 
+						i, j = string.find(text, grade, offset)
+						if i ~= nil then
+							-- Extract the actual clear type.
+							local substring = string.sub(text, i, j)
+							bodyText:AddAttribute(i-1, {
+								Length=#substring,
+								Diffuse=(gradeMap[substring] and gradeMap[substring] or Color.White)
 							})
 							offset = j + 1
 						end
@@ -635,6 +750,7 @@ for player in ivalues(PlayerNumber) do
 			self:visible(GAMESTATE:IsSideJoined(player))
 		end,
 		ShowCommand=function(self, params)
+			local pn = ToEnumShortString(player)
 			self.PaneFunctions = {}
 
 			if params.data["rpg"] then
@@ -655,7 +771,6 @@ for player in ivalues(PlayerNumber) do
 				-- All other cases should be handled by normal ItlFile.lua write.
 				local song = GAMESTATE:GetCurrentSong()
 				local song_dir = song:GetSongDir()
-				local pn = ToEnumShortString(player)
 				if SL[pn].ITLData["pathMap"][song_dir] == nil then
 					UpdateItlData(player)
 				end
@@ -860,7 +975,7 @@ for player in ivalues(PlayerNumber) do
 				self:diffuse(color("#A1FF94")):zoomto(paneWidth, RowHeight)
 			end,
 		},
-		returnBannerAndSong(0,112,0.34),
+		BannerAndSong(0, 112, 0.34),
 	}
 
 	local af3 = af2[#af2]

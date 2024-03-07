@@ -18,7 +18,7 @@ return Def.Quad{
 	end,
 	ScreenChangedMessageCommand=function(self)
 		local topscreen = SCREENMAN:GetTopScreen():GetName()
-		if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectMusicCasual" then
+		if topscreen == "ScreenSelectMusicCasual" then
 			self:diffuse(dark)
 		end
 		if ThemePrefs.Get("VisualStyle") == "SRPG7" then

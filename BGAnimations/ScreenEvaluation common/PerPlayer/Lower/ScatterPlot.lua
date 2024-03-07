@@ -10,10 +10,6 @@ local GraphWidth = args.GraphWidth
 local GraphHeight = args.GraphHeight
 local mods = SL[pn].ActiveModifiers
 
-local pn = ToEnumShortString(player)
-
-local pn = ToEnumShortString(player)
-
 -- sequential_offsets gathered in ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
 local death_second = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].DeathSecond
@@ -22,6 +18,7 @@ local MusicRate = SL.Global.ActiveModifiers.MusicRate
 -- a table to store the AMV's vertices
 -- this will be a table of tables, to get around ActorMultiVertex limitations on D3D renderer
 local vertsTable= {}
+
 local Steps = GAMESTATE:GetCurrentSteps(player)
 local TimingData = Steps:GetTimingData()
 -- FirstSecond and LastSecond are used in scaling the x-coordinates of the AMV's vertices
@@ -55,10 +52,12 @@ end
 
 -- ---------------------------------------------
 
+-- Initialize vertices table of tables and start the stepcount
 vertsTable[#vertsTable+1] = {}
 local stepCount = 0
 for t in ivalues(sequential_offsets) do
 	stepCount = stepCount + 1
+	-- If the step-count exceeds the threshold, start a new table within the table.
 	if stepCount >= 8192 then
 		stepCount = 0
 		vertsTable[#vertsTable+1] = {}
@@ -194,6 +193,7 @@ end
 -- the scatter plot will use an ActorMultiVertex in "Quads" mode
 -- this is more efficient than drawing n Def.Quads (one for each judgment)
 -- because the entire AMV will be a single Actor rather than n Actors with n unique Draw() calls.
+-- Since we've now split the table into multiples, create an ActorMultiVertex for each table and store them into one ActorFrame.
 local af = Def.ActorFrame{}
 
 for verts in ivalues(vertsTable) do

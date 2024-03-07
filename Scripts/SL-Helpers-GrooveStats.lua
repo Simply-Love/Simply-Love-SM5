@@ -267,9 +267,7 @@ IsServiceAllowed = function(condition)
 		SL.GrooveStats.IsConnected and
 		GAMESTATE:GetCurrentGame():GetName()=="dance" and
 		(SL.Global.GameMode == "ITG" or SL.Global.GameMode == "FA+") and
-		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= "") -- and
-		-- not GAMESTATE:IsCourseMode())
-		)
+		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= ""))
 end
 
 -- -----------------------------------------------------------------------

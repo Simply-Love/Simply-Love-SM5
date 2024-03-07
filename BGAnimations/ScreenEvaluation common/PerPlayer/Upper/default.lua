@@ -30,7 +30,6 @@ return Def.ActorFrame{
 	-- Record Texts (Machine and/or Personal)
 	LoadActor("./RecordTexts.lua", player),
 
-	-- Event specific (ITL/RPG) progress box 
+	-- Event Progress Box
 	LoadActor("./EventProgress.lua", player)
-
 }

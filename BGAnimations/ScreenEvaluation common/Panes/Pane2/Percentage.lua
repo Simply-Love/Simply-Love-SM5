@@ -1,10 +1,19 @@
 local player, controller = unpack(...)
 
-local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-local PercentDP = stats:GetPercentDancePoints()
-local percent = FormatPercentScore(PercentDP)
--- Format the Percentage string, removing the % symbol
-percent = percent:gsub("%%", "")
+local percent = nil
+local diffuse = nil
+
+if SL[ToEnumShortString(player)].ActiveModifiers.ShowEXScore then
+	percent = CalculateExScore(player)
+	diffuse = SL.JudgmentColors[SL.Global.GameMode][1]
+else
+	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+	local PercentDP = stats:GetPercentDancePoints()
+	percent = FormatPercentScore(PercentDP):gsub("%%", "")
+	-- Format the Percentage string, removing the % symbol
+	percent = tonumber(percent)
+	diffuse = Color.White
+end
 
 return Def.ActorFrame{
 	Name="PercentageContainer"..ToEnumShortString(player),
@@ -29,10 +38,11 @@ return Def.ActorFrame{
 
 	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Name="Percent",
-		Text=percent,
+		Text=("%.2f"):format(percent),
 		InitCommand=function(self)
 			self:horizalign(right):zoom(0.95)
 			self:x( (controller == PLAYER_1 and 1.5 or 141))
+			self:diffuse(diffuse)
 		end
 	}
 }

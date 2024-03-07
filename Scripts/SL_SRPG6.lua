@@ -1,17 +1,22 @@
 SL.SRPG7 = {
 	Colors = {
-		"#666000",
-		"#3d6526",	-- green (main)
-		"#36855b",
-		"#36a392",
-		"#51c0c8",	-- teal (DPRT)
-		"#009bcf",
-		"#006ecb",
-		"#5131a4",	-- blue (Footspeed Empire)
-		"#9c0082",
-		"#bf0052",
-		"#c32020",	-- red (Stamina Nation)
-		"#954f00",
+		            ----------+--------------
+		"#666000",  -- Unaff. | Yellow     --
+		"#3d6526",  --        | Green      --
+		"#36855b",  --        | Green-Blue --
+		            ----------+--------------
+		"#36a392",  -- DPRT   | Teal       --
+		"#51c0c8",  --        | Cyan       --
+		"#009bcf",  --        | Light Blue --
+		            ----------+--------------
+		"#006ecb",  -- FE     | Blue       --
+		"#5131a4",  --        | Violet     --
+		"#9c0082",  --        | Purple     --
+		            ----------+--------------
+		"#bf0052",  -- SN     | Pink       --
+		"#c32020",  --        | Red        --
+		"#954f00",  --        | Orange     --
+		            ----------+--------------
 	},
 	TextColor = "#ffffff",
 
@@ -22,6 +27,8 @@ SL.SRPG7 = {
 		return "logo_main (doubleres).png"
 	end,
 	GetFactionName = function(idx)
+		-- Assuming that idx is 1-indexed and
+		-- follows the order of the colours above
 		if idx <= 3 then
 			return "Unaffiliated"
 		elseif idx <= 6 then

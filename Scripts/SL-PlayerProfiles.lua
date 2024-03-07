@@ -60,6 +60,8 @@ local permitted_profile_settings = {
 	MiniIndicator		 = "string",
 	MiniIndicatorColor	 = "string",
 
+	MeasureLines         = "string",
+
 	ColumnFlashOnMiss    = "boolean",
 	SubtractiveScoring   = "boolean",
 	Pacemaker            = "boolean",
@@ -85,8 +87,6 @@ local permitted_profile_settings = {
 
 	HideEarlyDecentWayOffJudgments = "boolean",
 	HideEarlyDecentWayOffFlash     = "boolean",
-
-	VisualDelay          = "string",
 	
 	PackBanner           = "boolean",
 	StepInfo             = "boolean",

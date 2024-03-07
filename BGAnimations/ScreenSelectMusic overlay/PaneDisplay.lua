@@ -92,32 +92,26 @@ local GetScoresRequestProcessor = function(res, params)
 		local rivalNum = 1
 		local worldRecordSet = false
 		local personalRecordSet = false
-		
-		local itlScore = nil
-		local isItlSong = false
-		
-		if data and data[playerStr] and data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"] then
-		-- And then also ensure that the chart hash matches the currently parsed one.
-			-- It's better to just not display anything than display the wrong scores.
-			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
-				isItlSong = true
-				for gsEntry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
-					if gsEntry["isSelf"] then
-						UpdateItlExScore(PlayerNumber[i], SL["P"..i].Streams.Hash, gsEntry["score"])
-						-- GS's score entry is a value like 9823, so we need to divide it by 100 to get 98.23
-						itlScore = string.format("%.2f%%", gsEntry["score"]/100)
-						itlRaw = gsEntry["score"]/100
-					end
-				end
-			end
-		end
+		local foundLeaderboard = false
 
 		-- First check to see if the leaderboard even exists.
-		if data and data[playerStr] and data[playerStr]["gsLeaderboard"] and #data[playerStr]["gsLeaderboard"] > 0 then
+		if data and data[playerStr] then
+			local showExScore = SL["P"..i].ActiveModifiers.ShowEXScore and data[playerStr]["exLeaderboard"] ~= nil
+			local leaderboardData = nil
+			if showExScore then
+				leaderboardData = data[playerStr]["exLeaderboard"]
+			elseif data[playerStr]["gsLeaderboard"] then
+				leaderboardData = data[playerStr]["gsLeaderboard"]
+			end
+
+			if leaderboardData then
+				foundLeaderboard = true
+			end
+
 			-- And then also ensure that the chart hash matches the currently parsed one.
 			-- It's better to just not display anything than display the wrong scores.
-			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
-				for gsEntry in ivalues(data[playerStr]["gsLeaderboard"]) do
+			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] and leaderboardData then
+				for gsEntry in ivalues(leaderboardData) do
 					if gsEntry["rank"] == 1 then
 						SetNameAndScore(
 							GetMachineTag(gsEntry),
@@ -130,23 +124,35 @@ local GetScoresRequestProcessor = function(res, params)
 					end
 
 					if gsEntry["isSelf"] then
-						-- Let's check if the GS high score is higher than the local high score
-						local player = PlayerNumber[i]
-						local localScore = GetScoreForPlayer(player)
-						-- GS's score entry is a value like 9823, so we need to divide it by 100 to get 98.23
-						local gsScore = gsEntry["score"] / 100
-
-						-- GetPercentDP() returns a value like 0.9823, so we need to multiply it by 100 to get 98.23
-						if not localScore or gsScore >= localScore:GetPercentDP() * 100 then
-							-- It is! Let's use it instead of the local one.
+						-- Always display personal EX score from the site if it's available.
+						-- TODO(teejusb): Grab white count from stats and calculate it to compare local score.
+						if showExScore then
 							SetNameAndScore(
 								GetMachineTag(gsEntry),
-								string.format("%.2f%%", gsScore),
+								string.format("%.2f%%", gsEntry["score"]/100),
 								playerName,
 								playerScore,
 								"#000000"
 							)
 							personalRecordSet = true
+						else
+							-- Let's check if the GS high score is higher than the local high score
+							local player = PlayerNumber[i]
+							local localScore = GetScoreForPlayer(player)
+							-- GS's score entry is a value like 9823, so we need to divide it by 100 to get 98.23
+							local gsScore = gsEntry["score"] / 100
+
+							-- GetPercentDP() returns a value like 0.9823, so we need to multiply it by 100 to get 98.23
+							if not localScore or gsScore >= localScore:GetPercentDP() * 100 then
+								-- It is! Let's use it instead of the local one.
+								SetNameAndScore(
+									GetMachineTag(gsEntry),
+									string.format("%.2f%%", gsScore),
+									playerName,
+									playerScore
+								)
+								personalRecordSet = true
+							end
 						end
 					end
 
@@ -229,22 +235,18 @@ local GetScoresRequestProcessor = function(res, params)
 			end
 		else
 			if data and data[playerStr] then
-				if itlScore ~= nil then
-					loadingText:settext("ITL   "..itlScore):diffuse(color("#21CCE8"))
-					SL["P"..i].itlScore = itlRaw*100
-					local stepartist = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("StepArtistAF_P"..i)
-
-					if stepartist ~= nil then
-					  stepartist:queuecommand("ITL")
+				if foundLeaderboard then
+					if SL["P"..i].ActiveModifiers.ShowEXScore then
+						loadingText:settext("EX Score")
+					else
+						loadingText:settext("GrooveStats")
 					end
-					-- SCREENMAN:GetTopScreen():GetChild("StepArtistAF_"..i):queuecommand("Reset")
-				elseif isItlSong and itlScore == nil then
-					loadingText:settext("No ITL Score"):diffuse(color("#21CCE8"))
-					SL["P"..i].itlScore = 0
-				elseif data[playerStr]["isRanked"] then
-					loadingText:settext("Loaded"):diffuse(Color.Black)
 				else
-					loadingText:settext("Not Ranked"):diffuse(Color.Black)
+					if SL["P"..i].ActiveModifiers.ShowEXScore then
+						loadingText:settext("No EX Data")
+					else
+						loadingText:settext("No Data")
+					end
 				end
 			else
 				-- Just hide the text
@@ -359,7 +361,7 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 				GetScoresRequestProcessor(res, params)
 			else
 				self:playcommand("MakeGrooveStatsRequest", {
-					endpoint="player-leaderboards.php?"..NETWORK:EncodeQueryParameters(query),
+					endpoint="player-scores.php?"..NETWORK:EncodeQueryParameters(query),
 					method="GET",
 					headers=headers,
 					timeout=10,

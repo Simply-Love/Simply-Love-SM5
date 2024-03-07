@@ -34,7 +34,7 @@ if PROFILEMAN:GetNumLocalProfiles() <= 0 then
 end
 -- -----------------------------------------------------------------------
 
-local initial_data = profile_data[1]
+local initial_data = profile_data[0]
 local pos = nil
 
 if SL.Global.FastProfileSwitchInProgress then
@@ -128,17 +128,29 @@ return Def.ActorFrame{
 
 		LoadFont("Common Normal")..{
 			InitCommand=function(self)
+				self:diffuseshift():effectcolor1(1,1,1,1):effectcolor2(0.5,0.5,0.5,1)
+				self:diffusealpha(0):maxwidth(180)
+				self:queuecommand("ResetText")
+			end,
+			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
+			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+			ResetTextCommand=function(self)
 				if IsArcade() and not GAMESTATE:EnoughCreditsToJoin() then
 					self:settext( THEME:GetString("ScreenSelectProfile", "EnterCreditsToJoin") )
 				else
 					self:settext( THEME:GetString("ScreenSelectProfile", "PressStartToJoin") )
 				end
-
-				self:diffuseshift():effectcolor1(1,1,1,1):effectcolor2(0.5,0.5,0.5,1)
-				self:diffusealpha(0):maxwidth(180)
 			end,
-			OnCommand=function(self) self:sleep(0.3):linear(0.1):diffusealpha(1) end,
-			OffCommand=function(self) self:linear(0.1):diffusealpha(0) end,
+			UnselectedProfileMessageCommand=function(self, params)
+				if params.PlayerNumber ~= player then return end
+
+				self:queuecommand("ResetText")
+			end,
+			SelectedProfileMessageCommand=function(self, params)
+				if params.PlayerNumber ~= player then return end
+
+				self:settext("Waiting...")
+			end,
 			CoinsChangedMessageCommand=function(self)
 				if IsArcade() and GAMESTATE:EnoughCreditsToJoin() then
 					self:settext(THEME:GetString("ScreenSelectProfile", "PressStartToJoin"))
@@ -168,12 +180,30 @@ return Def.ActorFrame{
 			end
 
 			scroller.focus_pos = 5
+
 			scroller:set_info_set(scroller_data, 0)
 
 			-- Scroll to the current player profile, if any
 			if pos then
 				local curr_index = scroller:get_info_at_focus_pos().index
 				scroller:scroll_by_amount(pos - curr_index)
+			else
+				local pn = ToEnumShortString(player)
+				if PREFSMAN:GetPreference("DefaultLocalProfileID"..pn) ~= "" then
+					local default_profile_id = PREFSMAN:GetPreference("DefaultLocalProfileID"..pn)
+					local profile_dir = PROFILEMAN:LocalProfileIDToDir(default_profile_id)
+					
+					for i, profile_item in ipairs(scroller_data) do
+						if profile_item.dir == profile_dir then
+							scroller:set_info_set(scroller_data, 1)
+							scroller:scroll_by_amount(i-5)
+							break
+						end
+					end
+				else
+					scroller:set_info_set(scroller_data, 1)
+					scroller:scroll_by_amount(-1 )
+				end
 			end
 		end,
 

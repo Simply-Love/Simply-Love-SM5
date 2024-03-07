@@ -9,440 +9,204 @@ if not IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() ~= 1)
 local player = ...
 local pn = ToEnumShortString(player)
 
-local panes = 0
+-- TODO: Create RPG body.
 
-local isRpg = false
-local isItl = false
+local CreateITLBody = function(itlData)
+	local score = itlData["score"]
+	local scoreDelta = itlData["scoreDelta"]
+	local currentPoints = itlData["currentPoints"]
+	local pointDelta = itlData["pointDelta"]
+	local currentRankingPointTotal = itlData["currentRankingPointTotal"]
+	local rankingDelta = itlData["rankingDelta"]
+	local currentSongPointTotal = itlData["currentSongPointTotal"]
+	local totalSongDelta = itlData["totalSongDelta"]
+	local currentExPointTotal = itlData["currentExPointTotal"]
+	local totalExDelta = itlData["totalExDelta"]
+	local currentPointTotal = itlData["currentPointTotal"]
+	local totalDelta = itlData["totalDelta"]
+
+	return string.format(
+		"EX Score: %.2f%% (%+.2f%%)\n"..
+		"Points: %d (%+d)\n\n"..
+		"Ranking Points: %d (%+d)\n"..
+		"Song Points: %d (%+d)\n"..
+		"EX Points: %d (%+d)\n"..
+		"Total Points: %d (%+d)",
+		score, scoreDelta, currentPoints, pointDelta,
+		currentRankingPointTotal, rankingDelta,
+		currentSongPointTotal, totalSongDelta,
+		currentExPointTotal, totalExDelta,
+		currentPointTotal, totalDelta
+	)
+end
+
+-- Takes in an actor and both scales the text to fit within the box and
+-- colorizes the text.
+--
+-- We colorize the following:
+-- - Numbers (including decimals) in red if negative, green if positive.
+-- - Quoted strings in green.
+local ScaleAndColorizeBody = function(self, text, height, width, rowHeight, defaultColor)
+	-- We don't want text to run out through the bottom.
+	-- Incrementally adjust the zoom while adjust wrapwdithpixels until it fits.
+	-- Not the prettiest solution but it works.
+	for zoomVal=1.0, 0.1, -0.05 do
+		self:zoom(zoomVal)
+		self:wrapwidthpixels(width/(zoomVal))
+		self:settext(text):visible(true)
+		if self:GetHeight() * zoomVal <= height - rowHeight*1.5 then
+			break
+		end
+	end
+
+	local offset = 0
+	while offset <= #text do
+		-- Search for all numbers (decimals included).
+		-- They may include the +/- prefixes and also potentially %/x as suffixes.
+		local i, j = string.find(text, "[-+]?[%d]*%.?[%d]+[%%x]?", offset)
+		-- No more numbers found. Break out.
+		if i == nil then
+			break
+		end
+		-- Extract the actual numeric text.
+		local substring = string.sub(text, i, j)
+
+		local clr = defaultColor
+
+		-- Except negatives should be red.
+		if substring:sub(1, 1) == "-" then
+			clr = Color.Red
+		-- And positives should be green.
+		elseif substring:sub(1, 1) == "+" then
+			clr = Color.Green
+		end
+
+		self:AddAttribute(i-1, {
+			Length=#substring,
+			Diffuse=clr
+		})
+
+		offset = j + 1
+	end
+
+	offset = 0
+
+	while offset <= #text do
+		-- Search for all quoted strings.
+		local i, j = string.find(text, "\".-\"", offset)
+		-- No more found. Break out.
+		if i == nil then
+			break
+		end
+		-- Extract the actual quoted text.
+		local substring = string.sub(text, i, j)
+
+		self:AddAttribute(i-1, {
+			Length=#substring,
+			Diffuse=Color.Green
+		})
+
+		offset = j + 1
+	end
+end
+
+local ItlPink = color("1,0.2,0.406,1")
 
 -- Default position is on the other player's upper area where the grade should be
-local boxStart = {}
-local box = {}
-local logo = {}
-boxStart["x"] = 381 * (player == PLAYER_1 and 1 or -1)
-boxStart["y"] = 109
-box["x"] = 157
-box["y"] = 143
-logo["y"] = 40
-logo["zoom"] = 0.15
-local width = 180
-local starty = -60
+local posX = 381 * (player == PLAYER_1 and 1 or -1)
+local posY = 109
 
--- If that is taken by a player or the twitch chat module, put it to the side in widescreen mode
+local paneWidth = 156
+local paneHeight = 144
+local borderWidth = 2
+
+local RowHeight = 25
+
+local hasData = false
+
+-- If that space is taken by a player or the twitch chat module,
+-- put it to the side in widescreen mode.
 if IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() > 1) then
-	boxStart["x"] = 210 * (player == PLAYER_1 and -1 or 1)
-	boxStart["y"] = 274
-	box["x"] = 120
-	box["y"] = 180
-	logo["y"] = 40
-	logo["zoom"] = 0.25
-	width = 140
-	starty = -80
+	posX = 211 * (player == PLAYER_1 and -1 or 1)
+	posY = 274
+	paneWidth = 118
+	paneHeight = 180
+	RowHeight = 45
 end
-
-local afFinal = Def.ActorFrame{
-	Name="Events"..pn
-}
-
--- RPG
--- Display RPG progress such as song score, rate mod, skill points, quests, etc
 
 local af = Def.ActorFrame{
-	Name="RPGQuest"..pn,
+	Name="EventProgress"..pn,
+
 	InitCommand=function(self)
-		self:visible(false)
-		self:xy(boxStart["x"],boxStart["y"])
-	end,
-	RpgQuestsCommand=function(self,params)
-		isRpg = true
-		panes = panes + 1
-		self:visible(true)
-		self:GetChild("QuestText"):playcommand("Set",params)
-	end
-}
-
--- Draw border Quad
-af[#af+1] = Def.Quad {
-	InitCommand=function(self)
-		self:zoomto(box["x"],box["y"])
-		self:diffuse(color("1,0.972,0.792,1"))
-	end
-}
-
--- Draw background Quad
-af[#af+1] = Def.Quad {
-	InitCommand=function(self)
-		self:zoomto(box["x"]-2,box["y"]-2)
-		self:diffuse(Color.Black)
-	end
-}
-
--- SRPG logo
-af[#af+1] = Def.Sprite {
-	Texture=THEME:GetPathG("", "_VisualStyles/SRPG7/logo_main (doubleres).png"),
-	InitCommand=function(self)
-		self:zoom(0.05)
-		self:diffusealpha(0.2)
-	end
-}
-
-local rowheight = 15
-
--- Score
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="Score",
-	InitCommand=function(self)
-		self:zoom(0.8)
-	end,
-	RpgQuestsCommand=function(self,params)
-		local score = params.box_score[1]
-		local score_text = (score < 0 and "" or "+") ..  string.format("%.2f%%",score)
-		self:settext(score_text)
-		if score < 0 then 
-				self:diffuse(Color.Red) 
-		elseif score == 0 then 
-			self:diffuse(Color.Blue) 
-		else 
-			self:diffuse(Color.Green) 
-		end
-		self:xy(-30,starty)		
-	end
-}
-
--- Rate
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="Rate",
-	InitCommand=function(self)
-		self:zoom(0.8)
-	end,
-	RpgQuestsCommand=function(self,params)
-		local rate = params.box_score[2]
-		local rate_text = (rate < 0 and "" or "+") ..  string.format("%.2f",rate) .. "x"
-		self:settext(rate_text)
-		if rate < 0 then 
-			self:diffuse(Color.Red) 
-		elseif rate == 0 then 
-			self:diffuse(Color.Blue) 
-		else 
-			self:diffuse(Color.Green) 
-		end
-		self:xy(30,starty)		
-	end
-}
-
--- Life level / BPM skill points
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="Progress",
-	InitCommand=function(self)
-		self:zoom(0.8)
-	end,
-	RpgQuestsCommand=function(self,params)
-		if #params.box_progress > 0 then
-			local progress_text = params.box_progress[1]
-			if #params.box_progress == 2 then progress_text = progress_text .. "    " .. params.box_progress[2] end
-			self:settext(progress_text)
-			self:y(starty+rowheight)
-		end
-	end
-}
-
-if not chatModule then
-	-- Column 1
-	af[#af+1] = LoadFont("Common Normal")..{
-		Name="SkillPointsCol1",
-		InitCommand=function(self)
-			self:zoom(0.8)
-		end,
-		RpgQuestsCommand=function(self,params)
-			-- 2 per row
-			if #params.box_stats > 0 then
-				local rows = math.ceil(#params.box_stats/2)
-				local sp_text = params.box_stats[1]
-				-- There's probably a better way to do this
-				for i=2,rows do
-					if params.box_stats[i*2-1] ~= nil then 
-						sp_text = sp_text .. "\n" .. params.box_stats[i*2-1]
-					end
-				end
-				self:settext(sp_text)
-				self:vertspacing(-5)
-				self:vertalign('VertAlign_Top')
-				self:maxwidth(width)
-				startrow = #params.box_progress > 0 and 2 or 1
-				self:xy(chatModule and -20 or -40,-65+rowheight*startrow)
-				self:diffuse(color("0.501,0.501,0.501"))
-
-			end
-		end
-	} 
-
-	-- Column 2
-	af[#af+1] = LoadFont("Common Normal")..{
-		Name="SkillPointsCol1",
-		InitCommand=function(self)
-			self:zoom(0.8)
-		end,
-		RpgQuestsCommand=function(self,params)
-			-- 2 per row
-			if #params.box_stats > 1 then
-				local rows = math.ceil(#params.box_stats/2)
-				local sp_text = params.box_stats[2]
-				-- There's probably a better way to do this
-				for i=2,rows do
-					if params.box_stats[i*2] ~= nil then 
-						sp_text = sp_text .. "\n" .. params.box_stats[i*2]
-					end
-				end
-				self:settext(sp_text)
-				self:vertspacing(-5)
-				self:vertalign('VertAlign_Top')
-				startrow = #params.box_progress > 0 and 2 or 1
-				self:xy(chatModule and 20 or 40,-65+rowheight*startrow)
-				self:diffuse(color("0.501,0.501,0.501"))
-
-			end
-		end
-	} 	
-
-else
-	-- all in one column since the box is larger. please don't get literally every single stat and multiple quests in one song lol
-	af[#af+1] = LoadFont("Common Normal")..{
-		Name="SkillPointsCol1",
-		InitCommand=function(self)
-			self:zoom(0.8)
-		end,
-		RpgQuestsCommand=function(self,params)
-			if #params.box_stats > 0 then
-				local rows = math.ceil(#params.box_stats)
-				local sp_text = params.box_stats[1]
-				-- There's probably a better way to do this
-				for i=2,rows do
-					if params.box_stats[i] ~= nil then 
-						sp_text = sp_text .. "\n" .. params.box_stats[i]
-					end
-				end
-				self:settext(sp_text)
-				self:vertspacing(-5)
-				self:vertalign('VertAlign_Top')
-				self:maxwidth(width)
-				startrow = #params.box_progress > 0 and 2 or 1
-				self:xy(0,-65+rowheight*startrow)
-				self:diffuse(color("0.501,0.501,0.501"))
-
-			end
-		end
-	} 
-
-end
-
-af[#af+1] = LoadFont("Common Normal")..{
-	Name="QuestText",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		--self:valign(1)
-	end,
-	RpgQuestsCommand=function(self,params)
-		if #params.box_quests > 0 then
-			text = params.box_quests[1]
-			-- There's probably a better way to do this
-			for i=2,#params.box_quests do
-				text = text .. "\n" .. params.box_quests[i]
-			end
-			self:settext(text)
-			self:vertalign('VertAlign_Top')
-			self:vertspacing(-5)
-			startrow = (#params.box_progress > 0 and 2 or 1) + (chatModule and math.ceil(#params.box_stats) or math.ceil(#params.box_stats/2))
-			self:y(-65+rowheight*startrow)
-			self:maxwidth(width)
-		end
-	end
-} 
-
--- ITL
--- Return ITL stats such as song score, TP/RP, etc.
-
-local af2 = Def.ActorFrame{
-	Name="ItlProgress"..pn,
-	InitCommand=function(self)
-		self:xy(boxStart["x"],boxStart["y"])
+		self:xy(posX, posY)
 		self:visible(false)
 	end,
-	ItlDataReadyMessageCommand=function(self,params)
-		-- Local stats first, this *should* happen after the currently played song is written to file, and before the api response is returned.
-		if PROFILEMAN:IsPersistentProfile(player) and IsItlSong(player) and params.player == player then
-			local profile = PROFILEMAN:GetProfile(player)
-			local profileName = profile:GetDisplayName()		
-			tp, rp, played = CalculateITLStats(player)
-			
-			hash = SL[pn].Streams.Hash
-			ItlData = SL[pn].ITLData
-		
-			songPoints = ItlData["hashMap"][hash]["points"]
-			songRank = ItlData["hashMap"][hash]["rank"]			
-			songScore = ItlData["hashMap"][hash]["ex"]
-						
-			self:playcommand("ItlStatsLocal", {songScore=songScore, tp=tp, rp=rp, played=played, profileName=profileName,folderName=folderName, songPoints=songPoints, songRank=songRank})
-		end
-	end,
-	ItlBoxCommand=function(self,params)
-		-- If connected to GrooveStats, it will show the stats from the api
-		self:visible(true)
-		self:playcommand("ItlStatsOnline", params)
-		isItl = true
-		
-		if isItl and isRpg then
-			self:queuecommand("Marquee")
-		end
-	end,
-	MarqueeCommand=function(self)
-		self:linear(1):diffusealpha(1):sleep(5):linear(1):diffusealpha(0):sleep(5):queuecommand("Marquee")
-	end
-}
 
--- Draw border Quad
-af2[#af2+1] = Def.Quad {
-	InitCommand=function(self)
-		self:zoomto(box["x"],box["y"])
-		self:diffuse(color("1,0.972,0.792,1"))
-	end
-}
+	SetDataCommand=function(self, params)
+		if params.itlData then
+			hasData = true
+			local itlString = CreateITLBody(params.itlData)
+			ScaleAndColorizeBody(
+				self:GetChild("BodyText"),
+				itlString,
+				paneHeight - borderWidth,
+				paneWidth - borderWidth,
+				RowHeight,
+				ItlPink)
 
--- Draw background Quad
-af2[#af2+1] = Def.Quad {
-	InitCommand=function(self)
-		self:zoomto(box["x"]-2,box["y"]-2)
-		self:diffuse(Color.Black)
-	end
-}
+			self:GetChild("Header"):settext(params.itlData["name"]:gsub("ITL Online", "ITL"))
 
--- Use random logo to spice things up
-local itlLogoDir = THEME:GetCurrentThemeDirectory() .. "Graphics/ITL Online 2023/"
-logoFiles = findFiles(itlLogoDir,"png")
-if #logoFiles > 0 then
-	logoImage = logoFiles[math.random(#logoFiles)]
-end
-
-af2[#af2+1] = Def.Sprite {
-	Texture=logoImage,
-	InitCommand=function(self)
-		self:zoom(logo["zoom"])
-		self:diffusealpha(0.2)
-		self:y(logo["y"])
-	end
-}
-
--- EX Score
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="Score",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:xy(0,starty)
-	end,
-	ItlStatsLocalCommand=function(self,params)
-		self:settext(tostring(("%.2f"):format(params.songScore / 100)).. "%")
-	end,
-	ItlStatsOnlineCommand=function(self,params)
-		self:settext(string.format("%.2f%%",params.box_score["score"]) .. " (" .. string.format("%+.2f%%",params.box_score["delta"]) ..  ")")
-		if params.box_score["delta"] > 0 then self:diffuse(Color.Green)
-		elseif params.box_score["delta"] < 0 then self:diffuse(Color.Red)
-		end
-	end
-}
-
--- Points
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="Points",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:xy(-30,starty+rowheight)
-	end,
-	ItlStatsLocalCommand=function(self,params)
-		-- API response doesn't return the song points value. Use local score only
-		-- This should be correct most of the time 
-		self:settext(params.songPoints .. " pts")		
-	end
-}
-
--- Rank
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="Rank",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:xy(30,starty+rowheight)
-	end,
-	ItlStatsLocalCommand=function(self,params)
-		-- API response doesn't return the song rank. Use local calculated rank only
-		-- This should be correct most of the time 
-		self:settext("#" .. params.songRank)
-	end
-}
-
--- RP
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="RP",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:y(starty+rowheight*2)
-	end,
-	ItlStatsLocalCommand=function(self,params)
-		self:settext("RP: " .. params.rp)		
-	end,
-	ItlStatsOnlineCommand=function(self,params)
-		self:settext("RP: " ..params.box_rp["curr"] .. " (+" .. params.box_rp["delta"] ..  ")")
-		if params.box_rp["delta"] > 0 then self:diffuse(Color.Green) end
-	end
-}
-
--- TP
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="TP",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:y(starty+rowheight*3)
-	end,
-	ItlStatsLocalCommand=function(self,params)
-		self:settext("TP: " .. params.tp)
-	end,
-	ItlStatsOnlineCommand=function(self,params)
-		self:settext("TP: " .. params.box_tp["curr"] .. " (+" .. params.box_tp["delta"] ..  ")")
-		if params.box_tp["delta"] > 0 then self:diffuse(Color.Green) end
-	end
-}
-
--- Songs played
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="Songs",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:y(starty+rowheight*4)
-	end,
-	ItlStatsLocalCommand=function(self,params)
-		self:settext("Songs played: " .. params.played)
-	end
-}
-
-af2[#af2+1] = LoadFont("Common Normal")..{
-	Name="QuestText",
-	InitCommand=function(self)
-		self:zoom(0.8)
-		self:y(starty-10+rowheight*6)
-	end,
-	ItlStatsOnlineCommand=function(self,params)
-		if #params.box_quests > 0 then
-			text = "Quests:\n"
-			text = text .. params.box_quests[1]
-			-- There's probably a better way to do this
-			for i=2,#params.box_quests do
-				text = text .. "\n" .. params.box_quests[i]
+			-- Ensure the header text fits within the box.
+			for zoomVal=0.5, 0.1, -0.05 do
+				self:GetChild("Header"):zoom(zoomVal)
+				self:GetChild("Header"):wrapwidthpixels((paneWidth-6)/(zoomVal))
+				if self:GetChild("Header"):GetHeight() * zoomVal <= RowHeight*2 then
+					break
+				end
 			end
-			self:settext(text)
-			self:vertalign('VertAlign_Top')
-			self:vertspacing(-5)
-			self:maxwidth(width)
 		end
-	end
+	end,
+
+	MaybeShowCommand=function(self)
+		self:visible(hasData)
+	end,
+
+	-- Draw border Quad
+	Def.Quad {
+		InitCommand=function(self)
+			self:zoomto(paneWidth, paneHeight)
+			self:diffuse(Color.White):diffusealpha(0.1)
+		end
+	},
+
+	-- Draw background Quad
+	Def.Quad {
+		InitCommand=function(self)
+			self:zoomto(paneWidth - borderWidth, paneHeight - borderWidth)
+			self:diffuse(Color.Black):diffusealpha(0.85)
+		end
+	},
+
+	-- Header Text
+	LoadFont("Wendy/_wendy small").. {
+		Name="Header",
+		Text="",
+		InitCommand=function(self)
+			self:zoom(0.5)
+			self:y(-paneHeight/2 + 15)
+		end
+	},
+
+	-- Main Body Text
+	LoadFont("Common Normal").. {
+		Name="BodyText",
+		Text="",
+		InitCommand=function(self)
+			self:valign(0)
+			self:wrapwidthpixels(paneWidth)
+			self:y(-paneHeight/2 + RowHeight * 3/2)
+		end,
+	},
 }
 
-afFinal[#afFinal+1] = af
-afFinal[#afFinal+1] = af2
-
-return afFinal
+return af

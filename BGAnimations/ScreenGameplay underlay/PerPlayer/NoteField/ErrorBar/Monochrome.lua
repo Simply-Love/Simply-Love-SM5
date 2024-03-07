@@ -109,6 +109,7 @@ local af = Def.ActorFrame{
         if params.EarlyTapNoteScore ~= nil then
             local tns = ToEnumShortString(params.TapNoteScore)
             local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
+
             if earlyTns ~= "None" then
                 if SL.Global.GameMode == "FA+" then
                     if tns == "W5" then
