@@ -22,11 +22,11 @@ local af = Def.ActorFrame{
       notefield:SetBeatBars(true)
 
       if mods.MeasureLines == "Measure" then
-        notefield:SetBeatBarsAlpha(0.5, 0, 0, 0)
+        notefield:SetBeatBarsAlpha(0.75, 0, 0, 0)
       elseif mods.MeasureLines == "Quarter" then
-        notefield:SetBeatBarsAlpha(0.5, 0.25, 0, 0)
+        notefield:SetBeatBarsAlpha(0.75, 0.5, 0, 0)
       elseif mods.MeasureLines == "Eighth" then
-        notefield:SetBeatBarsAlpha(0.5, 0.25, 0.1, 0)
+        notefield:SetBeatBarsAlpha(0.75, 0.5, 0.25, 0)
       end
     end
   end,
