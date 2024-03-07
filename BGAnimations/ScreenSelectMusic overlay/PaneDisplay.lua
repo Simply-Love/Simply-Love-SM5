@@ -92,13 +92,11 @@ local GetScoresRequestProcessor = function(res, params)
 		local rivalNum = 1
 		local worldRecordSet = false
 		local personalRecordSet = false
-		local data = res["status"] == "success" and res["data"] or nil
 		local foundLeaderboard = false
 
 		-- First check to see if the leaderboard even exists.
 		if data and data[playerStr] then
 			local showExScore = SL["P"..i].ActiveModifiers.ShowEXScore and data[playerStr]["exLeaderboard"] ~= nil
-
 			local leaderboardData = nil
 			if showExScore then
 				leaderboardData = data[playerStr]["exLeaderboard"]
