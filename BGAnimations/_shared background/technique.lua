@@ -27,10 +27,10 @@ local t = Def.ActorFrame {
 		end
 	end,
 
-	LoopCommand=function(self)
+    LoopCommand=function(self)
 		index = index + 1
 		self:queuecommand("NewColor"):sleep(delay):queuecommand("Loop")
-	end
+	end,
 }
 
 -- fricks sake this function is giving me so much damn mileage lol
@@ -43,7 +43,7 @@ end
 t[#t+1] = Def.Quad {
 	InitCommand=function(self)
 		self:diffuse(20/255, 20/255, 20/255, 1):zoomto(SCREEN_WIDTH, SCREEN_HEIGHT):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
-		if ThemePrefs.Get("RainbowMode") then -- rainbow mode has removed 5 years off my lifespan
+        if ThemePrefs.Get("RainbowMode") then
 			self:diffusealpha(0)
 		end
 	end
@@ -56,7 +56,7 @@ t[#t+1] = Def.Sprite {
 		self:zoom(20):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		:customtexturerect(0,0,60,60):texcoordvelocity(0.05, 0.07)
 		:diffusealpha(0.1)
-		if ThemePrefs.Get("RainbowMode") then
+        if ThemePrefs.Get("RainbowMode") then
 			self:diffusealpha(0.15)
 		end
 	end
@@ -67,7 +67,7 @@ t[#t+1] = Def.Sprite {
 		self:zoom(20):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		:customtexturerect(0,0,60,60):texcoordvelocity(0.04, 0.02)
 		:diffusealpha(0.05)
-		if ThemePrefs.Get("RainbowMode") then
+        if ThemePrefs.Get("RainbowMode") then
 			self:diffusealpha(0.2)
 		end
 	end
@@ -78,7 +78,7 @@ t[#t+1] = Def.Sprite {
 		self:zoom(20):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		:customtexturerect(0,0,60,60):texcoordvelocity(0.02, 0.015)
 		:diffusealpha(0.025)
-		if ThemePrefs.Get("RainbowMode") then
+        if ThemePrefs.Get("RainbowMode") then
 			self:diffusealpha(0.25)
 		end
 	end
@@ -87,15 +87,15 @@ t[#t+1] = Def.Sprite {
 -- main stuff (rings, arrow)
 for i=1,10 do
 	t[#t+1] = Def.Model {
-	Meshes="circlefrag_model.txt";
-	Materials="circlefrag_model.txt";
-	Bones="circlefrag_model.txt";
-		InitCommand=function(self)
-			self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true)):baserotationz(randomXD(i) * 400):baserotationx(-60):baserotationy(20)
-			:SetTextureFiltering(true)
-			:diffusealpha(randomXD(i))
+        Meshes="circlefrag_model.txt",
+        Materials="circlefrag_model.txt",
+        Bones="circlefrag_model.txt",
+            InitCommand=function(self)
+                self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true)):baserotationz(randomXD(i) * 400):baserotationx(-60):baserotationy(20)
+                :SetTextureFiltering(true)
+                :diffusealpha(randomXD(i))
 
-			if ThemePrefs.Get("RainbowMode") then
+            if ThemePrefs.Get("RainbowMode") then
 				self:diffuse(GetHexColor(randomindex+anim_data.color_add[i], true))
 				self:diffusealpha(self:GetDiffuseAlpha() / 2)
 			end
@@ -103,14 +103,17 @@ for i=1,10 do
 		OnCommand=function(self)
 			self:zoom((randomXD(i*1.6) + 0.35)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (1 / self:GetZoom()) * 850)
 			self:spin():effectmagnitude(0, 0, randomXD(i*3.4) * 14):effectoffset(randomXD(i*1.2) * 400)
-		end
+		end,
+        ColorSelectedMessageCommand=function(self)
+            self:diffuse(GetHexColor(SL.Global.ActiveColorIndex+anim_data.color_add[i], true)):diffusealpha(randomXD(i))
+        end
 	}
 end
 
 t[#t+1] = Def.Model {
-	Meshes="ring_model.txt";
-	Materials="ring_model.txt";
-	Bones="ring_model.txt";
+	Meshes="ring_model.txt",
+	Materials="ring_model.txt",
+	Bones="ring_model.txt",
 	InitCommand=function(self)
 		self:diffuse(1, 1, 1, 0.8):baserotationz(50):baserotationx(-60):baserotationy(20)
 		:SetTextureFiltering(true)
@@ -122,9 +125,9 @@ t[#t+1] = Def.Model {
 }
 
 t[#t+1] = Def.Model {
-	Meshes="ring_model.txt";
-	Materials="ring_model.txt";
-	Bones="ring_model.txt";
+	Meshes="ring_model.txt",
+	Materials="ring_model.txt",
+	Bones="ring_model.txt",
 	InitCommand=function(self)
 		self:diffuse(1, 1, 1, 0.8):baserotationz(50):baserotationx(-60):baserotationy(20)
 		:SetTextureFiltering(true)
@@ -136,9 +139,9 @@ t[#t+1] = Def.Model {
 }
 
 t[#t+1] = Def.Model {
-	Meshes="arrow_model.txt";
-	Materials="arrow_model.txt";
-	Bones="arrow_model.txt";
+	Meshes="arrow_model.txt",
+	Materials="arrow_model.txt",
+	Bones="arrow_model.txt",
 	InitCommand=function(self)
 		self
 		:diffuse(GetHexColor(SL.Global.ActiveColorIndex, true))
@@ -146,7 +149,7 @@ t[#t+1] = Def.Model {
 		:SetTextureFiltering(true)
 		:diffusealpha(0.7)
 
-		if ThemePrefs.Get("RainbowMode") then
+        if ThemePrefs.Get("RainbowMode") then
 			self:diffuse(GetHexColor(randomindex, true))
 			self:diffusealpha(0.4)
 		end
@@ -154,23 +157,26 @@ t[#t+1] = Def.Model {
 	OnCommand=function(self)
 		self:zoom(1.2):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 		self:spin():effectmagnitude(0, 10, 0)
-	end
+	end,
+    ColorSelectedMessageCommand=function(self)
+        self:diffuse(GetHexColor(SL.Global.ActiveColorIndex, true)):diffusealpha(0.7)
+    end
 }
 
 for i=11,18 do
-	t[#t+1] = Def.Model {
-	Meshes="circlefrag_model.txt";
-	Materials="circlefrag_model.txt";
-	Bones="circlefrag_model.txt";
-		InitCommand=function(self)
-			self:diffuse(1, 1, 1, randomXD(i / 1.6)):baserotationz(randomXD(i) * 2000):baserotationx(-60):baserotationy(20)
-			:SetTextureFiltering(true)
-		end,
-		OnCommand=function(self)
-			self:zoom((randomXD(i*2.8) + 0.35)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (2 / self:GetZoom()) * 850)
-			self:spin():effectmagnitude(0, 0, randomXD(i*3.6) * 14):effectoffset(i * 2000)
-		end
-	}
+    t[#t+1] = Def.Model {
+        Meshes="circlefrag_model.txt",
+        Materials="circlefrag_model.txt",
+        Bones="circlefrag_model.txt",
+        InitCommand=function(self)
+            self:diffuse(1, 1, 1, randomXD(i / 1.6)):baserotationz(randomXD(i) * 2000):baserotationx(-60):baserotationy(20)
+            :SetTextureFiltering(true)
+        end,
+        OnCommand=function(self)
+            self:zoom((randomXD(i*2.8) + 0.35)):xy(SCREEN_CENTER_X, SCREEN_CENTER_Y):z((randomXD(i * 13) - 0.6) * (2 / self:GetZoom()) * 850)
+            self:spin():effectmagnitude(0, 0, randomXD(i*3.6) * 14):effectoffset(i * 2000)
+        end
+    }
 end
 
 
