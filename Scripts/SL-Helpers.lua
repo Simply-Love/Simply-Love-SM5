@@ -963,6 +963,8 @@ GetPlayerOptionsString = function(player)
 	local substitutions = {
 		["SuperShuffle"] = "Blender",
 		["HyperShuffle"] = "Random",
+		["LRMirror"] = "LR-Mirror",
+		["UDMirror"] = "UD-Mirror",
 	}
 
 	for k,v in pairs(substitutions) do
