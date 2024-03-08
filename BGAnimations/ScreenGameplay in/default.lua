@@ -71,6 +71,24 @@ af[#af+1] = Def.ActorFrame{
 	}
 }
 
+for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+	af[#af+1] = LoadFont("Common Normal")..{
+		Text=GetPlayerOptionsString(player),
+		InitCommand=function(self)
+			self:y(_screen.h - 20):valign(1)
+
+			if player == PLAYER_1 then
+				self:x(20):halign(0)
+			else
+				self:x(_screen.w - 20):halign(1)
+			end
+		end,
+		OnCommand=function(self)
+			self:diffusealpha(1):sleep(1):accelerate(0.33):diffusealpha(0)
+		end,
+	}
+end
+
 af[#af+1] = LoadFont("Common Bold")..{
 	Text=text,
 	InitCommand=function(self) self:Center():diffusealpha(0):shadowlength(1) end,
