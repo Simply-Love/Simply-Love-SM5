@@ -203,7 +203,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 					local leaderboardData = nil
 					if showExScore then
 						leaderboardData = data[playerStr]["exLeaderboard"]
-					elseif data[playerStr]["leaderboard"] then
+					elseif data[playerStr]["gsLeaderboard"] then
 						leaderboardData = data[playerStr]["gsLeaderboard"]
 					end
 
