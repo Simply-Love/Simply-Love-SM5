@@ -9,7 +9,7 @@ local filter = Def.Quad{
         local percentage = mods.LaneCover:gsub("%%","") / 100
 
 		self:diffuse(Color.Black)
-			:xy(GetNotefieldX(player), _screen.cy + (headerHeight / 2))
+			:xy(GetNotefieldX(player) + (mods.NoteFieldOffsetX * 2), _screen.cy + (headerHeight / 2))
             :zoomto(GetNotefieldWidth(player), _screen.h - headerHeight)
 
         if (playeroptions:UsingReverse()) then
