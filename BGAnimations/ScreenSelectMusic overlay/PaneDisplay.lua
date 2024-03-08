@@ -149,7 +149,8 @@ local GetScoresRequestProcessor = function(res, params)
 									GetMachineTag(gsEntry),
 									string.format("%.2f%%", gsScore),
 									playerName,
-									playerScore
+									playerScore,
+									"#000000"
 								)
 								personalRecordSet = true
 							end
@@ -235,14 +236,31 @@ local GetScoresRequestProcessor = function(res, params)
 			end
 		else
 			if data and data[playerStr] then
+				local headers = res.headers
+				local boogie = false
+				local boogie_ex = false
+				if headers["bs-leaderboard-player-" .. i] == "BS" then
+					boogie = true
+				elseif headers["bs-leaderboard-player-" .. i] == "BS-EX" then
+					boogie_ex = true
+				end
+				
 				if foundLeaderboard then
-					if SL["P"..i].ActiveModifiers.ShowEXScore then
+					if boogie then
+						loadingText:settext("BoogieStats")
+					elseif boogie_ex then
+						loadingText:settext("Boogie EX")
+					elseif SL["P"..i].ActiveModifiers.ShowEXScore then
 						loadingText:settext("EX Score")
 					else
 						loadingText:settext("GrooveStats")
 					end
 				else
-					if SL["P"..i].ActiveModifiers.ShowEXScore then
+					if boogie then
+						loadingText:settext("No Boogie Data")
+					elseif boogie_ex then
+						loadingText:settext("No Boogie EX")
+					elseif SL["P"..i].ActiveModifiers.ShowEXScore then
 						loadingText:settext("No EX Data")
 					else
 						loadingText:settext("No Data")

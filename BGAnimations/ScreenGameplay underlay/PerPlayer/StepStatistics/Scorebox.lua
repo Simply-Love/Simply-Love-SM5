@@ -154,6 +154,11 @@ local LeaderboardRequestProcessor = function(res, master)
 		-- These will get overwritten if we have any entries in the leaderboard below.
 		SetScoreData(1, 1, "", "No Scores", "", false, false, false, false)
 		SetScoreData(2, 1, "", "No Scores", "", false, false, false, false)
+		
+		-- Don't display the second leaderboard on BoogieStats responses
+		if boogie or boogie_ex then
+			all_data[2].has_data = false
+		end
 
 		local numEntries = 0
 		if SL["P"..n].ActiveModifiers.ShowEXScore then
@@ -185,7 +190,7 @@ local LeaderboardRequestProcessor = function(res, master)
 									entry["isSelf"],
 									entry["isRival"],
 									entry["isFail"],
-									false
+									boogie_ex
 								)
 				end
 			end
@@ -202,7 +207,7 @@ local LeaderboardRequestProcessor = function(res, master)
 									entry["isSelf"],
 									entry["isRival"],
 									entry["isFail"],
-									false
+									boogie_ex
 								)
 				end
 			end
