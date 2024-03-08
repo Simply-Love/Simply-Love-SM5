@@ -183,6 +183,8 @@ local LeaderboardRequestProcessor = function(res, master)
 		local numEntries = 0
 		if SL["P"..n].ActiveModifiers.ShowEXScore then
 			-- If the player is using EX scoring, then we want to display the EX leaderboard first.
+			cur_style = 2
+			
 			if data[playerStr]["exLeaderboard"] then
 				numEntries = 0
 				for entry in ivalues(data[playerStr]["exLeaderboard"]) do
@@ -224,6 +226,8 @@ local LeaderboardRequestProcessor = function(res, master)
 			end
 		else
 			-- Display the main GrooveStats leaderboard first if player is not using EX scoring.
+			cur_style = 0
+			
 			if data[playerStr]["gsLeaderboard"] then
 				numEntries = 0
 				for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
@@ -265,7 +269,9 @@ local LeaderboardRequestProcessor = function(res, master)
 			end
 		end
 
+		-- Display event boxes first if they are applicable
 		if data[playerStr]["rpg"] then
+			cur_style = 3
 			local numEntries = 0
 			SetScoreData(3, 1, "", "No Scores", "", false, false, false)
 
@@ -296,6 +302,7 @@ local LeaderboardRequestProcessor = function(res, master)
 		end
 
 		if data[playerStr]["itl"] then
+			cur_style = 4
 			local numEntries = 0
 			SetScoreData(4, 1, "", "No Scores", "", false, false, false)
 
