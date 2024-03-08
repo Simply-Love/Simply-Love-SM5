@@ -7,8 +7,7 @@ if ThemePrefs.Get("MusicWheelGS") ~= "Scorebox" then return end
 local player = ...
 local pn = ToEnumShortString(player)
 
-if (not SL[pn].ActiveModifiers.DisplayScorebox or
-		not IsServiceAllowed(SL.GrooveStats.GetScores) or
+if (not IsServiceAllowed(SL.GrooveStats.GetScores) or
 		SL[pn].ApiKey == "") then
 	return
 end
