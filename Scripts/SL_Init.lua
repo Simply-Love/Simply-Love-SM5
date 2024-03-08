@@ -48,6 +48,7 @@ local PlayerDefaults = {
 				HideEarlyDecentWayOffFlash = false,
 
 				TimingWindows = {true, true, true, true, true},
+				LaneCover="0%",
 				ShowFaPlusWindow = false,
 				ShowExScore = false,
 				ShowFaPlusPane = true,
