@@ -3,6 +3,12 @@ local player = ...
 local playerStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local grade = playerStats:GetGrade()
 
+-- only run in modified stepmania build
+if SYNCMAN and SYNCMAN:IsEnabled() then
+	-- Broadcast final score for each player, used by syncstart-web to save scores
+	SYNCMAN:BroadcastFinalScore(playerStats)
+end
+
 -- "I passd with a q though."
 local title = GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 if title == "D" then grade = "Grade_Tier99" end
