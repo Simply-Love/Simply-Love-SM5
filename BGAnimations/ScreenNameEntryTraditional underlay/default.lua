@@ -125,58 +125,61 @@ t[#t+1] = Def.ActorFrame {
 
 -- Banner(s) and Title(s)
 for i=1,NumStages do
+	if SL.Global.Stages.Stats[i] == nil then
+		-- do nothing
+	else
+		local SongOrCourse = SL.Global.Stages.Stats[i].song
 
-	local SongOrCourse = SL.Global.Stages.Stats[i].song
-
-	-- Create an ActorFrame for each (Name + Banner) pair
-	-- so that we can display/hide all children simultaneously.
-	local SongNameAndBanner = Def.ActorFrame{
-		InitCommand=function(self) self:visible(false) end,
-		OnCommand=function(self)
-			self:sleep(DurationPerStage * (i-1) )
-			self:queuecommand("Display")
-		end,
-		DisplayCommand=function(self)
-			self:visible(true)
-			self:sleep(DurationPerStage)
-			self:queuecommand("Wait")
-		end,
-		WaitCommand=function(self)
-			self:visible(false)
-			self:sleep(DurationPerStage * (NumStages-1))
-			self:queuecommand("Display")
-		end
-	}
-
-	-- song name
-	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("Common Normal")..{
-		Name="SongName"..i,
-		InitCommand=function(self) self:xy(_screen.cx, 54):maxwidth(294):shadowlength(0.333) end,
-		OnCommand=function(self)
-			if SongOrCourse then
-				self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
+		-- Create an ActorFrame for each (Name + Banner) pair
+		-- so that we can display/hide all children simultaneously.
+		local SongNameAndBanner = Def.ActorFrame{
+			InitCommand=function(self) self:visible(false) end,
+			OnCommand=function(self)
+				self:sleep(DurationPerStage * (i-1) )
+				self:queuecommand("Display")
+			end,
+			DisplayCommand=function(self)
+				self:visible(true)
+				self:sleep(DurationPerStage)
+				self:queuecommand("Wait")
+			end,
+			WaitCommand=function(self)
+				self:visible(false)
+				self:sleep(DurationPerStage * (NumStages-1))
+				self:queuecommand("Display")
 			end
-		end
-	}
+		}
 
-	-- song banner
-	SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
-		Name="SongBanner"..i,
-		InitCommand=function(self) self:xy(_screen.cx, 121.5) end,
-		OnCommand=function(self)
-			if SongOrCourse then
-				if GAMESTATE:IsCourseMode() then
-					self:LoadFromCourse(SongOrCourse)
-				else
-					self:LoadFromSong(SongOrCourse)
+		-- song name
+		SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("Common Normal")..{
+			Name="SongName"..i,
+			InitCommand=function(self) self:xy(_screen.cx, 54):maxwidth(294):shadowlength(0.333) end,
+			OnCommand=function(self)
+				if SongOrCourse then
+					self:settext( GAMESTATE:IsCourseMode() and SongOrCourse:GetDisplayFullTitle() or SongOrCourse:GetDisplayMainTitle() )
 				end
-				self:setsize(418,164):zoom(0.7)
 			end
-		end
-	}
+		}
 
-	-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
-	t[#t+1] = SongNameAndBanner
+		-- song banner
+		SongNameAndBanner[#SongNameAndBanner+1] = Def.Banner{
+			Name="SongBanner"..i,
+			InitCommand=function(self) self:xy(_screen.cx, 121.5) end,
+			OnCommand=function(self)
+				if SongOrCourse then
+					if GAMESTATE:IsCourseMode() then
+						self:LoadFromCourse(SongOrCourse)
+					else
+						self:LoadFromSong(SongOrCourse)
+					end
+					self:setsize(418,164):zoom(0.7)
+				end
+			end
+		}
+
+		-- add each SongNameAndBanner ActorFrame to the primary ActorFrame
+		t[#t+1] = SongNameAndBanner
+	end
 end
 
 

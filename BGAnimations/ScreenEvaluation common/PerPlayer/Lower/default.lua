@@ -3,6 +3,8 @@
 local player = ...
 local NumPlayers = #GAMESTATE:GetHumanPlayers()
 
+local stats = SessionDataForStatistics(player)
+
 local pane_spacing = 10
 local small_pane_w = 300
 
@@ -50,6 +52,66 @@ af[#af+1] = Def.Quad{
 	end
 }
 
+if IsUsingWideScreen() then
+	af[#af+1] = LoadFont("Common Normal").. {
+		Name="Steps",
+		Text=(""),
+
+		InitCommand=function(self)
+			local align = (player==PLAYER_1 and right or left)
+			local stats_position_x = 0
+			local right_side_offset = 0
+			local left_side_offset = 0
+
+			if NumPlayers == 2 or SL.Global.GameMode == "Casual" then
+				left_side_offset = small_pane_w * -0.5
+				right_side_offset = small_pane_w * 0.5
+				stats_position_x = (player==PLAYER_1 and left_side_offset or right_side_offset)
+			else
+				left_side_offset = small_pane_w * -0.5
+				right_side_offset =  small_pane_w + pane_spacing + small_pane_w * 0.5
+				stats_position_x  = (player==PLAYER_1 and left_side_offset or right_side_offset)
+			end
+
+			self:xy(stats_position_x, _screen.h-65):horizalign(align)
+		end,
+
+		ScreenChangedMessageCommand=function(self)
+			self:playcommand("Refresh")
+		end,
+
+		RefreshCommand=function(self)
+			stats = SessionDataForStatistics(player)
+
+			if stats.hours < 10 then
+				stats.hours = 0 .. stats.hours
+			end
+
+			if stats.minutes < 10 then
+				stats.minutes = 0 .. stats.minutes
+			end
+
+			if stats.notesHitThisGame > 9999 then
+				stats.notesHitThisGame = tonumber(string.format("%.1f", stats.notesHitThisGame/1000)) .. "k"
+			end
+
+			if player==PLAYER_1 then
+				self:settext(("%s 👟\n%s:%s ⏱\n%s 💿"):format(
+					stats.notesHitThisGame,
+					stats.hours,
+					stats.minutes,
+					stats.songsPlayedThisGame))
+			else
+				self:settext(("👟 %s \n⏱ %s:%s\n💿 %s"):format(
+					stats.notesHitThisGame,
+					stats.hours,
+					stats.minutes,
+					stats.songsPlayedThisGame))
+			end
+		end
+	}
+end
+	
 -- "Look at this graph."  –Some sort of meme on The Internet
 af[#af+1] = LoadActor("./Graphs.lua", player)
 
