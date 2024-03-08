@@ -946,10 +946,6 @@ local Overrides = {
 		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" }
 	},
 	-------------------------------------------------------------------------
-	BeatBars = {
-		Choices = { "None", "Measures", "Beats" },
-	},
-	-------------------------------------------------------------------------
 	TiltMultiplier = {
 		Choices = { 0.25, 0.5, 1, 1.5, 2, 2.5, 3 },
 	},

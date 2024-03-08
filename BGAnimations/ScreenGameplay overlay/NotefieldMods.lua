@@ -6,17 +6,6 @@ local mods = SL[pn].ActiveModifiers
 
 return Def.Actor{
 	OnCommand=function(self)
-		if mods.BeatBars == "None" then
-			SL.Metrics["ShowBeatBars"] = false
-		elseif mods.BeatBars == "Measures" then
-			SL.Metrics["ShowBeatBars"] = true
-			SL.Metrics["BarMeasureAlpha"] = 0.5
-			SL.Metrics["Bar4thAlpha"] = 0
-		elseif mods.BeatBars == "Beats" then
-			SL.Metrics["ShowBeatBars"] = true
-			SL.Metrics["BarMeasureAlpha"] = 0.5
-			SL.Metrics["Bar4thAlpha"] = 0.25
-		end
 		THEME:ReloadMetrics()
 	end,
 }

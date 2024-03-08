@@ -6,33 +6,34 @@ local mods = SL[ToEnumShortString(player)].ActiveModifiers
 local metrics = SL.Metrics[SL.Global.GameMode]
 -- a flag to determine if we are using a GameMode that utilizes FA+ timing windows
 local FAplus = (metrics.PercentScoreWeightW1 == metrics.PercentScoreWeightW2)
+local columns = {}
 
 local NumColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 local IsReversedColumn = function(player, columnIndex)
-	local columns = {}
+	local rColumns = {}
 	for i=1, NumColumns do
-		columns[#columns + 1] = false
+		rColumns[#rColumns + 1] = false
 	end
 
 	local opts = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions()
 	if opts:Reverse() == 1 then
-		for column,val in ipairs(columns) do
-			columns[column] = not val
+		for column,val in ipairs(rColumns) do
+			rColumns[column] = not val
 		end
 	end
 
 	if opts:Alternate() == 1 then
-		for column,val in ipairs(columns) do
+		for column,val in ipairs(rColumns) do
 			if column % 2 == 0 then
-				columns[column] = not val
+				rColumns[column] = not val
 			end
 		end
 	end
 
 	if opts:Split() == 1 then
-		for column,val in ipairs(columns) do
+		for column,val in ipairs(rColumns) do
 			if column > NumColumns / 2 then
-				columns[column] = not val
+				rColumns[column] = not val
 			end
 		end
 	end
@@ -40,14 +41,14 @@ local IsReversedColumn = function(player, columnIndex)
 	if opts:Cross() == 1 then
 		local firstChunk = NumColumns / 4
 		local lastChunk = NumColumns - firstChunk
-		for column,val in ipairs(columns) do
+		for column,val in ipairs(rColumns) do
 			if column > firstChunk and column <= lastChunk then
-				columns[column] = not val
+				rColumns[column] = not val
 			end
 		end
 	end
 
-	return columns[columnIndex]
+	return rColumns[columnIndex]
 end
 
 if mods.ColumnFlashOnMiss then
@@ -84,13 +85,12 @@ if mods.ColumnFlashOnMiss then
 		end
 	end
 
-	local columns = {}
 	local style = GAMESTATE:GetCurrentStyle(player)
 	local width = style:GetWidth(player)
 
 	local y_offset = 80
 	
-	FlashColumn=function(self, params)
+	local FlashColumn=function(self, params)
 		if params.Player == player and (params.Notes or params.Holds) then
 			for i,col in pairs(params.Notes or params.Holds) do
 				local tns = ToEnumShortString(params.TapNoteScore or params.HoldNoteScore)

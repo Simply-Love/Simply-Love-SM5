@@ -99,7 +99,6 @@ local permitted_profile_settings = {
 	FlashExcellent       = "boolean",
 	FlashFantastic       = "boolean",
 	
-	BeatBars			 = "string",
 	TiltMultiplier       = "number",
 	
 	ComboColors			 = "string",
