@@ -34,6 +34,7 @@ local t = Def.ActorFrame{
 }
 
 for player in ivalues(Players) do
+	t[#t+1] = LoadActor("./PerPlayer/BackgroundBrightness.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
 	t[#t+1] = LoadActor("./PerPlayer/BackgroundFilter.lua", player)
