@@ -45,6 +45,7 @@ local transition_seconds = 1
 local all_data = {}
 
 local ResetAllData = function()
+	all_data = {}
 	SL[pn].Rival = {}
 	SL[pn].Rival.Score = 0
 	SL[pn].Rival.EXScore = 0
@@ -68,7 +69,7 @@ local ResetAllData = function()
 				["isEx"]=false,
 			}
 		end
-		all_data[#all_data + 1] = data
+		all_data[i] = data
 	end
 end
 
@@ -283,7 +284,7 @@ local LeaderboardRequestProcessor = function(res, master)
 				end
 				numEntries = numEntries + 1
 				for i=numEntries,5,1 do
-					SetScoreData(2, i,
+					SetScoreData(3, i,
 									"",
 									"",
 									"",
@@ -321,7 +322,7 @@ local LeaderboardRequestProcessor = function(res, master)
 				end
 				numEntries = numEntries + 1
 				for i=numEntries,5,1 do
-					SetScoreData(3, i,
+					SetScoreData(4, i,
 									"",
 									"",
 									"",
@@ -398,6 +399,7 @@ local af = Def.ActorFrame{
 		for i=1,num_styles do
 			if all_data[i].has_data then
 				has_data = true
+				break
 			end
 		end
 		if not has_data then return end

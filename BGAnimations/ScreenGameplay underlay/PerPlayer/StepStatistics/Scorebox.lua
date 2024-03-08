@@ -230,13 +230,13 @@ local LeaderboardRequestProcessor = function(res, master)
 		end
 
 		if data[playerStr]["rpg"] then
-			local entryCount = 0
+			local numEntries = 0
 			SetScoreData(3, 1, "", "No Scores", "", false, false, false)
 
 			if data[playerStr]["rpg"]["rpgLeaderboard"] then
 				for entry in ivalues(data[playerStr]["rpg"]["rpgLeaderboard"]) do
-					entryCount = entryCount + 1
-					SetScoreData(3, entryCount,
+					numEntries = numEntries + 1
+					SetScoreData(3, numEntries,
 									tostring(entry["rank"]),
 									entry["name"],
 									string.format("%.2f", entry["score"]/100),
@@ -246,9 +246,9 @@ local LeaderboardRequestProcessor = function(res, master)
 									false
 								)
 				end
-				entryCount = entryCount + 1
-				for i=entryCount,5,1 do
-					SetScoreData(2, i,
+				numEntries = numEntries + 1
+				for i=numEntries,5,1 do
+					SetScoreData(3, i,
 									"",
 									"",
 									"",
@@ -278,7 +278,7 @@ local LeaderboardRequestProcessor = function(res, master)
 				end
 				numEntries = numEntries + 1
 				for i=numEntries,5,1 do
-					SetScoreData(3, i,
+					SetScoreData(4, i,
 									"",
 									"",
 									"",
