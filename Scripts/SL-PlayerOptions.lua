@@ -633,7 +633,7 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	MeasureLines = {
-		Values = { "Off", "Measure", "Quarter", "Eighth" },
+		Choices = { "Off", "Measure", "Quarter", "Eighth" },
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
 
