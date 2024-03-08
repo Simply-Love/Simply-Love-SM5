@@ -196,7 +196,7 @@ local LeaderboardRequestProcessor = function(res, master)
 									true
 								)
 				end
-				entryCount = entryCount + 1
+				numEntries = numEntries + 1
 				for i=numEntries,5,1 do
 					SetScoreData(2, i, "", "", "", "", "", "", true)
 				end
@@ -216,7 +216,7 @@ local LeaderboardRequestProcessor = function(res, master)
 									boogie_ex
 								)
 				end
-				entryCount = entryCount + 1
+				numEntries = numEntries + 1
 				for i=numEntries,5,1 do
 					SetScoreData(1, i, "", "", "", "", "", "", boogie_ex)
 				end
