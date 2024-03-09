@@ -185,7 +185,7 @@ ReadItlFile = function(player)
 	--          "Rolls" -> total number of rolls held
 	--     "totalRolls" -> total number of rolls in the chart
 	--  },
-	if itlData["fixedEx"] == nil then
+	if itlData["fixedEx2024"] == nil then
 		local hashMap = itlData["hashMap"]
 		local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss" }
 
@@ -228,7 +228,7 @@ ReadItlFile = function(player)
 			end
 		end
 
-		itlData["fixedEx"] = true
+		itlData["fixedEx2024"] = true
 	end
 	
 	-- Fix points that got default-stored as empty strings in an earlier
