@@ -379,12 +379,11 @@ end
 
 local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local pn = ToEnumShortString(player)
-	local score = CalculateExScore(player, GetExJudgmentCounts(player))
 
 	local paneTexts = {}
 	local paneFunctions = {}
 	
-	local score = CalculateExScore(player)
+	local score = CalculateExScore(player, GetExJudgmentCounts(player))
 	local scoreDelta = itlData["scoreDelta"]/100.0
 
 	local steps = GAMESTATE:GetCurrentSteps(player)

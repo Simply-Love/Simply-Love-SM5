@@ -110,7 +110,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		-- Format the Percentage string, removing the % symbol
 		percent = tonumber(percent)
 	else
-		percent = CalculateExScore(player)
+		percent = CalculateExScore(player, counts)
 	end
 
 	if index == 1 then
