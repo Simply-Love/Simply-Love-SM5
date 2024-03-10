@@ -128,7 +128,9 @@ local LeaderboardRequestProcessor = function(res, master)
 			text = "Failed to Load 😞"
 		end
 		SetScoreData(1, 1, "", text, "", false, false, false, false)
-		master:queuecommand("CheckScorebox")
+		if master ~= nil then
+			master:queuecommand("CheckScorebox")
+		end
 		return
 	end
 
@@ -146,6 +148,7 @@ local LeaderboardRequestProcessor = function(res, master)
 	elseif headers["bs-leaderboard-player-" .. n] == "BS-EX" then
 		boogie_ex = true
 	end
+	if not SCREENMAN:GetTopScreen():GetChild("Overlay") then return end
 	local gsBox = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("ScoreBox" .. pn):GetChild("GrooveStatsLogo")
 	local bsBox = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("ScoreBox" .. pn):GetChild("BoogieStatsLogo")
 	local bsExBox = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("ScoreBox" .. pn):GetChild("BoogieStatsEXLogo")
@@ -338,7 +341,9 @@ local LeaderboardRequestProcessor = function(res, master)
 			end
 		end
  	end
-	master:queuecommand("CheckScorebox")
+	if master ~= nil then
+		master:queuecommand("CheckScorebox")
+	end
 end
 
 local af = Def.ActorFrame{
