@@ -97,6 +97,8 @@ Handle.Start = function(event)
 		MESSAGEMAN:Broadcast("SelectedProfile", {PlayerNumber=event.PlayerNumber})
 
 		if readyPlayers["P1"] and readyPlayers["P2"] then
+			-- Set finished to true so that we don't process any more input
+			finished = true	
 			-- if we're here, both players have selected a profile
 			-- play the StartButton sound
 			MESSAGEMAN:Broadcast("StartButton")
