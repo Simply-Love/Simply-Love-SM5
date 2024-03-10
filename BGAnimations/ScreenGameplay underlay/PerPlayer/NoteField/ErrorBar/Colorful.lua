@@ -59,7 +59,7 @@ local function DisplayTick(self, params)
             earlysubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
             latesubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
         else
-            local offset = params.TapNoteOffset and "Early" or "Late"
+            local offset = params.TapNoteOffset < 0 and "Early" or "Late"
             local subbar = offset == "Early" and earlysubbar or latesubbar
             subbar:finishtweening()
             subbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
