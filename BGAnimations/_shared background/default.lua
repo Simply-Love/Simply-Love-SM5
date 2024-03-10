@@ -31,9 +31,6 @@ af[#af+1] = Def.Quad{
 af[#af+1] = LoadActor("./Normal.lua", file)
 af[#af+1] = LoadActor("./RainbowMode.lua", file)
 
-if style == "Technique" then
-	af[#af+1] = LoadActor("./technique.lua", file)
-end
 af[#af+1] = LoadActor("./Static.lua", file)
 af[#af+1] = LoadActor("./Technique.lua", file)
 
