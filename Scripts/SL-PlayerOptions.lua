@@ -447,9 +447,6 @@ local Overrides = {
 				return { "ShowFaPlusWindow" }
 			end
 
-			if SL.Global.GameMode == "FA+" then
-				return { "ShowEXScore", "SmallerWhite" }
-			end
 			return { "ShowFaPlusWindow", "ShowEXScore", "ShowFaPlusPane", "SmallerWhite" }
 		end,
 		LoadSelections = function(self, list, pn)
@@ -479,6 +476,7 @@ local Overrides = {
 				mods.ShowFaPlusWindow = list[1]
 				mods.ShowEXScore = ThemePrefs.Get("ScoringSystem") == "EX"
 				mods.ShowFaPlusPane = true
+				mods.SmallerWhite = false
 				-- Default to FA+ pane in Tournament Mode
 				sl_pn.EvalPanePrimary = 2
 				return
