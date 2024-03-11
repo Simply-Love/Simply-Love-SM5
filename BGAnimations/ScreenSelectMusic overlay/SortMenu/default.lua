@@ -280,17 +280,13 @@ local t = Def.ActorFrame {
 			end
 		end
 		-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
-		-- but don't add the current SL GameMode as a choice. If a player is already in FA+, don't
-		-- present a choice that would allow them to switch to FA+.
-		if SL.Global.Stages.PlayedThisGame == 0 then
+		-- but don't add the current SL GameMode as a choice.
 			if SL.Global.GameMode ~= "ITG"      then table.insert(wheel_options, {"ChangeMode", "ITG"}) end
-			if SL.Global.GameMode ~= "FA+"      then table.insert(wheel_options, {"ChangeMode", "FA+"}) end
 			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
 			-- and offer to switch them back to casual mode. This allows them to do so again.
 			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
 			-- include the check.
 			if SL.Global.GameMode ~= "Casual"   then table.insert(wheel_options, {"ChangeMode", "Casual"}) end
-
 		end
 
 		-- Add operator functions if in event mode. (Public arcades probably don't want random players
