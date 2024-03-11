@@ -718,7 +718,7 @@ local Overrides = {
 		ExportOnChange = true,
 		Choices = function()
 			local first	= 0
-			local last 	= 50
+			local last 	= 150
 			local step 	= 1
 
 			return range(first, last, step)
@@ -747,8 +747,8 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		ExportOnChange = true,
 		Choices = function()
-			local first	= -50
-			local last 	= 50
+			local first	= -100
+			local last 	= 100
 			local step 	= 1
 
 			return range(first, last, step)
