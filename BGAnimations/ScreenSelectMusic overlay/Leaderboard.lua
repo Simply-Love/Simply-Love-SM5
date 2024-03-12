@@ -16,6 +16,24 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 	local entryNum = 1
 	local rivalNum = 1
 
+	
+	if leaderboardData["Disabled"] then
+		if leaderboardData["Name"] then
+			local name = leaderboardData["Name"]:gsub("ITL Online", "ITL")
+			leaderboard:GetChild("Header"):settext(name)
+		end
+		for j=1, NumEntries do
+			local entry = leaderboard:GetChild("LeaderboardEntry"..j)
+			if j == 1 then
+				SetEntryText("", "Disabled", "", "", entry)
+			else
+				-- Empty out the remaining rows.
+				SetEntryText("", "", "", "", entry)
+			end
+		end
+		return
+	end
+
 	-- Hide the rival and self highlights.
 	-- They will be unhidden and repositioned as needed below.
 	for i=1,3 do
@@ -91,7 +109,38 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 		end
 	end
 end
-
+local getLocalLeaderboard = function(pn)
+	if not GAMESTATE:IsPlayerEnabled(pn) then return {} end
+    local HighScores = PROFILEMAN:GetMachineProfile():GetHighScoreList(GAMESTATE:GetCurrentSong(),GAMESTATE:GetCurrentSteps(pn)):GetHighScores()
+    local profileName = PROFILEMAN:GetProfile(pn):GetLastUsedHighScoreName()
+    local localData = {}
+    if HighScores then
+        for i, highscore in ipairs(HighScores) do
+            local name = highscore:GetName()
+            local percentDP = highscore:GetPercentDP()
+            local score = tonumber(("%.0f"):format(percentDP * 10000))
+            local date = highscore:GetDate()
+            local grade = highscore:GetGrade()
+            local isRival = false
+            local isSelf = name == profileName
+            local isFail = false
+            if grade == "Grade_Failed" then
+                isFail = true
+            end
+            local entry = {
+                name=name,
+                score=score,
+                date=date,
+                isRival=isRival,
+                isSelf=isSelf,
+                isFail=isFail,
+                rank=i
+            }
+            table.insert(localData, entry)
+        end
+    end
+    return localData
+end
 local LeaderboardRequestProcessor = function(res, master)
 	if master == nil then return end
 
@@ -106,6 +155,14 @@ local LeaderboardRequestProcessor = function(res, master)
 		for i=1, 2 do
 			local pn = "P"..i
 			local leaderboard = master:GetChild(pn.."Leaderboard")
+			local leaderboardList = master[pn]["Leaderboards"]
+			local localData = getLocalLeaderboard(pn)
+			leaderboardList[#leaderboardList + 1] = {
+				Name="Local Leaderboard",
+				Data=DeepCopy(localData),
+				IsEX=false
+			}
+			master[pn]["LeaderboardIndex"] = 1
 			for j=1, NumEntries do
 				local entry = leaderboard:GetChild("LeaderboardEntry"..j)
 				if j == 1 then
@@ -129,7 +186,6 @@ local LeaderboardRequestProcessor = function(res, master)
 
 		if data[playerStr] then
 			master[pn].isRanked = data[playerStr]["isRanked"]
-
 			if SL["P"..i].ActiveModifiers.ShowEXScore then
 				-- If the player is using EX scoring, then we want to display the EX leaderboard first.
 				if data[playerStr]["exLeaderboard"] then
@@ -181,6 +237,17 @@ local LeaderboardRequestProcessor = function(res, master)
 					}
 					master[pn]["LeaderboardIndex"] = 1
 				end
+			end
+
+			-- Display the local leaderboard last if the preference is not set
+			if not ThemePrefs.Get("PrioritizeLocalLeaderboard") then
+				local localData = getLocalLeaderboard(pn)
+				leaderboardList[#leaderboardList + 1] = {
+					Name="Local Leaderboard",
+					Data=DeepCopy(localData),
+					IsEX=false
+				}
+				master[pn]["LeaderboardIndex"] = 1
 			end
 
 			if #leaderboardList > 1 then
@@ -253,22 +320,51 @@ local af = Def.ActorFrame{
 	},
 	RequestResponseActor(17, 50)..{
 		SendLeaderboardRequestCommand=function(self)
+			-- If a player does not have an API key or chart hash just show the local leaderboard.
+			
+			for i=1,2 do
+				local pn = "P"..i
+				if SL[pn].ApiKey == "" or SL[pn].Streams.Hash == "" or ThemePrefs.Get("PrioritizeLocalLeaderboard") or not IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+					local pn = "P"..i
+					local leaderboard = self:GetParent():GetChild(pn.."Leaderboard")
+					local leaderboardList = self:GetParent()[pn]["Leaderboards"]
+					local localData = getLocalLeaderboard(pn)
+					leaderboardList[#leaderboardList + 1] = {
+						Name="Local Leaderboard",
+						Data=DeepCopy(localData),
+						IsEX=false
+					}
+					self:GetParent()[pn]["LeaderboardIndex"] = 1
+				end
+			end
+			-- Display the local leaderboard first if the preference is set
+			if ThemePrefs.Get("PrioritizeLocalLeaderboard") or not IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+				for i=1, 2 do
+					local pn = "P"..i
+					local leaderboard = self:GetParent():GetChild(pn.."Leaderboard")
+					local leaderboardList = self:GetParent()[pn]["Leaderboards"]
+					local localData = getLocalLeaderboard(pn)
+					leaderboardList[#leaderboardList + 1] = {
+						Name="Local Leaderboard",
+						Data=DeepCopy(localData),
+						IsEX=false
+					}
+					self:GetParent()[pn]["LeaderboardIndex"] = 1
+				end
+			end
 			if not IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 				if SL.GrooveStats.IsConnected then
 					-- If we disable the service from a previous request, surface it to the user here.
-					-- (Even though the Leaderboard option is already removed from the sort menu, so this is extra).
 					for i=1, 2 do
 						local pn = "P"..i
 						local leaderboard = self:GetParent():GetChild(pn.."Leaderboard")
-						for j=1, NumEntries do
-							local entry = leaderboard:GetChild("LeaderboardEntry"..j)
-							if j == 1 then
-								SetEntryText("", "Disabled", "", "", entry)
-							else
-								-- Empty out the remaining rows.
-								SetEntryText("", "", "", "", entry)
-							end
-						end
+						local leaderboardList = self:GetParent()[pn]["Leaderboards"]
+						leaderboardList[#leaderboardList + 1] = {
+							Name="Groovestats",
+							Disabled=true,
+							IsEX=false
+						}
+						SetLeaderboardForPlayer(i, leaderboard, leaderboardList[1], false)
 					end
 				end
 				return
