@@ -19,7 +19,7 @@ return Def.Quad{
 			:diffusealpha( mods.BackgroundFilter / 100 )
 			:zoomto( GetNotefieldWidth() + 80, _screen.h )
 			:fadeleft(0.1):faderight(0.1)
-		if NoteFieldIsCentered and SL[pn].ActiveModifiers.DataVisualizations ~= "None" then
+		if NoteFieldIsCentered and (SL[pn].ActiveModifiers.DataVisualizations ~= "None" or (ThemePrefs.Get("EnableTournamentMode") and ThemePrefs.Get("StepStats") == "Show")) then
 			if pn == "P1" then
 				self:zoomto( GetNotefieldWidth() + 40, _screen.h ):addx(-20):faderight(0)
 			else
