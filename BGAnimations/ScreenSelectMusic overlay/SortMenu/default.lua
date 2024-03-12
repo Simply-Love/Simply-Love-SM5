@@ -308,12 +308,9 @@ local t = Def.ActorFrame {
 			table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
 		end
 
-		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
-		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-			-- Also only add this if we're actually hovering over a song.
-			if GAMESTATE:GetCurrentSong() then
-				table.insert(wheel_options, {"GrooveStats", "Leaderboard"})
-			end
+		-- Only add this if we're actually hovering over a song.
+		if GAMESTATE:GetCurrentSong() then
+			table.insert(wheel_options, {"GrooveStats", "Leaderboard"})
 		end
 
 		if not GAMESTATE:IsCourseMode() then
