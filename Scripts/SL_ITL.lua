@@ -249,6 +249,30 @@ ReadItlFile = function(player)
 		itlData["fixedPoints"] = true
 	end
 
+	-- As of ITL 2024, there is a separate ranking for singles and doubles.
+	-- Old json file didn't store stepsType, so do a one time sweep to populate
+	if itlData["fixedStepsType"] == nil then
+		-- Loop through pathMap to find the stepsType of all the songs, and update it in the hashMap		
+		local pathMap = itlData["pathMap"]
+		local hashMap = itlData["hashMap"]
+		
+		for path, hash in pairs(pathMap) do
+			if hashMap[hash] ~= nil then
+				local songPath = path:gsub("/Songs","")		
+				local song = SONGMAN:FindSong(songPath)	
+				local allSteps = song:GetAllSteps()
+				-- Songs with more than one chart will be from the original pack i.e. not ITL.
+				-- These ones could have both singles and doubles, so it won't be accurate
+				if #allSteps == 1 then				
+					local steps = allSteps[1]
+					local stepsType = steps:GetStepsType() == "StepsType_Dance_Single" and "single" or "double"
+					hashMap[hash]["stepsType"] = stepsType		
+				end	
+			end
+		end
+		itlData["fixedStepsType"] = true
+	end
+
 	SL[pn].ITLData = itlData
 end
 
@@ -387,7 +411,8 @@ local DataForSong = function(player, prevData)
 	local points = GetITLPointsForSong(maxPoints, ex)
 	local usedCmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil
 	local date = ("%04d-%02d-%02d"):format(year, month, day)
-	
+	local stepsType = steps:GetStepsType() == "StepsType_Dance_Single" and "single" or "double"
+
 	return {
 		["judgments"] = judgments,
 		["ex"] = ex * 100,
@@ -397,6 +422,7 @@ local DataForSong = function(player, prevData)
 		["date"] = date,
 		["noCmod"] = noCmod,
 		["maxPoints"] = maxPoints,
+		["stepsType"] = stepsType,
 	}
 end
 
@@ -431,7 +457,8 @@ CalculateITLSongRanks = function(player)
 	itlData = SL[pn].ITLData
 	local songHashes = itlData["hashMap"]
 
-	-- Create and populate tables to rank each hash score
+	--TODO: delete this once it's confirmed working
+	-- Create and populate tables to rank each hash score	
 	local points = {}
 	local songPoints = {}
 	for key in pairs(songHashes) do
@@ -456,6 +483,51 @@ CalculateITLSongRanks = function(player)
 	-- Write song scores sorted by point value descending into json
 	itlData["points"] = points
 
+	-- Create and populate tables to rank each hash score by stepsType
+	local pointsSingle = {}
+	local pointsDouble = {}
+	
+	local songPointsSingle = {}
+	local songPointsDouble = {}
+	for key in pairs(songHashes) do
+		if songHashes[key]["stepsType"] == "single" then			
+			songPointsSingle[key] = songHashes[key]["points"]
+			table.insert(pointsSingle,songHashes[key]["points"])
+		else -- don't need to specify doubles right? unless there will ITL Couples will become a thing lol
+			songPointsDouble[key] = songHashes[key]["points"]
+			table.insert(pointsDouble,songHashes[key]["points"])
+		end
+	end		 
+	-- Reverse sort points values
+	table.sort(pointsSingle,function(a,b) return a > b end)
+	table.sort(pointsDouble,function(a,b) return a > b end)
+
+	for k, v in pairs(pointsSingle) do
+		for key in pairs(songHashes) do
+			if songHashes[key]["points"] == v then
+				songHashes[key]["rank"] = k
+				break
+			end
+		end
+	end
+
+	for k, v in pairs(pointsDouble) do
+		for key in pairs(songHashes) do
+			if songHashes[key]["points"] == v then
+				songHashes[key]["rank"] = k
+				break
+			end
+		end
+	end
+
+	itlData["hashMap"] = songHashes
+
+	-- Write song scores sorted by point value descending into json
+	itlData["points"] = points
+
+	itlData["pointsSingle"] = pointsSingle
+	itlData["pointsDouble"] = pointsDouble
+
 	-- Rewrite the data in memory
 	SL[pn].ITLData = itlData
 end
@@ -466,6 +538,8 @@ UpdateItlExScore = function(player, hash, exscore)
 	local hashMap = SL[pn].ITLData["hashMap"]
 	if hashMap[hash] == nil then
 		-- New score, just copy things over.
+		local steps = GAMESTATE:GetCurrentSteps(player)
+
 		hashMap[hash] = {
 			["judgments"] = {},
 			["ex"] = 0,
@@ -475,16 +549,19 @@ UpdateItlExScore = function(player, hash, exscore)
 			["date"] = "",
 			["maxPoints"] = 0,
 			["noCmod"] = false,
+			-- ITL has doubles now. populate the steps type of the song
+			["stepsType"] = steps:GetStepsType() == "StepsType_Dance_Single" and "single" or "double",
 		}
 		
 		updated = true
 	end
-	
+
 	if exscore >= hashMap[hash]["ex"] or hashMap[hash]["points"] == 0 then
 		hashMap[hash]["ex"] = exscore
 		
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		local chartName = steps:GetChartName()
+		
 
 		local maxPoints = nil
 		if steps:GetDescription() == SL[pn].Streams.Description then
@@ -561,6 +638,7 @@ UpdateItlData = function(player)
 		end
 
 		local data = DataForSong(player, prevData)
+
 		-- C-Modded a No CMOD chart. Don't save this score.
 		if data["noCmod"] and data["usedCmod"] then
 			return
@@ -587,6 +665,7 @@ UpdateItlData = function(player)
 				["date"] = data["date"],
 				["maxPoints"] = data["maxPoints"],
 				["noCmod"] = data["noCmod"],
+				["stepsType"] = data["stepsType"],
 			}
 			updated = true
 		else
@@ -631,6 +710,7 @@ UpdateItlData = function(player)
 				hashMap[hash]["date"] = data["date"]
 				hashMap[hash]["noCmod"] = data["noCmod"]
 				hashMap[hash]["maxPoints"] = data["maxPoints"]
+				hashMap[hash]["stepsType"] = data["stepsType"]
 			end
 		end
 

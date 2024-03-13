@@ -183,12 +183,12 @@ for player in ivalues(PlayerNumber) do
 									local rank = SL[pn].ITLData["hashMap"][hash]["rank"]
 									
 									self:settext(tostring(rank))
-
-									if rank <= 10 then self:diffuse(SL.JudgmentColors["FA+"][1])
-									elseif rank <= 25 then self:diffuse(SL.JudgmentColors["FA+"][2])
-									elseif rank <= 50 then self:diffuse(SL.JudgmentColors["FA+"][3])
-									elseif rank <= 75 then self:diffuse(SL.JudgmentColors["FA+"][4])
-									elseif rank <= 85 then self:diffuse(SL.JudgmentColors["FA+"][5])
+									local style = GAMESTATE:GetCurrentStyle():GetName()
+									if 		rank <=	(style == "single" and 10 or 5) 	then self:diffuse(SL.JudgmentColors["FA+"][1])
+									elseif	rank <= (style == "single" and 25 or 20)	then self:diffuse(SL.JudgmentColors["FA+"][2])
+									elseif	rank <= (style == "single" and 50 or 40) 	then self:diffuse(SL.JudgmentColors["FA+"][3])
+									elseif	rank <= (style == "single" and 75 or 50) 	then self:diffuse(SL.JudgmentColors["FA+"][4])
+									elseif	rank <= (style == "single" and 85 or 55)	then self:diffuse(SL.JudgmentColors["FA+"][5])
 									else self:diffuse(Color.Red)
 									end
 								end
