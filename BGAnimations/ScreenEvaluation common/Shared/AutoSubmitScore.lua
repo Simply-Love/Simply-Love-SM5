@@ -335,10 +335,11 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 								recordText:diffuseshift():effectcolor1(Color.White):effectcolor2(Color.Yellow):effectperiod(3)
 								local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/"
 								if personalRank == 1 then
-									recordText:settext("World Record!")
+									local worldRecordText = "World Record!"
 									if showExScore then
 										worldRecordText = worldRecordText .. " (EX)"
 									end
+									recordText:settext(worldRecordText)
 									-- Play random sound in Sounds/Evaluation WR/
 									soundDir = soundDir .. "Evaluation WR/"
 									audio_files = findFiles(soundDir)
