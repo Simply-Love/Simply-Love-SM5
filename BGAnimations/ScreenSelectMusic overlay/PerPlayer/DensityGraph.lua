@@ -79,6 +79,13 @@ local af = Def.ActorFrame{
 			if GAMESTATE:GetNumSidesJoined() == 2 then
 				self:queuecommand("TogglePatternInfo")
 			end
+		elseif params.Name == "CloseFolder1" or params.Name == "CloseFolder2" or params.Name == "CloseFolder3" then
+			local wheel = SCREENMAN:GetTopScreen():GetMusicWheel()
+			local section = wheel:GetSelectedSection()
+			wheel:SetOpenSection(""):SetOpenSection(section):SetOpenSection("")
+			wheel:Move(1)
+			wheel:Move(-1)
+			wheel:Move(0)
 		end
 	end,
 }

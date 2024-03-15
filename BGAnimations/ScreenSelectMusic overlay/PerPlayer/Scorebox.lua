@@ -155,13 +155,9 @@ local LeaderboardRequestProcessor = function(res, master)
 
 	if boogie then
 		style_color[0] = BoogieStatsPurple
+		style_color[1] = BoogieStatsPurple
 		bsBox:visible(true)
 		bsExBox:visible(false)
-		gsBox:visible(false)
-	elseif boogie_ex then
-		style_color[0] = BoogieStatsPurple
-		bsBox:visible(false)
-		bsExBox:visible(true)
 		gsBox:visible(false)
 	else
 		style_color[0] = GrooveStatsBlue
@@ -178,165 +174,175 @@ local LeaderboardRequestProcessor = function(res, master)
 		SetScoreData(1, 1, "", "No Scores", "", false, false, false, false)
 		SetScoreData(2, 1, "", "No Scores", "", false, false, false, false)
 		
-		-- Don't display the second leaderboard on BoogieStats responses
-		if boogie or boogie_ex then
-			all_data[2].has_data = false
-		end
+		all_data[1].has_data = false
+		all_data[2].has_data = false
+		
+		local showITG = SL["P"..n].ActiveModifiers.SBITGScore
+		local showEX = SL["P"..n].ActiveModifiers.SBEXScore
+		local showEvents = SL["P"..n].ActiveModifiers.SBEvents
 
 		local numEntries = 0
 		if SL["P"..n].ActiveModifiers.ShowEXScore then
-			-- If the player is using EX scoring, then we want to display the EX leaderboard first.			
-			if data[playerStr]["exLeaderboard"] then
-				numEntries = 0
-				for entry in ivalues(data[playerStr]["exLeaderboard"]) do
+			-- If the player is using EX scoring, then we want to display the EX leaderboard first.		
+			if showEX then
+				if data[playerStr]["exLeaderboard"] then
+					numEntries = 0
+					for entry in ivalues(data[playerStr]["exLeaderboard"]) do
+						numEntries = numEntries + 1
+						SetScoreData(1, numEntries,
+										tostring(entry["rank"]),
+										entry["name"],
+										string.format("%.2f", entry["score"]/100),
+										entry["isSelf"],
+										entry["isRival"],
+										entry["isFail"],
+										true
+									)
+					end
 					numEntries = numEntries + 1
-					SetScoreData(1, numEntries,
-									tostring(entry["rank"]),
-									entry["name"],
-									string.format("%.2f", entry["score"]/100),
-									entry["isSelf"],
-									entry["isRival"],
-									entry["isFail"],
-									true
-								)
-				end
-				numEntries = numEntries + 1
-				for i=numEntries,5,1 do
-					SetScoreData(1, i, "", "", "", "", "", "", true)
+					for i=numEntries,5,1 do
+						SetScoreData(1, i, "", "", "", "", "", "", true)
+					end
 				end
 			end
 
-			if data[playerStr]["gsLeaderboard"] then
-				numEntries = 0
-				for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
+			if showITG then
+				if data[playerStr]["gsLeaderboard"] then
+					numEntries = 0
+					for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
+						numEntries = numEntries + 1
+						SetScoreData(2, numEntries,
+										tostring(entry["rank"]),
+										entry["name"],
+										string.format("%.2f", entry["score"]/100),
+										entry["isSelf"],
+										entry["isRival"],
+										entry["isFail"],
+										boogie_ex
+									)
+					end
 					numEntries = numEntries + 1
-					SetScoreData(2, numEntries,
-									tostring(entry["rank"]),
-									entry["name"],
-									string.format("%.2f", entry["score"]/100),
-									entry["isSelf"],
-									entry["isRival"],
-									entry["isFail"],
-									boogie_ex
-								)
-				end
-				numEntries = numEntries + 1
-				for i=numEntries,5,1 do
-					SetScoreData(2, i, "", "", "", "", "", "", boogie_ex)
+					for i=numEntries,5,1 do
+						SetScoreData(2, i, "", "", "", "", "", "", boogie_ex)
+					end
 				end
 			end
 		else
 			-- Display the main GrooveStats leaderboard first if player is not using EX scoring.
-			cur_style = 0
-			
-			if data[playerStr]["gsLeaderboard"] then
-				numEntries = 0
-				for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
+			if showITG then
+				if data[playerStr]["gsLeaderboard"] then
+					numEntries = 0
+					for entry in ivalues(data[playerStr]["gsLeaderboard"]) do
+						numEntries = numEntries + 1
+						SetScoreData(1, numEntries,
+										tostring(entry["rank"]),
+										entry["name"],
+										string.format("%.2f", entry["score"]/100),
+										entry["isSelf"],
+										entry["isRival"],
+										entry["isFail"],
+										boogie_ex
+									)
+					end
 					numEntries = numEntries + 1
-					SetScoreData(1, numEntries,
-									tostring(entry["rank"]),
-									entry["name"],
-									string.format("%.2f", entry["score"]/100),
-									entry["isSelf"],
-									entry["isRival"],
-									entry["isFail"],
-									boogie_ex
-								)
-				end
-				numEntries = numEntries + 1
-				for i=numEntries,5,1 do
-					SetScoreData(1, i, "", "", "", "", "", "", boogie_ex)
+					for i=numEntries,5,1 do
+						SetScoreData(1, i, "", "", "", "", "", "", boogie_ex)
+					end
 				end
 			end
 
-			if data[playerStr]["exLeaderboard"] then
-				numEntries = 0
-				for entry in ivalues(data[playerStr]["exLeaderboard"]) do
+			if showEX then
+				if data[playerStr]["exLeaderboard"] then
+					numEntries = 0
+					for entry in ivalues(data[playerStr]["exLeaderboard"]) do
+						numEntries = numEntries + 1
+						SetScoreData(2, numEntries,
+										tostring(entry["rank"]),
+										entry["name"],
+										string.format("%.2f", entry["score"]/100),
+										entry["isSelf"],
+										entry["isRival"],
+										entry["isFail"],
+										true
+									)
+					end
 					numEntries = numEntries + 1
-					SetScoreData(2, numEntries,
-									tostring(entry["rank"]),
-									entry["name"],
-									string.format("%.2f", entry["score"]/100),
-									entry["isSelf"],
-									entry["isRival"],
-									entry["isFail"],
-									true
-								)
-				end
-				numEntries = numEntries + 1
-				for i=numEntries,5,1 do
-					SetScoreData(2, i, "", "", "", "", "", "", true)
+					for i=numEntries,5,1 do
+						SetScoreData(2, i, "", "", "", "", "", "", true)
+					end
 				end
 			end
 		end
 
 		-- Display event boxes first if they are applicable
-		if data[playerStr]["rpg"] then
-			cur_style = 3
-			local numEntries = 0
-			SetScoreData(3, 1, "", "No Scores", "", false, false, false)
+		if showEvents then
+			if data[playerStr]["rpg"] then
+				cur_style = 3
+				local numEntries = 0
+				SetScoreData(3, 1, "", "No Scores", "", false, false, false)
 
-			if data[playerStr]["rpg"]["rpgLeaderboard"] then
-				for entry in ivalues(data[playerStr]["rpg"]["rpgLeaderboard"]) do
-					numEntries = numEntries + 1
-					SetScoreData(3, numEntries,
-									tostring(entry["rank"]),
-									entry["name"],
-									string.format("%.2f", entry["score"]/100),
-									entry["isSelf"],
-									entry["isRival"],
-									entry["isFail"],
-									false
-								)
-				end
-				numEntries = numEntries + 1
-				for i=numEntries,5,1 do
-					SetScoreData(3, i,
-									"",
-									"",
-									"",
-									false,
-									false,
-									false)
-				end
-			end
-		end
-
-		if data[playerStr]["itl"] then
-			cur_style = 4
-			local numEntries = 0
-			SetScoreData(4, 1, "", "No Scores", "", false, false, false)
-
-			if data[playerStr]["itl"]["itlLeaderboard"] then
-				for entry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
-					if entry["isSelf"] then
-						UpdateItlExScore(player, SL[pn].Streams.Hash, entry["score"])
-						SL["P"..n].itlScore = entry["score"]
-						local stepartist = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("StepArtistAF_P"..n)
-						if stepartist ~= nil then
-						  stepartist:queuecommand("ITL")
-						end
+				if data[playerStr]["rpg"]["rpgLeaderboard"] then
+					for entry in ivalues(data[playerStr]["rpg"]["rpgLeaderboard"]) do
+						numEntries = numEntries + 1
+						SetScoreData(3, numEntries,
+										tostring(entry["rank"]),
+										entry["name"],
+										string.format("%.2f", entry["score"]/100),
+										entry["isSelf"],
+										entry["isRival"],
+										entry["isFail"],
+										false
+									)
 					end
 					numEntries = numEntries + 1
-					SetScoreData(4, numEntries,
-									tostring(entry["rank"]),
-									entry["name"],
-									string.format("%.2f", entry["score"]/100),
-									entry["isSelf"],
-									entry["isRival"],
-									entry["isFail"],
-									true
-								)
+					for i=numEntries,5,1 do
+						SetScoreData(3, i,
+										"",
+										"",
+										"",
+										false,
+										false,
+										false)
+					end
 				end
-				numEntries = numEntries + 1
-				for i=numEntries,5,1 do
-					SetScoreData(4, i,
-									"",
-									"",
-									"",
-									false,
-									false,
-									false)
+			end
+
+			if data[playerStr]["itl"] then
+				cur_style = 4
+				local numEntries = 0
+				SetScoreData(4, 1, "", "No Scores", "", false, false, false)
+
+				if data[playerStr]["itl"]["itlLeaderboard"] then
+					for entry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+						if entry["isSelf"] then
+							UpdateItlExScore(player, SL[pn].Streams.Hash, entry["score"])
+							SL["P"..n].itlScore = entry["score"]
+							local stepartist = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("PerPlayer"):GetChild("StepArtistAF_P"..n)
+							if stepartist ~= nil then
+							  stepartist:queuecommand("ITL")
+							end
+						end
+						numEntries = numEntries + 1
+						SetScoreData(4, numEntries,
+										tostring(entry["rank"]),
+										entry["name"],
+										string.format("%.2f", entry["score"]/100),
+										entry["isSelf"],
+										entry["isRival"],
+										entry["isFail"],
+										true
+									)
+					end
+					numEntries = numEntries + 1
+					for i=numEntries,5,1 do
+						SetScoreData(4, i,
+										"",
+										"",
+										"",
+										false,
+										false,
+										false)
+					end
 				end
 			end
 		end
@@ -624,7 +630,7 @@ local af = Def.ActorFrame{
 			self:zoom(0.8):diffusealpha(0.5)
 		end,
 		LoopScoreboxCommand=function(self)
-			if cur_style == 0 then
+			if cur_style == 0 or cur_style == 1 then
 				self:sleep(transition_seconds/2):linear(transition_seconds/2):diffusealpha(0.5)
 			else
 				self:linear(transition_seconds/2):diffusealpha(0)

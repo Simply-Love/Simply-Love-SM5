@@ -571,6 +571,11 @@ local Overrides = {
 		end,
 	},
 	-------------------------------------------------------------------------
+	ScoreBoxOptions = {
+		SelectType = "SelectMultiple",
+		Values = { "SBITGScore", "SBEXScore", "SBEvents" },
+	},
+	-------------------------------------------------------------------------
 	StepStatsExtra = {
 		Choices = function()
 			local choices = { "None", "ErrorStats" }

@@ -92,6 +92,10 @@ local permitted_profile_settings = {
 	StepInfo             = "boolean",
 	DisplayScorebox      = "boolean",
 	
+	SBITGScore           = "boolean",
+	SBEXScore            = "boolean",
+	SBEvents             = "boolean",
+	
 	FlashMiss            = "boolean",
 	FlashWayOff          = "boolean",
 	FlashDecent          = "boolean",
