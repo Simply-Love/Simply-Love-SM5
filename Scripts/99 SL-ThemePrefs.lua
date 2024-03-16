@@ -307,6 +307,12 @@ SL_CustomPrefs.Get = function()
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values  = { true, false }
 		},
+		
+		CloseFolderCodes = {
+			Default = "None",
+			Choices = { "None", "Up-Down", "Down-Up", "Select-MenuUp" },
+			Values = { "Off", "CloseFolder1", "CloseFolder2", "CloseFolder3" },
+		},
 
 		ThemeFont = {
 			Default = "Common",
