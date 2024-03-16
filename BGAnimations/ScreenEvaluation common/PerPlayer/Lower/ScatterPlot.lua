@@ -1,6 +1,7 @@
 -- if we're in CourseMode, bail now
 -- the normal LifeMeter graph (Def.GraphDisplay) will be drawn
-if GAMESTATE:IsCourseMode() then return end
+-- if GAMESTATE:IsCourseMode() then return end
+local iscourse = GAMESTATE:IsCourseMode()
 
 -- arguments passed in from Graphs.lua
 local args = ...
@@ -9,6 +10,18 @@ local pn = ToEnumShortString(player)
 local GraphWidth = args.GraphWidth
 local GraphHeight = args.GraphHeight
 local mods = SL[pn].ActiveModifiers
+
+local function TotalCourseLength(player)
+    -- utility for graph stuff because i ended up doing this a lot
+    -- i use this method instead of TrailUtil.GetTotalSeconds because that leaves unused time at the end in graphs
+    local trail = GAMESTATE:GetCurrentTrail(player)
+    local t = 0
+    for te in ivalues(trail:GetTrailEntries()) do
+        t = t + te:GetSong():GetLastSecond()
+    end
+
+    return t
+end
 
 -- sequential_offsets gathered in ./BGAnimations/ScreenGameplay overlay/JudgmentOffsetTracking.lua
 local sequential_offsets = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].sequential_offsets
@@ -23,7 +36,7 @@ local Steps = GAMESTATE:GetCurrentSteps(player)
 local TimingData = Steps:GetTimingData()
 -- FirstSecond and LastSecond are used in scaling the x-coordinates of the AMV's vertices
 local FirstSecond = math.min(TimingData:GetElapsedTimeFromBeat(0), 0)
-local LastSecond = GAMESTATE:GetCurrentSong():GetLastSecond()
+local LastSecond = (not iscourse) and GAMESTATE:GetCurrentSong():GetLastSecond() or TotalCourseLength(player)
 
 -- variables that will be used and re-used in the loop while calculating the AMV's vertices
 local Offset, CurrentSecond, TimingWindow, x, y, c, r, g, b
@@ -195,6 +208,27 @@ end
 -- because the entire AMV will be a single Actor rather than n Actors with n unique Draw() calls.
 -- Since we've now split the table into multiples, create an ActorMultiVertex for each table and store them into one ActorFrame.
 local af = Def.ActorFrame{}
+
+if iscourse then
+	local trailEntries = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()
+	local curSecs = 0
+	
+	for i=1,#trailEntries do
+		local endSec = trailEntries[i]:GetSong():GetLastSecond()
+		local startX = (-GraphWidth/2) + (curSecs / LastSecond) * GraphWidth
+		local endX = (endSec / LastSecond) * GraphWidth
+		af[#af+1] = Def.Quad{
+			InitCommand=function(self)
+				self:x(startX):zoomto(endX, GraphHeight):diffuse(LightenColor(LightenColor(color("#101519")))):diffusealpha(0.5):vertalign(top):horizalign(left)
+				if i%2 == 0 then self:visible(false) end
+				if ThemePrefs.Get("VisualStyle") == "Technique" then
+					self:diffusealpha(0.75)
+				end
+			end
+		}
+		curSecs = curSecs + endSec
+	end
+end
 
 for verts in ivalues(vertsTable) do
 	local amv = Def.ActorMultiVertex{
