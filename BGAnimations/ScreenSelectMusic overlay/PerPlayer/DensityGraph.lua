@@ -9,6 +9,10 @@ local pn = ToEnumShortString(player)
 local height = 64
 local width = IsUsingWideScreen() and 286 or 276
 
+-- In 2-players mode, whether the DensityGraph or PatternInfo is shown
+-- Can be toggled by the code "ToggleChartInfo" in metrics.ini
+local showPatternInfo = false
+
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
@@ -43,6 +47,7 @@ local af = Def.ActorFrame{
 			-- Only need to toggle in versus since in single player modes, both
 			-- panes are already displayed.
 			if GAMESTATE:GetNumSidesJoined() == 2 then
+				showPatternInfo = not showPatternInfo
 				self:queuecommand("TogglePatternInfo")
 			end
 		end
@@ -107,10 +112,10 @@ af2[#af2+1] = NPS_Histogram(player, width, height)..{
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
-		self:visible(true)
+		self:visible(not showPatternInfo)
 	end,
 	TogglePatternInfoCommand=function(self)
-		self:visible(not self:GetVisible())
+		self:visible(not showPatternInfo)
 	end
 }
 -- Don't let the density graph parse the chart.
@@ -138,11 +143,11 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	RedrawCommand=function(self)
 		if SL[pn].Streams.PeakNPS ~= 0 then
 			self:settext(("Peak NPS: %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
-			self:visible(true)
+			self:visible(not showPatternInfo)
 		end
 	end,
 	TogglePatternInfoCommand=function(self)
-		self:visible(not self:GetVisible())
+		self:visible(not showPatternInfo)
 	end
 }
 
@@ -157,10 +162,10 @@ af2[#af2+1] = Def.ActorFrame{
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
-		self:visible(true)
+		self:visible(not showPatternInfo)
 	end,
 	TogglePatternInfoCommand=function(self)
-		self:visible(not self:GetVisible())
+		self:visible(not showPatternInfo)
 	end,
 	Def.Quad{
 		InitCommand=function(self)
@@ -218,7 +223,7 @@ af2[#af2+1] = Def.ActorFrame{
 		end
 	end,
 	TogglePatternInfoCommand=function(self)
-		self:visible(not self:GetVisible())
+		self:visible(showPatternInfo)
 	end,
 	
 	-- Background for the additional chart info.
