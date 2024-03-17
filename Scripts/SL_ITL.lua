@@ -227,8 +227,16 @@ ReadItlFile = function(player)
 				end
 			end
 		end
-
 		itlData["fixedEx2024"] = true
+		
+		if itlData["fixedLamps"] == nil then
+			for hash, data in pairs(hashMap) do
+				if data["ex"] == 10000 then
+					data["clearType"] = 5
+				end
+			end
+		end
+		itlData["fixedLamps"] = true	
 	end
 	
 	-- Fix points that got default-stored as empty strings in an earlier
@@ -349,7 +357,7 @@ local DataForSong = function(player, prevData)
 		totalTaps = totalTaps + judgments["W2"]
 		if totalTaps == 0 then clearType = 4 end
 
-		totalTaps = totalTaps + judgments["W1"]
+		totalTaps = totalTaps + judgments["W115"]
 		if totalTaps == 0 then clearType = 5 end
 
 		return clearType
