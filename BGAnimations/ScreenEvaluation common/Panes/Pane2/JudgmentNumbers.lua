@@ -48,13 +48,13 @@ end
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
 	local number = counts[window] or 0
-	local number15 = number
-	local display15 = false
+	local number10 = number
+	local display10 = true
 	
 	if i == 1 then
-		number15 = counts["W015"]
+		number10 = counts["W010"]
 	elseif i == 2 then
-		number15 = counts["W115"]
+		number10 = counts["W110"]
 	end
 
 	-- actual numbers
@@ -87,12 +87,12 @@ for i=1,#TapNoteScores.Types do
 			end
 		end,
 		MarqueeCommand=function(self)
-			if display15 then
-				self:settext(("%04.0f"):format(number15))
-				display15 = false
+			if display10 then
+				self:settext(("%04.0f"):format(number10))
+				display10 = false
 			else
 				self:settext(("%04.0f"):format(number))
-				display15 = true
+				display10 = true
 			end
 			self:sleep(2):queuecommand("Marquee")
 		end

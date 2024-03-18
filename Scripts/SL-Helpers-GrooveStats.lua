@@ -525,7 +525,7 @@ CreateCommentString = function(player)
 			local suffix = i == 6 and "m" or suffixes[i]
 			
 			if i == 1 then
-				number = counts["W115"]
+				number = counts["W1"]
 			end
 			
 			if number ~= 0 then

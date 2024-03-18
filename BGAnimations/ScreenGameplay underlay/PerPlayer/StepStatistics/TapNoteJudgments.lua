@@ -118,25 +118,27 @@ for index, window in ipairs(TNS.Types) do
 			-- Check the top window case for ShowFaPlusWindow.
 			if ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" then
 				local is_W0 = IsW0Judgment(params, player)
-				if is_W0 and window == "W0" then
-					TNS.Judgments[window] = TNS.Judgments[window] + 1
-					incremented = true
-				end
+				local is_W010 = IsW010Judgment(params, player)
+				if SL[pn].ActiveModifiers.SmallerWhite then
+					if is_W010 and window == "W0" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
 
-				if not is_W0 and window == "W1" then
-					TNS.Judgments[window] = TNS.Judgments[window] + 1
-					incremented = true
-				end
-			elseif SL[pn].ActiveModifiers.SmallerWhite and SL.Global.GameMode == "FA+" and ToEnumShortString(params.TapNoteScore) == "W1" then
-				local is_W0 = IsW0Judgment(params, player)
-				if is_W0 and window == "W1" then
-					TNS.Judgments[window] = TNS.Judgments[window] + 1
-					incremented = true
-				end
+					if not is_W010 and window == "W1" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
+				else
+					if is_W0 and window == "W0" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
 
-				if not is_W0 and window == "W2" then
-					TNS.Judgments[window] = TNS.Judgments[window] + 1
-					incremented = true
+					if not is_W0 and window == "W1" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
 				end
 			elseif ToEnumShortString(params.TapNoteScore) == window then
 				TNS.Judgments[window] = TNS.Judgments[window] + 1
@@ -181,7 +183,7 @@ for index, window in ipairs(TNS.Types) do
 				end,
 			}
 			
-			if index == 1 and SL[pn].ActiveModifiers.SmallerWhite and (ShowFaPlusWindow or SL.Global.GameMode == "FA+") then
+			if index == 1 and SL[pn].ActiveModifiers.SmallerWhite and ShowFaPlusWindow then
 				af[#af+1] = LoadFont("Common Normal")..{
 					Text="(10ms)",
 					InitCommand=function(self)

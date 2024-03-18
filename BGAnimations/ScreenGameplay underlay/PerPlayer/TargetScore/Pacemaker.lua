@@ -4,7 +4,7 @@ local pn = ToEnumShortString(player)
 local GetPossibleExScore = function(counts)
 	local best_counts = {}
 	
-	local keys = { "W015", "W115", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
 
 	for key in ivalues(keys) do
 		local value = counts[key]

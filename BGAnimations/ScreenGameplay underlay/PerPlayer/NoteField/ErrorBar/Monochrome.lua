@@ -187,7 +187,7 @@ local timing = {}
 for i = 1, #enabledTimingWindows do
     local wi = enabledTimingWindows[i]
     
-    if (mods.ShowFaPlusWindow or (mods.SmallerWhite and SL.Global.GameMode == "FA+")) and wi == 1 then
+    if mods.ShowFaPlusWindow and wi == 1 then
         -- Split the Fantastic window
         timing[#timing + 1] = GetTimingWindow(1, "FA+", mods.SmallerWhite)
         timing[#timing + 1] = GetTimingWindow(2, "FA+")

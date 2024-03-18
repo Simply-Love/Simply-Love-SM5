@@ -47,7 +47,7 @@ end
 local GetPossibleExScore = function(counts)
 	local best_counts = {}
 	
-	local keys = { "W015", "W115", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
 
 	for key in ivalues(keys) do
 		local value = counts[key]
@@ -64,7 +64,7 @@ local GetPossibleExScore = function(counts)
 			elseif key == "HitMine" then
 				best_counts[key] = 0
 			else
-				best_counts["W015"] = best_counts["W015"] + value
+				best_counts["W0"] = best_counts["W0"] + value
 			end
 		end
 	end

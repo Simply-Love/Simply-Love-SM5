@@ -358,7 +358,7 @@ local DataForSong = function(player, prevData)
 		totalTaps = totalTaps + judgments["W2"]
 		if totalTaps == 0 then clearType = 4 end
 
-		totalTaps = totalTaps + judgments["W115"]
+		totalTaps = totalTaps + judgments["W1"]
 		if totalTaps == 0 then clearType = 5 end
 
 		return clearType

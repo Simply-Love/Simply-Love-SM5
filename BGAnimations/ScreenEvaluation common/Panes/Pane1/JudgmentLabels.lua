@@ -80,68 +80,22 @@ for i=1, #TapNoteScores.Types do
 				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
 			end
 		}
-		if i==1 and SL[pn].ActiveModifiers.SmallerWhite and SL.Global.GameMode == "FA+" then
-			local show15 = false
-			t[#t+1] = LoadFont("Common Normal")..{
-				Text="10ms",
-				InitCommand=function(self) self:zoom(0.6):horizalign(right):maxwidth(76) end,
-				BeginCommand=function(self)
-					self:x( (controller == PLAYER_1 and 28) or -28 )
-					if maxCount > 9999 then
-						length = math.floor(math.log10(maxCount)+1)
-						modifier = controller == PLAYER_1 and -11*(length-4) or 11*(length-4)
-						finalPos = 28 + modifier
-						finalZoom = 0.6 - 0.1*(length-4)
-						self:x( (controller == PLAYER_1 and finalPos) or -finalPos ):zoom(finalZoom)
-					end
-					self:y(i*26-30)
-					-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
-					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][i] )
-					self:playcommand("Marquee")
-				end,
-				MarqueeCommand=function(self)
-					if show15 then
-						self:settext("15ms")
-						show15 = false
-					else
-						self:settext("10ms")
-						show15 = true
-					end
-					
-					self:sleep(2):queuecommand("Marquee")
-				end
-			}
-		end
 	end
 end
 
 -- labels: hands/ex, holds, mines, rolls
 for index, label in ipairs(RadarCategories) do
-	-- Replace hands with the EX score only in FA+ mode.
-	-- We have a separate FA+ pane for ITG mode.
-	if index == 1 and SL.Global.GameMode == "FA+" then
-		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small" or "Mega/_mega font")..{
-			Text="EX",
-			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
-			BeginCommand=function(self)
-				self:x( (controller == PLAYER_1 and -160) or 90 )
-				self:y(38)
-				self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
-			end
-		}
-	else
-		local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
-		local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
+	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
+	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
-		t[#t+1] = LoadFont("Common Normal")..{
-			Text=label,
-			InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
-			BeginCommand=function(self)
-				self:x( (controller == PLAYER_1 and -160) or 90 )
-				self:y((index-1)*28 + 41)
-			end
-		}
-	end
+	t[#t+1] = LoadFont("Common Normal")..{
+		Text=label,
+		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
+		BeginCommand=function(self)
+			self:x( (controller == PLAYER_1 and -160) or 90 )
+			self:y((index-1)*28 + 41)
+		end
+	}
 end
 
 return t

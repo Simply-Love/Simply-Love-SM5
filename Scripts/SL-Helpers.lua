@@ -628,9 +628,6 @@ IsW0Judgment = function(params, player)
 		local scale = PREFSMAN:GetPreference("TimingWindowScale")
 		local pn = ToEnumShortString(player)
 		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-		if SL[pn].ActiveModifiers.SmallerWhite then
-			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
-		end
 
 		local offset = math.abs(params.TapNoteOffset)
 		if offset <= W0 then
@@ -641,9 +638,6 @@ IsW0Judgment = function(params, player)
 		local scale = PREFSMAN:GetPreference("TimingWindowScale")
 		local pn = ToEnumShortString(player)
 		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
-		if SL[pn].ActiveModifiers.SmallerWhite then
-			W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
-		end
 		
 		local offset = math.abs(params.TapNoteOffset)
 		if offset <= W0 then
@@ -653,7 +647,7 @@ IsW0Judgment = function(params, player)
 	return false
 end
 
-IsW015Judgment = function(params, player)
+IsW010Judgment = function(params, player)
 	if params.Player ~= player then return false end
 	if params.HoldNoteScore then return false end
 	
@@ -662,7 +656,7 @@ IsW015Judgment = function(params, player)
 		local prefs = SL.Preferences["FA+"]
 		local scale = PREFSMAN:GetPreference("TimingWindowScale")
 		local pn = ToEnumShortString(player)
-		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
+		local W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
 
 		local offset = math.abs(params.TapNoteOffset)
 		if offset <= W0 then
@@ -708,67 +702,29 @@ GetExJudgmentCounts = function(player)
 
 	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 
-	if SL.Global.GameMode == "FA+" then
-		for window in ivalues(TNS) do
-			adjusted_window = window
-			-- In FA+ mode, we need to shift the windows up 1 so that the key we're using is accurate.
-			-- E.g. W1 window becomes W0, W2 becomes W1, etc.
-			if window ~= "Miss" then
-				adjusted_window = "W"..(tonumber(window:sub(-1))-1)
-			end
-
-			-- Get the count.
-			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
-			-- 10ms check
-			if window == "W1" then
-				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0
-				local faPlus15 = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W015
-				local fa = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W1
-				-- Subtract white count from blue count
-				local fa15 = fa - faPlus15 + faPlus
-				
-				-- Populate the two numbers.
-				counts["W0"] = faPlus
-				counts["W015"] = faPlus15
-				counts["W1"] = fa
-				counts["W115"] = fa15
-			elseif window == "W2" then
-				local x=0
-			-- For the last window (Decent) in FA+ mode...
-			elseif window == "W5" then
-				-- Only populate if the window is still active.
-				if SL[pn].ActiveModifiers.TimingWindows[5] then
-					counts[adjusted_window] = number
-				end
-			else
-				counts[adjusted_window] = number
-			end
-		end
-	elseif SL.Global.GameMode == "ITG" then
-		for window in ivalues(TNS) do
-			-- Get the count.
-			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
-			-- We need to extract the W0 count in ITG mode.
-			if window == "W1" then
-				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total
-				local faPlus15 = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W015_total
-				-- Subtract FA+ count from the overall fantastic window count.
-				local number15 = number - faPlus15
-				number = number - faPlus
-				
-				-- Populate the two numbers.
-				counts["W0"] = faPlus
-				counts["W015"] = faPlus15
-				counts["W1"] = number
-				counts["W115"] = number15
-				
-			else
-				if ((window ~= "W4" and window ~= "W5") or
-						-- Only populate decent and way off windows if they're active.
-						(window == "W4" and SL[pn].ActiveModifiers.TimingWindows[4]) or
-						(window == "W5" and SL[pn].ActiveModifiers.TimingWindows[5])) then
-					counts[window] = number
-				end
+	for window in ivalues(TNS) do
+		-- Get the count.
+		local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
+		-- We need to extract the W0 count in ITG mode.
+		if window == "W1" then
+			local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total
+			local faPlus10 = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W010_total
+			-- Subtract FA+ count from the overall fantastic window count.
+			local number10 = number - faPlus10
+			number = number - faPlus
+			
+			-- Populate the two numbers.
+			counts["W0"] = faPlus
+			counts["W010"] = faPlus10
+			counts["W1"] = number
+			counts["W110"] = number10
+			
+		else
+			if ((window ~= "W4" and window ~= "W5") or
+					-- Only populate decent and way off windows if they're active.
+					(window == "W4" and SL[pn].ActiveModifiers.TimingWindows[4]) or
+					(window == "W5" and SL[pn].ActiveModifiers.TimingWindows[5])) then
+				counts[window] = number
 			end
 		end
 	end
@@ -848,9 +804,8 @@ CalculateExScore = function(player, ex_counts, use_actual_w0_weight)
 		total_points = total_points + totalMines * SL.ExWeights["HitMine"];
 	end
 
-	-- Use W015 instead of W0, to always calculate EX score based on 15ms blue fantastic window
 	local FAplus = (SL.Metrics[SL.Global.GameMode].PercentScoreWeightW1 == SL.Metrics[SL.Global.GameMode].PercentScoreWeightW2)
-	local keys = { "W015", "W115", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
 	local counts = ex_counts or SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
 	-- Just for validation, but shouldn't happen in normal gameplay.
 	if counts == nil then return 0 end
@@ -858,13 +813,7 @@ CalculateExScore = function(player, ex_counts, use_actual_w0_weight)
 	for key in ivalues(keys) do
 		local value = counts[key]
 		if value ~= nil then
-			if key == "W015" then
-				total_points = total_points + value * SL.ExWeights["W0"]
-			elseif key == "W115" then
-				total_points = total_points + value * SL.ExWeights["W1"]
-			else
-				total_points = total_points + value * SL.ExWeights[key]
-			end
+			total_points = total_points + value * SL.ExWeights[key]
 		end
 	end
 	

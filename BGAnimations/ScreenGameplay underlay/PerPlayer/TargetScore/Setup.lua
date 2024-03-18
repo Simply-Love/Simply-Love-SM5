@@ -27,8 +27,8 @@ local GetTopScore = function(kind)
 		if topscore then
 			if SL[pn].ActiveModifiers.ShowEXScore then
 				local counts = {}
-				counts["W015"] = topscore:GetTapNoteScore("TapNoteScore_W1") - topscore:GetScore()
-				counts["W115"] = topscore:GetScore()
+				counts["W0"] = topscore:GetTapNoteScore("TapNoteScore_W1") - topscore:GetScore()
+				counts["W1"] = topscore:GetScore()
 				counts["W2"] = topscore:GetTapNoteScore("TapNoteScore_W2")
 				counts["W3"] = topscore:GetTapNoteScore("TapNoteScore_W3")
 				counts["W4"] = topscore:GetTapNoteScore("TapNoteScore_W4")
