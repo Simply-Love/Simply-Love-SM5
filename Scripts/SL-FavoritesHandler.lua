@@ -112,19 +112,26 @@ generateFavoritesForMusicWheel = function()
                                 Songs = {}
                             }
                         else
-                            listofavorites[#listofavorites].Songs[#listofavorites[#listofavorites].Songs + 1] = line
+                            listofavorites[#listofavorites].Songs[#listofavorites[#listofavorites].Songs + 1] = {
+                                Path = line,
+                                Title = SONGMAN:FindSong(line) and SONGMAN:FindSong(line):GetDisplayMainTitle() or nil
+                            }
                             SL[ToEnumShortString(pn)].Favorites[#SL[ToEnumShortString(pn)].Favorites + 1] = SONGMAN:FindSong(line)
                         end
                     end
 
                     -- sort alphabetically
-                    table.sort(listofavorites, function(a, b)
-                        return a.Name:lower() < b.Name:lower()
-                    end)
+                    -- table.sort(listofavorites, function(a, b)
+                    --     return a.Name:lower() < b.Name:lower()
+                    -- end)
                     for i = 1, #listofavorites do
                         table.sort(listofavorites[i].Songs, function(a, b)
-                            return split("/", a)[2]:lower() <
-                                       split("/", b)[2]:lower()
+                            if a.Title == nil then
+                                return false
+                            elseif b.Title == nil then
+                                return true
+                            end
+                            return a.Title:lower() < b.Title:lower()
                         end)
                     end
 
@@ -132,7 +139,7 @@ generateFavoritesForMusicWheel = function()
                     for fav, _ in ivalues(listofavorites) do
                         strToWrite = strToWrite .. ("---%s\n"):format(fav.Name)
                         for song, i in ivalues(fav.Songs) do
-                            strToWrite = strToWrite .. ("%s\n"):format(song)
+                            strToWrite = strToWrite .. ("%s\n"):format(song.Path)
                         end
                     end
                 end
