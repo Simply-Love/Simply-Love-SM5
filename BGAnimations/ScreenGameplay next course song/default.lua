@@ -1,4 +1,4 @@
-return Def.ActorFrame{
+local af = Def.ActorFrame{
 	StartCommand=function(self)
 		self:diffusealpha(0):visible(true):sleep(0.75):decelerate(0.5):diffusealpha(1)
 	end,
@@ -27,3 +27,9 @@ return Def.ActorFrame{
 		StartCommand=function(self) self:scale_or_crop_background() end
   }
 }
+
+if GAMESTATE:IsCourseMode() then
+	af[#af+1] = LoadActor("ChangeSpeedModBeforeFirstNote.lua")
+end
+
+return af

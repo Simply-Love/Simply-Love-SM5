@@ -918,9 +918,10 @@ end
 
 -- -----------------------------------------------------------------------
 -- Returns a stringified form of a player's selected options.
-GetPlayerOptionsString = function(player)
+GetPlayerOptionsString = function(player, modsLevel)
+	local modsLevel = modsLevel or "ModsLevel_Preferred"
 	-- grab the song options from this PlayerState
-	local PlayerOptions = GAMESTATE:GetPlayerState(player):GetPlayerOptionsArray("ModsLevel_Preferred")
+	local PlayerOptions = GAMESTATE:GetPlayerState(player):GetPlayerOptionsArray(modsLevel)
 	local pn = ToEnumShortString(player)
 
 	-- start with an empty string...
