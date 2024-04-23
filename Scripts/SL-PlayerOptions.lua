@@ -634,15 +634,6 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	MeasureLines = {
 		Values = { "Off", "Measure", "Quarter", "Eighth" },
-		SaveSelections = function(self, list, pn)
-			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
-			for i=1,#self.Choices do
-				if list[i] then
-					mods.MeasureLines = self.Choices[i]
-				end
-			end
-		end
 	},
 	-------------------------------------------------------------------------
 	VisualDelay = {
