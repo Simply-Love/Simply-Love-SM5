@@ -3,13 +3,17 @@ local player = ...
 local playerStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local grade = playerStats:GetGrade()
 
--- only run in modified stepmania build
+-- only run in modified ITGmania build
 if SYNCMAN and SYNCMAN:IsEnabled() then
+    local ex_counts = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts
+    local white_count = ex_counts["W1"]
+    local ExScore, ActualPoints, ActualPossible = CalculateExScore(player)
+
 	-- Broadcast final score for each player, used by syncstart-web to save scores
 	if GAMESTATE:IsCourseMode() then
-		SYNCMAN:BroadcastFinalCourseScore(playerStats)
+		SYNCMAN:BroadcastFinalCourseScore(playerStats, white_count, ActualPoints, ActualPossible)
 	else
-		SYNCMAN:BroadcastFinalScore(playerStats)
+		SYNCMAN:BroadcastFinalScore(playerStats, white_count, ActualPoints, ActualPossible)
 	end
 end
 

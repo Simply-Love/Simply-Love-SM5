@@ -122,10 +122,17 @@ return Def.Actor{
 				end
 			end
 		end
-		if count_updated then
-			-- Broadcast so other elements on ScreenGameplay can process the updated count.
-			local ExScore, ActualPoints, ActualPossible = CalculateExScore(player)
 
+        local ExScore, ActualPoints, ActualPossible = CalculateExScore(player)
+
+        -- only run in modified ITGmania build
+        if SYNCMAN and SYNCMAN:IsEnabled() then
+            -- Broadcast score update
+            SYNCMAN:BroadcastScoreChange(stats, storage.ex_counts.W1, ActualPoints, ActualPossible)
+        end
+
+		if count_updated then
+            -- Broadcast so other elements on ScreenGameplay can process the updated count.
 			MESSAGEMAN:Broadcast(
 				"ExCountsChanged",
 				{
