@@ -58,6 +58,8 @@ if file_to_load == "None" then
 	return Def.Actor{
 		InitCommand=function(self) self:visible(false) end,
 		JudgmentMessageCommand=function(self,param)
+			if param.Player ~= player then return end
+
 			if ToEnumShortString(param.TapNoteScore) == "W1" and mods.ShowFaPlusWindow then
 				if not IsW0Judgment(param, player) and not IsAutoplay(player) then
 					frame = 1
