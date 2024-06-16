@@ -189,7 +189,7 @@ for i = 1, #enabledTimingWindows do
     
     if mods.ShowFaPlusWindow and wi == 1 then
         -- Split the Fantastic window
-        timing[#timing + 1] = GetTimingWindow(1, "FA+")
+        timing[#timing + 1] = GetTimingWindow(1, "FA+", mods.TighterFantasticWindow)
         timing[#timing + 1] = GetTimingWindow(2, "FA+")
     else
         timing[#timing + 1] = GetTimingWindow(wi)

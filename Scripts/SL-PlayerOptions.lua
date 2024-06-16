@@ -402,7 +402,7 @@ local Overrides = {
 				return { "ShowExScore" }
 			end
 
-			return { "ShowFaPlusWindow", "ShowExScore", "ShowFaPlusPane" }
+			return { "ShowFaPlusWindow", "ShowExScore", "ShowFaPlusPane", "TighterFantasticWindow" }
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
@@ -413,12 +413,14 @@ local Overrides = {
 
 			if SL.Global.GameMode == "FA+" then
 				list[1] = mods.ShowExScore or false
+				list[2] = mods.TighterFantasticWindow or false
 				return list
 			end		
 
 			list[1] = mods.ShowFaPlusWindow or false
 			list[2] = mods.ShowExScore or false
 			list[3] = mods.ShowFaPlusPane and true
+			list[4] = mods.TighterFantasticWindow or false
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
@@ -429,6 +431,7 @@ local Overrides = {
 				mods.ShowFaPlusWindow = list[1]
 				mods.ShowExScore = ThemePrefs.Get("ScoringSystem") == "EX"
 				mods.ShowFaPlusPane = true
+				mods.TighterFantasticWindow = false
 				-- Default to FA+ pane in Tournament Mode
 				sl_pn.EvalPanePrimary = 2
 				return
@@ -440,12 +443,14 @@ local Overrides = {
 				mods.ShowExScore = list[1]
 				-- the main score pane is already the FA+ pane
 				mods.ShowFaPlusPane = false
+				mods.TighterFantasticWindow = list[2]
 				return
 			end
 
 			mods.ShowFaPlusWindow = list[1]
 			mods.ShowExScore = list[2]
 			mods.ShowFaPlusPane = list[3]
+			mods.TighterFantasticWindow = list[4]
 			-- Default to FA+ pane if either options are active.
 			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and list[3]) and 2 or 1
 		end

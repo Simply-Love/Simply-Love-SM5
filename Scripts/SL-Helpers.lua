@@ -40,9 +40,13 @@ end
 -- -----------------------------------------------------------------------
 -- get timing window in milliseconds
 
-GetTimingWindow = function(n, mode)
+GetTimingWindow = function(n, mode, tighterFantasticWindow)
 	local prefs = SL.Preferences[mode or SL.Global.GameMode]
 	local scale = PREFSMAN:GetPreference("TimingWindowScale")
+	if mode == "FA+" and tighterFantasticWindow and n == 1 then
+		-- 8.5ms + 1.5ms
+		return 0.0085 * scale + prefs.TimingWindowAdd
+	end
 	return prefs["TimingWindowSecondsW"..n] * scale + prefs.TimingWindowAdd
 end
 
@@ -614,6 +618,26 @@ IsW0Judgment = function(params, player)
 	return false
 end
 
+IsW0TightJudgment = function(params, player)
+	if params.Player ~= player then return false end
+	if params.HoldNoteScore then return false end
+	
+	-- Only check/update FA+ count if we received a TNS in the top window.
+	if params.TapNoteScore == "TapNoteScore_W1" and SL.Global.GameMode == "ITG"  then
+		local prefs = SL.Preferences["FA+"]
+		local scale = PREFSMAN:GetPreference("TimingWindowScale")
+		local pn = ToEnumShortString(player)
+		-- 8.5ms + 1.5ms
+		local W0 = 0.0085 * scale + prefs["TimingWindowAdd"]
+
+		local offset = math.abs(params.TapNoteOffset)
+		if offset <= W0 then
+			return true
+		end
+	end
+	return false
+end
+
 -- -----------------------------------------------------------------------
 -- Gets the fully populated judgment counts for a player.
 -- This includes the FA+ window (W0). Decents/WayOffs (W4/W5) will only exist in the
@@ -678,11 +702,16 @@ GetExJudgmentCounts = function(player)
 			-- We need to extract the W0 count in ITG mode.
 			if window == "W1" then
 				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total
+				local faPlus10 = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_10_total
 				-- Subtract FA+ count from the overall fantastic window count.
+				local number10 = number - faPlus10
 				number = number - faPlus
+
 				-- Populate the two numbers.
 				counts["W0"] = faPlus
+				counts["W0_10"] = faPlus10
 				counts["W1"] = number
+				counts["W1_10"] = number10
 			else
 				if ((window ~= "W4" and window ~= "W5") or
 						-- Only populate decent and way off windows if they're active.

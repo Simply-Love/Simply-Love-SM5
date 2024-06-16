@@ -90,6 +90,34 @@ for i=1, #TapNoteScores.Types do
 				self:diffuse( TapNoteScores.Colors[i] )
 			end
 		}
+		if i==1 and SL[pn].ActiveModifiers.TighterFantasticWindow then
+			local displayTight = true
+
+			t[#t+1] = LoadFont("Common Normal")..{
+				Text="15ms",
+				InitCommand=function(self) 
+					self:zoom(0.6):horizalign(right):maxwidth(76) 
+				end,
+				BeginCommand=function(self)
+					self:x( (controller == PLAYER_1 and 28) or -28 )
+					self:y(i*26 -36)
+					-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
+					self:diffuse( TapNoteScores.Colors[i] )
+					self:playcommand("Marquee")					
+				end,
+				MarqueeCommand=function(self)
+					if displayTight then
+						self:settext("10ms")
+						displayTight = false
+					else
+						self:settext("15ms")
+						displayTight = true
+					end
+					
+					self:sleep(2):queuecommand("Marquee")
+				end
+			}
+		end
 	end
 end
 

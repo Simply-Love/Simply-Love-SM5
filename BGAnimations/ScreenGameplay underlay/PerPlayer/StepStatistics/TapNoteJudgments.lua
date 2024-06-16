@@ -129,15 +129,29 @@ for index, window in ipairs(TNS.Types) do
 			-- Check the top window case for ShowFaPlusWindow.
 			if ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" then
 				local is_W0 = IsW0Judgment(params, player)
-				if is_W0 and window == "W0" then
-					TNS.Judgments[window] = TNS.Judgments[window] + 1
-					incremented = true
+				local is_W0_tight = IsW0TightJudgment(params, player)
+				if SL[pn].ActiveModifiers.TighterFantasticWindow then
+					if is_W0_tight and window == "W0" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
+	
+					if not is_W0_tight and window == "W1" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
+				else
+					if is_W0 and window == "W0" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
+	
+					if not is_W0 and window == "W1" then
+						TNS.Judgments[window] = TNS.Judgments[window] + 1
+						incremented = true
+					end
 				end
 
-				if not is_W0 and window == "W1" then
-					TNS.Judgments[window] = TNS.Judgments[window] + 1
-					incremented = true
-				end
 			elseif ToEnumShortString(params.TapNoteScore) == window then
 				TNS.Judgments[window] = TNS.Judgments[window] + 1
 				incremented = true
@@ -159,7 +173,6 @@ for index, window in ipairs(TNS.Types) do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
 	if has_labels then
 		if windows[index] or index==#TNS.Names then
-
 			af[#af+1] = LoadFont("Common Normal")..{
 				Text=TNS.Names[index]:upper(),
 				InitCommand=function(self)
@@ -185,6 +198,29 @@ for index, window in ipairs(TNS.Types) do
 					end
 				end,
 			}
+
+			if index == 1 and SL[pn].ActiveModifiers.TighterFantasticWindow	and ShowFaPlusWindow then
+				af[#af+1] = LoadFont("Common Normal")..{
+					Text="(10ms)",
+					InitCommand=function(self)
+						self:zoom(0.6):maxwidth(72)
+						self:halign( PlayerNumber:Reverse()[player] )
+						if player==PLAYER_1 then
+							self:x( 80 + (digits-4)*16)
+						else
+							self:x(-80 - (digits-4)*16)
+						end
+						self:y((index-1) * row_height - 267)
+						self:diffuse( TNS.Colors[index] )
+	
+						-- flip alignment when ultrawide and both players joined
+						if IsUltraWide and #GAMESTATE:GetHumanPlayers() > 1 then
+							self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
+							self:x(self:GetX() * -1)
+						end
+					end,
+				}
+			end
 		end
 	end
 

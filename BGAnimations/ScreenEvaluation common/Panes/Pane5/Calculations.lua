@@ -129,7 +129,7 @@ for offset=-worst_window, worst_window, 0.001 do
 
 		if mods.ShowFaPlusPane and mods.ShowFaPlusWindow then
 			abs_offset = math.abs(offset)
-			if abs_offset > GetTimingWindow(1, "FA+") and abs_offset <= GetTimingWindow(2, "FA+") then
+			if abs_offset > GetTimingWindow(1, "FA+", mods.TighterFantasticWindow) and abs_offset <= GetTimingWindow(2, "FA+") then
 				c = SL.JudgmentColors["FA+"][2]
 			end
 		end
