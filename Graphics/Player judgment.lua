@@ -18,7 +18,8 @@ if file_to_load == "None" then
 			if param.Player ~= player then return end
 
 			if ToEnumShortString(param.TapNoteScore) == "W1" and mods.ShowFaPlusWindow then
-				if not IsW0Judgment(param, player) and not IsAutoplay(player) then
+				local is_W0 = IsW0TightJudgment(param, player) or (not mods.TighterFantasticWindow and IsW0Judgment(param, player))
+				if not is_W0 and not IsAutoplay(player) then
 					frame = 1
 					if param.Notes ~= nil then
 						for col,tapnote in pairs(param.Notes) do
@@ -151,7 +152,8 @@ return Def.ActorFrame{
 					-- Treat Autoplay specially. The TNS might be out of the range, but
 					-- it's a nicer experience to always just display the top window graphic regardless.
 					-- This technically causes a discrepency on the histogram, but it's likely okay.
-					if not IsW0Judgment(param, player) and not IsAutoplay(player) then
+					local is_W0 = IsW0TightJudgment(param, player) or (not mods.TighterFantasticWindow and IsW0Judgment(param, player))
+					if not is_W0 and not IsAutoplay(player) then
 						frame = 1
 						
 						for col,tapnote in pairs(param.Notes) do

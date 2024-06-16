@@ -16,6 +16,8 @@ local storage = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.Play
 local valid_tns = {
 	-- Emulated, not a real TNS.
 	W0 = true,
+	W0_10 = true,
+	W1_10 = true,
 
 	-- Actual TNS's
 	W1 = true,
@@ -38,7 +40,9 @@ return Def.Actor{
 			-- These counts are only tracked while a player hasn't failed.
 			-- This is so that the EX score stops changing once they've failed.
 			W0 = 0,
+			W0_10 = 0,
 			W1 = 0,
+			W1_10 = 0,
 			W2 = 0,
 			W3 = 0,
 			W4 = 0,
@@ -53,7 +57,8 @@ return Def.Actor{
 			-- The W0 count displayed in the pane in ScreenEvaluation should
 			-- still display the total count (whether or not the player has failed).
 			-- Track that separately.
-			W0_total = 0
+			W0_total = 0,
+			W0_10_total = 0
 		}
 	end,
 	JudgmentMessageCommand=function(self, params)
@@ -82,15 +87,26 @@ return Def.Actor{
 				if TNS == "W1" then
 					-- Check if this W1 is actually in the W0 window
 					local is_W0 = IsW0Judgment(params, player)
-					if is_W0 then
+					local is_W0_10 = IsW0TightJudgment(params, player)					
+					if is_W0_10 then	
 						if not stats:GetFailed() then
 							storage.ex_counts.W0 = storage.ex_counts.W0 + 1
+							storage.ex_counts.W0_10 = storage.ex_counts.W0_10 + 1
+							count_updated = true
+						end
+						storage.ex_counts.W0_total = storage.ex_counts.W0_total + 1
+						storage.ex_counts.W0_10_total = storage.ex_counts.W0_10_total + 1
+					elseif is_W0 then
+						if not stats:GetFailed() then
+							storage.ex_counts.W0 = storage.ex_counts.W0 + 1
+							storage.ex_counts.W1_10 = storage.ex_counts.W1_10 + 1
 							count_updated = true
 						end
 						storage.ex_counts.W0_total = storage.ex_counts.W0_total + 1
 					else
 						if not stats:GetFailed() then
 							storage.ex_counts.W1 = storage.ex_counts.W1 + 1
+							storage.ex_counts.W1_10 = storage.ex_counts.W1_10 + 1
 							count_updated = true
 						end
 					end

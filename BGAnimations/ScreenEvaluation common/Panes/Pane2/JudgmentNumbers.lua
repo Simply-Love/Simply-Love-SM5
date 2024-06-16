@@ -48,6 +48,14 @@ end
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
 	local number = counts[window] or 0
+	local numberTight = number
+	local displayTight = true
+
+	if i == 1 then
+		numberTight = counts["W0_10"]
+	elseif i == 2 then
+		numberTight = counts["W1_10"]
+	end
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
@@ -74,6 +82,20 @@ for i=1,#TapNoteScores.Types do
 			self:x( TapNoteScores.x[ToEnumShortString(controller)] )
 			self:y((i-1)*32 -24)
 			self:targetnumber(number)
+			
+			if SL[pn].ActiveModifiers.TighterFantasticWindow then
+				self:playcommand("Marquee")
+			end
+		end,
+		MarqueeCommand=function(self)
+			if displayTight then
+				self:settext(("%04.0f"):format(numberTight))
+				displayTight = false
+			else
+				self:settext(("%04.0f"):format(number))
+				displayTight = true
+			end
+			self:sleep(2):queuecommand("Marquee")
 		end
 	}
 
