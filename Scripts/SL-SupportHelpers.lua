@@ -85,17 +85,12 @@ end
 -- use StepManiaVersionIsSupported() to check if Simply Love supports the version of SM5 in use
 
 StepManiaVersionIsSupported = function()
-	-- SM5.0.12 is supported (latest stable release)
-	-- SM5.1.x is supported
-	-- SM5.2 is not supported because it saw significant
-	--       backwards-incompatible API changes and is now abandoned
+	-- SM5.0.12, SM5.1.x and OutFox are no longer supported
 	if IsStepMania() then
-		return IsProductVersion(5, 0, 12) or IsProductVersion(5, 1)
+		return false
 	end
-
-	-- OutFox >= 0.4 is supported (beta status because it's not open source yet)
 	if IsOutFox() then
-		return IsMinimumProductVersion(0, 4)
+		return false
 	end
 
 	-- ITGmania >= 0.8.0
