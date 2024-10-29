@@ -21,9 +21,15 @@ return Def.Actor{
 		-- so that we can more easily display it on ScreenEvaluationSummary when this game cycle ends.
 		local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
-		-- a PLayerStageStats object from the engine
+		-- a PlayerStageStats object from the engine
 		-- see: http://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Actors-PlayerStageStats
 		local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+
+		if PROFILEMAN:IsPersistentProfile(pn) then
+			storage.profile = PROFILEMAN:GetProfile(player):GetDisplayName()
+		else
+			storage.profile = '[GUEST]'
+		end
 
 		storage.grade = pss:GetGrade()
 		storage.score = pss:GetPercentDancePoints()
@@ -37,10 +43,13 @@ return Def.Actor{
 			Miss = pss:GetTapNoteScores(TNSTypes[6])
 		}
 		
-		if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
+		if (mods.ShowFaPlusWindow and mods.ShowFaPlusPane) or mods.ShowEXScore then
 			local counts = GetExJudgmentCounts(player)
 			storage.judgments.W0 = counts.W0
 			storage.judgments.W1 = counts.W1
+			storage.showex = mods.ShowEXScore
+		else
+			storage.showex = false
 		end
 
 		if GAMESTATE:IsCourseMode() then
@@ -48,13 +57,13 @@ return Def.Actor{
 			storage.difficulty = storage.steps:GetDifficulty()
 			storage.meter      = storage.steps:GetMeter()
 			storage.stepartist = GAMESTATE:GetCurrentCourse(player):GetScripter()
-
 		else
 			storage.steps      = GAMESTATE:GetCurrentSteps(player)
 			storage.difficulty = pss:GetPlayedSteps()[1]:GetDifficulty()
 			storage.meter      = pss:GetPlayedSteps()[1]:GetMeter()
 			storage.stepartist = pss:GetPlayedSteps()[1]:GetAuthorCredit()
-
 		end
+
+		storage.timingwindows = SL[pn].ActiveModifiers.TimingWindows
 	end
 }

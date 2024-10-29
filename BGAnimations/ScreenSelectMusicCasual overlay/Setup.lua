@@ -113,7 +113,7 @@ local PruneSongsFromGroup = function(group)
 		-- this should be guaranteed by this point, but better safe than segfault
 		if song:HasStepsType(steps_type)
 		-- respect StepMania's cutoff for 1-round songs
-		and song:MusicLengthSeconds() < PREFSMAN:GetPreference("LongVerSongSeconds")
+		and song:GetLastSecond() < PREFSMAN:GetPreference("LongVerSongSeconds")
 		-- respect the #SELECTABLE tag in this song's simfile
 		and UNLOCKMAN:IsSongLocked(song) == 0
 		then
@@ -222,7 +222,7 @@ local PruneGroups = function(_groups)
 
 		for song in ivalues(SONGMAN:GetSongsInGroup(group)) do
 			if song:HasStepsType(steps_type)
-			and song:MusicLengthSeconds() < PREFSMAN:GetPreference("LongVerSongSeconds") then
+			and song:GetLastSecond() < PREFSMAN:GetPreference("LongVerSongSeconds") then
 
 				for steps in ivalues(song:GetStepsByStepsType(steps_type)) do
 					if steps:GetMeter() < ThemePrefs.Get("CasualMaxMeter") then

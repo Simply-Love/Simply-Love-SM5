@@ -19,8 +19,11 @@ for i,stats in pairs( SL[ToEnumShortString(player)].Stages.Stats ) do
 
 		for column, judgments in ipairs(stats.column_judgments) do
 			for judgment, judgment_count in pairs(judgments) do
-				if judgment ~= "Miss" then
-					notesHitThisGame = notesHitThisGame + judgment_count
+				-- Early hits are a stored in a table, we want to ignore those for this calculation.
+				if type(judgment_count) == "number" then
+					if judgment ~= "Miss" then
+						notesHitThisGame = notesHitThisGame + judgment_count
+					end
 				end
 			end
 		end

@@ -20,6 +20,7 @@ local input = function(event)
 			local focus = sort_wheel:get_actor_item_at_focus_pos()
 			if focus.kind == "SortBy" then
 				MESSAGEMAN:Broadcast('Sort', { order = focus.sort_by })
+				MESSAGEMAN:Broadcast('ResetHeaderText')
 				overlay:queuecommand("DirectInputToEngine")
 
 				-- the player wants to change modes, for example from ITG to FA+
@@ -43,8 +44,9 @@ local input = function(event)
 				end
 				-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
-				-- If the MenuTimer is in effect, make sure to grab its current
-				-- value before reloading the screen.
+				-- If the MenuTimer is in effect, we need to make sure the current number of seconds
+				-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions
+				-- will save the current number of seconds before transitioning to the next screen.
 				if PREFSMAN:GetPreference("MenuTimer") then
 					overlay:playcommand("ShowPressStartForOptions")
 				end
@@ -54,6 +56,9 @@ local input = function(event)
 				if GAMESTATE:GetCurrentGame():GetName() == "techno" then new_style = new_style .. "8" end
 				-- set it in the engine
 				GAMESTATE:SetCurrentStyle(new_style)
+				-- Make sure we cancel the request if it's active before trying to switch screens.
+				-- This prevents the "Stale ActorFrame" error.
+				overlay:GetChild("PaneDisplayMaster"):GetChild("GetScoresRequester"):playcommand("Cancel")
 				-- finally, reload the screen
 				screen:SetNextScreenName("ScreenReloadSSM")
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
@@ -67,6 +72,55 @@ local input = function(event)
 					-- Direct the input back to the engine, so that the ScreenTextEntry overlay
 					-- works correctly.
 					overlay:queuecommand("DirectInputToEngineForSongSearch")
+				elseif focus.new_overlay == "LoadNewSongs" then
+					-- Make sure we cancel the request if it's active before trying to switch screens.
+					-- This prevents the "Stale ActorFrame" error.
+					overlay:GetChild("PaneDisplayMaster"):GetChild("GetScoresRequester"):playcommand("Cancel")
+					overlay:playcommand("DirectInputToEngine")
+					SCREENMAN:SetNewScreen("ScreenReloadSongsSSM")
+				elseif focus.new_overlay == "ViewDownloads" then
+					-- Make sure we cancel the request if it's active before trying to switch screens.
+					-- This prevents the "Stale ActorFrame" error.
+					overlay:GetChild("PaneDisplayMaster"):GetChild("GetScoresRequester"):playcommand("Cancel")
+					overlay:playcommand("DirectInputToEngine")
+					SCREENMAN:SetNewScreen("ScreenViewDownloads")
+				elseif focus.new_overlay == "SwitchProfile" then
+					SL.Global.FastProfileSwitchInProgress = true
+
+					-- Make sure we save any currently active profiles before potentially switching
+					-- to different ones.
+					GAMESTATE:SaveProfiles()
+					PROFILEMAN:SaveMachineProfile()
+
+					overlay:queuecommand("DirectInputToEngineForSelectProfile")
+				elseif focus.new_overlay == "AddFavorite" then
+					addOrRemoveFavorite(event.PlayerNumber)
+					-- Nudge the wheel a bit so that that the icon is correctly updated.
+					overlay:queuecommand("DirectInputToEngine")
+					local screen = SCREENMAN:GetTopScreen()
+					screen:GetMusicWheel():Move(1)
+					screen:GetMusicWheel():Move(-1)
+					screen:GetMusicWheel():Move(0)
+				elseif focus.new_overlay == "PracticeMode" then
+					SCREENMAN:GetTopScreen():SetNextScreenName("ScreenPractice")
+					SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+				elseif focus.new_overlay == "Preferred" then
+					-- Only allow sorting by favorites if there are favorites available
+					if (#SL[ToEnumShortString(event.PlayerNumber)].Favorites > 0) then
+						-- The 2nd argument, isAbsolute, is ITGmania 0.6.0 specific. It
+						-- allows absolute paths to be used for the favorites file which is
+						-- how it works to load from the profile directory.
+						SONGMAN:SetPreferredSongs(getFavoritesPath(event.PlayerNumber), --[[isAbsolute=]]true);
+						if SONGMAN:GetPreferredSortSongs() then
+							overlay:queuecommand("DirectInputToEngine")
+							SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort("SortOrder_Preferred")
+						else 
+							SM(ToEnumShortString(event.PlayerNumber).." has no favorites!")
+						end
+					else
+						SM("No Favorites Available")
+					end
+
 				end
 			end
 

@@ -24,7 +24,7 @@ local abbreviations = {
 
 local colors = {}
 for w=num_judgments_available,1,-1 do
-	if SL.Global.ActiveModifiers.TimingWindows[w]==true then
+	if SL[pn].ActiveModifiers.TimingWindows[w]==true then
 		colors[w] = DeepCopy(SL.JudgmentColors[SL.Global.GameMode][w])
 	else
 		abbreviations[SL.Global.GameMode][w] = abbreviations[SL.Global.GameMode][w+1]

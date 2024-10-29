@@ -34,6 +34,27 @@ if PROFILEMAN:GetNumLocalProfiles() <= 0 then
 end
 -- -----------------------------------------------------------------------
 
+local initial_data = profile_data[0]
+local pos = nil
+
+if SL.Global.FastProfileSwitchInProgress then
+	-- If we're fast profile switching, we want to open the profile scrollers
+	-- focused on current player profiles. Let's remember the index of the profile
+	-- so that we can scroll to it.
+	for profile in ivalues(profile_data) do
+		if profile.guid == PROFILEMAN:GetProfile(player):GetGUID() then
+			pos = profile.index
+			break
+		end
+	end
+	-- If we haven't found a matching profile looking in profile_data, this has to
+	-- be [GUEST]
+	pos = pos or 0
+
+	initial_data = profile_data[pos]
+end
+
+
 local FrameBackground = function(c, player, w)
 	w = w or frame.w
 	scroller.w = w - info.w
@@ -94,7 +115,9 @@ return Def.ActorFrame{
 			self:zoom(1.15):bounceend(0.175):zoom(1)
 		end
 	end,
-
+	PreventEscapeMessageCommand=function(self)
+		self:finishtweening():bounceend(0.1):addx(5):bounceend(0.1):addx(-10):bounceend(0.1):addx(5)
+	end,
 
 	-- dark frame prompting players to "Press START to join!"
 	-- (or "Enter credits to join!" depending on CoinMode and available credits)
@@ -141,7 +164,7 @@ return Def.ActorFrame{
 		InitCommand=function(self)
 			-- Create the info needed for the "[Guest]" scroller item.
 			-- It won't map to any real local profile (as desired!), so we'll hardcode
-			-- an index of 0, and handle it later, on ScreenSelectProfile's OffCommand
+			-- an index of 0, and handle it later, on ScreenSelectProfile's FinishCommand
 			-- in default.lua if either/both players want to chose it.
 			local guest_profile = { index=0, displayname=THEME:GetString("ScreenSelectProfile", "GuestProfile") }
 
@@ -156,24 +179,28 @@ return Def.ActorFrame{
 			end
 
 			scroller.focus_pos = 5
+			-- initialize to the guest profile in case we don't have a default profile
+			scroller:set_info_set(scroller_data, 1)
+			scroller:scroll_by_amount(-1)
 
-			local pn = ToEnumShortString(player)
-			if PREFSMAN:GetPreference("DefaultLocalProfileID"..pn) ~= "" then
-				local default_profile_id = PREFSMAN:GetPreference("DefaultLocalProfileID"..pn)
-				local profile_dir = PROFILEMAN:LocalProfileIDToDir(default_profile_id)
-				
-				for i, profile_item in ipairs(scroller_data) do
-					if profile_item.dir == profile_dir then
-						scroller:set_info_set(scroller_data, 1)
-						scroller:scroll_by_amount(i-5)
-						break
+			-- Scroll to the current player profile, if any
+			if pos then
+				local curr_index = scroller:get_info_at_focus_pos().index
+				scroller:scroll_by_amount(pos - curr_index)
+			else
+				local pn = ToEnumShortString(player)
+				if PREFSMAN:GetPreference("DefaultLocalProfileID"..pn) ~= "" then
+					local default_profile_id = PREFSMAN:GetPreference("DefaultLocalProfileID"..pn)
+					local profile_dir = PROFILEMAN:LocalProfileIDToDir(default_profile_id)
+					for i, profile_item in ipairs(scroller_data) do
+						if profile_item.dir == profile_dir then
+							scroller:scroll_by_amount(i-4)
+							initial_data = profile_data[i-4]
+							break
+						end
 					end
 				end
-			else
-				scroller:set_info_set(scroller_data, 1)
-				scroller:scroll_by_amount(-1)
 			end
-
 		end,
 
 		FrameBackground(PlayerColor(player), player, frame.w * 1.1),
@@ -193,7 +220,7 @@ return Def.ActorFrame{
 			InitCommand=function(self)
 				self:x(15.5)
 			end,
-			OnCommand=function(self) self:playcommand("Set", profile_data[0]) end,
+			OnCommand=function(self) self:playcommand("Set", initial_data) end,
 
 			-- semi-transparent Quad to the right of this colored frame to present profile stats and mods
 			Def.Quad {
@@ -234,6 +261,9 @@ return Def.ActorFrame{
 						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualStyle") .."/SelectColor"))..{
 							InitCommand=function(self)
 								self:align(0,0):zoom(0.09):diffusealpha(0.9):xy(13, 8)
+								if ThemePrefs.Get("VisualStyle") == "SRPG8" then
+									self:zoom(0.3):xy(5, 0)
+								end
 							end
 						},
 						LoadFont("Common Normal")..{
@@ -367,7 +397,7 @@ return Def.ActorFrame{
 	LoadFont("Common Normal")..{
 		Name='SelectedProfileText',
 		InitCommand=function(self)
-			self:settext(profile_data[0] and profile_data[0].displayname or "")
+			self:settext(initial_data and initial_data.displayname or "")
 			self:y(160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
 		end,
 		OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end

@@ -21,8 +21,8 @@ local a = Def.Actor{}
 
 a.OnCommand=function(self) SCREENMAN:GetTopScreen():AddInputCallback( InputHandler ) end
 a.BeginCommand=function(self)
-	-- In case we switched into SRPG7 and had Rainbow Mode enabled, disable it.
-	if ThemePrefs.Get("VisualStyle") == "SRPG7" and ThemePrefs.Get("RainbowMode") == true then
+	-- In case we switched into SRPG8 and had Rainbow Mode enabled, disable it.
+	if ThemePrefs.Get("VisualStyle") == "SRPG8" and ThemePrefs.Get("RainbowMode") == true then
 		ThemePrefs.Set("RainbowMode", false)
 	end
 

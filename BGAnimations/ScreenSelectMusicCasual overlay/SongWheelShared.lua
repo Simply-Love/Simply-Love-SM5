@@ -155,7 +155,7 @@ af[#af+1] = Def.ActorFrame{
 			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(14):horizalign(left) end,
 	 		CurrentSongChangedMessageCommand=function(self, params)
 				if params.song then
-		 			self:settext( THEME:GetString("SongDescription", "Length") .. ": " .. SecondsToMMSS(params.song:MusicLengthSeconds()):gsub("^0*","") )
+		 			self:settext( THEME:GetString("SongDescription", "Length") .. ": " .. SecondsToMMSS(params.song:GetLastSecond()):gsub("^0*","") )
 				end
 	 		end,
 		},

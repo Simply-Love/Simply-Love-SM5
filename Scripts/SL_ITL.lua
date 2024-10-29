@@ -77,7 +77,7 @@ WriteItlFile = function(player)
 	local f = RageFileUtil:CreateRageFile()
 
 	if f:Open(path, 2) then
-		f:Write(json.encode(SL[pn].ITLData))
+		f:Write(JsonEncode(SL[pn].ITLData))
 		f:Close()
 	end
 	f:destroy()
@@ -109,7 +109,7 @@ ReadItlFile = function(player)
 			f:Close()
 		end
 		f:destroy()
-		itlData = json.decode(existing)
+		itlData = JsonDecode(existing)
 	end
 	-- SL 5.2.0 had a bug where the EX scores weren't calculated correctly.
 	-- If that's the case, then recalculate the scores the first time the v5.2.1 theme
@@ -345,7 +345,7 @@ UpdateItlData = function(player)
 	-- We also require all the windows to be enabled.
 	-- ITG mode is the only mode that has all the windows enabled by default.
 	local allWindowsEnabled = SL.Global.GameMode == "ITG"
-	for enabled in ivalues(SL.Global.ActiveModifiers.TimingWindows) do
+	for enabled in ivalues(SL[pn].ActiveModifiers.TimingWindows) do
 		allWindowsEnabled = allWindowsEnabled and enabled
 	end
 

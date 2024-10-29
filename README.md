@@ -1,37 +1,28 @@
-# Simply Love (StepMania 5)
+# Simply Love (ITGmania)
 
 ![Arrow Logo](https://i.imgur.com/oZmxyGo.png)
 
 
 ## About
 
-Simply Love is a StepMania 5 theme for the post-ITG community.
+Simply Love is an ITGmania theme for the post-ITG community.
 
-It features a clean and simple design, offers numerous data-driven features not implemented by the StepMania 5 engine, and allows the current generation of ITG fans to breathe new life into the game they've known for over a decade.
+It features a clean and simple design, offers numerous data-driven features not implemented by the ITGmania engine, and allows the current generation of ITG fans to breathe new life into the game they've known for over a two decades.
 
 Simply Love was originally designed and implemented for a previous version of StepMania (SM3.95) by hurtpiggypig.  For more information on that version of Simply Love, check here:
 https://www.youtube.com/watch?v=OtcWy5m6-CQ
 
 
-## Supported Versions of StepMania
+## Supported Versions of ITGmania
 
-Simply Love is compatible with current releases from the official StepMania project.
+The current release of Simply Love is compatible with current ITGmania versions **0.8.0** or newer.
 
-**Compatible Releases**<br>
-✅ [StepMania 5.0.12](https://github.com/stepmania/stepmania/releases/tag/v5.0.12)<br>
-✅ [StepMania 5.1-b2](https://github.com/stepmania/stepmania/releases/tag/v5.1.0-b2)<br>
-✅ [OutFox 0.4.14.1](https://projectoutfox.com/releases/0.4.14.1) and newer (preliminary support). Versions prior to that are not supported.<br>
-
-For new installations we currently recommend installing StepMania 5.1. While
-5.0.12 is officially the latest stable release of StepMania, 5.1 is widely used
-and an improvement over 5.0 in almost every regard. StepMania 5.3 (Outfox) is
-currently in an alpha stage of development. Check it out, though. The project
-is making great progress!
-
-If you are able to compile StepMania's source code yourself, the [5_1-new branch](https://github.com/stepmania/stepmania/tree/5_1-new/) is supported.  The wiki has [instructions for compiling](https://github.com/stepmania/stepmania/wiki/Compiling-StepMania).
+For new installations we currently recommend grabbing the ITGmania + Simply Love bundle over at the
+[www.itgmania.com](https://www.itgmania.com).
 
 
-**Incompatible**<br>
+**Incompatible Versions**<br>
+❌ StepMania 5 (SM5)<br>
 ❌ Forks of SM5 (e.g. *starworlds*)<br>
 ❌ Older versions of StepMania (e.g. StepMania 3.9)<br>
 ❌ Forks of older versions of StepMania (e.g. OpenITG, NotITG)<br>

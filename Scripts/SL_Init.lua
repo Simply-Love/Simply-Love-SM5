@@ -12,6 +12,7 @@ local PlayerDefaults = {
 				NoteSkin = nil,
 				Mini = "0%",
 				BackgroundFilter = "Off",
+				VisualDelay = "0ms",
 
 				HideTargets = false,
 				HideSongBG = false,
@@ -26,6 +27,7 @@ local PlayerDefaults = {
 				MeasureCounter = "None",
 				MeasureCounterLeft = true,
 				MeasureCounterUp = false,
+				MeasureLines = "Off",
 				DataVisualizations = "None",
 				TargetScore = 11,
 				ActionOnMissedTarget = "Nothing",
@@ -41,6 +43,10 @@ local PlayerDefaults = {
 				ErrorBarMultiTick = false,
 				ErrorBarTrim = "Off",
 
+				HideEarlyDecentWayOffJudgments = false,
+				HideEarlyDecentWayOffFlash = false,
+
+				TimingWindows = {true, true, true, true, true},
 				ShowFaPlusWindow = false,
 				ShowEXScore = false,
 				ShowFaPlusPane = true,
@@ -97,6 +103,7 @@ local PlayerDefaults = {
 			self.ApiKey = ""
 			-- Whether or not the player is playing on pad.
 			self.IsPadPlayer = false
+			self.Favorites = {}
 		end
 	}
 }
@@ -109,7 +116,6 @@ local GlobalDefaults = {
 		initialize = function(self)
 			self.ActiveModifiers = {
 				MusicRate = 1.0,
-				TimingWindows = {true, true, true, true, true},
 			}
 			self.Stages = {
 				PlayedThisGame = 0,
@@ -238,6 +244,7 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W3",
+			MinTNSToScoreNotes=ThemePrefs.Get("RescoreEarlyHits") and "TapNoteScore_W3" or "TapNoteScore_None",
 			HarshHotLifePenalty=true,
 
 			PercentageScoring=true,
@@ -258,6 +265,7 @@ SL = {
 			RegenComboAfterMiss=5,
 			MaxRegenComboAfterMiss=10,
 			MinTNSToHideNotes="TapNoteScore_W4",
+			MinTNSToScoreNotes=ThemePrefs.Get("RescoreEarlyHits") and "TapNoteScore_W4" or "TapNoteScore_None",
 			HarshHotLifePenalty=true,
 
 			PercentageScoring=true,
@@ -414,12 +422,12 @@ SL = {
 		Held=1,
 		HitMine=-1
 	},
-	-- Fields used to determine the existence of the launcher and the
-	-- available GrooveStats services.
+	-- Fields used to determine whether or not we can connect to the
+	-- GrooveStats services.
 	GrooveStats = {
-		-- Whether we're launching StepMania with a launcher.
+		-- Whether we're connected to the internet or not.
 		-- Determined once on boot in ScreenSystemLayer.
-		Launcher = false,
+		IsConnected = false,
 
 		-- Available GrooveStats services. Subject to change while
 		-- StepMania is running.
@@ -433,7 +441,38 @@ SL = {
 		-- *   updated to properly consume this value.  *
 		-- **********************************************
 		ChartHashVersion = 3,
-	}
+
+		-- We want to cache the some of the requests/responses to prevent making the
+		-- same request multiple times in a small timeframe.
+		-- Each entry is keyed with some string hash which maps to a table with the
+		-- following keys:
+		--   Response: string, the JSON-ified response to cache
+		--   Timestamp: number, when the request was made
+		RequestCache = {},
+
+		-- Used to prevent redundant downloads for SRPG unlocks.
+		-- Each entry is keyed on the URL of the download which maps to a table of
+		-- PackNames the unlock has been unpacked to.
+		-- To see if we have already downloaded an unlock, one can just key on
+		-- SL.UnlocksCache[url][packName]
+		-- LoadUnlocksCache() is defined in SL-Helpers-GrooveStats.lua so that must
+		-- be loaded before this file.
+		UnlocksCache = LoadUnlocksCache(),
+	},
+	-- Stores all active/failed downloads.
+	-- Each entry is keyed on a string UUID which maps to a table with the
+	-- following keys:
+	--    Request: HttpRequestFuture, the closure returned by NETWORK:HttpRequest
+	--    Name: string, an identifier for this download.
+	--    Url: string, The URL of the download.
+	--    Destination: string, where the download should be unpacked to.
+	--    CurrentBytes: number, the bytes downloaded so far
+	--    TotalBytes: number, the total bytes of the file
+	--    Complete: bool, whether or not the download has completed
+	--              (either success or failure).
+	-- If a request fails, there will be another key:
+	--    ErrorMessage: string, the reasoning for the failure.
+	Downloads = {}
 }
 
 

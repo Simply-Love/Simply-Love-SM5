@@ -170,7 +170,7 @@ function WriteScores()
 
 			local f = RageFileUtil.CreateRageFile()
 			if f:Open(profileDir .. "SL-Scores/" .. filename, 2) then
-				f:Write(json.encode(content))
+				f:Write(JsonEncode(content, true))
 			end
 			f:destroy()
 		end

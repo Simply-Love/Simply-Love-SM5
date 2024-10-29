@@ -25,6 +25,9 @@ else
 		LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualStyle") .."/SelectColor"))..{
 			InitCommand=function(self)
 				self:align(0,0):zoom(0.12):diffusealpha(0.9):xy(15, 10)
+				if ThemePrefs.Get("VisualStyle") == "SRPG8" then
+					self:zoom(0.4):xy(5, 0)	
+				end
 			end
 		},
 		-- fallback text ("no avatar")

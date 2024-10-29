@@ -29,10 +29,10 @@ af[#af+1] = Def.Sprite{
 		self:playcommand("LoadImage")
 	end,
 	LoadImageCommand=function(self)
-		if ThemePrefs.Get("VisualStyle") == "SRPG7" then
-			self:Load(THEME:GetPathG("", "_VisualStyles/SRPG7/"..SL.SRPG7.GetLogo()))
-			self:zoom(0.1):vertalign(top)
-			self:y(-130):shadowlength(0)
+		if ThemePrefs.Get("VisualStyle") == "SRPG8" then
+			self:Load(THEME:GetPathG("", "_VisualStyles/SRPG8/"..SL.SRPG8.GetLogo()))
+			self:zoom(0.225):vertalign(top)
+			self:x(-15):y(-130):shadowlength(0)
 		else
 			local style = ThemePrefs.Get("VisualStyle")
 			local image = THEME:GetPathG("", "_VisualStyles/"..style.."/TitleMenu (doubleres).png")
@@ -49,7 +49,7 @@ af[#af+1] = Def.Sprite{
 }
 
 
-if ThemePrefs.Get("VisualStyle") ~= "SRPG7" then
+if ThemePrefs.Get("VisualStyle") ~= "SRPG8" then
 	-- decorative arrows for current game (dance, pump, techno, etc.)
 	af[#af+1] = LoadActor(resolved_path)..{
 		InitCommand=function(self)
@@ -74,9 +74,9 @@ if ThemePrefs.Get("VisualStyle") ~= "SRPG7" then
 			end
 		end,
 		VisualStyleSelectedMessageCommand=function(self)
-			-- In case we auto-switch to SRPG7, then it's possible this actor may have been added to the screen.
-			-- If so, we want to hide the logo as it interferes with the SRPG7 logo.
-			if ThemePrefs.Get("VisualStyle") == "SRPG7" then
+			-- In case we auto-switch to SRPG8, then it's possible this actor may have been added to the screen.
+			-- If so, we want to hide the logo as it interferes with the SRPG8 logo.
+			if ThemePrefs.Get("VisualStyle") == "SRPG8" then
 				self:visible(false)
 			end
 		end

@@ -169,3 +169,20 @@ function map(func, array)
 	end
 	return new_array
 end
+
+
+-- Create a new table with each unique element from the input present exactly once,
+-- e.g. {1, 2, 3, 2, 1} -> {1, 2, 3}
+function deduplicate(array)
+	local hash = {}
+	local res = {}
+
+	for _, v in ipairs(array) do
+		if not hash[v] then
+			res[#res+1] = v
+			hash[v] = true
+		end
+	end
+
+	return res
+end

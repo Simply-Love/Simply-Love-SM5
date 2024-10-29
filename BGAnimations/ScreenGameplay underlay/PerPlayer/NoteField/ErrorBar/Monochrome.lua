@@ -24,7 +24,6 @@
 local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-local gmods = SL.Global.ActiveModifiers
 
 local judgmentColors = {
     TapNoteScore_W1 = SL.JudgmentColors[SL.Global.GameMode][1],
@@ -48,7 +47,7 @@ local judgmentToTrim = {
 
 local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
-    if gmods.TimingWindows[i] then
+    if mods.TimingWindows[i] then
         if not judgmentToTrim["TapNoteScore_W" .. tostring(i)] then
             enabledTimingWindows[#enabledTimingWindows + 1] = i
         end
@@ -58,6 +57,35 @@ end
 local maxTimingOffset = GetTimingWindow(enabledTimingWindows[#enabledTimingWindows])
 local wscale = barWidth / 2 / maxTimingOffset
 
+local function DisplayTick(self, params)
+    if params.TapNoteOffset then
+        local tick = self:GetChild("Tick" .. currentTick)
+        currentTick = currentTick % numTicks + 1
+
+        tick:finishtweening()
+
+        local color = judgmentColors[params.TapNoteScore] 
+
+        -- Check if we need to adjust the color for the white fantastic window.
+        if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and
+            not IsW0Judgment(params, player) then
+            color = SL.JudgmentColors["FA+"][2]
+        end
+
+        tick:diffusealpha(1)
+            :diffuse(color)
+            :x(params.TapNoteOffset * wscale)
+
+        if numTicks > 1 then
+            tick:sleep(0.03):linear(tickDuration - 0.03)
+        else
+            tick:sleep(tickDuration)
+        end
+
+        tick:diffusealpha(0)
+    end
+end
+
 local af = Def.ActorFrame{
     InitCommand = function(self)
         self:xy(GetNotefieldX(player), layout.y)
@@ -66,39 +94,36 @@ local af = Def.ActorFrame{
         self:RemoveChild("EarlyLabel")
         self:RemoveChild("LateLabel")
     end,
+    EarlyHitMessageCommand=function(self, params)
+        if params.Player ~= player then return end
+        if judgmentToTrim[params.TapNoteScore] then return end
+
+        DisplayTick(self, params)
+    end,
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
         if not judgmentColors[params.TapNoteScore] then return end
         if judgmentToTrim[params.TapNoteScore] then return end
 
-        if params.TapNoteOffset then
-            local tick = self:GetChild("Tick" .. currentTick)
-            currentTick = currentTick % numTicks + 1
+        if params.EarlyTapNoteScore ~= nil then
+            local tns = ToEnumShortString(params.TapNoteScore)
+            local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
 
-            tick:finishtweening()
-
-
-            local color = judgmentColors[params.TapNoteScore] 
-
-            -- Check if we need to adjust the color for the white fantastic window.
-            if mods.ShowFaPlusWindow and ToEnumShortString(params.TapNoteScore) == "W1" and
-                not IsW0Judgment(params, player) then
-                color = SL.JudgmentColors["FA+"][2]
+            if earlyTns ~= "None" then
+                if SL.Global.GameMode == "FA+" then
+                    if tns == "W5" then
+                        return
+                    end
+                else
+                    if tns == "W4" or tns == "W5" then
+                        return
+                    end
+                end
             end
-
-            tick:diffusealpha(1)
-                :diffuse(color)
-                :x(params.TapNoteOffset * wscale)
-
-            if numTicks > 1 then
-                tick:sleep(0.03):linear(tickDuration - 0.03)
-            else
-                tick:sleep(tickDuration)
-            end
-
-            tick:diffusealpha(0)
         end
+
+        DisplayTick(self, params)
     end,
 
     -- Background

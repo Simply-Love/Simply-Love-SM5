@@ -4,7 +4,6 @@
 local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-local gmods = SL.Global.ActiveModifiers
 
 local barWidth = 160
 local barHeight = 10
@@ -20,7 +19,7 @@ local judgmentToTrim = {
 
 local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
-    if gmods.TimingWindows[i] then
+    if mods.TimingWindows[i] then
         if not judgmentToTrim["TapNoteScore_W" .. tostring(i)] then
             enabledTimingWindows[#enabledTimingWindows + 1] = i
         end
@@ -60,7 +59,7 @@ local function DisplayTick(self, params)
             earlysubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
             latesubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
         else
-            local offset = params.TapNoteOffset and "Early" or "Late"
+            local offset = params.TapNoteOffset < 0 and "Early" or "Late"
             local subbar = offset == "Early" and earlysubbar or latesubbar
             subbar:finishtweening()
             subbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
@@ -91,10 +90,33 @@ local af = Def.ActorFrame{
         self:xy(GetNotefieldX(player), layout.y)
         self:GetChild("Bar"):zoom(0)
     end,
+    EarlyHitMessageCommand=function(self, params)
+        if params.Player ~= player then return end
+        if judgmentToTrim[params.TapNoteScore] then return end
+
+        DisplayTick(self, params)
+    end,
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
         if judgmentToTrim[params.TapNoteScore] then return end
+
+        if params.EarlyTapNoteScore ~= nil then
+            local tns = ToEnumShortString(params.TapNoteScore)
+            local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
+
+            if earlyTns ~= "None" then
+                if SL.Global.GameMode == "FA+" then
+                    if tns == "W5" then
+                        return
+                    end
+                else
+                    if tns == "W4" or tns == "W5" then
+                        return
+                    end
+                end
+            end
+        end
 
         DisplayTick(self, params)
     end,

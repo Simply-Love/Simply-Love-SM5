@@ -106,15 +106,17 @@ local function gen_vertices(player, width, height, desaturation)
 	return verts
 end
 
--- FIXME: add inline comments explaining the intent/purpose of this code
+-- This function interpolates between two vertices based on a given offset
 function interpolate_vert(v1, v2, offset)
-	local ratio = (offset - v1[1][1]) / (v2[1][1] - v1[1][1])
-	local y = v1[1][2] * (1 - ratio) + v2[1][2] * ratio
-	local color = lerp_color(ratio, v1[2], v2[2])
-
-	return {{offset, y, 0}, color}
+    -- Calculate the ratio of the offset to the difference in x-coordinates of the two vertices
+    local ratio = (offset - v1[1][1]) / (v2[1][1] - v1[1][1])
+    -- Interpolate the y-coordinate based on the ratio
+    local y = v1[1][2] * (1 - ratio) + v2[1][2] * ratio
+    -- Interpolate the color based on the ratio
+    local color = lerp_color(ratio, v1[2], v2[2])
+    -- Return the interpolated vertex and color as a table
+    return {{offset, y, 0}, color}
 end
-
 
 function NPS_Histogram(player, width, height, desaturation)
 	local pn = ToEnumShortString(player)

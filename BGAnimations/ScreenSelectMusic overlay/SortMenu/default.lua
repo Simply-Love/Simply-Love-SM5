@@ -225,6 +225,12 @@ local t = Def.ActorFrame {
 		SCREENMAN:AddNewScreenToTop("ScreenTextEntry")
 		SCREENMAN:GetTopScreen():Load(SongSearchSettings)
 	end,
+	DirectInputToEngineForSelectProfileCommand=function(self)
+		DirectInputToEngine(self)
+
+		-- Then add the ScreenSelectProfile on top.
+		SCREENMAN:AddNewScreenToTop("ScreenSelectProfile")
+	end,
 
 	AssessAvailableChoicesCommand=function(self)
 		-- normally I would give variables like these file scope, and not declare
@@ -241,26 +247,16 @@ local t = Def.ActorFrame {
 			{"SortBy", "Genre"},
 			{"SortBy", "BPM"},
 			{"SortBy", "Length"},
+			{"SortBy", "Meter"},
 		}
-		-- the engine's MusicWheel has distinct items in the SortOrder enum for double
-		if style == "double" then
-			table.insert(wheel_options, {"SortBy", "DoubleChallengeMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleHardMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleMediumMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleEasyMeter"})
-			table.insert(wheel_options, {"SortBy", "DoubleBeginnerMeter"})
-		-- Otherwise... use the SortOrders that don't specify double.
-		-- Does this imply that difficulty sorting in more uncommon styles
-		-- (solo, routine, etc.) probably doesn't work?
-		else
-			table.insert(wheel_options, {"SortBy", "ChallengeMeter"})
-			table.insert(wheel_options, {"SortBy", "HardMeter"})
-			table.insert(wheel_options, {"SortBy", "MediumMeter"})
-			table.insert(wheel_options, {"SortBy", "EasyMeter"})
-			table.insert(wheel_options, {"SortBy", "BeginnerMeter"})
-		end
 		table.insert(wheel_options, {"SortBy", "Popularity"})
 		table.insert(wheel_options, {"SortBy", "Recent"})
+		-- Loop through players and add their TopGrades to the wheel options if they've a profile
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			if (PROFILEMAN:IsPersistentProfile(player)) then
+				table.insert(wheel_options, {"SortBy", "Top".. ToEnumShortString(player).."Grades" })
+			end
+		end
 		-- Allow players to switch from single to double and from double to single
 		-- but only present these options if Joint Double or Joint Premium is enabled
 		if not (PREFSMAN:GetPreference("Premium") == "Premium_Off" and GAMESTATE:GetCoinMode() == "CoinMode_Pay") then
@@ -284,24 +280,37 @@ local t = Def.ActorFrame {
 			end
 		end
 		-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
-		-- but don't add the current SL GameMode as a choice. If a player is already in FA+, don't
-		-- present a choice that would allow them to switch to FA+.
+		-- but don't add the current SL GameMode as a choice.
 		if SL.Global.Stages.PlayedThisGame == 0 then
 			if SL.Global.GameMode ~= "ITG"      then table.insert(wheel_options, {"ChangeMode", "ITG"}) end
-			if SL.Global.GameMode ~= "FA+"      then table.insert(wheel_options, {"ChangeMode", "FA+"}) end
 			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
 			-- and offer to switch them back to casual mode. This allows them to do so again.
 			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
 			-- include the check.
 			if SL.Global.GameMode ~= "Casual"   then table.insert(wheel_options, {"ChangeMode", "Casual"}) end
+		end
 
+		-- Add operator functions if in event mode. (Public arcades probably don't want random players
+		-- attempting to diagnose the pads, etc ...)
+		if GAMESTATE:IsEventMode() then
+			-- Allow players to switch to a TestInput overlay if the current game has visual assets to support it.
+			local game = GAMESTATE:GetCurrentGame():GetName()
+			if (game=="dance" or game=="pump" or game=="techno") then
+				table.insert(wheel_options, {"FeelingSalty", "TestInput"})
+			end
+			if GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures") then
+				table.insert(wheel_options, {"HardTime", "PracticeMode"})
+			end
 		end
-		-- allow players to switch to a TestInput overlay if the current game has visual assets to support it
-		-- and if we're in EventMode (public arcades probably don't want random players attempting to diagnose the pads...)
-		local game = GAMESTATE:GetCurrentGame():GetName()
-		if (game=="dance" or game=="pump" or game=="techno") and GAMESTATE:IsEventMode() then
-			table.insert(wheel_options, {"FeelingSalty", "TestInput"})
+
+		table.insert(wheel_options, {"TakeABreather", "LoadNewSongs"})
+
+		-- Only display the View Downloads option if we're connected to
+		-- GrooveStats and Auto-Downloads are enabled.
+		if SL.GrooveStats.IsConnected and ThemePrefs.Get("AutoDownloadUnlocks") then
+			table.insert(wheel_options, {"NeedMoreRam", "ViewDownloads"})
 		end
+
 		-- The relevant Leaderboard.lua actor is only added if these same conditions are met.
 		if IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 			-- Also only add this if we're actually hovering over a song.
@@ -317,6 +326,21 @@ local t = Def.ActorFrame {
 			end
 		end
 
+		if ThemePrefs.Get("AllowScreenSelectProfile") then
+			table.insert(wheel_options, {"NextPlease", "SwitchProfile"})
+		end
+
+		if GAMESTATE:GetCurrentSong() ~= nil then
+			table.insert(wheel_options, {"ImLovinIt", "AddFavorite"})
+		end
+
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local path = getFavoritesPath(player)
+			if FILEMAN:DoesFileExist(path) then
+				table.insert(wheel_options, {"MixTape", "Preferred"})
+				break
+			end
+		end
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
