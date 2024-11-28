@@ -86,13 +86,6 @@ end
 
 StepManiaVersionIsSupported = function()
 	-- SM5.0.12, SM5.1.x and OutFox are no longer supported
-	if IsStepMania() then
-		return false
-	end
-	if IsOutFox() then
-		return false
-	end
-
 	-- ITGmania >= 0.8.0
 	if IsITGmania() then
 		return IsMinimumProductVersion(0, 8, 0)
