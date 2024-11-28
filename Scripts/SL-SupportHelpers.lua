@@ -62,19 +62,6 @@ function IsMinimumProductVersion(...)
 	return true
 end
 
-
-function IsStepMania()
-	if type(ProductFamily) ~= "function" then return false end
-	return ProductFamily() == "StepMania"
-end
-
-
-function IsOutFox()
-	if type(ProductFamily) ~= "function" then return false end
-	return ProductFamily() == "OutFox"
-end
-
-
 function IsITGmania()
 	if type(ProductFamily) ~= "function" then return false end
 	return ProductFamily() == "ITGmania"
