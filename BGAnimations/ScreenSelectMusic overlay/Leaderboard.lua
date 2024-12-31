@@ -158,7 +158,7 @@ local LeaderboardRequestProcessor = function(res, master)
 			local leaderboardList = master[pn]["Leaderboards"]
 			local localData = getLocalLeaderboard(pn)
 			leaderboardList[#leaderboardList + 1] = {
-				Name="Local Leaderboard",
+				Name="Machine's  Best",
 				Data=DeepCopy(localData),
 				IsEX=false
 			}
@@ -239,16 +239,14 @@ local LeaderboardRequestProcessor = function(res, master)
 				end
 			end
 
-			-- Display the local leaderboard last if the preference is not set
-			if not ThemePrefs.Get("PrioritizeLocalLeaderboard") then
-				local localData = getLocalLeaderboard(pn)
-				leaderboardList[#leaderboardList + 1] = {
-					Name="Local Leaderboard",
-					Data=DeepCopy(localData),
-					IsEX=false
-				}
-				master[pn]["LeaderboardIndex"] = 1
-			end
+			-- Display the local leaderboard last
+			local localData = getLocalLeaderboard(pn)
+			leaderboardList[#leaderboardList + 1] = {
+				Name="Machine's  Best",
+				Data=DeepCopy(localData),
+				IsEX=false
+			}
+			master[pn]["LeaderboardIndex"] = 1
 
 			if #leaderboardList > 1 then
 				leaderboard:GetChild("PaneIcons"):visible(true)
@@ -321,31 +319,15 @@ local af = Def.ActorFrame{
 	RequestResponseActor(17, 50)..{
 		SendLeaderboardRequestCommand=function(self)
 			-- If a player does not have an API key or chart hash just show the local leaderboard.
-			
 			for i=1,2 do
 				local pn = "P"..i
-				if SL[pn].ApiKey == "" or SL[pn].Streams.Hash == "" or ThemePrefs.Get("PrioritizeLocalLeaderboard") or not IsServiceAllowed(SL.GrooveStats.Leaderboard) then
+				if SL[pn].ApiKey == "" or SL[pn].Streams.Hash == "" or not IsServiceAllowed(SL.GrooveStats.Leaderboard) then
 					local pn = "P"..i
 					local leaderboard = self:GetParent():GetChild(pn.."Leaderboard")
 					local leaderboardList = self:GetParent()[pn]["Leaderboards"]
 					local localData = getLocalLeaderboard(pn)
 					leaderboardList[#leaderboardList + 1] = {
-						Name="Local Leaderboard",
-						Data=DeepCopy(localData),
-						IsEX=false
-					}
-					self:GetParent()[pn]["LeaderboardIndex"] = 1
-				end
-			end
-			-- Display the local leaderboard first if the preference is set
-			if ThemePrefs.Get("PrioritizeLocalLeaderboard") or not IsServiceAllowed(SL.GrooveStats.Leaderboard) then
-				for i=1, 2 do
-					local pn = "P"..i
-					local leaderboard = self:GetParent():GetChild(pn.."Leaderboard")
-					local leaderboardList = self:GetParent()[pn]["Leaderboards"]
-					local localData = getLocalLeaderboard(pn)
-					leaderboardList[#leaderboardList + 1] = {
-						Name="Local Leaderboard",
+						Name="Machine's  Best",
 						Data=DeepCopy(localData),
 						IsEX=false
 					}
