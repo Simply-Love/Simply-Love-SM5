@@ -63,7 +63,13 @@ local input = function(event)
 				screen:SetNextScreenName("ScreenReloadSSM")
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
 			elseif focus.new_overlay then
-				if focus.new_overlay == "TestInput" then
+				if focus.new_overlay == "GoBack" then
+					sortmenu:playcommand("AssessAvailableChoices")
+				-- if the overlay starts with "Category"
+				elseif focus.new_overlay:match("^Category") then
+					-- Pass in everything after "Category" to the broadcast
+					MESSAGEMAN:Broadcast('EnterCategory', { Category = focus.new_overlay })
+				elseif focus.new_overlay == "TestInput" then
 					sortmenu:queuecommand("DirectInputToTestInput")
 				elseif focus.new_overlay == "Leaderboard" then
 					-- The leaderboard entry is removed altogether if the service isn't available.

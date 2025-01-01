@@ -80,12 +80,19 @@ return {
 			else
 				self.new_overlay = info[2]
 			end
-
+			
 			local toptext    = self.kind ~= "" and THEME:GetString("ScreenSelectMusic", self.kind) or ""
 			local bottomtext = THEME:GetString(self.kind == "ChangeMode" and "ScreenSelectPlayMode" or "ScreenSelectMusic", info[2])
 
 			self.top_text:settext(toptext)
 			self.bottom_text:settext(bottomtext)
+			if bottomtext == "Go Back" then
+				self.bottom_text:diffuse(Color.Red)
+			elseif toptext == "" then
+				self.bottom_text:diffuse(Color.Blue)
+			else
+				self.bottom_text:diffuse(Color.White)
+			end
 		end
 	}
 }
