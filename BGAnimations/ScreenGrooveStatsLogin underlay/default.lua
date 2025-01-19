@@ -10,11 +10,10 @@ local ResetGrooveStatsSettings = function(pn)
 end
 
 ws = NETWORK:WebSocket{
-  url="ws://127.0.0.1:3000",
+  url="ws://qrlogin.groovestats.com:3000",
   pingInterval=15,
   automaticReconnect=true,
   onMessage=function(msg)
-    SM(msg)
     local msgType = ToEnumShortString(msg.type)
     if msgType == "Open" then
       local data = {
@@ -70,9 +69,19 @@ local af = Def.ActorFrame{
     ResetGrooveStatsSettings("P1")
     ResetGrooveStatsSettings("P2")
     ws:Close()
-    SM("Cancelled")
   end,
-  OffCommand=function(self) ws:Close() SM("Offed") end,
+  OffCommand=function(self)
+    ws:Close()
+  end,
+
+  LoadFont("Common Normal")..{
+    Text="Scan the QR code to log in to GrooveStats!",
+    InitCommand=function(self) self:y(-150) end,
+  },
+  LoadFont("Common Normal")..{
+    Text="Visit www.groovestats.com to create an account.",
+    InitCommand=function(self) self:y(-120) end,
+  },
 
   LoadFont("Common Normal")..{
     Text=THEME:GetString("ScreenEvaluation", "PressStartToContinue"),
@@ -90,7 +99,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
   local pn = ToEnumShortString(player)
 
   local childAf = Def.ActorFrame{
-    InitCommand=function(self) self:x(200 * (player == PLAYER_1 and -1 or 1) ) end,
+    InitCommand=function(self) self:x(200 * (player == PLAYER_1 and -1 or 1) ):y(15) end,
 
     -- White box for the border
     Def.Quad {
@@ -106,6 +115,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
       Text=SL[pn].ApiKey and "Profile already\nconnected!" or "",
       HideQrMessageCommand=function(self, params)
         if params.pn == pn then
+          WriteGrooveStatsIni(player)
           self:settext(params.username .. '\nLogged in!')
         end
       end,
@@ -113,10 +123,11 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 
   }
 
-  -- This side doesn't have an API key set, display a QR code to fetch one.
-  if SL[pn].ApiKey == "" then
+  -- Display a QR code to fetch the API keu if we always want to display the
+  -- screen, or if the player doesn't already have an API key saved.
+  if ThemePrefs.Get("QRLogin") == "Always" or SL[pn].ApiKey == "" then
     local side = (player == PLAYER_1) and 1 or 2
-    local url = ("HTTPS://GROOVESTATS.COM/QR/%s/%d"):format(uuid, side):upper()
+    local url = ("HTTPS://www.groovestats.com/qrlogin.php?UUID=%s&SIDE=%d"):format(uuid, side)
 
     childAf[#childAf+1] = LoadActor( qrModulePath , {url, qrcodeSize} )..{
       Name="QRCode",

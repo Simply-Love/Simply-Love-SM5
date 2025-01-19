@@ -24,6 +24,11 @@ local function CreditsText( player )
 		UpdateTextCommand=function(self)
 			-- this feels like a holdover from SM3.9 that just never got updated
 			local str = ScreenSystemLayerHelpers.GetCreditsMessage(player)
+			local pn = ToEnumShortString(player)
+			if SL[pn].GrooveStatsUsername ~= "" then
+				str = SL[pn].GrooveStatsUsername
+			end
+
 			self:settext(str)
 		end,
 		SetCreditsTextMessageCommand=function(self, params)

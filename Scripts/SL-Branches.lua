@@ -68,7 +68,9 @@ Branch.AllowScreenSelectProfile = function()
 end
 
 Branch.AfterSelectProfile = function()
-	local allApiKeys = true
+	-- If we only want to sometimes display QR Login, only do so if at least one
+	-- of the chosen profiles doesn't already have an API key saved.
+	local allApiKeys = false
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local pn = ToEnumShortString(player)
 		if SL[pn].ApiKey == "" then
@@ -76,7 +78,9 @@ Branch.AfterSelectProfile = function()
 			break
 		end
 	end
-	if SL.GrooveStats.IsConnected and not allApiKeys then
+	if (SL.GrooveStats.IsConnected and
+	    (ThemePrefs.Get("QRLogin") == "Always" or
+			 (ThemePrefs.Get("QRLogin") == "Sometimes" and not allApiKeys))) then
 		return "ScreenGrooveStatsLogin"
 	else
 		return Branch.AllowScreenSelectColor()
