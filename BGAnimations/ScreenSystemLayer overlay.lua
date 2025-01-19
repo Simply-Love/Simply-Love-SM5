@@ -943,7 +943,7 @@ t[#t+1] = Def.ActorFrame{
 		Def.Quad{
 			Name="Background",
 			InitCommand=function(self)
-				self:zoomto(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2):diffuse(0, 0, 0, 0.5)
+				self:zoomto(SCREEN_WIDTH / 3, SCREEN_HEIGHT):diffuse(0, 0, 0, 0.5):y(_screen.cy)
 			end,
 		},
 
