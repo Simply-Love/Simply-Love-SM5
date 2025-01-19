@@ -798,16 +798,17 @@ t[#t+1] = Def.ActorFrame{
 						elseif action == "create" then
 							MESSAGEMAN:Broadcast("CreateLobby")
 						end
+						self:GetChild("Display"):visible(true)
 					elseif msgType == "Message" then
 						local response = JsonDecode(msg.data)
 						HandleResponse(response, self)
 					elseif msgType == "Close" then
 						MESSAGEMAN:Broadcast("DisconnectOnline")
+						self:GetChild("Display"):visible(false)
 					end
 				end,
 			}
 
-			self:GetChild("Display"):visible(true)
 		end
 	end,
 	ScreenChangedMessageCommand=function(self)
