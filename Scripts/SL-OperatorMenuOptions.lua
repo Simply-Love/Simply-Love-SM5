@@ -264,8 +264,8 @@ function offsetMS(pref, low, high)
 end
 
 OperatorMenuOptionRows.GlobalOffsetSeconds = function()
-	-- 100ms should be sufficient to accomodate for audio delay
-	return offsetMS("GlobalOffsetSeconds", -100, 100)
+	-- up to 1s of audio delay (via HDMI), because some TVs are really slow
+	return offsetMS("GlobalOffsetSeconds", -1000, 1000)
 end
 
 OperatorMenuOptionRows.VisualDelaySeconds = function()
