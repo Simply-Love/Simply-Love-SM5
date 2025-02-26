@@ -485,6 +485,17 @@ function InitializeSimplyLove()
 	SL.P1:initialize()
 	SL.P2:initialize()
 	SL.Global:initialize()
+	
+	-- Temporary fix so late joining players aren't getting the last person's profile.
+	-- This obsoletes the handling for defaulting to the DefaultLocalProfile in SelectProfile
+	-- However, the addition of the ProfileSortOrder_Recent will ensure the last used profile is
+	-- always at the top of the list anyways
+	-- If the SelectProfile screen is not being used, we should continue to use the default profiles
+	if ThemePrefs.Get("AllowScreenSelectProfile") then
+		PREFSMAN:SetPreference("DefaultLocalProfileIDP1", "")
+		PREFSMAN:SetPreference("DefaultLocalProfileIDP2", "")
+	else
+
 end
 
 InitializeSimplyLove()
