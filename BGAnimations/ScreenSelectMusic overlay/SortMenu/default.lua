@@ -195,6 +195,8 @@ local function AddPlayerSortOptions()
 end
 
 local function AddPlaylists()
+
+	-- First add the machine playlists
 	local player_sort_options = {}
 	-- Get the name of every file in the Other/Playlists directory
 	local files = FILEMAN:GetDirListing(THEME:GetCurrentThemeDirectory().."Other/Playlists/")
@@ -203,10 +205,24 @@ local function AddPlaylists()
 		local file = files[i]
 		if file:match("%.txt$") then
 			local playlist = file:gsub("%.txt$", "")
-			table.insert(player_sort_options, {{"Playlist", playlist}})
+			table.insert(player_sort_options, {{"MachinePlaylist", playlist}})
 		end
 	end
 
+	-- Then add the personal playlists
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		local playlistPath = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[player] + 1]) .."/Playlists/";
+		local playerPlaylists = FILEMAN:GetDirListing(playlistPath)
+		for i=1, #playerPlaylists do
+			local file = playerPlaylists[i]
+			if file:match("%.txt$") then
+				local playlist = file:gsub("%.txt$", "")
+				table.insert(player_sort_options, {{"PersonalPlaylist", playlist}})
+			end
+		end
+	end
+	
+	-- Favorites are basically a playlist so include those too
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local path = getFavoritesPath(player)
 		if FILEMAN:DoesFileExist(path) then
@@ -214,9 +230,9 @@ local function AddPlaylists()
 			break
 		end
 	end
-
 	return player_sort_options
 end
+
 local function GetChangeableStyles(style)
 	local available_styles = {}
 	-- Allow players to switch from single to double and from double to single
@@ -312,7 +328,7 @@ local wheel_options = {
 	},
 	{
 		{"", "CategoryPlaylists"},
-		AddPlaylists()
+		AddPlaylists(),
 	},
 	{ {"SortBy", "Group"} },
 	{ {"SortBy", "Title"} },
