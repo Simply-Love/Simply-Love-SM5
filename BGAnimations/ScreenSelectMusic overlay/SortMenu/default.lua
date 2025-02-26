@@ -304,8 +304,13 @@ local wheel_options = {
 			{ {"SortBy", "Popularity"} },
 			{ {"SortBy", "Recent"} },
 			{ {"SortBy", "TopGrades"} },
-			{ {"SortBy", "TopP1Grades"}, PROFILEMAN:IsPersistentProfile(PLAYER_1) },
-			{ {"SortBy", "TopP2Grades"}, PROFILEMAN:IsPersistentProfile(PLAYER_2) },
+			{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+			{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+			{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+			{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+			{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+			{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+
 		}
 	},
 	{
