@@ -537,7 +537,7 @@ for player in ivalues( PlayerNumber ) do
 
 			LoadFont("Common Normal").. {
 				Name="Name",
-				Text=(i==1 and THEME:GetString("GrooveStats", "Loading") or ""),
+				Text=(i==1 and THEME:GetString("Groovestats", "Loading") or ""),
 				InitCommand=function(self)
 					self:horizalign(center)
 					self:maxwidth(130)
@@ -545,7 +545,7 @@ for player in ivalues( PlayerNumber ) do
 					self:diffuse(Color.White)
 				end,
 				ResetEntryMessageCommand=function(self)
-					self:settext(i==1 and THEME:GetString("GrooveStats", "Loading") or "")
+					self:settext(i==1 and THEME:GetString("Groovestats", "Loading") or "")
 					self:diffuse(Color.White)
 				end
 			},
