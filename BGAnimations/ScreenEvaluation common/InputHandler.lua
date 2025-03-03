@@ -44,13 +44,19 @@ for controller=1,2 do
 			-- and the other side as their profile's EvalPaneSecondary
 			if #players==1 then
 				if ("P"..controller)==ToEnumShortString(mpn) then
-					pane:visible(i == primary_i)
-					active_pane[controller] = primary_i
-
+					if i == primary_i then
+						pane:visible(true)
+						active_pane[controller] = #panes[controller] + 1
+					else
+						pane:visible(false)
+					end
 				elseif ("P"..controller)==ToEnumShortString(OtherPlayer[mpn]) then
-					pane:visible(i == secondary_i)
-					active_pane[controller] = secondary_i
-
+					if i == secondary_i then
+						pane:visible(true)
+						active_pane[controller] = #panes[controller] + 1
+					else
+						pane:visible(false)
+					end
 				end
 
 			-- versus
