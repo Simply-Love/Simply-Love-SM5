@@ -75,6 +75,7 @@ SL_CustomPrefs.Get = function()
 				THEME:GetString("ScreenSelectPlayMode", "ITG"),
 			},
 			Values = { "Casual", "ITG" }
+		},
 		DefaultFailType =
 		{
 			Default = "Immediate",
