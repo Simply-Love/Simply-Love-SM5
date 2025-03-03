@@ -68,7 +68,7 @@ af[#af+1] = Def.BitmapText{
 
 af[#af+1] = Def.BitmapText{
 	Name="NoDownloads",
-	Text=THEME:GetStrings("Groovestats", "NoDownloads"),
+	Text=THEME:GetString("Groovestats", "NoDownloads"),
 	Font="Common Normal",
 	InitCommand=function(self) self:visible(false):zoom(2) end,
 }

@@ -279,7 +279,7 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 				-- If we disable the service from a previous request, surface it to the user here.
 				for i=1,2 do
 					local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
-					loadingText:settext(THEME:GetStrings("Groovestats", "Disabled"))
+					loadingText:settext(THEME:GetString("Groovestats", "Disabled"))
 					loadingText:visible(true)
 				end
 			end

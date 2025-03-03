@@ -481,7 +481,7 @@ for player in ivalues( PlayerNumber ) do
 
 			LoadFont("Common Normal").. {
 				Name="Text",
-				Text=THEME:GetStrings("Groovestats", "MoreLeaderboards"),
+				Text=THEME:GetString("Groovestats", "MoreLeaderboards"),
 				InitCommand=function(self)
 					self:diffuse(Color.White)
 				end,

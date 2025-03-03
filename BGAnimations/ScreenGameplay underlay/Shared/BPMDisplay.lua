@@ -8,7 +8,7 @@ local bpmDisplay, SongPosition
 
 -- -----------------------------------------------------------------------
 
-local xRateText = THEME:GetStrings("OptionsTitles", "MusicRateMultiplier")
+local xRateText = THEME:GetString("OptionsTitles", "MusicRateMultiplier")
 
 -- the update function when a single BPM Display is in use
 local UpdateSingleBPM = function(af)

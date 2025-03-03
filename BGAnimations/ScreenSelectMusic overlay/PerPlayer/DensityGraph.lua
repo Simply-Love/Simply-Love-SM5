@@ -249,8 +249,8 @@ local layout = {
 
 local colSpacing = 150
 local rowSpacing = 20
-local noneText = THEME:GetStrings("SLPlayerOptions", "None")
-local totalStreamText = THEME:GetStrings("ScreenSelectMusic", "TotalStream")
+local noneText = THEME:GetString("SLPlayerOptions", "None")
+local totalStreamText = THEME:GetString("ScreenSelectMusic", "TotalStream")
 
 for i, row in ipairs(layout) do
 	for j, col in pairs(row) do
