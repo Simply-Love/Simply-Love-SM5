@@ -75,6 +75,19 @@ SL_CustomPrefs.Get = function()
 				THEME:GetString("ScreenSelectPlayMode", "ITG"),
 			},
 			Values = { "Casual", "ITG" }
+		DefaultFailType =
+		{
+			Default = "Immediate",
+			Choices = {
+					"Immediate",
+					"ImmediateContinue",
+					"Off",
+			},
+			Values = {
+					"Immediate",
+					"ImmediateContinue",
+					"Off",
+			},
 		},
 		AutoStyle =
 		{
