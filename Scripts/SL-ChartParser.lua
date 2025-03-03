@@ -497,7 +497,7 @@ ParseChartInfo = function(steps, pn)
 
 				-- Let's just do this here for now since a lot of the existing infra
 				-- references these values directly. We can refactor later.
-				local techCounts = step:CalculateTechCounts(player)
+				local techCounts = steps:CalculateTechCounts(player)
 
 				SL[pn].Streams.Crossovers = techCounts:GetValue("TechCountsCategory_Crossovers")
 				SL[pn].Streams.Footswitches = techCounts:GetValue("TechCountsCategory_Footswitches")
