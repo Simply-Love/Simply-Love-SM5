@@ -250,12 +250,12 @@ local layout = {
 local colSpacing = 150
 local rowSpacing = 20
 local noneText = THEME:GetString("SLPlayerOptions", "None")
-local totalStreamText = THEME:GetString("ScreenSelectMusic", "TotalStream")
+local totalStreamText = THEME:GetString("SLPlayerOptions", "TotalStream")
 
 for i, row in ipairs(layout) do
 	for j, col in pairs(row) do
 		af3[#af3+1] = LoadFont("Common normal")..{
-			Text=col ~= totalStreamText and "0" or noneText" (0.0%)",
+			Text=(col ~= totalStreamText and "0" or noneText).." (0.0%)",
 			Name=col .. "Value",
 			InitCommand=function(self)
 				local textHeight = 17
