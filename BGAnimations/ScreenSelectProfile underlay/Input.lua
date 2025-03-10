@@ -41,7 +41,6 @@ for profile in ivalues(profile_data) do
 end
 
 local AutoStyle = ThemePrefs.Get("AutoStyle")
-local mpn = GAMESTATE:GetMasterPlayerNumber()
 
 local Handle = {}
 
@@ -232,7 +231,13 @@ Handle.Back = function(event)
 		-- unjoin a player from a 2-player setup
 		if SL.Global.FastProfileSwitchInProgress and GAMESTATE:GetNumSidesJoined() == 1 then
 			GAMESTATE:SetCurrentStyle("single")
-			SCREENMAN:GetTopScreen():playcommand("Update")
+			-- If AutoStyle is single then someone had joined during gameplay
+			-- We need to explicitly remove this player's join frame
+			if (AutoStyle=="single") then
+				SCREENMAN:GetTopScreen():playcommand("Update", {player=event.PlayerNumber})
+			else
+				SCREENMAN:GetTopScreen():playcommand("Update")
+			end
 		end
 
 	end
@@ -243,7 +248,7 @@ Handle.Select = Handle.Back
 local InputHandler = function(event)
 	if finished then return false end
 	if not event or not event.button then return false end
-	if (AutoStyle=="single" or AutoStyle=="double") and event.PlayerNumber ~= mpn then return false	end
+	if (((AutoStyle=="single" or AutoStyle=="double") and #GAMESTATE:GetHumanPlayers() == 1) and event.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber()) then return false	end
 
 	if event.type ~= "InputEventType_Release" then
 		if Handle[event.GameButton] then Handle[event.GameButton](event) end

@@ -4,11 +4,6 @@
 -- SelectProfileFrames for both PLAYER_1 and PLAYER_2, but only the MasterPlayerNumber
 local AutoStyle = ThemePrefs.Get("AutoStyle")
 
--- retrieve the MasterPlayerNumber now, at initialization, so that if AutoStyle is set
--- to "single" or "double" and that singular player unjoins, we still have a handle on
--- which PlayerNumber they're supposed to be...
-local mpn = GAMESTATE:GetMasterPlayerNumber()
-
 -- a table of profile data (highscore name, most recent song, mods, etc.)
 -- indexed by "ProfileIndex" (provided by engine)
 local profile_data = LoadActor("./PlayerProfileData.lua")
@@ -22,7 +17,6 @@ local readyPlayers = {
 	["P1"] = false,
 	["P2"] = false,
 }
-
 -- ----------------------------------------------------
 
 local HandleStateChange = function(self, Player)
@@ -171,7 +165,7 @@ local t = Def.ActorFrame {
 
 	CodeMessageCommand=function(self, params)
 
-		if (AutoStyle=="single" or AutoStyle=="double") and params.PlayerNumber ~= mpn then return end
+		if (AutoStyle=="single" or AutoStyle=="double" or #GAMESTATE:GetHumanPlayers() > 1 ) and params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber()  then return end
 
 		-- Don't allow players to unjoin from SelectProfile in CoinMode_Pay.
 		-- 1 credit has already been deducted from ScreenTitleJoin, so allowing players
@@ -224,11 +218,11 @@ local t = Def.ActorFrame {
 			return
 		end
 
-		if AutoStyle=="none" or AutoStyle=="versus" then
+		if AutoStyle=="none" or AutoStyle=="versus" or #GAMESTATE:GetHumanPlayers() > 1 then
 			HandleStateChange(self, PLAYER_1)
 			HandleStateChange(self, PLAYER_2)
 		else
-			HandleStateChange(self, mpn)
+			HandleStateChange(self, GAMESTATE:GetMasterPlayerNumber())
 		end
 	end,
 
@@ -281,12 +275,12 @@ if SL.Global.FastProfileSwitchInProgress then
 end
 
 -- load PlayerFrames for both
-if AutoStyle=="none" or AutoStyle=="versus" then
+if AutoStyle=="none" or AutoStyle=="versus" or #GAMESTATE:GetHumanPlayers() > 1 then
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data, Avatars=avatars})
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data, Avatars=avatars})
 -- load only for the MasterPlayerNumber
 else
-	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=mpn, Scroller=scrollers[mpn], ProfileData=profile_data, Avatars=avatars})
+	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=GAMESTATE:GetMasterPlayerNumber(), Scroller=scrollers[GAMESTATE:GetMasterPlayerNumber()], ProfileData=profile_data, Avatars=avatars})
 end
 
 LoadActor("./JudgmentGraphicPreviews.lua", {af=t, profile_data=profile_data})
