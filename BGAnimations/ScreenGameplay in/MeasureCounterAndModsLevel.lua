@@ -8,8 +8,8 @@ return function(SongNumberInCourse)
 		local pn = ToEnumShortString(player)
 		SL[pn].PlayerOptionsString = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 
-		-- Check if MeasureCounter is turned on.  We may need to parse the chart.
-		-- NEW: If ColumnCues is turned on, that will also require chart parsing.
+		-- Check if MeasureCounter or ColumnCues are turned on.
+		-- We may need to parse the chart
 		local mods = SL[pn].ActiveModifiers
 		if (mods.MeasureCounter and mods.MeasureCounter ~= "None") or mods.ColumnCues then
 
