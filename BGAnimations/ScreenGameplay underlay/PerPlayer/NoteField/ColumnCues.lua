@@ -85,6 +85,7 @@ local af = Def.ActorFrame{
 		self:SetUpdateFunction(Update)
 	end,
 	CurrentSongChangedMessageCommand=function(self)
+		playerState = GAMESTATE:GetPlayerState(player)
 		columnCues = SL[pn].Streams.ColumnCues
 		curIndex = 1
 		updatedFirstTime = false
