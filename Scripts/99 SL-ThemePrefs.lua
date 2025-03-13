@@ -76,20 +76,7 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "Casual", "ITG" }
 		},
-		DefaultFailType =
-		{
-			Default = "Immediate",
-			Choices = {
-					"Immediate",
-					"ImmediateContinue",
-					"Off",
-			},
-			Values = {
-					"Immediate",
-					"ImmediateContinue",
-					"Off",
-			},
-		},
+
 		AutoStyle =
 		{
 			Default = "none",
@@ -312,6 +299,7 @@ SL_CustomPrefs.Get = function()
 			Choices =  { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
 			Values  = { true, false }
 		},
+
 		QRLogin = {
 			Default = "Sometimes",
 			Choices = {
