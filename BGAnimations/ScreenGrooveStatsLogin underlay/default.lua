@@ -127,7 +127,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
   -- screen, or if the player doesn't already have an API key saved.
   if ThemePrefs.Get("QRLogin") == "Always" or SL[pn].ApiKey == "" then
     local side = (player == PLAYER_1) and 1 or 2
-    local url = ("HTTPS://www.groovestats.com/qrlogin.php?UUID=%s&SIDE=%d"):format(uuid, side)
+    local url = ("http://www.groovestats.com/qrlogin.php?UUID=%s&SIDE=%d"):format(uuid, side)
 
     childAf[#childAf+1] = LoadActor( qrModulePath , {url, qrcodeSize} )..{
       Name="QRCode",
