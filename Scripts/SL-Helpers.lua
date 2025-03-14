@@ -989,3 +989,17 @@ GetPlayerOptionsString = function(player, modsLevel)
 
 	return optionslist
 end
+-- -----------------------------------------------------------------------
+-- helper function for returning the player AF
+-- works as expected in ScreenGameplay
+--     arguments:  pn is short string PlayerNumber like "P1" or "P2"
+--     returns:    the "PlayerP1" or "PlayerP2" ActorFrame in ScreenGameplay or ScreenEdit
+GetPlayerAF = function(pn)
+	local topscreen = SCREENMAN:GetTopScreen()
+	if not topscreen then
+		lua.ReportScriptError("GetPlayerAF() failed to find the player ActorFrame because there is no Screen yet.")
+		return nil
+	end
+
+	return topscreen:GetChild("Player"..pn)
+end

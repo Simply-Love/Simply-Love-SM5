@@ -50,4 +50,12 @@ for section, offset in pairs(sections) do
 	}
 end
 
+
+local Players = GAMESTATE:GetHumanPlayers()
+for player in ivalues(Players) do
+	-- All NoteField specific actors are contained in this file.
+	t[#t+1] = LoadActor("./ScreenGameplay underlay/PerPlayer/NoteField/default.lua", player)
+
+end
+
 return t
