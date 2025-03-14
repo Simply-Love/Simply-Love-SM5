@@ -1,3 +1,4 @@
+
 local t = Def.ActorFrame{
 	Name="Text",
 	OnCommand=function(self) self:queuecommand("Show") end,

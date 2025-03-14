@@ -989,3 +989,56 @@ GetPlayerOptionsString = function(player, modsLevel)
 
 	return optionslist
 end
+
+
+-- helper function for returning the player AF
+-- works as expected in ScreenGameplay
+--     arguments:  pn is short string PlayerNumber like "P1" or "P2"
+--     returns:    the "PlayerP1" or "PlayerP2" ActorFrame in ScreenGameplay
+--                 or, the unnamed equivalent in ScrenEdit
+GetPlayerAF = function(pn)
+	local topscreen = SCREENMAN:GetTopScreen()
+	if not topscreen then
+		lua.ReportScriptError("GetPlayerAF() failed to find the player ActorFrame because there is no Screen yet.")
+		return nil
+	end
+
+	local playerAF = nil
+
+	-- Get the player ActorFrame on ScreenGameplay
+	-- It's a direct child of the screen and named "PlayerP1" for P1
+	-- and "PlayerP2" for P2.
+	-- This naming convention is hardcoded in the SM5 engine.
+	--
+	-- ScreenEdit does not name its player ActorFrame, but we can still find it.
+
+	-- find the player ActorFrame in edit mode
+	local notefields = {}
+	if (THEME:GetMetric(topscreen:GetName(), "Class") == "ScreenEdit") then
+		-- loop through all nameless children of topscreen
+		-- and find the one that contains the NoteField
+		-- which is thankfully still named "NoteField"1
+
+		for _,nameless_child in ipairs(topscreen:GetChild("")) do
+			if nameless_child:GetChild("NoteField") then
+				notefields[#notefields+1] = nameless_child
+			end
+		end
+		-- If there is only one side joined always return the first one.
+		if #notefields == 1 then
+			return notefields[1]
+		-- If there are two sides joined, return the one that matches the player number.
+		else
+			return notefields[pn == "P1" and 1 or 2]
+		end
+
+	-- find the player ActorFrame in gameplay
+	else
+		local player_af = topscreen:GetChild("Player"..pn)
+		if player_af then
+			playerAF = player_af
+		end
+	end
+
+	return playerAF
+end

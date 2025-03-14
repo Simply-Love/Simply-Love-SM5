@@ -89,7 +89,10 @@ local af = Def.ActorFrame{
 		columnCues = SL[pn].Streams.ColumnCues
 		curIndex = 1
 		updatedFirstTime = false
-	end
+	end,
+	PlayingCommand=function(self)
+		curIndex = 1
+	end,
 }
 
 local IsReversedColumn = function(player, columnIndex)
