@@ -209,7 +209,7 @@ local GetScoresRequestProcessor = function(res, params)
 					end
 				else
 					if SL["P"..i].ActiveModifiers.ShowEXScore then
-						loadingText:settext(THEME:GetString("Groovestats", "NoEXData"))
+						loadingText:settext(THEME:GetString("Groovestats", "NoExData"))
 					else
 						loadingText:settext(THEME:GetString("Groovestats", "NoData"))
 					end
