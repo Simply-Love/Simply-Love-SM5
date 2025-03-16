@@ -59,7 +59,7 @@ Branch.AllowScreenSelectProfile = function()
 	if ThemePrefs.Get("AllowScreenSelectProfile") then
 		return "ScreenSelectProfile"
 	else
-			return Branch.AfterSelectProfile()
+		return Branch.AfterSelectProfile()
 	end
 end
 
