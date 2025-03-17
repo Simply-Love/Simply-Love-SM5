@@ -120,22 +120,22 @@ Branch.AfterScreenSelectColor = function()
 		-- the engine, but I guess we're doing it here, in SL-Branches.lua, for now.
 		GAMESTATE:SetCurrentStyle( preferred_style )
 
-		return Branch.AllowScreenSelectGameMode()
+		return Branch.AllowScreenSelectPlayMode()
 	end
 
 	return "ScreenSelectStyle"
 end
 
-Branch.AllowScreenSelectGameMode = function()
-	if ThemePrefs.Get("AllowScreenSelectGameMode") then
+Branch.AllowScreenSelectPlayMode = function()
+	if ThemePrefs.Get("AllowScreenSelectPlayMode") then
 		return "ScreenSelectPlayMode"
 	else
-		return Branch.AllowScreenSelectMarathon()
+		return Branch.AllowScreenSelectPlayMode2()
 	end
 end
 
-Branch.AllowScreenSelectMarathon = function()
-	if SL.Global.GameMode == "ITG" and ThemePrefs.Get("AllowScreenSelectMarathon") then
+Branch.AllowScreenSelectPlayMode2 = function()
+	if SL.Global.GameMode == "ITG" and ThemePrefs.Get("AllowScreenSelectPlayMode2") then
 		return "ScreenSelectPlayMode2"
 	else
 		return "ScreenProfileLoad"
