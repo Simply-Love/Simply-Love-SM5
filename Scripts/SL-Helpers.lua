@@ -990,9 +990,9 @@ GetPlayerOptionsString = function(player, modsLevel)
 	return optionslist
 end
 
-
+-- -----------------------------------------------------------------------
 -- helper function for returning the player AF
--- works as expected in ScreenGameplay
+-- Works as expected in ScreenGameplay + Edit + Practice Mode
 --     arguments:  pn is short string PlayerNumber like "P1" or "P2"
 --     returns:    the "PlayerP1" or "PlayerP2" ActorFrame in ScreenGameplay
 --                 or, the unnamed equivalent in ScrenEdit

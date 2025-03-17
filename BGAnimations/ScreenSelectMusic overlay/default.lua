@@ -6,7 +6,6 @@ local af = Def.ActorFrame{
 	InitCommand=function(self)
 		SL.Global.GameplayReloadCheck = false
 		generateFavoritesForMusicWheel()
-		SM(SL.Metrics["ShowBeatBars"])
 		-- While other SM versions don't need this, Outfox resets the
 		-- the music rate to 1 between songs, but we want to be using
 		-- the preselected music rate.
