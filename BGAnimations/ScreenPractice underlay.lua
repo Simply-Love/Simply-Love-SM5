@@ -25,8 +25,8 @@ local t = Def.ActorFrame{
 
 local sections = {
 	NavigationHelp = 0,
-	MenuHelp = 100,
-	MiscHelp = 136
+	MenuHelp = 130,
+	MiscHelp = 166
 }
 
 for section, offset in pairs(sections) do
