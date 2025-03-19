@@ -63,6 +63,10 @@ return Def.Actor{
 		local count_updated = false
 		if params.HoldNoteScore then
 			local HNS = ToEnumShortString(params.HoldNoteScore)
+			-- Missed holds are scored the same way as let go holds, so count them as such
+			if HNS == "MissedHold" then
+				HNS = "LetGo"
+			end
 			-- Only track the HoldNoteScores we care about
 			if valid_hns[HNS] then
 				if not stats:GetFailed() then
