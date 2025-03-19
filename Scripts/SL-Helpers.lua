@@ -952,7 +952,8 @@ GetPlayerOptionsString = function(player, modsLevel)
 	for i,option in ipairs(PlayerOptions) do
 
 		-- these don't need to show up in the mods list
-		if option ~= "FailAtEnd" and option ~= "FailImmediateContinue" and option ~= "FailImmediate" then
+		if option ~= "FailAtEnd" and option ~= "FailImmediateContinue" and option ~= "FailImmediate" and 
+			not string.find(option, "Lights") then
 			-- 100% Mini will be in the PlayerOptions as just "Mini" so use the value from the SL table instead
 			if option:match("Mini") then
 				option = SL[pn].ActiveModifiers.Mini .. " Mini"
