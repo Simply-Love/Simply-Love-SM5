@@ -157,6 +157,12 @@ local t = Def.ActorFrame {
 
 		if SL.Global.FastProfileSwitchInProgress then
 			SL.Global.FastProfileSwitchInProgress = false
+			-- Check if one of the players has a memory card
+			-- If so, we need to reload the screen to update the profile data
+			-- Otherwise, we can just finish the screen
+			if MEMCARDMAN:GetCardState(PLAYER_1) ~= 'MemoryCardState_none' or MEMCARDMAN:GetCardState(PLAYER_2) ~= 'MemoryCardState_none' then
+				MESSAGEMAN:Broadcast("ReloadScreenForMemoryCards")
+			end
 		end
 		SCREENMAN:GetTopScreen():Finish()
 	end,

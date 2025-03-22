@@ -105,7 +105,11 @@ local input = function(event)
 					SCREENMAN:SetNewScreen("ScreenViewDownloads")
 				elseif focus.new_overlay == "SwitchProfile" then
 					SL.Global.FastProfileSwitchInProgress = true
-
+					-- If a memory card is inserted we can't be on that profile's songs when switching profiles
+					-- as the profile is temporarily unloaded when finishing the screen.
+					if MEMCARDMAN:GetCardState(PLAYER_1) ~= 'MemoryCardState_none' or MEMCARDMAN:GetCardState(PLAYER_2) ~= 'MemoryCardState_none' then
+						SCREENMAN:GetTopScreen():GetMusicWheel():SetOpenSection("");
+					end
 					-- Make sure we save any currently active profiles before potentially switching
 					-- to different ones.
 					GAMESTATE:SaveProfiles()

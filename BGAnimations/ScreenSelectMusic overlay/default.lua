@@ -32,6 +32,15 @@ local af = Def.ActorFrame{
 			addOrRemoveFavorite(params.PlayerNumber)
 		end
 	end,
+	ReloadScreenForMemoryCardsMessageCommand=function(self, params)
+		-- Wait some time for the profile screen to finish transitioning
+		-- before reloading the screen.
+		self:sleep(0.10):queuecommand("Reload")
+	end,
+	ReloadCommand=function(self)
+		SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM")
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+	end,
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
