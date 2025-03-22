@@ -8,7 +8,7 @@ local recommended_string = THEME:GetString("RecommendedOptionExplanations", "Rec
 af.OnCommand=function(self)
 	local ScreenName = SCREENMAN:GetTopScreen():GetName()
 	if ScreenName == "ScreenMapControllers"
-	or ScreenName == "ScreenTestInput" then
+	or ScreenName == "ScreenTestInput" or ScreenName == "ScreenBookkeeping" then
 		self:visible(false)
 		return
 	end
