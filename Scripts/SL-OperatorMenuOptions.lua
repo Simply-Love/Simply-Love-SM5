@@ -133,8 +133,13 @@ OperatorMenuOptionRows.DefaultFailType = function()
 					-- If default_fail is empty, then we need to append the new fail type to the front
 					-- of the DefaultModifiers string.  Otherwise, we need to replace the old fail type
 					-- with the new fail type.
-					if default_fail == "" then
-						PREFSMAN:SetPreference("DefaultModifiers", new_fail .. ", " .. default_mods)
+					if default_fail == "" and (new_fail ~= "failimmediate") then
+						-- if default_mods is empty we cant have the comma
+						if default_mods == "" then
+							PREFSMAN:SetPreference("DefaultModifiers", new_fail)
+						else
+							PREFSMAN:SetPreference("DefaultModifiers", new_fail .. "," .. default_mods)
+						end
 					else
 						default_mods = string.gsub(default_mods, default_fail, new_fail)
 						PREFSMAN:SetPreference("DefaultModifiers", default_mods)	
