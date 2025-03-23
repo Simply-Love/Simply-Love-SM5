@@ -291,10 +291,12 @@ local wheel_options = {
 	-- The second element's table contains that options will show under this category.
 	-- It follows the same structure as the top level table.
 
-	{ 
-		{"", "CategorySorts"}, 
+        { {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
+        { {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
+	{
+		{"", "CategorySorts"},
 		{
-			{{"SortBy", "Group"} },
+			{ {"SortBy", "Group"} },
 			{ {"SortBy", "Title"} },
 			{ {"SortBy", "Artist"} },
 			{ {"SortBy", "Genre"} },
@@ -310,45 +312,22 @@ local wheel_options = {
 			{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 			{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 			{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+                        { {"MixTape", "Preferred"} }
 
-		}
-	},
-	{
-		{"", "CategoryAdvanced"},
-		{
-			{ {"FeelingSalty", "TestInput"}, GAMESTATE:IsEventMode() },
-			{ {"HardTime", "PracticeMode"}, function() return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures") end },
-			{ {"TakeABreather", "LoadNewSongs"} },
-			{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
-			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
-			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
-			{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
-		}
-	},
-	{
-		{"", "CategoryStyles"},
-		{
-			GetChangeableStyles(style),
 		}
 	},
 	{
 		{"", "CategoryPlaylists"},
 		AddPlaylists(),
 	},
-	{ {"SortBy", "Group"} },
-	{ {"SortBy", "Title"} },
-	{ {"SortBy", "Recent"} },
-	-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
-	-- but don't add the current SL GameMode as a choice.
-	{ {"ChangeMode", "ITG"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "ITG" },
-	-- Casual players often choose the wrong mode and an experienced player in the area may notice this
-	-- and offer to switch them back to casual mode. This allows them to do so again.
-	-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
-	-- include the check.
-	{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
 	{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
-	AddFavorites(),
-	{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },	
+        { {"HardTime", "PracticeMode"}, function() return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures") end },
+	{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
+        { {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
+        { {"TakeABreather", "LoadNewSongs"} },
+        { {"ChangeStyle", "Double"}, function() return GAMESTATE:GetCurrentStyle():GetName() == "single" end },
+        { {"ChangeStyle", "Single"}, function() return GAMESTATE:GetCurrentStyle():GetName() == "double" end },
+        { {"FeelingSalty", "TestInput"}, GAMESTATE:IsEventMode() },
 }
 
 
