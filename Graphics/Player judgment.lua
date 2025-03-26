@@ -20,9 +20,14 @@ if file_to_load == "None" then
 			if ToEnumShortString(param.TapNoteScore) == "W1" and mods.ShowFaPlusWindow then
 				if not IsW0Judgment(param, player) and not IsAutoplay(player) then
 					frame = 1
-					
-					for col,tapnote in pairs(param.Notes) do
-						local tnt = ToEnumShortString(tapnote:GetTapNoteType())
+					if param.Notes ~= nil then
+						for col,tapnote in pairs(param.Notes) do
+							local tnt = ToEnumShortString(tapnote:GetTapNoteType())
+							if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
+								GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_W1", --[[bright]] true)
+							end
+						end
+					elseif param.TapNote ~= nil then
 						if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
 							GetPlayerAF(pn):GetChild("NoteField"):did_tap_note(col, "TapNoteScore_W1", --[[bright]] true)
 						end
