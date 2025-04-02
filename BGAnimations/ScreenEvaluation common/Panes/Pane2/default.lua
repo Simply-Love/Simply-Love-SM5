@@ -5,7 +5,6 @@ local player = unpack(...)
 local pn = ToEnumShortString(player)
 
 -- We only want to use this in ITG mode.
--- In FA+ mode the data in this pane is handled by Pane 1
 -- We don't want this version in casual mode at all.
 if SL.Global.GameMode ~= "ITG" or not SL[pn].ActiveModifiers.ShowFaPlusPane then
 	return

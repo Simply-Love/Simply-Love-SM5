@@ -208,15 +208,6 @@ GetComboThreshold = function( MaintainOrContinue )
 	-- include dummy values here to prevent Lua errors in case players accidentally switch to lights
 	Combo.lights  = { Maintain = "TapNoteScore_W3", Continue = "TapNoteScore_W3" }
 
-
-	-- handle FA+ for Dance
-	-- should these values change for Pump?  I guess that's up to me.
-	if SL.Global.GameMode=="FA+" then
-		Combo.dance.Maintain = "TapNoteScore_W4"
-		Combo.dance.Continue = "TapNoteScore_W4"
-	end
-
-
 	local game = GAMESTATE:GetCurrentGame():GetName() or "dance"
 	return Combo[game][MaintainOrContinue]
 end
@@ -325,7 +316,7 @@ end
 -- -----------------------------------------------------------------------
 
 SetGameModePreferences = function()
-	-- apply the preferences associated with this SL GameMode (Casual, ITG, FA+)
+	-- apply the preferences associated with this SL GameMode (Casual, ITG)
 	for key,val in pairs(SL.Preferences[SL.Global.GameMode]) do
 		PREFSMAN:SetPreference(key, val)
 	end
@@ -372,10 +363,6 @@ SetGameModePreferences = function()
 	-- this was probably a Bad Decision™ on my part in hindsight  -quietly
 	prefix["ITG"] = ""
 
-	-- "FA+" mode is prefixed with "ECFA-" because the mode was previously known as "ECFA Mode"
-	-- and I don't want to deal with renaming relatively critical files from the theme.
-	-- Thus, scores from FA+ mode will continue to go into ECFA-Stats.xml.
-	prefix["FA+"] = "ECFA-"
 	prefix["Casual"] = "Casual-"
 
 	if PROFILEMAN:GetStatsPrefix() ~= prefix[SL.Global.GameMode] then
@@ -388,7 +375,7 @@ end
 -- manages for you back to their stock SM5 values.
 --
 -- These "managed" Preferences are listed in ./Scripts/SL_Init.lua
--- per-gamemode (Casual, ITG, FA+), and actively applied (and reapplied)
+-- per-gamemode (Casual, ITG), and actively applied (and reapplied)
 -- for each new game using SetGameModePreferences()
 --
 -- SL normally calls ResetPreferencesToStockSM5() from
@@ -601,7 +588,7 @@ IsW0Judgment = function(params, player)
 	if params.HoldNoteScore then return false end
 
 	-- Only check/update FA+ count if we received a TNS in the top window.
-	if params.TapNoteScore == "TapNoteScore_W1" and SL.Global.GameMode == "ITG"  then
+	if params.TapNoteScore == "TapNoteScore_W1" and SL.Global.GameMode == "ITG" then
 		local prefs = SL.Preferences["FA+"]
 		local scale = PREFSMAN:GetPreference("TimingWindowScale")
 		local W0 = prefs["TimingWindowSecondsW1"] * scale + prefs["TimingWindowAdd"]
@@ -650,28 +637,7 @@ GetExJudgmentCounts = function(player)
 
 	local TNS = { "W1", "W2", "W3", "W4", "W5", "Miss" }
 
-	if SL.Global.GameMode == "FA+" then
-		for window in ivalues(TNS) do
-			adjusted_window = window
-			-- In FA+ mode, we need to shift the windows up 1 so that the key we're using is accurate.
-			-- E.g. W1 window becomes W0, W2 becomes W1, etc.
-			if window ~= "Miss" then
-				adjusted_window = "W"..(tonumber(window:sub(-1))-1)
-			end
-
-			-- Get the count.
-			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )
-			-- For the last window (Decent) in FA+ mode...
-			if window == "W5" then
-				-- Only populate if the window is still active.
-				if SL[pn].ActiveModifiers.TimingWindows[5] then
-					counts[adjusted_window] = number
-				end
-			else
-				counts[adjusted_window] = number
-			end
-		end
-	elseif SL.Global.GameMode == "ITG" then
+    if SL.Global.GameMode == "ITG" then
 		for window in ivalues(TNS) do
 			-- Get the count.
 			local number = stats:GetTapNoteScores( "TapNoteScore_"..window )

@@ -7,23 +7,23 @@ local Colors = {}
 if mods.ShowFaPlusWindow and mods.ShowFaPlusPane then
 	TapNoteScores.Types = {'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}
 	Colors = {
-		SL.JudgmentColors["FA+"][1],
-		SL.JudgmentColors["FA+"][2],
-		SL.JudgmentColors["FA+"][3],
-		SL.JudgmentColors["FA+"][4],
-		SL.JudgmentColors["FA+"][5],
-		SL.JudgmentColors["ITG"][5], -- FA+ mode doesn't have a Way Off window. Extract color from the ITG mode.
-		SL.JudgmentColors["FA+"][6],
+		SL.JudgmentColors["ITG"][1], -- Fantastic Blue
+		SL.JudgmentColors["FA+"][2], -- Just extract the Fantastic white color
+        SL.JudgmentColors["ITG"][2], -- Yellow Excellent
+		SL.JudgmentColors["ITG"][3], -- Green Great
+		SL.JudgmentColors["ITG"][4], -- Purple Decent
+		SL.JudgmentColors["ITG"][5], -- Way Off
+		SL.JudgmentColors["ITG"][6], -- Red Miss
 	}
 	-- get all TNS names
 	TapNoteScores.Names = {
-		THEME:GetString("TapNoteScoreFA+", "W1"),
-		THEME:GetString("TapNoteScoreFA+", "W2"),
-		THEME:GetString("TapNoteScoreFA+", "W3"),
-		THEME:GetString("TapNoteScoreFA+", "W4"),
-		THEME:GetString("TapNoteScoreFA+", "W5"),
-		THEME:GetString("TapNoteScore", "W5"), -- FA+ mode doesn't have a Way Off window. Extract name from the ITG mode.
-		THEME:GetString("TapNoteScoreFA+", "Miss"),
+		THEME:GetString("TapNoteScore", "W1"),
+		THEME:GetString("TapNoteScoreFA+", "W2"), -- Extract the Fantastic White Window
+		THEME:GetString("TapNoteScore", "W2"),
+		THEME:GetString("TapNoteScore", "W3"),
+		THEME:GetString("TapNoteScore", "W4"),
+		THEME:GetString("TapNoteScore", "W5"),
+		THEME:GetString("TapNoteScore", "Miss"),
 	}
 else
 	TapNoteScores.Types = {'W1', 'W2', 'W3', 'W4', 'W5', 'Miss'}

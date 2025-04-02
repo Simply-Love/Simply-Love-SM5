@@ -6,13 +6,13 @@ local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local TapNoteScores = {
 	Types = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
 	Colors = {
-		SL.JudgmentColors["FA+"][1],
-		SL.JudgmentColors["FA+"][2],
-		SL.JudgmentColors["FA+"][3],
-		SL.JudgmentColors["FA+"][4],
-		SL.JudgmentColors["FA+"][5],
-		SL.JudgmentColors["ITG"][5], -- FA+ mode doesn't have a Way Off window. Extract color from the ITG mode.
-		SL.JudgmentColors["FA+"][6],
+		SL.JudgmentColors["ITG"][1], -- Fantastic Blue
+		SL.JudgmentColors["FA+"][2], -- Just extract the Fantastic white color
+        SL.JudgmentColors["ITG"][2], -- Yellow Excellent
+		SL.JudgmentColors["ITG"][3], -- Green Great
+		SL.JudgmentColors["ITG"][4], -- Purple Decent
+		SL.JudgmentColors["ITG"][5], -- Way Off
+		SL.JudgmentColors["ITG"][6], -- Red Miss
 	},
 	-- x values for P1 and P2
 	x = { P1=64, P2=94 }

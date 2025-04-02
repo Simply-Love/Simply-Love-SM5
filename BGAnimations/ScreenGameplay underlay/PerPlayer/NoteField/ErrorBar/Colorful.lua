@@ -13,7 +13,7 @@ local numTicks = mods.ErrorBarMultiTick and 10 or 1
 local currentTick = 1
 local judgmentToTrim = {
     TapNoteScore_W3 = mods.ErrorBarTrim == "Excellent" and SL.Global.GameMode == "ITG",
-    TapNoteScore_W4 = (mods.ErrorBarTrim ~= "Off" and SL.Global.GameMode == "ITG") or (mods.ErrorBarTrim == "Excellent" and SL.Global.GameMode == "FA+"),
+    TapNoteScore_W4 = mods.ErrorBarTrim ~= "Off" and SL.Global.GameMode == "ITG",
     TapNoteScore_W5 = mods.ErrorBarTrim ~= "Off"
 }
 
@@ -106,14 +106,8 @@ local af = Def.ActorFrame{
             local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
 
             if earlyTns ~= "None" then
-                if SL.Global.GameMode == "FA+" then
-                    if tns == "W5" then
-                        return
-                    end
-                else
-                    if tns == "W4" or tns == "W5" then
-                        return
-                    end
+                if tns == "W4" or tns == "W5" then
+                    return
                 end
             end
         end

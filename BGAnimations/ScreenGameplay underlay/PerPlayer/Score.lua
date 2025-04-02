@@ -59,9 +59,9 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 		self:valign(1):horizalign(right)
 		self:zoom(0.5)
 		if IsEX then
-			-- If EX Score, let's diffuse it to be the same as the FA+ top window.
+			-- If EX Score, let's diffuse it to be the same as the ITG top window.
 			-- This will make it consistent with the EX Score Pane.
-			self:diffuse(SL.JudgmentColors["FA+"][1])
+			self:diffuse(SL.JudgmentColors["ITG"][1])
 		end
 	end,
 

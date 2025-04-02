@@ -16,15 +16,6 @@ colors.FullComboW2 = {color("#FDFFC9"), color("#FDDB85")} -- gold combo
 colors.FullComboW3 = {color("#C9FFC9"), color("#94FEC1")} -- green combo
 colors.FullComboW4 = {color("#FFFFFF"), color("#FFFFFF")} -- white combo
 
--- combo colors used in FA+
-if SL.Global.GameMode == "FA+" then
-	colors.FullComboW1 = {color("#C8FFFF"), color("#6BF0FF")} -- blue combo
-	colors.FullComboW2 = {color("#C8FFFF"), color("#6BF0FF")} -- blue combo
-	colors.FullComboW3 = {color("#FDFFC9"), color("#FDDB85")} -- gold combo
-	colors.FullComboW4 = {color("#C9FFC9"), color("#94FEC1")} -- green combo
-end
-
-
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt")
 
 local af = Def.ActorFrame{

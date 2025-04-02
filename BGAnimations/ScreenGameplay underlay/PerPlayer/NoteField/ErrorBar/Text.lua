@@ -59,14 +59,8 @@ local af = Def.ActorFrame{
                 local earlyTns = ToEnumShortString(params.EarlyTapNoteScore)
     
                 if earlyTns ~= "None" then
-                    if SL.Global.GameMode == "FA+" then
-                        if tns == "W5" then
-                            return
-                        end
-                    else
-                        if tns == "W4" or tns == "W5" then
-                            return
-                        end
+                    if tns == "W4" or tns == "W5" then
+                        return
                     end
                 end
             end

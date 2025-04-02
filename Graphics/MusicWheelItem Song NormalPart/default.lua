@@ -31,7 +31,7 @@ for player in ivalues(PlayerNumber) do
 			self:visible(false)
 			self:zoom(0.2)
 			self:x( _screen.w/(WideScale(2.15, 2.14)) - self:GetWidth()*self:GetZoom() - 40 )
-			self:diffuse(SL.JudgmentColors["FA+"][1])
+			self:diffuse(SL.JudgmentColors["ITG"][1])
 		end,
 		PlayerJoinedMessageCommand=function(self)
 			self:visible(GAMESTATE:IsPlayerEnabled(player))

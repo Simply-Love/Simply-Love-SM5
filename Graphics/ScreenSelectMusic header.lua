@@ -89,7 +89,7 @@ else
 
 end
 
--- "ITG" or "FA+"; aligned to right of screen
+-- "ITG" aligned to right of screen
 af[#af+1] = LoadFont("Common Header")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),

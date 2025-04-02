@@ -31,17 +31,6 @@ local function GetLamp(high_score_list)
 			end
 		end
 
-		-- NOTE: Below is deprecated since FA+ mode no longer really exists.
-		if award == nil and SL.Global.GameMode == "FA+" and score:GetGrade() ~= "Grade_Failed" then
-			-- Dropping a roll/hold breaks the StageAward, but hitting a mine does not.
-			local misses = score:GetTapNoteScore("TapNoteScore_Miss") +
-					score:GetHoldNoteScore("HoldNoteScore_LetGo") +
-					score:GetTapNoteScore("TapNoteScore_CheckpointMiss")
-			if misses + score:GetTapNoteScore("TapNoteScore_W5") == 0 then
-				award = "StageAward_FullComboW4"
-			end
-		end
-
 		if AwardMap[award] ~= nil then
 			best_lamp = math.min(best_lamp and best_lamp or 999, AwardMap[award])
 		end

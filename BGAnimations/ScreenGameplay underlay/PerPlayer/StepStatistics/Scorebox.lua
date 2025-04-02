@@ -475,7 +475,7 @@ for i=1,NumEntries do
 			if score.isFail then
 				clr = Color.Red
 			elseif score.isEx then
-				clr = SL.JudgmentColors["FA+"][1]
+				clr = SL.JudgmentColors["ITG"][1]
 			elseif score.isSelf then
 				clr = self_color
 			elseif score.isRival then
