@@ -169,6 +169,12 @@ SL_CustomPrefs.Get = function()
 		},
 		-- - - - - - - - - - - - - - - - - - - -
 		-- MenuTimer values for various screens
+		ScreenGrooveStatsLoginMenuTimer =
+		{
+			Default = 30,
+			Choices = map(SecondsToMSS, range(15, 90, 5)),
+			Values  = range(15, 90, 5),
+		},
 		ScreenSelectMusicMenuTimer =
 		{
 			Default = 300,
@@ -188,6 +194,12 @@ SL_CustomPrefs.Get = function()
 			Values  = range(30, 450, 15),
 		},
 		ScreenEvaluationMenuTimer =
+		{
+			Default = 60,
+			Choices = map(SecondsToMSS, range(15, 450, 15)),
+			Values  = range(15, 450, 15),
+		},
+		ScreenEvaluationNonstopMenuTimer =
 		{
 			Default = 60,
 			Choices = map(SecondsToMSS, range(15, 450, 15)),
