@@ -1,8 +1,8 @@
 -- ----------------------------------------------------------------
--- This file (SL-ChartParserHelpers.lua) is used to populate auxilliary
+-- This file (SL-ChartParserHelpers.lua) is used to populate auxiliary
 -- data which is oftem based off the data parsed form ChartParseInfo.
 
--- The main use case is when this auxilliary information might depend on 
+-- The main use case is when this auxiliary information might depend on
 -- extra information that isn't available during the Chart Parsing stage.
 
 -- For example, getting the information for the measure counter depends on
@@ -184,7 +184,7 @@ GenerateBreakdownText = function(pn, minimization_level)
 			end
 		end
 	end
-	
+
 	-- Add any trailing segments we haven't accounted for yet.
 	if segment_sum ~= 0 then
 		if minimization_level == 2 then
@@ -220,4 +220,36 @@ GetTotalStreamAndBreakMeasures = function(pn)
 	end
 
 	return totalStream, totalBreak
+end
+
+-- ----------------------------------------------------------------
+-- reset a player's "Streams" table to default values
+-- used if they have MeasureCounter enabled for stage1 and off for stage2
+
+ResetStreamsData = function(pn)
+	SL[pn].Streams = {
+		-- Chart identifiers for caching purposes.
+		Filename = "",
+		StepsType = "",
+		Difficulty = "",
+		Description = "",
+
+		-- Information parsed out from the chart.
+		NotesPerMeasure = {},
+		EquallySpacedPerMeasure = {},
+		PeakNPS = 0,
+		NPSperMeasure = {},
+		columnCues = {},
+		Hash = '',
+
+		Crossovers = 0,
+		Footswitches = 0,
+		Sideswitches = 0,
+		Jacks = 0,
+		Brackets = 0,
+
+		-- Data for measure counter. Populated in ./ScreenGameplay in/MeasureCounterAndMods.lua.
+		-- Uses the notesThreshold option.
+		Measures = {},
+	}
 end

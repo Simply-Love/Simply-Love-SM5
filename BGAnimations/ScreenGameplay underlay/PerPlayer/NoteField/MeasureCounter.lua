@@ -2,10 +2,17 @@ local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
+if mods.MeasureCounter == "None" then
+	-- ensure that player's "Streams" table is reset to default values
+	-- in case they e.g. use MeasureCounter on stage1 and then disable it for stage2
+	ResetStreamsData(pn)
+end
+
 -- don't allow MeasureCounter to appear in Casual gamemode via profile settings
 if SL.Global.GameMode == "Casual"
 or not mods.MeasureCounter
 or mods.MeasureCounter == "None" then
+
 	return
 end
 
@@ -18,7 +25,7 @@ local bmt = {}
 
 -- How many streams to "look ahead"
 local lookAhead = mods.HideLookahead and 0 or 3
--- If you want to see more than 2 counts in advance, change the 2 to a larger value.
+-- If you want to see more than 3 counts in advance, change the 3 to a larger value.
 -- Making the value very large will likely impact fps. -quietly
 
 
