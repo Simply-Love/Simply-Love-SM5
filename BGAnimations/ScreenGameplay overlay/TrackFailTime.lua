@@ -1,5 +1,5 @@
 -- This file will track the time that a player fails and show on the Evaluation screen.
--- Additionally, if the player fails inside a stream (16ths or higher) it will display 
+-- Additionally, if the player fails inside a stream (16ths or higher) it will display
 -- the position in the stream (16ths) that they fail.
 
 -- This does not count if the player holds start to fail
@@ -28,13 +28,13 @@ end
 
 -- Return the current time of the course or song, in seconds
 local CurrentTimeSongOrCourse = function(player)
-    local playerState = GAMESTATE:GetPlayerState(player)	
+    local playerState = GAMESTATE:GetPlayerState(player)
     local seconds = 0
     local rate = SL.Global.ActiveModifiers.MusicRate
 
     if GAMESTATE:IsCourseMode() then
         local cumulativeSeconds = CourseLengthPerSong(player)
-        
+
         -- Find out what song in the course and add up all the previous songs
         local courseIndex = GAMESTATE:GetCourseSongIndex()
         for i = 1, courseIndex do
@@ -82,8 +82,8 @@ end
 local af = Def.Actor{
 	HealthStateChangedMessageCommand=function(self, param)
 		-- Only do something if the player fails
-		if param.PlayerNumber == player and param.HealthState == "HealthState_Dead" then			
-			local playerState = GAMESTATE:GetPlayerState(player)			
+		if param.PlayerNumber == player and param.HealthState == "HealthState_Dead" then
+			local playerState = GAMESTATE:GetPlayerState(player)
 
 			-- These functions already account for rate mod
 			local currentSecond = CurrentTimeSongOrCourse(player)
@@ -95,14 +95,14 @@ local af = Def.Actor{
 			local graphPercentage = 0
             local graphLabel = 0
 
-			if GAMESTATE:IsCourseMode() then 
+			if GAMESTATE:IsCourseMode() then
 				local cumulativeSeconds = CourseLengthPerSong(player)
 				local courseIndex = GAMESTATE:GetCourseSongIndex()
 				local totalSecondsToEndOfSong = cumulativeSeconds[courseIndex+1]
 
 				graphPercentage = deathSecond / totalSecondsToEndOfSong
 				graphLabel = deathSecond / totalSeconds
-			else 
+			else
 				graphPercentage = deathSecond / totalSeconds
 				graphLabel = totalSeconds - deathSecond
 			end
@@ -112,16 +112,19 @@ local af = Def.Actor{
 			local streams = SL[pn].Streams
 			local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
+            -- streams.NotesPerMeasure will be an empty table if player wasn't using MeasureCounter
+            local currentMeasureWasStream = (type(streams.NotesPerMeasure[currentMeasure+1]) == "number") and (streams.NotesPerMeasure[currentMeasure+1] > 16)
+
 			storage.TotalSeconds = totalSeconds
 			storage.DeathSecond = deathSecond
 			storage.GraphPercentage = graphPercentage
 			storage.GraphLabel = graphLabel
 
 			-- find out if this measure was a stream (16ths or higher)
-			if streams.NotesPerMeasure[currentMeasure+1] >= 16 then
-				-- find out which measure the fail was 
+			if currentMeasureWasStream then
+				-- find out which measure the fail was
 				for i=1,#streams.Measures do
-					if currentMeasure >= streams.Measures[i].streamStart and currentMeasure < streams.Measures[i].streamEnd  then							
+					if currentMeasure >= streams.Measures[i].streamStart and currentMeasure < streams.Measures[i].streamEnd  then
 						local streamRun = currentMeasure - streams.Measures[i].streamStart + 1
 						local streamTotal = streams.Measures[i].streamEnd - streams.Measures[i].streamStart
 						storage.DeathMeasures = string.format("%s/%s", streamRun, streamTotal)
