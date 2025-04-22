@@ -519,27 +519,41 @@ t[#t+1] = Def.ActorFrame {
 		self.IsDisplaying = false
 	end,
 	SystemMessageMessageCommand=function(self, params)
-		if self.IsDisplaying then
-			self:finishtweening()
-			local newText = bmt:GetText().."\n"..params.Message
-			-- Display only the last few lines of text
-			local lines = {}
-			for line in newText:gmatch("[^\n]+") do
-				lines[#lines+1] = line
+		-- Handle case where the message usage is SM(msg, duration)
+		local stack = params.Stack or false
+		if type(stack) == "number" then
+			params.Stack = params.Duration
+			params.Duration = stack
+		end
+
+		if params.Stack == true then
+			if self.IsDisplaying then
+				self:finishtweening()
+				local newText = bmt:GetText().."\n"..params.Message
+				-- Display only the last few lines of text
+				local lines = {}
+				for line in newText:gmatch("[^\n]+") do
+					lines[#lines+1] = line
+				end
+				local start = math.max(#lines - totalVisibleLines, 1)
+				local displayText = table.concat(lines, "\n", start, #lines)
+				bmt:settext(displayText)
+			else
+				bmt:settext( params.Message )
 			end
-			local start = math.max(#lines - totalVisibleLines, 1)
-			local displayText = table.concat(lines, "\n", start, #lines)
-			bmt:settext(displayText)
+			self:playcommand( "On")
+			if params.NoAnimate then
+				self:finishtweening()
+			end
+			self:sleep(type(params.Duration)=="number" and params.Duration or 3.33 + 0.25):queuecommand("Off")
 		else
 			bmt:settext( params.Message )
+			self:playcommand( "On" )
+			if params.NoAnimate then
+				self:finishtweening()
+			end
+			self:playcommand( "Off", params )
 		end
-
-		self:playcommand( "On", params )
-		if params.NoAnimate then
-			self:finishtweening()
-		end
-
-		self:sleep(type(params.Duration)=="number" and params.Duration or 3.33 + 0.25):queuecommand("Off")
 	end,
 	HideSystemMessageMessageCommand=function(self) self:finishtweening() end,
 

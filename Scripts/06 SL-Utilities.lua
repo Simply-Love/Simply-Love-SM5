@@ -68,7 +68,7 @@ end
 -- in seconds, for how long you want the text to appear on screen.
 -- in Simply Love, the default SystemMessage duration used in ./BGA/ScreenSystemLayer overlay.lua is 3
 
-SM = function( arg, duration )
+SM = function( arg, stack, duration )
 	local msg
 
 	-- if a table has been passed in, recursively stringify the table's keys and values
@@ -84,7 +84,7 @@ SM = function( arg, duration )
 	-- "SystemMessage" with certain parameters.  see: ScreenManager.cpp
 	-- let's broadcast directly using MESSAGEMAN so that we can also pack in a duration
 	-- value (how long to display the SystemMessage for) if so desired
-	MESSAGEMAN:Broadcast("SystemMessage", {Message=msg, Duration=duration})
+	MESSAGEMAN:Broadcast("SystemMessage", {Message=msg, Duration=duration, Stack=stack})
 	Trace(msg)
 end
 
