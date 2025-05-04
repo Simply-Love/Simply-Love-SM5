@@ -108,7 +108,7 @@ for index, label in ipairs(RadarCategories) do
 			Text=text,
 			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 			BeginCommand=function(self)
-				self:x( (controller == PLAYER_1 and -160) or 90 )
+				self:x( (controller == PLAYER_1 and -160) or 82 )
 				self:y(38)
 
 				if SL[pn].ActiveModifiers.ShowExScore then
