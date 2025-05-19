@@ -18,7 +18,7 @@ local CourseLengthPerSong = function(player)
         if trail then
             local entries = trail:GetTrailEntries()
             for i, entry in ipairs(entries) do
-                seconds = seconds + (entry:GetSong():MusicLengthSeconds() / rate)
+                seconds = seconds + (entry:GetSong():GetLastSecond() / rate)
                 table.insert(cumulativeSeconds, seconds)
             end
         end
@@ -37,9 +37,9 @@ local CurrentTimeSongOrCourse = function(player)
         
         -- Find out what song in the course and add up all the previous songs
         local courseIndex = GAMESTATE:GetCourseSongIndex()
-        for i = 1, courseIndex do
-            seconds = seconds + cumulativeSeconds[courseIndex]
-        end
+		if courseIndex > 0 then
+			seconds = cumulativeSeconds[courseIndex]
+		end
 
         -- Thenn add on the current song's timer
         local currentSongTimer = playerState:GetSongPosition():GetMusicSecondsVisible()

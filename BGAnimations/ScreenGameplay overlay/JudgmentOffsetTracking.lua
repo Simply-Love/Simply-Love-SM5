@@ -20,10 +20,19 @@ return Def.Actor{
 			-- If the judgment was a Miss, store the string "Miss" as offset instead of the number 0.
 			-- For all other judgments, store the offset value provided by the engine as a number.
 			local offset = params.TapNoteScore == "TapNoteScore_Miss" and "Miss" or params.TapNoteOffset
+			local courseOffset = 0
+			if GAMESTATE:IsCourseMode() then
+				local curCourseSong = GAMESTATE:GetCourseSongIndex()
+				local courseEntries = GAMESTATE:GetCurrentTrail(ToEnumShortString(player)):GetTrailEntries()
+				
+				for i=1,curCourseSong do
+					courseOffset = courseOffset + courseEntries[i]:GetSong():GetLastSecond()
+				end
+			end
 
 			-- Store judgment offsets (including misses) in an indexed table as they occur.
 			-- Also store the CurMusicSeconds for Evaluation's scatter plot.
-			sequential_offsets[#sequential_offsets+1] = { GAMESTATE:GetCurMusicSeconds(), offset }
+			sequential_offsets[#sequential_offsets+1] = { courseOffset + GAMESTATE:GetCurMusicSeconds(), offset }
 		end
 	end,
 	OffCommand=function(self)

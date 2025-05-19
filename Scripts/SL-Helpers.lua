@@ -1043,3 +1043,35 @@ GetPlayerAF = function(pn)
 
 	return playerAF
 end
+
+-- -----------------------------------------------------------------------
+-- cool functions for scatterplotting course mode
+
+-- calculate each chart's actual length by GetLastSecond instead of song length
+TotalCourseLength = function(player)
+    local trail = GAMESTATE:GetCurrentTrail(player)
+    local t = 0
+    for te in ivalues(trail:GetTrailEntries()) do
+        t = t + te:GetSong():GetLastSecond()
+    end
+
+    return t / SL.Global.ActiveModifiers.MusicRate
+end
+
+-- calculate amount of course played for properly scaling the scatterplot of judgments
+TotalCourseLengthPlayed = function(player)
+	local pn = ToEnumShortString(player)
+	local trail = GAMESTATE:GetCurrentTrail(player)
+	local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
+	if storage.DeathSecond ~= nil then
+		local deathSecond = storage.DeathSecond
+		local t = 0
+		for te in ivalues(trail:GetTrailEntries()) do
+			t = t + ( te:GetSong():GetLastSecond() / SL.Global.ActiveModifiers.MusicRate )
+			if t > deathSecond then break end
+		end
+		return t
+	else
+		return -1
+	end
+end

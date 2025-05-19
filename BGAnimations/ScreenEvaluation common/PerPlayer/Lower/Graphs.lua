@@ -8,6 +8,7 @@ local GraphWidth  = THEME:GetMetric("GraphDisplay", "BodyWidth")
 local GraphHeight = THEME:GetMetric("GraphDisplay", "BodyHeight")
 
 local af = Def.ActorFrame{
+	Name="JudgeGraph",
 	InitCommand=function(self)
 		self:y(_screen.cy + 124)
 		if NumPlayers == 1 then
@@ -39,6 +40,15 @@ if not GAMESTATE:IsCourseMode() then
 			-- Lower the opacity otherwise some of the scatter plot points might become hard to see.
 			self:diffusealpha(0.5)
 			self:queuecommand("Redraw")
+		end,
+	}
+else
+	af[#af+1] = NPS_Histogram_Static_Course(player, GraphWidth, GraphHeight, 0.5)..{
+		Name="DensityGraph",
+		OnCommand=function(self)
+			self:addx(-GraphWidth/2):addy(GraphHeight)
+			-- Lower the opacity otherwise some of the scatter plot points might become hard to see.
+			self:diffusealpha(0.65)
 		end,
 	}
 end
@@ -73,20 +83,22 @@ af[#af+1] = Def.GraphDisplay{
 			local offset = GraphWidth * offsetFactor
 			self:addx(offset/2)
 			self:SetWidth(GraphWidth - offset)
+		else
+			local duration = TotalCourseLength(player)
+			local liveDuration = TotalCourseLengthPlayed(player)
+
+			if liveDuration ~= -1 then
+				self:SetWidth(liveDuration / duration * GraphWidth):x(-GraphWidth/2):horizalign(left)
+			end
 		end
 
 		local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local stageStats = STATSMAN:GetCurStageStats()
 		self:Set(stageStats, playerStageStats)
-
-		if GAMESTATE:IsCourseMode() then
-			-- hide the GraphDisplay's stroke ("Line")
-			self:GetChild("Line"):visible(false)
-		else
-			-- hide the GraphDisplay's body (2nd unnamed child)
-			self:GetChild("")[2]:visible(false)
-				self:GetChild("Line"):addy(1)
-		end
+		
+		-- hide the GraphDisplay's body (2nd unnamed child)
+		self:GetChild("")[2]:visible(false)
+		self:GetChild("Line"):addy(1)
 	end
 }
 
@@ -108,6 +120,12 @@ if storage.DeathSecond ~= nil then
 	local graphPercentage = storage.GraphPercentage
 	local graphLabel = storage.GraphLabel
 	local secondsLeft = seconds - deathSecond
+	
+	if GAMESTATE:IsCourseMode() then
+		local duration = TotalCourseLength(player)
+		local liveDuration = TotalCourseLengthPlayed(player)
+		graphPercentage = graphPercentage * liveDuration / duration
+	end
 
 	-- If the player failed, check how much time was remaining
 	af[#af+1] = Def.ActorFrame {
