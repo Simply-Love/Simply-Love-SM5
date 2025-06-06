@@ -579,9 +579,10 @@ t[#t+1] = Def.ActorFrame {
 		self:playcommand( "On", params )
 		if params.NoAnimate then
 			self:finishtweening()
+			self:playcommand( "Off", params )
+		else
+		    self:sleep(type(params.Duration)=="number" and params.Duration or 3.33 + 0.25):queuecommand("Off")
 		end
-
-		self:sleep(type(params.Duration)=="number" and params.Duration or 3.33 + 0.25):queuecommand("Off")
 	end,
 	HideSystemMessageMessageCommand=function(self) self:finishtweening() end,
 
