@@ -10,7 +10,54 @@ if not IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() ~= 1)
 local player = ...
 local pn = ToEnumShortString(player)
 
--- TODO: Create RPG body.
+local CreateRPGBody = function(rpgData)
+	local rpgStats = {
+		tp = true,
+		lp = true,
+		bb = true,
+		gold = true,
+		jp = true
+	}
+
+	local score = rpgData["score"]
+	local scoreDelta = rpgData["scoreDelta"]
+	local rate = rpgData["rate"]
+	local rateDelta = rpgData["rateDelta"]
+
+	local qualifierImprovements = {}
+	local statImprovements = {}
+	for improvement in ivalues(rpgData["statImprovements"]) do
+		if rpgStats[improvement.name] and improvement["gained"] > 0 then
+			if #rpgData["statImprovements"] >= 5 and (improvement.name == "tp" or improvement.name == "lp") then
+				table.insert(
+					qualifierImprovements,
+					string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
+				)
+			else
+				table.insert(
+					statImprovements,
+					string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
+				)
+			end
+		end
+	end
+
+	local statsBody = string.format(
+		"Score: %.2f%% (%+.2f%%)\n"..
+		"Rate: %.2f (%+.2f)\n\n",
+		score, scoreDelta, rate, rateDelta)
+
+	if #qualifierImprovements == 1 then
+			statsBody = statsBody .. qualifierImprovements[1] .. "\n"
+	elseif #qualifierImprovements == 2 then
+			statsBody = statsBody .. qualifierImprovements[1] .. " " .. qualifierImprovements[2] .. "\n"
+	end
+	for extraStats in ivalues(statImprovements) do
+		statsBody = statsBody .. extraStats .. "\n"
+	end
+
+	return string.gsub(statsBody, "[\n\r]+$", "")
+end
 
 local CreateITLBody = function(itlData)
 	local score = itlData["score"]
@@ -112,6 +159,7 @@ local ScaleAndColorizeBody = function(self, text, height, width, rowHeight, defa
 end
 
 local ItlPink = color("1,0.2,0.406,1")
+local RpgYellow = color("1,0.972,0.792,1")
 
 -- Default position is on the other player's upper area where the grade should be
 local posX = 381 * (player == PLAYER_1 and 1 or -1)
@@ -132,7 +180,6 @@ if IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() > 1) then
 	posY = 274
 	paneWidth = 118
 	paneHeight = 180
-	RowHeight = 45
 end
 
 local af = Def.ActorFrame{
@@ -144,7 +191,29 @@ local af = Def.ActorFrame{
 	end,
 
 	SetDataCommand=function(self, params)
-		if params.itlData then
+		if params.rpgData then
+			hasData = true
+			local rpgString = CreateRPGBody(params.rpgData)
+			ScaleAndColorizeBody(
+				self:GetChild("BodyText"),
+				rpgString,
+				paneHeight - borderWidth,
+				paneWidth - borderWidth,
+				RowHeight,
+				RpgYellow)
+
+			self:GetChild("Header"):settext(params.rpgData["name"]:gsub("Stamina RPG", "SRPG"))
+
+			-- Ensure the header text fits within the box.
+			for zoomVal=0.5, 0.1, -0.05 do
+				self:GetChild("Header"):zoom(zoomVal)
+				self:GetChild("Header"):wrapwidthpixels((paneWidth-6)/(zoomVal))
+				if self:GetChild("Header"):GetHeight() * zoomVal <= RowHeight*2 then
+					break
+				end
+			end
+		-- TODO: Add support for when a song is in both RPG and ITL
+		elseif params.itlData and not hasData then
 			hasData = true
 			local itlString = CreateITLBody(params.itlData)
 			ScaleAndColorizeBody(
