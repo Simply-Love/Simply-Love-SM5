@@ -68,7 +68,7 @@ end
 -- in seconds, for how long you want the text to appear on screen.
 -- in Simply Love, the default SystemMessage duration used in ./BGA/ScreenSystemLayer overlay.lua is 3
 
-SM = function( arg, stack, duration )
+SM = function( arg, duration, stack )
 	local msg
 
 	-- if a table has been passed in, recursively stringify the table's keys and values
