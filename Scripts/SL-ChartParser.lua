@@ -1,4 +1,4 @@
-local GetSimfileString = function(steps)
+GetSimfileString = function(steps)
 	-- steps:GetFilename() returns the filename of the sm or ssc file, including path, as it is stored in SM's cache
 	local filename = steps:GetFilename()
 	if not filename or filename == "" then return end
@@ -157,7 +157,7 @@ end
 --    NoteDataString, a substring from SimfileString that contains the just the requested (minimized) note data
 --    BPMs, a substring from SimfileString that contains the BPM string for this specific chart
 
-local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
+GetSimfileChartString = function(SimfileString, StepsType, Difficulty, StepsDescription, Filetype)
 	local NoteDataString = nil
 	local BPMs = nil
 
@@ -300,7 +300,7 @@ local GetMeasureInfo = function(Steps, chartString)
 	local timingData = Steps:GetTimingData()
 
 	-- Column Cues variables.
-	local columnCueAllData = {} 
+	local columnCueAllData = {}
 	local columnTimes = {}
 
 	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
@@ -428,6 +428,8 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		SL[pn].Streams.Sideswitches = SL[opposite_player].Streams.Sideswitches
 		SL[pn].Streams.Jacks = SL[opposite_player].Streams.Jacks
 		SL[pn].Streams.Brackets = SL[opposite_player].Streams.Brackets
+		SL[pn].Streams.Doublesteps = SL[opposite_player].Streams.Doublesteps
+		SL[pn].Streams.TechNotation = SL[opposite_player].Streams.TechNotation
 
 		SL[pn].Streams.Filename = SL[opposite_player].Streams.Filename
 		SL[pn].Streams.StepsType = SL[opposite_player].Streams.StepsType
@@ -439,9 +441,9 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		return false
 	end
 end
-		
+
 ParseChartInfo = function(steps, pn)
-	-- The filename for these steps in the StepMania cache 
+	-- The filename for these steps in the StepMania cache
 	local filename = steps:GetFilename()
 	-- StepsType, a string like "dance-single" or "pump-double"
 	local stepsType = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
@@ -504,6 +506,9 @@ ParseChartInfo = function(steps, pn)
 				SL[pn].Streams.Sideswitches = techCounts:GetValue("TechCountsCategory_Sideswitches")
 				SL[pn].Streams.Jacks = techCounts:GetValue("TechCountsCategory_Jacks")
 				SL[pn].Streams.Brackets = techCounts:GetValue("TechCountsCategory_Brackets")
+				SL[pn].Streams.Doublesteps = techCounts:GetValue("TechCountsCategory_Doublesteps")
+
+				SL[pn].Streams.TechNotation = SLTechNotation_Format(steps, pn, TechNotationVerboseKey)
 
 				SL[pn].Streams.Filename = filename
 				SL[pn].Streams.StepsType = stepsType
@@ -527,6 +532,7 @@ ParseChartInfo = function(steps, pn)
 			SL[pn].Streams.Sideswitches = 0
 			SL[pn].Streams.Jacks = 0
 			SL[pn].Streams.Brackets = 0
+			SL[pn].Streams.Doublesteps = 0
 
 			SL[pn].Streams.Filename = filename
 			SL[pn].Streams.StepsType = stepsType

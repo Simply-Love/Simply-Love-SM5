@@ -39,9 +39,7 @@ local function IsQuint(hsl)
 	return false
 end
 
-return Def.ActorFrame{
-	LoadActor("GetLamp.lua"),
-
+local af = Def.ActorFrame {
 	Def.Sprite{
 		Texture=THEME:GetPathG("MusicWheelItem","Grades/grades 1x19.png"),
 		InitCommand=function(self) self:zoom( SL_WideScale(0.18, 0.3) ):animate(false) end,
@@ -55,7 +53,7 @@ return Def.ActorFrame{
 		--     NumTimesPlayed (number)
 		--     HighScoreList (as of ITGmania 1.0.1 -- NOTE: can be removed in a future version)
 		SetGradeCommand=function(self, params)
-			if not params.Grade then
+			if not params.Grade or ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_ReplaceGrade then
 				self:visible(false)
 				return
 			end
@@ -75,3 +73,9 @@ return Def.ActorFrame{
 		end
 	},
 }
+
+if not ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_ReplaceGrade then
+	af[#af + 1] = LoadActor("GetLamp.lua")
+end
+
+return af
