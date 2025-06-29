@@ -128,11 +128,11 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="NPS",
 	Text=peakNPSText..": ",
 	InitCommand=function(self)
-		self:horizalign(left):zoom(0.8)
+		self:horizalign(left):zoom(0.8):maxwidth(133)
 		if player == PLAYER_1 then
-			self:addx(60):addy(-41)
+			self:addx(36):addy(-41)
 		else
-			self:addx(-136):addy(-41)
+			self:addx(-143):addy(-41)
 		end
 		-- We want black text in Rainbow mode except during HolidayCheer(), white otherwise.
 		self:diffuse((ThemePrefs.Get("RainbowMode") and not HolidayCheer()) and {0, 0, 0, 1} or {1, 1, 1, 1})
@@ -142,8 +142,15 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
+		local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(pn)
+		local totalMeasures = streamMeasures + breakMeasures
+		local percentageText = "" 
+		if streamMeasures ~= 0 then
+			percentageText = string.format(" (%0.1f%%)", --[[streamMeasures, totalMeasures,]] streamMeasures/totalMeasures*100)
+		end
+
 		if SL[pn].Streams.PeakNPS ~= 0 then
-			self:settext((peakNPSText..": %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
+			self:settext((peakNPSText..": %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate) .. percentageText)
 			self:visible(not showPatternInfo)
 		end
 	end,
@@ -187,6 +194,7 @@ af2[#af2+1] = Def.ActorFrame{
 		end,
 		RedrawCommand=function(self)
 			local textZoom = 0.8
+
 			self:settext(GenerateBreakdownText(pn, 0))
 			local minimization_level = 1
 			while self:GetWidth() > (width/textZoom) and minimization_level < 4 do
@@ -227,6 +235,32 @@ af2[#af2+1] = Def.ActorFrame{
 		self:visible(showPatternInfo)
 	end,
 
+	-- Tech notation, identical placement as the Peak NPS text
+	LoadFont("Common Normal") .. {
+		Text = "",
+		InitCommand=function(self)
+			self:horizalign(left):zoom(0.8)
+
+			if GAMESTATE:GetNumSidesJoined() == 1 then
+				self:maxwidth(width)
+			else
+				self:maxwidth(133)
+			end
+			
+			if player == PLAYER_1 then
+				self:addx(36):addy(-41)
+			else
+				self:addx(-143):addy(-41)
+			end
+
+			-- We want black text in Rainbow mode except during HolidayCheer(), white otherwise.
+			self:diffuse((ThemePrefs.Get("RainbowMode") and not HolidayCheer()) and {0, 0, 0, 1} or {1, 1, 1, 1})
+		end,
+		RedrawCommand=function(self)
+			self:settext(SL[pn].Streams.TechNotation)
+		end
+	},
+
 	-- Background for the additional chart info.
 	-- Only shown in 1 Player mode
 	Def.Quad{
@@ -244,49 +278,30 @@ local af3 = af2[#af2]
 local layout = {
 	{"Crossovers", "Footswitches"},
 	{"Sideswitches", "Jacks"},
-	{"Brackets", "Total Stream"},
+	{"Brackets", "Doublesteps"},
 }
 
 local colSpacing = 150
 local rowSpacing = 20
-local noneText = THEME:GetString("SLPlayerOptions", "None")
-local totalStreamText = THEME:GetString("SLPlayerOptions", "TotalStream")
 
 for i, row in ipairs(layout) do
 	for j, col in pairs(row) do
 		af3[#af3+1] = LoadFont("Common normal")..{
-			Text=(col ~= totalStreamText and "0" or noneText).." (0.0%)",
+			Text="0",
 			Name=col .. "Value",
 			InitCommand=function(self)
-				local textHeight = 17
+				local textHeight = 17 -- TODO: remove? This is unused
 				local textZoom = 0.8
 				self:zoom(textZoom):horizalign(right)
-				if col == "Total Stream" then
-					self:maxwidth(100)
-				end
 				self:xy(-width/2 + 40, -height/2 + 13)
 				self:addx((j-1)*colSpacing)
 				self:addy((i-1)*rowSpacing)
 			end,
 			HideCommand=function(self)
-				if col ~= "Total Stream" then
-					self:settext("0")
-				else
-					self:settext(noneText.." (0.0%)")
-				end
+				self:settext("0")
 			end,
 			RedrawCommand=function(self)
-				if col ~= "Total Stream" then
-					self:settext(SL[pn].Streams[col])
-				else
-					local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(pn)
-					local totalMeasures = streamMeasures + breakMeasures
-					if streamMeasures == 0 then
-						self:settext(noneText.." (0.0%)")
-					else
-						self:settext(string.format("%d/%d (%0.1f%%)", streamMeasures, totalMeasures, streamMeasures/totalMeasures*100))
-					end
-				end
+				self:settext(SL[pn].Streams[col])
 			end
 		}
 
@@ -294,7 +309,7 @@ for i, row in ipairs(layout) do
 			Text=THEME:GetString("TechCategory", col),
 			Name=col,
 			InitCommand=function(self)
-				local textHeight = 17
+				local textHeight = 17 -- TODO: remove? This is unused
 				local textZoom = 0.8
 				self:maxwidth(width/textZoom):zoom(textZoom):horizalign(left)
 				self:xy(-width/2 + 50, -height/2 + 13)

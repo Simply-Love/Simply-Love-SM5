@@ -3,7 +3,7 @@ local player = ...
 if (SL.Global.GameMode == "Casual" or
 		GAMESTATE:IsCourseMode() or
 		not IsItlActive() or
-		not IsItlSong(player) or
+		not IsItlSong(GAMESTATE:GetCurrentSong(), player) or
 		GAMESTATE:GetCurrentGame():GetName() ~= "dance") then
 	return
 end

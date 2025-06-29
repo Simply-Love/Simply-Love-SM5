@@ -1,12 +1,10 @@
 -- -----------------------------------------------------------------------
-IsItlSong = function(player)
-	local song = GAMESTATE:GetCurrentSong()
+IsItlSong = function(song, player)
 	local song_dir = song:GetSongDir()
 	local group = string.lower(song:GetGroupName())
 	local pn = ToEnumShortString(player)
 	return string.find(group, "itl online 2025") or string.find(group, "itl 2025") or SL[pn].ITLData["pathMap"][song_dir] ~= nil
 end
-
 
 IsItlActive = function()
 	-- The file is only written to while the event is active.
@@ -68,7 +66,7 @@ WriteItlFile = function(player)
 		[PLAYER_1] = "ProfileSlot_Player1",
 		[PLAYER_2] = "ProfileSlot_Player2"
 	}
-	
+
 	local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return end
@@ -90,14 +88,14 @@ ReadItlFile = function(player)
 		[PLAYER_1] = "ProfileSlot_Player1",
 		[PLAYER_2] = "ProfileSlot_Player2"
 	}
-	
+
 	local dir = PROFILEMAN:GetProfileDir(profile_slot[player])
 	local pn = ToEnumShortString(player)
 	-- We require an explicit profile to be loaded.
 	if not dir or #dir == 0 then return end
 
 	local path = dir .. itlFilePath
-	local itlData = { 
+	local itlData = {
 		["pathMap"] = {},
 		["hashMap"] = {},
 	}
@@ -235,7 +233,7 @@ local DataForSong = function(player, prevData)
 			noCmod = prevData["noCmod"]
 		end
 	end
-	
+
 	local year = Year()
 	local month = MonthOfYear()+1
 	local day = DayOfMonth()
@@ -246,7 +244,7 @@ local DataForSong = function(player, prevData)
 	local points = GetITLPointsForSong(passingPoints, maxScoringPoints, ex)
 	local usedCmod = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil
 	local date = ("%04d-%02d-%02d"):format(year, month, day)
-	
+
 	return {
 		["judgments"] = judgments,
 		["ex"] = ex * 100,
@@ -267,7 +265,7 @@ end
 UpdateItlData = function(player)
 	local pn = ToEnumShortString(player)
 	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
-		
+
 	-- Do the same validation as GrooveStats.
 	-- This checks important things like timing windows, addition/removal of arrows, etc.
 	local _, valid = ValidForGrooveStats(player)
@@ -314,7 +312,7 @@ UpdateItlData = function(player)
 			local pathMap = SL[pn].ITLData["pathMap"]
 			pathMap[song_dir] = hash
 		end
-		
+
 		-- Then maybe update the hashMap.
 		local updated = false
 		if hashMap[hash] == nil then
@@ -336,7 +334,7 @@ UpdateItlData = function(player)
 			if data["ex"] >= hashMap[hash]["ex"] then
 				hashMap[hash]["ex"] = data["ex"]
 				-- hashMap[hash]["points"] = data["points"]
-				
+
 				if data["ex"] > hashMap[hash]["ex"] then
 					-- EX count is strictly better, copy the judgments over.
 					hashMap[hash]["judgments"] = DeepCopy(data["judgments"])
@@ -362,7 +360,7 @@ UpdateItlData = function(player)
 						updated = true
 					end
 				end
-			end	
+			end
 
 			if data["clearType"] > hashMap[hash]["clearType"] then
 				hashMap[hash]["clearType"] = data["clearType"]
