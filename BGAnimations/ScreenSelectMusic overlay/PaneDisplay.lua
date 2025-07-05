@@ -137,7 +137,7 @@ local GetScoresRequestProcessor = function(res, params)
 								playerScore
 							)
 							local chartHash = data[playerStr]["chartHash"]
-							CacheSetGSEX(chartHash, cachePlayerName, ex_str)
+							CacheSetGSEX(cachePlayerName, chartHash, ex_str)
 							-- GAMESTATE:GetCurrentSong() should hopefully be correct as the hash has been verified above.
 							MESSAGEMAN:Broadcast("CacheUpdatedGS", { Song = GAMESTATE:GetCurrentSong() })
 							personalRecordSet = true

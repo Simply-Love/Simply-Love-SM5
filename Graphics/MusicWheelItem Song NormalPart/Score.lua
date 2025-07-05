@@ -23,6 +23,29 @@ local function CalculateExScoreFromHighscoreAndSteps(hs, steps, pn)
 	return CalculateExScoreNoGlobalState(steps, pn, po_NoMines, ex_counts, use_actual_w0_weight)
 end
 
+local function MusicRateFromHighscore(hs)
+    local music_rate_suffix = "xMusic" -- essentially ssprintf("%2.2fxMusic"), see SongOptions::GetMods
+    local mods_string = hs:GetModifiers() -- can be something like "NoHideLights, m250, Overhead, 0.99xMusic"
+    local suffix_pos = string.find(mods_string, music_rate_suffix)
+    if suffix_pos == nil or suffix_pos == 0 then
+        return 1
+    else
+        local iteration_pos = suffix_pos - 1
+        while iteration_pos >= 0 do
+            local char_at_iteration_pos = string.sub(mods_string, iteration_pos, iteration_pos)
+            if char_at_iteration_pos == " " or char_at_iteration_pos == "," then
+                local number = tonumber(string.sub(mods_string, iteration_pos, suffix_pos - 1))
+                if number > 0 then
+                    return number
+                end
+            end
+            
+            iteration_pos = iteration_pos - 1
+        end
+    end
+    
+end
+
 -- Based on GetLamp
 -- Colors in SL.JudgementColors["FA+"]:
 -- 1: blue    (FFC)
@@ -78,9 +101,9 @@ local function SetGetGSCachedScore(steps, ex)
 
     local cached_score = nil
     if ex then
-        cached_score = CacheGetGSEX(chart_gs_hash, player_name)
+        cached_score = CacheGetGSEX(player_name, chart_gs_hash)
     else
-        cached_score = CacheGetGSITG(chart_gs_hash, player_name)
+        cached_score = CacheGetGSITG(player_name, chart_gs_hash)
     end
 
     if cached_score ~= nil then
@@ -99,43 +122,65 @@ local function GetSetLocalCachedScore(song, steps, ex)
     local highscores = PROFILEMAN:GetProfile(pn):GetHighScoreList(song, steps):GetHighScores()
 
     if ex then
-        local cached_ex, cached_award_map_idx = CacheGetLocalEX(chart_gs_hash, player_name)
+        local cached_ex, cached_award_map_idx = CacheGetLocalEX(player_name, chart_gs_hash)
 
+        ---@type string|number|nil
         local best_ex = nil
+        ---@type integer?
         local best_ex_award_map_idx = nil
 
         if cached_ex == nil or song == current_song then
             -- Calculate from all local scores
             local hs_for_best_ex = nil
             for hs in ivalues(highscores) do
-                local ex = CalculateExScoreFromHighscoreAndSteps(hs, steps, pn)
-                if ex ~= nil and best_ex == nil then
-                    best_ex = ex
-                    hs_for_best_ex = hs
-                elseif ex ~= nil and ex > best_ex then
-                    best_ex = ex
-                    hs_for_best_ex = hs
+                if MusicRateFromHighscore(hs) >= 1 then
+                    local ex = CalculateExScoreFromHighscoreAndSteps(hs, steps, pn)
+                    if ex ~= nil and best_ex == nil then
+                        best_ex = ex
+                        hs_for_best_ex = hs
+                    elseif ex ~= nil and ex > best_ex then
+                        best_ex = ex
+                        hs_for_best_ex = hs
+                    end
                 end
             end
 
             if best_ex ~= nil then
+                best_ex = ("%05.2f"):format(best_ex)
                 best_ex_award_map_idx = AwardMapIndexColorForHighScore(hs_for_best_ex)
-                CacheSetLocalEX(chart_gs_hash, player_name, best_ex, best_ex_award_map_idx)
+                CacheSetLocalEX(player_name, chart_gs_hash, best_ex, ("%d"):format(best_ex_award_map_idx))
             end
         else
             best_ex = cached_ex
-            best_ex_award_map_idx = cached_award_map_idx
+            best_ex_award_map_idx = tonumber(cached_award_map_idx)
         end
 
         local best_ex_color = SL.JudgmentColors["FA+"][best_ex_award_map_idx]
 
         return best_ex, best_ex_color
-    else
-        if #highscores > 0 then
-            return highscores[1]:GetPercentDP() * 100, SL.JudgmentColors["FA+"][2]
+    else -- ITG score
+        local cached_itg, cached_award_map_idx = CacheGetLocalITG(player_name, chart_gs_hash)
+        if cached_itg == nil or song == current_song then
+            -- TODO: highscores should already be ordered by GetPercentDP, check if they really are?
+            for hs in ivalues(highscores) do
+                if MusicRateFromHighscore(hs) >= 1 then
+                    local itg = hs:GetPercentDP() * 100
+                    -- TODO: does AwardMapIndexColorForHighScore work properly for ITG scores?
+                    local itg_award_map_idx = AwardMapIndexColorForHighScore(hs)
+                    if itg ~= nil then
+                        -- Store ITG score in cache too as this allows sharing scores between charts that are in several packs
+                        local itg_string = ("%05.2f"):format(itg)
+                        -- without tostring(itg_award_map_idx), for some reason gets stored as float string in sqlite
+                        CacheSetLocalITG(player_name, chart_gs_hash, itg_string, ("%d"):format(itg_award_map_idx))
+                        return itg_string, SL.JudgmentColors["FA+"][itg_award_map_idx]
+                    end
+                end
+            end
         else
-            return nil, nil
+            return cached_itg, SL.JudgmentColors["FA+"][tonumber(cached_award_map_idx)]
         end
+
+        return nil, nil
     end
 end
 
@@ -261,14 +306,18 @@ return Def.BitmapText {
 
         EXScore_DBG("Actually calculating something for " .. song:GetMainTitle())
 
+        ---@type boolean
         local showExScore = SL[ToEnumShortString(player)].ActiveModifiers.ShowExScore
 
         -- Local score. GetSetLocalCached... will recalculate if this song is the currently selected song.
+        ---@type string?
         local local_score = nil
+        ---@type table?
         local local_score_color = nil
 
         -- GrooveStats score. GetSetGSCached... will not call the API, that's done by PaneDisplay.
         -- PaneDisplay broadcasts CacheUpdatedGS when it writes something to the cache.
+        ---@type string?
         local groovestats_score = nil
 
         if showExScore then
@@ -282,13 +331,15 @@ return Def.BitmapText {
                 groovestats_score = SetGetGSCachedScore(steps, false)
             end
         end
+        
+        EXScore_DBG(song:GetMainTitle() .. " -- local_score: " .. tostring(local_score) .. " local_score_color: " .. tostring(local_score_color))
 
         -- Display the best score
-        if local_score ~= nil and local_score >= tonumber(groovestats_score or "0") then
-            self:settext(("%05.2f"):format(local_score))
+        if local_score ~= nil and tonumber(local_score) >= tonumber(groovestats_score or "0") then
+            self:settext(local_score)
             self:diffuse(local_score_color)
             self:visible(true)
-        elseif groovestats_score ~= nil and tonumber(groovestats_score) > (local_score or 0) then
+        elseif groovestats_score ~= nil and tonumber(groovestats_score) > (tonumber(local_score) or 0) then
             self:settext(groovestats_score)
             -- We don't get timing counts from GS so we don't know what lamp color this would be.
             -- If we also have the score locally (technically it might not be the same score as
