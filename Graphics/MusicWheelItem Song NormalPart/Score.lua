@@ -185,7 +185,9 @@ local function GetSetLocalCachedScore(song, steps, ex)
 end
 
 local function UpdateYPosition(actor)
-    if GAMESTATE:GetNumSidesJoined() == 2 then
+    local p1setting = PlayerMusicWheelScore(PLAYER_1)
+    local p2setting = PlayerMusicWheelScore(PLAYER_2)
+    if GAMESTATE:GetNumSidesJoined() == 2 and p1setting == p2setting and (p1setting == PlayerMusicWheelScore_ReplaceGrade or p1setting == PlayerMusicWheelScore_Yes) then
         if player == PLAYER_1 then
             actor:y(-11)
         else
@@ -210,8 +212,15 @@ return Def.BitmapText {
     InitCommand = function(self)
         self:visible(false)
         self:zoom(0.2)
-        if ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_ReplaceGrade then
-            self:x(32)
+        if PlayerMusicWheelScore(player) == PlayerMusicWheelScore_ReplaceGrade then
+            if GAMESTATE:GetNumSidesJoined() == 2 and player == PLAYER_1 and PlayerMusicWheelScore(PLAYER_2) ~= PlayerMusicWheelScore_ReplaceGrade then
+                self:x(20)
+                self:maxwidth(160)
+            elseif GAMESTATE:GetNumSidesJoined() == 2 and player == PLAYER_2 and PlayerMusicWheelScore(PLAYER_1) ~= PlayerMusicWheelScore_ReplaceGrade then
+                self:x(50)
+            else
+                self:x(32)
+            end
         else
             -- Similar to ITL_EXScore.lua
             self:x(_screen.w / WideScale(2.15, 2.14) - self:GetWidth() * self:GetZoom() - 35)

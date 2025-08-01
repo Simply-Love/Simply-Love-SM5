@@ -2,6 +2,14 @@
 -- Helper Functions for PlayerOptions
 -- -----------------------------------------------------------------------
 
+PlayerMusicWheelScore_No = "No"
+PlayerMusicWheelScore_Yes = "Yes"
+PlayerMusicWheelScore_ReplaceGrade = "ReplaceGrade"
+
+function PlayerMusicWheelScore(pn)
+	return SL[ToEnumShortString(pn)].ActiveModifiers.PlayerMusicWheelScore
+end
+
 local GetModsAndPlayerOptions = function(player)
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
 	local topscreen = SCREENMAN:GetTopScreen():GetName()
@@ -454,6 +462,10 @@ local Overrides = {
 			-- Default to FA+ pane if either options are active.
 			sl_pn.EvalPanePrimary = ((list[1] or list[2]) and list[3]) and 2 or 1
 		end
+	},
+	-------------------------------------------------------------------------
+	PlayerMusicWheelScore = {
+		Choices = { PlayerMusicWheelScore_No, PlayerMusicWheelScore_Yes, PlayerMusicWheelScore_ReplaceGrade }
 	},
 	-------------------------------------------------------------------------
 	Hide = {

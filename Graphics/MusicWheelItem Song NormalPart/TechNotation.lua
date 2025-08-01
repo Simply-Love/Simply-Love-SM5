@@ -39,11 +39,12 @@ local af = Def.BitmapText {
 
 		-- TODO: is there a better way of laying this out?
 		local x_offset = 10
-		local musicWheelScore = ThemePrefs.Get("MusicWheelScore")
+		local musicWheelScoreYes = SLMusicWheelScoreEnabled() and (PlayerMusicWheelScore(PLAYER_1) == PlayerMusicWheelScore_Yes or PlayerMusicWheelScore(PLAYER_2) == PlayerMusicWheelScore_Yes)
+		local musicWheelScoreNo = (not SLMusicWheelScoreEnabled()) or PlayerMusicWheelScore(PLAYER_1) == PlayerMusicWheelScore_No or PlayerMusicWheelScore(PLAYER_2) == PlayerMusicWheelScore_No
 		-- If MusicWheelScore is No, there's a score displayed on the right side only if it's ITL
 		-- If MusicWheelScore is Yes, there's a score displayed on the right side (regardless of ITL)
 		-- If MusicWheelScore is ReplaceGrade, there's no score displayed on the right side (regardless of ITL)
-		if (musicWheelScore == MusicWheelScore_No and IsItlSong(song, player)) or ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_Yes then
+		if (musicWheelScoreNo and IsItlSong(song, player)) or musicWheelScoreYes then
 			-- We have ITL_EXscore or Score on the rightmost side
 			x_offset = 60
 		end

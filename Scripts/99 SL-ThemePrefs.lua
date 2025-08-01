@@ -339,24 +339,25 @@ SL_CustomPrefs.Get = function()
 		},
 
 		MusicWheelScore = {
-			Default = MusicWheelScore_No,
+			Default = MusicWheelScore_On,
 			Choices =  {
-				THEME:GetString("ThemePrefs", "No"),
-				THEME:GetString("ThemePrefs", "Yes"),
-				THEME:GetString("ThemePrefs", "ReplaceGrade")
+				THEME:GetString("ThemePrefs", "Off"),
+				THEME:GetString("ThemePrefs", "On"),
 			},
 			Values = {
-				MusicWheelScore_No,
-				MusicWheelScore_Yes,
-				MusicWheelScore_ReplaceGrade
+				MusicWheelScore_Off,
+				MusicWheelScore_On,
 			}
 		}
 	}
 end
 
-MusicWheelScore_No = "No"
-MusicWheelScore_Yes = "Yes"
-MusicWheelScore_ReplaceGrade = "ReplaceGrade"
+MusicWheelScore_Off = "Off"
+MusicWheelScore_On = "On"
+
+function SLMusicWheelScoreEnabled()
+	return ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_On
+end
 
 SL_CustomPrefs.Validate = function()
 	local file = IniFile.ReadFile("Save/ThemePrefs.ini")

@@ -53,7 +53,8 @@ local af = Def.ActorFrame {
 		--     NumTimesPlayed (number)
 		--     HighScoreList (as of ITGmania 1.0.1 -- NOTE: can be removed in a future version)
 		SetGradeCommand=function(self, params)
-			if not params.Grade or ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_ReplaceGrade then
+			local musicWheelScoreReplaceGrade = SLMusicWheelScoreEnabled() and PlayerMusicWheelScore(params.PlayerNumber) == PlayerMusicWheelScore_ReplaceGrade
+			if not params.Grade or musicWheelScoreReplaceGrade then
 				self:visible(false)
 				return
 			end
@@ -74,8 +75,6 @@ local af = Def.ActorFrame {
 	},
 }
 
-if not ThemePrefs.Get("MusicWheelScore") == MusicWheelScore_ReplaceGrade then
-	af[#af + 1] = LoadActor("GetLamp.lua")
-end
+af[#af + 1] = LoadActor("GetLamp.lua")
 
 return af
