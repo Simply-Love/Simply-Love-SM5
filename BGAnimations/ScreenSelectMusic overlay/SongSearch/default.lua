@@ -15,15 +15,20 @@ local af = Def.ActorFrame {
 		self:visible(false)
 	end,
 	DisplaySearchResultsMessageCommand=function(self, params)
+		self:queuecommand("AddInputCallback")
 		self:visible(true)
 		self:playcommand("AssessCandidates", params)
-		-- We have to wait a little bit before adding the input handler.
-		self:sleep(0.25):queuecommand("AddInputCallback")
 	end,
 	AddInputCallbackCommand=function(self)
-		SCREENMAN:GetTopScreen():AddInputCallback(inputHandler)
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
+		end
+		-- Queue this command recursively until the ScreenSelectMusic finishes loading
+		if SCREENMAN:GetTopScreen():GetName() ~= "ScreenSelectMusic" then
+			self:sleep(0.01)
+			self:queuecommand("AddInputCallback")
+		else
+			SCREENMAN:GetTopScreen():AddInputCallback(inputHandler)
 		end
 	end,
 	DirectInputToEngineCommand=function(self)
