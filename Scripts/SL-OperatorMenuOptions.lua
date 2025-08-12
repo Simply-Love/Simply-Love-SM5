@@ -473,13 +473,18 @@ OperatorMenuOptionRows.CustomSongsLoadTimeout = function()
 end
 
 OperatorMenuOptionRows.SoundDevice = function()
-	local choices = { "auto" }
-	local values  = { "" }
+	-- local choices = { "auto" }
+	-- local values  = { "" }
+	local choices = {}
+	local values = {}
+	if type(get_sound_device_list) ~= "function" then
+		return nil
+	end
 
 	local soundDrivers = get_sound_device_list()
 	for i, driver in ipairs(soundDrivers) do
-		choices[i+1] = driver.readable_name
-		values[i+1]  = driver.system_name
+		choices[i] = driver.readable_name
+		values[i]  = driver.system_name
 	end
 
 	return {
