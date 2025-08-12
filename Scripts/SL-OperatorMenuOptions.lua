@@ -471,3 +471,50 @@ OperatorMenuOptionRows.CustomSongsLoadTimeout = function()
 		end,
 	}
 end
+
+OperatorMenuOptionRows.SoundDevice = function()
+	local choices = { "auto" }
+	local values  = { "" }
+
+	local soundDrivers = get_sound_device_list()
+	for i, driver in ipairs(soundDrivers) do
+		choices[i+1] = driver.readable_name
+		values[i+1]  = driver.system_name
+	end
+
+	return {
+		Name = "SoundDevice",
+		Choices = choices,
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+
+		LoadSelections = function(self, list, pn)
+			local pref = PREFSMAN:GetPreference("SoundDevice")
+
+			-- Multiple comma-delimited sound drivers may be listed, but
+			-- we only want the first because that's the one actually in use.
+			-- Split the string on commas, get the first match found, and
+			-- immediately break from the loop.
+			for driver in pref:gmatch("([^,]+),?") do
+				pref = driver
+				break
+			end
+
+			if not pref then return end
+
+			local i = FindInTable(pref, self.Choices) or 1
+			list[i] = true
+		end,
+
+		SaveSelections = function(self, list, pn)
+			for i = 1, #list do
+				if list[i] then
+					PREFSMAN:SetPreference("SoundDevice", values[i])
+					break
+				end
+			end
+		end,
+	}
+end
