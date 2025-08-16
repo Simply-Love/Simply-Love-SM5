@@ -417,7 +417,6 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 			SL[opposite_player].Streams.Description == description) then
 		-- If so then just copy everything over.
 		SL[pn].Streams.NotesPerMeasure = SL[opposite_player].Streams.NotesPerMeasure
-		SL[pn].Streams.EquallySpacedPerMeasure = SL[opposite_player].Streams.EquallySpacedPerMeasure
 		SL[pn].Streams.PeakNPS = SL[opposite_player].Streams.PeakNPS
 		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
 		SL[pn].Streams.ColumnCues = SL[opposite_player].Streams.ColumnCues
@@ -462,82 +461,40 @@ ParseChartInfo = function(steps, pn)
 			SL[pn].Streams.StepsType ~= stepsType or
 			SL[pn].Streams.Difficulty ~= difficulty or
 			SL[pn].Streams.Description ~= description) then
-		local simfileString, fileType = GetSimfileString( steps )
-		local parsed = false
 
+		-- Not using the GetGrooveStatsHash from the engine since there are some
+		-- differences in the hash logic.
+		-- SL[pn].Streams.Hash = steps:GetGrooveStatsHash() or ''
+
+		SL[pn].Streams.Hash = ''
+		local simfileString, fileType = GetSimfileString( steps )
 		if simfileString then
 			-- Parse out just the contents of the notes
 			local chartString, BPMs = GetSimfileChartString(simfileString, stepsType, difficulty, description, fileType)
 			if chartString ~= nil and BPMs ~= nil then
 				-- We use 16 characters for the V3 GrooveStats hash.
 				local Hash = BinaryToHex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
-
-				-- Check if there is an & present, we're dealing with a couples chart:
-				-- Couples charts have P1 and P2 steps in the same chart string.
-				-- We need to split the chart string into two separate chart strings.
-				local splitIndex = chartString:find("&")
-				-- If the pn is P1 use the first half of the chart string, otherwise use the second half.
-				if splitIndex then
-					chartString = pn == "P1" and chartString:sub(1, splitIndex-1) or chartString:sub(splitIndex+1)
-				end
-
-				-- Append the semi-colon at the end so it's easier for GetMeasureInfo to get the contents
-				-- of the last measure.
-				chartString = chartString .. '\n;'
-				-- Which measures have enough notes to be considered as part of a stream?
-				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
-				-- The chart string is minimized at this point (via GetSimfileChartString).
-				local NotesPerMeasure, PeakNPS, NPSperMeasure, ColumnCues, EquallySpacedPerMeasure = GetMeasureInfo(steps, chartString)
-
-				-- Which sequences of measures are considered a stream?
-				SL[pn].Streams.NotesPerMeasure = NotesPerMeasure
-				SL[pn].Streams.EquallySpacedPerMeasure = EquallySpacedPerMeasure
-				SL[pn].Streams.PeakNPS = PeakNPS
-				SL[pn].Streams.NPSperMeasure = NPSperMeasure
-				SL[pn].Streams.ColumnCues = ColumnCues
 				SL[pn].Streams.Hash = Hash
-
-				-- Let's just do this here for now since a lot of the existing infra
-				-- references these values directly. We can refactor later.
-				local techCounts = steps:CalculateTechCounts(player)
-
-				SL[pn].Streams.Crossovers = techCounts:GetValue("TechCountsCategory_Crossovers")
-				SL[pn].Streams.Footswitches = techCounts:GetValue("TechCountsCategory_Footswitches")
-				SL[pn].Streams.Sideswitches = techCounts:GetValue("TechCountsCategory_Sideswitches")
-				SL[pn].Streams.Jacks = techCounts:GetValue("TechCountsCategory_Jacks")
-				SL[pn].Streams.Brackets = techCounts:GetValue("TechCountsCategory_Brackets")
-				SL[pn].Streams.Doublesteps = techCounts:GetValue("TechCountsCategory_Doublesteps")
-
-				SL[pn].Streams.TechNotation = SLTechNotation_Format(steps, pn, TechNotationVerboseKey)
-
-				SL[pn].Streams.Filename = filename
-				SL[pn].Streams.StepsType = stepsType
-				SL[pn].Streams.Difficulty = difficulty
-				SL[pn].Streams.Description = description
-
-				parsed = true
 			end
 		end
 
-		-- Clear stream data if we can't parse the chart
-		if not parsed then
-			SL[pn].Streams.NotesPerMeasure = {}
-			SL[pn].Streams.EquallySpacedPerMeasure = {}
-			SL[pn].Streams.PeakNPS = 0
-			SL[pn].Streams.NPSperMeasure = {}
-			SL[pn].Streams.Hash = ''
+		local techCounts = steps:GetTechCounts(pn)
+		SL[pn].Streams.Crossovers = techCounts:GetValue("TechCountsCategory_Crossovers") or 0
+		SL[pn].Streams.Footswitches = techCounts:GetValue("TechCountsCategory_Footswitches") or 0
+		SL[pn].Streams.Sideswitches = techCounts:GetValue("TechCountsCategory_Sideswitches") or 0
+		SL[pn].Streams.Jacks = techCounts:GetValue("TechCountsCategory_Jacks") or 0
+		SL[pn].Streams.Brackets = techCounts:GetValue("TechCountsCategory_Brackets") or 0
+		SL[pn].Streams.Doublesteps = techCounts:GetValue("TechCountsCategory_Doublesteps") or 0
+		SL[pn].Streams.TechNotation = SLTechNotation_Format(steps, pn, TechNotationVerboseKey)
 
-			SL[pn].Streams.Crossovers = 0
-			SL[pn].Streams.Footswitches = 0
-			SL[pn].Streams.Sideswitches = 0
-			SL[pn].Streams.Jacks = 0
-			SL[pn].Streams.Brackets = 0
-			SL[pn].Streams.Doublesteps = 0
+		SL[pn].Streams.NotesPerMeasure = steps:GetNotesPerMeasure(pn) or {}
+		SL[pn].Streams.PeakNPS = steps:GetPeakNps(pn) or 0
+		SL[pn].Streams.NPSperMeasure = steps:GetNpsPerMeasure(pn) or {}
+		SL[pn].Streams.ColumnCues = steps:GetColumnCues(pn) or {}
 
-			SL[pn].Streams.Filename = filename
-			SL[pn].Streams.StepsType = stepsType
-			SL[pn].Streams.Difficulty = difficulty
-			SL[pn].Streams.Description = description
-		end
+		SL[pn].Streams.Filename = filename
+		SL[pn].Streams.StepsType = stepsType
+		SL[pn].Streams.Difficulty = difficulty
+		SL[pn].Streams.Description = description
 	end
 end
