@@ -48,7 +48,7 @@ local function CreditsText( player )
 					stats.notesHitThisGame = tonumber(string.format("%.1f", stats.notesHitThisGame/1000)) .. "k"
 				end
 				
-				local screenName = screen:GetName()
+				local screenName = screen and screen:GetName()
 
 				if (screen == nil) then
 					self:settext(str)
