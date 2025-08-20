@@ -290,90 +290,93 @@ local function GetChangeableStyles()
 	return available_styles
 end
 local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
-local wheel_options = {
-	-- This is the master table that controls the SortMenu's choices
-	-- The structure is as follows:
-	-- The top level table contains the options that will be displayed in the SortMenu.
-	-- For instance: { {"SortBy", "Group"} } adds the SortBy (toptext) Group (bottomtext) option to the SortMenu.
-
-	-- If a second element is present, this means we're either providing a condition determining whether or not the option is displayed.
-	-- or we're creating a submenu.
-	-- If the second element is a table, it's a submenu, if it equates to a boolean, it's a condition.
-
-	-- Conditions:
-	-- These determine whether or not the option will be displayed.
-	-- For instance: { {"SortBy", "Group"}, GAMESTATE:IsCourseMode() } will only display the Group option in CourseMode.
-	-- You can use any Lua expression that equates to a boolean value here.
-	-- Alternatively, you may provide a function that returns a boolean value for more complex and timely conditions.
-
-	-- Submenus:
-	-- We can create categories within the SortMenu by providing a table as the second element
-	-- The first element becomes the top and bottomtext for the category.
-	-- The second element's table contains that options will show under this category.
-	-- It follows the same structure as the top level table.
-
-	{ 
-		{"", "CategorySorts"}, 
-		{
-			{{"SortBy", "Group"} },
-			{ {"SortBy", "Title"} },
-			{ {"SortBy", "Artist"} },
-			{ {"SortBy", "Genre"} },
-			{ {"SortBy", "BPM"} },
-			{ {"SortBy", "Length"} },
-			{ {"SortBy", "Meter"} },
-			{ {"SortBy", "Popularity"} },
-			{ {"SortBy", "Recent"} },
-			{ {"SortBy", "TopGrades"} },
-			{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-			{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-			{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-			{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-			{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-			{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-
-		}
-	},
-	{
-		{"", "CategoryAdvanced"},
-		{
-			{ {"FeelingSalty", "TestInput"}, GAMESTATE:IsEventMode() },
-			{ {"HardTime", "PracticeMode"}, function() return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures") end },
-			{ {"TakeABreather", "LoadNewSongs"} },
-			{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
-			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
-			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
-			{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
-		}
-	},
-	{
-		{"", "CategoryStyles"},
-		GetChangeableStyles,
-	},
-	{
-		{"", "CategoryPlaylists"},
-		AddPlaylists,
-	},
-	{ {"SortBy", "Group"} },
-	{ {"SortBy", "Title"} },
-	{ {"SortBy", "Recent"} },
-	-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
-	-- but don't add the current SL GameMode as a choice.
-	{ {"ChangeMode", "ITG"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "ITG" },
-	-- Casual players often choose the wrong mode and an experienced player in the area may notice this
-	-- and offer to switch them back to casual mode. This allows them to do so again.
-	-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
-	-- include the check.
-	{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
-	{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
-	AddFavorites(),
-	{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },	
-}
 
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
-	InitCommand=function(self) self:visible(false) end,
+	wheel_options = {},
+	InitCommand=function(self)
+		self.wheel_options = {
+			-- This is the master table that controls the SortMenu's choices
+			-- The structure is as follows:
+			-- The top level table contains the options that will be displayed in the SortMenu.
+			-- For instance: { {"SortBy", "Group"} } adds the SortBy (toptext) Group (bottomtext) option to the SortMenu.
+
+			-- If a second element is present, this means we're either providing a condition determining whether or not the option is displayed.
+			-- or we're creating a submenu.
+			-- If the second element is a table, it's a submenu, if it equates to a boolean, it's a condition.
+
+			-- Conditions:
+			-- These determine whether or not the option will be displayed.
+			-- For instance: { {"SortBy", "Group"}, GAMESTATE:IsCourseMode() } will only display the Group option in CourseMode.
+			-- You can use any Lua expression that equates to a boolean value here.
+			-- Alternatively, you may provide a function that returns a boolean value for more complex and timely conditions.
+
+			-- Submenus:
+			-- We can create categories within the SortMenu by providing a table as the second element
+			-- The first element becomes the top and bottomtext for the category.
+			-- The second element's table contains that options will show under this category.
+			-- It follows the same structure as the top level table.
+
+			{ 
+				{"", "CategorySorts"}, 
+				{
+					{{"SortBy", "Group"} },
+					{ {"SortBy", "Title"} },
+					{ {"SortBy", "Artist"} },
+					{ {"SortBy", "Genre"} },
+					{ {"SortBy", "BPM"} },
+					{ {"SortBy", "Length"} },
+					{ {"SortBy", "Meter"} },
+					{ {"SortBy", "Popularity"} },
+					{ {"SortBy", "Recent"} },
+					{ {"SortBy", "TopGrades"} },
+					{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+					{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+					{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+					{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+					{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+					{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+
+				}
+			},
+			{
+				{"", "CategoryAdvanced"},
+				{
+					{ {"FeelingSalty", "TestInput"}, GAMESTATE:IsEventMode() },
+					{ {"HardTime", "PracticeMode"}, function() return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures") end },
+					{ {"TakeABreather", "LoadNewSongs"} },
+					{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
+					{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
+					{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
+					{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
+				}
+			},
+			{
+				{"", "CategoryStyles"},
+				GetChangeableStyles,
+			},
+			{
+				{"", "CategoryPlaylists"},
+				AddPlaylists,
+			},
+			{ {"SortBy", "Group"} },
+			{ {"SortBy", "Title"} },
+			{ {"SortBy", "Recent"} },
+			-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
+			-- but don't add the current SL GameMode as a choice.
+			{ {"ChangeMode", "ITG"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "ITG" },
+			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
+			-- and offer to switch them back to casual mode. This allows them to do so again.
+			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
+			-- include the check.
+			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
+			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
+			AddFavorites(),
+			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },	
+		}
+		self:visible(false)
+	end,
 	-- Always ensure player input is directed back to the engine when leaving SelectMusic.
 	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 	-- Figure out which choices to put in the SortWheel based on various current conditions.
