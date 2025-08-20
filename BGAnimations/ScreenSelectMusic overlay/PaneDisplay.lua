@@ -267,10 +267,11 @@ local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
 af[#af+1] = RequestResponseActor(17, 50)..{
 	Name="GetScoresRequester",
-	OnCommand=function(self)
+	InitCommand=function(self)
 		-- Create variables for both players, even if they're not currently active.
 		self.IsParsing = {false, false}
 	end,
+	OnCommand=function(self) self.IsParsing = {false, false} end,
 	-- Broadcasted from ./PerPlayer/DensityGraph.lua
 	P1ChartParsingMessageCommand=function(self)	self.IsParsing[1] = true end,
 	P2ChartParsingMessageCommand=function(self)	self.IsParsing[2] = true end,
