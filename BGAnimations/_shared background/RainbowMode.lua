@@ -1,7 +1,8 @@
 -- --------------------------------------------------------
 -- RainbowMode background
 
-local file = ...
+local style = ThemePrefs.Get("VisualStyle")
+local file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
 
 -- this index will be used within the scope of this file like (index+1) and (index-1)
 -- to continue to diffuse each sprite as we shift through the colors available in SL.Colors
@@ -13,41 +14,24 @@ local index = SL.Global.ActiveColorIndex
 local delay = 0
 
 local af1 = Def.ActorFrame{
-	InitCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-		self:visible(ThemePrefs.Get("RainbowMode") and style ~= "SRPG9")
-	end,
+	Name="_shared background/RainbowMode",
 	OnCommand=function(self) self:Center():bob():effectmagnitude(0,50,0):effectperiod(8) end,
-	VisualStyleSelectedMessageCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-
-		if ThemePrefs.Get("RainbowMode") and style ~= "SRPG9" then
-			self:visible(true):linear(0.6):diffusealpha(1)
-		else
-			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
-		end
-	end,
-	HideCommand=function(self) self:visible(false) end,
 }
 
 local af2 = Def.ActorFrame{
 	InitCommand=function(self) self:diffusealpha(0):queuecommand("Appear"):playcommand("NewColor") end,
-	AppearCommand=function(self) self:linear(1):diffusealpha(1):queuecommand("Loop") end,
+	AppearCommand=function(self)
+		self:linear(1):diffusealpha(1):queuecommand("Loop")
+	end,
 
 	OnCommand=function(self)
-		delay = 0.7
 		self:bob():effectmagnitude(0,0,50):effectperiod(12)
-	end,
-	VisualStyleSelectedMessageCommand=function(self)
-		if ThemePrefs.Get("RainbowMode") then
-			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualStyle") .. "/SharedBackground.png")
-			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
-		end
 	end,
 
 	LoopCommand=function(self)
 		index = index + 1
 		self:queuecommand("NewColor"):sleep(delay):queuecommand("Loop")
+		delay = 0.7
 	end
 }
 
