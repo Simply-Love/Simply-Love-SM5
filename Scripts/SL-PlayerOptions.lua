@@ -618,8 +618,8 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	VisualDelay = {
 		Choices = function()
-			local first	= -100
-			local last 	= 100
+			local first	= -999
+			local last 	= 999
 			local step 	= 1
 			return stringify( range(first, last, step), "%gms")
 		end,
