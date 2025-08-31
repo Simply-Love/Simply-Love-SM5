@@ -98,7 +98,14 @@ end
 local t = Def.ActorFrame {
 	Name="SortMenu",
 	-- ensure player input is directed back to the engine when initializing ScreenSelectMusic.
-	InitCommand=function(self) self:visible(false):queuecommand("DirectInputToEngine") end,
+	InitCommand=function(self)
+		self:visible(false):queuecommand("DirectInputToEngine")
+
+		-- make wheel_options accessible from other files (i.e. Modules)
+		-- this allows folks to create Modules that would add new options to the sort menu
+		self.wheel_options = wheel_options
+	end,
+
 	-- ensure player input is directed back to the engine when leaving ScreenSelectMusic.
 	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 
@@ -171,7 +178,7 @@ local t = Def.ActorFrame {
 		local filtered_wheel_options = {}
 
 		-- build the array of rows
-		for i, folder in ipairs(wheel_options) do
+		for i, folder in ipairs(self.wheel_options) do
 			-- some folders' `children` table are dynamically constructed at SSM screen init,
 			-- which could result in a folder having 0 children.  e.g. AddPlaylists() could
 			-- return an empty table.  only add a row for this folder if it has children
