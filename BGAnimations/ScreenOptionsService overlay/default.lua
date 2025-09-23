@@ -17,10 +17,10 @@ for childscreen_name in THEME:GetMetric("ScreenOptionsService", "LineNames"):gma
 
 	-- We can prepend "Screen" to the beginning of each child screen's Name to transform
 	-- something like "InputOptions" into "ScreenInputOptions".
-	-- From there, we can see metric'c "ScreenInputOptions" has its own LineNames
+	-- From there, we can see metric's "ScreenInputOptions" has its own LineNames
 	-- and split those on commas to get OptionRows that would be available on the next screen.
 	--
-	-- This is is not a safe assumption in other themes (or even everyhere in SL), but I've configured
+	-- This is is not a safe assumption in other themes (or even everywhere in SL), but I've configured
 	-- SL's metrics for ScreenOptionsService and children to Just Work™ for this sort of lookup.
 
 	if THEME:HasMetric("Screen"..childscreen_name, "LineNames") then
@@ -99,6 +99,8 @@ end
 --    some StepMania game types (popn, beat, kickbox, etc.) are not supported in SL
 --    SL only supports official StepMania releases, and a limited range of versions at that
 af[#af+1] = LoadActor("./Support.lua")
+-- -----------------------------------------------------------------------
+af[#af+1] = LoadActor("./ActiveOptionRowState.lua")
 -- -----------------------------------------------------------------------
 
 -- background Quad for side pane

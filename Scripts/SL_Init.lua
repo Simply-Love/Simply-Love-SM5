@@ -152,6 +152,10 @@ local GlobalDefaults = {
 
 			-- TODO(teejusb): We should only initialize this once to save on compute.
 			self.GrooveStatsPlayerOptionKeys = CreateGrooveStatsPlayerOptionKeys()
+
+			-- used to track active OptionRow index when navigating the Operator Menu's many screens and sub-screens
+			-- shaped like: { ScreenOptionsService=3, ScreenVisualOptions=1 }
+			self.PrevScreenOptionsServiceRow = {}
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,
