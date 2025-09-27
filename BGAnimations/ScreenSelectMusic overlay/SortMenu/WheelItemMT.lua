@@ -158,20 +158,22 @@ return {
 			if not info then self.bottom_text:settext("") return end
 			self.info = info
 
-			local toptext = THEME:GetString("ScreenSelectMusic", info[1])
+			local toptext = THEME:HasString("ScreenSelectMusic", info[1]) and THEME:GetString("ScreenSelectMusic", info[1]) or ""
 			local bottomtext
 
-			-- this row's bottom_text is the name of the playlist file retrieved from disk
-			if (info[1]=="Playlist" or info[1]=="MachinePlaylist" or info[1]=="PersonalPlaylist") then
-				bottomtext = info[2]
+			-- try to localize this row's bottom_text from ScreenSelectMusic first
+			if THEME:HasString("ScreenSelectMusic", info[2]) then
+				bottomtext = THEME:GetString("ScreenSelectMusic", info[2])
 
-			-- localize this row's bottom_text from ScreenSelectPlayMode (e.g. "Casual")
-			elseif (info[1] == "ChangeMode") then
+			-- then try localize this row's bottom_text from ScreenSelectPlayMode (e.g. "Casual")
+			elseif THEME:HasString("ScreenSelectPlayMode", info[2]) then
 				bottomtext = THEME:GetString("ScreenSelectPlayMode", info[2])
 
-			-- localize this row's bottom_text from ScreenSelectMusic
+			-- otherwise, this row's bottom_text is the name of the playlist file
+			-- retrieved from disk, or it's not defined by the theme's language files.
+			-- use the string as-is for bottomtext
 			else
-				bottomtext = THEME:GetString("ScreenSelectMusic", info[2])
+				bottomtext = tostring(info[2])
 			end
 
 			self.top_text:settext(toptext)
