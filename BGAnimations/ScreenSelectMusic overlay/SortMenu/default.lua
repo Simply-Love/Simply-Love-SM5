@@ -37,7 +37,7 @@ local SongSearchSettings = LoadActor("../SongSearch/SongSearchSettings.lua")
 -- but its prose was approachable enough for wastes-of-space like me, so I guess I'll
 -- recommend it until I find a more helpful one.
 --                                      -quietly
-local sortmenu_dimensions = { w=210, h=160 }
+local sortmenu_dimensions = { w=210, h=204 }
 local wheel_item_mt = LoadActor("WheelItemMT.lua", {sortmenu_dimensions})
 
 -- initialize the SortMenu to be be focused on the 2nd element, SortBy-Group in the "Common" folder
@@ -222,8 +222,8 @@ local t = Def.ActorFrame {
 		-- NOT the total number of things you can eventually scroll through (#wheel_options = 14)
 		--
 		-- so, math.floor(7/2) gives focus to the third item in the wheel, which looks weird
-		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
-		sort_wheel.focus_pos = 4
+		-- in this particular usage.  Thus, set the focus to the wheel's current 5th Actor.
+		sort_wheel.focus_pos = 5
 
 		sort_wheel:set_info_set(filtered_wheel_options, wheel_index)
 	end,
@@ -255,11 +255,17 @@ local t = Def.ActorFrame {
 	},
 	-- top mask
 	Def.Quad {
-		InitCommand=function(self) self:Center():zoomto(sortmenu_dimensions.w, _screen.h/2):y(40):MaskSource() end
+		InitCommand=function(self)
+			self:zoomto(sortmenu_dimensions.w, _screen.h):MaskSource():valign(1)
+			self:Center():y(self:GetY()-sortmenu_dimensions.h/2)
+		end
 	},
 	-- bottom mask
 	Def.Quad {
-		InitCommand=function(self) self:zoomto(sortmenu_dimensions.w, _screen.h/2):xy(_screen.cx,_screen.cy+200):MaskSource() end
+		InitCommand=function(self)
+			self:zoomto(sortmenu_dimensions.w, _screen.h):MaskSource():valign(0)
+			self:Center():y(self:GetY()+sortmenu_dimensions.h/2)
+		end
 	},
 	-- "Press SELECT To Cancel" text
 	Def.BitmapText{
@@ -269,17 +275,20 @@ local t = Def.ActorFrame {
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
 				self:visible(false)
 			else
-				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffuse(0.7,0.7,0.7,1)
+				self:Center():valign(0):y(self:GetY()+sortmenu_dimensions.h/2 + 15):zoom(0.3):diffuse(0.7,0.7,0.7,1)
 			end
 		end
 	},
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
-	sort_wheel:create_actors( "Sort Menu", 7, wheel_item_mt, _screen.cx, _screen.cy ),
+	sort_wheel:create_actors( "Sort Menu", 9, wheel_item_mt, _screen.cx, _screen.cy ),
 
 	-- arrow cursor
 	LoadActor(THEME:GetPathG("", "EditMenu Right.png"))..{
 		Name="arrow_cursor",
-		InitCommand=function(self) self:zoom(0.4):xy(_screen.cx-96, _screen.cy+9) end,
+		InitCommand=function(self)
+			self:zoom(0.4):x(_screen.cx-96)
+			self:y(_screen.cy+5) -- FIXME: set cursor y-position using sort_wheel's focus_pos
+		end,
 		BumpCommand=function(self) self:finishtweening():smooth(0.075):x(_screen.cx-101):smooth(0.075):x(_screen.cx-96) end,
 		ShowCursorCommand=function(self) self:visible(true)  end,
 		HideCursorCommand=function(self) self:visible(false) end,

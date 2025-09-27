@@ -141,7 +141,10 @@ return {
 				self.container:playcommand('LoseFocus')
 			end
 
-			self.container:smooth(0.1):y(row_height * (item_index - math.ceil(num_items/2)))
+			self.container:smooth(0.1):y(
+				-- FIXME: retool SortMenu's so that WheelItems don't need magic number offsets like -4
+				row_height * (item_index - math.ceil(num_items/2)) - 4
+			)
 
 			if item_index <= 1 or  item_index >= num_items then
 				self.container:diffusealpha(0)
