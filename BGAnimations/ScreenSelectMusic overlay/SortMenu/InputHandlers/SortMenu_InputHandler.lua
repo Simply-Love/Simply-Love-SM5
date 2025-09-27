@@ -32,7 +32,7 @@ local input = function(event)
 			-- info[2] is a string of bottom_text like "Group", "Casual", or "Test Input"
 			-- info[3] is a function to be called if the user chooses this row
 			if (info[1] == "ToggleFolder") then
-				sortmenu:GetChild("toggle_folder"):play()
+				sortmenu:GetChild("toggle_folder_sound"):play()
 			else
 				sortmenu:GetChild("start_sound"):play()
 			end

@@ -71,9 +71,22 @@ end
 -- the player wants to change the MusicWheel's song sort, for example from "Group" to "BPM"
 local function ChangeSort()
 	local focus = sort_wheel:get_actor_item_at_focus_pos()
-	MESSAGEMAN:Broadcast('Sort', { order = focus.info[2] })
-	MESSAGEMAN:Broadcast('ResetHeaderText')
-	SCREENMAN:GetTopScreen():GetChild("Overlay"):queuecommand("DirectInputToEngine")
+	local newSortOrder = ("SortOrder_%s"):format(focus.info[2])
+	local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
+	local sortmenu = overlay:GetChild("SortMenu")
+
+	-- warn the user if the SortOrder wasn't valid
+	-- could result from a typo in SortMenuRows.lua
+	if (SortOrder:Reverse()[newSortOrder] == nil) then
+		lua.ReportScriptError( ("%s isn't a valid SortOrder"):format(focus.info[2]) )
+		sortmenu:GetChild("error_sound"):play()
+
+	else
+		MESSAGEMAN:Broadcast('Sort', { order = focus.info[2] })
+		MESSAGEMAN:Broadcast('ResetHeaderText')
+	end
+
+	overlay:queuecommand("DirectInputToEngine")
 end
 
 -- a specific player wants to change the MusicWheel's sort to "SortOrder_Preferred"
@@ -104,21 +117,31 @@ local function ChangeMode()
 	local screen   = SCREENMAN:GetTopScreen()
 	local sortmenu = screen:GetChild("Overlay"):GetChild("SortMenu")
 	local focus    = sort_wheel:get_actor_item_at_focus_pos()
-	SL.Global.GameMode = focus.info[2]
+	local newMode  = focus.info[2]
 
-	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-		ApplyMods(player)       -- global function from ./Scripts/SL-Helpers.lua
+	-- ensure the new GameMode exists before trying to switch to it
+	if SL.Preferences[newMode] == nil then
+		lua.ReportScriptError( ("%s isn't a valid mode in Simply Love"):format(focus.info[2]) )
+		sortmenu:GetChild("error_sound"):play()
+
+	else
+		SL.Global.GameMode = newMode
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			ApplyMods(player)       -- global function from ./Scripts/SL-Helpers.lua
+		end
+		SetGameModePreferences()  -- global function from ./Scripts/SL-Helpers.lua
+		THEME:ReloadMetrics()
+		-- Broadcast that the SL GameMode has changed
+		-- SSM's header will update its text and highscore names in the PaneDisplays will refresh
+		MESSAGEMAN:Broadcast("SLGameModeChanged")
 	end
-	SetGameModePreferences()  -- global function from ./Scripts/SL-Helpers.lua
-	THEME:ReloadMetrics()
-	-- Broadcast that the SL GameMode has changed
-	-- SSM's header will update its text and highscore names in the PaneDisplays will refresh
-	MESSAGEMAN:Broadcast("SLGameModeChanged")
+
 	-- Reload the SortMenu's available options and queue "DirectInputToEngine"
 	-- to return input from Lua back to the engine and hide the SortMenu from view
 	sortmenu:playcommand("AssessAvailableChoices"):queuecommand("DirectInputToEngine")
+
 	-- the player is switching to casual mode which uses a different SelectMusic screen
-	if focus.info[2] == "Casual" then
+	if newMode == "Casual" then
 		screen:SetNextScreenName("ScreenSelectMusicCasual")
 		screen:StartTransitioningScreen("SM_GoToNextScreen")
 	end
@@ -128,18 +151,34 @@ end
 local function ChangeStyle()
 	local screen  = SCREENMAN:GetTopScreen()
 	local overlay = screen:GetChild("Overlay")
+	local sortmenu = overlay:GetChild("SortMenu")
+
+	-- Get the style we want to change to
+	local newStyle = sort_wheel:get_actor_item_at_focus_pos().info[2]:lower()
+	-- get names of styles for current game, e.g. { "single", "versus", "double", "couple", "solo", "routine", "threepanel" }
+	local stylesForGame = map(Style.GetName, GAMEMAN:GetStylesForGame(GAMESTATE:GetCurrentGame():GetName()))
+
+	-- ensure the style is valid before switching to it
+	-- could result from a typo in SortMenuRows.lua
+	if FindInTable(newStyle, stylesForGame) == nil then
+		lua.ReportScriptError( ("%s is not a valid style in %s"):format(newStyle, GAMESTATE:GetCurrentGame():GetName()) )
+		sortmenu:GetChild("error_sound"):play()
+		sortmenu:playcommand("AssessAvailableChoices"):queuecommand("DirectInputToEngine")
+		return
+	end
+
+
 	-- If the MenuTimer is in effect, we need to make sure the current number of seconds
 	-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions
 	-- will save the current number of seconds before transitioning to the next screen.
 	if PREFSMAN:GetPreference("MenuTimer") then
 		overlay:playcommand("ShowPressStartForOptions")
 	end
-	-- Get the style we want to change to
-	local new_style = sort_wheel:get_actor_item_at_focus_pos().info[2]:lower()
+
 	-- accommodate techno game
-	if GAMESTATE:GetCurrentGame():GetName() == "techno" then new_style = new_style .. "8" end
+	if GAMESTATE:GetCurrentGame():GetName() == "techno" then newStyle = newStyle .. "8" end
 	-- set it in the engine
-	GAMESTATE:SetCurrentStyle(new_style)
+	GAMESTATE:SetCurrentStyle(newStyle)
 	-- Make sure we cancel the request if it's active before trying to switch screens.
 	-- This prevents the "Stale ActorFrame" error.
 	overlay:GetChild("PaneDisplayMaster"):GetChild("GetScoresRequester"):playcommand("Cancel")

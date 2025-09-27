@@ -37,7 +37,7 @@ local wheel_options = {
 		name="FolderFindASong",
 		open=false,
 		children={
-			{ { "WhereforeArtThou", "SongSearch", ShowSongSearch}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures")},
+			{ {"WhereforeArtThou", "SongSearch", ShowSongSearch}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures")},
 			{ {"SortBy", "Group",        ChangeSort} },
 			{ {"SortBy", "Title",        ChangeSort} },
 			{ {"SortBy", "Artist",       ChangeSort} },
