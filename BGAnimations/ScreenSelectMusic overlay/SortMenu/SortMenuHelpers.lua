@@ -75,18 +75,17 @@ local function ChangeSort()
 	local overlay = SCREENMAN:GetTopScreen():GetChild("Overlay")
 	local sortmenu = overlay:GetChild("SortMenu")
 
+	overlay:queuecommand("DirectInputToEngine")
+
 	-- warn the user if the SortOrder wasn't valid
 	-- could result from a typo in SortMenuRows.lua
 	if (SortOrder:Reverse()[newSortOrder] == nil) then
 		lua.ReportScriptError( ("%s isn't a valid SortOrder"):format(focus.info[2]) )
-		sortmenu:GetChild("error_sound"):play()
-
-	else
-		MESSAGEMAN:Broadcast('Sort', { order = focus.info[2] })
-		MESSAGEMAN:Broadcast('ResetHeaderText')
+		return false
 	end
 
-	overlay:queuecommand("DirectInputToEngine")
+	MESSAGEMAN:Broadcast('Sort', { order = focus.info[2] })
+	MESSAGEMAN:Broadcast('ResetHeaderText')
 end
 
 -- a specific player wants to change the MusicWheel's sort to "SortOrder_Preferred"
@@ -95,7 +94,8 @@ local function ChangeToPlayerFavoritesSort(player)
 	-- Only allow sorting by favorites if there are favorites available
 	if (#SL[ToEnumShortString(player)].Favorites <= 0) then
 		SM( THEME:GetString("ScreenSelectMusic", "NoPlayerFavoritesAvailable"):format(ToEnumShortString(player)) )
-		return
+		-- return false so SortMenu_InputHandler can play "common invalid" sound effect
+		return false
 	end
 
 	-- set the MusicWheel's "preferred sort" to this player's favorites.txt
@@ -122,19 +122,20 @@ local function ChangeMode()
 	-- ensure the new GameMode exists before trying to switch to it
 	if SL.Preferences[newMode] == nil then
 		lua.ReportScriptError( ("%s isn't a valid mode in Simply Love"):format(focus.info[2]) )
-		sortmenu:GetChild("error_sound"):play()
-
-	else
-		SL.Global.GameMode = newMode
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			ApplyMods(player)       -- global function from ./Scripts/SL-Helpers.lua
-		end
-		SetGameModePreferences()  -- global function from ./Scripts/SL-Helpers.lua
-		THEME:ReloadMetrics()
-		-- Broadcast that the SL GameMode has changed
-		-- SSM's header will update its text and highscore names in the PaneDisplays will refresh
-		MESSAGEMAN:Broadcast("SLGameModeChanged")
+		sortmenu:queuecommand("DirectInputToEngine")
+		return false
 	end
+
+
+	SL.Global.GameMode = newMode
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		ApplyMods(player)       -- global function from ./Scripts/SL-Helpers.lua
+	end
+	SetGameModePreferences()  -- global function from ./Scripts/SL-Helpers.lua
+	THEME:ReloadMetrics()
+	-- Broadcast that the SL GameMode has changed
+	-- SSM's header will update its text and highscore names in the PaneDisplays will refresh
+	MESSAGEMAN:Broadcast("SLGameModeChanged")
 
 	-- Reload the SortMenu's available options and queue "DirectInputToEngine"
 	-- to return input from Lua back to the engine and hide the SortMenu from view
@@ -155,16 +156,16 @@ local function ChangeStyle()
 
 	-- Get the style we want to change to
 	local newStyle = sort_wheel:get_actor_item_at_focus_pos().info[2]:lower()
-	-- get names of styles for current game, e.g. { "single", "versus", "double", "couple", "solo", "routine", "threepanel" }
+	-- get names of styles for current game
+	-- e.g. for dance: { "single", "versus", "double", "couple", "solo", "routine", "threepanel" }
 	local stylesForGame = map(Style.GetName, GAMEMAN:GetStylesForGame(GAMESTATE:GetCurrentGame():GetName()))
 
 	-- ensure the style is valid before switching to it
 	-- could result from a typo in SortMenuRows.lua
 	if FindInTable(newStyle, stylesForGame) == nil then
 		lua.ReportScriptError( ("%s is not a valid style in %s"):format(newStyle, GAMESTATE:GetCurrentGame():GetName()) )
-		sortmenu:GetChild("error_sound"):play()
 		sortmenu:playcommand("AssessAvailableChoices"):queuecommand("DirectInputToEngine")
-		return
+		return false
 	end
 
 
