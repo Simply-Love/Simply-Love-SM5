@@ -182,7 +182,21 @@ local t = Def.ActorFrame {
 			-- some folders' `children` table are dynamically constructed at SSM screen init,
 			-- which could result in a folder having 0 children.  e.g. AddPlaylists() could
 			-- return an empty table.  only add a row for this folder if it has children
-			local folder_children = type(folder.children)=="function" and folder.children() or folder.children
+			local preliminary_folder_children = type(folder.children)=="function" and folder.children() or folder.children
+			local folder_children = {}
+
+			for row in ivalues(preliminary_folder_children) do
+				local condition = row[2]
+
+				if condition == nil                                     -- no condition specified, always add this row
+				or (type(condition)=="boolean"  and condition==true)    -- condition is a boolean, evaluated at screen init
+				or (type(condition)=="function" and condition()==true)  -- condition is a function, evaluate it now
+				then
+					table.insert(folder_children, row)
+				end
+			end
+
+			-- add this folder as a WheelItem to the SortMenu
 			if #folder_children > 0 then
 				table.insert(
 					filtered_wheel_options,
@@ -191,20 +205,13 @@ local t = Def.ActorFrame {
 			end
 
 			-- a folder's `open` flag is toggled in `ToggleFolder()`
-			-- if a folder is "open", add its children as visible rows to the SortMenu
+			-- if a folder is "open", add its children as visible WheelItems to the SortMenu
 			if (folder.open) then
 				for _, row in ipairs(folder_children) do
-					local condition = row[2]
-
-					if condition==nil                                       -- no condition specified, always add this row
-					or (type(condition)=="function" and condition()==true)  -- condition is a function, evaluate it now
-					or (type(condition)=="boolean"  and condition==true)    -- condition is a boolean, evaluated at screen init
-					then
-						table.insert(
-							filtered_wheel_options,
-							{row[1][1], row[1][2], row[1][3], false} -- top_text, bottom_text, action_if_chosen, is_folder
-						)
-					end
+					table.insert(
+						filtered_wheel_options,
+						{row[1][1], row[1][2], row[1][3], false} -- top_text, bottom_text, action_if_chosen, is_folder
+					)
 				end
 			end
 		end
