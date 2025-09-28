@@ -104,6 +104,7 @@ local t = Def.ActorFrame {
 		-- make wheel_options accessible from other files (i.e. Modules)
 		-- this allows folks to create Modules that would add new options to the sort menu
 		self.wheel_options = wheel_options
+		self.wheel_index   = wheel_index
 	end,
 
 	-- ensure player input is directed back to the engine when leaving ScreenSelectMusic.
@@ -115,7 +116,7 @@ local t = Def.ActorFrame {
 	ShowSortMenuCommand=function(self) self:visible(true) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
 
-  WheelMovedCommand=function() wheel_index = sort_wheel:get_index_at_focus_pos() end,
+  WheelMovedCommand=function(self) self.wheel_index = sort_wheel:get_index_at_focus_pos() end,
 
 	DirectInputToSortMenuCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
@@ -171,6 +172,9 @@ local t = Def.ActorFrame {
 		DirectInputToEngine(self)
 		-- Then add the ScreenSelectProfile on top.
 		SCREENMAN:AddNewScreenToTop("ScreenSelectProfile")
+
+		-- reset SortMenu to be be focused on the 2nd element, SortBy-Group in the "Common" folder
+		self.wheel_index = 2
 	end,
 
 	AssessAvailableChoicesCommand=function(self, params)
@@ -223,7 +227,7 @@ local t = Def.ActorFrame {
 		if params and params.folder_name then
 			for i, row in ipairs(filtered_wheel_options) do
 				if row[2] == params.folder_name then
-					wheel_index = i
+					self.wheel_index = i
 					break
 				end
 			end
@@ -238,7 +242,7 @@ local t = Def.ActorFrame {
 		-- in this particular usage.  Thus, set the focus to the wheel's current 5th Actor.
 		sort_wheel.focus_pos = 5
 
-		sort_wheel:set_info_set(filtered_wheel_options, wheel_index)
+		sort_wheel:set_info_set(filtered_wheel_options, self.wheel_index)
 	end,
 
 	-- slightly darken the entire screen
