@@ -241,6 +241,15 @@ local function DownloadsExist()
     return SL.GrooveStats.IsConnected and ThemePrefs.Get("AutoDownloadUnlocks")
 end
 
+local function AtLeastOnePlayerHasFavorites()
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		local path = getFavoritesPath(player)
+		if FILEMAN:DoesFileExist(path) then
+			return true
+		end
+	end
+end
+
 
 ------------------------------------------------------------
 -- then, a collection of helper functions that return one or more
@@ -249,23 +258,6 @@ end
 -- sometimes it's easier to write a function that conditionally returns a collection of rows.
 -- a SortMenu "row" is structured like
 --   {{ top_text, bottom_text, action_if_chosen }, optional_condition_to_be_visible }
-
--- returns one row for one player's favorites.txt
-local function AddFavoritesRow(player)
-		local path = getFavoritesPath(player)
-		if FILEMAN:DoesFileExist(path) then
-
-			if #GAMESTATE:GetHumanPlayers() > 1 then
-				-- both players are joined, return bottom_text like "P1 Favorites" or "P2 Favorites"
-				return {"MixTape", ("%sPreferred"):format(ToEnumShortString(player)), function() ChangeToPlayerFavoritesSort(player) end}
-			else
-				-- only one player joined, return bottom_text as "Favorites"
-				return {"MixTape", "Preferred", function() ChangeToPlayerFavoritesSort(player) end}
-			end
-		end
-
-    return nil
-end
 
 -- returns an array of rows for machine playlists, player playlists, and player favorites
 local AddPlaylistsRows = function()
@@ -297,10 +289,10 @@ local AddPlaylistsRows = function()
 	end
 
 	-- Favorites are basically a playlist so include those too
-	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-		local player_favs = AddFavoritesRow(player)
-		if player_favs then table.insert(playlists, {player_favs}) end
+	if AtLeastOnePlayerHasFavorites() then
+		table.insert(playlists, {{"MixTape", "Preferred", ChangeToPlayerFavoritesSort}, AtLeastOnePlayerHasFavorites})
 	end
+
 	return playlists
 end
 
@@ -354,20 +346,21 @@ end
 ------------------------------------------------------------
 
 return {
-  ShowSongSearch,
-  ShowTestInput,
-  ShowLeaderboard,
-  ShowDownloads,
-  ShowPracticeMode,
-  ShowSelectProfile,
-  ShowSetSummary,
-  ShowLoadNewSongs,
-  ChangeSort,
-  ChangeMode,
-  ChangeStyle,
-  AddSongToFavorites,
-  AddFavoritesRow,
-  AddPlaylistsRows,
-  GetChangeableStylesRows,
-  DownloadsExist
+	ShowSongSearch,
+	ShowTestInput,
+	ShowLeaderboard,
+	ShowDownloads,
+	ShowPracticeMode,
+	ShowSelectProfile,
+	ShowSetSummary,
+	ShowLoadNewSongs,
+	ChangeSort,
+	ChangeMode,
+	ChangeStyle,
+	AddSongToFavorites,
+	ChangeToPlayerFavoritesSort,
+	AddPlaylistsRows,
+	GetChangeableStylesRows,
+	DownloadsExist,
+	AtLeastOnePlayerHasFavorites
 }

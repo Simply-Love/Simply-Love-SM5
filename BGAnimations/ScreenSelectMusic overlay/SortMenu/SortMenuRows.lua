@@ -1,4 +1,4 @@
-local  ShowSongSearch, ShowTestInput, ShowLeaderboard, ShowDownloads, ShowPracticeMode, ShowSelectProfile, ShowSetSummary, ShowLoadNewSongs, ChangeSort, ChangeMode, ChangeStyle, AddSongToFavorites, AddFavoritesRow, AddPlaylistsRows, GetChangeableStylesRows, DownloadsExist = unpack(LoadActor("./SortMenuHelpers.lua", ...))
+local  ShowSongSearch, ShowTestInput, ShowLeaderboard, ShowDownloads, ShowPracticeMode, ShowSelectProfile, ShowSetSummary, ShowLoadNewSongs, ChangeSort, ChangeMode, ChangeStyle, AddSongToFavorites, ChangeToPlayerFavoritesSort, AddPlaylistsRows, GetChangeableStylesRows, DownloadsExist, AtLeastOnePlayerHasFavorites = unpack(LoadActor("./SortMenuHelpers.lua", ...))
 
 ------------------------------------------------------------
 -- `wheel_options` is the table that defines the SortMenu's choices
@@ -20,16 +20,15 @@ local wheel_options = {
 		name="FolderCommon",
 		open=true,
 		children={
-			{ {"SortBy", "Group",  ChangeSort} },
-			{ {"SortBy", "Title",  ChangeSort} },
-			{ {"SortBy", "Recent", ChangeSort} },
+			{ {"SortBy",      "Group",         ChangeSort} },
+			{ {"SortBy",      "Title",         ChangeSort} },
+			{ {"ImLovinIt",   "AddFavorite",   AddSongToFavorites}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
+			{ {"NextPlease",  "SwitchProfile", ShowSelectProfile},  ThemePrefs.Get("AllowScreenSelectProfile") },
+			{ {"MixTape",     "Preferred",     ChangeToPlayerFavoritesSort}, AtLeastOnePlayerHasFavorites },
+			{ {"GrooveStats", "Leaderboard",   ShowLeaderboard},    function() return GAMESTATE:GetCurrentSong() ~= nil end },
 			-- Casual players often accidentally choose ITG mode and an experienced player in the area may notice this
 			-- and offer to switch them back to Casual mode using this option in the SortMenu.
-			{ {"ChangeMode", "Casual",       ChangeMode},         SL.Global.Stages.PlayedThisGame == 0 },
-			{ {"ImLovinIt",  "AddFavorite",  AddSongToFavorites}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
-			{ AddFavoritesRow(PLAYER_1),                          function() return GAMESTATE:IsHumanPlayer(PLAYER_1) end },
-			{ AddFavoritesRow(PLAYER_2),                          function() return GAMESTATE:IsHumanPlayer(PLAYER_2) end },
-			{ {"GrooveStats", "Leaderboard", ShowLeaderboard},    function() return GAMESTATE:GetCurrentSong() ~= nil end },
+			{ {"ChangeMode",   "Casual",       ChangeMode},         SL.Global.Stages.PlayedThisGame == 0 },
 		}
 	},
 
