@@ -119,20 +119,25 @@ return {
 		end,
 
 		transform = function(self, item_index, num_items, has_focus)
+			local isFolder = self.info[4] == true
+
 			self.container:finishtweening()
 
-			-- if this is a group folder
-			if self.top_text:GetText() == "" then
+			-- if this is a group folder, show the folder icon for this WheelItem
+			if isFolder then
 				self.container:queuecommand("ShowFolder")
+
+			-- otherwise, this WheelItem is a choice, so hide its folder icon
 			else
 				self.container:queuecommand("HideFolder")
 			end
 
+
 			if has_focus then
 				self.container:playcommand('GainFocus')
 
-				-- if a folder row has focus
-				if self.top_text:GetText() == "" then
+				-- hide the bouncing triangular cursor while scrolling through folders
+				if isFolder then
 					SCREENMAN:GetTopScreen():GetChild("Overlay"):playcommand("HideCursor")
 				else
 					SCREENMAN:GetTopScreen():GetChild("Overlay"):playcommand("ShowCursor")
@@ -142,7 +147,7 @@ return {
 			end
 
 			self.container:smooth(0.1):y(
-				-- FIXME: retool SortMenu's so that WheelItems don't need magic number offsets like -4
+				-- FIXME: retool SortMenu so that WheelItems don't need magic number offsets like -4
 				row_height * (item_index - math.ceil(num_items/2)) - 4
 			)
 
@@ -156,19 +161,20 @@ return {
 
 		-- `self` is one particular instance of the metatable returned by WheelItemMT
 		-- `info` is an individual info table from filtered_wheel_options like
-		--    {'SortBy','Title', ChangeSort} or {'TakeABreather', 'LoadNewSongs', ShowLoadNewSongs} or {'ToggleFolder','FolderStyles', ToggleFolder}
+		--    {'SortBy','Title', ChangeSort, false} or {'TakeABreather', 'LoadNewSongs', ShowLoadNewSongs, false} or {'','FolderStyles', ToggleFolder, true}
 		set = function(self, info)
 			if not info then self.bottom_text:settext("") return end
 			self.info = info
 
-			local toptext = THEME:HasString("ScreenSelectMusic", info[1]) and THEME:GetString("ScreenSelectMusic", info[1]) or ""
+			-- try to localize toptext from the current language's [ScreenSelectMusic] section,
+			local toptext = THEME:HasString("ScreenSelectMusic", info[1]) and THEME:GetString("ScreenSelectMusic", info[1]) or tostring(info[1])
 			local bottomtext
 
 			-- try to localize this row's bottom_text from ScreenSelectMusic first
 			if THEME:HasString("ScreenSelectMusic", info[2]) then
 				bottomtext = THEME:GetString("ScreenSelectMusic", info[2])
 
-			-- then try localize this row's bottom_text from ScreenSelectPlayMode (e.g. "Casual")
+			-- then, try localize this row's bottom_text from ScreenSelectPlayMode (e.g. "Casual")
 			elseif THEME:HasString("ScreenSelectPlayMode", info[2]) then
 				bottomtext = THEME:GetString("ScreenSelectPlayMode", info[2])
 

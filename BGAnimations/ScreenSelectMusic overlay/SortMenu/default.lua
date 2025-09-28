@@ -184,10 +184,13 @@ local t = Def.ActorFrame {
 			-- return an empty table.  only add a row for this folder if it has children
 			local folder_children = type(folder.children)=="function" and folder.children() or folder.children
 			if #folder_children > 0 then
-				table.insert(filtered_wheel_options, {"ToggleFolder", folder.name, ToggleFolder})
+				table.insert(
+					filtered_wheel_options,
+					{"", folder.name, ToggleFolder, true} -- top_text, bottom_text, action_if_chosen, is_folder
+				)
 			end
 
-			-- a folder's `open` flag is toggled in `ToggleFolder`
+			-- a folder's `open` flag is toggled in `ToggleFolder()`
 			-- if a folder is "open", add its children as visible rows to the SortMenu
 			if (folder.open) then
 				for _, row in ipairs(folder_children) do
@@ -197,7 +200,10 @@ local t = Def.ActorFrame {
 					or (type(condition)=="function" and condition()==true)  -- condition is a function, evaluate it now
 					or (type(condition)=="boolean"  and condition==true)    -- condition is a boolean, evaluated at screen init
 					then
-						table.insert(filtered_wheel_options,  row[1])
+						table.insert(
+							filtered_wheel_options,
+							{row[1][1], row[1][2], row[1][3], false} -- top_text, bottom_text, action_if_chosen, is_folder
+						)
 					end
 				end
 			end
