@@ -61,7 +61,10 @@ return Def.Sprite{
 
 	OnCommand=function(self) self:queuecommand("Set") end,
 	CurrentSongChangedMessageCommand=function(self) self:queuecommand("Set") end,
-	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("Set") end,
+	-- Need to update when either player's selection changes because the other
+	-- player's selection can change which steps are visible.
+	CurrentStepsP1ChangedMessageCommand=function(self) self:queuecommand("Set") end,
+	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("Set") end,
 
 	SetCommand=function(self)
 		local song = GAMESTATE:GetCurrentSong()
