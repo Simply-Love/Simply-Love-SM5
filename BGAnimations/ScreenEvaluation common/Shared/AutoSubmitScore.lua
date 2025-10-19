@@ -230,10 +230,26 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 					end
 
 					-- Only display the overlay on the sides that are actually joined.
-					if ToEnumShortString("PLAYER_P"..i) == "P"..side and (data[playerStr]["rpg"] or data[playerStr]["itl"]) then
-						local eventAf = overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):GetChild("P"..i.."EventAf")
-						eventAf:playcommand("Show", {data=data[playerStr]})
-						shouldDisplayOverlay = true
+					if ToEnumShortString("PLAYER_P"..i) == "P"..side then
+						if (data[playerStr]["rpg"] or data[playerStr]["itl"]) then
+							local eventAf = overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):GetChild("P"..i.."EventAf")
+							eventAf:playcommand("Show", {data=data[playerStr]})
+							shouldDisplayOverlay = true
+						end
+
+						if (data[playerStr]["sc"]) then
+							local scData =data[playerStr]["sc"]
+							local tpx = scData["tpx"]
+							local lpx = scData["lcx"]
+
+							local logo = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."SC2")
+							local tpxText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."TPX")
+							local lpxText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."LPX")
+
+							logo:visible(true)
+							tpxText:visible(true):settext("TPX: "..tpx)
+							lpxText:visible(true):settext("LPX: "..lpx)
+						end
 					end
 
 					-- Only update PB/WR messages on the side that is joined
@@ -499,6 +515,73 @@ af[#af+1] = LoadFont("Common Bold")..{
 		self:visible(false)
 	end,
 }
+
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","sc2 (doubleres).png"),
+	Name="P1SC2",
+	InitCommand=function(self)
+		local x = _screen.cx - 400
+		self:zoom(0.1)
+		self:xy(x,135)
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = LoadFont("Common Normal")..{
+	Name="P1TPX",
+	Text="TPX: 12335",
+	InitCommand=function(self)
+		local x = _screen.cx - 400
+		self:horizalign(left)
+		self:xy(x,155)
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = LoadFont("Common Normal")..{
+	Name="P1LPX",
+	Text="LPX: 1232",
+	InitCommand=function(self)
+		local x = _screen.cx - 400
+		self:horizalign(left)
+		self:xy(x,175)
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = Def.Sprite{
+	Texture=THEME:GetPathG("","sc2 (doubleres).png"),
+	Name="P2SC2",
+	InitCommand=function(self)
+		local x = _screen.cx + 330
+		self:zoom(0.1)
+		self:xy(x,135)
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = LoadFont("Common Normal")..{
+	Name="P2TPX",
+	Text="TPX: 12335",
+	InitCommand=function(self)
+		local x = _screen.cx + 330
+		self:horizalign(left)
+		self:xy(x,155)
+		self:visible(false)
+	end,
+}
+
+af[#af+1] = LoadFont("Common Normal")..{
+	Name="P2LPX",
+	Text="LPX: 1232",
+	InitCommand=function(self)
+		local x = _screen.cx + 330
+		self:horizalign(left)
+		self:xy(x,175)
+		self:visible(false)
+	end,
+}
+
 
 af[#af+1] = LoadActor("./EventOverlay.lua")
 
