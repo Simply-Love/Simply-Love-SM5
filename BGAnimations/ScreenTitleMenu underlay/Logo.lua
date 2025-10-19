@@ -31,8 +31,8 @@ af[#af+1] = Def.Sprite{
 	LoadImageCommand=function(self)
 		if ThemePrefs.Get("VisualStyle") == "SRPG9" then
 			self:Load(THEME:GetPathG("", "_VisualStyles/SRPG9/"..SL.SRPG9.GetLogo()))
-			self:zoom(0.225):vertalign(top)
-			self:y(-115):shadowlength(0)
+			self:zoom(0.22):vertalign(top)
+			self:y(-150):shadowlength(0)
 		else
 			local style = ThemePrefs.Get("VisualStyle")
 			local image = THEME:GetPathG("", "_VisualStyles/"..style.."/TitleMenu (doubleres).png")
@@ -42,45 +42,45 @@ af[#af+1] = Def.Sprite{
 			else
 				self:Load(image)
 			end
-			self:zoom(0.7):vertalign(top)
-			self:y(-102):shadowlength(0.75)
+			self:zoom(0.22):vertalign(top)
+			self:y(-150):shadowlength(0.75)
 		end
 	end,
 }
 
 
-if ThemePrefs.Get("VisualStyle") ~= "SRPG9" then
-	-- decorative arrows for current game (dance, pump, techno, etc.)
-	af[#af+1] = LoadActor(resolved_path)..{
-		InitCommand=function(self)
-			self:y(-16)
+-- if ThemePrefs.Get("VisualStyle") ~= "SRPG9" then
+-- 	-- decorative arrows for current game (dance, pump, techno, etc.)
+-- 	af[#af+1] = LoadActor(resolved_path)..{
+-- 		InitCommand=function(self)
+-- 			self:y(-16)
 
-			-- use ActorUtil to resolve the path and find out if it's a png or a directory
-			-- if it's a png, scale it
-			-- if it's a directory, assume the default.lua returns an AF and handles its own scaling
-			if ActorUtil.GetFileType(resolved_path) == "FileType_Bitmap" then
-				-- get a reference to the SIMPLY [something] graphic
-				-- it's rasterized text in the Wendy font like "SIMPLY LOVE" or "SIMPLY THONK" or etc.
-				local simply = self:GetParent():GetChild("Simply Text")
+-- 			-- use ActorUtil to resolve the path and find out if it's a png or a directory
+-- 			-- if it's a png, scale it
+-- 			-- if it's a directory, assume the default.lua returns an AF and handles its own scaling
+-- 			if ActorUtil.GetFileType(resolved_path) == "FileType_Bitmap" then
+-- 				-- get a reference to the SIMPLY [something] graphic
+-- 				-- it's rasterized text in the Wendy font like "SIMPLY LOVE" or "SIMPLY THONK" or etc.
+-- 				local simply = self:GetParent():GetChild("Simply Text")
 
-				-- zoom the logo's width to match the width of the text graphic
-				-- zoomtowidth() performs a "horizontal" zoom (on the x-axis) to meet a provided pixel quantity
-				--    and leaves the y-axis zoom as-is, potentially skewing/squishing the appearance of the asset
-				self:zoomtowidth( simply:GetZoomedWidth() )
+-- 				-- zoom the logo's width to match the width of the text graphic
+-- 				-- zoomtowidth() performs a "horizontal" zoom (on the x-axis) to meet a provided pixel quantity
+-- 				--    and leaves the y-axis zoom as-is, potentially skewing/squishing the appearance of the asset
+-- 				self:zoomtowidth( simply:GetZoomedWidth() )
 
-				-- so, get the horizontal zoom factor of these decorative arrows
-				-- and apply it to the y-axis as well to maintain proportions
-				self:zoomy( self:GetZoomX() )
-			end
-		end,
-		VisualStyleSelectedMessageCommand=function(self)
-			-- In case we auto-switch to SRPG9, then it's possible this actor may have been added to the screen.
-			-- If so, we want to hide the logo as it interferes with the SRPG9 logo.
-			if ThemePrefs.Get("VisualStyle") == "SRPG9" then
-				self:visible(false)
-			end
-		end
-	}
-end
+-- 				-- so, get the horizontal zoom factor of these decorative arrows
+-- 				-- and apply it to the y-axis as well to maintain proportions
+-- 				self:zoomy( self:GetZoomX() )
+-- 			end
+-- 		end,
+-- 		VisualStyleSelectedMessageCommand=function(self)
+-- 			-- In case we auto-switch to SRPG9, then it's possible this actor may have been added to the screen.
+-- 			-- If so, we want to hide the logo as it interferes with the SRPG9 logo.
+-- 			if ThemePrefs.Get("VisualStyle") == "SRPG9" then
+-- 				self:visible(false)
+-- 			end
+-- 		end
+-- 	}
+-- end
 
 return af
