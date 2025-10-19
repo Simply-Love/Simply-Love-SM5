@@ -350,7 +350,7 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 	local easter_eggs = PREFSMAN:GetPreference("EasterEggs")
 	local game = GAMESTATE:GetCurrentGame():GetName()
 	local style = ThemePrefs.Get("VisualStyle")
-	if events ~= nil and easter_eggs and game == "dance" then
+	if events ~= nil and easter_eggs and (game == "dance" or game == "pump") then
 		local last_active_event = ThemePrefs.Get("LastActiveEvent")
 
 		for event in ivalues(events) do

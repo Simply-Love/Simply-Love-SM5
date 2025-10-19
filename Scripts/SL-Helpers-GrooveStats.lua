@@ -288,7 +288,7 @@ IsServiceAllowed = function(condition)
 	return (condition and
 		ThemePrefs.Get("EnableGrooveStats") and
 		SL.GrooveStats.IsConnected and
-		GAMESTATE:GetCurrentGame():GetName()=="dance" and
+		(GAMESTATE:GetCurrentGame():GetName()=="dance" or GAMESTATE:GetCurrentGame():GetName() == "pump") and
 		SL.Global.GameMode == "ITG" and
 		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= ""))
 end
@@ -311,7 +311,7 @@ ValidForGrooveStats = function(player)
 	-- First, check for modes not supported by GrooveStats.
 
 	-- GrooveStats only supports dance for now (not pump, techno, etc.)
-	valid[1] = GAMESTATE:GetCurrentGame():GetName() == "dance"
+	valid[1] = (GAMESTATE:GetCurrentGame():GetName() == "dance" or GAMESTATE:GetCurrentGame():GetName() == "pump")
 
 	-- GrooveStats does not support dance-solo (i.e. 6-panel dance like DDR Solo 4th Mix)
 	-- https://en.wikipedia.org/wiki/Dance_Dance_Revolution_Solo
