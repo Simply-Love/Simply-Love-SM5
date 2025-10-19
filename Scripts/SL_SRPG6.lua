@@ -24,7 +24,7 @@ SL.SRPG10 = {
 	firstRun = false,
 
 	GetLogo = function()
-		return "logo_main (doubleres).png"
+		return "TitleMenu (doubleres).png"
 	end,
 	GetFactionName = function(idx)
 		-- Assuming that idx is 1-indexed and
