@@ -36,6 +36,16 @@ SL_WideScale = function(AR4_3, AR16_9)
 	return clamp(scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 ), math.min(AR4_3, AR16_9), math.max(AR4_3, AR16_9))
 end
 
+-- -----------------------------------------------------------------------
+BackgroundFilterValues = function()
+	return {
+		Off = 0,
+		Dark = 50,
+		Darker = 75,
+		Darkest = 95,
+	}
+end
+
 
 -- -----------------------------------------------------------------------
 -- get timing window in milliseconds

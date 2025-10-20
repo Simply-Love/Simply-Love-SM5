@@ -5,17 +5,12 @@ local mods = SL[pn].ActiveModifiers
 -- if no BackgroundFilter is necessary, it's safe to bail now
 if mods.BackgroundFilter == "Off" then return end
 
-local FilterAlpha = {
-	Dark = 0.5,
-	Darker = 0.75,
-	Darkest = 0.95
-}
-
+local FilterAlpha = BackgroundFilterValues()
 return Def.Quad{
 	InitCommand=function(self)
 		self:xy(GetNotefieldX(player), _screen.cy )
 			:diffuse(Color.Black)
-			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
+			:diffusealpha( FilterAlpha[mods.BackgroundFilter]/100 or 0 )
 			:zoomto( GetNotefieldWidth(), _screen.h )
 	end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,

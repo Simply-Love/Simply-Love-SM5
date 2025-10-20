@@ -860,12 +860,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 			[8]="lambda",
 			[9]="metal",
 		}),
-		["BackgroundFilter"] = CreateKey("string", {
-			[1]="Off",
-			[2]="Dark",
-			[3]="Darker",
-			[4]="Darkest",
-		}),
+		["BackgroundFilter"] = CreateKey("number"),
 		["HideTargets"] = CreateKey("boolean"),
 		["HideSongBG"] = CreateKey("boolean"),
 		["HideCombo"] = CreateKey("boolean"),
@@ -884,6 +879,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 		}),
 		["MeasureCounterLeft"] = CreateKey("boolean"),
 		["MeasureCounterUp"] = CreateKey("boolean"),
+		["HideLookahead"] = CreateKey("number"),
 		["MeasureLines"] = CreateKey("string", {
 			[1]="Off",
 			[2]="Measure",
@@ -923,6 +919,8 @@ CreateGrooveStatsPlayerOptionKeys = function()
 			[1]="Off",
 			[2]="Great",
 			[3]="Excellent",
+			-- Zmod option
+			[4]="Fantastic",
 		}),
 		["HideEarlyDecentWayOffJudgments"] = CreateKey("boolean"),
 		["HideEarlyDecentWayOffFlash"] = CreateKey("boolean"),
@@ -938,6 +936,9 @@ CreateGrooveStatsPlayerOptionKeys = function()
 		-- Only save a subset of them	since some of them are not that relevant.
 		-- Also some things like SpeedMod are handled above.
 		["Mini"] = CreateKey("number"),
+		-- Usually Flip is all or nothing but ZMod uses percentages of it for the
+		-- "Spacing" option
+		["Flip"] = CreateKey("number"),
 		["VisualDelay"] = CreateKey("number"),
 		["Cover"] = CreateKey("boolean"), -- Hide Background
 		["NoMines"] = CreateKey("boolean"),
@@ -1019,6 +1020,17 @@ GetPlayerOptionsJsonForGrooveStats = function(player)
 	local mini = SL[pn].ActiveModifiers.Mini:gsub("%%", "")/1
 	local visualDelay = SL[pn].ActiveModifiers.VisualDelay:gsub("ms","")/1
 
+	-- Similarly, BackgroundFilter has options that directly map to numbers.
+	local FilterAlpha = BackgroundFilterValues()
+	local value = FilterAlpha[SL[pn].ActiveModifiers.BackgroundFilter]
+	local backgroundFilter = value and value or 0
+
+	-- HideLookeahead is stored as a boolean in SL, but we want to save it as
+	-- a number in GrooveStats.\
+	-- We use 3 here since that's actually what SL represents, even though
+	-- we'll collapse it down to true/false when loading from GrooveStats.
+	local hideLookahead = SL[pn].ActiveModifiers.HideLookahead and 3 or 0
+
 	local hasCover = false
 	local hasNoMines = false
 	local hasReverse = false
@@ -1075,11 +1087,25 @@ SetPlayerOptionsJsonFromGroovestats = function(player, jsonStr)
 						Trace("Tried to set option for key: "..key.." but the value: "..value.." is not in the map.")
 					end
 				elseif keyData.Type == "number" and type(value) == "number" then
+					-- Some mods are special and need custom handling.
 					-- Mini and VisualDelay are special in that we use strings to actually represent them in the SL table.
+					-- Background Filter is saved as a number (for Zmod/DD) but SL saves it as a string
+					-- HideLookahead is saved as a number (for Zmod) but SL is just binary
 					if key == "Mini" then
 						SL[pn].ActiveModifiers[key] = value.."%"
 					elseif key == "VisualDelay" then
 						SL[pn].ActiveModifiers[key] = value.."ms"
+					elseif key == "BackgroundFilter" then
+						local FilterAlpha = BackgroundFilterValues()
+						-- Check if the value exists in the FilterAlpha table.
+						for filterName, alpha in pairs(FilterAlpha) do
+							if alpha == value then
+								SL[pn].ActiveModifiers[key] = filterName
+								break
+							end
+						end
+					elseif key == "HideLookahead" then
+						SL[pn].ActiveModifiers[key] = (value > 0) and true or false
 					else
 						-- If the option is a number, we just use the value directly.
 						SL[pn].ActiveModifiers[key] = value
