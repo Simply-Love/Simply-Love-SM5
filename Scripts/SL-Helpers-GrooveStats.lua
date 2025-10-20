@@ -280,7 +280,7 @@ end
 -- Currently the conditions are:
 --  - GrooveStats is enabled in the operator menu.
 --  - We were successfully able to make a GrooveStats conenction previously.
---  - We must be in the "dance" game mode (not "pump", etc)
+--  - We must be in the "dance" or "pump" game mode (not "techno", etc)
 --  - We must be in ITG.
 --  - At least one Api Key must be available (this condition may be relaxed in the future)
 --  - We must not be in course mode (ZANKOKU: moving this specific check to autosubmitscore instead, since otherwise it blocks scorebox when playing course mode).
@@ -288,7 +288,7 @@ IsServiceAllowed = function(condition)
 	return (condition and
 		ThemePrefs.Get("EnableGrooveStats") and
 		SL.GrooveStats.IsConnected and
-		(GAMESTATE:GetCurrentGame():GetName()=="dance" or GAMESTATE:GetCurrentGame():GetName() == "pump") and
+		(GAMESTATE:GetCurrentGame():GetName() == "dance" or GAMESTATE:GetCurrentGame():GetName() == "pump") and
 		SL.Global.GameMode == "ITG" and
 		(SL.P1.ApiKey ~= "" or SL.P2.ApiKey ~= ""))
 end
@@ -310,7 +310,7 @@ ValidForGrooveStats = function(player)
 	-- ------------------------------------------
 	-- First, check for modes not supported by GrooveStats.
 
-	-- GrooveStats only supports dance for now (not pump, techno, etc.)
+	-- GrooveStats only supports dance and pump for now (not techno, etc.)
 	valid[1] = (GAMESTATE:GetCurrentGame():GetName() == "dance" or GAMESTATE:GetCurrentGame():GetName() == "pump")
 
 	-- GrooveStats does not support dance-solo (i.e. 6-panel dance like DDR Solo 4th Mix)
