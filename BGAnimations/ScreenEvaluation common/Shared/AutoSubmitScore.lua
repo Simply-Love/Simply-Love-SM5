@@ -367,7 +367,7 @@ local af = Def.ActorFrame {
 				local pn = ToEnumShortString(player)
 
 				if GAMESTATE:IsHumanPlayer(player) and GAMESTATE:IsSideJoined(player) then
-					local _, valid = ValidForGrooveStats(player)
+					local _, valid, _ = ValidForGrooveStats(player)
 					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 					local submitForPlayer = false
 
@@ -410,8 +410,8 @@ local af = Def.ActorFrame {
 			-- Only send the request if it's applicable.
 			if sendRequest then
 				-- Unjoined players won't have the text displayed.
-             
-                self:GetParent():GetChild("P1SubmitText"):settext(THEME:GetString("GrooveStats", "Submitting"))
+
+				self:GetParent():GetChild("P1SubmitText"):settext(THEME:GetString("GrooveStats", "Submitting"))
 				self:GetParent():GetChild("P2SubmitText"):settext(THEME:GetString("GrooveStats", "Submitting"))
 					
 				self:playcommand("MakeGrooveStatsRequest", {
@@ -421,7 +421,7 @@ local af = Def.ActorFrame {
 					body=JsonEncode(body),
 					timeout=30,
 					callback=AutoSubmitRequestProcessor,
-				args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"),
+					args=SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild("ScreenEval Common"),
 				})
 			end
 		end

@@ -270,7 +270,7 @@ UpdateItlData = function(player)
 		
 	-- Do the same validation as GrooveStats.
 	-- This checks important things like timing windows, addition/removal of arrows, etc.
-	local _, valid = ValidForGrooveStats(player)
+	local _, valid, _ = ValidForGrooveStats(player)
 
 	-- ITL additionally requires the music rate to be 1.00x.
 	local so = GAMESTATE:GetSongOptionsObject("ModsLevel_Song")

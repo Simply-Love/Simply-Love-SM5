@@ -304,7 +304,6 @@ end
 -- well-intentioned-but-unaware players from accidentally submitting
 -- invalid scores to GrooveStats.
 ValidForGrooveStats = function(player)
-	local pn = ToEnumShortString(player)
 	local valid = {}
 
 	-- ------------------------------------------
@@ -392,30 +391,44 @@ ValidForGrooveStats = function(player)
 	}
 	local LifeWindows = { "W1", "W2", "W3", "W4", "W5", "Miss", "LetGo", "Held", "HitMine" }
 
+	local Check = function(condition, errorString, badSettings)
+		if not condition then
+			badSettings[#badSettings + 1] = errorString
+		end
+
+		return condition
+	end
+
+	local badSettings = {}
+
 	-- Originally verify the ComboToRegainLife metrics.
-	valid[7] = (PREFSMAN:GetPreference("RegenComboAfterMiss") == 5 and PREFSMAN:GetPreference("MaxRegenComboAfterMiss") == 10)
+	valid[7] = Check(
+		PREFSMAN:GetPreference("RegenComboAfterMiss") == 5 and PREFSMAN:GetPreference("MaxRegenComboAfterMiss") == 10,
+		"- ComboToRegainLife Pref", badSettings
+	)
 
 	local FloatEquals = function(a, b)
 		return math.abs(a-b) < 0.0001
 	end
 
-	valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "InitialValue"), 0.5)
-	valid[7] = valid[7] and PREFSMAN:GetPreference("HarshHotLifePenalty")
+	valid[7] = Check(FloatEquals(THEME:GetMetric("LifeMeterBar", "InitialValue"), 0.5), "- Lifebar Initial Value", badSettings) and valid[7]
+	valid[7] = Check(PREFSMAN:GetPreference("HarshHotLifePenalty"), "- HarshHotLifePenalty", badSettings) and valid[7]
 
 	-- And then verify the windows themselves.
 	local TWA = PREFSMAN:GetPreference("TimingWindowAdd")
+	local pn = ToEnumShortString(player)
 	if SL.Global.GameMode == "ITG" then
 		for i, window in ipairs(TimingWindows) do
 			-- Only check if the Timing Window is actually "enabled".
 			if i > 5 or SL[pn].ActiveModifiers.TimingWindows[i] then
-				valid[7] = valid[7] and FloatEquals(PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA, ExpectedWindows[i])
+				valid[7] = Check(FloatEquals(PREFSMAN:GetPreference("TimingWindowSeconds"..window) + TWA, ExpectedWindows[i]), "- TimingWindow"..window, badSettings) and valid[7]
 			end
 		end
 
 		for i, window in ipairs(LifeWindows) do
-			valid[7] = valid[7] and FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i])
+			valid[7] = Check(FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i]), "- LifePercentChange"..window, badSettings) and valid[7]
 
-			valid[7] = valid[7] and THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[i]
+			valid[7] = Check(THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[i], "- PercentScoreWeight"..window, badSettings) and valid[7]
 		end
 	end
 
@@ -475,7 +488,10 @@ ValidForGrooveStats = function(player)
 		if not passed_check then allChecksValid = false break end
 	end
 
-	return valid, allChecksValid
+	-- Construct a string listing all invalid prefs for logging/display purposes.
+	local badSettingsStr = table.concat(badSettings, "\n")
+
+	return valid, allChecksValid, badSettingsStr
 end
 
 -- -----------------------------------------------------------------------

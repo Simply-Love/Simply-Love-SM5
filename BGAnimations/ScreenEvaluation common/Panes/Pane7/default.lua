@@ -2,7 +2,7 @@
 
 local player, _, ComputedData = unpack(...)
 
-local checks, allChecksPassed = ValidForGrooveStats(player)
+local checks, allChecksPassed, badSettings = ValidForGrooveStats(player)
 
 local url, text = nil, ""
 local X_HasBeenBlinked = false
@@ -32,6 +32,9 @@ else
 			if i==4 then
 				-- that string has a %s token so we can pass in the current SL GameMode
 				text = text .. ScreenString("QRInvalidScore"..i):format(SL.Global.GameMode) .. "\n"
+			elseif i == 7 then
+				-- If Metrics/Preferences are incorrect, also list them out.
+				text = text .. ScreenString("QRInvalidScore"..i) .. "\n" .. badSettings .. "\n"
 			else
 				-- other strings can be used as-is
 				text = text .. ScreenString("QRInvalidScore"..i) .. "\n"
