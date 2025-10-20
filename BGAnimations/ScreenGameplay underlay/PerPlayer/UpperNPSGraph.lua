@@ -46,7 +46,8 @@ local song_percent, first_second, last_second
 
 return Def.ActorFrame{
 	InitCommand=function(self)
-		self:y(71):x(xpos[player])
+		local adjusted_offset_x = SL[pn].ActiveModifiers.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
+		self:y(71):x(xpos[player] + adjusted_offset_x)
 	end,
 	-- called at the start of each new song in CourseMode, and once at the start of regular gameplay
 	CurrentSongChangedMessageCommand=function(self)
