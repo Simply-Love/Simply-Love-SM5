@@ -48,6 +48,8 @@ local PlayerDefaults = {
 				HideEarlyDecentWayOffJudgments = false,
 				HideEarlyDecentWayOffFlash = false,
 
+				-- While SL no longer supports disabling individual timing windows
+				-- in ITG mode, Casual mode still does so we still track it here.
 				TimingWindows = {true, true, true, true, true},
 				ShowFaPlusWindow = false,
 				ShowExScore = false,
