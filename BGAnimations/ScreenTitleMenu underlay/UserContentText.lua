@@ -66,13 +66,13 @@ local GetText = function()
 	local newer_sl_exists = false
 	local sl_parts = GetVersionParts(sl_version:match("^(%S+)"))
 	if SL.Global.SimplyLoveLatestVersion then
-		newer_sl_exists = IsNewer(SL.Global.SimplyLoveLatestVersion, {5, 6 ,0})
+		newer_sl_exists = IsNewer(SL.Global.SimplyLoveLatestVersion, sl_parts)
 	end
 
 	local newer_itgmania_exists = false
 	local itgmania_parts = GetProductVersion()
 	if SL.Global.ITGmaniaLatestVersion then
-		newer_itgmania_exists = IsNewer(SL.Global.ITGmaniaLatestVersion, {1, 0, 0})
+		newer_itgmania_exists = IsNewer(SL.Global.ITGmaniaLatestVersion, itgmania_parts)
 	end
 
 
