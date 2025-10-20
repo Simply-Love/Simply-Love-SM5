@@ -55,6 +55,31 @@ if HolidayCheer() then
 	}
 end
 
+af2[#af2+1] = Def.ActorFrame{
+	OnCommand=function(self)
+		local url = "https://www.itgmania.com/api/versions.json"
+		if (SL.Global.ITGmaniaLatestVersion == nil and
+		    SL.Global.SimplyLoveLatestVersion == nil and
+				NETWORK:IsUrlAllowed(url)) then
+			NETWORK:HttpRequest{
+				url=url,
+				onResponse=function(response)
+					if response.statusCode == 200 then
+						local versions = JsonDecode(response["body"])
+						local itgmania_version = versions["itgmania_version"]
+						local simply_love_version = versions["simply_love_version"]
+
+						SL.Global.ITGmaniaLatestVersion = GetVersionParts(itgmania_version)
+						SL.Global.SimplyLoveLatestVersion = GetVersionParts(simply_love_version)
+
+						MESSAGEMAN:Broadcast("VersionCheck")
+					end
+				end
+			}
+		end
+	end,
+}
+
 -- ensure that af2 is added as a child of af
 af[#af+1] = af2
 

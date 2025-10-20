@@ -10,6 +10,23 @@ local song_stats = ("%i %s %i %s, %i %s"):format(
 	THEME:GetString("ScreenTitleMenu", "courses")
 )
 
+-- Checks if there is later version than curVersion
+-- both latestVersion and curVersion are tables of numbers, e.g. {5,0,12}
+function IsNewer(latestVersion, curVersion)
+	for i = 1, math.max(#latestVersion, #curVersion) do
+		local latestPart = latestVersion[i] or 0
+		local curPart = curVersion[i] or 0
+
+		if latestPart > curPart then
+			return true
+		elseif latestPart < curPart then
+			return false
+		end
+	end
+
+	return false
+end
+
 -- -----------------------------------------------------------------------
 -- People commonly have multiple copies of SL installed – sometimes different forks with unique features
 -- sometimes due to concern that an update will cause them to lose data, sometimes accidentally, etc.
@@ -45,14 +62,30 @@ end
 -- -----------------------------------------------------------------------
 
 -- build a 3-line string to display info about this version of SL, this version of SM, and installed song content
-local text = ("%s%s\n%s\n%s"):format(
-	sl_name,  (sl_version and (" v" .. sl_version) or ""),
-	sm_version,
-	song_stats
-)
+local GetText = function()
+	local newer_sl_exists = false
+	local sl_parts = GetVersionParts(sl_version:match("^(%S+)"))
+	if SL.Global.SimplyLoveLatestVersion then
+		newer_sl_exists = IsNewer(SL.Global.SimplyLoveLatestVersion, {5, 6 ,0})
+	end
+
+	local newer_itgmania_exists = false
+	local itgmania_parts = GetProductVersion()
+	if SL.Global.ITGmaniaLatestVersion then
+		newer_itgmania_exists = IsNewer(SL.Global.ITGmaniaLatestVersion, {1, 0, 0})
+	end
+
+
+	local text = ("%s%s%s\n%s%s\n%s"):format(
+		sl_name,  (sl_version and (" v" .. sl_version) or ""), (newer_sl_exists and " ("..table.concat(sl_parts, ".").." Available📥)" or ""),
+		sm_version, (newer_itgmania_exists and " (" .. table.concat(itgmania_parts, ".") .." Available📥)" or ""),
+		song_stats
+	)
+	return text
+end
 
 return LoadFont("Common Normal")..{
-	Text=text,
+	Text=GetText(),
 	InitCommand=function(self)
 		self:zoom(0.8):y(-150):diffusealpha(0)
 		self:playcommand("UpdateColor")
@@ -70,6 +103,9 @@ return LoadFont("Common Normal")..{
 		end
 
 		self:diffuse(textColor):shadowlength(shadowLength)
+	end,
+	VersionCheckMessageCommand=function(self)
+		self:settext(GetText())
 	end,
 	VisualStyleSelectedMessageCommand=function(self)
 		self:playcommand("UpdateColor")

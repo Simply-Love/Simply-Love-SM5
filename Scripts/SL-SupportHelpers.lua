@@ -1,7 +1,15 @@
 -- -----------------------------------------------------------------------
 -- local helper function to transform a StepMania version string ("5.0.12") into a table of numbers { 5, 0, 12 }
+GetVersionParts = function(versionString)
+	local versionParts = {}
+	for i in versionString:gmatch("[^%.]+") do
+		table.insert(versionParts, tonumber(i))
+	end
+	return versionParts
+end
 
-local getProductVersion = function()
+
+GetProductVersion = function()
 	if type(ProductVersion) ~= "function" then return {} end
 
 	-- get the version string, e.g. "5.0.11" or "5.1.0" or "5.2-git-96f9771" or etc.
@@ -14,10 +22,7 @@ local getProductVersion = function()
 	version = version:gsub("-.*", "")
 
 	-- parse the version string into a table
-	local v = {}
-	for i in version:gmatch("[^%.]+") do
-		table.insert(v, tonumber(i))
-	end
+	local v = GetVersionParts(version)
 
 	return v
 end
@@ -36,7 +41,7 @@ end
 --   IsProductVersion(5, 1)     will return false
 
 function IsProductVersion(...)
-	local version = getProductVersion()
+	local version = GetProductVersion()
 
 	for i = 1, select('#', ...) do
 		if select(i, ...) ~= version[i] then
@@ -48,7 +53,7 @@ function IsProductVersion(...)
 end
 
 function IsMinimumProductVersion(...)
-	local version = getProductVersion()
+	local version = GetProductVersion()
 
 	for i = 1, select('#', ...) do
 		local n = select(i, ...)
@@ -120,6 +125,19 @@ GetThemeVersion = function()
 	if file then
 		if file.ThemeInfo and file.ThemeInfo.Version then
 			return file.ThemeInfo.Version
+		end
+	end
+	return false
+end
+
+-- -----------------------------------------------------------------------
+-- read the author from ThemeInfo.ini to display on ScreenTitleMenu
+
+GetAuthor = function()
+	local file = IniFile.ReadFile( THEME:GetCurrentThemeDirectory() .. "ThemeInfo.ini" )
+	if file then
+		if file.ThemeInfo and file.ThemeInfo.Author then
+			return file.ThemeInfo.Author
 		end
 	end
 	return false
