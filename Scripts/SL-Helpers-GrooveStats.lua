@@ -309,8 +309,10 @@ ValidForGrooveStats = function(player)
 	-- ------------------------------------------
 	-- First, check for modes not supported by GrooveStats.
 
+	local cur_game = GAMESTATE:GetCurrentGame():GetName()
+
 	-- GrooveStats only supports dance and pump for now (not techno, etc.)
-	valid[1] = (GAMESTATE:GetCurrentGame():GetName() == "dance" or GAMESTATE:GetCurrentGame():GetName() == "pump")
+	valid[1] = (cur_game == "dance" or cur_game == "pump")
 
 	-- GrooveStats does not support dance-solo (i.e. 6-panel dance like DDR Solo 4th Mix)
 	-- https://en.wikipedia.org/wiki/Dance_Dance_Revolution_Solo
@@ -374,8 +376,8 @@ ValidForGrooveStats = function(player)
 		 0.000,  -- Decents
 		-0.050,  -- Way Offs
 		-0.100,  -- Miss
-		-0.080,  -- Let Go
-		 0.008,  -- Held
+		 cur_game == "pump" and 0.000 or -0.080,  -- Let Go
+		 cur_game == "pump" and 0.000 or  0.008,  -- Held
 		-0.050,  -- Hit Mine
 	}
 	local ExpectedScoreWeight = {
@@ -386,7 +388,7 @@ ValidForGrooveStats = function(player)
 		-6,  -- Way Offs
 		-12,  -- Miss
 		 0,  -- Let Go
-		 5,  -- Held
+		 cur_game == "pump" and 0 or 5,  -- Held
 		-6,  -- Hit Mine
 	}
 	local LifeWindows = { "W1", "W2", "W3", "W4", "W5", "Miss", "LetGo", "Held", "HitMine" }
