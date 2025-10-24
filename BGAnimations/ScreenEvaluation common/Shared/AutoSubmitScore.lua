@@ -237,10 +237,10 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							shouldDisplayOverlay = true
 						end
 
-						if (data[playerStr]["sc"]) then
-							local scData =data[playerStr]["sc"]
+						if (data[playerStr]["live"]) then
+							local scData =data[playerStr]["live"]
 							local tpx = scData["tpx"]
-							local lpx = scData["lcx"]
+							local lpx = scData["lpx"]
 
 							local logo = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."SC2")
 							local tpxText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."TPX")
