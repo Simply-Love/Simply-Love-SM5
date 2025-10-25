@@ -376,8 +376,8 @@ ValidForGrooveStats = function(player)
 		 0.000,  -- Decents
 		-0.050,  -- Way Offs
 		-0.100,  -- Miss
-		 cur_game == "pump" and 0.000 or -0.080,  -- Let Go
-		 cur_game == "pump" and 0.000 or  0.008,  -- Held
+		-0.080,  -- Let Go
+		 0.008,  -- Held
 		-0.050,  -- Hit Mine
 	}
 	local ExpectedScoreWeight = {
@@ -388,7 +388,7 @@ ValidForGrooveStats = function(player)
 		-6,  -- Way Offs
 		-12,  -- Miss
 		 0,  -- Let Go
-		 cur_game == "pump" and 0 or 5,  -- Held
+		 5,  -- Held
 		-6,  -- Hit Mine
 	}
 	local LifeWindows = { "W1", "W2", "W3", "W4", "W5", "Miss", "LetGo", "Held", "HitMine" }
