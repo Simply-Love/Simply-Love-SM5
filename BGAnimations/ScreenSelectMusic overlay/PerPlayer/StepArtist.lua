@@ -78,7 +78,7 @@ return Def.ActorFrame{
 
 	--STEPS label
 	LoadFont("Common Normal")..{
-		Text=GAMESTATE:IsCourseMode() and Screen.String("SongNumber"):format(1) or Screen.String("STEPS"),
+		Text=GAMESTATE:IsCourseMode() and THEME:GetString("ScreenSelectCourse", "SongNumber"):format(1) or Screen.String("STEPS"),
 		InitCommand=function(self)
 			self:diffuse(0,0,0,1):horizalign(left):x(30):maxwidth(40):zoom(0.8)
 		end,

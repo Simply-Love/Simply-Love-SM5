@@ -59,7 +59,23 @@ local input = function(event)
 					screen:SetNextScreenName("ScreenSelectMusicCasual")
 					screen:StartTransitioningScreen("SM_GoToNextScreen")
 				end
-				-- the player wants to change styles, for example from single to double
+
+			-- Change between Course (aka Marathon aka Nonstop) and Regular mode.
+			elseif focus.kind == "ChangePlayMode" then
+				-- Unselect song/course first to avoid getting to a state where
+				-- play mode is Course but a song is selected or vice versa.
+				GAMESTATE:SetCurrentSong(nil)
+				GAMESTATE:SetCurrentCourse(nil)
+				GAMESTATE:SetCurrentPlayMode(focus.change)
+
+				-- Save menu timer value.
+				if PREFSMAN:GetPreference("MenuTimer") then
+					overlay:playcommand("ShowPressStartForOptions")
+				end
+				screen:SetNextScreenName("ScreenReloadSSM")
+				screen:StartTransitioningScreen("SM_GoToNextScreen")
+
+			-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
 				-- If the MenuTimer is in effect, we need to make sure the current number of seconds
 				-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions

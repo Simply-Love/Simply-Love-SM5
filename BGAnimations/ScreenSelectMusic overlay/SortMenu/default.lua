@@ -61,6 +61,8 @@ end
 ------------------------------------------------------------
 
 local function AddFavorites()
+	if GAMESTATE:IsCourseMode() then return false end
+
     for player in ivalues(GAMESTATE:GetHumanPlayers()) do
         local path = getFavoritesPath(player)
         if FILEMAN:DoesFileExist(path) then
@@ -86,17 +88,50 @@ local function PracticeModeAvailable()
 	return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures")
 end
 
-local function AddPlayerSortOptions()
-    local player_sort_options = {}
-    for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-        if PROFILEMAN:IsPersistentProfile(player) then
-            table.insert(player_sort_options, {"SortBy", "Top" .. ToEnumShortString(player) .. "Grades"})
-        end
-    end
-    return player_sort_options
+local function ChangePlayModeAvailable()
+	local onlineHandler = GetOnlineHandlerInstance()
+	return GAMESTATE:IsEventMode() and
+		ThemePrefs.Get("AllowScreenSelectPlayMode2") and
+		not (onlineHandler and onlineHandler.connected)
+end
+
+local function AddSorts()
+	-- Most sort orders don't currently work in course mode, they cause the
+	-- wheel to change to song mode instead. The ones that seem work are
+	-- AllCourses, Nonstop, Oni, and Endless. I don't know if those are useful
+	-- so let's just disable the sort orders for course mode.
+	if GAMESTATE:IsCourseMode() then return {} end
+
+	return {
+		{{"SortBy", "Group"} },
+		{ {"SortBy", "Title"} },
+		{ {"SortBy", "Artist"} },
+		{ {"SortBy", "Genre"} },
+		{ {"SortBy", "BPM"} },
+		{ {"SortBy", "Length"} },
+		{ {"SortBy", "Meter"} },
+		{ {"SortBy", "Popularity"} },
+		{ {"SortBy", "Recent"} },
+		{ {"SortBy", "TopGrades"} },
+	}
+end
+
+local function AddProfileEntries()
+	if GAMESTATE:IsCourseMode() then return {} end
+
+	return {
+		{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+		{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+		{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+		{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+		{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+		{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+		{ {"MixTape", "Preferred"}, AddFavorites },
+	}
 end
 
 local function AddPlaylists()
+	if GAMESTATE:IsCourseMode() then return {} end
 
 	-- First add the machine playlists
 	local player_sort_options = {}
@@ -251,6 +286,7 @@ local t = Def.ActorFrame {
 			-- and offer to switch them back to casual mode. This allows them to do so again.
 			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
 			-- include the check.
+			--
 			{ { "", "GoBack" } },
 			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
 			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
@@ -258,43 +294,28 @@ local t = Def.ActorFrame {
 			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
 			{ {"MixTape", "Preferred"}, AddFavorites },
 			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
+			{ {"ChangePlayMode", "Nonstop"}, not GAMESTATE:IsCourseMode() and ChangePlayModeAvailable() },
+			{ {"ChangePlayMode", "Regular"}, GAMESTATE:IsCourseMode() and ChangePlayModeAvailable() },
 			{
 
 				{"", "CategorySorts"},
-				{
-					{{"SortBy", "Group"} },
-					{ {"SortBy", "Title"} },
-					{ {"SortBy", "Artist"} },
-					{ {"SortBy", "Genre"} },
-					{ {"SortBy", "BPM"} },
-					{ {"SortBy", "Length"} },
-					{ {"SortBy", "Meter"} },
-					{ {"SortBy", "Popularity"} },
-					{ {"SortBy", "Recent"} },
-					{ {"SortBy", "TopGrades"} },
-				}
+				AddSorts(),
 			},
 			{
 				{"", "CategoryProfile"},
-				{
-					{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-					{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-					{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-					{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{ {"MixTape", "Preferred"}, AddFavorites },
-				}
+				AddProfileEntries(),
 			},
 			{
 				{"", "CategoryAdvanced"},
 				{
 					{ {"FeelingSalty", "TestInput"}, GAMESTATE:IsEventMode() },
 					{ {"HardTime", "PracticeMode"}, PracticeModeAvailable },
-					{ {"TakeABreather", "LoadNewSongs"} },
+					-- Loading songs doesn't work from course mode because it invalidates autogen courses,
+					-- which could delete the currently selected course.
+					{ {"TakeABreather", "LoadNewSongs"}, not GAMESTATE:IsCourseMode() },
 					{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
 					{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
-					{ {"BottomText", "OnlineLobbies"}, ThemePrefs.Get("EnableOnlineLobbies") and GAMESTATE:IsEventMode() },
+					{ {"BottomText", "OnlineLobbies"}, ThemePrefs.Get("EnableOnlineLobbies") and GAMESTATE:IsEventMode() and not GAMESTATE:IsCourseMode() },
 				}
 			},
 			{
