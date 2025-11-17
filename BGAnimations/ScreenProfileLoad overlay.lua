@@ -32,12 +32,14 @@ return Def.ActorFrame{
 		end,
 		OnCommand=function(self)
 			self:linear(tweentime):cropright(0):sleep(tweentime)
-			self:linear(tweentime):cropleft(1)
 			self:sleep(0.1):queuecommand("Load")
 		end,
 		LoadCommand=function(self)
 			SCREENMAN:GetTopScreen():Continue()
-		end
+	        end,
+	        OffCommand = function(self)
+	            self:linear(tweentime):cropleft(1)
+	        end
 	},
 
 	Def.BitmapText{
