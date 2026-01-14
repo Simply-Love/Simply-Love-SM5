@@ -4,8 +4,12 @@
 
 local GetModsAndPlayerOptions = function(player)
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
-	local topscreen = SCREENMAN:GetTopScreen():GetName()
-	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
+	-- This can get called already when loading ScreenTitleMenu if all screens
+	-- before and including ScreenSelectPlayMode are disabled. Top screen will
+	-- be nil in that case.
+	local topscreen = SCREENMAN:GetTopScreen()
+	local topscreenname = topscreen and topscreen:GetName()
+	local modslevel = topscreenname == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
 	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
 
 	return mods, playeroptions
