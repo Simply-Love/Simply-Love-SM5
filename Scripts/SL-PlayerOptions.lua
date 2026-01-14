@@ -4,7 +4,7 @@
 
 PlayerMusicWheelScore_No = "No"
 PlayerMusicWheelScore_Yes = "Yes"
-PlayerMusicWheelScore_ReplaceGrade = "ReplaceGrade"
+PlayerMusicWheelScore_ReplaceGrade = "Replace Grade"
 
 function PlayerMusicWheelScore(pn)
 	return SL[ToEnumShortString(pn)].ActiveModifiers.PlayerMusicWheelScore
