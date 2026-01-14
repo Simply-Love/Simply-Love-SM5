@@ -423,6 +423,8 @@ local t = Def.ActorFrame {
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
+		-- Stop the music wheel in case it's still spinning.
+		screen:GetMusicWheel():Move(0)
 		self:queuecommand("AssessAvailableChoices"):queuecommand("ShowSortMenu")
 		overlay:playcommand("HideTestInput")
 		overlay:playcommand("HideLeaderboard")
