@@ -144,7 +144,7 @@ return Def.Actor{
         -- only run in modified ITGmania build
         if SYNCMAN and SYNCMAN:IsEnabled() then
             -- Broadcast score update
-            SYNCMAN:BroadcastScoreChange(stats, storage.ex_counts.W1, ActualPoints, ActualPossible)
+            SYNCMAN:BroadcastScoreChange(stats, storage.ex_counts.W0, storage.ex_counts.W1, storage.ex_counts.W2, storage.ex_counts.W3, storage.ex_counts.W4, storage.ex_counts.W5, storage.ex_counts.Miss, ActualPoints, ActualPossible, ("%.2f"):format(ExScore))
         end
 
 		if count_updated then
