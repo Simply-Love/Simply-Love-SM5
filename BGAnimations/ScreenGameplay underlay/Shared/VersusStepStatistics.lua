@@ -1,5 +1,6 @@
 local Players = GAMESTATE:GetHumanPlayers()
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local FilterAlpha = BackgroundFilterValues()
 
 local ShouldDisplayStatsForPlayer = function(player)
     local pn = ToEnumShortString(player)
@@ -25,6 +26,28 @@ local ShouldDisplayStats = function()
     return shouldDisplay
 end
 
+local determineFilterAlphas = function()
+    local totalFilterAlpha = 0
+    local numPlayersShowing = 0
+
+    for _, player in ipairs(Players) do
+        local pn = ToEnumShortString(player)
+        if ShouldDisplayStatsForPlayer(player) then
+            totalFilterAlpha = totalFilterAlpha + (FilterAlpha[SL[pn].ActiveModifiers.BackgroundFilter]/100 or 0)
+            numPlayersShowing = numPlayersShowing + 1
+        end
+    end
+
+    if numPlayersShowing == 0 then
+        return 0
+    end
+
+    local averageFilterAlpha = totalFilterAlpha / numPlayersShowing
+    averageFilterAlpha = clamp(averageFilterAlpha, 0.25, 0.9)
+
+    return averageFilterAlpha
+end
+
 if not ShouldDisplayStats() then
     return
 end
@@ -35,6 +58,7 @@ local af = Def.ActorFrame{
     end
 }
 
+local alpha = determineFilterAlphas()
 for player in ivalues(Players) do
     if ShouldDisplayStatsForPlayer(player) and #Players > 1 then
 	
@@ -42,7 +66,7 @@ for player in ivalues(Players) do
 	
         af[#af+1] = Def.Quad{
             InitCommand=function(self)
-                self:diffuse(Color.Black)
+                self:diffuse(0, 0, 0, alpha)   
 				self:zoomto(150, SCREEN_HEIGHT)
             end,
         }
