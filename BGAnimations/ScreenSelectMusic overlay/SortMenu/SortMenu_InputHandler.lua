@@ -8,6 +8,10 @@ local input = function(event)
 	local screen   = SCREENMAN:GetTopScreen()
 	local overlay  = screen:GetChild("Overlay")
 	local sortmenu = overlay:GetChild("SortMenu")
+	if SCREENMAN:GetTopScreen():GetMusicWheel():IsLocked() then
+		overlay:queuecommand("DirectInputToEngine")
+	end
+	
 	if event.type ~= "InputEventType_Release" then
 		if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" then
 			sort_wheel:scroll_by_amount(1)

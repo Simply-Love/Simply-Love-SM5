@@ -149,6 +149,9 @@ local GlobalDefaults = {
 			self.TimeAtSessionStart = nil
 			self.SampleMusicLoops = ThemePrefs.Get("SampleMusicLoops")
 
+			-- Is the music wheel locked? Useful when loading overlay screens
+			self.MusicWheelLocked = false
+			
 			self.GameplayReloadCheck = false
 			-- How long to wait before displaying a "cue"
 			self.ColumnCueMinTime = 1.5
