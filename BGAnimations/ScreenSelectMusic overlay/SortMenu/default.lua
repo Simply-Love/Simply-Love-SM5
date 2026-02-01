@@ -354,8 +354,7 @@ local wheel_options = {
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
-	-- Always ensure player input is directed back to the engine when initializing SelectMusic.
-	InitCommand=function(self) self:visible(false):queuecommand("DirectInputToEngine") end,
+	InitCommand=function(self) self:visible(false) end,
 	-- Always ensure player input is directed back to the engine when leaving SelectMusic.
 	OffCommand=function(self) self:playcommand("DirectInputToEngine") end,
 	-- Figure out which choices to put in the SortWheel based on various current conditions.
