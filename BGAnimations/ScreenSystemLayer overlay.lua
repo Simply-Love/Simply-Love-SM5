@@ -594,5 +594,11 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 -- -----------------------------------------------------------------------
-
+-- For tracking the PrevScreenName.
+t[#t+1] = Def.ActorFrame {
+	ScreenChangedMessageCommand=function(self)
+		local topscreen = SCREENMAN:GetTopScreen():GetName()
+		SL.Global.PrevScreenName = topscreen
+	end
+}
 return t

@@ -164,6 +164,12 @@ local GlobalDefaults = {
 		-- These values outside initialize() won't be reset each game cycle,
 		-- but are rather manipulated as needed by the theme.
 		ActiveColorIndex = ThemePrefs.Get("SimplyLoveColor") or 1,
+
+		-- PrevScreenName is technically handled by:
+		-- https://quietly-turning.github.io/Lua-For-SM5/LuaAPI?engine=StepMania&version=5.1%20(dev)#Screens-Screen-GetPrevScreenName
+		-- However, it actually just uses the value set in metrics.ini. This allows us to dynamically track
+		-- the real PrevScreenName, in case you have a more complex screen journey.
+		PrevScreenName = "",
 	}
 }
 

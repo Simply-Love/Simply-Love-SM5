@@ -24,6 +24,7 @@ local t = Def.ActorFrame{
 }
 
 local players =  GAMESTATE:GetHumanPlayers()
+local timeSeeked = false
 for player in ivalues(players) do
 	local backgroundFilter = LoadActor("ScreenGameplay underlay/PerPlayer/BackgroundFilter.lua", player)
 
@@ -47,6 +48,24 @@ for player in ivalues(players) do
 		ShowCommand=function(self) self:visible(false) end,
 		PlayingCommand=function(self) self:visible(true) end,
 	}
+
+	-- If we're coming from ScreenEvaluationStage, see if anyone failed the song.
+	-- This picks the first player to see a failure, in case both players failed.
+	t[#t+1] = Def.ActorFrame{
+		OnCommand=function(self)
+			if SL.Global.PrevScreenName == "ScreenEvaluationStage" then
+				local pn = ToEnumShortString(player)
+				local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame]
+				if not timeSeeked and storage ~= nil and storage.DeathSecond ~= nil then
+					SCREENMAN:GetTopScreen():SeekSong(storage.DeathSecond)
+					timeSeeked = true
+				end
+			end
+		end
+	}
 end
+
+
+
 
 return t
