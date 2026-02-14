@@ -15,6 +15,33 @@ local speedmod_def = {
 	M = { upper=2000, increment=5 }
 }
 
+local variants_def = {}
+local playerVariants = {
+	[PLAYER_1] = false,
+	[PLAYER_2] = false
+}
+local row_visible = true
+for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
+	local pn = ToEnumShortString(player)
+	local noteskin_name = SL[pn].ActiveModifiers.NoteSkin
+	if noteskin_name then
+		if NOTESKIN:HasVariants(noteskin_name) then
+			variants_def[pn] = NOTESKIN:GetVariantNamesForNoteSkin(noteskin_name)
+			-- Put the current NoteSkin at the front of the list of variants so that it's the default selection when we refresh the OptionRow
+			table.insert(variants_def[pn], 1, noteskin_name)
+			playerVariants[player] = true
+		else
+			playerVariants[player] = false
+			variants_def[pn] = {noteskin_name}
+		end
+		-- If neither player has variants for their selected NoteSkin, hide the NoteSkinVariant OptionRow
+		if row_visible and not (playerVariants[PLAYER_1] or playerVariants[PLAYER_2]) then
+			row_visible = false
+		end
+		SL[pn].ActiveModifiers.NoteSkinVariant = SL[pn].ActiveModifiers.NoteSkinVariant or variants_def[pn][1]
+	end
+end
+
 local song = GAMESTATE:GetCurrentSong()
 
 ------------------------------------------------------------
@@ -97,11 +124,48 @@ local FindOptionRowIndex = function(ScreenOptions, Name)
 	end
 end
 
+local ChangeVariant = function(pn, direction)
+	local ScreenOptions = SCREENMAN:GetTopScreen()
+	if direction == 0 then
+		local noteskin_name = SL[pn].ActiveModifiers.NoteSkin
+		if NOTESKIN:HasVariants(noteskin_name) then
+			variants_def[pn] = NOTESKIN:GetVariantNamesForNoteSkin(noteskin_name)
+			-- Put the current NoteSkin at the front of the list of variants so that it's the default selection when we refresh the OptionRow
+			table.insert(variants_def[pn], 1, noteskin_name)
+			if row_visible == false then
+				local VariantRowIndex = FindOptionRowIndex(ScreenOptions,"NoteSkinVariant")
+				local screen = SCREENMAN:GetTopScreen()
+				screen:SetOptionRowVisible(VariantRowIndex, true)     -- show row 5 and enable it
+				screen:RedrawOptions()                   -- reflow/redraw options
+				row_visible = true
+			end
+		else
+			variants_def[pn] = {noteskin_name}
+			local VariantRowIndex = FindOptionRowIndex(ScreenOptions,"NoteSkinVariant")
+			local screen = SCREENMAN:GetTopScreen()
+			screen:SetOptionRowVisible(VariantRowIndex, false)     -- hide row 5 and disable it
+			screen:RedrawOptions()                   -- reflow/redraw options
+			row_visible = false
+		end
+
+	else
+
+	end
+	local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or SL[pn].ActiveModifiers.NoteSkin
+	local variants = variants_def[pn] or {current_variant}
+	local current_index = FindInTable(current_variant, variants) or 1
+
+	-- increment/decrement and apply modulo to wrap around if we exceed the number of variants or hit 0
+	local new_index = ((current_index + direction) - 1) % #variants + 1
+	SL[pn].ActiveModifiers.NoteSkinVariant = variants[new_index]
+end
+
 ------------------------------------------------------------
 
 -- SpeedModBMTs is a table that will contain the BitmapText actors within the SpeedMod OptionRow for available players
 local SpeedModBMTs = {}
-
+-- VariantBMTs is a table that will contain the BitmapText actors within the NoteSkinVariant OptionRow for available players
+local VariantBMTs = {}
 local t = Def.ActorFrame{
 	InitCommand=function(self) self:xy(_screen.cx,0) end,
 	OnCommand=function(self)
@@ -116,12 +180,22 @@ local t = Def.ActorFrame{
 
 		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			local pn = ToEnumShortString(player)
-			local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions,"SpeedMod")
 
+			local SpeedModRowIndex = FindOptionRowIndex(ScreenOptions,"SpeedMod")
+			local VariantRowIndex = FindOptionRowIndex(ScreenOptions,"NoteSkinVariant")
 			if SpeedModRowIndex then
 				-- The BitmapText actors for P1 and P2 speedmod are both named "Item", so we need to provide a 1 or 2 to index
 				SpeedModBMTs[pn] = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
 				self:playcommand("Set"..pn)
+			end
+			if VariantRowIndex then
+				-- The BitmapText actors for P1 and P2 variant are both named "Item", so we need to provide a 1 or 2 to index
+				VariantBMTs[pn] = ScreenOptions:GetOptionRow(VariantRowIndex):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
+				self:queuecommand("Set"..pn.."Variant")
+			end
+			if row_visible == false then
+				ScreenOptions:SetOptionRowVisible(VariantRowIndex, false)     -- hide row 5 and disable it
+				ScreenOptions:RedrawOptions()                   -- reflow/redraw options
 			end
 		end
 	end,
@@ -159,6 +233,21 @@ local t = Def.ActorFrame{
 
 			title_bmt:settext( ("%s\nbpm: %s"):format(THEME:GetString("OptionTitles", "MusicRate"), text) )
 		end
+	end,
+	RefreshVariantsCommand=function(self)
+		-- if the NoteSkin OptionRow was changed, update the NoteSkinVariant OptionRow to reflect the new choices available for this NoteSkin
+		local screen = SCREENMAN:GetTopScreen()
+		local VariantRowIndex = FindOptionRowIndex(screen,"NoteSkinVariant")
+		if not VariantRowIndex then return end
+		for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
+			local pn = ToEnumShortString(player)
+			local variant_bmt = VariantBMTs[pn]
+			if variant_bmt then
+				local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or SL[pn].ActiveModifiers.NoteSkin
+				MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=player, Name="NoteSkinVariant", Value=current_variant})
+			end
+		end
+
 	end
 }
 
@@ -166,6 +255,7 @@ local t = Def.ActorFrame{
 -- this overlay ActorFrame; they'll each be hidden immediately via visible(false)
 -- and referred to as needed via ActorProxy in ./Graphics/OptionRow Frame.lua
 LoadActor("./OptionRowPreviews/NoteSkin.lua", t)
+LoadActor("./OptionRowPreviews/NoteSkinVariant.lua", t)
 LoadActor("./OptionRowPreviews/JudgmentGraphic.lua", t)
 LoadActor("./OptionRowPreviews/ComboFont.lua", t)
 LoadActor("./OptionRowPreviews/HoldJudgment.lua", t)
@@ -232,6 +322,13 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			SpeedModBMTs[pn]:settext( text )
 			self:GetParent():queuecommand("Refresh")
 		end,
+		["Set" .. pn .. "VariantCommand"]=function(self)
+			local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or SL[pn].ActiveModifiers.NoteSkin
+			-- Get all text after first _ to get the variant name
+			current_variant = current_variant:match("_(.*)") or current_variant
+			VariantBMTs[pn]:settext( current_variant )
+			self:GetParent():queuecommand("RefreshVariants")
+		end,
 
 		["CurrentSteps" .. pn .. "ChangedMessageCommand"]=function(self) self:queuecommand("Set"..pn) end,
 		["CurrentTrail" .. pn .. "ChangedMessageCommand"]=function(self) self:queuecommand("Set"..pn) end,
@@ -244,6 +341,14 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 				ChangeSpeedMod( pn, -1 )
 				self:queuecommand("Set"..pn)
 			end
+			if row_index == FindOptionRowIndex(topscreen, "NoteSkinVariant") then
+				ChangeVariant( pn, -1 )
+				self:queuecommand("Set"..pn.."Variant")
+			end
+			if row_index == FindOptionRowIndex(topscreen, "NoteSkin") then
+				ChangeVariant( pn, 0 )
+				self:queuecommand("Set"..pn.."Variant")
+			end
 		end,
 		["MenuRight" .. pn .. "MessageCommand"]=function(self)
 			local topscreen = SCREENMAN:GetTopScreen()
@@ -252,6 +357,13 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			if row_index == FindOptionRowIndex(topscreen, "SpeedMod") then
 				ChangeSpeedMod( pn, 1 )
 				self:queuecommand("Set"..pn)
+			end
+			if row_index == FindOptionRowIndex(topscreen, "NoteSkinVariant") then
+				ChangeVariant( pn, 1 )
+				self:queuecommand("Set"..pn.."Variant")
+			elseif row_index == FindOptionRowIndex(topscreen, "NoteSkin") then
+				ChangeVariant( pn, 0 )
+				self:queuecommand("Set"..pn.."Variant")
 			end
 		end
 	}

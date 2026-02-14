@@ -149,7 +149,7 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		Choices = function()
 
-			local all = NOTESKIN:GetNoteSkinNames()
+			local all = NOTESKIN:GetNoteSkinNames(false)
 
 			if ThemePrefs.Get("HideStockNoteSkins") then
 				local game = GAMESTATE:GetCurrentGame():GetName()
@@ -191,7 +191,7 @@ local Overrides = {
 
 			-- It's possible a user might want to hide stock noteskins
 			-- but only have stock noteskins.  If so, just return all noteskins.
-			if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
+			if #all == 0 then all = NOTESKIN:GetNoteSkinNames(false) end
 
 			return all
 		end,
@@ -203,6 +203,20 @@ local Overrides = {
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
 			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkin", Value=mods.NoteSkin})
 			playeroptions:NoteSkin( mods.NoteSkin )
+		end
+	},
+	NoteSkinVariant = {
+		ExportOnChange = true,
+		LayoutType = "ShowOneInRow",
+		Choices = { "       " },
+		EnabledForPlayers = function() return {} end,
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			local variant = mods.NoteSkinVariant or mods.NoteSkin or "cel"
+			mods.NoteSkinVariant = variant
+			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
+			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkinVariant", Value=mods.NoteSkinVariant})
+			playeroptions:NoteSkin( mods.NoteSkinVariant )
 		end
 	},
 	-------------------------------------------------------------------------

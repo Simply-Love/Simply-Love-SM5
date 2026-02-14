@@ -1060,4 +1060,3 @@ TotalCourseLengthPlayed = function(player)
 		return -1
 	end
 end
-

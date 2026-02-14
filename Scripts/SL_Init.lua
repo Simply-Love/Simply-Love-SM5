@@ -10,6 +10,7 @@ local PlayerDefaults = {
 				ComboFont = "Wendy",
 				HoldJudgment = "Love 1x2 (doubleres).png",
 				NoteSkin = nil,
+				NoteSkinVariant = nil,
 				Mini = "0%",
 				BackgroundFilter = "Darker",
 				VisualDelay = "0ms",
