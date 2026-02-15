@@ -5,6 +5,8 @@
 PlayerMusicWheelScore_No = "No"
 PlayerMusicWheelScore_Yes = "Yes"
 PlayerMusicWheelScore_ReplaceGrade = "Replace Grade"
+local style = GAMESTATE:GetCurrentStyle()
+local styletype = style and style:GetStyleType() or nil
 
 function PlayerMusicWheelScore(pn)
 	return SL[ToEnumShortString(pn)].ActiveModifiers.PlayerMusicWheelScore
@@ -772,6 +774,36 @@ local Overrides = {
 			for i,v in ipairs(self.Choices) do
 				if list[i] then
 					SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetX = v
+					break
+				end
+			end
+		end
+	},
+	-------------------------------------------------------------------------
+	NoteFieldOffsetXDouble = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
+		Choices = function()
+			local first	= 0
+			local last 	= 150
+			local step 	= 1
+
+			return range(first, last, step)
+		end,
+		LoadSelections = function(self, list, pn)
+			local val = tonumber(SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetXDouble) or 0
+			for i,v in ipairs(self.Choices) do
+				if v == val then
+					list[i] = true
+					break
+				end
+			end
+			return list
+		end,
+		SaveSelections = function(self, list, pn)
+			for i,v in ipairs(self.Choices) do
+				if list[i] then
+					SL[ToEnumShortString(pn)].ActiveModifiers.NoteFieldOffsetXDouble = v
 					break
 				end
 			end

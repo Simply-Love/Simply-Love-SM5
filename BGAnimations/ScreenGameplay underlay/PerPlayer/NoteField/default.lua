@@ -3,15 +3,21 @@ local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 local opts = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions()
 local layout = GetGameplayLayout(player, opts:Reverse() ~= 0)
+local style = GAMESTATE:GetCurrentStyle()
+local styletype = style and style:GetStyleType() or nil
 
 local af = Def.ActorFrame{
   Name="NoteFieldContainer"..pn,
   OnCommand=function(self)
     local adjusted_offset_x = mods.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
 
+    if styletype == "StyleType_OnePlayerTwoSides" or styletype == "StyleType_TwoPlayersSharedSides" then
+        adjusted_offset_x = mods.NoteFieldOffsetXDouble 
+    end 
+
     self:addy(mods.NoteFieldOffsetY)
     local player = GetPlayerAF(pn)
-    
+
     player:addx(adjusted_offset_x)
     player:addy(mods.NoteFieldOffsetY)
 
