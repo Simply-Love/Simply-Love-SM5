@@ -108,6 +108,12 @@ local input = function(event)
 					overlay:playcommand("DirectInputToEngine")
 					SCREENMAN:SetNewScreen("ScreenViewDownloads")
 				elseif focus.new_overlay == "SwitchProfile" then
+					-- There's a race condition that occurs when a player mashes the Start button
+					-- fast enough, when the Switch Profiles button is highlighted, that causes
+					-- two SelectProfile screens to be present. This softlocks the game
+					-- due to the first screen not able to receive inputs.
+					if SL.Global.FastProfileSwitchInProgress then return false end
+
 					SL.Global.FastProfileSwitchInProgress = true
 					-- If a memory card is inserted we can't be on that profile's songs when switching profiles
 					-- as the profile is temporarily unloaded when finishing the screen.
