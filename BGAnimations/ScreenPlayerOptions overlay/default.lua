@@ -16,11 +16,6 @@ local speedmod_def = {
 }
 
 local variants_def = {}
-local playerVariants = {
-	[PLAYER_1] = false,
-	[PLAYER_2] = false
-}
-local row_visible = true
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)
 	local noteskin_name = SL[pn].ActiveModifiers.NoteSkin
@@ -29,16 +24,9 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			variants_def[pn] = NOTESKIN:GetVariantNamesForNoteSkin(noteskin_name)
 			-- Put the current NoteSkin at the front of the list of variants so that it's the default selection when we refresh the OptionRow
 			table.insert(variants_def[pn], 1, noteskin_name)
-			playerVariants[player] = true
 		else
-			playerVariants[player] = false
 			variants_def[pn] = {noteskin_name}
 		end
-		-- If neither player has variants for their selected NoteSkin, hide the NoteSkinVariant OptionRow
-		if row_visible and not (playerVariants[PLAYER_1] or playerVariants[PLAYER_2]) then
-			row_visible = false
-		end
-		SL[pn].ActiveModifiers.NoteSkinVariant = SL[pn].ActiveModifiers.NoteSkinVariant or variants_def[pn][1]
 	end
 end
 
@@ -132,24 +120,9 @@ local ChangeVariant = function(pn, direction)
 			variants_def[pn] = NOTESKIN:GetVariantNamesForNoteSkin(noteskin_name)
 			-- Put the current NoteSkin at the front of the list of variants so that it's the default selection when we refresh the OptionRow
 			table.insert(variants_def[pn], 1, noteskin_name)
-			if row_visible == false then
-				local VariantRowIndex = FindOptionRowIndex(ScreenOptions,"NoteSkinVariant")
-				local screen = SCREENMAN:GetTopScreen()
-				screen:SetOptionRowVisible(VariantRowIndex, true)     -- show row 5 and enable it
-				screen:RedrawOptions()                   -- reflow/redraw options
-				row_visible = true
-			end
 		else
 			variants_def[pn] = {noteskin_name}
-			local VariantRowIndex = FindOptionRowIndex(ScreenOptions,"NoteSkinVariant")
-			local screen = SCREENMAN:GetTopScreen()
-			screen:SetOptionRowVisible(VariantRowIndex, false)     -- hide row 5 and disable it
-			screen:RedrawOptions()                   -- reflow/redraw options
-			row_visible = false
 		end
-
-	else
-
 	end
 	local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or SL[pn].ActiveModifiers.NoteSkin
 	local variants = variants_def[pn] or {current_variant}
@@ -159,6 +132,7 @@ local ChangeVariant = function(pn, direction)
 	local new_index = ((current_index + direction) - 1) % #variants + 1
 	SL[pn].ActiveModifiers.NoteSkinVariant = variants[new_index]
 end
+
 
 ------------------------------------------------------------
 
@@ -192,10 +166,6 @@ local t = Def.ActorFrame{
 				-- The BitmapText actors for P1 and P2 variant are both named "Item", so we need to provide a 1 or 2 to index
 				VariantBMTs[pn] = ScreenOptions:GetOptionRow(VariantRowIndex):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]
 				self:queuecommand("Set"..pn.."Variant")
-			end
-			if row_visible == false then
-				ScreenOptions:SetOptionRowVisible(VariantRowIndex, false)     -- hide row 5 and disable it
-				ScreenOptions:RedrawOptions()                   -- reflow/redraw options
 			end
 		end
 	end,
@@ -235,7 +205,6 @@ local t = Def.ActorFrame{
 		end
 	end,
 	RefreshVariantsCommand=function(self)
-		-- if the NoteSkin OptionRow was changed, update the NoteSkinVariant OptionRow to reflect the new choices available for this NoteSkin
 		local screen = SCREENMAN:GetTopScreen()
 		local VariantRowIndex = FindOptionRowIndex(screen,"NoteSkinVariant")
 		if not VariantRowIndex then return end
@@ -243,8 +212,11 @@ local t = Def.ActorFrame{
 			local pn = ToEnumShortString(player)
 			local variant_bmt = VariantBMTs[pn]
 			if variant_bmt then
-				local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or SL[pn].ActiveModifiers.NoteSkin
+				local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or ""
+				local screen = SCREENMAN:GetTopScreen()
+
 				MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=player, Name="NoteSkinVariant", Value=current_variant})
+				screen:RedrawOptions() 
 			end
 		end
 

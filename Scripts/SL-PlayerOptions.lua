@@ -209,14 +209,26 @@ local Overrides = {
 		ExportOnChange = true,
 		LayoutType = "ShowOneInRow",
 		Choices = { "       " },
-		EnabledForPlayers = function() return {} end,
+		EnabledForPlayers = function() 
+			local players = {}
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local variant = SL[ToEnumShortString(player)].ActiveModifiers.NoteSkinVariant
+				local noteskin = SL[ToEnumShortString(player)].ActiveModifiers.NoteSkin
+				if (noteskin and NOTESKIN:HasVariants(noteskin)) then
+					players[#players+1] = player
+				end
+			end
+			return players 
+		end,
+		ReloadRowMessages = { "RefreshActorProxy" },
 		SaveSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-			local variant = mods.NoteSkinVariant or mods.NoteSkin or "cel"
-			mods.NoteSkinVariant = variant
-			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
-			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkinVariant", Value=mods.NoteSkinVariant})
-			playeroptions:NoteSkin( mods.NoteSkinVariant )
+			local variant = mods.NoteSkinVariant
+			if variant then
+				-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
+				MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkinVariant", Value=mods.NoteSkinVariant})
+				playeroptions:NoteSkin( mods.NoteSkinVariant )
+			end
 		end
 	},
 	-------------------------------------------------------------------------
