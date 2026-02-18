@@ -26,26 +26,15 @@ local ShouldDisplayStats = function()
     return shouldDisplay
 end
 
+-- Returns a table of the background filter alpha values for each player
+-- used to diffuse the step statistics bg quad accordingly
 local determineFilterAlphas = function()
-    local totalFilterAlpha = 0
-    local numPlayersShowing = 0
-
-    for _, player in ipairs(Players) do
+    local alphas = {}
+    for player in ivalues(Players) do
         local pn = ToEnumShortString(player)
-        if ShouldDisplayStatsForPlayer(player) then
-            totalFilterAlpha = totalFilterAlpha + (FilterAlpha[SL[pn].ActiveModifiers.BackgroundFilter]/100 or 0)
-            numPlayersShowing = numPlayersShowing + 1
-        end
+        alphas[player] = clamp(FilterAlpha[SL[pn].ActiveModifiers.BackgroundFilter]/100 or 0, 0.25, 0.9)
     end
-
-    if numPlayersShowing == 0 then
-        return 0
-    end
-
-    local averageFilterAlpha = totalFilterAlpha / numPlayersShowing
-    averageFilterAlpha = clamp(averageFilterAlpha, 0.25, 0.9)
-
-    return averageFilterAlpha
+    return alphas
 end
 
 if not ShouldDisplayStats() then
@@ -58,20 +47,15 @@ local af = Def.ActorFrame{
     end
 }
 
-local alpha = determineFilterAlphas()
-for player in ivalues(Players) do
-    if ShouldDisplayStatsForPlayer(player) and #Players > 1 then
-	
-		local pn = tonumber(player:sub(-1))
-	
-        af[#af+1] = Def.Quad{
-            InitCommand=function(self)
-                self:diffuse(0, 0, 0, alpha)   
-				self:zoomto(150, SCREEN_HEIGHT)
-            end,
-        }
-        
-    end
+local playerFilters = determineFilterAlphas()
+if ShouldDisplayStats() then
+    af[#af+1] = Def.Quad{
+        InitCommand=function(self)
+            self:diffuseleftedge(0,0,0, playerFilters[PLAYER_1] or 0.25)
+                :diffuserightedge(0,0,0, playerFilters[PLAYER_2] or 0.25)
+            self:zoomto(150, SCREEN_HEIGHT)
+        end,
+    }
 end
 
 for player in ivalues(Players) do
