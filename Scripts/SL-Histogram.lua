@@ -178,6 +178,37 @@ function NPS_Histogram_Static_Course(player, width, height, desaturation)
 	return af
 end
 
+function NPS_Histogram_With_Position_Line(player, width, height)
+	local pn = ToEnumShortString(player)
+	local af = Def.ActorFrame{}
+	af[#af+1] = NPS_Histogram(player, width, height)
+	local first_second, last_second
+	local position_verts
+	af[#af+1] = Def.ActorMultiVertex{
+		Name="PositionLine",
+		InitCommand=function(self)
+			self:SetDrawState({Mode="DrawMode_LineStrip"})
+				:SetLineWidth(2)
+				:align(0, 0)
+			local color = {1, 1, 1, 1}
+			position_verts = {{{0, 0, 0}, color}, {{0, -height, 0}, color}}
+			self:SetNumVertices(2):SetVertices(position_verts)
+
+			local song = GAMESTATE:GetCurrentSong()
+			first_second = math.min(song:GetTimingData():GetElapsedTimeFromBeat(0), 0)
+			last_second = song:GetLastSecond()
+		end,
+		ScrollSongCommand=function(self)
+			-- Move the line left and right
+			local current_second = GAMESTATE:GetCurMusicSeconds()
+			offset = scale(current_second, 0, last_second-first_second, 0, width)
+			position_verts[1][1][1] = offset
+			position_verts[2][1][1] = offset
+			self:SetVertices(position_verts)
+		end
+	}
+	return af
+end
 
 function Scrolling_NPS_Histogram(player, width, height, desaturation)
 	local verts, visible_verts
