@@ -464,6 +464,13 @@ local t = Def.ActorFrame {
 		-- that we want to have focus when the wheel is displayed
 		sort_wheel:set_info_set(filtered_wheel_options, current_sort_order_index)
 	end,
+
+	CurrentSongChangedMessageCommand=function(self)
+		if self:GetVisible() then
+			self:queuecommand("AssessAvailableChoices")
+		end
+	end,
+
 	-- slightly darken the entire screen
 	Def.Quad {
 		InitCommand=function(self) self:FullScreen():diffuse(Color.Black):diffusealpha(0.8) end
