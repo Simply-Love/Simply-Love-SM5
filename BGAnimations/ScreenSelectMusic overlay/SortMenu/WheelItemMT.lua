@@ -1,3 +1,6 @@
+local sortmenu_dimensions = unpack(...)
+local row_height = 36
+
 -- the metatable for an item in the sort_wheel
 return {
 	__index = {
@@ -14,52 +17,129 @@ return {
 				end,
 			}
 
-			-- top text
-			af[#af+1] = Def.BitmapText{
-				Font="Common Normal",
+			-- background
+			af[#af+1] = Def.Quad{
+				Name="background",
 				InitCommand=function(subself)
-					self.top_text = subself
-					subself:zoom(1.15):y(-15):diffusealpha(0)
+					self.bg = subself
+					subself:vertalign(top):setsize(sortmenu_dimensions.w, row_height-2)
+					subself:y(-12):diffuse(0.15,0.15,0.15,1)
 				end,
-				OnCommand=function(subself)
-					subself:sleep(0.13):linear(0.05):diffusealpha(1)
+				ShowFolderCommand=function(subself)
+					subself:diffusealpha(1)
+				end,
+				HideFolderCommand=function(subself)
+					subself:diffusealpha(0)
+				end,
+				GainFocusCommand=function(subself)
+					subself:finishtweening():accelerate(0.1):diffuse(0.35,0.35,0.35,1)
+				end,
+				LoseFocusCommand=function(subself)
+					subself:finishtweening():decelerate(0.1):diffuse(0.2,0.2,0.2,1)
 				end
 			}
 
-			-- bottom text
-			af[#af+1] = Def.BitmapText{
-				Font="Common Bold",
+			af[#af+1] = Def.ActorFrame{
+				Name="text container AF",
 				InitCommand=function(subself)
-					self.bottom_text = subself
-					subself:zoom(0.85):y(10):diffusealpha(0):maxwidth(405)
+					self.text_container = subself
+					subself:x(-100):zoom(0.5)
 				end,
-				OnCommand=function(subself)
-					subself:sleep(0.1):linear(0.15):diffusealpha(1)
-				end
+
+				-- folder icon
+				LoadActor("./folder-solid.png")..{
+					Name="folder icon",
+					InitCommand=function(subself)
+						self.folder_icon = subself
+						subself:visible(false):vertalign(top)
+						subself:zoom(0.4):xy(28, -16)
+					end,
+					ShowFolderCommand=function(subself)
+						subself:visible(true)
+					end,
+					HideFolderCommand=function(subself)
+						subself:visible(false)
+					end,
+					GainFocusCommand=function(subself)
+						subself:diffuse(1,1,1,1)
+					end,
+					LoseFocusCommand=function(subself)
+						subself:diffuse(0.6,0.6,0.6,1)
+					end,
+				},
+
+				-- top text
+				Def.BitmapText{
+					Name="top text",
+					Font="Common Normal",
+					InitCommand=function(subself)
+						self.top_text = subself
+						subself:zoom(1.15):xy(33,-8):diffusealpha(0)
+						subself:horizalign(left)
+					end,
+					OnCommand=function(subself)
+						subself:sleep(0.13):linear(0.05):diffusealpha(1)
+					end,
+					GainFocusCommand=function(subself)
+						subself:diffuse(1,1,1,1)
+					end,
+					LoseFocusCommand=function(subself)
+						subself:diffuse(0.6,0.6,0.6,1)
+					end,
+				},
+
+				-- bottom text
+				Def.BitmapText{
+					Name="bottom text",
+					Font="Common Bold",
+					InitCommand=function(subself)
+						self.bottom_text = subself
+						subself:zoom(0.8):y(10):diffusealpha(0):maxwidth(405)
+						subself:horizalign(left)
+					end,
+					OnCommand=function(subself)
+						subself:sleep(0.1):linear(0.15):diffusealpha(1)
+					end,
+					ShowFolderCommand=function(subself)
+						subself:xy(64,10)
+					end,
+					HideFolderCommand=function(subself)
+						subself:xy(32,17)
+					end,
+					GainFocusCommand=function(subself)
+						subself:diffuse(1,1,1,1)
+					end,
+					LoseFocusCommand=function(subself)
+						subself:diffuse(0.6,0.6,0.6,1)
+					end,
+				}
 			}
 
 			return af
 		end,
 
 		transform = function(self, item_index, num_items, has_focus)
+			local isFolder = self.kind == "" and self.new_overlay ~= "GoBack"
+
 			self.container:finishtweening()
 
-			if has_focus then
-				self.container:accelerate(0.15)
-				self.container:zoom(0.6)
-				self.container:diffuse( GetCurrentColor() )
-				self.container:glow(color("1,1,1,0.5"))
+			if isFolder then
+				self.container:queuecommand("ShowFolder")
 			else
-				self.container:glow(color("1,1,1,0"))
-				self.container:accelerate(0.15)
-				self.container:zoom(0.5)
-				self.container:diffuse(color("#888888"))
-				self.container:glow(color("1,1,1,0"))
+				self.container:queuecommand("HideFolder")
 			end
 
-			self.container:y(36 * (item_index - math.ceil(num_items/2)))
+			if has_focus then
+				self.container:playcommand('GainFocus')
+			else
+				self.container:playcommand('LoseFocus')
+			end
 
-			if item_index <= 1 or  item_index >= num_items then
+			self.container:smooth(0.1):y(
+				row_height * (item_index - math.ceil(num_items/2)) - 4
+			)
+
+			if item_index <= 1 or item_index >= num_items then
 				self.container:diffusealpha(0)
 			else
 				self.container:diffusealpha(1)
@@ -73,26 +153,25 @@ return {
 
 			if self.kind == "SortBy" then
 				self.sort_by = info[2]
-
 			elseif self.kind == "ChangeMode" or self.kind == "ChangeStyle" then
 				self.change = info[2]
-
 			else
 				self.new_overlay = info[2]
 			end
-			
-			local toptext    = self.kind ~= "" and THEME:GetString("ScreenSelectMusic", self.kind) or ""
-			local bottomtext =  string.match(self.kind, "Playlist") and info[2] or THEME:GetString(self.kind == "ChangeMode" and "ScreenSelectPlayMode" or "ScreenSelectMusic", info[2])
+
+			local toptext = THEME:HasString("ScreenSelectMusic", info[1]) and THEME:GetString("ScreenSelectMusic", info[1]) or tostring(info[1])
+			local bottomtext
+
+			if THEME:HasString("ScreenSelectMusic", info[2]) then
+				bottomtext = THEME:GetString("ScreenSelectMusic", info[2])
+			elseif THEME:HasString("ScreenSelectPlayMode", info[2]) then
+				bottomtext = THEME:GetString("ScreenSelectPlayMode", info[2])
+			else
+				bottomtext = tostring(info[2])
+			end
 
 			self.top_text:settext(toptext)
 			self.bottom_text:settext(bottomtext)
-			if bottomtext == "Go Back" then
-				self.bottom_text:diffuse(Color.Red)
-			elseif toptext == "" then
-				self.bottom_text:diffuse(Color.Blue)
-			else
-				self.bottom_text:diffuse(Color.White)
-			end
 		end
 	}
 }

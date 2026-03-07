@@ -27,9 +27,10 @@ local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
 -- but its prose was approachable enough for wastes-of-space like me, so I guess I'll
 -- recommend it until I find a more helpful one.
 --                                      -quietly
-local wheel_item_mt = LoadActor("WheelItemMT.lua")
-local sortmenu = { w=210, h=160 }
+local sortmenu_dimensions = { w=210, h=204 }
+local wheel_item_mt = LoadActor("WheelItemMT.lua", {sortmenu_dimensions})
 local lastCategory = ""
+local openCategory = nil
 
 local FilterTable = function(arr, func)
 	local new_index = 1
@@ -291,6 +292,31 @@ local function GetChangeableStyles()
 end
 local style = GAMESTATE:GetCurrentStyle():GetName():gsub("8", "")
 
+local function ResolveVisibleSubOptions(option)
+	local source_sub_options = nil
+	if type(option[2]) == "function" and option[1][1] == "" then
+		source_sub_options = option[2]() or {}
+	elseif type(option[2]) == "table" then
+		source_sub_options = option[2]
+	end
+
+	local sub_options = {}
+	if source_sub_options ~= nil then
+		for j=1, #source_sub_options do
+			local sub_option = source_sub_options[j]
+			if type(sub_option[2]) == "function" then
+				if sub_option[2]() then
+					table.insert(sub_options, sub_option[1])
+				end
+			elseif sub_option[2] == nil or sub_option[2] == true then
+				table.insert(sub_options, sub_option[1])
+			end
+		end
+	end
+
+	return sub_options
+end
+
 
 local t = Def.ActorFrame {
 	Name="SortMenu",
@@ -331,13 +357,19 @@ local t = Def.ActorFrame {
 					{ {"SortBy", "Popularity"} },
 					{ {"SortBy", "Recent"} },
 					{ {"SortBy", "TopGrades"} },
+				}
+			},
+			{
+				{"", "CategoryProfile"},
+				{
 					{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
 					{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
 					{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
 					{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 					{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 					{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-
+					{AddFavorites()},
+					{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") }
 				}
 			},
 			{
@@ -348,7 +380,6 @@ local t = Def.ActorFrame {
 					{ {"TakeABreather", "LoadNewSongs"} },
 					{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
 					{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
-					{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
 					{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
 				}
 			},
@@ -363,6 +394,7 @@ local t = Def.ActorFrame {
 			{ {"SortBy", "Group"} },
 			{ {"SortBy", "Title"} },
 			{ {"SortBy", "Recent"} },
+			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
 			-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
 			-- but don't add the current SL GameMode as a choice.
 			{ {"ChangeMode", "ITG"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "ITG" },
@@ -383,57 +415,19 @@ local t = Def.ActorFrame {
 	OnCommand=function(self) self:playcommand("AssessAvailableChoices") end,
 	ShowSortMenuCommand=function(self) self:visible(true) end,
 	HideSortMenuCommand=function(self) self:visible(false) end,
+	ToggleCategoryCommand=function(self, params)
+		if not (params and params.Category) then return end
+		if openCategory == params.Category then
+			openCategory = nil
+			lastCategory = params.Category
+		else
+			openCategory = params.Category
+			lastCategory = ""
+		end
+		self:playcommand("AssessAvailableChoices")
+	end,
 	EnterCategoryMessageCommand=function(self, params)
-		local category = params.Category
-		lastCategory = params.Category
-		local filtered_wheel_options = {}
-		for i=1, #wheel_options do
-			local option = wheel_options[i]
-			if option ~= nil and option[1] ~= nil and option[1][2] == category then
-				local source_sub_options = nil
-				-- Allow categories to specify their submenu via a function
-				if type(option[2]) == "function" and option[1][1] == "" then
-					source_sub_options = option[2]() or {}
-				elseif type(option[2]) == "table" then
-					source_sub_options = option[2]
-				end
-				if source_sub_options ~= nil then
-					for j=1, #source_sub_options do
-						local sub_option = source_sub_options[j]
-						if type(sub_option[2]) == "function" then
-							if sub_option[2]() then
-								table.insert(filtered_wheel_options, sub_option[1])
-							end
-						elseif sub_option[2] == nil or sub_option[2] == true then
-							table.insert(filtered_wheel_options, sub_option[1])
-						end
-					end
-				end
-			end
-		end
-		table.insert(filtered_wheel_options, {"Options", "GoBack"})
-		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
-		--
-		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
-		-- NOT the total number of things you can eventually scroll through (#wheel_options = 14)
-		--
-		-- so, math.floor(7/2) gives focus to the third item in the wheel, which looks weird
-		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
-		sort_wheel.focus_pos = 4
-		-- get the currently active SortOrder and truncate the "SortOrder_" from the beginning
-		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
-		local current_sort_order_index = 1
-		--SM(filtered_wheel_options)
-		-- find the sick_wheel index of the item we want to display first when the player activates this SortMenu
-		for i=1, #filtered_wheel_options do
-			if filtered_wheel_options[i][1] == "SortBy" and filtered_wheel_options[i][2] == current_sort_order then
-				current_sort_order_index = i
-				break
-			end
-		end
-		-- the second argument passed to set_info_set is the index of the item in wheel_options
-		-- that we want to have focus when the wheel is displayed
-		sort_wheel:set_info_set(filtered_wheel_options, current_sort_order_index)
+		self:playcommand("ToggleCategory", params)
 	end,
 	DirectInputToSortMenuCommand=function(self)
 		local screen = SCREENMAN:GetTopScreen()
@@ -495,55 +489,63 @@ local t = Def.ActorFrame {
 	AssessAvailableChoicesCommand=function(self)
 
 		local filtered_wheel_options = {}
-		for i=1, #wheel_options do
-			local option = wheel_options[i]
-			if option ~= nil then
-				-- If this is a category (empty top text) and uses either
-				-- a table or a function as its submenu source, resolve it
-				local is_category = type(option[1]) == "table" and option[1][1] == "" and option[1][2] ~= nil
-				if is_category and (type(option[2]) == "table" or type(option[2]) == "function") then
-					local source_sub_options
-					if type(option[2]) == "function" then
-						source_sub_options = option[2]() or {}
-					else
-						source_sub_options = option[2]
-					end
-					local sub_options = {}
-					for j=1, #source_sub_options do
-						local sub_option = source_sub_options[j]
-						if type(sub_option[2]) == "function" then
-							if sub_option[2]() then
-								table.insert(sub_options, sub_option)
-							end
-						elseif sub_option[2] == nil or sub_option[2] == true then
-							table.insert(sub_options, sub_option)
-						end
-					end
+		if openCategory ~= nil then
+			for i=1, #self.wheel_options do
+				local option = self.wheel_options[i]
+				if option ~= nil and option[1] ~= nil and option[1][2] == openCategory then
+					local sub_options = ResolveVisibleSubOptions(option)
 					if #sub_options > 0 then
-						table.insert(filtered_wheel_options, {option[1][1], option[1][2]})
+						-- Keep the category row visible so pressing Start on it toggles closed.
+						table.insert(filtered_wheel_options, {"", openCategory})
+						for j=1, #sub_options do
+							table.insert(filtered_wheel_options, sub_options[j])
+						end
+					else
+						openCategory = nil
+						lastCategory = ""
 					end
-				elseif type(option[2]) == "function" then
-					if option[2]() then
-						table.insert(filtered_wheel_options, {option[1][1], option[1][2]})
-					end
-				elseif option[2] == nil or option[2] == true then
-					table.insert(filtered_wheel_options, {option[1][1], option[1][2]})
+					break
 				end
 			end
-		end	
+		end
+
+		if openCategory == nil then
+			for i=1, #self.wheel_options do
+				local option = self.wheel_options[i]
+				if option ~= nil then
+					-- If this is a category (empty top text) and uses either
+					-- a table or a function as its submenu source, resolve it
+					local is_category = type(option[1]) == "table" and option[1][1] == "" and option[1][2] ~= nil
+					if is_category and (type(option[2]) == "table" or type(option[2]) == "function") then
+						local sub_options = ResolveVisibleSubOptions(option)
+						if #sub_options > 0 then
+							table.insert(filtered_wheel_options, {option[1][1], option[1][2]})
+						end
+					elseif type(option[2]) == "function" then
+						if option[2]() then
+							table.insert(filtered_wheel_options, {option[1][1], option[1][2]})
+						end
+					elseif option[2] == nil or option[2] == true then
+						table.insert(filtered_wheel_options, {option[1][1], option[1][2]})
+					end
+				end
+			end
+		end
+
 		-- Override sick_wheel's default focus_pos, which is math.floor(num_items / 2)
 		--
 		-- keep in mind that num_items is the number of Actors in the wheel (here, 7)
 		-- NOT the total number of things you can eventually scroll through (#wheel_options = 14)
 		--
-		-- so, math.floor(7/2) gives focus to the third item in the wheel, which looks weird
-		-- in this particular usage.  Thus, set the focus to the wheel's current 4th Actor.
-		sort_wheel.focus_pos = 4
+		-- so, math.floor(9/2) gives focus to the fifth item in the wheel.
+		sort_wheel.focus_pos = 5
 		-- get the currently active SortOrder and truncate the "SortOrder_" from the beginning
 		local current_sort_order = ToEnumShortString(GAMESTATE:GetSortOrder())
 		local current_sort_order_index = 1
 		-- find the sick_wheel index of the item we want to display first when the player activates this SortMenu
-		if lastCategory == "" then
+		if openCategory ~= nil then
+			current_sort_order_index = 1
+		elseif lastCategory == "" then
 			for i=1, #filtered_wheel_options do
 				if filtered_wheel_options[i][2] == current_sort_order then
 					current_sort_order_index = i
@@ -569,7 +571,7 @@ local t = Def.ActorFrame {
 	},
 	-- OptionsList Header Quad
 	Def.Quad {
-		InitCommand=function(self) self:Center():zoomto(sortmenu.w+2,22):xy(_screen.cx, _screen.cy-92) end
+		InitCommand=function(self) self:Center():zoomto(sortmenu_dimensions.w+2,22):xy(_screen.cx, _screen.cy-92) end
 	},
 	-- "Options" text
 	Def.BitmapText{
@@ -582,19 +584,25 @@ local t = Def.ActorFrame {
 	},
 	-- white border
 	Def.Quad {
-		InitCommand=function(self) self:Center():zoomto(sortmenu.w+2,sortmenu.h+2) end
+		InitCommand=function(self) self:Center():zoomto(sortmenu_dimensions.w+2, sortmenu_dimensions.h+2) end
 	},
 	-- BG of the sortmenu box
 	Def.Quad {
-		InitCommand=function(self) self:Center():zoomto(sortmenu.w,sortmenu.h):diffuse(Color.Black) end
+		InitCommand=function(self) self:Center():zoomto(sortmenu_dimensions.w, sortmenu_dimensions.h):diffuse(Color.Black) end
 	},
 	-- top mask
 	Def.Quad {
-		InitCommand=function(self) self:Center():zoomto(sortmenu.w,_screen.h/2):y(40):MaskSource() end
+		InitCommand=function(self)
+			self:zoomto(sortmenu_dimensions.w, _screen.h):MaskSource():valign(1)
+			self:Center():y(self:GetY()-sortmenu_dimensions.h/2)
+		end
 	},
 	-- bottom mask
 	Def.Quad {
-		InitCommand=function(self) self:zoomto(sortmenu.w,_screen.h/2):xy(_screen.cx,_screen.cy+200):MaskSource() end
+		InitCommand=function(self)
+			self:zoomto(sortmenu_dimensions.w, _screen.h):MaskSource():valign(0)
+			self:Center():y(self:GetY()+sortmenu_dimensions.h/2)
+		end
 	},
 	-- "Press SELECT To Cancel" text
 	Def.BitmapText{
@@ -604,12 +612,12 @@ local t = Def.ActorFrame {
 			if PREFSMAN:GetPreference("ThreeKeyNavigation") then
 				self:visible(false)
 			else
-				self:xy(_screen.cx, _screen.cy+100):zoom(0.3):diffuse(0.7,0.7,0.7,1)
+				self:Center():valign(0):y(self:GetY()+sortmenu_dimensions.h/2 + 15):zoom(0.3):diffuse(0.7,0.7,0.7,1)
 			end
 		end
 	},
 	-- this returns an ActorFrame ( see: ./Scripts/Consensual-sick_wheel.lua )
-	sort_wheel:create_actors( "Sort Menu", 7, wheel_item_mt, _screen.cx, _screen.cy )
+	sort_wheel:create_actors( "Sort Menu", 9, wheel_item_mt, _screen.cx, _screen.cy )
 }
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenSelectMaster", "change") )..{ Name="change_sound", IsAction=true, SupportPan=false }
 t[#t+1] = LoadActor( THEME:GetPathS("common", "start") )..{ Name="start_sound", IsAction=true, SupportPan=false }
