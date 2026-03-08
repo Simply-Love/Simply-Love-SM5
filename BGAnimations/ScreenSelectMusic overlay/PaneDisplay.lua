@@ -391,6 +391,13 @@ for player in ivalues(PlayerNumber) do
 		end
 	}
 
+		-- -----------------------------------------------------------------------
+	-- tabs along the top of the PaneDisplay, one per available stepchart
+
+	if ThemePrefs.Get("PreferredStyle")=="auto" then
+		af2[#af2+1] = LoadActor("./StepsDisplayList/TabbedStepchartList/default.lua", {player, _screen.w/2 - 10})
+	end
+
 	-- -----------------------------------------------------------------------
 	-- loop through the six sub-tables in the PaneItems table
 	-- add one BitmapText as the label and one BitmapText as the value for each PaneItem

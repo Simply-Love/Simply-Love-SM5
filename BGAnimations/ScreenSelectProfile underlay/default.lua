@@ -4,6 +4,11 @@
 -- SelectProfileFrames for both PLAYER_1 and PLAYER_2, but only the MasterPlayerNumber
 local PreferredStyle = ThemePrefs.Get("PreferredStyle")
 
+-- retrieve the MasterPlayerNumber now, at initialization, so that if PreferredStyle is set
+-- to "single" or "double" and that singular player unjoins, we still have a handle on
+-- which PlayerNumber they're supposed to be...
+local mpn = GAMESTATE:GetMasterPlayerNumber()
+
 -- a table of profile data (highscore name, most recent song, mods, etc.)
 -- indexed by "ProfileIndex" (provided by engine)
 local profile_data = LoadActor("./PlayerProfileData.lua")
@@ -227,7 +232,7 @@ local t = Def.ActorFrame {
 			return
 		end
 
-		if PreferredStyle=="none" or PreferredStyle=="versus" or #GAMESTATE:GetHumanPlayers() > 1 then
+		if not (PreferredStyle=="single" or PreferredStyle=="double") or #GAMESTATE:GetHumanPlayers() > 1 then
 			HandleStateChange(self, PLAYER_1)
 			HandleStateChange(self, PLAYER_2)
 		else
