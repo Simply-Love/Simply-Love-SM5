@@ -16,7 +16,7 @@ local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pane = Def.ActorFrame{
 	InitCommand=function(self)
-		if style == "OnePlayerTwoSides" then
+		if style == "OnePlayerTwoSides" or (style == "TwoPlayersSharedSides" and routineStatus) then
 			if controller == PLAYER_2 then self:x(-260)
 			else self:x(50) end
 		end
@@ -42,8 +42,19 @@ if style == "OnePlayerOneSide" or style == "TwoPlayersTwoSides" then
 		Text=THEME:GetString("ScreenEvaluation",  "TestInputInstructions"),
 		InitCommand=function(self) self:zoom(0.8):xy(-140,255):_wrapwidthpixels(100/0.8):align(0,0):vertspacing(-4) end
 	}
+elseif style == "TwoPlayersSharedSides" then
 
--- for everything else (double, routine, couple), show two pads
+	pane[#pane+1] = LoadFont("Common normal")..{
+		Text=THEME:GetString("ScreenEvaluation",  "TestInput"),
+		InitCommand=function(self) self:zoom(1):xy(-92, 196):vertalign(top):maxwidth(100/self:GetZoom()) end
+	}
+	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_1, ShowMenuButtons=false, ShowPlayerLabel=false})..{
+		InitCommand=function(self) self:xy(-66, 338):zoom(0.65) end
+	}
+	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_2, ShowMenuButtons=false, ShowPlayerLabel=false})..{
+		InitCommand=function(self) self:xy(66, 338):zoom(0.65) end
+	}
+-- for everything else (double, halfdouble, couple, etc.), show two pads
 else
 	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=PLAYER_1, ShowMenuButtons=false, ShowPlayerLabel=false})..{
 		InitCommand=function(self) self:xy(22, 338):zoom(0.8) end

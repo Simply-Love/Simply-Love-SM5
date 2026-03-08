@@ -1,8 +1,8 @@
--- AutoStyle is a Simply Love ThemePref that can allow players to always
+-- PreferredStyle is a Simply Love ThemePref that can allow players to always
 -- automatically have one of [single, double, versus] chosen for them.
--- If AutoStyle is either "single" or "double", we don't want to load
+-- If PreferredStyle is either "single" or "double", we don't want to load
 -- SelectProfileFrames for both PLAYER_1 and PLAYER_2, but only the MasterPlayerNumber
-local AutoStyle = ThemePrefs.Get("AutoStyle")
+local PreferredStyle = ThemePrefs.Get("PreferredStyle")
 
 -- a table of profile data (highscore name, most recent song, mods, etc.)
 -- indexed by "ProfileIndex" (provided by engine)
@@ -174,7 +174,7 @@ local t = Def.ActorFrame {
 
 	CodeMessageCommand=function(self, params)
 
-		if (AutoStyle=="single" or AutoStyle=="double" or #GAMESTATE:GetHumanPlayers() > 1 ) and params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber()  then return end
+		if (PreferredStyle=="single" or PreferredStyle=="double" or #GAMESTATE:GetHumanPlayers() > 1 ) and params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber()  then return end
 
 		-- Don't allow players to unjoin from SelectProfile in CoinMode_Pay.
 		-- 1 credit has already been deducted from ScreenTitleJoin, so allowing players
@@ -227,7 +227,7 @@ local t = Def.ActorFrame {
 			return
 		end
 
-		if AutoStyle=="none" or AutoStyle=="versus" or #GAMESTATE:GetHumanPlayers() > 1 then
+		if PreferredStyle=="none" or PreferredStyle=="versus" or #GAMESTATE:GetHumanPlayers() > 1 then
 			HandleStateChange(self, PLAYER_1)
 			HandleStateChange(self, PLAYER_2)
 		else
@@ -284,7 +284,7 @@ if SL.Global.FastProfileSwitchInProgress then
 end
 
 -- load PlayerFrames for both
-if AutoStyle=="none" or AutoStyle=="versus" or #GAMESTATE:GetHumanPlayers() > 1 then
+if not (PreferredStyle=="single" or PreferredStyle=="double")  or #GAMESTATE:GetHumanPlayers() > 1 then
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_1, Scroller=scrollers[PLAYER_1], ProfileData=profile_data, Avatars=avatars})
 	t[#t+1] = LoadActor("PlayerFrame.lua", {Player=PLAYER_2, Scroller=scrollers[PLAYER_2], ProfileData=profile_data, Avatars=avatars})
 -- load only for the MasterPlayerNumber

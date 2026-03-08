@@ -76,17 +76,17 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "Casual", "ITG" }
 		},
-
-		AutoStyle =
+		PreferredStyle =
 		{
 			Default = "none",
 			Choices = {
 				THEME:GetString("ScreenSelectStyle", "None"),
+				THEME:GetString("ScreenSelectStyle", "Auto"),
 				THEME:GetString("ScreenSelectStyle", "Single"),
 				THEME:GetString("ScreenSelectStyle", "Versus"),
 				THEME:GetString("ScreenSelectStyle", "Double")
 			},
-			Values = { "none", "single", "versus", "double" }
+			Values = { "none", "auto", "single", "versus", "double" }
 		},
 		VisualStyle =
 		{

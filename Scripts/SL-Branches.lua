@@ -96,10 +96,18 @@ Branch.AllowScreenSelectColor = function()
 end
 
 Branch.AfterScreenSelectColor = function()
-	local preferred_style = ThemePrefs.Get("AutoStyle")
+	
+	if THEME:GetMetric("Common", "AutoSetStyle") == true then
+		local styles = { "single", "versus" }
+		GAMESTATE:SetCurrentStyle( styles[GAMESTATE:GetNumSidesJoined()] )
+		return "ScreenSelectPlayMode"
+	end
+
+	-- ------------------------------------------------------------
+	local preferred_style = ThemePrefs.Get("PreferredStyle")
 
 	if preferred_style ~= "none"
-	-- AutoStyle should not be possible in pay mode
+	-- PreferredStyle should not be possible in pay mode
 	-- it's too confusing for machine operators, novice players, and developers alike
 	and GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then
 
@@ -108,7 +116,7 @@ Branch.AfterScreenSelectColor = function()
 			GAMESTATE:JoinPlayer(PLAYER_1)
 			GAMESTATE:JoinPlayer(PLAYER_2)
 
-		-- if AutoStyle was "single" but both players are already joined
+		-- if PreferredStyle was "single" but both players are already joined
 		-- (for whatever reason), we're in a bit of a pickle, as there is
 		-- no way to read the player's mind and know which side they really
 		-- want to play on. Unjoin PLAYER_2 for lack of a better solution.

@@ -70,6 +70,9 @@ if song_str ~= "" then
 						-- set steps
 						local steps = song:GetOneSteps(stepstype_str, diff_str)
 						GAMESTATE:SetCurrentSteps(PLAYER_1, steps)
+						if style == "couple" or style == "routine" then
+							GAMESTATE:SetCurrentSteps(PLAYER_2, steps)
+						end
 						break
 					end
 				end
