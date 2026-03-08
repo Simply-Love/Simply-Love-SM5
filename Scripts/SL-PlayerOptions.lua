@@ -360,11 +360,13 @@ local Overrides = {
 				local song = GAMESTATE:GetCurrentSong()
 				if song then
 					for steps in ivalues( SongUtil.GetPlayableSteps(song) ) do
+						local choice
 						if steps:IsAnEdit() then
-							choices[#choices+1] = ("%s %i"):format(steps:GetDescription(), steps:GetMeter())
+							choice = ("%s\n%s %i"):format(steps:GetStepsType():gsub("%w+_%w+_", ""):lower(), steps:GetDescription(), steps:GetMeter())
 						else
-							choices[#choices+1] = ("%s %i"):format(THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())), steps:GetMeter())
+							choice = ("%s\n%s %i"):format(steps:GetStepsType():gsub("%w+_%w+_", ""):lower(), THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())), steps:GetMeter())
 						end
+						table.insert(choices, choice)
 					end
 				end
 			else
@@ -894,6 +896,18 @@ local OptionRowDefault = {
 			self.LayoutType = Overrides[name].LayoutType or "ShowAllInRow"
 			self.SelectType = Overrides[name].SelectType or "SelectOne"
 			self.OneChoiceForAllPlayers = Overrides[name].OneChoiceForAllPlayers or false
+			if GAMESTATE:GetCurrentStyle() ~= nil and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides" then
+				local list = {
+					"NoteSkin",
+					"NoteSkinVariant",
+					"JudgmentGraphic",
+					"ComboFont",
+					"HoldJudgment",
+				}
+				if not FindInTable(name, list) then
+					self.OneChoiceForAllPlayers = true
+				end
+			end
 			self.ExportOnChange = Overrides[name].ExportOnChange or false
 			self.EnabledForPlayers = Overrides[name].EnabledForPlayers or function() return {PLAYER_1, PLAYER_2} end
 			self.ReloadRowMessages = Overrides[name].ReloadRowMessages or {}
