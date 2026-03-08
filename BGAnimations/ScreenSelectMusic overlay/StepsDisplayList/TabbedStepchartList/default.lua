@@ -113,7 +113,7 @@ for i=0,num_tabs-1 do
       InitCommand=function(self)
          self:zoom(0.4):diffuse(0,0,0,1):y(4)
          if not IsUsingWideScreen() then
-            self:x(tab_width - 10) -- 4:3 display
+            self:x(tab_width - 14) -- 4:3 display
          else
             self:x(tab_width - WideScale(5, 0))
          end

@@ -397,6 +397,9 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			-- If we're in TwoPlayersSharedSides, center the text
 			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides" then
 				self:x(WideScale(-77, -100) + WideScale(140,154)) :halign(0.65)
+				if pn ~= ToEnumShortString(GAMESTATE:GetMasterPlayerNumber()) then
+					self:visible(false)
+				end
 			end
 			self:shadowlength(0.55)
 		end,
