@@ -7,7 +7,7 @@ local noteskin = GAMESTATE:GetPlayerState(player):GetCurrentPlayerOptions():Note
 -- NOTESKIN:LoadActorForNoteSkin() expects the noteskin name to be all lowercase(?)
 -- so transform the string to be lowercase
 noteskin = noteskin:lower()
-
+local routineStatus = false
 
 -- -----------------------------------------------------------------------
 local game  = GAMESTATE:GetCurrentGame():GetName()
@@ -34,7 +34,8 @@ local box_height = 146
 
 -- more space for double and routine
 local styletype = ToEnumShortString(style:GetStyleType())
-if not (styletype == "OnePlayerOneSide" or styletype == "TwoPlayersTwoSides") then
+
+if (styletype == "OnePlayerTwoSides" or (styletype == "TwoPlayersSharedSides" and routineStatus) ) then
 	box_width = 520
 end
 
@@ -44,18 +45,21 @@ local row_height = box_height/#rows
 -- -----------------------------------------------------------------------
 
 local af = Def.ActorFrame{}
-af.InitCommand=function(self) self:xy(-104, _screen.cy-40) end
+af.InitCommand=function(self) self:xy((styletype == "TwoPlayersSharedSides" and not routineStatus) and -102 or -104, _screen.cy-40) end
 
 
 for i, column in ipairs( cols ) do
 
 	local _x = col_width * i
 
-	-- Calculating column positioning like this in techno game and dance solor results
-	-- in each column being ~10px too far left; this does not happen in other games that
-	-- I've tested.  There's probably a cleaner fix involving scaling column.XOffset to
-	-- fit within the bounds of box_width but this is easer for now.
-	if game == "techno" or (game == "dance" and style_name == "solo") then
+	-- Calculating column positioning like this in techno game, dance solo, and pump routine
+	-- results in each column being ~10px too far left; this does not happen in other games
+	-- that I've tested.  There's probably a cleaner fix involving scaling column.XOffset to
+	-- fit within the bounds of box_width but this is easer for now.  -quietly
+	if game == "techno"
+	or (game == "dance" and style_name == "solo")
+	or (style_name == "routine")
+	then
 		_x = _x + 10
 	end
 
@@ -74,15 +78,17 @@ for i, column in ipairs( cols ) do
 		-- don't add rows for TimingWindows that were turned off, but always add Miss
 		if SL[pn].ActiveModifiers.TimingWindows[j] or j==#rows or (mods.ShowFaPlusWindow and mods.ShowFaPlusPane and SL[pn].ActiveModifiers.TimingWindows[j-1]) then
 			-- add a BitmapText actor to be the number for this column
+			local judgementText = 0
+			judgementText =SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment]
+
 			af[#af+1] = LoadFont("Common Normal")..{
-				Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i][judgment],
+				Text=judgementText,
 				InitCommand=function(self)
 					self:xy(_x, j*row_height + 4)
 						:zoom(0.9)
 					if j == #rows then miss_bmt = self end
 				end
 			}
-
 			if judgment == "W4" or judgment == "W5" then
 				af[#af+1] = LoadFont("Common Normal")..{
 					Text=SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].column_judgments[i]["Early"][judgment],

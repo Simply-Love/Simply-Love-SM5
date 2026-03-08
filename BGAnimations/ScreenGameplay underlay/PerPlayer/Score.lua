@@ -32,6 +32,10 @@ local pos = {
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
+if styletype == "TwoPlayersSharedSides" then
+	pss = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+end
+
 local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
 local total_tapnotes = StepsOrTrail:GetRadarValues(player):GetValue( "RadarCategory_Notes" )
 
@@ -51,6 +55,32 @@ local ar_scale = {
 local zoom_factor = clamp(scale(GetScreenAspectRatio(), 16/10, 16/9, ar_scale.sixteen_ten, ar_scale.sixteen_nine), 0, 1.125)
 
 -- -----------------------------------------------------------------------
+local function MakePercentScore(actual, possible)
+    if possible == 0 then
+        return 0 -- avoid division by zero
+    end
+
+    if actual == possible then
+        return 1 -- correct for rounding error
+    end
+
+    local percent = actual / possible
+
+    -- Ensure percent is not negative
+    percent = math.max(0.0, percent)
+
+    -- Number of decimal places for percent score
+    local percentTotalDigits = 3 + 2
+    local truncInterval = math.pow(0.1, percentTotalDigits - 1)
+
+    -- Small adjustment to avoid rounding issues
+    percent = percent + 0.000001
+
+    -- Truncate to the desired precision
+    percent = math.floor(percent / truncInterval) * truncInterval
+
+    return percent
+end
 
 return LoadFont("Wendy/_wendy monospace numbers")..{
 	Text="0.00",

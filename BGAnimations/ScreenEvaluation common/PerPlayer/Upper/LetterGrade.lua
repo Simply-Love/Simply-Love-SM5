@@ -1,6 +1,12 @@
 local player = ...
 
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+
 local playerStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local routineStatus = SL.Global.RoutineStatus
+if (styletype == "TwoPlayersSharedSides") then
+	playerStats = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+end
 local grade = playerStats:GetGrade()
 
 -- "I passd with a q though."

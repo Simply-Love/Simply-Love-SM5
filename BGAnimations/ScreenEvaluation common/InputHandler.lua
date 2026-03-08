@@ -23,7 +23,7 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 --        so this is more like "validation" than validation
 
 local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_panes)
-local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
+local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)-1
 
 -- -----------------------------------------------------------------------
 -- initialize local tables (panes, active_pane) for the the input handling function to use
@@ -79,10 +79,9 @@ end
 -- EvalPaneSecondary=4
 -- because Pane3 is full-width in double and the other pane is supposed to be hidden when it is visible
 
-if style == "OnePlayerTwoSides" then
+if style == "OnePlayerTwoSides" or (style == "TwoPlayersSharedSides") then
 	local cn  = PlayerNumber:Reverse()[mpn] + 1
 	local ocn = (cn % 2) + 1
-
 	-- if the player wanted their primary pane to be something that is full-width in double
 	if panes[cn][active_pane[cn]]:GetChild(""):GetCommand("ExpandForDouble") then
 		-- hide all panes for the other controller

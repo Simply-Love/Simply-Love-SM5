@@ -2,6 +2,7 @@ local player, controller = unpack(...)
 
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local TapNoteScores = {
 	Types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
@@ -63,33 +64,51 @@ end
 
 -- then handle hands/ex, holds, mines, rolls
 for index, RCType in ipairs(RadarCategories.Types) do
-    local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
-    local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
-    possible = clamp(possible, 0, 999)
+	-- Replace hands with the Routine Score if we're in routine mode
+	if index == 1 and (styletype == "TwoPlayersSharedSides") then
+		local PercentDP = pss:GetPercentDancePoints()
+		percent = FormatPercentScore(PercentDP)
+		-- Format the Percentage string, removing the % symbol
+		percent = percent:gsub("%%", "")
+		t[#t+1] = LoadFont("Wendy/_wendy white")..{
+			Name="Percent",
+			Text=percent,
+			InitCommand=function(self)
+				self:horizalign(right):zoom(0.4)
+				self:x( ((controller == PLAYER_1) and -114) or 286 )
+				self:y(47)
+				self:diffuse( (controller == PLAYER_1) and Color.Blue or Color.Red)
+			end
+		}
+	else
+		local performance = pss:GetRadarActual():GetValue( "RadarCategory_"..RCType )
+		local possible = pss:GetRadarPossible():GetValue( "RadarCategory_"..RCType )
+		possible = clamp(possible, 0, 999)
 
-    -- player performance value
-    -- use a RollingNumber to animate the count tallying up for visual effect
-    t[#t+1] = Def.RollingNumbers{
-        Font="Wendy/_ScreenEvaluation numbers",
-        InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
-        BeginCommand=function(self)
-            self:x( RadarCategories.x[ToEnumShortString(controller)] )
-            self:y((index-1)*35 + 53)
-            self:targetnumber(performance)
-        end
-    }
+		-- player performance value
+		-- use a RollingNumber to animate the count tallying up for visual effect
+		t[#t+1] = Def.RollingNumbers{
+			Font="Wendy/_ScreenEvaluation numbers",
+			InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
+			BeginCommand=function(self)
+				self:x( RadarCategories.x[ToEnumShortString(controller)] )
+				self:y((index-1)*35 + 53)
+				self:targetnumber(performance)
+			end
+		}
 
-    -- slash and possible value
-    t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
-        InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
-        BeginCommand=function(self)
-            self:x( ((controller == PLAYER_1) and -114) or 286 )
-            self:y((index-1)*35 + 53)
-            self:settext(("/%03d"):format(possible))
-            local leadingZeroAttr = { Length=4-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
-            self:AddAttribute(0, leadingZeroAttr )
-        end
-    }
+		-- slash and possible value
+		t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
+			BeginCommand=function(self)
+				self:x( ((controller == PLAYER_1) and -114) or 286 )
+				self:y((index-1)*35 + 53)
+				self:settext(("/%03d"):format(possible))
+				local leadingZeroAttr = { Length=4-tonumber(tostring(possible):len()), Diffuse=color("#5A6166") }
+				self:AddAttribute(0, leadingZeroAttr )
+			end
+		}
+	end
 end
 
 return t
