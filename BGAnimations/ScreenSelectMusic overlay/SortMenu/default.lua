@@ -173,10 +173,10 @@ local function AddFavorites()
     for player in ivalues(GAMESTATE:GetHumanPlayers()) do
         local path = getFavoritesPath(player)
         if FILEMAN:DoesFileExist(path) then
-            return {{"MixTape", "Preferred"}}
+			return true
         end
     end
-    return nil
+	return false
 end
 
 -- Only display the View Downloads option if we're connected to
@@ -343,8 +343,20 @@ local t = Def.ActorFrame {
 			-- The first element becomes the top and bottomtext for the category.
 			-- The second element's table contains that options will show under this category.
 			-- It follows the same structure as the top level table.
-
+			
+			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
+			-- and offer to switch them back to casual mode. This allows them to do so again.
+			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
+			-- include the check.
+			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },	
+			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
+			{ {"MixTape", "Preferred"}, AddFavorites },
+			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
+			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
+			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
+			{ { "", "GoBack" }, PREFSMAN:GetPreference("ThreeKeyNavigation") },
 			{ 
+
 				{"", "CategorySorts"}, 
 				{
 					{{"SortBy", "Group"} },
@@ -368,6 +380,7 @@ local t = Def.ActorFrame {
 					{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 					{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 					{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+					{ {"MixTape", "Preferred"}, AddFavorites },
 				}
 			},
 			{
@@ -387,18 +400,7 @@ local t = Def.ActorFrame {
 			{
 				{"", "CategoryPlaylists"},
 				AddPlaylists,
-			},
-			{ { "", "GoBack" }, PREFSMAN:GetPreference("ThreeKeyNavigation") },
-			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
-			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
-			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
-			AddFavorites(),
-			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
-			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
-			-- and offer to switch them back to casual mode. This allows them to do so again.
-			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
-			-- include the check.
-			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },	
+			}
 		}
 		self:visible(false)
 	end,
