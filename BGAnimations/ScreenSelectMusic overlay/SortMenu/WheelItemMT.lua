@@ -107,10 +107,18 @@ return {
 						subself:xy(32,17)
 					end,
 					GainFocusCommand=function(subself)
-						subself:diffuse(1,1,1,1)
+						if subself:GetText() == "Go Back" then
+							subself:diffuse(1,0.6,0.6,1)
+						else
+							subself:diffuse(1,1,1,1)
+						end
 					end,
 					LoseFocusCommand=function(subself)
-						subself:diffuse(0.6,0.6,0.6,1)
+						if subself:GetText() == "Go Back" then
+							subself:diffuse(Color.Red)
+						else
+							subself:diffuse(0.6,0.6,0.6,1)
+						end
 					end,
 				}
 			}
@@ -169,7 +177,6 @@ return {
 			else
 				bottomtext = tostring(info[2])
 			end
-
 			self.top_text:settext(toptext)
 			self.bottom_text:settext(bottomtext)
 		end
