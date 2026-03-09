@@ -368,7 +368,6 @@ local t = Def.ActorFrame {
 					{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 					{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
 					{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{AddFavorites()},
 				}
 			},
 			{
