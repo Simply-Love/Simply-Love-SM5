@@ -115,7 +115,7 @@ return {
 					end,
 					LoseFocusCommand=function(subself)
 						if subself:GetText() == "Go Back" then
-							subself:diffuse(Color.Red)
+							subself:diffuse(color("#7E0E13"))
 						else
 							subself:diffuse(0.6,0.6,0.6,1)
 						end
