@@ -389,6 +389,7 @@ local t = Def.ActorFrame {
 				{"", "CategoryPlaylists"},
 				AddPlaylists,
 			},
+			{ { "", "GoBack" }, PREFSMAN:GetPreference("ThreeKeyNavigation") },
 			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
 			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
 			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},

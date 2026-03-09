@@ -81,7 +81,7 @@ local input = function(event)
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
 			elseif focus.new_overlay then
 				if focus.new_overlay == "GoBack" then
-					sortmenu:playcommand("AssessAvailableChoices")
+					overlay:queuecommand("DirectInputToEngine")
 				-- if the overlay starts with "Category"
 				elseif focus.new_overlay:match("^Category") then
 					sortmenu:playcommand("ToggleCategory", { Category = focus.new_overlay })
