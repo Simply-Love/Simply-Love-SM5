@@ -378,7 +378,6 @@ local t = Def.ActorFrame {
 					{ {"HardTime", "PracticeMode"}, function() return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures") end },
 					{ {"TakeABreather", "LoadNewSongs"} },
 					{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
-					{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
 					{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
 				}
 			},
@@ -390,21 +389,16 @@ local t = Def.ActorFrame {
 				{"", "CategoryPlaylists"},
 				AddPlaylists,
 			},
-			{ {"SortBy", "Group"} },
-			{ {"SortBy", "Title"} },
-			{ {"SortBy", "Recent"} },
+			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
 			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
-			-- Allow players to switch out to a different SL GameMode if no stages have been played yet,
-			-- but don't add the current SL GameMode as a choice.
-			{ {"ChangeMode", "ITG"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "ITG" },
+			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
+			AddFavorites(),
+			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
 			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
 			-- and offer to switch them back to casual mode. This allows them to do so again.
 			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
 			-- include the check.
-			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
-			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
-			AddFavorites(),
-			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },	
+			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },	
 		}
 		self:visible(false)
 	end,
