@@ -253,15 +253,14 @@ local DisplayLobbyState = function(data, actor)
 			lines[#lines+1] = "Waiting for players to sync screens...\n"
 		end
 	end
-
-	for player in ivalues(updatedData.players) do
+	for i, player in ipairs(updatedData.players) do
 		local displayedScreen = player.screenName ~= "NoScreen" and player.screenName:gsub("Screen", "") or "Transitioning"
 		local readyText = ""
 		if screenName == "ScreenGameplay" and not updatedData.aux.allPlayersReady then
 			readyText =" ["..(player.ready and "✔" or "❌").."]"
 		end
 
-		local playerAndScreen = (#lines+1)..'. '..player.profileName..readyText.." - in "..displayedScreen
+		local playerAndScreen = i..'. '..player.profileName..readyText.." - in "..displayedScreen
 
 		lines[#lines+1] = playerAndScreen
 		for scoreScreen in ivalues(scoreScreens) do
@@ -302,7 +301,6 @@ local DisplayLobbyState = function(data, actor)
 
 	-- This gets cleared out by the server when every player has arrived at the song selection screen.
 	songSelected = (data.songInfo ~= nil)
-
 	actor:GetChild("Display"):playcommand("UpdateText", {text=table.concat(lines, "\n")})
 end
 
