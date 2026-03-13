@@ -828,7 +828,6 @@ local af = Def.ActorFrame{
 				self:x(180)
 				self.idx = idx - 1
 			end,
-
 			Def.Quad{
 				InitCommand=function(self)
 					self:zoomto(200, 40):diffuse(Color.White)
@@ -855,7 +854,23 @@ local af = Def.ActorFrame{
 				HoverCommand=function(self)
 					self:diffuse(active_index == self:GetParent().idx and GetHexColor(SL.Global.ActiveColorIndex) or Color.White)
 				end
-			}
+			},
+			Def.Quad{
+				InitCommand=function(self)
+					self:zoomto(200, 40):diffuse(color("#424242")):diffusealpha(0)
+				end,
+				SelectedCommand=function(self)
+					if active_index ~= self:GetParent().idx then
+						-- Gray out the button if it's not selected, since it won't do anything.
+						self:diffusealpha(0.70)
+					else
+						self:diffusealpha(0)
+					end
+				end,
+				LoseFocusCommand=function(self)
+					self:diffusealpha(0)
+				end
+			},
 		},
 
 		Def.ActorFrame{
@@ -896,7 +911,23 @@ local af = Def.ActorFrame{
 				HoverCommand=function(self)
 					self:diffuse(active_index == self:GetParent().idx and GetHexColor(SL.Global.ActiveColorIndex) or Color.White)
 				end
-			}
+			},
+			Def.Quad{
+				InitCommand=function(self)
+					self:zoomto(200, 40):diffuse(color("#424242")):diffusealpha(0)
+				end,
+				SelectedCommand=function(self)
+					if active_index ~= self:GetParent().idx then
+						-- Gray out the button if it's not selected, since it won't do anything.
+						self:diffusealpha(0.70)
+					else
+						self:diffusealpha(0)
+					end
+				end,
+				LoseFocusCommand=function(self)
+					self:diffusealpha(0)
+				end
+			},
 		},
 
 		Def.ActorFrame{
@@ -937,7 +968,23 @@ local af = Def.ActorFrame{
 				HoverCommand=function(self)
 					self:diffuse(active_index == self:GetParent().idx and GetHexColor(SL.Global.ActiveColorIndex) or Color.White)
 				end
-			}
+			},
+			Def.Quad{
+				InitCommand=function(self)
+					self:zoomto(200, 40):diffuse(color("#424242")):diffusealpha(0)
+				end,
+				SelectedCommand=function(self)
+					if active_index ~= self:GetParent().idx then
+						-- Gray out the button if it's not selected, since it won't do anything.
+						self:diffusealpha(0.70)
+					else
+						self:diffusealpha(0)
+					end
+				end,
+				LoseFocusCommand=function(self)
+					self:diffusealpha(0)
+				end
+			},
 		},
 	},
 
