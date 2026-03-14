@@ -410,7 +410,7 @@ end
 
 -- Column cues require decompressing the chart's NoteData, which is expensive.
 ParseColumnCues = function(steps, pn)
-	local columnCues = steps:GetColumnCues(SL.Global.ColumnCueMinTime)
+	local columnCues = steps:GetColumnCues(SL.Global.ColumnCueMinTime, pn)
 	for _, cue in ipairs(columnCues) do
 		for _, col in ipairs(cue.columns) do
 			col.isMine = (col.noteType == MINE_NOTE_TYPE)
