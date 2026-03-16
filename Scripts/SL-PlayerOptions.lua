@@ -699,19 +699,20 @@ local Overrides = {
 			for w in ivalues(disabledWindows) do
 				windows[tonumber(ToEnumShortString(w):sub(-1))] = false
 			end
-
 			-- Compare them to any of our available selections
 			local matched = false
 			for i=1,#list do
 				local all_match = true
-				for w,window in ipairs(windows) do
-					if window ~= self.Values[i][w] then all_match = false; break end
-				end
-				if all_match then
-					matched = true
-					list[i] = true
-					mods.TimingWindows = windows
-					break
+				if self.Values[i] then
+					for w,window in ipairs(windows) do
+						if window ~= self.Values[i][w] then all_match = false; break end
+					end		
+					if all_match then
+						matched = true
+						list[i] = true
+						mods.TimingWindows = windows
+						break
+					end
 				end
 			end
 
