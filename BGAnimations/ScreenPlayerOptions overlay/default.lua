@@ -15,6 +15,41 @@ local speedmod_def = {
 	M = { upper=2000, increment=5 }
 }
 
+-- In Routine (couples) mode, default players to the red and blue couples skins
+-- if they aren't already on a couples noteskin.
+if IsRoutine() then
+	local couples_noteskin
+	for skin in ivalues(NOTESKIN:GetNoteSkinNames(false)) do
+		if skin:lower() == "couples" then
+			couples_noteskin = skin
+			break
+		end
+	end
+
+	if couples_noteskin then
+		local already_on_couples = true
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local current = SL[ToEnumShortString(player)].ActiveModifiers.NoteSkin or ""
+			if current:lower() ~= couples_noteskin:lower() then
+				already_on_couples = false
+				break
+			end
+		end
+
+		if not already_on_couples then
+			local variants = NOTESKIN:GetVariantNamesForNoteSkin(couples_noteskin) or {}
+			local defaults = { P1 = "couples__blue", P2 = "couples__red" }
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local pn = ToEnumShortString(player)
+				SL[pn].ActiveModifiers.NoteSkin = couples_noteskin
+				if defaults[pn] then
+					SL[pn].ActiveModifiers.NoteSkinVariant = defaults[pn]
+				end
+			end
+		end
+	end
+end
+
 local variants_def = {}
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)
@@ -23,7 +58,9 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		if NOTESKIN:HasVariants(noteskin_name) then
 			variants_def[pn] = NOTESKIN:GetVariantNamesForNoteSkin(noteskin_name)
 			-- Put the current NoteSkin at the front of the list of variants so that it's the default selection when we refresh the OptionRow
-			table.insert(variants_def[pn], 1, noteskin_name)
+			if not IsRoutine() then
+				table.insert(variants_def[pn], 1, noteskin_name)
+			end
 		else
 			variants_def[pn] = {noteskin_name}
 		end
@@ -235,7 +272,6 @@ local t = Def.ActorFrame{
 			if variant_bmt then
 				local current_variant = SL[pn].ActiveModifiers.NoteSkinVariant or ""
 				local screen = SCREENMAN:GetTopScreen()
-
 				MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=player, Name="NoteSkinVariant", Value=current_variant})
 				screen:RedrawOptions() 
 			end
