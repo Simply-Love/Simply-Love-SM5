@@ -128,7 +128,7 @@ local InputHandler = function(event)
 					showing_leave_confirm = false
 					t:GetChild("LeaveConfirmPrompt"):visible(false)
 				end
-			elseif event.GameButton == "Select" then
+			elseif event.GameButton == "Select" or event.GameButton == "Back" then
 				SOUND:PlayOnce(THEME:GetPathS("Common", "Cancel"))
 				showing_leave_confirm = false
 				t:GetChild("LeaveConfirmPrompt"):visible(false)
@@ -194,7 +194,7 @@ local InputHandler = function(event)
 					end
 					t:queuecommand("UpdatePasswordText")
 				end
-			elseif event.GameButton == "Select" then
+			elseif event.GameButton == "Select" or event.GameButton == "Back" then
 				local password = GetPromptPassword()
 				if password:len() > 0 then
 					SetPromptPassword(password:sub(1, -2))
@@ -345,7 +345,7 @@ local InputHandler = function(event)
 				t:queuecommand("UpdatePasswordPromptUI")
 				t:queuecommand("UpdatePasswordText")
 			end
-		elseif event.GameButton == "Select" then
+		elseif event.GameButton == "Select" or event.GameButton == "Back" then
 			if list_selected then
 				list_selected = false
 				SOUND:PlayOnce(THEME:GetPathS("Common", "Cancel"))
