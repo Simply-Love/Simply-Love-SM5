@@ -7,6 +7,11 @@ local readyState = {
 	["P2"] = true
 }
 local songSelected = false
+-- Track Start button hold time for disconnect
+local startHoldTime = {
+	["P1"] = nil,
+	["P2"] = nil
+}
 -- These screens are the ones we want to display the player's scores for.
 local scoreScreens = {"ScreenGameplay", "ScreenEvaluationStage"}
 
@@ -38,13 +43,29 @@ local autoConnect = false
 -- This input handler is used to lock input while we're waiting on the server to tell us to proceed.
 -- It does nothing, but it's necessary to prevent the player from interacting with the screen
 -- until everyone is ready.
+-- Holding Start for 5 seconds will disconnect from the lobby.
 local InputHandler = function(event)
 	if SCREENMAN:GetTopScreen() and SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" and isWaiting then
+		local pn = ToEnumShortString(event.PlayerNumber)
 		if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
-			local pn = ToEnumShortString(event.PlayerNumber)
 			readyState[pn] = true
-
+			startHoldTime[pn] = GetTimeSinceStart()
 			MESSAGEMAN:Broadcast("UpdateMachineState")
+		elseif event.type == "InputEventType_Repeat" and event.GameButton == "Start" then
+			-- Check if Start has been held for 5 seconds
+			SM("Continue holding &START; for " .. (5 - math.floor(GetTimeSinceStart() - startHoldTime[pn])) .. " more seconds to disconnect...")
+			if startHoldTime[pn] ~= nil then
+				local holdDuration = GetTimeSinceStart() - startHoldTime[pn]
+				if holdDuration >= 5.0 then
+					SM("Disconnected from lobby.")
+					startHoldTime[pn] = nil
+					isWaiting = false
+					SCREENMAN:GetTopScreen():PauseGame(false)
+					MESSAGEMAN:Broadcast("DisconnectOnline")
+				end
+			end
+		elseif event.type == "InputEventType_Release" and event.GameButton == "Start" then
+			startHoldTime[pn] = nil
 		end
 	end
 
