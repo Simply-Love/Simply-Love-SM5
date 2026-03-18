@@ -139,7 +139,7 @@ local GetMachineState = function()
 	}
 end
 
-local OrderPlayers = function(data)
+local OrderPlayers = function(data, localScreenName)
 	local updatedData = {
 		players = {},
 
@@ -155,7 +155,9 @@ local OrderPlayers = function(data)
 	--  Copy over the song info, if any.
 	updatedData.songInfo = data.songInfo
 
-	local firstScreen = nil
+	-- Use the current screen as the baseline to prevent
+	-- incorrectly reporting all players as synchronized.
+	local firstScreen = localScreenName
 	-- Process the scoreScreens first so we can sort the players by score.
 	for player in ivalues(data.players) do
 		if firstScreen == nil then
@@ -227,7 +229,7 @@ local DisplayLobbyState = function(data, actor)
 	local screen = SCREENMAN:GetTopScreen()
 	local screenName = screen and screen:GetName() or "NoScreen"
 
-	local updatedData = OrderPlayers(data)
+	local updatedData = OrderPlayers(data, screenName)
 
 	local lines = {}
 
