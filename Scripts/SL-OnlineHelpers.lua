@@ -324,6 +324,9 @@ local DisplayLobbyState = function(data, actor)
 			if topScreen and topScreen:GetName() == "ScreenSelectMusic" then
 				local song = SONGMAN:FindSong(data.songInfo.songPath)
 				local wheel = topScreen:GetMusicWheel()
+				if not song and data.songInfo.songPath:split("/")[2] then
+					song = SONGMAN:FindSong(data.songInfo.songPath:split("/")[2])
+				end
 				if song and wheel then
 					wheel:SelectSong(song)
 					wheel:Move(1)
