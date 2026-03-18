@@ -175,7 +175,7 @@ return {
 			elseif THEME:HasString("ScreenSelectPlayMode", info[2]) then
 				bottomtext = THEME:GetString("ScreenSelectPlayMode", info[2])
 			else
-				bottomtext = tostring(info[2])
+				bottomtext = tostring(info[2]):gsub("^Category", "")
 			end
 			self.top_text:settext(toptext)
 			self.bottom_text:settext(bottomtext)
