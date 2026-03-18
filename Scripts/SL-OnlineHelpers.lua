@@ -147,6 +147,8 @@ local OrderPlayers = function(data, localScreenName)
 		aux = {
 			-- Used to give input back to the players if we're waiting.
 			allInSameScreen = true,
+			-- Evaluation should stay locked only while any player is still in gameplay.
+			anyInGameplay = false,
 			-- Used to determine when to display the Ready/Not Ready state for players.
 			allPlayersReady = true,
 		}
@@ -166,6 +168,10 @@ local OrderPlayers = function(data, localScreenName)
 
 		if player.screenName ~= firstScreen then
 			updatedData.aux.allInSameScreen = false
+		end
+
+		if player.screenName == "ScreenGameplay" then
+			updatedData.aux.anyInGameplay = true
 		end
 
 		if not player.ready then
@@ -203,6 +209,10 @@ local OrderPlayers = function(data, localScreenName)
 			updatedData.aux.allInSameScreen = false
 		end
 
+		if player.screenName == "ScreenGameplay" then
+			updatedData.aux.anyInGameplay = true
+		end
+
 		if not player.ready then
 			updatedData.aux.allPlayersReady = false
 		end
@@ -238,8 +248,11 @@ local DisplayLobbyState = function(data, actor)
 		if screenName == "ScreenGameplay" then
 			-- Gameplay requires everyone to be in gameplay and manually ready-up.
 			readyToUnlock = updatedData.aux.allInSameScreen and updatedData.aux.allPlayersReady
+		elseif screenName == "ScreenEvaluationStage" then
+			-- Evaluation should only be blocked while someone is still playing.
+			readyToUnlock = not updatedData.aux.anyInGameplay
 		elseif autoReadyScreens[screenName] then
-			-- Select Music and Evaluation only require everyone to arrive at the same screen.
+			-- Other auto-ready screens require everyone to arrive at the same screen.
 			readyToUnlock = updatedData.aux.allInSameScreen
 		else
 			readyToUnlock = updatedData.aux.allPlayersReady
