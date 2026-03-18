@@ -9,8 +9,8 @@ local readyState = {
 local songSelected = false
 -- Track Start button hold time for disconnect
 local startHoldTime = {
-	["P1"] = nil,
-	["P2"] = nil
+	["P1"] = 0,
+	["P2"] = 0
 }
 -- These screens are the ones we want to display the player's scores for.
 local scoreScreens = {"ScreenGameplay", "ScreenEvaluationStage"}
@@ -55,12 +55,12 @@ local InputHandler = function(event)
 			end
 		elseif event.type == "InputEventType_Repeat" and event.GameButton == "Start" then
 			-- Check if Start has been held for 5 seconds
-			if startHoldTime[pn] ~= nil then
+			if startHoldTime[pn] > 0 then
 				local holdDuration = GetTimeSinceStart() - startHoldTime[pn]
         SM("Continue holding &START; for " .. (5 - math.floor(holdDuration)) .. " more seconds to disconnect...")
 				if holdDuration >= 5.0 then
 					SM("Disconnected from lobby.")
-					startHoldTime[pn] = nil
+					startHoldTime[pn] = 0
 					isWaiting = false
 					if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
 						SCREENMAN:GetTopScreen():PauseGame(false)
@@ -69,7 +69,7 @@ local InputHandler = function(event)
 				end
 			end
 		elseif event.type == "InputEventType_Release" and event.GameButton == "Start" then
-			startHoldTime[pn] = nil
+			startHoldTime[pn] = 0
 		end
 	end
 
