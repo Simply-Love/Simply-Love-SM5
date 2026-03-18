@@ -273,6 +273,9 @@ local DisplayLobbyState = function(data, actor)
 			end
 		else
 			lines[#lines+1] = "Waiting for players to sync screens...\n"
+			if screenName == "ScreenGameplay" then
+				lines[#lines+1] = "Press &START; to ready up!\n"
+			end
 		end
 	end
 	for i, player in ipairs(updatedData.players) do
