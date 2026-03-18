@@ -211,6 +211,9 @@ local t = Def.ActorFrame{
 			local VariantRowIndex = FindOptionRowIndex(ScreenOptions,"NoteSkinVariant")
 			if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides" then
 				if player == GAMESTATE:GetMasterPlayerNumber() then
+					local otherPn = pn == "P1" and "P2" or "P1"
+					SL[otherPn].ActiveModifiers.SpeedMod     = SL[pn].ActiveModifiers.SpeedMod
+					SL[otherPn].ActiveModifiers.SpeedModType = SL[pn].ActiveModifiers.SpeedModType
 					SpeedModBMTs[pn] = ScreenOptions:GetOptionRow(SpeedModRowIndex):GetChild(""):GetChild("Item")
 				end
 			else

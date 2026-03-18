@@ -14,7 +14,7 @@ local RestartHandler = function(event)
 			holdingCtrl = true
 		elseif event.DeviceInput.button == "DeviceButton_r" then
 			if holdingCtrl then
-				SCREENMAN:GetTopScreen():SetPrevScreenName("ScreenGameplay"):SetNextScreenName("ScreenGameplay"):begin_backing_out()
+				SCREENMAN:GetTopScreen():SetPrevScreenName(Branch.GameplayScreen()):SetNextScreenName(Branch.GameplayScreen()):begin_backing_out()
 			end
 		end
 	elseif event.type == "InputEventType_Release" then
@@ -22,6 +22,33 @@ local RestartHandler = function(event)
 			holdingCtrl = false
 		end
 	end
+end
+
+local po = {}
+for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+	po[player] = GAMESTATE:GetPlayerState(player):GetPlayerOptions('ModsLevel_Song')
+end
+-- If the style is TwoPlayersSharedSides, we need to set the speed mod for the routine as well
+if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides" then
+	local xmod = po[GAMESTATE:GetMasterPlayerNumber()]:XMod()
+	local mmod = po[GAMESTATE:GetMasterPlayerNumber()]:MMod()
+	local cmod = po[GAMESTATE:GetMasterPlayerNumber()]:CMod()
+
+	local mini = tonumber(SL[ToEnumShortString(GAMESTATE:GetMasterPlayerNumber())].ActiveModifiers.Mini:sub(1, -2)) / 100
+
+	local speedmod = SL[ToEnumShortString(GAMESTATE:GetMasterPlayerNumber())].ActiveModifiers.SpeedMod
+	local speedmod_str = (cmod ~= nil and "CMod") or (mmod ~= nil and "MMod") or (xmod ~= nil and "XMod")
+
+	local fmt = {
+		XMod = "mod,%.2fx",
+		MMod = "mod,m%d",
+		CMod = "mod,c%d",
+	}
+	local gcString = fmt[speedmod_str]:format(speedmod)
+	gcString = gcString ..""
+	GAMESTATE:ApplyGameCommand(gcString.."mod,"..SL[ToEnumShortString(GAMESTATE:GetMasterPlayerNumber())].ActiveModifiers.Mini.." mini", PLAYER_2)
+	GAMESTATE:ApplyGameCommand(gcString.."mod,"..SL[ToEnumShortString(GAMESTATE:GetMasterPlayerNumber())].ActiveModifiers.Mini.." mini", PLAYER_1)
+
 end
 
 local t = Def.ActorFrame{

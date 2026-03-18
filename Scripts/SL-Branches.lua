@@ -217,7 +217,7 @@ Branch.AfterSelectMusic = function()
 		end
 
 		-- while everything else (single, versus, double, etc.) uses ScreenGameplay
-		return "ScreenGameplay"
+		return Branch.GameplayScreen()
 	end
 end
 

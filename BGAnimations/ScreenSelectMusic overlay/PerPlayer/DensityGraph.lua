@@ -135,7 +135,7 @@ af2[#af2+1] = NPS_Histogram(player, width, height)..{
 af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 
 -- The Peak NPS text
-local peakNPSText = THEME:GetString("ScreenGameplay", "PeakNPS")
+local peakNPSText = THEME:GetString(Branch.GameplayScreen(), "PeakNPS")
 af2[#af2+1] = LoadFont("Common Normal")..{
 	Name="NPS",
 	Text=peakNPSText..": ",
