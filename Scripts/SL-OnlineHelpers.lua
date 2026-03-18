@@ -45,12 +45,14 @@ local autoConnect = false
 -- until everyone is ready.
 -- Holding Start for 5 seconds will disconnect from the lobby.
 local InputHandler = function(event)
-	if SCREENMAN:GetTopScreen() and SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" and isWaiting then
+	if SCREENMAN:GetTopScreen() and isWaiting and event.PlayerNumber then
 		local pn = ToEnumShortString(event.PlayerNumber)
 		if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
-			readyState[pn] = true
 			startHoldTime[pn] = GetTimeSinceStart()
-			MESSAGEMAN:Broadcast("UpdateMachineState")
+			if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
+				readyState[pn] = true
+				MESSAGEMAN:Broadcast("UpdateMachineState")
+			end
 		elseif event.type == "InputEventType_Repeat" and event.GameButton == "Start" then
 			-- Check if Start has been held for 5 seconds
 			SM("Continue holding &START; for " .. (5 - math.floor(GetTimeSinceStart() - startHoldTime[pn])) .. " more seconds to disconnect...")
@@ -60,7 +62,9 @@ local InputHandler = function(event)
 					SM("Disconnected from lobby.")
 					startHoldTime[pn] = nil
 					isWaiting = false
-					SCREENMAN:GetTopScreen():PauseGame(false)
+					if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
+						SCREENMAN:GetTopScreen():PauseGame(false)
+					end
 					MESSAGEMAN:Broadcast("DisconnectOnline")
 				end
 			end
@@ -513,22 +517,25 @@ CreateOnlineHandler = function()
             end
           end
 
-					if autoReadyScreens[screenName] then
-						for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
-							local pn = ToEnumShortString(player)
-							readyState[pn] = true
-						end
-					end
+		if autoReadyScreens[screenName] then
+			for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
+				local pn = ToEnumShortString(player)
+				readyState[pn] = true
+			end
+		end
 
           if screenName == "ScreenGameplay" then
-						for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
-							local pn = ToEnumShortString(player)
-							readyState[pn] = false
-						end
+			for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
+				local pn = ToEnumShortString(player)
+				readyState[pn] = false
+			end
             -- Input callbacks get cleared out when we transition screens, so we don't need to worry about explicitly removing it.
             SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
             SCREENMAN:GetTopScreen():PauseGame(true)
-          end
+		elseif isWaiting then
+			SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
+
+		end
 
           MESSAGEMAN:Broadcast("UpdateMachineState")
         end
