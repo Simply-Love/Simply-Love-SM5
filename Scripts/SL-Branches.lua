@@ -47,10 +47,9 @@ SelectMusicOrCourse = function()
 	if GAMESTATE:IsCourseMode() then
 		return "ScreenSelectCourse"
 	else
-		if SL.Global.GameMode == "Casual" then
-			-- return "ScreenSelectMusicCasual"
-			return "ScreenSelectMusic"
-		end
+		-- if SL.Global.GameMode == "Casual" then
+		-- 	return "ScreenSelectMusicCasual"
+		-- end
 
 		return "ScreenSelectMusic"
 	end
