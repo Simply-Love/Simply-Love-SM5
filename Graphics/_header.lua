@@ -21,7 +21,13 @@ return Def.ActorFrame{
 		ScreenChangedMessageCommand=function(self)
 			local topscreen = SCREENMAN:GetTopScreen():GetName()
 			if SL.Global.GameMode == "Casual" and (topscreen == "ScreenEvaluationStage" or topscreen == "ScreenEvaluationSummary") then
-				self:diffuse(dark)
+			    self:diffuse(dark)
+			end
+			if SL.Global.GameMode == "Casual" and topscreen == "ScreenSelectMusic" then
+			    self:diffuse({0.569, 0.816, 0.310,0.9})
+			end
+			if SL.Global.GameMode == "ITG" and topscreen == "ScreenSelectMusic" then
+			    self:diffuse({0.925, 0.333, 0.490, 0.9})
 			end
 			if ThemePrefs.Get("VisualStyle") == "SRPG9" then
 				self:diffuse(GetCurrentColor(true))

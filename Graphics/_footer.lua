@@ -21,6 +21,12 @@ return Def.Quad{
 		if topscreen == "ScreenSelectMusicCasual" then
 			self:diffuse(dark)
 		end
+		if SL.Global.GameMode == "Casual" and topscreen == "ScreenSelectMusic" then
+		    self:diffuse({0.569, 0.816, 0.310,0.9})
+		end
+		if SL.Global.GameMode == "ITG" and topscreen == "ScreenSelectMusic" then
+		    self:diffuse({0.925, 0.333, 0.490, 0.9})
+		end
 		if ThemePrefs.Get("VisualStyle") == "SRPG9" then
 			self:diffuse(GetCurrentColor(true))
 		end
