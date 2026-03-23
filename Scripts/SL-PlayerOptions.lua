@@ -679,51 +679,25 @@ local Overrides = {
 		Choices = function()
 			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 			local t = {THEME:GetString("SLPlayerOptions","None")}
-			-- assume pluralization via terminal s
-			local idx = 2
-			t[idx] = THEME:GetString(tns,"W5").."s"
-			idx = idx + 1
-			if SL.Global.GameMode=="ITG" then
+			if SL.Global.GameMode=="Casual" then
+				local idx = 2
 				t[idx] = THEME:GetString(tns,"W4").."s + "..t[idx-1]
-				idx = idx + 1
 			end
-			t[idx] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
 			return t
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
 			-- First determine the set of actual enabled windows.
 			local windows = {true,true,true,true,true}
-			local disabledWindows = playeroptions:GetDisabledTimingWindows()
-			for w in ivalues(disabledWindows) do
-				windows[tonumber(ToEnumShortString(w):sub(-1))] = false
-			end
-			-- Compare them to any of our available selections
-			local matched = false
-			for i=1,#list do
-				local all_match = true
-				if self.Values[i] then
-					for w,window in ipairs(windows) do
-						if window ~= self.Values[i][w] then all_match = false; break end
-					end		
-					if all_match then
-						matched = true
-						list[i] = true
-						mods.TimingWindows = windows
-						break
-					end
-				end
-			end
-
-			-- It's possible one may have manipulated the available windows through playeroptions elsewhere.
-			-- If the TimingWindows set via LoadSelections is not one of our valid choices then default
-			-- to a known value (all windows enabled).
-			if not matched then
-				mods.TimingWindows = {true,true,true,true,true}
+			if SL.Global.Gamemode == "Casual" then
+				windows[4] = false
+				windows[5] = false
+				list[2] = true
+			else
 				playeroptions:ResetDisabledTimingWindows()
 				list[1] = true
 			end
+			mods.TimingWindows = windows
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
@@ -732,6 +706,7 @@ local Overrides = {
 				if list[i] then
 					mods.TimingWindows = self.Values[i]
 					playeroptions:ResetDisabledTimingWindows()
+					if SL.Global.GameMode == "ITG" then return end
 					for i,enabled in ipairs(mods.TimingWindows) do
 						if not enabled then
 							playeroptions:DisableTimingWindow("TimingWindow_W"..i)
