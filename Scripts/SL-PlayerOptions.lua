@@ -1006,3 +1006,9 @@ function ApplyMods(player)
 		OptRow:SaveSelections( list, player )
 	end
 end
+
+function ResetPlayerMods(player)
+	local pn = ToEnumShortString(player)
+	SL[pn]:resetMods()
+	ApplyMods(player)
+end

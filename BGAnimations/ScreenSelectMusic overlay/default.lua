@@ -1,8 +1,25 @@
+local ResetModsInput = function(event)
+	if event.type == "InputEventType_Release" then return false end
+	if not event.DeviceInput then return false end
+	local key = event.DeviceInput.button
+	local player
+	if key == "DeviceButton_F9" then player = PLAYER_1
+	elseif key == "DeviceButton_F10" then player = PLAYER_2
+	end
+	if player and GAMESTATE:IsSideJoined(player) then
+		ResetPlayerMods(player)
+	end
+	return false
+end
+
 local af = Def.ActorFrame{
 	-- GameplayReloadCheck is a kludgy global variable used in ScreenGameplay in.lua to check
 	-- if ScreenGameplay is being entered "properly" or being reloaded by a scripted mod-chart.
 	-- If we're here in SelectMusic, set GameplayReloadCheck to false, signifying that the next
 	-- time ScreenGameplay loads, it should have a properly animated entrance.
+	OnCommand=function(self)
+		SCREENMAN:GetTopScreen():AddInputCallback(ResetModsInput)
+	end,
 	InitCommand=function(self)
 		SL.Global.GameplayReloadCheck = false
 		generateFavoritesForMusicWheel()
@@ -46,7 +63,7 @@ local af = Def.ActorFrame{
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
-	-- MenuTimer code for preserving SSM's timer value when going 
+	-- MenuTimer code for preserving SSM's timer value when going
 	-- from SSM to a different screen and back to SSM (i.e. returning from PlayerOptions).
 	LoadActor("./PreserveMenuTimer.lua"),
 	-- Apply player modifiers from profile

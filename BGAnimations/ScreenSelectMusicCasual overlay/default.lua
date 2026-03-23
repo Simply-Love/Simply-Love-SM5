@@ -83,6 +83,19 @@ local t = Def.ActorFrame {
 
 		-- One element of the Input table is an internal function, Handler
 		SCREENMAN:GetTopScreen():AddInputCallback( Input.Handler )
+		SCREENMAN:GetTopScreen():AddInputCallback(function(event)
+			if event.type == "InputEventType_Release" then return false end
+			if not event.DeviceInput then return false end
+			local key = event.DeviceInput.button
+			local player
+			if key == "DeviceButton_F9" then player = PLAYER_1
+			elseif key == "DeviceButton_F10" then player = PLAYER_2
+			end
+			if player and GAMESTATE:IsSideJoined(player) then
+				ResetPlayerMods(player)
+			end
+			return false
+		end)
 
 		-- set up initial variable states and the players' OptionRows
 		Input:Init()

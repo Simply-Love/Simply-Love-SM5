@@ -2,7 +2,7 @@
 
 local PlayerDefaults = {
 	__index = {
-		initialize = function(self)
+		resetMods = function(self)
 			self.ActiveModifiers = {
 				SpeedModType = "M",
 				SpeedMod = 250,
@@ -59,6 +59,9 @@ local PlayerDefaults = {
 				NoteFieldOffsetX = 0,
 				NoteFieldOffsetY = 0,
 			}
+		end,
+		initialize = function(self)
+			self:resetMods()
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
 				-- Chart identifiers for caching purposes.
