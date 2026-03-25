@@ -150,6 +150,7 @@ local GlobalDefaults = {
 			}
 			self.TimeAtSessionStart = nil
 			self.SampleMusicLoops = ThemePrefs.Get("SampleMusicLoops")
+			self.SampleMusicStartsImmediately = ThemePrefs.Get("SampleMusicStartsImmediately")
 
 			-- Is the music wheel locked? Useful when loading overlay screens
 			self.MusicWheelLocked = false
