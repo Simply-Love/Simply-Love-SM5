@@ -207,6 +207,7 @@ local Overrides = {
 	},
 	NoteSkinVariant = {
 		ExportOnChange = true,
+		HideOnDisable = true,
 		LayoutType = "ShowOneInRow",
 		Choices = { "       " },
 		EnabledForPlayers = function() 
@@ -881,6 +882,7 @@ local OptionRowDefault = {
 			self.EnabledForPlayers = Overrides[name].EnabledForPlayers or function() return {PLAYER_1, PLAYER_2} end
 			self.ReloadRowMessages = Overrides[name].ReloadRowMessages or {}
 			self.BroadcastOnExport = Overrides[name].BroadcastOnExport or {}
+			self.HideOnDisable = Overrides[name].HideOnDisable or false
 			
 			if self.SelectType == "SelectOne" then
 
