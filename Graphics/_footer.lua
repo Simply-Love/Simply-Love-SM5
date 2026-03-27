@@ -1,6 +1,8 @@
 -- tables of rgba values
 local dark  = {0,0,0,0.9}
 local light = {0.65,0.65,0.65,1}
+local green = {0.569, 0.816, 0.310,0.9}
+local pink = {0.925, 0.333, 0.490, 0.9}
 
 return Def.Quad{
 	Name="Footer",
@@ -21,12 +23,7 @@ return Def.Quad{
 		if topscreen == "ScreenSelectMusicCasual" then
 			self:diffuse(dark)
 		end
-		if SL.Global.GameMode == "Casual" and topscreen == "ScreenSelectMusic" then
-		    self:diffuse({0.569, 0.816, 0.310,0.9})
-		end
-		if SL.Global.GameMode == "ITG" and topscreen == "ScreenSelectMusic" then
-		    self:diffuse({0.925, 0.333, 0.490, 0.9})
-		end
+
 		if ThemePrefs.Get("VisualStyle") == "SRPG9" then
 			self:diffuse(GetCurrentColor(true))
 		end
@@ -37,6 +34,12 @@ return Def.Quad{
 				self:diffusealpha(0)
 			end
 		end
+    	 if SL.Global.GameMode == "Casual" and topscreen == "ScreenSelectMusic" then
+            self:diffuse(green)
+        end
+        if SL.Global.GameMode == "ITG" and topscreen == "ScreenSelectMusic" then
+            self:diffuse(pink)
+        end
 	end,
 	ColorSelectedMessageCommand=function(self)
 		if ThemePrefs.Get("VisualStyle") == "SRPG9" then
