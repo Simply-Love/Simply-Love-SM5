@@ -3,6 +3,10 @@
 ------------------------------------------------------------
 
 local EnoughCreditsToContinue = function()
+	if PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay" then
+		-- if we're not in Pay mode, we don't want to gate continues behind credits at all
+		return true
+	end
 	local credits = GetCredits().Credits
 
 	local premium = ToEnumShortString(GAMESTATE:GetPremium())
@@ -298,8 +302,8 @@ Branch.AfterProfileSave = function()
 		-- this style is more verbose but avoids obnoxious if statements
 
 		if setOver then
-			-- continues are only allowed in Pay mode
-			if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
+			-- continues are only allowed in Pay/Free modes
+			if PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Home" then
 				if SL.Global.ContinuesRemaining > 0 and EnoughCreditsToContinue() then
 					return "ScreenPlayAgain"
 				end
