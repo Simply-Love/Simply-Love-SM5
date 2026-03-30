@@ -6,7 +6,9 @@ return function(AllSteps)
 
 		local difficulty = stepchart:GetDifficulty()
 
-		if difficulty == "Difficulty_Edit" then
+		if SL.Global.GameMode == "Casual" and stepchart:GetMeter() > ThemePrefs.Get("CasualMaxMeter") then
+			-- skip charts above the casual difficulty limit
+		elseif difficulty == "Difficulty_Edit" then
 			-- gather edit charts into a separate table for now
 			edits[#edits+1] = stepchart
 		else

@@ -5,9 +5,30 @@ local ResetModsInput = function(event)
 	if player and GAMESTATE:IsSideJoined(player) then
 		ResetPlayerMods(player)
 		local pn = player == PLAYER_1 and "1" or "2"
-		MESSAGEMAN:Broadcast("ResetModsNotification", { text = "P"..pn.." mods reset" })
-	end
+        SCREENMAN:SystemMessage("P"..pn.." mods reset")
+end
 	return false
+end
+
+local ClampCasualDifficulty = function(player)
+	if SL.Global.GameMode ~= "Casual" then return end
+	local song = GAMESTATE:GetCurrentSong()
+	if not song then return end
+	local current = GAMESTATE:GetCurrentSteps(player)
+	if not current then return end
+	local maxMeter = ThemePrefs.Get("CasualMaxMeter")
+	if current:GetMeter() <= maxMeter then return end
+	local bestSteps = nil
+	for _, s in ipairs(SongUtil.GetPlayableSteps(song)) do
+		if s:GetMeter() <= maxMeter then
+			if bestSteps == nil or s:GetMeter() > bestSteps:GetMeter() then
+				bestSteps = s
+			end
+		end
+	end
+	if bestSteps then
+		GAMESTATE:SetCurrentSteps(player, bestSteps)
+	end
 end
 
 local af = Def.ActorFrame{
@@ -49,6 +70,9 @@ local af = Def.ActorFrame{
 			SCREENMAN:GetTopScreen():Cancel()
 		end
 	end,
+	CurrentStepsP1ChangedMessageCommand=function(self) ClampCasualDifficulty(PLAYER_1) end,
+	CurrentStepsP2ChangedMessageCommand=function(self) ClampCasualDifficulty(PLAYER_2) end,
+
 	ReloadScreenForMemoryCardsMessageCommand=function(self, params)
 		-- Wait some time for the profile screen to finish transitioning
 		-- before reloading the screen.
@@ -100,21 +124,6 @@ local af = Def.ActorFrame{
 
 	LoadActor("./SongSearch/default.lua"),
 
-	-- Notification text for mods reset
-	Def.BitmapText{
-		Font="Common Bold",
-		InitCommand=function(self)
-			self:xy(_screen.cx, _screen.cy - 80):zoom(0.5):diffusealpha(0):halign(0.5):valign(0.5)
-		end,
-		ResetModsNotificationMessageCommand=function(self, params)
-			self:settext(params.text)
-				:stoptweening()
-				:diffusealpha(1)
-				:sleep(1.5)
-				:linear(0.5)
-				:diffusealpha(0)
-		end,
-	},
 }
 
 return af
