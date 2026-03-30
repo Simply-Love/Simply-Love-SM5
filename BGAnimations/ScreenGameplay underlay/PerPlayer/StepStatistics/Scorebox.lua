@@ -302,7 +302,7 @@ local af = Def.ActorFrame{
 			if sendRequest then
 				self:GetParent():GetChild("Name1"):settext(THEME:GetString("GrooveStats", "Loading"))
 				self:playcommand("MakeGrooveStatsRequest", {
-					endpoint="player-leaderboards.php?"..NETWORK:EncodeQueryParameters(query),
+					endpoint="?action=playerLeaderboards&"..NETWORK:EncodeQueryParameters(query),
 					method="GET",
 					headers=headers,
 					timeout=10,

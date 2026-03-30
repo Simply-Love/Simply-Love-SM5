@@ -14,7 +14,7 @@ local af = Def.ActorFrame {
 	end,
     Def.Sprite{
         InitCommand=function(self)
-            self:animate(false):visible(false):x(-20)
+            self:animate(false):visible(false):x(-23)
             self:Load( THEME:GetPathG("", "fave-icon.png") )
             self:diffuseshift():effectperiod(0.8)
             if pn == "P1" then

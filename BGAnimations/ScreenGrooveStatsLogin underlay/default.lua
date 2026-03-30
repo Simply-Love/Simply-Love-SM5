@@ -35,6 +35,12 @@ ws = NETWORK:WebSocket{
           local username = data.username
           local side = data.side
           local pn = (side == 1) and "P1" or "P2"
+          local player = (side == 1) and PLAYER_1 or PLAYER_2
+
+          if data.playerOptions then
+            SetPlayerOptionsJsonFromGroovestats(player, data.playerOptions)
+          end
+
           SL[pn].ApiKey = apiKey
           SL[pn].GrooveStatsUsername = username
           -- If they're QR code logging in, let's assume they're a pad player.

@@ -30,6 +30,8 @@ local af = Def.ActorFrame{
 	CodeMessageCommand=function(self, params)
 		if params.Name == "Favorite1" or params.Name == "Favorite2" then
 			addOrRemoveFavorite(params.PlayerNumber)
+		elseif params.Name == "EscapeFromEventMode" then
+			SCREENMAN:GetTopScreen():Cancel()
 		end
 	end,
 	ReloadScreenForMemoryCardsMessageCommand=function(self, params)
@@ -80,10 +82,6 @@ local af = Def.ActorFrame{
 	-- The GrooveStats leaderboard that can (maybe) be accessed from the SortMenu
 	-- This is only added in "dance" mode and if the service is available.
 	LoadActor("./Leaderboard.lua"),
-
-	-- a yes/no prompt overlay for backing out of SelectMusic when in EventMode can be
-	-- activated via "CodeEscapeFromEventMode" under [ScreenSelectMusic] in Metrics.ini
-	LoadActor("./EscapeFromEventMode.lua"),
 
 	LoadActor("./SongSearch/default.lua"),
 }

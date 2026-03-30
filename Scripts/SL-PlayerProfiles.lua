@@ -149,11 +149,10 @@ LoadProfileCustom = function(profile, dir)
 				if k=="PlayerOptionsString" and type(v)=="string" then
 					-- v here is the comma-delimited set of modifiers the engine's PlayerOptions interface understands
 
-					-- update the SL table so that this PlayerOptionsString value is easily accessible throughout the theme
-					SL[pn].PlayerOptionsString = v
-
 					-- use the engine's SetPlayerOptions() method to set a whole bunch of mods in the engine all at once
 					GAMESTATE:GetPlayerState(player):SetPlayerOptions("ModsLevel_Preferred", v)
+					-- Special case timing windows as they're not controllable in SL.
+					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):ResetDisabledTimingWindows()
 
 					-- However! It's quite likely that a FailType mod could be in that^ string, meaning a player could
 					-- have their own setting for FailType saved to their profile.  I think it makes more sense to let
@@ -161,6 +160,10 @@ LoadProfileCustom = function(profile, dir)
 					-- use the PlayerOptions interface to set FailSetting() using the default FailType setting from
 					-- the operator menu's Advanced Options
 					GAMESTATE:GetPlayerState(player):GetPlayerOptions("ModsLevel_Preferred"):FailSetting( GetDefaultFailType() )
+					
+					-- Finally extract out the PlayerOptionsString by the fetching it from the engine
+					-- Update the SL table so that this PlayerOptionsString value is easily accessible throughout the theme
+					SL[pn].PlayerOptionsString = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 				end
 			end
 		end

@@ -114,7 +114,7 @@ t[#t+1] = Def.Quad {
 -- in the hours to implement a proper fix and the community will surely be better for it. :)
 -- -----------------------------------------------------------------------
 
-local rows_with_proxies = { "NoteSkin", "JudgmentGraphic", "ComboFont", "HoldJudgment", "MusicRate" }
+local rows_with_proxies = { "NoteSkin", "NoteSkinVariant", "JudgmentGraphic", "ComboFont", "HoldJudgment", "MusicRate" }
 
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	local pn = ToEnumShortString(player)
@@ -140,7 +140,6 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 	proxy.RefreshActorProxyMessageCommand=function(self, params)
 		if player ~= params.Player then return end
 		if not (params.Name and params.Value) then return end
-
 		local optrow = self:GetParent():GetParent():GetParent()
 		if optrow and optrow:GetName() == params.Name then
 
@@ -155,7 +154,6 @@ for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 			else
 				offscreen_actor_name = ("%s_%s"):format(params.Name, params.Value)
 			end
-
 			-- attempt to find the offscreen actor added by ./BGAnimations/ScreenPlayerOptions overlay.lua
 			local offscreen_actor = SCREENMAN:GetTopScreen():GetChild("Overlay"):GetChild(offscreen_actor_name)
 			-- ensure that that actor exists before attempting to set it as the target of this ActorProxy

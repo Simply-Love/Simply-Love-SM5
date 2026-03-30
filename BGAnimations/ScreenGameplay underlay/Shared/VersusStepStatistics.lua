@@ -1,5 +1,6 @@
 local Players = GAMESTATE:GetHumanPlayers()
 local IsUltraWide = (GetScreenAspectRatio() > 21/9)
+local FilterAlpha = BackgroundFilterValues()
 
 local ShouldDisplayStatsForPlayer = function(player)
     local pn = ToEnumShortString(player)
@@ -25,6 +26,17 @@ local ShouldDisplayStats = function()
     return shouldDisplay
 end
 
+-- Returns a table of the background filter alpha values for each player
+-- used to diffuse the step statistics bg quad accordingly
+local determineFilterAlphas = function()
+    local alphas = {}
+    for player in ivalues(Players) do
+        local pn = ToEnumShortString(player)
+        alphas[player] = clamp(FilterAlpha[SL[pn].ActiveModifiers.BackgroundFilter]/100 or 0, 0.25, 0.9)
+    end
+    return alphas
+end
+
 if not ShouldDisplayStats() then
     return
 end
@@ -35,19 +47,15 @@ local af = Def.ActorFrame{
     end
 }
 
-for player in ivalues(Players) do
-    if ShouldDisplayStatsForPlayer(player) and #Players > 1 then
-	
-		local pn = tonumber(player:sub(-1))
-	
-        af[#af+1] = Def.Quad{
-            InitCommand=function(self)
-                self:diffuse(Color.Black)
-				self:zoomto(150, SCREEN_HEIGHT)
-            end,
-        }
-        
-    end
+local playerFilters = determineFilterAlphas()
+if ShouldDisplayStats() then
+    af[#af+1] = Def.Quad{
+        InitCommand=function(self)
+            self:diffuseleftedge(0,0,0, playerFilters[PLAYER_1] or 0.25)
+                :diffuserightedge(0,0,0, playerFilters[PLAYER_2] or 0.25)
+            self:zoomto(150, SCREEN_HEIGHT)
+        end,
+    }
 end
 
 for player in ivalues(Players) do

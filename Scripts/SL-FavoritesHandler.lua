@@ -30,7 +30,7 @@ addOrRemoveFavorite = function(player)
 
         elseif favoritesString then
             -- If song found in the player's favorites
-            local checksong = string.match(favoritesString, strPlainText(arr[3] .. "/" .. arr[4]))
+            local checksong = string.match(favoritesString, strPlainText(arr[3] .. "/" .. arr[4]) .. "\n")
 
             -- Song found
             if checksong then
