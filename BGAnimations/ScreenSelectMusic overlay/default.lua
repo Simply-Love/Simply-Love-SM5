@@ -1,13 +1,11 @@
 local ResetModsInput = function(event)
 	if event.type == "InputEventType_Release" then return false end
-	if not event.DeviceInput then return false end
-	local key = event.DeviceInput.button
-	local player
-	if key == "DeviceButton_F9" then player = PLAYER_1
-	elseif key == "DeviceButton_F10" then player = PLAYER_2
-	end
+	if event.GameButton ~= "EffectUp" then return false end
+	local player = event.PlayerNumber
 	if player and GAMESTATE:IsSideJoined(player) then
 		ResetPlayerMods(player)
+		local pn = player == PLAYER_1 and "1" or "2"
+		MESSAGEMAN:Broadcast("ResetModsNotification", { text = "P"..pn.." mods reset" })
 	end
 	return false
 end
@@ -101,6 +99,22 @@ local af = Def.ActorFrame{
 	LoadActor("./Leaderboard.lua"),
 
 	LoadActor("./SongSearch/default.lua"),
+
+	-- Notification text for mods reset
+	Def.BitmapText{
+		Font="Common Bold",
+		InitCommand=function(self)
+			self:xy(_screen.cx, _screen.cy - 80):zoom(0.5):diffusealpha(0):halign(0.5):valign(0.5)
+		end,
+		ResetModsNotificationMessageCommand=function(self, params)
+			self:settext(params.text)
+				:stoptweening()
+				:diffusealpha(1)
+				:sleep(1.5)
+				:linear(0.5)
+				:diffusealpha(0)
+		end,
+	},
 }
 
 return af
