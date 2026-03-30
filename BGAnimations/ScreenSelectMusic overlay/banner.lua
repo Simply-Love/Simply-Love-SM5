@@ -59,7 +59,7 @@ t[#t+1] = Def.ActorFrame{
 	},
 
 	--the music rate text
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:shadowlength(1):zoom(0.85) end,
 		OnCommand=function(self)
 			self:settext(("%g"):format(SL.Global.ActiveModifiers.MusicRate) .. "x " .. THEME:GetString("OptionTitles", "MusicRate"))

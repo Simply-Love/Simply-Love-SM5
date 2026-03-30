@@ -22,7 +22,7 @@ local SongOrCourse = args.SongOrCourse or (GAMESTATE:IsCourseMode() and GAMESTAT
 local StepsOrTrail = args.StepsOrTrail or ((args.RoundsAgo==nil or args.RoundsAgo==1) and (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player) or GAMESTATE:GetCurrentSteps(player)))
 if not (SongOrCourse and StepsOrTrail) then return af end
 
-local Font = args.Font or "Common Normal"
+local Font = args.Font or ThemePrefs.Get("ThemeFont") .. " Normal"
 local row_height = args.RowHeight or 22
 
 -- ---------------------------------------------
@@ -147,25 +147,25 @@ for i=lower,upper do
 	row[#row+1] = LoadFont(Font)..{
 		Name="Rank",
 		Text=i..". ",
-		InitCommand=function(self) self:horizalign(right):xy(-120, row_index*row_height) end,
+		InitCommand=function(self) self:horizalign(right):xy(-130, row_index*row_height):maxwidth(55) end,
 	}
 
 	row[#row+1] = LoadFont(Font)..{
 		Name="Name",
 		Text=name,
-		InitCommand=function(self) self:horizalign(left):xy(-110, row_index*row_height) end,
+		InitCommand=function(self) self:horizalign(left):xy(-120, row_index*row_height):maxwidth(130) end,
 	}
 
 	row[#row+1] = LoadFont(Font)..{
 		Name="Score",
 		Text=score,
-		InitCommand=function(self) self:horizalign(left):xy(-24, row_index*row_height) end,
+		InitCommand=function(self) self:horizalign(left):xy(16, row_index*row_height) end,
 	}
 
 	row[#row+1] = LoadFont(Font)..{
 		Name="Date",
 		Text=date,
-		InitCommand=function(self) self:horizalign(left):xy(50, row_index*row_height) end,
+		InitCommand=function(self) self:horizalign(left):xy(72, row_index*row_height) end,
 	}
 
 	af[#af+1] = row

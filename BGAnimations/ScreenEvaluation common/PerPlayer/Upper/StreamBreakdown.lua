@@ -5,7 +5,7 @@ if GAMESTATE:IsCourseMode() then return end
 
 local width = 155
 
-return LoadFont("Common Normal")..{
+return LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
     Text="",
 	InitCommand=function(self)
 		local textZoom = 0.7

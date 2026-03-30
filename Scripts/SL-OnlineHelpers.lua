@@ -12,6 +12,7 @@ local startHoldTime = {
 	["P1"] = 0,
 	["P2"] = 0
 }
+local lastDisconnectCountdown = nil
 -- These screens are the ones we want to display the player's scores for.
 local scoreScreens = {"ScreenGameplay", "ScreenEvaluationStage"}
 
@@ -46,6 +47,7 @@ local InputHandler = function(event)
 		local pn = ToEnumShortString(event.PlayerNumber)
 		if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
 			startHoldTime[pn] = GetTimeSinceStart()
+			lastDisconnectCountdown = nil
 			if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
 				readyState[pn] = true
 				MESSAGEMAN:Broadcast("UpdateMachineState")
@@ -54,10 +56,15 @@ local InputHandler = function(event)
 			-- Check if Start has been held for 5 seconds
 			if startHoldTime[pn] > 0 then
 				local holdDuration = GetTimeSinceStart() - startHoldTime[pn]
-        SM("Continue holding &START; for " .. (5 - math.floor(holdDuration)) .. " more seconds to disconnect...")
+				local remainingSeconds = math.max(0, 5 - math.floor(holdDuration))
+				if remainingSeconds ~= lastDisconnectCountdown then
+					SM("Continue holding &START; for " .. remainingSeconds .. " more seconds to disconnect...")
+					lastDisconnectCountdown = remainingSeconds
+				end
 				if holdDuration >= 5.0 then
 					SM("Disconnected from lobby.")
 					startHoldTime[pn] = 0
+					lastDisconnectCountdown = nil
 					isWaiting = false
 					if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
 						SCREENMAN:GetTopScreen():PauseGame(false)
@@ -67,6 +74,7 @@ local InputHandler = function(event)
 			end
 		elseif event.type == "InputEventType_Release" and event.GameButton == "Start" then
 			startHoldTime[pn] = 0
+			lastDisconnectCountdown = nil
 		end
 	end
 
@@ -120,35 +128,37 @@ local GetMachineState = function()
 
 	local players = {}
 	for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
-		local profileName = "NoName"
-		if (PROFILEMAN:IsPersistentProfile(player) and
-				PROFILEMAN:GetProfile(player)) then
-			profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+		if GAMESTATE:IsSideJoined(player) then
+			local profileName = "NoName"
+			if (PROFILEMAN:IsPersistentProfile(player) and
+					PROFILEMAN:GetProfile(player)) then
+				profileName = PROFILEMAN:GetProfile(player):GetDisplayName()
+			end
+
+			local judgments = nil
+			local score = nil
+			local exScore = nil
+			if screenName == "ScreenGameplay" or screenName == "ScreenEvaluationStage" then
+				judgments = GetJudgmentCounts(player)
+				local dance_points = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
+				local percent = FormatPercentScore( dance_points ):gsub("%%", "")
+				score = tonumber(percent)
+				exScore = CalculateExScore(player)
+			end
+
+			local pn = ToEnumShortString(player)
+			players[pn] = {
+				playerId = pn,
+				profileName = profileName,
+				screenName=screenName,
+				ready=readyState[pn],
+
+				judgments = judgments,
+				score = score,
+				exScore = exScore,
+				-- TODO(teejusb): Add song progression.
+			}
 		end
-
-		local judgments = nil
-		local score = nil
-		local exScore = nil
-		if screenName == "ScreenGameplay" or screenName == "ScreenEvaluationStage" then
-			judgments = GetJudgmentCounts(player)
-			local dance_points = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
-			local percent = FormatPercentScore( dance_points ):gsub("%%", "")
-			score = tonumber(percent)
-			exScore = CalculateExScore(player)
-		end
-
-		local pn = ToEnumShortString(player)
-		players[pn] = {
-			playerId = pn,
-			profileName = profileName,
-			screenName=screenName,
-			ready=readyState[pn],
-
-			judgments = judgments,
-			score = score,
-			exScore = exScore,
-			-- TODO(teejusb): Add song progression.
-		}
 	end
 
 	-- If "P1"/"P2" is missing from players, then the player isn't enabled and the corresponding
@@ -211,14 +221,14 @@ local OrderPlayers = function(data, localScreenName)
 	-- Sort the players by score.
 	-- TODO(teejusb): Determine how to do toggle between score and exScore.
 	table.sort(updatedData.players, function(a, b)
-		-- a.score or b.score can be nil, so we need to handle that.
-		if a.score == nil then
+		-- a.exScore or b.exScore can be nil, so we need to handle that.
+		if a.exScore == nil then
 			return false
 		end
-		if b.score == nil then
+		if b.exScore == nil then
 			return true
 		end
-		return a.score > b.score
+		return a.exScore > b.exScore
 	end)
 
 	-- Then add all the other players in other screens below.

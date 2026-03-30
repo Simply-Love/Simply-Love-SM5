@@ -9,7 +9,7 @@ local af = Def.ActorFrame{
 	HideTestInputCommand=function(self) self:visible(false) end,
 
 	Def.Quad{ InitCommand=function(self) self:FullScreen():diffuse(0,0,0,0.875) end },
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("Common", "PopupDismissText"),
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h-120):zoom(1.1) end
 	}

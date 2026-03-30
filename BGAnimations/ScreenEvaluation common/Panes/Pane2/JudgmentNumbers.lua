@@ -48,10 +48,18 @@ end
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
 	local number = counts[window] or 0
+	local number10 = number
+	local display10 = true
+	
+	if i == 1 then
+		number10 = counts["W010"]
+	elseif i == 2 then
+		number10 = counts["W110"]
+	end
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
-		Font="Wendy/_ScreenEvaluation numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " ScreenEval",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
 
@@ -74,6 +82,19 @@ for i=1,#TapNoteScores.Types do
 			self:x( TapNoteScores.x[ToEnumShortString(controller)] )
 			self:y((i-1)*32 -24)
 			self:targetnumber(number)
+			if SL[pn].ActiveModifiers.SmallerWhite then
+				self:playcommand("Marquee")
+			end
+		end,
+		MarqueeCommand=function(self)
+			if display10 then
+				self:settext(("%04.0f"):format(number10))
+				display10 = false
+			else
+				self:settext(("%04.0f"):format(number))
+				display10 = true
+			end
+			self:sleep(2):queuecommand("Marquee")
 		end
 	}
 
@@ -89,15 +110,15 @@ for index, RCType in ipairs(RadarCategories.Types) do
 		-- Format the Percentage string, removing the % symbol
 		percent = tonumber(percent)
 	else
-		percent = CalculateExScore(player)
+		percent = CalculateExScore(player, counts)
 	end
 
 	if index == 1 then
-		t[#t+1] = LoadFont("Wendy/_wendy white")..{
+		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 			Name="Percent",
 			Text=("%.2f"):format(percent),
 			InitCommand=function(self)
-				self:horizalign(right):zoom(0.4)
+				self:horizalign(right):zoom(0.65)
 				self:x( ((controller == PLAYER_1) and -114) or 286 )
 				self:y(47)
 				
@@ -123,7 +144,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	-- player performance value
 	-- use a RollingNumber to animate the count tallying up for visual effect
 	t[#t+1] = Def.RollingNumbers{
-		Font="Wendy/_ScreenEvaluation numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " ScreenEval",
 		InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
 		BeginCommand=function(self)
 			self:x( RadarCategories.x[ToEnumShortString(controller)] )
@@ -133,7 +154,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	}
 
 	-- slash and possible value
-	t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+	t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " ScreenEval")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 		BeginCommand=function(self)
 			self:x( ((controller == PLAYER_1) and -114) or 286 )

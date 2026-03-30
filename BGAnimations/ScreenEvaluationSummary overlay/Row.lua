@@ -55,7 +55,7 @@ t[#t+1] = Def.Banner{
 }
 
 -- the title of the song
-t[#t+1] = LoadFont("Common Normal")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Name="SongTitle",
 	InitCommand=function(self) self:zoom(0.8):y(-43):maxwidth(350) end,
 	DrawStageCommand=function(self)
@@ -66,7 +66,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 -- the BPM(s) of the song
 -- FIXME: the current layout of ScreenEvaluationSummary doesn't accommodate split BPMs
 --        so this is currently hardcoded to use the MasterPlayer's BPM values
-t[#t+1] = LoadFont("Common Normal")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Name="SongBPM",
 	InitCommand=function(self) self:zoom(0.65):y(32):maxwidth(350) end,
 	DrawStageCommand=function(self)

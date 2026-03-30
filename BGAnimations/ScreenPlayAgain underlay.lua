@@ -88,7 +88,7 @@ local wheel_item_mt = {
 				end
 			}
 
-			af[#af+1] = LoadFont("Common Bold")..{
+			af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 				InitCommand=function(subself)
 					self.text= subself
 					subself:diffusealpha(0)
@@ -169,7 +169,7 @@ local t = Def.ActorFrame{
 	-- slightly darken the entire screen
 	Def.Quad { InitCommand=function(self) self:FullScreen():diffuse(0,0,0,0.6) end },
 
-	LoadFont("Common Bold")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Text=THEME:GetString("ScreenPlayAgain", "Continue"),
 		InitCommand=function(self) self:xy(_screen.cx, _screen.cy-30) end,
 	},

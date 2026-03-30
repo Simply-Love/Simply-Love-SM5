@@ -1,15 +1,19 @@
 local Players = GAMESTATE:GetHumanPlayers();
 
 local t = Def.ActorFrame{
-	LoadFont("Wendy/_wendy white")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy white" 
+			or ThemePrefs.Get("ThemeFont") == "Mega" and "Mega/_mega font"
+			or ThemePrefs.Get("ThemeFont") == "Unprofessional" and "Unprofessional/_unprofessional white")..{
 		Text="GAME",
-		InitCommand=function(self) self:xy(_screen.cx,_screen.cy-40):croptop(1):fadetop(1):zoom(1.2):shadowlength(1) end,
+		InitCommand=function(self) self:xy(_screen.cx,_screen.cy-40):croptop(1):fadetop(1):zoom(ThemePrefs.Get("ThemeFont") ~= "Mega" and 1.2 or 1.95):shadowlength(1) end,
 		OnCommand=function(self) self:decelerate(0.5):croptop(0):fadetop(0):glow(1,1,1,1):decelerate(1):glow(1,1,1,1) end,
 		OffCommand=function(self) self:accelerate(0.5):fadeleft(1):cropleft(1) end
 	},
-	LoadFont("Wendy/_wendy white")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy white" 
+			or ThemePrefs.Get("ThemeFont") == "Mega" and "Mega/_mega font"
+			or ThemePrefs.Get("ThemeFont") == "Unprofessional" and "Unprofessional/_unprofessional white")..{
 		Text="OVER",
-		InitCommand=function(self) self:xy(_screen.cx,_screen.cy+40):croptop(1):fadetop(1):zoom(1.2):shadowlength(1) end,
+		InitCommand=function(self) self:xy(_screen.cx,_screen.cy+40):croptop(1):fadetop(1):zoom(ThemePrefs.Get("ThemeFont") ~= "Mega" and 1.2 or 1.95):shadowlength(1) end,
 		OnCommand=function(self) self:decelerate(0.5):croptop(0):fadetop(0):glow(1,1,1,1):decelerate(1):glow(1,1,1,1) end,
 		OffCommand=function(self) self:accelerate(0.5):fadeleft(1):cropleft(1) end
 	},
@@ -52,7 +56,7 @@ for player in ivalues(Players) do
 
 		-- loop through those stats, adding them to the ActorFrame for this player as BitmapText actors
 		for i,stat in ipairs(profile_stats) do
-			PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
+			PlayerStatsAF[#PlayerStatsAF+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 				Text=stat,
 				InitCommand=function(self)
 					self:diffuse(PlayerColor(player)):zoom(0.95)
@@ -80,7 +84,7 @@ for player in ivalues(Players) do
 
 	-- loop through those stats, adding them to the ActorFrame for this player as BitmapText actors
 	for i,stat in ipairs(stats) do
-		PlayerStatsAF[#PlayerStatsAF+1] = LoadFont("Common Normal")..{
+		PlayerStatsAF[#PlayerStatsAF+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			Text=stat,
 			InitCommand=function(self)
 				self:diffuse(PlayerColor(player)):zoom(0.95)

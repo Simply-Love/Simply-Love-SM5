@@ -27,7 +27,7 @@ local af = Def.ActorFrame{
       elseif mods.MeasureLines == "Quarter" then
         notefield:SetBeatBarsAlpha(0.75, 0.5, 0, 0)
       elseif mods.MeasureLines == "Eighth" then
-        notefield:SetBeatBarsAlpha(0.75, 0.5, 0.25, 0)
+        notefield:SetBeatBarsAlpha(0.75, 0.5, 0.125, 0)
       end
     end
   end,
@@ -40,5 +40,13 @@ af[#af+1] = LoadActor("MeasureCounter.lua", player, layout.MeasureCounter)
 af[#af+1] = LoadActor("SubtractiveScoring.lua", player, layout.SubtractiveScoring)
 af[#af+1] = LoadActor("ColumnCues.lua", player)
 af[#af+1] = LoadActor("DisplayMods.lua", player) 
+
+-- zmod specific elements
+if SL.Global.GameMode ~= "Casual" then
+	af[#af+1] = LoadActor("RunTimer.lua", player, layout.SubtractiveScoring.y, layout.MeasureCounter)
+	af[#af+1] = LoadActor("BrokenRunCounter.lua", player, layout.MeasureCounter)
+	af[#af+1] = LoadActor("OffsetDisplay.lua", player)
+	af[#af+1] = LoadActor("JudgmentBack.lua", player)
+end
 
 return af

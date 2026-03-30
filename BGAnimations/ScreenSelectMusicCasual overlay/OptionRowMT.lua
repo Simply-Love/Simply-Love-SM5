@@ -23,7 +23,7 @@ local optionrow_mt = {
 
 				-- helptext
 				Def.BitmapText{
-					Font="Common Normal",
+					Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 					InitCommand=function(subself)
 						self.helptext = subself
 						subself:horizalign(left):zoom(0.9)

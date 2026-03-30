@@ -40,7 +40,7 @@ underlay[#underlay+1] = Def.ActorFrame{
 	},
 
 	-- local profile's display name at top of modal
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:xy(-99, -118):halign(0):diffuse(Color.Black) end,
 		BeginCommand=function(self)
 			local profile = GAMESTATE:GetEditLocalProfile()

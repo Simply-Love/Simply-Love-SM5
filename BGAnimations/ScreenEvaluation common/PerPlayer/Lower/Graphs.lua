@@ -7,6 +7,34 @@ local NumPlayers = #GAMESTATE:GetHumanPlayers()
 local GraphWidth  = THEME:GetMetric("GraphDisplay", "BodyWidth")
 local GraphHeight = THEME:GetMetric("GraphDisplay", "BodyHeight")
 
+local function TotalCourseLength()
+    -- utility for graph stuff because i ended up doing this a lot
+    -- i use this method instead of TrailUtil.GetTotalSeconds because that leaves unused time at the end in graphs
+    local trail = GAMESTATE:GetCurrentTrail(player)
+    local t = 0
+    for te in ivalues(trail:GetTrailEntries()) do
+        t = t + te:GetSong():GetLastSecond()
+    end
+
+    return t / SL.Global.ActiveModifiers.MusicRate
+end
+
+local function TotalCourseLengthPlayed()
+	local trail = GAMESTATE:GetCurrentTrail(player)
+	local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
+	if storage.DeathSecond ~= nil then
+		local deathSecond = storage.DeathSecond
+		local t = 0
+		for te in ivalues(trail:GetTrailEntries()) do
+			t = t + ( te:GetSong():GetLastSecond() / SL.Global.ActiveModifiers.MusicRate )
+			if t > deathSecond then break end
+		end
+		return t
+	else
+		return -1
+	end
+end
+
 local af = Def.ActorFrame{
 	Name="JudgeGraph",
 	InitCommand=function(self)
@@ -23,7 +51,7 @@ local af = Def.ActorFrame{
 		InitCommand=function(self)
 			self:zoomto(GraphWidth, GraphHeight):diffuse(color("#101519")):vertalign(top)
 			if ThemePrefs.Get("VisualStyle") == "Technique" then
-				self:diffusealpha(0.75)
+				self:diffusealpha(0.95)
 			end
 		end
 	},
@@ -94,6 +122,7 @@ af[#af+1] = Def.GraphDisplay{
 
 		local playerStageStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 		local stageStats = STATSMAN:GetCurStageStats()
+		
 		self:Set(stageStats, playerStageStats)
 		
 		-- hide the GraphDisplay's body (2nd unnamed child)
@@ -106,11 +135,12 @@ af[#af+1] = Def.Quad{
 	Name="ZeroLine",
 	InitCommand=function(self)
 		self:zoomto(GraphWidth,1)
-		self:y(GraphHeight/2)
+		self:y(GraphHeight/2+0.75)
 		self:diffusealpha(0.1)
 	end
 }
 
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
 if storage.DeathSecond ~= nil then
@@ -160,7 +190,7 @@ if storage.DeathSecond ~= nil then
 				end
 			},
 		},
-		LoadFont("Common Normal")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			InitCommand=function(self)
 				self:zoom(0.5)
 				self:diffuse(Color.Red)

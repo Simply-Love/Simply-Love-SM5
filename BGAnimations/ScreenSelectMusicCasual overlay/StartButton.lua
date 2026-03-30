@@ -21,7 +21,7 @@ return Def.ActorFrame{
 		InitCommand=function(self) self:diffuseshift():effectcolor1(color("#33aa33")):effectcolor2(color("#55cc55")):zoomto(w, h) end,
 	},
 
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="Text",
 		Text=THEME:GetString("ScreenSelectMusicCasual", "Press"),
 		InitCommand=function(self) self:diffuse(Color.Black):zoom(0.9) end,

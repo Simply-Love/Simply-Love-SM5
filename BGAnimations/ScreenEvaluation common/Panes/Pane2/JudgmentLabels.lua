@@ -73,7 +73,7 @@ end
 for i=1, #TapNoteScores.Types do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
 	if windows[i] or i==#TapNoteScores.Types then
-		t[#t+1] = LoadFont("Common Normal")..{
+		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			Text=TapNoteScores.Names[i]:upper(),
 			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(76) end,
 			BeginCommand=function(self)
@@ -90,6 +90,38 @@ for i=1, #TapNoteScores.Types do
 				self:diffuse( TapNoteScores.Colors[i] )
 			end
 		}
+		if i==1 and SL[pn].ActiveModifiers.SmallerWhite then
+			local show15 = false
+			t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
+				Text="10ms",
+				InitCommand=function(self) self:zoom(0.6):horizalign(right):maxwidth(76) end,
+				BeginCommand=function(self)
+					self:x( (controller == PLAYER_1 and 28) or -28 )
+					if maxCount > 9999 then
+						length = math.floor(math.log10(maxCount)+1)
+						modifier = controller == PLAYER_1 and -11*(length-4) or 11*(length-4)
+						finalPos = 28 + modifier
+						finalZoom = 0.6 - 0.1*(length-4)
+						self:x( (controller == PLAYER_1 and finalPos) or -finalPos ):zoom(finalZoom)
+					end
+					self:y(i*26-36)
+					-- diffuse the JudgmentLabels the appropriate colors for the current GameMode
+					self:diffuse( TapNoteScores.Colors[i] )
+					self:playcommand("Marquee")
+				end,
+				MarqueeCommand=function(self)
+					if show15 then
+						self:settext("15ms")
+						show15 = false
+					else
+						self:settext("10ms")
+						show15 = true
+					end
+					
+					self:sleep(2):queuecommand("Marquee")
+				end
+			}
+		end
 	end
 end
 
@@ -104,7 +136,9 @@ for index, label in ipairs(RadarCategories) do
 		end
 
 
-		t[#t+1] = LoadFont("Wendy/_wendy small")..{
+		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small"
+							or ThemePrefs.Get("ThemeFont") == "Mega" and "Mega/_mega font"
+							or ThemePrefs.Get("ThemeFont") == "Unprofessional" and "Unprofessional/_unprofessional small")..{
 			Text=text,
 			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
 			BeginCommand=function(self)
@@ -123,7 +157,7 @@ for index, label in ipairs(RadarCategories) do
 	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 	local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
-	t[#t+1] = LoadFont("Common Normal")..{
+	t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=label,
 		InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
 		BeginCommand=function(self)

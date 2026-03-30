@@ -18,11 +18,11 @@ return Def.ActorFrame{
 	-- nice
 	LoadActor("./nice.lua", player),
 
+	-- stream info
+	LoadActor("./StreamInfo.lua", player),
+	
 	-- stepartist
 	LoadActor("./StepArtist.lua", player),
-
-	-- stream breakdown
-	LoadActor("./StreamBreakdown.lua", player),
 
 	-- difficulty text and meter
 	LoadActor("./Difficulty.lua", player),

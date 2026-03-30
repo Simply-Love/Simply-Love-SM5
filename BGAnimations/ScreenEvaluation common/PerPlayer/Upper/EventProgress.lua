@@ -1,5 +1,4 @@
 -- File to handle Event specific (ITL/RPG) progress such as song scores, ranking points, quest completions, etc.
--- if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) or GAMESTATE:IsCourseMode() then return end
 
 -- Unsure if it's possible to detect whether the chat module pane is active, so check that the file exists
 local chatModule = FILEMAN:DoesFileExist(THEME:GetCurrentThemeDirectory() .. "Modules/TwitchChat.lua")
@@ -182,6 +181,15 @@ if IsUsingWideScreen() and (chatModule or #GAMESTATE:GetHumanPlayers() > 1) then
 	paneHeight = 180
 end
 
+-- Random Event logo - 400x400px
+-- TODO: SRPG Event logo dir
+local EventLogoDir = THEME:GetCurrentThemeDirectory() .. "Graphics/ITL Online/"
+logoFiles = findFiles(EventLogoDir,"png")
+if #logoFiles > 0 then	
+	logoImage = logoFiles[math.random(#logoFiles)]
+end
+local rpgLogoImage = THEME:GetPathG("", "_VisualStyles/SRPG9/logo_alt (doubleres).png")
+
 local af = Def.ActorFrame{
 	Name="EventProgress"..pn,
 
@@ -193,6 +201,24 @@ local af = Def.ActorFrame{
 	SetDataCommand=function(self, params)
 		if params.rpgData then
 			hasData = true
+			
+			-- check for dailies
+			if params.rpgData["questsCompleted"] then
+				for quest in ivalues(params.rpgData["questsCompleted"]) do
+					if string.find(string.upper(quest["title"]), "UNAFFILIATED DAILY") then
+						rpgLogoImage = THEME:GetPathG("", "Stamina RPG/daily (doubleres).png")
+					end
+					
+					if string.find(string.upper(quest["title"]), "SN DAILY") then
+						rpgLogoImage = THEME:GetPathG("", "Stamina RPG/daily_sn (doubleres).png")
+					elseif string.find(string.upper(quest["title"]), "DPRT DAILY") then
+						rpgLogoImage = THEME:GetPathG("", "Stamina RPG/daily_dprt (doubleres).png")
+					elseif string.find(string.upper(quest["title"]), "FE DAILY") then
+						rpgLogoImage = THEME:GetPathG("", "Stamina RPG/daily_fe (doubleres).png")
+					end
+				end
+			end
+			
 			local rpgString = CreateRPGBody(params.rpgData)
 			ScaleAndColorizeBody(
 				self:GetChild("BodyText"),
@@ -212,10 +238,12 @@ local af = Def.ActorFrame{
 					break
 				end
 			end
+			self:queuecommand("RPG")
 		-- TODO: Add support for when a song is in both RPG and ITL
 		elseif params.itlData and not hasData then
 			hasData = true
 			local itlString = CreateITLBody(params.itlData)
+			
 			ScaleAndColorizeBody(
 				self:GetChild("BodyText"),
 				itlString,
@@ -257,6 +285,32 @@ local af = Def.ActorFrame{
 		end
 	},
 
+	-- Random event logo
+	Def.Sprite {
+		Texture=logoImage,
+		Name="ITLLogo",
+		InitCommand=function(self)
+			self:zoom(0.2)
+			self:diffusealpha(0.2)
+		end,
+		RPGCommand=function(self)
+			self:visible(false)
+		end
+	},
+	
+	Def.Sprite {
+		Name="RPGLogo",
+		InitCommand=function(self)
+			self:zoom(0.13)
+			self:diffusealpha(0.25)
+			self:visible(false)
+		end,
+		RPGCommand=function(self)
+			self:Load(rpgLogoImage)
+			self:visible(true)
+		end
+	},
+
 	-- Header Text
 	LoadFont("Wendy/_wendy small").. {
 		Name="Header",
@@ -268,7 +322,7 @@ local af = Def.ActorFrame{
 	},
 
 	-- Main Body Text
-	LoadFont("Common Normal").. {
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 		Name="BodyText",
 		Text="",
 		InitCommand=function(self)

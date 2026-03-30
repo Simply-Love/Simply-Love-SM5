@@ -23,12 +23,14 @@ if SL.Global.GameMode == "Casual" then return end
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
-
 local judgments = {}
+local PlayerState = GAMESTATE:GetPlayerState(player)
+local streams = SL[ToEnumShortString(player)].Streams
+local foot
 for i=1,GAMESTATE:GetCurrentStyle():ColumnsPerPlayer() do
 	-- W4 and W5 are the early decent/way offs itself.
 	-- W0-W3 are for indicating what the early hits were rescored to.
-	judgments[#judgments+1] = { W0=0, W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0, Early={ W0=0, W1=0, W2=0, W3=0, W4=0, W5=0 } }
+	judgments[#judgments+1] = { W0=0, W1=0, W2=0, W3=0, W4=0, W5=0, Miss=0, MissBecauseHeld=0, Early={ W0=0, W1=0, W2=0, W3=0, W4=0, W5=0 }, W1early=0, W2early=0, W3early=0, W4early=0, W5early=0, W4lf=0, W4rf=0, W5lf=0, W5rf=0, Misslf=0, Missrf=0 }
 end
 
 return Def.Actor{
@@ -47,6 +49,7 @@ return Def.Actor{
 				-- see: https://quietly-turning.github.io/Lua-For-SM5/LuaAPI#Enums-TapNoteType
 				if tnt == "Tap" or tnt == "HoldHead" or tnt == "Lift" then
 					local tns = ToEnumShortString(params.TapNoteScore)
+					
 					-- This was a rescored hit. Track what it was rescored to.
 					if params.EarlyTapNoteScore ~= nil then
 						local etns = ToEnumShortString(params.EarlyTapNoteScore)
@@ -63,7 +66,7 @@ return Def.Actor{
 							judgments[col]["Early"][etns] = judgments[col]["Early"][etns] + 1
 						end
 					end
-
+					
 					if mods.ShowFaPlusWindow and mods.ShowFaPlusPane and IsW0Judgment(params, player) then
 						tns = "W0"
 					end
@@ -71,6 +74,44 @@ return Def.Actor{
 
 					if tnt ~= "Lift" and tns == "Miss" and tapnote:GetTapNoteResult():GetHeld() then
 						judgments[col].MissBecauseHeld = judgments[col].MissBecauseHeld + 1
+					end
+					
+					if params.TapNoteOffset < 0 then
+						if tns == "W1" and SL[pn].ActiveModifiers.ShowFaPlusWindow and not IsW0Judgment(params, player) then
+							judgments[col].W1early = judgments[col].W1early + 1
+						elseif tns ~= "W1" and tns ~= "W0" then
+							judgments[col][tns .. "early"] = judgments[col][tns .. "early"] + 1
+						end
+					end
+					
+					if col == 1 then
+						foot=true
+					elseif col == 4 then
+						foot=false
+					else
+						foot = not foot
+					end
+					if col == 2 or col == 3 then
+						if tns == "W4" or tns == "W5" or tns == "Miss" then
+							local isStream = false
+							if streams.Measures and #streams.Measures > 0 then
+								local currMeasure = (math.floor(PlayerState:GetSongPosition():GetSongBeatVisible()))/4
+								for i=1,#streams.Measures do
+									run = streams.Measures[i]
+									if currMeasure >= run.streamStart and currMeasure <= run.streamEnd and not run.isBreak then
+										isStream = true
+										break
+									elseif currMeasure < run.streamStart then
+										break
+									end
+								end
+							end
+							
+							if isStream then
+								local fs = foot and "lf" or "rf"
+								judgments[col][tns .. fs] = judgments[col][tns .. fs] + 1
+							end
+						end
 					end
 				end
 			end

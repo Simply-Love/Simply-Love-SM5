@@ -34,7 +34,7 @@ return {
 
 			-- Download Name
 			af[#af+1] = Def.BitmapText{
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="DownloadName",
 				InitCommand=function(subself)
 					self.download_name = subself
@@ -43,7 +43,7 @@ return {
 			}
 
 			af[#af+1] = Def.Quad{
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="ProgressBar",
 				InitCommand=function(subself)
 					self.progress_bar = subself
@@ -60,7 +60,7 @@ return {
 			}
 
 			af[#af+1] = Def.Quad{
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="Endpoint",
 				InitCommand=function(subself)
 					self.endpoint = subself
@@ -69,7 +69,7 @@ return {
 			}
 
 			af[#af+1] = Def.BitmapText{
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="Message",
 				InitCommand=function(subself)
 					self.message = subself
@@ -80,7 +80,7 @@ return {
 			-- Percentage
 			af[#af+1] = Def.BitmapText{
 				Text="0%",
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="Percentage",
 				InitCommand=function(subself)
 					self.percentage = subself
@@ -90,7 +90,7 @@ return {
 
 			af[#af+1] = Def.BitmapText{
 				Text="99/100",
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="DownloadAmount",
 				InitCommand=function(subself)
 					self.download_amount = subself
@@ -99,7 +99,7 @@ return {
 			}
 
 			af[#af+1] = Def.Quad{
-				Font="Common Normal",
+				Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 				Name="Separator",
 				InitCommand=function(subself)
 					self.separator = subself

@@ -116,7 +116,7 @@ local t = Def.ActorFrame{
 
 	-- description
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			self:zoom(0.825):halign(0):valign(0):xy(-130,-60)
 		end,
@@ -158,7 +158,7 @@ local t = Def.ActorFrame{
 
 	-- Score
 	Def.BitmapText{
-		Font="Wendy/_wendy monospace numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " numbers",
 		InitCommand=function(self)
 			self:zoom(0.225):xy(124,-68):diffusealpha(0)
 		end,

@@ -36,13 +36,13 @@ af[#af+1] = Def.ActorFrame{
 
 	-- ----------------------------------------
 	-- Artist Label
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("SongDescription", GAMESTATE:IsCourseMode() and "NumSongs" or "Artist"):upper(),
 		InitCommand=function(self) self:align(1,0):y(-11):maxwidth(44):diffuse(0.5,0.5,0.5,1) end,
 	},
 
 	-- Song Artist (or number of Songs in this Course, if CourseMode)
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:align(0,0):xy(5,-11) end,
 		SetCommand=function(self)
 			local maxwidth = _w - 60
@@ -66,7 +66,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- ----------------------------------------
 	-- BPM Label
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("SongDescription", "BPM"):upper(),
 		InitCommand=function(self)
 			self:align(1,0):y(10):diffuse(0.5,0.5,0.5,1)
@@ -74,7 +74,7 @@ af[#af+1] = Def.ActorFrame{
 	},
 
 	-- BPM value
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self)
 			-- vertical align has to be middle for BPM value in case of split BPMs having a line break
 			self:align(0, 0.5)
@@ -136,7 +136,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- ----------------------------------------
 	-- Song Duration Label
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("SongDescription", "Length"):upper(),
 		InitCommand=function(self)
 			self:align(1,0):diffuse(0.5,0.5,0.5,1)
@@ -145,7 +145,7 @@ af[#af+1] = Def.ActorFrame{
 	},
 
 	-- Song Duration Value
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:align(0,0):xy(_w-130 + 5, 10) end,
 		SetCommand=function(self)
 			if MusicWheel == nil then MusicWheel = SCREENMAN:GetTopScreen():GetMusicWheel() end
@@ -159,7 +159,7 @@ af[#af+1] = Def.ActorFrame{
 				-- because it exceeds the 2-round or 3-round time limit cutoff.
 				local song = GAMESTATE:GetCurrentSong()
 				if song then
-					seconds = song:MusicLengthSeconds()
+					seconds = song:GetLastSecond()
 				end
 
 			elseif SelectedType == "WheelItemDataType_Section" then
@@ -236,7 +236,7 @@ if not GAMESTATE:IsEventMode() then
 			end
 		},
 
-		LoadFont("Common Normal")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			InitCommand=function(self) self:diffuse(Color.Black):zoom(0.8) end,
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()

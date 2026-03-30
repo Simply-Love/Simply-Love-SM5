@@ -31,14 +31,14 @@ if style == "OnePlayerOneSide" or style == "TwoPlayersTwoSides" then
 	pane[#pane+1] = LoadActor( THEME:GetPathB("", "_modules/TestInput Pad/default.lua"), {Player=player, ShowMenuButtons=false, ShowPlayerLabel=false})..{
 		InitCommand=function(self) self:xy(50, 338):zoom(0.8) end
 	}
-	pane[#pane+1] = LoadFont("Common normal")..{
+	pane[#pane+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("ScreenEvaluation",  "TestInput"),
 		InitCommand=function(self) self:zoom(1.1):xy(-92, 222):vertalign(top):maxwidth(100/self:GetZoom()) end
 	}
 	pane[#pane+1] = Def.Quad{
 		InitCommand=function(self) self:xy(-140, 245):zoomto(96,1):align(0,0):diffuse(1,1,1,0.33) end
 	}
-	pane[#pane+1] = LoadFont("Common normal")..{
+	pane[#pane+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("ScreenEvaluation",  "TestInputInstructions"),
 		InitCommand=function(self) self:zoom(0.8):xy(-140,255):_wrapwidthpixels(100/0.8):align(0,0):vertspacing(-4) end
 	}

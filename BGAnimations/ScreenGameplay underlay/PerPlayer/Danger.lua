@@ -39,7 +39,7 @@ local danger = Def.Quad{
 	end,
 	DangerCommand=function(self) self:linear(0.3):diffusealpha(0.7):diffuseshift():effectcolor1(1, 0, 0.24, 0.1):effectcolor2(1, 0, 0, 0.35) end,
 	DeadCommand=function(self) self:diffusealpha(0):stopeffect():stoptweening():diffuse(1,0,0,1):linear(0.3):diffusealpha(0.8):linear(0.3):diffusealpha(0) end,
-	OutOfDangerCommand=function(self) self:diffusealpha(0):stopeffect():stoptweening():diffuse(0,1,0,1):linear(0.3):diffusealpha(0.8):linear(0.3):diffusealpha(0) end,
+	OutOfDangerCommand=function(self) self:diffusealpha(0):stopeffect():stoptweening():diffuse(0,1,0,0.5):linear(0.3):diffusealpha(0.4):linear(0.3):diffusealpha(0) end,
 	HideCommand=function(self) self:stopeffect():stoptweening():linear(0.3):diffusealpha(0) end
 }
 

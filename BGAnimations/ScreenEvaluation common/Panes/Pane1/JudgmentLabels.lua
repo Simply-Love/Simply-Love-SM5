@@ -63,7 +63,7 @@ for i=1, #TapNoteScores.Types do
 	-- no need to add BitmapText actors for TimingWindows that were turned off
 	if windows[i] or i==#TapNoteScores.Types then
 
-		t[#t+1] = LoadFont("Common Normal")..{
+		t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			Text=TapNoteScores.Names[i]:upper(),
 			InitCommand=function(self) self:zoom(0.833):horizalign(right):maxwidth(76) end,
 			BeginCommand=function(self)
@@ -88,7 +88,7 @@ for index, label in ipairs(RadarCategories) do
     local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
     local possible = stats:GetRadarPossible():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )
 
-    t[#t+1] = LoadFont("Common Normal")..{
+    t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
         Text=label,
         InitCommand=function(self) self:zoom(0.833):horizalign(right) end,
         BeginCommand=function(self)

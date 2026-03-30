@@ -17,7 +17,7 @@ local optionrow_item_mt = {
 				HideCommand=function(subself) subself:linear(0.2):diffusealpha(0) end,
 
 				Def.BitmapText{
-					Font="Common Normal",
+					Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 					InitCommand=function(subself)
 						self.bmt1 = subself
 						subself:horizalign(left):diffusealpha(1):diffuse(Color.Black)
@@ -27,7 +27,7 @@ local optionrow_item_mt = {
 					LoseFocusCommand=function(subself) subself:diffusealpha(0) end
 				},
 				Def.BitmapText{
-					Font="Common Normal",
+					Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 					InitCommand=function(subself)
 						self.bmt2 = subself
 						subself:horizalign(right):diffusealpha(0):diffuse(Color.Black)

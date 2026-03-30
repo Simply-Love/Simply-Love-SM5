@@ -15,6 +15,7 @@ local RadarCategories = {
 	x = { P1=-180, P2=218 }
 }
 
+local counts = GetExJudgmentCounts(player)
 
 local t = Def.ActorFrame{
 	InitCommand=function(self)self:zoom(0.8):xy(90,_screen.cy-24) end,
@@ -30,10 +31,12 @@ local t = Def.ActorFrame{
 for i=1,#TapNoteScores.Types do
 	local window = TapNoteScores.Types[i]
 	local number = pss:GetTapNoteScores( "TapNoteScore_"..window )
+	local number10 = number
+	local display15 = false
 
 	-- actual numbers
 	t[#t+1] = Def.RollingNumbers{
-		Font="Wendy/_ScreenEvaluation numbers",
+		Font=ThemePrefs.Get("ThemeFont") .. " ScreenEval",
 		InitCommand=function(self)
 			self:zoom(0.5):horizalign(right)
 
@@ -56,7 +59,7 @@ for i=1,#TapNoteScores.Types do
 			self:x( TapNoteScores.x[ToEnumShortString(controller)] )
 			self:y((i-1)*35 -20)
 			self:targetnumber(number)
-		end
+		end,
 	}
 
 end
@@ -70,7 +73,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
     -- player performance value
     -- use a RollingNumber to animate the count tallying up for visual effect
     t[#t+1] = Def.RollingNumbers{
-        Font="Wendy/_ScreenEvaluation numbers",
+        Font=ThemePrefs.Get("ThemeFont") .. " ScreenEval",
         InitCommand=function(self) self:zoom(0.5):horizalign(right):Load("RollingNumbersEvaluationB") end,
         BeginCommand=function(self)
             self:x( RadarCategories.x[ToEnumShortString(controller)] )
@@ -80,7 +83,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
     }
 
     -- slash and possible value
-    t[#t+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+    t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " ScreenEval")..{
         InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
         BeginCommand=function(self)
             self:x( ((controller == PLAYER_1) and -114) or 286 )

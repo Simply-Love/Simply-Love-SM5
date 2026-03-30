@@ -73,7 +73,7 @@ function IsITGmania()
 end
 
 -- define the required version here
-local MinimumVersion = {1, 2, 0}
+local MinimumVersion = {1, 2, 1}
 
 -- -----------------------------------------------------------------------
 -- use StepManiaVersionIsSupported() to check if Simply Love supports the version of SM5 in use

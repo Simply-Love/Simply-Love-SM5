@@ -4,7 +4,7 @@ local percent = nil
 local diffuse = nil
 
 if SL[ToEnumShortString(player)].ActiveModifiers.ShowExScore then
-	percent = CalculateExScore(player)
+	percent = CalculateExScore(player, GetExJudgmentCounts(player))
 	diffuse = SL.JudgmentColors[SL.Global.GameMode][1]
 else
 	local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
@@ -36,12 +36,11 @@ return Def.ActorFrame{
 		end
 	},
 
-
-	LoadFont("Wendy/_wendy white")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Name="Percent",
 		Text=("%.2f"):format(percent),
 		InitCommand=function(self)
-			self:horizalign(right):zoom(0.585)
+			self:horizalign(right):zoom(0.95)
 			self:x( (controller == PLAYER_1 and 1.5 or 141))
 			self:diffuse(diffuse)
 		end

@@ -24,7 +24,7 @@ local mini_screen_h= _screen.h * .1
 -- w and h are the width and height of the aspect ratio, passed in so they
 -- can be displayed to be read.
 function BGFitNormalExampleText(w, h)
-	return LoadFont("Common Normal")..{
+	return LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		-- To use a different font for the text, change the Font field.
 		Name= "example_label",
 		-- The "BG" part of the text is fetched with THEME:GetString so that it
@@ -52,7 +52,7 @@ for i, mode in ipairs(BackgroundFitMode) do
 			-- row across the center of the screen, evenly spaced.
 			self:xy(xstart + ((i-1) * width_per_choice), _screen.cy+50)
 		end,
-		LoadFont("Common Normal")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			-- This actor is a label for the choice, so the player knows the name
 			-- of their choice.
 			Name= "mode_label",

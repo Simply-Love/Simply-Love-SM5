@@ -117,7 +117,7 @@ local song_mt = {
 
 				-- title
 				Def.BitmapText{
-					Font="Common Normal",
+					Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 					InitCommand=function(subself)
 						self.title_bmt = subself
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75)
@@ -140,7 +140,7 @@ local song_mt = {
 				},
 				-- subtitle
 				Def.BitmapText{
-					Font="Common Normal",
+					Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 					InitCommand=function(subself)
 						self.subtitle_bmt = subself
 						subself:zoom(0.8):diffuse(Color.White):shadowlength(0.75)

@@ -34,7 +34,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- unique songs
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			self:zoom(1.1):diffuse(Color.White):xy(0,15):maxwidth(300)
 		end,
@@ -49,7 +49,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- artists
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			self:zoom(0.75):diffuse(Color.White):xy(-260, 30):horizalign(left):vertalign(top)
 		end,
@@ -64,7 +64,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- genres
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			self:zoom(0.75):diffuse(Color.White):xy(-60, 30):horizalign(left):vertalign(top)
 		end,
@@ -79,7 +79,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- steps
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			self:zoom(0.75):diffuse(Color.White):xy(130, 30):horizalign(left):vertalign(top)
 		end,

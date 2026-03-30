@@ -44,7 +44,7 @@ local af = Def.ActorFrame {
 	OffCommand=function(self) self:sleep(0.4) end,
 
 	Def.DeviceList {
-		Font=THEME:GetPathF("","Common Normal"),
+		Font=THEME:GetPathF("",ThemePrefs.Get("ThemeFont") .. " Normal"),
 		InitCommand=function(self)
 			if ThemePrefs.Get("RainbowMode") then self:diffuse(0,0,0,1) end
 			self:xy(_screen.cx,_screen.h-60):zoom(0.8)
@@ -68,7 +68,7 @@ if (game=="dance" or game=="pump" or game=="techno") then
 
 	-- and add a custom BitmapText to show which inputs are not mapped to any game buttons
 	af[#af+1] = Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			if ThemePrefs.Get("RainbowMode") then self:diffuse(0,0,0,1) end
 			self:xy(_screen.cx, _screen.cy+32):vertalign(top):vertspacing(-3)
@@ -89,7 +89,7 @@ if (game=="dance" or game=="pump" or game=="techno") then
 -- for other games (para, kb7), just use a standard InputList provided by the engine
 else
 	af[#af+1] = Def.InputList{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		InitCommand=function(self)
 			if ThemePrefs.Get("RainbowMode") then self:diffuse(0,0,0,1) end
 			self:xy(_screen.cx-250, 50):horizalign(left):vertalign(top):vertspacing(0)

@@ -26,10 +26,11 @@ return Def.ActorFrame{
 	},
 
 	-- player's chart's difficulty meter
-	LoadFont("Common Bold")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		InitCommand=function(self)
 			self:diffuse( Color.Black )
 			self:zoom( 0.4 )
+			self:y(-4)
 		end,
 		CurrentSongChangedMessageCommand=function(self) self:queuecommand("Begin") end,
 		BeginCommand=function(self)
@@ -40,5 +41,62 @@ return Def.ActorFrame{
 				self:settext(meter)
 			end
 		end
+	},
+
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
+		InitCommand=function(self)
+			self:diffuse( Color.Black )
+			self:y(9.5)
+			self:zoom( 0.5 )
+			--self:y(_screen.cy-82)
+			--self:x(149 * (player==PLAYER_1 and -1 or 1))
+			--self:halign(pn)
+			
+			-- self:y(_screen.cy-83)
+			-- self:x(129.5 * (player==PLAYER_1 and -1 or 1))
+			-- --self:halign(0.5)
+			-- :zoom(0.5)
+			
+			-- self:y(_screen.cy-61)
+			-- self:x(129.5 * (player==PLAYER_1 and -1 or 1))
+			-- self:halign(0.5):zoom(0.5)
+		end,
+		BeginCommand=function(self)
+			local textColor = Color.Black
+			local shadowLength = 0
+			if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
+				textColor = Color.Black
+			end
+			self:diffuse(textColor)
+			self:shadowlength(shadowLength)
+
+			local steps = GAMESTATE:GetCurrentSteps(player)
+			local song = GAMESTATE:GetCurrentSong()
+			-- GetDifficulty() returns a value from the Difficulty Enum such as "Difficulty_Hard"
+			-- ToEnumShortString() removes the characters up to and including the
+			-- underscore, transforming a string like "Difficulty_Hard" into "Hard"
+			local difficulty = ToEnumShortString( steps:GetDifficulty() )
+			if difficulty == "Challenge" then
+				if string.find(string.upper(song:GetMainTitle()), "%(NOVICE%)") then
+					difficulty = ToEnumShortString("Difficulty_Beginner")
+				elseif string.find(string.upper(song:GetMainTitle()), "%(EASY%)") then
+					difficulty = ToEnumShortString("Difficulty_Easy")
+				elseif string.find(string.upper(song:GetMainTitle()), "%(MEDIUM%)") then
+					difficulty = ToEnumShortString("Difficulty_Medium")
+				elseif string.find(string.upper(song:GetMainTitle()), "%(HARD%)") then
+					difficulty = ToEnumShortString("Difficulty_Hard")
+				elseif string.find(string.upper(song:GetMainTitle()), "%(EDIT%)") then
+					difficulty = ToEnumShortString("Difficulty_Edit")
+				end
+			end
+			difficulty = THEME:GetString("Difficulty", difficulty)
+			--if difficulty == "Challenge" or difficulty == "Expert" then difficulty = "X"
+			--else difficulty = difficulty:sub(1,1) end
+			
+
+			self:settext(difficulty)
+		end
 	}
+
+
 }

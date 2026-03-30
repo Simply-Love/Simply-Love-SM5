@@ -83,7 +83,7 @@ local t = Def.ActorFrame{
 	end
 }
 
-t[#t+1] = LoadFont("Common Bold")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="MachineRecord",
 	InitCommand=function(self) self:xy(-110,-18):diffuse(PlayerColor(player)) end,
 	OnCommand=function(self)
@@ -93,7 +93,7 @@ t[#t+1] = LoadFont("Common Bold")..{
 	end,
 }
 
-t[#t+1] = LoadFont("Common Bold")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="PersonalRecord",
 	InitCommand=function(self) self:xy(-110,24):diffuse(PlayerColor(player)) end,
 	OnCommand=function(self)

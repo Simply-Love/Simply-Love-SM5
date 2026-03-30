@@ -112,7 +112,7 @@ local item_mt = {
 
 				-- group title bmt
 				Def.BitmapText{
-					Font="Common Normal",
+					Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 					InitCommand=function(subself)
 						self.bmt = subself
 						subself:_wrapwidthpixels(150):vertspacing(-4):shadowlength(0.5)

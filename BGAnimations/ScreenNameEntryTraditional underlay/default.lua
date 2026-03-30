@@ -146,7 +146,7 @@ for i=1,NumStages do
 	}
 
 	-- song name
-	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont("Common Normal")..{
+	SongNameAndBanner[#SongNameAndBanner+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="SongName"..i,
 		InitCommand=function(self) self:xy(_screen.cx, 54):maxwidth(294):shadowlength(0.333) end,
 		OnCommand=function(self)

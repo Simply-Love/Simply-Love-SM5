@@ -16,6 +16,8 @@ local storage = SL[ToEnumShortString(player)].Stages.Stats[SL.Global.Stages.Play
 local valid_tns = {
 	-- Emulated, not a real TNS.
 	W0 = true,
+	W010 = true,
+	W110 = true,
 
 	-- Actual TNS's
 	W1 = true,
@@ -38,7 +40,9 @@ return Def.Actor{
 			-- These counts are only tracked while a player hasn't failed.
 			-- This is so that the EX score stops changing once they've failed.
 			W0 = 0,
+			W010 = 0,
 			W1 = 0,
+			W110 = 0,
 			W2 = 0,
 			W3 = 0,
 			W4 = 0,
@@ -53,7 +57,8 @@ return Def.Actor{
 			-- The W0 count displayed in the pane in ScreenEvaluation should
 			-- still display the total count (whether or not the player has failed).
 			-- Track that separately.
-			W0_total = 0
+			W0_total = 0,
+			W010_total = 0
 		}
 	end,
 	JudgmentMessageCommand=function(self, params)
@@ -78,45 +83,37 @@ return Def.Actor{
 		elseif params.TapNoteScore then
 			local TNS = ToEnumShortString(params.TapNoteScore)
 
-			if SL.Global.GameMode == "ITG" then
-				if TNS == "W1" then
-					-- Check if this W1 is actually in the W0 window
-					local is_W0 = IsW0Judgment(params, player)
-					if is_W0 then
-						if not stats:GetFailed() then
-							storage.ex_counts.W0 = storage.ex_counts.W0 + 1
-							count_updated = true
-						end
-						storage.ex_counts.W0_total = storage.ex_counts.W0_total + 1
-					else
-						if not stats:GetFailed() then
-							storage.ex_counts.W1 = storage.ex_counts.W1 + 1
-							count_updated = true
-						end
+			if TNS == "W1" then
+				-- Check if this W1 is actually in the W0 window
+				local is_W0 = IsW0Judgment(params, player)
+				local is_W010 = IsW010Judgment(params, player)
+				if is_W010 then
+					if not stats:GetFailed() then
+						storage.ex_counts.W0 = storage.ex_counts.W0 + 1
+						storage.ex_counts.W010 = storage.ex_counts.W010 + 1
+						count_updated = true
 					end
+					storage.ex_counts.W0_total = storage.ex_counts.W0_total + 1
+					storage.ex_counts.W010_total = storage.ex_counts.W010_total + 1
+				elseif is_W0 then
+					if not stats:GetFailed() then
+						storage.ex_counts.W0 = storage.ex_counts.W0 + 1
+						storage.ex_counts.W110 = storage.ex_counts.W110 + 1
+						count_updated = true
+					end
+					storage.ex_counts.W0_total = storage.ex_counts.W0_total + 1
 				else
-					-- Only track the TapNoteScores we care about
-					if valid_tns[TNS] then
-						if not stats:GetFailed() then
-							storage.ex_counts[TNS] = storage.ex_counts[TNS] + 1
-							count_updated = true
-						end
+					if not stats:GetFailed() then
+						storage.ex_counts.W1 = storage.ex_counts.W1 + 1
+						storage.ex_counts.W110 = storage.ex_counts.W110 + 1
+						count_updated = true
 					end
 				end
 			else
-				adjusted_TNS = TNS
-				tier = string.match(TNS, "W(%d)")
-
-				-- In FA+ mode, we need to shift the windows up 1 so that the key we're using is accurate.
-				-- E.g. W1 window becomes W0, W2 becomes W1, etc.
-				if tier ~= nil then
-					adjusted_TNS = "W"..(tonumber(tier)-1)
-				end
-				
 				-- Only track the TapNoteScores we care about
-				if valid_tns[adjusted_TNS] then
+				if valid_tns[TNS] then
 					if not stats:GetFailed() then
-						storage.ex_counts[adjusted_TNS] = storage.ex_counts[adjusted_TNS] + 1
+						storage.ex_counts[TNS] = storage.ex_counts[TNS] + 1
 						count_updated = true
 					end
 				end
@@ -124,16 +121,16 @@ return Def.Actor{
 		end
 		if count_updated then
 			-- Broadcast so other elements on ScreenGameplay can process the updated count.
-			local ExScore, ActualPoints, ActualPossible = CalculateExScore(player)
+			local ExScore, actual_points, actual_possible=CalculateExScore(player,storage.ex_counts)
 
 			MESSAGEMAN:Broadcast(
 				"ExCountsChanged",
 				{
-					Player=player,
-					ExCounts=storage.ex_counts,
-					ExScore=ExScore,
-					ActualPoints=ActualPoints,
-					ActualPossible=ActualPossible
+					Player=player, 
+					ExCounts=storage.ex_counts, 
+					ExScore=CalculateExScore(player,storage.ex_counts), 
+					actual_points=actual_points, 
+					actual_possible=actual_possible 
 				}
 			)
 		end

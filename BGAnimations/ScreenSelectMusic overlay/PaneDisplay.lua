@@ -37,10 +37,10 @@ local GetScoreForPlayer = function(player)
 end
 
 -- -----------------------------------------------------------------------
-local SetNameAndScore = function(name, score, nameActor, scoreActor)
+local SetNameAndScore = function(name, score, nameActor, scoreActor, textColor)
 	if not scoreActor or not nameActor then return end
-	scoreActor:settext(score)
-	nameActor:settext(name)
+	scoreActor:settext(score):diffuse(color(textColor))
+	nameActor:settext(name):diffuse(color(textColor))
 end
 
 local GetMachineTag = function(gsEntry)
@@ -121,7 +121,8 @@ local GetScoresRequestProcessor = function(res, params)
 							GetMachineTag(gsEntry),
 							string.format("%.2f%%", gsEntry["score"]/100),
 							machineName,
-							machineScore
+							machineScore,
+							"#000000"
 						)
 						worldRecordSet = true
 					end
@@ -134,7 +135,8 @@ local GetScoresRequestProcessor = function(res, params)
 								GetMachineTag(gsEntry),
 								string.format("%.2f%%", gsEntry["score"]/100),
 								playerName,
-								playerScore
+								playerScore,
+								"#000000"
 							)
 							personalRecordSet = true
 						else
@@ -151,7 +153,8 @@ local GetScoresRequestProcessor = function(res, params)
 									GetMachineTag(gsEntry),
 									string.format("%.2f%%", gsScore),
 									playerName,
-									playerScore
+									playerScore,
+									"#000000"
 								)
 								personalRecordSet = true
 							end
@@ -165,7 +168,39 @@ local GetScoresRequestProcessor = function(res, params)
 							GetMachineTag(gsEntry),
 							string.format("%.2f%%", gsEntry["score"]/100),
 							rivalName,
-							rivalScore
+							rivalScore,
+							"#000000"
+						)
+						rivalNum = rivalNum + 1
+					end
+				end
+			end
+		elseif data and data[playerStr] and data[playerStr]["itl"] and data[playerStr]["itl"]["itlLeaderboard"] then
+			
+			-- And then also ensure that the chart hash matches the currently parsed one.
+			-- It's better to just not display anything than display the wrong scores.
+			if SL["P"..i].Streams.Hash == data[playerStr]["chartHash"] then
+				for gsEntry in ivalues(data[playerStr]["itl"]["itlLeaderboard"]) do
+					if gsEntry["rank"] == 1 then
+						SetNameAndScore(
+							GetMachineTag(gsEntry),
+							string.format("%.2f%%", gsEntry["score"]/100),
+							machineName,
+							machineScore,
+							"#21CCE8"
+						)
+						worldRecordSet = true
+					end
+
+					if gsEntry["isRival"] then
+						local rivalScore = paneDisplay:GetChild("Rival"..rivalNum.."Score")
+						local rivalName = paneDisplay:GetChild("Rival"..rivalNum.."Name")
+						SetNameAndScore(
+							GetMachineTag(gsEntry),
+							string.format("%.2f%%", gsEntry["score"]/100),
+							rivalName,
+							rivalScore,
+							"#21CCE8"
 						)
 						rivalNum = rivalNum + 1
 					end
@@ -205,15 +240,32 @@ local GetScoresRequestProcessor = function(res, params)
 			end
 		else
 			if data and data[playerStr] then
+				local headers = res.headers
+				local boogie = false
+				local boogie_ex = false
+				if headers["bs-leaderboard-player-" .. i] == "BS" then
+					boogie = true
+				elseif headers["bs-leaderboard-player-" .. i] == "BS-EX" then
+					boogie_ex = true
+				end
+				
 				if foundLeaderboard then
-					if SL["P"..i].ActiveModifiers.ShowExScore then
+					if boogie then
+						loadingText:settext("BoogieStats")
+					elseif boogie_ex then
+						loadingText:settext("Boogie EX")
+					elseif SL["P"..i].ActiveModifiers.ShowExScore then
 						loadingText:settext(THEME:GetString("GrooveStats", "ExScore"))
 					else
 						loadingText:settext(THEME:GetString("GrooveStats", "GrooveStats"))
 					end
 				else
-					if SL["P"..i].ActiveModifiers.ShowExScore then
-						loadingText:settext(THEME:GetString("GrooveStats", "NoExData"))
+					if boogie then
+						loadingText:settext("No Boogie Data")
+					elseif boogie_ex then
+						loadingText:settext("No Boogie EX")
+					elseif SL["P"..i].ActiveModifiers.ShowExScore then
+						loadingText:settext(THEME:GetString("GrooveStats", "NoEXData"))
 					else
 						loadingText:settext(THEME:GetString("GrooveStats", "NoData"))
 					end
@@ -296,19 +348,26 @@ af[#af+1] = RequestResponseActor(17, 50)..{
 		-- This makes sure that the Hash in the ChartInfo cache exists.
 		local sendRequest = false
 		local headers = {}
-		local query = {}
+		local query = {
+			maxLeaderboardResults=NumEntries,
+		}
 		local requestCacheKey = ""
 
-		for i=1,2 do
-			local pn = "P"..i
-			if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
-				query["chartHashP"..i] = SL[pn].Streams.Hash
-				headers["x-api-key-player-"..i] = SL[pn].ApiKey
-				requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey .. pn
-				local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
-				loadingText:visible(true)
-				loadingText:settext(THEME:GetString("GrooveStats", "Loading"))
-				sendRequest = true
+		if ThemePrefs.Get("MusicWheelGS") == "Pane" then
+			for i=1,2 do
+				local pn = "P"..i
+				if IsItlSong(PlayerNumber[i]) then
+					UpdatePathMap(PlayerNumber[i], SL[pn].Streams.Hash)
+				end
+				if SL[pn].ApiKey ~= "" and SL[pn].Streams.Hash ~= "" then
+					query["chartHashP"..i] = SL[pn].Streams.Hash
+					headers["x-api-key-player-"..i] = SL[pn].ApiKey
+					requestCacheKey = requestCacheKey .. SL[pn].Streams.Hash .. SL[pn].ApiKey .. pn
+					local loadingText = master:GetChild("PaneDisplayP"..i):GetChild("Loading")
+					loadingText:visible(true)
+					loadingText:settext(THEME:GetString("GrooveStats", "Loading")):diffuse(Color.Black)
+					sendRequest = true
+				end
 			end
 		end
 
@@ -423,7 +482,7 @@ for player in ivalues(PlayerNumber) do
 			Name=item.name,
 
 			-- numerical value
-			LoadFont("Common Normal")..{
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 				InitCommand=function(self)
 					self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
 					self:x(pos.col[col])
@@ -444,7 +503,7 @@ for player in ivalues(PlayerNumber) do
 			},
 
 			-- label
-			LoadFont("Common Normal")..{
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 				Text=item.name,
 				InitCommand=function(self)
 					self:zoom(text_zoom):diffuse(Color.Black):horizalign(left)
@@ -456,7 +515,7 @@ for player in ivalues(PlayerNumber) do
 	end
 
 	-- Machine/World Record Machine Tag
-	af2[#af2+1] = LoadFont("Common Normal")..{
+	af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="MachineHighScoreName",
 		InitCommand=function(self)
 			self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
@@ -466,8 +525,8 @@ for player in ivalues(PlayerNumber) do
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
 			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("----")
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
+				self:settext("----"):diffuse(Color.Black)
 			else
 				self:queuecommand("SetDefault")
 			end
@@ -475,13 +534,13 @@ for player in ivalues(PlayerNumber) do
 		SetDefaultCommand=function(self)
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
 			local machineScore = GetScoreFromProfile(machine_profile, SongOrCourse, StepsOrTrail)
-			self:settext(machineScore and machineScore:GetName() or "----")
+			self:settext(machineScore and machineScore:GetName() or "----"):diffuse(Color.Black)
 			DiffuseEmojis(self:ClearAttributes())
 		end
 	}
 
 	-- Machine/World Record HighScore
-	af2[#af2+1] = LoadFont("Common Normal")..{
+	af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="MachineHighScore",
 		InitCommand=function(self)
 			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
@@ -491,8 +550,8 @@ for player in ivalues(PlayerNumber) do
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
 			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
-				self:settext("??.??%")
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
+				self:settext("??.??%"):diffuse(Color.Black)
 			else
 				self:queuecommand("SetDefault")
 			end
@@ -501,15 +560,15 @@ for player in ivalues(PlayerNumber) do
 			local SongOrCourse, StepsOrTrail = GetSongAndSteps(player)
 			local machineScore = GetScoreFromProfile(machine_profile, SongOrCourse, StepsOrTrail)
 			if machineScore ~= nil then
-				self:settext(FormatPercentScore(machineScore:GetPercentDP()))
+				self:settext(FormatPercentScore(machineScore:GetPercentDP())):diffuse(Color.Black)
 			else
-				self:settext("??.??%")
+				self:settext("??.??%"):diffuse(Color.Black)
 			end
 		end
 	}
 
 	-- Player Profile/GrooveStats Machine Tag
-	af2[#af2+1] = LoadFont("Common Normal")..{
+	af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="PlayerHighScoreName",
 		InitCommand=function(self)
 			self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
@@ -519,7 +578,7 @@ for player in ivalues(PlayerNumber) do
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
 			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
 				self:settext("----")
 			else
 				self:queuecommand("SetDefault")
@@ -527,13 +586,13 @@ for player in ivalues(PlayerNumber) do
 		end,
 		SetDefaultCommand=function(self)
 			local playerScore = GetScoreForPlayer(player)
-			self:settext(playerScore and playerScore:GetName() or "----")
+			self:settext(playerScore and playerScore:GetName() or "----"):diffuse(Color.Black)
 			DiffuseEmojis(self:ClearAttributes())
 		end
 	}
 
 	-- Player Profile/GrooveStats HighScore
-	af2[#af2+1] = LoadFont("Common Normal")..{
+	af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="PlayerHighScore",
 		InitCommand=function(self)
 			self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
@@ -543,7 +602,7 @@ for player in ivalues(PlayerNumber) do
 		SetCommand=function(self)
 			-- We overload this actor to work both for GrooveStats and also offline.
 			-- If we're connected, we let the ResponseProcessor set the text
-			if IsServiceAllowed(SL.GrooveStats.GetScores) then
+			if IsServiceAllowed(SL.GrooveStats.GetScores) and ThemePrefs.Get("MusicWheelGS") == "Pane" then
 				self:settext("??.??%")
 			else
 				self:queuecommand("SetDefault")
@@ -552,14 +611,14 @@ for player in ivalues(PlayerNumber) do
 		SetDefaultCommand=function(self)
 			local playerScore = GetScoreForPlayer(player)
 			if playerScore ~= nil then
-				self:settext(FormatPercentScore(playerScore:GetPercentDP()))
+				self:settext(FormatPercentScore(playerScore:GetPercentDP())):diffuse(Color.Black)
 			else
-				self:settext("??.??%")
+				self:settext("??.??%"):diffuse(Color.Black)
 			end
 		end
 	}
 
-	af2[#af2+1] = LoadFont("Common Normal")..{
+	af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="Loading",
 		Text=THEME:GetString("GrooveStats", "Loading"),
 		InitCommand=function(self)
@@ -599,38 +658,40 @@ for player in ivalues(PlayerNumber) do
 
 	-- Add actors for Rival score data. Hidden by default
 	-- We position relative to column 3 for spacing reasons.
-	for i=1,3 do
-		-- Rival Machine Tag
-		af2[#af2+1] = LoadFont("Common Normal")..{
-			Name="Rival"..i.."Name",
-			InitCommand=function(self)
-				self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
-				self:x(pos.col[3]+50*text_zoom)
-				self:y(pos.row[i])
-			end,
-			OnCommand=function(self)
-				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
-			end,
-			SetCommand=function(self)
-				self:settext("----")
-			end
-		}
-
-		-- Rival HighScore
-		af2[#af2+1] = LoadFont("Common Normal")..{
-			Name="Rival"..i.."Score",
-			InitCommand=function(self)
-				self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
-				self:x(pos.col[3]+125*text_zoom)
-				self:y(pos.row[i])
-			end,
-			OnCommand=function(self)
-				self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
-			end,
-			SetCommand=function(self)
-				self:settext("??.??%")
-			end
-		}
+	if ThemePrefs.Get("MusicWheelGS") == "Pane" then
+		for i=1,3 do
+			-- Rival Machine Tag
+			af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
+				Name="Rival"..i.."Name",
+				InitCommand=function(self)
+					self:zoom(text_zoom):diffuse(Color.Black):maxwidth(30)
+					self:x(pos.col[3]+50*text_zoom)
+					self:y(pos.row[i])
+				end,
+				OnCommand=function(self)
+					self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
+				end,
+				SetCommand=function(self)
+					self:settext("----"):diffuse(Color.Black)
+				end
+			}
+	
+			-- Rival HighScore
+			af2[#af2+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
+				Name="Rival"..i.."Score",
+				InitCommand=function(self)
+					self:zoom(text_zoom):diffuse(Color.Black):horizalign(right)
+					self:x(pos.col[3]+125*text_zoom)
+					self:y(pos.row[i])
+				end,
+				OnCommand=function(self)
+					self:visible(IsServiceAllowed(SL.GrooveStats.GetScores))
+				end,
+				SetCommand=function(self)
+					self:settext("??.??%"):diffuse(Color.Black)
+				end
+			}
+		end
 	end
 end
 

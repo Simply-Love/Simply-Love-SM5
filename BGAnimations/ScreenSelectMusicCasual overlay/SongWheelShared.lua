@@ -112,7 +112,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- main title
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		Name="Title",
 		InitCommand=function(self) self:zoom(1.3):diffuse(Color.White):horizalign(left):y(-45):maxwidth(300) end,
 		CurrentSongChangedMessageCommand=function(self, params)
@@ -124,7 +124,7 @@ af[#af+1] = Def.ActorFrame{
 
 	-- artist
 	Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		Name="Artist",
 		InitCommand=function(self) self:zoom(0.85):diffuse(Color.White):y(-20):horizalign(left) end,
 		CurrentSongChangedMessageCommand=function(self, params)
@@ -139,7 +139,7 @@ af[#af+1] = Def.ActorFrame{
 
 		-- BPM
 		Def.BitmapText{
-			Font="Common Normal",
+			Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 			Name="BPM",
 			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(0):horizalign(left) end,
 			CurrentSongChangedMessageCommand=function(self, params)
@@ -150,7 +150,7 @@ af[#af+1] = Def.ActorFrame{
 		},
 		-- length
 		Def.BitmapText{
-			Font="Common Normal",
+			Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 			Name="Length",
 			InitCommand=function(self) self:zoom(0.65):diffuse(Color.White):y(14):horizalign(left) end,
 	 		CurrentSongChangedMessageCommand=function(self, params)
@@ -161,7 +161,7 @@ af[#af+1] = Def.ActorFrame{
 		},
 		-- genre
 		Def.BitmapText{
-			Font="Common Normal",
+			Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 			Name="Genre",
 			InitCommand=function(self)
 				self:zoom(0.65):diffuse(Color.White):y(28):horizalign(left)

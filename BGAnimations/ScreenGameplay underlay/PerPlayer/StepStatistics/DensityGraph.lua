@@ -22,7 +22,7 @@ and SL.P1.ActiveModifiers.DataVisualizations == "Step Statistics"
 and SL.P2.ActiveModifiers.DataVisualizations == "Step Statistics")
 -- -----------------------------------------------------------------------
 local mods = SL[pn].ActiveModifiers
-local FilterAlpha = clamp(BackgroundFilterValues()[mods.BackgroundFilter]/100 or 0, 0.25, 1)
+local FilterAlpha = mods.BackgroundFilter
 -- max_seconds is how many seconds of a stepchart we want visualized on-screen at once.
 -- For very long songs (longer than, say, 10 minutes) the density graph becomes too
 -- horizontally compressed (squeezed in, so to speak) and it's dificult to get any useful
@@ -95,10 +95,11 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 }
 
 -- PeakNPS text
-local text = LoadFont("Common Normal")..{
+local text = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	InitCommand=function(self)
 		if style ~= "double" then
-			self:halign(PlayerNumber:Reverse()[OtherPlayer[player]]):zoom(0.9)
+			self:zoom(0.5)
+			self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
 		else
 			self:halign(3.4):zoom(0.9)
 		end
@@ -128,7 +129,7 @@ local text = LoadFont("Common Normal")..{
 				self:x(52)
 			end
 		else
-			self:x(SL_WideScale(6,130))
+			self:x(_screen.w*0.5 - SL_WideScale(6,98))
 			if NoteFieldIsCentered then
 				self:x(69)
 			end
@@ -137,8 +138,9 @@ local text = LoadFont("Common Normal")..{
 			end
 		end
 
-		self:y( -self:GetHeight()/2 - 2 )
-		self:settext( ("%s: %g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2)) )
+		self:y( -self:GetHeight()/2 + 5 )
+		self:settext( ("%s/%s: %g/%g"):format(THEME:GetString("ScreenGameplay", "PeakNPS"),THEME:GetString("ScreenGameplay", "eBPM"), round(my_peak * SL.Global.ActiveModifiers.MusicRate,2),round(my_peak *15* SL.Global.ActiveModifiers.MusicRate,0)) )
+		self:maxwidth(190)
 	end,
 }
 

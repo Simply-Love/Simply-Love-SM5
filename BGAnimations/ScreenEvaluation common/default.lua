@@ -1,5 +1,5 @@
 local Players = GAMESTATE:GetHumanPlayers()
-local NumPanes = SL.Global.GameMode=="Casual" and 1 or 8
+local NumPanes = SL.Global.GameMode=="Casual" and 1 or 10
 
 local InputHandler = nil
 local EventOverlayInputHandler = nil
@@ -19,6 +19,11 @@ if SL.Global.GameMode ~= "Casual" then
 		EventOverlayInputHandler = LoadActor("./Shared/EventInputHandler.lua")
 		SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
 		PROFILEMAN:SaveMachineProfile()
+		
+		if SL.NewDownloadsCompleted then
+			SL.NewDownloadsCompleted = false
+			SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSongsSSM")
+		end
 	end
 	t.DirectInputToEngineCommand=function(self)
 		SCREENMAN:GetTopScreen():RemoveInputCallback(EventOverlayInputHandler)
@@ -35,6 +40,10 @@ if SL.Global.GameMode ~= "Casual" then
 		for player in ivalues(PlayerNumber) do
 			SCREENMAN:set_input_redirected(player, true)
 		end
+	end
+	t.NewDownloadsCompletedMessageCommand=function(self, params)
+		SL.NewDownloadsCompleted = false
+		SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSongsSSM")
 	end
 else
 	t.OnCommand=function(self)
@@ -82,9 +91,18 @@ for player in ivalues(Players) do
 	-- judgment scatterplot, modifier list, disqualified text
 	t[#t+1] = LoadActor("./PerPlayer/Lower/default.lua", player)
 
+	-- Save Ghost Data if player has improved their score
+	t[#t+1] = LoadActor("./PerPlayer/SaveGhostData.lua", player)
+
 	-- Generate the .itl file for the player.
 	-- When the event isn't active, this actor is nil.
 	t[#t+1] = LoadActor("./PerPlayer/ItlFile.lua", player)
+
+	-- Generate the .rpg file for the player to keep track of best rate mod on the songwheel
+	-- When the event isn't active, this actor is nil.
+	t[#t+1] = LoadActor("./PerPlayer/RpgRatemod.lua", player)
+	
+	
 end
 
 -- -----------------------------------------------------------------------

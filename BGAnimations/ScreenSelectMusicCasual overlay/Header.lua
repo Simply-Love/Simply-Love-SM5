@@ -17,7 +17,7 @@ local af = Def.ActorFrame{
 	-- "Choose Your Song"
 	Def.BitmapText{
 		Name="HeaderText",
-		Font="Common Header",
+		Font=ThemePrefs.Get("ThemeFont") .. " Header",
 		Text=text,
 		InitCommand=function(self) self:diffuse(1,1,1,0):zoom(WideScale(0.5,0.6)):horizalign(left):xy(10, 15) end,
 		OffCommand=function(self) self:accelerate(0.33):diffusealpha(0) end,
@@ -29,7 +29,7 @@ local af = Def.ActorFrame{
 -- Stage Number
 if not PREFSMAN:GetPreference("EventMode") then
 	af[#af+1] = Def.BitmapText{
-		Font=PREFSMAN:GetPreference("EventMode") and "Wendy/_wendy monospace numbers" or "Common Header",
+		Font=PREFSMAN:GetPreference("EventMode") and ThemePrefs.Get("ThemeFont") .. " numbers" or ThemePrefs.Get("ThemeFont") .. " Header",
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)

@@ -6,7 +6,7 @@ return Def.ActorFrame{
 		    :accelerate(0.2):y(10)
 	end,
 
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("GraphDisplay", "Barely"),
 		InitCommand=function(self) self:zoom(0.75) end,
 	},

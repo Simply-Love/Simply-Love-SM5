@@ -84,7 +84,7 @@ local GetText = function()
 	return text
 end
 
-return LoadFont("Common Normal")..{
+return LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Text=GetText(),
 	InitCommand=function(self)
 		self:zoom(0.8):y(-150):diffusealpha(0)

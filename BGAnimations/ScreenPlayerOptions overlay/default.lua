@@ -133,6 +133,68 @@ local ChangeVariant = function(pn, direction)
 	SL[pn].ActiveModifiers.NoteSkinVariant = variants[new_index]
 end
 
+local CalculatePerspectiveSpeed = function(player)
+	player   = player or GAMESTATE:GetMasterPlayerNumber()
+	local pn = ToEnumShortString(player)
+	local ScreenOptions = SCREENMAN:GetTopScreen()
+
+	local StepsOrTrail = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentTrail(player)) or GAMESTATE:GetCurrentSteps(player)
+	local MusicRate    = SL.Global.ActiveModifiers.MusicRate or 1
+
+	local SpeedModType = SL[pn].ActiveModifiers.SpeedModType
+	local SpeedMod     = SL[pn].ActiveModifiers.SpeedMod
+	
+	local PerspectiveRowIndex = FindOptionRowIndex(ScreenOptions,"Perspective")
+	local Perspective         = ScreenOptions:GetOptionRow(PerspectiveRowIndex):GetChoiceInRowWithFocus(pn)
+	local PersMult            = 1
+	
+	local MiniModRowIndex = FindOptionRowIndex(ScreenOptions,"Mini")
+	local Mini            = SL[pn].ActiveModifiers.Mini:gsub("%%","")
+	
+	if Perspective == 1 then
+		PersMult = 0.75
+	elseif Perspective == 2 then
+		PersMult = 33 / 39
+	elseif Perspective == 3 then
+		PersMult = 33 / 43
+	elseif Perspective == 4 then
+		PersMult = 0.825
+	end
+
+	if MiniModRowIndex then
+		-- The BitmapText actors for P1 and P2 mini mod are both named "Item", so we need to provide a 1 or 2 to index
+		Mini = ScreenOptions:GetOptionRow(MiniModRowIndex):GetChild(""):GetChild("Item")[ PlayerNumber:Reverse()[player]+1 ]:GetText():gsub("%%","")
+	end
+
+	local bpms = GetDisplayBPMs(player, StepsOrTrail, MusicRate)
+	if not (bpms and bpms[1] and bpms[2]) then return "" end
+
+	if SpeedModType=="X" then
+		bpms[1] = bpms[1] * SpeedMod
+		bpms[2] = bpms[2] * SpeedMod
+
+	elseif SpeedModType=="M" then
+		bpms[1] = bpms[1] * (SpeedMod/bpms[2])
+		bpms[2] = SpeedMod
+
+	elseif SpeedModType=="C" then
+		bpms[1] = SpeedMod
+		bpms[2] = SpeedMod
+	end
+	
+	bpms[1] = bpms[1] * (200 - Mini) / 200 * PersMult
+	bpms[2] = bpms[2] * (200 - Mini) / 200 * PersMult
+
+	-- format as strings
+	bpms[1] = ("%.0f"):format(bpms[1])
+	bpms[2] = ("%.0f"):format(bpms[2])
+
+	if bpms[1] == bpms[2] then
+		return bpms[1]
+	end
+
+	return ("%s-%s"):format(bpms[1], bpms[2])
+end
 
 ------------------------------------------------------------
 
@@ -229,6 +291,7 @@ local t = Def.ActorFrame{
 LoadActor("./OptionRowPreviews/NoteSkin.lua", t)
 LoadActor("./OptionRowPreviews/NoteSkinVariant.lua", t)
 LoadActor("./OptionRowPreviews/JudgmentGraphic.lua", t)
+LoadActor("./OptionRowPreviews/HeldGraphic.lua", t)
 LoadActor("./OptionRowPreviews/ComboFont.lua", t)
 LoadActor("./OptionRowPreviews/HoldJudgment.lua", t)
 LoadActor("./OptionRowPreviews/MusicRate.lua", t)
@@ -312,6 +375,16 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			if row_index == FindOptionRowIndex(topscreen, "SpeedMod") then
 				ChangeSpeedMod( pn, -1 )
 				self:queuecommand("Set"..pn)
+			elseif row_index == FindOptionRowIndex(topscreen, "Mini") or row_index == FindOptionRowIndex(topscreen, "Perspective") then
+				self:queuecommand("Set"..pn)
+			end
+			if row_index == FindOptionRowIndex(topscreen, "NoteSkinVariant") then
+				ChangeVariant( pn, -1 )
+				self:queuecommand("Set"..pn.."Variant")
+			end
+			if row_index == FindOptionRowIndex(topscreen, "NoteSkin") then
+				ChangeVariant( pn, 0 )
+				self:queuecommand("Set"..pn.."Variant")
 			end
 			if row_index == FindOptionRowIndex(topscreen, "NoteSkinVariant") then
 				ChangeVariant( pn, -1 )
@@ -329,6 +402,15 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			if row_index == FindOptionRowIndex(topscreen, "SpeedMod") then
 				ChangeSpeedMod( pn, 1 )
 				self:queuecommand("Set"..pn)
+			elseif row_index == FindOptionRowIndex(topscreen, "Mini") or row_index == FindOptionRowIndex(topscreen, "Perspective") then
+				self:queuecommand("Set"..pn)
+			end
+			if row_index == FindOptionRowIndex(topscreen, "NoteSkinVariant") then
+				ChangeVariant( pn, 1 )
+				self:queuecommand("Set"..pn.."Variant")
+			elseif row_index == FindOptionRowIndex(topscreen, "NoteSkin") then
+				ChangeVariant( pn, 0 )
+				self:queuecommand("Set"..pn.."Variant")
 			end
 			if row_index == FindOptionRowIndex(topscreen, "NoteSkinVariant") then
 				ChangeVariant( pn, 1 )
@@ -341,7 +423,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	}
 
 	-- the large block text at the top that shows each player their current scroll speed
-	t[#t+1] = LoadFont("Common Bold")..{
+	t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Name=pn.."SpeedModHelper",
 		Text="",
 		InitCommand=function(self)
@@ -353,6 +435,26 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		OnCommand=function(self) self:linear(0.4):diffusealpha(1) end,
 		RefreshCommand=function(self)
 			self:settext( ("%s%s"):format(SL[pn].ActiveModifiers.SpeedModType, CalculateScrollSpeed(player)) )
+		end
+	}
+	
+	t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
+		Name=pn.."SpeedModHelperEn",
+		Text="",
+		InitCommand=function(self)
+			self:diffuse(PlayerColor(player)):diffusealpha(0)
+			self:zoom(0.3):y(52)
+			self:x(player==PLAYER_1 and WideScale(-77, -100) or WideScale(140,154))
+			self:shadowlength(0.55)
+		end,
+		OnCommand=function(self) self:linear(0.4):diffusealpha(0) end,
+		RefreshCommand=function(self)
+			local w = self:GetParent():GetChild(pn.."SpeedModHelper"):GetWidth()
+			local scroll = CalculateScrollSpeed(player)
+			local pScroll = CalculatePerspectiveSpeed(player)
+			if scroll == pScroll then self:finishtweening():linear(0.5):diffusealpha(0) else self:finishtweening():linear(0.5):diffusealpha(0.8) end
+			self:x(player==PLAYER_1 and WideScale(-77 + (w * 0.4), -100 + (w * 0.4)) or WideScale(140 + (w * 0.4),154 + (w * 0.4)))
+			self:settext( ("%s%s"):format(SL[pn].ActiveModifiers.SpeedModType, pScroll) )
 		end
 	}
 end

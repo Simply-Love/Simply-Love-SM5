@@ -16,7 +16,7 @@ return Def.ActorFrame{
 	},
 
 	-- Song Title
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="SongTitle",
 		InitCommand=function(self) self:zoom(0.8):shadowlength(0.6):maxwidth(_screen.w/2.5 - 10) end,
 		CurrentSongChangedMessageCommand=function(self)

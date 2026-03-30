@@ -15,7 +15,7 @@ return Def.ActorFrame{
 	},
 
 	-- text for BPM (and maybe music rate if ~= 1.0)
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:zoom(0.6):maxwidth(418/0.875) end,
 		OnCommand=function(self)
 			-- FIXME: the current layout of ScreenEvaluation doesn't accommodate split BPMs
@@ -33,7 +33,7 @@ return Def.ActorFrame{
 	},
 
 	-- text for Song Length
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:zoom(0.6):maxwidth(418/0.875):x(145):horizalign("right") end,
 		OnCommand=function(self)
 			local seconds = nil
@@ -43,7 +43,7 @@ return Def.ActorFrame{
 					seconds = TrailUtil.GetTotalSeconds(trail)
 				end
 			else
-				seconds = GAMESTATE:GetCurrentSong():MusicLengthSeconds()
+				seconds = GAMESTATE:GetCurrentSong():GetLastSecond()
 			end
 
 			if seconds then
@@ -63,7 +63,7 @@ return Def.ActorFrame{
 	},
 
 	-- text for Artist
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self)
 			self:zoom(0.6):maxwidth(418/2.3):x(-145):horizalign("left")
 			if SL.Global.ActiveModifiers.MusicRate ~= 1 then

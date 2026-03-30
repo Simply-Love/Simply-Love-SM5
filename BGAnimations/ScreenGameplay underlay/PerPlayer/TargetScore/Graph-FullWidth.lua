@@ -3,6 +3,36 @@ local player, pss, isTwoPlayers, bothWantBars, pos_data,
 
 local pn = ToEnumShortString(player)
 
+local GetPossibleExScore = function(counts)
+	local best_counts = {}
+	
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+
+	for key in ivalues(keys) do
+		local value = counts[key]
+		if value ~= nil then
+			-- Initialize the keys	
+			if best_counts[key] == nil then
+				best_counts[key] = 0
+			end
+
+			-- Upgrade dropped holds/rolls to held.
+			if key == "LetGo" or key == "Held" then
+				best_counts["Held"] = best_counts["Held"] + value
+			-- We never hit any mines.
+			elseif key == "HitMine" then
+				best_counts[key] = 0
+			-- Upgrade to FA+ window.
+			else
+				best_counts["W0"] = best_counts["W0"] + value
+			end
+		end
+	end
+	
+	local possible_ex_score, possible_total = CalculateExScore(player, best_counts)
+	return possible_ex_score, possible_total
+end
+
 -- Converts a grade enum to an exponential scale, returning the corresponding Y point in the graph
 local getYFromGradeEnum = function(gradeEnum)
 	return percentToYCoordinate(THEME:GetMetric("PlayerStageStats", "GradePercent" .. ToEnumShortString(gradeEnum)))
@@ -27,8 +57,16 @@ local af = Def.ActorFrame {
 		end,
 		-- follow the player's score
 		UpdateCommand=function(self)
-			local dp = pss:GetPercentDancePoints()
-			self:zoomy(-percentToYCoordinate(dp))
+			if not SL[pn].ActiveModifiers.ShowExScore then
+				local dp = pss:GetPercentDancePoints()
+				self:zoomy(-percentToYCoordinate(dp))
+			end
+		end,
+		ExCountsChangedMessageCommand=function(self, params)
+			if SL[pn].ActiveModifiers.ShowExScore then
+				local dp = params.actual_points / params.actual_possible
+				self:zoomy(-percentToYCoordinate(dp))
+			end
 		end
 	},
 
@@ -43,9 +81,18 @@ local af = Def.ActorFrame {
 			self:diffuse(Color.Green)
 		end,
 		UpdateCommand = function(self)
-			local currentDP = personal_best * GetCurMaxPercentDancePoints()
-			self:zoomy(-percentToYCoordinate(currentDP))
+			if not SL[pn].ActiveModifiers.ShowExScore then
+				local targetDP = target_score * GetCurMaxPercentDancePoints()
+				self:zoomy(-percentToYCoordinate(targetDP))
+			end
 		end,
+		ExCountsChangedMessageCommand=function(self, params)
+			if SL[pn].ActiveModifiers.ShowExScore then
+				local PercentMax, DPCurrMax = GetPossibleExScore(params.ExCounts)
+				local currentDP = personal_best * GetCurMaxPercentDancePoints(DPCurrMax, params.actual_possible)
+				self:zoomy(-percentToYCoordinate(currentDP))
+			end
+		end
 	},
 
 	-- BAR 3: Target Score
@@ -58,9 +105,18 @@ local af = Def.ActorFrame {
 		OnCommand=function(self)
 			self:diffuse(Color.Red)
 		end,
-		UpdateCommand=function(self)
-			local targetDP = target_score * GetCurMaxPercentDancePoints()
-			self:zoomy(-percentToYCoordinate(targetDP))
+		UpdateCommand = function(self)
+			if not SL[pn].ActiveModifiers.ShowExScore then
+				local currentDP = target_score * GetCurMaxPercentDancePoints()
+				self:zoomy(-percentToYCoordinate(currentDP))
+			end
+		end,
+		ExCountsChangedMessageCommand=function(self, params)
+			if SL[pn].ActiveModifiers.ShowExScore then
+				local PercentMax, DPCurrMax = GetPossibleExScore(params.ExCounts)
+				local currentDP = target_score * GetCurMaxPercentDancePoints(DPCurrMax, params.actual_possible)
+				self:zoomy(-percentToYCoordinate(currentDP))
+			end
 		end
 	},
 
@@ -125,21 +181,21 @@ end
 
 -- text labels for the bars
 af[#af+1] = Def.ActorFrame{
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("TargetScoreGraph", "You"),
 		InitCommand=function(self)
 			self:xy( pos_data.bar.offset + pos_data.bar.spacing + (pos_data.bar.w/2), 20 ):shadowlength(1)
 		end,
 	},
 
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("TargetScoreGraph", "Personal"),
 		InitCommand=function(self)
 			self:xy( pos_data.bar.offset + (pos_data.bar.spacing * 2) + (pos_data.bar.w/2) + pos_data.bar.w, 20 ):shadowlength(1)
 		end,
 	},
 
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("TargetScoreGraph", "Target"),
 		InitCommand=function(self)
 			self:xy( pos_data.bar.offset + (pos_data.bar.spacing * 3) + (pos_data.bar.w/2) + pos_data.bar.w * 2, 20 ):shadowlength(1)

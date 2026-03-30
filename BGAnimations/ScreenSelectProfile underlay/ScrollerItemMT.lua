@@ -15,7 +15,7 @@ return {
 				AppearCommand=function(subself) subself:visible(true):linear(0.15):diffusealpha(1) end,
 			}
 
-			local txt = LoadFont("Common Normal")..{
+			local txt = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 				InitCommand=function(subself)
 					self.bmt = subself
 					subself:maxwidth(115):MaskDest():shadowlength(0.5)

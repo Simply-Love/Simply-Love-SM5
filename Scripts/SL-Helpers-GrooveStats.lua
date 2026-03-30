@@ -1,3 +1,20 @@
+GrooveStatsURL = function()
+	-- For test GrooveStats responses, create a file called GrooveStats_UAT.txt
+	-- in your theme's Other directory. To toggle between live and UAT, delete/rename this file.
+	-- Requires gsapi-mock and adding 127.0.0.1 to HttpAllowHosts in Preferences.ini
+	local url_prefix
+	local dir = THEME:GetCurrentThemeDirectory() .. "Other/"
+	local uat = dir .. "GrooveStats_UAT.txt"
+	local boogie = ThemePrefs.Get("EnableBoogieStats")
+	if not FILEMAN:DoesFileExist(uat) then 
+		if boogie and string.find(PREFSMAN:GetPreference("HttpAllowHosts"), "boogiestats.andr.host") then url_prefix = "https://boogiestats.andr.host/" 
+		else url_prefix = "https://apiservice.groovestats.com/api/" end
+	else
+		url_prefix = "http://127.0.0.1:5000/"
+	end
+	return url_prefix
+end
+
 -- -----------------------------------------------------------------------
 -- Returns an actor that can write a request, wait for its response, and then
 -- perform some action. This actor will only wait for one response at a time.
@@ -41,7 +58,7 @@
 -- args: any, arguments that will be made accesible to the callback function. This
 --       can of any type as long as the callback knows what to do with it.
 RequestResponseActor = function(x, y)
-	local url_prefix = "https://apiservice.groovestats.com/api/"
+	local url_prefix = GrooveStatsURL()
 
 	return Def.ActorFrame{
 		InitCommand=function(self)
@@ -165,7 +182,7 @@ RequestResponseActor = function(x, y)
 					self:diffuse(GetHexColor(SL.Global.ActiveColorIndex, true))
 				end
 			},
-			LoadFont("Common Normal")..{
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 				InitCommand=function(self)
 					self:zoom(0.9)
 					-- Leaderboard should be white since it's on a black background.
@@ -514,7 +531,12 @@ CreateCommentString = function(player)
 
 	local suffixes = {"w", "e", "g", "d", "wo"}
 
-	local comment = ""
+	local comment = (SL.Global.GameMode == "FA+" or SL[pn].ActiveModifiers.ShowFaPlusWindow) and "FA+" or ""
+	
+	-- Show EX score for FA+ play
+	if SL.Global.GameMode == "FA+" or (SL.Global.GameMode == "ITG" and SL[pn].ActiveModifiers.ShowFaPlusWindow) then
+		comment = comment .. ", " .. ("%.2f"):format(CalculateExScore(player, GetExJudgmentCounts(player))) .. "EX"
+	end
 
 	local rate = SL.Global.ActiveModifiers.MusicRate
 	if rate ~= 1 then
@@ -524,19 +546,43 @@ CreateCommentString = function(player)
 		comment = comment..("%gx Rate"):format(rate)
 	end
 
-	-- Ignore the top window in all cases.
-	for i=2, 6 do
-		local suffix = i == 6 and "m" or suffixes[i]
-		local tns = i == 6 and "TapNoteScore_Miss" or "TapNoteScore_W"..i
+	-- Get EX judgment counts if playing with FA+ windows enabled in ITG mode
+	if SL.Global.GameMode == "ITG" then
+		local counts = GetExJudgmentCounts(player)
+		local types = { 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' }
 		
-		local number = pss:GetTapNoteScores(tns)
-
-		-- If the windows are disabled, then the number will be 0.
-		if number ~= 0 then
-			if #comment ~= 0 then
-				comment = comment .. ", "
+		for i=1,6 do
+			local window = types[i]
+			local number = counts[window] or 0
+			local suffix = i == 6 and "m" or suffixes[i]
+			
+			if i == 1 then
+				number = counts["W1"]
 			end
-			comment = comment..number..suffix
+			
+			if number ~= 0 then
+				if #comment ~= 0 then
+					comment = comment .. ", "
+				end
+				comment = comment..number..suffix
+			end
+		end
+	else
+		-- Ignore the top window in all cases.
+		for i=2, 6 do
+			local idx = SL.Global.GameMode == "FA+" and i-1 or i
+			local suffix = i == 6 and "m" or suffixes[idx]
+			local tns = i == 6 and "TapNoteScore_Miss" or "TapNoteScore_W"..i
+			
+			local number = pss:GetTapNoteScores(tns)
+
+			-- If the windows are disabled, then the number will be 0.
+			if number ~= 0 then
+				if #comment ~= 0 then
+					comment = comment .. ", "
+				end
+				comment = comment..number..suffix
+			end
 		end
 	end
 
@@ -743,6 +789,9 @@ DownloadEventUnlock = function(url, unlockName, packName)
 							SL.GrooveStats.UnlocksCache[url] = {}
 						end
 						SL.GrooveStats.UnlocksCache[url][packName] = true
+						
+						SL.NewDownloadsCompleted = true
+						MESSAGEMAN:Broadcast("NewDownloadsCompleted")
 
 						-- If Pack.ini doesn't exist (new unlock for this player), create it.
 						local group = string.lower(packName)
@@ -861,6 +910,15 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[17]="Shift 2x7 (doubleres).png",
 				[18]="Tactics 2x7 (doubleres).png",
 				[19]="Wendy 2x7 (doubleres).png",
+				-- Digital Dance
+				[100]="Chalk 2x7 (doubleres).png",
+				[101]="Digital 2x7 (doubleres).png",
+				[102]="Ice 2x7.png",
+				[103]="ITG2 HD 2x7 (doubleres).png",
+				[104]="Optimus Dark 2x7 (doubleres).png",
+				[105]="Powerpuff HD 2x7 (doubleres).png",
+				[106]="Reptilian 2x7 (doubleres).png",
+				[107]="TRON 2x7 (doubleres).png",
 		}),
 		["ComboFont"] = CreateKey("string", {
 			[1]="Arial Rounded",
@@ -876,6 +934,8 @@ CreateGrooveStatsPlayerOptionKeys = function()
 			[2]="Love 1x2 (doubleres).png",
 			[3]="mute 1x2 (doubleres).png",
 			[4]="None 1x2.png",
+			-- Digital Dance
+			[100]="Ice 1x2.png",
 		}),
 		["NoteSkin"] = CreateKey("string", {
 			[1]="cel",
@@ -929,6 +989,8 @@ CreateGrooveStatsPlayerOptionKeys = function()
 			[1]="Standard",
 			[2]="Surround",
 			[3]="Vertical",
+			-- Digital Dance
+			[100]="Top",
 		}),
 		["NPSGraphAtTop"] = CreateKey("boolean"),
 		["JudgmentTilt"] = CreateKey("boolean"),
@@ -1049,8 +1111,7 @@ GetPlayerOptionsJsonForGrooveStats = function(player)
 	local visualDelay = SL[pn].ActiveModifiers.VisualDelay:gsub("ms","")/1
 
 	-- Similarly, BackgroundFilter has options that directly map to numbers.
-	local FilterAlpha = BackgroundFilterValues()
-	local value = FilterAlpha[SL[pn].ActiveModifiers.BackgroundFilter]
+	local value = SL[pn].ActiveModifiers.BackgroundFilter
 	local backgroundFilter = value and value or 0
 
 	-- HideLookeahead is stored as a boolean in SL, but we want to save it as

@@ -15,7 +15,7 @@ local t = Def.ActorFrame{
 
 		Def.Quad{ InitCommand=function(self) self:zoomto(30,1):horizalign(right) end },
 
-		LoadFont("Common Bold") .. {
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold") .. {
 			Name="InfoText",
 			Text=THEME:GetString("ScreenEdit", "Info"),
 			InitCommand=function(self) self:zoom(0.265):horizalign(right):x(-35):diffuse(PlayerColor(PLAYER_1)) end,
@@ -39,14 +39,14 @@ for section, offset in pairs(sections) do
 		ShowCommand=function(self) self:visible(true) end,
 		HideCommand=function(self) self:visible(false) end,
 
-		LoadFont("Common Bold")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 			Text=THEME:GetString("ScreenEdit", section.."Label"),
 			InitCommand=function(self) self:zoom(0.265):horizalign(left):xy(35, 10):diffuse(PlayerColor(PLAYER_1)) end
 		},
 		Def.Quad{
 			InitCommand=function(self) self:y(10):zoomto(30,1):horizalign(left):diffusealpha(0.75) end
 		},
-		LoadFont("Common Normal")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			Text=THEME:GetString("ScreenEdit", section.."Text"),
 			InitCommand=function(self) self:xy(10, 20):zoom(0.6):horizalign(left):vertalign(top):vertspacing(-1) end,
 		},

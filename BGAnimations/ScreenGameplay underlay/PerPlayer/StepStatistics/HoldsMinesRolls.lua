@@ -115,7 +115,7 @@ for i, category in ipairs(RadarCategories) do
 	local possibleAttr = { Diffuse=gray }
 
 	-- labels: holds, mines, rolls
-	af[#af+1] = LoadFont("Common Normal")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name=("%s_Label"):format(category),
 		Text=THEME:GetString("ScreenEvaluation", category),
 		InitCommand=function(self)
@@ -132,7 +132,7 @@ for i, category in ipairs(RadarCategories) do
 	}
 
 	-- player performance value / possible value
-	af[#af+1] = LoadFont("Wendy/_ScreenEvaluation numbers")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " ScreenEval")..{
 		Name=("%s_Values"):format(category),
 		InitCommand=function(self)
 			self:zoom(0.4):horizalign( right )

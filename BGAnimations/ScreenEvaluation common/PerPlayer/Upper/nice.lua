@@ -106,7 +106,7 @@ if IsNice() then
 				-- it just plays the file you pass it at 100%; this can be jarring
 				-- use SOUND:DimMusic() as a way to set the volume to match SoundVolume preference
 				-- for 1.3 seconds, the duration of nice.ogg
-				SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
+				-- SOUND:DimMusic(PREFSMAN:GetPreference("SoundVolume"),  1.3)
 				SOUND:PlayOnce(THEME:GetPathS("", "nice.ogg"))
 			end
 		end
@@ -117,6 +117,24 @@ if IsCranked() then
 	af[#af+1] = LoadActor(THEME:GetPathS("", "wrenches.ogg"))..{
 		OnCommand=function(self) self:sleep(0.5):queuecommand("Play") end,
 		PlayCommand=function(self) self:play() end
+	}
+end
+
+local pn = ToEnumShortString(player)
+if SL[pn].ActiveModifiers.NoBar then
+	af[#af+1] = LoadActor(THEME:GetPathG("","nobar.png"))..{
+		InitCommand=function(self)
+			self:xy(40, _screen.cy-134)
+		end,
+		OnCommand=function(self)
+
+			self:y(_screen.cy-94)
+			self:zoom(0.15)
+
+			if player == PLAYER_1 then
+				self:x( self:GetX() * -1 )
+			end
+		end
 	}
 end
 

@@ -1,17 +1,26 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
+local NoteFieldIsCentered = (GetNotefieldX(player) == _screen.cx)
 
 -- if no BackgroundFilter is necessary, it's safe to bail now
-if mods.BackgroundFilter == "Off" then return end
+if mods.BackgroundFilter == 0 then return end
 
 local FilterAlpha = BackgroundFilterValues()
 return Def.Quad{
 	InitCommand=function(self)
 		self:xy(GetNotefieldX(player), _screen.cy )
 			:diffuse(Color.Black)
-			:diffusealpha( FilterAlpha[mods.BackgroundFilter]/100 or 0 )
-			:zoomto( GetNotefieldWidth(), _screen.h )
+			:diffusealpha( mods.BackgroundFilter / 100 )
+			:zoomto( GetNotefieldWidth() + 80, _screen.h )
+			:fadeleft(0.1):faderight(0.1)
+		if NoteFieldIsCentered and (SL[pn].ActiveModifiers.DataVisualizations ~= "None" or (ThemePrefs.Get("EnableTournamentMode") and ThemePrefs.Get("StepStats") == "Show")) then
+			if pn == "P1" then
+				self:zoomto( GetNotefieldWidth() + 40, _screen.h ):addx(-20):faderight(0)
+			else
+				self:zoomto( GetNotefieldWidth() + 40, _screen.h ):addx(20):fadeleft(0)
+			end
+		end
 	end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)

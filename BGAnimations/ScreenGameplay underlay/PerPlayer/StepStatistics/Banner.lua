@@ -11,6 +11,7 @@ return Def.Banner{
 		
 		if style ~= "double" then
 			self:xy(70 * (player==PLAYER_1 and 1 or -1), -200)
+			self:SetDecodeMovie(ThemePrefs.Get("AnimateBanners"))
 
 			self:SetDecodeMovie(ThemePrefs.Get("AnimateBanners"))
 

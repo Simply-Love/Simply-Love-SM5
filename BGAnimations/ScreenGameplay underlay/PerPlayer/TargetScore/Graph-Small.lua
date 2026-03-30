@@ -1,6 +1,36 @@
 local player, pss, isTwoPlayers, bothWantBars, pos_data,
       target_score, personal_best, percentToYCoordinate, GetCurMaxPercentDancePoints = unpack(...)
+local pn = ToEnumShortString(player)
 
+local GetPossibleExScore = function(counts)
+	local best_counts = {}
+	
+	local keys = { "W0", "W1", "W2", "W3", "W4", "W5", "Miss", "Held", "LetGo", "HitMine" }
+
+	for key in ivalues(keys) do
+		local value = counts[key]
+		if value ~= nil then
+			-- Initialize the keys	
+			if best_counts[key] == nil then
+				best_counts[key] = 0
+			end
+
+			-- Upgrade dropped holds/rolls to held.
+			if key == "LetGo" or key == "Held" then
+				best_counts["Held"] = best_counts["Held"] + value
+			-- We never hit any mines.
+			elseif key == "HitMine" then
+				best_counts[key] = 0
+			-- Upgrade to FA+ window.
+			else
+				best_counts["W0"] = best_counts["W0"] + value
+			end
+		end
+	end
+	
+	local possible_ex_score, possible_total = CalculateExScore(player, best_counts)
+	return possible_ex_score, possible_total
+end
 
 return Def.ActorFrame {
 
@@ -19,8 +49,16 @@ return Def.ActorFrame {
 		end,
 		-- follow the player's score
 		UpdateCommand=function(self)
-			local dp = pss:GetPercentDancePoints()
-			self:zoomy(-percentToYCoordinate(dp))
+			if not SL[pn].ActiveModifiers.ShowExScore then
+				local dp = pss:GetPercentDancePoints()
+				self:zoomy(-percentToYCoordinate(dp))
+			end
+		end,
+		ExCountsChangedMessageCommand=function(self, params)
+			if SL[pn].ActiveModifiers.ShowExScore then
+				local dp = params.actual_points / params.actual_possible
+				self:zoomy(-percentToYCoordinate(dp))
+			end
 		end
 	},
 
@@ -35,8 +73,17 @@ return Def.ActorFrame {
 			self:diffuse(Color.Red)
 		end,
 		UpdateCommand=function(self)
-			local targetDP = target_score * GetCurMaxPercentDancePoints()
-			self:zoomy(-percentToYCoordinate(targetDP))
+			if not SL[pn].ActiveModifiers.ShowExScore then
+				local targetDP = target_score * GetCurMaxPercentDancePoints()
+				self:zoomy(-percentToYCoordinate(targetDP))
+			end
+		end,
+		ExCountsChangedMessageCommand=function(self, params)
+			if SL[pn].ActiveModifiers.ShowExScore then
+				local PercentMax, DPCurrMax = GetPossibleExScore(params.ExCounts)
+				local targetDP = target_score * GetCurMaxPercentDancePoints(DPCurrMax, params.actual_possible)
+				self:zoomy(-percentToYCoordinate(targetDP))
+			end
 		end
 	},
 

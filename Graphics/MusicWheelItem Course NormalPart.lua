@@ -5,8 +5,8 @@ local num_visible_items = num_items - 2
 
 local item_width = _screen.w / 2.125
 
-return Def.ActorFrame {
-    -- the MusicWheel is centered via metrics under [ScreenSelectMusic]; offset by a slight amount to the right here
+local af =  Def.ActorFrame{
+	-- the MusicWheel is centered via metrics under [ScreenSelectMusic]; offset by a slight amount to the right here
     InitCommand = function(self) self:x(WideScale(28, 33)) end,
 
     Def.Quad {
@@ -37,3 +37,12 @@ return Def.ActorFrame {
 		end,
     }
 }
+
+
+local players = GAMESTATE:GetHumanPlayers()
+
+for i in ivalues(players) do
+	af[#af+1] = LoadActor(THEME:GetPathG("", "MusicWheelItem RPGRate.lua"), i)
+end
+
+return af

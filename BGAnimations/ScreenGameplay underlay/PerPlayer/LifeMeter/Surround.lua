@@ -1,4 +1,5 @@
 local player = ...
+local pn = ToEnumShortString(player)
 
 local af = Def.ActorFrame{
 	Name="LifeMeter_"..ToEnumShortString(player),
@@ -66,6 +67,21 @@ else
 		end,
 		ChangeSizeCommand=function(self, params)
 			self:finishtweening():smooth(0.2):croptop(params.CropAmount)
+			local absLife = 1-params.CropAmount
+			if SL[pn].ActiveModifiers.ResponsiveColors then
+				if absLife >= 0.9 then
+					self:diffuse(0, 1, (absLife - 0.9) * 10, 0.2)
+				elseif absLife >= 0.5 then
+					self:diffuse((0.9 - absLife) * 10 / 4, 1, 0, 0.2)
+				else
+					self:diffuse(1, (absLife - 0.2) * 10 / 3, 0, 0.2)
+				end
+			end
+			if absLife == 1 and SL[pn].ActiveModifiers.RainbowMax then
+				self:rainbow()
+			elseif SL[pn].ActiveModifiers.RainbowMax then
+				self:stopeffect()
+			end
 		end,
 		DeadCommand=function(self)
 			self:finishtweening():smooth(0.2):croptop(1)

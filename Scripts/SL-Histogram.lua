@@ -107,6 +107,18 @@ local function gen_vertices(player, width, height, Steps, desaturation)
 	return verts
 end
 
+local function TotalCourseLength(player)
+    -- utility for graph stuff because i ended up doing this a lot
+    -- i use this method instead of TrailUtil.GetTotalSeconds because that leaves unused time at the end in graphs
+    local trail = GAMESTATE:GetCurrentTrail(player)
+    local t = 0
+    for te in ivalues(trail:GetTrailEntries()) do
+        t = t + te:GetSong():GetLastSecond()
+    end
+
+    return t
+end
+
 -- This function interpolates between two vertices based on a given offset
 function interpolate_vert(v1, v2, offset)
     -- Calculate the ratio of the offset to the difference in x-coordinates of the two vertices

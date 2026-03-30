@@ -39,7 +39,7 @@ end
 
 local t = Def.ActorFrame{ OnCommand=function(self) af=self; SCREENMAN:GetTopScreen():AddInputCallback(InputHandler) end }
 
-t[#t+1] = LoadFont("Common Normal")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Text=ScreenString("Paragraph1"),
 	InitCommand=function(self)
 		self:xy(_screen.cx, 90):_wrapwidthpixels(text_width):diffusealpha(0):zoom(WideScale(2.15,2))
@@ -47,7 +47,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 	OnCommand=function(self) self:linear(0.15):diffusealpha(1) end
 }
 
-t[#t+1] = LoadFont("Common Normal")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Text=ScreenString("Paragraph2"),
 	InitCommand=function(self)
 		self:xy(_screen.cx, 350):_wrapwidthpixels(text_width):diffusealpha(0):zoom(WideScale(1.15,1))
@@ -66,11 +66,11 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		choice_actors[0] = self
 	end,
 
-	LoadFont("Common Bold")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Text=THEME:GetString("ScreenPromptToResetPreferencesToStock","Yes"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=ScreenString("YesInfo"),
 		InitCommand=function(self) self:y(32) end,
 	}
@@ -83,11 +83,11 @@ choices_af[#choices_af+1] = Def.ActorFrame{
 		choice_actors[1] = self
 	end,
 
-	LoadFont("Common Bold")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		Text=THEME:GetString("ScreenPromptToResetPreferencesToStock","No"),
 		InitCommand=function(self) self:zoom(1.1) end
 	},
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=ScreenString("NoInfo"),
 		InitCommand=function(self) self:y(32)  end,
 	}

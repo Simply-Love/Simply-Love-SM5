@@ -60,7 +60,7 @@ local af = Def.ActorFrame{
 
 af[#af+1] = Def.BitmapText{
 	Text=THEME:GetString("Common", "PopupDismissText"),
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	InitCommand=function(self)
 		self:y(170)
 	end,
@@ -69,14 +69,14 @@ af[#af+1] = Def.BitmapText{
 af[#af+1] = Def.BitmapText{
 	Name="NoDownloads",
 	Text=THEME:GetString("GrooveStats", "NoDownloads"),
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	InitCommand=function(self) self:visible(false):zoom(2) end,
 }
 
 af[#af+1] = Def.BitmapText{
 	Name="Completed",
 	Text="",
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	InitCommand=function(self)
 		self:xy(220, 170):horizalign('HorizAlign_Right')
 	end,

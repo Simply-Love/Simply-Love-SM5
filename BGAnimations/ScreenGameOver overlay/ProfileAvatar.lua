@@ -31,7 +31,7 @@ else
 			end
 		},
 		-- fallback text ("no avatar")
-		LoadFont("Common Normal")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			Text=THEME:GetString("ProfileAvatar","NoAvatar"),
 			InitCommand=function(self)
 				self:valign(0):zoom(0.9):diffusealpha(0.9):xy(56, 88)

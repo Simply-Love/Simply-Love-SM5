@@ -1,8 +1,13 @@
 local pss = ...
 local t = Def.ActorFrame{}
 
+local starPath = "./assets/star.png"
+if ThemePrefs.Get("OutlineGrade") then
+	starPath = "./assets/outlined/star.png"
+end
+
 -- flag (all fantastics except 1 ex): stars
-t[#t+1] = LoadActor("./assets/star.png")..{
+t[#t+1] = LoadActor(starPath)..{
 	OnCommand=function(self)
 		if pss ~= nil and pss:GetTapNoteScores('TapNoteScore_Miss') == 0 and
 				pss:GetTapNoteScores('TapNoteScore_W5') == 0 and
@@ -19,7 +24,7 @@ t[#t+1] = LoadActor("./assets/star.png")..{
 	end,
 }
 
-t[#t+1] = LoadActor("./assets/star.png")..{
+t[#t+1] = LoadActor(starPath)..{
 	OnCommand=function(self)
 		self:visible(false)
 		if pss ~= nil and pss:GetTapNoteScores('TapNoteScore_Miss') == 0 and

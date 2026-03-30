@@ -107,9 +107,43 @@ end
 --    80 Total
 GenerateBreakdownText = function(pn, minimization_level)
 	if #SL[pn].Streams.NotesPerMeasure == 0 then return 'Not available!' end
+	
+	local segments = {}
+	local multiplier = 2
+	
+	local GetDensity = function(segments)
+		local total_stream = 0
+		local total_measures = 0
+		for i, segment in ipairs(segments) do
+			local segment_size = math.floor((segment.streamEnd - segment.streamStart) * multiplier)
+			if not segment.isBreak then total_stream = total_stream + segment_size end
+			total_measures = total_measures + segment_size
+		end
+		return (total_stream / total_measures)
+	end
+	
+	-- Experimental by Zankoku - See if a reasonable breakdown can be generated from 32nds or 24ths
+	if GetDisplayBPMs(pn)[1] == GetDisplayBPMs(pn)[2] then
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 32)
+		
+		if #segments == 0 or GetDensity(segments) < 0.2 then
+			multiplier = 1.5
+			segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 24)
+		end
+		
+		if #segments == 0 or GetDensity(segments) < 0.2 then
+			multiplier = 1.25
+			segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 20)
+		end
+	end
+	
+	if #segments == 0 or GetDensity(segments) < 0.2 then
+		multiplier = 1
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	end
 
 	-- Assume 16ths for the breakdown text
-	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	-- segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
 	local text_segments = {}
 
 	-- The following is used for level 2 and 3 minimization levels.
@@ -143,21 +177,30 @@ GenerateBreakdownText = function(pn, minimization_level)
 	end
 
 	for i, segment in ipairs(segments) do
-		local segment_size = segment.streamEnd - segment.streamStart
+		local segment_size = math.floor((segment.streamEnd - segment.streamStart) * multiplier)
 		if segment.isBreak then
-			-- Never include leading and trailing breaks.
-			if i ~= 1 and i ~= #segments then
-				-- Break segments of size 1 aren't handled here as they don't show up.
-				-- Instead we handle them below when we see two stream sequences in succession.
-				if segment_size <= 4 then
-					segment_sum, is_broken, total_sum = AddNotationForSegment(
-						"-", segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
-				elseif segment_size < 32 then
-					segment_sum, is_broken, total_sum = AddNotationForSegment(
-						"/",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
-				else
-					segment_sum, is_broken, total_sum = AddNotationForSegment(
-						" | ",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+			if i ~= 1 and i ~= #segments and segment_size <= 3 and (minimization_level == 2 or minimization_level == 3) then
+				-- Don't count this as a true "break"
+				is_broken = true
+				-- For * notation, we want to add short breaks as part of the number.
+				if minimization_level == 2 then
+					segment_sum = segment_sum + segment_size
+				end
+			else
+				-- Never include leading and trailing breaks.
+				if i ~= 1 and i ~= #segments then
+					-- Break segments of size 1 aren't handled here as they don't show up.
+					-- Instead we handle them below when we see two stream sequences in succession.
+					if segment_size <= 4 then
+						segment_sum, is_broken, total_sum = AddNotationForSegment(
+							"-", segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+					elseif segment_size < 32 then
+						segment_sum, is_broken, total_sum = AddNotationForSegment(
+							"/",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+					else
+						segment_sum, is_broken, total_sum = AddNotationForSegment(
+							" | ",  segment_size, minimization_level, text_segments, segment_sum, is_broken, total_sum)
+					end
 				end
 			end
 		else
@@ -178,7 +221,11 @@ GenerateBreakdownText = function(pn, minimization_level)
 				-- If we find two streams in sequence, then there's an implicit (1) in between.
 				-- Make sure we still account for that for minimization levels 0 and 1.
 				if i > 1 and not segments[i-1].isBreak then
-					text_segments[#text_segments+1] = "-"
+					if minimization_level == 0 then
+						text_segments[#text_segments+1] = "-"
+					else
+						text_segments[#text_segments+1] = "'"
+					end
 				end
 				text_segments[#text_segments+1] = tostring(segment_size)
 			end
@@ -193,31 +240,91 @@ GenerateBreakdownText = function(pn, minimization_level)
 			total_sum = total_sum + segment_sum
 		end
 	end
+	
+	local displaybpm = GetDisplayBPMs(pn)[1]
+	local realBpms = GAMESTATE:GetCurrentSong():GetTimingData():GetActualBPM()
+	
+	if realBpms then
+		if displaybpm * multiplier > realBpms[1] * multiplier and displaybpm * multiplier > realBpms[2] * multiplier then
+			displaybpm = realBpms[2]
+		end
+	end
+	
+	local calcbpm = (displaybpm * multiplier - math.floor(displaybpm * multiplier)) < 0.5 and math.floor(displaybpm * multiplier) or math.ceil(displaybpm * multiplier)
+	local endbpm = (multiplier == 1 and "") or " @ " .. calcbpm
 
 	if minimization_level == 3 then
-		return string.format("%d Total", total_sum)
+		return string.format("%d Total" .. endbpm, total_sum)
 	elseif #text_segments == 0 then
 		return 'No Streams!'
 	else
-		return table.concat(text_segments, '')
+		return table.concat(text_segments, '') .. endbpm
 	end
 end
 
 -- ----------------------------------------------------------------
 -- Returns the total amount of stream and break measures in a chart.
-GetTotalStreamAndBreakMeasures = function(pn)
+GetTotalStreamAndBreakMeasures = function(pn, fullMeasures)
 	local totalStream, totalBreak = 0, 0
+	local edgeBreak = 0
+	local lastSegmentWasStream = false
+	local segments = {}
+	local addition = fullMeasures and 2 or 0
+	
+	local GetDensity = function(segments)
+		local total_stream = 0
+		local total_measures = 0
+		for i, segment in ipairs(segments) do
+			local segment_size = math.floor((segment.streamEnd - segment.streamStart) * multiplier)
+			if not segment.isBreak then total_stream = total_stream + segment_size end
+			total_measures = total_measures + segment_size
+		end
+		return (total_stream / total_measures)
+	end
 
-	-- Assume 16ths for the breakdown text
-	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
-	for i, segment in ipairs(segments) do
-		local segment_size = segment.streamEnd - segment.streamStart
-		if segment.isBreak then
-			totalBreak = totalBreak + segment_size
-		else
-			totalStream = totalStream + segment_size
+	
+	if GetDisplayBPMs(pn)[1] == GetDisplayBPMs(pn)[2] then
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 30+addition)
+		
+		if #segments == 0 or GetDensity(segments) < 0.2 then
+			multiplier = 1.5
+			segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 22+addition)
+		end
+		
+		if #segments == 0 or GetDensity(segments) < 0.2 then
+			multiplier = 1.25
+			segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 18+addition)
 		end
 	end
+	
+	if #segments == 0 or GetDensity(segments) < 0.2 then
+		multiplier = 1
+		segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 14+addition)
+	end
+	
+	for i, segment in ipairs(segments) do
+		local segment_size = segment.streamEnd - segment.streamStart
+		if segment.isBreak and i < #segments and i ~= 1 then
+			totalBreak = totalBreak + segment_size
+			lastSegmentWasStream = false
+		elseif segment.isBreak then
+			edgeBreak = edgeBreak + segment_size
+			lastSegmentWasStream = false
+		else
+			if lastSegmentWasStream then
+				totalBreak = totalBreak + 1
+			end
+			totalStream = totalStream + segment_size
+			lastSegmentWasStream = true
+		end
+	end
+	
+	if totalStream + totalBreak < 10 or totalStream + totalBreak < edgeBreak then
+		totalBreak = totalBreak + edgeBreak
+	end
+	
+	totalStream = totalStream * multiplier
+	totalBreak = totalBreak * multiplier
 
 	return totalStream, totalBreak
 end

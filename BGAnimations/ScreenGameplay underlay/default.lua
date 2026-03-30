@@ -34,10 +34,12 @@ local t = Def.ActorFrame{
 }
 
 for player in ivalues(Players) do
-	t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/BackgroundFilter.lua", player)
-	t[#t+1] = LoadActor("./PerPlayer/nice.lua", player)
+	if not SL[ToEnumShortString(player)].ActiveModifiers.BreakUI then
+		t[#t+1] = LoadActor("./PerPlayer/Danger.lua", player)
+		t[#t+1] = LoadActor("./PerPlayer/StepStatistics/default.lua", player)
+		t[#t+1] = LoadActor("./PerPlayer/BackgroundFilter.lua", player)
+		t[#t+1] = LoadActor("./PerPlayer/nice.lua", player)
+	end
 end
 
 -- UI elements shared by both players
@@ -59,7 +61,6 @@ for player in ivalues(Players) do
 
 	-- All NoteField specific actors are contained in this file.
 	t[#t+1] = LoadActor("./PerPlayer/NoteField/default.lua", player)
-
 end
 
 -- add to the ActorFrame last; overlapped by StepStatistics otherwise

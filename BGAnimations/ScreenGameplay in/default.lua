@@ -16,13 +16,24 @@ if IsSpooky() then
 	assets.minisplode = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
 end
 
+if not SL.Global.GameplayReloadCheck then
+	SL.Global.Stages.Restarts = 0
+end
+
 if GAMESTATE:IsCourseMode() then
 	SongsInCourse = #GAMESTATE:GetCurrentCourse():GetCourseEntries()
 	text = ("%s 1 / %d"):format(THEME:GetString("Stage", "Stage"), SongsInCourse)
+elseif SL.Global.GameplayReloadCheck then
+	SL.Global.Stages.Restarts = SL.Global.Stages.Restarts + 1
+	text = "RESTART " .. tostring(SL.Global.Stages.Restarts)
+elseif string.find(string.upper(GAMESTATE:GetCurrentSong():GetGroupName()), "STAMINA RPG 9") then
+	text = "Stamina RPG 9"
+	
+elseif string.find(string.upper(GAMESTATE:GetCurrentSong():GetGroupName()), "ITL ONLINE 2025") then
+	text = "ITL Online 2025"
 
 elseif not PREFSMAN:GetPreference("EventMode") then
 	text = THEME:GetString("Stage", "Stage") .. " " .. tostring(SL.Global.Stages.PlayedThisGame + 1)
-
 else
 	text = THEME:GetString("Stage", "Event")
 end
@@ -71,20 +82,22 @@ af[#af+1] = Def.ActorFrame{
 	}
 }
 
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Text=text,
 	InitCommand=function(self) self:Center():diffusealpha(0):shadowlength(1) end,
 	OnCommand=function(self)
 		-- don't animate the text tweening to the bottom of the screen if ScreenGameplay was just reloaded by a mod chart
-		if not SL.Global.GameplayReloadCheck then
+		-- if not SL.Global.GameplayReloadCheck then
 			self:accelerate(0.5):diffusealpha(1):sleep(0.66):accelerate(0.33)
-		end
-		self:zoom(0.4):y(_screen.h-30)
+		-- end
+		
 
 		-- offset "stage i" text to the left or right if only one player is joined, and that player's notefield is centered
 		if #GAMESTATE:GetHumanPlayers() == 1 and GetNotefieldX( GAMESTATE:GetMasterPlayerNumber() ) == _screen.cx then
 			local player = GAMESTATE:GetHumanPlayers()[1]
-			self:x(_screen.cx + (GetNotefieldWidth()*0.5 + self:GetWidth()*0.25) * (player==PLAYER_1 and -1 or 1))
+			self:x(_screen.cx + (GetNotefieldWidth()*0.5 + self:GetWidth()*0.25) * (player==PLAYER_1 and -1 or 1)):zoom(0.4):y(_screen.h-30):diffusealpha(1):sleep(2)
+		else
+			self:zoom(0.4):y(_screen.h-30):diffusealpha(1):sleep(2)
 		end
 	end,
 	CurrentSongChangedMessageCommand=function(self)
@@ -95,5 +108,18 @@ af[#af+1] = LoadFont("Common Bold")..{
 		end
 	end
 }
+
+
+-- Play random sound in Sounds/Song Start/
+local soundDir = THEME:GetCurrentThemeDirectory() .. "Sounds/Song Start/"
+audio_files = findFiles(soundDir)
+local restart_file = soundDir .. "Restart/" .. SL.Global.Stages.Restarts .. ".ogg"
+local restart_nocount_file = soundDir .. "Restart/restart.ogg"
+if SL.Global.GameplayReloadCheck and (FILEMAN:DoesFileExist(restart_file) or FILEMAN:DoesFileExist(restart_nocount_file)) then
+	if FILEMAN:DoesFileExist(restart_file) then SOUND:PlayOnce(restart_file)
+	elseif FILEMAN:DoesFileExist(restart_nocount_file) then SOUND:PlayOnce(restart_nocount_file) end
+elseif #audio_files > 0 then
+	SOUND:PlayOnce(audio_files[math.random(#audio_files)])
+end
 
 return af

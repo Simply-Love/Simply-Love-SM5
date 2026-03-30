@@ -10,8 +10,11 @@ local bothWantBars =   isTwoPlayers
 -- some helper functions local to this file
 
 -- Ported from PSS.cpp, can be removed if that gets exported to Lua
-local GetCurMaxPercentDancePoints = function()
-	local possible = pss:GetPossibleDancePoints()
+local GetCurMaxPercentDancePoints = function(ex_possible, ex_max)
+	if SL[pn].ActiveModifiers.ShowExScore then
+		return ex_possible / ex_max
+	end
+	local possible = pss:GetPossibleDancePoints()		
 	if possible == 0 then
 		return 0
 	end

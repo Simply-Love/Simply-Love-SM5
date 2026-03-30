@@ -42,6 +42,10 @@ local af = Def.ActorFrame{
 	InitCommand=function(self)
 		SL.Global.GameplayReloadCheck = false
 		generateFavoritesForMusicWheel()
+		
+		-- reset song start time here in case player force-escaped
+		start_time = -1
+
 		-- While other SM versions don't need this, Outfox resets the
 		-- the music rate to 1 between songs, but we want to be using
 		-- the preselected music rate.
@@ -109,6 +113,7 @@ local af = Def.ActorFrame{
 
 	-- Song's Musical Artist, BPM, Duration
 	LoadActor("./SongDescription/SongDescription.lua"),
+
 	-- Banner Art
 	LoadActor("./Banner.lua"),
 

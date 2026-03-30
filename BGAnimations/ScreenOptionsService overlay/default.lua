@@ -113,7 +113,7 @@ af[#af+1] = Def.Quad{
 
 -- Option Explanation text
 af[#af+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	InitCommand=function(self)
 		self:xy(-bg_width/2 + padding, -bg_height/2 + padding)
 		self:vertalign(top):horizalign(left)
@@ -127,7 +127,7 @@ af[#af+1] = Def.BitmapText{
 
 -- text for first six OptionRows on the next screen
 af[#af+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	InitCommand=function(self)
 		self:x(-bg_width/2 + padding*2)
 		self:vertalign(top):horizalign(left)

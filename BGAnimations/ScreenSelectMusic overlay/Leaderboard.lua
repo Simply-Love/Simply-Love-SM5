@@ -51,46 +51,50 @@ local SetLeaderboardForPlayer = function(player_num, leaderboard, leaderboardDat
 		end
 
 		if leaderboardData["Data"] then
+			local added = {}
 			for gsEntry in ivalues(leaderboardData["Data"]) do
-				local entry = leaderboard:GetChild("LeaderboardEntry"..entryNum)
-				SetEntryText(
-					gsEntry["rank"]..".",
-					gsEntry["name"],
-					string.format("%.2f%%", gsEntry["score"]/100),
-					ParseGrooveStatsDate(gsEntry["date"]),
-					entry
-				)
-				if gsEntry["isRival"] then
-					if gsEntry["isFail"] then
-						entry:GetChild("Rank"):diffuse(Color.Black)
-						entry:GetChild("Name"):diffuse(Color.Black)
-						entry:GetChild("Score"):diffuse(Color.Red)
-						entry:GetChild("Date"):diffuse(Color.Black)
+				if not added[gsEntry["name"]] then
+					added[gsEntry["name"]] = true
+					local entry = leaderboard:GetChild("LeaderboardEntry"..entryNum)
+					SetEntryText(
+						gsEntry["rank"]..".",
+						gsEntry["name"],
+						string.format("%.2f%%", gsEntry["score"]/100),
+						ParseGrooveStatsDate(gsEntry["date"]),
+						entry
+					)
+					if gsEntry["isRival"] then
+						if gsEntry["isFail"] then
+							entry:GetChild("Rank"):diffuse(Color.Black)
+							entry:GetChild("Name"):diffuse(Color.Black)
+							entry:GetChild("Score"):diffuse(Color.Red)
+							entry:GetChild("Date"):diffuse(Color.Black)
+						else
+							entry:diffuse(Color.Black)
+						end
+						leaderboard:GetChild("Rival"..rivalNum):y(entry:GetY()):visible(true)
+						rivalNum = rivalNum + 1
+					elseif gsEntry["isSelf"] then
+						if gsEntry["isFail"] then
+							entry:GetChild("Rank"):diffuse(Color.Black)
+							entry:GetChild("Name"):diffuse(Color.Black)
+							entry:GetChild("Score"):diffuse(Color.Red)
+							entry:GetChild("Date"):diffuse(Color.Black)
+						else
+							entry:diffuse(Color.Black)
+						end
+						leaderboard:GetChild("Self"):y(entry:GetY()):visible(true)
 					else
-						entry:diffuse(Color.Black)
+						entry:diffuse(Color.White)
 					end
-					leaderboard:GetChild("Rival"..rivalNum):y(entry:GetY()):visible(true)
-					rivalNum = rivalNum + 1
-				elseif gsEntry["isSelf"] then
-					if gsEntry["isFail"] then
-						entry:GetChild("Rank"):diffuse(Color.Black)
-						entry:GetChild("Name"):diffuse(Color.Black)
-						entry:GetChild("Score"):diffuse(Color.Red)
-						entry:GetChild("Date"):diffuse(Color.Black)
-					else
-						entry:diffuse(Color.Black)
-					end
-					leaderboard:GetChild("Self"):y(entry:GetY()):visible(true)
-				else
-					entry:diffuse(Color.White)
-				end
 
-				-- Why does this work for normal entries but not for Rivals/Self where
-				-- I have to explicitly set the colors for each child??
-				if gsEntry["isFail"] then
-					entry:GetChild("Score"):diffuse(Color.Red)
+					-- Why does this work for normal entries but not for Rivals/Self where
+					-- I have to explicitly set the colors for each child??
+					if gsEntry["isFail"] then
+						entry:GetChild("Score"):diffuse(Color.Red)
+					end
+					entryNum = entryNum + 1
 				end
-				entryNum = entryNum + 1
 			end
 		end
 	end
@@ -183,10 +187,37 @@ local LeaderboardRequestProcessor = function(res, master)
 		local pn = "P"..i
 		local leaderboard = master:GetChild(pn.."Leaderboard")
 		local leaderboardList = master[pn]["Leaderboards"]
+		local boogie = false
+		local boogie_ex = false
+		if res.headers["bs-leaderboard-player-" .. i] == "BS" then
+			boogie = true
+		elseif res.headers["bs-leaderboard-player-" .. i] == "BS-EX" then
+			boogie_ex = true
+		end
 
 		if data[playerStr] then
 			master[pn].isRanked = data[playerStr]["isRanked"]
-			if SL["P"..i].ActiveModifiers.ShowExScore then
+
+			-- First add the main leaderboard.
+			if boogie then
+				if data[playerStr]["gsLeaderboard"] then
+					leaderboardList[#leaderboardList + 1] = {
+						Name="BoogieStats",
+						Data=DeepCopy(data[playerStr]["gsLeaderboard"]),
+						IsEX=false
+					}
+					master[pn]["LeaderboardIndex"] = 1
+				end
+			elseif boogie_ex then
+				if data[playerStr]["gsLeaderboard"] then
+					leaderboardList[#leaderboardList + 1] = {
+						Name="BoogieStats",
+						Data=DeepCopy(data[playerStr]["gsLeaderboard"]),
+						IsEX=true
+					}
+					master[pn]["LeaderboardIndex"] = 1
+				end
+			elseif SL["P"..i].ActiveModifiers.ShowExScore then
 				-- If the player is using EX scoring, then we want to display the EX leaderboard first.
 				if data[playerStr]["exLeaderboard"] then
 					leaderboardList[#leaderboardList + 1] = {
@@ -215,7 +246,7 @@ local LeaderboardRequestProcessor = function(res, master)
 					}
 					master[pn]["LeaderboardIndex"] = 1
 				end
-
+				
 				if data[playerStr]["exLeaderboard"] then
 					leaderboardList[#leaderboardList + 1] = {
 						Name="GrooveStats",
@@ -312,7 +343,7 @@ local af = Def.ActorFrame{
 	end,
 
 	Def.Quad{ InitCommand=function(self) self:FullScreen():diffuse(0,0,0,0.875) end },
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("Common", "PopupDismissText"),
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h-50):zoom(1.1) end
 	},
@@ -544,7 +575,7 @@ for player in ivalues( PlayerNumber ) do
 				self:visible(false)
 			end,
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="LeftIcon",
 				Text="&MENULEFT;",
 				InitCommand=function(self)
@@ -557,7 +588,7 @@ for player in ivalues( PlayerNumber ) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Text",
 				Text=THEME:GetString("GrooveStats", "MoreLeaderboards"),
 				InitCommand=function(self)
@@ -565,7 +596,7 @@ for player in ivalues( PlayerNumber ) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="RightIcon",
 				Text="&MENURiGHT;",
 				InitCommand=function(self)
@@ -598,7 +629,7 @@ for player in ivalues( PlayerNumber ) do
 				self:GetChild("Date"):visible(GAMESTATE:GetNumSidesJoined() == 1)
 			end,
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Rank",
 				Text="",
 				InitCommand=function(self)
@@ -613,7 +644,7 @@ for player in ivalues( PlayerNumber ) do
 				end
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Name",
 				Text=(i==1 and THEME:GetString("GrooveStats", "Loading") or ""),
 				InitCommand=function(self)
@@ -628,7 +659,7 @@ for player in ivalues( PlayerNumber ) do
 				end
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Score",
 				Text="",
 				InitCommand=function(self)
@@ -641,7 +672,7 @@ for player in ivalues( PlayerNumber ) do
 					self:diffuse(Color.White)
 				end
 			},
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Date",
 				Text="",
 				InitCommand=function(self)

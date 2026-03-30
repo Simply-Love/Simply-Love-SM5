@@ -91,7 +91,7 @@ pane[#pane+1] = LoadActor("../Pane3/Percentage.lua", player)..{
 	OnCommand=function(self) self:xy(25, -22) end
 }
 
-pane[#pane+1] = LoadFont("Common Normal")..{
+pane[#pane+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Text="GrooveStats QR",
 	InitCommand=function(self) self:align(0,0) end
 }
@@ -110,7 +110,7 @@ if not allChecksPassed then
 end
 
 -- localized help text, either "use your phone to scan" or "here's why your score was invalid"
-pane[#pane+1] = LoadFont("Common Normal")..{
+pane[#pane+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	Text=text,
 	Name="HelpText",
 	InitCommand=function(self)

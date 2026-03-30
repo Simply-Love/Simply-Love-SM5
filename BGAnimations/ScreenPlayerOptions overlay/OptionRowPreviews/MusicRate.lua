@@ -18,7 +18,7 @@ end
 for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local pn = ToEnumShortString(player)
 
-	t[#t+1] = LoadFont("Common Normal")..{
+	t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name=pn.."_MusicRate_",
 		InitCommand=function(self)
 			self:zoom(2):x(SL_WideScale(-222,-238)):visible(false)

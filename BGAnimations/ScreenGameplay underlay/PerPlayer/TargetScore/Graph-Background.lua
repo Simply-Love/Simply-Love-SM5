@@ -70,7 +70,7 @@ for i = 1,#gradeBorders do
 	-- in 4:3 the graphs touch each other, so the labels for P2 are redundant
 	if not (isTwoPlayers and bothWantBars and player == PLAYER_2 and not IsUsingWideScreen()) then
 		bg[#bg+1] = Def.BitmapText{
-			Font="Common Normal",
+			Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 			Text=gradeNames[i],
 			InitCommand=function(self)
 				self:valign(1):halign(0)

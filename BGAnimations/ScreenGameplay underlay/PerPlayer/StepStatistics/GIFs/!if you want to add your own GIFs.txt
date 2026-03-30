@@ -1,0 +1,4 @@
+Reference the existing lua files on setting up a sprite from a sprite sheet.
+Player options will dynamically retrieve any lua file from this directory and add it as a choice for step stats extras.
+
+Additional GIFs may be found on: https://github.com/SugoiFactory/SL-zmod-GIFs

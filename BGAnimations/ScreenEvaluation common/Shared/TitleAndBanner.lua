@@ -43,7 +43,7 @@ af[#af+1] = Def.Quad{
 }
 
 -- song/course title text
-af[#af+1] = LoadFont("Common Normal")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	InitCommand=function(self)
 		local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 		if songtitle then self:settext(songtitle):maxwidth(banner.width*banner.zoom) end

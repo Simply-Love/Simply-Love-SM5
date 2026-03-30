@@ -104,7 +104,7 @@ local BannerAndSong = function(x, y, zoom)
 			self:setsize(418, 164):animate(false) 
 		end
 	}
-	af[#af+1] = LoadFont("Common Normal")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Name="SongName",
 		InitCommand=function(self)
 			local songtitle = (GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle()) or GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
@@ -220,6 +220,13 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 	local statImprovements = {}
 	local skillImprovements = {}
 	local quests = {}
+
+	
+	local box_quests = {}
+	local box_progress = {}
+	local box_stats = {}
+	local box_score = {scoreDelta,rateDelta}
+
 	local progress = rpgData["progress"]
 	if progress then
 		if progress["statImprovements"] then
@@ -229,16 +236,42 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 						statImprovements,
 						string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
 					)
+
+					table.insert(
+						box_stats,
+						string.format("%d %s", improvement["gained"], string.upper(improvement["name"]))
+					)
+
 				end
 			end
 		end
 
 		if progress["skillImprovements"] then
 			skillImprovements = progress["skillImprovements"]
+			for i in ivalues(skillImprovements) do
+				
+				-- Make string into array so we can find out what kind of skill improvement we made
+				local words = {}
+				for word in (i.." "):gmatch("(.-)".." ") do
+					table.insert(words, word)
+				end
+				
+				if words[4] == "Skill" then
+					local sp_level = words[6]
+					local sp_bpm = words[8]
+					local sp_text = sp_bpm .. " BPM Lvl " .. sp_level
+					table.insert(box_progress,sp_text)	
+				elseif words[4] == "Life" then
+					local life_level = words[6]:sub(1,string.len(words[6])-1)
+					local life_text = "Life Lvl " .. life_level
+					table.insert(box_progress,life_text)
+				end
+			end
 		end
-
+		
 		if progress["questsCompleted"] then
 			for quest in ivalues(progress["questsCompleted"]) do
+				table.insert(box_quests,quest["title"])
 				local questStrings = {}
 				table.insert(questStrings, string.format(
 					"Completed \"%s\"!\n",
@@ -283,6 +316,7 @@ local GetRpgPaneFunctions = function(eventAf, rpgData, player)
 				["rate"] = rate,
 				["rateDelta"] = rateDelta,
 				["statImprovements"] = progress["statImprovements"],
+				["questsCompleted"] = progress["questsCompleted"],
 			},
 		})
 	end
@@ -387,10 +421,11 @@ end
 
 local GetItlPaneFunctions = function(eventAf, itlData, player)
 	local pn = ToEnumShortString(player)
+
 	local paneTexts = {}
 	local paneFunctions = {}
 	
-	local score = CalculateExScore(player)
+	local score = CalculateExScore(player, GetExJudgmentCounts(player))
 	local scoreDelta = itlData["scoreDelta"]/100.0
 
 	local steps = GAMESTATE:GetCurrentSteps(player)
@@ -760,7 +795,7 @@ local af = Def.ActorFrame{
 	},
 
 	-- Press START to dismiss text.
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=THEME:GetString("Common", "PopupDismissText"),
 		InitCommand=function(self) self:xy(_screen.cx, _screen.h-50):zoom(1.1) end
 	}
@@ -892,7 +927,7 @@ for player in ivalues(PlayerNumber) do
 		},
 
 		-- Header Text
-		LoadFont("Wendy/_wendy small").. {
+		LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small" or "Mega/_mega font").. {
 			Name="Header",
 			Text="Stamina RPG",
 			InitCommand=function(self)
@@ -902,7 +937,7 @@ for player in ivalues(PlayerNumber) do
 		},
 
 		-- EX Score text (if applicable)
-		LoadFont("Wendy/_wendy small").. {
+		LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy small" or "Mega/_mega font").. {
 			Name="EX",
 			Text="EX",
 			InitCommand=function(self)
@@ -914,7 +949,7 @@ for player in ivalues(PlayerNumber) do
 		},
 
 		-- Main Body Text
-		LoadFont("Common Normal").. {
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 			Name="BodyText",
 			Text="",
 			InitCommand=function(self)
@@ -936,7 +971,7 @@ for player in ivalues(PlayerNumber) do
 				self:y(paneHeight/2 - RowHeight/2)
 			end,
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="LeftIcon",
 				Text="&MENULEFT;",
 				InitCommand=function(self)
@@ -949,7 +984,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Text",
 				Text="More Information",
 				InitCommand=function(self)
@@ -957,7 +992,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="RightIcon",
 				Text="&MENURiGHT;",
 				InitCommand=function(self)
@@ -1024,7 +1059,7 @@ for player in ivalues(PlayerNumber) do
 				end
 			end,
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Rank",
 				Text="",
 				InitCommand=function(self)
@@ -1034,7 +1069,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Name",
 				Text="",
 				InitCommand=function(self)
@@ -1044,7 +1079,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Score",
 				Text="",
 				InitCommand=function(self)
@@ -1053,7 +1088,7 @@ for player in ivalues(PlayerNumber) do
 				end,
 			},
 
-			LoadFont("Common Normal").. {
+			LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal").. {
 				Name="Date",
 				Text="",
 				InitCommand=function(self)

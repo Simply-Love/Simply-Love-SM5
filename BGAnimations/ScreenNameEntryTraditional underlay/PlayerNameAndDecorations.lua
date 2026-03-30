@@ -41,16 +41,18 @@ local t = Def.ActorFrame{
 }
 
 
-t[#t+1] = LoadActor("Cursor.png")..{
+t[#t+1] = LoadActor("Cursor (doubleres).png")..{
 	Name="Cursor",
 	InitCommand=function(self) self:diffuse(PlayerColor(Player)):zoom(0.5) end,
 	OnCommand=function(self) self:visible( CanEnterName ):y(58) end,
 	HideCommand=function(self) self:linear(0.25):diffusealpha(0) end
 }
 
-t[#t+1] = LoadFont("Wendy/_wendy white")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") == "Common" and "Wendy/_wendy white" 
+			or ThemePrefs.Get("ThemeFont") == "Mega" and "Mega/_mega font"
+			or ThemePrefs.Get("ThemeFont") == "Unprofessional" and "Unprofessional/_unprofessional white")..{
 	Name="PlayerName",
-	InitCommand=function(self) self:zoom(0.75):halign(0):xy(-80,0) end,
+	InitCommand=function(self) self:zoom(ThemePrefs.Get("ThemeFont") ~= "Mega" and 0.75 or 1.22):halign(0):xy(-80,0) end,
 	OnCommand=function(self)
 		self:visible( CanEnterName )
 		self:settext( SL[pn].HighScores.Name or "" )
@@ -60,7 +62,7 @@ t[#t+1] = LoadFont("Wendy/_wendy white")..{
 	end
 }
 
-t[#t+1] = LoadFont("Common Bold")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Text=ScreenString("OutOfRanking"),
 	OnCommand=function(self) self:zoom(0.7):diffuse(PlayerColor(Player)):y(58):visible(not CanEnterName) end
 }

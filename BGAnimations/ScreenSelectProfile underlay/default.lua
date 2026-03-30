@@ -198,6 +198,13 @@ local t = Def.ActorFrame {
 					GAMESTATE:SetCurrentStyle("single")
 					SCREENMAN:GetTopScreen():playcommand("Update")
 				end
+
+				-- CurrentStyle has to be explicitly set to single in order to be able to
+				-- unjoin a player from a 2-player setup
+				if SL.Global.FastProfileSwitchInProgress and GAMESTATE:GetNumSidesJoined() == 1 then
+					GAMESTATE:SetCurrentStyle("single")
+					SCREENMAN:GetTopScreen():playcommand("Update")
+				end
 			end
 		end
 	end,

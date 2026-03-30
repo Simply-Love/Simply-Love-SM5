@@ -4,7 +4,7 @@ local has_focus = false
 local t = Def.ActorFrame{}
 
 -- this renders the text of a single choice in the scroller
-t[#t+1] = LoadFont("Common Bold")..{
+t[#t+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	Name="Choice"..index,
 	Text=THEME:GetString( 'ScreenTitleMenu', Var("GameCommand"):GetText() ),
 

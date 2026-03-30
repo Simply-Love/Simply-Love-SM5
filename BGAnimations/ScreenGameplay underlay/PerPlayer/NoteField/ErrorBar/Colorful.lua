@@ -5,19 +5,25 @@ local player, layout = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
 
+local hideEarlyJudgment = mods.HideEarlyDecentWayOffJudgments and true or false
+
 local barWidth = 160
 local barHeight = 10
 local tickWidth = 2
 local tickDuration = 0.5
 local numTicks = mods.ErrorBarMultiTick and 10 or 1
 local currentTick = 1
+
+local enabledTimingWindows = {}
+
+-- Find out maximum timing window for error bar
 local judgmentToTrim = {
-    TapNoteScore_W3 = mods.ErrorBarTrim == "Excellent" and SL.Global.GameMode == "ITG",
+	TapNoteScore_W2 = mods.ErrorBarTrim == "Fantastic" and SL.Global.GameMode == "ITG",
+    TapNoteScore_W3 = (mods.ErrorBarTrim == "Fantastic" or mods.ErrorBarTrim == "Excellent") and SL.Global.GameMode == "ITG",
     TapNoteScore_W4 = mods.ErrorBarTrim ~= "Off" and SL.Global.GameMode == "ITG",
     TapNoteScore_W5 = mods.ErrorBarTrim ~= "Off"
 }
 
-local enabledTimingWindows = {}
 for i = 1, NumJudgmentsAvailable() do
     if mods.TimingWindows[i] then
         if not judgmentToTrim["TapNoteScore_W" .. tostring(i)] then
@@ -32,47 +38,29 @@ local wscale = barWidth / 2 / maxTimingOffset
 local function DisplayTick(self, params)
     local score = ToEnumShortString(params.TapNoteScore)
     if score == "W1" or score == "W2" or score == "W3" or score == "W4" or score == "W5" then
-        local window = score
-        local isTopWindow = score == "W1"
-        if mods.ShowFaPlusWindow then
-            if IsW0Judgment(params, player) then
-                window = "W0"
-            else
-                isTopWindow = false
-            end
-        end
-        
         local tick = self:GetChild("Tick" .. currentTick)
         local bar = self:GetChild("Bar")
-        local earlysubbar = bar:GetChild("Early"..window)
-        local latesubbar = bar:GetChild("Late"..window)
-        
+
         currentTick = currentTick % numTicks + 1
-        
+		
+		local offset = params.TapNoteOffset
+		if math.abs(offset) > maxTimingOffset then
+			if offset < 0 then offset = -maxTimingOffset
+			else offset = maxTimingOffset end
+		end
+
         tick:finishtweening()
         bar:finishtweening()
         bar:zoom(1)
-        
-        if isTopWindow then
-            earlysubbar:finishtweening()
-            latesubbar:finishtweening()
-            earlysubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
-            latesubbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
-        else
-            local offset = params.TapNoteOffset < 0 and "Early" or "Late"
-            local subbar = offset == "Early" and earlysubbar or latesubbar
-            subbar:finishtweening()
-            subbar:diffusealpha(1):linear(tickDuration):diffusealpha(0.3)
-        end
 
         if numTicks > 1 then
             tick:diffusealpha(1)
-                :x(params.TapNoteOffset * wscale)
+                :x(offset * wscale)
                 :sleep(0.03):linear(tickDuration - 0.03)
                 :diffusealpha(0)
         else
             tick:diffusealpha(1)
-                :x(params.TapNoteOffset * wscale)
+                :x(offset * wscale)
                 :sleep(tickDuration):diffusealpha(0)
         end
 
@@ -91,15 +79,13 @@ local af = Def.ActorFrame{
         self:GetChild("Bar"):zoom(0)
     end,
     EarlyHitMessageCommand=function(self, params)
-        if params.Player ~= player then return end
-        if judgmentToTrim[params.TapNoteScore] then return end
+        if params.Player ~= player or hideEarlyJudgment then return end
 
         DisplayTick(self, params)
     end,
     JudgmentMessageCommand = function(self, params)
         if params.Player ~= player then return end
         if params.HoldNoteScore then return end
-        if judgmentToTrim[params.TapNoteScore] then return end
 
         if params.EarlyTapNoteScore ~= nil then
             local tns = ToEnumShortString(params.TapNoteScore)
@@ -141,7 +127,7 @@ for i = 1, #enabledTimingWindows do
     
     if mods.ShowFaPlusWindow and wi == 1 then
         -- Split the Fantastic window
-        windows.timing[#windows.timing + 1] = GetTimingWindow(1, "FA+")
+        windows.timing[#windows.timing + 1] = GetTimingWindow(1, "FA+", mods.SmallerWhite)
         windows.color[#windows.color + 1] = SL.JudgmentColors["FA+"][1]
 
         windows.timing[#windows.timing + 1] = GetTimingWindow(2, "FA+")
@@ -163,13 +149,13 @@ for i, window in ipairs(windows.timing) do
     bar_af[#bar_af+1] = Def.Quad{
         Name="EarlyW" .. windowNum,
         InitCommand = function(self)
-            self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(0.3)
+            self:x(-x):horizalign("left"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(1)
         end
     }
     bar_af[#bar_af+1] = Def.Quad{
         Name="LateW" .. windowNum,
         InitCommand = function(self)
-            self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(0.3)
+            self:x(x):horizalign("right"):zoomto(width, barHeight):diffuse(judgmentColor):diffusealpha(1)
         end
     }
 

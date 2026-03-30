@@ -24,7 +24,7 @@ return Def.ActorFrame{
 		end
 	},
 
-	LoadFont("Common Normal")..{
+	LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		Text=optionslist,
 		InitCommand=function(self) self:zoom(font_zoom):xy(-140,-5):align(0,0):vertspacing(-6):_wrapwidthpixels((width-10) / font_zoom) end
 	}

@@ -26,11 +26,11 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 			-- If a simple colored BitmapText isn't what you want for displaying
 			-- the value being entered, read _fallback/Scripts/04 NumPadEntry.lua.
 			value_pos = {0, -48},
-			value_font = "Common Normal",
+			value_font = ThemePrefs.Get("ThemeFont") .. " Normal",
 			value_color = PlayerColor(pn),
 			-- Optional prompt settings.
 			prompt_pos = {0, -72},
-			prompt_font = "Common Normal",
+			prompt_font = ThemePrefs.Get("ThemeFont") .. " Normal",
 			prompt_color = Color.White,
 			prompt_text = THEME:GetString("ScreenHeartEntry", "Heart Rate"),
 			-- Optional button settings.
@@ -40,7 +40,7 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 				{-30, 24}, {0, 24},   {30, 24},
 				{-30, 48}, {0, 48},   {30, 48}
 			},
-			button_font = "Common Normal",
+			button_font = ThemePrefs.Get("ThemeFont") .. " Normal",
 			button_color = Color.White,
 			-- Cursor settings.  You probably want something more than a quad for
 			-- the cursor, so this example includes the command the cursor needs
@@ -155,7 +155,7 @@ local args = {
 			SCREENMAN:GetTopScreen():AddInputCallback(input)
 		end,
 		-- The BitmapText used to display the elapsed time.
-		LoadFont("Common Normal")..{
+		LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 			Name="timer_text",
 			Text="00.0",
 			InitCommand=function(self) self:xy(_screen.cx, _screen.cy-80):diffuse(Color.White) end,

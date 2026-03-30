@@ -7,12 +7,14 @@ local PlayerDefaults = {
 				SpeedModType = "M",
 				SpeedMod = 250,
 				JudgmentGraphic = "Love 2x6 (doubleres).png",
+				HeldGraphic = "None",
 				ComboFont = "Wendy",
 				HoldJudgment = "Love 1x2 (doubleres).png",
 				NoteSkin = nil,
 				NoteSkinVariant = nil,
 				Mini = "0%",
-				BackgroundFilter = "Darker",
+				Spacing = "0%",
+				BackgroundFilter = 0,
 				VisualDelay = "0ms",
 
 				HideTargets = false,
@@ -31,7 +33,9 @@ local PlayerDefaults = {
 				HideLookahead = false,
 				MeasureLines = "Off",
 				DataVisualizations = "Step Statistics",
-				TargetScore = 11,
+				StepStatsExtra = "None",
+				TargetScore = "Personal best",
+				TargetScoreNumber = 100,
 				ActionOnMissedTarget = "Nothing",
 				Pacemaker = false,
 				LifeMeterType = "Standard",
@@ -39,6 +43,8 @@ local PlayerDefaults = {
 				JudgmentTilt = false,
 				TiltMultiplier = 1,
 				ColumnCues = true,
+				ColumnCountdown = false,
+				ShowHeldMiss = false,
 				DisplayScorebox = true,
 
 				ErrorBar = "None",
@@ -55,6 +61,30 @@ local PlayerDefaults = {
 				ShowFaPlusWindow = false,
 				ShowExScore = false,
 				ShowFaPlusPane = true,
+				
+				RainbowMax = false,
+				ResponsiveColors = false,
+				ShowLifePercent = false,
+				
+				PackBanner = false,
+				StepInfo = false,
+				SBITGScore = true,
+				SBExScore = true,
+				SBEvents = true,
+				
+				FlashMiss = true,
+				FlashWayOff = false,
+				FlashDecent = false,
+				FlashGreat = false,
+				FlashExcellent = false,
+				FlashFantastic = false,
+				
+				TiltMultiplier = 1,
+				ComboColors = "Glow",
+				ComboMode = "FullCombo",
+				TimerMode = "Time",
+				JudgmentAnimation = "Default",
+				RailBalance = "No",
 
 				NoteFieldOffsetX = 0,
 				NoteFieldOffsetY = 0,
@@ -129,6 +159,7 @@ local GlobalDefaults = {
 			}
 			self.Stages = {
 				PlayedThisGame = 0,
+				Restarts = 0,
 				Remaining = PREFSMAN:GetPreference("SongsPerPlay"),
 				Stats = {}
 			}
@@ -137,6 +168,7 @@ local GlobalDefaults = {
 				PlayerOptions  = "ScreenGameplay",
 				PlayerOptions2 = "ScreenGameplay",
 				PlayerOptions3 = "ScreenGameplay",
+				PlayerOptions4 = "ScreenGameplay",
 			}
 			self.ContinuesRemaining = ThemePrefs.Get("NumberOfContinuesAllowed") or 0
 			self.GameMode = ThemePrefs.Get("DefaultGameMode") or "ITG"
@@ -153,6 +185,7 @@ local GlobalDefaults = {
 			}
 			self.TimeAtSessionStart = nil
 			self.SampleMusicLoops = ThemePrefs.Get("SampleMusicLoops")
+			self.SampleMusicStartsImmediately = ThemePrefs.Get("SampleMusicStartsImmediately")
 
 			-- Is the music wheel locked? Useful when loading overlay screens
 			self.MusicWheelLocked = false
@@ -197,6 +230,23 @@ SL = {
 		"#FFFF00",
 		"#FFBE00",
 		"#FF7D00",
+	},
+	-- Colors used by ITG for difficulties
+	ITGDiffColors = {
+		"#a355b8", --beginner
+		"#1ec51d", --easy
+		"#d6db41", --medium
+		"#ba3049",
+		"#2691c5",
+		"#F7F7F7", --edit
+	},
+	DDRDiffColors = {
+		"#2dccef", --beginner
+		"#eaa910", --basic
+		"#ff344d", --difficult
+		"#30d81e", --expert
+		"#e900ff", --challenge
+		"#F7F7F7", --edit
 	},
 	-- These are the original SL colors. They're used for decorative (non-text) elements, like the background hearts:
 	DecorativeColors = {

@@ -1,4 +1,5 @@
 local bmt_actor
+local ses_actor
 
 -- -----------------------------------------------------------------------
 
@@ -17,6 +18,12 @@ end
 
 local UpdateTimer = function(af, dt)
 	local seconds = GetTimeSinceStart() - (SL.Global.TimeAtSessionStart or GetTimeSinceStart())
+	local totalTime = 0
+	local anyPlayer = "P1"
+	if #SL["P1"].Stages.Stats == 0 then anyPlayer = "P2" end
+	for i,stats in pairs( SL[anyPlayer].Stages.Stats ) do
+		totalTime = totalTime + (stats and stats.duration or 0)
+	end
 
 	-- if this game session is less than 1 hour in duration so far
 	if seconds < 3600 then
@@ -29,6 +36,21 @@ local UpdateTimer = function(af, dt)
 	-- in it for the long haul
 	else
 		bmt_actor:settext( SecondsToHHMMSS(seconds) )
+	end
+	
+	if totalTime ~= nil then
+		-- if this game session is less than 1 hour in duration so far
+		if totalTime < 3600 then
+			ses_actor:settext( SecondsToMMSS(totalTime) )
+
+		-- somewhere between 1 and 10 hours
+		elseif totalTime >= 3600 and totalTime < 36000 then
+			ses_actor:settext( SecondsToHMMSS(totalTime) )
+
+		-- in it for the long haul
+		else
+			ses_actor:settext( SecondsToHHMMSS(totalTime) )
+		end
 	end
 end
 
@@ -58,7 +80,7 @@ af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
 -- session timer in EventMode
 if PREFSMAN:GetPreference("EventMode") then
 
-	af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " numbers")..{
 		Name="Session Timer",
 		InitCommand=function(self)
 			bmt_actor = self
@@ -70,11 +92,24 @@ if PREFSMAN:GetPreference("EventMode") then
 			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 		end,
 	}
+	
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " numbers")..{
+		Name="Play Timer",
+		InitCommand=function(self)
+			ses_actor = self
+			self:zoom( SL_WideScale(0.3, 0.36) )
+			self:y( SL_WideScale(3.15, 3.5) / self:GetZoom() )
+			self:diffusealpha(0):x(_screen.cx + SL_WideScale(150, 200))
+		end,
+		OnCommand=function(self)
+			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
+		end,
+	}
 
 -- stage number when not EventMode
 else
 
-	af[#af+1] = LoadFont("Common Header")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Header")..{
 		Name="Stage Number",
 		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
@@ -90,7 +125,7 @@ else
 end
 
 -- "ITG" aligned to right of screen
-af[#af+1] = LoadFont("Common Header")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Header")..{
 	Name="GameModeText",
 	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
 	InitCommand=function(self)

@@ -52,7 +52,7 @@ local af = Def.ActorFrame{
 
 -- profile name (only if there were any profile switches happening this session)
 if displayProfileNames then
-	af[#af+1] = LoadFont("Common Normal")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 		InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-43) end,
 		DrawStageCommand=function(self)
 			if playerStats and profile then
@@ -65,7 +65,7 @@ if displayProfileNames then
 end
 
 -- percent score
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	InitCommand=function(self) self:zoom(0.5):horizalign(align1):x(col1x):y(-24) end,
 	DrawStageCommand=function(self)
 		if playerStats and score then
@@ -99,7 +99,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 }
 
 --ex score
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	InitCommand=function(self) self:zoom(0.38):horizalign(align1):x(col1x):y(-12) end,
 	DrawStageCommand=function(self)
 		if playerStats and playerStats.judgments and playerStats.judgments.W0 then
@@ -118,7 +118,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 
 -- stepchart style ("single" or "double" or etc.)
 -- difficulty text ("beginner" or "expert" or etc.)
-af[#af+1] = LoadFont("Common Normal")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	InitCommand=function(self)
 		self:y(17)
 		self:x(col1x + (player==PLAYER_1 and -1 or 1))
@@ -148,7 +148,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 }
 
 -- difficulty meter
-af[#af+1] = LoadFont("Common Bold")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 	InitCommand=function(self) self:zoom(0.4):horizalign(align1):x(col1x):y(-1) end,
 	DrawStageCommand=function(self)
 		if playerStats and meter then
@@ -163,7 +163,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 }
 
 -- stepartist
-af[#af+1] = LoadFont("Common Normal")..{
+af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Normal")..{
 	InitCommand=function(self) self:zoom(0.65):horizalign(align1):x(col1x):y(32) end,
 	DrawStageCommand=function(self)
 		if playerStats and stepartist then
@@ -197,7 +197,7 @@ af[#af+1] = Def.ActorProxy{
 
 for i=1,#TNSTypes do
 
-	af[#af+1] = LoadFont("Common Bold")..{
+	af[#af+1] = LoadFont(ThemePrefs.Get("ThemeFont") .. " Bold")..{
 		InitCommand=function(self)
 			self:zoom(0.28):horizalign(align2):x(col2x):y(i*13 - 50)
 				:diffuse( Colors[i] )

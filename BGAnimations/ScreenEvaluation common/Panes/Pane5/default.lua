@@ -46,6 +46,8 @@ local std_dev = 0
 local max_error = 0
 local count = 0
 
+local max_error = 0 -- Temporary fix for non rounded max error until mainline SL fixes it
+
 for t in ivalues(sequential_offsets) do
 	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
 	-- the second value in t is the offset value or the string "Miss"
@@ -118,7 +120,7 @@ pane[#pane+1] = Def.Quad{
 
 -- "Early" text
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Bold",
+	Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 	Text=ScreenString("Early"),
 	InitCommand=function(self)
 		self:addx(10):addy(-125)
@@ -132,7 +134,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- "Late" text
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Bold",
+	Font=ThemePrefs.Get("ThemeFont") .. " Bold",
 	Text=ScreenString("Late"),
 	InitCommand=function(self)
 		self:addx(pane_width-10):addy(-125)
@@ -150,12 +152,15 @@ pane[#pane+1] = Def.Quad{
 			:zoomto(pane_width, bottombar_height )
 			:xy(pane_width/2, 0)
 			:diffuse(color("#101519"))
+		if ThemePrefs.Get("VisualStyle") == "Technique" then
+			self:diffusealpha(0.5)
+		end
 	end,
 }
 
 -- centered text for W1
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	Text=abbreviations[SL.Global.GameMode][1],
 	InitCommand=function(self)
 		local x = pane_width/2
@@ -172,7 +177,7 @@ for i=2,num_judgments_available do
 
 	-- early (left) judgment text
 	pane[#pane+1] = Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
 			local window = -1 * GetTimingWindow(i)
@@ -194,7 +199,7 @@ for i=2,num_judgments_available do
 
 	-- late (right) judgment text
 	pane[#pane+1] = Def.BitmapText{
-		Font="Common Normal",
+		Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 		Text=abbreviations[SL.Global.GameMode][i],
 		InitCommand=function(self)
 			local window = GetTimingWindow(i)
@@ -276,7 +281,7 @@ label.max_width = ((pane_width/3)/label.zoom) - ((label.padding/label.zoom)*3)
 
 -- avg_timing_error label
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	Text=ScreenString("MeanTimingError"),
 	InitCommand=function(self)
 		self:x(40):y(label.y)
@@ -290,7 +295,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- avg_timing_error label
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	Text=ScreenString("MeanOffset"),
 	InitCommand=function(self)
 		self:x(40 + (pane_width-80)/3):y(label.y)
@@ -304,7 +309,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- std_dev label
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	Text=ScreenString("StdDev"),
 	InitCommand=function(self)
 		self:x(40 + (pane_width-80)/3 * 2):y(label.y)
@@ -314,7 +319,7 @@ pane[#pane+1] = Def.BitmapText{
 
 -- max_error label
 pane[#pane+1] = Def.BitmapText{
-	Font="Common Normal",
+	Font=ThemePrefs.Get("ThemeFont") .. " Normal",
 	Text=ScreenString("MaxError"),
 	InitCommand=function(self)
 		self:x(pane_width-40):y(label.y)

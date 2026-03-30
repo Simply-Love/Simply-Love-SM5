@@ -33,7 +33,7 @@ return Def.Actor{
 
 		storage.grade = pss:GetGrade()
 		storage.score = pss:GetPercentDancePoints()
-		storage.exscore = CalculateExScore(player)
+		storage.exscore = CalculateExScore(player, GetExJudgmentCounts(player))
 		storage.judgments = {
 			W1 = pss:GetTapNoteScores(TNSTypes[1]),
 			W2 = pss:GetTapNoteScores(TNSTypes[2]),
