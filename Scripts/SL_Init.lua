@@ -23,7 +23,12 @@ local PlayerDefaults = {
 				HideDanger = false,
 				HideComboExplosions = false,
 
-				ColumnFlashOnMiss = false,
+				FlashMiss = false,
+				FlashWayOff = false,
+				FlashDecent = false,
+				FlashGreat = false,
+				FlashExcellent = false,
+				FlashFantastic = false,
 				SubtractiveScoring = false,
 				MeasureCounter = "None",
 				MeasureCounterLeft = false,

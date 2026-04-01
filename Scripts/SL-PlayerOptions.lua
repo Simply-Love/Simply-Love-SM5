@@ -551,7 +551,7 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "NPSGraphAtTop" }
+			local vals = { "SubtractiveScoring", "Pacemaker", "NPSGraphAtTop" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
 			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).
@@ -668,6 +668,11 @@ local Overrides = {
 	TimingWindowOptions = {
 		SelectType = "SelectMultiple",
 		Values = { "HideEarlyDecentWayOffJudgments", "HideEarlyDecentWayOffFlash" }
+	},
+	-------------------------------------------------------------------------
+	JudgmentFlash = {
+		SelectType = "SelectMultiple",
+		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" }
 	},
 	-------------------------------------------------------------------------
 	TimingWindows = {
