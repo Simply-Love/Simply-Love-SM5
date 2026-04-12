@@ -1095,6 +1095,8 @@ GetPlayerOptionsJsonForGrooveStats = function(player)
 
 	MaybeSetOption(options, "Mini", mini, "number")
 	MaybeSetOption(options, "VisualDelay", visualDelay, "number")
+	MaybeSetOption(options, "BackgroundFilter", backgroundFilter, "number")
+	MaybeSetOption(options, "HideLookahead", hideLookahead, "number")
 
 	MaybeSetOption(options, "Cover", hasCover, "boolean")
 	MaybeSetOption(options, "NoMines", hasNoMines, "boolean")
