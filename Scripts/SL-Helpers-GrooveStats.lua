@@ -850,7 +850,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[6]="Emoticon 2x7 (doubleres).png",
 				[7]="Focus 2x7 (doubleres).png",
 				[8]="Grammar 2x7 (doubleres).png",
-				[9]="GrooveNights 2x7.png",
+				[9]="GrooveNights 2x7 (doubleres).png",
 				[10]="ITG2 2x7 (doubleres).png",
 				[11]="Love 2x7 (doubleres).png",
 				[12]="Love Chroma 2x7 (doubleres).png",
@@ -861,6 +861,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[17]="Shift 2x7 (doubleres).png",
 				[18]="Tactics 2x7 (doubleres).png",
 				[19]="Wendy 2x7 (doubleres).png",
+				[20]="Censored 1x7 (doubleres).png",
 				-- Digital Dance
 				[100]="Chalk 2x7 (doubleres).png",
 				[101]="Digital 2x7 (doubleres).png",
