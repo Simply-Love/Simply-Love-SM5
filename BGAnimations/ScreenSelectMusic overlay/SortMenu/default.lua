@@ -5,10 +5,18 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 sort_wheel.custom_functions = {}
 -- the logic that handles navigating the SortMenu
 -- (scrolling through choices, choosing one, canceling)
--- is large enough that I moved it to its own file
-local sortmenu_input = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
-local testinput_input = LoadActor("TestInput_InputHandler.lua")
+-- is complex enough to be in its own file
+local sortmenu_input    = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
+
+-- input handlers for TestInput and Leaderboards are similarly complex
+local testinput_input   = LoadActor("TestInput_InputHandler.lua")
 local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
+
+-- logic for song search is also in its own file
+local SongSearchSettings = LoadActor("../SongSearch/SongSearchSettings.lua")
+
+local sortmenu_dimensions = { w=210, h=204 }
+
 -- "MT" is my personal means of denoting that this thing (the file, the variable, whatever)
 -- has something to do with a Lua metatable.
 --
@@ -28,127 +36,9 @@ local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
 -- but its prose was approachable enough for wastes-of-space like me, so I guess I'll
 -- recommend it until I find a more helpful one.
 --                                      -quietly
-local sortmenu_dimensions = { w=210, h=204 }
 local wheel_item_mt = LoadActor("WheelItemMT.lua", {sortmenu_dimensions})
 local lastCategory = ""
 local openCategory = nil
-
-local FilterTable = function(arr, func)
-	local new_index = 1
-	local size_orig = #arr
-	for v in ivalues(arr) do
-		if func(v) then
-			arr[new_index] = v
-			new_index = new_index + 1
-		end
-	end
-	for i = new_index, size_orig do arr[i] = nil end
-end
-
-local GetBpmTier = function(bpm)
-	return math.floor((bpm + 0.5) / 10) * 10
-end
-
-local SongSearchSettings = {
-	Question="'pack/song' format will search for songs in specific packs\n'[###]' format will search for BPMs/Difficulties",
-	InitialAnswer="",
-	MaxInputLength=30,
-	OnOK=function(input)
-		if #input == 0 then return end
-
-		-- Lowercase the input text for comparison
-		local searchText = input:lower()
-
-		-- First extract out the "numbers".
-		-- Anything <= 35 is considered a difficulty, otherwise it's a bpm.
-		local difficulty = nil
-		local bpmTier = nil
-
-		for match in searchText:gmatch("%[(%d+)]") do
-			local value = tonumber(match)
-			if value <= 35 then
-				difficulty = value
-			else
-				-- Determine the "tier".
-				bpmTier = GetBpmTier(value)
-			end
-		end
-
-		-- Remove the parsed atoms, and then strip leading/trailing whitespace.
-		searchText = searchText:gsub("%[%d+]", ""):gsub("^%s*(.-)%s*$", "%1")
-
-		-- The we separate out the pack and song into their own search terms.
-		local packName = nil
-		local songName = nil
-
-		local forwardSlashIdx = searchText:find('/')
-		if not forwardSlashIdx then
-			songName = searchText
-		else
-			packName = searchText:sub(1, forwardSlashIdx - 1)
-			songName = searchText:sub(forwardSlashIdx + 1)
-		end
-
-		-- Normalize empty strings to nil.
-		if packName and #packName == 0 then packName = nil end
-		if songName and #songName == 0 then songName = nil end
-
-		-- If we have no search criteria, then return early.
-		if not (packName or songName or difficulty or bpmTier) then return end
-
-		-- Start with the complete song list.
-		local candidates = SONGMAN:GetAllSongs()
-		local stepsType = GAMESTATE:GetCurrentStyle():GetStepsType()
-
-		-- Only add valid candidates if there are steps in the current mode.
-		FilterTable(candidates, function(song) return song:HasStepsType(stepsType) end)
-
-		if songName then
-			FilterTable(candidates, function(song)
-				return (song:GetDisplayFullTitle():lower():find(songName) ~= nil or
-						song:GetTranslitFullTitle():lower():find(songName) ~= nil)
-			end)
-		end
-
-		if packName then
-			FilterTable(candidates, function(song) return song:GetGroupName():lower():find(packName) end)
-		end
-
-		if difficulty then
-			FilterTable(candidates, function(song)
-				local allSteps = song:GetStepsByStepsType(stepsType)
-				for steps in ivalues(allSteps) do
-					-- Don't consider edits.
-					if steps:GetDifficulty() ~= "Difficulty_Edit" then
-						if steps:GetMeter() == difficulty then
-							return true
-						end
-					end
-				end
-				return false
-			end)
-		end
-
-		if bpmTier then
-			FilterTable(candidates, function(song)
-				-- NOTE(teejusb): Not handling split bpms now, sorry.
-				local bpms = song:GetDisplayBpms()
-				if bpms[2]-bpms[1] == 0 then
-					-- If only one BPM, then check to see if it's in the same tier.
-					return bpmTier == GetBpmTier(bpms[1])
-				else
-					-- Otherwise check and see if the bpm is in the span of the tier.
-					local lowTier = GetBpmTier(bpms[1])
-					local highTier = GetBpmTier(bpms[2])
-					return lowTier <= bpmTier and bpmTier <= highTier
-				end
-			end)
-		end
-
-		-- Even if we don't have any results, we want to show that to the player.
-		MESSAGEMAN:Broadcast("DisplaySearchResults", {searchText=input, candidates=candidates})
-	end,
-}
 
 -- General purpose function to redirect input back to the engine.
 -- "self" here should refer to the SortMenu ActorFrame.
@@ -233,7 +123,7 @@ local function AddPlaylists()
 			end
 		end
 	end
-	
+
 	-- Favorites are basically a playlist so include those too
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local path = getFavoritesPath(player)
@@ -252,7 +142,7 @@ local function GetChangeableStyles()
 	-- Allow players to switch from single to double and from double to single
 	-- but only present these options if Joint Double or Joint Premium is enabled
 	-- and we're not in "AutoSetStyle" mode (all styles presented simultaneously like PIU does)
-	
+
 	if THEME:GetMetric("Common", "AutoSetStyle") == true then
 		-- Check number of players
 		if ThemePrefs.Get("AllowDanceSolo") then
@@ -264,7 +154,7 @@ local function GetChangeableStyles()
 		table.insert(available_styles, {{"ChangeStyle", "Versus"}, not (GAMESTATE:GetNumPlayersEnabled() == 1)  })
 		table.insert(available_styles, {{"ChangeStyle", "Routine"}, not (GAMESTATE:GetNumPlayersEnabled() == 1)  })
 		table.insert(available_styles, {{"ChangeStyle", "Couple"}, not (GAMESTATE:GetNumPlayersEnabled() == 1) })
-	else 
+	else
 		if not (PREFSMAN:GetPreference("Premium") == "Premium_Off" and GAMESTATE:GetCoinMode() == "CoinMode_Pay") then
 			if style == "single" then
 				table.insert(available_styles, {{"ChangeStyle", "Double"}})
@@ -356,7 +246,7 @@ local t = Def.ActorFrame {
 			-- The first element becomes the top and bottomtext for the category.
 			-- The second element's table contains that options will show under this category.
 			-- It follows the same structure as the top level table.
-			
+
 			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
 			-- and offer to switch them back to casual mode. This allows them to do so again.
 			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
@@ -367,10 +257,10 @@ local t = Def.ActorFrame {
 			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
 			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
 			{ {"MixTape", "Preferred"}, AddFavorites },
-			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },	
-			{ 
+			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
+			{
 
-				{"", "CategorySorts"}, 
+				{"", "CategorySorts"},
 				{
 					{{"SortBy", "Group"} },
 					{ {"SortBy", "Title"} },
@@ -462,7 +352,7 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
-		
+
 		overlay:playcommand("ShowTestInput")
 	end,
 	DirectInputToLeaderboardCommand=function(self)
@@ -474,7 +364,7 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
-		
+
 		overlay:playcommand("ShowLeaderboard")
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
