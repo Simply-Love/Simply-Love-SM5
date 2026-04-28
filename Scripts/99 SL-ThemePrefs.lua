@@ -82,6 +82,12 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "Casual", "ITG" }
 		},
+		PremiumFreeAvailable =
+		{
+			Default = false,
+			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values = { true, false }
+		},
 		DefaultSort =
 		{
 			Default = "Series",

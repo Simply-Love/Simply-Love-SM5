@@ -381,6 +381,26 @@ SetGameModePreferences = function()
 end
 
 -- -----------------------------------------------------------------------
+
+PremiumFreeAvailable = function()
+	return ThemePrefs.Get("PremiumFreeAvailable") and SL.Global.GameMode ~= "Casual" and not PREFSMAN:GetPreference("EventMode") and GAMESTATE:GetCoinMode() ~= "CoinMode_Home"
+end
+
+PremiumFreeActive = function()
+	return PremiumFreeAvailable() and GAMESTATE:IsPremiumFreeActive()
+end
+
+PremiumFreeExpired = function()
+	return PremiumFreeActive() and GAMESTATE:IsPremiumFreeExpired()
+end
+
+PremiumFreeSecondsLeft = function()
+	if not PremiumFreeActive() then return 0 end
+
+	return math.max(0, math.ceil(GAMESTATE:GetPremiumFreeSecondsLeft()))
+end
+
+-- -----------------------------------------------------------------------
 -- Call ResetPreferencesToStockSM5() to reset all the Preferences that SL silently
 -- manages for you back to their stock SM5 values.
 --
