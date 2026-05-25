@@ -61,18 +61,11 @@ local PlayerDefaults = {
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
-				-- Chart identifiers for caching purposes.
-				Filename = "",
-				StepsType = "",
-				Difficulty = "",
-				Description = "",
-
 				-- Information parsed out from the chart.
 				NotesPerMeasure = {},
-				EquallySpacedPerMeasure = {},
 				PeakNPS = 0,
 				NPSperMeasure = {},
-				columnCues = {},
+				ColumnCues = {},
 				Hash = '',
 
 				Crossovers = 0,

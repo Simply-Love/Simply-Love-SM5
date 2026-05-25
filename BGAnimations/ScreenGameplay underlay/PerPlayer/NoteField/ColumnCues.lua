@@ -97,9 +97,7 @@ local af = Def.ActorFrame{
 			steps = GAMESTATE:GetCurrentSteps(player)
 		end
 
-		-- Ensure that SL[pn].Streams.ColumnCues is populated. This will skip
-		-- parsing if SL[pn].Streams is already up to date.
-		ParseChartInfo(steps, pn)
+		ParseColumnCues(steps, pn)
 
 		playerState = GAMESTATE:GetPlayerState(player)
 		columnCues = SL[pn].Streams.ColumnCues

@@ -76,15 +76,11 @@ af[#af+1] = Def.ActorFrame{
 		self:queuecommand("Hide")
 	end,
 	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
-		self:queuecommand("Hide")
-		self:stoptweening()
-		self:sleep(0.4)
-		self:queuecommand("ParseChart")
+		self:playcommand("ParseChart")
 	end,
 	ParseChartCommand=function(self)
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		if steps then
-			MESSAGEMAN:Broadcast(pn.."ChartParsing")
 			ParseChartInfo(steps, pn)
 			self:queuecommand("Show")
 		end
