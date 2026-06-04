@@ -41,8 +41,8 @@ local rate = tonumber(string.format("%.0f", SL.Global.ActiveModifiers.MusicRate 
 
 local steps = GAMESTATE:GetCurrentSteps(player)
 
--- ParseChartInfo will do no work if the data already exists in the SL.Streams Cache.
-ParseChartInfo(steps, pn)
+-- ComputeChartHash will do no work if we've already hashed this chart.
+ComputeChartHash(steps, pn)
 local hash = SL[pn].Streams.Hash
 local hash_version = SL.GrooveStats.ChartHashVersion
 

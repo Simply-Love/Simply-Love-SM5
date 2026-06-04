@@ -73,25 +73,36 @@ af[#af+1] = Def.ActorFrame{
 	-- going from song -> folder. It will get unhidden after a chart is parsed
 	-- below.
 	CurrentSongChangedMessageCommand=function(self)
-		self:queuecommand("Hide")
+		self:playcommand("Hide")
 	end,
 	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
-		self:playcommand("ParseChart")
-	end,
-	ParseChartCommand=function(self)
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		if steps then
 			ParseChartInfo(steps, pn)
-			self:queuecommand("Show")
+			self:playcommand("Show")
+		end
+
+		-- Computing the GrooveStats hash requires parsing the simfile, which is
+		-- expensive. Debounce it so that scrolling through the wheel doesn't
+		-- parse every chart we pass over, only the one we settle on.
+		-- Only needed for GrooveStats score/leaderboard lookups.
+		self:stoptweening()
+		self:sleep(0.4)
+		self:queuecommand("ComputeHash")
+	end,
+	ComputeHashCommand=function(self)
+		local steps = GAMESTATE:GetCurrentSteps(player)
+		if steps then
+			ComputeChartHash(steps, pn)
+			MESSAGEMAN:Broadcast("ChartParsed")
 		end
 	end,
 	ShowCommand=function(self)
 		if GAMESTATE:GetCurrentSong() and
 				GAMESTATE:GetCurrentSteps(player) then
-			MESSAGEMAN:Broadcast(pn.."ChartParsed")
-			self:queuecommand("Redraw")
+			self:playcommand("Redraw")
 		else
-			self:queuecommand("Hide")
+			self:playcommand("Hide")
 		end
 	end
 }

@@ -259,10 +259,7 @@ local af = Def.ActorFrame{ Name="PaneDisplayMaster" }
 
 af[#af+1] = RequestResponseActor(17, 50)..{
 	Name="GetScoresRequester",
-	-- Broadcasted from ./PerPlayer/DensityGraph.lua
-	P1ChartParsedMessageCommand=function(self) self:queuecommand("ChartParsed") end,
-	P2ChartParsedMessageCommand=function(self) self:queuecommand("ChartParsed") end,
-	ChartParsedCommand=function(self)
+	ChartParsedMessageCommand=function(self)
 		local master = self:GetParent()
 
 		if not IsServiceAllowed(SL.GrooveStats.GetScores) then

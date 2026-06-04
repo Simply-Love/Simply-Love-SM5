@@ -61,6 +61,13 @@ local PlayerDefaults = {
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
+				-- Chart identifiers used to cache the GrooveStats hash so we only
+				-- parse a given chart once.
+				Filename = "",
+				StepsType = "",
+				Difficulty = "",
+				Description = "",
+
 				-- Information parsed out from the chart.
 				NotesPerMeasure = {},
 				PeakNPS = 0,
