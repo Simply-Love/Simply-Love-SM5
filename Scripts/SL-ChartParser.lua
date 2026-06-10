@@ -284,6 +284,29 @@ end
 
 -- ----------------------------------------------------------------
 
+local GetEquallySpacedPerMeasure = function(chartString)
+	local equallySpacedPerMeasure = {}
+	local notesInMeasure = 0
+	local rowsInMeasure = 0
+
+	for line in (chartString .. '\n;'):gmatch("[^%s*\r\n]+") do
+		if line:match("^[,;]%s*") then
+			table.insert(equallySpacedPerMeasure, notesInMeasure == rowsInMeasure)
+			notesInMeasure = 0
+			rowsInMeasure = 0
+		else
+			rowsInMeasure = rowsInMeasure + 1
+			if line:match("[124]") then
+				notesInMeasure = notesInMeasure + 1
+			end
+		end
+	end
+
+	return equallySpacedPerMeasure
+end
+
+-- ----------------------------------------------------------------
+
 local MaybeCopyHashFromOppositePlayer = function(pn, filename, stepsType, difficulty, description)
 	local opposite_player = pn == "P1" and "P2" or "P1"
 	-- If the stepsType ends in routine or couple just return false
@@ -298,6 +321,7 @@ local MaybeCopyHashFromOppositePlayer = function(pn, filename, stepsType, diffic
 			SL[opposite_player].Streams.Difficulty == difficulty and
 			SL[opposite_player].Streams.Description == description) then
 		SL[pn].Streams.Hash = SL[opposite_player].Streams.Hash
+		SL[pn].Streams.EquallySpacedPerMeasure = SL[opposite_player].Streams.EquallySpacedPerMeasure
 		SL[pn].Streams.Filename = filename
 		SL[pn].Streams.StepsType = stepsType
 		SL[pn].Streams.Difficulty = difficulty
@@ -354,6 +378,7 @@ ComputeChartHash = function(steps, pn)
 			SL[pn].Streams.Description ~= description) then
 
 		local hash = ''
+		local equallySpacedPerMeasure = {}
 		local simfileString, fileType = GetSimfileString( steps )
 		if simfileString then
 			-- Parse out just the contents of the notes
@@ -364,10 +389,18 @@ ComputeChartHash = function(steps, pn)
 				-- separated by an '&'; the hash intentionally covers the whole thing,
 				-- so it is identical for both players.
 				hash = BinaryToHex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
+
+				-- For equally spaced, use only this player's half of a couples chart.
+				local splitIndex = chartString:find("&")
+				if splitIndex then
+					chartString = pn == "P1" and chartString:sub(1, splitIndex-1) or chartString:sub(splitIndex+1)
+				end
+				equallySpacedPerMeasure = GetEquallySpacedPerMeasure(chartString)
 			end
 		end
 
 		SL[pn].Streams.Hash = hash
+		SL[pn].Streams.EquallySpacedPerMeasure = equallySpacedPerMeasure
 		SL[pn].Streams.Filename = filename
 		SL[pn].Streams.StepsType = stepsType
 		SL[pn].Streams.Difficulty = difficulty
