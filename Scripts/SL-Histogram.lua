@@ -140,9 +140,8 @@ function NPS_Histogram(player, width, height, desaturation)
 	return amv
 end
 
--- set of density graphs for a course
--- one little issue here is that varying nps per song isn't reflected by the relative height of each chart
--- honestly too big of a hassle for me to mess with right now
+-- Set of density graphs for a course
+-- TODO: Make it possible to regenerate new graphs in screen select course ?
 function NPS_Histogram_Static_Course(player, width, height, desaturation)
 	local pn = ToEnumShortString(player)
 	local af = Def.ActorFrame{}
@@ -155,9 +154,12 @@ function NPS_Histogram_Static_Course(player, width, height, desaturation)
 	-- the last value whatever local variable in the loop was once the actors execute)
 	local curx = 0
 	local ptable = {}
+	local PeakCourseNPS = 0
 	for te in ivalues(trail:GetTrailEntries()) do
+		if te:GetSteps():GetPeakNps(pn) > PeakCourseNPS then PeakCourseNPS = te:GetSteps():GetPeakNps(pn) end
 		local w = (te:GetSong():GetLastSecond() / SL.Global.ActiveModifiers.MusicRate / totaltime) * width
-		table.insert(ptable, {curx, w, te:GetSteps()})
+		local PeakTENPS = te:GetSteps():GetPeakNps(pn)
+		table.insert(ptable, {curx, w, te:GetSteps(), PeakTENPS})
 		curx = curx + w
 	end
 	for i, pos in ipairs(ptable) do
@@ -169,7 +171,8 @@ function NPS_Histogram_Static_Course(player, width, height, desaturation)
 				self:queuecommand("SetVertices")
 			end,
 			SetVerticesCommand = function(self)
-				local verts = gen_vertices(player, pos[2], height, pos[3], desaturation)
+				local Ratio = pos[4]/PeakCourseNPS
+				local verts = gen_vertices(player, pos[2], height*Ratio, pos[3], desaturation)
 				self:SetNumVertices(#verts):SetVertices(verts)
 			end
 		}
