@@ -672,7 +672,18 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	JudgmentFlash = {
 		SelectType = "SelectMultiple",
-		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" }
+		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" },
+		Choices = function()
+			local tns = "TapNoteScore"
+			return {
+				THEME:GetString(tns, "Miss"),
+				THEME:GetString(tns, "W5"),
+				THEME:GetString(tns, "W4"),
+				THEME:GetString(tns, "W3"),
+				THEME:GetString(tns, "W2"),
+				THEME:GetString(tns, "W1"),
+			}
+		end,
 	},
 	-------------------------------------------------------------------------
 	TimingWindows = {
