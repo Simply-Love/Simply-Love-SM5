@@ -93,12 +93,29 @@ evaluation) is the most useful thing to share.
 - Header, BPM, and the NPS graph reflow automatically via the centered-notefield
   paths
 
-**Planned / in progress:**
+**Done — song select (first pass):**
 
-- Song select (`ScreenSelectMusic`) portrait layout
-- Evaluation (`ScreenEvaluation`) portrait layout
-- Fine-tuning of the gameplay top strip and the EX Target Score / Pacemaker
-  overlay, once screenshots are available
+- Banner centered and scaled to fit, near the top
+- Song-description panel centered below the banner and fitted to width
+- Density graph centered and fitted to width
+- Step-artist credit brought on-screen
+- GrooveStats leaderboard (1P) fitted to width
+- Radar pane centered for single player
+
+**Done — evaluation (first pass):**
+
+- Per-player panes / upper results centered (were at `_screen.cx ± 155`, off the
+  left of the portrait canvas)
+- Lower pane kept a single centered column instead of double width
+- Results banner scaled to fit width
+
+**Needs screenshot tuning:**
+
+- Gameplay top strip and the EX Target Score / Pacemaker overlay
+- Evaluation in-pane content (judgment breakdown, GrooveStats QR, offset
+  histogram) once the panes are centered
+- Song-description inner content offset; density-graph vs. music-wheel overlap;
+  radar-pane columns at the narrower width
 
 **Scope:** single player only. Two-player layout is not targeted; if a second
 player is never joined, its actors are never created, so P2 graphics stay out of
