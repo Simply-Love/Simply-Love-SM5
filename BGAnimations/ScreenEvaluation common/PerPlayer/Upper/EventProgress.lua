@@ -26,18 +26,20 @@ local CreateRPGBody = function(rpgData)
 
 	local qualifierImprovements = {}
 	local statImprovements = {}
-	for improvement in ivalues(rpgData["statImprovements"]) do
-		if rpgStats[improvement.name] and improvement["gained"] > 0 then
-			if #rpgData["statImprovements"] >= 5 and (improvement.name == "tp" or improvement.name == "lp") then
-				table.insert(
-					qualifierImprovements,
-					string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
-				)
-			else
-				table.insert(
-					statImprovements,
-					string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
-				)
+	if rpgData["statImprovements"] then
+		for improvement in ivalues(rpgData["statImprovements"]) do
+			if rpgStats[improvement.name] and improvement["gained"] > 0 then
+				if #rpgData["statImprovements"] >= 5 and (improvement.name == "tp" or improvement.name == "lp") then
+					table.insert(
+						qualifierImprovements,
+						string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
+					)
+				else
+					table.insert(
+						statImprovements,
+						string.format("+%d %s", improvement["gained"], string.upper(improvement["name"]))
+					)
+				end
 			end
 		end
 	end

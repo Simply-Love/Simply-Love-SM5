@@ -283,126 +283,31 @@ local GetSimfileChartString = function(SimfileString, StepsType, Difficulty, Ste
 end
 
 -- ----------------------------------------------------------------
--- Figure out which measures are considered a stream of notes
--- The chartString is expected to be minimized.
-local GetMeasureInfo = function(Steps, chartString)
-	-- Stream Measures Variables
-	-- Which measures are considered a stream?
-	local notesPerMeasure = {}
+
+local GetEquallySpacedPerMeasure = function(chartString)
 	local equallySpacedPerMeasure = {}
-	local measureCount = 1
-	local notesInMeasure = 0  -- The tap notes found in this measure
-	local rowsInMeasure = 0   -- The total rows in this measure (can be just 1 if measure is empty).
+	local notesInMeasure = 0
+	local rowsInMeasure = 0
 
-	-- NPS and Density Graph Variables
-	local NPSperMeasure = {}
-	local NPSForThisMeasure, peakNPS = 0, 0
-	local timingData = Steps:GetTimingData()
-
-	-- Column Cues variables.
-	local columnCueAllData = {} 
-	local columnTimes = {}
-
-	-- Loop through each line in our string of measures, trimming potential leading whitespace (thanks, TLOES/Mirage Garden)
-	for line in chartString:gmatch("[^%s*\r\n]+") do
-		-- If we hit a comma or a semi-colon, then we've hit the end of our measure
-		if(line:match("^[,;]%s*")) then
-			-- Does the number of notes in this measure meet our threshold to be considered a stream?
-			table.insert(notesPerMeasure, notesInMeasure)
+	for line in (chartString .. '\n;'):gmatch("[^%s*\r\n]+") do
+		if line:match("^[,;]%s*") then
 			table.insert(equallySpacedPerMeasure, notesInMeasure == rowsInMeasure)
-
-			-- Column Cue calculation
-			for noteData in ivalues(columnCueAllData) do
-				local beat = 4 * ((measureCount-1) + (noteData.rowNum-1)/rowsInMeasure)
-				columnTimes[#columnTimes + 1] = {
-					columns=noteData.columns,
-					time=timingData:GetElapsedTimeFromBeat(beat)
-				}
-			end
-
-			-- NPS Calculation
-			durationOfMeasureInSeconds = timingData:GetElapsedTimeFromBeat(measureCount * 4) - timingData:GetElapsedTimeFromBeat((measureCount-1)*4)
-
-			-- FIXME: We subtract the time at the current measure from the time at the next measure to determine
-			-- the duration of this measure in seconds, and use that to calculate notes per second.
-			--
-			-- Measures *normally* occur over some positive quantity of seconds.  Measures that use warps,
-			-- negative BPMs, and negative stops are normally reported by the SM5 engine as having a duration
-			-- of 0 seconds, and when that happens, we safely assume that there were 0 notes in that measure.
-			--
-			-- This doesn't always hold true.  Measures 48 and 49 of "Mudkyp Korea/Can't Nobody" use a properly
-			-- timed negative stop, but the engine reports them as having very small but positive durations
-			-- which erroneously inflates the notes per second calculation.
-			--
-			-- As a hold over for this case, we check that the duration is <= 0.12 (instead of 0), so this only
-			-- breaks for cases where charts are of 2,000 BPM (which are likely rarer than those with warps).
-			if durationOfMeasureInSeconds <= 0.12 then
-				NPSForThisMeasure = 0
-			else
-				NPSForThisMeasure = notesInMeasure/durationOfMeasureInSeconds
-			end
-
-			NPSperMeasure[measureCount] = NPSForThisMeasure
-
-			-- determine whether this measure contained the PeakNPS
-			if NPSForThisMeasure > peakNPS then
-				peakNPS = NPSForThisMeasure
-			end
-
-			-- Reset iterative variables
 			notesInMeasure = 0
 			rowsInMeasure = 0
-			measureCount = measureCount + 1
-			columnCueAllData = {}
 		else
 			rowsInMeasure = rowsInMeasure + 1
-			-- Is this a note? (Tap, Hold Head, Roll Head)
-			if(line:match("[124]")) then
+			if line:match("[124]") then
 				notesInMeasure = notesInMeasure + 1
 			end
-
-			-- For column cues, also keep track of mines
-			if line:match("[124M]") then
-				-- Find all the columns where the tap notes/mines occur.
-				-- This is used for the ColumnCues.
-				local columns = {}
-				local i = 0
-				while true do
-					i = line:find("[124M]", i+1)
-					if i == nil then break end
-					columns[#columns+1] = {
-						colNum=i,
-						isMine=line:sub(i, i) == "M"
-					}
-				end
-				columnCueAllData[#columnCueAllData+1] = {
-					rowNum=rowsInMeasure,
-					columns=columns
-				}
-			end
 		end
 	end
 
-	local columnCues = {}
-	local prevTime = 0
-	for columnTime in ivalues(columnTimes) do
-		local duration = columnTime.time - prevTime
-		if duration >= SL.Global.ColumnCueMinTime or prevTime == 0 then
-			columnCues[#columnCues + 1] = {
-				columns=columnTime.columns,
-				startTime=prevTime,
-				duration=duration
-			}
-		end
-		prevTime = columnTime.time
-	end
-
-	return notesPerMeasure, peakNPS, NPSperMeasure, columnCues, equallySpacedPerMeasure
+	return equallySpacedPerMeasure
 end
 
 -- ----------------------------------------------------------------
 
-local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty, description)
+local MaybeCopyHashFromOppositePlayer = function(pn, filename, stepsType, difficulty, description)
 	local opposite_player = pn == "P1" and "P2" or "P1"
 	-- If the stepsType ends in routine or couple just return false
 	-- because players do not have the same chart despite the same simfile
@@ -410,38 +315,49 @@ local MaybeCopyFromOppositePlayer = function(pn, filename, stepsType, difficulty
 		return false
 	end
 
-	-- Check if we already have the data stored in the opposite player's cache.
+	-- Check if the opposite player already hashed this same chart.
 	if (SL[opposite_player].Streams.Filename == filename and
 			SL[opposite_player].Streams.StepsType == stepsType and
 			SL[opposite_player].Streams.Difficulty == difficulty and
 			SL[opposite_player].Streams.Description == description) then
-		-- If so then just copy everything over.
-		SL[pn].Streams.NotesPerMeasure = SL[opposite_player].Streams.NotesPerMeasure
-		SL[pn].Streams.EquallySpacedPerMeasure = SL[opposite_player].Streams.EquallySpacedPerMeasure
-		SL[pn].Streams.PeakNPS = SL[opposite_player].Streams.PeakNPS
-		SL[pn].Streams.NPSperMeasure = SL[opposite_player].Streams.NPSperMeasure
-		SL[pn].Streams.ColumnCues = SL[opposite_player].Streams.ColumnCues
 		SL[pn].Streams.Hash = SL[opposite_player].Streams.Hash
-
-		SL[pn].Streams.Crossovers = SL[opposite_player].Streams.Crossovers
-		SL[pn].Streams.Footswitches = SL[opposite_player].Streams.Footswitches
-		SL[pn].Streams.Sideswitches = SL[opposite_player].Streams.Sideswitches
-		SL[pn].Streams.Jacks = SL[opposite_player].Streams.Jacks
-		SL[pn].Streams.Brackets = SL[opposite_player].Streams.Brackets
-
-		SL[pn].Streams.Filename = SL[opposite_player].Streams.Filename
-		SL[pn].Streams.StepsType = SL[opposite_player].Streams.StepsType
-		SL[pn].Streams.Difficulty = SL[opposite_player].Streams.Difficulty
-		SL[pn].Streams.Description = SL[opposite_player].Streams.Description
-
+		SL[pn].Streams.EquallySpacedPerMeasure = SL[opposite_player].Streams.EquallySpacedPerMeasure
+		SL[pn].Streams.Filename = filename
+		SL[pn].Streams.StepsType = stepsType
+		SL[pn].Streams.Difficulty = difficulty
+		SL[pn].Streams.Description = description
 		return true
-	else
-		return false
 	end
+
+	return false
 end
-		
+
+-- TODO: we shouldn't hardcode this and instead just pass if col is a mine directly.
+local MINE_NOTE_TYPE = 4
+
+-- The chart info shown while browsing the song wheel (density graph, NPS,
+-- tech counts) all comes from cheap, cached engine data, so this is safe to
+-- call on every chart change without parsing the simfile.
 ParseChartInfo = function(steps, pn)
-	-- The filename for these steps in the StepMania cache 
+	local player = pn == "P1" and PLAYER_1 or PLAYER_2
+
+	SL[pn].Streams.NotesPerMeasure = steps:GetNotesPerMeasure(player)
+	SL[pn].Streams.NPSperMeasure = steps:GetNpsPerMeasure(player)
+	SL[pn].Streams.PeakNPS = steps:GetPeakNps(player)
+
+	local techCounts = steps:GetTechCounts(player)
+	SL[pn].Streams.Crossovers = techCounts:GetValue("TechCountsCategory_Crossovers")
+	SL[pn].Streams.Footswitches = techCounts:GetValue("TechCountsCategory_Footswitches")
+	SL[pn].Streams.Sideswitches = techCounts:GetValue("TechCountsCategory_Sideswitches")
+	SL[pn].Streams.Jacks = techCounts:GetValue("TechCountsCategory_Jacks")
+	SL[pn].Streams.Brackets = techCounts:GetValue("TechCountsCategory_Brackets")
+end
+
+-- Computing the GrooveStats hash requires decompressing the chart's NoteData, which is expensive.
+ComputeChartHash = function(steps, pn)
+	if not steps then return end
+
+	-- The filename for these steps in the StepMania cache
 	local filename = steps:GetFilename()
 	-- StepsType, a string like "dance-single" or "pump-double"
 	local stepsType = ToEnumShortString( steps:GetStepsType() ):gsub("_", "-"):lower()
@@ -451,87 +367,55 @@ ParseChartInfo = function(steps, pn)
 	local description = steps:GetDescription()
 
 	-- If we've copied from the other player then we're done.
-	if MaybeCopyFromOppositePlayer(pn, filename, stepsType, difficulty, description) then
+	if MaybeCopyHashFromOppositePlayer(pn, filename, stepsType, difficulty, description) then
 		return
 	end
 
-	-- Only parse the file if it's not what's already stored in SL Cache.
+	-- Only parse the file if it's not the chart we've already hashed.
 	if (SL[pn].Streams.Filename ~= filename or
 			SL[pn].Streams.StepsType ~= stepsType or
 			SL[pn].Streams.Difficulty ~= difficulty or
 			SL[pn].Streams.Description ~= description) then
-		local simfileString, fileType = GetSimfileString( steps )
-		local parsed = false
 
+		local hash = ''
+		local equallySpacedPerMeasure = {}
+		local simfileString, fileType = GetSimfileString( steps )
 		if simfileString then
 			-- Parse out just the contents of the notes
 			local chartString, BPMs = GetSimfileChartString(simfileString, stepsType, difficulty, description, fileType)
 			if chartString ~= nil and BPMs ~= nil then
 				-- We use 16 characters for the V3 GrooveStats hash.
-				local Hash = BinaryToHex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
+				-- For couples charts the chart string contains both P1 and P2 steps
+				-- separated by an '&'; the hash intentionally covers the whole thing,
+				-- so it is identical for both players.
+				hash = BinaryToHex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
 
-				-- Check if there is an & present, we're dealing with a couples chart:
-				-- Couples charts have P1 and P2 steps in the same chart string.
-				-- We need to split the chart string into two separate chart strings.
+				-- For equally spaced, use only this player's half of a couples chart.
 				local splitIndex = chartString:find("&")
-				-- If the pn is P1 use the first half of the chart string, otherwise use the second half.
 				if splitIndex then
 					chartString = pn == "P1" and chartString:sub(1, splitIndex-1) or chartString:sub(splitIndex+1)
 				end
-
-				-- Append the semi-colon at the end so it's easier for GetMeasureInfo to get the contents
-				-- of the last measure.
-				chartString = chartString .. '\n;'
-				-- Which measures have enough notes to be considered as part of a stream?
-				-- We can also extract the PeakNPS and the NPSperMeasure table info in the same pass.
-				-- The chart string is minimized at this point (via GetSimfileChartString).
-				local NotesPerMeasure, PeakNPS, NPSperMeasure, ColumnCues, EquallySpacedPerMeasure = GetMeasureInfo(steps, chartString)
-
-				-- Which sequences of measures are considered a stream?
-				SL[pn].Streams.NotesPerMeasure = NotesPerMeasure
-				SL[pn].Streams.EquallySpacedPerMeasure = EquallySpacedPerMeasure
-				SL[pn].Streams.PeakNPS = PeakNPS
-				SL[pn].Streams.NPSperMeasure = NPSperMeasure
-				SL[pn].Streams.ColumnCues = ColumnCues
-				SL[pn].Streams.Hash = Hash
-
-				-- Let's just do this here for now since a lot of the existing infra
-				-- references these values directly. We can refactor later.
-				local techCounts = steps:CalculateTechCounts(player)
-
-				SL[pn].Streams.Crossovers = techCounts:GetValue("TechCountsCategory_Crossovers")
-				SL[pn].Streams.Footswitches = techCounts:GetValue("TechCountsCategory_Footswitches")
-				SL[pn].Streams.Sideswitches = techCounts:GetValue("TechCountsCategory_Sideswitches")
-				SL[pn].Streams.Jacks = techCounts:GetValue("TechCountsCategory_Jacks")
-				SL[pn].Streams.Brackets = techCounts:GetValue("TechCountsCategory_Brackets")
-
-				SL[pn].Streams.Filename = filename
-				SL[pn].Streams.StepsType = stepsType
-				SL[pn].Streams.Difficulty = difficulty
-				SL[pn].Streams.Description = description
-
-				parsed = true
+				equallySpacedPerMeasure = GetEquallySpacedPerMeasure(chartString)
 			end
 		end
 
-		-- Clear stream data if we can't parse the chart
-		if not parsed then
-			SL[pn].Streams.NotesPerMeasure = {}
-			SL[pn].Streams.EquallySpacedPerMeasure = {}
-			SL[pn].Streams.PeakNPS = 0
-			SL[pn].Streams.NPSperMeasure = {}
-			SL[pn].Streams.Hash = ''
+		SL[pn].Streams.Hash = hash
+		SL[pn].Streams.EquallySpacedPerMeasure = equallySpacedPerMeasure
+		SL[pn].Streams.Filename = filename
+		SL[pn].Streams.StepsType = stepsType
+		SL[pn].Streams.Difficulty = difficulty
+		SL[pn].Streams.Description = description
+	end
+end
 
-			SL[pn].Streams.Crossovers = 0
-			SL[pn].Streams.Footswitches = 0
-			SL[pn].Streams.Sideswitches = 0
-			SL[pn].Streams.Jacks = 0
-			SL[pn].Streams.Brackets = 0
-
-			SL[pn].Streams.Filename = filename
-			SL[pn].Streams.StepsType = stepsType
-			SL[pn].Streams.Difficulty = difficulty
-			SL[pn].Streams.Description = description
+-- Column cues require decompressing the chart's NoteData, which is expensive.
+ParseColumnCues = function(steps, pn)
+	local columnCues = steps:GetColumnCues(SL.Global.ColumnCueMinTime)
+	for _, cue in ipairs(columnCues) do
+		for _, col in ipairs(cue.columns) do
+			col.isMine = (col.noteType == MINE_NOTE_TYPE)
+			col.noteType = nil
 		end
 	end
+	SL[pn].Streams.ColumnCues = columnCues
 end

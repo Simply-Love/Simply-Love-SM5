@@ -21,7 +21,8 @@ local BothUsingStepStats = (#GAMESTATE:GetHumanPlayers()==2
 and SL.P1.ActiveModifiers.DataVisualizations == "Step Statistics"
 and SL.P2.ActiveModifiers.DataVisualizations == "Step Statistics")
 -- -----------------------------------------------------------------------
-
+local mods = SL[pn].ActiveModifiers
+local FilterAlpha = clamp(BackgroundFilterValues()[mods.BackgroundFilter]/100 or 0, 0.25, 1)
 -- max_seconds is how many seconds of a stepchart we want visualized on-screen at once.
 -- For very long songs (longer than, say, 10 minutes) the density graph becomes too
 -- horizontally compressed (squeezed in, so to speak) and it's dificult to get any useful
@@ -65,6 +66,7 @@ local bg = Def.Quad{
 		self:zoomto(width, height)
 			:align(0,0)
 			:diffuse(color("#1E282F"))
+			:diffusealpha(FilterAlpha)
 	end
 }
 
@@ -77,6 +79,7 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 	OnCommand=function(self)
 		-- offset the graph's x-position by half the thickness of the LifeLine
 		self:xy( LifeLineThickness/2, height )
+		self:diffusealpha(FilterAlpha)
 	end,
 	PeakNPSUpdatedMessageCommand=function(self) self:queuecommand("Size") end,
 	SizeCommand=function(self)

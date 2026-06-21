@@ -50,6 +50,10 @@ local af = Def.ActorFrame{
 	-- be hidden by the mask, but that is effectively already called on the
 	-- entire "Display" ActorFrame of the CourseContentsList in the engine's code.
 
+	-- We need to undo the effects of these masks after rendering the course
+	-- contents to avoid hiding parts of other actors rendered on top, such as
+	-- the sort menu and profile select menu.
+
 	-- lower mask
 	Def.Quad{
 		InitCommand=function(self)
@@ -180,6 +184,28 @@ af[#af+1] = Def.CourseContentsList {
 			end
 		}
 	}
+}
+
+-- Undo the masks to avoid hiding parts of other actors rendered on top of them.
+af[#af+1] = Def.Quad{
+	InitCommand=function(self)
+		self:xy(0, 98)
+			:zoomto(PaneWidth, 40)
+			:blend('BlendMode_NoEffect')
+			:zwrite(true)
+			:zbias(-0.1)
+	end
+}
+
+af[#af+1] = Def.Quad{
+	InitCommand=function(self)
+		self:vertalign(bottom)
+			:xy(0, -18)
+			:zoomto(PaneWidth, 100)
+			:blend('BlendMode_NoEffect')
+			:zwrite(true)
+			:zbias(-0.1)
+	end
 }
 
 return af

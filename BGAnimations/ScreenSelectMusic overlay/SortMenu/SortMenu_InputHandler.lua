@@ -8,6 +8,10 @@ local input = function(event)
 	local screen   = SCREENMAN:GetTopScreen()
 	local overlay  = screen:GetChild("Overlay")
 	local sortmenu = overlay:GetChild("SortMenu")
+	if SCREENMAN:GetTopScreen():GetMusicWheel():IsLocked() then
+		overlay:queuecommand("DirectInputToEngine")
+	end
+	
 	if event.type ~= "InputEventType_Release" then
 		if event.GameButton == "MenuRight" or event.GameButton == "MenuDown" then
 			sort_wheel:scroll_by_amount(1)
@@ -55,7 +59,23 @@ local input = function(event)
 					screen:SetNextScreenName("ScreenSelectMusicCasual")
 					screen:StartTransitioningScreen("SM_GoToNextScreen")
 				end
-				-- the player wants to change styles, for example from single to double
+
+			-- Change between Course (aka Marathon aka Nonstop) and Regular mode.
+			elseif focus.kind == "ChangePlayMode" then
+				-- Unselect song/course first to avoid getting to a state where
+				-- play mode is Course but a song is selected or vice versa.
+				GAMESTATE:SetCurrentSong(nil)
+				GAMESTATE:SetCurrentCourse(nil)
+				GAMESTATE:SetCurrentPlayMode(focus.change)
+
+				-- Save menu timer value.
+				if PREFSMAN:GetPreference("MenuTimer") then
+					overlay:playcommand("ShowPressStartForOptions")
+				end
+				screen:SetNextScreenName("ScreenReloadSSM")
+				screen:StartTransitioningScreen("SM_GoToNextScreen")
+
+			-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
 				-- If the MenuTimer is in effect, we need to make sure the current number of seconds
 				-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions
@@ -77,11 +97,10 @@ local input = function(event)
 				screen:StartTransitioningScreen("SM_GoToNextScreen")
 			elseif focus.new_overlay then
 				if focus.new_overlay == "GoBack" then
-					sortmenu:playcommand("AssessAvailableChoices")
+					overlay:queuecommand("DirectInputToEngine")
 				-- if the overlay starts with "Category"
 				elseif focus.new_overlay:match("^Category") then
-					-- Pass in everything after "Category" to the broadcast
-					MESSAGEMAN:Broadcast('EnterCategory', { Category = focus.new_overlay })
+					sortmenu:playcommand("ToggleCategory", { Category = focus.new_overlay })
 				elseif focus.new_overlay == "TestInput" then
 					sortmenu:queuecommand("DirectInputToTestInput")
 				elseif focus.new_overlay == "Leaderboard" then
@@ -103,7 +122,16 @@ local input = function(event)
 					overlay:GetChild("PaneDisplayMaster"):GetChild("GetScoresRequester"):playcommand("Cancel")
 					overlay:playcommand("DirectInputToEngine")
 					SCREENMAN:SetNewScreen("ScreenViewDownloads")
+				elseif focus.new_overlay == "OnlineLobbies" then
+					overlay:queuecommand("DirectInputToEngine")
+					SCREENMAN:SetNewScreen("ScreenOnlineLobbies")
 				elseif focus.new_overlay == "SwitchProfile" then
+					-- There's a race condition that occurs when a player mashes the Start button
+					-- fast enough, when the Switch Profiles button is highlighted, that causes
+					-- two SelectProfile screens to be present. This softlocks the game
+					-- due to the first screen not able to receive inputs.
+					if SL.Global.FastProfileSwitchInProgress then return false end
+
 					SL.Global.FastProfileSwitchInProgress = true
 					-- If a memory card is inserted we can't be on that profile's songs when switching profiles
 					-- as the profile is temporarily unloaded when finishing the screen.
@@ -146,6 +174,8 @@ local input = function(event)
 				elseif focus.new_overlay == "SetSummary" then
 					SCREENMAN:GetTopScreen():SetNextScreenName("ScreenEvaluationSummarySet")
 					SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+				elseif sortmenu.custom_functions[focus.new_overlay] ~= nil then
+					sortmenu.custom_functions[focus.new_overlay](event)
 				end
 			end
 

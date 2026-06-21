@@ -33,6 +33,9 @@ else
 end
 
 local Update = function(self, delta)
+	local topScreen = SCREENMAN:GetTopScreen()
+	if topScreen and topScreen.IsPaused and topScreen:IsPaused() then return end
+
 	if curIndex <= #columnCues then
 		local curTime = playerState:GetSongPosition():GetMusicSecondsVisible()
 		local columnCue = columnCues[curIndex]
@@ -85,6 +88,17 @@ local af = Def.ActorFrame{
 		self:SetUpdateFunction(Update)
 	end,
 	CurrentSongChangedMessageCommand=function(self)
+		local steps = nil
+		if GAMESTATE:IsCourseMode() then
+			local songIndex = GAMESTATE:GetCourseSongIndex() + 1
+			local trail = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[songIndex]
+			steps = trail:GetSteps()
+		else
+			steps = GAMESTATE:GetCurrentSteps(player)
+		end
+
+		ParseColumnCues(steps, pn)
+
 		playerState = GAMESTATE:GetPlayerState(player)
 		columnCues = SL[pn].Streams.ColumnCues
 		curIndex = 1

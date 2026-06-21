@@ -17,7 +17,7 @@ return Def.ActorFrame {
     Def.Quad {
         InitCommand = function(self)
             self:horizalign(left):diffuse(DarkUI() and {1, 1, 1, 0.5} or {10 / 255, 20 / 255, 27 / 255, 1}):zoomto(item_width, (_screen.h / num_visible_items) - 1)
-            if ThemePrefs.Get("VisualStyle") == "SRPG9" or ThemePrefs.Get("VisualStyle") == "Technique" then
+            if ThemePrefs.Get("VisualStyle") == "SRPG10" or ThemePrefs.Get("VisualStyle") == "Technique" then
                 self:diffusealpha(0.5)
             end
         end,
@@ -30,7 +30,7 @@ return Def.ActorFrame {
 				else
 					self:diffuserightedge(DarkUI() and {1, 0.5, 0.5, 0.5} or {80 / 255, 20 / 255, 27 / 255, 1})
 				end
-				if ThemePrefs.Get("VisualStyle") == "SRPG9" or ThemePrefs.Get("VisualStyle") == "Technique" then
+				if ThemePrefs.Get("VisualStyle") == "SRPG10" or ThemePrefs.Get("VisualStyle") == "Technique" then
 					self:diffusealpha(0.5)
 				end
 			end

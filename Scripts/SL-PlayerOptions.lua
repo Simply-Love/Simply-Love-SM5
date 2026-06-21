@@ -4,8 +4,12 @@
 
 local GetModsAndPlayerOptions = function(player)
 	local mods = SL[ToEnumShortString(player)].ActiveModifiers
-	local topscreen = SCREENMAN:GetTopScreen():GetName()
-	local modslevel = topscreen  == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
+	-- This can get called already when loading ScreenTitleMenu if all screens
+	-- before and including ScreenSelectPlayMode are disabled. Top screen will
+	-- be nil in that case.
+	local topscreen = SCREENMAN:GetTopScreen()
+	local topscreenname = topscreen and topscreen:GetName()
+	local modslevel = topscreenname == "ScreenEditOptions" and "ModsLevel_Stage" or "ModsLevel_Preferred"
 	local playeroptions = GAMESTATE:GetPlayerState(player):GetPlayerOptions(modslevel)
 
 	return mods, playeroptions
@@ -145,7 +149,7 @@ local Overrides = {
 		LayoutType = "ShowOneInRow",
 		Choices = function()
 
-			local all = NOTESKIN:GetNoteSkinNames()
+			local all = NOTESKIN:GetNoteSkinNames(false)
 
 			if ThemePrefs.Get("HideStockNoteSkins") then
 				local game = GAMESTATE:GetCurrentGame():GetName()
@@ -187,7 +191,7 @@ local Overrides = {
 
 			-- It's possible a user might want to hide stock noteskins
 			-- but only have stock noteskins.  If so, just return all noteskins.
-			if #all == 0 then all = NOTESKIN:GetNoteSkinNames() end
+			if #all == 0 then all = NOTESKIN:GetNoteSkinNames(false) end
 
 			return all
 		end,
@@ -199,6 +203,33 @@ local Overrides = {
 			-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
 			MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkin", Value=mods.NoteSkin})
 			playeroptions:NoteSkin( mods.NoteSkin )
+		end
+	},
+	NoteSkinVariant = {
+		ExportOnChange = true,
+		HideOnDisable = true,
+		LayoutType = "ShowOneInRow",
+		Choices = { "       " },
+		EnabledForPlayers = function() 
+			local players = {}
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local variant = SL[ToEnumShortString(player)].ActiveModifiers.NoteSkinVariant
+				local noteskin = SL[ToEnumShortString(player)].ActiveModifiers.NoteSkin
+				if (noteskin and NOTESKIN:HasVariants(noteskin)) then
+					players[#players+1] = player
+				end
+			end
+			return players 
+		end,
+		ReloadRowMessages = { "RefreshActorProxy" },
+		SaveSelections = function(self, list, pn)
+			local mods, playeroptions = GetModsAndPlayerOptions(pn)
+			local variant = mods.NoteSkinVariant
+			if variant then
+				-- Broadcast a message that ./Graphics/OptionRow Frame.lua will be listening for so it can change the NoteSkin preview
+				MESSAGEMAN:Broadcast("RefreshActorProxy", {Player=pn, Name="NoteSkinVariant", Value=mods.NoteSkinVariant})
+				playeroptions:NoteSkin( mods.NoteSkinVariant )
+			end
 		end
 	},
 	-------------------------------------------------------------------------
@@ -520,7 +551,7 @@ local Overrides = {
 		SelectType = "SelectMultiple",
 		Values = function()
 			-- GameplayExtras will be presented as a single OptionRow when WideScreen
-			local vals = { "ColumnFlashOnMiss", "SubtractiveScoring", "Pacemaker", "NPSGraphAtTop" }
+			local vals = { "SubtractiveScoring", "Pacemaker", "NPSGraphAtTop" }
 
 			-- if not WideScreen (traditional DDR cabinets running at 640x480)
 			-- remove the last two choices to be appended an additional OptionRow (GameplayExtrasB below).
@@ -639,6 +670,22 @@ local Overrides = {
 		Values = { "HideEarlyDecentWayOffJudgments", "HideEarlyDecentWayOffFlash" }
 	},
 	-------------------------------------------------------------------------
+	JudgmentFlash = {
+		SelectType = "SelectMultiple",
+		Values = { "FlashMiss", "FlashWayOff", "FlashDecent", "FlashGreat", "FlashExcellent", "FlashFantastic" },
+		Choices = function()
+			local tns = "TapNoteScore"
+			return {
+				THEME:GetString(tns, "Miss"),
+				THEME:GetString(tns, "W5"),
+				THEME:GetString(tns, "W4"),
+				THEME:GetString(tns, "W3"),
+				THEME:GetString(tns, "W2"),
+				THEME:GetString(tns, "W1"),
+			}
+		end,
+	},
+	-------------------------------------------------------------------------
 	TimingWindows = {
 		Values = function()
 			return {
@@ -649,50 +696,25 @@ local Overrides = {
 		Choices = function()
 			local tns = "TapNoteScore" .. (SL.Global.GameMode=="ITG" and "" or SL.Global.GameMode)
 			local t = {THEME:GetString("SLPlayerOptions","None")}
-			-- assume pluralization via terminal s
-			local idx = 2
-			t[idx] = THEME:GetString(tns,"W5").."s"
-			idx = idx + 1
-			if SL.Global.GameMode=="ITG" then
+			if SL.Global.GameMode=="Casual" then
+				local idx = 2
 				t[idx] = THEME:GetString(tns,"W4").."s + "..t[idx-1]
-				idx = idx + 1
 			end
-			t[idx] = THEME:GetString(tns,"W1").."s + "..THEME:GetString(tns,"W2").."s"
 			return t
 		end,
 		LoadSelections = function(self, list, pn)
 			local mods, playeroptions = GetModsAndPlayerOptions(pn)
-
 			-- First determine the set of actual enabled windows.
 			local windows = {true,true,true,true,true}
-			local disabledWindows = playeroptions:GetDisabledTimingWindows()
-			for w in ivalues(disabledWindows) do
-				windows[tonumber(ToEnumShortString(w):sub(-1))] = false
-			end
-
-			-- Compare them to any of our available selections
-			local matched = false
-			for i=1,#list do
-				local all_match = true
-				for w,window in ipairs(windows) do
-					if window ~= self.Values[i][w] then all_match = false; break end
-				end
-				if all_match then
-					matched = true
-					list[i] = true
-					mods.TimingWindows = windows
-					break
-				end
-			end
-
-			-- It's possible one may have manipulated the available windows through playeroptions elsewhere.
-			-- If the TimingWindows set via LoadSelections is not one of our valid choices then default
-			-- to a known value (all windows enabled).
-			if not matched then
-				mods.TimingWindows = {true,true,true,true,true}
+			if SL.Global.Gamemode == "Casual" then
+				windows[4] = false
+				windows[5] = false
+				list[2] = true
+			else
 				playeroptions:ResetDisabledTimingWindows()
 				list[1] = true
 			end
+			mods.TimingWindows = windows
 			return list
 		end,
 		SaveSelections = function(self, list, pn)
@@ -701,6 +723,7 @@ local Overrides = {
 				if list[i] then
 					mods.TimingWindows = self.Values[i]
 					playeroptions:ResetDisabledTimingWindows()
+					if SL.Global.GameMode == "ITG" then return end
 					for i,enabled in ipairs(mods.TimingWindows) do
 						if not enabled then
 							playeroptions:DisableTimingWindow("TimingWindow_W"..i)
@@ -778,14 +801,14 @@ local Overrides = {
 	ScreenAfterPlayerOptions = {
 		Values = function()
 			local choices = { "Gameplay", "Select Music", "Options2", "Options3"  }
-			if SL.Global.MenuTimer.ScreenSelectMusic < 1 then table.remove(choices, 2) end
+			if SL.Global.MenuTimer.ScreenSelectMusic < 1  or SL.Global.MusicWheelLocked == true then table.remove(choices, 2) end
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions = Branch.GameplayScreen() end
 
-			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
+			if SL.Global.MenuTimer.ScreenSelectMusic > 1 and SL.Global.MusicWheelLocked == false then
 				if list[2] then SL.Global.ScreenAfter.PlayerOptions = SelectMusicOrCourse() end
 				if list[3] then SL.Global.ScreenAfter.PlayerOptions = "ScreenPlayerOptions2" end
 				if list[4] then SL.Global.ScreenAfter.PlayerOptions = "ScreenPlayerOptions3" end
@@ -799,14 +822,14 @@ local Overrides = {
 	ScreenAfterPlayerOptions2 = {
 		Values = function()
 			local choices = { "Gameplay", "Select Music", "Options1", "Options3"  }
-			if SL.Global.MenuTimer.ScreenSelectMusic < 1 then table.remove(choices, 2) end
+			if SL.Global.MenuTimer.ScreenSelectMusic < 1  or SL.Global.MusicWheelLocked == true	 then table.remove(choices, 2) end
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions2 = Branch.GameplayScreen() end
 
-			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
+			if SL.Global.MenuTimer.ScreenSelectMusic > 1 and SL.Global.MusicWheelLocked == false then
 				if list[2] then SL.Global.ScreenAfter.PlayerOptions2 = SelectMusicOrCourse() end
 				if list[3] then SL.Global.ScreenAfter.PlayerOptions2 = "ScreenPlayerOptions" end
 				if list[4] then SL.Global.ScreenAfter.PlayerOptions2 = "ScreenPlayerOptions3" end
@@ -821,14 +844,14 @@ local Overrides = {
 	ScreenAfterPlayerOptions3 = {
 		Values = function()
 			local choices = { "Gameplay", "Select Music", "Options1", "Options2"  }
-			if SL.Global.MenuTimer.ScreenSelectMusic < 1 then table.remove(choices, 2) end
+			if SL.Global.MenuTimer.ScreenSelectMusic < 1  or SL.Global.MusicWheelLocked == true then table.remove(choices, 2) end
 			return choices
 		end,
 		OneChoiceForAllPlayers = true,
 		SaveSelections = function(self, list, pn)
 			if list[1] then SL.Global.ScreenAfter.PlayerOptions3 = Branch.GameplayScreen() end
 
-			if SL.Global.MenuTimer.ScreenSelectMusic > 1 then
+			if SL.Global.MenuTimer.ScreenSelectMusic > 1 and SL.Global.MusicWheelLocked == false then
 				if list[2] then SL.Global.ScreenAfter.PlayerOptions3 = SelectMusicOrCourse() end
 				if list[3] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions" end
 				if list[4] then SL.Global.ScreenAfter.PlayerOptions3 = "ScreenPlayerOptions2" end
@@ -872,8 +895,11 @@ local OptionRowDefault = {
 			self.SelectType = Overrides[name].SelectType or "SelectOne"
 			self.OneChoiceForAllPlayers = Overrides[name].OneChoiceForAllPlayers or false
 			self.ExportOnChange = Overrides[name].ExportOnChange or false
-
-
+			self.EnabledForPlayers = Overrides[name].EnabledForPlayers or function() return {PLAYER_1, PLAYER_2} end
+			self.ReloadRowMessages = Overrides[name].ReloadRowMessages or {}
+			self.BroadcastOnExport = Overrides[name].BroadcastOnExport or {}
+			self.HideOnDisable = Overrides[name].HideOnDisable or false
+			
 			if self.SelectType == "SelectOne" then
 
 				self.LoadSelections = Overrides[name].LoadSelections or function(subself, list, pn)

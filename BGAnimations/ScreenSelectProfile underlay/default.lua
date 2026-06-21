@@ -110,6 +110,9 @@ local t = Def.ActorFrame {
 	-- sleep for 0.5 seconds to give the PlayerFrames time to tween out
 	-- and queue a call to Finish() so that the engine can wrap things up
 	OffCommand=function(self)
+		-- Update the lobby state in case we're online. This won't do anything
+		-- if we're not connected to a lobby.
+		MESSAGEMAN:Broadcast("UpdateOnlineState")
 		self:sleep(0.5):queuecommand("Finish")
 	end,
 	FinishCommand=function(self)

@@ -15,7 +15,7 @@
 --
 -- af.OnCommand=function(self)
 --     self:playcommand("MakeGrooveStatsRequest", {
---         endpoint="new-session.php?chartHashVersion="..SL.GrooveStats.ChartHashVersion,
+--         endpoint="?action=newSession&chartHashVersion="..SL.GrooveStats.ChartHashVersion,
 --         method="GET",
 --         timeout=10,
 --         callback=NewSessionRequestProcessor,
@@ -41,7 +41,7 @@
 -- args: any, arguments that will be made accesible to the callback function. This
 --       can of any type as long as the callback knows what to do with it.
 RequestResponseActor = function(x, y)
-	local url_prefix = "https://api.groovestats.com/"
+	local url_prefix = "https://apiservice.groovestats.com/api/"
 
 	return Def.ActorFrame{
 		InitCommand=function(self)
@@ -122,13 +122,18 @@ RequestResponseActor = function(x, y)
 						end
 					end
 
-					self:GetChild("Spinner"):visible(false)
+					MESSAGEMAN:Broadcast("GrooveStatsRequestFinished", {id=request_actor_id})
 				end,
 			}
 			-- Keep track of when we started making the request
 			self.request_time = GetTimeSinceStart()
 			-- Start looping for the spinner.
 			self:queuecommand("GrooveStatsRequestLoop")
+		end,
+		GrooveStatsRequestFinishedMessageCommand=function(self, params)
+			if params and params.id == request_actor_id then
+				self:GetChild("Spinner"):visible(false)
+			end
 		end,
 		GrooveStatsRequestLoopCommand=function(self)
 			local now = GetTimeSinceStart()
@@ -413,6 +418,10 @@ ValidForGrooveStats = function(player)
 		return math.abs(a-b) < 0.0001
 	end
 
+	local FloatLE = function(a, b)
+		return a < b + 0.0001
+	end
+
 	valid[7] = Check(FloatEquals(THEME:GetMetric("LifeMeterBar", "InitialValue"), 0.5), "- Lifebar Initial Value", badSettings) and valid[7]
 	valid[7] = Check(PREFSMAN:GetPreference("HarshHotLifePenalty"), "- HarshHotLifePenalty", badSettings) and valid[7]
 
@@ -428,8 +437,9 @@ ValidForGrooveStats = function(player)
 		end
 
 		for i, window in ipairs(LifeWindows) do
-			valid[7] = Check(FloatEquals(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i]), "- LifePercentChange"..window, badSettings) and valid[7]
-
+			-- We can support *harder* lifebars (i.e. <= the expected weights).
+			valid[7] = Check(FloatLE(THEME:GetMetric("LifeMeterBar", "LifePercentChange"..window), ExpectedLife[i]), "- LifePercentChange"..window, badSettings) and valid[7]
+		
 			valid[7] = Check(THEME:GetMetric("ScoreKeeperNormal", "PercentScoreWeight"..window) == ExpectedScoreWeight[i], "- PercentScoreWeight"..window, badSettings) and valid[7]
 		end
 	end
@@ -736,7 +746,7 @@ DownloadEventUnlock = function(url, unlockName, packName)
 
 						-- If Pack.ini doesn't exist (new unlock for this player), create it.
 						local group = string.lower(packName)
-						local year = 2025
+						local year = 2026
 						if string.find(group, "itl online "..year.." unlocks") then
 							local packIniPath = destinationPack.."Pack.ini"
 							if not FILEMAN:DoesFileExist(packIniPath) then
@@ -749,7 +759,7 @@ DownloadEventUnlock = function(url, unlockName, packName)
 										["Series"]="ITL Online",
 										["Year"]=year,
 										["Banner"]="",
-										["SyncOffset"]="ITG",
+										["SyncOffset"]="NULL",
 									}
 								})
 							end
@@ -840,7 +850,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[6]="Emoticon 2x7 (doubleres).png",
 				[7]="Focus 2x7 (doubleres).png",
 				[8]="Grammar 2x7 (doubleres).png",
-				[9]="GrooveNights 2x7.png",
+				[9]="GrooveNights 2x7 (doubleres).png",
 				[10]="ITG2 2x7 (doubleres).png",
 				[11]="Love 2x7 (doubleres).png",
 				[12]="Love Chroma 2x7 (doubleres).png",
@@ -851,6 +861,16 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[17]="Shift 2x7 (doubleres).png",
 				[18]="Tactics 2x7 (doubleres).png",
 				[19]="Wendy 2x7 (doubleres).png",
+				[20]="Censored 1x7 (doubleres).png",
+				-- Digital Dance
+				[100]="Chalk 2x7 (doubleres).png",
+				[101]="Digital 2x7 (doubleres).png",
+				[102]="Ice 2x7.png",
+				[103]="ITG2 HD 2x7 (doubleres).png",
+				[104]="Optimus Dark 2x7 (doubleres).png",
+				[105]="Powerpuff HD 2x7 (doubleres).png",
+				[106]="Reptilian 2x7 (doubleres).png",
+				[107]="TRON 2x7 (doubleres).png",
 		}),
 		["ComboFont"] = CreateKey("string", {
 			[1]="Arial Rounded",
@@ -866,6 +886,8 @@ CreateGrooveStatsPlayerOptionKeys = function()
 			[2]="Love 1x2 (doubleres).png",
 			[3]="mute 1x2 (doubleres).png",
 			[4]="None 1x2.png",
+			-- Digital Dance
+			[100]="Ice 1x2.png",
 		}),
 		["NoteSkin"] = CreateKey("string", {
 			[1]="cel",
@@ -886,7 +908,12 @@ CreateGrooveStatsPlayerOptionKeys = function()
 		["HideScore"] = CreateKey("boolean"),
 		["HideDanger"] = CreateKey("boolean"),
 		["HideComboExplosions"] = CreateKey("boolean"),
-		["ColumnFlashOnMiss"] = CreateKey("boolean"),
+		["FlashMiss"] = CreateKey("boolean"),
+		["FlashWayOff"] = CreateKey("boolean"),
+		["FlashDecent"] = CreateKey("boolean"),
+		["FlashGreat"] = CreateKey("boolean"),
+		["FlashExcellent"] = CreateKey("boolean"),
+		["FlashFantastic"] = CreateKey("boolean"),
 		["SubtractiveScoring"] = CreateKey("boolean"),
 		["MeasureCounter"] = CreateKey("string", {
 			[1]="None",
@@ -919,6 +946,8 @@ CreateGrooveStatsPlayerOptionKeys = function()
 			[1]="Standard",
 			[2]="Surround",
 			[3]="Vertical",
+			-- Digital Dance
+			[100]="Top",
 		}),
 		["NPSGraphAtTop"] = CreateKey("boolean"),
 		["JudgmentTilt"] = CreateKey("boolean"),
@@ -1072,6 +1101,8 @@ GetPlayerOptionsJsonForGrooveStats = function(player)
 
 	MaybeSetOption(options, "Mini", mini, "number")
 	MaybeSetOption(options, "VisualDelay", visualDelay, "number")
+	MaybeSetOption(options, "BackgroundFilter", backgroundFilter, "number")
+	MaybeSetOption(options, "HideLookahead", hideLookahead, "number")
 
 	MaybeSetOption(options, "Cover", hasCover, "boolean")
 	MaybeSetOption(options, "NoMines", hasNoMines, "boolean")

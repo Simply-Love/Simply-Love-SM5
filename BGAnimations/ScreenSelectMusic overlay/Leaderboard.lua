@@ -370,7 +370,7 @@ local af = Def.ActorFrame{
 			-- Technically this should always be true since otherwise we wouldn't even get to this screen.
 			if sendRequest then
 				self:playcommand("MakeGrooveStatsRequest", {
-					endpoint="player-leaderboards.php?"..NETWORK:EncodeQueryParameters(query),
+					endpoint="?action=playerLeaderboards&"..NETWORK:EncodeQueryParameters(query),
 					method="GET",
 					headers=headers,
 					timeout=10,

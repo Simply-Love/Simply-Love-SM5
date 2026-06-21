@@ -10,6 +10,7 @@ local PlayerDefaults = {
 				ComboFont = "Wendy",
 				HoldJudgment = "Love 1x2 (doubleres).png",
 				NoteSkin = nil,
+				NoteSkinVariant = nil,
 				Mini = "0%",
 				BackgroundFilter = "Darker",
 				VisualDelay = "0ms",
@@ -22,7 +23,12 @@ local PlayerDefaults = {
 				HideDanger = false,
 				HideComboExplosions = false,
 
-				ColumnFlashOnMiss = false,
+				FlashMiss = false,
+				FlashWayOff = false,
+				FlashDecent = false,
+				FlashGreat = false,
+				FlashExcellent = false,
+				FlashFantastic = false,
 				SubtractiveScoring = false,
 				MeasureCounter = "None",
 				MeasureCounterLeft = false,
@@ -60,7 +66,8 @@ local PlayerDefaults = {
 			}
 			-- TODO(teejusb): Rename "Streams" as the data contains more information than that.
 			self.Streams = {
-				-- Chart identifiers for caching purposes.
+				-- Chart identifiers used to cache the GrooveStats hash so we only
+				-- parse a given chart once.
 				Filename = "",
 				StepsType = "",
 				Difficulty = "",
@@ -71,7 +78,7 @@ local PlayerDefaults = {
 				EquallySpacedPerMeasure = {},
 				PeakNPS = 0,
 				NPSperMeasure = {},
-				columnCues = {},
+				ColumnCues = {},
 				Hash = '',
 
 				Crossovers = 0,
@@ -95,6 +102,7 @@ local PlayerDefaults = {
 			self.ITLData = {
 				["pathMap"] = {},
 				["hashMap"] = {},
+				["unlockFolders"] = {},
 			}
 
 			-- default panes to intialize ScreenEvaluation to
@@ -148,7 +156,11 @@ local GlobalDefaults = {
 			}
 			self.TimeAtSessionStart = nil
 			self.SampleMusicLoops = ThemePrefs.Get("SampleMusicLoops")
+			self.SampleMusicStartsImmediately = ThemePrefs.Get("SampleMusicStartsImmediately")
 
+			-- Is the music wheel locked? Useful when loading overlay screens
+			self.MusicWheelLocked = false
+			
 			self.GameplayReloadCheck = false
 			-- How long to wait before displaying a "cue"
 			self.ColumnCueMinTime = 1.5
