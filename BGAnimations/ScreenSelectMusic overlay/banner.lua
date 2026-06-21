@@ -5,7 +5,10 @@ local bannerHeight = 164
 
 local t = Def.ActorFrame{
 	OnCommand=function(self)
-		if IsUsingWideScreen() then
+		if IsVerticalScreen() then
+			self:zoom(Positions.ScreenSelectMusic.BannerZoom())
+			self:xy(Positions.ScreenSelectMusic.BannerX(), Positions.ScreenSelectMusic.BannerY())
+		elseif IsUsingWideScreen() then
 			self:zoom(0.7655)
 			self:xy(_screen.cx - 170, 96)
 		else

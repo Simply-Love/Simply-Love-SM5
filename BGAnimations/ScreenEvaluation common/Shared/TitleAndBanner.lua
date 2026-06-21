@@ -2,7 +2,8 @@ local SongOrCourse = GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() o
 
 local banner = {
 	width = 418,
-	zoom = 0.7,
+	-- portrait: shrink so 418 * zoom fits the ~270-wide canvas
+	zoom = Positions.ScreenEvaluation.BannerZoom(),
 }
 
 -- the Quad containing the bpm and music rate doesn't appear in Casual mode

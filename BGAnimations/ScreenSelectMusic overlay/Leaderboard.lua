@@ -382,7 +382,7 @@ local af = Def.ActorFrame{
 	}
 }
 
-local paneWidth1Player = 330
+local paneWidth1Player = Positions.ScreenSelectMusic.LeaderboardWidth1Player()
 local paneWidth2Player = 230
 local paneWidth = (GAMESTATE:GetNumSidesJoined() == 1) and paneWidth1Player or paneWidth2Player
 local paneHeight = 360

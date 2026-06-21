@@ -2,11 +2,16 @@ local MusicWheel, SelectedType
 local group_durations = LoadActor("./GroupDurations.lua")
 
 -- width of background quad
-local _w = IsUsingWideScreen() and 320 or 310
+local _w = Positions.ScreenSelectMusic.SongDescriptionWidth()
 
 local af = Def.ActorFrame{
 	OnCommand=function(self)
-		self:xy(_screen.cx - (IsUsingWideScreen() and 170 or 165), _screen.cy - 55)
+		if IsVerticalScreen() then
+			-- center the panel horizontally and tuck it below the banner
+			self:xy(_screen.cx, _screen.cy - 95)
+		else
+			self:xy(_screen.cx - (IsUsingWideScreen() and 170 or 165), _screen.cy - 55)
+		end
 	end,
 	DisplayLanguageChangedMessageCommand=function(self) self:playcommand("Set") end,
 	CurrentSongChangedMessageCommand=function(self)    self:playcommand("Set") end,
@@ -32,7 +37,14 @@ af[#af+1] = Def.Quad{
 
 -- ActorFrame for Artist, BPM, and Song length
 af[#af+1] = Def.ActorFrame{
-	InitCommand=function(self) self:xy(-110,-6) end,
+	InitCommand=function(self)
+		if IsVerticalScreen() then
+			-- narrower quad in portrait: shift content to the left edge of the panel
+			self:xy(-_w/2 + 50, -6)
+		else
+			self:xy(-110,-6)
+		end
+	end,
 
 	-- ----------------------------------------
 	-- Artist Label

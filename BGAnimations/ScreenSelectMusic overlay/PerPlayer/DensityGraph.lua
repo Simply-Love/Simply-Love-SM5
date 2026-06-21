@@ -7,7 +7,7 @@ local pn = ToEnumShortString(player)
 
 -- Height and width of the density graph.
 local height = 64
-local width = IsUsingWideScreen() and 286 or 276
+local width = Positions.ScreenSelectMusic.DensityGraphWidth()
 
 -- In 2-players mode, whether the DensityGraph or PatternInfo is shown
 -- Can be toggled by the code "ToggleChartInfo" in metrics.ini
@@ -16,13 +16,19 @@ local showPatternInfo = false
 local af = Def.ActorFrame{
 	InitCommand=function(self)
 		self:visible( GAMESTATE:IsHumanPlayer(player) )
-		self:xy(_screen.cx-182, _screen.cy+23)
+
+		if IsVerticalScreen() then
+			-- center the graph horizontally on the narrow portrait canvas
+			self:xy(_screen.cx - width/2, _screen.cy+23)
+		else
+			self:xy(_screen.cx-182, _screen.cy+23)
+		end
 
 		if player == PLAYER_2 then
 			self:addy(height+24)
 		end
 
-		if IsUsingWideScreen() then
+		if IsUsingWideScreen() and not IsVerticalScreen() then
 			self:addx(-5)
 		end
 	end,

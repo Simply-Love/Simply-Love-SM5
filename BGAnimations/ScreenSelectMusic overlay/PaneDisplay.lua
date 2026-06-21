@@ -346,7 +346,10 @@ for player in ivalues(PlayerNumber) do
 	af2.InitCommand=function(self)
 		self:visible(GAMESTATE:IsHumanPlayer(player))
 
-		if player == PLAYER_1 then
+		if IsVerticalScreen() then
+			-- single-player portrait: center the pane horizontally
+			self:x(_screen.cx)
+		elseif player == PLAYER_1 then
 			self:x(_screen.w * 0.25 - 5)
 		elseif player == PLAYER_2 then
 			self:x(_screen.w * 0.75 + 5)
@@ -392,7 +395,7 @@ for player in ivalues(PlayerNumber) do
 	af2[#af2+1] = Def.Quad{
 		Name="BackgroundQuad",
 		InitCommand=function(self)
-			self:zoomtowidth(_screen.w/2-10)
+			self:zoomtowidth(IsVerticalScreen() and 258 or (_screen.w/2-10))
 			self:zoomtoheight(pane_height)
 			self:vertalign(top)
 		end,

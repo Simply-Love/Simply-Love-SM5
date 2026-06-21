@@ -36,7 +36,12 @@ return Def.ActorFrame{
 
 		if player == PLAYER_1 then
 
-			if GAMESTATE:IsCourseMode() then
+			if IsVerticalScreen() then
+				-- the landscape x (_screen.cx - ~350) is far off the left of the
+				-- narrow portrait canvas; left-align near the left edge instead.
+				self:x( 5 )
+				self:y(_screen.cy + (GAMESTATE:IsCourseMode() and 32 or 12))
+			elseif GAMESTATE:IsCourseMode() then
 				self:x( _screen.cx - (IsUsingWideScreen() and 356 or 346))
 				self:y(_screen.cy + 32)
 			else

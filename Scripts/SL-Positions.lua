@@ -59,11 +59,61 @@ Positions.ScreenGameplay.DifficultyMeterY = function()
 end
 
 -- =======================================================================
--- ScreenSelectMusic  (filled in during the song-select pass)
+-- ScreenSelectMusic
 -- =======================================================================
 Positions.ScreenSelectMusic = {}
 
+-- Banner zoom. Banner art is 418x164; in portrait we shrink it so
+-- 418 * zoom fits within the ~270-wide canvas (418 * 0.6 ~= 251).
+Positions.ScreenSelectMusic.BannerZoom = function()
+	if IsVerticalScreen() then return 0.6 end
+	return IsUsingWideScreen() and 0.7655 or 0.75
+end
+
+-- Banner center position. Portrait centers it horizontally near the top.
+Positions.ScreenSelectMusic.BannerX = function()
+	if IsVerticalScreen() then return _screen.cx end
+	return _screen.cx - (IsUsingWideScreen() and 170 or 166)
+end
+
+Positions.ScreenSelectMusic.BannerY = function()
+	if IsVerticalScreen() then return 70 end
+	return 96
+end
+
+-- SongDescription panel background width. Portrait fits the panel to ~258.
+Positions.ScreenSelectMusic.SongDescriptionWidth = function()
+	if IsVerticalScreen() then return 258 end
+	return IsUsingWideScreen() and 320 or 310
+end
+
+-- DensityGraph width. Portrait fits to ~258.
+Positions.ScreenSelectMusic.DensityGraphWidth = function()
+	if IsVerticalScreen() then return 258 end
+	return IsUsingWideScreen() and 286 or 276
+end
+
+-- Leaderboard single-player pane width. Portrait reduces to ~258 to fit.
+Positions.ScreenSelectMusic.LeaderboardWidth1Player = function()
+	if IsVerticalScreen() then return 258 end
+	return 330
+end
+
 -- =======================================================================
--- ScreenEvaluation  (filled in during the evaluation pass)
+-- ScreenEvaluation
 -- =======================================================================
 Positions.ScreenEvaluation = {}
+
+-- Per-player horizontal offset for panes / upper content. In portrait we
+-- center the active single player at _screen.cx.
+Positions.ScreenEvaluation.PaneOffset = function(player)
+	if IsVerticalScreen() then return _screen.cx end
+	return _screen.cx + (player == PLAYER_2 and 155 or -155)
+end
+
+-- Banner zoom on ScreenEvaluation. Banner is 418 wide; portrait shrinks it
+-- to fit the ~270-wide canvas (418 * 0.6 ~= 251).
+Positions.ScreenEvaluation.BannerZoom = function()
+	if IsVerticalScreen() then return 0.6 end
+	return 0.7
+end

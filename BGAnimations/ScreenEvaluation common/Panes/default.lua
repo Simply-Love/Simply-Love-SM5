@@ -5,8 +5,8 @@ local af = Def.ActorFrame{}
 af.Name="Panes"
 
 local offset = {
-	[PLAYER_1] = _screen.cx-155,
-	[PLAYER_2] = _screen.cx+155
+	[PLAYER_1] = Positions.ScreenEvaluation.PaneOffset(PLAYER_1),
+	[PLAYER_2] = Positions.ScreenEvaluation.PaneOffset(PLAYER_2)
 }
 
 -- -----------------------------------------------------------------------

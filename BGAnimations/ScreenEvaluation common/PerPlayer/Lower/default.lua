@@ -10,9 +10,15 @@ local small_pane_w = 300
 local pane_width = 300
 local pane_height  = 180
 
+-- In portrait (single player), the double-width lower pane would overflow the
+-- narrow ~270-wide canvas, so keep it a single column sized to fit and center
+-- it on screen.
+if IsVerticalScreen() then
+	small_pane_w = 258
+	pane_width = 258
 -- if only one player is joined, use more screen width to draw two
 -- side-by-side panes that both belong to this player
-if NumPlayers == 1 and SL.Global.GameMode ~= "Casual" then
+elseif NumPlayers == 1 and SL.Global.GameMode ~= "Casual" then
 	pane_width = (pane_width * 2) + pane_spacing
 end
 
@@ -20,9 +26,13 @@ local af = Def.ActorFrame{
 	Name=ToEnumShortString(player).."_AF_Lower",
 	InitCommand=function(self)
 
+		if IsVerticalScreen() then
+			-- single-column lower pane centered on the portrait canvas
+			self:x(_screen.cx)
+
 		-- if 2 players joined, or if Casual Mode where panes are not full-width,
 		-- give each player their own distinct space for a half-width pane
-		if NumPlayers == 2 or SL.Global.GameMode == "Casual" then
+		elseif NumPlayers == 2 or SL.Global.GameMode == "Casual" then
 			self:x(_screen.cx + ((small_pane_w + pane_spacing) * (player==PLAYER_1 and -0.5 or 0.5)))
 
 		else
