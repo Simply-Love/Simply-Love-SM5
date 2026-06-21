@@ -292,7 +292,4 @@ end
 LoadActor("./JudgmentGraphicPreviews.lua", {af=t, profile_data=profile_data})
 LoadActor("./NoteSkinPreviews.lua", {af=t, profile_data=profile_data})
 
--- Alert for blocking custom songs loading
-t[#t + 1] = LoadActor("./CheckingCustomSongs.lua")
-
 return t
