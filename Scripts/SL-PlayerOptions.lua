@@ -464,6 +464,30 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	Vocalize = {
+		LayoutType = "ShowOneInRow",
+		ExportOnChange = true,
+		Choices = function()
+			-- Table of just the names
+			local vocalizeNames = {}
+			local count = 0
+
+			for key, value in pairs(GetVocalizations()) do
+			  table.insert(vocalizeNames, key)
+			  count = count + 1
+			end
+			
+			table.sort(vocalizeNames)
+			table.insert(vocalizeNames, 1, "Off")
+			
+			if count > 1 then
+				table.insert(vocalizeNames, "Random")
+			end
+			
+			return vocalizeNames
+		end
+	},
+	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
 		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },

@@ -55,6 +55,8 @@ local PlayerDefaults = {
 				ShowFaPlusWindow = false,
 				ShowExScore = false,
 				ShowFaPlusPane = true,
+				
+				Vocalize = "Off",
 
 				NoteFieldOffsetX = 0,
 				NoteFieldOffsetY = 0,
