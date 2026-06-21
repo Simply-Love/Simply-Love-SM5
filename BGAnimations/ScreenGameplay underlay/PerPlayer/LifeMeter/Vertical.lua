@@ -3,22 +3,30 @@ local pn = ToEnumShortString(player)
 
 local width = 16
 local height = 250
-local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(302, 400)
+local _x
 
--- if double
-if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides"
--- or center1player preference is enabled and only one player is playing
-or PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
-	_x =  _screen.cx + ((GetNotefieldWidth()/2 + 10) * (player==PLAYER_1 and -1 or 1))
+if IsVerticalScreen() then
+	-- Portrait: the notefield is centered and fills most of the width, so pin
+	-- the thin vertical (ITG2-style) life bar to the left edge of the screen.
+	_x = width
+else
+	_x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(302, 400)
 
--- for the highly-specific scenario where aspect ratio is ultrawide or wider
--- and both players are joined, and this player wants both a vertical lifemeter
--- and step stats, move their vertical lifemeter to the inside of the notefield
-elseif GetScreenAspectRatio() > 21/9
-and #GAMESTATE:GetHumanPlayers() > 1
-and SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
-then
-	_x = _screen.cx + (player==PLAYER_1 and -1 or 1) * 60
+	-- if double
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides"
+	-- or center1player preference is enabled and only one player is playing
+	or PREFSMAN:GetPreference("Center1Player") and #GAMESTATE:GetHumanPlayers() == 1 then
+		_x =  _screen.cx + ((GetNotefieldWidth()/2 + 10) * (player==PLAYER_1 and -1 or 1))
+
+	-- for the highly-specific scenario where aspect ratio is ultrawide or wider
+	-- and both players are joined, and this player wants both a vertical lifemeter
+	-- and step stats, move their vertical lifemeter to the inside of the notefield
+	elseif GetScreenAspectRatio() > 21/9
+	and #GAMESTATE:GetHumanPlayers() > 1
+	and SL[pn].ActiveModifiers.DataVisualizations == "Step Statistics"
+	then
+		_x = _screen.cx + (player==PLAYER_1 and -1 or 1) * 60
+	end
 end
 
 -- get SongPosition specific to this player so that

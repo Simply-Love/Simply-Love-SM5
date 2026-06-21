@@ -1,12 +1,16 @@
 local player = ...
 local pn = ToEnumShortString(player)
 
-local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(292.5, 342.5)
+-- Portrait: top-right corner (see Positions). Landscape: beside the notefield.
+local _x = Positions.ScreenGameplay.DifficultyMeterX(player)
 
 return Def.ActorFrame{
 	InitCommand=function(self)
-		local adjusted_offset_x = SL[pn].ActiveModifiers.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1)
-		self:xy(_x + adjusted_offset_x, 56)
+		-- In portrait the meter is a fixed corner element, so don't shift it by
+		-- the per-player NoteFieldOffsetX (that follows the centered notefield).
+		local adjusted_offset_x = IsVerticalScreen() and 0
+			or (SL[pn].ActiveModifiers.NoteFieldOffsetX * (player == PLAYER_1 and -1 or 1))
+		self:xy(_x + adjusted_offset_x, Positions.ScreenGameplay.DifficultyMeterY())
 	end,
 
 

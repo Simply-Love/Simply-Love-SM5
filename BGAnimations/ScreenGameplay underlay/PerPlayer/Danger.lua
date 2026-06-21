@@ -29,7 +29,9 @@ local danger = Def.Quad{
 		self:visible(not SL[pn].ActiveModifiers.HideLifebar)
 		self:diffusealpha(0)
 
-		if IsPlayingDouble or PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
+		if IsVerticalScreen() or IsPlayingDouble or PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
+			-- Portrait: notefield is centered and fills the width, so the
+			-- danger flash should cover the whole screen (no left/right half).
 			self:stretchto(0,0,_screen.w,_screen.h)
 		elseif not IsPlayingDouble and player == PLAYER_1 then
 			self:faderight(0.1):stretchto(0,0,_screen.cx,_screen.h)

@@ -2,7 +2,11 @@ local player = ...
 
 local w = 136
 local h = 18
-local _x = _screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(238, 288)
+-- Portrait: the notefield is centered, so center the horizontal life bar in the
+-- top strip (it fits within the ~270-wide portrait screen). Landscape: beside
+-- the notefield, per player.
+local _x = IsVerticalScreen() and _screen.cx
+	or (_screen.cx + (player==PLAYER_1 and -1 or 1) * SL_WideScale(238, 288))
 
 -- get SongPosition specific to this player so that
 -- split BPMs are handled if there are any

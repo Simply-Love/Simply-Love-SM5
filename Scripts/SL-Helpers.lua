@@ -37,6 +37,25 @@ SL_WideScale = function(AR4_3, AR16_9)
 end
 
 -- -----------------------------------------------------------------------
+-- IsVerticalScreen() returns true when the display is in portrait orientation
+-- (taller than it is wide), e.g. a monitor rotated 90° for a 9:16 / 1080x1920
+-- single-player dance setup.
+--
+-- Simply Love's layout was designed for landscape (width > height): helpers
+-- like WideScale()/SL_WideScale() and many metrics assume width > height.
+-- Portrait layout overrides branch on this helper (and the values in
+-- Scripts/SL-Positions.lua) so the theme runs correctly in either orientation
+-- without forking every screen and without removing any features.
+--
+-- The engine derives the aspect ratio from DisplayAspectRatio in Preferences.ini.
+-- For a rotated monitor set DisplayAspectRatio=0.562500 (9:16) and
+-- DisplayHeight=1920 (DisplayWidth is ignored). See README.md.
+
+IsVerticalScreen = function()
+	return GetScreenAspectRatio() <= 1
+end
+
+-- -----------------------------------------------------------------------
 BackgroundFilterValues = function()
 	return {
 		Off = 0,

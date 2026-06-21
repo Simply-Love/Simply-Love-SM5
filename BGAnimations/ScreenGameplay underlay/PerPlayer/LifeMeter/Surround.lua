@@ -56,12 +56,20 @@ else
 	af[#af+1] = Def.Quad{
 		InitCommand=function(self)
 			self:vertalign(top)
-				:zoomto( _screen.w/2, _screen.h-80 )
 
-			if player == PLAYER_1 then
-				self:horizalign(left):diffuse(0.2,0.2,0.2,1):faderight(0.8):xy(0, 80)
+			-- Portrait: single player with a centered notefield that fills the
+			-- width, so the Surround tint should cover the whole width behind it
+			-- (no left/right half split, no horizontal fade).
+			if IsVerticalScreen() then
+				self:zoomto( _screen.w, _screen.h-80 )
+					:horizalign(left):diffuse(0.2,0.2,0.2,1):xy(0, 80)
 			else
-				self:horizalign(right):diffuse(0.2,0.2,0.2,1):fadeleft(0.8):xy(_screen.w, 80)
+				self:zoomto( _screen.w/2, _screen.h-80 )
+				if player == PLAYER_1 then
+					self:horizalign(left):diffuse(0.2,0.2,0.2,1):faderight(0.8):xy(0, 80)
+				else
+					self:horizalign(right):diffuse(0.2,0.2,0.2,1):fadeleft(0.8):xy(_screen.w, 80)
+				end
 			end
 		end,
 		ChangeSizeCommand=function(self, params)

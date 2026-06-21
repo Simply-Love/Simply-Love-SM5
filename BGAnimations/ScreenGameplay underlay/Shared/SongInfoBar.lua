@@ -1,4 +1,6 @@
-local w = SL_WideScale(310, 417)
+-- Portrait: SL_WideScale clamps to 310, but the portrait virtual screen is only
+-- ~270 wide, so the bar would overflow. Fit it to the screen width instead.
+local w = IsVerticalScreen() and (_screen.w - 8) or SL_WideScale(310, 417)
 local h = 22
 
 -- Song Completion Meter

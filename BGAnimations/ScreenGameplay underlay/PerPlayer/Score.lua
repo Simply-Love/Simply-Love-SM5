@@ -57,7 +57,7 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 	Name=pn.."Score",
 	InitCommand=function(self)
 		self:valign(1):horizalign(right)
-		self:zoom(0.5)
+		self:zoom(Positions.ScreenGameplay.ScoreZoom())
 		if IsEX then
 			-- If EX Score, let's diffuse it to be the same as the ITG top window.
 			-- This will make it consistent with the EX Score Pane.
@@ -66,6 +66,14 @@ return LoadFont("Wendy/_wendy monospace numbers")..{
 	end,
 
 	BeginCommand=function(self)
+		-----------------------------------------------------------------
+		-- Portrait: the notefield is centered and fills most of the width,
+		-- so the score has no room beside it. Pin it to the top-right strip
+		-- above the receptors. (zoom already set via ScoreZoom in Init.)
+		if IsVerticalScreen() then
+			self:xy( _screen.w - 4, 56 )
+			return
+		end
 		-----------------------------------------------------------------
 		-- ultrawide with both players joined is really its own layout
 		-- hardcode some numbers for now, return early, and call it a day

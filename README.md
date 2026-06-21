@@ -67,6 +67,28 @@ Simply Love is designed to be usable at resolutions as low as 640x480 but still 
 The aspect ratio can be changed under *Graphics / Sound Options*.
 
 
+## Portrait / Vertical Mode
+
+This fork adds a **portrait (vertical) layout** for single-player setups on a
+monitor rotated 90° (e.g. 9:16 / 1080×1920 with a dance pad). Rotating the
+monitor gives roughly 1.7× more arrow-scrolling space.
+
+All modern Simply Love features (GrooveStats auto-submit / leaderboards /
+rivals / QR login, EX score, Quint Star, FA+) remain intact — portrait support
+is layered on top via layout overrides that branch on screen orientation, not a
+feature fork.
+
+To enable portrait mode, set these in your `Preferences.ini`:
+
+```
+DisplayAspectRatio=0.562500   # 9:16  (DisplayWidth is ignored)
+DisplayHeight=1920
+```
+
+See [Portrait / Vertical Mode](./Other/Documentation/PortraitVerticalMode-README.md)
+for setup details, the layout architecture, and current status.
+
+
 ## Screenshots
 
 ![Title Screen](https://i.imgur.com/txGZj2Ul.png)
