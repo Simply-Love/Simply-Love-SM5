@@ -76,6 +76,19 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "Casual", "ITG" }
 		},
+		DefaultSort =
+		{
+			Default = "Series",
+			Choices = {
+				THEME:GetString("ScreenSelectMusic", "Series"),
+				THEME:GetString("ScreenSelectMusic", "Group"),
+				THEME:GetString("ScreenSelectMusic", "Title"),
+				THEME:GetString("ScreenSelectMusic", "Meter"),
+				THEME:GetString("ScreenSelectMusic", "Popularity"),
+				THEME:GetString("ScreenSelectMusic", "Recent"),
+			},
+			Values = { "Series", "Group", "Title", "Meter", "Popularity", "Recent"}
+		},
 		PreferredStyle =
 		{
 			Default = "none",
