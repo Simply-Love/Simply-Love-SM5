@@ -4,6 +4,7 @@ return Def.Quad{
 	OffCommand=function(self)
 		if SL.Global.GameMode == "ITG" then
 			local song = GAMESTATE:GetCurrentSong()
+			local totalWhites = 0
 			for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 				local pn = ToEnumShortString(player)
 				local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
@@ -11,6 +12,7 @@ return Def.Quad{
 				local faPlus = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1].ex_counts.W0_total
 				-- Subtract FA+ count from the overall fantastic window count.
 				local whites = number - faPlus
+				totalWhites = totalWhites + whites
 				-- This will save the white count to Stats.xml, so we can later recover
 				-- it when we deprecate FA+ mode and introduce W0.
 				--
@@ -31,6 +33,23 @@ return Def.Quad{
 					end
 				end
 				pss:SetScore(bestWhites)
+			end
+			if IsRoutine() then
+				local routineStats = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+				local bestWhites = totalWhites
+				if PROFILEMAN:IsPersistentProfile(GAMESTATE:GetMasterPlayerNumber()) then
+					local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber())
+					local scores = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetHighScoreList(song, steps):GetHighScores()
+					for hs in ivalues(scores) do
+						-- If the player previously quadded the song, retain the better white count.
+						-- Technically this is a workaround because the date would be wrong, but
+						-- it's still worth to keep the score around
+						if (routineStats:GetPercentDancePoints() == hs:GetPercentDP() and hs:GetPercentDP() == 1.0) then
+							bestWhites = math.min(bestWhites, hs:GetScore())
+						end
+					end
+				end
+				routineStats:SetScore(bestWhites)
 			end
 		end
 	end
