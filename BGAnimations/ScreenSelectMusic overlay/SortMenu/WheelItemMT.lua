@@ -47,7 +47,7 @@ return {
 				end,
 
 				-- folder icon
-				LoadActor("./folder-solid.png")..{
+				LoadActor(THEME:GetPathG("", "folder-solid.png"))..{
 					Name="folder icon",
 					InitCommand=function(subself)
 						self.folder_icon = subself

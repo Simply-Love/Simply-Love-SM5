@@ -221,7 +221,8 @@ local function AddSorts()
 	if GAMESTATE:IsCourseMode() then return {} end
 
 	return {
-		{{"SortBy", "Group"} },
+		{{"SortBy", "Series"} },
+		{ {"SortBy", "Group"} },
 		{ {"SortBy", "Title"} },
 		{ {"SortBy", "Artist"} },
 		{ {"SortBy", "Genre"} },
