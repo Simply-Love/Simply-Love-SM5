@@ -1,6 +1,6 @@
 local player = ...
 if not player then return Def.Actor end
-
+local autoStyle = ThemePrefs.Get("PreferredStyle") == "auto"
 local StepchartOptRowIndex = nil
 
 -- get all the LinesNames as a single string from Metrics.ini, split on commas,
@@ -25,7 +25,7 @@ return Def.ActorFrame {
 		Name="CursorBottom",
 		InitCommand=function(self) self:zoomto(1,2):y(12) end,
 		OptionRowChangedMessageCommand=function(self)
-			if PlayerOnStepChartOptRow(player) then
+			if PlayerOnStepChartOptRow(player) and autoStyle then
 				-- self:y(player==PLAYER_1 and 16 or 14)
 				self:y(16)
 			else

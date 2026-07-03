@@ -20,7 +20,7 @@ return Def.Quad {
 	Name="CursorLeft",
 	InitCommand=function(self) self:zoomto(2,26) end,
 	OptionRowChangedMessageCommand=function(self, params)
-	if PlayerOnStepChartOptRow(player) then
+		if PlayerOnStepChartOptRow(player) and autoStyle then
 			self:y(player==PLAYER_1 and 1 or 3):zoomto(2,30)
 		else
 			self:y(player==PLAYER_1 and -1 or 1):zoomto(2,26)
