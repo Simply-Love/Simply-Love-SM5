@@ -355,17 +355,15 @@ local Overrides = {
 		ExportOnChange = true,
 		Choices = function()
 			local choices = {}
+			local show_steps_type = ThemePrefs.Get("PreferredStyle") == "auto"
 
 			if not GAMESTATE:IsCourseMode() then
 				local song = GAMESTATE:GetCurrentSong()
 				if song then
 					for steps in ivalues( SongUtil.GetPlayableSteps(song) ) do
-						local choice
-						if steps:IsAnEdit() then
-							choice = ("%s\n%s %i"):format(steps:GetStepsType():gsub("%w+_%w+_", ""):lower(), steps:GetDescription(), steps:GetMeter())
-						else
-							choice = ("%s\n%s %i"):format(steps:GetStepsType():gsub("%w+_%w+_", ""):lower(), THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty())), steps:GetMeter())
-						end
+						local header = show_steps_type and (steps:GetStepsType():gsub("%w+_%w+_", ""):lower() .. "\n") or ""
+						local difficultyOrDesc = steps:IsAnEdit() and steps:GetDescription() or THEME:GetString("Difficulty", ToEnumShortString(steps:GetDifficulty()))
+						local choice = ("%s%s %i"):format(header, difficultyOrDesc, steps:GetMeter())
 						table.insert(choices, choice)
 					end
 				end
