@@ -13,7 +13,7 @@ local offset = {
 -- Note: Some of these Pane actors may be nil. This is not a bug, but
 --       a feature for any panes we want to be conditional.  -teejusb
 
-if #players == 2 or SL.Global.GameMode=="Casual" and not (styletype == "TwoPlayersSharedSides") then
+if #players == 2 or SL.Global.GameMode=="Casual" and not (style == "TwoPlayersSharedSides") then
 	for player in ivalues(players) do
 		-- add Panes for this player to the ActorFrame using a simple, numerical for-loop
 		for i=1, NumPanes do

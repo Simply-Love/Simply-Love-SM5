@@ -16,7 +16,7 @@ local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pane = Def.ActorFrame{
 	InitCommand=function(self)
-		if style == "OnePlayerTwoSides" or (style == "TwoPlayersSharedSides" and routineStatus) then
+		if style == "OnePlayerTwoSides" then
 			if controller == PLAYER_2 then self:x(-260)
 			else self:x(50) end
 		end

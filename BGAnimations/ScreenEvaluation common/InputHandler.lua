@@ -23,7 +23,7 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 --        so this is more like "validation" than validation
 
 local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_panes)
-local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)-1
+local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
 
 -- -----------------------------------------------------------------------
 -- initialize local tables (panes, active_pane) for the the input handling function to use
