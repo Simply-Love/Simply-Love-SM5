@@ -7,7 +7,7 @@ for i, name in ipairs(LineNames) do
 	if name == "Stepchart" then StepchartOptRowIndex = i-1; break end
 end
 -- -----------------------------------------------------------------------
-
+local offset = ThemePrefs.Get("PreferredStyle") == "auto" and 4 or 0
 return Def.ActorFrame{
 	Name="OptionsUnderlineMiddle",
 
@@ -36,8 +36,8 @@ return Def.ActorFrame{
 			if not unnamed_children then return end
 
 			for k,v in ipairs(unnamed_children) do
-				-- offset them all by 4px
-				v:y(4)
+				-- offset them all by 4px if PreferredStyle is auto
+				v:y(offset)
 			end
 		end
 	}
