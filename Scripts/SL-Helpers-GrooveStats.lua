@@ -747,8 +747,8 @@ DownloadEventUnlock = function(url, unlockName, packName)
 						-- If Pack.ini doesn't exist (new unlock for this player), create it.
 						local group = string.lower(packName)
 						local year = 2026
+						local packIniPath = destinationPack.."Pack.ini"
 						if string.find(group, "itl online "..year.." unlocks") then
-							local packIniPath = destinationPack.."Pack.ini"
 							if not FILEMAN:DoesFileExist(packIniPath) then
 								IniFile.WriteFile(packIniPath, {
 									["Group"]={
@@ -760,6 +760,21 @@ DownloadEventUnlock = function(url, unlockName, packName)
 										["Year"]=year,
 										["Banner"]="",
 										["SyncOffset"]="NULL",
+									}
+								})
+							end
+						elseif string.find(group, "stamina rpg 10 unlocks") then
+							if not FILEMAN:DoesFileExist(packIniPath) then
+								IniFile.WriteFile(packIniPath, {
+									["Group"]={
+										["Version"]=1,
+										["DisplayTitle"]=packName,
+										["TranslitTitle"]=packName,
+										["SortTitle"]=packName,
+										["Series"]="Stamina RPG",
+										["Year"]=year,
+										["Banner"]="",
+										["SyncOffset"]="ITG",
 									}
 								})
 							end

@@ -1,0 +1,1 @@
+return LoadActor(THEME:GetPathG("OptionsCursor", "Left"), PLAYER_2)

@@ -1,6 +1,8 @@
 local player = Var "Player"
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
+local style = GAMESTATE:GetCurrentStyle()
+local styletype = style and style:GetStyleType() or nil
 
 local available_fonts = GetComboFonts()
 local combo_font = (FindInTable(mods.ComboFont, available_fonts) ~= nil and mods.ComboFont) or available_fonts[1] or nil
@@ -45,6 +47,13 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 	Name="Number",
 	OnCommand=function(self)
 		self:shadowlength(1):vertalign(middle):zoom(0.75)
+		if styletype == "StyleType_TwoPlayersSharedSides" then 
+			if player == PLAYER_1 then
+				self:addx(-120):addy(-20)
+			else
+				self:addx(120):addy(-20)
+			end
+		end
 	end,
 	ComboCommand=function(self, params)
 		self:settext( params.Combo or params.Misses or "" )
@@ -83,7 +92,15 @@ local combo_bmt = LoadFont("_Combo Fonts/" .. combo_font .."/" .. combo_font)..{
 			self:effectcolor1(colors.FullComboW4[1]):effectcolor2(colors.FullComboW4[2])
 
 		elseif params.Combo then
-			self:stopeffect():diffuse( Color.White ) -- not a full combo; no effect, always just #ffffff
+			if styletype == "StyleType_TwoPlayersSharedSides" then 
+				if player == PLAYER_1 then
+					self:stopeffect():diffuse(color("#ADD8E6"))
+				else
+					self:stopeffect():diffuse(color("#FFC0CB"))
+				end
+			else
+				self:stopeffect():diffuse( Color.White ) -- not a full combo; no effect, always just #ffffff
+			end
 
 		elseif params.Misses then
 			self:stopeffect():diffuse( Color.Red ) -- Miss Combo; no effect, always just #ff0000

@@ -10,16 +10,15 @@ local p = PlayerNumber:Reverse()[player]
 local GetStepsToDisplay = LoadActor("../StepsDisplayList/StepsToDisplay.lua")
 -- I feel like this surely must be the wrong way to do this...
 local GlobalOffsetSeconds = PREFSMAN:GetPreference("GlobalOffsetSeconds")
-
+local auto_style = ThemePrefs.Get("PreferredStyle") == "auto"
 local RowIndex = 1
 
 return Def.Sprite{
 	Texture=THEME:GetPathB("ScreenSelectMusic", "overlay/PerPlayer/arrow.png"),
 	Name="Cursor"..pn,
 	InitCommand=function(self)
-		self:visible( GAMESTATE:IsHumanPlayer(player) )
+		self:visible( GAMESTATE:IsHumanPlayer(player) and not auto_style )
 		self:halign( p ):zoom(0.575)
-
 		-- FIXME: SM5.1-beta's EffectClock enum includes constants for
 		--   CLOCK_BGM_BEAT_PLAYER1 and CLOCK_BGM_BEAT_PLAYER2 but
 		--   but effectclock(), the only method currently available via
@@ -53,7 +52,7 @@ return Def.Sprite{
 	end,
 
 	PlayerJoinedMessageCommand=function(self, params)
-		if params.Player == player then self:visible(true) end
+		if params.Player == player then self:visible(not auto_style) end
 	end,
 	PlayerUnjoinedMessageCommand=function(self, params)
 		if params.Player == player then self:visible(false) end

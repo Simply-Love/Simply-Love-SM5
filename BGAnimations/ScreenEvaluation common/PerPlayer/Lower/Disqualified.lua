@@ -7,6 +7,10 @@ if SL.Global.GameMode == "Casual" then return end
 local player = ...
 
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+if (style == "TwoPlayersSharedSides") then
+	stats = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+end
 local disqualified = stats:IsDisqualified()
 
 -- If the player was disqualified, return a BitmapText actor with localized text

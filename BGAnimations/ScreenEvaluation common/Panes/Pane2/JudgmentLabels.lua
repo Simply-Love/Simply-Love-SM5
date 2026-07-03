@@ -2,7 +2,7 @@ local player, controller = unpack(...)
 
 local pn = ToEnumShortString(player)
 local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
-
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 local firstToUpper = function(str)
     return (str:gsub("^%l", string.upper))
 end
@@ -103,21 +103,32 @@ for index, label in ipairs(RadarCategories) do
 			text = "EX"
 		end
 
-
-		t[#t+1] = LoadFont("Wendy/_wendy small")..{
-			Text=text,
-			InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
-			BeginCommand=function(self)
-				self:x( (controller == PLAYER_1 and -160) or 82 )
-				self:y(38)
-
-				if SL[pn].ActiveModifiers.ShowExScore then
-					self:diffuse(Color.White)
-				else
-					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+		if (styletype == "TwoPlayersSharedSides") then
+			t[#t+1] = LoadFont("Wendy/_wendy small")..{
+				Text=controller == PLAYER_1 and "P1" or "P2",
+				InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
+				BeginCommand=function(self)
+					self:x( (controller == PLAYER_1 and -160) or 90 )
+					self:y(38)
+					self:diffuse( controller == PLAYER_1 and Color.Blue or Color.Red )
 				end
-			end
-		}
+			}
+		else
+			t[#t+1] = LoadFont("Wendy/_wendy small")..{
+				Text=text,
+				InitCommand=function(self) self:zoom(0.5):horizalign(right) end,
+				BeginCommand=function(self)
+					self:x( (controller == PLAYER_1 and -160) or 82 )
+					self:y(38)
+
+					if SL[pn].ActiveModifiers.ShowExScore then
+						self:diffuse(Color.White)
+					else
+						self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+					end
+				end
+			}
+		end
 	end
 
 	local performance = stats:GetRadarActual():GetValue( "RadarCategory_"..firstToUpper(EnglishRadarCategories[label]) )

@@ -14,11 +14,12 @@ local startHoldTime = {
 }
 local lastDisconnectCountdown = nil
 -- These screens are the ones we want to display the player's scores for.
-local scoreScreens = {"ScreenGameplay", "ScreenEvaluationStage"}
+local scoreScreens = {"ScreenGameplay", "ScreenGameplayShared", "ScreenEvaluationStage"}
 
 local syncLockScreens = {
   ["ScreenSelectMusic"] = true,
   ["ScreenGameplay"] = true,
+  ["ScreenGameplayShared"] = true,
   ["ScreenEvaluationStage"] = true,
 }
 
@@ -62,7 +63,7 @@ local InputHandler = function(event)
     if event.type == "InputEventType_FirstPress" and event.GameButton == "Start" then
       startHoldTime[pn] = GetTimeSinceStart()
       lastDisconnectCountdown = nil
-      if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
+      if SCREENMAN:GetTopScreen():GetName() == Branch.GameplayScreen() then
         readyState[pn] = true
         MESSAGEMAN:Broadcast("UpdateMachineState")
       end
@@ -80,7 +81,7 @@ local InputHandler = function(event)
           startHoldTime[pn] = 0
           lastDisconnectCountdown = nil
           isWaiting = false
-          if SCREENMAN:GetTopScreen():GetName() == "ScreenGameplay" then
+          if SCREENMAN:GetTopScreen():GetName() == Branch.GameplayScreen() then
             SCREENMAN:GetTopScreen():PauseGame(false)
           end
           MESSAGEMAN:Broadcast("DisconnectOnline")
@@ -132,13 +133,22 @@ local GetJudgmentCounts = function(player)
   return judgmentCounts
 end
 
-local GetMachineState = function()
+local GetMachineState = function(params)
   -- NOTE(teejusb): Keep in mind that SCREENMAN:GetTopScreen() might return nil since we might be
   -- transitioning screens when we receive any messages from the server.
+
+  if params == nil then
+    params = {}
+  end
 
   local screen = SCREENMAN:GetTopScreen()
   -- Use a "NoScreen" fallback in case we're transitioning screens.
   local screenName = screen and screen:GetName() or "NoScreen"
+
+  -- If the caller provided a screenName, use that instead of the current screen.
+  if params.screenName ~= nil then
+    screenName = params.screenName
+  end
 
   local players = {}
   for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
@@ -152,7 +162,7 @@ local GetMachineState = function()
       local judgments = nil
       local score = nil
       local exScore = nil
-      if screenName == "ScreenGameplay" or screenName == "ScreenEvaluationStage" then
+      if screenName == Branch.GameplayScreen() or screenName == "ScreenEvaluationStage" then
         judgments = GetJudgmentCounts(player)
         local dance_points = STATSMAN:GetCurStageStats():GetPlayerStageStats(player):GetPercentDancePoints()
         local percent = FormatPercentScore( dance_points ):gsub("%%", "")
@@ -216,7 +226,7 @@ local OrderPlayers = function(data, localScreenName)
       updatedData.aux.allInSameScreen = false
     end
 
-    if player.screenName == "ScreenGameplay" then
+    if player.screenName == Branch.GameplayScreen() then
       updatedData.aux.anyInGameplay = true
     end
 
@@ -255,7 +265,7 @@ local OrderPlayers = function(data, localScreenName)
       updatedData.aux.allInSameScreen = false
     end
 
-    if player.screenName == "ScreenGameplay" then
+    if player.screenName == Branch.GameplayScreen() then
       updatedData.aux.anyInGameplay = true
     end
 
@@ -291,7 +301,7 @@ local DisplayLobbyState = function(data, actor)
 
   if isWaiting then
     local readyToUnlock = false
-    if screenName == "ScreenGameplay" then
+    if screenName == Branch.GameplayScreen() then
       -- Gameplay requires everyone to be in gameplay and manually ready-up.
       readyToUnlock = updatedData.aux.allInSameScreen and updatedData.aux.allPlayersReady
     elseif screenName == "ScreenEvaluationStage" then
@@ -332,12 +342,12 @@ local DisplayLobbyState = function(data, actor)
         SCREENMAN:set_input_redirected(player, false)
       end
 
-      if screenName == "ScreenGameplay" then
+      if screenName == Branch.GameplayScreen() then
         SCREENMAN:GetTopScreen():PauseGame(false)
       end
     else
       lines[#lines+1] = "Waiting for players to sync screens...\n"
-      if screenName == "ScreenGameplay" then
+      if screenName == Branch.GameplayScreen() then
         lines[#lines+1] = "Press &START; to ready up!\n"
       end
     end
@@ -345,7 +355,7 @@ local DisplayLobbyState = function(data, actor)
   for i, player in ipairs(updatedData.players) do
     local displayedScreen = player.screenName ~= "NoScreen" and player.screenName:gsub("Screen", "") or "Transitioning"
     local readyText = ""
-    if screenName == "ScreenGameplay" and not updatedData.aux.allPlayersReady then
+    if screenName == Branch.GameplayScreen() and not updatedData.aux.allPlayersReady then
       readyText =" ["..(player.ready and "✔" or "❌").."]"
     end
 
@@ -528,9 +538,9 @@ CreateOnlineHandler = function()
           }
         end
       end,
-      UpdateOnlineStateMessageCommand=function(self)
+      UpdateOnlineStateMessageCommand=function(self, params)
         if self.connected and self.socket ~= nil and self.inLobby then
-          local request = CreateRequest("updateMachine", GetMachineState())
+          local request = CreateRequest("updateMachine", GetMachineState(params))
           self.socket:Send(request)
         end
       end,
@@ -572,7 +582,7 @@ CreateOnlineHandler = function()
             end
           end
 
-          if screenName == "ScreenGameplay" then
+          if screenName == Branch.GameplayScreen() then
             for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
               local pn = ToEnumShortString(player)
               readyState[pn] = false
@@ -704,7 +714,7 @@ CreateOnlineHandler = function()
           if screenName == "ScreenSelectMusic" then
             self:xy(LEFT, _screen.cy)
             bg:zoomto(width, height)
-          elseif screenName == "ScreenEvaluationStage" or screenName == "ScreenGameplay" then
+          elseif screenName == "ScreenEvaluationStage" or screenName == Branch.GameplayScreen() then
             local p1Joined = GAMESTATE:IsSideJoined("PlayerNumber_P1")
             local p2Joined = GAMESTATE:IsSideJoined("PlayerNumber_P2")
 

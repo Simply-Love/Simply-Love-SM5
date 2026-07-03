@@ -4,6 +4,9 @@ local player = ...
 local pn = ToEnumShortString(player)
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+if styletype == "TwoPlayersSharedSides" then
+	pss = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+end
 
 local HighScoreIndex = {
 	Machine =  pss:GetMachineHighScoreIndex(),

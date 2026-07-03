@@ -83,8 +83,18 @@ local input = function(event)
 				if PREFSMAN:GetPreference("MenuTimer") then
 					overlay:playcommand("ShowPressStartForOptions")
 				end
+				-- We have to turn off autosetstyle to switch styles
+				if ThemePrefs.Get("PreferredStyle")=="auto" then
+					ThemePrefs.Set("PreferredStyle", "none")
+					THEME:ReloadMetrics()
+				end
 				-- Get the style we want to change to
 				local new_style = focus.change:lower()
+				if new_style == "all" then
+					ThemePrefs.Set("PreferredStyle", "auto")
+					THEME:ReloadMetrics()
+					new_style = #GAMESTATE:GetHumanPlayers() == 1 and "single" or "versus"
+				end
 				-- accommodate techno game
 				if GAMESTATE:GetCurrentGame():GetName() == "techno" then new_style = new_style .. "8" end
 				-- set it in the engine

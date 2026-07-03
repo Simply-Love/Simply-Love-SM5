@@ -207,7 +207,7 @@ local t = Def.ActorFrame{
 			InitCommand=function(self) self:zoomto(40,14):xy(59,-64):diffuse( GetCurrentColor(true) ) end
 		},
 		-- life meter animated swoosh
-		LoadActor(THEME:GetPathB("ScreenGameplay", "underlay/PerPlayer/LifeMeter/swoosh.png"))..{
+		LoadActor(THEME:GetPathB(Branch.GameplayScreen(), "underlay/PerPlayer/LifeMeter/swoosh.png"))..{
 			InitCommand=function(self) self:zoomto(40,14):diffusealpha(0.45):xy(59,-64) end,
 			OnCommand=function(self)
 				self:customtexturerect(0,0,1,1):texcoordvelocity(-2,0)

@@ -6,7 +6,12 @@ local optionslist = GetPlayerOptionsString(player)
 
 local af = Def.ActorFrame{
   InitCommand = function(self)
-    self:diffusealpha(1):xy(GetNotefieldX(player), SCREEN_HEIGHT/4*1.3)
+    if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides" then
+      -- if p1 3/4 of the notefielx, if p2 5/4
+        self:diffusealpha(1):xy(GetNotefieldX(player) / (player == PLAYER_1 and 0.825 or 1.25), SCREEN_HEIGHT/4*1.3)
+		else
+      self:diffusealpha(1):xy(GetNotefieldX(player), SCREEN_HEIGHT/4*1.3)
+    end
   end,
   OnCommand=function(self)
     self:sleep(5):decelerate(0.5):diffusealpha(0)
