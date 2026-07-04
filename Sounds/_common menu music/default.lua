@@ -9,7 +9,7 @@ local songs = {
 	Stars  = "Shooting Star - faux VRC6 remix",
 	Thonk  = "Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix",
 	Technique = "Quaq",
-	SRPG9  = "SRPG9"
+	SRPG10  = "SRPG10"
 }
 
 -- retrieve the current VisualStyle from the ThemePrefs system

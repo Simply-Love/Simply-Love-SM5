@@ -4,7 +4,7 @@ if GAMESTATE:IsCourseMode() then return end
 -- ----------------------------------------------
 
 local GetStepsToDisplay = LoadActor("./StepsToDisplay.lua")
-
+local autoStyle = ThemePrefs.Get("PreferredStyle")=="auto"
 local t = Def.ActorFrame{
 	Name="StepsDisplayList",
 	InitCommand=function(self) self:xy(_screen.cx-26, _screen.cy + 67) end,
@@ -15,7 +15,10 @@ local t = Def.ActorFrame{
 	CurrentStepsP2ChangedMessageCommand=function(self) self:queuecommand("RedrawStepsDisplay") end,
 
 	RedrawStepsDisplayCommand=function(self)
-
+		if autoStyle then
+			self:visible(false)
+			return
+		end
 		local song = GAMESTATE:GetCurrentSong()
 
 		if song then

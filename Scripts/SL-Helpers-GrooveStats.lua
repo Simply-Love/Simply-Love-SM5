@@ -747,8 +747,8 @@ DownloadEventUnlock = function(url, unlockName, packName)
 						-- If Pack.ini doesn't exist (new unlock for this player), create it.
 						local group = string.lower(packName)
 						local year = 2026
+						local packIniPath = destinationPack.."Pack.ini"
 						if string.find(group, "itl online "..year.." unlocks") then
-							local packIniPath = destinationPack.."Pack.ini"
 							if not FILEMAN:DoesFileExist(packIniPath) then
 								IniFile.WriteFile(packIniPath, {
 									["Group"]={
@@ -760,6 +760,21 @@ DownloadEventUnlock = function(url, unlockName, packName)
 										["Year"]=year,
 										["Banner"]="",
 										["SyncOffset"]="NULL",
+									}
+								})
+							end
+						elseif string.find(group, "stamina rpg 10 unlocks") then
+							if not FILEMAN:DoesFileExist(packIniPath) then
+								IniFile.WriteFile(packIniPath, {
+									["Group"]={
+										["Version"]=1,
+										["DisplayTitle"]=packName,
+										["TranslitTitle"]=packName,
+										["SortTitle"]=packName,
+										["Series"]="Stamina RPG",
+										["Year"]=year,
+										["Banner"]="",
+										["SyncOffset"]="ITG",
 									}
 								})
 							end
@@ -850,7 +865,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[6]="Emoticon 2x7 (doubleres).png",
 				[7]="Focus 2x7 (doubleres).png",
 				[8]="Grammar 2x7 (doubleres).png",
-				[9]="GrooveNights 2x7.png",
+				[9]="GrooveNights 2x7 (doubleres).png",
 				[10]="ITG2 2x7 (doubleres).png",
 				[11]="Love 2x7 (doubleres).png",
 				[12]="Love Chroma 2x7 (doubleres).png",
@@ -861,6 +876,7 @@ CreateGrooveStatsPlayerOptionKeys = function()
 				[17]="Shift 2x7 (doubleres).png",
 				[18]="Tactics 2x7 (doubleres).png",
 				[19]="Wendy 2x7 (doubleres).png",
+				[20]="Censored 1x7 (doubleres).png",
 				-- Digital Dance
 				[100]="Chalk 2x7 (doubleres).png",
 				[101]="Digital 2x7 (doubleres).png",
@@ -907,7 +923,12 @@ CreateGrooveStatsPlayerOptionKeys = function()
 		["HideScore"] = CreateKey("boolean"),
 		["HideDanger"] = CreateKey("boolean"),
 		["HideComboExplosions"] = CreateKey("boolean"),
-		["ColumnFlashOnMiss"] = CreateKey("boolean"),
+		["FlashMiss"] = CreateKey("boolean"),
+		["FlashWayOff"] = CreateKey("boolean"),
+		["FlashDecent"] = CreateKey("boolean"),
+		["FlashGreat"] = CreateKey("boolean"),
+		["FlashExcellent"] = CreateKey("boolean"),
+		["FlashFantastic"] = CreateKey("boolean"),
 		["SubtractiveScoring"] = CreateKey("boolean"),
 		["MeasureCounter"] = CreateKey("string", {
 			[1]="None",
@@ -1095,6 +1116,8 @@ GetPlayerOptionsJsonForGrooveStats = function(player)
 
 	MaybeSetOption(options, "Mini", mini, "number")
 	MaybeSetOption(options, "VisualDelay", visualDelay, "number")
+	MaybeSetOption(options, "BackgroundFilter", backgroundFilter, "number")
+	MaybeSetOption(options, "HideLookahead", hideLookahead, "number")
 
 	MaybeSetOption(options, "Cover", hasCover, "boolean")
 	MaybeSetOption(options, "NoMines", hasNoMines, "boolean")

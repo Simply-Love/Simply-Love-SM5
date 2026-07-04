@@ -9,7 +9,7 @@ local RestartHandler = function(event)
 		elseif event.DeviceInput.button == "DeviceButton_r" then
 			if holdingCtrl then
 				SM("Replaying Song")
-				SCREENMAN:GetTopScreen():SetNextScreenName("ScreenGameplay"):StartTransitioningScreen("SM_GoToNextScreen")
+				SCREENMAN:GetTopScreen():SetNextScreenName(Branch.GameplayScreen()):StartTransitioningScreen("SM_GoToNextScreen")
 			end
 		elseif event.DeviceInput.button == "DeviceButton_p" then
 			if holdingCtrl then

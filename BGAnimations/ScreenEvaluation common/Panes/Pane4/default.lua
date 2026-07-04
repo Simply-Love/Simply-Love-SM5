@@ -11,6 +11,9 @@ local pane = Def.ActorFrame{
 -- -----------------------------------------------------------------------
 
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+if (styletype == "TwoPlayersSharedSides") then
+	pss = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+end
 local NumHighScores = math.min(10, PREFSMAN:GetPreference("MaxHighScoresPerListForMachine"))
 
 local HighScoreIndex = {
@@ -71,14 +74,14 @@ if (not EarnedMachineRecord and EarnedTop2Personal) then
 	args.RowHeight = 20.25
 
 	-- top 8 machine HighScores
-	args.NumHighScores = 8
+	args.NumHighScores = math.min(8, PREFSMAN:GetPreference("MaxHighScoresPerListForMachine"))
 	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)
 
 	-- horizontal line visually separating machine HighScores from player HighScores
 	pane[#pane+1] = Def.Quad{ InitCommand=function(self) self:zoomto(100, 1):y(args.RowHeight*9):diffuse(1,1,1,0.33) end }
 
 	-- top 2 player HighScores
-	args.NumHighScores = 2
+	args.NumHighScores = math.min(2, PREFSMAN:GetPreference("MaxHighScoresPerListForPlayer"))
 	args.Profile = PROFILEMAN:GetProfile(player)
 	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)..{
 		InitCommand=function(self) self:y(args.RowHeight*9) end
@@ -89,7 +92,7 @@ if (not EarnedMachineRecord and EarnedTop2Personal) then
 -- We can also hijack the 10 rows of high scores to display those ones fetched from GrooveStats.
 else
 	-- top 10 machine HighScores
-	args.NumHighScores = 10
+	args.NumHighScores = math.min(10, PREFSMAN:GetPreference("MaxHighScoresPerListForMachine"))
 	pane[#pane+1] = LoadActor(THEME:GetPathB("", "_modules/HighScoreList.lua"), args)
 end
 

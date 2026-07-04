@@ -59,7 +59,23 @@ local input = function(event)
 					screen:SetNextScreenName("ScreenSelectMusicCasual")
 					screen:StartTransitioningScreen("SM_GoToNextScreen")
 				end
-				-- the player wants to change styles, for example from single to double
+
+			-- Change between Course (aka Marathon aka Nonstop) and Regular mode.
+			elseif focus.kind == "ChangePlayMode" then
+				-- Unselect song/course first to avoid getting to a state where
+				-- play mode is Course but a song is selected or vice versa.
+				GAMESTATE:SetCurrentSong(nil)
+				GAMESTATE:SetCurrentCourse(nil)
+				GAMESTATE:SetCurrentPlayMode(focus.change)
+
+				-- Save menu timer value.
+				if PREFSMAN:GetPreference("MenuTimer") then
+					overlay:playcommand("ShowPressStartForOptions")
+				end
+				screen:SetNextScreenName("ScreenReloadSSM")
+				screen:StartTransitioningScreen("SM_GoToNextScreen")
+
+			-- the player wants to change styles, for example from single to double
 			elseif focus.kind == "ChangeStyle" then
 				-- If the MenuTimer is in effect, we need to make sure the current number of seconds
 				-- remaining is preserved so we can reinstate it later. ShowPressStartForOptions
@@ -67,8 +83,18 @@ local input = function(event)
 				if PREFSMAN:GetPreference("MenuTimer") then
 					overlay:playcommand("ShowPressStartForOptions")
 				end
+				-- We have to turn off autosetstyle to switch styles
+				if ThemePrefs.Get("PreferredStyle")=="auto" then
+					ThemePrefs.Set("PreferredStyle", "none")
+					THEME:ReloadMetrics()
+				end
 				-- Get the style we want to change to
 				local new_style = focus.change:lower()
+				if new_style == "all" then
+					ThemePrefs.Set("PreferredStyle", "auto")
+					THEME:ReloadMetrics()
+					new_style = #GAMESTATE:GetHumanPlayers() == 1 and "single" or "versus"
+				end
 				-- accommodate techno game
 				if GAMESTATE:GetCurrentGame():GetName() == "techno" then new_style = new_style .. "8" end
 				-- set it in the engine

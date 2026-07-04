@@ -1,6 +1,6 @@
 if not IsServiceAllowed(SL.GrooveStats.AutoSubmit) or GAMESTATE:IsCourseMode() then return end
 
-local NumEntries = 10
+local NumEntries = math.min(10, PREFSMAN:GetPreference("MaxHighScoresPerListForMachine"))
 
 local SetEntryText = function(rank, name, score, date, actor)
 	if actor == nil then return end
@@ -327,7 +327,7 @@ local af = Def.ActorFrame {
 		-- local eventAf = overlay:GetChild("AutoSubmitMaster"):GetChild("EventOverlay"):GetChild("P1EventAf")
 		-- eventAf:playcommand("Show", {data={
 		-- 	["rpg"] = {
-		-- 		["name"] = "SRPG9",
+		-- 		["name"] = "SRPG10",
 		-- 		["result"] = "score-added",
 		-- 		["rpgLeaderboard"] = {
 		-- 			{

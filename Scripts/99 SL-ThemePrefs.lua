@@ -24,16 +24,16 @@ SL_CustomPrefs.Get = function()
 	local day = DayOfMonth()
 	local today = year * 10000 + month * 100 + day
 
-	if today >= 20240620 then
-		visualStyleChoices[#visualStyleChoices+1] = "✨"
-		visualStyleValues[#visualStyleValues+1] = "SRPG9"
+	if today >= 20260629 then
+		visualStyleChoices[#visualStyleChoices+1] = "🖌"
+		visualStyleValues[#visualStyleValues+1] = "SRPG10"
 	else
 		local prefs = IniFile.ReadFile("/Save/ThemePrefs.ini")
 		local theme = PREFSMAN:GetPreference("Theme")
 		local lastActiveEvent = nil
-		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG9" then
-			visualStyleChoices[#visualStyleChoices+1] = "✨"
-			visualStyleValues[#visualStyleValues+1] = "SRPG9"
+		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG10" then
+			visualStyleChoices[#visualStyleChoices+1] = "🖌"
+			visualStyleValues[#visualStyleValues+1] = "SRPG10"
 		end
 	end
 
@@ -61,6 +61,12 @@ SL_CustomPrefs.Get = function()
 			Default = "ITG",
 			Choices = { "ITG", "IIDX" }
 		},
+		HideInactiveSeries =
+		{
+			Default = false,
+			Choices = { THEME:GetString("ThemePrefs","Yes"), THEME:GetString("ThemePrefs", "No") },
+			Values  = { true, false }
+		},
 		AllowDanceSolo =
 		{
 			Default = false,
@@ -76,17 +82,30 @@ SL_CustomPrefs.Get = function()
 			},
 			Values = { "Casual", "ITG" }
 		},
-
-		AutoStyle =
+		DefaultSort =
+		{
+			Default = "Series",
+			Choices = {
+				THEME:GetString("ScreenSelectMusic", "Series"),
+				THEME:GetString("ScreenSelectMusic", "Group"),
+				THEME:GetString("ScreenSelectMusic", "Title"),
+				THEME:GetString("ScreenSelectMusic", "Meter"),
+				THEME:GetString("ScreenSelectMusic", "Popularity"),
+				THEME:GetString("ScreenSelectMusic", "Recent"),
+			},
+			Values = { "Series", "Group", "Title", "Meter", "Popularity", "Recent"}
+		},
+		PreferredStyle =
 		{
 			Default = "none",
 			Choices = {
 				THEME:GetString("ScreenSelectStyle", "None"),
+				THEME:GetString("ScreenSelectStyle", "Auto"),
 				THEME:GetString("ScreenSelectStyle", "Single"),
 				THEME:GetString("ScreenSelectStyle", "Versus"),
 				THEME:GetString("ScreenSelectStyle", "Double")
 			},
-			Values = { "none", "single", "versus", "double" }
+			Values = { "none", "auto", "single", "versus", "double" }
 		},
 		VisualStyle =
 		{

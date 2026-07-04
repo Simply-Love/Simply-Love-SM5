@@ -1,7 +1,8 @@
 local player, controller = unpack(...)
-
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 local pn = ToEnumShortString(player)
 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+
 
 local TapNoteScores = {
 	Types = { 'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'Miss' },
@@ -83,31 +84,54 @@ end
 for index, RCType in ipairs(RadarCategories.Types) do
 	-- Swap to displaying ITG score if we're showing EX score in gameplay.
 	local percent = nil
-	if SL[pn].ActiveModifiers.ShowExScore then
+	if styletype == "TwoPlayersSharedSides" then
 		local PercentDP = pss:GetPercentDancePoints()
-		percent = FormatPercentScore(PercentDP):gsub("%%", "")
+		percent = FormatPercentScore(PercentDP)
 		-- Format the Percentage string, removing the % symbol
-		percent = tonumber(percent)
+		percent = percent:gsub("%%", "")
 	else
-		percent = CalculateExScore(player)
+		if SL[pn].ActiveModifiers.ShowExScore then
+			local PercentDP = pss:GetPercentDancePoints()
+			percent = FormatPercentScore(PercentDP):gsub("%%", "")
+			-- Format the Percentage string, removing the % symbol
+			percent = tonumber(percent)
+		else
+			percent = CalculateExScore(player)
+		end
 	end
 
 	if index == 1 then
-		t[#t+1] = LoadFont("Wendy/_wendy white")..{
-			Name="Percent",
-			Text=("%.2f"):format(percent),
-			InitCommand=function(self)
-				self:horizalign(right):zoom(0.4)
-				self:x( ((controller == PLAYER_1) and -114) or 286 )
-				self:y(47)
-				
-				if SL[pn].ActiveModifiers.ShowExScore then
-					self:diffuse(Color.White)
-				else
-					self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+		if (styletype == "TwoPlayersSharedSides") then
+
+			-- Format the Percentage string, removing the % symbol
+			percent = percent:gsub("%%", "")
+			t[#t+1] = LoadFont("Wendy/_wendy white")..{
+				Name="Percent",
+				Text=percent,
+				InitCommand=function(self)
+					self:horizalign(right):zoom(0.4)
+					self:x( ((controller == PLAYER_1) and -114) or 286 )
+					self:y(47)
+					self:diffuse( (controller == PLAYER_1) and Color.Blue or Color.Red)
 				end
-			end
 		}
+		else
+			t[#t+1] = LoadFont("Wendy/_wendy white")..{
+				Name="Percent",
+				Text=("%.2f"):format(percent),
+				InitCommand=function(self)
+					self:horizalign(right):zoom(0.4)
+					self:x( ((controller == PLAYER_1) and -114) or 286 )
+					self:y(47)
+					
+					if SL[pn].ActiveModifiers.ShowExScore then
+						self:diffuse(Color.White)
+					else
+						self:diffuse( SL.JudgmentColors[SL.Global.GameMode][1] )
+					end
+				end
+			}
+		end
 	end
 
 	local possible = counts["total"..RCType]

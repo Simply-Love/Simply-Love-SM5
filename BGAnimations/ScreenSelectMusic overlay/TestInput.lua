@@ -4,6 +4,7 @@ local game = GAMESTATE:GetCurrentGame():GetName()
 if not (game=="dance" or game=="pump" or game=="techno") then return end
 
 local af = Def.ActorFrame{
+	Name="TestInput",
 	InitCommand=function(self) self:visible(false) end,
 	ShowTestInputCommand=function(self) self:visible(true) end,
 	HideTestInputCommand=function(self) self:visible(false) end,

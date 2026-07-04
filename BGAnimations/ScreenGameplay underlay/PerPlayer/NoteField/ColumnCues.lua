@@ -15,6 +15,7 @@ local columnCues = SL[pn].Streams.ColumnCues
 
 local numColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 local style = GAMESTATE:GetCurrentStyle(player)
+local isRoutine = style:GetStyleType() == "StyleType_TwoPlayersSharedSides"
 local width = style:GetWidth(player)
 
 local yOffset = 80
@@ -97,9 +98,7 @@ local af = Def.ActorFrame{
 			steps = GAMESTATE:GetCurrentSteps(player)
 		end
 
-		-- Ensure that SL[pn].Streams.ColumnCues is populated. This will skip
-		-- parsing if SL[pn].Streams is already up to date.
-		ParseChartInfo(steps, pn)
+		ParseColumnCues(steps, pn)
 
 		playerState = GAMESTATE:GetPlayerState(player)
 		columnCues = SL[pn].Streams.ColumnCues
@@ -172,7 +171,14 @@ for columnIndex=1,numColumns do
 			end,
 			FlashCommand=function(self, params)
 				local flashDuration = params.duration
-				local clr = params.isMine and color("1,0,0,0.12") or color("0.3,1,1,0.12")
+				local clr
+				if params.isMine then
+					clr = color("1,0,0,0.12")
+				elseif isRoutine and pn == 'P2' then
+					clr = color("1,0.4,1,0.12")
+				else
+					clr = color("0.3,1,1,0.12")
+				end
 				self:stoptweening()
 					:decelerate(fadeTime)
 					:diffuse(clr)

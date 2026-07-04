@@ -49,9 +49,11 @@ local count = 0
 for t in ivalues(sequential_offsets) do
 	-- the first value in t is CurrentMusicSeconds when the offset occurred, which we don't need here
 	-- the second value in t is the offset value or the string "Miss"
+	-- the third value in t flags auto-judged pump notes (hold heads and ticks);
+	-- we skip those here since they aren't actually timed
 	local val = t[2]
 
-	if val ~= "Miss" then
+	if val ~= "Miss" and not t[3] then
 		count = count + 1
 
 		-- check if this is the highest error amount
@@ -81,7 +83,7 @@ if count > 0 then
 		local sum_diff_squared = 0
 		for t in ivalues(sequential_offsets) do
 			local val = t[2]
-			if val ~= "Miss" then
+			if val ~= "Miss" and not t[3] then
 				sum_diff_squared = sum_diff_squared + math.pow((val - avg_offset), 2)
 			end
 		end

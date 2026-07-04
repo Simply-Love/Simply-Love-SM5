@@ -38,7 +38,9 @@ local target_score, pos_data, personal_best = LoadActor("./Setup.lua", {player, 
 
 -- ---------------------------------------------------------------
 -- add actors to the ActorFrame as needed
-local af = Def.ActorFrame{}
+local af = Def.ActorFrame{
+	Name="TargetScore" .. pn
+}
 
 if WantsTargetGraph then
 	af[#af+1] = LoadActor("./Graph-Common.lua", {player, pss, isTwoPlayers, pos_data, target_score, personal_best, use_smaller_graph})

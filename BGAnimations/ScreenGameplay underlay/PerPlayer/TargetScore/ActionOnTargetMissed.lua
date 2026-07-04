@@ -26,7 +26,7 @@ local args = {
 
 			elseif RestartOnMissedTarget then
 				-- EventMode is assumed (i.e. not CoinMode_Pay), so no need to fuss with managing stage counts for SL or SM
-				SCREENMAN:GetTopScreen():SetPrevScreenName("ScreenGameplay"):SetNextScreenName("ScreenGameplay"):begin_backing_out()
+				SCREENMAN:GetTopScreen():SetPrevScreenName(Branch.GameplayScreen()):SetNextScreenName(Branch.GameplayScreen()):begin_backing_out()
 			end
 		end
 	end

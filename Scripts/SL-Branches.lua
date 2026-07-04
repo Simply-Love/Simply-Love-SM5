@@ -3,6 +3,10 @@
 ------------------------------------------------------------
 
 local EnoughCreditsToContinue = function()
+	if PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Pay" then
+		-- if we're not in Pay mode, we don't want to gate continues behind credits at all
+		return true
+	end
 	local credits = GetCredits().Credits
 
 	local premium = ToEnumShortString(GAMESTATE:GetPremium())
@@ -92,10 +96,21 @@ Branch.AllowScreenSelectColor = function()
 end
 
 Branch.AfterScreenSelectColor = function()
-	local preferred_style = ThemePrefs.Get("AutoStyle")
+	
+	if THEME:GetMetric("Common", "AutoSetStyle") == true then
+		local styles = { "single", "versus" }
+		-- If for any reason all the screens prior are skipped we may
+		-- end up here without any players joined yet, so default to 
+		-- to single as PLAYER_2 can always join later
+		GAMESTATE:SetCurrentStyle( styles[math.max(GAMESTATE:GetNumSidesJoined(), 1)] )
+		return Branch.AllowScreenSelectPlayMode()
+	end
+
+	-- ------------------------------------------------------------
+	local preferred_style = ThemePrefs.Get("PreferredStyle")
 
 	if preferred_style ~= "none"
-	-- AutoStyle should not be possible in pay mode
+	-- PreferredStyle should not be possible in pay mode
 	-- it's too confusing for machine operators, novice players, and developers alike
 	and GAMESTATE:GetCoinMode() ~= "CoinMode_Pay" then
 
@@ -104,7 +119,7 @@ Branch.AfterScreenSelectColor = function()
 			GAMESTATE:JoinPlayer(PLAYER_1)
 			GAMESTATE:JoinPlayer(PLAYER_2)
 
-		-- if AutoStyle was "single" but both players are already joined
+		-- if PreferredStyle was "single" but both players are already joined
 		-- (for whatever reason), we're in a bit of a pickle, as there is
 		-- no way to read the player's mind and know which side they really
 		-- want to play on. Unjoin PLAYER_2 for lack of a better solution.
@@ -202,7 +217,7 @@ Branch.AfterSelectMusic = function()
 		end
 
 		-- while everything else (single, versus, double, etc.) uses ScreenGameplay
-		return "ScreenGameplay"
+		return Branch.GameplayScreen()
 	end
 end
 
@@ -298,8 +313,8 @@ Branch.AfterProfileSave = function()
 		-- this style is more verbose but avoids obnoxious if statements
 
 		if setOver then
-			-- continues are only allowed in Pay mode
-			if PREFSMAN:GetPreference("CoinMode") == "CoinMode_Pay" then
+			-- continues are only allowed in Pay/Free modes
+			if PREFSMAN:GetPreference("CoinMode") ~= "CoinMode_Home" then
 				if SL.Global.ContinuesRemaining > 0 and EnoughCreditsToContinue() then
 					return "ScreenPlayAgain"
 				end

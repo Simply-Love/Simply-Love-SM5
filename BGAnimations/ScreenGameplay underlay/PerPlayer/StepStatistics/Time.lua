@@ -205,7 +205,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 
 -- remaining time label
 af[#af+1] = LoadFont("Common Normal")..{
-	Text=("%s "):format( THEME:GetString("ScreenGameplay", "Remaining") ),
+	Text=("%s "):format( THEME:GetString(Branch.GameplayScreen(), "Remaining") ),
 	InitCommand=function(self)
 		if style ~= "double" then
 			self:halign(PlayerNumber:Reverse()[player]):vertalign(bottom)
@@ -276,7 +276,7 @@ af[#af+1] = LoadFont("Common Normal")..{
 			self:halign( PlayerNumber:Reverse()[OtherPlayer[player]] )
 		end
 
-		local s = GAMESTATE:IsCourseMode() and THEME:GetString("ScreenGameplay", "Course") or THEME:GetString("ScreenGameplay", "Song")
+		local s = GAMESTATE:IsCourseMode() and THEME:GetString(Branch.GameplayScreen(), "Course") or THEME:GetString(Branch.GameplayScreen(), "Song")
 		self:settext( ("%s "):format(s) )
 	end,
 	OnCommand=function(self)

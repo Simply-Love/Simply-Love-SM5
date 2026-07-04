@@ -17,7 +17,7 @@ t["ScreenSelectMusic"] = Def.ActorFrame {
     end
 }
 
-t["ScreenGameplay"] = Def.ActorFrame {
+t[Branch.GameplayScreen()] = Def.ActorFrame {
     ModuleCommand=function(self)
         SCREENMAN:SystemMessage("hello from ScreenGameplay")
     end

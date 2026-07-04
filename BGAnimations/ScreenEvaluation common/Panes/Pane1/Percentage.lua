@@ -1,8 +1,15 @@
 local player, controller = unpack(...)
+local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
-local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+local stats
+if  styletype == "TwoPlayersSharedSides" then
+	stats = STATSMAN:GetCurStageStats():GetRoutineStageStats()
+else
+	stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
+end
 local PercentDP = stats:GetPercentDancePoints()
 local percent = FormatPercentScore(PercentDP)
+
 -- Format the Percentage string, removing the % symbol
 percent = percent:gsub("%%", "")
 
@@ -15,10 +22,12 @@ return Def.ActorFrame{
 	-- dark background quad behind player percent score
 	Def.Quad{
 		InitCommand=function(self)
-			self:diffuse(color("#101519")):zoomto(158.5, 60)
+			self:diffuse(color("#101519")):zoomto(158.5, (styletype == "TwoPlayersSharedSides") and 88 or 60)
 			self:horizalign(controller==PLAYER_1 and left or right)
 			self:x(150 * (controller == PLAYER_1 and -1 or 1))
-
+			if styletype == "TwoPlayersSharedSides" then
+				self:y(14)
+			end
 			if ThemePrefs.Get("VisualStyle") == "Technique" then
 				self:diffusealpha(0.5)
 			end

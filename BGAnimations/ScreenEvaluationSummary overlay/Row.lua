@@ -44,7 +44,9 @@ t[#t+1] = Def.Banner{
 	InitCommand=function(self) self:y(-6) end,
 	DrawStageCommand=function(self)
 		if SongOrCourse then
-			if GAMESTATE:IsCourseMode() then
+			-- We can have both songs and courses in one session now. Check
+			-- which one this is.
+			if SongOrCourse.GetCourseType then
 				self:LoadFromCourse(SongOrCourse)
 			else
 				self:LoadFromSong(SongOrCourse)

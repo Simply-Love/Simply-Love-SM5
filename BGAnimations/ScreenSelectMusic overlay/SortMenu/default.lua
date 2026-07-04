@@ -5,10 +5,18 @@ local sort_wheel = setmetatable({}, sick_wheel_mt)
 sort_wheel.custom_functions = {}
 -- the logic that handles navigating the SortMenu
 -- (scrolling through choices, choosing one, canceling)
--- is large enough that I moved it to its own file
-local sortmenu_input = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
-local testinput_input = LoadActor("TestInput_InputHandler.lua")
+-- is complex enough to be in its own file
+local sortmenu_input    = LoadActor("SortMenu_InputHandler.lua", sort_wheel)
+
+-- input handlers for TestInput and Leaderboards are similarly complex
+local testinput_input   = LoadActor("TestInput_InputHandler.lua")
 local leaderboard_input = LoadActor("Leaderboard_InputHandler.lua")
+
+-- logic for song search is also in its own file
+local SongSearchSettings = LoadActor("../SongSearch/SongSearchSettings.lua")
+
+local sortmenu_dimensions = { w=210, h=204 }
+
 -- "MT" is my personal means of denoting that this thing (the file, the variable, whatever)
 -- has something to do with a Lua metatable.
 --
@@ -171,6 +179,8 @@ end
 ------------------------------------------------------------
 
 local function AddFavorites()
+	if GAMESTATE:IsCourseMode() then return false end
+
     for player in ivalues(GAMESTATE:GetHumanPlayers()) do
         local path = getFavoritesPath(player)
         if FILEMAN:DoesFileExist(path) then
@@ -196,17 +206,52 @@ local function PracticeModeAvailable()
 	return GAMESTATE:IsEventMode() and GAMESTATE:GetCurrentSong() ~= nil and ThemePrefs.Get("KeyboardFeatures")
 end
 
-local function AddPlayerSortOptions()
-    local player_sort_options = {}
-    for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-        if PROFILEMAN:IsPersistentProfile(player) then
-            table.insert(player_sort_options, {"SortBy", "Top" .. ToEnumShortString(player) .. "Grades"})
-        end
-    end
-    return player_sort_options
+local function ChangePlayModeAvailable()
+	local onlineHandler = GetOnlineHandlerInstance()
+	return GAMESTATE:IsEventMode() and
+		ThemePrefs.Get("AllowScreenSelectPlayMode2") and
+		not (onlineHandler and onlineHandler.connected)
+end
+
+local function AddSorts()
+	-- Most sort orders don't currently work in course mode, they cause the
+	-- wheel to change to song mode instead. The ones that seem work are
+	-- AllCourses, Nonstop, Oni, and Endless. I don't know if those are useful
+	-- so let's just disable the sort orders for course mode.
+	if GAMESTATE:IsCourseMode() then return {} end
+
+	return {
+		{{"SortBy", "Series"} },
+		{ {"SortBy", "Group"} },
+		{ {"SortBy", "Title"} },
+		{ {"SortBy", "Artist"} },
+		{ {"SortBy", "Genre"} },
+		{ {"SortBy", "BPM"} },
+		{ {"SortBy", "Length"} },
+		{ {"SortBy", "Meter"} },
+		{ {"SortBy", "Popularity"} },
+		{ {"SortBy", "Recent"} },
+		{ {"SortBy", "TopGrades"} },
+	}
+end
+
+local function AddProfileEntries()
+	if GAMESTATE:IsCourseMode() then return {} end
+
+	return {
+		{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
+		{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+		{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+		{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
+		{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+		{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+		{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
+		{ {"MixTape", "Preferred"}, AddFavorites },
+	}
 end
 
 local function AddPlaylists()
+	if GAMESTATE:IsCourseMode() then return {} end
 
 	-- First add the machine playlists
 	local player_sort_options = {}
@@ -233,7 +278,7 @@ local function AddPlaylists()
 			end
 		end
 	end
-	
+
 	-- Favorites are basically a playlist so include those too
 	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local path = getFavoritesPath(player)
@@ -253,7 +298,7 @@ local function GetChangeableStyles()
 	-- but only present these options if Joint Double or Joint Premium is enabled
 	-- and we're not in "AutoSetStyle" mode (all styles presented simultaneously like PIU does)
 	
-	if THEME:GetMetric("Common", "AutoSetStyle") == true then
+	if ThemePrefs.Get("PreferredStyle")=="auto" then
 		-- Check number of players
 		if ThemePrefs.Get("AllowDanceSolo") then
 			table.insert(available_styles, {{"ChangeStyle", "Solo"}, GAMESTATE:GetNumPlayersEnabled() == 1  })
@@ -285,16 +330,16 @@ local function GetChangeableStyles()
 			elseif style == "couple" then
 				table.insert(available_styles, {{"ChangeStyle", "Versus"}})
 				table.insert(available_styles, {{"ChangeStyle", "Routine"}})
+				table.insert(available_styles, {{"ChangeStyle", "All"}})
 			elseif style == "routine" then
 				table.insert(available_styles, {{"ChangeStyle", "Versus"}})
 				table.insert(available_styles, {{"ChangeStyle", "Couple"}})
-			-- Routine is not ready for use yet, but it might be soon.
-			-- This can be uncommented at that time to allow switching from versus into routine.
-			-- elseif style == "versus" then
-			--	table.insert(available_styles, {{"ChangeStyle", "Routine"}})
-			--	table.insert(available_styles, {{"ChangeStyle", "Couple"}})
+				table.insert(available_styles, {{"ChangeStyle", "All"}})
+			elseif style == "versus" then
+				-- table.insert(available_styles, {{"ChangeStyle", "Routine"}})
+				-- table.insert(available_styles, {{"ChangeStyle", "Couple"}})
 			end
-			-- table.insert(available_styles, {{"ChangeStyle", "All"}})
+			--table.insert(available_styles, {{"ChangeStyle", "All"}})
 
 		end
 	end
@@ -356,55 +401,42 @@ local t = Def.ActorFrame {
 			-- The first element becomes the top and bottomtext for the category.
 			-- The second element's table contains that options will show under this category.
 			-- It follows the same structure as the top level table.
-			
+
 			-- Casual players often choose the wrong mode and an experienced player in the area may notice this
 			-- and offer to switch them back to casual mode. This allows them to do so again.
 			-- It's technically not possible to reach the sort menu in Casual Mode, but juuust in case let's still
 			-- include the check.
-			{ { "", "GoBack" } },
+			--
+			-- Only show GoBack if we're in 3 key navigation mode, as it's redundant in 5 key.
+			{ { "", "GoBack" }, PREFSMAN:GetPreference("ThreeKeyNavigation") },
 			{ {"NextPlease", "SwitchProfile"}, ThemePrefs.Get("AllowScreenSelectProfile") },
 			{ {"GrooveStats", "Leaderboard"}, function() return GAMESTATE:GetCurrentSong() ~= nil end },
 			{ {"WhereforeArtThou", "SongSearch"}, not GAMESTATE:IsCourseMode() and ThemePrefs.Get("KeyboardFeatures") },
 			{ {"ImLovinIt", "AddFavorite"}, function() return GAMESTATE:GetCurrentSong() ~= nil end},
 			{ {"MixTape", "Preferred"}, AddFavorites },
-			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },	
-			{ 
+			{ {"ChangeMode", "Casual"}, SL.Global.Stages.PlayedThisGame == 0 and SL.Global.GameMode ~= "Casual" },
+			{ {"ChangePlayMode", "Nonstop"}, not GAMESTATE:IsCourseMode() and ChangePlayModeAvailable() },
+			{ {"ChangePlayMode", "Regular"}, GAMESTATE:IsCourseMode() and ChangePlayModeAvailable() },
+			{
 
-				{"", "CategorySorts"}, 
-				{
-					{{"SortBy", "Group"} },
-					{ {"SortBy", "Title"} },
-					{ {"SortBy", "Artist"} },
-					{ {"SortBy", "Genre"} },
-					{ {"SortBy", "BPM"} },
-					{ {"SortBy", "Length"} },
-					{ {"SortBy", "Meter"} },
-					{ {"SortBy", "Popularity"} },
-					{ {"SortBy", "Recent"} },
-					{ {"SortBy", "TopGrades"} },
-				}
+				{"", "CategorySorts"},
+				AddSorts(),
 			},
 			{
 				{"", "CategoryProfile"},
-				{
-					{ {"SortBy", "PopularityP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-					{ {"SortBy", "RecentP1"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-					{ {"SortBy", "TopP1Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_1) end },
-					{ {"SortBy", "PopularityP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{ {"SortBy", "RecentP2"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{ {"SortBy", "TopP2Grades"}, function() return PROFILEMAN:IsPersistentProfile(PLAYER_2) end },
-					{ {"MixTape", "Preferred"}, AddFavorites },
-				}
+				AddProfileEntries(),
 			},
 			{
 				{"", "CategoryAdvanced"},
 				{
 					{ {"FeelingSalty", "TestInput"}, GAMESTATE:IsEventMode() },
 					{ {"HardTime", "PracticeMode"}, PracticeModeAvailable },
-					{ {"TakeABreather", "LoadNewSongs"} },
+					-- Loading songs doesn't work from course mode because it invalidates autogen courses,
+					-- which could delete the currently selected course.
+					{ {"TakeABreather", "LoadNewSongs"}, not GAMESTATE:IsCourseMode() },
 					{ {"NeedMoreRam", "ViewDownloads"}, DownloadsExist },
 					{ {"SetSummaryText", "SetSummary"}, SL.Global.Stages.PlayedThisGame > 0 },
-					{ {"BottomText", "OnlineLobbies"}, ThemePrefs.Get("EnableOnlineLobbies") and GAMESTATE:IsEventMode() },
+					{ {"BottomText", "OnlineLobbies"}, ThemePrefs.Get("EnableOnlineLobbies") and GAMESTATE:IsEventMode() and not GAMESTATE:IsCourseMode() },
 				}
 			},
 			{
@@ -462,7 +494,7 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
-		
+
 		overlay:playcommand("ShowTestInput")
 	end,
 	DirectInputToLeaderboardCommand=function(self)
@@ -474,7 +506,7 @@ local t = Def.ActorFrame {
 			SCREENMAN:set_input_redirected(player, true)
 		end
 		self:playcommand("HideSortMenu")
-		
+
 		overlay:playcommand("ShowLeaderboard")
 	end,
 	-- this returns input back to the engine and its ScreenSelectMusic
@@ -574,6 +606,13 @@ local t = Def.ActorFrame {
 		-- that we want to have focus when the wheel is displayed
 		sort_wheel:set_info_set(filtered_wheel_options, current_sort_order_index)
 	end,
+
+	CurrentSongChangedMessageCommand=function(self)
+		if self:GetVisible() then
+			self:queuecommand("AssessAvailableChoices")
+		end
+	end,
+
 	-- slightly darken the entire screen
 	Def.Quad {
 		InitCommand=function(self) self:FullScreen():diffuse(Color.Black):diffusealpha(0.8) end

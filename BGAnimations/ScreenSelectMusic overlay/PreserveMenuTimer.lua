@@ -13,7 +13,10 @@ local Update = function(self, dt)
 	-- and music wheel exist only on ScreenSelectMusic so there's nothing to do
 	-- in that case.
 	local topscreen = SCREENMAN:GetTopScreen()
-	if topscreen:GetName() ~= 'ScreenSelectMusic' then return end
+	if topscreen:GetName() ~= 'ScreenSelectMusic' and
+		topscreen:GetName() ~= 'ScreenSelectCourse' then
+		return
+	end
 
 	if menuTimerEnabled then
 		SL.Global.MenuTimer.ScreenSelectMusic = topscreen:GetChild("Timer"):GetSeconds()

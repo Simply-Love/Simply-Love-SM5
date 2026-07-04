@@ -261,7 +261,7 @@ return Def.ActorFrame{
 						LoadActor(THEME:GetPathG("", "_VisualStyles/".. ThemePrefs.Get("VisualStyle") .."/SelectColor"))..{
 							InitCommand=function(self)
 								self:align(0,0):zoom(0.09):diffusealpha(0.9):xy(13, 8)
-								if ThemePrefs.Get("VisualStyle") == "SRPG9" then
+								if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 									self:zoom(0.3):xy(5, 0)
 								end
 							end
