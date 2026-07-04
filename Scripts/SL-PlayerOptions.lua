@@ -466,6 +466,7 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	Vocalize = {
 		LayoutType = "ShowOneInRow",
+		HideOnDisable = true,
 		ExportOnChange = true,
 		Choices = function()
 			-- Table of just the names
@@ -476,10 +477,9 @@ local Overrides = {
 			  table.insert(vocalizeNames, key)
 			  count = count + 1
 			end
-			
-			-- If there are no valid vocalizeNames don't show the option
+
 			if count == 0 then
-				return nil
+				return { "Off" }
 			end
 
 			table.sort(vocalizeNames)
@@ -490,6 +490,22 @@ local Overrides = {
 			end
 			
 			return vocalizeNames
+		end,
+		EnabledForPlayers = function()
+			local count = 0
+			local players = {}
+
+			for key, value in pairs(GetVocalizations()) do
+			  count = count + 1
+			end
+
+			if (count > 0) then
+				for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+					players[#players+1] = player
+				end
+			end
+
+			return players
 		end
 	},
 	-------------------------------------------------------------------------
