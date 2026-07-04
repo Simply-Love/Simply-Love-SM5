@@ -29,7 +29,11 @@ function GetDigits(player,speaker)
 		local dec2 = math.floor((score - int) * 100 - dec1 * 10)
 
 		if int == 100 then
-			digits[1] = '100percent' .. math.random(1, vocalizeList[speaker])
+			if vocalizeList[speaker] == 1 then
+				digits[1] = '100percent1'
+			else
+				digits[1] = '100percent' .. math.random(1, vocalizeList[speaker])
+			end
 		else
 			if int < 20 then
 				digits[1] = int;
