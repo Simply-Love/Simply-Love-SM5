@@ -477,6 +477,11 @@ local Overrides = {
 			  count = count + 1
 			end
 			
+			-- If there are no valid vocalizeNames don't show the option
+			if count == 0 then
+				return nil
+			end
+
 			table.sort(vocalizeNames)
 			table.insert(vocalizeNames, 1, "Off")
 			
