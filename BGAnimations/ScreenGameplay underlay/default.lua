@@ -92,4 +92,7 @@ end
 -- add to the ActorFrame last; overlapped by StepStatistics otherwise
 t[#t+1] = LoadActor("./Shared/BPMDisplay.lua")
 
+-- change player options on demand
+t[#t + 1] = LoadActor("./Shared/ReopenPlayerOptions.lua")
+
 return t
