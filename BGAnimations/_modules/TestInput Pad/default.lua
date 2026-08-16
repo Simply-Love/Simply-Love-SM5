@@ -87,6 +87,66 @@ for panel,values in pairs(Highlights) do
 	}
 end
 
+-- Visual dimensions of an edge sensor.
+local EDGE_SENSOR_WIDTH = 28
+local EDGE_SENSOR_HEIGHT = 4
+local EDGE_POS_OFFSET = 28
+
+-- Four edge sensors for each dance panel.
+-- Offsets are relative to the center of the panel.
+local EdgeSensors = {
+	Top = {
+		x = 0,
+		y = -EDGE_POS_OFFSET,
+		rotationz = 0,
+	},
+	Right = {
+		x = EDGE_POS_OFFSET,
+		y = 0,
+		rotationz = 90,
+	},
+	Bottom = {
+		x = 0,
+		y = EDGE_POS_OFFSET,
+		rotationz = 0,
+	},
+	Left = {
+		x = -EDGE_POS_OFFSET,
+		y = 0,
+		rotationz = 90,
+	},
+}
+
+-- render each sensor on top of the panel per player
+for panel, panel_values in pairs(Highlights) do
+	for sensor, sensor_values in pairs(EdgeSensors) do
+		pad[#pad+1] = Def.Quad {
+			InitCommand=function(self)
+				self:xy(
+					panel_values.x + sensor_values.x,
+					panel_values.y + sensor_values.y
+				)
+				self:rotationz(sensor_values.rotationz)
+				self:setsize(EDGE_SENSOR_WIDTH, EDGE_SENSOR_HEIGHT)
+				self:diffuse(0.7, 0.7, 0.7, 0)
+				self:visible(true)
+			end,
+			TestInputEventMessageCommand=function(self, event)
+				-- event.fullState comes from the engine
+				if event.fullState ~= nil then
+					if event.fullState[PlayerNumberToString(player)][panel] ~= nil then
+						-- intensity is the float of "how much" the panel is being pressed
+						-- for normal switches this could be just on/off
+						-- but for analog pads like fsrs it could be a range.
+						local intensity = event.fullState[PlayerNumberToString(player)][panel][sensor] or 0
+						self:diffuse(0.7, 0.7, 0.7, intensity)
+					end
+				end
+			end,
+		}
+	end
+end
+
 af[#af+1] = pad
 
 return af
