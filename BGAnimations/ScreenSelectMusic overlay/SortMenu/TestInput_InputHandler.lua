@@ -15,6 +15,8 @@ local function input(event)
 
 	-- broadcast event data using MESSAGEMAN for the TestInput overlay to listen for
 	if event.type ~= "InputEventType_Repeat" then
+		-- inject per sensor state
+		event.fullState = INPUTFILTER:GetFullSensorState()
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
 

@@ -13,6 +13,8 @@ local InputHandler = function(event)
 	end
 
 	if event.type ~= "InputEventType_Repeat" then
+		-- inject per sensor settings
+		event.fullState = INPUTFILTER:GetFullSensorState()
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
 
