@@ -131,14 +131,14 @@ for panel, panel_values in pairs(Highlights) do
 				self:diffuse(0.7, 0.7, 0.7, 0)
 				self:visible(true)
 			end,
-			TestInputEventMessageCommand=function(self, event)
+			TestSensorEventMessageCommand=function(self, event)
 				-- event.fullState comes from the engine
-				if event.fullState ~= nil then
-					if event.fullState[PlayerNumberToString(player)][panel] ~= nil then
+				if event ~= nil then
+					if event[PlayerNumberToString(player)][panel] ~= nil then
 						-- intensity is the float of "how much" the panel is being pressed
 						-- for normal switches this could be just on/off
 						-- but for analog pads like fsrs it could be a range.
-						local intensity = event.fullState[PlayerNumberToString(player)][panel][sensor] or 0
+						local intensity = event[PlayerNumberToString(player)][panel][sensor] or 0
 						self:diffuse(0.7, 0.7, 0.7, intensity)
 					end
 				end

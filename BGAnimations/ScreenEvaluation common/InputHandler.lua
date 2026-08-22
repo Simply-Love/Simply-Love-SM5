@@ -207,10 +207,11 @@ return function(event)
 	end
 
 	if PREFSMAN:GetPreference("OnlyDedicatedMenuButtons") and event.type ~= "InputEventType_Repeat" then
-		-- inject per sensor state
-		event.fullState = INPUTFILTER:GetFullSensorState()
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
+
+	-- for debugging individual sensor states.
+	MESSAGEMAN:Broadcast("TestSensorEvent", INPUTFILTER:GetFullSensorState())
 
 	return false
 end
