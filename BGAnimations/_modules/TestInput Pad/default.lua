@@ -115,7 +115,28 @@ local EdgeSensors = {
 		y = 0,
 		rotationz = 90,
 	},
+	Center = {
+		x = 0,
+		y = 0,
+		rotationz = 90,
+	},
 }
+
+local function TestSensorEvent(self, event, player, panel, sensor)
+    if event == nil then
+        return
+    end
+
+    local playerState = event[PlayerNumberToString(player)]
+
+    if playerState == nil or playerState[panel] == nil then
+        return
+    end
+
+    local intensity = playerState[panel][sensor] or 0
+
+    self:diffuse(0.7, 0.7, 0.7, intensity)
+end
 
 -- render each sensor on top of the panel per player
 for panel, panel_values in pairs(Highlights) do
@@ -132,16 +153,10 @@ for panel, panel_values in pairs(Highlights) do
 				self:visible(true)
 			end,
 			TestSensorEventMessageCommand=function(self, event)
-				-- event.fullState comes from the engine
-				if event ~= nil then
-					if event[PlayerNumberToString(player)][panel] ~= nil then
-						-- intensity is the float of "how much" the panel is being pressed
-						-- for normal switches this could be just on/off
-						-- but for analog pads like fsrs it could be a range.
-						local intensity = event[PlayerNumberToString(player)][panel][sensor] or 0
-						self:diffuse(0.7, 0.7, 0.7, intensity)
-					end
-				end
+				TestSensorEvent(self, event, player, panel, sensor)
+			end,
+			TestSensorRedrawEventMessageCommand=function(self, event)
+				TestSensorEvent(self, INPUTFILTER:GetFullSensorState(), player, panel, sensor)
 			end,
 		}
 	end
