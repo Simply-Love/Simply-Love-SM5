@@ -200,6 +200,12 @@ SL_CustomPrefs.Get = function()
 			Choices = map(SecondsToMSS, range(15, 90, 5)),
 			Values  = range(15, 90, 5),
 		},
+		PreGameMenuTimer =
+		{
+			Default = 20,
+			Choices = map(SecondsToMSS, range(5, 90, 5)),
+			Values  = range(5, 90, 5),
+		},
 		ScreenSelectMusicMenuTimer =
 		{
 			Default = 300,
