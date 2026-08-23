@@ -51,13 +51,13 @@ local HighScore = Def.ActorFrame{
 
 				-- hsl:GetHighScores() will return a table of HighScore objects ordered like {score#1, score#2, ...}
 				-- we're only interested in the best score per difficulty per song, so we want hsl:GetHighScores()[1]
-				local top_score = (hsl and (#hsl:GetHighScores() > 1)) and hsl:GetHighScores()[1]
+				local top_score = (hsl and (#hsl:GetHighScores() > 0)) and hsl:GetHighScores()[1]
 				local difficulty = ToEnumShortString(steps:GetDifficulty())
 
 				if top_score then
 
 					local text =  top_score:GetName() .. "\n" .. FormatPercentScore( top_score:GetPercentDP() )
-					self:GetChild("HighScore_"..difficulty):settext( text )
+					self:GetChild("HighScore_"..difficulty):hibernate(0):settext( text )
 
 				else
 					-- if there's no top_score for this particular difficulty of this particular chart
