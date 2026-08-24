@@ -162,6 +162,9 @@ local GlobalDefaults = {
 			self.MusicWheelLocked = false
 			
 			self.GameplayReloadCheck = false
+			-- in pay mode cannot return to music wheel after open PlayerOptions from Gameplay
+			self.GameplayForcePlayerOptions = false
+
 			-- How long to wait before displaying a "cue"
 			self.ColumnCueMinTime = 1.5
 
