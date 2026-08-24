@@ -88,7 +88,7 @@ for panel,values in pairs(Highlights) do
 end
 
 -- Visual dimensions of an edge sensor.
-local EDGE_SENSOR_WIDTH = 28
+local EDGE_SENSOR_WIDTH = 26
 local EDGE_SENSOR_HEIGHT = 4
 local EDGE_POS_OFFSET = 28
 
@@ -115,8 +115,43 @@ local EdgeSensors = {
 		y = 0,
 		rotationz = 90,
 	},
-	Center = {
+		TopCenter = {
 		x = 0,
+		y = -EDGE_POS_OFFSET,
+		rotationz = 0,
+	},
+	TopLeft = {
+		x = -EDGE_POS_OFFSET * 0.707,
+		y = -EDGE_POS_OFFSET * 0.707,
+		rotationz = -45,
+	},
+	TopRight = {
+		x = EDGE_POS_OFFSET * 0.707,
+		y = -EDGE_POS_OFFSET * 0.707,
+		rotationz = 45,
+	},
+	RightCenter = {
+		x = EDGE_POS_OFFSET,
+		y = 0,
+		rotationz = 90,
+	},
+	BottomRight = {
+		x = EDGE_POS_OFFSET * 0.707,
+		y = EDGE_POS_OFFSET * 0.707,
+		rotationz = -45,
+	},
+	BottomCenter = {
+		x = 0,
+		y = EDGE_POS_OFFSET,
+		rotationz = 0,
+	},
+	BottomLeft = {
+		x = -EDGE_POS_OFFSET * 0.707,
+		y = EDGE_POS_OFFSET * 0.707,
+		rotationz = 45,
+	},
+	LeftCenter = {
+		x = -EDGE_POS_OFFSET,
 		y = 0,
 		rotationz = 90,
 	},
