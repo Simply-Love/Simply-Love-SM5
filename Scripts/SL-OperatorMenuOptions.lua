@@ -369,6 +369,36 @@ OperatorMenuOptionRows.MemoryCards = function()
 	}
 end
 
+OperatorMenuOptionRows.CustomSongsMaxCount = function()
+	local choices = {10, 25, 50, 100, 150, 300, 500, 1000, 2000}
+
+	-- accommodate custom values rather than steamrolling over them
+	local pref = PREFSMAN:GetPreference("CustomSongsMaxCount")
+	if not FindInTable(pref, choices) then table.insert(choices, pref) end
+
+	return {
+		Name="CustomSongsMaxCount",
+		Choices=choices,
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		LoadSelections = function(self, list, pn)
+			local pref = PREFSMAN:GetPreference("CustomSongsMaxCount")
+			local i = FindInTable(pref, choices) or 1
+			list[i] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			for i=1, #choices do
+				if list[i] then
+					PREFSMAN:SetPreference("CustomSongsMaxCount", choices[i])
+					break
+				end
+			end
+		end,
+	}
+end
+
 
 OperatorMenuOptionRows.CustomSongsMaxSeconds = function()
 	-- first, define a reasonable range of 1:45 to 15:00
