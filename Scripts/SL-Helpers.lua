@@ -580,6 +580,79 @@ end
 
 
 -- -----------------------------------------------------------------------
+-- GetVocalizations returns a dictionary of strings that match valid Vocalization directories where:
+-- Key = Directory Name
+-- Value = # of quad vocalizations
+--
+-- a valid Vocalization must:
+--   • have its assets in a unique directory at ./Sounds/Vocalize/
+--   • include ogg files for 0..20, 30, 40, 50, 60, 70, 80, 90, point
+--   • have at least one ogg file for quads: 100percent1.ogg
+--   • Optional: additional quad vocalizations: 100percent2.ogg, 100percent3.ogg, etc. 
+
+GetVocalizations = function()
+	local path = THEME:GetCurrentThemeDirectory().."Sounds/Vocalize/"
+	local dirs = FILEMAN:GetDirListing(path, true, false)
+	local voices = {}
+
+	for directory_name in ivalues(dirs) do
+		local files = FILEMAN:GetDirListing(path..directory_name.."/")
+		local total_required = 30
+		local quads = 0
+		local required_files = {
+			['0.ogg'] = true,
+			['1.ogg'] = true,
+			['2.ogg'] = true,
+			['3.ogg'] = true,
+			['4.ogg'] = true,
+			['5.ogg'] = true,
+			['6.ogg'] = true,
+			['7.ogg'] = true,
+			['8.ogg'] = true,
+			['9.ogg'] = true,
+			['10.ogg'] = true,
+			['11.ogg'] = true,
+			['12.ogg'] = true,
+			['13.ogg'] = true,
+			['14.ogg'] = true,
+			['15.ogg'] = true,
+			['16.ogg'] = true,
+			['17.ogg'] = true,
+			['18.ogg'] = true,
+			['19.ogg'] = true,
+			['20.ogg'] = true,
+			['30.ogg'] = true,
+			['40.ogg'] = true,
+			['50.ogg'] = true,
+			['60.ogg'] = true,
+			['70.ogg'] = true,
+			['80.ogg'] = true,
+			['90.ogg'] = true,
+			['100percent1.ogg'] = true,
+			['point.ogg'] = true,
+		}
+
+		for filename in ivalues(files) do
+			if required_files[filename] then
+				required_files[filename] = nil
+				total_required = total_required - 1
+			end
+			
+			if string.sub(filename, 1, 10) == '100percent' then
+				quads = quads + 1
+			end
+		end
+
+		if total_required == 0 then
+			voices[directory_name] = quads
+		end
+	end
+
+	return voices
+end
+
+
+-- -----------------------------------------------------------------------
 IsHumanPlayer = function(player)
 	return GAMESTATE:GetPlayerState(player):GetPlayerController() == "PlayerController_Human"
 end
