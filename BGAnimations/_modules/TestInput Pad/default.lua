@@ -92,30 +92,11 @@ local EDGE_SENSOR_WIDTH = 26
 local EDGE_SENSOR_HEIGHT = 4
 local EDGE_POS_OFFSET = 28
 
--- Four edge sensors for each dance panel.
+-- Edge sensors for each dance panel.
 -- Offsets are relative to the center of the panel.
+-- 0.707 is ~ 1/sqrt(2) for the diagonals.
 local EdgeSensors = {
-	Top = {
-		x = 0,
-		y = -EDGE_POS_OFFSET,
-		rotationz = 0,
-	},
-	Right = {
-		x = EDGE_POS_OFFSET,
-		y = 0,
-		rotationz = 90,
-	},
-	Bottom = {
-		x = 0,
-		y = EDGE_POS_OFFSET,
-		rotationz = 0,
-	},
-	Left = {
-		x = -EDGE_POS_OFFSET,
-		y = 0,
-		rotationz = 90,
-	},
-		TopCenter = {
+	TopCenter = {
 		x = 0,
 		y = -EDGE_POS_OFFSET,
 		rotationz = 0,
