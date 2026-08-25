@@ -210,5 +210,8 @@ return function(event)
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
 
+	-- for debugging individual sensor states.
+	MESSAGEMAN:Broadcast("TestSensorEvent", INPUTFILTER:GetFullSensorState())
+
 	return false
 end

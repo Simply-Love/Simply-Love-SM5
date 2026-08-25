@@ -15,6 +15,9 @@ local InputHandler = function(event)
 	if event.type ~= "InputEventType_Repeat" then
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
+	
+	-- for debugging individual sensor states.
+	MESSAGEMAN:Broadcast("TestSensorEvent", INPUTFILTER:GetFullSensorState())
 
 	if event.button == "" then
 		local key = ("%s %s"):format(ToEnumShortString(event.DeviceInput.device), ToEnumShortString(event.DeviceInput.button))

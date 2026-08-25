@@ -87,6 +87,97 @@ for panel,values in pairs(Highlights) do
 	}
 end
 
+-- Visual dimensions of an edge sensor.
+local EDGE_SENSOR_WIDTH = 26
+local EDGE_SENSOR_HEIGHT = 4
+local EDGE_POS_OFFSET = 28
+
+-- Edge sensors for each dance panel.
+-- Offsets are relative to the center of the panel.
+-- 0.707 is ~ 1/sqrt(2) for the diagonals.
+local EdgeSensors = {
+	TopCenter = {
+		x = 0,
+		y = -EDGE_POS_OFFSET,
+		rotationz = 0,
+	},
+	TopLeft = {
+		x = -EDGE_POS_OFFSET * 0.707,
+		y = -EDGE_POS_OFFSET * 0.707,
+		rotationz = -45,
+	},
+	TopRight = {
+		x = EDGE_POS_OFFSET * 0.707,
+		y = -EDGE_POS_OFFSET * 0.707,
+		rotationz = 45,
+	},
+	RightCenter = {
+		x = EDGE_POS_OFFSET,
+		y = 0,
+		rotationz = 90,
+	},
+	BottomRight = {
+		x = EDGE_POS_OFFSET * 0.707,
+		y = EDGE_POS_OFFSET * 0.707,
+		rotationz = -45,
+	},
+	BottomCenter = {
+		x = 0,
+		y = EDGE_POS_OFFSET,
+		rotationz = 0,
+	},
+	BottomLeft = {
+		x = -EDGE_POS_OFFSET * 0.707,
+		y = EDGE_POS_OFFSET * 0.707,
+		rotationz = 45,
+	},
+	LeftCenter = {
+		x = -EDGE_POS_OFFSET,
+		y = 0,
+		rotationz = 90,
+	},
+}
+
+local function TestSensorEvent(self, event, player, panel, sensor)
+    if event == nil then
+        return
+    end
+
+    local playerState = event[PlayerNumberToString(player)]
+
+    if playerState == nil or playerState[panel] == nil then
+        return
+    end
+
+    local intensity = playerState[panel][sensor] or 0
+
+    self:diffuse(0.7, 0.7, 0.7, intensity)
+end
+
+-- render each sensor on top of the panel per player
+for panel, panel_values in pairs(Highlights) do
+	for sensor, sensor_values in pairs(EdgeSensors) do
+		pad[#pad+1] = Def.Quad {
+			InitCommand=function(self)
+				self:xy(
+					panel_values.x + sensor_values.x,
+					panel_values.y + sensor_values.y
+				)
+				self:rotationz(sensor_values.rotationz)
+				self:setsize(EDGE_SENSOR_WIDTH, EDGE_SENSOR_HEIGHT)
+				self:diffuse(0.7, 0.7, 0.7, 0)
+				self:visible(true)
+			end,
+			TestSensorEventMessageCommand=function(self, event)
+				TestSensorEvent(self, event, player, panel, sensor)
+			end,
+			TestSensorRedrawEventMessageCommand=function(self, event)
+				TestSensorEvent(self, INPUTFILTER:GetFullSensorState(), player, panel, sensor)
+			end,
+		}
+	end
+end
+
 af[#af+1] = pad
 
 return af

@@ -6,8 +6,14 @@ if not (game=="dance" or game=="pump" or game=="techno") then return end
 local af = Def.ActorFrame{
 	Name="TestInput",
 	InitCommand=function(self) self:visible(false) end,
-	ShowTestInputCommand=function(self) self:visible(true) end,
-	HideTestInputCommand=function(self) self:visible(false) end,
+	ShowTestInputCommand=function(self) 
+		INPUTMAN:StartSensorTest()
+		self:visible(true) 
+	end,
+	HideTestInputCommand=function(self)
+		INPUTMAN:StopSensorTest()
+		self:visible(false) 
+	end,
 
 	Def.Quad{ InitCommand=function(self) self:FullScreen():diffuse(0,0,0,0.875) end },
 	LoadFont("Common Normal")..{

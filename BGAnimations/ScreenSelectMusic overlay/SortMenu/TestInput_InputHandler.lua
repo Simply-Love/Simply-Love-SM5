@@ -18,6 +18,9 @@ local function input(event)
 		MESSAGEMAN:Broadcast("TestInputEvent", event)
 	end
 
+	-- for debugging individual sensor states.
+	MESSAGEMAN:Broadcast("TestSensorEvent", INPUTFILTER:GetFullSensorState())
+
 	-- pressing Start or Back (typically Esc on a keyboard) will queue "DirectInputToEngine"
 	-- but only if the event.type is not a Release
 	-- as soon as TestInput is activated via the SortMenu, the player is likely still holding Start
