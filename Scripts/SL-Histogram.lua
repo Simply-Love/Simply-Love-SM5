@@ -56,41 +56,36 @@ local function gen_vertices(player, width, height, Steps, desaturation)
 			purple = Desaturate(purple, desaturation)
 		end
 
-		local upper
+		local pixel_scale = 3840 / width
+
+		local bucket_x, prev_bucket_x
 
 		for i, nps in ipairs(NPSperMeasure) do
 
 			if nps > 0 then first_step_has_occurred = true end
 
 			if first_step_has_occurred then
-				-- i will represent the current measure number but will be 1 larger than
-				-- it should be (measures in SM start at 0; indexed Lua tables start at 1)
-				-- subtract 1 from i now to get the actual measure number to calculate time
 				t = TimingData:GetElapsedTimeFromBeat((i-1)*4)
 
 				x = scale(t, FirstSecond, LastSecond, 0, width)
 				y = round(-1 * scale(nps, 0, PeakNPS, 0, height))
+				bucket_x = round(x * pixel_scale)
 
-				-- if the height of this measure is the same as the previous two measures
-				-- we don't need to add two more points (bottom and top) to the verts table,
-				-- we can just "extend" the previous two points by updating their x position
-				-- to that of the current measure.  For songs with long streams, this should
-				-- cut down on the overall size of the verts table significantly.
-				if #verts > 2 and verts[#verts][1][2] == y and verts[#verts-2][1][2] == y then
-					verts[#verts][1][1] = x
-					verts[#verts-1][1][1] = x
-				else
-					-- lerp_color() is a global function defined by the SM engine that takes three arguments:
-					--    a float between [0,1]
-					--    color1
-					--    color2
-					-- and returns a color that has been linearly interpolated by that percent between the two colors provided
-					-- for example, lerp_color(0.5, yellow, orange) will return the color that is halfway between yellow and orange
-					upper = lerp_color(math.abs(y/height), blue, purple )
-
-					verts[#verts+1] = {{x, 0, 0}, blue} -- bottom of graph (blue)
-					verts[#verts+1] = {{x, y, 0}, upper}  -- top of graph (somewhere between blue and purple)
+				if prev_bucket_x == nil or bucket_x ~= prev_bucket_x then
+					-- if the height of this measure is the same as the previous two measures
+					-- we don't need to add two more points (bottom and top) to the verts table,
+					-- we can just "extend" the previous two points by updating their x position
+					-- to that of the current measure.
+					if #verts > 2 and verts[#verts][1][2] == y and verts[#verts-2][1][2] == y then
+						verts[#verts][1][1] = x
+						verts[#verts-1][1][1] = x
+					else
+						verts[#verts+1] = {{x, 0, 0}, blue}
+						verts[#verts+1] = {{x, y, 0}, lerp_color(math.abs(y/height), blue, purple)}
+					end
 				end
+
+				prev_bucket_x = bucket_x
 			end
 		end
 
