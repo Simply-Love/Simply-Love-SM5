@@ -464,6 +464,51 @@ local Overrides = {
 		end
 	},
 	-------------------------------------------------------------------------
+	Vocalize = {
+		LayoutType = "ShowOneInRow",
+		HideOnDisable = true,
+		ExportOnChange = true,
+		Choices = function()
+			-- Table of just the names
+			local vocalizeNames = {}
+			local count = 0
+
+			for key, value in pairs(GetVocalizations()) do
+			  table.insert(vocalizeNames, key)
+			  count = count + 1
+			end
+
+			if count == 0 then
+				return { "Off" }
+			end
+
+			table.sort(vocalizeNames)
+			table.insert(vocalizeNames, 1, "Off")
+			
+			if count > 1 then
+				table.insert(vocalizeNames, "Random")
+			end
+			
+			return vocalizeNames
+		end,
+		EnabledForPlayers = function()
+			local count = 0
+			local players = {}
+
+			for key, value in pairs(GetVocalizations()) do
+			  count = count + 1
+			end
+
+			if (count > 0) then
+				for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+					players[#players+1] = player
+				end
+			end
+
+			return players
+		end
+	},
+	-------------------------------------------------------------------------
 	Hide = {
 		SelectType = "SelectMultiple",
 		Values = { "Targets", "SongBG", "Combo", "Lifebar", "Score", "Danger", "ComboExplosions" },
