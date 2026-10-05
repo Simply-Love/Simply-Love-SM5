@@ -172,7 +172,9 @@ local ChangeVariant = function(pn, direction)
 		if NOTESKIN:HasVariants(noteskin_name) then
 			variants_def[pn] = NOTESKIN:GetVariantNamesForNoteSkin(noteskin_name)
 			-- Put the current NoteSkin at the front of the list of variants so that it's the default selection when we refresh the OptionRow
-			table.insert(variants_def[pn], 1, noteskin_name)
+			if not IsRoutine() then
+				table.insert(variants_def[pn], 1, noteskin_name)
+			end
 		else
 			variants_def[pn] = {noteskin_name}
 		end
