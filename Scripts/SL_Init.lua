@@ -172,6 +172,10 @@ local GlobalDefaults = {
 			-- used to track active OptionRow index when navigating the Operator Menu's many screens and sub-screens
 			-- shaped like: { ScreenOptionsService=3, ScreenVisualOptions=1 }
 			self.PrevScreenOptionsServiceRow = {}
+			
+			-- keep in memory latest song search params
+	    	-- reset every game session
+		    self.SongSearchParams = {}
 		end,
 
 		-- These values outside initialize() won't be reset each game cycle,

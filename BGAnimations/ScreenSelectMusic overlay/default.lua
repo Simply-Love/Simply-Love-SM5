@@ -43,6 +43,10 @@ local af = Def.ActorFrame{
 		SCREENMAN:GetTopScreen():SetNextScreenName("ScreenReloadSSM")
 		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 	end,
+	CancelCommand = function(self)
+	    -- reset SongSearchParams on leave
+	    self.SongSearchParams = {}
+	end,
 	-- ---------------------------------------------------
 	--  first, load files that contain no visual elements, just code that needs to run
 
@@ -85,8 +89,6 @@ local af = Def.ActorFrame{
 	-- The GrooveStats leaderboard that can (maybe) be accessed from the SortMenu
 	-- This is only added in "dance" mode and if the service is available.
 	LoadActor("./Leaderboard.lua"),
-
-	LoadActor("./SongSearch/default.lua"),
 }
 
 return af
