@@ -19,33 +19,42 @@ local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
 -- In Routine (couples) mode, default players to the red and blue couples skins
 -- if they aren't already on a couples noteskin.
 if IsRoutine() then
+	local current_skins = {}
+	for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		table.insert(current_skins, SL[ToEnumShortString(player)].ActiveModifiers.NoteSkin or "")
+	end
+
+	local only_on_couples = false
 	local couples_noteskin
 	for skin in ivalues(NOTESKIN:GetNoteSkinNames(false)) do
 		if skin:lower() == "couples" then
 			couples_noteskin = skin
-			break
 		end
-	end
-
-	if couples_noteskin then
-		local already_on_couples = true
-		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-			local current = SL[ToEnumShortString(player)].ActiveModifiers.NoteSkin or ""
-			if current:lower() ~= couples_noteskin:lower() then
-				already_on_couples = false
+		-- Take advantage of GetNoteSkinNames returning only "IsRoutineNoteSkin=true" noteskins
+		-- to check if players are using a couples noteskin.
+		local only_this_skin = true
+		for current in ivalues(current_skins) do
+			if current:lower() ~= skin:lower() then
+				only_this_skin = false
 				break
 			end
 		end
 
-		if not already_on_couples then
-			local variants = NOTESKIN:GetVariantNamesForNoteSkin(couples_noteskin) or {}
-			local defaults = { P1 = "couples_blue", P2 = "couples_red" }
-			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
-				local pn = ToEnumShortString(player)
-				SL[pn].ActiveModifiers.NoteSkin = couples_noteskin
-				if defaults[pn] then
-					SL[pn].ActiveModifiers.NoteSkinVariant = defaults[pn]
-				end
+		if only_this_skin then
+			only_on_couples = true
+			-- don't need to find couples_noteskin anymore so this is okay
+			break
+		end
+	end
+
+	if not only_on_couples and couples_noteskin then
+		local variants = NOTESKIN:GetVariantNamesForNoteSkin(couples_noteskin) or {}
+		local defaults = { P1 = "couples_blue", P2 = "couples_red" }
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local pn = ToEnumShortString(player)
+			SL[pn].ActiveModifiers.NoteSkin = couples_noteskin
+			if defaults[pn] then
+				SL[pn].ActiveModifiers.NoteSkinVariant = defaults[pn]
 			end
 		end
 	end
