@@ -39,7 +39,7 @@ if IsRoutine() then
 
 		if not already_on_couples then
 			local variants = NOTESKIN:GetVariantNamesForNoteSkin(couples_noteskin) or {}
-			local defaults = { P1 = "couples__blue", P2 = "couples__red" }
+			local defaults = { P1 = "couples_blue", P2 = "couples_red" }
 			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 				local pn = ToEnumShortString(player)
 				SL[pn].ActiveModifiers.NoteSkin = couples_noteskin
