@@ -16,6 +16,11 @@ local SecondsToHMMSS = SecondsToHMMSS or function(s)
 end
 
 local UpdateTimer = function(af, dt)
+	if PremiumFreeActive() then
+		bmt_actor:settext(SecondsToMMSS(PremiumFreeSecondsLeft()))
+		return
+	end
+
 	local seconds = GetTimeSinceStart() - (SL.Global.TimeAtSessionStart or GetTimeSinceStart())
 
 	-- if this game session is less than 1 hour in duration so far
@@ -36,14 +41,16 @@ end
 
 local af = Def.ActorFrame{ OffCommand=function(self) self:linear(0.1):diffusealpha(0) end }
 
--- only add this InitCommand to the main ActorFrame in EventMode
-if PREFSMAN:GetPreference("EventMode") then
+-- only add this InitCommand to the main ActorFrame when a header timer is needed
+if PREFSMAN:GetPreference("EventMode") or PremiumFreeActive() then
 	af.InitCommand=function(self)
-		-- TimeAtSessionStart will be reset to nil between game sessions
-		-- thus, if it's currently nil, we're loading ScreenSelectMusic
-		-- for the first time this particular game session
-		if SL.Global.TimeAtSessionStart == nil then
-			SL.Global.TimeAtSessionStart = GetTimeSinceStart()
+		if not PremiumFreeActive() then
+			-- TimeAtSessionStart will be reset to nil between game sessions
+			-- thus, if it's currently nil, we're loading ScreenSelectMusic
+			-- for the first time this particular game session
+			if SL.Global.TimeAtSessionStart == nil then
+				SL.Global.TimeAtSessionStart = GetTimeSinceStart()
+			end
 		end
 
 		self:SetUpdateFunction( UpdateTimer )
@@ -55,8 +62,8 @@ end
 af[#af+1] = LoadActor( THEME:GetPathG("", "_header.lua") )
 
 -- centered text
--- session timer in EventMode
-if PREFSMAN:GetPreference("EventMode") then
+-- session timer in EventMode, countdown timer in Premium-Free
+if PREFSMAN:GetPreference("EventMode") or PremiumFreeActive() then
 
 	af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 		Name="Session Timer",
@@ -92,7 +99,7 @@ end
 -- "ITG" aligned to right of screen
 af[#af+1] = LoadFont("Common Header")..{
 	Name="GameModeText",
-	Text=THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode),
+	Text=THEME:GetString("ScreenSelectPlayMode", PremiumFreeActive() and "PremiumFree" or SL.Global.GameMode),
 	InitCommand=function(self)
 		self:diffusealpha(0):halign(1):y(15)
 		self:zoom( SL_WideScale(0.5, 0.6) )
@@ -108,7 +115,7 @@ af[#af+1] = LoadFont("Common Header")..{
 		self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 	end,
 	SLGameModeChangedMessageCommand=function(self)
-		self:settext(THEME:GetString("ScreenSelectPlayMode", SL.Global.GameMode))
+		self:settext(THEME:GetString("ScreenSelectPlayMode", PremiumFreeActive() and "PremiumFree" or SL.Global.GameMode))
 	end
 }
 
