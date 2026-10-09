@@ -81,11 +81,12 @@ local histogram_amv = Scrolling_NPS_Histogram(player, width, height)..{
 		self:xy( LifeLineThickness/2, height )
 		self:diffusealpha(FilterAlpha)
 	end,
-	PeakNPSUpdatedMessageCommand=function(self) self:queuecommand("Size") end,
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self) self:queuecommand("Size") end,
 	SizeCommand=function(self)
 		if BothUsingStepStats then
-			local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
-			local their_peak = GAMESTATE:Env()[ToEnumShortString(OtherPlayer[player]).."PeakNPS"]
+			local other_player = OtherPlayer[player]
+			local my_peak = GetCurrentChartSteps(player):GetPeakNps(player)
+			local their_peak = GetCurrentChartSteps(other_player):GetPeakNps(other_player)
 
 			if my_peak < their_peak then
 				self:zoomtoheight(my_peak/their_peak)
@@ -110,13 +111,8 @@ local text = LoadFont("Common Normal")..{
 			self:halign( PlayerNumber:Reverse()[player] )
 		end
 	end,
-	PeakNPSUpdatedMessageCommand=function(self)
-		local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
-
-		if my_peak == nil then
-			self:settext("")
-			return
-		end
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
+		local my_peak = GetCurrentChartSteps(player):GetPeakNps(player)
 
 		if player == PLAYER_1 or style == "double" then
 			self:x(_screen.w*0.5 - SL_WideScale(6,59))
