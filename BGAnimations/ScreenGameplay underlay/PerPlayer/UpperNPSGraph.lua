@@ -65,8 +65,9 @@ return Def.ActorFrame{
 			self:zoomtoheight(1)
 
 			if #GAMESTATE:GetHumanPlayers()==2 and SL.P1.ActiveModifiers.NPSGraphAtTop and SL.P2.ActiveModifiers.NPSGraphAtTop then
-				local my_peak = GAMESTATE:Env()[pn.."PeakNPS"]
-				local their_peak = GAMESTATE:Env()[ToEnumShortString(OtherPlayer[player]).."PeakNPS"]
+				local other_player = OtherPlayer[player]
+				local my_peak = GetCurrentChartSteps(player):GetPeakNps(player)
+				local their_peak = GetCurrentChartSteps(other_player):GetPeakNps(other_player)
 
 				if my_peak < their_peak then
 					self:zoomtoheight(my_peak/their_peak)
