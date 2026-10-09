@@ -144,7 +144,7 @@ local text = LoadFont("Common Normal")..{
 
 local graph_and_lifeline = Def.ActorFrame{
 
-	CurrentSongChangedMessageCommand=function(self)
+	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
 		local song = GAMESTATE:GetCurrentSong()
 		first_second = math.min(song:GetTimingData():GetElapsedTimeFromBeat(0), 0)
 		last_second = song:GetLastSecond()
