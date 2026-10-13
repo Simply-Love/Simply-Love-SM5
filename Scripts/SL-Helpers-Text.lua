@@ -90,9 +90,10 @@ BitmapText._wrapwidthpixels = function(bmt, w)
 		local lower = 200
 		local upper = 240
 		bmt:settext("")
+		local nextCharacter = text:utf8gensub()
 
 		for i=1, text:utf8len() do
-			local c = text:utf8sub(i,i)
+			local c = nextCharacter()
 			local b = c:byte()
 
 			-- if adding this character causes the displayed string to be wider than allowed
@@ -105,18 +106,23 @@ BitmapText._wrapwidthpixels = function(bmt, w)
 				else
 					-- otherwise it's trickier, as romance languages only really allow newlines
 					-- to be inserted between words, not in the middle of single words
-					-- we'll have to "peel back" a character at a time until we hit whitespace
-					-- or something in the jp range
+					-- Find the last whitespace or JP character at or before i in one pass.
+					-- Keep that character limit even after inserting newlines.
 					local _text = bmt:GetText()
+					local breakByte
+					local j = 0
 
-					for j=i,1,-1 do
-						local _c = _text:utf8sub(j,j)
+					for _c, _, lastByte in _text:utf8gensub() do
+						j = j + 1
 						local _b = _c:byte()
 
 						if _c:match("%s") or (_b < upper and _b >= lower) then
-							bmt:settext( _text:utf8sub(1,j) .. "\n" .. _text:utf8sub(j+1) )
-							break
+							breakByte = lastByte
 						end
+						if j == i then break end
+					end
+					if breakByte then
+						bmt:settext( _text:sub(1,breakByte) .. "\n" .. _text:sub(breakByte+1) )
 					end
 				end
 			end
@@ -146,8 +152,8 @@ BitmapText.Truncate = function(bmt, m)
 		local lower = 200
 		local upper = 240
 
-		for i=1, text:utf8len() do
-			local b = text:utf8sub(i,i):byte()
+		for c in text:utf8gensub() do
+			local b = c:byte()
 			l = l + ((b < upper and b >= lower) and 4 or 1)
 		end
 		m = math.floor(m * (m/l))
