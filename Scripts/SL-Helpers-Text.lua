@@ -11,15 +11,21 @@
 
 DiffuseEmojis = function(bmt, text)
 	text = text or bmt:GetText()
+	-- Validate the whole string before adding attributes, as before.
+	local length = text:utf8len()
+	if length == 0 then return end
+	-- Advance through the string instead of rescanning its prefix for each character.
+	local nextCharacter = text:utf8gensub()
 
 	-- loop through each char in the string, checking for emojis; if any are found
 	-- don't diffuse that char to be any specific color by selectively diffusing it to be {1,1,1,1}
-	for i=1, text:utf8len() do
+	for i=1, length do
 		-- FIXME: Similar to _wrapwidthpixels(), if you can implement a proper utf8-friendly fix,
 		--        please submit a pull request because I certainly don't know what I'm doing.
 		-- utf8 encoded emojis start with a 0xe2 or 0xf0 byte, see
 		-- https://apps.timwhitlock.info/emoji/tables/unicode
-		if text:utf8sub(i, i):byte() == 0xe2 or text:utf8sub(i, i):byte() == 0xf0 then
+		local byte = nextCharacter():byte()
+		if byte == 0xe2 or byte == 0xf0 then
 			bmt:AddAttribute(i-1, { Length=1, Diffuse={1,1,1,1} } )
 		end
 	end
