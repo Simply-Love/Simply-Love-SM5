@@ -59,10 +59,12 @@ end
 -- -----------------------------------------------------------------------
 -- determines which timing_window an offset value (number) belongs to
 -- used by the judgment scatter plot and offset histogram in ScreenEvaluation
+-- optionally accepts timing windows captured for a batch of offsets
 
-DetermineTimingWindow = function(offset)
+DetermineTimingWindow = function(offset, timing_windows)
 	for i=1,NumJudgmentsAvailable() do
-		if math.abs(offset) <= GetTimingWindow(i) then
+		local window = timing_windows and timing_windows[i] or GetTimingWindow(i)
+		if math.abs(offset) <= window then
 			return i
 		end
 	end
@@ -79,11 +81,11 @@ end
 -- -----------------------------------------------------------------------
 -- get worst timing judgment hit for a song
 
-GetWorstJudgment = function(offsets)
+GetWorstJudgment = function(offsets, timing_windows)
 	local worst_judgment = 1
 	for i in ivalues(offsets) do
 		if i[2] ~= "Miss" then
-			local judgment = DetermineTimingWindow(i[2])
+			local judgment = DetermineTimingWindow(i[2], timing_windows)
 			if worst_judgment < judgment then
 				worst_judgment = judgment
 			end
