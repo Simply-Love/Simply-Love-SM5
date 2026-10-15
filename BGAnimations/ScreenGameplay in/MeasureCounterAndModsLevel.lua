@@ -6,7 +6,8 @@ return function(SongNumberInCourse)
 		-- in this way, we can override the effects of songs that forced modifiers during gameplay
 		-- the old-school (ie. ITG) way of GAMESTATE:ApplyGameCommand()
 		local pn = ToEnumShortString(player)
-		SL[pn].PlayerOptionsString = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
+		SL[pn].PlayerOptionsStringKey = GetPlayerOptionsStringKey(player)
+		SL[pn][SL[pn].PlayerOptionsStringKey] = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
 
 		-- Check if MeasureCounter are turned on.
 		-- We may need to parse the chart

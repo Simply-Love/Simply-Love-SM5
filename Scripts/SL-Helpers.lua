@@ -910,6 +910,21 @@ IsGameAndMenuButton = function(localized_btn)
 end
 
 -- -----------------------------------------------------------------------
+-- Single, versus, solo, and couple share the original option string.
+GetPlayerOptionsStringKey = function(player)
+	local style = GAMESTATE:GetCurrentStyle(player)
+	if style then
+		local style_type = style:GetStyleType()
+		if style_type == "StyleType_OnePlayerTwoSides" then
+			return "PlayerOptionsStringDouble"
+		elseif style_type == "StyleType_TwoPlayersSharedSides" then
+			return "PlayerOptionsStringRoutine"
+		end
+	end
+	return "PlayerOptionsString"
+end
+
+-- -----------------------------------------------------------------------
 -- Returns a stringified form of a player's selected options.
 GetPlayerOptionsString = function(player, modsLevel)
 	local modsLevel = modsLevel or "ModsLevel_Preferred"
