@@ -1,5 +1,13 @@
 local af = Def.ActorFrame{}
 
+af.PlayerOptionsVisibilityChangedMessageCommand=function(self)
+	self:queuecommand("RedrawOptions")
+end
+
+af.RedrawOptionsCommand=function(self)
+	SCREENMAN:GetTopScreen():RedrawOptions()
+end
+
 -- this is broadcast from [OptionRow] TitleGainFocusCommand in metrics.ini
 -- we use it to color the active OptionRow's title appropriately by PlayerColor()
 af.OptionRowChangedMessageCommand=function(self, params)
