@@ -81,6 +81,8 @@ local permitted_profile_settings = {
 	-- they have no player-facing OptionRows
 
 	PlayerOptionsString = "string",
+	PlayerOptionsStringDouble = "string",
+	PlayerOptionsStringRoutine = "string",
 }
 
 -- -----------------------------------------------------------------------
@@ -131,7 +133,7 @@ LoadProfileCustom = function(profile, dir)
 	end
 
 	if pn and FILEMAN:DoesFileExist(path) then
-		filecontents = IniFile.ReadFile(path)[theme_name]
+		filecontents = IniFile.ReadFile(path)[theme_name] or {}
 
 		-- for each key/value pair read in from the player's profile
 		for k,v in pairs(filecontents) do
@@ -145,6 +147,10 @@ LoadProfileCustom = function(profile, dir)
 				if type(v) == "string" and CustomOptionRow(k) and FindInTable(v, CustomOptionRow(k).Values or CustomOptionRow(k).Choices)
 				or type(v) ~= "string" then
 					SL[pn].ActiveModifiers[k] = v
+				end
+
+				if k=="PlayerOptionsStringDouble" or k=="PlayerOptionsStringRoutine" then
+					SL[pn][k] = v
 				end
 
 				-- special-case PlayerOptionsString for now
@@ -174,17 +180,26 @@ LoadProfileCustom = function(profile, dir)
 		end
 	end
 
+	if pn then
+		-- Older profiles used the same options for every style.
+		SL[pn].PlayerOptionsStringDouble = SL[pn].PlayerOptionsStringDouble or SL[pn].PlayerOptionsString
+		SL[pn].PlayerOptionsStringRoutine = SL[pn].PlayerOptionsStringRoutine or SL[pn].PlayerOptionsString
+	end
+
 	return true
 end
 
 -- function assigned to "CustomSaveFunction" under [Profile] in metrics.ini
 SaveProfileCustom = function(profile, dir)
-
 	local path =  dir .. filename
 
 	for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 		if profile == PROFILEMAN:GetProfile(player) then
 			local pn = ToEnumShortString(player)
+			local screen = SCREENMAN:GetTopScreen()
+			if  SL[pn].PlayerOptionsStringKey then
+				SL[pn][SL[pn].PlayerOptionsStringKey] = GAMESTATE:GetPlayerState(player):GetPlayerOptionsString("ModsLevel_Preferred")
+			end
 			local output = {}
 			for k,v in pairs(SL[pn].ActiveModifiers) do
 				if permitted_profile_settings[k] and type(v)==permitted_profile_settings[k] then
@@ -195,6 +210,8 @@ SaveProfileCustom = function(profile, dir)
 			-- these values are saved outside the SL[pn].ActiveModifiers tables
 			-- and thus won't be handled in the loop above
 			output.PlayerOptionsString = SL[pn].PlayerOptionsString
+			output.PlayerOptionsStringDouble = SL[pn].PlayerOptionsStringDouble
+			output.PlayerOptionsStringRoutine = SL[pn].PlayerOptionsStringRoutine
 
 			IniFile.WriteFile( path, {[theme_name]=output} )
 
