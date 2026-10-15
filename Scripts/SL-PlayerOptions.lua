@@ -563,6 +563,14 @@ local Overrides = {
 	},
 	GameplayExtrasB = {
 		SelectType = "SelectMultiple",
+		ExportOnChange = true,
+		SaveSelections = function(self, list, pn)
+			local mods = SL[ToEnumShortString(pn)].ActiveModifiers
+			for i, value in ipairs(self.Values) do
+				mods[value] = list[i]
+			end
+			MESSAGEMAN:Broadcast("PlayerOptionsVisibilityChanged")
+		end,
 		Values = function()
 			local vals = {}
 			if IsUsingWideScreen() then
@@ -588,6 +596,17 @@ local Overrides = {
 		end
 	},
 	TiltMultiplier = {
+		HideOnDisable = true,
+		ReloadRowMessages = { "PlayerOptionsVisibilityChanged" },
+		EnabledForPlayers = function()
+			local players = {}
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				if SL[ToEnumShortString(player)].ActiveModifiers.JudgmentTilt then
+					players[#players+1] = player
+				end
+			end
+			return players
+		end,
 		Choices = function()
 			local first	= 1
 			local last 	= 3
@@ -615,9 +634,26 @@ local Overrides = {
 	-------------------------------------------------------------------------
 	ErrorBar = {
 		Values = { "None", "Colorful", "Monochrome", "Text" },
+		ExportOnChange = true,
+		SaveSelections = function(self, list, pn)
+			for i, value in ipairs(self.Values) do
+				if list[i] then SL[ToEnumShortString(pn)].ActiveModifiers.ErrorBar = value; break end
+			end
+			MESSAGEMAN:Broadcast("PlayerOptionsVisibilityChanged")
+		end,
 	},
 	-------------------------------------------------------------------------
 	ErrorBarTrim = {
+		HideOnDisable = true,
+		ReloadRowMessages = { "PlayerOptionsVisibilityChanged" },
+		EnabledForPlayers = function()
+			local players = {}
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local errorbar = SL[ToEnumShortString(player)].ActiveModifiers.ErrorBar
+				if errorbar and errorbar ~= "None" then players[#players+1] = player end
+			end
+			return players
+		end,
 		Values = { "Off", "Great", "Excellent" },
 		Choices = function()
 			local tns = "TapNoteScore"
@@ -627,15 +663,42 @@ local Overrides = {
 	},
 	-------------------------------------------------------------------------
 	ErrorBarOptions = {
+		HideOnDisable = true,
+		ReloadRowMessages = { "PlayerOptionsVisibilityChanged" },
+		EnabledForPlayers = function()
+			local players = {}
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local errorbar = SL[ToEnumShortString(player)].ActiveModifiers.ErrorBar
+				if errorbar and errorbar ~= "None" then players[#players+1] = player end
+			end
+			return players
+		end,
 		SelectType = "SelectMultiple",
 		Values = { "ErrorBarUp", "ErrorBarMultiTick" },
 	},
 	-------------------------------------------------------------------------
 	MeasureCounter = {
 		Values = { "None", "8th", "12th", "16th", "24th", "32nd" },
+		ExportOnChange = true,
+		SaveSelections = function(self, list, pn)
+			for i, value in ipairs(self.Values) do
+				if list[i] then SL[ToEnumShortString(pn)].ActiveModifiers.MeasureCounter = value; break end
+			end
+			MESSAGEMAN:Broadcast("PlayerOptionsVisibilityChanged")
+		end,
 	},
 	-------------------------------------------------------------------------
 	MeasureCounterOptions = {
+		HideOnDisable = true,
+		ReloadRowMessages = { "PlayerOptionsVisibilityChanged" },
+		EnabledForPlayers = function()
+			local players = {}
+			for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+				local counter = SL[ToEnumShortString(player)].ActiveModifiers.MeasureCounter
+				if counter and counter ~= "None" then players[#players+1] = player end
+			end
+			return players
+		end,
 		SelectType = "SelectMultiple",
 		Values = { "MeasureCounterLeft", "MeasureCounterUp", "HideLookahead" },
 	},
