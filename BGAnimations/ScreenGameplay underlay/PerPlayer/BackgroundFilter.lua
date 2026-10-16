@@ -1,6 +1,7 @@
 local player = ...
 local pn = ToEnumShortString(player)
 local mods = SL[pn].ActiveModifiers
+local ScaleFactor = 1 - scale( mods.Mini:gsub("%%","")/100, 0, 2, 0, 1)
 
 -- if no BackgroundFilter is necessary, it's safe to bail now
 if mods.BackgroundFilter == "Off" then return end
@@ -16,7 +17,7 @@ return Def.Quad{
 		self:xy(GetNotefieldX(player), _screen.cy )
 			:diffuse(Color.Black)
 			:diffusealpha( FilterAlpha[mods.BackgroundFilter] or 0 )
-			:zoomto( GetNotefieldWidth(), _screen.h )
+			:zoomto( GetNotefieldWidth()*ScaleFactor, _screen.h )
 	end,
 	OffCommand=function(self) self:queuecommand("ComboFlash") end,
 	ComboFlashCommand=function(self)
