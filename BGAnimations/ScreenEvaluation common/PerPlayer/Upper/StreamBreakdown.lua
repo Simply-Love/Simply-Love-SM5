@@ -25,11 +25,11 @@ return LoadFont("Common Normal")..{
 	OnCommand=function(self)
         local textZoom = 0.7
         local steps = GAMESTATE:GetCurrentSteps(player)
-        local notesPerMeasure = steps:GetNotesPerMeasure(player)
-        self:settext(GenerateBreakdownText(notesPerMeasure, 0))
+        local breakdown = steps:GetStreamBreakdown(player)
+        self:settext(GenerateBreakdownText(breakdown, 0))
         local minimization_level = 1
         while self:GetWidth() > (width/textZoom) and minimization_level < 4 do
-            self:settext(GenerateBreakdownText(notesPerMeasure, minimization_level))
+            self:settext(GenerateBreakdownText(breakdown, minimization_level))
             minimization_level = minimization_level + 1
         end
     end,
