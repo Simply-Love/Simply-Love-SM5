@@ -109,7 +109,6 @@ local af = Def.Actor{
 
 			local currentMeasure = math.floor(playerState:GetSongPosition():GetSongBeatVisible()/4)
 
-			local streams = SL[pn].Streams
 			local storage = SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame + 1]
 
 			storage.TotalSeconds = totalSeconds
@@ -117,13 +116,21 @@ local af = Def.Actor{
 			storage.GraphPercentage = graphPercentage
 			storage.GraphLabel = graphLabel
 
+			local steps = GetCurrentChartSteps(player)
+			local notesPerMeasure = steps:GetNotesPerMeasure(player)
+			local measureCounter = SL[pn].ActiveModifiers.MeasureCounter
+			local notesThreshold = measureCounter and measureCounter ~= "None" and tonumber(measureCounter:match("%d+"))
+
 			-- find out if this measure was a stream (16ths or higher)
-			if streams.NotesPerMeasure[currentMeasure+1] >= 16 then
+			-- TODO: Use notesThreshold instead of hardcoding 16.
+			if notesThreshold and notesPerMeasure[currentMeasure+1] and notesPerMeasure[currentMeasure+1] >= 16 then
+				local measures = GetStreamSequences(notesPerMeasure, notesThreshold)
+
 				-- find out which measure the fail was 
-				for i=1,#streams.Measures do
-					if currentMeasure >= streams.Measures[i].streamStart and currentMeasure < streams.Measures[i].streamEnd  then							
-						local streamRun = currentMeasure - streams.Measures[i].streamStart + 1
-						local streamTotal = streams.Measures[i].streamEnd - streams.Measures[i].streamStart
+				for i=1,#measures do
+					if currentMeasure >= measures[i].streamStart and currentMeasure < measures[i].streamEnd  then
+						local streamRun = currentMeasure - measures[i].streamStart + 1
+						local streamTotal = measures[i].streamEnd - measures[i].streamStart
 						storage.DeathMeasures = string.format("%s/%s", streamRun, streamTotal)
 					end
 				end

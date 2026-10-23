@@ -72,24 +72,7 @@ local PlayerDefaults = {
 				StepsType = "",
 				Difficulty = "",
 				Description = "",
-
-				-- Information parsed out from the chart.
-				NotesPerMeasure = {},
-				EquallySpacedPerMeasure = {},
-				PeakNPS = 0,
-				NPSperMeasure = {},
-				ColumnCues = {},
 				Hash = '',
-
-				Crossovers = 0,
-				Footswitches = 0,
-				Sideswitches = 0,
-				Jacks = 0,
-				Brackets = 0,
-
-				-- Data for measure counter. Populated in ./ScreenGameplay in/MeasureCounterAndMods.lua.
-				-- Uses the notesThreshold option.
-				Measures = {},
 			}
 			self.HighScores = {
 				EnteringName = false,

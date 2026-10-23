@@ -10,8 +10,22 @@ local columnMapping = GetColumnMapping(player)
 -- Disable column cues if we couldn't compute valid columnMapping
 if columnMapping == nil then return end
 
+-- TODO: we shouldn't hardcode this and instead just pass if col is a mine directly.
+local MINE_NOTE_TYPE = 4
+
+local ParseColumnCues = function(steps, player)
+	local columnCues = steps:GetColumnCues(SL.Global.ColumnCueMinTime, player)
+	for _, cue in ipairs(columnCues) do
+		for _, col in ipairs(cue.columns) do
+			col.isMine = (col.noteType == MINE_NOTE_TYPE)
+			col.noteType = nil
+		end
+	end
+	return columnCues
+end
+
 local playerState = GAMESTATE:GetPlayerState(player)
-local columnCues = SL[pn].Streams.ColumnCues
+local columnCues = {}
 
 local numColumns = GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()
 local style = GAMESTATE:GetCurrentStyle(player)
@@ -89,19 +103,11 @@ local af = Def.ActorFrame{
 		self:SetUpdateFunction(Update)
 	end,
 	CurrentSongChangedMessageCommand=function(self)
-		local steps = nil
-		if GAMESTATE:IsCourseMode() then
-			local songIndex = GAMESTATE:GetCourseSongIndex() + 1
-			local trail = GAMESTATE:GetCurrentTrail(player):GetTrailEntries()[songIndex]
-			steps = trail:GetSteps()
-		else
-			steps = GAMESTATE:GetCurrentSteps(player)
-		end
+		local steps = GetCurrentChartSteps(player)
 
-		ParseColumnCues(steps, pn)
+		columnCues = ParseColumnCues(steps, player)
 
 		playerState = GAMESTATE:GetPlayerState(player)
-		columnCues = SL[pn].Streams.ColumnCues
 		curIndex = 1
 		updatedFirstTime = false
 	end,

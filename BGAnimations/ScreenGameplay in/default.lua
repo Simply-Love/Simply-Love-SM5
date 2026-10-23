@@ -1,5 +1,5 @@
 -- code for setting the PlayerOptions string (needed to counteract ITG mod charts)
--- and the MeasureCounter has been abstracted out to a different file to keep this one simpler.
+-- has been abstracted out to a different file to keep this one simpler.
 local InitializeMeasureCounterAndModsLevel = LoadActor("./MeasureCounterAndModsLevel.lua")
 
 local text = ""
@@ -27,7 +27,7 @@ else
 	text = THEME:GetString("Stage", "Event")
 end
 
-InitializeMeasureCounterAndModsLevel(SongNumberInCourse)
+InitializeMeasureCounterAndModsLevel()
 
 -------------------------------------------------------------------------
 
@@ -89,7 +89,7 @@ af[#af+1] = LoadFont("Common Bold")..{
 	end,
 	CurrentSongChangedMessageCommand=function(self)
 		if GAMESTATE:IsCourseMode() then
-			InitializeMeasureCounterAndModsLevel(SongNumberInCourse)
+			InitializeMeasureCounterAndModsLevel()
 			SongNumberInCourse = SongNumberInCourse + 1
 			self:settext(("%s %d / %d"):format(THEME:GetString("Stage", "Stage"), SongNumberInCourse, SongsInCourse))
 		end

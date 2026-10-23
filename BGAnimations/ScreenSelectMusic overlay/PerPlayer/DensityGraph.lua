@@ -83,7 +83,6 @@ af[#af+1] = Def.ActorFrame{
 	["CurrentSteps"..pn.."ChangedMessageCommand"]=function(self)
 		local steps = GAMESTATE:GetCurrentSteps(player)
 		if steps then
-			ParseChartInfo(steps, pn)
 			self:playcommand("Show")
 		end
 
@@ -130,8 +129,8 @@ af2[#af2+1] = NPS_Histogram(player, width, height)..{
 		self:visible(not showPatternInfo)
 	end
 }
--- Don't let the density graph parse the chart.
--- We do this in parent actorframe because we want to "stall" before we parse.
+-- The parent actorframe controls when the density graph redraws.
+-- Don't let the graph respond to CurrentSteps changes on its own.
 af2[#af2]["CurrentSteps"..pn.."ChangedMessageCommand"] = nil
 
 -- The Peak NPS text
@@ -154,8 +153,10 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		self:visible(false)
 	end,
 	RedrawCommand=function(self)
-		if SL[pn].Streams.PeakNPS ~= 0 then
-			self:settext((peakNPSText..": %.1f"):format(SL[pn].Streams.PeakNPS * SL.Global.ActiveModifiers.MusicRate))
+		local steps = GAMESTATE:GetCurrentSteps(player)
+		local peakNPS = steps and steps:GetPeakNps(player) or 0
+		if peakNPS ~= 0 then
+			self:settext((peakNPSText..": %.1f"):format(peakNPS * SL.Global.ActiveModifiers.MusicRate))
 			self:visible(not showPatternInfo)
 		end
 	end,
@@ -199,10 +200,12 @@ af2[#af2+1] = Def.ActorFrame{
 		end,
 		RedrawCommand=function(self)
 			local textZoom = 0.8
-			self:settext(GenerateBreakdownText(pn, 0))
+			local steps = GAMESTATE:GetCurrentSteps(player)
+			local notesPerMeasure = steps and steps:GetNotesPerMeasure(player) or {}
+			self:settext(GenerateBreakdownText(notesPerMeasure, 0))
 			local minimization_level = 1
 			while self:GetWidth() > (width/textZoom) and minimization_level < 4 do
-				self:settext(GenerateBreakdownText(pn, minimization_level))
+				self:settext(GenerateBreakdownText(notesPerMeasure, minimization_level))
 				minimization_level = minimization_level + 1
 			end
 		end,
@@ -288,10 +291,15 @@ for i, row in ipairs(layout) do
 				end
 			end,
 			RedrawCommand=function(self)
+				local steps = GAMESTATE:GetCurrentSteps(player)
+				if not steps then return end
+
 				if col ~= "Total Stream" then
-					self:settext(SL[pn].Streams[col])
+					local techCounts = steps:GetTechCounts(player)
+					self:settext(techCounts:GetValue("TechCountsCategory_"..col))
 				else
-					local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(pn)
+					local notesPerMeasure = steps:GetNotesPerMeasure(player)
+					local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(notesPerMeasure)
 					local totalMeasures = streamMeasures + breakMeasures
 					if streamMeasures == 0 then
 						self:settext(noneText.." (0.0%)")

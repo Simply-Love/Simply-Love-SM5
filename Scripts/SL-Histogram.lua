@@ -3,22 +3,15 @@ local function gen_vertices(player, width, height, Steps, desaturation)
 	local first_step_has_occurred = false
 	local pn = ToEnumShortString(player)
 
-	if not Steps then 
-		if GAMESTATE:IsCourseMode() then
-			local TrailEntry = GAMESTATE:GetCurrentTrail(player):GetTrailEntry(GAMESTATE:GetCourseSongIndex())
-			Steps = TrailEntry:GetSteps()
-		else
-			Steps = GAMESTATE:GetCurrentSteps(player)
-		end
+	if not Steps then
+		Steps = GetCurrentChartSteps(player)
 	end
 	Song = SONGMAN:GetSongFromSteps(Steps)
 	
 	if not Steps or not Song then return {} end
 
-	-- This function does no work if we already have the data in SL.Streams cache.
-	ParseChartInfo(Steps, pn)
-	PeakNPS = SL[pn].Streams.PeakNPS
-	NPSperMeasure = SL[pn].Streams.NPSperMeasure 
+	local PeakNPS = Steps:GetPeakNps(player)
+	local NPSperMeasure = Steps:GetNpsPerMeasure(player)
 	-- store the PeakNPS in GAMESTATE:Env()[pn.."PeakNPS"] in case both players are joined
 	-- their charts may have different peak densities, and if they both want histograms,
 	-- we'll need to be able to compare densities and scale one of the graphs vertically

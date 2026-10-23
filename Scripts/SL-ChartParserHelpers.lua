@@ -1,13 +1,9 @@
 -- ----------------------------------------------------------------
--- This file (SL-ChartParserHelpers.lua) is used to populate auxilliary
--- data which is oftem based off the data parsed form ChartParseInfo.
-
--- The main use case is when this auxilliary information might depend on 
--- extra information that isn't available during the Chart Parsing stage.
+-- This file (SL-ChartParserHelpers.lua) contains helpers for deriving
+-- auxiliary data from a chart's engine-cached notes-per-measure values.
 
 -- For example, getting the information for the measure counter depends on
--- the value chosen for notesPerMeasure threshold, which isn't/shouldn't be
--- known during the chart parsing stage.
+-- the value chosen for the notesPerMeasure threshold.
 
 
 -- ----------------------------------------------------------------
@@ -105,11 +101,11 @@ end
 --
 -- minimization_level = 3  -> Aggregating total streams
 --    80 Total
-GenerateBreakdownText = function(pn, minimization_level)
-	if #SL[pn].Streams.NotesPerMeasure == 0 then return 'Not available!' end
+GenerateBreakdownText = function(notesPerMeasure, minimization_level)
+	if #notesPerMeasure == 0 then return 'Not available!' end
 
 	-- Assume 16ths for the breakdown text
-	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	local segments = GetStreamSequences(notesPerMeasure, 16)
 	local text_segments = {}
 
 	-- The following is used for level 2 and 3 minimization levels.
@@ -205,11 +201,11 @@ end
 
 -- ----------------------------------------------------------------
 -- Returns the total amount of stream and break measures in a chart.
-GetTotalStreamAndBreakMeasures = function(pn)
+GetTotalStreamAndBreakMeasures = function(notesPerMeasure)
 	local totalStream, totalBreak = 0, 0
 
 	-- Assume 16ths for the breakdown text
-	local segments = GetStreamSequences(SL[pn].Streams.NotesPerMeasure, 16)
+	local segments = GetStreamSequences(notesPerMeasure, 16)
 	for i, segment in ipairs(segments) do
 		local segment_size = segment.streamEnd - segment.streamStart
 		if segment.isBreak then
