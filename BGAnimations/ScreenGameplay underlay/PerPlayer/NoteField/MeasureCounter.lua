@@ -12,7 +12,7 @@ end
 -- -----------------------------------------------------------------------
 
 local PlayerState = GAMESTATE:GetPlayerState(player)
-local streams, prevMeasure, streamIndex
+local measures, prevMeasure, streamIndex
 -- Collection of the BitmapText actors used for the measure counters.
 local bmt = {}
 
@@ -24,9 +24,10 @@ local lookAhead = mods.HideLookahead and 0 or 3
 
 -- We'll want to reset each of these values for each new song in the case of CourseMode
 local InitializeMeasureCounter = function()
-	-- SL[pn].Streams is initially set (and updated in CourseMode)
-	-- in ./ScreenGameplay in/MeasureCounterAndModsLevel.lua
-	streams = SL[pn].Streams
+	local steps = GetCurrentChartSteps(player)
+	local notesPerMeasure = steps:GetNotesPerMeasure(player)
+	local notesThreshold = tonumber(mods.MeasureCounter:match("%d+"))
+	measures = GetStreamSequences(notesPerMeasure, notesThreshold)
 	streamIndex = 1
 	prevMeasure = -1
 
@@ -101,7 +102,7 @@ end
 
 local Update = function(self, delta)
 	-- Check to make sure we even have any streams populated to display.
-	if not streams or not streams.Measures or #streams.Measures == 0 then return end
+	if not measures or #measures == 0 then return end
 
 	-- Things to look into:
 	-- 1. Does PlayerState:GetSongPosition() take split timing into consideration?  Do we need to?
@@ -113,7 +114,7 @@ local Update = function(self, delta)
 		prevMeasure = currMeasure
 
 		-- If we've reached the end of the stream, we want to get values for the next stream.
-		if IsEndOfStream(currMeasure, streams.Measures, streamIndex) then
+		if IsEndOfStream(currMeasure, measures, streamIndex) then
 			streamIndex = streamIndex + 1
 		end
 
@@ -123,14 +124,14 @@ local Update = function(self, delta)
 			-- We're looping forwards, but the BMTs are indexed in the opposite direction.
 			-- Adjust indices accordingly.
 			local adjustedIndex = lookAhead+2-i
-			local text = GetTextForMeasure(currMeasure, streams.Measures, streamIndex + i - 1, isLookAhead)
+			local text = GetTextForMeasure(currMeasure, measures, streamIndex + i - 1, isLookAhead)
 			bmt[adjustedIndex]:settext(text)
 			-- We can hit nil when we've run out of streams/breaks for the song. Just hide these BMTs.
-			if streams.Measures[streamIndex + i - 1] == nil then
+			if measures[streamIndex + i - 1] == nil then
 				bmt[adjustedIndex]:visible(false)
 
 			-- rest count
-			elseif streams.Measures[streamIndex + i - 1].isBreak then
+			elseif measures[streamIndex + i - 1].isBreak then
 				-- Make rest lookaheads be lighter than active rests.
 				if not isLookAhead then
 					bmt[adjustedIndex]:diffuse(0.5, 0.5, 0.5 ,1)

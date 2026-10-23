@@ -1,3 +1,14 @@
+-- Returns the Steps for the currently selected chart, accounting for CourseMode.
+GetCurrentChartSteps = function(player)
+	if GAMESTATE:IsCourseMode() then
+		local trail = GAMESTATE:GetCurrentTrail(player)
+		local index = GAMESTATE:GetCourseSongIndex() + 1
+		return trail:GetTrailEntries()[index]:GetSteps()
+	end
+
+	return GAMESTATE:GetCurrentSteps(player)
+end
+
 local GetSimfileString = function(steps)
 	-- steps:GetFilename() returns the filename of the sm or ssc file, including path, as it is stored in SM's cache
 	local filename = steps:GetFilename()
@@ -284,29 +295,6 @@ end
 
 -- ----------------------------------------------------------------
 
-local GetEquallySpacedPerMeasure = function(chartString)
-	local equallySpacedPerMeasure = {}
-	local notesInMeasure = 0
-	local rowsInMeasure = 0
-
-	for line in (chartString .. '\n;'):gmatch("[^%s*\r\n]+") do
-		if line:match("^[,;]%s*") then
-			table.insert(equallySpacedPerMeasure, notesInMeasure == rowsInMeasure)
-			notesInMeasure = 0
-			rowsInMeasure = 0
-		else
-			rowsInMeasure = rowsInMeasure + 1
-			if line:match("[124]") then
-				notesInMeasure = notesInMeasure + 1
-			end
-		end
-	end
-
-	return equallySpacedPerMeasure
-end
-
--- ----------------------------------------------------------------
-
 local MaybeCopyHashFromOppositePlayer = function(pn, filename, stepsType, difficulty, description)
 	local opposite_player = pn == "P1" and "P2" or "P1"
 	-- If the stepsType ends in routine or couple just return false
@@ -321,7 +309,6 @@ local MaybeCopyHashFromOppositePlayer = function(pn, filename, stepsType, diffic
 			SL[opposite_player].Streams.Difficulty == difficulty and
 			SL[opposite_player].Streams.Description == description) then
 		SL[pn].Streams.Hash = SL[opposite_player].Streams.Hash
-		SL[pn].Streams.EquallySpacedPerMeasure = SL[opposite_player].Streams.EquallySpacedPerMeasure
 		SL[pn].Streams.Filename = filename
 		SL[pn].Streams.StepsType = stepsType
 		SL[pn].Streams.Difficulty = difficulty
@@ -330,27 +317,6 @@ local MaybeCopyHashFromOppositePlayer = function(pn, filename, stepsType, diffic
 	end
 
 	return false
-end
-
--- TODO: we shouldn't hardcode this and instead just pass if col is a mine directly.
-local MINE_NOTE_TYPE = 4
-
--- The chart info shown while browsing the song wheel (density graph, NPS,
--- tech counts) all comes from cheap, cached engine data, so this is safe to
--- call on every chart change without parsing the simfile.
-ParseChartInfo = function(steps, pn)
-	local player = pn == "P1" and PLAYER_1 or PLAYER_2
-
-	SL[pn].Streams.NotesPerMeasure = steps:GetNotesPerMeasure(player)
-	SL[pn].Streams.NPSperMeasure = steps:GetNpsPerMeasure(player)
-	SL[pn].Streams.PeakNPS = steps:GetPeakNps(player)
-
-	local techCounts = steps:GetTechCounts(player)
-	SL[pn].Streams.Crossovers = techCounts:GetValue("TechCountsCategory_Crossovers")
-	SL[pn].Streams.Footswitches = techCounts:GetValue("TechCountsCategory_Footswitches")
-	SL[pn].Streams.Sideswitches = techCounts:GetValue("TechCountsCategory_Sideswitches")
-	SL[pn].Streams.Jacks = techCounts:GetValue("TechCountsCategory_Jacks")
-	SL[pn].Streams.Brackets = techCounts:GetValue("TechCountsCategory_Brackets")
 end
 
 -- Computing the GrooveStats hash requires decompressing the chart's NoteData, which is expensive.
@@ -378,7 +344,6 @@ ComputeChartHash = function(steps, pn)
 			SL[pn].Streams.Description ~= description) then
 
 		local hash = ''
-		local equallySpacedPerMeasure = {}
 		local simfileString, fileType = GetSimfileString( steps )
 		if simfileString then
 			-- Parse out just the contents of the notes
@@ -389,33 +354,13 @@ ComputeChartHash = function(steps, pn)
 				-- separated by an '&'; the hash intentionally covers the whole thing,
 				-- so it is identical for both players.
 				hash = BinaryToHex(CRYPTMAN:SHA1String(chartString..BPMs)):sub(1, 16)
-
-				-- For equally spaced, use only this player's half of a couples chart.
-				local splitIndex = chartString:find("&")
-				if splitIndex then
-					chartString = pn == "P1" and chartString:sub(1, splitIndex-1) or chartString:sub(splitIndex+1)
-				end
-				equallySpacedPerMeasure = GetEquallySpacedPerMeasure(chartString)
 			end
 		end
 
 		SL[pn].Streams.Hash = hash
-		SL[pn].Streams.EquallySpacedPerMeasure = equallySpacedPerMeasure
 		SL[pn].Streams.Filename = filename
 		SL[pn].Streams.StepsType = stepsType
 		SL[pn].Streams.Difficulty = difficulty
 		SL[pn].Streams.Description = description
 	end
-end
-
--- Column cues require decompressing the chart's NoteData, which is expensive.
-ParseColumnCues = function(steps, pn)
-	local columnCues = steps:GetColumnCues(SL.Global.ColumnCueMinTime, pn)
-	for _, cue in ipairs(columnCues) do
-		for _, col in ipairs(cue.columns) do
-			col.isMine = (col.noteType == MINE_NOTE_TYPE)
-			col.noteType = nil
-		end
-	end
-	SL[pn].Streams.ColumnCues = columnCues
 end
