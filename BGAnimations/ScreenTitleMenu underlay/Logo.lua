@@ -42,14 +42,14 @@ af[#af+1] = Def.Sprite{
 			else
 				self:Load(image)
 			end
-			self:zoom(0.22):vertalign(top)
-			self:y(-150):shadowlength(0.75)
+			self:zoom(0.5):vertalign(top)
+			self:y(-130):shadowlength(0.75)
 		end
 	end,
 }
 
 
--- if ThemePrefs.Get("VisualStyle") ~= "SRPG9" then
+-- if ThemePrefs.Get("VisualStyle") ~= "SRPG10" then
 -- 	-- decorative arrows for current game (dance, pump, techno, etc.)
 -- 	af[#af+1] = LoadActor(resolved_path)..{
 -- 		InitCommand=function(self)
@@ -74,9 +74,9 @@ af[#af+1] = Def.Sprite{
 -- 			end
 -- 		end,
 -- 		VisualStyleSelectedMessageCommand=function(self)
--- 			-- In case we auto-switch to SRPG9, then it's possible this actor may have been added to the screen.
--- 			-- If so, we want to hide the logo as it interferes with the SRPG9 logo.
--- 			if ThemePrefs.Get("VisualStyle") == "SRPG9" then
+-- 			-- In case we auto-switch to SRPG10, then it's possible this actor may have been added to the screen.
+-- 			-- If so, we want to hide the logo as it interferes with the SRPG10 logo.
+-- 			if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 -- 				self:visible(false)
 -- 			end
 -- 		end
