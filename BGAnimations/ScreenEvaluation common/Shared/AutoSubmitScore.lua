@@ -409,6 +409,7 @@ local af = Def.ActorFrame {
 							body["player"..i] = {
 								rate=rate,
 								score=score,
+								liveEvent="staminacon3",
 								judgmentCounts=GetJudgmentCounts(player),
 								rescoreCounts=GetRescoredJudgmentCounts(player),
 								usedCmod=(GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):CMod() ~= nil),
