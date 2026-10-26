@@ -264,7 +264,7 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 							local tpx = scData["tpx"]
 							local lpx = scData["lpx"]
 
-							local logo = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."SC2")
+							local logo = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."SC")
 							local tpxText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."TPX")
 							local lpxText = overlay:GetChild("AutoSubmitMaster"):GetChild("P"..side.."LPX")
 
@@ -540,11 +540,11 @@ af[#af+1] = LoadFont("Common Bold")..{
 }
 
 af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathG("","sc2 (doubleres).png"),
-	Name="P1SC2",
+	Texture=THEME:GetPathG("","sc (doubleres).png"),
+	Name="P1SC",
 	InitCommand=function(self)
 		local x = _screen.cx - 400
-		self:zoom(0.1)
+		self:zoom(0.5)
 		self:xy(x,135)
 		self:visible(false)
 	end,
@@ -573,11 +573,11 @@ af[#af+1] = LoadFont("Common Normal")..{
 }
 
 af[#af+1] = Def.Sprite{
-	Texture=THEME:GetPathG("","sc2 (doubleres).png"),
-	Name="P2SC2",
+	Texture=THEME:GetPathG("","sc (doubleres).png"),
+	Name="P2SC",
 	InitCommand=function(self)
 		local x = _screen.cx + 330
-		self:zoom(0.1)
+		self:zoom(0.5)
 		self:xy(x,135)
 		self:visible(false)
 	end,
