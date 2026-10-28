@@ -201,11 +201,11 @@ af2[#af2+1] = Def.ActorFrame{
 		RedrawCommand=function(self)
 			local textZoom = 0.8
 			local steps = GAMESTATE:GetCurrentSteps(player)
-			local notesPerMeasure = steps and steps:GetNotesPerMeasure(player) or {}
-			self:settext(GenerateBreakdownText(notesPerMeasure, 0))
+			local breakdown = steps and steps:GetStreamBreakdown(player)
+			self:settext(GenerateBreakdownText(breakdown, 0))
 			local minimization_level = 1
 			while self:GetWidth() > (width/textZoom) and minimization_level < 4 do
-				self:settext(GenerateBreakdownText(notesPerMeasure, minimization_level))
+				self:settext(GenerateBreakdownText(breakdown, minimization_level))
 				minimization_level = minimization_level + 1
 			end
 		end,
@@ -298,9 +298,9 @@ for i, row in ipairs(layout) do
 					local techCounts = steps:GetTechCounts(player)
 					self:settext(techCounts:GetValue("TechCountsCategory_"..col))
 				else
-					local notesPerMeasure = steps:GetNotesPerMeasure(player)
-					local streamMeasures, breakMeasures = GetTotalStreamAndBreakMeasures(notesPerMeasure)
-					local totalMeasures = streamMeasures + breakMeasures
+					local breakdown = steps:GetStreamBreakdown(player)
+					local streamMeasures = breakdown.TotalStream
+					local totalMeasures = streamMeasures + breakdown.TotalBreak
 					if streamMeasures == 0 then
 						self:settext(noneText.." (0.0%)")
 					else
