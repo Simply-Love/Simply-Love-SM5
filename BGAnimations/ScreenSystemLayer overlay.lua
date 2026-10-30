@@ -602,4 +602,13 @@ t[#t+1] = Def.ActorFrame {
 }
 -- -----------------------------------------------------------------------
 
+-- Safeguard for open overlays across screen changes
+t[#t+1] = Def.Actor{
+	ScreenChangedMessageCommand=function(self)
+		if SL and SL.OverlayManager then
+			SL.OverlayManager:OnScreenChanged()
+		end
+	end
+}
+
 return t
