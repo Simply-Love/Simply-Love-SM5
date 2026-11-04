@@ -4,9 +4,13 @@ local percent = nil
 local diffuse = nil
 local styletype = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 if (styletype == "TwoPlayersSharedSides") then
-	stats = STATSMAN:GetCurStageStats():GetRoutineStageStats()
-	-- Format the Percentage string, removing the % symbol
-	percent = CalculateExScore(player)
+	local total_points, total_possible = 0, 0
+	for routine_player in ivalues(GAMESTATE:GetHumanPlayers()) do
+		local _, points, possible = CalculateExScore(routine_player)
+		total_points = total_points + (points or 0)
+		total_possible = total_possible + (possible or 0)
+	end
+	percent = total_possible > 0 and math.max(0, math.floor(total_points/total_possible * 10000) / 100) or 0
 	diffuse = SL.JudgmentColors[SL.Global.GameMode][1]
 elseif SL[ToEnumShortString(player)].ActiveModifiers.ShowExScore then
 	percent = CalculateExScore(player)

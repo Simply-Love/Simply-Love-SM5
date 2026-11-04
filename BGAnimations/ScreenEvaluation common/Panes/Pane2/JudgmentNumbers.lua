@@ -85,10 +85,7 @@ for index, RCType in ipairs(RadarCategories.Types) do
 	-- Swap to displaying ITG score if we're showing EX score in gameplay.
 	local percent = nil
 	if styletype == "TwoPlayersSharedSides" then
-		local PercentDP = pss:GetPercentDancePoints()
-		percent = FormatPercentScore(PercentDP)
-		-- Format the Percentage string, removing the % symbol
-		percent = percent:gsub("%%", "")
+		percent = CalculateExScore(player)
 	else
 		if SL[pn].ActiveModifiers.ShowExScore then
 			local PercentDP = pss:GetPercentDancePoints()
@@ -102,12 +99,9 @@ for index, RCType in ipairs(RadarCategories.Types) do
 
 	if index == 1 then
 		if (styletype == "TwoPlayersSharedSides") then
-
-			-- Format the Percentage string, removing the % symbol
-			percent = percent:gsub("%%", "")
 			t[#t+1] = LoadFont("Wendy/_wendy white")..{
 				Name="Percent",
-				Text=percent,
+				Text=("%.2f"):format(percent),
 				InitCommand=function(self)
 					self:horizalign(right):zoom(0.4)
 					self:x( ((controller == PLAYER_1) and -114) or 286 )
