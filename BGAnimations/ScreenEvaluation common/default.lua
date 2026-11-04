@@ -13,9 +13,9 @@ local t = Def.ActorFrame{Name="ScreenEval Common"}
 if SL.Global.GameMode ~= "Casual" then
 	-- add a lua-based InputCalllback to this screen so that we can navigate
 	-- through multiple panes of information; pass a reference to this ActorFrame
-	-- and the number of panes there are to InputHandler.lua
+	-- to InputHandler.lua
 	t.OnCommand=function(self)
-		InputHandler = LoadActor("./InputHandler.lua", {self, NumPanes})
+		InputHandler = LoadActor("./InputHandler.lua", self)
 		EventOverlayInputHandler = LoadActor("./Shared/EventInputHandler.lua")
 		SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
 		PROFILEMAN:SaveMachineProfile()

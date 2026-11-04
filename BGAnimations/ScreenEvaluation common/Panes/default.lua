@@ -1,7 +1,39 @@
 local NumPanes = ...
+local pane_definitions = {}
+for i=1, NumPanes do
+	local path = THEME:GetPathB("ScreenEvaluation", "common/Panes/Pane"..i.."/default.lua")
+	pane_definitions[#pane_definitions+1] = {
+		Name="Pane"..i,
+		Load=function(args) return LoadActor(path, args) end
+	}
+end
+
+-- Modules can change this ordered list before any panes are loaded.
+-- How does this work you ask? well, you would first have a Module that is
+-- listening for the "EvaluationPanes" message. When this message is broadcast
+-- the module can use params.Panes to modify the list of panes before they are loaded.
+-- That way a Module could both inject new panes and modify existing ones before they are loaded.
+MESSAGEMAN:Broadcast("EvaluationPanes", {Panes=pane_definitions})
+
+local names = {}
+for pane in ivalues(pane_definitions) do
+	-- We use this to somewhat validate custom panes to ensure
+	-- they at least meet ze bare minimums -crashcringle
+	assert(type(pane.Name)=="string" and not names[pane.Name], "Evaluation panes need unique names.")
+	assert(type(pane.Load)=="function", "Evaluation panes need a Load function.")
+	names[pane.Name] = true
+end
+
 local players = GAMESTATE:GetHumanPlayers()
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-local af = Def.ActorFrame{}
+local af = Def.ActorFrame{
+	InitCommand=function(self)
+		self.pane_names = {}
+		for pane in ivalues(pane_definitions) do
+			self.pane_names[#self.pane_names+1] = pane.Name
+		end
+	end
+}
 af.Name="Panes"
 
 local offset = {
@@ -15,14 +47,15 @@ local offset = {
 
 if #players == 2 or SL.Global.GameMode=="Casual" and not (style == "TwoPlayersSharedSides") then
 	for player in ivalues(players) do
-		-- add Panes for this player to the ActorFrame using a simple, numerical for-loop
-		for i=1, NumPanes do
+		-- add Panes for this player in the configured order
+		for definition in ivalues(pane_definitions) do
 			local pn   = ToEnumShortString(player)
-			local pane = LoadActor("./Pane"..i, {player, player})
+			local pane = definition.Load({player, player})
 
 			if pane then
+				pane.Name = ""
 				af[#af+1] = Def.ActorFrame{
-					Name="Pane"..i.."_Side"..pn,
+					Name=definition.Name.."_Side"..pn,
 					InitCommand=function(self) self:x(offset[player]) end,
 					pane
 				}
@@ -53,21 +86,23 @@ elseif #players == 1 or style == "TwoPlayersSharedSides" then
 
 	local mpn = GAMESTATE:GetMasterPlayerNumber()
 
-	for i=1, NumPanes do
+	for definition in ivalues(pane_definitions) do
 		
-		local left_pane  = LoadActor("./Pane"..i, {mpn, PLAYER_1, ComputedData})
-		local right_pane = LoadActor("./Pane"..i, {mpn, PLAYER_2, ComputedData})
+		local left_pane  = definition.Load({mpn, PLAYER_1, ComputedData})
+		local right_pane = definition.Load({mpn, PLAYER_2, ComputedData})
 
 		-- These need to be wrapped in an extra AF to offset left and right.
 		-- Panes can be nil, however, so don't add extra AFs with nil children
 		if left_pane and right_pane then
+			left_pane.Name = ""
+			right_pane.Name = ""
 			af[#af+1] = Def.ActorFrame{
-				Name="Pane"..i.."_SideP1",
+				Name=definition.Name.."_SideP1",
 				InitCommand=function(self) self:x(offset.PlayerNumber_P1) end,
 				left_pane
 			}
 			af[#af+1] = Def.ActorFrame{
-				Name="Pane"..i.."_SideP2",
+				Name=definition.Name.."_SideP2",
 				InitCommand=function(self) self:x(offset.PlayerNumber_P2) end,
 				right_pane
 			}

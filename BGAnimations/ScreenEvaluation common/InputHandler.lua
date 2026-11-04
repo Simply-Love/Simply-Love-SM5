@@ -1,10 +1,9 @@
-local af, num_panes = unpack(...)
+local af = ...
 
-if not af
-or type(num_panes) ~= "number"
-then
-	return
-end
+if not af then return end
+
+local pane_names = af:GetChild("Panes").pane_names
+local num_panes = #pane_names
 
 -- -----------------------------------------------------------------------
 -- local variables
@@ -19,8 +18,6 @@ local mpn = GAMESTATE:GetMasterPlayerNumber()
 -- since we're potentially retrieving from player profile
 -- perform some rudimentary validation by clamping both
 -- values to be within permitted ranges
--- FIXME: num_panes won't be accurate if any panes were nil,
---        so this is more like "validation" than validation
 
 local primary_i   = clamp(SL[ToEnumShortString(mpn)].EvalPanePrimary,   1, num_panes)
 local secondary_i = clamp(SL[ToEnumShortString(mpn)].EvalPaneSecondary, 1, num_panes)
@@ -36,7 +33,7 @@ for controller=1,2 do
 	-- list of panes we want to consider.
 	for i=1,num_panes do
 
-		local pane = af:GetChild("Panes"):GetChild( ("Pane%i_SideP%i"):format(i, controller) )
+		local pane = af:GetChild("Panes"):GetChild( ("%s_SideP%i"):format(pane_names[i], controller) )
 
 		if pane ~= nil then
 			-- single, double
@@ -65,11 +62,18 @@ for controller=1,2 do
 				-- will be 1 if no profile/"Guest" profile
 				local p = clamp(SL["P"..controller].EvalPanePrimary, 1, num_panes)
 				pane:visible(i == p)
-				active_pane[controller] = p
+				if i == p then active_pane[controller] = #panes[controller] + 1 end
 			end
 
 		 	table.insert(panes[controller], pane)
 		end
+	end
+
+	-- A module or a conditional pane may have removed the saved selection.
+	if not active_pane[controller] and #panes[controller] > 0 then
+		local fallback = #players==1 and ("P"..controller)~=ToEnumShortString(mpn) and 2 or 1
+		active_pane[controller] = math.min(fallback, #panes[controller])
+		panes[controller][active_pane[controller]]:visible(true)
 	end
 end
 
@@ -79,7 +83,8 @@ end
 -- EvalPaneSecondary=4
 -- because Pane3 is full-width in double and the other pane is supposed to be hidden when it is visible
 
-if style == "OnePlayerTwoSides" or (style == "TwoPlayersSharedSides") then
+if (style == "OnePlayerTwoSides" or style == "TwoPlayersSharedSides")
+and #panes[1] > 0 and #panes[2] > 0 then
 	local cn  = PlayerNumber:Reverse()[mpn] + 1
 	local ocn = (cn % 2) + 1
 	-- if the player wanted their primary pane to be something that is full-width in double
@@ -93,7 +98,7 @@ if style == "OnePlayerTwoSides" or (style == "TwoPlayersSharedSides") then
 	end
 
 	-- if the player wanted their secondary pane to be something that is full-width in double
-	if panes[cn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble") then
+	if panes[ocn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble") then
 		-- arbitrarily opt to hide the secondary pane
 		panes[ocn][active_pane[ocn]]:visible(false)
 
@@ -102,7 +107,7 @@ if style == "OnePlayerTwoSides" or (style == "TwoPlayersSharedSides") then
 			active_pane[ocn] = (active_pane[ocn] % #panes[ocn]) + 1
 
 			if active_pane[ocn] ~= active_pane[cn]
-			and not panes[cn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble")
+			and not panes[ocn][active_pane[ocn]]:GetChild(""):GetCommand("ExpandForDouble")
 			then
 				panes[ocn][active_pane[ocn]]:visible(true)
 				break
@@ -133,7 +138,7 @@ return function(event)
 	local ocn = tonumber(ToEnumShortString(OtherController[event.controller]))
 
 
-	if event.type == "InputEventType_FirstPress" and panes[cn] then
+	if event.type == "InputEventType_FirstPress" and panes[cn] and #panes[cn] > 0 then
 
 		if event.GameButton == "MenuRight" or event.GameButton == "MenuLeft" then
 			if event.GameButton == "MenuRight" then
