@@ -158,8 +158,10 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 			local entryNum = 1
 			local rivalNum = 1
 			-- Pane 8 is the groovestats highscores pane.
-			local highScorePane = panes:GetChild("Pane8_SideP"..i):GetChild("")
-			local QRPane = panes:GetChild("Pane7_SideP"..i):GetChild("")
+			local highScorePane = panes:GetChild("Pane8_SideP"..i)
+			local QRPane = panes:GetChild("Pane7_SideP"..i)
+			local highScoreList = highScorePane and highScorePane:GetChild(""):GetChild("HighScoreList")
+			QRPane = QRPane and QRPane:GetChild("")
 
 			-- If only one player is joined, we then need to update both panes with only
 			-- one players' data.
@@ -189,41 +191,45 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 					if leaderboardData then
 						for gsEntry in ivalues(leaderboardData) do
-							local entry = highScorePane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..entryNum)
-							entry:stoptweening()
-							entry:diffuse(Color.White)
-							SetEntryText(
-								gsEntry["rank"]..".",
-								GetMachineTag(gsEntry),
-								string.format("%.2f%%", gsEntry["score"]/100),
-								ParseGrooveStatsDate(gsEntry["date"]),
-								entry
-							)
+							if gsEntry["isSelf"] then personalRank = gsEntry["rank"] end
+							local entry = highScoreList and highScoreList:GetChild("HighScoreEntry"..entryNum)
+							if entry then
+								entry:stoptweening()
+								entry:diffuse(Color.White)
+								SetEntryText(
+									gsEntry["rank"]..".",
+									GetMachineTag(gsEntry),
+									string.format("%.2f%%", gsEntry["score"]/100),
+									ParseGrooveStatsDate(gsEntry["date"]),
+									entry
+								)
 
-							-- TODO(teejusb): Determine how we want to easily display EX scores.
-							-- For now just highlight blue because it's simple.
-							if showExScore then
-								entry:GetChild("Score"):diffuse(SL.JudgmentColors["ITG"][1])
-							else
-								entry:GetChild("Score"):diffuse(Color.White)
-							end
+								-- TODO(teejusb): Determine how we want to easily display EX scores.
+								-- For now just highlight blue because it's simple.
+								if showExScore then
+									entry:GetChild("Score"):diffuse(SL.JudgmentColors["ITG"][1])
+								else
+									entry:GetChild("Score"):diffuse(Color.White)
+								end
 
-							if gsEntry["isRival"] then
-								entry:diffuse(color("#BD94FF"))
-								rivalNum = rivalNum + 1
-							elseif gsEntry["isSelf"] then
-								entry:diffuse(color("#A1FF94"))
-								personalRank = gsEntry["rank"]
-							end
+								if gsEntry["isRival"] then
+									entry:diffuse(color("#BD94FF"))
+									rivalNum = rivalNum + 1
+								elseif gsEntry["isSelf"] then
+									entry:diffuse(color("#A1FF94"))
+								end
 
-							if gsEntry["isFail"] then
-								entry:GetChild("Score"):diffuse(Color.Red)
+								if gsEntry["isFail"] then
+									entry:GetChild("Score"):diffuse(Color.Red)
+								end
+								entryNum = entryNum + 1
 							end
-							entryNum = entryNum + 1
 						end
 
-						QRPane:GetChild("QRCode"):queuecommand("Hide")
-						QRPane:GetChild("HelpText"):settext(THEME:GetString("GrooveStats", "ScoreAlreadySubmitted"))
+						if QRPane and QRPane:GetChild("QRCode") and QRPane:GetChild("HelpText") then
+							QRPane:GetChild("QRCode"):queuecommand("Hide")
+							QRPane:GetChild("HelpText"):settext(THEME:GetString("GrooveStats", "ScoreAlreadySubmitted"))
+						end
 						if i == 1 and P1SubmitText then
 							P1SubmitText:queuecommand("Submit")
 						elseif i == 2 and P2SubmitText then
@@ -290,9 +296,9 @@ local AutoSubmitRequestProcessor = function(res, overlay)
 
 			-- Empty out any remaining entries on a successful response.
 			-- For failed responses we fallback to the scores available in the machine.
-			if res["status"] == "success" then
+			if res["status"] == "success" and highScoreList then
 				for j=entryNum, NumEntries do
-					local entry = highScorePane:GetChild("HighScoreList"):GetChild("HighScoreEntry"..j)
+					local entry = highScoreList:GetChild("HighScoreEntry"..j)
 					entry:stoptweening()
 					-- We didn't get any scores if i is still == 1.
 					if j == 1 then
