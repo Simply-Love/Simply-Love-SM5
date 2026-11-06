@@ -45,6 +45,9 @@ end
 -- -----------------------------------------------------------------------
 -- First, add actors that would be the same whether 1 or 2 players are joined.
 
+-- code for vocalizing the score
+t[#t+1] = LoadActor("./Shared/Vocalize.lua")
+
 -- code for triggering a screenshot and animating a "screenshot" texture
 t[#t+1] = LoadActor("./Shared/ScreenshotHandler.lua")
 
