@@ -431,12 +431,53 @@ local DisplayLobbyState = function(data, actor)
   actor:GetChild("Display"):playcommand("UpdateText", {text=table.concat(lines, "\n")})
 end
 
+-- The engine owns transport and arbitration; this handler owns one lobby layer.
+local discordOwner = "simply-love.online"
+local DEFAULT_LOBBY_CAPACITY = 6
+local ClearDiscordLobby = function()
+  if DISCORD then DISCORD:ClearPresence(discordOwner) end
+end
+
+local UpdateDiscordLobby = function(data, actor)
+  if not DISCORD then return end
+  local code = data and tostring(data.code or "") or ""
+  if not code:match("^[%w%-_]+$") or #code > 64 then
+    ClearDiscordLobby()
+    return
+  end
+  local fields = {
+    state="In an Online Lobby", partyId="groovestats:"..code,
+    smallImage="online", smallText="Online Lobby"
+  }
+  -- The secret carries only routing information, never the password.
+  -- Admission (including password validation) remains server-owned.
+  local protected = data.isPasswordProtected
+  if type(protected) ~= "boolean" then protected = actor.discordLobbyProtected == true end
+  fields.joinSecret = "itgmania:gs:2:"..(protected and "protected:" or "public:")..code
+  if protected then fields.smallText = "Online Lobby (password required)" end
+  local count = #(data.players or {})
+  -- Prefer the server capacity; older lobby-state responses omit it.
+  local capacity = tonumber(data.maxPlayers) or DEFAULT_LOBBY_CAPACITY
+  if capacity % 1 ~= 0 then capacity = DEFAULT_LOBBY_CAPACITY end
+  if capacity and capacity >= count and count > 0 and capacity <= 2147483647 then
+    fields.partySize = count
+    fields.partyMax = capacity
+    if count >= capacity then fields.joinSecret = nil end
+  else
+    -- Do not advertise malformed or inconsistent party information.
+    fields.partyId = ""
+    fields.joinSecret = ""
+  end
+  DISCORD:SetPresence(discordOwner, fields, 200)
+end
+
 local HandleResponse = function(response, actor)
   local event = response.event
   local data = response.data
 
   if event == "lobbyState" then
     actor.inLobby = true
+    UpdateDiscordLobby(data, actor)
     actor.latestLobbyState = data
     actor.lobbyStateNeedsDisplaying = true
     ScheduleLobbyStateUpdate(actor)
@@ -447,9 +488,11 @@ local HandleResponse = function(response, actor)
     })
   elseif event == "lobbyLeft" then
     actor.inLobby = false
+    ClearDiscordLobby()
     MESSAGEMAN:Broadcast("OnlineLobbyLeft", data or {})
   elseif event == "clientDisconnected" then
     actor.inLobby = false
+    ClearDiscordLobby()
     MESSAGEMAN:Broadcast("OnlineClientDisconnected", data or {})
   elseif event == "responseStatus" then
     MESSAGEMAN:Broadcast("OnlineResponseStatus", data or {})
@@ -477,6 +520,7 @@ CreateOnlineHandler = function()
         self.socket = nil
         self.connected = false
         self.inLobby = false
+        ClearDiscordLobby()
         self.errorMsg = nil
         self.lobbyStateNeedsDisplaying = false
         self.lobbyStateThrottleActive = false
@@ -490,6 +534,7 @@ CreateOnlineHandler = function()
         end
         self.connected = false
         self.inLobby = false
+        ClearDiscordLobby()
         self.errorMsg = nil
         self.lobbyStateNeedsDisplaying = false
         self.lobbyStateThrottleActive = false
@@ -517,7 +562,9 @@ CreateOnlineHandler = function()
               local msgType = ToEnumShortString(msg.type)
               if msgType == "Open" then
                 self.connected = true
+                self:queuecommand("ProcessDiscordJoin")
                 self.inLobby = false
+                ClearDiscordLobby()
                 self.errorMsg = nil
                 self:GetChild("Display"):visible(true)
               elseif msgType == "Message" then
@@ -525,11 +572,13 @@ CreateOnlineHandler = function()
                 HandleResponse(response, self)
               elseif msgType == "Close" then
                 self.inLobby = false
+                ClearDiscordLobby()
                 MESSAGEMAN:Broadcast("DisconnectOnline")
                 self:GetChild("Display"):GetChild("Text"):settext("")
                 self:GetChild("Display"):visible(false)
               elseif msgType == "Error" then
                 self.inLobby = false
+                ClearDiscordLobby()
                 self.errorMsg = msg.reason
                 self:GetChild("Display"):GetChild("Text"):settext("")
                 self:GetChild("Display"):visible(false)
@@ -551,7 +600,48 @@ CreateOnlineHandler = function()
           DisplayLobbyState(self.latestLobbyState, self)
         end
       end,
+      DiscordJoinMessageCommand=function(self, params)
+        local secret = params and params.secret
+        if type(secret) ~= "string" then return end
+        local visibility, code = secret:match("^itgmania:gs:2:(%a+):([%w%-_]+)$")
+        if code then
+          if visibility ~= "public" and visibility ~= "protected" then return end
+        else
+          -- Older public invites remain valid during the transition.
+          code = secret:match("^itgmania:gs:1:([%w%-_]+)$")
+          visibility = "public"
+        end
+        if not code or #code > 64 then return end
+        self.discordPendingCode = code
+        self.discordPendingProtected = visibility == "protected"
+        self.discordInviteTime = GetTimeSinceStart()
+        SCREENMAN:SystemMessage(self.discordPendingProtected and
+          "Discord invite received (password required). Open Online Lobbies to join." or
+          "Discord invite received. Open Online Lobbies to join.")
+        self:queuecommand("ProcessDiscordJoin")
+      end,
+      ProcessDiscordJoinCommand=function(self)
+        if not DISCORD or not DISCORD:IsJoinAllowed() then
+          self.discordPendingCode = nil
+          return
+        end
+        if self.discordInviteTime and GetTimeSinceStart() - self.discordInviteTime > 180 then
+          self.discordPendingCode = nil
+        end
+        local screen = SCREENMAN:GetTopScreen()
+        if self.discordPendingCode and self.connected and not self.inLobby and
+            screen and screen:GetName() == "ScreenOnlineLobbies" then
+          local code = self.discordPendingCode
+          local protected = self.discordPendingProtected
+          self.discordPendingCode = nil
+          self.discordPendingProtected = nil
+          MESSAGEMAN:Broadcast("OnlineLobbyJoinSelected", {
+            code=code, isPasswordProtected=protected
+          })
+        end
+      end,
       ScreenChangedMessageCommand=function(self)
+        self:queuecommand("ProcessDiscordJoin")
         if self.connected and self.socket ~= nil then
           if not self.inLobby then
             return
@@ -643,19 +733,23 @@ CreateOnlineHandler = function()
       end,
       JoinLobbyMessageCommand=function(self, params)
         if self.connected and self.socket ~= nil then
-        self.inLobby = false
+          self.inLobby = false
+          ClearDiscordLobby()
           local data = GetMachineState()
           data.code = params.code and params.code
           data.password = params.password and params.password or ""
+          self.discordLobbyProtected = data.password ~= ""
           local request = CreateRequest("joinLobby", data)
           self.socket:Send(request)
         end
       end,
       CreateLobbyMessageCommand=function(self, params)
         if self.connected and self.socket ~= nil then
-        self.inLobby = false
+          self.inLobby = false
+          ClearDiscordLobby()
           local data = GetMachineState()
           data.password = params.password and params.password or ""
+          self.discordLobbyProtected = data.password ~= ""
           local request = CreateRequest("createLobby", data)
           self.socket:Send(request)
         end
@@ -683,6 +777,7 @@ CreateOnlineHandler = function()
         end
         self.connected = false
         self.inLobby = false
+        ClearDiscordLobby()
         self.socket = nil
         self:GetChild("Display"):GetChild("Text"):settext("")
         self:GetChild("Display"):visible(false)
