@@ -117,9 +117,8 @@ local input = function(event)
 					-- The leaderboard entry is removed altogether if the service isn't available.
 					sortmenu:queuecommand("DirectInputToLeaderboard")
 				elseif focus.new_overlay == "SongSearch" then
-					-- Direct the input back to the engine, so that the ScreenTextEntry overlay
-					-- works correctly.
-					overlay:queuecommand("DirectInputToEngineForSongSearch")
+			        -- Open the Search Song modal
+			        overlay:queuecommand("DirectInputToSongSearch")
 				elseif focus.new_overlay == "LoadNewSongs" then
 					-- Make sure we cancel the request if it's active before trying to switch screens.
 					-- This prevents the "Stale ActorFrame" error.
