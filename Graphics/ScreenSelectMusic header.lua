@@ -83,13 +83,13 @@ else
 
 	af[#af+1] = LoadFont("Common Header")..{
 		Name="Stage Number",
-		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
 			self:zoom( SL_WideScale(0.5, 0.6) )
 			self:y( SL_WideScale(7.5, 9) / self:GetZoom() )
 			self:diffusealpha(0):x(_screen.cx)
 		end,
 		OnCommand=function(self)
+			self:settext(SSM_Header_StageText())
 			self:sleep(0.1):decelerate(0.33):diffusealpha(1)
 		end,
 	}
