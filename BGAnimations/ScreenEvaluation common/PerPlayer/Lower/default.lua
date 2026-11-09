@@ -41,7 +41,7 @@ af[#af+1] = Def.Quad{
 		self:xy(-small_pane_w * 0.5, _screen.cy+34)
 		self:zoomto( pane_width, pane_height )
 
-		if ThemePrefs.Get("RainbowMode") then
+		if VisualStyleUsesDarkText() then
 			self:diffusealpha(0.9)
 		end
 		if ThemePrefs.Get("VisualStyle") == "Technique" then

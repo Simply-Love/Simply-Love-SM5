@@ -82,7 +82,7 @@ local FrameBackground = function(c, player, w)
 		Def.Quad{
 			InitCommand=function(self)
 				self:cropbottom(1):zoomto(w+frame.border, frame.h+frame.border)
-				if ThemePrefs.Get("RainbowMode") then self:diffuse(Color.Black) end
+				if VisualStyleUsesDarkText() then self:diffuse(Color.Black) end
 			end,
 		},
 		-- colored bg
@@ -398,7 +398,7 @@ return Def.ActorFrame{
 		Name='SelectedProfileText',
 		InitCommand=function(self)
 			self:settext(initial_data and initial_data.displayname or "")
-			self:y(160):zoom(1.35):shadowlength(ThemePrefs.Get("RainbowMode") and 0.5 or 0):cropright(1)
+			self:y(160):zoom(1.35):shadowlength(VisualStyleUsesDarkText() and 0.5 or 0):cropright(1)
 		end,
 		OnCommand=function(self) self:sleep(0.2):smooth(0.2):cropright(0) end
 	}

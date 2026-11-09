@@ -84,18 +84,14 @@ local af = Def.ActorFrame{
     Text=THEME:GetString("ScreenSelectProfile", "LoginInstructions"),
     InitCommand=function(self)
       self:y(-150)
-      if ThemePrefs.Get("RainbowMode") then
-        self:diffuse(Color.Black)
-      end
+      self:diffuse(GetColorOverBackground())
     end,
   },
   LoadFont("Common Normal")..{
     Text=THEME:GetString("ScreenSelectProfile", "VisitWebsite"),
     InitCommand=function(self)
       self:y(-120)
-      if ThemePrefs.Get("RainbowMode") then
-        self:diffuse(Color.Black)
-      end
+      self:diffuse(GetColorOverBackground())
     end,
   },
 
@@ -130,9 +126,7 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
     LoadFont("Common Normal")..{
       Text=SL[pn].ApiKey and THEME:GetString("ScreenSelectProfile", "ProfileConnected") or "",
       InitCommand=function(self)
-        if ThemePrefs.RainbowMode then
-          self:diffuse(Color.Black)
-        end
+        self:diffuse(Color.White)
       end,
       HideQrMessageCommand=function(self, params)
         if params.pn == pn then

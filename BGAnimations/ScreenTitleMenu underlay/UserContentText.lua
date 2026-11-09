@@ -1,4 +1,4 @@
-local TextColor = (ThemePrefs.Get("RainbowMode") and (not HolidayCheer()) and Color.Black) or Color.White
+local TextColor = GetColorOverBackground()
 
 -- generate a string like "7741 songs in 69 groups, 10 courses"
 local song_stats = ("%i %s %i %s, %i %s"):format(
@@ -92,11 +92,10 @@ return LoadFont("Common Normal")..{
 	end,
 	OnCommand=function(self) self:sleep(0.2):linear(0.4):diffusealpha(1) end,
 	UpdateColorCommand=function(self)
-		local textColor = Color.White
+		local title = GetVisualStyle().title or {}
+		self:y(title.infoY or -150):zoom(title.infoZoom or 0.8)
+		local textColor = GetColorOverBackground()
 		local shadowLength = 0
-		if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
-			textColor = Color.Black
-		end
 		if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 			textColor = color(SL.SRPG10.TextColor)
 			shadowLength = 0.4

@@ -23,7 +23,7 @@ af[#af+1] = Def.Quad{
 		self:setsize( _w, 50 )
 		self:diffuse(color("#1e282f"))
 
-		if ThemePrefs.Get("RainbowMode") then self:diffusealpha(0.9) end
+		if VisualStyleUsesDarkText() then self:diffusealpha(0.9) end
 		if ThemePrefs.Get("VisualStyle") == "Technique" then
 			self:diffusealpha(0.5)
 		end

@@ -33,7 +33,7 @@ t[#t+1] = LoadFont("Common Bold")..{
 			self:diffuse(textColor)
 		else
 			local textColor = color("#888888")
-			if ThemePrefs.Get("RainbowMode") then
+			if VisualStyleUsesDarkText() then
 				textColor = Color.White
 			end
 			if ThemePrefs.Get("VisualStyle") == "SRPG10" then

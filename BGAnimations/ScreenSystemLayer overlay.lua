@@ -1,15 +1,7 @@
 -- This is mostly copy/pasted directly from SM5's _fallback theme with
 -- very minor modifications.
 
-local t = Def.ActorFrame{
-	InitCommand=function(self)
-		-- In case we loaded the theme with SRPG10 and had Rainbow Mode enabled, disable it.
-		if ThemePrefs.Get("VisualStyle") == "SRPG10" and ThemePrefs.Get("RainbowMode") == true then
-			ThemePrefs.Set("RainbowMode", false)
-			ThemePrefs.Save()
-		end
-	end
-}
+local t = Def.ActorFrame{}
 
 -- -----------------------------------------------------------------------
 
@@ -49,6 +41,7 @@ local function CreditsText( player )
 
 				local screenName = screen:GetName()
 				if screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo" then
+					textColor = GetColorOverBackground()
 					if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 						textColor = color(SL.SRPG10.TextColor)
 						shadowLength = 0.4
@@ -61,10 +54,8 @@ local function CreditsText( player )
 					--        today, but there's always hope
 					--        I'll see tomorrow
 
-					-- dark text for RainbowMode
-					if ThemePrefs.Get("RainbowMode") then
-						textColor = Color.Black
-					end
+					-- Use the style text contrast.
+					textColor = GetColorOverBackground()
 				end
 			end
 
@@ -395,11 +386,8 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 end
 
 local function DiffuseText(bmt)
-	local textColor = Color.White
+	local textColor = GetColorOverBackground()
 	local shadowLength = 0
-	if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
-		textColor = Color.Black
-	end
 	if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 		textColor = color(SL.SRPG10.TextColor)
 		shadowLength = 0.4

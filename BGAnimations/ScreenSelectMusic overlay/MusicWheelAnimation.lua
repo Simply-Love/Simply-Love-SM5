@@ -23,7 +23,7 @@ for i=1,NumWheelItems-2 do
 			self:x( _screen.cx+_screen.w/4 )
 				:y( 9 + (_screen.h/NumWheelItems)*i )
 				:zoomto(_screen.w/2, (_screen.h/NumWheelItems)/2)
-				:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
+				:diffuse( VisualStyleUsesDarkText() and Color.White or Color.Black )
 		end,
 		OnCommand=function(self) self:sleep(i*0.05):linear(0.1):cropbottom(1):diffusealpha(0.25):queuecommand("Hide") end,
 		HideCommand=function(self) self:visible(false) end
@@ -34,7 +34,7 @@ for i=1,NumWheelItems-2 do
 			self:x( _screen.cx+_screen.w/4 )
 				:y( 25 + (_screen.h/NumWheelItems)*i )
 				:zoomto(_screen.w/2, (_screen.h/NumWheelItems)/2)
-				:diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
+				:diffuse( VisualStyleUsesDarkText() and Color.White or Color.Black )
 		end,
 		OnCommand=function(self) self:sleep(i*0.05):linear(0.1):croptop(1):diffusealpha(0.25):queuecommand("Hide") end,
 		HideCommand=function(self) self:visible(false) end
