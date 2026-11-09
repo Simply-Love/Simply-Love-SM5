@@ -16,7 +16,7 @@ af.InitCommand=function(self) self:Center() end
 
 
 -- IsSpooky() will be true during October if EasterEggs are enabled
--- this is the content found in ./Graphics/_VisualStyles/Spooky/ExtraSpooky
+-- this is the content found in ./Other/VisualStyles/Spooky/ExtraSpooky
 -- it needs to be layered appropriately, some assets behind, some in front
 -- Spooky.lua includes a quad that fades the screen to black and the glowing pumpkin that remains
 -- SpookyButFadeOut.lua includes cobwebs in the upper-right and upper-left

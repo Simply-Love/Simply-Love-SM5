@@ -15,9 +15,17 @@ if type(ThemePrefs) ~= "table" or type(ThemePrefs.Get) ~= "function" then
 end
 
 SL_CustomPrefs.Get = function()
-	 -- emojis are our lingua franca for the 21st century
-	local visualStyleChoices = { "❤", "↖", "🐻", "🦆", "😺", "🎃", "🌈", "⭐", "🤔", "🌀" }
-	local visualStyleValues  = { "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk", "Technique" }
+	local visualStyleChoices, visualStyleValues = {}, {}
+	local function AddStyle(id)
+		local style = VisualStyles.definitions[id]
+		if style then
+			visualStyleValues[#visualStyleValues+1] = id
+			visualStyleChoices[#visualStyleChoices+1] = style.choice or style.name or id
+		end
+	end
+	for _, id in ipairs({ "Hearts", "Arrows", "Bears", "Ducks", "Cats", "Spooky", "Gay", "Stars", "Thonk", "Technique" }) do
+		AddStyle(id)
+	end
 
 	local year = Year()
 	local month = MonthOfYear()+1
@@ -25,15 +33,19 @@ SL_CustomPrefs.Get = function()
 	local today = year * 10000 + month * 100 + day
 
 	if today >= 20260629 then
-		visualStyleChoices[#visualStyleChoices+1] = "🖌"
-		visualStyleValues[#visualStyleValues+1] = "SRPG10"
+		AddStyle("SRPG10")
 	else
 		local prefs = IniFile.ReadFile("/Save/ThemePrefs.ini")
 		local theme = PREFSMAN:GetPreference("Theme")
 		local lastActiveEvent = nil
 		if prefs[theme] and prefs[theme].LastActiveEvent == "SRPG10" then
-			visualStyleChoices[#visualStyleChoices+1] = "🖌"
-			visualStyleValues[#visualStyleValues+1] = "SRPG10"
+			AddStyle("SRPG10")
+		end
+	end
+
+	for _, id in ipairs(VisualStyles.order) do
+		if id ~= "SRPG10" and not FindInTable(id, visualStyleValues) then
+			AddStyle(id)
 		end
 	end
 
@@ -427,6 +439,11 @@ SL_CustomPrefs.Init = function()
 
 	-- run our own rudimentary validation
 	SL_CustomPrefs.Validate()
+
+	-- Custom backgrounds only use RainbowMode when they opt in.
+	if not VisualStyleSupportsRainbow() then
+		ThemePrefs.Set("RainbowMode", false)
+	end
 
 	-- finally, call ThemePrefs.Save() so that a [Simply Love] section
 	-- can be created in ./Save/ThemePrefs.ini if one was not found

@@ -9,7 +9,7 @@ local path = ("/%s/Graphics/_logos/%s"):format( THEME:GetCurrentThemeDirectory()
 -- So, use ActorUtil.ResolvePath() to attempt to resolve the path.
 -- If it doesn't resolve to a valid StepMania path, it will return nil,
 -- and we can use that mean that neither a png nor a directory was found for this game.
-local resolved_path = ActorUtil.ResolvePath(path, 1, true)
+local resolved_path = VisualStyleAsset("TitleLogo", true) or ActorUtil.ResolvePath(path, 1, true)
 if resolved_path == nil then
 	game = "dance"
 	resolved_path = ("/%s/Graphics/_logos/dance.png"):format( THEME:GetCurrentThemeDirectory() )
@@ -30,20 +30,20 @@ af[#af+1] = Def.Sprite{
 	end,
 	LoadImageCommand=function(self)
 		if ThemePrefs.Get("VisualStyle") == "SRPG10" then
-			self:Load(THEME:GetPathG("", "_VisualStyles/SRPG10/"..SL.SRPG10.GetLogo()))
+			self:Load(VisualStyles.Asset("SRPG10", SL.SRPG10.GetLogo()))
 			self:zoom(0.07):vertalign(top)
 			self:y(-150):shadowlength(0)
 		else
-			local style = ThemePrefs.Get("VisualStyle")
-			local image = THEME:GetPathG("", "_VisualStyles/"..style.."/TitleMenu (doubleres).png")
-			local imageAlt = "/Themes/"..THEME:GetCurThemeName().."/Graphics/_VisualStyles/"..style.."/TitleMenuAlt (doubleres).png"
-			if FILEMAN:DoesFileExist(imageAlt) and math.random(1,100) <= 10 then
+			local image = VisualStyleAsset("TitleMenu (doubleres).png")
+			local imageAlt = VisualStyleAsset("TitleMenuAlt (doubleres).png", true)
+			if imageAlt and math.random(1,100) <= 10 then
 				self:Load(imageAlt)
 			else
 				self:Load(image)
 			end
-			self:zoom(0.7):vertalign(top)
-			self:y(-102):shadowlength(0.75)
+			local title = GetVisualStyle().title or {}
+			self:zoom(title.textZoom or 0.7):vertalign(top)
+			self:y(title.textY or -102):rotationz(title.textRotation or 0):shadowlength(0.75)
 		end
 	end,
 }
@@ -53,7 +53,8 @@ if ThemePrefs.Get("VisualStyle") ~= "SRPG10" then
 	-- decorative arrows for current game (dance, pump, techno, etc.)
 	af[#af+1] = LoadActor(resolved_path)..{
 		InitCommand=function(self)
-			self:y(-16)
+			local title = GetVisualStyle().title or {}
+			self:y(title.logoY or -16):rotationz(title.logoRotation or 0)
 
 			-- use ActorUtil to resolve the path and find out if it's a png or a directory
 			-- if it's a png, scale it
@@ -72,6 +73,7 @@ if ThemePrefs.Get("VisualStyle") ~= "SRPG10" then
 				-- and apply it to the y-axis as well to maintain proportions
 				self:zoomy( self:GetZoomX() )
 			end
+			if title.logoZoom then self:zoom(title.logoZoom) end
 		end,
 		VisualStyleSelectedMessageCommand=function(self)
 			-- In case we auto-switch to SRPG10, then it's possible this actor may have been added to the screen.

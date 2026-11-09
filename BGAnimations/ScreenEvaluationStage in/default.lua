@@ -41,7 +41,7 @@ else
 
 	if failed then
 		af[#af+1] = Def.Sprite{
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Paint.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Eval/Paint.png"),
 			InitCommand=function(self)
 				self:zoomto(SCREEN_WIDTH + 350, SCREEN_HEIGHT + 200	)
 			end,
@@ -56,7 +56,7 @@ else
 		}
 
 		af[#af+1] = Def.Sprite{
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Red Lines.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Eval/Red Lines.png"),
 			InitCommand=function(self)
 				self:zoom(480 / 1080):diffusealpha(0)
 			end,
@@ -66,7 +66,7 @@ else
 		}
 
 		af[#af+1] = Def.Sprite{
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Expedition Failed.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Eval/Expedition Failed.png"),
 			InitCommand=function(self)
 				self:zoom(480 / 1080):diffusealpha(0)
 			end,
@@ -76,14 +76,14 @@ else
 		}
 	else
 		af[#af+1] = Def.Sprite{
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/PassBG.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Eval/PassBG.png"),
 			InitCommand=function(self)
 				self:zoom(480 / 1080)
 			end,
 		}
 
 		af[#af+1] = Def.Sprite{
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Gold Leaf Background.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Eval/Gold Leaf Background.png"),
 			InitCommand=function(self)
 				self:zoom(480 / 1080)
 			end,
@@ -93,7 +93,7 @@ else
 		}
 
 		af[#af+1] = Def.Sprite{
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Victory.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Eval/Victory.png"),
 			InitCommand=function(self)
 				self:zoom(0.5)
 			end,
