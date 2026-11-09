@@ -106,6 +106,26 @@ LoadGuest = function(player)
 end
 
 
+local mem_avatars = {}
+local max_mem_avatar_bytes = 2 * 1024 * 1024
+
+-- copy memorycard avatars to memory while the card is mounted during profile load
+local CopyAvatarToMemory = function(profile, dir)
+	local guid = profile:GetGUID()
+	mem_avatars[guid] = nil
+
+	local path = GetAvatarPath(dir, profile:GetDisplayName())
+	if not path or path:sub(1, #dir) ~= dir or FILEMAN:GetFileSizeBytes(path) > max_avatar_bytes then
+		return
+	end
+
+	-- the profile GUID is used to make a unique path
+	local copy = ("/@mem/SL-Avatars/%s.%s"):format(guid, path:match("[^.]+$"))
+	if FILEMAN:Copy(path, copy) then
+		mem_avatars[guid] = copy
+	end
+end
+
 -- function assigned to "CustomLoadFunction" under [Profile] in metrics.ini
 LoadProfileCustom = function(profile, dir)
 	local path =  dir .. filename
@@ -130,6 +150,10 @@ LoadProfileCustom = function(profile, dir)
 		ReadItlFile(player)
 
 		SL[pn].Stages = stages
+
+		if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+			CopyAvatarToMemory(profile, dir)
+		end
 	end
 
 	if pn and FILEMAN:DoesFileExist(path) then
@@ -229,7 +253,7 @@ end
 -- -----------------------------------------------------------------------
 -- returns a path to a profile avatar, or nil if none is found
 
-GetAvatarPath = function(profileDirectory, displayName)
+GetAvatarPath = function(profileDirectory, displayName, skipProfileDirectory)
 
 	if type(profileDirectory) ~= "string" then return end
 
@@ -250,6 +274,7 @@ GetAvatarPath = function(profileDirectory, displayName)
 		("%sprofile picture"):format(profileDirectory),
 		("/Appearance/Avatars/%s"):format(displayName)
 	}
+	if skipProfileDirectory then paths = { paths[3] } end
 
 	for _, path in ipairs(paths) do
 		for _, extension in ipairs(extensions) do
@@ -282,7 +307,12 @@ GetPlayerAvatarPath = function(player)
 	if not profile_slot[player] then return end
 
 	local dir  = PROFILEMAN:GetProfileDir(profile_slot[player])
-	local name = PROFILEMAN:GetProfile(player):GetDisplayName()
+	local profile = PROFILEMAN:GetProfile(player)
+	local name = profile:GetDisplayName()
+
+	if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+		return mem_avatars[profile:GetGUID()] or GetAvatarPath(dir, name, true)
+	end
 
 	return GetAvatarPath(dir, name)
 end
