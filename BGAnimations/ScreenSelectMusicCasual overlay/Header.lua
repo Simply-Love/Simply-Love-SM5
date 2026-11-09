@@ -31,7 +31,6 @@ if not PREFSMAN:GetPreference("EventMode") then
 	af[#af+1] = Def.BitmapText{
 		Font=PREFSMAN:GetPreference("EventMode") and "Wendy/_wendy monospace numbers" or "Common Header",
 		Name="Stage Number",
-		Text=SSM_Header_StageText(),
 		InitCommand=function(self)
 			self:diffusealpha(0):halign(1):zoom(0.5):x(_screen.w-8)
 			if PREFSMAN:GetPreference("MenuTimer") then
@@ -40,6 +39,7 @@ if not PREFSMAN:GetPreference("EventMode") then
 				self:y(34)
 			end
 		end,
+		OnCommand=function(self) self:settext(SSM_Header_StageText()) end,
 		SwitchFocusToGroupsMessageCommand=function(self) self:linear(0.1):diffusealpha(0) end,
 		SwitchFocusToSongsMessageCommand=function(self) self:sleep(0.25):linear(0.1):diffusealpha(1) end,
 	}
