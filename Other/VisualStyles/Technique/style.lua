@@ -2,5 +2,5 @@ return {
 	id = "Technique",
 	name = "Technique",
 	choice = "🌀",
-	background = { type = "actor", file = "../../../BGAnimations/_shared background/Technique.lua" },
+	background = { type = "actor", file = "Technique.lua" },
 }

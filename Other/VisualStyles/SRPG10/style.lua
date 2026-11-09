@@ -5,5 +5,5 @@ return {
 	colorOverBackground = {
 		default = Color.White,
 	},
-	background = { type = "actor", file = "../../../BGAnimations/_shared background/Static.lua" },
+	background = { type = "actor", file = "Static.lua" },
 }

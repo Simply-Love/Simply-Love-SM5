@@ -11,26 +11,7 @@ local anim_data = {
 }
 
 local t = Def.ActorFrame {
-	InitCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-		self:visible(style == "Technique")
-	end,
 	OnCommand=function(self) self:fov(90):accelerate(0.8):diffusealpha(1) end,
-	HideCommand=function(self) self:visible(false) end,
-
-	VisualStyleSelectedMessageCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-		if style == "Technique" then
-			self:visible(true):linear(0.6):diffusealpha(1)
-		else
-			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
-		end
-	end,
-
-    LoopCommand=function(self)
-		index = index + 1
-		self:queuecommand("NewColor"):sleep(delay):queuecommand("Loop")
-	end,
 }
 
 -- fricks sake this function is giving me so much damn mileage lol

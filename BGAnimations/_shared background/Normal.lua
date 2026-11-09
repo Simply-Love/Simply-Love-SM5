@@ -11,25 +11,7 @@ local anim_data = {
 }
 
 local t = Def.ActorFrame {
-	InitCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-		self:visible(not ThemePrefs.Get("RainbowMode") and style ~= "SRPG10" and style ~= "Technique")
-	end,
 	OnCommand=function(self) self:accelerate(0.8):diffusealpha(1) end,
-	HideCommand=function(self) self:visible(false) end,
-
-	VisualStyleSelectedMessageCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-
-		if ThemePrefs.Get("RainbowMode") or style == "SRPG10" or style == "Technique" then
-			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
-		else
-			self:visible(true):linear(0.6):diffusealpha(1)
-
-			local new_file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
-			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
-		end
-	end
 }
 
 for i=1,10 do

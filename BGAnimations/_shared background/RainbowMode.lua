@@ -13,21 +13,7 @@ local index = SL.Global.ActiveColorIndex
 local delay = 0
 
 local af1 = Def.ActorFrame{
-	InitCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-		self:visible(ThemePrefs.Get("RainbowMode") and style ~= "SRPG10")
-	end,
 	OnCommand=function(self) self:Center():bob():effectmagnitude(0,50,0):effectperiod(8) end,
-	VisualStyleSelectedMessageCommand=function(self)
-		local style = ThemePrefs.Get("VisualStyle")
-
-		if ThemePrefs.Get("RainbowMode") and style ~= "SRPG10" then
-			self:visible(true):linear(0.6):diffusealpha(1)
-		else
-			self:linear(0.6):diffusealpha(0):queuecommand("Hide")
-		end
-	end,
-	HideCommand=function(self) self:visible(false) end,
 }
 
 local af2 = Def.ActorFrame{
@@ -37,12 +23,6 @@ local af2 = Def.ActorFrame{
 	OnCommand=function(self)
 		delay = 0.7
 		self:bob():effectmagnitude(0,0,50):effectperiod(12)
-	end,
-	VisualStyleSelectedMessageCommand=function(self)
-		if ThemePrefs.Get("RainbowMode") then
-			local new_file = THEME:GetPathG("", "_VisualStyles/" .. ThemePrefs.Get("VisualStyle") .. "/SharedBackground.png")
-			self:RunCommandsOnChildren(function(child) child:Load(new_file) end)
-		end
 	end,
 
 	LoopCommand=function(self)

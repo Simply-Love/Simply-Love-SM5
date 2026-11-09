@@ -165,11 +165,8 @@ function VisualStyles.Asset(id, name, optional)
 	end
 	local file = style.assets and style.assets[name]
 	local path = ActorUtil.ResolvePath(style.root .. (file or name), 1, true)
-	if not path then
-		path = ActorUtil.ResolvePath("/" .. THEME:GetCurrentThemeDirectory():gsub("^/+", "") .. "Graphics/_VisualStyles/" .. id .. "/" .. name, 1, true)
-	end
 	if path or optional then return path end
-	path = ActorUtil.ResolvePath("/" .. THEME:GetCurrentThemeDirectory():gsub("^/+", "") .. "Graphics/_VisualStyles/Hearts/" .. name, 1, true)
+	path = ActorUtil.ResolvePath(VisualStyles.definitions.Hearts.root .. name, 1, true)
 	if not path then throwVisualStyleError(id .. ": missing graphic " .. name) end
 	return path
 end
