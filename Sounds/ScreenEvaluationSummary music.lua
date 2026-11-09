@@ -1,8 +1,3 @@
-local audio_file = "_silent"
+if HolidayCheer() then return THEME:GetPathS("", "jinglebells.ogg") end
 
--- the best way to spread holiday cheer is singing loud for all to hear
-if HolidayCheer() then
-	audio_file = "jinglebells.ogg"
-end
-
-return THEME:GetPathS("", audio_file)
+return VisualStyleSound("evaluationSummaryMusic") or THEME:GetPathS("", "_silent")

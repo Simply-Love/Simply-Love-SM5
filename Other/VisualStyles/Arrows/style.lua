@@ -36,4 +36,7 @@ return {
 		rainbowMode = Color.Black,
 	},
 	background = { type = "default" },
+	sounds = {
+		menuMusic = "halcyon farms (loop).ogg",
+	},
 }

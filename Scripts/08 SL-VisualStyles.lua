@@ -181,7 +181,7 @@ function VisualStyleSound(name)
 	if file then return style.root .. file end
 	if name == "menuMusic" then
 		local hearts = VisualStyles.definitions.Hearts
-		return THEME:GetPathS("", "_common menu music/in_two")
+		return hearts.root .. hearts.sounds.menuMusic
 	end
 	if name == "gameOverMusic" then return THEME:GetPathS("", "fold.ogg") end
 end

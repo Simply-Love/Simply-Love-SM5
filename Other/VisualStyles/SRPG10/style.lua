@@ -6,4 +6,10 @@ return {
 		default = Color.White,
 	},
 	background = { type = "actor", file = "Static.lua" },
+	sounds = {
+		menuMusic = "SRPG10 (loop).ogg",
+		gameOverMusic = "SRPG10-GameOver.ogg",
+		evaluationPassed = "Passed.ogg",
+		evaluationFailed = "Failed.ogg",
+	},
 }

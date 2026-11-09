@@ -9,10 +9,16 @@ for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 	end
 end
 
+local function PlayResultSound()
+	local sound = VisualStyleSound(failed and "evaluationFailed" or "evaluationPassed")
+	if sound then SOUND:PlayOnce(sound) end
+end
+
 if ThemePrefs.Get("VisualStyle") ~= "SRPG10" then
 	local img = failed and "failed text.png" or "cleared text.png"
 
 	return Def.ActorFrame{
+		OnCommand=PlayResultSound,
 		Def.Quad{
 			InitCommand=function(self) self:FullScreen():diffuse(Color.Black) end,
 			OnCommand=function(self) self:sleep(0.2):linear(0.5):diffusealpha(0) end,
@@ -31,11 +37,7 @@ else
 		end,
 		OnCommand=function(self)
 			self:sleep(totalTime - 0.5):linear(0.5):diffusealpha(0)
-			if failed then
-				SOUND:PlayOnce(THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Failed.ogg"))
-			else
-				SOUND:PlayOnce(THEME:GetPathG("", "_VisualStyles/SRPG10/Eval/Passed.ogg"))
-			end
+			PlayResultSound()
 		end,
 	}
 

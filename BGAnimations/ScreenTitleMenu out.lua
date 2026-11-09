@@ -324,9 +324,9 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
-if IsSpooky() then
-	-- sound effect
-	t[#t+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/spooky.ogg"))..{
+local titleSound = VisualStyleSound("titleToGameplay")
+if titleSound and (GetVisualStyle().id ~= "Spooky" or IsSpooky()) then
+	t[#t+1] = LoadActor(titleSound)..{
 		-- only play when the first choice (Gameplay) is chosen
 		TitleMenuToGameplayMessageCommand=function(self) self:play() end
 	}

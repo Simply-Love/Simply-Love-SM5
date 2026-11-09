@@ -1,3 +1,6 @@
+local music = VisualStyleSound("evaluationMusic")
+if music then return music end
+
 local dir = THEME:GetPathS("", "ScreenEvaluationMusic/")
 
 local dirFiles = FILEMAN:GetDirListing(dir)
