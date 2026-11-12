@@ -119,6 +119,27 @@ local OtherController = {
 	GameController_2 = "GameController_1"
 }
 
+local function update_sensor_test_mode()
+	local enabled = false
+
+	for controller=1,2 do
+		for pane in ivalues(panes[controller]) do
+			local contents = pane:GetChild("")
+			if pane:GetVisible() and contents and contents:GetCommand("SensorTestMode") then
+				enabled = true
+				break
+			end
+		end
+		if enabled then break end
+	end
+
+	if enabled then INPUTMAN:StartSensorTest()
+	else INPUTMAN:StopSensorTest() end
+end
+
+-- The test-input pane can be the initially selected pane.
+update_sensor_test_mode()
+
 return function(event)
 
 	if not (event and event.PlayerNumber and event.button) then return false end
@@ -203,6 +224,7 @@ return function(event)
 			end
 
 			af:queuecommand("PaneSwitch")
+			update_sensor_test_mode()
 		end
 	end
 
