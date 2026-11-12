@@ -7,13 +7,13 @@ local SongNumberInCourse = 0
 local SongsInCourse
 local style = ThemePrefs.Get("VisualStyle")
 local assets = {
-	splode     = THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn splode"),
-	minisplode = THEME:GetPathG("", "_VisualStyles/"..style.."/GameplayIn minisplode")
+	splode     = VisualStyleAsset("GameplayIn splode"),
+	minisplode = VisualStyleAsset("GameplayIn minisplode")
 }
 
 if IsSpooky() then
-	assets.splode     = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
-	assets.minisplode = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
+	assets.splode     = VisualStyles.Asset("Spooky", "ExtraSpooky/Bats")
+	assets.minisplode = VisualStyles.Asset("Spooky", "ExtraSpooky/Bats")
 end
 
 if GAMESTATE:IsCourseMode() then

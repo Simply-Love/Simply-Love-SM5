@@ -3,9 +3,9 @@ local color2 = GetHexColor(SL.Global.ActiveColorIndex-1, true)
 local style = ThemePrefs.Get("VisualStyle")
 
 local assets = {}
-assets.flycenter = THEME:GetPathG("", "_VisualStyles/".. style .."/TitleMenu flycenter")
-assets.flytop    = THEME:GetPathG("", "_VisualStyles/".. style .."/TitleMenu flytop")
-assets.flybottom = THEME:GetPathG("", "_VisualStyles/".. style .."/TitleMenu flybottom")
+assets.flycenter = VisualStyleAsset("TitleMenu flycenter")
+assets.flytop    = VisualStyleAsset("TitleMenu flytop")
+assets.flybottom = VisualStyleAsset("TitleMenu flybottom")
 
 local timing = {}
 timing.af_decel = 0.4
@@ -19,9 +19,9 @@ local t = Def.ActorFrame{}
 -- override if it's time to get spooky
 if IsSpooky() then
 	style = "Spooky/ExtraSpooky"
-	assets.flycenter = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
-	assets.flytop    = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
-	assets.flybottom = THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Bats")
+	assets.flycenter = VisualStyles.Asset("Spooky", "ExtraSpooky/Bats")
+	assets.flytop    = VisualStyles.Asset("Spooky", "ExtraSpooky/Bats")
+	assets.flybottom = VisualStyles.Asset("Spooky", "ExtraSpooky/Bats")
 
 	-- this is broadcast from ./Graphics/ScreenTitleMenu scroll.lua
 	-- when the first choice ("Gameplay") is chosen by the player
@@ -324,9 +324,9 @@ t[#t+1] = Def.ActorFrame {
 	}
 }
 
-if IsSpooky() then
-	-- sound effect
-	t[#t+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/spooky.ogg"))..{
+local titleSound = VisualStyleSound("titleToGameplay")
+if titleSound and (GetVisualStyle().id ~= "Spooky" or IsSpooky()) then
+	t[#t+1] = LoadActor(titleSound)..{
 		-- only play when the first choice (Gameplay) is chosen
 		TitleMenuToGameplayMessageCommand=function(self) self:play() end
 	}

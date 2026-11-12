@@ -80,7 +80,7 @@ local af = Def.ActorFrame{
 			self:diffuse(color("#1e282f")):zoomto(PaneWidth, 96)
 				:xy(0, 30)
 
-			if ThemePrefs.Get("RainbowMode") then
+			if VisualStyleUsesDarkText() then
 				self:diffusealpha(0.75)
 			end
 		end

@@ -50,10 +50,7 @@ af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 			end
 		end
 
-		local textColor = Color.White
-		if ThemePrefs.Get("RainbowMode") and not HolidayCheer() then
-			textColor = Color.Black
-		end
+		local textColor = GetTextColorOverBackground()
 
 		self:diffuse(textColor)
 		self:playcommand("Refresh")

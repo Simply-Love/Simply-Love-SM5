@@ -172,7 +172,7 @@ for row=0,2 do
 	for col=0,2 do
 		local panel_index = row*3+col+1
 
-		af[#af+1] = LoadActor( THEME:GetPathG("", "_VisualStyles/Spooky/ExtraSpooky/Spider.png") )..{
+		af[#af+1] = LoadActor( VisualStyles.Asset("Spooky", "ExtraSpooky/Spider.png") )..{
 			InitCommand=function(self)
 				init_panel(self, col, row, zoom)
 			end,

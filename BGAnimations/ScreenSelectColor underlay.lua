@@ -75,7 +75,7 @@ local wheel_item_mt = {
 				end
 			}
 
-			af[#af+1] = LoadActor(THEME:GetPathG("", "_VisualStyles/"..style.."/SelectColor.png"))..{
+			af[#af+1] = LoadActor(VisualStyleAsset("SelectColor"))..{
 				InitCommand=function(subself)
 					self.heart = subself
 					subself:diffusealpha(0)

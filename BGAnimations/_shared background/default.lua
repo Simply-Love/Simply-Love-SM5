@@ -1,35 +1,14 @@
--- the best way to spread holiday cheer is singing loud for all to hear
-if HolidayCheer() then
-	return LoadActor( THEME:GetPathB("", "_shared background/Snow.lua") )
-end
-
-local style = ThemePrefs.Get("VisualStyle")
-
--- use the "VisualStyle" ThemePrefs value to generate a proper filepath to the appropriate
--- SharedBackground texture and pass it to Normal.lua and RainbowMode.lua now as this file
--- is being initialized.
-
--- if the player chooses a different VisualStyle during runtime, MESSAGEMAN will broadcast
--- "VisualStyleSelected" which we can use in Normal.lua and RainbowMode.lua to Load() the
--- newly-appropriate texture from disk into each Sprite; see also: ./BGAnimations/ScreenOptionsService overlay.lua
-local style = ThemePrefs.Get("VisualStyle")
-local file = THEME:GetPathG("", "_VisualStyles/" .. style .. "/SharedBackground.png")
-
-local af = Def.ActorFrame{}
-
--- a simple Quad to serve as the backdrop
-af[#af+1] = Def.Quad{
-	InitCommand=function(self) self:FullScreen():Center():diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black ) end,
+return Def.ActorFrame{
+	LoadActor("./Current.lua"),
 	VisualStyleSelectedMessageCommand=function(self)
-		THEME:ReloadMetrics() -- is this needed here?  -quietly
+		self:queuecommand("ReloadBackground")
+	end,
+	ReloadBackgroundCommand=function(self)
+		THEME:ReloadMetrics()
 		SL.Global.ActiveColorIndex = ThemePrefs.Get("RainbowMode") and 3 or ThemePrefs.Get("SimplyLoveColor")
-		self:linear(1):diffuse( ThemePrefs.Get("RainbowMode") and Color.White or Color.Black )
-	end
+		self:RemoveChild("CurrentBackground")
+		self:AddChildFromPath(THEME:GetPathB("", "_shared background/Current.lua"))
+		self:GetChild("CurrentBackground"):playcommand("Begin")
+		self:GetChild("CurrentBackground"):playcommand("On")
+	end,
 }
-
-af[#af+1] = LoadActor("./Normal.lua", file)
-af[#af+1] = LoadActor("./RainbowMode.lua", file)
-af[#af+1] = LoadActor("./Static.lua", file)
-af[#af+1] = LoadActor("./Technique.lua", file)
-
-return af

@@ -853,7 +853,7 @@ for player in ivalues(PlayerNumber) do
 		-- Main Black cement background
 		Def.Sprite {
 			Name="BackgroundImage",
-			Texture=THEME:GetPathG("", "_VisualStyles/SRPG10/Overlay-BG.png"),
+			Texture=VisualStyles.Asset("SRPG10", "Overlay-BG.png"),
 			InitCommand=function(self)
 				-- self:CropTo(paneWidth, paneHeight)
 				self:zoomto(paneWidth, paneHeight)

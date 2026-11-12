@@ -63,7 +63,7 @@ local af = Def.ActorFrame{
 af[#af+1] = Def.Quad{
 	InitCommand=function(self)
 		self:diffuse(color("#1e282f")):zoomto(width, height)
-		if ThemePrefs.Get("RainbowMode") then
+		if VisualStyleUsesDarkText() then
 			self:diffusealpha(0.9)
 		end
 		if ThemePrefs.Get("VisualStyle") == "Technique" then
@@ -145,8 +145,8 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 		else
 			self:addx(-136):addy(-41)
 		end
-		-- We want black text in Rainbow mode except during HolidayCheer(), white otherwise.
-		self:diffuse((ThemePrefs.Get("RainbowMode") and not HolidayCheer()) and {0, 0, 0, 1} or {1, 1, 1, 1})
+		-- Use the style text contrast.
+		self:diffuse(GetTextColorOverBackground())
 	end,
 	HideCommand=function(self)
 		self:settext(peakNPSText..": ")

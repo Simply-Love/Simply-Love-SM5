@@ -472,15 +472,8 @@ HolidayCheer = function()
 end
 
 DarkUI = function()
-	-- During the process of switching games, THEME:GetCurThemeName() will temporarily return "_fallback"
-	-- which will cause the ThemePrefs system to throw errors when a "RainbowMode" key isn't found
-	-- because a [_fallback] section doesn't exist.  This should really be fixed in the _fallback theme,
-	-- but we can prevent Lua errors from being thrown in the meantime.
 	if THEME:GetCurThemeName() ~= PREFSMAN:GetPreference("Theme") then return false end
-
-	if ThemePrefs.Get("RainbowMode") then return true end
-	if HolidayCheer() then return true end
-	return false
+	return VisualStyleUsesDarkText() or HolidayCheer()
 end
 
 -- -----------------------------------------------------------------------
@@ -1030,10 +1023,10 @@ end
 -- -----------------------------------------------------------------------
 -- If the banner is missing, use the VisualStyle fallback banner according to selected color.
 GetFallbackBanner = function()
-    local path = "/" .. THEME:GetCurrentThemeDirectory() .. "Graphics/_FallbackBanners/" .. ThemePrefs.Get("VisualStyle")
-    local banner_directory = FILEMAN:DoesFileExist(path) and path or THEME:GetPathG("", "_FallbackBanners/Arrows")
-
-    return banner_directory .. "/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"
+    local banner = VisualStyleAsset("FallbackBanner" .. SL.Global.ActiveColorIndex, true)
+    if banner then return banner end
+    local file = "FallbackBanners/banner" .. SL.Global.ActiveColorIndex .. " (doubleres).png"
+    return VisualStyleAsset(file, true) or VisualStyles.Asset("Arrows", file)
 end
 
 -- -----------------------------------------------------------------------
