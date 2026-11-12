@@ -146,7 +146,7 @@ af2[#af2+1] = LoadFont("Common Normal")..{
 			self:addx(-136):addy(-41)
 		end
 		-- Use the style text contrast.
-		self:diffuse(GetColorOverBackground())
+		self:diffuse(GetTextColorOverBackground())
 	end,
 	HideCommand=function(self)
 		self:settext(peakNPSText..": ")

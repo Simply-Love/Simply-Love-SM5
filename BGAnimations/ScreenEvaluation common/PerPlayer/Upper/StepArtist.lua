@@ -20,7 +20,7 @@ local marquee_index = 0
 return LoadFont("Common Normal")..{
 	InitCommand=function(self) self:zoom(0.7):xy(115,_screen.cy-80) end,
 	OnCommand=function(self)
-		local textColor = GetColorOverBackground()
+		local textColor = GetTextColorOverBackground()
 		local shadowLength = 0
 		self:diffuse(textColor)
 		self:shadowlength(shadowLength)

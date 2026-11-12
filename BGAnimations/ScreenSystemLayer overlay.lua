@@ -41,7 +41,7 @@ local function CreditsText( player )
 
 				local screenName = screen:GetName()
 				if screenName == "ScreenTitleMenu" or screenName == "ScreenTitleJoin" or screenName == "ScreenLogo" then
-					textColor = GetColorOverBackground()
+					textColor = GetTextColorOverBackground()
 					if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 						textColor = color(SL.SRPG10.TextColor)
 						shadowLength = 0.4
@@ -55,7 +55,7 @@ local function CreditsText( player )
 					--        I'll see tomorrow
 
 					-- Use the style text contrast.
-					textColor = GetColorOverBackground()
+					textColor = GetTextColorOverBackground()
 				end
 			end
 
@@ -386,7 +386,7 @@ local NewSessionRequestProcessor = function(res, gsInfo)
 end
 
 local function DiffuseText(bmt)
-	local textColor = GetColorOverBackground()
+	local textColor = GetTextColorOverBackground()
 	local shadowLength = 0
 	if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 		textColor = color(SL.SRPG10.TextColor)

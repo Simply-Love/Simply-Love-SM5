@@ -16,7 +16,7 @@ return LoadFont("Common Normal")..{
 			self:horizalign(right)
 		end
 
-        local textColor = GetColorOverBackground()
+        local textColor = GetTextColorOverBackground()
         self:diffuse(textColor)
     end,
 	OnCommand=function(self)

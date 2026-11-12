@@ -17,10 +17,10 @@ function VisualStyles.Register(definition, root)
 		throwVisualStyleError("duplicate id " .. id)
 		return false
 	end
-	local foreground = definition.colorOverBackground
+	local foreground = definition.textColorOverBackground
 	if foreground == nil then foreground = { default = Color.White, rainbowMode = Color.Black } end
 	if type(foreground) ~= "table" then
-		throwVisualStyleError(id .. ": colorOverBackground must be a table")
+		throwVisualStyleError(id .. ": textColorOverBackground must be a table")
 		return false
 	end
 	for mode, c in pairs(foreground) do
@@ -108,7 +108,7 @@ function VisualStyles.Register(definition, root)
 			return false
 		end
 	end
-	definition.colorOverBackground = foreground
+	definition.textColorOverBackground = foreground
 	definition.background = background
 	definition.root = root
 	VisualStyles.definitions[id] = definition
@@ -138,13 +138,13 @@ function GetVisualStyle()
 end
 
 function VisualStyleSupportsRainbow()
-	return GetVisualStyle().colorOverBackground.rainbowMode ~= nil
+	return GetVisualStyle().textColorOverBackground.rainbowMode ~= nil
 end
 
-function GetColorOverBackground()
+function GetTextColorOverBackground()
 	local c = Color.White
 	if THEME:GetCurThemeName() == PREFSMAN:GetPreference("Theme") and not HolidayCheer() then
-		local foreground = GetVisualStyle().colorOverBackground
+		local foreground = GetVisualStyle().textColorOverBackground
 		c = ThemePrefs.Get("RainbowMode") and foreground.rainbowMode or foreground.default
 	end
 	return { c[1], c[2], c[3], c[4] }
@@ -152,7 +152,7 @@ end
 
 -- Panels and inverse colors still need a light or dark contrast choice.
 function VisualStyleUsesDarkText()
-	local c = GetColorOverBackground()
+	local c = GetTextColorOverBackground()
 	return c[1] * 0.299 + c[2] * 0.587 + c[3] * 0.114 < 0.5
 end
 

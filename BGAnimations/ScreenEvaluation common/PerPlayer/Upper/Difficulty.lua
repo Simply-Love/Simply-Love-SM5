@@ -10,7 +10,7 @@ return Def.ActorFrame{
 			self:x(115 * (player==PLAYER_1 and -1 or 1))
 			self:halign(pn):zoom(0.7)
 
-			local textColor = GetColorOverBackground()
+			local textColor = GetTextColorOverBackground()
 			local shadowLength = 0
 			self:diffuse(textColor)
 			self:shadowlength(shadowLength)

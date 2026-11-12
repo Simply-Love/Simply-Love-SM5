@@ -27,7 +27,7 @@ return Def.ActorFrame{
 		Name="HorizontalWhiteSwoosh",
 		InitCommand=function(self)
 			self:horizalign(center):vertalign(middle)
-				:diffuse( GetColorOverBackground() )
+				:diffuse( GetTextColorOverBackground() )
 				:zoomto(_screen.w + 100,50):faderight(0.1):fadeleft(0.1):cropright(1)
 		end,
 		OnCommand=function(self)

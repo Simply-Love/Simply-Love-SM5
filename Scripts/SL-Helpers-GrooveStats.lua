@@ -169,7 +169,7 @@ RequestResponseActor = function(x, y)
 				InitCommand=function(self)
 					self:zoom(0.9)
 					-- Leaderboard should be white since it's on a black background.
-					self:diffuse(name == "Leaderboard" and Color.White or GetColorOverBackground())
+					self:diffuse(name == "Leaderboard" and Color.White or GetTextColorOverBackground())
 				end,
 				UpdateSpinnerCommand=function(self, params)
 					-- Only display the countdown after we've waiting for some amount of time.

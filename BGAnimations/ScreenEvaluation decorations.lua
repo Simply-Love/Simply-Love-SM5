@@ -50,7 +50,7 @@ af[#af+1] = LoadFont("Wendy/_wendy monospace numbers")..{
 			end
 		end
 
-		local textColor = GetColorOverBackground()
+		local textColor = GetTextColorOverBackground()
 
 		self:diffuse(textColor)
 		self:playcommand("Refresh")

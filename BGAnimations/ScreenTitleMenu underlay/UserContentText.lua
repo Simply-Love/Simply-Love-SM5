@@ -1,4 +1,4 @@
-local TextColor = GetColorOverBackground()
+local TextColor = GetTextColorOverBackground()
 
 -- generate a string like "7741 songs in 69 groups, 10 courses"
 local song_stats = ("%i %s %i %s, %i %s"):format(
@@ -94,7 +94,7 @@ return LoadFont("Common Normal")..{
 	UpdateColorCommand=function(self)
 		local title = GetVisualStyle().title or {}
 		self:y(title.infoY or -150):zoom(title.infoZoom or 0.8)
-		local textColor = GetColorOverBackground()
+		local textColor = GetTextColorOverBackground()
 		local shadowLength = 0
 		if ThemePrefs.Get("VisualStyle") == "SRPG10" then
 			textColor = color(SL.SRPG10.TextColor)

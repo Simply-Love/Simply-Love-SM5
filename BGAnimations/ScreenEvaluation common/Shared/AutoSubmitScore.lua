@@ -434,7 +434,7 @@ local af = Def.ActorFrame {
 	}
 }
 
-local textColor = GetColorOverBackground()
+local textColor = GetTextColorOverBackground()
 local shadowLength = 0
 
 af[#af+1] = LoadFont("Common Normal").. {

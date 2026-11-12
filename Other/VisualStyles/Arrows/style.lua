@@ -1,9 +1,9 @@
 -- VisualStyle options:
 -- id: saved preference value; use a unique name.
 -- name: display name. choice: optional short label or emoji for the options menu.
--- colorOverBackground: optional; omitted uses Color.White by default and Color.Black in RainbowMode.
--- colorOverBackground.default: foreground RGBA color; defaults to Color.White.
--- colorOverBackground.rainbowMode: foreground RGBA color; omit from an explicit table to disable RainbowMode.
+-- textColorOverBackground: optional; omitted uses Color.White by default and Color.Black in RainbowMode.
+-- textColorOverBackground.default: foreground RGBA color; defaults to Color.White.
+-- textColorOverBackground.rainbowMode: foreground RGBA color; omit from an explicit table to disable RainbowMode.
 -- Image and actor backgrounds must implement their own RainbowMode behavior when opting in.
 -- background.type: default (moving pattern), image (still image), or actor (Lua actor).
 -- background.file: file relative to this folder; optional texture for default, required for image and actor.
@@ -31,7 +31,7 @@ return {
 	id = "Arrows",
 	name = "Arrows",
 	choice = "↖",
-	colorOverBackground = {
+	textColorOverBackground = {
 		default = Color.White,
 		rainbowMode = Color.Black,
 	},

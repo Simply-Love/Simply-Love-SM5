@@ -84,14 +84,14 @@ local af = Def.ActorFrame{
     Text=THEME:GetString("ScreenSelectProfile", "LoginInstructions"),
     InitCommand=function(self)
       self:y(-150)
-      self:diffuse(GetColorOverBackground())
+      self:diffuse(GetTextColorOverBackground())
     end,
   },
   LoadFont("Common Normal")..{
     Text=THEME:GetString("ScreenSelectProfile", "VisitWebsite"),
     InitCommand=function(self)
       self:y(-120)
-      self:diffuse(GetColorOverBackground())
+      self:diffuse(GetTextColorOverBackground())
     end,
   },
 

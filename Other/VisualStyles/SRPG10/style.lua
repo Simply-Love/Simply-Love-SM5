@@ -2,7 +2,7 @@ return {
 	id = "SRPG10",
 	name = "SRPG10",
 	choice = "🖌",
-	colorOverBackground = {
+	textColorOverBackground = {
 		default = Color.White,
 	},
 	background = { type = "actor", file = "Static.lua" },
