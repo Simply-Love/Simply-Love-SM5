@@ -15,6 +15,10 @@ local player, controller = unpack(...)
 local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 
 local pane = Def.ActorFrame{
+	-- InputHandler.lua uses this marker to enable the input driver's detailed
+	-- sensor polling only while this pane is visible.
+	SensorTestModeCommand=function() end,
+	OffCommand=function() INPUTMAN:StopSensorTest() end,
 	InitCommand=function(self)
 		if style == "OnePlayerTwoSides" then
 			if controller == PLAYER_2 then self:x(-260)
