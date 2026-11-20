@@ -159,7 +159,7 @@ af[#af+1] = Def.ActorFrame{
 				-- because it exceeds the 2-round or 3-round time limit cutoff.
 				local song = GAMESTATE:GetCurrentSong()
 				if song then
-					seconds = song:MusicLengthSeconds()
+					seconds = song:GetLastSecond()
 				end
 
 			elseif SelectedType == "WheelItemDataType_Section" then
