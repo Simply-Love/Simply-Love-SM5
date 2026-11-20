@@ -40,6 +40,7 @@ local SelectGameMode = function()
 		SetGameModePreferences()
 		-- and reload the theme's Metrics
 		THEME:ReloadMetrics()
+		TopScreen:lockinput(math.huge)
 		TopScreen:StartTransitioningScreen("SM_GoToNextScreen")
 	end
 end
